@@ -17,13 +17,14 @@ from dcs.mapping import *
 from dcs.point import *
 from dcs.task import *
 
-SPREAD_DISTANCE_FACTOR = 0.1, 0.25
-SPREAD_DISTANCE_SIZE_FACTOR = 0.5
+SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_MAX_DIST = 30000
 
 WARM_START_ALTITUDE = 6000
 WARM_START_AIRSPEED = 300
 CAS_ALTITUDE = 3000
+
+INTERCEPT_MAX_DISTANCE_FACTOR = 15
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[PlaneGroup]
@@ -37,8 +38,7 @@ class AircraftConflictGenerator:
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[0]),
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[1]),
                 )
-
-        return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
+        return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_FACTOR[0])
 
     def _generate_group(
             self,
@@ -48,7 +48,7 @@ class AircraftConflictGenerator:
             count: int,
             at: Point = None,
             airport: Airport = None) -> PlaneGroup:
-        starttype = airport == None and StartType.Warm or StartType.Runway
+        starttype = airport == None and StartType.Warm or StartType.Cold
         return self.m.flight_group(
                 country=side,
                 name=name,
@@ -86,9 +86,14 @@ class AircraftConflictGenerator:
                     airport=airport)
 
             group.task = Escort.name
-            for group in self.escort_targets:
-                group.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
+            group.load_task_default_loadout(dcs.task.Escort.name)
 
+            heading = group.position.heading_between_point(self.conflict.point)
+            position = group.position # type: Point
+            wayp = group.add_waypoint(position.point_from_heading(heading, 3000), CAS_ALTITUDE)
+
+            for group in self.escort_targets:
+                wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
 
     def generate_interceptors(self, defenders: typing.Dict[PlaneType, int], airport: Airport = None):
         for type, count in defenders.items():
@@ -100,5 +105,8 @@ class AircraftConflictGenerator:
                     at=airport == None and self._group_point(self.conflict.air_defenders_location) or None,
                     airport=airport)
 
-            group.add_waypoint(self.conflict.point, CAS_ALTITUDE)
-            group.task = FighterSweep()
+            group.task = FighterSweep.name
+            group.load_task_default_loadout(dcs.task.FighterSweep())
+            wayp = group.add_waypoint(self.conflict.point, CAS_ALTITUDE)
+            wayp.tasks.append(dcs.task.EngageTargets(max_distance=self.conflict.size * INTERCEPT_MAX_DISTANCE_FACTOR))
+            wayp.tasks.append(dcs.task.OrbitAction())

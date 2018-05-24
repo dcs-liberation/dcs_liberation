@@ -1,2 +1,4 @@
 *.pyc
 __pycache__
+output.miz
+.DS_Store

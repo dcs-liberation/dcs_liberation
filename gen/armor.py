@@ -18,8 +18,8 @@ from dcs.point import *
 from dcs.task import *
 from dcs.country import *
 
-SPREAD_DISTANCE_FACTOR = 0.01, 0.1
-SPREAD_DISTANCE_SIZE_FACTOR = 0.5
+SPREAD_DISTANCE_FACTOR = 0.1, 0.3
+SPREAD_DISTANCE_SIZE_FACTOR = 0.1
 
 class ArmorConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict):
@@ -42,7 +42,7 @@ class ArmorConflictGenerator:
                     unit,
                     position=self._group_point(at),
                     group_size=1,
-                    move_formation=PointAction.OnRoad)
+                    move_formation=PointAction.OffRoad)
             wayp = group.add_waypoint(self.conflict.point)
             wayp.tasks = []
 

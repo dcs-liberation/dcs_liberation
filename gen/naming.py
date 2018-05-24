@@ -16,6 +16,10 @@ class NameGenerator:
     def next_intercept_group_name(self):
         self.number += 1
         return "Intercept Unit {}".format(self.number)
+    
+    def next_ground_group_name(self):
+        self.number += 1
+        return "AA Unit {}".format(self.number)
 
 
 namegen = NameGenerator()
