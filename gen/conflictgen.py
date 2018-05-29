@@ -57,3 +57,19 @@ class Conflict:
         instance.air_defenders_location = instance.position.point_from_heading(random.randint(*INTERCEPT_DEFENDERS_HEADING) + heading, INTERCEPT_DEFENDERS_DISTANCE)
 
         return instance
+
+    @classmethod
+    def ground_intercept_conflict(self, attacker: Country, defender: Country, position: Point, heading):
+        from theater.conflicttheater import SIZE_SMALL
+
+        instance = self()
+        instance.attackers_side = attacker
+        instance.defenders_side = defender
+
+        instance.position = position
+        instance.size = SIZE_SMALL
+
+        instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE)
+        instance.ground_defenders_location = instance.position
+
+        return instance

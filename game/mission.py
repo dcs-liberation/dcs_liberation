@@ -12,6 +12,7 @@ from gen.aircraft import *
 from gen.aaa import *
 from gen.conflictgen import *
 
+
 class Operation:
     def __init__(self, mission: Mission, conflict: Conflict):
         self.mission = mission
@@ -19,6 +20,7 @@ class Operation:
         self.armorgen = ArmorConflictGenerator(self.mission, self.conflict)
         self.airgen = AircraftConflictGenerator(self.mission, self.conflict)
         self.aagen = AAConflictGenerator(self.mission, self.conflict)
+
 
 class CaptureOperation(Operation):
     def __init__(self,
@@ -54,6 +56,7 @@ class CaptureOperation(Operation):
         self.airgen.generate_defense(self.intercept)
         self.aagen.generate(self.aa)
 
+
 class InterceptOperation(Operation):
     def __init__(self,
                  mission: Mission,
@@ -68,7 +71,7 @@ class InterceptOperation(Operation):
             attacker=attacker,
             defender=defender,
             position=destination.position,
-            heading=0
+            heading=randint(0, 360)
         )
 
         super(InterceptOperation, self).__init__(mission, conflict)
@@ -81,3 +84,28 @@ class InterceptOperation(Operation):
         self.airgen.generate_transport(self.transport, self.destination_port)
         self.airgen.generate_transport_escort(self.escort)
         self.airgen.generate_interception(self.interceptors)
+
+
+class GroundInterceptOperation(Operation):
+    def __init__(self,
+                 mission: Mission,
+                 attacker: Country,
+                 defender: Country,
+                 position: Point,
+                 target: typing.Dict[VehicleType, int],
+                 strikegroup: typing.Dict[PlaneType, int]):
+        conflict = Conflict.ground_intercept_conflict(
+            attacker=attacker,
+            defender=defender,
+            position=position,
+            heading=randint(0, 360)
+        )
+
+        super(GroundInterceptOperation, self).__init__(mission, conflict)
+        self.strikegroup = strikegroup
+        self.target = target
+
+    def generate(self):
+        self.airgen.generate_cas(self.strikegroup)
+        self.armorgen.generate({}, self.target)
+
