@@ -5,7 +5,7 @@ import math
 from dcs.mapping import *
 from dcs.country import *
 
-from gen.conflictgen import Conflict
+from gen.conflictgen import *
 
 class ControlPoint:
     connected_points = [] # type: typing.List[ControlPoint]
@@ -27,12 +27,12 @@ class ControlPoint:
     def connect(self, to):
         self.connected_points.append(to)
 
-    def find_radial(self, heading: int):
+    def find_radial(self, heading: int, ignored_radial: int = None):
         closest_radial = 0
         closest_radial_delta = 360
-        for radial in self.radials:
+        for radial in [x for x in self.radials if x != ignored_radial]:
             delta = math.fabs(radial - heading)
-            if closest_radial_delta < delta:
+            if delta < closest_radial_delta:
                 closest_radial = radial
                 closest_radial_delta = delta
 
@@ -42,13 +42,13 @@ class ControlPoint:
         cp = from_cp # type: ControlPoint
 
         attack_radial = self.find_radial(cp.position.heading_between_point(self.position))
-        defense_radial = self.find_radial(self.position.heading_between_point(cp.position))
+        defense_radial = self.find_radial(self.position.heading_between_point(cp.position), ignored_radial=attack_radial)
 
-        return Conflict(attacker=attacker,
-                        attack_heading=attack_radial,
-                        defender=defender,
-                        defense_heading=defense_radial,
-                        position=self.position,
-                        size=self.size)
+        return Conflict.capture_conflict(attacker=attacker,
+                                         attack_heading=attack_radial,
+                                         defender=defender,
+                                         defense_heading=defense_radial,
+                                         position=self.position,
+                                         size=self.size)
 
 

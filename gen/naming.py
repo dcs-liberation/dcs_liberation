@@ -21,6 +21,10 @@ class NameGenerator:
         self.number += 1
         return "AA Unit {}".format(self.number)
 
+    def next_transport_group_name(self):
+        self.number += 1
+        return "Transport Unit {}".format(self.number)
+
 
 namegen = NameGenerator()
 
