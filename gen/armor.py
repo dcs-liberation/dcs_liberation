@@ -43,7 +43,7 @@ class ArmorConflictGenerator:
                     position=self._group_point(at),
                     group_size=1,
                     move_formation=PointAction.OffRoad)
-            wayp = group.add_waypoint(self.conflict.point)
+            wayp = group.add_waypoint(self.conflict.position)
             wayp.tasks = []
 
     def generate(self, attackers: typing.Dict[UnitType, int], defenders: typing.Dict[UnitType, int]):

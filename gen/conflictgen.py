@@ -20,18 +20,15 @@ GROUND_DISTANCE_FACTOR = 2
 AIR_DISTANCE_FACTOR = 5
 
 class Conflict:
-    trigger_zone = None # type: TriggerZone
-    activation_trigger = None # type: Trigger
-
-    def __init__(self, attacker: Country, attack_heading: int, defender: Country, defense_heading: int, point: Point, size: int):
+    def __init__(self, attacker: Country, attack_heading: int, defender: Country, defense_heading: int, position: Point, size: int):
         self.attackers_side = attacker
         self.defenders_side = defender
-        self.point = point
+        self.position = position
         self.size = size
 
-        self.ground_attackers_location = self.point.point_from_heading(attack_heading, self.size * GROUND_DISTANCE_FACTOR)
-        self.ground_defenders_location = self.point.point_from_heading(defense_heading, self.size * GROUND_DISTANCE_FACTOR)
+        self.ground_attackers_location = self.position.point_from_heading(attack_heading, self.size * GROUND_DISTANCE_FACTOR)
+        self.ground_defenders_location = self.position.point_from_heading(defense_heading, self.size * GROUND_DISTANCE_FACTOR)
 
-        self.air_attackers_location = self.point.point_from_heading(attack_heading, self.size * AIR_DISTANCE_FACTOR)
-        self.air_defenders_location = self.point.point_from_heading(defense_heading, self.size * AIR_DISTANCE_FACTOR)
+        self.air_attackers_location = self.position.point_from_heading(attack_heading, self.size * AIR_DISTANCE_FACTOR)
+        self.air_defenders_location = self.position.point_from_heading(defense_heading, self.size * AIR_DISTANCE_FACTOR)
 

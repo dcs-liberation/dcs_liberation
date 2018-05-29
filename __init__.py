@@ -5,33 +5,37 @@ import os
 
 import gen
 import theater.caucasus
+import game.mission
+
+from dcs.planes import *
+from dcs.vehicles import *
 
 m = dcs.Mission()
 
 theater = theater.caucasus.CaucasusTheater()
-conflict = theater.controlpoints[0].conflict_attack(theater.controlpoints[1], m.country("USA"), m.country("Russia"))
 
+theater.kutaisi.base.aircraft = {
+    A_10C: 4,
+    F_15C: 4,
+}
 
-"""
-conflict = gen.Conflict(
-        heading=100,
-        attacker=m.country("USA"),
-        defender=m.country("Russia"),
-        point=m.terrain.krymsk().position,
-        size=10000)
-        """
+theater.kutaisi.base.armor = {
+    Armor.MBT_M1A2_Abrams: 4,
+}
 
-armor_conflict = gen.ArmorConflictGenerator(m, conflict)
-armor_conflict.generate(
-        attackers={dcs.vehicles.Armor.MBT_M1A2_Abrams: 8},
-        defenders={dcs.vehicles.Armor.MBT_T_80U: 10})
+theater.senaki.base.aircraft = {
+    MiG_21Bis: 8,
+}
 
-aircraft_conflict = gen.AircraftConflictGenerator(m, conflict)
-aircraft_conflict.generate_cas({dcs.planes.A_10C: 4})
-aircraft_conflict.generate_escort({dcs.planes.F_15C: 4})
-aircraft_conflict.generate_interceptors({dcs.planes.Su_27: 6})
+theater.senaki.base.armor = {
+    Armor.MBT_T_55: 6,
+}
 
-aa_conflict = gen.AAConflictGenerator(m, conflict)
-aa_conflict.generate({dcs.vehicles.AirDefence.AAA_ZU_23_on_Ural_375: 3})
+theater.senaki.base.aa = {
+    AirDefence.AAA_ZU_23_on_Ural_375: 2,
+}
 
-m.save("output.miz")
+op = game.mission.CaptureOperation.playerless(m, theater.kutaisi, theater.senaki)
+op.generate()
+
+m.save("build/output.miz")

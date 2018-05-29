@@ -1,4 +1,5 @@
 import dcs
 
-mission = dcs.mission.Mission()
-country = mission.country("USA")
+MISSION = dcs.mission.Mission()
+US = MISSION.country("USA")
+THEM = MISSION.country("Russia")

@@ -72,7 +72,7 @@ class AircraftConflictGenerator:
                     airport=airport)
             self.escort_targets.append(group)
 
-            group.add_waypoint(self.conflict.point, CAS_ALTITUDE)
+            group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
             group.task = CAS.name
 
     def generate_escort(self, attackers: typing.Dict[PlaneType, int], airport: Airport = None):
@@ -88,7 +88,7 @@ class AircraftConflictGenerator:
             group.task = Escort.name
             group.load_task_default_loadout(dcs.task.Escort.name)
 
-            heading = group.position.heading_between_point(self.conflict.point)
+            heading = group.position.heading_between_point(self.conflict.position)
             position = group.position # type: Point
             wayp = group.add_waypoint(position.point_from_heading(heading, 3000), CAS_ALTITUDE)
 
@@ -107,6 +107,6 @@ class AircraftConflictGenerator:
 
             group.task = FighterSweep.name
             group.load_task_default_loadout(dcs.task.FighterSweep())
-            wayp = group.add_waypoint(self.conflict.point, CAS_ALTITUDE)
+            wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
             wayp.tasks.append(dcs.task.EngageTargets(max_distance=self.conflict.size * INTERCEPT_MAX_DISTANCE_FACTOR))
             wayp.tasks.append(dcs.task.OrbitAction())
