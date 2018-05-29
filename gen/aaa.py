@@ -26,10 +26,9 @@ class AAConflictGenerator:
 
     def generate(self, units: typing.Dict[UnitType, int]):
         for type, count in units.items():
-            for _ in range(count):
-                p = self.conflict.ground_defenders_location.random_point_within(
-                        self.conflict.size * DISTANCE_FACTOR[1],
-                        self.conflict.size * DISTANCE_FACTOR[0])
+            for _, radial in zip(range(count), self.conflict.radials):
+                distance = randint(self.conflict.size * DISTANCE_FACTOR[0], self.conflict.size * DISTANCE_FACTOR[1])
+                p = self.conflict.position.point_from_heading(radial, distance)
 
                 self.m.vehicle_group(
                         country=self.conflict.defenders_side,

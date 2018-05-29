@@ -49,6 +49,7 @@ class ControlPoint:
                                          defender=defender,
                                          defense_heading=defense_radial,
                                          position=self.position,
-                                         size=self.size)
+                                         size=self.size,
+                                         radials=self.radials)
 
 

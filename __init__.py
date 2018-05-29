@@ -35,19 +35,6 @@ theater.senaki.base.aa = {
     AirDefence.AAA_ZU_23_on_Ural_375: 2,
 }
 
-op = game.mission.CaptureOperation(
-    mission=m,
-    attacker=m.country("USA"),
-    defender=m.country("Russia"),
-    from_cp=theater.senaki,
-    to_cp=theater.batumi,
-    cas={A_10C: 2},
-    escort={F_15C: 2},
-    attack={Armor.MBT_M1A2_Abrams: 4},
-    intercept={Su_27: 4},
-    defense={Armor.MBT_T_55: 4},
-    aa={AirDefence.AAA_ZU_23_Insurgent_on_Ural_375: 3})
-
 op = game.mission.InterceptOperation(
     mission=m,
     attacker=m.country("USA"),
@@ -67,6 +54,19 @@ op = game.mission.GroundInterceptOperation(
     target={Unarmed.Transport_ZIL_4331: 10},
     strikegroup={A_10C: 2}
 )
+
+op = game.mission.CaptureOperation(
+    mission=m,
+    attacker=m.country("USA"),
+    defender=m.country("Russia"),
+    from_cp=theater.senaki,
+    to_cp=theater.batumi,
+    cas={A_10C: 2},
+    escort={F_15C: 2},
+    attack={Armor.MBT_M1A2_Abrams: 4},
+    intercept={Su_27: 4},
+    defense={Armor.MBT_T_55: 4},
+    aa={AirDefence.AAA_ZU_23_Insurgent_on_Ural_375: 3})
 op.generate()
 
 if not os.path.exists("./build"):

@@ -5,6 +5,7 @@ from dcs.mission import *
 from dcs.unitgroup import *
 from dcs.vehicles import *
 from theater.controlpoint import *
+from theater.conflicttheater import *
 from theater.base import *
 
 from gen.armor import *
@@ -71,7 +72,8 @@ class InterceptOperation(Operation):
             attacker=attacker,
             defender=defender,
             position=destination.position,
-            heading=randint(0, 360)
+            heading=randint(0, 360),
+            radials=ALL_RADIALS
         )
 
         super(InterceptOperation, self).__init__(mission, conflict)
@@ -98,7 +100,8 @@ class GroundInterceptOperation(Operation):
             attacker=attacker,
             defender=defender,
             position=position,
-            heading=randint(0, 360)
+            heading=randint(0, 360),
+            radials=ALL_RADIALS
         )
 
         super(GroundInterceptOperation, self).__init__(mission, conflict)
