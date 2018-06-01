@@ -5,71 +5,87 @@ import os
 
 import gen
 import theater.caucasus
-import game.mission
+import game.operation
+import ui.window
+import ui.mainmenu
+
+from game.game import Game
+from theater.controlpoint import *
 
 from dcs.planes import *
 from dcs.vehicles import *
 
 m = dcs.Mission()
-
 theater = theater.caucasus.CaucasusTheater()
-
 theater.kutaisi.base.aircraft = {
-    A_10C: 4,
     F_15C: 4,
+    A_10C: 2,
 }
 
-theater.kutaisi.base.armor = {
-    Armor.MBT_M1A2_Abrams: 4,
-}
+g = Game(theater=theater)
 
-theater.senaki.base.aircraft = {
-    MiG_21Bis: 8,
-}
+w = ui.window.Window()
+m = ui.mainmenu.MainMenu(g, w)
 
-theater.senaki.base.armor = {
-    Armor.MBT_T_55: 6,
-}
+w.run()
 
-theater.senaki.base.aa = {
-    AirDefence.AAA_ZU_23_on_Ural_375: 2,
-}
 
-op = game.mission.InterceptOperation(
-    mission=m,
-    attacker=m.country("USA"),
-    defender=m.country("Russia"),
-    destination=theater.batumi,
-    destination_port=m.terrain.batumi(),
-    escort={Su_27: 2},
-    transport={An_26B: 2},
-    interceptors={M_2000C: 2}
-)
+"""
+selected_cp = None  # type: ControlPoint
+while True:
+    ptr = 0
 
-op = game.mission.GroundInterceptOperation(
-    mission=m,
-    attacker=m.country("USA"),
-    defender=m.country("Russia"),
-    position=m.terrain.batumi().position,
-    target={Unarmed.Transport_ZIL_4331: 10},
-    strikegroup={A_10C: 2}
-)
+    print("Budget: {}m".format(g.budget))
 
-op = game.mission.CaptureOperation(
-    mission=m,
-    attacker=m.country("USA"),
-    defender=m.country("Russia"),
-    from_cp=theater.senaki,
-    to_cp=theater.batumi,
-    cas={A_10C: 2},
-    escort={F_15C: 2},
-    attack={Armor.MBT_M1A2_Abrams: 4},
-    intercept={Su_27: 4},
-    defense={Armor.MBT_T_55: 4},
-    aa={AirDefence.AAA_ZU_23_Insurgent_on_Ural_375: 3})
-op.generate()
+    if selected_cp is None:
+        print("Events:")
+        for event in g.events:
+            ptr += 1
+            print("{}. {} {}".format(ptr, event.attacker != g.side and "!" or " ", event))
+
+        print("Control Points:")
+        controlpoints = g.theater.controlpoints
+        controlpoints.sort(key=lambda x: x.captured)
+        for cp in g.theater.controlpoints:
+            ptr += 1
+            print("{}. [{}{}] {}{}{}{}".format(
+                ptr,
+                cp.captured and "x" or " ",
+                int(cp.base.readiness * 10),
+                cp.name,
+                "^" * cp.base.total_planes,
+                "." * cp.base.total_armor,
+                "*" * cp.base.total_aa))
+
+        events_boundary = len(g.events)
+        try:
+            selected_idx = int(input(">").strip()) - 1
+        except:
+            continue
+
+        if selected_idx == -1:
+            g.pass_turn()
+            continue
+        if selected_idx < events_boundary:
+            event = g.events[selected_idx]
+        else:
+            selected_cp = controlpoints[selected_idx - events_boundary]
+    else:
+        print("Units on the base: ")
+        for unit, count in selected_cp.base.all_units:
+            print("{} ({}) ".format(unit.name and unit.name or unit.id, count), end="")
+        print("")
+
+        try:
+            selected_idx = int(input(">").strip()) - 1
+        except:
+            continue
+        if selected_idx == -1:
+            selected_cp = None
 
 if not os.path.exists("./build"):
     os.mkdir("./build")
 
 m.save("build/output.miz")
+"""
+

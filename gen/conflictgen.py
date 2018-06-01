@@ -25,6 +25,7 @@ INTERCEPT_DEFENDERS_HEADING = -10, 10
 INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
 
+
 class Conflict:
     attackers_side = None  # type: Country
     defenders_side = None  # type: Country

@@ -35,6 +35,7 @@ class AircraftConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict):
         self.m = mission
         self.conflict = conflict
+        self.escort_targets = []
 
     def _group_point(self, point) -> Point:
         distance = randint(
@@ -53,6 +54,8 @@ class AircraftConflictGenerator:
             airport: Airport = None) -> PlaneGroup:
         starttype = airport == None and StartType.Warm or StartType.Cold
         print("generating {} ({}) at {} {}".format(unit, count, at, airport, side))
+        assert count > 0
+
         return self.m.flight_group(
                 country=side,
                 name=name,
@@ -66,7 +69,8 @@ class AircraftConflictGenerator:
                 group_size=count)
 
     def _generate_escort(self, units: typing.Dict[PlaneType, int], airport: Airport, side: Country, location: Point):
-        assert len(self.escort_targets) > 0
+        if len(self.escort_targets) == 0:
+            return
 
         for type, count in units.items():
             group = self._generate_group(
@@ -81,7 +85,7 @@ class AircraftConflictGenerator:
             group.load_task_default_loadout(dcs.task.Escort)
 
             heading = group.position.heading_between_point(self.conflict.position)
-            position = group.position # type: Point
+            position = group.position  # type: Point
             wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE)
 
             for group in self.escort_targets:

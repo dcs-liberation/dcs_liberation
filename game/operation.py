@@ -1,6 +1,7 @@
 import typing
 
 from globals import *
+from userdata.debriefing_parser import *
 from dcs.mission import *
 from dcs.unitgroup import *
 from dcs.vehicles import *
@@ -21,6 +22,15 @@ class Operation:
         self.armorgen = ArmorConflictGenerator(self.mission, self.conflict)
         self.airgen = AircraftConflictGenerator(self.mission, self.conflict)
         self.aagen = AAConflictGenerator(self.mission, self.conflict)
+
+    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
+        return []
+
+    def is_successfull(self, debriefing: Debriefing) -> bool:
+        return True
+
+    def generate(self):
+        pass
 
 
 class CaptureOperation(Operation):

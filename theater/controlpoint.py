@@ -7,25 +7,35 @@ from dcs.country import *
 
 from gen.conflictgen import *
 
-class ControlPoint:
-    connected_points = [] # type: typing.List[ControlPoint]
-    position = None # type: Point
-    captured = False
-    strength = 100
-    base: None # type: theater.base.Base
 
-    def __init__(self, point: Point, radials: typing.Collection[int], size: int, importance: int):
+class ControlPoint:
+    connected_points = []  # type: typing.List[ControlPoint]
+    position = None  # type: Point
+    captured = False
+    base: None  # type: theater.base.Base
+    airport: None  # type: Airport
+
+    def __init__(self, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
         import theater.base
 
-        self.position = point
+        self.name = airport.name
+        self.position = airport.position
+        self.airport = airport
         self.size = size
         self.importance = importance
         self.captured = False
         self.radials = radials
+        self.connected_points = []
         self.base = theater.base.Base()
+
+    def __str__(self):
+        return self.name
 
     def connect(self, to):
         self.connected_points.append(to)
+
+    def is_connected(self, to) -> bool:
+        return to in self.connected_points
 
     def find_radial(self, heading: int, ignored_radial: int = None):
         closest_radial = 0
@@ -39,7 +49,7 @@ class ControlPoint:
         return closest_radial
 
     def conflict_attack(self, from_cp, attacker: Country, defender: Country) -> Conflict:
-        cp = from_cp # type: ControlPoint
+        cp = from_cp  # type: ControlPoint
 
         attack_radial = self.find_radial(cp.position.heading_between_point(self.position))
         defense_radial = self.find_radial(self.position.heading_between_point(cp.position), ignored_radial=attack_radial)

@@ -1,6 +1,7 @@
 import typing
 import dcs
 import math
+import itertools
 
 from shop import db
 from theater.controlpoint import ControlPoint
@@ -17,10 +18,15 @@ ARMOR_IMPORTANCE_FACTOR = 4
 class Base:
     aircraft = {}  # type: typing.Dict[PlaneType, int]
     armor = {}  # type: typing.Dict[Armor, int]
-    aa = {} # type: typing.Dict[AirDefence, int]
+    aa = {}  # type: typing.Dict[AirDefence, int]
+    strength = 1  # type: float
+    commision_points = {}
 
     def __init__(self):
-        pass
+        self.aircraft = {}
+        self.armor = {}
+        self.aa = {}
+        self.commision_points = {}
 
     @property
     def total_planes(self) -> int:
@@ -30,19 +36,40 @@ class Base:
     def total_armor(self) -> int:
         return sum(self.armor.values())
 
+    @property
+    def total_aa(self) -> int:
+        return sum(self.aa.values())
+
+    def total_units(self, task: Task) -> int:
+        return sum([c for t, c in itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items()) if t in db.UNIT_BY_TASK[task]])
+
+    def total_units_of_type(self, unit_type) -> int:
+        return sum([c for t, c in itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items()) if t == unit_type])
+
+    @property
+    def all_units(self):
+        return itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items())
+
     def _find_best_unit(self, dict, for_type: Task, count: int) -> typing.Dict:
-        sorted_planes = [key for key in dict.keys() if key in db.UNIT_BY_TASK[for_type]]
-        sorted_planes.sort(key=lambda x: db.PRICES[x], reverse=True)
+        assert count > 0
+
+        sorted_units = [key for key in dict.keys() if key in db.UNIT_BY_TASK[for_type]]
+        sorted_units.sort(key=lambda x: db.PRICES[x], reverse=True)
 
         result = {}
-        for plane in sorted_planes:
-            existing_count = dict[plane] # type: int
+        for unit_type in sorted_units:
+            existing_count = dict[unit_type]  # type: int
             if not existing_count:
                 continue
 
+            if count <= 0:
+                break
+
             result_unit_count = min(count, existing_count)
             count -= result_unit_count
-            result[plane] = result.get(plane, 0) + result_unit_count
+
+            assert result_unit_count > 0
+            result[unit_type] = result.get(unit_type, 0) + result_unit_count
 
         return result
 
@@ -65,24 +92,68 @@ class Base:
             total_scrambled += PLANES_IN_GROUP
             yield PLANES_IN_GROUP and total_scrambled < total_planes or total_planes - total_scrambled
 
-    def commit_scramble(self, scrambled_aircraft: typing.Dict[PlaneType, int]):
-        for k, c in scrambled_aircraft:
-            self.aircraft[k] -= c
-            assert self.aircraft[k] >= 0
-            if self.aircraft[k] == 0:
-                del self.aircraft[k]
+    def append_commision_points(self, for_type, points: float) -> int:
+        self.commision_points[for_type] = self.commision_points.get(for_type, 0) + points
+        points = self.commision_points[for_type]
+        if points >= 1:
+            self.commision_points[for_type] = points - math.floor(points)
+            return int(math.floor(points))
+
+        return 0
+
+    def commision_units(self, units: typing.Dict[typing.Any, int]):
+        for value in units.values():
+            assert value > 0
+            assert value == math.floor(value)
+
+        for unit_type, unit_count in units.items():
+            for_task = db.unit_task(unit_type)
+
+            target_dict = None
+            if for_task == CAS or for_task == FighterSweep:
+                target_dict = self.aircraft
+            elif for_task == CAP:
+                target_dict = self.armor
+            elif for_task == AirDefence:
+                target_dict = self.aa
+
+            assert target_dict is not None
+            target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
+
+    def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
+        for unit_type, count in units_lost.items():
+            aircraft_key = next((x for x in self.aircraft.keys() if x.id == unit_type), None)
+            if aircraft_key:
+                self.aircraft[aircraft_key] = self.aircraft[aircraft_key] - count
+
+            armor_key = next((x for x in self.armor.keys() if x.name == unit_type), None)
+            if armor_key:
+                self.armor[armor_key] = self.armor[armor_key] - count
+
+            aa_key = next((x for x in self.aa.keys() if x.name == unit_type), None)
+            if aa_key:
+                self.aa[aa_key] = self.aa[aa_key] - count
+
+    def affect_strength(self, amount):
+        self.strength += amount
+        if self.strength > 1:
+            self.strength = 1
 
     def scramble_cas(self, for_target: ControlPoint) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(CAS, int(for_target.importance * PLANES_IMPORTANCE_FACTOR))
+        return self._find_best_planes(CAS, math.ceil(for_target.importance * PLANES_IMPORTANCE_FACTOR * self.strength))
 
     def scramble_sweep(self, for_target: ControlPoint) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, int(for_target.importance * PLANES_IMPORTANCE_FACTOR))
+        return self._find_best_planes(FighterSweep, math.ceil(for_target.importance * PLANES_IMPORTANCE_FACTOR * self.strength))
 
     def scramble_interceptors(self, factor: float) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, int(self.total_planes * factor))
+        return self._find_best_planes(FighterSweep, math.ceil(self.total_planes * factor * self.strength))
+
+    def scramble_interceptors_count(self, count: int) -> typing.Dict[PlaneType, int]:
+        assert count > 0
+        return self._find_best_planes(FighterSweep, count)
 
     def assemble_cap(self, for_target: ControlPoint) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, int(for_target.importance * ARMOR_IMPORTANCE_FACTOR))
+        return self._find_best_armor(CAP, math.ceil(for_target.importance * ARMOR_IMPORTANCE_FACTOR * self.strength))
 
     def assemble_defense(self, factor: float) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, int(self.total_armor * factor))
+        return self._find_best_armor(CAP, math.ceil(self.total_armor * factor * self.strength))
