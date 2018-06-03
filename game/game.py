@@ -36,6 +36,7 @@ PLAYER_BUDGET_IMPORTANCE_LOG = 2
 class Game:
     budget = 45
     events = None  # type: typing.List[Event]
+    pending_transfers = None  # type: typing.Dict[]
 
     def __init__(self, theater: ConflictTheater):
         self.events = []
@@ -55,6 +56,9 @@ class Game:
 
     def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):
+            if from_cp.base.total_planes == 0 or from_cp.base.total_armor == 0:
+                continue
+
             if self._roll(ENEMY_CAPTURE_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(CaptureEvent(attacker_name=self.enemy,
                                                 defender_name=self.player,
@@ -64,6 +68,9 @@ class Game:
 
     def _generate_interceptions(self):
         for from_cp, to_cp in self.theater.conflicts(False):
+            if from_cp.base.total_units(FighterSweep) == 0:
+                continue
+
             if self._roll(ENEMY_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(InterceptEvent(attacker_name=self.enemy,
                                                   defender_name=self.player,
@@ -100,10 +107,19 @@ class Game:
                     cp.base.commision_units({unit_type: points_to_spend})
 
     def _budget_player(self):
-        total_importance = sum([x.importance for x in self.theater.player_points()])
-        total_strength = sum([x.base.strength for x in self.theater.player_points()]) / len(self.theater.player_points())
+        if len(self.theater.player_points()) > 0:
+            total_importance = sum([x.importance for x in self.theater.player_points()])
+            total_strength = sum([x.base.strength for x in self.theater.player_points()]) / len(self.theater.player_points())
 
-        self.budget += math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE)
+            self.budget += math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE)
+
+    def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
+        event = UnitsDeliveryEvent(attacker_name=self.player,
+                                   defender_name=self.player,
+                                   from_cp=to_cp,
+                                   to_cp=to_cp)
+        self.events.append(event)
+        return event
 
     def initiate_event(self, event: Event):
         event.operation.generate()
@@ -119,13 +135,14 @@ class Game:
     def is_player_attack(self, event: Event):
         return event.attacker.name == self.player
 
-    def pass_turn(self):
+    def pass_turn(self, no_action=False):
         for event in self.events:
             event.skip()
 
-        self._budget_player()
-        for cp in self.theater.enemy_bases():
-            self._commision_units(cp)
+        if not no_action:
+            self._budget_player()
+            for cp in self.theater.enemy_bases():
+                self._commision_units(cp)
 
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()

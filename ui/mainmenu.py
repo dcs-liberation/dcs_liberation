@@ -7,30 +7,19 @@ from ui.basemenu import *
 
 from game.game import *
 
-class MainMenu:
-    def __init__(self, game: Game, window: Window):
-        self.image = PhotoImage(file="resources/caumap.gif")
-        self.game = game
-        self.window = window
 
+class MainMenu(Menu):
+    def __init__(self, window: Window, parent, game: Game):
+        super(MainMenu, self).__init__(window, parent, game)
+
+        self.image = PhotoImage(file="resources/caumap.gif")
         map = Label(window.left_pane, image=self.image)
         map.grid(column=0, row=0)
 
         self.frame = self.window.right_pane
         self.frame.grid_columnconfigure(0, weight=1)
-        self.update()
 
-    def pass_turn(self):
-        self.game.pass_turn()
-        self.update()
-
-    def start_event(self, event) -> typing.Callable:
-        return lambda: EventMenu(self.window, self, self.game, event)
-
-    def go_cp(self, cp: ControlPoint) -> typing.Callable:
-        return lambda: BaseMenu(self.window, self, self.game, cp.base)
-
-    def update(self):
+    def display(self):
         self.window.clear_right_pane()
 
         row = 1
@@ -59,6 +48,14 @@ class MainMenu:
         label("Budget: {}m".format(self.game.budget))
 
         for event in self.game.events:
+            if not event.informational:
+                continue
+            label(str(event))
+
+        for event in self.game.events:
+            if event.informational:
+                continue
+
             event_button(event, "{} {}".format(event.attacker.name != self.game.player and "!" or " ", event))
 
         Separator(self.frame, orient='horizontal').grid(column=0, row=row, sticky=EW); row += 1
@@ -76,3 +73,12 @@ class MainMenu:
             Label(self.frame, text=title).grid(column=0, row=row, sticky=NE)
             row += 1
 
+    def pass_turn(self):
+        self.game.pass_turn(no_action=True)
+        self.display()
+
+    def start_event(self, event) -> typing.Callable:
+        return lambda: EventMenu(self.window, self, self.game, event).display()
+
+    def go_cp(self, cp: ControlPoint) -> typing.Callable:
+        return lambda: BaseMenu(self.window, self, self.game, cp).display()

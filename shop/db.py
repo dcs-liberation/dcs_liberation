@@ -12,34 +12,34 @@ from dcs.unittype import *
 PRICES = {
     # planes
 
-    Su_25T: 10,
-    Su_25: 10,
-    A_10A: 15,
+    Su_25T: 11,
+    Su_25: 11,
+    A_10A: 18,
     A_10C: 20,
 
-    Su_27: 20,
-    Su_33: 23,
-    F_15C: 25,
-    M_2000C: 17,
+    Su_27: 30,
+    Su_33: 33,
+    F_15C: 30,
+    M_2000C: 11,
 
-    MiG_15bis: 10,
+    MiG_15bis: 6,
     MiG_21Bis: 13,
     MiG_29A: 23,
 
-    IL_76MD: 20,
-    S_3B_Tanker: 20,
+    IL_76MD: 13,
+    S_3B_Tanker: 13,
 
     # armor
 
-    Armor.MBT_T_55: 18,
-    Armor.MBT_T_80U: 20,
-    Armor.MBT_T_90: 22,
+    Armor.MBT_T_55: 4,
+    Armor.MBT_T_80U: 8,
+    Armor.MBT_T_90: 10,
 
-    Armor.MBT_M60A3_Patton: 15,
-    Armor.MBT_M1A2_Abrams: 20,
+    Armor.MBT_M60A3_Patton: 6,
+    Armor.MBT_M1A2_Abrams: 9,
 
-    Armor.ATGM_M1134_Stryker: 12,
-    Armor.APC_BTR_80: 10,
+    Armor.ATGM_M1134_Stryker: 6,
+    Armor.APC_BTR_80: 6,
 }
 
 UNIT_BY_TASK = {

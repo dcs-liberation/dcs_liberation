@@ -25,7 +25,8 @@ theater.kutaisi.base.aircraft = {
 g = Game(theater=theater)
 
 w = ui.window.Window()
-m = ui.mainmenu.MainMenu(g, w)
+m = ui.mainmenu.MainMenu(w, None, g)
+m.display()
 
 w.run()
 

@@ -6,22 +6,50 @@ from game.game import *
 from game import event
 
 
-class EventMenu:
+class EventMenu(Menu):
     aircraft_scramble_entries = None  # type: typing.Dict[PlaneType, Entry]
     armor_scramble_entries = None  # type: typing.Dict[Armor, Entry]
 
     def __init__(self, window: Window, parent, game: Game, event: event.Event):
-        self.window = window
-        self.frame = self.window.right_pane
-        self.parent = parent
+        super(EventMenu, self).__init__(window, parent, game)
 
         self.event = event
-        self.game = game
-
         self.aircraft_scramble_entries = {}
         self.armor_scramble_entries = {}
 
-        self.update()
+        self.frame = self.window.right_pane
+
+    def display(self):
+        self.window.clear_right_pane()
+        row = 0
+
+        def label(text):
+            nonlocal row
+            Label(self.frame, text=text).grid(column=0, row=0)
+
+            row += 1
+
+        def scrable_row(unit_type, unit_count):
+            nonlocal row
+            Label(self.frame, text="{} ({})".format(unit_type.id and unit_type.id or unit_type.name, unit_count)).grid(column=0, row=row)
+            e = Entry(self.frame)
+            e.grid(column=1, row=row)
+
+            self.aircraft_scramble_entries[unit_type] = e
+            row += 1
+
+        base = None  # type: Base
+        if self.event.attacker.name == self.game.player:
+            base = self.event.from_cp.base
+        else:
+            base = self.event.to_cp.base
+
+        label("Aircraft")
+        for unit_type, count in base.aircraft.items():
+            scrable_row(unit_type, count)
+
+        Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
+        Button(self.frame, text="Back", command=self.dismiss).grid(column=0, row=row)
 
     def start(self):
         scrambled_aircraft = {}
@@ -64,35 +92,5 @@ class EventMenu:
             e.player_attacking(e.to_cp.position.random_point_within(30000), strikegroup=scrambled_aircraft)
 
         self.game.initiate_event(self.event)
-        EventResultsMenu(self.window, self.parent, self.game, self.event)
+        EventResultsMenu(self.window, self.parent, self.game, self.event).display()
 
-    def update(self):
-        self.window.clear_right_pane()
-        row = 0
-
-        def label(text):
-            nonlocal row
-            Label(self.frame, text=text).grid(column=0, row=0)
-
-            row += 1
-
-        def scrable_row(unit_type, unit_count):
-            nonlocal row
-            Label(self.frame, text="{} ({})".format(unit_type.id and unit_type.id or unit_type.name, unit_count)).grid(column=0, row=row)
-            e = Entry(self.frame)
-            e.grid(column=1, row=row)
-
-            self.aircraft_scramble_entries[unit_type] = e
-            row += 1
-
-        base = None  # type: Base
-        if self.event.attacker.name == self.game.player:
-            base = self.event.from_cp.base
-        else:
-            base = self.event.to_cp.base
-
-        label("Aircraft")
-        for unit, count in base.aircraft.items():
-            scrable_row(unit, count)
-
-        Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)

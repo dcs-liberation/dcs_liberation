@@ -51,7 +51,8 @@ class Base:
         return itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items())
 
     def _find_best_unit(self, dict, for_type: Task, count: int) -> typing.Dict:
-        assert count > 0
+        if count <= 0:
+            return {}
 
         sorted_units = [key for key in dict.keys() if key in db.UNIT_BY_TASK[for_type]]
         sorted_units.sort(key=lambda x: db.PRICES[x], reverse=True)
@@ -122,17 +123,19 @@ class Base:
 
     def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
         for unit_type, count in units_lost.items():
-            aircraft_key = next((x for x in self.aircraft.keys() if x.id == unit_type), None)
-            if aircraft_key:
-                self.aircraft[aircraft_key] = self.aircraft[aircraft_key] - count
+            target_array = None
+            if unit_type in self.aircraft:
+                target_array = self.aircraft
+            elif unit_type in self.armor:
+                target_array = self.armor
+            elif unit_type in self.aa:
+                target_array = self.aa
+            else:
+                continue
 
-            armor_key = next((x for x in self.armor.keys() if x.name == unit_type), None)
-            if armor_key:
-                self.armor[armor_key] = self.armor[armor_key] - count
-
-            aa_key = next((x for x in self.aa.keys() if x.name == unit_type), None)
-            if aa_key:
-                self.aa[aa_key] = self.aa[aa_key] - count
+            target_array[unit_type] = target_array[unit_type] - count
+            if target_array[unit_type] == 0:
+                del target_array[unit_type]
 
     def affect_strength(self, amount):
         self.strength += amount

@@ -13,6 +13,7 @@ DIFFICULTY_LOG_BASE = 1.5
 
 class Event:
     silent = False
+    informational = False
     operation = None  # type: Operation
     difficulty = 1  # type: int
     BONUS_BASE = 0
@@ -94,9 +95,9 @@ class InterceptEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
         if self.is_successfull(debriefing):
-            self.to_cp.base.affect_strength(0.1 * self.from_cp.captured and -1 or 1)
+            self.to_cp.base.affect_strength(0.1 * float(self.from_cp.captured and -1 or 1))
         else:
-            self.to_cp.base.affect_strength(0.1 * self.from_cp.captured and 1 or -1)
+            self.to_cp.base.affect_strength(0.1 * float(self.from_cp.captured and 1 or -1))
 
     def skip(self):
         if self.to_cp.captured:
@@ -183,3 +184,26 @@ class CaptureEvent(Event):
                                           intercept=interceptors,
                                           defense=self.to_cp.base.armor,
                                           aa=self.to_cp.base.aa)
+
+
+class UnitsDeliveryEvent(Event):
+    informational = True
+    units = None  # type: typing.Dict[UnitType, int]
+
+    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint):
+        super(UnitsDeliveryEvent, self).__init__(attacker_name=attacker_name,
+                                                 defender_name=defender_name,
+                                                 from_cp=from_cp,
+                                                 to_cp=to_cp)
+
+        self.units = {}
+
+    def __str__(self):
+        return "Pending delivery to {}".format(self.to_cp)
+
+    def deliver(self, units: typing.Dict[UnitType, int]):
+        for k, v in units.items():
+            self.units[k] = self.units.get(k, 0) + v
+
+    def skip(self):
+        self.to_cp.base.commision_units(self.units)

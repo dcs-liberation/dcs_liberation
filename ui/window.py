@@ -1,4 +1,5 @@
 from tkinter import *
+from game.game import *
 
 
 class Window:
@@ -39,3 +40,17 @@ class Window:
 
     def run(self):
         self.tk.mainloop()
+
+
+class Menu:
+    parent = None  # type: Menu
+    def __init__(self, window: Window, parent, game: Game):
+        self.window = window
+        self.parent = parent
+        self.game = game
+
+    def dismiss(self):
+        self.parent.display()
+
+    def display(self):
+        pass
