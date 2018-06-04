@@ -25,36 +25,36 @@ class EventResultsMenu(Menu):
         self.window.clear_right_pane()
 
         if not self.finished:
-            Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1, True)).grid(row=0, column=0)
-            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1, False)).grid(row=0, column=1)
+            Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1, True)).grid()
+            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1, False)).grid(column=1)
 
-            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5, True)).grid(row=1, column=0)
+            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5, True)).grid(row=1, )
             Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5, False)).grid(row=1, column=1)
 
-            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0, True)).grid(row=2, column=0)
+            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0, True)).grid(row=2, )
             Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0, False)).grid(row=2, column=1)
         else:
             row = 0
             if self.event.is_successfull(self.debriefing):
-                Label(self.frame, text="Operation success").grid(column=0, row=row, columnspan=1); row += 1
+                Label(self.frame, text="Operation success").grid(row=row, columnspan=1); row += 1
             else:
-                Label(self.frame, text="Operation failed").grid(column=0, row=row, columnspan=1); row += 1
+                Label(self.frame, text="Operation failed").grid(row=row, columnspan=1); row += 1
 
-            Separator(self.frame, orient='horizontal').grid(column=0, row=row, columnspan=1, sticky=NE); row += 1
+            Separator(self.frame, orient='horizontal').grid(row=row, columnspan=1, sticky=NE); row += 1
             Label(self.frame, text="Player losses").grid(row=row, columnspan=1); row += 1
             for unit_type, count in self.player_losses.items():
-                Label(self.frame, text=db.unit_type_name(unit_type)).grid(column=0, row=row)
+                Label(self.frame, text=db.unit_type_name(unit_type)).grid(row=row)
                 Label(self.frame, text="{}".format(count)).grid(column=1, row=row)
                 row += 1
 
-            Separator(self.frame, orient='horizontal').grid(column=0, row=row, columnspan=1, sticky=NE); row += 1
+            Separator(self.frame, orient='horizontal').grid(row=row, columnspan=1, sticky=NE); row += 1
             Label(self.frame, text="Enemy losses").grid(columnspan=1, row=row); row += 1
             for unit_type, count in self.enemy_losses.items():
-                Label(self.frame, text=db.unit_type_name(unit_type)).grid(column=0, row=row)
+                Label(self.frame, text=db.unit_type_name(unit_type)).grid(row=row)
                 Label(self.frame, text="{}".format(count)).grid(column=1, row=row)
                 row += 1
 
-            Button(self.frame, text="Okay", command=self.dismiss).grid(column=0, columnspan=1, row=row); row += 1
+            Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
 
     def simulate_result(self, player_factor: float, enemy_factor: float, result: bool):
         def action():

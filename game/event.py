@@ -49,6 +49,7 @@ class GroundInterceptEvent(Event):
     BONUS_BASE = 3
     TARGET_AMOUNT_FACTOR = 3
     TARGET_VARIETY = 3
+    STRENGTH_INFLUENCE = 0.1
 
     def __str__(self):
         return "Ground intercept at {} ({})".format(self.to_cp, "*" * self.difficulty)
@@ -58,9 +59,9 @@ class GroundInterceptEvent(Event):
 
         if self.from_cp.captured:
             if self.is_successfull(debriefing):
-                self.to_cp.base.affect_strength(-0.1)
+                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
-                self.to_cp.base.affect_strength(+0.1)
+                self.to_cp.base.affect_strength(+self.STRENGTH_INFLUENCE)
         else:
             assert False
 
@@ -88,6 +89,7 @@ class GroundInterceptEvent(Event):
 class InterceptEvent(Event):
     ESCORT_AMOUNT_FACTOR = 2
     BONUS_BASE = 5
+    STRENGTH_INFLUENCE = 0.25
 
     def __str__(self):
         return "Intercept at {} ({})".format(self.to_cp, "*" * self.difficulty)
@@ -95,13 +97,13 @@ class InterceptEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
         if self.is_successfull(debriefing):
-            self.to_cp.base.affect_strength(0.1 * float(self.from_cp.captured and -1 or 1))
+            self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and -1 or 1))
         else:
-            self.to_cp.base.affect_strength(0.1 * float(self.from_cp.captured and 1 or -1))
+            self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and 1 or -1))
 
     def skip(self):
         if self.to_cp.captured:
-            self.to_cp.base.affect_strength(-0.2)
+            self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, interceptors: typing.Dict[PlaneType, int]):
         escort = self.to_cp.base.scramble_sweep(self.to_cp)
@@ -135,6 +137,7 @@ class InterceptEvent(Event):
 class CaptureEvent(Event):
     silent = True
     BONUS_BASE = 7
+    STRENGTH_RECOVERY = 0.35
 
     def __str__(self):
         return "Capture {} ({})".format(self.to_cp, "*" * self.difficulty)
@@ -147,7 +150,7 @@ class CaptureEvent(Event):
         else:
             if not self.from_cp.captured:
                 self.to_cp.captured = False
-            self.to_cp.base.affect_strength(+0.5)
+            self.to_cp.base.affect_strength(+self.STRENGTH_RECOVERY)
 
     def skip(self):
         if self.to_cp.captured:

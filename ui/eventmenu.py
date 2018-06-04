@@ -25,13 +25,13 @@ class EventMenu(Menu):
 
         def label(text):
             nonlocal row
-            Label(self.frame, text=text).grid(column=0, row=0)
+            Label(self.frame, text=text).grid()
 
             row += 1
 
         def scrable_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(unit_type.id and unit_type.id or unit_type.name, unit_count)).grid(column=0, row=row)
+            Label(self.frame, text="{} ({})".format(unit_type.id and unit_type.id or unit_type.name, unit_count)).grid(row=row)
             e = Entry(self.frame)
             e.grid(column=1, row=row)
 
@@ -48,8 +48,8 @@ class EventMenu(Menu):
         for unit_type, count in base.aircraft.items():
             scrable_row(unit_type, count)
 
-        Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
-        Button(self.frame, text="Back", command=self.dismiss).grid(column=0, row=row)
+        Button(self.frame, text="Commit", command=self.start).grid(row=row)
+        Button(self.frame, text="Back", command=self.dismiss).grid(row=row)
 
     def start(self):
         scrambled_aircraft = {}

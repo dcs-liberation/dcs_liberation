@@ -26,7 +26,7 @@ class BaseMenu(Menu):
             existing_units = self.base.total_units_of_type(unit_type)
             scheduled_units = self.event.units.get(unit_type, 0)
 
-            Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(column=0, row=row, sticky=W)
+            Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(row=row, sticky=W)
             Label(self.frame, text="({})".format(existing_units)).grid(column=1, row=row)
             Label(self.frame, text="{}m {}".format(unit_price, scheduled_units and "(bought {})".format(scheduled_units) or "")).grid(column=2, row=row)
             Button(self.frame, text="Buy", command=self.buy(unit_type)).grid(column=3, row=row)
@@ -40,12 +40,12 @@ class BaseMenu(Menu):
             AirDefence: db.find_unittype(AirDefence, self.game.player),
         }
 
-        Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(column=0, row=row, sticky=W)
+        Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(row=row, sticky=W)
         Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)
         row += 1
 
         for task_type, units in units.items():
-            Label(self.frame, text="{}".format(db.task_name(task_type))).grid(column=0, row=row, columnspan=5); row += 1
+            Label(self.frame, text="{}".format(db.task_name(task_type))).grid(row=row, columnspan=5); row += 1
             for unit_type in units:
                 purchase_row(unit_type, db.PRICES[unit_type])
 

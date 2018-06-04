@@ -22,9 +22,9 @@ class Window:
         self.frame.grid_rowconfigure(0, weight=1)
 
         self.left_pane = Frame(self.frame)
-        self.left_pane.grid(column=0, row=0, sticky=NSEW)
+        self.left_pane.grid(row=0, column=0, sticky=NSEW)
         self.right_pane = Frame(self.frame)
-        self.right_pane.grid(column=1, row=0, sticky=NSEW)
+        self.right_pane.grid(row=0, column=1, sticky=NSEW)
 
         self.tk.focus()
 
