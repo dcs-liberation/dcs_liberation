@@ -39,7 +39,7 @@ class Conflict:
     air_defenders_location = None  # type: Point
 
     @classmethod
-    def capture_conflict(self, attacker: Country, attack_heading: int, defender: Country, defense_heading: int, position: Point, size: int, radials: typing.List[int]):
+    def capture_conflict(self, attacker: Country, attack_heading: int, defender: Country, defense_heading: int, position: Point, size: int, radials: typing.Collection[int]):
         instance = self()
         instance.attackers_side = attacker
         instance.defenders_side = defender

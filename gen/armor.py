@@ -6,6 +6,7 @@ from random import randint
 
 import globals
 
+from shop import db
 from .conflictgen import *
 from .naming import *
 
@@ -21,6 +22,7 @@ from dcs.country import *
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
 
+
 class ArmorConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict):
         self.m = mission
@@ -34,7 +36,7 @@ class ArmorConflictGenerator:
 
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
 
-    def _generate_group(self, side: Country, unit: UnitType, count: int, at: Point):
+    def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point):
         for c in range(count):
             group = self.m.vehicle_group(
                     side,
@@ -46,7 +48,7 @@ class ArmorConflictGenerator:
             wayp = group.add_waypoint(self.conflict.position)
             wayp.tasks = []
 
-    def generate(self, attackers: typing.Dict[UnitType, int], defenders: typing.Dict[UnitType, int]):
+    def generate(self, attackers: db.ArmorDict, defenders: db.ArmorDict):
         for type, count in attackers.items():
             self._generate_group(
                     side=self.conflict.attackers_side,

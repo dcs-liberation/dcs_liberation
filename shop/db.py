@@ -40,20 +40,27 @@ PRICES = {
 
     Armor.ATGM_M1134_Stryker: 6,
     Armor.APC_BTR_80: 6,
+
+    AirDefence.AAA_ZU_23_on_Ural_375: 4,
 }
 
 UNIT_BY_TASK = {
     FighterSweep: [Su_27, Su_33, Su_25, F_15C, MiG_15bis, MiG_21Bis, MiG_29A, ],
     CAS: [Su_25T, A_10A, A_10C, ],
     CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
-    AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375, ],
+    AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375,  ],
     Transport: [IL_76MD, S_3B_Tanker, ],
 }
 
 UNIT_BY_COUNTRY = {
-    "Russia": [Su_25T, A_10C, Su_27, Su_33, Su_25, MiG_15bis, MiG_21Bis, MiG_29A, AirDefence.AAA_ZU_23_on_Ural_375, Armor.APC_BTR_80, Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, IL_76MD, ],
+"Russia": [Su_25T, Su_27, Su_33, Su_25, MiG_15bis, MiG_21Bis, MiG_29A, AirDefence.AAA_ZU_23_on_Ural_375, Armor.APC_BTR_80, Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, IL_76MD, ],
     "USA": [F_15C, A_10C, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, S_3B_Tanker],
 }
+
+UnitsDict = typing.Dict[UnitType, int]
+PlaneDict = typing.Dict[PlaneType, int]
+ArmorDict = typing.Dict[VehicleType, int]
+AADict = typing.Dict[AirDefence, int]
 
 
 def unit_task(unit: UnitType) -> Task:

@@ -2,13 +2,15 @@ from tkinter import *
 from ui.window import *
 from ui.eventresultsmenu import *
 
+from shop import db
 from game.game import *
 from game import event
 
 
 class EventMenu(Menu):
-    aircraft_scramble_entries = None  # type: typing.Dict[PlaneType, Entry]
-    armor_scramble_entries = None  # type: typing.Dict[Armor, Entry]
+    aircraft_scramble_entries = None  # type: typing.Dict[PlaneType , Entry]
+    aircraft_client_entries = None  # type: typing.Dict[PlaneType, Entry]
+    armor_scramble_entries = None  # type: typing.Dict[VehicleType, Entry]
 
     def __init__(self, window: Window, parent, game: Game, event: event.Event):
         super(EventMenu, self).__init__(window, parent, game)
@@ -16,6 +18,7 @@ class EventMenu(Menu):
         self.event = event
         self.aircraft_scramble_entries = {}
         self.armor_scramble_entries = {}
+        self.aircraft_client_entries = {}
 
         self.frame = self.window.right_pane
 
@@ -31,11 +34,24 @@ class EventMenu(Menu):
 
         def scrable_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(unit_type.id and unit_type.id or unit_type.name, unit_count)).grid(row=row)
-            e = Entry(self.frame)
-            e.grid(column=1, row=row)
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row)
+            scramble_entry = Entry(self.frame)
+            scramble_entry.grid(column=1, row=row)
+            self.aircraft_scramble_entries[unit_type] = scramble_entry
 
-            self.aircraft_scramble_entries[unit_type] = e
+            client_entry = Entry(self.frame)
+            client_entry.grid(column=2, row=row)
+            self.aircraft_client_entries[unit_type] = client_entry
+
+            row += 1
+
+        def scramble_armor_row(unit_type, unit_count):
+            nonlocal row
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row)
+            scramble_entry = Entry(self.frame)
+            scramble_entry.grid(column=1, row=row)
+            self.armor_scramble_entries[unit_type] = scramble_entry
+
             row += 1
 
         base = None  # type: Base
@@ -48,8 +64,12 @@ class EventMenu(Menu):
         for unit_type, count in base.aircraft.items():
             scrable_row(unit_type, count)
 
-        Button(self.frame, text="Commit", command=self.start).grid(row=row)
-        Button(self.frame, text="Back", command=self.dismiss).grid(row=row)
+        label("Armor")
+        for unit_type, count in base.armor.items():
+            scramble_armor_row(unit_type, count)
+
+        Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
+        Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)
 
     def start(self):
         scrambled_aircraft = {}
@@ -67,6 +87,13 @@ class EventMenu(Menu):
                 elif task == FighterSweep:
                     scrambled_sweep[unit_type] = amount
 
+        scrambled_clients = {}
+        for unit_type, field in self.aircraft_client_entries.items():
+            value = field.get()
+            if value and int(value) > 0:
+                amount = int(value)
+                scrambled_clients[unit_type] = amount
+
         scrambled_armor = {}
         for unit_type, field in self.armor_scramble_entries.items():
             value = field.get()
@@ -78,18 +105,22 @@ class EventMenu(Menu):
             if self.game.is_player_attack(self.event):
                 e.player_attacking(cas=scrambled_cas,
                                    escort=scrambled_sweep,
-                                   armor=scrambled_armor)
+                                   armor=scrambled_armor,
+                                   clients=scrambled_clients)
             else:
-                e.player_defending(interceptors=scrambled_aircraft)
+                e.player_defending(interceptors=scrambled_aircraft,
+                                   clients=scrambled_clients)
         elif type(self.event) is InterceptEvent:
             e = self.event  # type: InterceptEvent
             if self.game.is_player_attack(self.event):
-                e.player_attacking(interceptors=scrambled_aircraft)
+                e.player_attacking(interceptors=scrambled_aircraft,
+                                   clients=scrambled_clients)
             else:
-                e.player_defending(escort=scrambled_aircraft)
+                e.player_defending(escort=scrambled_aircraft,
+                                   clients=scrambled_clients)
         elif type(self.event) is GroundInterceptEvent:
             e = self.event  # type: GroundInterceptEvent
-            e.player_attacking(e.to_cp.position.random_point_within(30000), strikegroup=scrambled_aircraft)
+            e.player_attacking(e.to_cp.position.random_point_within(30000), strikegroup=scrambled_aircraft, clients=scrambled_clients)
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()

@@ -44,11 +44,9 @@ class MainMenu(Menu):
             Button(self.frame, text=title, command=self.go_cp(cp)).grid(row=row, sticky=NW)
             row += 1
 
-        statusbar = Frame(self.frame).grid(column=0, row=row, sticky=NSEW)
+        Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(column=0, row=0, sticky=NW)
+        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=1, row=0, sticky=NE)
         row += 1
-
-        Label(statusbar, text="Budget: {}m".format(self.game.budget)).grid(column=0, row=0, sticky=NW)
-        Button(statusbar, text="Pass turn", command=self.pass_turn).grid(column=1, row=0, sticky=NE)
 
         for event in self.game.events:
             if not event.informational:

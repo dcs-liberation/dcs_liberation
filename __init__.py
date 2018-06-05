@@ -10,6 +10,7 @@ import ui.window
 import ui.mainmenu
 
 from game.game import Game
+from theater import start_generator
 from theater.controlpoint import *
 
 from dcs.planes import *
@@ -17,6 +18,8 @@ from dcs.vehicles import *
 
 m = dcs.Mission()
 theater = theater.caucasus.CaucasusTheater()
+
+start_generator.generate_initial(theater, "Russia")
 theater.kutaisi.base.aircraft = {
     F_15C: 4,
     A_10C: 2,

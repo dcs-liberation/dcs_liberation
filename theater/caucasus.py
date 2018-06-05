@@ -3,6 +3,7 @@ from dcs.terrain import caucasus
 from .conflicttheater import *
 from .base import *
 
+
 class CaucasusTheater(ConflictTheater):
     kutaisi = ControlPoint(caucasus.Kutaisi, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     senaki = ControlPoint(caucasus.Senaki, ALL_RADIALS, SIZE_REGULAR, IMPORTANCE_LOW)

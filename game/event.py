@@ -71,7 +71,7 @@ class GroundInterceptEvent(Event):
         else:
             pass
 
-    def player_attacking(self, position: Point, strikegroup: typing.Dict[PlaneType, int]):
+    def player_attacking(self, position: Point, strikegroup: db.PlaneDict, clients: db.PlaneDict):
         suitable_unittypes = db.find_unittype(CAP, self.defender.name)
         random.shuffle(suitable_unittypes)
         unittypes = suitable_unittypes[:self.TARGET_VARIETY]
@@ -81,6 +81,8 @@ class GroundInterceptEvent(Event):
         self.operation = GroundInterceptOperation(mission=self.mission,
                                                   attacker=self.attacker,
                                                   defender=self.defender,
+                                                  attacker_clients=clients,
+                                                  defender_clients={},
                                                   position=position,
                                                   target=targets,
                                                   strikegroup=strikegroup)
@@ -105,7 +107,7 @@ class InterceptEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, interceptors: typing.Dict[PlaneType, int]):
+    def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
         escort = self.to_cp.base.scramble_sweep(self.to_cp)
         transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
         assert transport_unit is not None
@@ -113,13 +115,15 @@ class InterceptEvent(Event):
         self.operation = InterceptOperation(mission=self.mission,
                                             attacker=self.attacker,
                                             defender=self.defender,
+                                            attacker_clients=clients,
+                                            defender_clients={},
                                             destination=self.to_cp,
                                             destination_port=self.to_cp.airport,
                                             escort=escort,
                                             transport={transport_unit: 1},
                                             interceptors=interceptors)
 
-    def player_defending(self, escort: typing.Dict[PlaneType, int]):
+    def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
         interceptors = self.from_cp.base.scramble_interceptors_count(self.difficulty * self.ESCORT_AMOUNT_FACTOR)
         transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
         assert transport_unit is not None
@@ -127,6 +131,8 @@ class InterceptEvent(Event):
         self.operation = InterceptOperation(mission=self.mission,
                                             attacker=self.attacker,
                                             defender=self.defender,
+                                            attacker_clients={},
+                                            defender_clients=clients,
                                             destination=self.to_cp,
                                             destination_port=self.to_cp.airport,
                                             escort=escort,
@@ -156,7 +162,7 @@ class CaptureEvent(Event):
         if self.to_cp.captured:
             self.to_cp.captured = False
 
-    def player_defending(self, interceptors: typing.Dict[PlaneType, int]):
+    def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
         cas = self.from_cp.base.scramble_cas(self.to_cp)
         escort = self.from_cp.base.scramble_sweep(self.to_cp)
         attackers = self.from_cp.base.assemble_cap(self.to_cp)
@@ -164,6 +170,8 @@ class CaptureEvent(Event):
         self.operation = CaptureOperation(mission=self.mission,
                                           attacker=self.attacker,
                                           defender=self.defender,
+                                          attacker_clients={},
+                                          defender_clients=clients,
                                           from_cp=self.from_cp,
                                           to_cp=self.to_cp,
                                           cas=cas,
@@ -173,12 +181,14 @@ class CaptureEvent(Event):
                                           defense=self.to_cp.base.armor,
                                           aa=self.to_cp.base.aa)
 
-    def player_attacking(self, cas: typing.Dict[PlaneType, int], escort: typing.Dict[PlaneType, int], armor: typing.Dict[Armor, int]):
+    def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
         interceptors = self.to_cp.base.scramble_sweep(for_target=self.to_cp)
 
         self.operation = CaptureOperation(mission=self.mission,
                                           attacker=self.attacker,
                                           defender=self.defender,
+                                          attacker_clients=clients,
+                                          defender_clients={},
                                           from_cp=self.from_cp,
                                           to_cp=self.to_cp,
                                           cas=cas,

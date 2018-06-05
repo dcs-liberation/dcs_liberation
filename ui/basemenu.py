@@ -62,7 +62,11 @@ class BaseMenu(Menu):
 
     def sell(self, unit_type):
         def action():
-            if self.base.total_units_of_type(unit_type) > 0:
+            if self.event.units.get(unit_type, 0) > 0:
+                price = db.PRICES[unit_type]
+                self.game.budget += price
+                self.event.units[unit_type] = self.event.units[unit_type] - 1
+            elif self.base.total_units_of_type(unit_type) > 0:
                 price = db.PRICES[unit_type]
                 self.game.budget += price
                 self.base.commit_losses({unit_type: 1})
