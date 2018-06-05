@@ -23,8 +23,8 @@ COMMISION_AMOUNTS_FACTORS = {
 }
 
 
-ENEMY_INTERCEPT_PROBABILITY_BASE = 25
-ENEMY_CAPTURE_PROBABILITY_BASE = 15
+ENEMY_INTERCEPT_PROBABILITY_BASE = 15
+ENEMY_CAPTURE_PROBABILITY_BASE = 5
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 30
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
@@ -49,10 +49,11 @@ class Game:
 
     def _fill_cap_events(self):
         for from_cp, to_cp in self.theater.conflicts(True):
-            self.events.append(CaptureEvent(attacker_name=self.player,
-                                            defender_name=self.enemy,
-                                            from_cp=from_cp,
-                                            to_cp=to_cp))
+            if to_cp not in [x.to_cp for x in self.events]:
+                self.events.append(CaptureEvent(attacker_name=self.player,
+                                                defender_name=self.enemy,
+                                                from_cp=from_cp,
+                                                to_cp=to_cp))
 
     def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):
@@ -106,12 +107,17 @@ class Game:
                     unit_type = random.choice(db.find_unittype(for_task, self.enemy))
                     cp.base.commision_units({unit_type: points_to_spend})
 
-    def _budget_player(self):
+    @property
+    def budget_reward_amount(self):
         if len(self.theater.player_points()) > 0:
             total_importance = sum([x.importance for x in self.theater.player_points()])
             total_strength = sum([x.base.strength for x in self.theater.player_points()]) / len(self.theater.player_points())
+            return math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE)
+        else:
+            return 0
 
-            self.budget += math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE)
+    def _budget_player(self):
+        self.budget += self.budget_reward_amount
 
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
         event = UnitsDeliveryEvent(attacker_name=self.player,
@@ -120,6 +126,9 @@ class Game:
                                    to_cp=to_cp)
         self.events.append(event)
         return event
+
+    def units_delivery_remove(self, event: Event):
+        self.events.remove(event)
 
     def initiate_event(self, event: Event):
         event.operation.generate()

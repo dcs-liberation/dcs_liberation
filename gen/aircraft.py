@@ -45,28 +45,39 @@ class AircraftConflictGenerator:
                 )
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_FACTOR[0])
 
-    def _generate_group(
-            self,
-            name: str,
-            side: Country,
-            unit: PlaneType,
-            count: int,
-            client_count: int,
-            at: Point = None,
-            airport: Airport = None) -> FlyingGroup:
-        starttype = airport is None and StartType.Warm or StartType.Cold
+    def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None) -> FlyingGroup:
         assert count > 0
+        assert unit is not None
+
+        group = self.m.flight_group_from_airport(
+            country=side,
+            name=name,
+            aircraft_type=unit_type,
+            airport=airport,
+            maintask=None,
+            start_type=StartType.Cold,
+            group_size=count,
+            parking_slots=None)
+
+        for idx in range(client_count):
+            group.units[idx].set_client()
+
+        return group
+
+    def _generate_inflight(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: Point) -> FlyingGroup:
+        assert count > 0
+        assert unit is not None
 
         group = self.m.flight_group(
             country=side,
             name=name,
-            aircraft_type=unit,
-            airport=airport,
+            aircraft_type=unit_type,
+            airport=None,
             position=at,
             altitude=WARM_START_ALTITUDE,
             speed=WARM_START_AIRSPEED,
             maintask=None,
-            start_type=starttype,
+            start_type=StartType.Warm,
             group_size=count)
 
         for idx in range(client_count):
@@ -74,7 +85,35 @@ class AircraftConflictGenerator:
 
         return group
 
-    def _generate_escort(self, units: db.PlaneDict, clients: db.PlaneDict, airport: Airport, side: Country, location: Point):
+    def _generate_at_carrier(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: ShipGroup) -> FlyingGroup:
+        assert count > 0
+        assert unit is not None
+
+        group = self.m.flight_group_from_unit(
+            country=side,
+            name=name,
+            aircraft_type=unit_type,
+            pad_group=at,
+            maintask=None,
+            start_type=StartType.Warm,
+            group_size=count)
+
+        for idx in range(client_count):
+            group.units[idx].set_client()
+
+        return group
+
+    def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
+        if type(at) == Point:
+            return self._generate_inflight(name, side, unit_type, count, client_count, at)
+        elif type(at) == Airport:
+            return self._generate_at_airport(name, side, unit_type, count, client_count, at)
+        elif type(at) == ShipGroup:
+            return self._generate_at_carrier(name, side, unit_type, count, client_count, at)
+        else:
+            assert False
+
+    def _generate_escort(self, side: Country, units: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition):
         if len(self.escort_targets) == 0:
             return
 
@@ -82,11 +121,10 @@ class AircraftConflictGenerator:
             group = self._generate_group(
                 name=namegen.next_escort_group_name(),
                 side=side,
-                unit=type,
+                unit_type=type,
                 count=count,
                 client_count=clients.get(type, 0),
-                at=location,
-                airport=airport)
+                at=at)
 
             group.task = Escort.name
             group.load_task_default_loadout(dcs.task.Escort)
@@ -98,52 +136,46 @@ class AircraftConflictGenerator:
             for group in self.escort_targets:
                 wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
 
-    def generate_cas(self, attackers: db.PlaneDict, clients: db.PlaneDict, airport: Airport = None):
+    def generate_cas(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
 
         for type, count in attackers.items():
             group = self._generate_group(
                     name=namegen.next_cas_group_name(),
                     side=self.conflict.attackers_side,
-                    unit=type,
+                    unit_type=type,
                     count=count,
                     client_count=clients.get(type, 0),
-                    at=airport is None and self._group_point(self.conflict.air_attackers_location) or None,
-                    airport=airport)
+                    at=at and at or self._group_point(self.conflict.air_attackers_location))
             self.escort_targets.append(group)
 
             group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
             group.task = CAS.name
             group.load_task_default_loadout(CAS)
 
-    def generate_cas_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, airport: Airport = None):
+    def generate_cas_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         self._generate_escort(
+            side=self.conflict.attackers_side,
             units=attackers,
             clients=clients,
-            airport=airport,
-            side=self.conflict.attackers_side,
-            location=airport is None and self._group_point(self.conflict.air_attackers_location) or None
-        )
+            at=at and at or self._group_point(self.conflict.air_attackers_location))
 
-    def generate_transport_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, airport: Airport = None):
+    def generate_transport_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         self._generate_escort(
+            side=self.conflict.defenders_side,
             units=escort,
             clients=clients,
-            airport=airport,
-            side=self.conflict.defenders_side,
-            location=airport is None and self._group_point(self.conflict.air_defenders_location) or None
-        )
+            at=at and at or self._group_point(self.conflict.air_defenders_location))
 
-    def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, airport: Airport = None):
+    def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for type, count in defenders.items():
             group = self._generate_group(
-                    name=namegen.next_intercept_group_name(),
-                    side=self.conflict.defenders_side,
-                    unit=type,
-                    count=count,
-                    client_count=clients.get(type, 0),
-                    at=airport is None and self._group_point(self.conflict.air_defenders_location) or None,
-                    airport=airport)
+                name=namegen.next_intercept_group_name(),
+                side=self.conflict.defenders_side,
+                unit_type=type,
+                count=count,
+                client_count=clients.get(type, 0),
+                at=at and at or self._group_point(self.conflict.air_defenders_location))
 
             group.task = FighterSweep.name
             group.load_task_default_loadout(FighterSweep)
@@ -158,29 +190,25 @@ class AircraftConflictGenerator:
             group = self._generate_group(
                 name=namegen.next_transport_group_name(),
                 side=self.conflict.defenders_side,
-                unit=type,
+                unit_type=type,
                 count=count,
                 client_count=0,
-                at=self._group_point(self.conflict.air_defenders_location),
-                airport=None
-            )
+                at=self._group_point(self.conflict.air_defenders_location))
 
             group.task = Transport.name
 
             self.escort_targets.append(group)
             group.land_at(destination)
 
-    def generate_interception(self, interceptors: db.PlaneDict, clients: db.PlaneDict, airport: Airport = None):
+    def generate_interception(self, interceptors: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for type, count in interceptors.items():
             group = self._generate_group(
                 name=namegen.next_intercept_group_name(),
                 side=self.conflict.attackers_side,
-                unit=type,
+                unit_type=type,
                 count=count,
                 client_count=clients.get(type, 0),
-                at=airport is None and self._group_point(self.conflict.air_attackers_location) or None,
-                airport=airport
-            )
+                at=at and at or self._group_point(self.conflict.air_attackers_location))
 
             group.task = FighterSweep.name
             group.load_task_default_loadout(FighterSweep)

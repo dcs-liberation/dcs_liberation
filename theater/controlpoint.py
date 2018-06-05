@@ -13,20 +13,25 @@ class ControlPoint:
     position = None  # type: Point
     captured = False
     base: None  # type: theater.base.Base
-    airport: None  # type: Airport
+    at: None  # type: db.StartPosition
 
-    def __init__(self, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+    def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int):
         import theater.base
 
-        self.name = airport.name
-        self.position = airport.position
-        self.airport = airport
+        self.name = name
+        self.position = position
+        self.at = at
+
         self.size = size
         self.importance = importance
         self.captured = False
         self.radials = radials
         self.connected_points = []
         self.base = theater.base.Base()
+
+    @classmethod
+    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+        return cls(airport.name, airport.position, airport, radials, size, importance)
 
     def __str__(self):
         return self.name
@@ -61,5 +66,3 @@ class ControlPoint:
                                          position=self.position,
                                          size=self.size,
                                          radials=self.radials)
-
-

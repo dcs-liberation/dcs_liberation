@@ -49,6 +49,12 @@ class BaseMenu(Menu):
             for unit_type in units:
                 purchase_row(unit_type, db.PRICES[unit_type])
 
+    def dismiss(self):
+        if sum([x for x in self.event.units.values()]) == 0:
+            self.game.units_delivery_remove(self.event)
+
+        super(BaseMenu, self).dismiss()
+
     def buy(self, unit_type):
         def action():
             price = db.PRICES[unit_type]
