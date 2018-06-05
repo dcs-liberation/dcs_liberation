@@ -60,7 +60,7 @@ UNIT_BY_COUNTRY = {
 UnitsDict = typing.Dict[UnitType, int]
 PlaneDict = typing.Dict[PlaneType, int]
 ArmorDict = typing.Dict[VehicleType, int]
-AADict = typing.Dict[AirDefence, int]
+AirDefenseDict = typing.Dict[AirDefence, int]
 
 
 def unit_task(unit: UnitType) -> Task:

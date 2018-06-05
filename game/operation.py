@@ -48,7 +48,7 @@ class CaptureOperation(Operation):
                  attack: db.ArmorDict,
                  intercept: db.PlaneDict,
                  defense: db.ArmorDict,
-                 aa: db.AADict):
+                 aa: db.AirDefenseDict):
             conflict = to_cp.conflict_attack(from_cp, attacker, defender)
 
             super(CaptureOperation, self).__init__(mission, conflict)
@@ -84,6 +84,7 @@ class InterceptOperation(Operation):
                  destination_port: Airport,
                  escort: db.PlaneDict,
                  transport: db.PlaneDict,
+                 airdefense: db.AirDefenseDict,
                  interceptors: db.PlaneDict):
         conflict = Conflict.intercept_conflict(
             attacker=attacker,
@@ -99,12 +100,14 @@ class InterceptOperation(Operation):
         self.defender_clients = defender_clients
         self.escort = escort
         self.transport = transport
+        self.airdefense = airdefense
         self.interceptors = interceptors
 
     def generate(self):
         self.airgen.generate_transport(self.transport, self.destination_port)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
         self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients)
+        self.aagen.generate(self.airdefense)
 
 
 class GroundInterceptOperation(Operation):

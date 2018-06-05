@@ -92,6 +92,7 @@ class InterceptEvent(Event):
     ESCORT_AMOUNT_FACTOR = 2
     BONUS_BASE = 5
     STRENGTH_INFLUENCE = 0.25
+    AIRDEFENSE_COUNT = 3
 
     def __str__(self):
         return "Intercept at {} ({})".format(self.to_cp, "*" * self.difficulty)
@@ -112,6 +113,8 @@ class InterceptEvent(Event):
         transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
         assert transport_unit is not None
 
+        airdefense_unit = db.find_unittype(AirDefence, self.defender.name)[0]
+
         self.operation = InterceptOperation(mission=self.mission,
                                             attacker=self.attacker,
                                             defender=self.defender,
@@ -121,6 +124,7 @@ class InterceptEvent(Event):
                                             destination_port=self.to_cp.airport,
                                             escort=escort,
                                             transport={transport_unit: 1},
+                                            airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
                                             interceptors=interceptors)
 
     def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
@@ -137,7 +141,8 @@ class InterceptEvent(Event):
                                             destination_port=self.to_cp.airport,
                                             escort=escort,
                                             transport={transport_unit: 1},
-                                            interceptors=interceptors)
+                                            interceptors=interceptors,
+                                            airdefense={})
 
 
 class CaptureEvent(Event):

@@ -24,7 +24,7 @@ COMMISION_AMOUNTS_FACTORS = {
 
 
 ENEMY_INTERCEPT_PROBABILITY_BASE = 25
-ENEMY_CAPTURE_PROBABILITY_BASE = 15
+ENEMY_CAPTURE_PROBABILITY_BASE = 5
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 30
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
@@ -49,10 +49,11 @@ class Game:
 
     def _fill_cap_events(self):
         for from_cp, to_cp in self.theater.conflicts(True):
-            self.events.append(CaptureEvent(attacker_name=self.player,
-                                            defender_name=self.enemy,
-                                            from_cp=from_cp,
-                                            to_cp=to_cp))
+            if to_cp not in [x.to_cp for x in self.events]:
+                self.events.append(CaptureEvent(attacker_name=self.player,
+                                                defender_name=self.enemy,
+                                                from_cp=from_cp,
+                                                to_cp=to_cp))
 
     def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):

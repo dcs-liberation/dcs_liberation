@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from ui.window import *
 from ui.eventmenu import *
 from ui.basemenu import *
+from ui.overviewcanvas import *
 
 from game.game import *
 
@@ -12,15 +13,19 @@ class MainMenu(Menu):
     def __init__(self, window: Window, parent, game: Game):
         super(MainMenu, self).__init__(window, parent, game)
 
-        self.image = PhotoImage(file="resources/caumap.gif")
-        map = Label(window.left_pane, image=self.image)
-        map.grid()
+        #self.image = PhotoImage(file="resources/caumap.gif")
+        #map = Label(window.left_pane, image=self.image)
+        #map.grid()
+
+        self.upd = OverviewCanvas(self.window.left_pane, game)
+        self.upd.update()
 
         self.frame = self.window.right_pane
         self.frame.grid_columnconfigure(0, weight=1)
 
     def display(self):
         self.window.clear_right_pane()
+        self.upd.update()
 
         row = 1
 
@@ -62,17 +67,6 @@ class MainMenu(Menu):
         Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
         for cp in self.game.theater.player_points():
             cp_button(cp)
-
-        Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
-        for cp in self.game.theater.enemy_bases():
-            title = "[{}] {}{}{}{}".format(
-                int(cp.base.strength * 10),
-                cp.name,
-                "^" * cp.base.total_planes,
-                "." * cp.base.total_armor,
-                "*" * cp.base.total_aa)
-            Label(self.frame, text=title).grid(row=row, sticky=NE)
-            row += 1
 
     def pass_turn(self):
         self.game.pass_turn(no_action=True)
