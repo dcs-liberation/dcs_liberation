@@ -1,7 +1,9 @@
 import typing
-import dcs
 import math
+import random
 import itertools
+
+import dcs
 
 from shop import db
 from theater.controlpoint import ControlPoint

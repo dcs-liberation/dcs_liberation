@@ -10,6 +10,8 @@ from game.game import *
 
 
 class MainMenu(Menu):
+    basemenu = None  # type: BaseMenu
+
     def __init__(self, window: Window, parent, game: Game):
         super(MainMenu, self).__init__(window, parent, game)
 
@@ -17,7 +19,7 @@ class MainMenu(Menu):
         #map = Label(window.left_pane, image=self.image)
         #map.grid()
 
-        self.upd = OverviewCanvas(self.window.left_pane, game)
+        self.upd = OverviewCanvas(self.window.left_pane, self, game)
         self.upd.update()
 
         self.frame = self.window.right_pane
@@ -39,23 +41,14 @@ class MainMenu(Menu):
             Button(self.frame, text=text, command=self.start_event(event)).grid(row=row, sticky=N)
             row += 1
 
-        def cp_button(cp):
-            nonlocal row
-            title = "{}{}{}{}".format(
-                cp.name,
-                "^" * cp.base.total_planes,
-                "." * cp.base.total_armor,
-                "*" * cp.base.total_aa)
-            Button(self.frame, text=title, command=self.go_cp(cp)).grid(row=row, sticky=NW)
-            row += 1
-
-        Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(column=0, row=0, sticky=NW)
-        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=1, row=0, sticky=NE)
-        row += 1
+        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=NE)
+        Label(self.frame, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)).grid(column=0, row=0, sticky=NW)
+        Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
         for event in self.game.events:
             if not event.informational:
                 continue
+
             label(str(event))
 
         for event in self.game.events:
@@ -64,10 +57,6 @@ class MainMenu(Menu):
 
             event_button(event, "{} {}".format(event.attacker.name != self.game.player and "!" or " ", event))
 
-        Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
-        for cp in self.game.theater.player_points():
-            cp_button(cp)
-
     def pass_turn(self):
         self.game.pass_turn(no_action=True)
         self.display()
@@ -75,5 +64,10 @@ class MainMenu(Menu):
     def start_event(self, event) -> typing.Callable:
         return lambda: EventMenu(self.window, self, self.game, event).display()
 
-    def go_cp(self, cp: ControlPoint) -> typing.Callable:
-        return lambda: BaseMenu(self.window, self, self.game, cp).display()
+    def go_cp(self, cp: ControlPoint):
+        if self.basemenu:
+            self.basemenu.dismiss()
+            self.basemenu = None
+
+        self.basemenu = BaseMenu(self.window, self, self.game, cp)
+        self.basemenu.display()

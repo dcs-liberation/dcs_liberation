@@ -7,19 +7,22 @@ from game.game import *
 
 
 class OverviewCanvas:
-    def __init__(self, frame: Frame, game: Game):
-        self.canvas = Canvas(frame, width=600, height=400)
+    mainmenu = None  # type: ui.mainmenu.MainMenu
+
+    def __init__(self, frame: Frame, parent, game: Game):
+        self.canvas = Canvas(frame, width=616, height=350)
         self.canvas.grid(column=0, row=0, sticky=NSEW)
         self.image = PhotoImage(file="resources/caumap.gif")
+        self.parent = parent
 
         self.game = game
 
     def cp_coordinates(self, cp: ControlPoint) -> (int, int):
         point_a = (-317948.32727306, 635639.37385346)
-        point_a_img = 361 - 60, 306 + 20
+        point_a_img = 282.5, 319
 
         point_b = (-355692.3067714, 617269.96285781)
-        point_b_img = 345 - 59.5, 339 + 19.5
+        point_b_img = 269, 352
 
         x_dist = point_a_img[0] - point_b_img[0]
         lon_dist = point_a[1] - point_b[1]
@@ -36,6 +39,13 @@ class OverviewCanvas:
 
         return point_b_img[1] + y_offset * y_scale, point_a_img[0] - x_offset * x_scale
 
+    def create_cp_title(self, coords, cp: ControlPoint):
+        title = cp.name
+        font = ("Helvetica", 13)
+
+        self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
+        self.canvas.create_text(coords[0], coords[1], text=title, font=font)
+
     def update(self):
         self.canvas.delete(ALL)
         self.canvas.create_image((self.image.width()/2, self.image.height()/2), image=self.image)
@@ -51,12 +61,28 @@ class OverviewCanvas:
                 else:
                     color = "black"
 
-                self.canvas.create_line((coords[0], coords[1], connected_coords[0], connected_coords[1]), width=3, fill=color)
+                self.canvas.create_line((coords[0], coords[1], connected_coords[0], connected_coords[1]), width=2, fill=color)
 
         for cp in self.game.theater.controlpoints:
             coords = self.cp_coordinates(cp)
-            arc_size = 12 * math.pow(cp.importance, 1)
-            self.canvas.create_arc((coords[0] - arc_size/2, coords[1] - arc_size/2),
-                                   (coords[0]+arc_size, coords[1]+arc_size),
-                                   fill='red')
+            arc_size = 18 * math.pow(cp.importance, 1)
+            extent = max(cp.base.strength * 180, 10)
+            start = (180 - extent) / 2
+            color = cp.captured and 'blue' or 'red'
+
+            cp_id = self.canvas.create_arc((coords[0] - arc_size/2, coords[1] - arc_size/2),
+                                           (coords[0]+arc_size/2, coords[1]+arc_size/2),
+                                           fill=color,
+                                           style=PIESLICE,
+                                           start=start,
+                                           extent=extent)
+            self.canvas.tag_bind(cp_id, "<Button-1>", self.display(cp))
+            self.create_cp_title((coords[0] + arc_size/2, coords[1] + arc_size/2), cp)
+            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text="8/4/2", font=("Helvetica", 10))
+
+    def display(self, cp: ControlPoint):
+        def action(_):
+            return self.parent.go_cp(cp)
+
+        return action
 
