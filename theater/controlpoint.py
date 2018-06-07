@@ -33,8 +33,17 @@ class ControlPoint:
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
         return cls(airport.name, airport.position, airport, radials, size, importance)
 
+    @classmethod
+    def carrier(cls, name: str, at: Point):
+        import theater.conflicttheater
+        return cls(name, at, at, theater.conflicttheater.ALL_RADIALS, theater.conflicttheater.SIZE_SMALL, 1)
+
     def __str__(self):
         return self.name
+
+    @property
+    def is_global(self):
+        return not self.connected_points
 
     def connect(self, to):
         self.connected_points.append(to)

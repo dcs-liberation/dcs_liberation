@@ -20,7 +20,8 @@ COAST_HORIZONTAL = [315, 0, 45, ]
 
 
 class ConflictTheater:
-    controlpoints = [] # type: typing.List[ControlPoint]
+    controlpoints = None  # type: typing.Collection[ControlPoint]
+    reference_points = None  # type: typing.Dict
 
     def __init__(self):
         self.controlpoints = []

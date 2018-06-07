@@ -53,7 +53,7 @@ class AircraftConflictGenerator:
             country=side,
             name=name,
             aircraft_type=unit_type,
-            airport=airport,
+            airport=self.m.terrain.airport_by_id(airport.id),
             maintask=None,
             start_type=StartType.Cold,
             group_size=count,
@@ -104,11 +104,11 @@ class AircraftConflictGenerator:
         return group
 
     def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
-        if type(at) == Point:
+        if isinstance(at, Point):
             return self._generate_inflight(name, side, unit_type, count, client_count, at)
-        elif type(at) == Airport:
+        elif issubclass(at, Airport):
             return self._generate_at_airport(name, side, unit_type, count, client_count, at)
-        elif type(at) == ShipGroup:
+        elif isinstance(at, ShipGroup):
             return self._generate_at_carrier(name, side, unit_type, count, client_count, at)
         else:
             assert False

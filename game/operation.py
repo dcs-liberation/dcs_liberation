@@ -43,7 +43,6 @@ class CaptureOperation(Operation):
                  defender: Country,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
-                 attacker_airport: typing.Optional[Airport],
                  from_cp: ControlPoint,
                  to_cp: ControlPoint,
                  cas: db.PlaneDict,
@@ -59,7 +58,6 @@ class CaptureOperation(Operation):
             self.to_cp = to_cp
             self.attacker_clients = attacker_clients
             self.defender_clients = defender_clients
-            self.attacker_airport = attacker_airport
             self.cas = cas
             self.escort = escort
             self.intercept = intercept
@@ -74,8 +72,8 @@ class CaptureOperation(Operation):
         self.aagen.generate(self.aa)
         self.airgen.generate_defense(self.intercept, clients=self.defender_clients)
 
-        self.airgen.generate_cas(self.cas, clients=self.attacker_clients, at=self.attacker_airport)
-        self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients, at=self.attacker_airport)
+        self.airgen.generate_cas(self.cas, clients=self.attacker_clients, at=self.from_cp.at)
+        self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients, at=self.from_cp.at)
 
 
 class InterceptOperation(Operation):
@@ -85,9 +83,8 @@ class InterceptOperation(Operation):
                  defender: Country,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
-                 attacker_airport: typing.Optional[Airport],
-                 destination: ControlPoint,
-                 destination_port: Airport,
+                 from_cp: ControlPoint,
+                 to_cp: ControlPoint,
                  escort: db.PlaneDict,
                  transport: db.PlaneDict,
                  airdefense: db.AirDefenseDict,
@@ -95,14 +92,14 @@ class InterceptOperation(Operation):
         conflict = Conflict.intercept_conflict(
             attacker=attacker,
             defender=defender,
-            position=destination.position,
+            position=to_cp.position,
             heading=randint(0, 360),
             radials=ALL_RADIALS
         )
 
         super(InterceptOperation, self).__init__(mission, conflict)
-        self.destination_port = destination_port
-        self.attacker_airport = attacker_airport
+        self.to_cp = to_cp
+        self.from_cp = from_cp
         self.attacker_clients = attacker_clients
         self.defender_clients = defender_clients
         self.escort = escort
@@ -111,11 +108,14 @@ class InterceptOperation(Operation):
         self.interceptors = interceptors
 
     def generate(self):
-        self.airgen.generate_transport(self.transport, self.destination_port)
+        self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
         self.aagen.generate(self.airdefense)
 
-        self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, airport=self.attacker_airport)
+        if self.from_cp.is_global:
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.shipgen.generate(self.from_cp.at))
+        else:
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.from_cp.at)
 
 
 class GroundInterceptOperation(Operation):
@@ -123,9 +123,9 @@ class GroundInterceptOperation(Operation):
                  mission: Mission,
                  attacker: Country,
                  defender: Country,
+                 from_cp: ControlPoint,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
-                 attacker_airport: typing.Optional[Airport],
                  position: Point,
                  target: db.ArmorDict,
                  strikegroup: db.PlaneDict):
@@ -140,10 +140,10 @@ class GroundInterceptOperation(Operation):
         super(GroundInterceptOperation, self).__init__(mission, conflict)
         self.attacker_clients = attacker_clients
         self.defender_clients = defender_clients
-        self.attacker_airport = attacker_airport
+        self.from_cp = from_cp
         self.strikegroup = strikegroup
         self.target = target
 
     def generate(self):
-        self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.attacker_airport)
+        self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.from_cp.at)
         self.armorgen.generate({}, self.target)

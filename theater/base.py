@@ -29,6 +29,7 @@ class Base:
         self.armor = {}
         self.aa = {}
         self.commision_points = {}
+        self.strength = 1
 
     @property
     def total_planes(self) -> int:

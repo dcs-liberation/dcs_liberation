@@ -23,8 +23,8 @@ COMMISION_AMOUNTS_FACTORS = {
 }
 
 
-ENEMY_INTERCEPT_PROBABILITY_BASE = 15
-ENEMY_CAPTURE_PROBABILITY_BASE = 5
+ENEMY_INTERCEPT_PROBABILITY_BASE = 10
+ENEMY_CAPTURE_PROBABILITY_BASE = 3
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 30
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
@@ -128,7 +128,8 @@ class Game:
         return event
 
     def units_delivery_remove(self, event: Event):
-        self.events.remove(event)
+        if event in self.events:
+            self.events.remove(event)
 
     def initiate_event(self, event: Event):
         event.operation.generate()
