@@ -15,10 +15,6 @@ class MainMenu(Menu):
     def __init__(self, window: Window, parent, game: Game):
         super(MainMenu, self).__init__(window, parent, game)
 
-        #self.image = PhotoImage(file="resources/caumap.gif")
-        #map = Label(window.left_pane, image=self.image)
-        #map.grid()
-
         self.upd = OverviewCanvas(self.window.left_pane, self, game)
         self.upd.update()
 

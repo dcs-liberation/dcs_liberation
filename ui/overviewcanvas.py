@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from ui.window import *
 
 from game.game import *
+from theater.conflicttheater import *
 
 
 class OverviewCanvas:
@@ -18,11 +19,11 @@ class OverviewCanvas:
         self.game = game
 
     def cp_coordinates(self, cp: ControlPoint) -> (int, int):
-        point_a = (-317948.32727306, 635639.37385346)
-        point_a_img = 282.5, 319
+        point_a = list(self.game.theater.reference_points.keys())[0]
+        point_a_img = self.game.theater.reference_points[point_a]
 
-        point_b = (-355692.3067714, 617269.96285781)
-        point_b_img = 269, 352
+        point_b = list(self.game.theater.reference_points.keys())[1]
+        point_b_img = self.game.theater.reference_points[point_b]
 
         x_dist = point_a_img[0] - point_b_img[0]
         lon_dist = point_a[1] - point_b[1]

@@ -13,6 +13,7 @@ from shop import *
 from gen.armor import *
 from gen.aircraft import *
 from gen.aaa import *
+from gen.shipgen import *
 from gen.conflictgen import *
 
 
@@ -23,6 +24,7 @@ class Operation:
         self.armorgen = ArmorConflictGenerator(self.mission, self.conflict)
         self.airgen = AircraftConflictGenerator(self.mission, self.conflict)
         self.aagen = AAConflictGenerator(self.mission, self.conflict)
+        self.shipgen = ShipGenerator(self.mission, self.conflict)
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
@@ -67,10 +69,11 @@ class CaptureOperation(Operation):
 
     def generate(self):
         self.armorgen.generate(self.attack, self.defense)
-        self.airgen.generate_cas(self.cas, clients=self.attacker_clients)
-        self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients)
-        self.airgen.generate_defense(self.intercept, clients=self.defender_clients)
         self.aagen.generate(self.aa)
+        self.airgen.generate_defense(self.intercept, clients=self.defender_clients)
+
+        self.airgen.generate_cas(self.cas, clients=self.attacker_clients, at=self.from_cp.at)
+        self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients, at=self.from_cp.at)
 
 
 class InterceptOperation(Operation):
@@ -80,8 +83,8 @@ class InterceptOperation(Operation):
                  defender: Country,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
-                 destination: ControlPoint,
-                 destination_port: Airport,
+                 from_cp: ControlPoint,
+                 to_cp: ControlPoint,
                  escort: db.PlaneDict,
                  transport: db.PlaneDict,
                  airdefense: db.AirDefenseDict,
@@ -89,13 +92,14 @@ class InterceptOperation(Operation):
         conflict = Conflict.intercept_conflict(
             attacker=attacker,
             defender=defender,
-            position=destination.position,
+            position=to_cp.position,
             heading=randint(0, 360),
             radials=ALL_RADIALS
         )
 
         super(InterceptOperation, self).__init__(mission, conflict)
-        self.destination_port = destination_port
+        self.to_cp = to_cp
+        self.from_cp = from_cp
         self.attacker_clients = attacker_clients
         self.defender_clients = defender_clients
         self.escort = escort
@@ -104,10 +108,14 @@ class InterceptOperation(Operation):
         self.interceptors = interceptors
 
     def generate(self):
-        self.airgen.generate_transport(self.transport, self.destination_port)
+        self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
-        self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients)
         self.aagen.generate(self.airdefense)
+
+        if self.from_cp.is_global:
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.shipgen.generate(self.from_cp.at))
+        else:
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.from_cp.at)
 
 
 class GroundInterceptOperation(Operation):
@@ -115,6 +123,7 @@ class GroundInterceptOperation(Operation):
                  mission: Mission,
                  attacker: Country,
                  defender: Country,
+                 from_cp: ControlPoint,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
                  position: Point,
@@ -131,10 +140,10 @@ class GroundInterceptOperation(Operation):
         super(GroundInterceptOperation, self).__init__(mission, conflict)
         self.attacker_clients = attacker_clients
         self.defender_clients = defender_clients
+        self.from_cp = from_cp
         self.strikegroup = strikegroup
         self.target = target
 
     def generate(self):
-        self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients)
+        self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.from_cp.at)
         self.armorgen.generate({}, self.target)
-

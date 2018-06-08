@@ -13,14 +13,15 @@ class ControlPoint:
     position = None  # type: Point
     captured = False
     base: None  # type: theater.base.Base
-    airport: None  # type: Airport
+    at: None  # type: db.StartPosition
 
-    def __init__(self, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+    def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int):
         import theater.base
 
-        self.name = airport.name
-        self.position = airport.position
-        self.airport = airport
+        self.name = name
+        self.position = position
+        self.at = at
+
         self.size = size
         self.importance = importance
         self.captured = False
@@ -28,8 +29,21 @@ class ControlPoint:
         self.connected_points = []
         self.base = theater.base.Base()
 
+    @classmethod
+    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+        return cls(airport.name, airport.position, airport, radials, size, importance)
+
+    @classmethod
+    def carrier(cls, name: str, at: Point):
+        import theater.conflicttheater
+        return cls(name, at, at, theater.conflicttheater.ALL_RADIALS, theater.conflicttheater.SIZE_SMALL, 1)
+
     def __str__(self):
         return self.name
+
+    @property
+    def is_global(self):
+        return not self.connected_points
 
     def connect(self, to):
         self.connected_points.append(to)
@@ -61,5 +75,3 @@ class ControlPoint:
                                          position=self.position,
                                          size=self.size,
                                          radials=self.radials)
-
-
