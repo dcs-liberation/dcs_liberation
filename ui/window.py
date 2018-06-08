@@ -15,7 +15,7 @@ class Window:
         self.frame = Frame(self.tk)
         self.frame.grid(column=0, row=0, sticky=NSEW)
         self.frame.grid_columnconfigure(0, minsize=300)
-        self.frame.grid_columnconfigure(1, minsize=300)
+        self.frame.grid_columnconfigure(1, minsize=400)
 
         self.frame.grid_columnconfigure(0, weight=0)
         self.frame.grid_columnconfigure(1, weight=1)

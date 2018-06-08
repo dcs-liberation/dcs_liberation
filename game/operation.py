@@ -89,11 +89,15 @@ class InterceptOperation(Operation):
                  transport: db.PlaneDict,
                  airdefense: db.AirDefenseDict,
                  interceptors: db.PlaneDict):
+        heading = from_cp.position.heading_between_point(to_cp.position)
+        distance = from_cp.position.distance_to_point(to_cp.position)
+        position = from_cp.position.point_from_heading(heading, distance/2)
+        
         conflict = Conflict.intercept_conflict(
             attacker=attacker,
             defender=defender,
-            position=to_cp.position,
-            heading=randint(0, 360),
+            position=position,
+            heading=heading,
             radials=ALL_RADIALS
         )
 

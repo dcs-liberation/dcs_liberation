@@ -61,7 +61,7 @@ UNIT_BY_COUNTRY = {
 }
 
 UnitsDict = typing.Dict[UnitType, int]
-PlaneDict = typing.Dict[PlaneType, int]
+PlaneDict = typing.Dict[FlyingType, int]
 ArmorDict = typing.Dict[VehicleType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]
 StartingPosition = typing.Optional[typing.Union[ShipGroup, Airport, Point]]

@@ -32,26 +32,28 @@ class MainMenu(Menu):
             Label(self.frame, text=text).grid(row=row, sticky=NW)
             row += 1
 
-        def event_button(event, text):
+        def event_button(event):
             nonlocal row
-            Button(self.frame, text=text, command=self.start_event(event)).grid(row=row, sticky=N)
+            Message(self.frame, text="{}{}".format(
+                event.defender.name == self.game.player and "Enemy attacking: " or "",
+                event
+            ), aspect=500).grid(column=0, row=row, sticky=NW)
+            Button(self.frame, text=">", command=self.start_event(event)).grid(column=0, row=row, sticky=NE+S)
             row += 1
+            Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
         Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=NE)
         Label(self.frame, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)).grid(column=0, row=0, sticky=NW)
         Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
-        for event in self.game.events:
-            if not event.informational:
-                continue
+        events = self.game.events
+        events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
 
-            label(str(event))
-
-        for event in self.game.events:
+        for event in events:
             if event.informational:
-                continue
-
-            event_button(event, "{} {}".format(event.attacker.name != self.game.player and "!" or " ", event))
+                label(str(event))
+            else:
+                event_button(event)
 
     def pass_turn(self):
         self.game.pass_turn(no_action=True)

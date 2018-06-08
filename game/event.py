@@ -50,9 +50,21 @@ class GroundInterceptEvent(Event):
     TARGET_AMOUNT_FACTOR = 3
     TARGET_VARIETY = 3
     STRENGTH_INFLUENCE = 0.1
+    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.7
+
+    targets = None  # type: db.ArmorDict
 
     def __str__(self):
-        return "Ground intercept at {} ({})".format(self.to_cp, "*" * self.difficulty)
+        return "Ground intercept from {} at {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+
+    def is_successfull(self, debriefing: Debriefing):
+        total_targets = sum(self.targets.values())
+        destroyed_targets = 0
+        for unit, count in debriefing.destroyed_units[self.defender.name].items():
+            if unit in self.targets:
+                destroyed_targets += count
+
+        return (float(destroyed_targets) / float(total_targets)) > self.SUCCESS_TARGETS_HIT_PERCENTAGE
 
     def commit(self, debriefing: Debriefing):
         super(GroundInterceptEvent, self).commit(debriefing)
@@ -76,8 +88,8 @@ class GroundInterceptEvent(Event):
         random.shuffle(suitable_unittypes)
         unittypes = suitable_unittypes[:self.TARGET_VARIETY]
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
-        targets = {unittype: typecount for unittype in unittypes}
 
+        self.targets = {unittype: typecount for unittype in unittypes}
         self.operation = GroundInterceptOperation(mission=self.mission,
                                                   attacker=self.attacker,
                                                   defender=self.defender,
@@ -85,7 +97,7 @@ class GroundInterceptEvent(Event):
                                                   defender_clients={},
                                                   from_cp=self.from_cp,
                                                   position=position,
-                                                  target=targets,
+                                                  target=self.targets,
                                                   strikegroup=strikegroup)
 
 
@@ -95,11 +107,21 @@ class InterceptEvent(Event):
     STRENGTH_INFLUENCE = 0.25
     AIRDEFENSE_COUNT = 3
 
+    transport_unit = None  # type: FlyingType
+
     def __str__(self):
-        return "Intercept at {} ({})".format(self.to_cp, "*" * self.difficulty)
+        return "Intercept from {} at {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+
+    def is_successfull(self, debriefing: Debriefing):
+        intercepted = self.transport_unit in debriefing.destroyed_units[self.defender.name].keys()
+        if self.from_cp.captured:
+            return intercepted
+        else:
+            return not intercepted
 
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
+
         if self.is_successfull(debriefing):
             self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and -1 or 1))
         else:
@@ -111,8 +133,8 @@ class InterceptEvent(Event):
 
     def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
         escort = self.to_cp.base.scramble_sweep(self.to_cp)
-        transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
-        assert transport_unit is not None
+        self.transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
+        assert self.transport_unit is not None
 
         airdefense_unit = db.find_unittype(AirDefence, self.defender.name)[0]
 
@@ -124,14 +146,14 @@ class InterceptEvent(Event):
                                             from_cp=self.from_cp,
                                             to_cp=self.to_cp,
                                             escort=escort,
-                                            transport={transport_unit: 1},
+                                            transport={self.transport_unit: 1},
                                             airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
                                             interceptors=interceptors)
 
     def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
         interceptors = self.from_cp.base.scramble_interceptors_count(self.difficulty * self.ESCORT_AMOUNT_FACTOR)
-        transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
-        assert transport_unit is not None
+        self.transport_unit = random.choice(db.find_unittype(Transport, self.defender.name))
+        assert self.transport_unit is not None
 
         self.operation = InterceptOperation(mission=self.mission,
                                             attacker=self.attacker,
@@ -141,7 +163,7 @@ class InterceptEvent(Event):
                                             from_cp=self.from_cp,
                                             to_cp=self.to_cp,
                                             escort=escort,
-                                            transport={transport_unit: 1},
+                                            transport={self.transport_unit: 1},
                                             interceptors=interceptors,
                                             airdefense={})
 
@@ -152,7 +174,14 @@ class CaptureEvent(Event):
     STRENGTH_RECOVERY = 0.35
 
     def __str__(self):
-        return "Capture {} ({})".format(self.to_cp, "*" * self.difficulty)
+        return "Attack from {} to {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+
+    def is_successfull(self, debriefing: Debriefing):
+        attackers_success = len(debriefing.destroyed_units[self.defender.name]) > len(debriefing.destroyed_units[self.attacker.name])
+        if self.from_cp.captured:
+            return attackers_success
+        else:
+            return not attackers_success
 
     def commit(self, debriefing: Debriefing):
         super(CaptureEvent, self).commit(debriefing)

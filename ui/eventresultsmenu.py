@@ -80,6 +80,7 @@ class EventResultsMenu(Menu):
             }
 
             self.finished = True
+            self.debriefing = debriefing
             self.game.finish_event(self.event, debriefing)
             self.display()
             self.game.pass_turn()

@@ -106,10 +106,10 @@ class AircraftConflictGenerator:
     def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
         if isinstance(at, Point):
             return self._generate_inflight(name, side, unit_type, count, client_count, at)
-        elif issubclass(at, Airport):
-            return self._generate_at_airport(name, side, unit_type, count, client_count, at)
         elif isinstance(at, ShipGroup):
             return self._generate_at_carrier(name, side, unit_type, count, client_count, at)
+        elif issubclass(at, Airport):
+            return self._generate_at_airport(name, side, unit_type, count, client_count, at)
         else:
             assert False
 
