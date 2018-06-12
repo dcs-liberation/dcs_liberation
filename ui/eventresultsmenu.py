@@ -15,7 +15,7 @@ class EventResultsMenu(Menu):
         self.event = event
         self.finished = False
 
-        wait_for_debriefing(lambda: self.process_debriefing)
+        wait_for_debriefing(callback=self.process_debriefing)
 
     def display(self):
         self.window.clear_right_pane()
@@ -55,12 +55,12 @@ class EventResultsMenu(Menu):
             Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
 
     def process_debriefing(self, debriefing: Debriefing):
-        self.game.finish_event(debriefing)
+        self.game.finish_event(event=self.event, debriefing=debriefing)
         self.game.pass_turn()
 
         self.finished = True
-        self.player_losses = debriefing.destroyed_units[self.game.player]
-        self.enemy_losses = debriefing.destroyed_units[self.game.enemy]
+        self.player_losses = debriefing.destroyed_units.get(self.game.player, {})
+        self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy, {})
         self.display()
 
     def simulate_result(self, player_factor: float, enemy_factor: float, result: bool):

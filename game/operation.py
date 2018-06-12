@@ -1,4 +1,4 @@
-from userdata.debriefing_parser import *
+from userdata.debriefing import *
 from theater.conflicttheater import *
 from theater.base import *
 
