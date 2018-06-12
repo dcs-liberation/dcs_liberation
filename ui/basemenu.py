@@ -1,7 +1,3 @@
-from shop import db
-
-from tkinter import *
-from ui.window import *
 from ui.eventmenu import *
 
 from game.game import *

@@ -1,12 +1,10 @@
-from tkinter import *
-from tkinter.ttk import *
+import pickle
 
-from ui.window import *
-from ui.eventmenu import *
 from ui.basemenu import *
 from ui.overviewcanvas import *
 
 from game.game import *
+from userdata import persistency
 
 
 class MainMenu(Menu):
@@ -22,9 +20,10 @@ class MainMenu(Menu):
         self.frame.grid_columnconfigure(0, weight=1)
 
     def display(self):
+        persistency.save_game(self.game)
+
         self.window.clear_right_pane()
         self.upd.update()
-
         row = 1
 
         def label(text):

@@ -1,11 +1,8 @@
 import typing
 import math
-import random
 import itertools
 
-import dcs
-
-from shop import db
+from game import db
 from theater.controlpoint import ControlPoint
 
 from dcs.planes import *
@@ -104,6 +101,10 @@ class Base:
             return int(math.floor(points))
 
         return 0
+
+    def filter_units(self, applicable_units: typing.Collection):
+        self.aircraft = {k: v for k, v in self.aircraft.items() if k in applicable_units}
+        self.armor = {k: v for k, v in self.aircraft.items() if k in applicable_units}
 
     def commision_units(self, units: typing.Dict[typing.Any, int]):
         for value in units.values():

@@ -79,7 +79,9 @@ class OverviewCanvas:
                                            extent=extent)
             self.canvas.tag_bind(cp_id, "<Button-1>", self.display(cp))
             self.create_cp_title((coords[0] + arc_size/2, coords[1] + arc_size/2), cp)
-            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text="8/4/2", font=("Helvetica", 10))
+
+            units_title = "{}/{}/{}".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
+            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10))
 
     def display(self, cp: ControlPoint):
         def action(_):

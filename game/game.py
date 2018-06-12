@@ -1,9 +1,3 @@
-import typing
-import random
-
-from theater.conflicttheater import *
-from theater.controlpoint import *
-from userdata.debriefing_parser import *
 from game.event import *
 
 COMMISION_LIMITS_SCALE = 2
@@ -24,11 +18,15 @@ COMMISION_AMOUNTS_FACTORS = {
 
 
 ENEMY_INTERCEPT_PROBABILITY_BASE = 10
+ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 1
 ENEMY_CAPTURE_PROBABILITY_BASE = 3
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 30
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
 PLAYER_GLOBALINTERCEPT_PROBABILITY_BASE = 100
+
+PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 50
+PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
 PLAYER_BUDGET_BASE = 25
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
@@ -54,7 +52,8 @@ class Game:
                 self.events.append(CaptureEvent(attacker_name=self.player,
                                                 defender_name=self.enemy,
                                                 from_cp=from_cp,
-                                                to_cp=to_cp))
+                                                to_cp=to_cp,
+                                                theater=self.theater))
 
     def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):
@@ -65,10 +64,12 @@ class Game:
                 self.events.append(CaptureEvent(attacker_name=self.enemy,
                                                 defender_name=self.player,
                                                 from_cp=from_cp,
-                                                to_cp=to_cp))
+                                                to_cp=to_cp,
+                                                theater=self.theater))
                 break
 
     def _generate_interceptions(self):
+        enemy_interception = False
         for from_cp, to_cp in self.theater.conflicts(False):
             if from_cp.base.total_units(FighterSweep) == 0:
                 continue
@@ -77,15 +78,36 @@ class Game:
                 self.events.append(InterceptEvent(attacker_name=self.enemy,
                                                   defender_name=self.player,
                                                   from_cp=from_cp,
-                                                  to_cp=to_cp))
+                                                  to_cp=to_cp,
+                                                  theater=self.theater))
+                enemy_interception = True
                 break
+
+        for to_cp in self.theater.player_points():
+            if enemy_interception:
+                break
+
+            if to_cp in self.theater.conflicts(False):
+                continue
+
+            if self._roll(ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE, 1):
+                for from_cp, _ in self.theater.conflicts(False):
+                    if from_cp.base.total_units(FighterSweep) > 0:
+                        self.events.append(InterceptEvent(attacker_name=self.enemy,
+                                                          defender_name=self.player,
+                                                          from_cp=from_cp,
+                                                          to_cp=to_cp,
+                                                          theater=self.theater))
+                        enemy_interception = True
+                        break
 
         for from_cp, to_cp in self.theater.conflicts(True):
             if self._roll(PLAYER_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(InterceptEvent(attacker_name=self.player,
                                                   defender_name=self.enemy,
                                                   from_cp=from_cp,
-                                                  to_cp=to_cp))
+                                                  to_cp=to_cp,
+                                                  theater=self.theater))
                 break
 
     def _generate_groundinterceptions(self):
@@ -94,7 +116,20 @@ class Game:
                 self.events.append(GroundInterceptEvent(attacker_name=self.player,
                                                         defender_name=self.enemy,
                                                         from_cp=from_cp,
-                                                        to_cp=to_cp))
+                                                        to_cp=to_cp,
+                                                        theater=self.theater))
+                break
+
+    def _generate_globalinterceptions(self):
+        for from_cp in [x for x in self.theater.player_points() if x.is_global]:
+            probability = PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE * math.log(len(self.theater.player_points()) + 1, PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG)
+            if self._roll(probability, from_cp.base.strength):
+                to_cp = random.choice([x for x in self.theater.enemy_points() if x not in self.theater.conflicts()])
+                self.events.append(InterceptEvent(attacker_name=self.player,
+                                                  defender_name=self.enemy,
+                                                  from_cp=from_cp,
+                                                  to_cp=to_cp,
+                                                  theater=self.theater))
                 break
 
     def _generate_global(self):
@@ -134,7 +169,8 @@ class Game:
         event = UnitsDeliveryEvent(attacker_name=self.player,
                                    defender_name=self.player,
                                    from_cp=to_cp,
-                                   to_cp=to_cp)
+                                   to_cp=to_cp,
+                                   theater=self.theater)
         self.events.append(event)
         return event
 
@@ -143,8 +179,8 @@ class Game:
             self.events.remove(event)
 
     def initiate_event(self, event: Event):
-        event.operation.generate()
-        event.mission.save("build/next_mission.miz")
+        assert event in self.events
+        event.generate()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
         event.commit(debriefing)
@@ -154,7 +190,7 @@ class Game:
         self.events.remove(event)
 
     def is_player_attack(self, event: Event):
-        return event.attacker.name == self.player
+        return event.attacker_name == self.player
 
     def pass_turn(self, no_action=False):
         for event in self.events:
@@ -162,13 +198,14 @@ class Game:
 
         if not no_action:
             self._budget_player()
-            for cp in self.theater.enemy_bases():
+            for cp in self.theater.enemy_points():
                 self._commision_units(cp)
 
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()
         self._generate_enemy_caps()
         self._generate_interceptions()
+        self._generate_globalinterceptions()
         self._generate_groundinterceptions()
         self._generate_global()
 

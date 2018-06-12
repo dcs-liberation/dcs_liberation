@@ -1,7 +1,4 @@
 import typing
-import dcs
-
-import globals
 
 from dcs.vehicles import *
 from dcs.unitgroup import *

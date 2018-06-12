@@ -1,20 +1,8 @@
-import typing
-import pdb
-import dcs
-
-from random import randint
-
-import globals
-
 from .conflictgen import *
 from .naming import *
 
 from dcs.mission import *
-from dcs.vehicles import *
 from dcs.unitgroup import *
-from dcs.unittype import *
-from dcs.mapping import *
-from dcs.point import *
 from dcs.task import *
 
 

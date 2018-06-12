@@ -1,10 +1,3 @@
-import typing
-import random
-
-import dcs
-
-from shop import db
-from theater.controlpoint import *
 from theater.base import *
 from theater.conflicttheater import *
 
@@ -13,7 +6,7 @@ UNIT_AMOUNT_FACTOR = 1
 
 
 def generate_initial(theater: ConflictTheater, enemy: str):
-    for cp in theater.enemy_bases():
+    for cp in theater.enemy_points():
         if cp.captured:
             continue
 
