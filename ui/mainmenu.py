@@ -34,9 +34,9 @@ class MainMenu(Menu):
         def event_button(event):
             nonlocal row
             Message(self.frame, text="{}{}".format(
-                event.defender.name == self.game.player and "Enemy attacking: " or "",
+                event.defender_name == self.game.player and "Enemy attacking: " or "",
                 event
-            ), aspect=500).grid(column=0, row=row, sticky=NW)
+            ), aspect=800).grid(column=0, row=row, sticky=NW)
             Button(self.frame, text=">", command=self.start_event(event)).grid(column=0, row=row, sticky=NE+S)
             row += 1
             Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1

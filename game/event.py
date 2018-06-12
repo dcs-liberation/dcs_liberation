@@ -56,12 +56,12 @@ class GroundInterceptEvent(Event):
     targets = None  # type: db.ArmorDict
 
     def __str__(self):
-        return "Ground intercept from {} at {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+        return "Ground intercept from {} at {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())
         destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units[self.defender.name].items():
+        for unit, count in debriefing.destroyed_units[self.defender_name].items():
             if unit in self.targets:
                 destroyed_targets += count
 
@@ -113,10 +113,10 @@ class InterceptEvent(Event):
     transport_unit = None  # type: FlyingType
 
     def __str__(self):
-        return "Intercept from {} at {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+        return "Intercept from {} at {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
-        intercepted = self.transport_unit in debriefing.destroyed_units[self.defender.name].keys()
+        intercepted = self.transport_unit in debriefing.destroyed_units[self.defender_name].keys()
         if self.from_cp.captured:
             return intercepted
         else:
@@ -185,10 +185,10 @@ class CaptureEvent(Event):
     STRENGTH_RECOVERY = 0.35
 
     def __str__(self):
-        return "Attack from {} to {} ({})".format(self.from_cp, self.to_cp, "*" * self.difficulty)
+        return "Attack from {} to {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
-        attackers_success = len(debriefing.destroyed_units[self.defender.name]) > len(debriefing.destroyed_units[self.attacker.name])
+        attackers_success = len(debriefing.destroyed_units[self.defender_name]) > len(debriefing.destroyed_units[self.attacker_name])
         if self.from_cp.captured:
             return attackers_success
         else:

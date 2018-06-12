@@ -159,7 +159,8 @@ class GroundInterceptOperation(Operation):
             radials=ALL_RADIALS
         )
 
-        super(GroundInterceptOperation, self).__init__(mission, conflict)
+        self.initialize(mission=mission,
+                        conflict=conflict)
 
     def generate(self):
         self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.starting_position)

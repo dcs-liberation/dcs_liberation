@@ -23,29 +23,33 @@ class EventMenu(Menu):
         self.window.clear_right_pane()
         row = 0
 
-        def label(text):
+        def label(text, _row=None, _column=None):
             nonlocal row
-            Label(self.frame, text=text).grid()
+            Label(self.frame, text=text).grid(row=_row and _row or row, column=_column and _column or 0)
 
-            row += 1
+            if _row is None:
+                row += 1
 
         def scrable_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row)
-            scramble_entry = Entry(self.frame)
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row, sticky=W)
+            scramble_entry = Entry(self.frame, width=10)
             scramble_entry.grid(column=1, row=row)
+            scramble_entry.insert(0, "0")
             self.aircraft_scramble_entries[unit_type] = scramble_entry
 
-            client_entry = Entry(self.frame)
+            client_entry = Entry(self.frame, width=10)
             client_entry.grid(column=2, row=row)
+            client_entry.insert(0, "0")
             self.aircraft_client_entries[unit_type] = client_entry
 
             row += 1
 
         def scramble_armor_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row)
-            scramble_entry = Entry(self.frame)
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row, sticky=W)
+            scramble_entry = Entry(self.frame, width=10)
+            scramble_entry.insert(0, "0")
             scramble_entry.grid(column=1, row=row)
             self.armor_scramble_entries[unit_type] = scramble_entry
 
@@ -58,12 +62,22 @@ class EventMenu(Menu):
             base = self.event.to_cp.base
 
         label("Aircraft")
+        label("Amount", row, 1)
+        label("Client slots", row, 2)
+        row+=1
+
         for unit_type, count in base.aircraft.items():
             scrable_row(unit_type, count)
+
+        if not base.total_planes:
+            label("None")
 
         label("Armor")
         for unit_type, count in base.armor.items():
             scramble_armor_row(unit_type, count)
+
+        if not base.total_armor:
+            label("None")
 
         Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
         Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)

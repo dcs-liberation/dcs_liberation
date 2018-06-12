@@ -42,19 +42,20 @@ PRICES = {
     Armor.APC_BTR_80: 6,
 
     AirDefence.AAA_ZU_23_on_Ural_375: 4,
+    AirDefence.SAM_Avenger_M1097: 10,
 }
 
 UNIT_BY_TASK = {
     FighterSweep: [Su_27, Su_33, Su_25, F_15C, MiG_15bis, MiG_21Bis, MiG_29A, F_A_18C, AV8BNA],
     CAS: [Su_25T, A_10A, A_10C, ],
     CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
-    AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375,  ],
+    AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375, AirDefence.SAM_Avenger_M1097 ],
     Transport: [IL_76MD, S_3B_Tanker, ],
 }
 
 UNIT_BY_COUNTRY = {
     "Russia": [Su_25T, Su_27, Su_33, Su_25, MiG_15bis, MiG_21Bis, MiG_29A, AirDefence.AAA_ZU_23_on_Ural_375, Armor.APC_BTR_80, Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, IL_76MD, ],
-    "USA": [F_15C, A_10C, F_A_18C, AV8BNA, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, S_3B_Tanker],
+    "USA": [F_15C, A_10C, F_A_18C, AV8BNA, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, S_3B_Tanker, AirDefence.SAM_Avenger_M1097],
 }
 
 UnitsDict = typing.Dict[UnitType, int]

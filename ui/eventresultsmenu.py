@@ -21,14 +21,14 @@ class EventResultsMenu(Menu):
         self.window.clear_right_pane()
 
         if not self.finished:
-            Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1, True)).grid()
-            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1, False)).grid(row=1, column=1)
+            Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1)).grid()
+            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1)).grid(row=1, column=1)
 
-            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5, True)).grid(row=2, )
-            Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5, False)).grid(row=2, column=1)
+            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5)).grid(row=2, )
+            Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5)).grid(row=2, column=1)
 
-            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0, True)).grid(row=3, )
-            Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0, False)).grid(row=3, column=1)
+            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0)).grid(row=3, )
+            Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0)).grid(row=3, column=1)
 
             Label(self.frame, text="Play the mission and save debriefing to {}".format(debriefing_directory_location())).grid(row=0, column=0)
         else:
@@ -55,6 +55,10 @@ class EventResultsMenu(Menu):
             Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
 
     def process_debriefing(self, debriefing: Debriefing):
+        debriefing.calculate_destroyed_units(mission=self.event.operation.mission,
+                                             player_name=self.game.player,
+                                             enemy_name=self.game.enemy)
+
         self.game.finish_event(event=self.event, debriefing=debriefing)
         self.game.pass_turn()
 
@@ -63,7 +67,7 @@ class EventResultsMenu(Menu):
         self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy, {})
         self.display()
 
-    def simulate_result(self, player_factor: float, enemy_factor: float, result: bool):
+    def simulate_result(self, player_factor: float, enemy_factor: float):
         def action():
             debriefing = Debriefing()
 

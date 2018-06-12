@@ -21,8 +21,8 @@ ENEMY_INTERCEPT_PROBABILITY_BASE = 10
 ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 1
 ENEMY_CAPTURE_PROBABILITY_BASE = 3
 
-PLAYER_INTERCEPT_PROBABILITY_BASE = 30
-PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
+PLAYER_INTERCEPT_PROBABILITY_BASE = 100
+PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 100
 PLAYER_GLOBALINTERCEPT_PROBABILITY_BASE = 100
 
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 50
@@ -40,8 +40,8 @@ class Game:
     def __init__(self, theater: ConflictTheater):
         self.events = []
         self.theater = theater
-        self.player = "USA"
-        self.enemy = "Russia"
+        self.player = "Russia"
+        self.enemy = "USA"
 
     def _roll(self, prob, mult):
         return random.randint(0, 100) <= prob * mult
@@ -132,16 +132,6 @@ class Game:
                                                   theater=self.theater))
                 break
 
-    def _generate_global(self):
-        for cp in self.theater.player_points():
-            if cp.is_global:
-                if self._roll(PLAYER_GLOBALINTERCEPT_PROBABILITY_BASE, cp.base.strength):
-                    enemy_points = list(set(self.theater.enemy_bases()) - set(self.theater.conflicts(False)))
-                    self.events.append(InterceptEvent(attacker_name=self.player,
-                                                      defender_name=self.enemy,
-                                                      from_cp=cp,
-                                                      to_cp=random.choice(enemy_points)))
-
     def _commision_units(self, cp: ControlPoint):
         for for_task in [CAP, CAS, FighterSweep, AirDefence]:
             limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE)
@@ -207,5 +197,4 @@ class Game:
         self._generate_interceptions()
         self._generate_globalinterceptions()
         self._generate_groundinterceptions()
-        self._generate_global()
 
