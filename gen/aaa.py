@@ -1,21 +1,9 @@
-import typing
-import pdb
-import dcs
-
-from random import randint
-
-import globals
+from game import db
 
 from .conflictgen import *
 from .naming import *
 
 from dcs.mission import *
-from dcs.vehicles import *
-from dcs.unitgroup import *
-from dcs.unittype import *
-from dcs.mapping import *
-from dcs.point import *
-from dcs.task import *
 
 DISTANCE_FACTOR = 4, 5
 
@@ -24,7 +12,7 @@ class AAConflictGenerator:
         self.m = mission
         self.conflict = conflict
 
-    def generate(self, units: typing.Dict[UnitType, int]):
+    def generate(self, units: db.AirDefenseDict):
         for type, count in units.items():
             for _, radial in zip(range(count), self.conflict.radials):
                 distance = randint(self.conflict.size * DISTANCE_FACTOR[0], self.conflict.size * DISTANCE_FACTOR[1])

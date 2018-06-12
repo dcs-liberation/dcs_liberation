@@ -10,3 +10,10 @@ class Debriefing:
         with open(path, "r") as f:
             events = json.load(f)
 
+
+def debriefing_directory_location() -> str:
+    return "build/debrfiefing"
+
+
+def wait_for_debriefing(callback: typing.Callable):
+    pass

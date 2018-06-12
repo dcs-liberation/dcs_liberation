@@ -40,5 +40,5 @@ class ConflictTheater:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
                 yield (cp, connected_point)
 
-    def enemy_bases(self) -> typing.Collection[ControlPoint]:
+    def enemy_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]

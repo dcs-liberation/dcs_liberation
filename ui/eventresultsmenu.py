@@ -1,13 +1,7 @@
-import math
-import itertools
-
-from tkinter import *
 from tkinter.ttk import *
 from ui.window import *
 
-from userdata.debriefing_parser import *
 from game.game import *
-from game import event
 
 
 class EventResultsMenu(Menu):
@@ -21,18 +15,22 @@ class EventResultsMenu(Menu):
         self.event = event
         self.finished = False
 
+        wait_for_debriefing(lambda: self.process_debriefing)
+
     def display(self):
         self.window.clear_right_pane()
 
         if not self.finished:
             Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1, True)).grid()
-            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1, False)).grid(column=1)
+            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1, False)).grid(row=1, column=1)
 
-            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5, True)).grid(row=1, )
-            Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5, False)).grid(row=1, column=1)
+            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5, True)).grid(row=2, )
+            Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5, False)).grid(row=2, column=1)
 
-            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0, True)).grid(row=2, )
-            Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0, False)).grid(row=2, column=1)
+            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0, True)).grid(row=3, )
+            Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0, False)).grid(row=3, column=1)
+
+            Label(self.frame, text="Play the mission and save debriefing to {}".format(debriefing_directory_location())).grid(row=0, column=0)
         else:
             row = 0
             if self.event.is_successfull(self.debriefing):
@@ -55,6 +53,15 @@ class EventResultsMenu(Menu):
                 row += 1
 
             Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
+
+    def process_debriefing(self, debriefing: Debriefing):
+        self.game.finish_event(debriefing)
+        self.game.pass_turn()
+
+        self.finished = True
+        self.player_losses = debriefing.destroyed_units[self.game.player]
+        self.enemy_losses = debriefing.destroyed_units[self.game.enemy]
+        self.display()
 
     def simulate_result(self, player_factor: float, enemy_factor: float, result: bool):
         def action():

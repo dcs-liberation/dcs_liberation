@@ -1,10 +1,7 @@
-from tkinter import *
-from ui.window import *
 from ui.eventresultsmenu import *
 
-from shop import db
 from game.game import *
-from game import event
+from game import event, db
 
 
 class EventMenu(Menu):
@@ -55,7 +52,7 @@ class EventMenu(Menu):
             row += 1
 
         base = None  # type: Base
-        if self.event.attacker.name == self.game.player:
+        if self.event.attacker_name == self.game.player:
             base = self.event.from_cp.base
         else:
             base = self.event.to_cp.base
