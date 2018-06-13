@@ -7,6 +7,7 @@ from gen.aircraft import *
 from gen.aaa import *
 from gen.shipgen import *
 from gen.conflictgen import *
+from gen.envsettingsgen import *
 
 
 class Operation:
@@ -16,7 +17,9 @@ class Operation:
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
     aagen = None  # type: AAConflictGenerator
+    extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
+    envgen = None  # type: EnvironmentSettingsGenerator
 
     def __init__(self,
                  theater: ConflictTheater,
@@ -42,6 +45,7 @@ class Operation:
         self.airgen = AircraftConflictGenerator(mission, conflict)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
+        self.envgen = EnvironmentSettingsGenerator(mission)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
@@ -52,6 +56,7 @@ class Operation:
 
     def generate(self):
         self.extra_aagen.generate()
+        self.envgen.generate()
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []

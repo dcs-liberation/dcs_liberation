@@ -44,6 +44,7 @@ class Window:
 
 class Menu:
     parent = None  # type: Menu
+
     def __init__(self, window: Window, parent, game: Game):
         self.window = window
         self.parent = parent

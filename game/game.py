@@ -37,11 +37,11 @@ class Game:
     events = None  # type: typing.List[Event]
     pending_transfers = None  # type: typing.Dict[]
 
-    def __init__(self, theater: ConflictTheater):
+    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater):
         self.events = []
         self.theater = theater
-        self.player = "USA"
-        self.enemy = "Russia"
+        self.player = player_name
+        self.enemy = enemy_name
 
     def _roll(self, prob, mult):
         return random.randint(0, 100) <= prob * mult

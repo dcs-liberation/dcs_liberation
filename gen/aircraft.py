@@ -44,7 +44,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             airport=self.m.terrain.airport_by_id(airport.id),
             maintask=None,
-            start_type=StartType.Cold,
+            start_type=StartType.Warm,
             group_size=count,
             parking_slots=None)
 
