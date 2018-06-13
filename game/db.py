@@ -2,6 +2,7 @@ import typing
 
 from dcs.vehicles import *
 from dcs.unitgroup import *
+from dcs.ships import *
 from dcs.planes import *
 from dcs.task import *
 from dcs.unittype import *
@@ -51,11 +52,36 @@ UNIT_BY_TASK = {
     CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375, AirDefence.SAM_Avenger_M1097 ],
     Transport: [IL_76MD, S_3B_Tanker, ],
+    Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
 }
 
 UNIT_BY_COUNTRY = {
-    "Russia": [Su_25T, Su_27, Su_33, Su_25, MiG_15bis, MiG_21Bis, MiG_29A, AirDefence.AAA_ZU_23_on_Ural_375, Armor.APC_BTR_80, Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, IL_76MD, ],
-    "USA": [F_15C, A_10C, F_A_18C, AV8BNA, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, S_3B_Tanker, AirDefence.SAM_Avenger_M1097],
+    "Russia": [
+        Su_25T,
+        Su_27,
+        Su_33,
+        Su_25,
+        MiG_15bis,
+        MiG_21Bis,
+        MiG_29A,
+        AirDefence.AAA_ZU_23_on_Ural_375,
+        Armor.APC_BTR_80,
+        Armor.MBT_T_90,
+        Armor.MBT_T_80U,
+        Armor.MBT_T_55,
+        IL_76MD,
+        CV_1143_5_Admiral_Kuznetsov],
+
+    "USA": [F_15C,
+            A_10C,
+            F_A_18C,
+            AV8BNA,
+            Armor.MBT_M1A2_Abrams,
+            Armor.MBT_M60A3_Patton,
+            Armor.ATGM_M1134_Stryker,
+            S_3B_Tanker,
+            AirDefence.SAM_Avenger_M1097,
+            CVN_74_John_C__Stennis],
 }
 
 UnitsDict = typing.Dict[UnitType, int]

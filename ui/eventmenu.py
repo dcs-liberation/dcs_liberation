@@ -64,7 +64,7 @@ class EventMenu(Menu):
         label("Aircraft")
         label("Amount", row, 1)
         label("Client slots", row, 2)
-        row+=1
+        row += 1
 
         for unit_type, count in base.aircraft.items():
             scrable_row(unit_type, count)

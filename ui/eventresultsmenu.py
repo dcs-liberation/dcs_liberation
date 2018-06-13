@@ -69,7 +69,7 @@ class EventResultsMenu(Menu):
 
     def simulate_result(self, player_factor: float, enemy_factor: float):
         def action():
-            debriefing = Debriefing()
+            debriefing = Debriefing({})
 
             def count_planes(groups: typing.List[FlyingGroup], mult: float) -> typing.Dict[UnitType, int]:
                 result = {}

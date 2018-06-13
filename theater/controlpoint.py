@@ -1,11 +1,10 @@
 import typing
-import dcs
-import math
 
 from dcs.mapping import *
 from dcs.country import *
+from dcs.terrain import Airport
 
-from gen.conflictgen import *
+from gen.conflictgen import Conflict
 
 
 class ControlPoint:
@@ -18,7 +17,7 @@ class ControlPoint:
     def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int):
         import theater.base
 
-        self.name = name
+        self.name = name.split("-")[0]
         self.position = position
         self.at = at
 

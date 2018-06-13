@@ -1,4 +1,5 @@
 from dcs.terrain import caucasus
+from dcs import mapping
 
 from .conflicttheater import *
 from .base import *

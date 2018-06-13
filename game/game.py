@@ -17,31 +17,31 @@ COMMISION_AMOUNTS_FACTORS = {
 }
 
 
-ENEMY_INTERCEPT_PROBABILITY_BASE = 10
+ENEMY_INTERCEPT_PROBABILITY_BASE = 5
 ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 1
 ENEMY_CAPTURE_PROBABILITY_BASE = 3
 
-PLAYER_INTERCEPT_PROBABILITY_BASE = 100
-PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 100
-PLAYER_GLOBALINTERCEPT_PROBABILITY_BASE = 100
+PLAYER_INTERCEPT_PROBABILITY_BASE = 30
+PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
 
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 50
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
-PLAYER_BUDGET_BASE = 25
+PLAYER_BUDGET_INITIAL = 60
+PLAYER_BUDGET_BASE = 20
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
 class Game:
-    budget = 45
+    budget = PLAYER_BUDGET_INITIAL
     events = None  # type: typing.List[Event]
     pending_transfers = None  # type: typing.Dict[]
 
     def __init__(self, theater: ConflictTheater):
         self.events = []
         self.theater = theater
-        self.player = "Russia"
-        self.enemy = "USA"
+        self.player = "USA"
+        self.enemy = "Russia"
 
     def _roll(self, prob, mult):
         return random.randint(0, 100) <= prob * mult

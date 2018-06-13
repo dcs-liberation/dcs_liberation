@@ -91,7 +91,8 @@ class GroundInterceptEvent(Event):
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
         self.targets = {unittype: typecount for unittype in unittypes}
 
-        op = GroundInterceptOperation(attacker_name=self.attacker_name,
+        op = GroundInterceptOperation(theater=self.theater,
+                                      attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       attacker_clients=clients,
                                       defender_clients={},
@@ -145,7 +146,8 @@ class InterceptEvent(Event):
 
         airdefense_unit = db.find_unittype(AirDefence, self.defender_name)[0]
 
-        op = InterceptOperation(attacker_name=self.attacker_name,
+        op = InterceptOperation(theater=self.theater,
+                                attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 attacker_clients=clients,
                                 defender_clients={},
@@ -164,7 +166,8 @@ class InterceptEvent(Event):
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None
 
-        op = InterceptOperation(attacker_name=self.attacker_name,
+        op = InterceptOperation(theater=self.theater,
+                                attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 attacker_clients={},
                                 defender_clients=clients,
@@ -216,7 +219,8 @@ class CaptureEvent(Event):
         escort = self.from_cp.base.scramble_sweep(self.to_cp)
         attackers = self.from_cp.base.assemble_cap(self.to_cp)
 
-        op = CaptureOperation(attacker_name=self.attacker_name,
+        op = CaptureOperation(theater=self.theater,
+                              attacker_name=self.attacker_name,
                               defender_name=self.defender_name,
                               attacker_clients={},
                               defender_clients=clients,
@@ -235,7 +239,8 @@ class CaptureEvent(Event):
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
         interceptors = self.to_cp.base.scramble_sweep(for_target=self.to_cp)
 
-        op = CaptureOperation(attacker_name=self.attacker_name,
+        op = CaptureOperation(theater=self.theater,
+                              attacker_name=self.attacker_name,
                               defender_name=self.defender_name,
                               attacker_clients=clients,
                               defender_clients={},

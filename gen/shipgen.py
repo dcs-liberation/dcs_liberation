@@ -11,9 +11,9 @@ class ShipGenerator:
         self.m = mission
         self.conflict = conflict
 
-    def generate(self, at: Point) -> ShipGroup:
+    def generate(self, type: ShipType, at: Point) -> ShipGroup:
         return self.m.ship_group(
             country=self.conflict.attackers_side,
             name=namegen.next_transport_group_name(),
-            _type=dcs.ships.CVN_74_John_C__Stennis,
+            _type=type,
             position=at)

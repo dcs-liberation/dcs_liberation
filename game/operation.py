@@ -19,12 +19,14 @@ class Operation:
     shipgen = None  # type: ShipGenerator
 
     def __init__(self,
+                 theater: ConflictTheater,
                  attacker_name: str,
                  defender_name: str,
                  attacker_clients: db.PlaneDict,
                  defender_clients: db.PlaneDict,
                  from_cp: ControlPoint,
                  to_cp: ControlPoint = None):
+        self.theater = theater
         self.attacker_name = attacker_name
         self.defender_name = defender_name
         self.attacker_clients = attacker_clients
@@ -41,11 +43,15 @@ class Operation:
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
 
+        player_name = self.from_cp.captured and self.attacker_name or self.defender_name
+        enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
+        self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.theater, player_name, enemy_name)
+
     def prepare(self, is_quick: bool):
         self.starting_position = is_quick and self.from_cp.at or None
 
     def generate(self):
-        pass
+        self.extra_aagen.generate()
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
@@ -86,6 +92,7 @@ class CaptureOperation(Operation):
                                                             mission.country(self.defender_name)))
 
     def generate(self):
+        super(CaptureOperation, self).generate()
         self.armorgen.generate(self.attack, self.defense)
         self.aagen.generate(self.aa)
         self.airgen.generate_defense(self.intercept, clients=self.defender_clients)
@@ -129,12 +136,15 @@ class InterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        super(InterceptOperation, self).generate()
         self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
         self.aagen.generate(self.airdefense)
 
         if self.from_cp.is_global:
-            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.shipgen.generate(self.from_cp.at))
+            ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
+                                         at=self.from_cp.at)
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=ship)
         else:
             self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.starting_position)
 
@@ -163,5 +173,6 @@ class GroundInterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        super(GroundInterceptOperation, self).generate()
         self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.starting_position)
         self.armorgen.generate({}, self.target)

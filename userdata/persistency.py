@@ -1,3 +1,4 @@
+import typing
 import pickle
 import os
 import shutil
@@ -17,14 +18,15 @@ def _save_file_exists() -> bool:
     return os.path.exists(_save_file())
 
 
-def restore_game() -> Game:
+def restore_game() -> typing.Optional[Game]:
     if not _save_file_exists():
         return None
 
     try:
         with open(_save_file(), "rb") as f:
             return pickle.load(f)
-    except:
+    except Exception as e:
+        print(e)
         return None
 
 
@@ -32,7 +34,8 @@ def save_game(game: Game) -> bool:
     try:
         with open(_temporary_save_file(), "wb") as f:
             pickle.dump(game, f)
-            shutil.copy(_temporary_save_file(), _save_file())
-            return True
-    except:
+        shutil.copy(_temporary_save_file(), _save_file())
+        return True
+    except Exception as e:
+        print(e)
         return False
