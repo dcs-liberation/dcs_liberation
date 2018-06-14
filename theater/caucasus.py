@@ -12,16 +12,16 @@ class CaucasusTheater(ConflictTheater):
     soganlug = ControlPoint.from_airport(caucasus.Soganlug, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     senaki = ControlPoint.from_airport(caucasus.Senaki_Kolkhi, ALL_RADIALS, SIZE_REGULAR, IMPORTANCE_LOW)
-    kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_VERTICAL, SIZE_SMALL, IMPORTANCE_LOW)
-    batumi = ControlPoint.from_airport(caucasus.Batumi, COAST_VERTICAL, SIZE_SMALL, IMPORTANCE_MEDIUM)
-    sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_VERTICAL, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_VERTICAL, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    sochi = ControlPoint.from_airport(caucasus.Sochi_Adler, COAST_VERTICAL, SIZE_BIG, IMPORTANCE_HIGH)
+    kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_NS_E, SIZE_SMALL, IMPORTANCE_LOW)
+    batumi = ControlPoint.from_airport(caucasus.Batumi, COAST_NS_E, SIZE_SMALL, IMPORTANCE_MEDIUM)
+    sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_NS_E, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+    gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_NS_E, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+    sochi = ControlPoint.from_airport(caucasus.Sochi_Adler, COAST_NS_E, SIZE_BIG, IMPORTANCE_HIGH)
 
-    gelendzhik = ControlPoint.from_airport(caucasus.Gelendzhik, COAST_VERTICAL, SIZE_BIG, IMPORTANCE_MEDIUM)
+    gelendzhik = ControlPoint.from_airport(caucasus.Gelendzhik, COAST_NS_E, SIZE_BIG, IMPORTANCE_MEDIUM)
     maykop = ControlPoint.from_airport(caucasus.Maykop_Khanskaya, ALL_RADIALS, SIZE_LARGE, IMPORTANCE_HIGH)
     krasnodar = ControlPoint.from_airport(caucasus.Krasnodar_Center, ALL_RADIALS, SIZE_LARGE, IMPORTANCE_HIGH)
-    novorossiysk = ControlPoint.from_airport(caucasus.Novorossiysk, COAST_VERTICAL, SIZE_BIG, IMPORTANCE_MEDIUM)
+    novorossiysk = ControlPoint.from_airport(caucasus.Novorossiysk, COAST_NS_E, SIZE_BIG, IMPORTANCE_MEDIUM)
     krymsk = ControlPoint.from_airport(caucasus.Krymsk, ALL_RADIALS, SIZE_LARGE, IMPORTANCE_HIGH)
     anapa = ControlPoint.from_airport(caucasus.Anapa_Vityazevo, ALL_RADIALS, SIZE_LARGE, IMPORTANCE_HIGH)
 
@@ -34,9 +34,6 @@ class CaucasusTheater(ConflictTheater):
 
     def __init__(self):
         super(CaucasusTheater, self).__init__()
-
-        self.carrier_1.captured = True
-        self.soganlug.captured = True
 
         self.add_controlpoint(self.soganlug, connected_to=[self.kutaisi, self.beslan])
         self.add_controlpoint(self.beslan, connected_to=[self.soganlug, self.mozdok, self.nalchik])
@@ -60,3 +57,7 @@ class CaucasusTheater(ConflictTheater):
         self.add_controlpoint(self.krasnodar, connected_to=[self.krymsk, self.maykop])
 
         self.add_controlpoint(self.carrier_1)
+
+        self.carrier_1.captured = True
+        self.soganlug.captured = True
+
