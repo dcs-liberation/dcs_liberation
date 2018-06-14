@@ -68,7 +68,7 @@ class OverviewCanvas:
 
         for cp in self.game.theater.controlpoints:
             coords = self.cp_coordinates(cp)
-            arc_size = 28 * math.pow(cp.importance, 1)
+            arc_size = 22 * math.pow(cp.importance, 1)
             extent = max(cp.base.strength * 180, 10)
             start = (180 - extent) / 2
             color = cp.captured and 'blue' or 'red'

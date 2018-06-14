@@ -14,6 +14,12 @@ RANDOM_TIME = {
     "day": 100,
 }
 
+RANDOM_WEATHER = {
+    0: 0,  #  thunderstorm
+    1: 5,  #  heavy rain
+    2: 15, #  rain
+    3: 35, #  random dynamic
+}
 
 class EnvironmentSettingsGenerator:
     def __init__(self, mission: Mission, game):
@@ -29,7 +35,23 @@ class EnvironmentSettingsGenerator:
                 break
 
         self.mission.random_daytime(time_period)
-        self.mission.weather.random(self.mission.start_time, self.mission.terrain)
+
+        weather_roll = random.randint(0, 100)
+        weather_type = None
+        for k, v in RANDOM_TIME.items():
+            if v >= weather_roll:
+                weather_type = k
+                break
+
+        if weather_type == 0:
+            self.mission.weather.random_thunderstorm()
+        elif weather_type == 1:
+            self.mission.weather.heavy_rain()
+        elif weather_type == 2:
+            self.mission.weather.heavy_rain()
+            self.mission.weather.enable_fog = False
+        elif weather_type == 3:
+            self.mission.weather.random(self.mission.start_time, self.mission.terrain)
 
         for cp in self.game.theater.controlpoints:
             if cp.is_global:
