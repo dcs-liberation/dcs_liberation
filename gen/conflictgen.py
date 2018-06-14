@@ -24,6 +24,7 @@ INTERCEPT_ATTACKERS_HEADING = -45, 45
 INTERCEPT_DEFENDERS_HEADING = -10, 10
 INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
+INTERCEPT_MAX_DISTANCE = 45000
 
 
 class Conflict:
@@ -56,8 +57,13 @@ class Conflict:
         return instance
 
     @classmethod
-    def intercept_conflict(self, attacker: Country, defender: Country, position: Point, heading: int, radials: typing.List[int]):
+    def intercept_conflict(self, attacker: Country, defender: Country, from_cp, to_cp):
         from theater.conflicttheater import SIZE_REGULAR
+        from theater.conflicttheater import ALL_RADIALS
+
+        heading = from_cp.position.heading_between_point(to_cp.position)
+        distance = min(from_cp.position.distance_to_point(to_cp.position) / 2, INTERCEPT_MAX_DISTANCE)
+        position = from_cp.position.point_from_heading(heading, distance)
 
         instance = self()
         instance.attackers_side = attacker
@@ -65,7 +71,7 @@ class Conflict:
 
         instance.position = position
         instance.size = SIZE_REGULAR
-        instance.radials = radials
+        instance.radials = ALL_RADIALS
 
         instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, INTERCEPT_ATTACKERS_DISTANCE)
         instance.air_defenders_location = instance.position.point_from_heading(random.randint(*INTERCEPT_DEFENDERS_HEADING) + heading, INTERCEPT_DEFENDERS_DISTANCE)

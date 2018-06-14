@@ -137,7 +137,7 @@ class Base:
             else:
                 continue
 
-            target_array[unit_type] = target_array[unit_type] - count
+            target_array[unit_type] = max(target_array[unit_type] - count, 0)
             if target_array[unit_type] == 0:
                 del target_array[unit_type]
 

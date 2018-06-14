@@ -10,12 +10,12 @@ class Event:
     difficulty = 1  # type: int
     BONUS_BASE = 0
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         self.attacker_name = attacker_name
         self.defender_name = defender_name
         self.to_cp = to_cp
         self.from_cp = from_cp
-        self.theater = theater
+        self.game = game
 
     def bonus(self) -> int:
         return math.ceil(math.log(self.difficulty, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
@@ -28,6 +28,7 @@ class Event:
         self.operation.generate()
         self.operation.mission.save("build/nextturn.miz")
 
+    def generate_quick(self):
         self.operation.prepare(is_quick=True)
         self.operation.generate()
         self.operation.mission.save('build/nextturn_quick.miz')
@@ -91,7 +92,7 @@ class GroundInterceptEvent(Event):
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
         self.targets = {unittype: typecount for unittype in unittypes}
 
-        op = GroundInterceptOperation(theater=self.theater,
+        op = GroundInterceptOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       attacker_clients=clients,
@@ -128,7 +129,7 @@ class InterceptEvent(Event):
 
         if self.is_successfull(debriefing):
             if self.from_cp.is_global:
-                for cp in self.theater.enemy_points():
+                for cp in self.game.theater.enemy_points():
                     cp.base.affect_strength(-self.GLOBAL_STRENGTH_INFLUENCE)
             else:
                 self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and -1 or 1))
@@ -146,7 +147,7 @@ class InterceptEvent(Event):
 
         airdefense_unit = db.find_unittype(AirDefence, self.defender_name)[0]
 
-        op = InterceptOperation(theater=self.theater,
+        op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 attacker_clients=clients,
@@ -166,7 +167,7 @@ class InterceptEvent(Event):
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None
 
-        op = InterceptOperation(theater=self.theater,
+        op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 attacker_clients={},
@@ -191,7 +192,9 @@ class CaptureEvent(Event):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
-        attackers_success = len(debriefing.destroyed_units[self.defender_name]) > len(debriefing.destroyed_units[self.attacker_name])
+        alive_attackers = sum(debriefing.alive_units[self.attacker_name].values())
+        alive_defenders = sum(debriefing.alive_units[self.defender_name].values())
+        attackers_success = alive_attackers > alive_defenders
         if self.from_cp.captured:
             return attackers_success
         else:
@@ -219,7 +222,7 @@ class CaptureEvent(Event):
         escort = self.from_cp.base.scramble_sweep(self.to_cp)
         attackers = self.from_cp.base.assemble_cap(self.to_cp)
 
-        op = CaptureOperation(theater=self.theater,
+        op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,
                               defender_name=self.defender_name,
                               attacker_clients={},
@@ -239,7 +242,7 @@ class CaptureEvent(Event):
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
         interceptors = self.to_cp.base.scramble_sweep(for_target=self.to_cp)
 
-        op = CaptureOperation(theater=self.theater,
+        op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,
                               defender_name=self.defender_name,
                               attacker_clients=clients,
@@ -261,12 +264,12 @@ class UnitsDeliveryEvent(Event):
     informational = True
     units = None  # type: typing.Dict[UnitType, int]
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         super(UnitsDeliveryEvent, self).__init__(attacker_name=attacker_name,
                                                  defender_name=defender_name,
                                                  from_cp=from_cp,
                                                  to_cp=to_cp,
-                                                 theater=theater)
+                                                 game=game)
 
         self.units = {}
 

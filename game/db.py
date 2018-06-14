@@ -15,7 +15,7 @@ PRICES = {
     A_10A: 18,
     A_10C: 20,
 
-    F_A_18C: 18,
+    FA_18C_hornet: 18,
     AV8BNA: 15,
 
     Su_27: 30,
@@ -23,12 +23,14 @@ PRICES = {
     F_15C: 30,
     M_2000C: 11,
 
-    MiG_15bis: 6,
     MiG_21Bis: 13,
     MiG_29A: 23,
 
     IL_76MD: 13,
     S_3B_Tanker: 13,
+
+    A_50: 8,
+    E_3A: 8,
 
     # armor
 
@@ -47,12 +49,13 @@ PRICES = {
 }
 
 UNIT_BY_TASK = {
-    FighterSweep: [Su_27, Su_33, Su_25, F_15C, MiG_15bis, MiG_21Bis, MiG_29A, F_A_18C, AV8BNA],
+    FighterSweep: [Su_27, Su_33, FA_18C_hornet, F_15C, MiG_21Bis, MiG_29A, F_A_18C, AV8BNA],
     CAS: [Su_25T, A_10A, A_10C, ],
     CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [AirDefence.AAA_ZU_23_on_Ural_375, AirDefence.SAM_Avenger_M1097 ],
     Transport: [IL_76MD, S_3B_Tanker, ],
     Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
+    AWACS: [E_3A, A_50, ],
 }
 
 UNIT_BY_COUNTRY = {
@@ -61,9 +64,9 @@ UNIT_BY_COUNTRY = {
         Su_27,
         Su_33,
         Su_25,
-        MiG_15bis,
         MiG_21Bis,
         MiG_29A,
+        A_50,
         AirDefence.AAA_ZU_23_on_Ural_375,
         Armor.APC_BTR_80,
         Armor.MBT_T_90,
@@ -74,8 +77,9 @@ UNIT_BY_COUNTRY = {
 
     "USA": [F_15C,
             A_10C,
-            F_A_18C,
+            FA_18C_hornet,
             AV8BNA,
+            E_3A,
             Armor.MBT_M1A2_Abrams,
             Armor.MBT_M60A3_Patton,
             Armor.ATGM_M1134_Stryker,

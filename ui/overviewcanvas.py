@@ -44,8 +44,10 @@ class OverviewCanvas:
         title = cp.name
         font = ("Helvetica", 13)
 
-        self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
-        self.canvas.create_text(coords[0], coords[1], text=title, font=font)
+        id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
+        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
+        id = self.canvas.create_text(coords[0], coords[1], text=title, font=font)
+        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
 
     def update(self):
         self.canvas.delete(ALL)
@@ -66,7 +68,7 @@ class OverviewCanvas:
 
         for cp in self.game.theater.controlpoints:
             coords = self.cp_coordinates(cp)
-            arc_size = 18 * math.pow(cp.importance, 1)
+            arc_size = 28 * math.pow(cp.importance, 1)
             extent = max(cp.base.strength * 180, 10)
             start = (180 - extent) / 2
             color = cp.captured and 'blue' or 'red'
@@ -78,7 +80,7 @@ class OverviewCanvas:
                                            start=start,
                                            extent=extent)
             self.canvas.tag_bind(cp_id, "<Button-1>", self.display(cp))
-            self.create_cp_title((coords[0] + arc_size/2, coords[1] + arc_size/2), cp)
+            self.create_cp_title((coords[0] + arc_size/4, coords[1] + arc_size/4), cp)
 
             units_title = "{}/{}/{}".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
             self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10))

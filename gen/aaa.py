@@ -29,15 +29,18 @@ class AAConflictGenerator:
 
 
 class ExtraAAConflictGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, theater: ConflictTheater, player_name: Country, enemy_name: Country):
+    def __init__(self, mission: Mission, conflict: Conflict, game, player_name: Country, enemy_name: Country):
         self.mission = mission
-        self.theater = theater
+        self.game = game
         self.conflict = conflict
         self.player_name = player_name
         self.enemy_name = enemy_name
 
     def generate(self):
-        for cp in self.theater.controlpoints:
+        for cp in self.game.theater.controlpoints:
+            if cp.is_global:
+                continue
+
             if cp.position.distance_to_point(self.conflict.position) > EXTRA_AA_MIN_DISTANCE:
                 country_name = cp.captured and self.player_name or self.enemy_name
 

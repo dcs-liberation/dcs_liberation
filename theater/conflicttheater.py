@@ -20,6 +20,7 @@ COAST_HORIZONTAL = [315, 0, 45, ]
 
 
 class ConflictTheater:
+    terrain = None  # type: dcs.terrain.Terrain
     controlpoints = None  # type: typing.Collection[ControlPoint]
     reference_points = None  # type: typing.Dict
 

@@ -55,6 +55,7 @@ class EventResultsMenu(Menu):
             Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
 
     def process_debriefing(self, debriefing: Debriefing):
+        self.debriefing = debriefing
         debriefing.calculate_destroyed_units(mission=self.event.operation.mission,
                                              player_name=self.game.player,
                                              enemy_name=self.game.enemy)

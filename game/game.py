@@ -27,7 +27,7 @@ PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 50
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
-PLAYER_BUDGET_INITIAL = 60
+PLAYER_BUDGET_INITIAL = 90
 PLAYER_BUDGET_BASE = 20
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
@@ -53,7 +53,7 @@ class Game:
                                                 defender_name=self.enemy,
                                                 from_cp=from_cp,
                                                 to_cp=to_cp,
-                                                theater=self.theater))
+                                                game=self))
 
     def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):
@@ -65,7 +65,7 @@ class Game:
                                                 defender_name=self.player,
                                                 from_cp=from_cp,
                                                 to_cp=to_cp,
-                                                theater=self.theater))
+                                                game=self))
                 break
 
     def _generate_interceptions(self):
@@ -79,13 +79,16 @@ class Game:
                                                   defender_name=self.player,
                                                   from_cp=from_cp,
                                                   to_cp=to_cp,
-                                                  theater=self.theater))
+                                                  game=self))
                 enemy_interception = True
                 break
 
         for to_cp in self.theater.player_points():
             if enemy_interception:
                 break
+
+            if to_cp.is_global:
+                continue
 
             if to_cp in self.theater.conflicts(False):
                 continue
@@ -97,7 +100,7 @@ class Game:
                                                           defender_name=self.player,
                                                           from_cp=from_cp,
                                                           to_cp=to_cp,
-                                                          theater=self.theater))
+                                                          game=self))
                         enemy_interception = True
                         break
 
@@ -107,7 +110,7 @@ class Game:
                                                   defender_name=self.enemy,
                                                   from_cp=from_cp,
                                                   to_cp=to_cp,
-                                                  theater=self.theater))
+                                                  game=self))
                 break
 
     def _generate_groundinterceptions(self):
@@ -117,7 +120,7 @@ class Game:
                                                         defender_name=self.enemy,
                                                         from_cp=from_cp,
                                                         to_cp=to_cp,
-                                                        theater=self.theater))
+                                                        game=self))
                 break
 
     def _generate_globalinterceptions(self):
@@ -129,7 +132,7 @@ class Game:
                                                   defender_name=self.enemy,
                                                   from_cp=from_cp,
                                                   to_cp=to_cp,
-                                                  theater=self.theater))
+                                                  game=self))
                 break
 
     def _commision_units(self, cp: ControlPoint):
@@ -160,7 +163,7 @@ class Game:
                                    defender_name=self.player,
                                    from_cp=to_cp,
                                    to_cp=to_cp,
-                                   theater=self.theater)
+                                   game=self)
         self.events.append(event)
         return event
 
@@ -170,7 +173,9 @@ class Game:
 
     def initiate_event(self, event: Event):
         assert event in self.events
+
         event.generate()
+        event.generate_quick()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
         event.commit(debriefing)
