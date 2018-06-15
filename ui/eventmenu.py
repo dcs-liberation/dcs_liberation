@@ -8,6 +8,7 @@ class EventMenu(Menu):
     aircraft_scramble_entries = None  # type: typing.Dict[PlaneType , Entry]
     aircraft_client_entries = None  # type: typing.Dict[PlaneType, Entry]
     armor_scramble_entries = None  # type: typing.Dict[VehicleType, Entry]
+    awacs = None  # type: IntVar
 
     def __init__(self, window: Window, parent, game: Game, event: event.Event):
         super(EventMenu, self).__init__(window, parent, game)
@@ -23,6 +24,7 @@ class EventMenu(Menu):
             self.base = self.event.to_cp.base
 
         self.frame = self.window.right_pane
+        self.awacs = IntVar()
 
     def display(self):
         self.window.clear_right_pane()
@@ -60,10 +62,15 @@ class EventMenu(Menu):
 
             row += 1
 
-        label("Aircraft")
-        label("Amount", row, 1)
-        label("Client slots", row, 2)
+        Checkbutton(self.frame, text="AWACS", var=self.awacs).grid(row=row, column=2)
         row += 1
+
+        label("Aircraft")
+
+        if self.base.aircraft:
+            label("Amount", row, 1)
+            label("Client slots", row, 2)
+            row += 1
 
         for unit_type, count in self.base.aircraft.items():
             scrable_row(unit_type, count)
@@ -82,14 +89,19 @@ class EventMenu(Menu):
         Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)
 
     def start(self):
+        if self.awacs.get() == 1:
+            self.event.is_awacs_enabled = True
+            self.game.awacs_expense_commit()
+        else:
+            self.event.is_awacs_enabled = False
+
         scrambled_aircraft = {}
         scrambled_sweep = {}
         scrambled_cas = {}
         for unit_type, field in self.aircraft_scramble_entries.items():
             value = field.get()
             if value and int(value) > 0:
-                #amount = min(int(value), self.base.aircraft[unit_type])
-                amount = int(value)
+                amount = min(int(value), self.base.aircraft[unit_type])
                 task = db.unit_task(unit_type)
 
                 scrambled_aircraft[unit_type] = amount

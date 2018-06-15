@@ -6,6 +6,7 @@ DIFFICULTY_LOG_BASE = 1.5
 class Event:
     silent = False
     informational = False
+    is_awacs_enabled = False
     operation = None  # type: Operation
     difficulty = 1  # type: int
     BONUS_BASE = 0
@@ -24,11 +25,13 @@ class Event:
         return self.operation.is_successfull(debriefing)
 
     def generate(self):
+        self.operation.is_awacs_enabled = self.is_awacs_enabled
         self.operation.prepare(is_quick=False)
         self.operation.generate()
         self.operation.mission.save("build/nextturn.miz")
 
     def generate_quick(self):
+        self.operation.is_awacs_enabled = self.is_awacs_enabled
         self.operation.prepare(is_quick=True)
         self.operation.generate()
         self.operation.mission.save('build/nextturn_quick.miz')

@@ -25,6 +25,10 @@ class NameGenerator:
         self.number += 1
         return "Transport Unit {}".format(self.number)
 
+    def next_awacs_group_name(self):
+        self.number += 1
+        return "AWACS Unit {}".format(self.number)
+
 
 namegen = NameGenerator()
 

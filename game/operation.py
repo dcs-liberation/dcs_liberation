@@ -8,6 +8,7 @@ from gen.aaa import *
 from gen.shipgen import *
 from gen.conflictgen import *
 from gen.envsettingsgen import *
+from gen.awacsgen import *
 
 
 class Operation:
@@ -21,6 +22,9 @@ class Operation:
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     envgen = None  # type: EnvironmentSettingsGenerator
+    awacsgen = None  # type: AWACSConflictGenerator
+
+    is_awacs_enabled = False
 
     def __init__(self,
                  game,
@@ -47,6 +51,7 @@ class Operation:
         self.airgen = AircraftConflictGenerator(mission, conflict)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
+        self.awacsgen = AWACSConflictGenerator(mission, conflict, self.game)
         self.envgen = EnvironmentSettingsGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
@@ -66,6 +71,8 @@ class Operation:
     def generate(self):
         self.extra_aagen.generate()
         self.envgen.generate(self.is_quick)
+        if self.is_awacs_enabled:
+            self.awacsgen.generate()
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
