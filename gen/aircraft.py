@@ -6,18 +6,23 @@ from dcs.mission import *
 from dcs.unitgroup import *
 from dcs.unittype import *
 from dcs.task import *
+from dcs.terrain.terrain import NoParkingSlotError
 
 SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_MAX_DIST = 30000
 WORKAROUND_WAYP_DIST = 1000
 
-WARM_START_ALTITUDE = 6000
-WARM_START_AIRSPEED = 300
+WARM_START_ALTITUDE = 3600
+WARM_START_AIRSPEED = 600
+INTERCEPTION_AIRSPEED = 1200
 
-INTERCEPT_ALT = 15000
-CAS_ALTITUDE = 3000
+TRANSPORT_LANDING_ALT = 500
+
+INTERCEPTION_ALT = 3600
+CAS_ALTITUDE = 1000
 
 INTERCEPT_MAX_DISTANCE_FACTOR = 15
+
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[PlaneGroup]
@@ -33,6 +38,39 @@ class AircraftConflictGenerator:
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[1]),
                 )
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_FACTOR[0])
+
+    def _split_to_groups(self, dict: db.PlaneDict, clients: db.PlaneDict = None) -> typing.Collection[typing.Tuple[FlyingType, int, int]]:
+        for flying_type, count in dict.items():
+            if clients:
+                client_count = clients.get(flying_type, 0)
+            else:
+                client_count = 0
+
+            while count > 0:
+                group_size = min(count, 4)
+                client_size = max(min(client_count, 4), 0)
+
+                yield (flying_type, group_size, client_size)
+                count -= group_size
+                client_count -= client_size
+
+    def _setup_group(self, group: FlyingGroup, for_task: Task):
+        did_load_loadout = False
+        unit_type = group.units[0].unit_type
+        if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
+            if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task])
+                did_load_loadout = True
+            elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"])
+                did_load_loadout = True
+
+        if not did_load_loadout:
+            group.load_task_default_loadout(for_task)
+
+        if unit_type in db.PLANE_LIVERY_OVERRIDES:
+            for unit_instance in group.units:
+                unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None) -> FlyingGroup:
         assert count > 0
@@ -98,7 +136,10 @@ class AircraftConflictGenerator:
         elif isinstance(at, ShipGroup):
             return self._generate_at_carrier(name, side, unit_type, count, client_count, at)
         elif issubclass(at, Airport):
-            return self._generate_at_airport(name, side, unit_type, count, client_count, at)
+            try:
+                return self._generate_at_airport(name, side, unit_type, count, client_count, at)
+            except NoParkingSlotError:
+                return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
         else:
             assert False
 
@@ -106,41 +147,42 @@ class AircraftConflictGenerator:
         if len(self.escort_targets) == 0:
             return
 
-        for type, count in units.items():
+        for flying_type, count, client_count in self._split_to_groups(units, clients):
             group = self._generate_group(
                 name=namegen.next_escort_group_name(),
                 side=side,
-                unit_type=type,
+                unit_type=flying_type,
                 count=count,
-                client_count=clients.get(type, 0),
+                client_count=client_count,
                 at=at)
 
             group.task = Escort.name
-            group.load_task_default_loadout(dcs.task.Escort)
 
             heading = group.position.heading_between_point(self.conflict.position)
             position = group.position  # type: Point
-            wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE)
+            wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             for group in self.escort_targets:
                 wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
 
+            self._setup_group(group, dcs.task.Escort)
+
     def generate_cas(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
 
-        for type, count in attackers.items():
+        for flying_type, count, client_count in self._split_to_groups(attackers, clients):
             group = self._generate_group(
                     name=namegen.next_cas_group_name(),
                     side=self.conflict.attackers_side,
-                    unit_type=type,
+                    unit_type=flying_type,
                     count=count,
-                    client_count=clients.get(type, 0),
+                    client_count=client_count,
                     at=at and at or self._group_point(self.conflict.air_attackers_location))
             self.escort_targets.append(group)
 
-            group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
+            group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             group.task = CAS.name
-            group.load_task_default_loadout(CAS)
+            self._setup_group(group, CAS)
 
     def generate_cas_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         self._generate_escort(
@@ -157,54 +199,55 @@ class AircraftConflictGenerator:
             at=at and at or self._group_point(self.conflict.air_defenders_location))
 
     def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for type, count in defenders.items():
+        for flying_type, count, client_count in self._split_to_groups(defenders, clients):
             group = self._generate_group(
                 name=namegen.next_intercept_group_name(),
                 side=self.conflict.defenders_side,
-                unit_type=type,
+                unit_type=flying_type,
                 count=count,
-                client_count=clients.get(type, 0),
+                client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_defenders_location))
 
             group.task = FighterSweep.name
-            group.load_task_default_loadout(FighterSweep)
-            wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
+            wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             wayp.tasks.append(dcs.task.EngageTargets(max_distance=self.conflict.size * INTERCEPT_MAX_DISTANCE_FACTOR))
             wayp.tasks.append(dcs.task.OrbitAction())
+            self._setup_group(group, FighterSweep)
 
     def generate_transport(self, transport: db.PlaneDict, destination: Airport):
         assert len(self.escort_targets) == 0
 
-        for type, count in transport.items():
+        for flying_type, count, client_count in self._split_to_groups(transport):
             group = self._generate_group(
                 name=namegen.next_transport_group_name(),
                 side=self.conflict.defenders_side,
-                unit_type=type,
+                unit_type=flying_type,
                 count=count,
-                client_count=0,
+                client_count=client_count,
                 at=self._group_point(self.conflict.air_defenders_location))
 
             group.task = Transport.name
 
             self.escort_targets.append(group)
+            group.add_waypoint(destination.position.random_point_within(0, 0), TRANSPORT_LANDING_ALT)
             group.land_at(destination)
 
     def generate_interception(self, interceptors: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for type, count in interceptors.items():
+        for flying_type, count, client_count in self._split_to_groups(interceptors, clients):
             group = self._generate_group(
                 name=namegen.next_intercept_group_name(),
                 side=self.conflict.attackers_side,
-                unit_type=type,
+                unit_type=flying_type,
                 count=count,
-                client_count=clients.get(type, 0),
+                client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_attackers_location))
 
             group.task = FighterSweep.name
-            group.load_task_default_loadout(FighterSweep)
 
             heading = group.position.heading_between_point(self.conflict.position)
-            initial_wayp = group.add_waypoint(group.position.point_from_heading(heading, WORKAROUND_WAYP_DIST), INTERCEPT_ALT)
+            initial_wayp = group.add_waypoint(group.position.point_from_heading(heading, WORKAROUND_WAYP_DIST), INTERCEPTION_ALT, INTERCEPTION_AIRSPEED)
             initial_wayp.tasks.append(EngageTargets())
 
             wayp = group.add_waypoint(self.conflict.position, 0)
             wayp.tasks.append(EngageTargets())
+            self._setup_group(group, FighterSweep)

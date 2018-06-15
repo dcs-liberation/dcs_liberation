@@ -62,10 +62,8 @@ class ControlPoint:
         return closest_radial
 
     def conflict_attack(self, from_cp, attacker: Country, defender: Country) -> Conflict:
-        cp = from_cp  # type: ControlPoint
-
-        attack_radial = self.find_radial(cp.position.heading_between_point(self.position))
-        defense_radial = self.find_radial(self.position.heading_between_point(cp.position), ignored_radial=attack_radial)
+        attack_radial = self.find_radial(self.position.heading_between_point(from_cp.position))
+        defense_radial = self.find_radial(from_cp.position.heading_between_point(self.position), ignored_radial=attack_radial)
 
         return Conflict.capture_conflict(attacker=attacker,
                                          attack_heading=attack_radial,

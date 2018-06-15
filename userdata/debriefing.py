@@ -72,6 +72,11 @@ class Debriefing:
             enemy.name: calculate_losses(enemy_units, self.alive_units.get(enemy.id, {})),
         }
 
+        self.alive_units = {
+            player.name: self.alive_units.get(player.id, {}),
+            enemy.name: self.alive_units.get(enemy.id, {}),
+        }
+
 def debriefing_directory_location() -> str:
     return "build/debriefing"
 

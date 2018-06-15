@@ -17,6 +17,11 @@ class EventMenu(Menu):
         self.armor_scramble_entries = {}
         self.aircraft_client_entries = {}
 
+        if self.event.attacker_name == self.game.player:
+            self.base = self.event.from_cp.base
+        else:
+            self.base = self.event.to_cp.base
+
         self.frame = self.window.right_pane
 
     def display(self):
@@ -55,28 +60,22 @@ class EventMenu(Menu):
 
             row += 1
 
-        base = None  # type: Base
-        if self.event.attacker_name == self.game.player:
-            base = self.event.from_cp.base
-        else:
-            base = self.event.to_cp.base
-
         label("Aircraft")
         label("Amount", row, 1)
         label("Client slots", row, 2)
         row += 1
 
-        for unit_type, count in base.aircraft.items():
+        for unit_type, count in self.base.aircraft.items():
             scrable_row(unit_type, count)
 
-        if not base.total_planes:
+        if not self.base.total_planes:
             label("None")
 
         label("Armor")
-        for unit_type, count in base.armor.items():
+        for unit_type, count in self.base.armor.items():
             scramble_armor_row(unit_type, count)
 
-        if not base.total_armor:
+        if not self.base.total_armor:
             label("None")
 
         Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
@@ -89,6 +88,7 @@ class EventMenu(Menu):
         for unit_type, field in self.aircraft_scramble_entries.items():
             value = field.get()
             if value and int(value) > 0:
+                #amount = min(int(value), self.base.aircraft[unit_type])
                 amount = int(value)
                 task = db.unit_task(unit_type)
 

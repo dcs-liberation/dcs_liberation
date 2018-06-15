@@ -18,13 +18,14 @@ def _opposite_heading(h):
     return h+180
 
 GROUND_DISTANCE_FACTOR = 2
-AIR_DISTANCE = 8000
+AIR_DISTANCE = 32000
 
 INTERCEPT_ATTACKERS_HEADING = -45, 45
 INTERCEPT_DEFENDERS_HEADING = -10, 10
 INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
-INTERCEPT_MAX_DISTANCE = 45000
+INTERCEPT_MAX_DISTANCE = 80000
+INTERCEPT_MIN_DISTANCE = 45000
 
 
 class Conflict:
@@ -62,7 +63,8 @@ class Conflict:
         from theater.conflicttheater import ALL_RADIALS
 
         heading = from_cp.position.heading_between_point(to_cp.position)
-        distance = min(from_cp.position.distance_to_point(to_cp.position) / 2, INTERCEPT_MAX_DISTANCE)
+        raw_distance = from_cp.position.distance_to_point(to_cp.position) / 2
+        distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
         position = from_cp.position.point_from_heading(heading, distance)
 
         instance = self()
@@ -74,7 +76,7 @@ class Conflict:
         instance.radials = ALL_RADIALS
 
         instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, INTERCEPT_ATTACKERS_DISTANCE)
-        instance.air_defenders_location = instance.position.point_from_heading(random.randint(*INTERCEPT_DEFENDERS_HEADING) + heading, INTERCEPT_DEFENDERS_DISTANCE)
+        instance.air_defenders_location = instance.position
 
         return instance
 

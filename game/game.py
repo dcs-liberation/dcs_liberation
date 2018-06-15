@@ -83,12 +83,6 @@ class Game:
                 enemy_interception = True
                 break
 
-        for to_cp in self.theater.player_points():
-            if enemy_interception:
-                break
-
-            if to_cp.is_global:
-                continue
 
             if to_cp in self.theater.conflicts(False):
                 continue

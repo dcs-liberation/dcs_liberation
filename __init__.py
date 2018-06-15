@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import sys
-
 import theater.caucasus
 import ui.window
 import ui.mainmenu

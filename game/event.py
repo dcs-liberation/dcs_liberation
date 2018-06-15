@@ -49,10 +49,10 @@ class Event:
 
 class GroundInterceptEvent(Event):
     BONUS_BASE = 3
-    TARGET_AMOUNT_FACTOR = 3
-    TARGET_VARIETY = 3
+    TARGET_AMOUNT_FACTOR = 2
+    TARGET_VARIETY = 2
     STRENGTH_INFLUENCE = 0.1
-    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.7
+    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.5
 
     targets = None  # type: db.ArmorDict
 

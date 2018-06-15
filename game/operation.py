@@ -37,6 +37,7 @@ class Operation:
         self.defender_clients = defender_clients
         self.from_cp = from_cp
         self.to_cp = to_cp
+        self.is_quick = False
 
     def initialize(self, mission: Mission, conflict: Conflict):
         self.mission = mission
@@ -46,13 +47,15 @@ class Operation:
         self.airgen = AircraftConflictGenerator(mission, conflict)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
-        self.envgen = EnvironmentSettingsGenerator(mission, self.game)
+        self.envgen = EnvironmentSettingsGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
         self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_name, enemy_name)
 
     def prepare(self, is_quick: bool):
+        self.is_quick = is_quick
+
         if is_quick:
             self.attackers_starting_position = None
             self.defenders_starting_position = None
@@ -62,7 +65,7 @@ class Operation:
 
     def generate(self):
         self.extra_aagen.generate()
-        self.envgen.generate()
+        self.envgen.generate(self.is_quick)
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
@@ -103,7 +106,6 @@ class CaptureOperation(Operation):
                                                             mission.country(self.defender_name)))
 
     def generate(self):
-        self.envgen.generate()
         self.armorgen.generate(self.attack, self.defense)
         self.aagen.generate(self.aa)
 
@@ -111,6 +113,8 @@ class CaptureOperation(Operation):
 
         self.airgen.generate_cas(self.cas, clients=self.attacker_clients, at=self.attackers_starting_position)
         self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
+
+        super(CaptureOperation, self).generate()
 
 
 class InterceptOperation(Operation):
@@ -144,16 +148,21 @@ class InterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        super(InterceptOperation, self).generate()
         self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
 
         if self.from_cp.is_global:
-            ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
-                                         at=self.from_cp.at)
-            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=ship)
+            starting_ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
+                                                  at=self.from_cp.at)
+
+            if self.is_quick:
+                starting_ship = None
+
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=starting_ship)
         else:
             self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
+
+        super(InterceptOperation, self).generate()
 
 
 class GroundInterceptOperation(Operation):
@@ -180,6 +189,7 @@ class GroundInterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        super(GroundInterceptOperation, self).generate()
         self.airgen.generate_cas(self.strikegroup, clients=self.attacker_clients, at=self.attackers_starting_position)
         self.armorgen.generate({}, self.target)
+
+        super(GroundInterceptOperation, self).generate()
