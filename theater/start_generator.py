@@ -1,8 +1,8 @@
 from theater.base import *
 from theater.conflicttheater import *
 
-UNIT_VARIETY = 2
-UNIT_AMOUNT_FACTOR = 0.25
+UNIT_VARIETY = 3
+UNIT_AMOUNT_FACTOR = 16
 
 
 def generate_initial(theater: ConflictTheater, enemy: str):
@@ -11,19 +11,14 @@ def generate_initial(theater: ConflictTheater, enemy: str):
             continue
 
         for task in [CAP, FighterSweep, CAS, AirDefence]:
-            suitable_unittypes = db.find_unittype(task, enemy)
-            suitable_unittypes.sort(key=lambda x: db.PRICES[x], reverse=True)
+            assert cp.importance <= IMPORTANCE_HIGH, "invalid importance {}".format(cp.importance)
+            assert cp.importance >= IMPORTANCE_LOW, "invalid importance {}".format(cp.importance)
 
-            importance = cp.importance * 10
-            reversed_importance = IMPORTANCE_HIGH * 10 - cp.importance * 10
-            units_idx_start = int(reversed_importance)
-            units_idx_end = units_idx_start + UNIT_VARIETY
+            importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
+            variety = int(UNIT_VARIETY + UNIT_VARIETY * importance_factor / 2)
+            unittypes = db.choose_units(task, importance_factor, variety, enemy)
 
-            range_start = min(len(suitable_unittypes)-1, units_idx_start)
-            range_end = min(len(suitable_unittypes), units_idx_end)
-            unittypes = suitable_unittypes[range_start:range_end]
-
-            typecount = max(math.floor(importance * UNIT_AMOUNT_FACTOR), 1)
-            #print("{} - {}-{} {}, {}".format(cp.name, units_idx_start, units_idx_end, unittypes, typecount))
-            units = {unittype: typecount for unittype in unittypes}
-            cp.base.commision_units(units)
+            count = max(int(importance_factor * UNIT_AMOUNT_FACTOR), 1)
+            count_per_type = max(int(float(count) / len(unittypes)), 1)
+            for unit_type in unittypes:
+                cp.base.commision_units({unit_type: count_per_type})

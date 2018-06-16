@@ -1,4 +1,5 @@
 import typing
+import re
 
 from dcs.mapping import *
 from dcs.country import *
@@ -17,7 +18,8 @@ class ControlPoint:
     def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int):
         import theater.base
 
-        self.name = name.split("-")[0]
+        self.name = " ".join(re.split(r" |-", name)[:2])
+        self.full_name = name
         self.position = position
         self.at = at
 
@@ -30,6 +32,7 @@ class ControlPoint:
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+        assert airport
         return cls(airport.name, airport.position, airport, radials, size, importance)
 
     @classmethod

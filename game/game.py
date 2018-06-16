@@ -9,6 +9,7 @@ COMMISION_LIMITS_FACTORS = {
 }
 
 COMMISION_AMOUNTS_SCALE = 2
+COMMISION_UNIT_VARIETY = 4
 COMMISION_AMOUNTS_FACTORS = {
     CAP: 0.6,
     CAS: 0.3,
@@ -85,7 +86,6 @@ class Game:
                 enemy_interception = True
                 break
 
-
             if to_cp in self.theater.conflicts(False):
                 continue
 
@@ -120,8 +120,10 @@ class Game:
                 break
 
     def _generate_globalinterceptions(self):
+        global_count = len([x for x in self.theater.player_points() if x.is_global])
         for from_cp in [x for x in self.theater.player_points() if x.is_global]:
-            probability = PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE * math.log(len(self.theater.player_points()) + 1, PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG)
+            probability_base = max(PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE / global_count, 1)
+            probability = probability_base * math.log(len(self.theater.player_points()) + 1, PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG)
             if self._roll(probability, from_cp.base.strength):
                 to_cp = random.choice([x for x in self.theater.enemy_points() if x not in self.theater.conflicts()])
                 self.events.append(InterceptEvent(attacker_name=self.player,
@@ -139,8 +141,9 @@ class Game:
                 awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE)
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
-                    unit_type = random.choice(db.find_unittype(for_task, self.enemy))
-                    cp.base.commision_units({unit_type: points_to_spend})
+                    importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
+                    unittypes = db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
+                    cp.base.commision_units({random.choice(unittypes): points_to_spend})
 
     @property
     def budget_reward_amount(self):

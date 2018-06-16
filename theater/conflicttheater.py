@@ -5,6 +5,7 @@ import dcs
 
 from .controlpoint import *
 
+SIZE_TINY = 150
 SIZE_SMALL = 600
 SIZE_REGULAR = 1000
 SIZE_BIG = 2000
@@ -29,6 +30,7 @@ class ConflictTheater:
     terrain = None  # type: dcs.terrain.Terrain
     controlpoints = None  # type: typing.Collection[ControlPoint]
     reference_points = None  # type: typing.Dict
+    overview_image = None  # type: str
 
     def __init__(self):
         self.controlpoints = []

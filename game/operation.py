@@ -58,7 +58,8 @@ class Operation:
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
         self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_name, enemy_name)
 
-    def prepare(self, is_quick: bool):
+    def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
+        self.mission = dcs.Mission(terrain)
         self.is_quick = is_quick
 
         if is_quick:
@@ -66,13 +67,24 @@ class Operation:
             self.defenders_starting_position = None
         else:
             self.attackers_starting_position = self.from_cp.at
-            self.defenders_starting_position = self.to_cp and self.to_cp.at or None
+            self.defenders_starting_position = self.to_cp.at
 
     def generate(self):
-        self.extra_aagen.generate()
-        self.envgen.generate(self.is_quick)
         if self.is_awacs_enabled:
             self.awacsgen.generate()
+
+        self.extra_aagen.generate()
+        self.envgen.generate(self.is_quick)
+
+        for global_cp in self.game.theater.controlpoints:
+            if not global_cp.is_global:
+                continue
+
+            ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
+                                         at=global_cp.at)
+
+            if global_cp == self.from_cp and not self.is_quick:
+                self.attackers_starting_position = ship
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
@@ -103,14 +115,12 @@ class CaptureOperation(Operation):
         self.defense = defense
         self.aa = aa
 
-    def prepare(self, is_quick: bool):
-        super(CaptureOperation, self).prepare(is_quick)
-        mission = dcs.Mission()
-
-        self.initialize(mission=mission,
+    def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
+        super(CaptureOperation, self).prepare(terrain, is_quick)
+        self.initialize(mission=self.mission,
                         conflict=self.to_cp.conflict_attack(self.from_cp,
-                                                            mission.country(self.attacker_name),
-                                                            mission.country(self.defender_name)))
+                                                            self.mission.country(self.attacker_name),
+                                                            self.mission.country(self.defender_name)))
 
     def generate(self):
         self.armorgen.generate(self.attack, self.defense)
@@ -140,18 +150,16 @@ class InterceptOperation(Operation):
         self.airdefense = airdefense
         self.interceptors = interceptors
 
-    def prepare(self, is_quick: bool):
-        super(InterceptOperation, self).prepare(is_quick)
-        mission = dcs.Mission()
-
+    def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
+        super(InterceptOperation, self).prepare(terrain, is_quick)
         conflict = Conflict.intercept_conflict(
-            attacker=mission.country(self.attacker_name),
-            defender=mission.country(self.defender_name),
+            attacker=self.mission.country(self.attacker_name),
+            defender=self.mission.country(self.defender_name),
             from_cp=self.from_cp,
             to_cp=self.to_cp
         )
 
-        self.initialize(mission=mission,
+        self.initialize(mission=self.mission,
                         conflict=conflict)
 
     def generate(self):
@@ -159,40 +167,30 @@ class InterceptOperation(Operation):
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
 
         if self.from_cp.is_global:
-            starting_ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
-                                                  at=self.from_cp.at)
-
-            if self.is_quick:
-                starting_ship = None
-
-            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=starting_ship)
+            super(InterceptOperation, self).generate()
+            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
         else:
             self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
-
-        super(InterceptOperation, self).generate()
+            super(InterceptOperation, self).generate()
 
 
 class GroundInterceptOperation(Operation):
     def setup(self,
-              position: Point,
               target: db.ArmorDict,
               strikegroup: db.PlaneDict):
-        self.position = position
         self.strikegroup = strikegroup
         self.target = target
 
-    def prepare(self, is_quick: bool):
-        super(GroundInterceptOperation, self).prepare(is_quick)
-        mission = dcs.Mission()
+    def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
+        super(GroundInterceptOperation, self).prepare(terrain, is_quick)
         conflict = Conflict.ground_intercept_conflict(
-            attacker=mission.country(self.attacker_name),
-            defender=mission.country(self.defender_name),
-            position=self.position,
-            heading=randint(0, 360),
-            radials=ALL_RADIALS
+            attacker=self.mission.country(self.attacker_name),
+            defender=self.mission.country(self.defender_name),
+            heading=self.to_cp.position.heading_between_point(self.from_cp.position),
+            cp=self.to_cp
         )
 
-        self.initialize(mission=mission,
+        self.initialize(mission=self.mission,
                         conflict=conflict)
 
     def generate(self):

@@ -14,10 +14,8 @@ from dcs.point import *
 from dcs.task import *
 from dcs.country import *
 
-def _opposite_heading(h):
-    return h+180
-
 GROUND_DISTANCE_FACTOR = 2
+GROUNDINTERCEPT_DISTANCE_FACTOR = 6
 AIR_DISTANCE = 32000
 
 INTERCEPT_ATTACKERS_HEADING = -45, 45
@@ -26,6 +24,10 @@ INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
 INTERCEPT_MAX_DISTANCE = 80000
 INTERCEPT_MIN_DISTANCE = 45000
+
+
+def _opposite_heading(h):
+    return h+180
 
 
 class Conflict:
@@ -81,18 +83,18 @@ class Conflict:
         return instance
 
     @classmethod
-    def ground_intercept_conflict(self, attacker: Country, defender: Country, position: Point, heading: int, radials: typing.List[int]):
+    def ground_intercept_conflict(self, attacker: Country, defender: Country, heading: int, cp):
         from theater.conflicttheater import SIZE_SMALL
 
         instance = self()
         instance.attackers_side = attacker
         instance.defenders_side = defender
 
-        instance.position = position
-        instance.size = SIZE_SMALL
-        instance.radials = radials
+        instance.position = cp.position
+        instance.size = cp.size
+        instance.radials = cp.radials
 
         instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE)
-        instance.ground_defenders_location = instance.position
+        instance.ground_defenders_location = instance.position.point_from_heading(random.choice(cp.radials), instance.size * GROUNDINTERCEPT_DISTANCE_FACTOR)
 
         return instance

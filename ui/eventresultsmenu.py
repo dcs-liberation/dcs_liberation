@@ -21,6 +21,9 @@ class EventResultsMenu(Menu):
         self.window.clear_right_pane()
 
         if not self.finished:
+            """
+            For debugging purposes
+            
             Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1)).grid()
             Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1)).grid(row=1, column=1)
 
@@ -29,6 +32,7 @@ class EventResultsMenu(Menu):
 
             Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0)).grid(row=3, )
             Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0)).grid(row=3, column=1)
+            """
 
             Label(self.frame, text="Play the mission and save debriefing to {}".format(debriefing_directory_location())).grid(row=0, column=0)
         else:

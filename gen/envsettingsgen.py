@@ -6,6 +6,7 @@ from dcs.mission import Mission
 from dcs.triggers import *
 from dcs.condition import *
 from dcs.action import *
+from dcs.task import *
 
 from theater.weatherforecast import WeatherForecast
 from theater.conflicttheater import Conflict
@@ -14,18 +15,17 @@ ACTIVATION_TRIGGER_SIZE = 80000
 ACTIVATION_TRIGGER_MIN_DISTANCE = 5000
 
 RANDOM_TIME = {
-    "night": 0,
-    "dusk": 5,
-    "dawn": 35,
-    "noon": 75,
+    "night": 5,
+    "dusk": 30,
+    "dawn": 30,
     "day": 100,
 }
 
 RANDOM_WEATHER = {
-    0: 0,  # thunderstorm
-    1: 5,  # heavy rain
-    2: 20,  # rain
-    3: 40,  # random dynamic
+    0: 5,  # thunderstorm
+    1: 20,  # heavy rain
+    2: 30,  # rain
+    3: 100,  # random dynamic
 }
 
 
@@ -36,17 +36,7 @@ class EnvironmentSettingsGenerator:
         self.game = game
 
     def _gen_random_time(self):
-        time_roll = random.randint(0, 100)
-        time_period = None
-        for k, v in RANDOM_TIME.items():
-            if v >= time_roll:
-                time_period = k
-                break
-
-        self.mission.random_daytime(time_period)
-
-    def _gen_random_time_2(self):
-        start_time = datetime.now(self.mission.start_time.tzinfo).date()
+        start_time = datetime.today()
         daytime_map = {
             "day": timedelta(hours=random.randrange(9, 18)),
             "night": timedelta(hours=random.randrange(-3, 6)),
@@ -54,24 +44,24 @@ class EnvironmentSettingsGenerator:
             "dawn": timedelta(hours=random.randrange(6, 9)),
         }
 
-        time_roll = random.randint(0, 100)
         time_period = None
         for k, v in RANDOM_TIME.items():
-            if v >= time_roll:
+            if random.randint(0, 100) <= v:
                 time_period = k
                 break
 
+        print("generated {}".format(time_period))
         start_time += daytime_map[time_period]
         self.mission.start_time = start_time
 
     def _gen_random_weather(self):
-        weather_roll = random.randint(0, 100)
         weather_type = None
-        for k, v in RANDOM_TIME.items():
-            if v >= weather_roll:
+        for k, v in RANDOM_WEATHER.items():
+            if random.randint(0, 100) <= v:
                 weather_type = k
                 break
 
+        print("generated weather {}".format(weather_type))
         if weather_type == 0:
             self.mission.weather.random_thunderstorm()
         elif weather_type == 1:
@@ -116,9 +106,10 @@ class EnvironmentSettingsGenerator:
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
-        self.mission.coalition[player_coalition].bullseye = self.conflict.position
+        self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,
+                                                             "y": self.conflict.position.y}
 
-        self._gen_random_time_2()
+        self._gen_random_time()
         self._gen_random_weather()
         self._set_allegiances(player_coalition, enemy_coalition)
 

@@ -6,6 +6,11 @@ from .base import *
 
 
 class NevadaTheater(ConflictTheater):
+    terrain = dcs.terrain.Nevada()
+    overview_image = "nevada.gif"
+    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45, -360),
+                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440, 80), }
+
     mina = ControlPoint.from_airport(nevada.Mina_Airport_3Q0, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah = ControlPoint.from_airport(nevada.Tonopah_Airport, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah_test_range = ControlPoint.from_airport(nevada.Tonopah_Test_Range_Airfield, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)

@@ -8,6 +8,9 @@ from dcs.unittype import *
 from dcs.task import *
 from dcs.terrain.terrain import NoParkingSlotError
 
+AWACS_DISTANCE = 150000
+AWACS_ALT = 10000
+
 
 class AWACSConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, game):
@@ -22,5 +25,6 @@ class AWACSConflictGenerator:
             country=self.conflict.attackers_side,
             name=namegen.next_awacs_group_name(),
             plane_type=plane,
+            altitude=AWACS_ALT,
             airport=None,
-            position=self.conflict.position)
+            position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE))

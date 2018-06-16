@@ -26,13 +26,13 @@ class Event:
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
-        self.operation.prepare(is_quick=False)
+        self.operation.prepare(self.game.theater.terrain, is_quick=False)
         self.operation.generate()
         self.operation.mission.save("build/nextturn.miz")
 
     def generate_quick(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
-        self.operation.prepare(is_quick=True)
+        self.operation.prepare(self.game.theater.terrain, is_quick=True)
         self.operation.generate()
         self.operation.mission.save('build/nextturn_quick.miz')
 
@@ -88,7 +88,7 @@ class GroundInterceptEvent(Event):
         else:
             pass
 
-    def player_attacking(self, position: Point, strikegroup: db.PlaneDict, clients: db.PlaneDict):
+    def player_attacking(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
         suitable_unittypes = db.find_unittype(CAP, self.defender_name)
         random.shuffle(suitable_unittypes)
         unittypes = suitable_unittypes[:self.TARGET_VARIETY]
@@ -100,9 +100,9 @@ class GroundInterceptEvent(Event):
                                       defender_name=self.defender_name,
                                       attacker_clients=clients,
                                       defender_clients={},
-                                      from_cp=self.from_cp)
-        op.setup(position=position,
-                 target=self.targets,
+                                      from_cp=self.from_cp,
+                                      to_cp=self.to_cp)
+        op.setup(target=self.targets,
                  strikegroup=strikegroup)
 
         self.operation = op

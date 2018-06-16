@@ -143,7 +143,7 @@ class EventMenu(Menu):
                                    clients=scrambled_clients)
         elif type(self.event) is GroundInterceptEvent:
             e = self.event  # type: GroundInterceptEvent
-            e.player_attacking(e.to_cp.position.random_point_within(30000), strikegroup=scrambled_aircraft, clients=scrambled_clients)
+            e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()
