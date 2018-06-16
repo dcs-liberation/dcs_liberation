@@ -7,8 +7,9 @@ from gen.aircraft import *
 from gen.aaa import *
 from gen.shipgen import *
 from gen.conflictgen import *
-from gen.envsettingsgen import *
+from gen.settingsgen import *
 from gen.awacsgen import *
+from gen.visualgen import *
 
 
 class Operation:
@@ -21,8 +22,9 @@ class Operation:
     aagen = None  # type: AAConflictGenerator
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
-    envgen = None  # type: EnvironmentSettingsGenerator
+    envgen = None  # type: SettingsGenerator
     awacsgen = None  # type: AWACSConflictGenerator
+    visualgen = None  # type: VisualGenerator
 
     is_awacs_enabled = False
 
@@ -52,7 +54,8 @@ class Operation:
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
         self.awacsgen = AWACSConflictGenerator(mission, conflict, self.game)
-        self.envgen = EnvironmentSettingsGenerator(mission, conflict, self.game)
+        self.envgen = SettingsGenerator(mission, conflict, self.game)
+        self.visualgen = VisualGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
@@ -70,6 +73,8 @@ class Operation:
             self.defenders_starting_position = self.to_cp.at
 
     def generate(self):
+        self.visualgen.generate()
+
         if self.is_awacs_enabled:
             self.awacsgen.generate()
 
@@ -117,6 +122,11 @@ class CaptureOperation(Operation):
 
     def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
         super(CaptureOperation, self).prepare(terrain, is_quick)
+
+        self.defenders_starting_position = None
+        if self.game.player == self.defender_name:
+            self.attackers_starting_position = None
+
         self.initialize(mission=self.mission,
                         conflict=self.to_cp.conflict_attack(self.from_cp,
                                                             self.mission.country(self.attacker_name),
@@ -131,6 +141,7 @@ class CaptureOperation(Operation):
         self.airgen.generate_cas(self.cas, clients=self.attacker_clients, at=self.attackers_starting_position)
         self.airgen.generate_cas_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
 
+        self.visualgen.generate_target_smokes(self.to_cp)
         super(CaptureOperation, self).generate()
 
 
@@ -152,6 +163,8 @@ class InterceptOperation(Operation):
 
     def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
         super(InterceptOperation, self).prepare(terrain, is_quick)
+        self.defenders_starting_position = None
+
         conflict = Conflict.intercept_conflict(
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),

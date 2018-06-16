@@ -1,6 +1,7 @@
 from dcs.terrain import caucasus
 from dcs import mapping
 
+from .landmap import *
 from .conflicttheater import *
 from .base import *
 
@@ -10,6 +11,13 @@ class CaucasusTheater(ConflictTheater):
     overview_image = "caumap.gif"
     reference_points = {(-317948.32727306, 635639.37385346): (282.5, 319),
                         (-355692.3067714, 617269.96285781): (269, 352), }
+    landmap_poly = load_poly("resources\\caulandmap.p")
+    daytime_map = {
+        "dawn": (6, 9),
+        "day": (9, 18),
+        "dusk": (18, 21),
+        "night": (0, 5),
+    }
 
     soganlug = ControlPoint.from_airport(caucasus.Soganlug, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
@@ -32,7 +40,7 @@ class CaucasusTheater(ConflictTheater):
     mineralnye = ControlPoint.from_airport(caucasus.Mineralnye_Vody, ALL_RADIALS, SIZE_BIG, IMPORTANCE_MEDIUM)
     mozdok = ControlPoint.from_airport(caucasus.Mozdok, ALL_RADIALS, SIZE_BIG, IMPORTANCE_MEDIUM)
 
-    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-355810.6875, 516399.1875))
+    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875))
 
     def __init__(self):
         super(CaucasusTheater, self).__init__()
@@ -62,4 +70,10 @@ class CaucasusTheater(ConflictTheater):
 
         self.carrier_1.captured = True
         self.soganlug.captured = True
+
+        self.sukhumi.captured = True
+        self.gudauta.base.strength = 0.5
+
+        self.kobuleti.captured = True
+        self.batumi.base.strength = 0.15
 

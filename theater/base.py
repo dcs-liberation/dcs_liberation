@@ -127,7 +127,6 @@ class Base:
 
     def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
         for unit_type, count in units_lost.items():
-            target_array = None
             if unit_type in self.aircraft:
                 target_array = self.aircraft
             elif unit_type in self.armor:
@@ -164,3 +163,7 @@ class Base:
 
     def assemble_defense(self, factor: float) -> typing.Dict[Armor, int]:
         return self._find_best_armor(CAP, math.ceil(self.total_armor * factor * self.strength))
+
+    def assemble_aa(self) -> typing.Dict[AirDefence, int]:
+        count = int(self.total_aa * (self.strength > 0.2 and self.strength or 0))
+        return self._find_best_unit(self.aa, AirDefence, count)

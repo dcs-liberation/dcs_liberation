@@ -115,16 +115,31 @@ UNIT_BY_TASK = {
     CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [
         AirDefence.AAA_Vulcan_M163,
+        AirDefence.AAA_Vulcan_M163,
+        AirDefence.AAA_Vulcan_M163,
+        AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Patriot_ICC,
 
         AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.SAM_SA_18_Igla_MANPADS,
         AirDefence.SAM_SA_18_Igla_MANPADS,
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
     ],
     Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
 }
+
+SAM_BAN = [
+    AirDefence.SAM_Avenger_M1097,
+    AirDefence.SAM_Patriot_ICC,
+
+    AirDefence.SAM_SA_19_Tunguska_2S6,
+    AirDefence.SAM_SA_8_Osa_9A33,
+]
 
 UNIT_BY_COUNTRY = {
     "Russia": [
@@ -256,7 +271,7 @@ def _validate_db():
     # check unit by task uniquity
     total_set = set()
     for t, unit_collection in UNIT_BY_TASK.items():
-        for unit_type in unit_collection:
+        for unit_type in set(unit_collection):
             assert unit_type not in total_set, "{} is duplicate".format(unit_type)
             total_set.add(unit_type)
 
@@ -271,5 +286,6 @@ def _validate_db():
     # check prices
     for unit_type in total_set:
         assert unit_type in PRICES, "{} not in prices".format(unit_type)
+
 
 _validate_db()

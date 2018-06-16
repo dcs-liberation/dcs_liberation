@@ -30,9 +30,9 @@ class EventMenu(Menu):
         self.window.clear_right_pane()
         row = 0
 
-        def label(text, _row=None, _column=None):
+        def label(text, _row=None, _column=None, sticky=None):
             nonlocal row
-            Label(self.frame, text=text).grid(row=_row and _row or row, column=_column and _column or 0)
+            Label(self.frame, text=text).grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
 
             if _row is None:
                 row += 1
@@ -62,7 +62,12 @@ class EventMenu(Menu):
 
             row += 1
 
-        Checkbutton(self.frame, text="AWACS", var=self.awacs).grid(row=row, column=2)
+        Button(self.frame, text="Commit", command=self.start).grid(column=1, row=row, sticky=E)
+        Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row, sticky=E)
+
+        awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
+        Checkbutton(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), var=self.awacs, state=awacs_enabled).grid(row=row, column=0, sticky=W)
+
         row += 1
 
         label("Aircraft")
@@ -76,17 +81,14 @@ class EventMenu(Menu):
             scrable_row(unit_type, count)
 
         if not self.base.total_planes:
-            label("None")
+            label("None", sticky=W)
 
         label("Armor")
         for unit_type, count in self.base.armor.items():
             scramble_armor_row(unit_type, count)
 
         if not self.base.total_armor:
-            label("None")
-
-        Button(self.frame, text="Commit", command=self.start).grid(column=0, row=row)
-        Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)
+            label("None", sticky=W)
 
     def start(self):
         if self.awacs.get() == 1:

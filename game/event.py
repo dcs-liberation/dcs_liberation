@@ -258,7 +258,7 @@ class CaptureEvent(Event):
                  attack=armor,
                  intercept=interceptors,
                  defense=self.to_cp.base.armor,
-                 aa=self.to_cp.base.aa)
+                 aa=self.to_cp.base.assemble_aa())
 
         self.operation = op
 

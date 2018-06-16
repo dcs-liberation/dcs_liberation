@@ -10,6 +10,12 @@ class NevadaTheater(ConflictTheater):
     overview_image = "nevada.gif"
     reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45, -360),
                         (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440, 80), }
+    daytime_map = {
+        "dawn": (4, 6),
+        "day": (6, 17),
+        "dusk": (17, 19),
+        "night": (0, 5),
+    }
 
     mina = ControlPoint.from_airport(nevada.Mina_Airport_3Q0, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah = ControlPoint.from_airport(nevada.Tonopah_Airport, ALL_RADIALS, SIZE_SMALL, IMPORTANCE_LOW)
@@ -45,3 +51,5 @@ class NevadaTheater(ConflictTheater):
         self.add_controlpoint(self.laughlin, connected_to=[self.jean, self.las_vegas])
 
         self.mina.captured = True
+        self.pahute_mesa.captured = True
+        self.groom_lake.captured = True

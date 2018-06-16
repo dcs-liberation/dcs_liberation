@@ -3,6 +3,7 @@ import itertools
 
 import dcs
 
+from .landmap import ray_tracing
 from .controlpoint import *
 
 SIZE_TINY = 150
@@ -31,6 +32,8 @@ class ConflictTheater:
     controlpoints = None  # type: typing.Collection[ControlPoint]
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str
+    landmap_poly = None
+    daytime_map = None  # type: typing.Dict[str, typing.Tuple[int, int]]
 
     def __init__(self):
         self.controlpoints = []
@@ -40,6 +43,15 @@ class ConflictTheater:
             point.connect(to=connected_point)
 
         self.controlpoints.append(point)
+
+    def is_on_land(self, point: Point) -> bool:
+        if not self.landmap_poly:
+            return True
+
+        for poly in self.landmap_poly:
+            return ray_tracing(point.x, point.y, poly)
+
+        return False
 
     def player_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if point.captured]

@@ -2,6 +2,7 @@ import pickle
 
 from ui.basemenu import *
 from ui.overviewcanvas import *
+from ui.configurationmenu import *
 
 from game.game import *
 from userdata import persistency
@@ -41,7 +42,8 @@ class MainMenu(Menu):
             row += 1
             Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
-        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=NE)
+        Button(self.frame, text="Configuration", command=self.configuration_menu).grid(column=0, row=0, sticky=NE)
+        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=N)
         Label(self.frame, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)).grid(column=0, row=0, sticky=NW)
         Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
@@ -58,10 +60,16 @@ class MainMenu(Menu):
         self.game.pass_turn(no_action=True)
         self.display()
 
+    def configuration_menu(self):
+        ConfigurationMenu(self.window, self, self.game).display()
+
     def start_event(self, event) -> typing.Callable:
         return lambda: EventMenu(self.window, self, self.game, event).display()
 
     def go_cp(self, cp: ControlPoint):
+        if not cp.captured:
+            return
+
         if self.basemenu:
             self.basemenu.dismiss()
             self.basemenu = None

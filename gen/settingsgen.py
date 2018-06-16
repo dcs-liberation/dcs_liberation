@@ -1,13 +1,14 @@
 import typing
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from dcs.mission import Mission
 from dcs.triggers import *
 from dcs.condition import *
 from dcs.action import *
-from dcs.task import *
+from dcs.unit import Skill
 
+from game import db
 from theater.weatherforecast import WeatherForecast
 from theater.conflicttheater import Conflict
 
@@ -23,35 +24,27 @@ RANDOM_TIME = {
 
 RANDOM_WEATHER = {
     0: 5,  # thunderstorm
-    1: 20,  # heavy rain
-    2: 30,  # rain
+    1: 10,  # heavy rain
+    2: 20,  # rain
     3: 100,  # random dynamic
 }
 
 
-class EnvironmentSettingsGenerator:
+class SettingsGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.mission = mission
         self.conflict = conflict
         self.game = game
 
     def _gen_random_time(self):
-        start_time = datetime.today()
-        daytime_map = {
-            "day": timedelta(hours=random.randrange(9, 18)),
-            "night": timedelta(hours=random.randrange(-3, 6)),
-            "dusk": timedelta(hours=random.randrange(18, 21)),
-            "dawn": timedelta(hours=random.randrange(6, 9)),
-        }
-
-        time_period = None
+        start_time = datetime.combine(datetime.today(), time())
+        time_range = None
         for k, v in RANDOM_TIME.items():
             if random.randint(0, 100) <= v:
-                time_period = k
+                time_range = self.game.theater.daytime_map[k]
                 break
 
-        print("generated {}".format(time_period))
-        start_time += daytime_map[time_period]
+        start_time += timedelta(hours=random.randint(*time_range))
         self.mission.start_time = start_time
 
     def _gen_random_weather(self):
@@ -102,6 +95,16 @@ class EnvironmentSettingsGenerator:
                 continue
             self.mission.terrain.airport_by_id(cp.at.id).set_coalition(cp.captured and player_coalition or enemy_coalition)
 
+    def _set_skill(self, player_coalition: str, enemy_coalition: str):
+        for coalition_name, coalition in self.mission.coalition.items():
+            skill_level = player_coalition == coalition_name and self.game.player_skill or self.game.enemy_skill
+            for country in coalition.countries.values():
+                for plane_group in country.plane_group:
+                    plane_group.set_skill(Skill(skill_level))
+
+                for vehicle_group in country.vehicle_group:
+                    vehicle_group.set_skill(Skill(skill_level))
+
     def generate(self, is_quick: bool):
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
@@ -111,6 +114,7 @@ class EnvironmentSettingsGenerator:
 
         self._gen_random_time()
         self._gen_random_weather()
+        self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
 
         if not is_quick:

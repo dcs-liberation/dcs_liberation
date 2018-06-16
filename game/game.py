@@ -5,7 +5,7 @@ COMMISION_LIMITS_FACTORS = {
     CAP: 2,
     CAS: 1,
     FighterSweep: 3,
-    AirDefence: 2,
+    AirDefence: 1,
 }
 
 COMMISION_AMOUNTS_SCALE = 2
@@ -39,6 +39,8 @@ class Game:
     budget = PLAYER_BUDGET_INITIAL
     events = None  # type: typing.List[Event]
     pending_transfers = None  # type: typing.Dict[]
+    player_skill = "Good"
+    enemy_skill = "Average"
 
     def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater):
         self.events = []
