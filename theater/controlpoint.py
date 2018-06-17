@@ -68,10 +68,11 @@ class ControlPoint:
         attack_radial = self.find_radial(self.position.heading_between_point(from_cp.position))
         defense_radial = self.find_radial(from_cp.position.heading_between_point(self.position), ignored_radial=attack_radial)
 
+        pos = self.position.point_from_heading(0, 1000)
         return Conflict.capture_conflict(attacker=attacker,
                                          attack_heading=attack_radial,
                                          defender=defender,
                                          defense_heading=defense_radial,
-                                         position=self.position,
+                                         position=pos,
                                          size=self.size,
                                          radials=self.radials)

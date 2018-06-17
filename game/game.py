@@ -19,17 +19,17 @@ COMMISION_AMOUNTS_FACTORS = {
 
 
 ENEMY_INTERCEPT_PROBABILITY_BASE = 8
-ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 3
+ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
 ENEMY_CAPTURE_PROBABILITY_BASE = 4
 
-PLAYER_INTERCEPT_PROBABILITY_BASE = 30
-PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 30
+PLAYER_INTERCEPT_PROBABILITY_BASE = 35
+PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 35
 
-PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 10
+PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 20
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
 PLAYER_BUDGET_INITIAL = 90
-PLAYER_BUDGET_BASE = 30
+PLAYER_BUDGET_BASE = 20
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 AWACS_BUDGET_COST = 4
@@ -60,9 +60,12 @@ class Game:
                                                 to_cp=to_cp,
                                                 game=self))
 
-    def _generate_enemy_caps(self):
+    def _generate_enemy_caps(self, ignored_cps: typing.Collection[ControlPoint] = None):
         for from_cp, to_cp in self.theater.conflicts(False):
             if from_cp.base.total_planes == 0 or from_cp.base.total_armor == 0:
+                continue
+
+            if ignored_cps and to_cp in ignored_cps:
                 continue
 
             if self._roll(ENEMY_CAPTURE_PROBABILITY_BASE, from_cp.base.strength):
@@ -191,7 +194,7 @@ class Game:
     def is_player_attack(self, event: Event):
         return event.attacker_name == self.player
 
-    def pass_turn(self, no_action=False):
+    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
             event.skip()
 
@@ -202,7 +205,7 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()
-        self._generate_enemy_caps()
+        self._generate_enemy_caps(ignored_cps=ignored_cps)
         self._generate_interceptions()
         self._generate_globalinterceptions()
         self._generate_groundinterceptions()

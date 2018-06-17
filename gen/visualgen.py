@@ -52,8 +52,8 @@ FRONT_SMOKE_LENGTH = 80000
 FRONT_SMOKE_SPACING = 600
 FRONT_SMOKE_RANDOM_SPREAD = 1200
 FRONT_SMOKE_TYPE_CHANCES = {
-    5: MassiveSmoke,
-    40: BigSmoke,
+    10: MassiveSmoke,
+    60: BigSmoke,
     100: Smoke,
 }
 
@@ -119,7 +119,6 @@ class VisualGenerator:
                         "",
                         _type=v,
                         position=position)
-
                     break
 
     def generate(self):

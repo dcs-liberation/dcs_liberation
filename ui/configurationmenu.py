@@ -29,4 +29,7 @@ class ConfigurationMenu(Menu):
         OptionMenu(self.frame, self.enemy_skill_var, "Average", "Good", "High", "Excellent").grid(row=1, column=1)
 
         Button(self.frame, text="Back", command=self.dismiss).grid(row=2, column=0, columnspan=1)
+        Button(self.frame, text="Cheat +200m", command=self.cheat_money).grid(row=3, column=0)
 
+    def cheat_money(self):
+        self.game.budget += 200

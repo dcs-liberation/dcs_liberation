@@ -53,7 +53,6 @@ class Event:
 
     def commit(self, debriefing: Debriefing):
         for country, losses in debriefing.destroyed_units.items():
-            cp = None  # type: ControlPoint
             if country == self.attacker_name:
                 cp = self.from_cp
             else:
@@ -69,7 +68,7 @@ class GroundInterceptEvent(Event):
     BONUS_BASE = 3
     TARGET_AMOUNT_FACTOR = 2
     TARGET_VARIETY = 2
-    STRENGTH_INFLUENCE = 0.1
+    STRENGTH_INFLUENCE = 0.3
     SUCCESS_TARGETS_HIT_PERCENTAGE = 0.5
 
     targets = None  # type: db.ArmorDict
@@ -84,7 +83,7 @@ class GroundInterceptEvent(Event):
             if unit in self.targets:
                 destroyed_targets += count
 
-        return (float(destroyed_targets) / float(total_targets)) > self.SUCCESS_TARGETS_HIT_PERCENTAGE
+        return (float(destroyed_targets) / float(total_targets)) >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
 
     def commit(self, debriefing: Debriefing):
         super(GroundInterceptEvent, self).commit(debriefing)
@@ -125,8 +124,8 @@ class GroundInterceptEvent(Event):
 
 class InterceptEvent(Event):
     BONUS_BASE = 5
-    STRENGTH_INFLUENCE = 0.25
-    GLOBAL_STRENGTH_INFLUENCE = 0.05
+    STRENGTH_INFLUENCE = 0.3
+    GLOBAL_STRENGTH_INFLUENCE = 0.3
     AIRDEFENSE_COUNT = 3
 
     transport_unit = None  # type: FlyingType
@@ -148,14 +147,17 @@ class InterceptEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
 
-        if self.is_successfull(debriefing):
-            if self.from_cp.is_global:
-                for cp in self.game.theater.enemy_points():
-                    cp.base.affect_strength(-self.GLOBAL_STRENGTH_INFLUENCE)
+        if self.attacker_name == self.game.player:
+            if self.is_successfull(debriefing):
+                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
-                self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and -1 or 1))
+                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:
-            self.to_cp.base.affect_strength(self.STRENGTH_INFLUENCE * float(self.from_cp.captured and 1 or -1))
+            # enemy attacking
+            if self.is_successfull(debriefing):
+                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+            else:
+                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def skip(self):
         if self.to_cp.captured:

@@ -13,9 +13,9 @@ class PersianGulfTheater(ConflictTheater):
                         (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (389, 22), }
     landmap_poly = load_poly("resources\\gulflandmap.p")
     daytime_map = {
-        "dawn": (5, 7),
-        "day": (7, 17),
-        "dusk": (17, 19),
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
         "night": (0, 5),
     }
 
@@ -31,7 +31,7 @@ class PersianGulfTheater(ConflictTheater):
 
     sirri = ControlPoint.from_airport(persiangulf.Sirri_Island, ALL_RADIALS, SIZE_TINY, IMPORTANCE_MEDIUM)
     abu_musa = ControlPoint.from_airport(persiangulf.Abu_Musa_Island_Airport, ALL_RADIALS, SIZE_TINY, IMPORTANCE_MEDIUM)
-    tunb_island = ControlPoint.from_airport(persiangulf.Tunb_Island_AFB, COAST_EW_N, SIZE_SMALL, IMPORTANCE_HIGH)
+    tunb_island = ControlPoint.from_airport(persiangulf.Tunb_Island_AFB, [0, 270, 330], SIZE_SMALL, IMPORTANCE_HIGH)
     tunb_kochak = ControlPoint.from_airport(persiangulf.Tunb_Kochak, COAST_EW_S, SIZE_TINY, IMPORTANCE_HIGH)
 
     bandar_lengeh = ControlPoint.from_airport(persiangulf.Bandar_Lengeh, COAST_EW_N, SIZE_SMALL, IMPORTANCE_HIGH)
@@ -72,4 +72,17 @@ class PersianGulfTheater(ConflictTheater):
 
         self.east_carrier.captured = True
         self.west_carrier.captured = True
+
         self.al_dhafra.captured = True
+
+        """
+        Mid game: 
+        """
+        
+        self.al_maktoum.captured = True
+        self.al_minhad.captured = True
+        self.dubai.captured = True
+        self.sharjah.captured = True
+        self.fujairah.captured = True
+        self.khasab.captured = True
+        self.sir_abu_nuayr.captured = True

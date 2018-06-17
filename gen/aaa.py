@@ -6,9 +6,10 @@ from .naming import *
 
 from dcs.mission import *
 
-DISTANCE_FACTOR = 4, 5
+DISTANCE_FACTOR = 2, 4
 EXTRA_AA_MIN_DISTANCE = 35000
 EXTRA_AA_POSITION_FROM_CP = 550
+
 
 class AAConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict):

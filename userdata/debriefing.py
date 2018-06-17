@@ -113,5 +113,8 @@ def _poll_new_debriefing_log(snapshot: typing.Dict[str, float], callback: typing
 
 
 def wait_for_debriefing(callback: typing.Callable):
+    if not os.path.exists(debriefing_directory_location()):
+        os.mkdir(debriefing_directory_location())
+
     threading.Thread(target=_poll_new_debriefing_log, args=(_logfiles_snapshot(), callback)).start()
 

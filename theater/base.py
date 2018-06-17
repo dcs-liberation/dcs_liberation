@@ -12,6 +12,7 @@ from dcs.task import *
 PLANES_IN_GROUP = 2
 
 PLANES_SCRAMBLE_MIN = 4
+PLANES_SCRAMBLE_MAX = 8
 PLANES_SCRAMBLE_FACTOR = 0.5
 
 
@@ -151,7 +152,7 @@ class Base:
 
     def scramble_count(self) -> int:
         count = int(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength)
-        return min(max(count, PLANES_SCRAMBLE_MIN), self.total_planes)
+        return min(min(max(count, PLANES_SCRAMBLE_MIN), PLANES_SCRAMBLE_MAX), self.total_planes)
 
     def assemble_count(self):
         return self.total_armor * self.strength

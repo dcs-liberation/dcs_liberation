@@ -7,7 +7,7 @@ UNIT_VARIETY = 3
 UNIT_AMOUNT_FACTOR = 16
 
 COUNT_BY_TASK = {
-    PinpointStrike: 12,
+    PinpointStrike: 24,
     CAP: 16,
     CAS: 8,
     AirDefence: 0.5,

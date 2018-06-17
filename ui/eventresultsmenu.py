@@ -68,7 +68,7 @@ class EventResultsMenu(Menu):
                                              enemy_name=self.game.enemy)
 
         self.game.finish_event(event=self.event, debriefing=debriefing)
-        self.game.pass_turn()
+        self.game.pass_turn(ignored_cps=[self.event.to_cp, ])
 
         self.finished = True
         self.player_losses = debriefing.destroyed_units.get(self.game.player, {})

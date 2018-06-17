@@ -128,10 +128,14 @@ class CaptureOperation(Operation):
         if self.game.player == self.defender_name:
             self.attackers_starting_position = None
 
+        conflict = Conflict.capture_conflict(
+            attacker=self.mission.country(self.attacker_name),
+            defender=self.mission.country(self.defender_name),
+            from_cp=self.from_cp,
+            to_cp=self.to_cp
+        )
         self.initialize(mission=self.mission,
-                        conflict=self.to_cp.conflict_attack(self.from_cp,
-                                                            self.mission.country(self.attacker_name),
-                                                            self.mission.country(self.defender_name)))
+                        conflict=conflict)
 
     def generate(self):
         self.armorgen.generate(self.attack, self.defense)
@@ -203,7 +207,8 @@ class GroundInterceptOperation(Operation):
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
             heading=self.to_cp.position.heading_between_point(self.from_cp.position),
-            cp=self.to_cp
+            from_cp=self.from_cp,
+            to_cp=self.to_cp
         )
 
         self.initialize(mission=self.mission,
