@@ -111,7 +111,7 @@ class EventMenu(Menu):
                 scrambled_aircraft[unit_type] = amount
                 if task == CAS:
                     scrambled_cas[unit_type] = amount
-                elif task == FighterSweep:
+                elif task == CAP:
                     scrambled_sweep[unit_type] = amount
 
         scrambled_clients = {}

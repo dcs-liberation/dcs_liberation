@@ -2,18 +2,18 @@ from game.event import *
 
 COMMISION_LIMITS_SCALE = 2
 COMMISION_LIMITS_FACTORS = {
-    CAP: 2,
+    PinpointStrike: 2,
     CAS: 1,
-    FighterSweep: 3,
+    CAP: 3,
     AirDefence: 1,
 }
 
 COMMISION_AMOUNTS_SCALE = 2
 COMMISION_UNIT_VARIETY = 4
 COMMISION_AMOUNTS_FACTORS = {
-    CAP: 0.6,
+    PinpointStrike: 0.6,
     CAS: 0.3,
-    FighterSweep: 0.5,
+    CAP: 0.5,
     AirDefence: 0.3,
 }
 
@@ -76,7 +76,7 @@ class Game:
     def _generate_interceptions(self):
         enemy_interception = False
         for from_cp, to_cp in self.theater.conflicts(False):
-            if from_cp.base.total_units(FighterSweep) == 0:
+            if from_cp.base.total_units(CAP) == 0:
                 continue
 
             if self._roll(ENEMY_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
@@ -93,7 +93,7 @@ class Game:
 
             if self._roll(ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE, 1):
                 for from_cp, _ in self.theater.conflicts(False):
-                    if from_cp.base.total_units(FighterSweep) > 0:
+                    if from_cp.base.total_units(CAP) > 0:
                         self.events.append(InterceptEvent(attacker_name=self.enemy,
                                                           defender_name=self.player,
                                                           from_cp=from_cp,
@@ -136,7 +136,7 @@ class Game:
                 break
 
     def _commision_units(self, cp: ControlPoint):
-        for for_task in [CAP, CAS, FighterSweep, AirDefence]:
+        for for_task in [PinpointStrike, CAS, CAP, AirDefence]:
             limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE)
             missing_units = limit - cp.base.total_units(for_task)
             if missing_units > 0:

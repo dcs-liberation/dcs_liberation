@@ -116,9 +116,9 @@ class Base:
             for_task = db.unit_task(unit_type)
 
             target_dict = None
-            if for_task == CAS or for_task == FighterSweep:
+            if for_task == CAS or for_task == CAP:
                 target_dict = self.aircraft
-            elif for_task == CAP:
+            elif for_task == PinpointStrike:
                 target_dict = self.armor
             elif for_task == AirDefence:
                 target_dict = self.aa
@@ -160,19 +160,19 @@ class Base:
         return int(self.total_aa * (self.strength > 0.2 and self.strength or 0))
 
     def scramble_sweep(self) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, self.scramble_count())
+        return self._find_best_planes(CAP, self.scramble_count())
 
     def scramble_cas(self) -> typing.Dict[PlaneType, int]:
         return self._find_best_planes(CAS, self.scramble_count())
 
     def scramble_interceptors(self) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, self.scramble_count())
+        return self._find_best_planes(CAP, self.scramble_count())
 
     def assemble_cap(self) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, self.assemble_count())
+        return self._find_best_armor(PinpointStrike, self.assemble_count())
 
     def assemble_defense(self) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, self.assemble_count())
+        return self._find_best_armor(PinpointStrike, self.assemble_count())
 
     def assemble_aa(self) -> typing.Dict[AirDefence, int]:
         return self._find_best_unit(self.aa, AirDefence, self.assemble_aa_count())

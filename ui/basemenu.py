@@ -30,9 +30,9 @@ class BaseMenu(Menu):
             row += 1
 
         units = {
-            CAP: db.find_unittype(CAP, self.game.player),
+            PinpointStrike: db.find_unittype(PinpointStrike, self.game.player),
             CAS: db.find_unittype(CAS, self.game.player),
-            FighterSweep: db.find_unittype(FighterSweep, self.game.player),
+            CAP: db.find_unittype(CAP, self.game.player),
             AirDefence: db.find_unittype(AirDefence, self.game.player),
         }
 

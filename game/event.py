@@ -104,7 +104,7 @@ class GroundInterceptEvent(Event):
             pass
 
     def player_attacking(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
-        suitable_unittypes = db.find_unittype(CAP, self.defender_name)
+        suitable_unittypes = db.find_unittype(PinpointStrike, self.defender_name)
         random.shuffle(suitable_unittypes)
         unittypes = suitable_unittypes[:self.TARGET_VARIETY]
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)

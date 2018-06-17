@@ -24,7 +24,6 @@ PRICES = {
 
     M_2000C: 18,
     FA_18C_hornet: 22,
-    AV8BNA: 18,
     F_15C: 28,
 
     # bomber
@@ -75,7 +74,7 @@ PRICES = {
 }
 
 UNIT_BY_TASK = {
-    FighterSweep: [
+    CAP: [
         C_101CC,
         AJS37,
         F_5E,
@@ -84,21 +83,20 @@ UNIT_BY_TASK = {
         MiG_31,
         Su_27,
         Su_33,
-        MiG_15bis,
         MiG_21Bis,
         MiG_29A,
         FA_18C_hornet,
-        AV8BNA,
         F_15C,
         M_2000C,
     ],
     CAS: [
+        MiG_15bis,
+        L_39ZA,
         A_10A,
         A_10C,
         Su_25T,
         Su_24M,
         Su_17M4,
-        L_39ZA,
         MiG_29G,
         Su_34,
     ],
@@ -114,7 +112,7 @@ UNIT_BY_TASK = {
     ],
     AWACS: [E_3A, A_50, ],
 
-    CAP: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
+    PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
@@ -192,7 +190,6 @@ UNIT_BY_COUNTRY = {
     "USA": [
         F_15C,
         FA_18C_hornet,
-        AV8BNA,
         AJS37,
         F_5E,
         M_2000C,
@@ -221,6 +218,12 @@ UNIT_BY_COUNTRY = {
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
+    },
+
+    Su_33: FighterSweep,
+
+    M_2000C: {
+        "*": "Combat Air Patrol",
     },
 
     MiG_21Bis: {

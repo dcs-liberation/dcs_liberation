@@ -7,8 +7,8 @@ UNIT_VARIETY = 3
 UNIT_AMOUNT_FACTOR = 16
 
 COUNT_BY_TASK = {
-    CAP: 12,
-    FighterSweep: 16,
+    PinpointStrike: 12,
+    CAP: 16,
     CAS: 8,
     AirDefence: 0.5,
 }
@@ -19,7 +19,7 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool):
         if cp.captured:
             continue
 
-        for task in [CAP, FighterSweep, CAS, AirDefence]:
+        for task in [PinpointStrike, CAP, CAS, AirDefence]:
             assert cp.importance <= IMPORTANCE_HIGH, "invalid importance {}".format(cp.importance)
             assert cp.importance >= IMPORTANCE_LOW, "invalid importance {}".format(cp.importance)
 

@@ -58,11 +58,16 @@ class AircraftConflictGenerator:
         did_load_loadout = False
         unit_type = group.units[0].unit_type
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
-            if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task])
-                did_load_loadout = True
-            elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"])
+            override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
+            if type(override_loadout) == dict:
+                if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                    group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task])
+                    did_load_loadout = True
+                elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                    group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"])
+                    did_load_loadout = True
+            elif issubclass(override_loadout, MainTask):
+                group.load_task_default_loadout(override_loadout)
                 did_load_loadout = True
 
         if not did_load_loadout:
@@ -162,7 +167,7 @@ class AircraftConflictGenerator:
             position = group.position  # type: Point
             wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE, WARM_START_AIRSPEED)
 
-            self._setup_group(group, FighterSweep)
+            self._setup_group(group, CAP)
 
             for group in self.escort_targets:
                 wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
@@ -208,11 +213,11 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_defenders_location))
 
-            group.task = FighterSweep.name
+            group.task = CAP.name
             wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             wayp.tasks.append(dcs.task.EngageTargets(max_distance=self.conflict.size * INTERCEPT_MAX_DISTANCE_FACTOR))
             wayp.tasks.append(dcs.task.OrbitAction())
-            self._setup_group(group, FighterSweep)
+            self._setup_group(group, CAP)
 
     def generate_transport(self, transport: db.PlaneDict, destination: Airport):
         assert len(self.escort_targets) == 0
@@ -242,7 +247,7 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_attackers_location))
 
-            group.task = FighterSweep.name
+            group.task = CAP.name
 
             heading = group.position.heading_between_point(self.conflict.position)
             initial_wayp = group.add_waypoint(group.position.point_from_heading(heading, WORKAROUND_WAYP_DIST), INTERCEPTION_ALT, INTERCEPTION_AIRSPEED)
@@ -250,4 +255,4 @@ class AircraftConflictGenerator:
 
             wayp = group.add_waypoint(self.conflict.position, 0)
             wayp.tasks.append(EngageTargets())
-            self._setup_group(group, FighterSweep)
+            self._setup_group(group, CAP)
