@@ -85,7 +85,8 @@ class Operation:
             if not global_cp.is_global:
                 continue
 
-            ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.attacker_name)[0],
+            ship = self.shipgen.generate(type=db.find_unittype(Carriage, self.game.player)[0],
+                                         country=self.game.player,
                                          at=global_cp.at)
 
             if global_cp == self.from_cp and not self.is_quick:
@@ -164,6 +165,8 @@ class InterceptOperation(Operation):
     def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
         super(InterceptOperation, self).prepare(terrain, is_quick)
         self.defenders_starting_position = None
+        if self.defender_name == self.game.player:
+            self.attackers_starting_position = None
 
         conflict = Conflict.intercept_conflict(
             attacker=self.mission.country(self.attacker_name),

@@ -52,6 +52,9 @@ class EventResultsMenu(Menu):
             Separator(self.frame, orient='horizontal').grid(row=row, columnspan=1, sticky=NE); row += 1
             Label(self.frame, text="Enemy losses").grid(columnspan=1, row=row); row += 1
             for unit_type, count in self.enemy_losses.items():
+                if count == 0:
+                    continue
+
                 Label(self.frame, text=db.unit_type_name(unit_type)).grid(row=row)
                 Label(self.frame, text="{}".format(count)).grid(column=1, row=row)
                 row += 1

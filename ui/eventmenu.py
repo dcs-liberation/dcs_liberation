@@ -62,12 +62,14 @@ class EventMenu(Menu):
 
             row += 1
 
+        Label(self.frame, text="{}. {}".format(self.event, self.event.threat_description)).grid(row=row, column=0, columnspan=3)
+        row += 1
+
         Button(self.frame, text="Commit", command=self.start).grid(column=1, row=row, sticky=E)
         Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row, sticky=E)
 
         awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
         Checkbutton(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), var=self.awacs, state=awacs_enabled).grid(row=row, column=0, sticky=W)
-
         row += 1
 
         label("Aircraft")

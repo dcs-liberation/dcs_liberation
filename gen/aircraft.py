@@ -72,8 +72,6 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
-        print("AC: {} {}".format(unit_type, len(group.units)))
-
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None) -> FlyingGroup:
         assert count > 0
         assert unit is not None
@@ -164,10 +162,10 @@ class AircraftConflictGenerator:
             position = group.position  # type: Point
             wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE, WARM_START_AIRSPEED)
 
+            self._setup_group(group, FighterSweep)
+
             for group in self.escort_targets:
                 wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
-
-            self._setup_group(group, dcs.task.Escort)
 
     def generate_cas(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0

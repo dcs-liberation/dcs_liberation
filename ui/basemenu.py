@@ -42,6 +42,9 @@ class BaseMenu(Menu):
 
         for task_type, units in units.items():
             Label(self.frame, text="{}".format(db.task_name(task_type))).grid(row=row, columnspan=5); row += 1
+
+            units = list(set(units))
+            units.sort(key=lambda x: db.PRICES[x])
             for unit_type in units:
                 purchase_row(unit_type, db.PRICES[unit_type])
 

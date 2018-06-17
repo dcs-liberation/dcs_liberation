@@ -22,7 +22,7 @@ class AWACSConflictGenerator:
         plane = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]
 
         self.mission.awacs_flight(
-            country=self.conflict.attackers_side,
+            country=self.mission.country(self.game.player),
             name=namegen.next_awacs_group_name(),
             plane_type=plane,
             altitude=AWACS_ALT,

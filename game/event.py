@@ -18,6 +18,21 @@ class Event:
         self.from_cp = from_cp
         self.game = game
 
+    @property
+    def is_player_attacking(self) -> bool:
+        return self.attacker_name == self.game.player
+
+    @property
+    def enemy_cp(self) -> ControlPoint:
+        if self.attacker_name == self.game.player:
+            return self.to_cp
+        else:
+            return self.from_cp
+
+    @property
+    def threat_description(self) -> str:
+        return ""
+
     def bonus(self) -> int:
         return math.ceil(math.log(self.difficulty, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
@@ -109,7 +124,6 @@ class GroundInterceptEvent(Event):
 
 
 class InterceptEvent(Event):
-    ESCORT_AMOUNT_FACTOR = 2
     BONUS_BASE = 5
     STRENGTH_INFLUENCE = 0.25
     GLOBAL_STRENGTH_INFLUENCE = 0.05
@@ -120,12 +134,16 @@ class InterceptEvent(Event):
     def __str__(self):
         return "Intercept from {} at {}".format(self.from_cp, self.to_cp)
 
+    @property
+    def threat_description(self):
+        return "{} aircraft".format(self.enemy_cp.base.scramble_count())
+
     def is_successfull(self, debriefing: Debriefing):
-        intercepted = self.transport_unit in debriefing.destroyed_units[self.defender_name].keys()
+        units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)
         if self.from_cp.captured:
-            return intercepted
+            return units_destroyed > 0
         else:
-            return not intercepted
+            return units_destroyed == 0
 
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
@@ -144,12 +162,12 @@ class InterceptEvent(Event):
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
-        escort = self.to_cp.base.scramble_sweep(self.to_cp)
+        escort = self.to_cp.base.scramble_sweep()
+
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None
 
-        airdefense_unit = db.find_unittype(AirDefence, self.defender_name)[0]
-
+        airdefense_unit = db.find_unittype(AirDefence, self.defender_name)[-1]
         op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
@@ -166,7 +184,8 @@ class InterceptEvent(Event):
         self.operation = op
 
     def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
-        interceptors = self.from_cp.base.scramble_interceptors_count(self.difficulty * self.ESCORT_AMOUNT_FACTOR)
+        interceptors = self.from_cp.base.scramble_interceptors()
+
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None
 
@@ -193,6 +212,18 @@ class CaptureEvent(Event):
 
     def __str__(self):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
+
+    @property
+    def threat_description(self):
+        descr = "{} aircraft + CAS, {} vehicles".format(
+            self.enemy_cp.base.scramble_count(),
+            self.enemy_cp.base.assemble_count()
+        )
+
+        if self.is_player_attacking:
+            descr += ", {} AA".format(self.enemy_cp.base.assemble_aa_count())
+
+        return descr
 
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum(debriefing.alive_units[self.attacker_name].values())
@@ -221,9 +252,9 @@ class CaptureEvent(Event):
             self.to_cp.captured = False
 
     def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
-        cas = self.from_cp.base.scramble_cas(self.to_cp)
-        escort = self.from_cp.base.scramble_sweep(self.to_cp)
-        attackers = self.from_cp.base.assemble_cap(self.to_cp)
+        cas = self.from_cp.base.scramble_cas()
+        escort = self.from_cp.base.scramble_sweep()
+        attackers = self.from_cp.base.assemble_cap()
 
         op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,
@@ -243,7 +274,7 @@ class CaptureEvent(Event):
         self.operation = op
 
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
-        interceptors = self.to_cp.base.scramble_sweep(for_target=self.to_cp)
+        interceptors = self.to_cp.base.scramble_sweep()
 
         op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,

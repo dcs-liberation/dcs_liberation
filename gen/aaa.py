@@ -51,7 +51,7 @@ class ExtraAAConflictGenerator:
                 self.mission.vehicle_group(
                     country=self.mission.country(country_name),
                     name=namegen.next_ground_group_name(),
-                    _type=random.choice(db.find_unittype(AirDefence, country_name)),
+                    _type=db.EXTRA_AA[country_name],
                     position=position,
                     group_size=2
                 )

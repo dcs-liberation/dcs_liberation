@@ -70,10 +70,3 @@ class CaucasusTheater(ConflictTheater):
 
         self.carrier_1.captured = True
         self.soganlug.captured = True
-
-        self.sukhumi.captured = True
-        self.gudauta.base.strength = 0.5
-
-        self.kobuleti.captured = True
-        self.batumi.base.strength = 0.15
-

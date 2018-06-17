@@ -9,21 +9,23 @@ from dcs.unittype import *
 
 PRICES = {
     # fighter
-    C_101CC: 10,
-    AJS37: 15,
-    F_5E: 12,
-    MiG_23MLD: 15,
-    MiG_25PD: 20,
-    MiG_31: 30,
-    Su_27: 30,
-    Su_33: 33,
-    MiG_15bis: 8,
-    MiG_21Bis: 13,
-    MiG_29A: 23,
-    FA_18C_hornet: 18,
-    AV8BNA: 15,
-    F_15C: 30,
-    M_2000C: 15,
+    C_101CC: 8,
+    MiG_23MLD: 20,
+    MiG_25PD: 24,
+    MiG_31: 28,
+    Su_27: 24,
+    Su_33: 25,
+    MiG_29A: 28,
+
+    AJS37: 13,
+    F_5E: 8,
+    MiG_15bis: 5,
+    MiG_21Bis: 8,
+
+    M_2000C: 18,
+    FA_18C_hornet: 22,
+    AV8BNA: 18,
+    F_15C: 28,
 
     # bomber
     Su_25T: 15,
@@ -140,6 +142,11 @@ SAM_BAN = [
     AirDefence.SAM_SA_19_Tunguska_2S6,
     AirDefence.SAM_SA_8_Osa_9A33,
 ]
+
+EXTRA_AA = {
+    "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
+    "USA": AirDefence.SAM_Patriot_EPP_III,
+}
 
 UNIT_BY_COUNTRY = {
     "Russia": [

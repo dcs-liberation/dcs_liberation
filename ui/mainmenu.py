@@ -43,8 +43,8 @@ class MainMenu(Menu):
             Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
         Button(self.frame, text="Configuration", command=self.configuration_menu).grid(column=0, row=0, sticky=NE)
-        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=N)
-        Label(self.frame, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)).grid(column=0, row=0, sticky=NW)
+        Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=NW)
+        Label(self.frame, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)).grid(column=0, row=0, sticky=N)
         Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
         events = self.game.events

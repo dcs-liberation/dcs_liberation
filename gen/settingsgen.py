@@ -12,7 +12,7 @@ from game import db
 from theater.weatherforecast import WeatherForecast
 from theater.conflicttheater import Conflict
 
-ACTIVATION_TRIGGER_SIZE = 80000
+ACTIVATION_TRIGGER_SIZE = 40000
 ACTIVATION_TRIGGER_MIN_DISTANCE = 5000
 
 RANDOM_TIME = {
@@ -23,7 +23,6 @@ RANDOM_TIME = {
 }
 
 RANDOM_WEATHER = {
-    0: 5,  # thunderstorm
     1: 10,  # heavy rain
     2: 20,  # rain
     3: 100,  # random dynamic
@@ -63,7 +62,7 @@ class SettingsGenerator:
             self.mission.weather.heavy_rain()
             self.mission.weather.enable_fog = False
         elif weather_type == 3:
-            self.mission.weather.random(self.mission.start_time, self.mission.terrain)
+            pass
 
     def _gen_activation_trigger(self, player_coalition: str, enemy_coalition: str):
         activate_by_trigger = []
@@ -100,7 +99,9 @@ class SettingsGenerator:
             skill_level = player_coalition == coalition_name and self.game.player_skill or self.game.enemy_skill
             for country in coalition.countries.values():
                 for plane_group in country.plane_group:
-                    plane_group.set_skill(Skill(skill_level))
+                    for plane_unit in plane_group.units:
+                        if plane_unit.skill != Skill.Client and plane_unit.skill != Skill.Player:
+                            plane_unit.skill = Skill(skill_level)
 
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(Skill(skill_level))

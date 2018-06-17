@@ -43,7 +43,6 @@ class PersianGulfTheater(ConflictTheater):
 
     east_carrier = ControlPoint.carrier("West carrier", Point(-91023.430176, -159467.078125))
     west_carrier = ControlPoint.carrier("East carrier", Point(-100531.972946, 60939.275818))
-    north_carrier = ControlPoint.carrier("North carrier", Point(70531.972946, 60939.275818))
 
     def __init__(self):
         super(PersianGulfTheater, self).__init__()
@@ -70,9 +69,7 @@ class PersianGulfTheater(ConflictTheater):
 
         self.add_controlpoint(self.east_carrier)
         self.add_controlpoint(self.west_carrier)
-        self.add_controlpoint(self.north_carrier)
 
         self.east_carrier.captured = True
         self.west_carrier.captured = True
-        self.north_carrier.captured = True
         self.al_dhafra.captured = True

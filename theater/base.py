@@ -10,8 +10,9 @@ from dcs.vehicles import *
 from dcs.task import *
 
 PLANES_IN_GROUP = 2
-PLANES_IMPORTANCE_FACTOR = 2
-ARMOR_IMPORTANCE_FACTOR = 4
+
+PLANES_SCRAMBLE_MIN = 4
+PLANES_SCRAMBLE_FACTOR = 0.5
 
 
 class Base:
@@ -77,7 +78,7 @@ class Base:
     def _find_best_planes(self, for_type: Task, count: int) -> typing.Dict[PlaneType, int]:
         return self._find_best_unit(self.aircraft, for_type, count)
 
-    def _find_best_armor(self, for_type: Task, count: int) -> typing.Dict[PlaneType, int]:
+    def _find_best_armor(self, for_type: Task, count: int) -> typing.Dict[Armor, int]:
         return self._find_best_unit(self.armor, for_type, count)
 
     def _group_sizes(self, total_planes: int) -> typing.List[int]:
@@ -136,6 +137,9 @@ class Base:
             else:
                 continue
 
+            if unit_type not in target_array:
+                continue
+                
             target_array[unit_type] = max(target_array[unit_type] - count, 0)
             if target_array[unit_type] == 0:
                 del target_array[unit_type]
@@ -145,25 +149,30 @@ class Base:
         if self.strength > 1:
             self.strength = 1
 
-    def scramble_cas(self, for_target: ControlPoint) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(CAS, math.ceil(for_target.importance * PLANES_IMPORTANCE_FACTOR * self.strength))
+    def scramble_count(self) -> int:
+        count = int(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength)
+        return min(max(count, PLANES_SCRAMBLE_MIN), self.total_planes)
 
-    def scramble_sweep(self, for_target: ControlPoint) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, math.ceil(for_target.importance * PLANES_IMPORTANCE_FACTOR * self.strength))
+    def assemble_count(self):
+        return self.total_armor * self.strength
 
-    def scramble_interceptors(self, factor: float) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(FighterSweep, math.ceil(self.total_planes * factor * self.strength))
+    def assemble_aa_count(self) -> int:
+        return int(self.total_aa * (self.strength > 0.2 and self.strength or 0))
 
-    def scramble_interceptors_count(self, count: int) -> typing.Dict[PlaneType, int]:
-        assert count > 0
-        return self._find_best_planes(FighterSweep, count)
+    def scramble_sweep(self) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(FighterSweep, self.scramble_count())
 
-    def assemble_cap(self, for_target: ControlPoint) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, math.ceil(for_target.importance * ARMOR_IMPORTANCE_FACTOR * self.strength))
+    def scramble_cas(self) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(CAS, self.scramble_count())
 
-    def assemble_defense(self, factor: float) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(CAP, math.ceil(self.total_armor * factor * self.strength))
+    def scramble_interceptors(self) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(FighterSweep, self.scramble_count())
+
+    def assemble_cap(self) -> typing.Dict[Armor, int]:
+        return self._find_best_armor(CAP, self.assemble_count())
+
+    def assemble_defense(self) -> typing.Dict[Armor, int]:
+        return self._find_best_armor(CAP, self.assemble_count())
 
     def assemble_aa(self) -> typing.Dict[AirDefence, int]:
-        count = int(self.total_aa * (self.strength > 0.2 and self.strength or 0))
-        return self._find_best_unit(self.aa, AirDefence, count)
+        return self._find_best_unit(self.aa, AirDefence, self.assemble_aa_count())

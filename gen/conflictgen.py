@@ -30,6 +30,16 @@ def _opposite_heading(h):
     return h+180
 
 
+def _heading_sum(h, a) -> int:
+    h += a
+    if h > 360:
+        return h - 360
+    elif h < 0:
+        return 360 - h
+    else:
+        return h
+
+
 class Conflict:
     attackers_side = None  # type: Country
     defenders_side = None  # type: Country
@@ -64,8 +74,8 @@ class Conflict:
         from theater.conflicttheater import SIZE_REGULAR
         from theater.conflicttheater import ALL_RADIALS
 
-        heading = from_cp.position.heading_between_point(to_cp.position)
-        raw_distance = from_cp.position.distance_to_point(to_cp.position) / 2
+        heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), +90)
+        raw_distance = from_cp.position.distance_to_point(to_cp.position) / 2.5
         distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
         position = from_cp.position.point_from_heading(heading, distance)
 

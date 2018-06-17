@@ -6,9 +6,9 @@ import os
 from dcs.lua import parse
 from dcs.mission import Mission
 
-from dcs.unitgroup import FlyingGroup
-from dcs.unit import Vehicle, VehicleType
+from dcs.unit import Vehicle
 from dcs.vehicles import vehicle_map
+from dcs.planes import plane_map
 from dcs.unit import UnitType
 
 from game import db
@@ -18,8 +18,8 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 class Debriefing:
     def __init__(self, alive_units):
-        self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[str, int]]
-        self.alive_units = alive_units  # type: typing.Dict[str, typing.Dict[str, int]]
+        self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
+        self.alive_units = alive_units  # type: typing.Dict[str, typing.Dict[UnitType, int]]
 
     @classmethod
     def parse(cls, path: str):
@@ -30,10 +30,17 @@ class Debriefing:
             alive_units = {}
 
             for unit in units.values():
-                unit_type = unit["type"]  # type: str
+                unit_type_name = unit["type"]  # type: str
                 country_id = int(unit["country"])
 
-                if type(unit_type) == str:
+                if type(unit_type_name) == str:
+                    unit_type = vehicle_map.get(unit_type_name, plane_map.get(unit_type_name, None))
+                    if unit_type is None:
+                        continue
+
+                    if unit_type in db.EXTRA_AA.values():
+                        continue
+
                     country_dict = alive_units.get(country_id, {})
                     country_dict[unit_type] = country_dict.get(unit_type, 0) + 1
                     alive_units[country_id] = country_dict
@@ -51,6 +58,9 @@ class Debriefing:
                     else:
                         unit_type = unit.unit_type
 
+                    if unit_type in db.EXTRA_AA.values():
+                        continue
+
                     result[unit_type] = result.get(unit_type, 0) + 1
 
             return result
@@ -58,7 +68,7 @@ class Debriefing:
         def calculate_losses(all_units: typing.Dict[UnitType, int], alive_units: typing.Dict[str, int]) -> typing.Dict[UnitType, int]:
             result = {}
             for t, count in all_units.items():
-                result[t] = max(count - alive_units.get(db.unit_type_name(t), 0), 0)
+                result[t] = max(count - alive_units.get(t, 0), 0)
             return result
 
         player = mission.country(player_name)
