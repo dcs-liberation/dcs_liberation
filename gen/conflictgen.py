@@ -14,6 +14,9 @@ from dcs.point import *
 from dcs.task import *
 from dcs.country import *
 
+from theater import *
+
+
 GROUND_DISTANCE_FACTOR = 0.8
 GROUNDINTERCEPT_DISTANCE_FACTOR = 3
 AIR_DISTANCE = 32000
@@ -24,6 +27,9 @@ INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
 INTERCEPT_MAX_DISTANCE = 80000
 INTERCEPT_MIN_DISTANCE = 45000
+
+NAVAL_INTERCEPT_DISTANCE_FACTOR = 1.3
+NAVAL_INTERCEPT_STEP = 3000
 
 
 def _opposite_heading(h):
@@ -117,5 +123,33 @@ class Conflict:
 
         instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE)
         instance.ground_defenders_location = instance.position.point_from_heading(random.choice(to_cp.radials), instance.size * GROUNDINTERCEPT_DISTANCE_FACTOR)
+
+        return instance
+
+    @classmethod
+    def naval_intercept_conflict(cls, attacker: Country, defender: Country, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint):
+        radial = random.choice(to_cp.sea_radials)
+
+        initial_distance = int(from_cp.position.distance_to_point(to_cp.position) * NAVAL_INTERCEPT_DISTANCE_FACTOR)
+        position = to_cp.position.point_from_heading(radial, initial_distance)
+        for offset in range(0, initial_distance, NAVAL_INTERCEPT_STEP):
+            if theater.is_on_land(position):
+                break
+            else:
+                position = to_cp.position.point_from_heading(radial, offset)
+
+        instance = cls()
+        instance.from_cp = from_cp
+        instance.to_cp = to_cp
+        instance.attackers_side = attacker
+        instance.defenders_side = defender
+
+        instance.position = position
+        instance.size = SIZE_REGULAR
+        instance.radials = to_cp.radials
+
+        attacker_heading = from_cp.position.heading_between_point(to_cp.position)
+        instance.air_attackers_location = instance.position.point_from_heading(attacker_heading, AIR_DISTANCE)
+        instance.air_defenders_location = instance.position.point_from_heading(_opposite_heading(attacker_heading), AIR_DISTANCE)
 
         return instance

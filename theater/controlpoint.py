@@ -5,8 +5,6 @@ from dcs.mapping import *
 from dcs.country import *
 from dcs.terrain import Airport
 
-from gen.conflictgen import Conflict
-
 
 class ControlPoint:
     connected_points = []  # type: typing.List[ControlPoint]
@@ -47,6 +45,16 @@ class ControlPoint:
     def is_global(self):
         return not self.connected_points
 
+    @property
+    def sea_radials(self) -> typing.Collection[int]:
+        # TODO: fix imports
+        all_radials = [0, 45, 90, 135, 180, 225, 270, 315, ]
+        result = []
+        for r in all_radials:
+            if r not in self.radials:
+                result.append(r)
+        return result
+
     def connect(self, to):
         self.connected_points.append(to)
 
@@ -64,15 +72,3 @@ class ControlPoint:
 
         return closest_radial
 
-    def conflict_attack(self, from_cp, attacker: Country, defender: Country) -> Conflict:
-        attack_radial = self.find_radial(self.position.heading_between_point(from_cp.position))
-        defense_radial = self.find_radial(from_cp.position.heading_between_point(self.position), ignored_radial=attack_radial)
-
-        pos = self.position.point_from_heading(0, 1000)
-        return Conflict.capture_conflict(attacker=attacker,
-                                         attack_heading=attack_radial,
-                                         defender=defender,
-                                         defense_heading=defense_radial,
-                                         position=pos,
-                                         size=self.size,
-                                         radials=self.radials)

@@ -2,8 +2,11 @@ import pickle
 
 
 def load_poly(filename: str):
-    with open(filename, "rb") as f:
-        return pickle.load(f)
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except:
+        return None
 
 
 def ray_tracing(x, y, poly):

@@ -88,13 +88,6 @@ class Base:
             total_scrambled += PLANES_IN_GROUP
             yield total_scrambled < total_planes and PLANES_IN_GROUP or total_planes - total_scrambled
 
-    def _group_sizes_for(self, target: ControlPoint) -> typing.List[int]:
-        total_planes = target.importance * PLANES_IMPORTANCE_FACTOR
-        total_scrambled = 0
-        for _ in range(math.ceil(total_planes / PLANES_IN_GROUP)):
-            total_scrambled += PLANES_IN_GROUP
-            yield PLANES_IN_GROUP and total_scrambled < total_planes or total_planes - total_scrambled
-
     def append_commision_points(self, for_type, points: float) -> int:
         self.commision_points[for_type] = self.commision_points.get(for_type, 0) + points
         points = self.commision_points[for_type]

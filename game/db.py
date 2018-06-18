@@ -71,6 +71,9 @@ PRICES = {
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
+
+    Bulk_cargo_ship_Yakushev: 100,
+    Dry_cargo_ship_Ivanov: 100,
 }
 
 UNIT_BY_TASK = {
@@ -130,7 +133,9 @@ UNIT_BY_TASK = {
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
     ],
+
     Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
+    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev],
 }
 
 SAM_BAN = [
@@ -185,7 +190,10 @@ UNIT_BY_COUNTRY = {
         Armor.MBT_T_90,
         Armor.MBT_T_80U,
         Armor.MBT_T_55,
-        CV_1143_5_Admiral_Kuznetsov],
+        CV_1143_5_Admiral_Kuznetsov,
+        Bulk_cargo_ship_Yakushev,
+        Dry_cargo_ship_Ivanov,
+    ],
 
     "USA": [
         F_15C,
@@ -212,6 +220,9 @@ UNIT_BY_COUNTRY = {
         AirDefence.SAM_Patriot_ICC,
 
         CVN_74_John_C__Stennis,
+        # TODO: verify or find out proper USA cargo ship
+        Bulk_cargo_ship_Yakushev,
+        Dry_cargo_ship_Ivanov,
     ],
 }
 
@@ -220,6 +231,7 @@ PLANE_PAYLOAD_OVERRIDES = {
         "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
     },
 
+    # TODO: figure out a way to setup su33 loadout
     Su_33: FighterSweep,
 
     M_2000C: {
@@ -238,6 +250,7 @@ PLANE_LIVERY_OVERRIDES = {
 UnitsDict = typing.Dict[UnitType, int]
 PlaneDict = typing.Dict[FlyingType, int]
 ArmorDict = typing.Dict[VehicleType, int]
+ShipDict = typing.Dict[ShipType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]
 StartingPosition = typing.Optional[typing.Union[ShipGroup, Airport, Point]]
 

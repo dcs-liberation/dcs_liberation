@@ -2,6 +2,7 @@ from tkinter.ttk import *
 from ui.window import *
 
 from game.game import *
+from userdata.debriefing import *
 
 
 class EventResultsMenu(Menu):

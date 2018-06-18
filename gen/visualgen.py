@@ -6,7 +6,8 @@ from dcs.mission import Mission
 from dcs.statics import *
 from dcs.unit import Static
 
-from theater.conflicttheater import Conflict
+from theater import *
+from .conflictgen import *
 #from game.game import Game
 
 

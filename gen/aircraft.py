@@ -176,7 +176,7 @@ class AircraftConflictGenerator:
             groups.append(group)
         return groups
 
-    def generate_cas(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+    def generate_cas_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
 
         for flying_type, count, client_count in self._split_to_groups(attackers, clients):
@@ -195,7 +195,26 @@ class AircraftConflictGenerator:
 
             group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
 
-    def generate_cas_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+    def generate_ship_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+        assert len(self.escort_targets) == 0
+
+        for flying_type, count, client_count in self._split_to_groups(attackers, clients):
+            group = self._generate_group(
+                name=namegen.next_cas_group_name(),
+                side=self.conflict.attackers_side,
+                unit_type=flying_type,
+                count=count,
+                client_count=client_count,
+                at=at and at or self._group_point(self.conflict.air_attackers_location))
+            self.escort_targets.append(group)
+
+            group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            group.task = AntishipStrike.name
+            self._setup_group(group, AntishipStrike, clients)
+
+            group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
+
+    def generate_strikegroup_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
                 side=self.conflict.attackers_side,
                 units=attackers,

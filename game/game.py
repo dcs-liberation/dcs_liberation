@@ -1,4 +1,15 @@
-from game.event import *
+import typing
+import random
+import math
+
+from dcs.task import *
+from dcs.vehicles import *
+
+from userdata.debriefing import Debriefing
+from theater import *
+
+from . import db
+from .event import *
 
 COMMISION_LIMITS_SCALE = 2
 COMMISION_LIMITS_FACTORS = {
@@ -124,6 +135,19 @@ class Game:
                                                         game=self))
                 break
 
+    def _generate_navalinterceptions(self):
+        for from_cp, to_cp in self.theater.conflicts(True):
+            if to_cp.radials == ALL_RADIALS:
+                continue
+
+            if self._roll(100, from_cp.base.strength):
+                self.events.append(NavalInterceptEvent(attacker_name=self.player,
+                                                       defender_name=self.enemy,
+                                                       from_cp=from_cp,
+                                                       to_cp=to_cp,
+                                                       game=self))
+                break
+
     def _generate_globalinterceptions(self):
         global_count = len([x for x in self.theater.player_points() if x.is_global])
         for from_cp in [x for x in self.theater.player_points() if x.is_global]:
@@ -205,8 +229,9 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()
-        self._generate_enemy_caps(ignored_cps=ignored_cps)
+        #self._generate_enemy_caps(ignored_cps=ignored_cps)
         self._generate_interceptions()
         self._generate_globalinterceptions()
         self._generate_groundinterceptions()
+        self._generate_navalinterceptions()
 

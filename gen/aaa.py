@@ -1,4 +1,4 @@
-from game import db
+from game import *
 
 from theater.conflicttheater import ConflictTheater
 from .conflictgen import *

@@ -9,8 +9,8 @@ from dcs.action import *
 from dcs.unit import Skill
 
 from game import db
-from theater.weatherforecast import WeatherForecast
-from theater.conflicttheater import Conflict
+from theater import *
+from gen import *
 
 ACTIVATION_TRIGGER_SIZE = 40000
 ACTIVATION_TRIGGER_MIN_DISTANCE = 5000

@@ -2,9 +2,10 @@ import typing
 import itertools
 
 import dcs
+from dcs.mapping import Point
 
 from .landmap import ray_tracing
-from .controlpoint import *
+from .controlpoint import ControlPoint
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
