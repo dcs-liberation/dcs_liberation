@@ -19,27 +19,27 @@ class PersianGulfTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    al_dhafra = ControlPoint.from_airport(persiangulf.Al_Dhafra_AB, ALL_RADIALS, SIZE_BIG, IMPORTANCE_LOW)
-    al_maktoum = ControlPoint.from_airport(persiangulf.Al_Maktoum_Intl, ALL_RADIALS, SIZE_BIG, IMPORTANCE_LOW)
-    al_minhad = ControlPoint.from_airport(persiangulf.Al_Minhad_AB, ALL_RADIALS, SIZE_REGULAR, IMPORTANCE_LOW)
-    sir_abu_nuayr = ControlPoint.from_airport(persiangulf.Sir_Abu_Nuayr, [330], SIZE_SMALL, IMPORTANCE_LOW)
+    al_dhafra = ControlPoint.from_airport(persiangulf.Al_Dhafra_AB, LAND, SIZE_BIG, IMPORTANCE_LOW)
+    al_maktoum = ControlPoint.from_airport(persiangulf.Al_Maktoum_Intl, LAND, SIZE_BIG, IMPORTANCE_LOW)
+    al_minhad = ControlPoint.from_airport(persiangulf.Al_Minhad_AB, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
+    sir_abu_nuayr = ControlPoint.from_airport(persiangulf.Sir_Abu_Nuayr, [0, 330], SIZE_SMALL, IMPORTANCE_LOW)
 
-    dubai = ControlPoint.from_airport(persiangulf.Dubai_Intl, COAST_SWNE, SIZE_LARGE, IMPORTANCE_MEDIUM)
-    sharjah = ControlPoint.from_airport(persiangulf.Sharjah_Intl, ALL_RADIALS, SIZE_BIG, IMPORTANCE_MEDIUM)
-    fujairah = ControlPoint.from_airport(persiangulf.Fujairah_Intl, COAST_NS_W, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    khasab = ControlPoint.from_airport(persiangulf.Khasab, COAST_EW_S, SIZE_SMALL, IMPORTANCE_MEDIUM)
+    dubai = ControlPoint.from_airport(persiangulf.Dubai_Intl, COAST_DL_E, SIZE_LARGE, IMPORTANCE_MEDIUM)
+    sharjah = ControlPoint.from_airport(persiangulf.Sharjah_Intl, LAND, SIZE_BIG, IMPORTANCE_MEDIUM)
+    fujairah = ControlPoint.from_airport(persiangulf.Fujairah_Intl, COAST_V_W, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+    khasab = ControlPoint.from_airport(persiangulf.Khasab, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
 
-    sirri = ControlPoint.from_airport(persiangulf.Sirri_Island, ALL_RADIALS, SIZE_TINY, IMPORTANCE_MEDIUM)
-    abu_musa = ControlPoint.from_airport(persiangulf.Abu_Musa_Island_Airport, ALL_RADIALS, SIZE_TINY, IMPORTANCE_MEDIUM)
-    tunb_island = ControlPoint.from_airport(persiangulf.Tunb_Island_AFB, [0, 270, 330], SIZE_SMALL, IMPORTANCE_HIGH)
-    tunb_kochak = ControlPoint.from_airport(persiangulf.Tunb_Kochak, COAST_EW_S, SIZE_TINY, IMPORTANCE_HIGH)
+    sirri = ControlPoint.from_airport(persiangulf.Sirri_Island, COAST_DL_W, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+    abu_musa = ControlPoint.from_airport(persiangulf.Abu_Musa_Island_Airport, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
+    tunb_island = ControlPoint.from_airport(persiangulf.Tunb_Island_AFB, [0, 270, 330], SIZE_REGULAR, IMPORTANCE_HIGH)
+    tunb_kochak = ControlPoint.from_airport(persiangulf.Tunb_Kochak, [135, 180], SIZE_SMALL, IMPORTANCE_HIGH)
 
-    bandar_lengeh = ControlPoint.from_airport(persiangulf.Bandar_Lengeh, COAST_EW_N, SIZE_SMALL, IMPORTANCE_HIGH)
-    qeshm = ControlPoint.from_airport(persiangulf.Qeshm_Island, COAST_EW_N, SIZE_SMALL, IMPORTANCE_HIGH)
+    bandar_lengeh = ControlPoint.from_airport(persiangulf.Bandar_Lengeh, [270, 315, 0, 45], SIZE_SMALL, IMPORTANCE_HIGH)
+    qeshm = ControlPoint.from_airport(persiangulf.Qeshm_Island, [270, 315, 0, 45, 90, 135, 180], SIZE_SMALL, IMPORTANCE_HIGH)
 
-    havadarya = ControlPoint.from_airport(persiangulf.Havadarya, COAST_EW_N, SIZE_REGULAR, IMPORTANCE_HIGH)
-    bandar_abbas = ControlPoint.from_airport(persiangulf.Bandar_Abbas_Intl, COAST_EW_N, SIZE_BIG, IMPORTANCE_HIGH)
-    lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, ALL_RADIALS, SIZE_REGULAR, IMPORTANCE_HIGH)
+    havadarya = ControlPoint.from_airport(persiangulf.Havadarya, COAST_DL_W, SIZE_REGULAR, IMPORTANCE_HIGH)
+    bandar_abbas = ControlPoint.from_airport(persiangulf.Bandar_Abbas_Intl, LAND, SIZE_BIG, IMPORTANCE_HIGH)
+    lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
 
     east_carrier = ControlPoint.carrier("West carrier", Point(-91023.430176, -159467.078125))
     west_carrier = ControlPoint.carrier("East carrier", Point(-100531.972946, 60939.275818))

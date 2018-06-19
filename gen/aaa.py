@@ -6,7 +6,7 @@ from .naming import *
 
 from dcs.mission import *
 
-DISTANCE_FACTOR = 2, 4
+DISTANCE_FACTOR = 0.5, 1
 EXTRA_AA_MIN_DISTANCE = 35000
 EXTRA_AA_POSITION_FROM_CP = 550
 

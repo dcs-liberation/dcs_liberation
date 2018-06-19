@@ -1,6 +1,8 @@
 import math
 import random
 
+from dcs.task import *
+
 from game import db
 from game.operation.capture import CaptureOperation
 from userdata.debriefing import Debriefing
@@ -29,8 +31,8 @@ class CaptureEvent(Event):
         return descr
 
     def is_successfull(self, debriefing: Debriefing):
-        alive_attackers = sum(debriefing.alive_units[self.attacker_name].values())
-        alive_defenders = sum(debriefing.alive_units[self.defender_name].values())
+        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
         attackers_success = alive_attackers > alive_defenders
         if self.from_cp.captured:
             return attackers_success

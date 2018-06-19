@@ -6,8 +6,9 @@ import os
 from dcs.lua import parse
 from dcs.mission import Mission
 
-from dcs.unit import Vehicle
+from dcs.unit import Vehicle, Ship
 from dcs.vehicles import vehicle_map
+from dcs.ships import ship_map
 from dcs.planes import plane_map
 from dcs.unit import UnitType
 
@@ -34,7 +35,7 @@ class Debriefing:
                 country_id = int(unit["country"])
 
                 if type(unit_type_name) == str:
-                    unit_type = vehicle_map.get(unit_type_name, plane_map.get(unit_type_name, None))
+                    unit_type = vehicle_map.get(unit_type_name, plane_map.get(unit_type_name, ship_map.get(unit_type_name, None)))
                     if unit_type is None:
                         continue
 
@@ -55,6 +56,8 @@ class Debriefing:
                     unit_type = None
                     if isinstance(unit, Vehicle):
                         unit_type = vehicle_map[unit.type]
+                    elif isinstance(unit, Ship):
+                        unit_type = ship_map[unit.type]
                     else:
                         unit_type = unit.unit_type
 
@@ -74,8 +77,8 @@ class Debriefing:
         player = mission.country(player_name)
         enemy = mission.country(enemy_name)
         
-        player_units = count_groups(player.plane_group + player.vehicle_group)
-        enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group)
+        player_units = count_groups(player.plane_group + player.vehicle_group + player.ship_group)
+        enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)
 
         self.destroyed_units = {
             player.name: calculate_losses(player_units, self.alive_units.get(player.id, {})),

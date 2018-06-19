@@ -17,8 +17,8 @@ from dcs.country import *
 from theater import *
 
 
-GROUND_DISTANCE_FACTOR = 0.8
-GROUNDINTERCEPT_DISTANCE_FACTOR = 3
+GROUND_DISTANCE_FACTOR = 1
+GROUNDINTERCEPT_DISTANCE_FACTOR = 6
 AIR_DISTANCE = 32000
 
 INTERCEPT_ATTACKERS_HEADING = -45, 45
@@ -29,6 +29,7 @@ INTERCEPT_MAX_DISTANCE = 80000
 INTERCEPT_MIN_DISTANCE = 45000
 
 NAVAL_INTERCEPT_DISTANCE_FACTOR = 1.3
+NAVAL_INTERCEPT_DISTANCE_MAX = 90000
 NAVAL_INTERCEPT_STEP = 3000
 
 
@@ -60,96 +61,148 @@ class Conflict:
     air_attackers_location = None  # type: Point
     air_defenders_location = None  # type: Point
 
+    def __init__(self,
+                 position: Point,
+                 theater: ConflictTheater,
+                 from_cp: ControlPoint,
+                 to_cp: ControlPoint,
+                 attackers_side: Country,
+                 defenders_side: Country,
+                 ground_attackers_location: Point,
+                 ground_defenders_location: Point,
+                 air_attackers_location: Point,
+                 air_defenders_location: Point):
+        self.attackers_side = attackers_side
+        self.defenders_side = defenders_side
+        self.from_cp = from_cp
+        self.to_cp = to_cp
+        self.theater = theater
+        self.position = position
+        self.size = to_cp.size
+        self.radials = to_cp.radials
+        self.ground_attackers_location = ground_attackers_location
+        self.ground_defenders_location = ground_defenders_location
+        self.air_attackers_location = air_attackers_location
+        self.air_defenders_location = air_defenders_location
+
     @classmethod
-    def capture_conflict(self, attacker: Country, defender: Country, from_cp, to_cp):
+    def _find_ground_location(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+        for _ in range(0, int(max_distance), 100):
+            if theater.is_on_land(initial):
+                return initial
+
+            initial = initial.point_from_heading(heading, 100)
+        return initial
+
+    @classmethod
+    def capture_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        position = to_cp.position
         attack_heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
         defense_heading = to_cp.find_radial(from_cp.position.heading_between_point(to_cp.position), ignored_radial=attack_heading)
-        position = to_cp.position
 
-        instance = self()
-        instance.attackers_side = attacker
-        instance.defenders_side = defender
-        instance.from_cp = from_cp
-        instance.to_cp = to_cp
-        instance.position = position
-        instance.size = to_cp.size
-        instance.radials = to_cp.radials
+        distance = to_cp.size * GROUND_DISTANCE_FACTOR
+        attackers_location = position.point_from_heading(attack_heading, distance)
+        attackers_location = Conflict._find_ground_location(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
 
-        instance.ground_attackers_location = instance.position.point_from_heading(attack_heading, instance.size * GROUND_DISTANCE_FACTOR)
-        instance.ground_defenders_location = instance.position.point_from_heading(defense_heading, instance.size * GROUND_DISTANCE_FACTOR)
+        defenders_location = position.point_from_heading(defense_heading, distance)
+        defenders_location = Conflict._find_ground_location(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
 
-        instance.air_attackers_location = instance.position.point_from_heading(attack_heading, AIR_DISTANCE)
-        instance.air_defenders_location = instance.position.point_from_heading(defense_heading, AIR_DISTANCE)
-
-        return instance
+        return cls(
+            position=position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=attackers_location,
+            ground_defenders_location=defenders_location,
+            air_attackers_location=position.point_from_heading(attack_heading, AIR_DISTANCE),
+            air_defenders_location=position.point_from_heading(defense_heading, AIR_DISTANCE)
+        )
 
     @classmethod
-    def intercept_conflict(self, attacker: Country, defender: Country, from_cp, to_cp):
-        from theater.conflicttheater import SIZE_REGULAR
-        from theater.conflicttheater import ALL_RADIALS
-
-        heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), random.choice([-1, 1]) * random.randint(60, 100))
-
+    def intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         raw_distance = from_cp.position.distance_to_point(to_cp.position) * 0.4
         distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
+
+        heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), random.choice([-1, 1]) * random.randint(60, 100))
         position = from_cp.position.point_from_heading(heading, distance)
 
-        instance = self()
-        instance.from_cp = from_cp
-        instance.to_cp = to_cp
-        instance.attackers_side = attacker
-        instance.defenders_side = defender
-
-        instance.position = position
-        instance.size = SIZE_REGULAR
-        instance.radials = ALL_RADIALS
-
-        instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, INTERCEPT_ATTACKERS_DISTANCE)
-        instance.air_defenders_location = instance.position
-
-        return instance
+        return cls(
+            position=position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=None,
+            air_attackers_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, INTERCEPT_ATTACKERS_DISTANCE),
+            air_defenders_location=position
+        )
 
     @classmethod
-    def ground_intercept_conflict(self, attacker: Country, defender: Country, heading: int, from_cp, to_cp):
-        instance = self()
-        instance.from_cp = from_cp
-        instance.to_cp = to_cp
-        instance.attackers_side = attacker
-        instance.defenders_side = defender
+    def ground_intercept_conflict(cls, attacker: Country, defender: Country, heading: int, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        heading = random.choice(to_cp.radials)
+        initial_location = to_cp.position.point_from_heading(heading, to_cp.size * GROUNDINTERCEPT_DISTANCE_FACTOR),
+        max_distance = to_cp.size * GROUNDINTERCEPT_DISTANCE_FACTOR
+        ground_location = Conflict._find_ground_location(initial_location, max_distance, _heading_sum(heading, 180), theater)
 
-        instance.position = to_cp.position
-        instance.size = to_cp.size
-        instance.radials = to_cp.radials
-
-        instance.air_attackers_location = instance.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE)
-        instance.ground_defenders_location = instance.position.point_from_heading(random.choice(to_cp.radials), instance.size * GROUNDINTERCEPT_DISTANCE_FACTOR)
-
-        return instance
+        return cls(
+            position=to_cp.position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=ground_location,
+            air_attackers_location=to_cp.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE),
+            air_defenders_location=to_cp.position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + _opposite_heading(heading), AIR_DISTANCE)
+        )
 
     @classmethod
-    def naval_intercept_conflict(cls, attacker: Country, defender: Country, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint):
+    def intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        raw_distance = from_cp.position.distance_to_point(to_cp.position) * 0.4
+        distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
+
+        heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), random.choice([-1, 1]) * random.randint(60, 100))
+        position = from_cp.position.point_from_heading(heading, distance)
+
+        return cls(
+            position=position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=None,
+            air_attackers_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, INTERCEPT_ATTACKERS_DISTANCE),
+            air_defenders_location=position
+        )
+
+    @classmethod
+    def naval_intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         radial = random.choice(to_cp.sea_radials)
 
-        initial_distance = int(from_cp.position.distance_to_point(to_cp.position) * NAVAL_INTERCEPT_DISTANCE_FACTOR)
+        initial_distance = min(int(from_cp.position.distance_to_point(to_cp.position) * NAVAL_INTERCEPT_DISTANCE_FACTOR), NAVAL_INTERCEPT_DISTANCE_MAX)
         position = to_cp.position.point_from_heading(radial, initial_distance)
         for offset in range(0, initial_distance, NAVAL_INTERCEPT_STEP):
-            if theater.is_on_land(position):
+            if not theater.is_on_land(position):
+                position = to_cp.position.point_from_heading(radial, initial_distance - offset)
                 break
-            else:
-                position = to_cp.position.point_from_heading(radial, offset)
-
-        instance = cls()
-        instance.from_cp = from_cp
-        instance.to_cp = to_cp
-        instance.attackers_side = attacker
-        instance.defenders_side = defender
-
-        instance.position = position
-        instance.size = SIZE_REGULAR
-        instance.radials = to_cp.radials
 
         attacker_heading = from_cp.position.heading_between_point(to_cp.position)
-        instance.air_attackers_location = instance.position.point_from_heading(attacker_heading, AIR_DISTANCE)
-        instance.air_defenders_location = instance.position.point_from_heading(_opposite_heading(attacker_heading), AIR_DISTANCE)
-
-        return instance
+        return cls(
+            position=position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=position,
+            air_attackers_location=position.point_from_heading(attacker_heading, AIR_DISTANCE),
+            air_defenders_location=position.point_from_heading(_opposite_heading(attacker_heading), AIR_DISTANCE)
+        )

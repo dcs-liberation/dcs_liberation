@@ -83,11 +83,12 @@ class OverviewCanvas:
                                            extent=extent)
 
             """
-            For debugging purposes
+            #For debugging purposes
             
             for r in cp.radials:
                 p = self.transform_point(cp.position.point_from_heading(r, 20000))
                 self.canvas.create_text(p[0], p[1], text="{}".format(r))
+            continue
             """
 
             self.canvas.tag_bind(cp_id, "<Button-1>", self.display(cp))

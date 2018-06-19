@@ -5,6 +5,7 @@ from dcs.task import *
 
 from game import *
 from game.event import *
+from game.operation.groundintercept import GroundInterceptOperation
 from userdata.debriefing import Debriefing
 
 
@@ -27,7 +28,10 @@ class GroundInterceptEvent(Event):
             if unit in self.targets:
                 destroyed_targets += count
 
-        return (float(destroyed_targets) / float(total_targets)) >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
+        if self.from_cp.captured:
+            return math.ceil(float(destroyed_targets) / total_targets) >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
+        else:
+            return math.ceil(float(destroyed_targets) / total_targets) < self.SUCCESS_TARGETS_HIT_PERCENTAGE
 
     def commit(self, debriefing: Debriefing):
         super(GroundInterceptEvent, self).commit(debriefing)
@@ -38,13 +42,14 @@ class GroundInterceptEvent(Event):
             else:
                 self.to_cp.base.affect_strength(+self.STRENGTH_INFLUENCE)
         else:
-            assert False
+            if self.is_successfull(debriefing):
+                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+            else:
+                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def skip(self):
-        if not self.to_cp.captured:
-            self.to_cp.base.affect_strength(+0.1)
-        else:
-            pass
+        if self.to_cp.captured:
+            self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
         suitable_unittypes = db.find_unittype(PinpointStrike, self.defender_name)
@@ -61,8 +66,31 @@ class GroundInterceptEvent(Event):
                                       from_cp=self.from_cp,
                                       to_cp=self.to_cp)
         op.setup(target=self.targets,
-                 strikegroup=strikegroup)
+                 strikegroup=strikegroup,
+                 interceptors={})
 
         self.operation = op
 
+    def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
+        suitable_unittypes = db.find_unittype(PinpointStrike, self.defender_name)
+        random.shuffle(suitable_unittypes)
+        unittypes = suitable_unittypes[:self.TARGET_VARIETY]
+        typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
+        self.targets = {unittype: typecount for unittype in unittypes}
 
+        op = GroundInterceptOperation(
+            self.game,
+            attacker_name=self.attacker_name,
+            defender_name=self.defender_name,
+            attacker_clients={},
+            defender_clients=clients,
+            from_cp=self.from_cp,
+            to_cp=self.to_cp
+        )
+
+        strikegroup = self.from_cp.base.scramble_cas()
+        op.setup(target=self.targets,
+                 strikegroup=strikegroup,
+                 interceptors=interceptors)
+
+        self.operation = op

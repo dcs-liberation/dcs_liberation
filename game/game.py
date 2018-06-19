@@ -32,10 +32,12 @@ COMMISION_AMOUNTS_FACTORS = {
 ENEMY_INTERCEPT_PROBABILITY_BASE = 8
 ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
 ENEMY_CAPTURE_PROBABILITY_BASE = 4
+ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE = 8
+ENEMY_NAVALINTERCEPT_PROBABILITY_BASE = 8
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 35
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 35
-
+PLAYER_NAVALINTERCEPT_PROBABILITY_BASE = 35
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
@@ -135,14 +137,35 @@ class Game:
                                                         game=self))
                 break
 
+        for from_cp, to_cp in self.theater.conflicts(False):
+            if self._roll(ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
+                self.events.append(GroundInterceptEvent(attacker_name=self.enemy,
+                                                        defender_name=self.player,
+                                                        from_cp=from_cp,
+                                                        to_cp=to_cp,
+                                                        game=self))
+                break
+
     def _generate_navalinterceptions(self):
         for from_cp, to_cp in self.theater.conflicts(True):
-            if to_cp.radials == ALL_RADIALS:
+            if to_cp.radials == LAND:
                 continue
 
-            if self._roll(100, from_cp.base.strength):
+            if self._roll(PLAYER_NAVALINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(NavalInterceptEvent(attacker_name=self.player,
                                                        defender_name=self.enemy,
+                                                       from_cp=from_cp,
+                                                       to_cp=to_cp,
+                                                       game=self))
+                break
+
+        for from_cp, to_cp in self.theater.conflicts(False):
+            if to_cp.radials == LAND:
+                continue
+
+            if self._roll(ENEMY_NAVALINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
+                self.events.append(NavalInterceptEvent(attacker_name=self.enemy,
+                                                       defender_name=self.player,
                                                        from_cp=from_cp,
                                                        to_cp=to_cp,
                                                        game=self))

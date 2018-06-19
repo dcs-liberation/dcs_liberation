@@ -30,7 +30,8 @@ class InterceptOperation(Operation):
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
             from_cp=self.from_cp,
-            to_cp=self.to_cp
+            to_cp=self.to_cp,
+            theater=self.game.theater
         )
 
         self.initialize(mission=self.mission,

@@ -72,8 +72,10 @@ PRICES = {
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
 
-    Bulk_cargo_ship_Yakushev: 100,
-    Dry_cargo_ship_Ivanov: 100,
+    LHA_1_Tarawa: 30,
+    Bulk_cargo_ship_Yakushev: 10,
+    Dry_cargo_ship_Ivanov: 10,
+    Tanker_Elnya_160: 10,
 }
 
 UNIT_BY_TASK = {
@@ -135,7 +137,7 @@ UNIT_BY_TASK = {
     ],
 
     Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
-    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev],
+    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, LHA_1_Tarawa],
 }
 
 SAM_BAN = [
@@ -193,6 +195,7 @@ UNIT_BY_COUNTRY = {
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
+        Tanker_Elnya_160,
     ],
 
     "USA": [
@@ -220,15 +223,14 @@ UNIT_BY_COUNTRY = {
         AirDefence.SAM_Patriot_ICC,
 
         CVN_74_John_C__Stennis,
-        # TODO: verify or find out proper USA cargo ship
-        Bulk_cargo_ship_Yakushev,
-        Dry_cargo_ship_Ivanov,
+        LHA_1_Tarawa,
     ],
 }
 
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
-        "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
+        Escort: "AIM-9M*6, AIM-7M*2, FUEL*3",
+        CAP: "AIM-9M*6, AIM-7M*2, FUEL*3",
     },
 
     # TODO: figure out a way to setup su33 loadout

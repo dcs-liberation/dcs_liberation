@@ -187,10 +187,17 @@ class EventMenu(Menu):
                                    clients=scrambled_clients)
         elif type(self.event) is GroundInterceptEvent:
             e = self.event  # type: GroundInterceptEvent
-            e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+            if self.game.is_player_attack(self.event):
+                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+            else:
+                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
-            e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+
+            if self.game.is_player_attack(self.event):
+                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+            else:
+                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()

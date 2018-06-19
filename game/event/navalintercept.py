@@ -14,13 +14,14 @@ from .event import Event
 
 class NavalInterceptEvent(Event):
     STRENGTH_INFLUENCE = 0.3
+    SUCCESS_RATE = 0.5
 
     targets = None  # type: db.ShipDict
 
     def _targets_count(self) -> int:
         from gen.conflictgen import IMPORTANCE_LOW, IMPORTANCE_HIGH
         factor = (self.to_cp.importance - IMPORTANCE_LOW) * 10
-        return min(int(factor), 1)
+        return max(int(factor), 1)
 
     def __str__(self) -> str:
         return "Naval intercept at {}".format(self.to_cp)
@@ -33,11 +34,16 @@ class NavalInterceptEvent(Event):
         return s
 
     def is_successfull(self, debriefing: Debriefing):
-        targets_destroyed = [c for t, c in debriefing.destroyed_units.items() if t in self.targets.values()]
+        total_targets = sum(self.targets.values())
+        destroyed_targets = 0
+        for unit, count in debriefing.destroyed_units[self.defender_name].items():
+            if unit in self.targets:
+                destroyed_targets += count
+
         if self.from_cp.captured:
-            return targets_destroyed > 0
+            return math.ceil(float(destroyed_targets) / total_targets) > self.SUCCESS_RATE
         else:
-            return targets_destroyed == 0
+            return math.ceil(float(destroyed_targets) / total_targets) < self.SUCCESS_RATE
 
     def commit(self, debriefing: Debriefing):
         super(NavalInterceptEvent, self).commit(debriefing)
@@ -88,8 +94,8 @@ class NavalInterceptEvent(Event):
             self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            attacker_clients=clients,
-            defender_clients={},
+            attacker_clients={},
+            defender_clients=clients,
             from_cp=self.from_cp,
             to_cp=self.to_cp
         )

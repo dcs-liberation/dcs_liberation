@@ -28,7 +28,7 @@ class ShipGenerator:
                 country=self.conflict.defenders_side,
                 name=namegen.next_transport_group_name(),
                 _type=unit_type,
-                position=self.conflict.position.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD),
+                position=self.conflict.ground_defenders_location.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD),
                 group_size=unit_count,
             )
 
