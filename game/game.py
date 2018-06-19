@@ -29,11 +29,11 @@ COMMISION_AMOUNTS_FACTORS = {
 }
 
 
-ENEMY_INTERCEPT_PROBABILITY_BASE = 8
-ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
+ENEMY_INTERCEPT_PROBABILITY_BASE = 5
 ENEMY_CAPTURE_PROBABILITY_BASE = 4
-ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE = 8
-ENEMY_NAVALINTERCEPT_PROBABILITY_BASE = 8
+ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE = 5
+ENEMY_NAVALINTERCEPT_PROBABILITY_BASE = 5
+ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 35
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 35
@@ -94,6 +94,9 @@ class Game:
         for from_cp, to_cp in self.theater.conflicts(False):
             if from_cp.base.total_units(CAP) == 0:
                 continue
+
+            if enemy_interception:
+                break
 
             if self._roll(ENEMY_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(InterceptEvent(attacker_name=self.enemy,
@@ -252,7 +255,7 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()
-        #self._generate_enemy_caps(ignored_cps=ignored_cps)
+        self._generate_enemy_caps(ignored_cps=ignored_cps)
         self._generate_interceptions()
         self._generate_globalinterceptions()
         self._generate_groundinterceptions()

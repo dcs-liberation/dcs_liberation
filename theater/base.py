@@ -142,6 +142,8 @@ class Base:
         self.strength += amount
         if self.strength > 1:
             self.strength = 1
+        elif self.strength < 0:
+            self.strength = 0.001
 
     def scramble_count(self) -> int:
         count = int(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength)
