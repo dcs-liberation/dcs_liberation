@@ -144,7 +144,7 @@ class Conflict:
     @classmethod
     def ground_intercept_conflict(cls, attacker: Country, defender: Country, heading: int, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         heading = random.choice(to_cp.radials)
-        initial_location = to_cp.position.point_from_heading(heading, to_cp.size * GROUNDINTERCEPT_DISTANCE_FACTOR),
+        initial_location = to_cp.position.point_from_heading(heading, to_cp.size * GROUNDINTERCEPT_DISTANCE_FACTOR)
         max_distance = to_cp.size * GROUNDINTERCEPT_DISTANCE_FACTOR
         ground_location = Conflict._find_ground_location(initial_location, max_distance, _heading_sum(heading, 180), theater)
 

@@ -79,6 +79,7 @@ class CaptureEvent(Event):
         self.operation = op
 
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
+        # TODO: also include CAS planes
         interceptors = self.to_cp.base.scramble_sweep()
 
         op = CaptureOperation(game=self.game,
@@ -93,6 +94,7 @@ class CaptureEvent(Event):
                  escort=escort,
                  attack=armor,
                  intercept=interceptors,
+                 # TODO: should strength affect this?
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.assemble_aa())
 

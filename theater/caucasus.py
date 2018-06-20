@@ -1,3 +1,5 @@
+import re
+
 from dcs.terrain import caucasus
 from dcs import mapping
 
@@ -70,3 +72,8 @@ class CaucasusTheater(ConflictTheater):
 
         self.carrier_1.captured = True
         self.soganlug.captured = True
+
+    def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
+        point.name = " ".join(re.split(r" |-", point.name)[:1])
+
+        super(CaucasusTheater, self).add_controlpoint(point, connected_to=connected_to)

@@ -51,7 +51,7 @@ class AntiAAStrikeEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
-        self.targets = self.to_cp.base.assemble_aa()
+        self.targets = self.to_cp.base.assemble_aa(count=self.to_cp.base.total_aa)
 
         op = AntiAAStrikeOperation(game=self.game,
                                    attacker_name=self.attacker_name,

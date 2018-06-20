@@ -12,26 +12,27 @@ PRICES = {
     C_101CC: 8,
     MiG_23MLD: 20,
     MiG_25PD: 24,
-    MiG_31: 28,
+    MiG_31: 26,
     Su_27: 24,
     Su_33: 25,
-    MiG_29A: 28,
+    MiG_29A: 26,
 
-    AJS37: 13,
-    F_5E: 8,
+    F_5E: 6,
     MiG_15bis: 5,
-    MiG_21Bis: 8,
+    MiG_21Bis: 6,
+    AJS37: 8,
 
-    M_2000C: 18,
-    FA_18C_hornet: 22,
-    F_15C: 28,
+    AV8BNA: 13,
+    M_2000C: 13,
+    FA_18C_hornet: 18,
+    F_15C: 24,
 
     # bomber
-    Su_25T: 15,
-    Su_24M: 18,
-    Su_17M4: 13,
+    Su_25T: 13,
+    Su_24M: 15,
+    Su_17M4: 10,
     L_39ZA: 10,
-    MiG_29G: 18,
+    MiG_29G: 15,
     Su_34: 22,
 
     A_10A: 18,
@@ -97,6 +98,7 @@ UNIT_BY_TASK = {
     CAS: [
         MiG_15bis,
         L_39ZA,
+        AV8BNA,
         A_10A,
         A_10C,
         Su_25T,
@@ -148,6 +150,10 @@ SAM_BAN = [
     AirDefence.SAM_SA_8_Osa_9A33,
 ]
 
+TAKEOFF_BAN = [
+    AV8BNA,
+]
+
 EXTRA_AA = {
     "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
     "USA": AirDefence.SAM_Patriot_EPP_III,
@@ -167,6 +173,7 @@ UNIT_BY_COUNTRY = {
         MiG_21Bis,
         MiG_29A,
         M_2000C,
+        AV8BNA,
 
         A_10A,
         A_10C,
@@ -209,6 +216,7 @@ UNIT_BY_COUNTRY = {
 
         A_10A,
         A_10C,
+        AV8BNA,
 
         S_3B_Tanker,
         C_130,
@@ -229,8 +237,11 @@ UNIT_BY_COUNTRY = {
 
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
-        Escort: "AIM-9M*6, AIM-7M*2, FUEL*3",
-        CAP: "AIM-9M*6, AIM-7M*2, FUEL*3",
+        "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
+    },
+
+    AV8BNA: {
+        CAS: "AS 2",
     },
 
     # TODO: figure out a way to setup su33 loadout

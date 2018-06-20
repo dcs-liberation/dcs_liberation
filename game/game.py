@@ -9,6 +9,7 @@ from userdata.debriefing import Debriefing
 from theater import *
 
 from . import db
+from .settings import Settings
 from .event import *
 
 COMMISION_LIMITS_SCALE = 2
@@ -33,29 +34,32 @@ ENEMY_INTERCEPT_PROBABILITY_BASE = 5
 ENEMY_CAPTURE_PROBABILITY_BASE = 4
 ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE = 5
 ENEMY_NAVALINTERCEPT_PROBABILITY_BASE = 5
+ENEMY_ANTIAASTRIKE_PROBABILITY_BASE = 5
 ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
 
 PLAYER_INTERCEPT_PROBABILITY_BASE = 35
 PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 35
 PLAYER_NAVALINTERCEPT_PROBABILITY_BASE = 35
+PLAYER_ANTIAASTRIKE_PROBABILITY_BASE = 35
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 
-PLAYER_BUDGET_INITIAL = 90
-PLAYER_BUDGET_BASE = 20
+PLAYER_BUDGET_INITIAL = 120
+PLAYER_BUDGET_BASE = 30
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 AWACS_BUDGET_COST = 4
 
 
 class Game:
+    settings = None  # type: Settings
     budget = PLAYER_BUDGET_INITIAL
     events = None  # type: typing.List[Event]
     pending_transfers = None  # type: typing.Dict[]
-    player_skill = "Good"
-    enemy_skill = "Average"
+    ignored_cps = None  # type: typing.Collection[ControlPoint]
 
     def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater):
+        self.settings = Settings()
         self.events = []
         self.theater = theater
         self.player = player_name
@@ -73,12 +77,12 @@ class Game:
                                                 to_cp=to_cp,
                                                 game=self))
 
-    def _generate_enemy_caps(self, ignored_cps: typing.Collection[ControlPoint] = None):
+    def _generate_enemy_caps(self):
         for from_cp, to_cp in self.theater.conflicts(False):
             if from_cp.base.total_planes == 0 or from_cp.base.total_armor == 0:
                 continue
 
-            if ignored_cps and to_cp in ignored_cps:
+            if to_cp in self.ignored_cps:
                 continue
 
             if self._roll(ENEMY_CAPTURE_PROBABILITY_BASE, from_cp.base.strength):
@@ -90,13 +94,12 @@ class Game:
                 break
 
     def _generate_interceptions(self):
-        enemy_interception = False
         for from_cp, to_cp in self.theater.conflicts(False):
             if from_cp.base.total_units(CAP) == 0:
                 continue
 
-            if enemy_interception:
-                break
+            if to_cp in self.ignored_cps:
+                continue
 
             if self._roll(ENEMY_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(InterceptEvent(attacker_name=self.enemy,
@@ -104,7 +107,6 @@ class Game:
                                                   from_cp=from_cp,
                                                   to_cp=to_cp,
                                                   game=self))
-                enemy_interception = True
                 break
 
             if to_cp in self.theater.conflicts(False):
@@ -118,7 +120,6 @@ class Game:
                                                           from_cp=from_cp,
                                                           to_cp=to_cp,
                                                           game=self))
-                        enemy_interception = True
                         break
 
         for from_cp, to_cp in self.theater.conflicts(True):
@@ -141,6 +142,9 @@ class Game:
                 break
 
         for from_cp, to_cp in self.theater.conflicts(False):
+            if to_cp in self.ignored_cps:
+                continue
+
             if self._roll(ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(GroundInterceptEvent(attacker_name=self.enemy,
                                                         defender_name=self.player,
@@ -166,6 +170,9 @@ class Game:
             if to_cp.radials == LAND:
                 continue
 
+            if to_cp in self.ignored_cps:
+                continue
+
             if self._roll(ENEMY_NAVALINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
                 self.events.append(NavalInterceptEvent(attacker_name=self.enemy,
                                                        defender_name=self.player,
@@ -186,6 +193,34 @@ class Game:
                                                   from_cp=from_cp,
                                                   to_cp=to_cp,
                                                   game=self))
+                break
+
+    def _generate_aastrikes(self):
+        for from_cp, to_cp in self.theater.conflicts(True):
+            if to_cp.base.total_aa == 0:
+                continue
+
+            if self._roll(PLAYER_ANTIAASTRIKE_PROBABILITY_BASE, from_cp.base.strength):
+                self.events.append(AntiAAStrikeEvent(attacker_name=self.player,
+                                                     defender_name=self.enemy,
+                                                     from_cp=from_cp,
+                                                     to_cp=to_cp,
+                                                     game=self))
+                break
+
+        for from_cp, to_cp in self.theater.conflicts(False):
+            if to_cp in self.ignored_cps:
+                continue
+
+            if to_cp.base.total_aa == 0:
+                continue
+
+            if self._roll(ENEMY_ANTIAASTRIKE_PROBABILITY_BASE, from_cp.base.strength):
+                self.events.append(AntiAAStrikeEvent(attacker_name=self.enemy,
+                                                     defender_name=self.player,
+                                                     from_cp=from_cp,
+                                                     to_cp=to_cp,
+                                                     game=self))
                 break
 
     def _commision_units(self, cp: ControlPoint):
@@ -253,11 +288,16 @@ class Game:
             for cp in self.theater.enemy_points():
                 self._commision_units(cp)
 
+        self.ignored_cps = []
+        if ignored_cps:
+            self.ignored_cps = ignored_cps
+
         self.events = []  # type: typing.List[Event]
         self._fill_cap_events()
-        self._generate_enemy_caps(ignored_cps=ignored_cps)
+        self._generate_enemy_caps()
         self._generate_interceptions()
         self._generate_globalinterceptions()
         self._generate_groundinterceptions()
         self._generate_navalinterceptions()
+        self._generate_aastrikes()
 

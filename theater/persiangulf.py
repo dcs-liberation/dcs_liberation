@@ -77,8 +77,6 @@ class PersianGulfTheater(ConflictTheater):
 
         """
         Mid game: 
-        """
-        
         self.al_maktoum.captured = True
         self.al_minhad.captured = True
         self.dubai.captured = True
@@ -86,3 +84,4 @@ class PersianGulfTheater(ConflictTheater):
         self.fujairah.captured = True
         self.khasab.captured = True
         self.sir_abu_nuayr.captured = True
+        """

@@ -66,7 +66,11 @@ class EventMenu(Menu):
 
             row += 1
 
-        Label(self.frame, text="{}. {}".format(self.event, self.event.threat_description)).grid(row=row, column=0, columnspan=5)
+        threat_descr = self.event.threat_description
+        if threat_descr:
+            threat_descr = "Approx. {}".format(threat_descr)
+
+        Label(self.frame, text="{}. {}".format(self.event, threat_descr)).grid(row=row, column=0, columnspan=5)
         row += 1
 
         Button(self.frame, text="Commit", command=self.start).grid(column=3, row=row, sticky=E)
@@ -194,6 +198,12 @@ class EventMenu(Menu):
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
 
+            if self.game.is_player_attack(self.event):
+                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+            else:
+                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
+        elif type(self.event) is AntiAAStrikeEvent:
+            e = self.event  # type: AntiAAStrikeEvent
             if self.game.is_player_attack(self.event):
                 e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
             else:

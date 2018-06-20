@@ -1,4 +1,5 @@
 from game import db
+from game.settings import Settings
 from .conflictgen import *
 from .naming import *
 
@@ -12,23 +13,24 @@ SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_MAX_DIST = 30000
 WORKAROUND_WAYP_DIST = 1000
 
-WARM_START_ALTITUDE = 3600
-WARM_START_AIRSPEED = 600
-INTERCEPTION_AIRSPEED = 1200
+WARM_START_ALTITUDE = 4600
+INTERCEPTION_ALT = 4600
+CAS_ALTITUDE = 4600
+RTB_ALTITUDE = 4600
+TRANSPORT_LANDING_ALT = 4600
 
-TRANSPORT_LANDING_ALT = 500
-
-INTERCEPTION_ALT = 3600
-CAS_ALTITUDE = 1000
-RTB_ALTITUDE = 1000
+WARM_START_AIRSPEED = 540
+INTERCEPTION_AIRSPEED = 1000
 
 INTERCEPT_MAX_DISTANCE = 80000
+
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[PlaneGroup]
 
-    def __init__(self, mission: Mission, conflict: Conflict):
+    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings):
         self.m = mission
+        self.settings = settings
         self.conflict = conflict
         self.escort_targets = []
 
@@ -134,10 +136,15 @@ class AircraftConflictGenerator:
         elif isinstance(at, ShipGroup):
             return self._generate_at_carrier(name, side, unit_type, count, client_count, at)
         elif issubclass(at, Airport):
-            try:
-                return self._generate_at_airport(name, side, unit_type, count, client_count, at)
-            except NoParkingSlotError:
-                return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
+            takeoff_ban = unit_type in db.TAKEOFF_BAN
+            ai_ban = client_count == 0 and self.settings.only_player_takeoff
+
+            if not takeoff_ban and not ai_ban:
+                try:
+                    return self._generate_at_airport(name, side, unit_type, count, client_count, at)
+                except NoParkingSlotError:
+                    pass
+            return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
         else:
             assert False
 

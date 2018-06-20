@@ -45,15 +45,20 @@ class ExtraAAConflictGenerator:
             if cp.is_global:
                 continue
 
-            if cp.position.distance_to_point(self.conflict.position) > EXTRA_AA_MIN_DISTANCE:
-                country_name = cp.captured and self.player_name or self.enemy_name
-                position = cp.position.point_from_heading(0, EXTRA_AA_POSITION_FROM_CP)
+            if cp.position.distance_to_point(self.conflict.position) < EXTRA_AA_MIN_DISTANCE:
+                continue
 
-                self.mission.vehicle_group(
-                    country=self.mission.country(country_name),
-                    name=namegen.next_ground_group_name(),
-                    _type=db.EXTRA_AA[country_name],
-                    position=position,
-                    group_size=2
-                )
+            if cp.position.distance_to_point(self.conflict.from_cp.position) < EXTRA_AA_MIN_DISTANCE:
+                continue
+
+            country_name = cp.captured and self.player_name or self.enemy_name
+            position = cp.position.point_from_heading(0, EXTRA_AA_POSITION_FROM_CP)
+
+            self.mission.vehicle_group(
+                country=self.mission.country(country_name),
+                name=namegen.next_ground_group_name(),
+                _type=db.EXTRA_AA[country_name],
+                position=position,
+                group_size=2
+            )
 

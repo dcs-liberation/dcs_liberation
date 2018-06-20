@@ -44,7 +44,7 @@ class Operation:
         self.conflict = conflict
 
         self.armorgen = ArmorConflictGenerator(mission, conflict)
-        self.airgen = AircraftConflictGenerator(mission, conflict)
+        self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
         self.awacsgen = AWACSConflictGenerator(mission, conflict, self.game)
