@@ -12,38 +12,34 @@ from . import db
 from .settings import Settings
 from .event import *
 
-COMMISION_LIMITS_SCALE = 2
+COMMISION_LIMITS_SCALE = 1.5
 COMMISION_LIMITS_FACTORS = {
-    PinpointStrike: 2,
-    CAS: 1,
-    CAP: 3,
-    AirDefence: 1,
+    PinpointStrike: 10,
+    CAS: 5,
+    CAP: 8,
+    AirDefence: 2,
 }
 
-COMMISION_AMOUNTS_SCALE = 2
+COMMISION_AMOUNTS_SCALE = 1.5
 COMMISION_UNIT_VARIETY = 4
 COMMISION_AMOUNTS_FACTORS = {
-    PinpointStrike: 0.6,
-    CAS: 0.3,
-    CAP: 0.5,
+    PinpointStrike: 2,
+    CAS: 1,
+    CAP: 2,
     AirDefence: 0.3,
 }
 
-
-ENEMY_INTERCEPT_PROBABILITY_BASE = 5
-ENEMY_CAPTURE_PROBABILITY_BASE = 4
-ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE = 5
-ENEMY_NAVALINTERCEPT_PROBABILITY_BASE = 5
-ENEMY_ANTIAASTRIKE_PROBABILITY_BASE = 5
-ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE = 5
-
-PLAYER_INTERCEPT_PROBABILITY_BASE = 35
-PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE = 35
-PLAYER_NAVALINTERCEPT_PROBABILITY_BASE = 35
-PLAYER_ANTIAASTRIKE_PROBABILITY_BASE = 35
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
+EVENT_PROBABILITIES = {
+    CaptureEvent: [100, 4],
+    InterceptEvent: [35, 5],
+    GroundInterceptEvent: [35, 5],
+    NavalInterceptEvent: [35, 5],
+    AntiAAStrikeEvent: [35, 5],
+}
 
+PLAYER_BASE_STRENGTH_RECOVERY = 0.2
 PLAYER_BUDGET_INITIAL = 120
 PLAYER_BUDGET_BASE = 30
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
@@ -68,119 +64,6 @@ class Game:
     def _roll(self, prob, mult):
         return random.randint(0, 100) <= prob * mult
 
-    def _fill_cap_events(self):
-        for from_cp, to_cp in self.theater.conflicts(True):
-            if to_cp not in [x.to_cp for x in self.events]:
-                self.events.append(CaptureEvent(attacker_name=self.player,
-                                                defender_name=self.enemy,
-                                                from_cp=from_cp,
-                                                to_cp=to_cp,
-                                                game=self))
-
-    def _generate_enemy_caps(self):
-        for from_cp, to_cp in self.theater.conflicts(False):
-            if from_cp.base.total_planes == 0 or from_cp.base.total_armor == 0:
-                continue
-
-            if to_cp in self.ignored_cps:
-                continue
-
-            if self._roll(ENEMY_CAPTURE_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(CaptureEvent(attacker_name=self.enemy,
-                                                defender_name=self.player,
-                                                from_cp=from_cp,
-                                                to_cp=to_cp,
-                                                game=self))
-                break
-
-    def _generate_interceptions(self):
-        for from_cp, to_cp in self.theater.conflicts(False):
-            if from_cp.base.total_units(CAP) == 0:
-                continue
-
-            if to_cp in self.ignored_cps:
-                continue
-
-            if self._roll(ENEMY_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(InterceptEvent(attacker_name=self.enemy,
-                                                  defender_name=self.player,
-                                                  from_cp=from_cp,
-                                                  to_cp=to_cp,
-                                                  game=self))
-                break
-
-            if to_cp in self.theater.conflicts(False):
-                continue
-
-            if self._roll(ENEMY_INTERCEPT_GLOBAL_PROBABILITY_BASE, 1):
-                for from_cp, _ in self.theater.conflicts(False):
-                    if from_cp.base.total_units(CAP) > 0:
-                        self.events.append(InterceptEvent(attacker_name=self.enemy,
-                                                          defender_name=self.player,
-                                                          from_cp=from_cp,
-                                                          to_cp=to_cp,
-                                                          game=self))
-                        break
-
-        for from_cp, to_cp in self.theater.conflicts(True):
-            if self._roll(PLAYER_INTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(InterceptEvent(attacker_name=self.player,
-                                                  defender_name=self.enemy,
-                                                  from_cp=from_cp,
-                                                  to_cp=to_cp,
-                                                  game=self))
-                break
-
-    def _generate_groundinterceptions(self):
-        for from_cp, to_cp in self.theater.conflicts(True):
-            if self._roll(PLAYER_GROUNDINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(GroundInterceptEvent(attacker_name=self.player,
-                                                        defender_name=self.enemy,
-                                                        from_cp=from_cp,
-                                                        to_cp=to_cp,
-                                                        game=self))
-                break
-
-        for from_cp, to_cp in self.theater.conflicts(False):
-            if to_cp in self.ignored_cps:
-                continue
-
-            if self._roll(ENEMY_GROUNDINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(GroundInterceptEvent(attacker_name=self.enemy,
-                                                        defender_name=self.player,
-                                                        from_cp=from_cp,
-                                                        to_cp=to_cp,
-                                                        game=self))
-                break
-
-    def _generate_navalinterceptions(self):
-        for from_cp, to_cp in self.theater.conflicts(True):
-            if to_cp.radials == LAND:
-                continue
-
-            if self._roll(PLAYER_NAVALINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(NavalInterceptEvent(attacker_name=self.player,
-                                                       defender_name=self.enemy,
-                                                       from_cp=from_cp,
-                                                       to_cp=to_cp,
-                                                       game=self))
-                break
-
-        for from_cp, to_cp in self.theater.conflicts(False):
-            if to_cp.radials == LAND:
-                continue
-
-            if to_cp in self.ignored_cps:
-                continue
-
-            if self._roll(ENEMY_NAVALINTERCEPT_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(NavalInterceptEvent(attacker_name=self.enemy,
-                                                       defender_name=self.player,
-                                                       from_cp=from_cp,
-                                                       to_cp=to_cp,
-                                                       game=self))
-                break
-
     def _generate_globalinterceptions(self):
         global_count = len([x for x in self.theater.player_points() if x.is_global])
         for from_cp in [x for x in self.theater.player_points() if x.is_global]:
@@ -195,52 +78,61 @@ class Game:
                                                   game=self))
                 break
 
-    def _generate_aastrikes(self):
-        for from_cp, to_cp in self.theater.conflicts(True):
-            if to_cp.base.total_aa == 0:
+    def _generate_events(self):
+        enemy_cap_generated = False
+        for player_cp, enemy_cp in self.theater.conflicts(True):
+            if player_cp.is_global or enemy_cp.is_global:
                 continue
 
-            if self._roll(PLAYER_ANTIAASTRIKE_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(AntiAAStrikeEvent(attacker_name=self.player,
-                                                     defender_name=self.enemy,
-                                                     from_cp=from_cp,
-                                                     to_cp=to_cp,
-                                                     game=self))
-                break
+            for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
+                if self._roll(player_probability, player_cp.base.strength):
+                    if event_class == NavalInterceptEvent:
+                        if enemy_cp.radials == LAND:
+                            continue
 
-        for from_cp, to_cp in self.theater.conflicts(False):
-            if to_cp in self.ignored_cps:
-                continue
+                    self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+                elif self._roll(enemy_probability, enemy_cp.base.strength):
+                    if player_cp in self.ignored_cps:
+                        continue
 
-            if to_cp.base.total_aa == 0:
-                continue
+                    if enemy_cp.base.total_planes == 0:
+                        continue
 
-            if self._roll(ENEMY_ANTIAASTRIKE_PROBABILITY_BASE, from_cp.base.strength):
-                self.events.append(AntiAAStrikeEvent(attacker_name=self.enemy,
-                                                     defender_name=self.player,
-                                                     from_cp=from_cp,
-                                                     to_cp=to_cp,
-                                                     game=self))
-                break
+                    if event_class == NavalInterceptEvent:
+                        if player_cp.radials == LAND:
+                            continue
+                    elif event_class == CaptureEvent:
+                        if enemy_cap_generated:
+                            continue
+                        if enemy_cp.base.total_armor == 0:
+                            continue
+                        enemy_cap_generated = True
+                    elif event_class == AntiAAStrikeEvent:
+                        if player_cp.base.total_aa == 0:
+                            continue
+
+                    self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
 
     def _commision_units(self, cp: ControlPoint):
         for for_task in [PinpointStrike, CAS, CAP, AirDefence]:
-            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE)
+            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE) * self.settings.multiplier
             missing_units = limit - cp.base.total_units(for_task)
             if missing_units > 0:
-                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE)
+                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
                     importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
                     unittypes = db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
-                    cp.base.commision_units({random.choice(unittypes): points_to_spend})
+                    d = {random.choice(unittypes): points_to_spend}
+                    print("Commision {}: {}".format(cp, d))
+                    cp.base.commision_units(d)
 
     @property
     def budget_reward_amount(self):
         if len(self.theater.player_points()) > 0:
             total_importance = sum([x.importance for x in self.theater.player_points()])
             total_strength = sum([x.base.strength for x in self.theater.player_points()]) / len(self.theater.player_points())
-            return math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE)
+            return math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE * self.settings.multiplier)
         else:
             return 0
 
@@ -287,17 +179,14 @@ class Game:
             self._budget_player()
             for cp in self.theater.enemy_points():
                 self._commision_units(cp)
+            for cp in self.theater.player_points():
+                cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.ignored_cps = []
         if ignored_cps:
             self.ignored_cps = ignored_cps
 
         self.events = []  # type: typing.List[Event]
-        self._fill_cap_events()
-        self._generate_enemy_caps()
-        self._generate_interceptions()
+        self._generate_events()
         self._generate_globalinterceptions()
-        self._generate_groundinterceptions()
-        self._generate_navalinterceptions()
-        self._generate_aastrikes()
 

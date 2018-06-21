@@ -21,7 +21,7 @@ class CaptureEvent(Event):
     @property
     def threat_description(self):
         descr = "{} aircraft + CAS, {} vehicles".format(
-            self.enemy_cp.base.scramble_count(),
+            self.enemy_cp.base.scramble_count(self.game.settings.multiplier),
             self.enemy_cp.base.assemble_count()
         )
 
@@ -57,9 +57,9 @@ class CaptureEvent(Event):
             self.to_cp.captured = False
 
     def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
-        cas = self.from_cp.base.scramble_cas()
-        escort = self.from_cp.base.scramble_sweep()
-        attackers = self.from_cp.base.assemble_cap()
+        cas = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
+        escort = self.from_cp.base.scramble_sweep(self.game.settings.multiplier)
+        attackers = self.from_cp.base.armor
 
         op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,
@@ -79,9 +79,6 @@ class CaptureEvent(Event):
         self.operation = op
 
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
-        # TODO: also include CAS planes
-        interceptors = self.to_cp.base.scramble_sweep()
-
         op = CaptureOperation(game=self.game,
                               attacker_name=self.attacker_name,
                               defender_name=self.defender_name,
@@ -90,11 +87,13 @@ class CaptureEvent(Event):
                               from_cp=self.from_cp,
                               to_cp=self.to_cp)
 
+        defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)
+        defenders.update(self.to_cp.base.scramble_cas(self.game.settings.multiplier))
+
         op.setup(cas=cas,
                  escort=escort,
                  attack=armor,
-                 intercept=interceptors,
-                 # TODO: should strength affect this?
+                 intercept=defenders,
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.assemble_aa())
 

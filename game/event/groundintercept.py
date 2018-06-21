@@ -88,7 +88,7 @@ class GroundInterceptEvent(Event):
             to_cp=self.to_cp
         )
 
-        strikegroup = self.from_cp.base.scramble_cas()
+        strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
         op.setup(target=self.targets,
                  strikegroup=strikegroup,
                  interceptors=interceptors)

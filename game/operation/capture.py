@@ -11,6 +11,7 @@ from gen.visualgen import *
 
 from .operation import Operation
 
+
 class CaptureOperation(Operation):
     cas = None  # type: db.PlaneDict
     escort = None  # type: db.PlaneDict

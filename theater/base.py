@@ -9,10 +9,9 @@ from dcs.planes import *
 from dcs.vehicles import *
 from dcs.task import *
 
-PLANES_IN_GROUP = 2
-
-PLANES_SCRAMBLE_MIN = 4
-PLANES_SCRAMBLE_MAX = 8
+STRENGTH_AA_ASSEMBLE_MIN = 0.2
+PLANES_SCRAMBLE_MIN_BASE = 4
+PLANES_SCRAMBLE_MAX_BASE = 8
 PLANES_SCRAMBLE_FACTOR = 0.5
 
 
@@ -84,12 +83,6 @@ class Base:
     def _find_best_armor(self, for_type: Task, count: int) -> typing.Dict[Armor, int]:
         return self._find_best_unit(self.armor, for_type, count)
 
-    def _group_sizes(self, total_planes: int) -> typing.List[int]:
-        total_scrambled = 0
-        for _ in range(math.ceil(total_planes / PLANES_IN_GROUP)):
-            total_scrambled += PLANES_IN_GROUP
-            yield total_scrambled < total_planes and PLANES_IN_GROUP or total_planes - total_scrambled
-
     def append_commision_points(self, for_type, points: float) -> int:
         self.commision_points[for_type] = self.commision_points.get(for_type, 0) + points
         points = self.commision_points[for_type]
@@ -147,24 +140,27 @@ class Base:
         elif self.strength < 0:
             self.strength = 0.001
 
-    def scramble_count(self) -> int:
+    def scramble_count(self, multiplier: float) -> int:
         count = int(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength)
-        return min(min(max(count, PLANES_SCRAMBLE_MIN), PLANES_SCRAMBLE_MAX), self.total_planes)
+        return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), self.total_planes)
 
     def assemble_count(self):
         return int(self.total_armor * self.strength)
 
     def assemble_aa_count(self) -> int:
-        return int(self.total_aa * (self.strength > 0.2 and self.strength or 0))
+        if self.strength > STRENGTH_AA_ASSEMBLE_MIN:
+            return self.total_aa
+        else:
+            return 0
 
-    def scramble_sweep(self) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(CAP, self.scramble_count())
+    def scramble_sweep(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(CAP, self.scramble_count(multiplier))
 
-    def scramble_cas(self) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(CAS, self.scramble_count())
+    def scramble_cas(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(CAS, self.scramble_count(multiplier))
 
-    def scramble_interceptors(self) -> typing.Dict[PlaneType, int]:
-        return self._find_best_planes(CAP, self.scramble_count())
+    def scramble_interceptors(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+        return self._find_best_planes(CAP, self.scramble_count(multiplier))
 
     def assemble_cap(self) -> typing.Dict[Armor, int]:
         return self._find_best_armor(PinpointStrike, self.assemble_count())

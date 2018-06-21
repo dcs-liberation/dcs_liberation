@@ -14,6 +14,7 @@ class Event:
     is_awacs_enabled = False
     operation = None  # type: Operation
     difficulty = 1  # type: int
+    game = None  # type: Game
     BONUS_BASE = 0
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):

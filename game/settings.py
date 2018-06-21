@@ -4,3 +4,4 @@ class Settings:
     enemy_skill = "Average"
     only_player_takeoff = False
     night_disabled = False
+    multiplier = 1

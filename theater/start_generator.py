@@ -5,16 +5,17 @@ from theater.conflicttheater import *
 
 UNIT_VARIETY = 3
 UNIT_AMOUNT_FACTOR = 16
+UNIT_COUNT_IMPORTANCE_LOG = 1.3
 
 COUNT_BY_TASK = {
-    PinpointStrike: 24,
-    CAP: 16,
-    CAS: 8,
-    AirDefence: 0.5,
+    PinpointStrike: 12,
+    CAP: 8,
+    CAS: 4,
+    AirDefence: 2,
 }
 
 
-def generate_initial(theater: ConflictTheater, enemy: str, sams: bool):
+def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
     for cp in theater.enemy_points():
         if cp.captured:
             continue
@@ -30,7 +31,8 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool):
             if not sams:
                 unittypes = [x for x in unittypes if x not in db.SAM_BAN]
 
-            count = max(COUNT_BY_TASK[task] * importance_factor, 1)
+            count_log = math.log(cp.importance + 0.01, UNIT_COUNT_IMPORTANCE_LOG)
+            count = max(COUNT_BY_TASK[task] * multiplier * (1+count_log), 1)
             count_per_type = max(int(float(count) / len(unittypes)), 1)
             for unit_type in unittypes:
                 print("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))

@@ -27,7 +27,7 @@ game = persistency.restore_game()
 if not game:
     new_game_menu = None  # type: NewGameMenu
 
-    def start_new_game(player_name: str, enemy_name: str, terrain: str, sams: bool):
+    def start_new_game(player_name: str, enemy_name: str, terrain: str, sams: bool, multiplier: float):
         if terrain == "persiangulf":
             conflicttheater = theater.persiangulf.PersianGulfTheater()
         elif terrain == "nevada":
@@ -35,10 +35,14 @@ if not game:
         else:
             conflicttheater = theater.caucasus.CaucasusTheater()
 
-        start_generator.generate_initial(conflicttheater, enemy_name, sams)
-        proceed_to_main_menu(Game(player_name=player_name,
-                                  enemy_name=enemy_name,
-                                  theater=conflicttheater))
+        start_generator.generate_initial(conflicttheater, enemy_name, sams, multiplier)
+        game = Game(player_name=player_name,
+                    enemy_name=enemy_name,
+                    theater=conflicttheater)
+        game.budget = int(game.budget * multiplier)
+        game.settings.multiplier = multiplier
+
+        proceed_to_main_menu(game)
 
     new_game_menu = ui.newgamemenu.NewGameMenu(w, start_new_game)
     new_game_menu.display()

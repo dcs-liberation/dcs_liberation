@@ -30,7 +30,7 @@ class NavalInterceptEvent(Event):
     def threat_description(self):
         s = "{} ship(s)".format(self._targets_count())
         if not self.from_cp.captured:
-            s += ", {} aircraft".format(self.from_cp.base.scramble_count())
+            s += ", {} aircraft".format(self.from_cp.base.scramble_count(self.game.settings.multiplier))
         return s
 
     def is_successfull(self, debriefing: Debriefing):
@@ -100,7 +100,7 @@ class NavalInterceptEvent(Event):
             to_cp=self.to_cp
         )
 
-        strikegroup = self.from_cp.base.scramble_cas()
+        strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
         op.setup(strikegroup=strikegroup,
                  interceptors=interceptors,
                  targets=self.targets)

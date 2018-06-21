@@ -7,7 +7,8 @@ from ui.window import *
 class NewGameMenu(Menu):
     selected_country = None  # type: IntVar
     selected_terrain = None  # type: IntVar
-    sams = True
+    sams = None
+    multiplier = None
 
     def __init__(self, window: Window, callback: typing.Callable):
         super(NewGameMenu, self).__init__(window, None, None)
@@ -22,6 +23,9 @@ class NewGameMenu(Menu):
 
         self.sams = BooleanVar()
         self.sams.set(1)
+
+        self.multiplier = StringVar()
+        self.multiplier.set("1")
 
     @property
     def player_country_name(self):
@@ -61,7 +65,14 @@ class NewGameMenu(Menu):
         Label(self.frame, text="Options").grid(row=1, column=2)
         Checkbutton(self.frame, text="SAMs", variable=self.sams).grid(row=1, column=2)
 
-        Button(self.frame, text="Proceed", command=self.proceed).grid(row=4, column=0, columnspan=3)
+        Label(self.frame, text="Multiplier").grid(row=0, column=3)
+        Entry(self.frame, textvariable=self.multiplier).grid(row=1, column=3)
+
+        Button(self.frame, text="Proceed", command=self.proceed).grid(row=5, column=0, columnspan=4)
 
     def proceed(self):
-        self.callback(self.player_country_name, self.enemy_country_name, self.terrain_name, bool(self.sams.get()))
+        self.callback(self.player_country_name,
+                      self.enemy_country_name,
+                      self.terrain_name,
+                      bool(self.sams.get()),
+                      float(self.multiplier.get()))
