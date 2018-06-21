@@ -6,6 +6,7 @@ from dcs.vehicles import *
 
 from game import db
 from game.operation.intercept import InterceptOperation
+from theater.conflicttheater import *
 from userdata.debriefing import Debriefing
 
 from .event import Event
@@ -38,7 +39,8 @@ class InterceptEvent(Event):
 
         if self.attacker_name == self.game.player:
             if self.is_successfull(debriefing):
-                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                for _, cp in self.game.theater.conflicts(True):
+                    cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
                 self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:

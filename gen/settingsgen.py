@@ -22,6 +22,8 @@ PUSH_TRIGGER_SIZE = 3000
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
 
+CLOUDS_BASE_MIN = 4000
+
 RANDOM_TIME = {
     "night": 5,
     "dusk": 30,
@@ -46,6 +48,9 @@ class SettingsGenerator:
         start_time = datetime.combine(datetime.today(), time())
         time_range = None
         for k, v in RANDOM_TIME.items():
+            if self.game.settings.night_disabled and k == "night":
+                continue
+
             if random.randint(0, 100) <= v:
                 time_range = self.game.theater.daytime_map[k]
                 break
@@ -70,6 +75,9 @@ class SettingsGenerator:
             self.mission.weather.enable_fog = False
         elif weather_type == 3:
             pass
+
+        if self.mission.weather.clouds_density > 0:
+            self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, CLOUDS_BASE_MIN)
 
     def _gen_activation_trigger(self, player_coalition: str, enemy_coalition: str):
         activate_by_trigger = []
@@ -101,6 +109,8 @@ class SettingsGenerator:
             for country in coalition.countries.values():
                 if coalition_name == player_coalition:
                     for plane_group in country.plane_group:
+                        if plane_group.task == AWACS.name:
+                            continue
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
 
                         pos1 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
