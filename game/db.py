@@ -12,8 +12,6 @@ PRICES = {
     # fighter
     C_101CC: 8,
     MiG_23MLD: 20,
-    MiG_25PD: 24,
-    MiG_31: 26,
     Su_27: 24,
     Su_33: 25,
     MiG_29A: 26,
@@ -30,11 +28,7 @@ PRICES = {
 
     # bomber
     Su_25T: 13,
-    Su_24M: 15,
-    Su_17M4: 10,
     L_39ZA: 10,
-    MiG_29G: 15,
-    Su_34: 22,
 
     A_10A: 18,
     A_10C: 20,
@@ -95,9 +89,6 @@ UNIT_BY_TASK = {
         C_101CC,
         AJS37,
         F_5E,
-        MiG_23MLD,
-        MiG_25PD,
-        MiG_31,
         Su_27,
         Su_33,
         MiG_21Bis,
@@ -113,10 +104,6 @@ UNIT_BY_TASK = {
         A_10A,
         A_10C,
         Su_25T,
-        Su_24M,
-        Su_17M4,
-        MiG_29G,
-        Su_34,
         Ka_50,
     ],
 
@@ -178,9 +165,6 @@ UNIT_BY_COUNTRY = {
         C_101CC,
         AJS37,
         F_5E,
-        MiG_23MLD,
-        MiG_25PD,
-        MiG_31,
         Su_27,
         Su_33,
         MiG_15bis,
@@ -192,11 +176,7 @@ UNIT_BY_COUNTRY = {
         A_10A,
         A_10C,
         Su_25T,
-        Su_24M,
-        Su_17M4,
         L_39ZA,
-        MiG_29G,
-        Su_34,
 
         IL_76MD,
         An_26B,
