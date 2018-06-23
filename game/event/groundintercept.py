@@ -19,7 +19,7 @@ class GroundInterceptEvent(Event):
     targets = None  # type: db.ArmorDict
 
     def __str__(self):
-        return "Ground intercept from {} at {}".format(self.from_cp, self.to_cp)
+        return "Fontline CAS from {} at {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())

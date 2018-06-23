@@ -12,6 +12,7 @@ from gen.conflictgen import Conflict
 
 from .operation import Operation
 
+
 class GroundInterceptOperation(Operation):
     strikegroup = None  # type: db.PlaneDict
     interceptors = None  # type: db.PlaneDict
@@ -34,7 +35,6 @@ class GroundInterceptOperation(Operation):
         conflict = Conflict.ground_intercept_conflict(
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
-            heading=self.to_cp.position.heading_between_point(self.from_cp.position),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater

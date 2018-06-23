@@ -208,6 +208,12 @@ class EventMenu(Menu):
                 e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
             else:
                 e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
+        elif type(self.event) is GroundAttackEvent:
+            e = self.event  # type: GroundAttackEvent
+            if self.game.is_player_attack(self.event):
+                assert False
+            else:
+                e.player_defending(strikegroup=scrambled_aircraft, clients=scrambled_clients)
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()

@@ -35,6 +35,7 @@ EVENT_PROBABILITIES = {
     CaptureEvent: [100, 4],
     InterceptEvent: [35, 5],
     GroundInterceptEvent: [35, 5],
+    GroundAttackEvent: [0, 35],
     NavalInterceptEvent: [35, 5],
     AntiAAStrikeEvent: [35, 5],
 }
@@ -62,7 +63,7 @@ class Game:
         self.enemy = enemy_name
 
     def _roll(self, prob, mult):
-        return random.randint(0, 100) <= prob * mult
+        return random.randint(1, 100) <= prob * mult
 
     def _generate_globalinterceptions(self):
         global_count = len([x for x in self.theater.player_points() if x.is_global])
@@ -80,6 +81,8 @@ class Game:
 
     def _generate_events(self):
         enemy_cap_generated = False
+        enemy_generated_types = []
+
         for player_cp, enemy_cp in self.theater.conflicts(True):
             if player_cp.is_global or enemy_cp.is_global:
                 continue
@@ -92,6 +95,9 @@ class Game:
 
                     self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
                 elif self._roll(enemy_probability, enemy_cp.base.strength):
+                    if event_class in enemy_generated_types:
+                        continue
+
                     if player_cp in self.ignored_cps:
                         continue
 
@@ -111,6 +117,7 @@ class Game:
                         if player_cp.base.total_aa == 0:
                             continue
 
+                    enemy_generated_types.append(event_class)
                     self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
 
     def _commision_units(self, cp: ControlPoint):
@@ -173,7 +180,8 @@ class Game:
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
-            event.skip()
+            if type(event) is UnitsDeliveryEvent:
+                event.skip()
 
         if not no_action:
             self._budget_player()

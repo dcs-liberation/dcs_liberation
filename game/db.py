@@ -4,6 +4,7 @@ from dcs.vehicles import *
 from dcs.unitgroup import *
 from dcs.ships import *
 from dcs.planes import *
+from dcs.helicopters import *
 from dcs.task import *
 from dcs.unittype import *
 
@@ -38,6 +39,11 @@ PRICES = {
     A_10A: 18,
     A_10C: 20,
 
+    # heli
+    Ka_50: 13,
+    UH_1H: 5,
+    Mi_8MT: 5,
+
     # special
     IL_76MD: 13,
     An_26B: 13,
@@ -59,6 +65,11 @@ PRICES = {
 
     Armor.ATGM_M1134_Stryker: 6,
     Armor.APC_BTR_80: 6,
+
+    Unarmed.Transport_UAZ_469: 3,
+    Unarmed.Transport_Ural_375: 3,
+
+    Unarmed.Transport_M818: 3,
 
     AirDefence.AAA_Vulcan_M163: 5,
     AirDefence.SAM_Avenger_M1097: 10,
@@ -106,6 +117,7 @@ UNIT_BY_TASK = {
         Su_17M4,
         MiG_29G,
         Su_34,
+        Ka_50,
     ],
 
     Transport: [
@@ -117,9 +129,11 @@ UNIT_BY_TASK = {
         S_3B_Tanker,
         C_130,
     ],
+
     AWACS: [E_3A, A_50, ],
 
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
+    Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
     AirDefence: [
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
@@ -190,6 +204,9 @@ UNIT_BY_COUNTRY = {
         Yak_40,
         A_50,
 
+        Ka_50,
+        Mi_8MT,
+
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.SAM_SA_18_Igla_MANPADS,
         AirDefence.SAM_SA_19_Tunguska_2S6,
@@ -199,6 +216,8 @@ UNIT_BY_COUNTRY = {
         Armor.MBT_T_90,
         Armor.MBT_T_80U,
         Armor.MBT_T_55,
+         Unarmed.Transport_Ural_375,
+        Unarmed.Transport_UAZ_469,
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
@@ -222,9 +241,13 @@ UNIT_BY_COUNTRY = {
         C_130,
         E_3A,
 
+        Ka_50,
+        UH_1H,
+
         Armor.MBT_M1A2_Abrams,
         Armor.MBT_M60A3_Patton,
         Armor.ATGM_M1134_Stryker,
+        Unarmed.Transport_M818,
 
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Avenger_M1097,
@@ -242,6 +265,10 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     AV8BNA: {
         CAS: "AS 2",
+    },
+
+    Ka_50: {
+      "*": "12x9A4172, 40xS-8",
     },
 
     # TODO: figure out a way to setup su33 loadout
@@ -262,6 +289,7 @@ PLANE_LIVERY_OVERRIDES = {
 
 UnitsDict = typing.Dict[UnitType, int]
 PlaneDict = typing.Dict[FlyingType, int]
+HeliDict = typing.Dict[HelicopterType, int]
 ArmorDict = typing.Dict[VehicleType, int]
 ShipDict = typing.Dict[ShipType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]

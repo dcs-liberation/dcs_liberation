@@ -13,26 +13,20 @@ from gen.conflictgen import Conflict
 from .operation import Operation
 
 
-class AntiAAStrikeOperation(Operation):
+class GroundAttackOperation(Operation):
     strikegroup = None  # type: db.PlaneDict
-    interceptors = None  # type: db.PlaneDict
     target = None  # type: db.ArmorDict
 
     def setup(self,
               target: db.ArmorDict,
-              strikegroup: db.PlaneDict,
-              interceptors: db.PlaneDict):
+              strikegroup: db.PlaneDict):
         self.strikegroup = strikegroup
-        self.interceptors = interceptors
         self.target = target
 
     def prepare(self, terrain: Terrain, is_quick: bool):
-        super(AntiAAStrikeOperation, self).prepare(terrain, is_quick)
-        if self.defender_name == self.game.player:
-            self.attackers_starting_position = None
-            self.defenders_starting_position = None
+        super(GroundAttackOperation, self).prepare(terrain, is_quick)
 
-        conflict = Conflict.ground_base_attack(
+        conflict = Conflict.ground_attack_conflict(
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
             from_cp=self.from_cp,
@@ -44,10 +38,7 @@ class AntiAAStrikeOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_cas_strikegroup(self.strikegroup, clients=self.attacker_clients, at=self.attackers_starting_position)
+        self.airgen.generate_defense(self.strikegroup, self.defender_clients, self.defenders_starting_position)
+        self.armorgen.generate(self.target, {})
 
-        if self.interceptors:
-            self.airgen.generate_defense(self.interceptors, clients=self.defender_clients, at=self.defenders_starting_position)
-
-        self.armorgen.generate({}, self.target)
-        super(AntiAAStrikeOperation, self).generate()
+        super(GroundAttackOperation, self).generate()
