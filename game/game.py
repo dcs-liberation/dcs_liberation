@@ -180,8 +180,7 @@ class Game:
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
-            if type(event) is UnitsDeliveryEvent:
-                event.skip()
+            event.skip()
 
         if not no_action:
             self._budget_player()

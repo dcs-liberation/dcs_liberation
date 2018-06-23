@@ -251,9 +251,6 @@ PLANE_PAYLOAD_OVERRIDES = {
       "*": "12x9A4172, 40xS-8",
     },
 
-    # TODO: figure out a way to setup su33 loadout
-    Su_33: FighterSweep,
-
     M_2000C: {
         "*": "Combat Air Patrol",
     },
