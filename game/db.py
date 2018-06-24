@@ -62,6 +62,8 @@ PRICES = {
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
+    Infantry.Infantry_M4: 1,
+    Infantry.Soldier_AK: 1,
 
     Unarmed.Transport_M818: 3,
 
@@ -121,6 +123,7 @@ UNIT_BY_TASK = {
 
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
+    Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
     AirDefence: [
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
@@ -196,8 +199,9 @@ UNIT_BY_COUNTRY = {
         Armor.MBT_T_90,
         Armor.MBT_T_80U,
         Armor.MBT_T_55,
-         Unarmed.Transport_Ural_375,
+        Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
+        Infantry.Soldier_AK,
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
@@ -228,6 +232,7 @@ UNIT_BY_COUNTRY = {
         Armor.MBT_M60A3_Patton,
         Armor.ATGM_M1134_Stryker,
         Unarmed.Transport_M818,
+        Infantry.Infantry_M4,
 
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Avenger_M1097,
