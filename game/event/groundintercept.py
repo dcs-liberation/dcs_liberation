@@ -29,9 +29,9 @@ class GroundInterceptEvent(Event):
                 destroyed_targets += count
 
         if self.from_cp.captured:
-            return math.ceil(float(destroyed_targets) / total_targets) >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
+            return float(destroyed_targets) / total_targets >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
         else:
-            return math.ceil(float(destroyed_targets) / total_targets) < self.SUCCESS_TARGETS_HIT_PERCENTAGE
+            return float(destroyed_targets) / total_targets < self.SUCCESS_TARGETS_HIT_PERCENTAGE
 
     def commit(self, debriefing: Debriefing):
         super(GroundInterceptEvent, self).commit(debriefing)

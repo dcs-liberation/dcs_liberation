@@ -72,7 +72,6 @@ class CaucasusTheater(ConflictTheater):
 
         self.carrier_1.captured = True
         self.soganlug.captured = True
-        self.beslan.base.strength = 0.25
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
         point.name = " ".join(re.split(r" |-", point.name)[:1])

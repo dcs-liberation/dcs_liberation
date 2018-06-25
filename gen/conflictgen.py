@@ -25,8 +25,8 @@ INTERCEPT_ATTACKERS_HEADING = -45, 45
 INTERCEPT_DEFENDERS_HEADING = -10, 10
 INTERCEPT_ATTACKERS_DISTANCE = 60000
 INTERCEPT_DEFENDERS_DISTANCE = 30000
-INTERCEPT_MAX_DISTANCE = 80000
-INTERCEPT_MIN_DISTANCE = 45000
+INTERCEPT_MAX_DISTANCE = 130000
+INTERCEPT_MIN_DISTANCE = 60000
 
 NAVAL_INTERCEPT_DISTANCE_FACTOR = 0.4
 NAVAL_INTERCEPT_DISTANCE_MAX = 40000
@@ -124,7 +124,7 @@ class Conflict:
 
     @classmethod
     def intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        raw_distance = from_cp.position.distance_to_point(to_cp.position) * 0.4
+        raw_distance = from_cp.position.distance_to_point(to_cp.position) * 0.6
         distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
 
         heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), random.choice([-1, 1]) * random.randint(60, 100))
@@ -213,7 +213,7 @@ class Conflict:
 
     @classmethod
     def intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        raw_distance = from_cp.position.distance_to_point(to_cp.position) * 0.4
+        raw_distance = from_cp.position.distance_to_point(to_cp.position)
         distance = max(min(raw_distance, INTERCEPT_MAX_DISTANCE), INTERCEPT_MIN_DISTANCE)
 
         heading = _heading_sum(from_cp.position.heading_between_point(to_cp.position), random.choice([-1, 1]) * random.randint(60, 100))

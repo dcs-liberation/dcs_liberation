@@ -33,12 +33,12 @@ PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 EVENT_PROBABILITIES = {
     CaptureEvent: [100, 4],
-    InterceptEvent: [35, 5],
-    GroundInterceptEvent: [35, 5],
+    InterceptEvent: [25, 5],
+    GroundInterceptEvent: [25, 5],
     GroundAttackEvent: [0, 5],
-    NavalInterceptEvent: [35, 5],
-    AntiAAStrikeEvent: [35, 5],
-    InfantryTransportEvent: [100, 0],
+    NavalInterceptEvent: [25, 5],
+    AntiAAStrikeEvent: [25, 5],
+    InfantryTransportEvent: [25, 0],
 }
 
 PLAYER_BASE_STRENGTH_RECOVERY = 0.2
@@ -174,7 +174,10 @@ class Game:
         if event.is_successfull(debriefing):
             self.budget += event.bonus()
 
-        self.events.remove(event)
+        if event in self.events:
+            self.events.remove(event)
+        else:
+            print("finish_event: event not in the events!")
 
     def is_player_attack(self, event: Event):
         return event.attacker_name == self.player
