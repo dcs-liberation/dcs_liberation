@@ -37,7 +37,7 @@ class MainMenu(Menu):
             Message(self.frame, text="{}{}".format(
                 event.defender_name == self.game.player and "Enemy attacking: " or "",
                 event
-            ), aspect=800).grid(column=0, row=row, sticky=NW)
+            ), aspect=1600).grid(column=0, row=row, sticky=NW)
             Button(self.frame, text=">", command=self.start_event(event)).grid(column=0, row=row, sticky=NE+S)
             row += 1
             Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1

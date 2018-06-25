@@ -52,16 +52,13 @@ class ArmorConflictGenerator:
                     count=count,
                     at=self.conflict.ground_defenders_location)
 
-    def generate_passengers(self, group_to_embark: Group, at: Point):
-        unit_type = db.find_unittype(Nothing, self.conflict.attackers_side.name)
+    def generate_passengers(self, count: int):
+        unit_type = random.choice(db.find_unittype(Nothing, self.conflict.attackers_side.name))
 
-        group = self.m.vehicle_group(
+        self.m.vehicle_group(
             country=self.conflict.attackers_side,
             name=namegen.next_passenger_group_name(),
             _type=unit_type,
-            position=at,
-            group_size=6
+            position=self.conflict.ground_attackers_location,
+            group_size=count
         )
-
-        wayp = group.add_waypoint(at)
-        wayp.tasks.append(EmbarkToTransport())

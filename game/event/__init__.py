@@ -5,3 +5,4 @@ from .capture import *
 from .navalintercept import *
 from .antiaastrike import *
 from .groundattack import *
+from .infantrytransport import *

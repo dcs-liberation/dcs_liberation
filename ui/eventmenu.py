@@ -214,6 +214,12 @@ class EventMenu(Menu):
                 assert False
             else:
                 e.player_defending(strikegroup=scrambled_aircraft, clients=scrambled_clients)
+        elif type(self.event) is InfantryTransportEvent:
+            e = self.event  # type: InfantryTransportEvent
+            if self.game.is_player_attack(self.event):
+                e.player_attacking(transport=scrambled_aircraft, clients=scrambled_clients)
+            else:
+                assert False
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()

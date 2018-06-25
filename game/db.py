@@ -122,8 +122,6 @@ UNIT_BY_TASK = {
     AWACS: [E_3A, A_50, ],
 
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
-    Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
-    Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
     AirDefence: [
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
@@ -141,6 +139,10 @@ UNIT_BY_TASK = {
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
     ],
+
+    Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
+    Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
+    Embarking: [UH_1H, Mi_8MT, ],
 
     Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
     CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, LHA_1_Tarawa],
@@ -188,6 +190,7 @@ UNIT_BY_COUNTRY = {
         A_50,
 
         Ka_50,
+        UH_1H,
         Mi_8MT,
 
         AirDefence.AAA_ZU_23_on_Ural_375,
@@ -227,6 +230,7 @@ UNIT_BY_COUNTRY = {
 
         Ka_50,
         UH_1H,
+        Mi_8MT,
 
         Armor.MBT_M1A2_Abrams,
         Armor.MBT_M60A3_Patton,
@@ -297,6 +301,8 @@ def unit_type_name(unit_type) -> str:
 def task_name(task) -> str:
     if task == AirDefence:
         return "AirDefence"
+    elif task == Embarking:
+        return "Transportation"
     else:
         return task.name
 

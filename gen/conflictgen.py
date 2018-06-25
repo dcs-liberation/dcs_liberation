@@ -87,11 +87,11 @@ class Conflict:
 
     @classmethod
     def _find_ground_location(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
-        for _ in range(0, int(max_distance), 100):
+        for _ in range(0, int(max_distance), 800):
             if theater.is_on_land(initial):
                 return initial
 
-            initial = initial.point_from_heading(heading, 100)
+            initial = initial.point_from_heading(heading, 800)
 
         print("Didn't find ground position!")
         return None
@@ -145,7 +145,7 @@ class Conflict:
 
     @classmethod
     def ground_attack_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        heading = from_cp.position.heading_between_point(to_cp.position)
+        heading = random.choice(to_cp.radials)
         initial_location = to_cp.position.random_point_within(*GROUND_ATTACK_DISTANCE)
         position = Conflict._find_ground_location(initial_location, GROUND_INTERCEPT_SPREAD, _heading_sum(heading, 180), theater)
         if not position:
@@ -256,4 +256,27 @@ class Conflict:
             ground_defenders_location=position,
             air_attackers_location=position.point_from_heading(attacker_heading, AIR_DISTANCE),
             air_defenders_location=position.point_from_heading(_opposite_heading(attacker_heading), AIR_DISTANCE)
+        )
+
+    @classmethod
+    def transport_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        frontline_position = cls._frontline_position(from_cp, to_cp)
+        heading = to_cp.position.heading_between_point(from_cp.position)
+        initial_dest = frontline_position.point_from_heading(heading, TRANSPORT_FRONTLINE_DIST)
+        dest = cls._find_ground_location(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)
+        if not dest:
+            radial = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
+            dest = to_cp.position.point_from_heading(radial, to_cp.size * GROUND_DISTANCE_FACTOR)
+
+        return cls(
+            position=dest,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=from_cp.position,
+            ground_defenders_location=frontline_position,
+            air_attackers_location=from_cp.position.point_from_heading(0, 100),
+            air_defenders_location=frontline_position
         )

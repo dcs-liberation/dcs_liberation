@@ -35,9 +35,10 @@ EVENT_PROBABILITIES = {
     CaptureEvent: [100, 4],
     InterceptEvent: [35, 5],
     GroundInterceptEvent: [35, 5],
-    GroundAttackEvent: [0, 35],
+    GroundAttackEvent: [0, 5],
     NavalInterceptEvent: [35, 5],
     AntiAAStrikeEvent: [35, 5],
+    InfantryTransportEvent: [100, 0],
 }
 
 PLAYER_BASE_STRENGTH_RECOVERY = 0.2

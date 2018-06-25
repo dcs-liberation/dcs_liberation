@@ -18,6 +18,7 @@ INTERCEPTION_ALT = 4600
 CAS_ALTITUDE = 4600
 RTB_ALTITUDE = 4600
 TRANSPORT_LANDING_ALT = 4600
+HELI_ALT = 900
 
 WARM_START_AIRSPEED = 540
 INTERCEPTION_AIRSPEED = 1000
@@ -297,3 +298,21 @@ class AircraftConflictGenerator:
             self._setup_group(group, CAP, clients)
 
             group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
+
+    def generate_passenger_transport(self, helis: db.HeliDict, clients: db.HeliDict, at: db.StartingPosition):
+        for heli_type, count, client_count in self._split_to_groups(helis, clients):
+            group = self._generate_group(
+                name=namegen.next_transport_group_name(),
+                side=self.conflict.attackers_side,
+                unit_type=heli_type,
+                count=count,
+                client_count=client_count,
+                at=at and at or self._group_point(self.conflict.air_attackers_location)
+            )
+
+            group.add_waypoint(
+                pos=self.conflict.position,
+                altitude=HELI_ALT,
+            )
+
+            self._setup_group(group, Transport, clients)

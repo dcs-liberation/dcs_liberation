@@ -31,6 +31,7 @@ class BaseMenu(Menu):
 
         units = {
             PinpointStrike: db.find_unittype(PinpointStrike, self.game.player),
+            Embarking: db.find_unittype(Embarking, self.game.player),
             CAS: db.find_unittype(CAS, self.game.player),
             CAP: db.find_unittype(CAP, self.game.player),
             AirDefence: db.find_unittype(AirDefence, self.game.player),

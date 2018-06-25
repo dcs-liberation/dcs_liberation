@@ -105,7 +105,7 @@ class Base:
             for_task = db.unit_task(unit_type)
 
             target_dict = None
-            if for_task == CAS or for_task == CAP:
+            if for_task == CAS or for_task == CAP or for_task == Embarking:
                 target_dict = self.aircraft
             elif for_task == PinpointStrike:
                 target_dict = self.armor

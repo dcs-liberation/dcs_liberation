@@ -23,8 +23,8 @@ class GroundAttackEvent(GroundInterceptEvent):
         op = GroundAttackOperation(game=self.game,
                                    attacker_name=self.attacker_name,
                                    defender_name=self.defender_name,
-                                   attacker_clients=clients,
-                                   defender_clients={},
+                                   attacker_clients={},
+                                   defender_clients=clients,
                                    from_cp=self.from_cp,
                                    to_cp=self.to_cp)
         op.setup(target=self.targets,

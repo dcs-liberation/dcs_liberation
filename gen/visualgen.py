@@ -11,6 +11,14 @@ from .conflictgen import *
 #from game.game import Game
 
 
+class MarkerSmoke(unittype.StaticType):
+    id = "big_smoke"
+    category = "Effects"
+    name = "big_smoke"
+    shape_name = 5
+    rate = 100
+
+
 class Smoke(unittype.StaticType):
     id = "big_smoke"
     category = "Effects"
@@ -33,6 +41,12 @@ class MassiveSmoke(unittype.StaticType):
     name = "big_smoke"
     shape_name = 4
     rate = 100
+
+
+class Outpost(unittype.StaticType):
+    id = "outpost"
+    name = "outpost"
+    category = "Fortifications"
 
 
 def __monkey_static_dict(self: Static):
@@ -87,7 +101,7 @@ class VisualGenerator:
         for from_cp, to_cp in self.game.theater.conflicts():
             distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONT_SMOKE_DISTANCE_FACTOR * to_cp.base.strength, FRONT_SMOKE_MIN_DISTANCE)
             heading = to_cp.position.heading_between_point(from_cp.position)
-            point = to_cp.position.point_from_heading(heading, distance)
+            point = Conflict._frontline_position(from_cp, to_cp)
             plane_start = point.point_from_heading(turn_heading(heading, 90), FRONT_SMOKE_LENGTH / 2)
 
             for offset in range(0, FRONT_SMOKE_LENGTH, FRONT_SMOKE_SPACING):
@@ -121,6 +135,23 @@ class VisualGenerator:
                         _type=v,
                         position=position)
                     break
+
+    def generate_transportation_marker(self, at: Point):
+        self.mission.static_group(
+            self.mission.country(self.game.player),
+            "",
+            _type=MarkerSmoke,
+            position=at
+        )
+
+    def generate_transportation_destination(self, at: Point):
+        self.generate_transportation_marker(at.point_from_heading(0, 20))
+        self.mission.static_group(
+            self.mission.country(self.game.player),
+            "",
+            _type=Outpost,
+            position=at
+        )
 
     def generate(self):
         self._generate_frontline_smokes()
