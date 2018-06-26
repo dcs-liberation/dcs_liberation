@@ -10,7 +10,6 @@ from userdata.debriefing import Debriefing
 
 
 class GroundInterceptEvent(Event):
-    BONUS_BASE = 3
     TARGET_AMOUNT_FACTOR = 2
     TARGET_VARIETY = 2
     STRENGTH_INFLUENCE = 0.3

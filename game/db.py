@@ -8,6 +8,31 @@ from dcs.helicopters import *
 from dcs.task import *
 from dcs.unittype import *
 
+"""
+---------- BEGINNING OF CONFIGURATION SECTION
+"""
+
+"""
+All aircraft names in this file should correspond with naming provided in following files:
+
+* https://github.com/pydcs/dcs/blob/master/dcs/planes.py - for planes
+* https://github.com/pydcs/dcs/blob/master/dcs/helicopters.py - for helicopters
+* https://github.com/pydcs/dcs/blob/master/dcs/vehicles.py - for vehicles (this include all of the ground vehicles)
+
+You can find names at the bottom of the file in following format:
+
+x_map = {
+    "Name of the unit in game": Identifier,
+}
+
+from this example `Identifier` should be used (which may or may not include category of the unit and dot + underscore characters).
+For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla is called `AirDefence.SAM_SA_18_Igla_MANPADS`
+"""
+
+"""
+Prices for the aircraft. 
+This defines both price for the player and prioritization for the enemy (i.e. less important bases will receive units with lower price)
+"""
 PRICES = {
     # fighter
     C_101CC: 8,
@@ -86,6 +111,22 @@ PRICES = {
     Tanker_Elnya_160: 10,
 }
 
+"""
+Units separated by tasks. This will include units for both countries. Be advised that unit could only belong to single task!
+
+Following tasks are present:
+* CAP - figther aircraft for CAP/Escort/Intercept
+* CAS - CAS aircraft
+* Transport - transport aircraft (used as targets in intercept operations)
+* AWACS - awacs
+* PinpointStrike - armor that will engage in ground war
+* AirDefense - AA units
+* Reconnaissance - units that will be used as targets in destroy insurgents operations
+* Nothing - troops that will be used for helicopter transport operations
+* Embarking - helicopters that will be used for helicopter transport operations
+* Carriage - aircraft carriers
+* CargoTransportation - ships that will be used as targets for ship intercept operations
+"""
 UNIT_BY_TASK = {
     CAP: [
         C_101CC,
@@ -148,6 +189,9 @@ UNIT_BY_TASK = {
     CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, LHA_1_Tarawa],
 }
 
+"""
+Units from AirDefense category of UNIT_BY_TASK that will be removed from use if "No SAM" option is checked at the start of the game
+"""
 SAM_BAN = [
     AirDefence.SAM_Avenger_M1097,
     AirDefence.SAM_Patriot_ICC,
@@ -156,19 +200,32 @@ SAM_BAN = [
     AirDefence.SAM_SA_8_Osa_9A33,
 ]
 
+"""
+Units that will always be spawned in the air
+"""
 TAKEOFF_BAN = [
-    AV8BNA,
+    AV8BNA,  # AI takeoff currently bugged attempting VTOL with no regards for the total weight
 ]
 
+"""
+Units that will be always spawned in the air if launched from the carrier
+"""
 CARRIER_TAKEOFF_BAN = [
-   Su_33,
+   Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
 ]
 
+"""
+AirDefense units that will be spawned at control points not related to the current operation
+"""
 EXTRA_AA = {
     "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
     "USA": AirDefence.SAM_Patriot_EPP_III,
 }
 
+"""
+Units separated by country. Currently only Russia and USA are supported. 
+Be advised that putting unit to the country that have not access to the unit in the game itself will result in incorrect missions generated!
+"""
 UNIT_BY_COUNTRY = {
     "Russia": [
         C_101CC,
@@ -251,6 +308,22 @@ UNIT_BY_COUNTRY = {
     ],
 }
 
+"""
+Aircraft payload overrides. Usually default loadout for the task is loaded during the mission generation.
+Syntax goes as follows:
+
+    `AircraftIdentifier`: {
+        "Category": "PayloadName",
+    },
+
+where:
+    * `AircraftIdentifier`: identifier of aircraft (the same that is used troughout the file)
+    * "Category": (in double quotes) is one of the tasks: CAS, CAP, Intercept, Escort or "*"
+    * "PayloadName": payload as found in resources/payloads/UNIT_TYPE.lua file. Sometimes this will match payload names 
+                     in the mission editor, sometimes it doesn't
+                     
+Payload will be used for operation of following type, "*" category will be used always, no matter the operation.
+"""
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
@@ -277,9 +350,21 @@ PLANE_PAYLOAD_OVERRIDES = {
     }
 }
 
+"""
+Aircraft livery overrides. Syntax as follows:
+
+    `Identifier`: "LiveryName",
+    
+`Identifier` is aircraft identifier (as used troughout the file) and "LiveryName" (with double quotes) 
+is livery name as found in mission editor.
+"""
 PLANE_LIVERY_OVERRIDES = {
-    FA_18C_hornet: "VFA-34",
+    FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
 }
+
+"""
+---------- END OF CONFIGURATION SECTION
+"""
 
 UnitsDict = typing.Dict[UnitType, int]
 PlaneDict = typing.Dict[FlyingType, int]

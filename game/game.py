@@ -12,6 +12,7 @@ from . import db
 from .settings import Settings
 from .event import *
 
+COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
 COMMISION_LIMITS_FACTORS = {
     PinpointStrike: 10,
@@ -21,7 +22,6 @@ COMMISION_LIMITS_FACTORS = {
 }
 
 COMMISION_AMOUNTS_SCALE = 1.5
-COMMISION_UNIT_VARIETY = 4
 COMMISION_AMOUNTS_FACTORS = {
     PinpointStrike: 2,
     CAS: 1,
@@ -31,6 +31,20 @@ COMMISION_AMOUNTS_FACTORS = {
 
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
+
+"""
+Various events probabilities. First key is player probabilty, second is enemy probability.
+For the enemy events, only 1 event of each type could be generated for a turn.
+
+Events:
+* CaptureEvent - capture base
+* InterceptEvent - air intercept
+* GroundInterceptEvent - frontline CAS
+* GroundAttackEvent - destroy insurgents
+* NavalInterceptEvent - naval intercept
+* AntiAAStrikeEvent - anti-AA strike
+* InfantryTransportEvent - helicopter infantry transport
+"""
 EVENT_PROBABILITIES = {
     CaptureEvent: [100, 4],
     InterceptEvent: [25, 5],
@@ -41,12 +55,18 @@ EVENT_PROBABILITIES = {
     InfantryTransportEvent: [25, 0],
 }
 
+# amount of strength captures bases recover for the turn
 PLAYER_BASE_STRENGTH_RECOVERY = 0.2
-PLAYER_BUDGET_INITIAL = 120
-PLAYER_BUDGET_BASE = 30
-PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
+# cost of AWACS for single operation
 AWACS_BUDGET_COST = 4
+
+# Initial budget value
+PLAYER_BUDGET_INITIAL = 120
+# Base post-turn bonus value
+PLAYER_BUDGET_BASE = 30
+# Bonus multiplier logarithm base
+PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
 class Game:
@@ -143,9 +163,8 @@ class Game:
     @property
     def budget_reward_amount(self):
         if len(self.theater.player_points()) > 0:
-            total_importance = sum([x.importance for x in self.theater.player_points()])
-            total_strength = sum([x.base.strength for x in self.theater.player_points()]) / len(self.theater.player_points())
-            return math.ceil(math.log(total_importance * total_strength + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE * self.settings.multiplier)
+            total_importance = sum([x.importance * x.base.strength for x in self.theater.player_points()])
+            return math.ceil(math.log(total_importance + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE * self.settings.multiplier)
         else:
             return 0
 

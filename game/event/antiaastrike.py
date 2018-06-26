@@ -10,7 +10,6 @@ from userdata.debriefing import Debriefing
 
 
 class AntiAAStrikeEvent(Event):
-    BONUS_BASE = 3
     TARGET_AMOUNT_MAX = 2
     STRENGTH_INFLUENCE = 0.3
     SUCCESS_TARGETS_HIT_PERCENTAGE = 0.5
