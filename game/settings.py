@@ -5,3 +5,4 @@ class Settings:
     only_player_takeoff = False
     night_disabled = False
     multiplier = 1
+    sams = True

@@ -38,6 +38,10 @@ RANDOM_WEATHER = {
 }
 
 
+class Silence(Option):
+    Key = 7
+
+
 class SettingsGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.mission = mission
@@ -84,7 +88,7 @@ class SettingsGenerator:
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
                 if coalition_name == enemy_coalition:
-                    for plane_group in country.plane_group:
+                    for plane_group in country.plane_group + country.helicopter_group:
                         plane_group.late_activation = True
                         activate_by_trigger.append(plane_group)
 
@@ -108,9 +112,10 @@ class SettingsGenerator:
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
                 if coalition_name == player_coalition:
-                    for plane_group in country.plane_group:
+                    for plane_group in country.plane_group + country.helicopter_group:
                         if plane_group.task == AWACS.name:
                             continue
+
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
 
                         pos1 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
@@ -124,7 +129,10 @@ class SettingsGenerator:
                         plane_group.points.insert(1, w2)
                         plane_group.points.insert(1, w1)
 
+                        w1.tasks.append(Silence(True))
                         w2.tasks.append(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
+                        plane_group.points[3].tasks.append(Silence(False))
+
                         plane_group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
                         push_by_trigger.append(plane_group)
 

@@ -51,6 +51,12 @@ class OverviewCanvas:
         id = self.canvas.create_text(coords[0], coords[1], text=title, font=font)
         self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
 
+    def _player_color(self):
+        return self.game.player == "USA" and "blue" or "red"
+
+    def _enemy_color(self):
+        return self.game.player == "USA" and "red" or "blue"
+
     def update(self):
         self.canvas.delete(ALL)
         self.canvas.create_image((self.image.width()/2, self.image.height()/2), image=self.image)
@@ -60,9 +66,9 @@ class OverviewCanvas:
             for connected_cp in cp.connected_points:
                 connected_coords = self.transform_point(connected_cp.position)
                 if connected_cp.captured != cp.captured:
-                    color = "red"
+                    color = self._enemy_color()
                 elif connected_cp.captured and cp.captured:
-                    color = "blue"
+                    color = self._player_color()
                 else:
                     color = "black"
 
@@ -73,7 +79,11 @@ class OverviewCanvas:
             arc_size = 22 * math.pow(cp.importance, 1)
             extent = max(cp.base.strength * 180, 10)
             start = (180 - extent) / 2
-            color = cp.captured and 'blue' or 'red'
+
+            if cp.captured:
+                color = self._player_color()
+            else:
+                color = self._enemy_color()
 
             cp_id = self.canvas.create_arc((coords[0] - arc_size/2, coords[1] - arc_size/2),
                                            (coords[0]+arc_size/2, coords[1]+arc_size/2),

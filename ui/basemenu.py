@@ -25,8 +25,8 @@ class BaseMenu(Menu):
             Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(row=row, sticky=W)
             Label(self.frame, text="({})".format(existing_units)).grid(column=1, row=row)
             Label(self.frame, text="{}m {}".format(unit_price, scheduled_units and "(bought {})".format(scheduled_units) or "")).grid(column=2, row=row)
-            Button(self.frame, text="Buy", command=self.buy(unit_type)).grid(column=3, row=row)
-            Button(self.frame, text="Sell", command=self.sell(unit_type)).grid(column=4, row=row)
+            Button(self.frame, text="+", command=self.buy(unit_type)).grid(column=3, row=row)
+            Button(self.frame, text="-", command=self.sell(unit_type)).grid(column=4, row=row)
             row += 1
 
         units = {
@@ -38,7 +38,7 @@ class BaseMenu(Menu):
         }
 
         Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(row=row, sticky=W)
-        Button(self.frame, text="Back", command=self.dismiss).grid(column=2, row=row)
+        Button(self.frame, text="Back", command=self.dismiss).grid(column=4, row=row)
         row += 1
 
         for task_type, units in units.items():
@@ -62,7 +62,7 @@ class BaseMenu(Menu):
                 self.event.deliver({unit_type: 1})
                 self.game.budget -= price
 
-            self.display()
+            #self.display()
 
         return action
 
@@ -76,6 +76,6 @@ class BaseMenu(Menu):
                 price = db.PRICES[unit_type]
                 self.game.budget += price
                 self.base.commit_losses({unit_type: 1})
-            self.display()
+            #self.display()
 
         return action

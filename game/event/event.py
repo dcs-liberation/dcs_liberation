@@ -5,7 +5,7 @@ from theater import *
 
 from userdata.debriefing import Debriefing
 
-DIFFICULTY_LOG_BASE = 1.5
+DIFFICULTY_LOG_BASE = 1.1
 
 
 class Event:
@@ -15,7 +15,7 @@ class Event:
     operation = None  # type: Operation
     difficulty = 1  # type: int
     game = None  # type: Game
-    BONUS_BASE = 0
+    BONUS_BASE = 3
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         self.attacker_name = attacker_name
@@ -40,7 +40,7 @@ class Event:
         return ""
 
     def bonus(self) -> int:
-        return math.ceil(math.log(self.difficulty, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
+        return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)

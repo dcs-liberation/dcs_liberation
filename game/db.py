@@ -160,6 +160,10 @@ TAKEOFF_BAN = [
     AV8BNA,
 ]
 
+CARRIER_TAKEOFF_BAN = [
+   Su_33,
+]
+
 EXTRA_AA = {
     "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
     "USA": AirDefence.SAM_Patriot_EPP_III,
@@ -250,6 +254,11 @@ UNIT_BY_COUNTRY = {
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
+    },
+
+    Su_33: {
+        "*": "R-73*4,R-27R*2,R-27ER*6",
+        "_carrier": "R-73*4",
     },
 
     AV8BNA: {

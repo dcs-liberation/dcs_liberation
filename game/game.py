@@ -130,7 +130,12 @@ class Game:
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
                     importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
-                    unittypes = db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
+
+                    if for_task == AirDefence and not self.settings.sams:
+                        unittypes = [x for x in db.find_unittype(AirDefence, self.enemy) if x not in db.SAM_BAN]
+                    else:
+                        unittypes = db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
+
                     d = {random.choice(unittypes): points_to_spend}
                     print("Commision {}: {}".format(cp, d))
                     cp.base.commision_units(d)

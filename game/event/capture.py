@@ -12,11 +12,14 @@ from .event import Event
 
 class CaptureEvent(Event):
     silent = True
-    BONUS_BASE = 7
+    BONUS_BASE = 10
     STRENGTH_RECOVERY = 0.35
 
     def __str__(self):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
+
+    def bonus(self):
+        return
 
     @property
     def threat_description(self):
@@ -33,7 +36,7 @@ class CaptureEvent(Event):
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
         alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
-        attackers_success = alive_attackers > alive_defenders
+        attackers_success = alive_attackers >= alive_defenders
         if self.from_cp.captured:
             return attackers_success
         else:
