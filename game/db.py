@@ -258,7 +258,6 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     Su_33: {
         "*": "R-73*4,R-27R*2,R-27ER*6",
-        "_carrier": "R-73*4",
     },
 
     AV8BNA: {

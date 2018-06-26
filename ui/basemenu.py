@@ -4,6 +4,9 @@ from game.game import *
 
 
 class BaseMenu(Menu):
+    bought_amount_labels = None  # type: typing.Collection[Label]
+    budget_label = None  # type: Label
+
     def __init__(self, window: Window, parent, game: Game, cp: ControlPoint):
         super(BaseMenu, self).__init__(window, parent, game)
 
@@ -11,6 +14,7 @@ class BaseMenu(Menu):
         self.base = cp.base
         self.frame = window.right_pane
         self.event = self.game.units_delivery_event(cp)
+        self.bought_amount_labels = {}
 
     def display(self):
         self.window.clear_right_pane()
@@ -23,8 +27,10 @@ class BaseMenu(Menu):
             scheduled_units = self.event.units.get(unit_type, 0)
 
             Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(row=row, sticky=W)
-            Label(self.frame, text="({})".format(existing_units)).grid(column=1, row=row)
-            Label(self.frame, text="{}m {}".format(unit_price, scheduled_units and "(bought {})".format(scheduled_units) or "")).grid(column=2, row=row)
+            label = Label(self.frame, text="({})".format(existing_units))
+            self.bought_amount_labels[unit_type] = label
+            label.grid(column=1, row=row)
+            Label(self.frame, text="{}m".format(unit_price)).grid(column=2, row=row)
             Button(self.frame, text="+", command=self.buy(unit_type)).grid(column=3, row=row)
             Button(self.frame, text="-", command=self.sell(unit_type)).grid(column=4, row=row)
             row += 1
@@ -37,7 +43,8 @@ class BaseMenu(Menu):
             AirDefence: db.find_unittype(AirDefence, self.game.player),
         }
 
-        Label(self.frame, text="Budget: {}m".format(self.game.budget)).grid(row=row, sticky=W)
+        self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget))
+        self.budget_label.grid(row=row, sticky=W)
         Button(self.frame, text="Back", command=self.dismiss).grid(column=4, row=row)
         row += 1
 
@@ -61,8 +68,9 @@ class BaseMenu(Menu):
             if self.game.budget >= price:
                 self.event.deliver({unit_type: 1})
                 self.game.budget -= price
-
-            #self.display()
+                label = self.bought_amount_labels[unit_type]  # type: Label
+                label["text"] = "({}, bought {})".format(self.cp.base.total_units_of_type(unit_type), self.event.units[unit_type])
+            self.budget_label["text"] = "Budget: {}m".format(self.game.budget)
 
         return action
 
@@ -76,6 +84,9 @@ class BaseMenu(Menu):
                 price = db.PRICES[unit_type]
                 self.game.budget += price
                 self.base.commit_losses({unit_type: 1})
-            #self.display()
+
+            label = self.bought_amount_labels[unit_type]  # type: Label
+            label["text"] = "({}, bought {})".format(self.cp.base.total_units_of_type(unit_type), self.event.units[unit_type])
+            self.budget_label["text"] = "Budget: {}m".format(self.game.budget)
 
         return action

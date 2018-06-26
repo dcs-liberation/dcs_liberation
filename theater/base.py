@@ -12,7 +12,7 @@ from dcs.task import *
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 4
 PLANES_SCRAMBLE_MAX_BASE = 8
-PLANES_SCRAMBLE_FACTOR = 0.5
+PLANES_SCRAMBLE_FACTOR = 0.6
 
 
 class Base:
@@ -141,7 +141,7 @@ class Base:
             self.strength = 0.001
 
     def scramble_count(self, multiplier: float) -> int:
-        count = int(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength)
+        count = int(math.ceil(self.total_planes * PLANES_SCRAMBLE_FACTOR * self.strength))
         return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), self.total_planes)
 
     def assemble_count(self):

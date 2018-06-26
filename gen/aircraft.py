@@ -66,9 +66,6 @@ class AircraftConflictGenerator:
                 if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
                     group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task])
                     did_load_loadout = True
-                elif "_carrier" in db.PLANE_PAYLOAD_OVERRIDES[unit_type] and isinstance(at, ShipGroup):
-                    group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["_carrier"])
-                    did_load_loadout = True
                 elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
                     group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"])
                     did_load_loadout = True
