@@ -7,3 +7,5 @@ build/*
 .idea/**/tasks.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/misc.xml
+.idea/*.iml

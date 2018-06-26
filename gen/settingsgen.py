@@ -130,6 +130,7 @@ class SettingsGenerator:
                         plane_group.points.insert(1, w1)
 
                         w1.tasks.append(Silence(True))
+
                         w2.tasks.append(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
                         plane_group.points[3].tasks.append(Silence(False))
 
