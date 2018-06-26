@@ -48,7 +48,7 @@ if not game:
         game.settings.sams = sams
 
         if midgame:
-            game.budget = game.budget * 8
+            game.budget = game.budget * 6 * len(list(conflicttheater.conflicts()))
 
         proceed_to_main_menu(game)
 
