@@ -18,9 +18,6 @@ class CaptureEvent(Event):
     def __str__(self):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
 
-    def bonus(self):
-        return
-
     @property
     def threat_description(self):
         descr = "{} aircraft + CAS, {} vehicles".format(

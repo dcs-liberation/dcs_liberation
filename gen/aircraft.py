@@ -10,7 +10,7 @@ from dcs.task import *
 from dcs.terrain.terrain import NoParkingSlotError
 
 SPREAD_DISTANCE_FACTOR = 1, 2
-ESCORT_MAX_DIST = 30000
+ESCORT_MAX_DIST = 80000
 WORKAROUND_WAYP_DIST = 1000
 
 WARM_START_ALTITUDE = 4600
@@ -20,7 +20,7 @@ RTB_ALTITUDE = 4600
 TRANSPORT_LANDING_ALT = 4600
 HELI_ALT = 900
 
-WARM_START_AIRSPEED = 540
+WARM_START_AIRSPEED = 550
 INTERCEPTION_AIRSPEED = 1000
 
 INTERCEPT_MAX_DISTANCE = 80000
@@ -117,7 +117,7 @@ class AircraftConflictGenerator:
             airport=None,
             position=pos,
             altitude=alt,
-            speed=WARM_START_AIRSPEED + random.randint(500, 3000),
+            speed=WARM_START_AIRSPEED,
             maintask=None,
             start_type=StartType.Warm,
             group_size=count)

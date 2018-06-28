@@ -87,8 +87,11 @@ class Conflict:
     @classmethod
     def _find_ground_location(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         for _ in range(0, int(max_distance), 800):
-            if theater.is_on_land(initial):
-                return initial
+            for _ in range(3):
+                if theater.is_on_land(initial):
+                    return initial
+
+                initial = initial.random_point_within(1000, 1000)
 
             initial = initial.point_from_heading(heading, 800)
 

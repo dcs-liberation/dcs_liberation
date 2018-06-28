@@ -35,7 +35,8 @@ class EventResultsMenu(Menu):
             Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0)).grid(row=3, column=1)
             """
 
-            Label(self.frame, text="Play the mission and save debriefing to {}".format(debriefing_directory_location())).grid(row=0, column=0)
+            Label(self.frame, text="Play the mission and save debriefing to").grid(row=0, column=0)
+            Label(self.frame, text=debriefing_directory_location()).grid(row=1, column=0)
         else:
             row = 0
             if self.event.is_successfull(self.debriefing):

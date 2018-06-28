@@ -52,6 +52,7 @@ class TriggersGenerator:
         activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, zone_size, name="Activation zone")
         activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
         activation_trigger.add_condition(PartOfCoalitionInZone(player_coalition, activation_trigger_zone.id))
+        activation_trigger.add_condition(FlagIsTrue())
         for group in activate_by_trigger:
             activation_trigger.add_action(ActivateGroup(group.id))
 
@@ -94,6 +95,7 @@ class TriggersGenerator:
             push_trigger.add_action(AITaskPush(group.id, 1))
         message_string = self.mission.string("Task force is in the air, proceed with the objective.")
         push_trigger.add_action(MessageToAll(message_string, clearview=True))
+        push_trigger.add_action(SetFlagValue())
 
         self.mission.triggerrules.triggers.append(push_trigger)
 

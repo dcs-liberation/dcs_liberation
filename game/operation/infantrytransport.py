@@ -45,6 +45,7 @@ class InfantryTransportOperation(Operation):
         self.visualgen.generate_transportation_marker(self.conflict.ground_attackers_location)
         self.visualgen.generate_transportation_destination(self.conflict.position)
 
+        # TODO: horrible, horrible hack
         # this will disable vehicle activation triggers,
         # which aren't needed on this type of missions
         self.is_quick = True

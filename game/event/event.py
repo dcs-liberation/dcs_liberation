@@ -5,6 +5,7 @@ from theater import *
 from gen.environmentgen import EnvironmentSettings
 
 from userdata.debriefing import Debriefing
+from userdata import persistency
 
 DIFFICULTY_LOG_BASE = 1.1
 
@@ -52,7 +53,7 @@ class Event:
 
         self.operation.prepare(self.game.theater.terrain, is_quick=False)
         self.operation.generate()
-        self.operation.mission.save("build/nextturn.miz")
+        self.operation.mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
         self.environment_settings = self.operation.environment_settings
 
     def generate_quick(self):
@@ -61,7 +62,7 @@ class Event:
 
         self.operation.prepare(self.game.theater.terrain, is_quick=True)
         self.operation.generate()
-        self.operation.mission.save('build/nextturn_quick.miz')
+        self.operation.mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
 
     def commit(self, debriefing: Debriefing):
         for country, losses in debriefing.destroyed_units.items():

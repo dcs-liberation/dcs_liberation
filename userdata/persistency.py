@@ -3,22 +3,24 @@ import pickle
 import os
 import shutil
 
-from game.game import Game
-
 
 def _save_file() -> str:
-    return "build/save"
+    return os.path.expanduser("~\Saved Games\DCS\liberation_save")
 
 
 def _temporary_save_file() -> str:
-    return "build/save_tmp"
+    return os.path.expanduser("~\Saved Games\DCS\liberation_save_tmp")
 
 
 def _save_file_exists() -> bool:
     return os.path.exists(_save_file())
 
 
-def restore_game() -> typing.Optional[Game]:
+def mission_path_for(name: str) -> str:
+    return os.path.expanduser("~\Saved Games\DCS\Missions\{}".format(name))
+
+
+def restore_game():
     if not _save_file_exists():
         return None
 
@@ -30,7 +32,7 @@ def restore_game() -> typing.Optional[Game]:
         return None
 
 
-def save_game(game: Game) -> bool:
+def save_game(game) -> bool:
     try:
         with open(_temporary_save_file(), "wb") as f:
             pickle.dump(game, f)

@@ -157,7 +157,7 @@ class Game:
                 awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
-                    unittypes = self._commision_unit_types(cp, for_task)
+                    unittypes = self.commision_unit_types(cp, for_task)
                     d = {random.choice(unittypes): points_to_spend}
                     print("Commision {}: {}".format(cp, d))
                     cp.base.commision_units(d)

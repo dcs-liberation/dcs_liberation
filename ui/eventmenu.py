@@ -132,7 +132,8 @@ class EventMenu(Menu):
     def client_one(self, unit_type: UnitType) -> typing.Callable:
         def action():
             entry = self.aircraft_client_entries[unit_type]  # type: Entry
-            amount = int(entry.get())
+            value = entry.get()
+            amount = int(value and value or "0")
             entry.delete(0, END)
             entry.insert(0, str(amount+1))
         return action

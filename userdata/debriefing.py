@@ -90,8 +90,9 @@ class Debriefing:
             enemy.name: self.alive_units.get(enemy.id, {}),
         }
 
+
 def debriefing_directory_location() -> str:
-    return "build/debriefing"
+    return os.path.expanduser("~\Saved Games\DCS")
 
 
 def _logfiles_snapshot() -> typing.Dict[str, float]:
@@ -108,11 +109,19 @@ def _poll_new_debriefing_log(snapshot: typing.Dict[str, float], callback: typing
     while should_run:
         for file, timestamp in _logfiles_snapshot().items():
             if file not in snapshot or timestamp != snapshot[file]:
-                callback(Debriefing.parse(os.path.join(debriefing_directory_location(), file)))
+                for _ in range(0, 3):
+                    # some solid programming going on in here
+                    try:
+                        debriefing = Debriefing.parse(os.path.join(debriefing_directory_location(), file))
+                        break
+                    except:
+                        time.sleep(3)
+
+                callback(debriefing)
                 should_run = False
                 break
 
-        time.sleep(1)
+        time.sleep(3)
 
 
 def wait_for_debriefing(callback: typing.Callable):
