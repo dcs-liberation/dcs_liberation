@@ -80,6 +80,8 @@ class BaseMenu(Menu):
                 price = db.PRICES[unit_type]
                 self.game.budget += price
                 self.event.units[unit_type] = self.event.units[unit_type] - 1
+                if self.event.units[unit_type] == 0:
+                    del self.event.units[unit_type]
             elif self.base.total_units_of_type(unit_type) > 0:
                 price = db.PRICES[unit_type]
                 self.game.budget += price

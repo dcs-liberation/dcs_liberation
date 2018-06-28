@@ -15,7 +15,7 @@ from theater import *
 from gen import *
 
 ACTIVATION_TRIGGER_SIZE = 100000
-ACTIVATION_TRIGGER_MIN_DISTANCE = 20000
+ACTIVATION_TRIGGER_MIN_DISTANCE = 10000
 
 PUSH_TRIGGER_SIZE = 3000
 
@@ -78,10 +78,7 @@ class SettingsGenerator:
             self.mission.weather.heavy_rain()
             self.mission.weather.enable_fog = False
         elif weather_type == 3:
-            self.mission.weather.clouds_iprecptns = 1
-            
-            while self.mission.weather.clouds_iprecptns != 0:
-                self.mission.weather.random(self.mission.start_time, self.conflict.theater.terrain)
+            self.mission.weather.random(self.mission.start_time, self.conflict.theater.terrain)
 
         if self.mission.weather.clouds_density > 0:
             self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, CLOUDS_BASE_MIN)

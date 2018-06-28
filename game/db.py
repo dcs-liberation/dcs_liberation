@@ -337,6 +337,10 @@ PLANE_PAYLOAD_OVERRIDES = {
         CAS: "AS 2",
     },
 
+    A_10C: {
+        CAS: "AGM-65D*2,AGM-65H*2,GBU-12*2,GBU-38*2,AIM-9*2,TGP,ECM,MK151*7",
+    },
+
     Ka_50: {
       "*": "12x9A4172, 40xS-8",
     },

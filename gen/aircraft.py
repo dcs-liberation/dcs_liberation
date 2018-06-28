@@ -107,14 +107,17 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
+        alt = WARM_START_ALTITUDE + random.randint(500, 3000)
+        pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
+
         return self.m.flight_group(
             country=side,
             name=name,
             aircraft_type=unit_type,
             airport=None,
-            position=at,
-            altitude=WARM_START_ALTITUDE,
-            speed=WARM_START_AIRSPEED,
+            position=pos,
+            altitude=alt,
+            speed=WARM_START_AIRSPEED + random.randint(500, 3000),
             maintask=None,
             start_type=StartType.Warm,
             group_size=count)

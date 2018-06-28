@@ -77,6 +77,7 @@ class InterceptEvent(Event):
         self.operation = op
 
     def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
+        # TODO: even not quick mission is too quick
         interceptors = self.from_cp.base.scramble_interceptors(self.game.settings.multiplier)
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
