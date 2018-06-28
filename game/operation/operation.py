@@ -16,10 +16,13 @@ class Operation:
     aagen = None  # type: AAConflictGenerator
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
-    envgen = None  # type: SettingsGenerator
+    triggersgen = None  # type: TriggersGenerator
     awacsgen = None  # type: AWACSConflictGenerator
     visualgen = None  # type: VisualGenerator
+    envgen = None  # type: EnvironmentGenerator
 
+    environment_settings = None
+    is_quick = None
     is_awacs_enabled = False
 
     def __init__(self,
@@ -48,8 +51,9 @@ class Operation:
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
         self.awacsgen = AWACSConflictGenerator(mission, conflict, self.game)
-        self.envgen = SettingsGenerator(mission, conflict, self.game)
+        self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
+        self.envgen = EnviromentGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
@@ -73,7 +77,12 @@ class Operation:
             self.awacsgen.generate()
 
         self.extra_aagen.generate()
-        self.envgen.generate(self.is_quick)
+        self.triggersgen.generate(self.is_quick)
+
+        if self.environment_settings is None:
+            self.environment_settings = self.envgen.generate()
+        else:
+            self.envgen.load(self.environment_settings)
 
         for global_cp in self.game.theater.controlpoints:
             if not global_cp.is_global:

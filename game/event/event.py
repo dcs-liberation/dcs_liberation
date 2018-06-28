@@ -2,6 +2,7 @@ from dcs.unittype import UnitType
 
 from game import *
 from theater import *
+from gen.environmentgen import EnvironmentSettings
 
 from userdata.debriefing import Debriefing
 
@@ -15,6 +16,7 @@ class Event:
     operation = None  # type: Operation
     difficulty = 1  # type: int
     game = None  # type: Game
+    environment_settings = None  # type: EnvironmentSettings
     BONUS_BASE = 3
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
@@ -47,12 +49,16 @@ class Event:
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
+
         self.operation.prepare(self.game.theater.terrain, is_quick=False)
         self.operation.generate()
         self.operation.mission.save("build/nextturn.miz")
+        self.environment_settings = self.operation.environment_settings
 
     def generate_quick(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
+        self.operation.environment_settings = self.environment_settings
+
         self.operation.prepare(self.game.theater.terrain, is_quick=True)
         self.operation.generate()
         self.operation.mission.save('build/nextturn_quick.miz')

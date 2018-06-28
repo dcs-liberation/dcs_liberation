@@ -141,6 +141,14 @@ class Game:
                     enemy_generated_types.append(event_class)
                     self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
 
+    def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
+        importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
+
+        if for_task == AirDefence and not self.settings.sams:
+            return [x for x in db.find_unittype(AirDefence, self.enemy) if x not in db.SAM_BAN]
+        else:
+            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
+
     def _commision_units(self, cp: ControlPoint):
         for for_task in [PinpointStrike, CAS, CAP, AirDefence]:
             limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE) * self.settings.multiplier
@@ -149,13 +157,7 @@ class Game:
                 awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
-                    importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
-
-                    if for_task == AirDefence and not self.settings.sams:
-                        unittypes = [x for x in db.find_unittype(AirDefence, self.enemy) if x not in db.SAM_BAN]
-                    else:
-                        unittypes = db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
-
+                    unittypes = self._commision_unit_types(cp, for_task)
                     d = {random.choice(unittypes): points_to_spend}
                     print("Commision {}: {}".format(cp, d))
                     cp.base.commision_units(d)
@@ -208,7 +210,8 @@ class Game:
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
-            event.skip()
+            if isinstance(event, UnitsDeliveryEvent):
+                event.skip()
 
         if not no_action:
             self._budget_player()

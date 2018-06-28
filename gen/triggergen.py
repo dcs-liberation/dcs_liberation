@@ -22,66 +22,16 @@ PUSH_TRIGGER_SIZE = 3000
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
 
-CLOUDS_BASE_MIN = 4000
-
-RANDOM_TIME = {
-    "night": 5,
-    "dusk": 30,
-    "dawn": 30,
-    "day": 100,
-}
-
-RANDOM_WEATHER = {
-    1: 5,  # heavy rain
-    2: 15,  # rain
-    3: 100,  # random dynamic
-}
-
 
 class Silence(Option):
     Key = 7
 
 
-class SettingsGenerator:
+class TriggersGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.mission = mission
         self.conflict = conflict
         self.game = game
-
-    def _gen_random_time(self):
-        start_time = datetime.combine(datetime.today(), time())
-        time_range = None
-        for k, v in RANDOM_TIME.items():
-            if self.game.settings.night_disabled and k == "night":
-                continue
-
-            if random.randint(0, 100) <= v:
-                time_range = self.game.theater.daytime_map[k]
-                break
-
-        start_time += timedelta(hours=random.randint(*time_range))
-        self.mission.start_time = start_time
-
-    def _gen_random_weather(self):
-        weather_type = None
-        for k, v in RANDOM_WEATHER.items():
-            if random.randint(0, 100) <= v:
-                weather_type = k
-                break
-
-        print("generated weather {}".format(weather_type))
-        if weather_type == 0:
-            self.mission.weather.random_thunderstorm()
-        elif weather_type == 1:
-            self.mission.weather.heavy_rain()
-        elif weather_type == 2:
-            self.mission.weather.heavy_rain()
-            self.mission.weather.enable_fog = False
-        elif weather_type == 3:
-            self.mission.weather.random(self.mission.start_time, self.conflict.theater.terrain)
-
-        if self.mission.weather.clouds_density > 0:
-            self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, CLOUDS_BASE_MIN)
 
     def _gen_activation_trigger(self, player_coalition: str, enemy_coalition: str):
         activate_by_trigger = []
@@ -178,8 +128,6 @@ class SettingsGenerator:
         self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,
                                                              "y": self.conflict.position.y}
 
-        self._gen_random_time()
-        self._gen_random_weather()
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
 

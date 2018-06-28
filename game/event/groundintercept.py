@@ -2,6 +2,7 @@ import math
 import random
 
 from dcs.task import *
+from dcs.vehicles import AirDefence
 
 from game import *
 from game.event import *
@@ -56,6 +57,9 @@ class GroundInterceptEvent(Event):
         unittypes = suitable_unittypes[:self.TARGET_VARIETY]
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
         self.targets = {unittype: typecount for unittype in unittypes}
+
+        defense_aa_unit = random.choice(self.game.commision_unit_types(self.to_cp, AirDefence))
+        self.targets[defense_aa_unit] = 1
 
         op = GroundInterceptOperation(game=self.game,
                                       attacker_name=self.attacker_name,

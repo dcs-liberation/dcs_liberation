@@ -5,7 +5,7 @@ from gen.armor import *
 from gen.aircraft import *
 from gen.aaa import *
 from gen.shipgen import *
-from gen.settingsgen import *
+from gen.triggergen import *
 from gen.awacsgen import *
 from gen.visualgen import *
 

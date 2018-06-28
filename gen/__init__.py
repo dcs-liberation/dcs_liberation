@@ -5,7 +5,8 @@ from .awacsgen import *
 from .conflictgen import *
 from .shipgen import *
 from .visualgen import *
-from .settingsgen import *
+from .triggergen import *
+from .environmentgen import *
 
 from . import naming
 
