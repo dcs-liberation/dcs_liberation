@@ -239,8 +239,6 @@ UNIT_BY_COUNTRY = {
         M_2000C,
         AV8BNA,
 
-        A_10A,
-        A_10C,
         Su_25T,
         L_39ZA,
 

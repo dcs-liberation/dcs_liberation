@@ -23,7 +23,8 @@ HELI_ALT = 900
 WARM_START_AIRSPEED = 550
 INTERCEPTION_AIRSPEED = 1000
 
-INTERCEPT_MAX_DISTANCE = 80000
+DEFENCE_ENGAGEMENT_MAX_DISTANCE = 60000
+INTERCEPT_MAX_DISTANCE = 200000
 
 
 class AircraftConflictGenerator:
@@ -87,7 +88,7 @@ class AircraftConflictGenerator:
             else:
                 group.units[idx].set_client()
 
-        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.ByPassAndEscape))
+        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None) -> FlyingGroup:
         assert count > 0
@@ -266,7 +267,7 @@ class AircraftConflictGenerator:
 
             group.task = CAP.name
             wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
-            wayp.tasks.append(dcs.task.EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
+            wayp.tasks.append(dcs.task.EngageTargets(max_distance=DEFENCE_ENGAGEMENT_MAX_DISTANCE))
             wayp.tasks.append(dcs.task.OrbitAction())
             self._setup_group(group, CAP, client_count)
 
@@ -307,7 +308,7 @@ class AircraftConflictGenerator:
             initial_wayp = group.add_waypoint(group.position.point_from_heading(heading, WORKAROUND_WAYP_DIST), INTERCEPTION_ALT, INTERCEPTION_AIRSPEED)
             initial_wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
 
-            wayp = group.add_waypoint(self.conflict.position, 0)
+            wayp = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
             wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
             self._setup_group(group, CAP, client_count)
 

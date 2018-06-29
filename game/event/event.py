@@ -18,7 +18,7 @@ class Event:
     difficulty = 1  # type: int
     game = None  # type: Game
     environment_settings = None  # type: EnvironmentSettings
-    BONUS_BASE = 3
+    BONUS_BASE = 5
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         self.attacker_name = attacker_name

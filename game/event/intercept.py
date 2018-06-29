@@ -13,7 +13,6 @@ from .event import Event
 
 
 class InterceptEvent(Event):
-    BONUS_BASE = 5
     STRENGTH_INFLUENCE = 0.3
     GLOBAL_STRENGTH_INFLUENCE = 0.3
     AIRDEFENSE_COUNT = 3
@@ -25,7 +24,7 @@ class InterceptEvent(Event):
 
     @property
     def threat_description(self):
-        return "{} aircraft".format(self.enemy_cp.base.scramble_count(self.game.settings.multiplier))
+        return "{} aircraft".format(self.enemy_cp.base.scramble_count(self.game.settings.multiplier, CAP))
 
     def is_successfull(self, debriefing: Debriefing):
         units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)

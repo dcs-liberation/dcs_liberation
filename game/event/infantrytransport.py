@@ -40,6 +40,8 @@ class InfantryTransportEvent(Event):
             to_cp=self.to_cp
         )
 
-        op.setup(transport=transport)
+        air_defense = db.find_unittype(AirDefence, self.defender_name)[0]
+        op.setup(transport=transport,
+                 aa={air_defense: 2})
 
         self.operation = op

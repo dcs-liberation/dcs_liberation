@@ -27,9 +27,11 @@ class BaseMenu(Menu):
             scheduled_units = self.event.units.get(unit_type, 0)
 
             Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(row=row, sticky=W)
+
             label = Label(self.frame, text="({})".format(existing_units))
-            self.bought_amount_labels[unit_type] = label
             label.grid(column=1, row=row)
+            self.bought_amount_labels[unit_type] = label
+
             Label(self.frame, text="{}m".format(unit_price)).grid(column=2, row=row)
             Button(self.frame, text="+", command=self.buy(unit_type)).grid(column=3, row=row)
             Button(self.frame, text="-", command=self.sell(unit_type)).grid(column=4, row=row)
@@ -62,15 +64,22 @@ class BaseMenu(Menu):
 
         super(BaseMenu, self).dismiss()
 
+    def _update_count_label(self, unit_type: UnitType):
+        self.bought_amount_labels[unit_type]["text"] = "({}{})".format(
+            self.cp.base.total_units_of_type(unit_type),
+            unit_type in self.event.units and ", bought {}".format(self.event.units[unit_type]) or ""
+        )
+
+        self.budget_label["text"] = "Budget: {}m".format(self.game.budget)
+
     def buy(self, unit_type):
         def action():
             price = db.PRICES[unit_type]
             if self.game.budget >= price:
                 self.event.deliver({unit_type: 1})
                 self.game.budget -= price
-                label = self.bought_amount_labels[unit_type]  # type: Label
-                label["text"] = "({}, bought {})".format(self.cp.base.total_units_of_type(unit_type), self.event.units[unit_type])
-            self.budget_label["text"] = "Budget: {}m".format(self.game.budget)
+
+            self._update_count_label(unit_type)
 
         return action
 
@@ -87,8 +96,6 @@ class BaseMenu(Menu):
                 self.game.budget += price
                 self.base.commit_losses({unit_type: 1})
 
-            label = self.bought_amount_labels[unit_type]  # type: Label
-            label["text"] = "({}, bought {})".format(self.cp.base.total_units_of_type(unit_type), self.event.units[unit_type])
-            self.budget_label["text"] = "Budget: {}m".format(self.game.budget)
+            self._update_count_label(unit_type)
 
         return action

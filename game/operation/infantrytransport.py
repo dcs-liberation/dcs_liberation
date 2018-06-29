@@ -15,9 +15,11 @@ from .operation import Operation
 
 class InfantryTransportOperation(Operation):
     transport = None  # type: db.HeliDict
+    aa = None  # type: db.AirDefenseDict
 
-    def setup(self, transport: db.HeliDict):
+    def setup(self, transport: db.HeliDict, aa: db.AirDefenseDict):
         self.transport = transport
+        self.aa = aa
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(InfantryTransportOperation, self).prepare(terrain, is_quick)
@@ -40,7 +42,8 @@ class InfantryTransportOperation(Operation):
             at=self.attackers_starting_position
         )
 
-        self.armorgen.generate_passengers(count=8)
+        self.armorgen.generate_passengers(count=6)
+        self.aagen.generate_at_defenders_location(self.aa)
 
         self.visualgen.generate_transportation_marker(self.conflict.ground_attackers_location)
         self.visualgen.generate_transportation_destination(self.conflict.position)

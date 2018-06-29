@@ -18,6 +18,13 @@ class GroundInterceptEvent(Event):
 
     targets = None  # type: db.ArmorDict
 
+    @property
+    def threat_description(self):
+        if not self.game.is_player_attack(self):
+            return "{} aicraft".format(self.from_cp.base.scramble_count(self.game.settings.multiplier, CAS))
+        else:
+            return super(GroundInterceptEvent, self).threat_description
+
     def __str__(self):
         return "Fontline CAS from {} at {}".format(self.from_cp, self.to_cp)
 

@@ -16,6 +16,16 @@ class AAConflictGenerator:
         self.m = mission
         self.conflict = conflict
 
+    def generate_at_defenders_location(self, units: db.AirDefenseDict):
+        for unit_type, count in units.items():
+            for _ in range(count):
+                self.m.vehicle_group(
+                    country=self.conflict.defenders_side,
+                    name=namegen.next_ground_group_name(),
+                    _type=unit_type,
+                    position=self.conflict.ground_defenders_location.random_point_within(100, 100),
+                    group_size=1)
+
     def generate(self, units: db.AirDefenseDict):
         for type, count in units.items():
             for _, radial in zip(range(count), self.conflict.radials):

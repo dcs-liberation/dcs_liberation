@@ -64,7 +64,7 @@ AWACS_BUDGET_COST = 4
 # Initial budget value
 PLAYER_BUDGET_INITIAL = 120
 # Base post-turn bonus value
-PLAYER_BUDGET_BASE = 30
+PLAYER_BUDGET_BASE = 10
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 

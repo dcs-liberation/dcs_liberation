@@ -12,23 +12,11 @@ from .event import Event
 
 class CaptureEvent(Event):
     silent = True
-    BONUS_BASE = 10
+    BONUS_BASE = 15
     STRENGTH_RECOVERY = 0.35
 
     def __str__(self):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
-
-    @property
-    def threat_description(self):
-        descr = "{} aircraft + CAS, {} vehicles".format(
-            self.enemy_cp.base.scramble_count(self.game.settings.multiplier),
-            self.enemy_cp.base.assemble_count()
-        )
-
-        if self.is_player_attacking:
-            descr += ", {} AA".format(self.enemy_cp.base.assemble_aa_count())
-
-        return descr
 
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])

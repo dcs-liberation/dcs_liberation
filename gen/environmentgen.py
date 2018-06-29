@@ -28,9 +28,9 @@ RANDOM_TIME = {
 
 RANDOM_WEATHER = {
     1: 5,  # heavy rain
-    2: 30,  # rain
-    3: 40,  # dynamic
-    4: 50,  # clear
+    2: 20,  # rain
+    3: 30,  # dynamic
+    4: 40,  # clear
     5: 100,  # random
 }
 
