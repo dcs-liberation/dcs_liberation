@@ -31,7 +31,8 @@ For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla
 
 """
 Prices for the aircraft. 
-This defines both price for the player and prioritization for the enemy (i.e. less important bases will receive units with lower price)
+This defines both price for the player (although only aircraft listed in CAP/CAS/Transport/Armor/AirDefense roles will be purchasable) 
+and prioritization for the enemy (i.e. less important bases will receive units with lower price)
 """
 PRICES = {
     # fighter
@@ -164,15 +165,13 @@ UNIT_BY_TASK = {
 
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [
-        AirDefence.AAA_Vulcan_M163,
+        # those are listed multiple times here to balance prioritization more into lower tier AAs
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Patriot_ICC,
 
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.SAM_SA_18_Igla_MANPADS,

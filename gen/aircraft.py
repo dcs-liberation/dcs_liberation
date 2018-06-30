@@ -190,6 +190,9 @@ class AircraftConflictGenerator:
             for group in self.escort_targets:
                 wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_ENGAGEMENT_MAX_DIST))
 
+            group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
+            group.land_at(self.conflict.from_cp.at)
+
             groups.append(group)
         return groups
 
