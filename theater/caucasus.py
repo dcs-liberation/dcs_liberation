@@ -24,7 +24,7 @@ class CaucasusTheater(ConflictTheater):
     soganlug = ControlPoint.from_airport(caucasus.Soganlug, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     senaki = ControlPoint.from_airport(caucasus.Senaki_Kolkhi, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
-    kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_A_E, SIZE_SMALL, IMPORTANCE_LOW)
+    kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_A_E, SIZE_SMALL, IMPORTANCE_MEDIUM)
     batumi = ControlPoint.from_airport(caucasus.Batumi, COAST_DL_E, SIZE_SMALL, IMPORTANCE_MEDIUM)
     sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_DR_E, SIZE_REGULAR, IMPORTANCE_MEDIUM)
     gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_DR_E, SIZE_REGULAR, IMPORTANCE_MEDIUM)

@@ -20,7 +20,7 @@ class NevadaTheater(ConflictTheater):
     mina = ControlPoint.from_airport(nevada.Mina_Airport_3Q0, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah = ControlPoint.from_airport(nevada.Tonopah_Airport, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah_test_range = ControlPoint.from_airport(nevada.Tonopah_Test_Range_Airfield, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    lincoln_conty = ControlPoint.from_airport(nevada.Lincoln_County, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+    lincoln_conty = ControlPoint.from_airport(nevada.Lincoln_County, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
 
     pahute_mesa = ControlPoint.from_airport(nevada.Pahute_Mesa_Airstrip, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
     groom_lake = ControlPoint.from_airport(nevada.Groom_Lake_AFB, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)

@@ -19,8 +19,8 @@ PUSH_TRIGGER_SIZE = 3000
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
 
-
 TRIGGER_MIN_DISTANCE_FROM_START = 10000
+TRIGGER_RADIUS_MINIMUM = 25000
 
 TRIGGER_RADIUS_SMALL = 40000
 TRIGGER_RADIUS_MEDIUM = 100000
@@ -50,10 +50,14 @@ class TriggersGenerator:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
-        zone_distance_to_aircraft = self.conflict.from_cp.position.distance_to_point(self.conflict.position)
-        zone_size = min(zone_distance_to_aircraft - TRIGGER_MIN_DISTANCE_FROM_START, radius)
+        conflict_distance = self.conflict.from_cp.position.distance_to_point(self.conflict.position)
+        minimum_radius = min(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, conflict_distance - TRIGGER_RADIUS_MINIMUM)
+        if minimum_radius < 0:
+            minimum_radius = 0
 
-        activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, zone_size, name="Activation zone")
+        result_radius = min(minimum_radius, radius)
+
+        activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, result_radius, name="Activation zone")
         activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
         activation_trigger.add_condition(PartOfCoalitionInZone(player_coalition, activation_trigger_zone.id))
         activation_trigger.add_condition(FlagIsTrue())
