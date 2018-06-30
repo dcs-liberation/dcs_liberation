@@ -9,6 +9,7 @@ from dcs.action import *
 from dcs.unit import Skill
 from dcs.point import MovingPoint, PointProperties
 from dcs.action import *
+from dcs.weather import *
 
 from game import db
 from theater import *
@@ -28,9 +29,9 @@ RANDOM_TIME = {
 
 RANDOM_WEATHER = {
     1: 5,  # heavy rain
-    2: 20,  # rain
-    3: 30,  # dynamic
-    4: 40,  # clear
+    2: 15,  # rain
+    3: 25,  # dynamic
+    4: 35,  # clear
     5: 100,  # random
 }
 
@@ -68,9 +69,7 @@ class EnviromentGenerator:
                 break
 
         print("generated weather {}".format(weather_type))
-        if weather_type == 0:
-            self.mission.weather.random_thunderstorm()
-        elif weather_type == 1:
+        if weather_type == 1:
             self.mission.weather.heavy_rain()
         elif weather_type == 2:
             self.mission.weather.heavy_rain()
@@ -84,12 +83,14 @@ class EnviromentGenerator:
             self.mission.weather.clouds_density = random.randint(*WEATHER_CLOUD_DENSITY)
             self.mission.weather.clouds_thickness = random.randint(*WEATHER_CLOUD_THICKNESS)
 
-            self.mission.weather.random(self.mission.start_time, self.conflict.theater.terrain)
+            wind_direction = random.randint(0, 360)
+            wind_speed = random.randint(0, 13)
+            self.mission.weather.wind_at_ground = Wind(wind_direction, wind_speed)
+            self.mission.weather.wind_at_2000 = Wind(wind_direction, wind_speed * 2)
+            self.mission.weather.wind_at_8000 = Wind(wind_direction, wind_speed * 3)
 
         if self.mission.weather.clouds_density > 0:
             self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, WEATHER_CLOUD_BASE_MIN)
-
-        self.mission.random_weather = False
 
     def generate(self) -> EnvironmentSettings:
         self._gen_random_time()

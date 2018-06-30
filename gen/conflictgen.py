@@ -16,6 +16,8 @@ from dcs.country import *
 
 from theater import *
 
+AIR_DISTANCE = 40000
+
 
 GROUND_DISTANCE_FACTOR = 1
 GROUNDINTERCEPT_DISTANCE_FACTOR = 6
@@ -122,8 +124,8 @@ class Conflict:
             defenders_side=defender,
             ground_attackers_location=attackers_location,
             ground_defenders_location=defenders_location,
-            air_attackers_location=position.point_from_heading(attack_raw_heading, AIR_DISTANCE),
-            air_defenders_location=position.point_from_heading(_opposite_heading(attack_raw_heading), AIR_DISTANCE)
+            air_attackers_location=position.point_from_heading(attack_raw_heading, CAPTURE_AIR_ATTACKERS_DISTANCE),
+            air_defenders_location=position.point_from_heading(_opposite_heading(attack_raw_heading), CAPTURE_AIR_DEFENDERS_DISTANCE)
         )
 
     @classmethod

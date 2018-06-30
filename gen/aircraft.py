@@ -10,14 +10,14 @@ from dcs.task import *
 from dcs.terrain.terrain import NoParkingSlotError
 
 SPREAD_DISTANCE_FACTOR = 1, 2
-ESCORT_MAX_DIST = 80000
+ESCORT_ENGAGEMENT_MAX_DIST = 100000
 WORKAROUND_WAYP_DIST = 1000
 
-WARM_START_ALTITUDE = 4600
-INTERCEPTION_ALT = 4600
-CAS_ALTITUDE = 4600
-RTB_ALTITUDE = 4600
-TRANSPORT_LANDING_ALT = 4600
+WARM_START_ALTITUDE = 3000
+INTERCEPTION_ALT = 3000
+CAS_ALTITUDE = 1000
+RTB_ALTITUDE = 1000
+TRANSPORT_LANDING_ALT = 1000
 HELI_ALT = 900
 
 WARM_START_AIRSPEED = 550
@@ -108,7 +108,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        alt = WARM_START_ALTITUDE + random.randint(500, 3000)
+        alt = WARM_START_ALTITUDE + random.randint(50, 200)
         pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
 
         return self.m.flight_group(
@@ -188,7 +188,7 @@ class AircraftConflictGenerator:
             self._setup_group(group, CAP, client_count)
 
             for group in self.escort_targets:
-                wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_MAX_DIST))
+                wayp.tasks.append(EscortTaskAction(group.id, engagement_max_dist=ESCORT_ENGAGEMENT_MAX_DIST))
 
             groups.append(group)
         return groups

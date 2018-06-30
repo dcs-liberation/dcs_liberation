@@ -10,6 +10,8 @@ class InterceptOperation(Operation):
     interceptors = None  # type: db.PlaneDict
     airdefense = None  # type: db.AirDefenseDict
 
+    trigger_radius = TRIGGER_RADIUS_LARGE
+
     def setup(self,
               escort: db.PlaneDict,
               transport: db.PlaneDict,

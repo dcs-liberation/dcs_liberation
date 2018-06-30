@@ -20,6 +20,8 @@ class CaptureOperation(Operation):
     defense = None  # type: db.ArmorDict
     aa = None  # type: db.AirDefenseDict
 
+    trigger_radius = TRIGGER_RADIUS_SMALL
+
     def setup(self,
               cas: db.PlaneDict,
               escort: db.PlaneDict,

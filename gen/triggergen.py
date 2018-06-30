@@ -14,13 +14,17 @@ from game import db
 from theater import *
 from gen import *
 
-ACTIVATION_TRIGGER_SIZE = 100000
-ACTIVATION_TRIGGER_MIN_DISTANCE = 10000
-
 PUSH_TRIGGER_SIZE = 3000
 
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
+
+
+TRIGGER_MIN_DISTANCE_FROM_START = 10000
+
+TRIGGER_RADIUS_SMALL = 40000
+TRIGGER_RADIUS_MEDIUM = 100000
+TRIGGER_RADIUS_LARGE = 150000
 
 
 class Silence(Option):
@@ -33,7 +37,7 @@ class TriggersGenerator:
         self.conflict = conflict
         self.game = game
 
-    def _gen_activation_trigger(self, player_coalition: str, enemy_coalition: str):
+    def _gen_activation_trigger(self, radius: int, player_coalition: str, enemy_coalition: str):
         activate_by_trigger = []
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
@@ -47,7 +51,7 @@ class TriggersGenerator:
                     activate_by_trigger.append(vehicle_group)
 
         zone_distance_to_aircraft = self.conflict.from_cp.position.distance_to_point(self.conflict.position)
-        zone_size = min(zone_distance_to_aircraft - ACTIVATION_TRIGGER_MIN_DISTANCE, ACTIVATION_TRIGGER_SIZE)
+        zone_size = min(zone_distance_to_aircraft - TRIGGER_MIN_DISTANCE_FROM_START, radius)
 
         activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, zone_size, name="Activation zone")
         activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
@@ -82,7 +86,9 @@ class TriggersGenerator:
 
                         w1.tasks.append(Silence(True))
 
-                        w2.tasks.append(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
+                        switch_waypoint_task = ControlledTask(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
+                        switch_waypoint_task.start_if_user_flag(1, False)
+                        w2.tasks.append(switch_waypoint_task)
                         plane_group.points[3].tasks.append(Silence(False))
 
                         plane_group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
@@ -93,7 +99,7 @@ class TriggersGenerator:
         push_trigger.add_condition(AllOfCoalitionOutsideZone(player_coalition, push_trigger_zone.id))
         for group in push_by_trigger:
             push_trigger.add_action(AITaskPush(group.id, 1))
-        message_string = self.mission.string("Task force is in the air, proceed with the objective.")
+        message_string = self.mission.string("Task force is in the air, proceed with the objective (activate waypoint 3).")
         push_trigger.add_action(MessageToAll(message_string, clearview=True))
         push_trigger.add_action(SetFlagValue())
 
@@ -123,7 +129,7 @@ class TriggersGenerator:
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(Skill(skill_level))
 
-    def generate(self, is_quick: bool):
+    def generate(self, is_quick: bool, activation_trigger_radius: int):
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
@@ -135,5 +141,5 @@ class TriggersGenerator:
 
         if not is_quick:
             # TODO: waypoint parts of this should not be post-hacked but added in airgen
-            self._gen_activation_trigger(player_coalition, enemy_coalition)
+            self._gen_activation_trigger(activation_trigger_radius, player_coalition, enemy_coalition)
             self._gen_push_trigger(player_coalition)

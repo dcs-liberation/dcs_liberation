@@ -22,6 +22,7 @@ class Operation:
     envgen = None  # type: EnvironmentGenerator
 
     environment_settings = None
+    trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
     is_awacs_enabled = False
 
@@ -77,7 +78,7 @@ class Operation:
             self.awacsgen.generate()
 
         self.extra_aagen.generate()
-        self.triggersgen.generate(self.is_quick)
+        self.triggersgen.generate(self.is_quick, self.trigger_radius)
 
         if self.environment_settings is None:
             self.environment_settings = self.envgen.generate()
