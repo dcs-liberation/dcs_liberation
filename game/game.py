@@ -46,12 +46,12 @@ Events:
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
-    CaptureEvent: [100, 6],
-    InterceptEvent: [25, 9],
-    GroundInterceptEvent: [25, 9],
-    GroundAttackEvent: [0, 9],
-    NavalInterceptEvent: [25, 9],
-    AntiAAStrikeEvent: [25, 9],
+    CaptureEvent: [100, 8],
+    InterceptEvent: [25, 12],
+    GroundInterceptEvent: [25, 12],
+    GroundAttackEvent: [0, 12],
+    NavalInterceptEvent: [25, 12],
+    AntiAAStrikeEvent: [25, 12],
     InfantryTransportEvent: [25, 0],
 }
 

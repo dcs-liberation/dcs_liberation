@@ -198,9 +198,6 @@ class Conflict:
         defense_heading = to_cp.find_radial(from_cp.position.heading_between_point(to_cp.position), ignored_radial=attack_heading)
 
         distance = to_cp.size * GROUND_DISTANCE_FACTOR
-        attackers_location = position.point_from_heading(attack_heading, distance)
-        attackers_location = Conflict._find_ground_location(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
-
         defenders_location = position.point_from_heading(defense_heading, distance)
         defenders_location = Conflict._find_ground_location(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
 
@@ -213,7 +210,7 @@ class Conflict:
             defenders_side=defender,
             ground_attackers_location=None,
             ground_defenders_location=defenders_location,
-            air_attackers_location=position.point_from_heading(attack_heading, INTERCEPT_ATTACKERS_DISTANCE),
+            air_attackers_location=position.point_from_heading(attack_heading, AIR_DISTANCE),
             air_defenders_location=position
         )
 

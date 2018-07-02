@@ -19,10 +19,11 @@ PUSH_TRIGGER_SIZE = 3000
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
 
+TRIGGER_WAYPOINT_OFFSET = 2
 TRIGGER_MIN_DISTANCE_FROM_START = 10000
 TRIGGER_RADIUS_MINIMUM = 25000
 
-TRIGGER_RADIUS_SMALL = 40000
+TRIGGER_RADIUS_SMALL = 30000
 TRIGGER_RADIUS_MEDIUM = 100000
 TRIGGER_RADIUS_LARGE = 150000
 
@@ -51,7 +52,7 @@ class TriggersGenerator:
                     activate_by_trigger.append(vehicle_group)
 
         conflict_distance = self.conflict.from_cp.position.distance_to_point(self.conflict.position)
-        minimum_radius = min(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, conflict_distance - TRIGGER_RADIUS_MINIMUM)
+        minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
         if minimum_radius < 0:
             minimum_radius = 0
 
@@ -147,3 +148,4 @@ class TriggersGenerator:
             # TODO: waypoint parts of this should not be post-hacked but added in airgen
             self._gen_activation_trigger(activation_trigger_radius, player_coalition, enemy_coalition)
             self._gen_push_trigger(player_coalition)
+

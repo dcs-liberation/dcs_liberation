@@ -150,7 +150,7 @@ class Base:
         return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), count)
 
     def assemble_count(self):
-        return int(self.total_armor * self.strength)
+        return int(self.total_armor * min(self.strength + 0.5, 1))
 
     def assemble_aa_count(self) -> int:
         if self.strength > STRENGTH_AA_ASSEMBLE_MIN:

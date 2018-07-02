@@ -26,7 +26,7 @@ x_map = {
 }
 
 from this example `Identifier` should be used (which may or may not include category of the unit and dot + underscore characters).
-For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla is called `AirDefence.SAM_SA_18_Igla_MANPADS`
+For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla is called `AirDefence.SAM_SA_18_Igla_S_MANPADS`
 """
 
 """
@@ -98,7 +98,7 @@ PRICES = {
     AirDefence.SAM_Patriot_ICC: 15,
 
     AirDefence.AAA_ZU_23_on_Ural_375: 5,
-    AirDefence.SAM_SA_18_Igla_MANPADS: 8,
+    AirDefence.SAM_SA_18_Igla_S_MANPADS: 8,
     AirDefence.SAM_SA_19_Tunguska_2S6: 10,
     AirDefence.SAM_SA_8_Osa_9A33: 15,
 
@@ -174,8 +174,7 @@ UNIT_BY_TASK = {
 
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.SAM_SA_18_Igla_MANPADS,
-        AirDefence.SAM_SA_18_Igla_MANPADS,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
     ],
@@ -252,7 +251,7 @@ UNIT_BY_COUNTRY = {
         Mi_8MT,
 
         AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.SAM_SA_18_Igla_MANPADS,
+        AirDefence.SAM_SA_18_Igla_S_MANPADS,
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
 

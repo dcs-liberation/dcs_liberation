@@ -41,7 +41,6 @@ class PersianGulfTheater(ConflictTheater):
     bandar_abbas = ControlPoint.from_airport(persiangulf.Bandar_Abbas_Intl, LAND, SIZE_BIG, IMPORTANCE_HIGH)
     lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
 
-    east_carrier = ControlPoint.carrier("West carrier", Point(-91023.430176, -159467.078125))
     west_carrier = ControlPoint.carrier("East carrier", Point(-100531.972946, 60939.275818))
 
     def __init__(self):
@@ -67,10 +66,8 @@ class PersianGulfTheater(ConflictTheater):
         self.add_controlpoint(self.bandar_abbas, connected_to=[self.havadarya])
         self.add_controlpoint(self.lar, connected_to=[self.bandar_lengeh, self.qeshm, self.havadarya])
 
-        self.add_controlpoint(self.east_carrier)
         self.add_controlpoint(self.west_carrier)
 
-        self.east_carrier.captured = True
         self.west_carrier.captured = True
 
         self.al_dhafra.captured = True

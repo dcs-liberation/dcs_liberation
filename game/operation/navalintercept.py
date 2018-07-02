@@ -8,6 +8,7 @@ class NavalInterceptionOperation(Operation):
     strikegroup = None  # type: db.PlaneDict
     interceptors = None  # type: db.PlaneDict
     targets = None  # type: db.ShipDict
+    trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
               strikegroup: db.PlaneDict,
