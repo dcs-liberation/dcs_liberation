@@ -16,6 +16,7 @@ class MarkerSmoke(unittype.StaticType):
     category = "Effects"
     name = "big_smoke"
     shape_name = 5
+    effect_transparency = 0.1
     rate = 100
 
 
@@ -24,6 +25,7 @@ class Smoke(unittype.StaticType):
     category = "Effects"
     name = "big_smoke"
     shape_name = 2
+    effect_transparency = 1
     rate = 100
 
 
@@ -31,6 +33,7 @@ class BigSmoke(unittype.StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
+    effect_transparency = 1
     shape_name = 3
     rate = 100
 
@@ -39,6 +42,7 @@ class MassiveSmoke(unittype.StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
+    effect_transparency = 1
     shape_name = 4
     rate = 100
 
@@ -55,6 +59,7 @@ def __monkey_static_dict(self: Static):
     d = __original_static_dict(self)
     if self.type == "big_smoke":
         d["effectPreset"] = self.shape_name
+        d["effectTransparency"] = self.effect_transparency
     return d
 
 
