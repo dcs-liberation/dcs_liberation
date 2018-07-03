@@ -20,16 +20,16 @@ class NevadaTheater(ConflictTheater):
     mina = ControlPoint.from_airport(nevada.Mina_Airport_3Q0, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah = ControlPoint.from_airport(nevada.Tonopah_Airport, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah_test_range = ControlPoint.from_airport(nevada.Tonopah_Test_Range_Airfield, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    lincoln_conty = ControlPoint.from_airport(nevada.Lincoln_County, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
+    lincoln_conty = ControlPoint.from_airport(nevada.Lincoln_County, LAND, SIZE_SMALL, 1.2)
 
-    pahute_mesa = ControlPoint.from_airport(nevada.Pahute_Mesa_Airstrip, LAND, SIZE_SMALL, IMPORTANCE_MEDIUM)
-    groom_lake = ControlPoint.from_airport(nevada.Groom_Lake_AFB, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    mesquite = ControlPoint.from_airport(nevada.Mesquite, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    beatty = ControlPoint.from_airport(nevada.Beatty_Airport, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+    pahute_mesa = ControlPoint.from_airport(nevada.Pahute_Mesa_Airstrip, LAND, SIZE_SMALL, 1.1)
+    groom_lake = ControlPoint.from_airport(nevada.Groom_Lake_AFB, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
+    mesquite = ControlPoint.from_airport(nevada.Mesquite, LAND, SIZE_REGULAR, 1.3)
+    beatty = ControlPoint.from_airport(nevada.Beatty_Airport, LAND, SIZE_REGULAR, 1.1)
 
     creech = ControlPoint.from_airport(nevada.Creech_AFB, LAND, SIZE_BIG, IMPORTANCE_HIGH)
     las_vegas = ControlPoint.from_airport(nevada.North_Las_Vegas, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
-    jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
+    jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, 1.2)
     laughlin = ControlPoint.from_airport(nevada.Laughlin_Airport, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 
     def __init__(self):

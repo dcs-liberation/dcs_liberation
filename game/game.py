@@ -18,7 +18,7 @@ COMMISION_LIMITS_FACTORS = {
     PinpointStrike: 10,
     CAS: 5,
     CAP: 8,
-    AirDefence: 2,
+    AirDefence: 1,
 }
 
 COMMISION_AMOUNTS_SCALE = 1.5
@@ -46,17 +46,20 @@ Events:
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
-    CaptureEvent: [100, 8],
-    InterceptEvent: [25, 12],
-    GroundInterceptEvent: [25, 12],
-    GroundAttackEvent: [0, 12],
-    NavalInterceptEvent: [25, 12],
-    AntiAAStrikeEvent: [25, 12],
+    CaptureEvent: [100, 10],
+    InterceptEvent: [25, 10],
+    GroundInterceptEvent: [25, 10],
+    GroundAttackEvent: [0, 10],
+    NavalInterceptEvent: [25, 10],
+    AntiAAStrikeEvent: [25, 10],
     InfantryTransportEvent: [25, 0],
 }
 
-# amount of strength captures bases recover for the turn
+# amount of strength player bases recover for the turn
 PLAYER_BASE_STRENGTH_RECOVERY = 0.2
+
+# amount of strength enemy bases recover for the turn
+ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 
 # cost of AWACS for single operation
 AWACS_BUDGET_COST = 4
@@ -110,11 +113,10 @@ class Game:
 
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
                 if self._roll(player_probability, player_cp.base.strength):
-                    if event_class == NavalInterceptEvent:
-                        if enemy_cp.radials == LAND:
-                            continue
-
-                    self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+                    if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
+                        pass
+                    else:
+                        self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
                 elif self._roll(enemy_probability, enemy_cp.base.strength):
                     if event_class in enemy_generated_types:
                         continue
@@ -214,8 +216,10 @@ class Game:
 
         if not no_action:
             self._budget_player()
+
             for cp in self.theater.enemy_points():
                 self._commision_units(cp)
+
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
 

@@ -11,7 +11,7 @@ COUNT_BY_TASK = {
     PinpointStrike: 12,
     CAP: 8,
     CAS: 4,
-    AirDefence: 2,
+    AirDefence: 1,
 }
 
 

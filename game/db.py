@@ -101,8 +101,8 @@ PRICES = {
 
     AirDefence.AAA_ZU_23_on_Ural_375: 5,
     AirDefence.SAM_SA_18_Igla_S_MANPADS: 8,
-    AirDefence.SAM_SA_19_Tunguska_2S6: 10,
-    AirDefence.SAM_SA_8_Osa_9A33: 15,
+    AirDefence.SAM_SA_19_Tunguska_2S6: 15,
+    AirDefence.SAM_SA_8_Osa_9A33: 13,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -174,13 +174,15 @@ UNIT_BY_TASK = {
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Avenger_M1097,
+        AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Patriot_ICC,
 
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
+        AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
     ],
 
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
@@ -240,7 +242,6 @@ UNIT_BY_COUNTRY = {
         MiG_29A,
         MiG_29S,
         M_2000C,
-        AV8BNA,
 
         Su_25T,
         Su_34,
@@ -258,8 +259,8 @@ UNIT_BY_COUNTRY = {
 
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.SAM_SA_18_Igla_S_MANPADS,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
 
         Armor.APC_BTR_80,
         Armor.MBT_T_90,
@@ -415,7 +416,7 @@ def choose_units(for_task: Task, factor: float, count: int, country: str) -> typ
 
     index_start = min(idx, len(suitable_unittypes) - variety)
     index_end = min(idx + variety, len(suitable_unittypes))
-    return suitable_unittypes[index_start:index_end]
+    return set(suitable_unittypes[index_start:index_end])
 
 
 def _validate_db():

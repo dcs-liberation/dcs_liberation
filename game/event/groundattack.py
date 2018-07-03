@@ -13,6 +13,10 @@ class GroundAttackEvent(GroundInterceptEvent):
     def __str__(self):
         return "Destroy insurgents at {}".format(self.to_cp)
 
+    @property
+    def threat_description(self):
+        return ""
+
     def player_defending(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
         suitable_unittypes = db.find_unittype(Reconnaissance, self.attacker_name)
         random.shuffle(suitable_unittypes)
