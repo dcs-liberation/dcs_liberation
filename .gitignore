@@ -1,6 +1,7 @@
 *.pyc
 __pycache__
 build/*
+logs.txt
 .DS_Store
 # User-specific stuff
 .idea/**/workspace.xml
