@@ -1,1 +1,1 @@
-.\venv\Scripts\python.exe __init__.py > logs.txt 2>&1
+py.exe __init__.py > logs.txt 2>&1
