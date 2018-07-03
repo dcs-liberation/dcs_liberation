@@ -28,8 +28,8 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplie
             variety = int(UNIT_VARIETY)
             unittypes = db.choose_units(task, importance_factor, variety, enemy)
 
-            if not sams:
-                unittypes = [x for x in unittypes if x not in db.SAM_BAN]
+            if not sams and task == AirDefence:
+                unittypes = [x for x in db.find_unittype(AirDefence, enemy) if x not in db.SAM_BAN]
 
             count_log = math.log(cp.importance + 0.01, UNIT_COUNT_IMPORTANCE_LOG)
             count = max(COUNT_BY_TASK[task] * multiplier * (1+count_log), 1)
