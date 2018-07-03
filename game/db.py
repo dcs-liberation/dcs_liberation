@@ -40,7 +40,8 @@ PRICES = {
     MiG_23MLD: 20,
     Su_27: 24,
     Su_33: 25,
-    MiG_29A: 26,
+    MiG_29A: 22,
+    MiG_29S: 26,
 
     F_5E: 6,
     MiG_15bis: 5,
@@ -137,6 +138,7 @@ UNIT_BY_TASK = {
         Su_33,
         MiG_21Bis,
         MiG_29A,
+        MiG_29S,
         FA_18C_hornet,
         F_15C,
         M_2000C,
@@ -234,6 +236,7 @@ UNIT_BY_COUNTRY = {
         MiG_15bis,
         MiG_21Bis,
         MiG_29A,
+        MiG_29S,
         M_2000C,
         AV8BNA,
 
