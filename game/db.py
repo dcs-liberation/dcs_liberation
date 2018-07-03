@@ -56,6 +56,7 @@ PRICES = {
     # bomber
     Su_25T: 13,
     L_39ZA: 10,
+    Su_34: 18,
 
     A_10A: 18,
     A_10C: 20,
@@ -150,6 +151,7 @@ UNIT_BY_TASK = {
         A_10A,
         A_10C,
         Su_25T,
+        Su_34,
         Ka_50,
     ],
 
@@ -241,6 +243,7 @@ UNIT_BY_COUNTRY = {
         AV8BNA,
 
         Su_25T,
+        Su_34,
         L_39ZA,
 
         IL_76MD,
