@@ -14,6 +14,8 @@ from dcs.unit import UnitType
 
 from game import db
 
+from .persistency import _base_path
+
 DEBRIEFING_LOG_EXTENSION = "log"
 
 
@@ -92,7 +94,7 @@ class Debriefing:
 
 
 def debriefing_directory_location() -> str:
-    return os.path.expanduser("~\Saved Games\DCS\liberation_debriefings")
+    return os.path.join(_base_path(), "liberation_debriefings")
 
 
 def _logfiles_snapshot() -> typing.Dict[str, float]:

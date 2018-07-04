@@ -4,12 +4,20 @@ import os
 import shutil
 
 
+def _base_path() -> str:
+    openbeta_path = os.path.expanduser("~\Saved Games\DCS.openbeta")
+    if os.path.exists(openbeta_path):
+        return openbeta_path
+    else:
+        return os.path.expanduser("~\Saved Games\DCS")
+
+
 def _save_file() -> str:
-    return os.path.expanduser("~\Saved Games\DCS\liberation_save")
+    return os.path.join(_base_path(), "liberation_save")
 
 
 def _temporary_save_file() -> str:
-    return os.path.expanduser("~\Saved Games\DCS\liberation_save_tmp")
+    return os.path.join(_base_path(), "liberation_save_tmp")
 
 
 def _save_file_exists() -> bool:
@@ -17,7 +25,7 @@ def _save_file_exists() -> bool:
 
 
 def mission_path_for(name: str) -> str:
-    return os.path.expanduser("~\Saved Games\DCS\Missions\{}".format(name))
+    return os.path.join(_base_path(), "Missions\{}".format(name))
 
 
 def restore_game():
