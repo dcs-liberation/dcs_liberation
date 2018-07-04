@@ -3,9 +3,19 @@ import pickle
 import os
 import shutil
 
+_user_folder = None  # type: str
 
-def _base_path() -> str:
-    openbeta_path = os.path.expanduser("~\Saved Games\DCS.openbeta")
+
+def setup(user_folder: str):
+    global _user_folder
+    _user_folder = user_folder
+
+
+def base_path() -> str:
+    global _user_folder
+    assert _user_folder
+
+    openbeta_path = os.path.join(_user_folder, "Saved Games\DCS.openbeta")
     if os.path.exists(openbeta_path):
         return openbeta_path
     else:
@@ -13,11 +23,11 @@ def _base_path() -> str:
 
 
 def _save_file() -> str:
-    return os.path.join(_base_path(), "liberation_save")
+    return os.path.join(base_path(), "liberation_save")
 
 
 def _temporary_save_file() -> str:
-    return os.path.join(_base_path(), "liberation_save_tmp")
+    return os.path.join(base_path(), "liberation_save_tmp")
 
 
 def _save_file_exists() -> bool:
@@ -25,7 +35,7 @@ def _save_file_exists() -> bool:
 
 
 def mission_path_for(name: str) -> str:
-    return os.path.join(_base_path(), "Missions\{}".format(name))
+    return os.path.join(base_path(), "Missions\{}".format(name))
 
 
 def restore_game():

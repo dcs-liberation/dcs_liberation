@@ -54,6 +54,7 @@ PRICES = {
     F_15C: 24,
 
     # bomber
+    Su_25: 15,
     Su_25T: 13,
     L_39ZA: 10,
     Su_34: 18,
@@ -150,6 +151,7 @@ UNIT_BY_TASK = {
         AV8BNA,
         A_10A,
         A_10C,
+        Su_25,
         Su_25T,
         Su_34,
         Ka_50,
@@ -235,6 +237,7 @@ UNIT_BY_COUNTRY = {
         C_101CC,
         AJS37,
         F_5E_3,
+        Su_25,
         Su_27,
         Su_33,
         MiG_15bis,
@@ -279,7 +282,6 @@ UNIT_BY_COUNTRY = {
         F_15C,
         FA_18C_hornet,
         AJS37,
-        F_5E_3,
         M_2000C,
         MiG_21Bis,
         MiG_15bis,
@@ -361,7 +363,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 Aircraft livery overrides. Syntax as follows:
 
     `Identifier`: "LiveryName",
-    
+
 `Identifier` is aircraft identifier (as used troughout the file) and "LiveryName" (with double quotes) 
 is livery name as found in mission editor.
 """

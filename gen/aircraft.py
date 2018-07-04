@@ -164,6 +164,16 @@ class AircraftConflictGenerator:
         else:
             assert False
 
+    def _rtb_for(self, group: FlyingGroup, cp: ControlPoint, at: db.StartingPosition = None):
+        group.add_waypoint(cp.position, RTB_ALTITUDE)
+
+        if isinstance(cp.at, Point):
+            pass
+        elif isinstance(cp.at, ShipGroup):
+            pass
+        elif issubclass(cp.at, Airport):
+            group.land_at(cp.at)
+
     def _at_position(self, at) -> Point:
         if isinstance(at, Point):
             return at
@@ -226,9 +236,7 @@ class AircraftConflictGenerator:
             group.task = CAS.name
             self._setup_group(group, CAS, client_count)
             self.escort_targets.append((group, group.points.index(waypoint)))
-
-            group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
-            group.land_at(self.conflict.from_cp.at)
+            self._rtb_for(group, self.conflict.from_cp, at)
 
     def generate_ship_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, target_groups: typing.Collection[ShipGroup], at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
@@ -249,9 +257,7 @@ class AircraftConflictGenerator:
             group.task = AntishipStrike.name
             self._setup_group(group, AntishipStrike, client_count)
             self.escort_targets.append((group, group.points.index(wayp)))
-
-            group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
-            group.land_at(self.conflict.from_cp.at)
+            self._rtb_for(group, self.conflict.from_cp, at)
 
     def generate_strikegroup_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
@@ -261,8 +267,7 @@ class AircraftConflictGenerator:
                 at=at and at or self._group_point(self.conflict.air_attackers_location),
                 is_quick=at is None,
                 should_orbit=True):
-            g.add_waypoint(self.conflict.position, WARM_START_ALTITUDE)
-            g.land_at(self.conflict.from_cp.at)
+            self._rtb_for(g, self.conflict.from_cp, at)
 
     def generate_transport_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
@@ -272,8 +277,7 @@ class AircraftConflictGenerator:
                 at=at and at or self._group_point(self.conflict.air_defenders_location),
                 is_quick=at is None,
                 should_orbit=False):
-            g.add_waypoint(self.conflict.to_cp.position, RTB_ALTITUDE)
-            g.land_at(self.conflict.to_cp.at)
+            self._rtb_for(g, self.conflict.to_cp, at)
 
     def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for flying_type, count, client_count in self._split_to_groups(defenders, clients):
@@ -290,9 +294,7 @@ class AircraftConflictGenerator:
             wayp.tasks.append(dcs.task.EngageTargets(max_distance=DEFENCE_ENGAGEMENT_MAX_DISTANCE))
             wayp.tasks.append(dcs.task.OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))
             self._setup_group(group, CAP, client_count)
-
-            group.add_waypoint(self.conflict.to_cp.position, RTB_ALTITUDE)
-            group.land_at(self.conflict.to_cp.at)
+            self._rtb_for(group, self.conflict.to_cp, at)
 
     def generate_transport(self, transport: db.PlaneDict, destination: Airport):
         assert len(self.escort_targets) == 0
@@ -331,9 +333,7 @@ class AircraftConflictGenerator:
             wayp = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
             wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
             self._setup_group(group, CAP, client_count)
-
-            group.add_waypoint(self.conflict.from_cp.position, RTB_ALTITUDE)
-            group.land_at(self.conflict.from_cp.at)
+            self._rtb_for(group, self.conflict.from_cp, at)
 
     def generate_passenger_transport(self, helis: db.HeliDict, clients: db.HeliDict, at: db.StartingPosition):
         for heli_type, count, client_count in self._split_to_groups(helis, clients):

@@ -1,4 +1,5 @@
 import typing
+import re
 import threading
 import time
 import os
@@ -14,7 +15,7 @@ from dcs.unit import UnitType
 
 from game import db
 
-from .persistency import _base_path
+from .persistency import base_path
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -25,10 +26,52 @@ class Debriefing:
         self.alive_units = alive_units  # type: typing.Dict[str, typing.Dict[UnitType, int]]
 
     @classmethod
+    def parse_mp_debrief(cls, string: str):
+        # TODO: actually write a parser
+        result = {}
+        append = False
+
+        country = None
+        unit_type = None
+
+        for line in string.split("\n"):
+            line = line.strip()
+            if not append:
+                if line == "world_state =":
+                    append = True
+                    continue
+
+            if append:
+                if line.startswith("country"):
+                    country = re.findall(r"country\s*=\s*(\d+),", line)[0]
+                if line.startswith("type"):
+                    unit_type = re.findall(r"type\s*=\s*\"(.*?)\",", line)[0]
+
+                if country and unit_type:
+                    result[len(result)+1] = {
+                        "country": int(country),
+                        "type": unit_type,
+                    }
+
+                    country = unit_type = None
+
+            if line.strip() == "} -- end of world_state":
+                break
+
+        return {
+            "debriefing": {
+                "world_state": result,
+            },
+        }
+
+    @classmethod
     def parse(cls, path: str):
         with open(path, "r") as f:
             table_string = f.read()
-            table = parse.loads(table_string)
+            try:
+                table = parse.loads(table_string)
+            except:
+                table = cls.parse_mp_debrief(table_string)
             units = table.get("debriefing", {}).get("world_state", {})
             alive_units = {}
 
@@ -94,7 +137,7 @@ class Debriefing:
 
 
 def debriefing_directory_location() -> str:
-    return os.path.join(_base_path(), "liberation_debriefings")
+    return os.path.join(base_path(), "liberation_debriefings")
 
 
 def _logfiles_snapshot() -> typing.Dict[str, float]:

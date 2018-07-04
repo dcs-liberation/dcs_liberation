@@ -1,4 +1,5 @@
 from dcs.terrain import Terrain
+from dcs.lua.parse import loads
 
 from userdata.debriefing import *
 
@@ -61,7 +62,11 @@ class Operation:
         self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_name, enemy_name)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
+        with open("resources/default_options.lua", "r") as f:
+            options_dict = loads(f.read())["options"]
+
         self.mission = dcs.Mission(terrain)
+        self.mission.options.load_from_dict(options_dict)
         self.is_quick = is_quick
 
         if is_quick:

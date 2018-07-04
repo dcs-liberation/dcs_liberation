@@ -26,7 +26,7 @@ class GroundInterceptEvent(Event):
             return super(GroundInterceptEvent, self).threat_description
 
     def __str__(self):
-        return "Fontline CAS from {} at {}".format(self.from_cp, self.to_cp)
+        return "Frontline CAS from {} at {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())
