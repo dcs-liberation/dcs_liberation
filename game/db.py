@@ -416,7 +416,7 @@ def choose_units(for_task: Task, factor: float, count: int, country: str) -> typ
 
     index_start = min(idx, len(suitable_unittypes) - variety)
     index_end = min(idx + variety, len(suitable_unittypes))
-    return set(suitable_unittypes[index_start:index_end])
+    return list(set(suitable_unittypes[index_start:index_end]))
 
 
 def _validate_db():
