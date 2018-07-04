@@ -1,4 +1,6 @@
-WIP [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) single-player liberation dynamic campaign. 
+[DCS World](https://www.digitalcombatsimulator.com/en/products/world/) single-player liberation dynamic campaign. 
+
+[Installation instructions/Manual](https://github.com/shdwp/dcs_liberation/wiki)
 
 Inspired by *ARMA Liberation* mission.
 
