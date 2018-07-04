@@ -43,7 +43,7 @@ PRICES = {
     MiG_29A: 22,
     MiG_29S: 26,
 
-    F_5E: 6,
+    F_5E_3: 6,
     MiG_15bis: 5,
     MiG_21Bis: 6,
     AJS37: 8,
@@ -134,7 +134,7 @@ UNIT_BY_TASK = {
     CAP: [
         C_101CC,
         AJS37,
-        F_5E,
+        F_5E_3,
         Su_27,
         Su_33,
         MiG_21Bis,
@@ -234,7 +234,7 @@ UNIT_BY_COUNTRY = {
     "Russia": [
         C_101CC,
         AJS37,
-        F_5E,
+        F_5E_3,
         Su_27,
         Su_33,
         MiG_15bis,
@@ -279,7 +279,7 @@ UNIT_BY_COUNTRY = {
         F_15C,
         FA_18C_hornet,
         AJS37,
-        F_5E,
+        F_5E_3,
         M_2000C,
         MiG_21Bis,
         MiG_15bis,
