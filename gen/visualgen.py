@@ -62,8 +62,6 @@ def __monkey_static_dict(self: Static):
 __original_static_dict = Static.dict
 Static.dict = __monkey_static_dict
 
-FRONT_SMOKE_MIN_DISTANCE = 10000
-FRONT_SMOKE_DISTANCE_FACTOR = 0.5
 FRONT_SMOKE_LENGTH = 80000
 FRONT_SMOKE_SPACING = 600
 FRONT_SMOKE_RANDOM_SPREAD = 3000
@@ -100,7 +98,6 @@ class VisualGenerator:
 
     def _generate_frontline_smokes(self):
         for from_cp, to_cp in self.game.theater.conflicts():
-            distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONT_SMOKE_DISTANCE_FACTOR * to_cp.base.strength, FRONT_SMOKE_MIN_DISTANCE)
             heading = to_cp.position.heading_between_point(from_cp.position)
             point = Conflict._frontline_position(from_cp, to_cp)
             plane_start = point.point_from_heading(turn_heading(heading, 90), FRONT_SMOKE_LENGTH / 2)
