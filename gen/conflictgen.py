@@ -95,7 +95,7 @@ class Conflict:
         self.air_defenders_location = air_defenders_location
 
     @classmethod
-    def _frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint):
+    def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint):
         distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONT_SMOKE_DISTANCE_FACTOR * to_cp.base.strength, FRONT_SMOKE_MIN_DISTANCE)
         heading = to_cp.position.heading_between_point(from_cp.position)
         return to_cp.position.point_from_heading(heading, distance)
@@ -187,7 +187,7 @@ class Conflict:
     @classmethod
     def ground_intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         heading = to_cp.position.heading_between_point(from_cp.position)
-        initial_location = cls._frontline_position(from_cp, to_cp).random_point_within(GROUND_INTERCEPT_SPREAD)
+        initial_location = cls.frontline_position(from_cp, to_cp).random_point_within(GROUND_INTERCEPT_SPREAD)
         position = Conflict._find_ground_location(initial_location, GROUND_INTERCEPT_SPREAD, heading, theater)
         if not position:
             heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
@@ -257,7 +257,7 @@ class Conflict:
 
     @classmethod
     def transport_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        frontline_position = cls._frontline_position(from_cp, to_cp)
+        frontline_position = cls.frontline_position(from_cp, to_cp)
         heading = to_cp.position.heading_between_point(from_cp.position)
         initial_dest = frontline_position.point_from_heading(heading, TRANSPORT_FRONTLINE_DIST)
         dest = cls._find_ground_location(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)

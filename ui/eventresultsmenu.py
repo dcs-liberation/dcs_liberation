@@ -65,9 +65,9 @@ class EventResultsMenu(Menu):
 
     def process_debriefing(self, debriefing: Debriefing):
         self.debriefing = debriefing
-        debriefing.calculate_destroyed_units(mission=self.event.operation.mission,
-                                             player_name=self.game.player,
-                                             enemy_name=self.game.enemy)
+        debriefing.calculate_alive_units(mission=self.event.operation.mission,
+                                         player_name=self.game.player,
+                                         enemy_name=self.game.enemy)
 
         self.game.finish_event(event=self.event, debriefing=debriefing)
         self.game.pass_turn(ignored_cps=[self.event.to_cp, ])

@@ -20,49 +20,29 @@ from .persistency import base_path
 DEBRIEFING_LOG_EXTENSION = "log"
 
 
+def parse_mutliplayer_debriefing(contents: str):
+    result = []
+
+    for line in [x.strip() for x in contents.splitlines()]:
+        key = None
+        if line.startswith("initiator"):
+            key = "initiator"
+            result.append({})
+        if line.startswith("type"):
+            key = "type"
+        else:
+            continue
+        value = re.findall(r"=\s*\"(.*?)\",", line)[0]
+        result[-1][key] = value
+    return {"debriefing": {"events": result}}
+
+
 class Debriefing:
-    def __init__(self, alive_units):
+    def __init__(self, dead_units):
         self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
-        self.alive_units = alive_units  # type: typing.Dict[str, typing.Dict[UnitType, int]]
+        self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
 
-    @classmethod
-    def parse_mp_debrief(cls, string: str):
-        # TODO: actually write a parser
-        result = {}
-        append = False
-
-        country = None
-        unit_type = None
-
-        for line in string.split("\n"):
-            line = line.strip()
-            if not append:
-                if line == "world_state =":
-                    append = True
-                    continue
-
-            if append:
-                if line.startswith("country"):
-                    country = re.findall(r"country\s*=\s*(\d+),", line)[0]
-                if line.startswith("type"):
-                    unit_type = re.findall(r"type\s*=\s*\"(.*?)\",", line)[0]
-
-                if country and unit_type:
-                    result[len(result)+1] = {
-                        "country": int(country),
-                        "type": unit_type,
-                    }
-
-                    country = unit_type = None
-
-            if line.strip() == "} -- end of world_state":
-                break
-
-        return {
-            "debriefing": {
-                "world_state": result,
-            },
-        }
+        self._dead_units = dead_units
 
     @classmethod
     def parse(cls, path: str):
@@ -70,30 +50,35 @@ class Debriefing:
             table_string = f.read()
             try:
                 table = parse.loads(table_string)
-            except:
-                table = cls.parse_mp_debrief(table_string)
-            units = table.get("debriefing", {}).get("world_state", {})
-            alive_units = {}
+            except Exception as e:
+                table = parse_mutliplayer_debriefing(table_string)
 
-            for unit in units.values():
-                unit_type_name = unit["type"]  # type: str
-                country_id = int(unit["country"])
+            events = table.get("debriefing", {}).get("events", {})
+            dead_units = {}
 
-                if type(unit_type_name) == str:
-                    unit_type = vehicle_map.get(unit_type_name, plane_map.get(unit_type_name, ship_map.get(unit_type_name, None)))
+            for event in events:
+                if event["type"] != "crashed" and event["type"] != "dead":
+                    continue
+
+                try:
+                    components = event["initiator"].split("|")
+                    country_id, group_id, unit_type = int(components[0]), int(components[1]), db.unit_type_from_name(components[2])
                     if unit_type is None:
                         continue
+                except Exception as e:
+                    continue
 
-                    if unit_type in db.EXTRA_AA.values():
-                        continue
+                if country_id not in dead_units:
+                    dead_units[country_id] = {}
 
-                    country_dict = alive_units.get(country_id, {})
-                    country_dict[unit_type] = country_dict.get(unit_type, 0) + 1
-                    alive_units[country_id] = country_dict
+                if unit_type not in dead_units[country_id]:
+                    dead_units[country_id][unit_type] = 0
 
-        return Debriefing(alive_units)
+                dead_units[country_id][unit_type] += 1
 
-    def calculate_destroyed_units(self, mission: Mission, player_name: str, enemy_name: str):
+        return Debriefing(dead_units)
+
+    def calculate_units(self, mission: Mission, player_name: str, enemy_name: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
             result = {}
             for group in groups:
@@ -113,12 +98,6 @@ class Debriefing:
 
             return result
 
-        def calculate_losses(all_units: typing.Dict[UnitType, int], alive_units: typing.Dict[str, int]) -> typing.Dict[UnitType, int]:
-            result = {}
-            for t, count in all_units.items():
-                result[t] = max(count - alive_units.get(t, 0), 0)
-            return result
-
         player = mission.country(player_name)
         enemy = mission.country(enemy_name)
         
@@ -126,13 +105,13 @@ class Debriefing:
         enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)
 
         self.destroyed_units = {
-            player.name: calculate_losses(player_units, self.alive_units.get(player.id, {})),
-            enemy.name: calculate_losses(enemy_units, self.alive_units.get(enemy.id, {})),
+            player.name: self._dead_units[player.id],
+            enemy.name: self._dead_units[enemy.id],
         }
 
         self.alive_units = {
-            player.name: self.alive_units.get(player.id, {}),
-            enemy.name: self.alive_units.get(enemy.id, {}),
+            player.name: {k: v - self._dead_units[player.id].get(k, 0) for k, v in player_units.items()},
+            enemy.name: {k: v - self._dead_units[enemy.id].get(k, 0) for k, v in enemy_units.items()},
         }
 
 

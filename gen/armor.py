@@ -29,7 +29,7 @@ class ArmorConflictGenerator:
         for c in range(count):
             group = self.m.vehicle_group(
                     side,
-                    namegen.next_armor_group_name(),
+                    namegen.next_unit_name(side, unit),
                     unit,
                     position=self._group_point(at),
                     group_size=1,
@@ -57,7 +57,7 @@ class ArmorConflictGenerator:
 
         self.m.vehicle_group(
             country=self.conflict.attackers_side,
-            name=namegen.next_passenger_group_name(),
+            name=namegen.next_unit_name(self.conflict.attackers_side, unit_type),
             _type=unit_type,
             position=self.conflict.ground_attackers_location,
             group_size=count

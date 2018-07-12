@@ -21,7 +21,7 @@ class AAConflictGenerator:
             for _ in range(count):
                 self.m.vehicle_group(
                     country=self.conflict.defenders_side,
-                    name=namegen.next_ground_group_name(),
+                    name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),
                     _type=unit_type,
                     position=self.conflict.ground_defenders_location.random_point_within(100, 100),
                     group_size=1)
@@ -34,7 +34,7 @@ class AAConflictGenerator:
 
                 self.m.vehicle_group(
                         country=self.conflict.defenders_side,
-                        name=namegen.next_ground_group_name(),
+                        name=namegen.next_unit_name(self.conflict.defenders_side, type),
                         _type=type,
                         position=p,
                         group_size=1)
@@ -66,7 +66,7 @@ class ExtraAAConflictGenerator:
 
             self.mission.vehicle_group(
                 country=self.mission.country(country_name),
-                name=namegen.next_ground_group_name(),
+                name=namegen.next_basedefense_name(),
                 _type=db.EXTRA_AA[country_name],
                 position=position,
                 group_size=2

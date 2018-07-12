@@ -400,6 +400,17 @@ def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
 
+def unit_type_from_name(name: str) -> UnitType:
+    if name in vehicle_map:
+        return vehicle_map[name]
+    elif name in plane_map:
+        return plane_map[name]
+    elif name in ship_map:
+        return ship_map[name]
+    else:
+        return None
+
+
 def task_name(task) -> str:
     if task == AirDefence:
         return "AirDefence"
