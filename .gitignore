@@ -1,6 +1,7 @@
 *.pyc
 __pycache__
 build/*
+resources/payloads/*.lua
 logs.txt
 .DS_Store
 # User-specific stuff
