@@ -23,8 +23,10 @@ class AWACSConflictGenerator:
 
         self.mission.awacs_flight(
             country=self.mission.country(self.game.player),
-            name=namegen.next_awacs_group_name(),
+            name=namegen.next_awacs_name(self.mission.country(self.game.player),),
             plane_type=plane,
             altitude=AWACS_ALT,
             airport=None,
-            position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE))
+            position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
+            frequency=251
+        )

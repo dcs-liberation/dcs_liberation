@@ -101,9 +101,11 @@ class TriggersGenerator:
 
         push_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.from_cp.position, PUSH_TRIGGER_SIZE, name="Push zone")
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
-        push_trigger.add_condition(AllOfCoalitionOutsideZone(player_coalition, push_trigger_zone.id))
+
         for group in push_by_trigger:
+            push_trigger.add_condition(AllOfGroupOutsideZone(group.id, push_trigger_zone.id))
             push_trigger.add_action(AITaskPush(group.id, 1))
+
         message_string = self.mission.string("Task force is in the air, proceed with the objective (activate waypoint 3).")
         push_trigger.add_action(MessageToAll(message_string, clearview=True))
         push_trigger.add_action(SetFlagValue())

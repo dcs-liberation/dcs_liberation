@@ -14,6 +14,9 @@ SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_ENGAGEMENT_MAX_DIST = 100000
 WORKAROUND_WAYP_DIST = 1000
 
+WARM_START_HELI_AIRSPEED = 200
+WARM_START_HELI_ALT = 1000
+
 WARM_START_ALTITUDE = 3000
 WARM_START_AIRSPEED = 550
 
@@ -114,7 +117,13 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        alt = WARM_START_ALTITUDE + random.randint(50, 200)
+        if unit_type in helicopters.helicopter_map:
+            alt = WARM_START_HELI_ALT + random.randint(50, 200)
+            speed = WARM_START_HELI_AIRSPEED
+        else:
+            alt = WARM_START_ALTITUDE + random.randint(50, 200)
+            speed = WARM_START_AIRSPEED
+
         pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
 
         return self.m.flight_group(
@@ -124,7 +133,7 @@ class AircraftConflictGenerator:
             airport=None,
             position=pos,
             altitude=alt,
-            speed=WARM_START_AIRSPEED,
+            speed=speed,
             maintask=None,
             start_type=StartType.Warm,
             group_size=count)

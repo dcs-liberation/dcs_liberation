@@ -90,17 +90,6 @@ class Operation:
         else:
             self.envgen.load(self.environment_settings)
 
-        for global_cp in self.game.theater.controlpoints:
-            if not global_cp.is_global:
-                continue
-
-            ship = self.shipgen.generate_carrier(type=db.find_unittype(Carriage, self.game.player)[0],
-                                                 country=self.game.player,
-                                                 at=global_cp.at)
-
-            if global_cp == self.from_cp and not self.is_quick:
-                self.attackers_starting_position = ship
-
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
 

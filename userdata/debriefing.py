@@ -21,19 +21,39 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 
 def parse_mutliplayer_debriefing(contents: str):
-    result = []
+    result = {}
+    element = None
+
+    in_events = False
 
     for line in [x.strip() for x in contents.splitlines()]:
+        if line.startswith("events ="):
+            in_events = True
+        elif line.startswith("}, -- end of events"):
+            in_events = False
+
+        if not in_events:
+            continue
+
         key = None
         if line.startswith("initiator"):
             key = "initiator"
-            result.append({})
-        if line.startswith("type"):
+            if element is None:
+                element = {}
+        elif line.startswith("type"):
             key = "type"
+            if element is None:
+                element = {}
+        elif line.startswith("}, -- end of ["):
+            result[len(result)] = element
+            element = None
+            continue
         else:
             continue
+
         value = re.findall(r"=\s*\"(.*?)\",", line)[0]
-        result[-1][key] = value
+        element[key] = value
+
     return {"debriefing": {"events": result}}
 
 
@@ -56,16 +76,24 @@ class Debriefing:
             events = table.get("debriefing", {}).get("events", {})
             dead_units = {}
 
-            for event in events:
-                if event["type"] != "crashed" and event["type"] != "dead":
+            for event in events.values():
+                event_type = event.get("type", None)
+                if event_type != "crash" and event_type != "dead":
                     continue
 
                 try:
                     components = event["initiator"].split("|")
-                    country_id, group_id, unit_type = int(components[0]), int(components[1]), db.unit_type_from_name(components[2])
+                    print(components)
+                    category, country_id, group_id, unit_type = components[0], int(components[1]), int(components[2]), db.unit_type_from_name(components[3])
                     if unit_type is None:
+                        print("Skipped due to no unit type")
+                        continue
+
+                    if category != "unit":
+                        print("Skipped due to category")
                         continue
                 except Exception as e:
+                    print(e)
                     continue
 
                 if country_id not in dead_units:
@@ -105,13 +133,13 @@ class Debriefing:
         enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)
 
         self.destroyed_units = {
-            player.name: self._dead_units[player.id],
-            enemy.name: self._dead_units[enemy.id],
+            player.name: self._dead_units.get(player.id, {}),
+            enemy.name: self._dead_units.get(enemy.id, {}),
         }
 
         self.alive_units = {
-            player.name: {k: v - self._dead_units[player.id].get(k, 0) for k, v in player_units.items()},
-            enemy.name: {k: v - self._dead_units[enemy.id].get(k, 0) for k, v in enemy_units.items()},
+            player.name: {k: v - self.destroyed_units[player.name].get(k, 0) for k, v in player_units.items()},
+            enemy.name: {k: v - self.destroyed_units[enemy.name].get(k, 0) for k, v in enemy_units.items()},
         }
 
 

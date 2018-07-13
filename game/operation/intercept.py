@@ -40,13 +40,20 @@ class InterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        for global_cp in self.game.theater.controlpoints:
+            if not global_cp.is_global:
+                continue
+
+            ship = self.shipgen.generate_carrier(type=db.find_unittype(Carriage, self.game.player)[0],
+                                                 country=self.game.player,
+                                                 at=global_cp.at)
+
+            if global_cp == self.from_cp and not self.is_quick:
+                self.attackers_starting_position = ship
+
         self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
 
-        if self.from_cp.is_global:
-            super(InterceptOperation, self).generate()
-            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
-        else:
-            self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
-            super(InterceptOperation, self).generate()
+        self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
+        super(InterceptOperation, self).generate()
 

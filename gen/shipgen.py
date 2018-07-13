@@ -17,7 +17,7 @@ class ShipGenerator:
     def generate_carrier(self, type: ShipType, country: str, at: Point) -> ShipGroup:
         return self.m.ship_group(
             country=self.m.country(country),
-            name=namegen.next_transport_group_name(),
+            name=namegen.next_carrier_name(self.m.country(country)),
             _type=type,
             position=at)
 
@@ -26,7 +26,7 @@ class ShipGenerator:
         for unit_type, unit_count in units.items():
             group = self.m.ship_group(
                 country=self.conflict.defenders_side,
-                name=namegen.next_transport_group_name(),
+                name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),
                 _type=unit_type,
                 position=self.conflict.ground_defenders_location.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD),
                 group_size=unit_count,

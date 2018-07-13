@@ -63,11 +63,12 @@ __original_static_dict = Static.dict
 Static.dict = __monkey_static_dict
 
 FRONT_SMOKE_LENGTH = 80000
-FRONT_SMOKE_SPACING = 600
-FRONT_SMOKE_RANDOM_SPREAD = 3000
+FRONT_SMOKE_SPACING = 800
+FRONT_SMOKE_RANDOM_SPREAD = 4000
 FRONT_SMOKE_TYPE_CHANCES = {
-    10: MassiveSmoke,
-    60: BigSmoke,
+    2: MassiveSmoke,
+    15: BigSmoke,
+    30: Smoke,
     100: Smoke,
 }
 

@@ -34,7 +34,7 @@ INTERCEPT_ATTACKERS_DISTANCE = 100000
 INTERCEPT_MAX_DISTANCE = 160000
 INTERCEPT_MIN_DISTANCE = 100000
 
-NAVAL_INTERCEPT_DISTANCE_FACTOR = 0.4
+NAVAL_INTERCEPT_DISTANCE_FACTOR = 1
 NAVAL_INTERCEPT_DISTANCE_MAX = 40000
 NAVAL_INTERCEPT_STEP = 5000
 
@@ -93,6 +93,10 @@ class Conflict:
         self.ground_defenders_location = ground_defenders_location
         self.air_attackers_location = air_attackers_location
         self.air_defenders_location = air_defenders_location
+
+    @property
+    def to_size(self):
+        return self.to_cp.size * GROUND_DISTANCE_FACTOR
 
     @classmethod
     def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint):
@@ -234,9 +238,9 @@ class Conflict:
         radial = random.choice(to_cp.sea_radials)
 
         initial_distance = min(int(from_cp.position.distance_to_point(to_cp.position) * NAVAL_INTERCEPT_DISTANCE_FACTOR), NAVAL_INTERCEPT_DISTANCE_MAX)
-        position = to_cp.position.point_from_heading(radial, initial_distance)
+        initial_position = to_cp.position.point_from_heading(radial, initial_distance)
         for offset in range(0, initial_distance, NAVAL_INTERCEPT_STEP):
-            position = to_cp.position.point_from_heading(_opposite_heading(radial), initial_distance - offset)
+            position = initial_position.point_from_heading(_opposite_heading(radial), offset)
 
             if not theater.is_on_land(position):
                 break
