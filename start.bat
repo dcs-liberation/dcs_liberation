@@ -1,1 +1,1 @@
-py.exe __init__.py "C:\Users\shdwp" > logs.txt 2>&1
+py.exe __init__.py %UserProfile% > logs.txt 2>&1
