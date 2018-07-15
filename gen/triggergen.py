@@ -140,10 +140,6 @@ class TriggersGenerator:
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
-        # dcs require at least some slots on both sides for the mission to start
-        self.mission.groundControl.red_observer = 1
-        self.mission.groundControl.blue_observer = 1
-
         self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,
                                                              "y": self.conflict.position.y}
 
