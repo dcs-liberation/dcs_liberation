@@ -51,5 +51,4 @@ class NevadaTheater(ConflictTheater):
         self.add_controlpoint(self.laughlin, connected_to=[self.jean, self.las_vegas])
 
         self.mina.captured = True
-        self.pahute_mesa.captured = True
-        self.groom_lake.captured = True
+

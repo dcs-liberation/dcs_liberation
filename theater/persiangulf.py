@@ -69,7 +69,6 @@ class PersianGulfTheater(ConflictTheater):
         self.add_controlpoint(self.west_carrier)
 
         self.west_carrier.captured = True
-
         self.al_dhafra.captured = True
 
         """
