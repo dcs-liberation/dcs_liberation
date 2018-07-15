@@ -29,18 +29,18 @@ def parse_mutliplayer_debriefing(contents: str):
     for line in [x.strip() for x in contents.splitlines()]:
         if line.startswith("events ="):
             in_events = True
-        elif line.startswith("}, -- end of events"):
+        elif line.startswith("} -- end of events"):
             in_events = False
 
         if not in_events:
             continue
 
         key = None
-        if line.startswith("initiator"):
+        if line.startswith("initiator\t"):
             key = "initiator"
             if element is None:
                 element = {}
-        elif line.startswith("type"):
+        elif line.startswith("type\t"):
             key = "type"
             if element is None:
                 element = {}
