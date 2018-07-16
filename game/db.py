@@ -432,6 +432,22 @@ def choose_units(for_task: Task, factor: float, count: int, country: str) -> typ
     return list(set(suitable_unittypes[index_start:index_end]))
 
 
+def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
+    unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
+
+
+def unitdict_split(unit_dict: UnitsDict, count: int):
+    buffer_dict = {}
+    for unit_type, unit_count in unit_dict.items():
+        for _ in range(unit_count):
+            unitdict_append(buffer_dict, unit_type, 1)
+            if sum(buffer_dict.values()) >= count:
+                yield buffer_dict
+                buffer_dict = {}
+
+    if len(buffer_dict):
+        yield buffer_dict
+
 def _validate_db():
     # check unit by task uniquity
     total_set = set()

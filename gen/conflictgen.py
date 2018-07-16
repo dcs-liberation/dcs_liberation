@@ -65,28 +65,35 @@ class Conflict:
     size = None  # type: int
     radials = None  # type: typing.List[int]
 
+    heading = None  # type: int
+    distance = None  # type: int
+
     ground_attackers_location = None  # type: Point
     ground_defenders_location = None  # type: Point
     air_attackers_location = None  # type: Point
     air_defenders_location = None  # type: Point
 
     def __init__(self,
-                 position: Point,
                  theater: ConflictTheater,
                  from_cp: ControlPoint,
                  to_cp: ControlPoint,
                  attackers_side: Country,
                  defenders_side: Country,
-                 ground_attackers_location: Point,
-                 ground_defenders_location: Point,
-                 air_attackers_location: Point,
-                 air_defenders_location: Point):
+                 position: Point,
+                 heading=None,
+                 distance=None,
+                 ground_attackers_location: Point = None,
+                 ground_defenders_location: Point = None,
+                 air_attackers_location: Point = None,
+                 air_defenders_location: Point = None):
         self.attackers_side = attackers_side
         self.defenders_side = defenders_side
         self.from_cp = from_cp
         self.to_cp = to_cp
         self.theater = theater
         self.position = position
+        self.heading = heading
+        self.distance = distance
         self.size = to_cp.size
         self.radials = to_cp.radials
         self.ground_attackers_location = ground_attackers_location
@@ -95,14 +102,56 @@ class Conflict:
         self.air_defenders_location = air_defenders_location
 
     @property
+    def center(self) -> Point:
+        return self.position.point_from_heading(self.heading, self.distance / 2)
+
+    @property
+    def tail(self) -> Point:
+        return self.position.point_from_heading(self.heading, self.distance)
+
+    @property
+    def is_vector(self) -> bool:
+        return self.heading is not None
+
+    @property
+    def opposite_heading(self) -> int:
+        return _heading_sum(self.heading, 180)
+
+    @property
     def to_size(self):
         return self.to_cp.size * GROUND_DISTANCE_FACTOR
 
     @classmethod
-    def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint):
+    def has_frontline_between(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> bool:
+        return from_cp.has_frontline and to_cp.has_frontline
+
+    @classmethod
+    def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Tuple[Point, int]:
         distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONT_SMOKE_DISTANCE_FACTOR * to_cp.base.strength, FRONT_SMOKE_MIN_DISTANCE)
         heading = to_cp.position.heading_between_point(from_cp.position)
-        return to_cp.position.point_from_heading(heading, distance)
+        return to_cp.position.point_from_heading(heading, distance), heading
+
+    @classmethod
+    def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> typing.Tuple[Point, int, int]:
+        center_position, heading = cls.frontline_position(from_cp, to_cp)
+
+        left_position = center_position
+        for offset in range(0, 80000, 1000):
+            pos = center_position.point_from_heading(_heading_sum(heading, -90), offset)
+            if not theater.is_on_land(pos):
+                break
+            else:
+                left_position = pos
+
+        right_position = center_position
+        for offset in range(0, 80000, 1000):
+            pos = center_position.point_from_heading(_heading_sum(heading, 90), offset)
+            if not theater.is_on_land(pos):
+                break
+            else:
+                right_position = pos
+
+        return left_position, _heading_sum(heading, 90), right_position.distance_to_point(left_position)
 
     @classmethod
     def _find_ground_location(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
@@ -189,25 +238,44 @@ class Conflict:
         )
 
     @classmethod
-    def ground_intercept_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        heading = to_cp.position.heading_between_point(from_cp.position)
-        initial_location = cls.frontline_position(from_cp, to_cp).random_point_within(GROUND_INTERCEPT_SPREAD)
-        position = Conflict._find_ground_location(initial_location, GROUND_INTERCEPT_SPREAD, heading, theater)
-        if not position:
-            heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
-            position = to_cp.position.point_from_heading(heading, to_cp.size * GROUND_DISTANCE_FACTOR)
+    def frontline_cas_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        assert cls.has_frontline_between(from_cp, to_cp)
+        position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
 
         return cls(
             position=position,
+            heading=heading,
+            distance=distance,
             theater=theater,
             from_cp=from_cp,
             to_cp=to_cp,
             attackers_side=attacker,
             defenders_side=defender,
             ground_attackers_location=None,
-            ground_defenders_location=position,
+            ground_defenders_location=None,
             air_attackers_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE),
-            air_defenders_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + _opposite_heading(heading), AIR_DISTANCE)
+            air_defenders_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + _opposite_heading(heading), AIR_DISTANCE),
+        )
+
+    @classmethod
+    def frontline_cap_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        assert cls.has_frontline_between(from_cp, to_cp)
+        position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
+        defenders_distance = random.randint(distance/3, distance)
+
+        return cls(
+            position=position,
+            heading=heading,
+            distance=distance,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=None,
+            air_attackers_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE),
+            air_defenders_location=position.point_from_heading(heading, max(AIR_DISTANCE, defenders_distance)),
         )
 
     @classmethod
@@ -261,8 +329,7 @@ class Conflict:
 
     @classmethod
     def transport_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        frontline_position = cls.frontline_position(from_cp, to_cp)
-        heading = to_cp.position.heading_between_point(from_cp.position)
+        frontline_position, heading = cls.frontline_position(from_cp, to_cp)
         initial_dest = frontline_position.point_from_heading(heading, TRANSPORT_FRONTLINE_DIST)
         dest = cls._find_ground_location(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)
         if not dest:
