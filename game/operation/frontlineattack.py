@@ -8,7 +8,7 @@ from gen.aircraft import *
 from gen.aaa import *
 from gen.shipgen import *
 from gen.triggergen import *
-from gen.awacsgen import *
+from gen.airsupportgen import *
 from gen.visualgen import *
 from gen.conflictgen import Conflict
 

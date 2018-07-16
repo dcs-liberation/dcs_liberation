@@ -73,7 +73,7 @@ class TriggersGenerator:
             for country in coalition.countries.values():
                 if coalition_name == player_coalition:
                     for plane_group in country.plane_group + country.helicopter_group:
-                        if plane_group.task == AWACS.name:
+                        if plane_group.task == AWACS.name or plane_group.task == Refueling.name:
                             continue
 
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)

@@ -52,7 +52,7 @@ class InterceptOperation(Operation):
                 self.attackers_starting_position = ship
 
         self.airgen.generate_transport(self.transport, self.to_cp.at)
-        self.airgen.generate_transport_escort(self.escort, clients=self.defender_clients)
+        self.airgen.generate_defenders_escort(self.escort, clients=self.defender_clients)
 
         self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
         super(InterceptOperation, self).generate()

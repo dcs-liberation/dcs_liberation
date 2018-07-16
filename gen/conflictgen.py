@@ -20,6 +20,7 @@ AIR_DISTANCE = 40000
 
 CAPTURE_AIR_ATTACKERS_DISTANCE = 25000
 CAPTURE_AIR_DEFENDERS_DISTANCE = 60000
+CAP_CAS_DISTANCE = 10000
 
 GROUND_INTERCEPT_SPREAD = 5000
 GROUND_DISTANCE_FACTOR = 1
@@ -261,8 +262,11 @@ class Conflict:
     @classmethod
     def frontline_cap_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         assert cls.has_frontline_between(from_cp, to_cp)
+
         position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
-        defenders_distance = random.randint(distance/3, distance)
+        attack_position = position.point_from_heading(heading, randint(0, int(distance)))
+        attackers_position = attack_position.point_from_heading(heading - 90, AIR_DISTANCE)
+        defenders_position = attack_position.point_from_heading(heading + 90, CAP_CAS_DISTANCE)
 
         return cls(
             position=position,
@@ -273,10 +277,8 @@ class Conflict:
             to_cp=to_cp,
             attackers_side=attacker,
             defenders_side=defender,
-            ground_attackers_location=None,
-            ground_defenders_location=None,
-            air_attackers_location=position.point_from_heading(random.randint(*INTERCEPT_ATTACKERS_HEADING) + heading, AIR_DISTANCE),
-            air_defenders_location=position.point_from_heading(heading, max(AIR_DISTANCE, defenders_distance)),
+            air_attackers_location=attackers_position,
+            air_defenders_location=defenders_position,
         )
 
     @classmethod

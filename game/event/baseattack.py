@@ -16,7 +16,7 @@ class BaseAttackEvent(Event):
     STRENGTH_RECOVERY = 0.55
 
     def __str__(self):
-        return "Attack from {} to {}".format(self.from_cp, self.to_cp)
+        return "Base attack from {} to {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])

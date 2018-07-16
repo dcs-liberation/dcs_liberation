@@ -15,6 +15,10 @@ class NameGenerator:
         self.number += 1
         return "awacs|{}|{}|0|".format(country.id, self.number)
 
+    def next_tanker_name(self, country):
+        self.number += 1
+        return "tanker|{}|{}|0|".format(country.id, self.number)
+
     def next_carrier_name(self, country):
         self.number += 1
         return "carrier|{}|{}|0|".format(country.id, self.number)

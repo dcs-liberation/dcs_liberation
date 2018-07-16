@@ -5,6 +5,7 @@ import math
 from dcs.task import *
 from dcs.vehicles import *
 
+from gen.conflictgen import Conflict
 from userdata.debriefing import Debriefing
 from theater import *
 
@@ -23,7 +24,7 @@ COMMISION_LIMITS_FACTORS = {
 
 COMMISION_AMOUNTS_SCALE = 1.5
 COMMISION_AMOUNTS_FACTORS = {
-    PinpointStrike: 2,
+    PinpointStrike: 6,
     CAS: 1,
     CAP: 2,
     AirDefence: 0.3,
@@ -31,6 +32,7 @@ COMMISION_AMOUNTS_FACTORS = {
 
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 25
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
+PLAYER_BASEATTACK_THRESHOLD = 0.2
 
 """
 Various events probabilities. First key is player probabilty, second is enemy probability.
@@ -47,8 +49,9 @@ Events:
 """
 EVENT_PROBABILITIES = {
     BaseAttackEvent: [100, 10],
-    InterceptEvent: [25, 10],
     FrontlineAttackEvent: [100, 0],
+    FrontlinePatrolEvent: [1000, 0],
+    InterceptEvent: [25, 10],
     InsurgentAttackEvent: [0, 10],
     NavalInterceptEvent: [25, 10],
     AntiAAStrikeEvent: [25, 10],
@@ -65,7 +68,7 @@ ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 AWACS_BUDGET_COST = 4
 
 # Initial budget value
-PLAYER_BUDGET_INITIAL = 120
+PLAYER_BUDGET_INITIAL = 170
 # Base post-turn bonus value
 PLAYER_BUDGET_BASE = 10
 # Bonus multiplier logarithm base
@@ -112,11 +115,18 @@ class Game:
                 continue
 
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
+                if event_class == FrontlineAttackEvent or event_class == InfantryTransportEvent or event_class == FrontlinePatrolEvent:
+                    if not Conflict.has_frontline_between(player_cp, enemy_cp):
+                        continue
+
                 if self._roll(player_probability, player_cp.base.strength):
                     if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
                         pass
                     else:
-                        self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+                        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
+                            pass
+                        else:
+                            self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
                 elif self._roll(enemy_probability, enemy_cp.base.strength):
                     if event_class in enemy_generated_types:
                         continue

@@ -243,12 +243,34 @@ class AircraftConflictGenerator:
 
             waypoint = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             if self.conflict.is_vector:
-                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
+                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             group.task = CAS.name
             self._setup_group(group, CAS, client_count)
             self.escort_targets.append((group, group.points.index(waypoint)))
             self._rtb_for(group, self.conflict.from_cp, at)
+
+    def generate_defenders_cas(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+        assert len(self.escort_targets) == 0
+
+        for flying_type, count, client_count in self._split_to_groups(defenders, clients):
+            group = self._generate_group(
+                name=namegen.next_unit_name(self.conflict.defenders_side, flying_type),
+                side=self.conflict.defenders_side,
+                unit_type=flying_type,
+                count=count,
+                client_count=client_count,
+                at=at and at or self._group_point(self.conflict.air_defenders_location))
+
+            pos = self.conflict.air_defenders_location.point_from_heading(self.conflict.heading-90, CAP_CAS_DISTANCE)
+            waypoint = group.add_waypoint(pos, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            if self.conflict.is_vector:
+                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_AIRSPEED)
+
+            group.task = CAS.name
+            self._setup_group(group, CAS, client_count)
+            self.escort_targets.append((group, group.points.index(waypoint)))
+            self._rtb_for(group, self.conflict.to_cp, at)
 
     def generate_ship_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, target_groups: typing.Collection[ShipGroup], at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
@@ -271,7 +293,7 @@ class AircraftConflictGenerator:
             self.escort_targets.append((group, group.points.index(wayp)))
             self._rtb_for(group, self.conflict.from_cp, at)
 
-    def generate_strikegroup_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+    def generate_attackers_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
                 side=self.conflict.attackers_side,
                 units=attackers,
@@ -281,7 +303,7 @@ class AircraftConflictGenerator:
                 should_orbit=True):
             self._rtb_for(g, self.conflict.from_cp, at)
 
-    def generate_transport_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+    def generate_defenders_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
                 side=self.conflict.defenders_side,
                 units=escort,
@@ -307,6 +329,24 @@ class AircraftConflictGenerator:
             wayp.tasks.append(dcs.task.OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))
             self._setup_group(group, CAP, client_count)
             self._rtb_for(group, self.conflict.to_cp, at)
+
+    def generate_patrol(self, patrol: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
+        for flying_type, count, client_count in self._split_to_groups(patrol, clients):
+            group = self._generate_group(
+                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
+                side=self.conflict.attackers_side,
+                unit_type=flying_type,
+                count=count,
+                client_count=client_count,
+                at=at and at or self._group_point(self.conflict.air_attackers_location))
+
+            waypoint = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+            if self.conflict.is_vector:
+                group.add_waypoint(self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+
+            group.task = CAP.name
+            self._setup_group(group, CAP, client_count)
+            self._rtb_for(group, self.conflict.from_cp, at)
 
     def generate_transport(self, transport: db.PlaneDict, destination: Airport):
         assert len(self.escort_targets) == 0
