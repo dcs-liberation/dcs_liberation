@@ -15,11 +15,11 @@ def base_path() -> str:
     global _user_folder
     assert _user_folder
 
-    openbeta_path = os.path.join(_user_folder, "Saved Games\DCS.openbeta")
+    openbeta_path = os.path.join(_user_folder, "Saved Games", "DCS.openbeta")
     if os.path.exists(openbeta_path):
         return openbeta_path
     else:
-        return os.path.join(_user_folder, "Saved Games\DCS")
+        return os.path.join(_user_folder, "Saved Games" , "DCS")
 
 
 def _save_file() -> str:
@@ -35,7 +35,7 @@ def _save_file_exists() -> bool:
 
 
 def mission_path_for(name: str) -> str:
-    return os.path.join(base_path(), "Missions\{}".format(name))
+    return os.path.join(base_path(), "Missions", "{}".format(name))
 
 
 def restore_game():
