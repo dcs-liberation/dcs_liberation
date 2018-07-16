@@ -13,7 +13,7 @@ from .event import Event
 class CaptureEvent(Event):
     silent = True
     BONUS_BASE = 15
-    STRENGTH_RECOVERY = 0.35
+    STRENGTH_RECOVERY = 0.55
 
     def __str__(self):
         return "Attack from {} to {}".format(self.from_cp, self.to_cp)
