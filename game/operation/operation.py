@@ -18,7 +18,7 @@ class Operation:
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
-    awacsgen = None  # type: AWACSConflictGenerator
+    awacsgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
     envgen = None  # type: EnvironmentGenerator
 
@@ -52,7 +52,7 @@ class Operation:
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
-        self.awacsgen = AWACSConflictGenerator(mission, conflict, self.game)
+        self.awacsgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
@@ -78,9 +78,7 @@ class Operation:
 
     def generate(self):
         self.visualgen.generate()
-
-        if self.is_awacs_enabled:
-            self.awacsgen.generate()
+        self.awacsgen.generate(self.is_awacs_enabled)
 
         self.extra_aagen.generate()
         self.triggersgen.generate(self.is_quick, self.trigger_radius)

@@ -1,7 +1,20 @@
+from dcs.helicopters import helicopter_map
+
 from ui.eventresultsmenu import *
 
 from game import *
 from game.event import *
+
+
+UNITTYPES_FOR_EVENTS = {
+    FrontlineAttackEvent: CAS,
+    FrontlinePatrolEvent: CAP,
+    InterceptEvent: CAP,
+    InsurgentAttackEvent: CAS,
+    NavalInterceptEvent: CAS,
+    AntiAAStrikeEvent: CAS,
+    InfantryTransportEvent: Embarking,
+}
 
 
 class EventMenu(Menu):
@@ -87,7 +100,14 @@ class EventMenu(Menu):
             Label(self.frame, text="Client slots").grid(row=row, column=3, columnspan=2)
             row += 1
 
+        filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__]
         for unit_type, count in self.base.aircraft.items():
+            if filter_to and db.unit_task(unit_type) != filter_to:
+                continue
+
+            if unit_type in helicopter_map and self.event.__class__ != InsurgentAttackEvent:
+                continue
+
             scrable_row(unit_type, count)
 
         if not self.base.total_planes:
@@ -193,6 +213,9 @@ class EventMenu(Menu):
         elif type(self.event) is FrontlineAttackEvent:
             e = self.event  # type: FrontlineAttackEvent
             e.player_attacking(armor=scrambled_armor, strikegroup=scrambled_aircraft, clients=scrambled_clients)
+        elif type(self.event) is FrontlinePatrolEvent:
+            e = self.event  # type: FrontlinePatrolEvent
+            e.player_attacking(interceptors=scrambled_aircraft, clients=scrambled_clients)
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
 

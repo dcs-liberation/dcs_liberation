@@ -6,7 +6,7 @@ from gen.aircraft import *
 from gen.aaa import *
 from gen.shipgen import *
 from gen.triggergen import *
-from gen.awacsgen import *
+from gen.airsupportgen import *
 from gen.visualgen import *
 
 from .operation import Operation
@@ -60,7 +60,7 @@ class BaseAttackOperation(Operation):
         self.airgen.generate_defense(self.intercept, clients=self.defender_clients, at=self.defenders_starting_position)
 
         self.airgen.generate_cas_strikegroup(self.cas, clients=self.attacker_clients, at=self.attackers_starting_position)
-        self.airgen.generate_strikegroup_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
+        self.airgen.generate_attackers_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
         super(BaseAttackOperation, self).generate()

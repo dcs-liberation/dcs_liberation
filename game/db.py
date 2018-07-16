@@ -73,6 +73,8 @@ PRICES = {
     An_30M: 13,
     Yak_40: 13,
     S_3B_Tanker: 13,
+    IL_78M: 13,
+    KC_135: 13,
 
     A_50: 8,
     E_3A: 8,
@@ -167,6 +169,11 @@ UNIT_BY_TASK = {
         C_130,
     ],
 
+    Refueling: [
+        IL_78M,
+        KC_135,
+    ],
+
     AWACS: [E_3A, A_50, ],
 
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
@@ -251,6 +258,7 @@ UNIT_BY_COUNTRY = {
         L_39ZA,
 
         IL_76MD,
+        IL_78M,
         An_26B,
         An_30M,
         Yak_40,
@@ -290,6 +298,7 @@ UNIT_BY_COUNTRY = {
         A_10C,
         AV8BNA,
 
+        KC_135,
         S_3B_Tanker,
         C_130,
         E_3A,
@@ -450,7 +459,11 @@ def unitdict_split(unit_dict: UnitsDict, count: int):
 
 
 def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict:
-    return list(unitdict_split(unit_dict, total_count))[0]
+    groups = list(unitdict_split(unit_dict, total_count))
+    if len(groups) > 0:
+        return groups[0]
+    else:
+        return {}
 
 
 def _validate_db():
