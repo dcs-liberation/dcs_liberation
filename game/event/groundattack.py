@@ -5,11 +5,11 @@ from dcs.task import *
 
 from game import *
 from game.event import *
-from game.event.groundintercept import GroundInterceptEvent
+from game.event.frontlinecas import FrontlineCASEvent
 from game.operation.groundattack import GroundAttackOperation
 
 
-class GroundAttackEvent(GroundInterceptEvent):
+class GroundAttackEvent(FrontlineCASEvent):
     def __str__(self):
         return "Destroy insurgents at {}".format(self.to_cp)
 
