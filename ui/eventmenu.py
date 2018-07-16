@@ -172,8 +172,8 @@ class EventMenu(Menu):
             if amount > 0:
                 scrambled_armor[unit_type] = amount
 
-        if type(self.event) is CaptureEvent:
-            e = self.event  # type: CaptureEvent
+        if type(self.event) is BaseAttackEvent:
+            e = self.event  # type: BaseAttackEvent
             if self.game.is_player_attack(self.event):
                 e.player_attacking(cas=scrambled_cas,
                                    escort=scrambled_sweep,
@@ -190,12 +190,9 @@ class EventMenu(Menu):
             else:
                 e.player_defending(escort=scrambled_aircraft,
                                    clients=scrambled_clients)
-        elif type(self.event) is FrontlineCASEvent:
-            e = self.event  # type: FrontlineCASEvent
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
-            else:
-                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
+        elif type(self.event) is FrontlineAttackEvent:
+            e = self.event  # type: FrontlineAttackEvent
+            e.player_attacking(armor=scrambled_armor, strikegroup=scrambled_aircraft, clients=scrambled_clients)
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
 
@@ -209,8 +206,8 @@ class EventMenu(Menu):
                 e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
             else:
                 e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
-        elif type(self.event) is GroundAttackEvent:
-            e = self.event  # type: GroundAttackEvent
+        elif type(self.event) is InsurgentAttackEvent:
+            e = self.event  # type: InsurgentAttackEvent
             if self.game.is_player_attack(self.event):
                 assert False
             else:

@@ -12,7 +12,7 @@ from gen.visualgen import *
 from .operation import Operation
 
 
-class CaptureOperation(Operation):
+class BaseAttackOperation(Operation):
     cas = None  # type: db.PlaneDict
     escort = None  # type: db.PlaneDict
     intercept = None  # type: db.PlaneDict
@@ -37,7 +37,7 @@ class CaptureOperation(Operation):
         self.aa = aa
 
     def prepare(self, terrain: dcs.terrain.Terrain, is_quick: bool):
-        super(CaptureOperation, self).prepare(terrain, is_quick)
+        super(BaseAttackOperation, self).prepare(terrain, is_quick)
 
         self.defenders_starting_position = None
         if self.game.player == self.defender_name:
@@ -63,5 +63,5 @@ class CaptureOperation(Operation):
         self.airgen.generate_strikegroup_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
-        super(CaptureOperation, self).generate()
+        super(BaseAttackOperation, self).generate()
 

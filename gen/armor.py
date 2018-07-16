@@ -1,3 +1,4 @@
+from random import randint
 from itertools import zip_longest
 
 from game import db
@@ -12,6 +13,10 @@ from dcs.country import *
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
+
+FRONTLINE_CAS_FIGHTS_COUNT = 4, 8
+FRONTLINE_CAS_GROUP_MIN = 1, 2
+FRONTLINE_CAS_PADDING = 12000
 
 
 class ArmorConflictGenerator:
@@ -50,7 +55,7 @@ class ArmorConflictGenerator:
                     side=self.conflict.attackers_side,
                     unit=type,
                     count=count,
-                    at=position.point_from_heading(self.conflict.heading - 90, 600),
+                    at=position.point_from_heading(self.conflict.heading - 90, 5000),
                     to=position)
 
         if defenders:
@@ -59,7 +64,7 @@ class ArmorConflictGenerator:
                     side=self.conflict.defenders_side,
                     unit=type,
                     count=count,
-                    at=position.point_from_heading(self.conflict.heading + 90, 600),
+                    at=position.point_from_heading(self.conflict.heading + 90, 1000),
                     to=position)
 
     def generate(self, attackers: db.ArmorDict, defenders: db.ArmorDict):
@@ -78,16 +83,16 @@ class ArmorConflictGenerator:
                 at=self.conflict.ground_defenders_location)
 
     def generate_vec(self, attackers: db.ArmorDict, defenders: db.ArmorDict):
-        defender_groups = list(db.unitdict_split(defenders, 6))
-        distance_between_groups = min(self.conflict.distance / len(defender_groups), 12000)
-        total_distance = distance_between_groups * len(defender_groups)
+        fights_count = randint(*FRONTLINE_CAS_FIGHTS_COUNT)
+        single_fight_defenders_count = min(int(sum(defenders.values()) / fights_count), randint(*FRONTLINE_CAS_GROUP_MIN))
+        defender_groups = list(db.unitdict_split(defenders, single_fight_defenders_count))
 
-        attacker_groups = list(db.unitdict_split(attackers,
-                                                 int(sum(attackers.values()) / len(defender_groups))))
+        single_fight_attackers_count = min(int(sum(attackers.values()) / len(defender_groups)), randint(*FRONTLINE_CAS_GROUP_MIN))
+        attacker_groups = list(db.unitdict_split(attackers, single_fight_attackers_count))
 
-        position = self.conflict.center.point_from_heading(self.conflict.opposite_heading, total_distance / 2)
         for attacker_group_dict, target_group_dict in zip_longest(attacker_groups, defender_groups):
-            position = position.point_from_heading(self.conflict.heading, distance_between_groups)
+            position = self.conflict.position.point_from_heading(self.conflict.heading,
+                                                                 random.randint(FRONTLINE_CAS_PADDING, int(self.conflict.distance - FRONTLINE_CAS_PADDING)))
             self._generate_fight_at(attacker_group_dict, target_group_dict, position)
 
     def generate_passengers(self, count: int):

@@ -5,11 +5,11 @@ from dcs.task import *
 
 from game import *
 from game.event import *
-from game.event.frontlinecas import FrontlineCASEvent
-from game.operation.groundattack import GroundAttackOperation
+from game.event.frontlineattack import FrontlineAttackEvent
+from game.operation.insurgentattack import InsurgentAttackOperation
 
 
-class GroundAttackEvent(FrontlineCASEvent):
+class InsurgentAttackEvent(FrontlineAttackEvent):
     def __str__(self):
         return "Destroy insurgents at {}".format(self.to_cp)
 
@@ -24,13 +24,13 @@ class GroundAttackEvent(FrontlineCASEvent):
         typecount = max(math.floor(self.difficulty * self.TARGET_AMOUNT_FACTOR), 1)
         self.targets = {unittype: typecount for unittype in unittypes}
 
-        op = GroundAttackOperation(game=self.game,
-                                   attacker_name=self.attacker_name,
-                                   defender_name=self.defender_name,
-                                   attacker_clients={},
-                                   defender_clients=clients,
-                                   from_cp=self.from_cp,
-                                   to_cp=self.to_cp)
+        op = InsurgentAttackOperation(game=self.game,
+                                      attacker_name=self.attacker_name,
+                                      defender_name=self.defender_name,
+                                      attacker_clients={},
+                                      defender_clients=clients,
+                                      from_cp=self.from_cp,
+                                      to_cp=self.to_cp)
         op.setup(target=self.targets,
                  strikegroup=strikegroup)
 

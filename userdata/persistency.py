@@ -19,7 +19,7 @@ def base_path() -> str:
     if os.path.exists(openbeta_path):
         return openbeta_path
     else:
-        return os.path.join(_user_folder, "Saved Games" , "DCS")
+        return os.path.join(_user_folder, "Saved Games", "DCS")
 
 
 def _save_file() -> str:

@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 from dcs.terrain import Terrain
 
 from game import db
@@ -13,20 +15,29 @@ from gen.conflictgen import Conflict
 from .operation import Operation
 
 
-class GroundAttackOperation(Operation):
+MAX_DISTANCE_BETWEEN_GROUPS = 12000
+
+
+class FrontlineAttackOperation(Operation):
+    attackers = None  # type: db.ArmorDict
     strikegroup = None  # type: db.PlaneDict
     target = None  # type: db.ArmorDict
 
     def setup(self,
               target: db.ArmorDict,
+              attackers: db.ArmorDict,
               strikegroup: db.PlaneDict):
         self.strikegroup = strikegroup
         self.target = target
+        self.attackers = attackers
 
     def prepare(self, terrain: Terrain, is_quick: bool):
-        super(GroundAttackOperation, self).prepare(terrain, is_quick)
+        super(FrontlineAttackOperation, self).prepare(terrain, is_quick)
+        if self.defender_name == self.game.player:
+            self.attackers_starting_position = None
+            self.defenders_starting_position = None
 
-        conflict = Conflict.ground_attack_conflict(
+        conflict = Conflict.frontline_cas_conflict(
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
             from_cp=self.from_cp,
@@ -38,7 +49,6 @@ class GroundAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_defense(self.strikegroup, self.defender_clients, self.defenders_starting_position)
-        self.armorgen.generate(self.target, {})
-
-        super(GroundAttackOperation, self).generate()
+        self.armorgen.generate_vec(self.attackers, self.target)
+        self.airgen.generate_cas_strikegroup(self.strikegroup, clients=self.attacker_clients, at=self.attackers_starting_position)
+        super(FrontlineAttackOperation, self).generate()

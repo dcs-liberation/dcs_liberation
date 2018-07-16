@@ -448,6 +448,11 @@ def unitdict_split(unit_dict: UnitsDict, count: int):
     if len(buffer_dict):
         yield buffer_dict
 
+
+def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict:
+    return list(unitdict_split(unit_dict, total_count))[0]
+
+
 def _validate_db():
     # check unit by task uniquity
     total_set = set()
