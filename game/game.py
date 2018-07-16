@@ -39,7 +39,7 @@ For the enemy events, only 1 event of each type could be generated for a turn.
 Events:
 * CaptureEvent - capture base
 * InterceptEvent - air intercept
-* GroundInterceptEvent - frontline CAS
+* FrontlineCASEvent - frontline CAS
 * GroundAttackEvent - destroy insurgents
 * NavalInterceptEvent - naval intercept
 * AntiAAStrikeEvent - anti-AA strike
@@ -48,7 +48,7 @@ Events:
 EVENT_PROBABILITIES = {
     CaptureEvent: [100, 10],
     InterceptEvent: [25, 10],
-    GroundInterceptEvent: [25, 10],
+    FrontlineCASEvent: [250, 0],
     GroundAttackEvent: [0, 10],
     NavalInterceptEvent: [25, 10],
     AntiAAStrikeEvent: [25, 10],
@@ -212,7 +212,8 @@ class Game:
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
-            event.skip()
+            if isinstance(event, UnitsDeliveryEvent):
+                event.skip()
 
         if not no_action:
             self._budget_player()

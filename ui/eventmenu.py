@@ -190,8 +190,8 @@ class EventMenu(Menu):
             else:
                 e.player_defending(escort=scrambled_aircraft,
                                    clients=scrambled_clients)
-        elif type(self.event) is GroundInterceptEvent:
-            e = self.event  # type: GroundInterceptEvent
+        elif type(self.event) is FrontlineCASEvent:
+            e = self.event  # type: FrontlineCASEvent
             if self.game.is_player_attack(self.event):
                 e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
             else:

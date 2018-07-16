@@ -242,6 +242,9 @@ class AircraftConflictGenerator:
                     at=at and at or self._group_point(self.conflict.air_attackers_location))
 
             waypoint = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            if self.conflict.is_vector:
+                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
+
             group.task = CAS.name
             self._setup_group(group, CAS, client_count)
             self.escort_targets.append((group, group.points.index(waypoint)))
@@ -341,6 +344,10 @@ class AircraftConflictGenerator:
 
             wayp = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
             wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
+            
+            if self.conflict.is_vector:
+                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
+
             self._setup_group(group, CAP, client_count)
             self._rtb_for(group, self.conflict.from_cp, at)
 

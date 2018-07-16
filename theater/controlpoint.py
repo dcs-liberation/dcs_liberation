@@ -10,10 +10,11 @@ class ControlPoint:
     connected_points = []  # type: typing.List[ControlPoint]
     position = None  # type: Point
     captured = False
-    base: None  # type: theater.base.Base
-    at: None  # type: db.StartPosition
+    has_frontline = True
+    base = None  # type: theater.base.Base
+    at = None  # type: db.StartPosition
 
-    def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int):
+    def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
         import theater.base
 
         self.name = " ".join(re.split(r" |-", name)[:2])
@@ -24,14 +25,15 @@ class ControlPoint:
         self.size = size
         self.importance = importance
         self.captured = False
+        self.has_frontline = has_frontline
         self.radials = radials
         self.connected_points = []
         self.base = theater.base.Base()
 
     @classmethod
-    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int):
+    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
         assert airport
-        return cls(airport.name, airport.position, airport, radials, size, importance)
+        return cls(airport.name, airport.position, airport, radials, size, importance, has_frontline)
 
     @classmethod
     def carrier(cls, name: str, at: Point):
