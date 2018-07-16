@@ -38,8 +38,9 @@ NAVAL_INTERCEPT_DISTANCE_FACTOR = 1
 NAVAL_INTERCEPT_DISTANCE_MAX = 40000
 NAVAL_INTERCEPT_STEP = 5000
 
-FRONT_SMOKE_MIN_DISTANCE = 5000
-FRONT_SMOKE_DISTANCE_FACTOR = 0.5
+FRONTLINE_LENGTH = 80000
+FRONTLINE_MIN_CP_DISTANCE = 5000
+FRONTLINE_DISTANCE_STRENGTH_FACTOR = 0.7
 
 
 def _opposite_heading(h):
@@ -127,7 +128,7 @@ class Conflict:
 
     @classmethod
     def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Tuple[Point, int]:
-        distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONT_SMOKE_DISTANCE_FACTOR * to_cp.base.strength, FRONT_SMOKE_MIN_DISTANCE)
+        distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONTLINE_DISTANCE_STRENGTH_FACTOR * to_cp.base.strength, FRONTLINE_MIN_CP_DISTANCE)
         heading = to_cp.position.heading_between_point(from_cp.position)
         return to_cp.position.point_from_heading(heading, distance), heading
 
@@ -136,7 +137,7 @@ class Conflict:
         center_position, heading = cls.frontline_position(from_cp, to_cp)
 
         left_position = center_position
-        for offset in range(0, 80000, 1000):
+        for offset in range(0, int(FRONTLINE_LENGTH / 2), 1000):
             pos = center_position.point_from_heading(_heading_sum(heading, -90), offset)
             if not theater.is_on_land(pos):
                 break
@@ -144,7 +145,7 @@ class Conflict:
                 left_position = pos
 
         right_position = center_position
-        for offset in range(0, 80000, 1000):
+        for offset in range(0, int(FRONTLINE_LENGTH / 2), 1000):
             pos = center_position.point_from_heading(_heading_sum(heading, 90), offset)
             if not theater.is_on_land(pos):
                 break

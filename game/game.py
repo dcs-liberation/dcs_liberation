@@ -39,17 +39,17 @@ For the enemy events, only 1 event of each type could be generated for a turn.
 Events:
 * CaptureEvent - capture base
 * InterceptEvent - air intercept
-* FrontlineCASEvent - frontline CAS
+* FrontlineAttack - frontline attack
 * GroundAttackEvent - destroy insurgents
 * NavalInterceptEvent - naval intercept
 * AntiAAStrikeEvent - anti-AA strike
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
-    CaptureEvent: [100, 10],
+    BaseAttackEvent: [100, 10],
     InterceptEvent: [25, 10],
-    FrontlineCASEvent: [250, 0],
-    GroundAttackEvent: [0, 10],
+    FrontlineAttackEvent: [100, 0],
+    InsurgentAttackEvent: [0, 10],
     NavalInterceptEvent: [25, 10],
     AntiAAStrikeEvent: [25, 10],
     InfantryTransportEvent: [25, 0],
@@ -130,7 +130,7 @@ class Game:
                     if event_class == NavalInterceptEvent:
                         if player_cp.radials == LAND:
                             continue
-                    elif event_class == CaptureEvent:
+                    elif event_class == BaseAttackEvent:
                         if enemy_cap_generated:
                             continue
                         if enemy_cp.base.total_armor == 0:

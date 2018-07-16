@@ -150,7 +150,7 @@ class Base:
         return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), count)
 
     def assemble_count(self):
-        return int(self.total_armor * min(self.strength + 0.5, 1))
+        return int(self.total_armor * 0.5)
 
     def assemble_aa_count(self) -> int:
         if self.strength > STRENGTH_AA_ASSEMBLE_MIN:
@@ -171,7 +171,8 @@ class Base:
         return self._find_best_armor(PinpointStrike, self.assemble_count())
 
     def assemble_defense(self) -> typing.Dict[Armor, int]:
-        return self._find_best_armor(PinpointStrike, self.assemble_count())
+        count = int(self.total_armor * min(self.strength + 0.5, 1))
+        return self._find_best_armor(PinpointStrike, count)
 
     def assemble_aa(self, count=None) -> typing.Dict[AirDefence, int]:
         return self._find_best_unit(self.aa, AirDefence, count and min(count, self.total_aa) or self.assemble_aa_count())

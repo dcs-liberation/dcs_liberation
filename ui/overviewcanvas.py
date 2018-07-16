@@ -6,6 +6,7 @@ from tkinter.ttk import *
 from ui.window import *
 
 from game.game import *
+from gen.conflictgen import Conflict
 from theater.conflicttheater import *
 
 
@@ -44,7 +45,7 @@ class OverviewCanvas:
 
     def create_cp_title(self, coords, cp: ControlPoint):
         title = cp.name
-        font = ("Helvetica", 13)
+        font = ("Helvetica", 10)
 
         id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
         self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
@@ -74,9 +75,14 @@ class OverviewCanvas:
 
                 self.canvas.create_line((coords[0], coords[1], connected_coords[0], connected_coords[1]), width=2, fill=color)
 
+                if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
+                    frontline_pos, heading, distance = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
+                    start_coords, end_coords = self.transform_point(frontline_pos), self.transform_point(frontline_pos.point_from_heading(heading, distance))
+                    self.canvas.create_line((*start_coords, *end_coords), width=2, fill=color)
+
         for cp in self.game.theater.controlpoints:
             coords = self.transform_point(cp.position)
-            arc_size = 22 * math.pow(cp.importance, 1)
+            arc_size = 16 * math.pow(cp.importance, 1)
             extent = max(cp.base.strength * 180, 10)
             start = (180 - extent) / 2
 

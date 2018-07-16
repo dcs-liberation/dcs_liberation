@@ -4,13 +4,13 @@ import random
 from dcs.task import *
 
 from game import db
-from game.operation.capture import CaptureOperation
+from game.operation.baseattack import BaseAttackOperation
 from userdata.debriefing import Debriefing
 
 from .event import Event
 
 
-class CaptureEvent(Event):
+class BaseAttackEvent(Event):
     silent = True
     BONUS_BASE = 15
     STRENGTH_RECOVERY = 0.55
@@ -28,7 +28,7 @@ class CaptureEvent(Event):
             return not attackers_success
 
     def commit(self, debriefing: Debriefing):
-        super(CaptureEvent, self).commit(debriefing)
+        super(BaseAttackEvent, self).commit(debriefing)
         if self.is_successfull(debriefing):
             if self.from_cp.captured:
                 self.to_cp.captured = True
@@ -49,13 +49,13 @@ class CaptureEvent(Event):
         escort = self.from_cp.base.scramble_sweep(self.game.settings.multiplier)
         attackers = self.from_cp.base.armor
 
-        op = CaptureOperation(game=self.game,
-                              attacker_name=self.attacker_name,
-                              defender_name=self.defender_name,
-                              attacker_clients={},
-                              defender_clients=clients,
-                              from_cp=self.from_cp,
-                              to_cp=self.to_cp)
+        op = BaseAttackOperation(game=self.game,
+                                 attacker_name=self.attacker_name,
+                                 defender_name=self.defender_name,
+                                 attacker_clients={},
+                                 defender_clients=clients,
+                                 from_cp=self.from_cp,
+                                 to_cp=self.to_cp)
 
         op.setup(cas=cas,
                  escort=escort,
@@ -67,13 +67,13 @@ class CaptureEvent(Event):
         self.operation = op
 
     def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
-        op = CaptureOperation(game=self.game,
-                              attacker_name=self.attacker_name,
-                              defender_name=self.defender_name,
-                              attacker_clients=clients,
-                              defender_clients={},
-                              from_cp=self.from_cp,
-                              to_cp=self.to_cp)
+        op = BaseAttackOperation(game=self.game,
+                                 attacker_name=self.attacker_name,
+                                 defender_name=self.defender_name,
+                                 attacker_clients=clients,
+                                 defender_clients={},
+                                 from_cp=self.from_cp,
+                                 to_cp=self.to_cp)
 
         defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)
         defenders.update(self.to_cp.base.scramble_cas(self.game.settings.multiplier))
