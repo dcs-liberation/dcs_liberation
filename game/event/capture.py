@@ -41,7 +41,7 @@ class CaptureEvent(Event):
             self.to_cp.base.affect_strength(+self.STRENGTH_RECOVERY)
 
     def skip(self):
-        if self.to_cp.captured:
+        if not self.is_player_attacking and self.to_cp.captured:
             self.to_cp.captured = False
 
     def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
