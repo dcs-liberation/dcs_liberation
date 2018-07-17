@@ -13,7 +13,7 @@ from userdata.debriefing import Debriefing
 class FrontlinePatrolEvent(Event):
     ESCORT_FACTOR = 0.5
     STRENGTH_INFLUENCE = 0.2
-    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.33
+    SUCCESS_FACTOR = 0.8
 
     cas = None  # type: db.PlaneDict
     escort = None  # type: db.PlaneDict
@@ -25,6 +25,7 @@ class FrontlinePatrolEvent(Event):
     def __str__(self):
         return "Frontline CAP from {} at {}".format(self.from_cp, self.to_cp)
 
+    """
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.cas.values())
         destroyed_targets = 0
@@ -36,6 +37,16 @@ class FrontlinePatrolEvent(Event):
             return float(destroyed_targets) / total_targets >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
         else:
             return float(destroyed_targets) / total_targets < self.SUCCESS_TARGETS_HIT_PERCENTAGE
+    """
+
+    def is_successfull(self, debriefing: Debriefing):
+        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
+        attackers_success = (float(alive_attackers) / alive_defenders) >= self.SUCCESS_FACTOR
+        if self.from_cp.captured:
+            return attackers_success
+        else:
+            return not attackers_success
 
     def commit(self, debriefing: Debriefing):
         super(FrontlinePatrolEvent, self).commit(debriefing)
@@ -54,7 +65,7 @@ class FrontlinePatrolEvent(Event):
     def skip(self):
         pass
 
-    def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
+    def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict, armor: db.ArmorDict):
         self.cas = self.to_cp.base.scramble_cas(self.game.settings.multiplier)
         self.escort = self.to_cp.base.scramble_sweep(self.game.settings.multiplier * self.ESCORT_FACTOR)
 
@@ -65,10 +76,12 @@ class FrontlinePatrolEvent(Event):
                                       defender_clients={},
                                       from_cp=self.from_cp,
                                       to_cp=self.to_cp)
+
+        defenders = self.to_cp.base.assemble_attack()
         op.setup(cas=self.cas,
                  escort=self.escort,
                  interceptors=interceptors,
-                 armor_attackers=self.from_cp.base.assemble_attack(),
-                 armor_defenders=self.to_cp.base.assemble_attack())
+                 armor_attackers=db.unitdict_restrict_count(armor, sum(defenders.values())),
+                 armor_defenders=defenders)
 
         self.operation = op

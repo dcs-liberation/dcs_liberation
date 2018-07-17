@@ -2,6 +2,7 @@
 __pycache__
 build/*
 resources/payloads/*.lua
+venv
 logs.txt
 .DS_Store
 # User-specific stuff

@@ -20,7 +20,7 @@ AIR_DISTANCE = 40000
 
 CAPTURE_AIR_ATTACKERS_DISTANCE = 25000
 CAPTURE_AIR_DEFENDERS_DISTANCE = 60000
-CAP_CAS_DISTANCE = 10000
+CAP_CAS_DISTANCE = 10000, 120000
 
 GROUND_INTERCEPT_SPREAD = 5000
 GROUND_DISTANCE_FACTOR = 1
@@ -123,6 +123,21 @@ class Conflict:
     def to_size(self):
         return self.to_cp.size * GROUND_DISTANCE_FACTOR
 
+    def find_insertion_point(self, other_point: Point) -> Point:
+        dx = self.position.x - self.tail.x
+        dy = self.position.y - self.tail.y
+        dr2 = float(dx ** 2 + dy ** 2)
+
+        lerp = ((other_point.x - self.tail.x) * dx + (other_point.y - self.tail.y) * dy) / dr2
+        if lerp < 0:
+            lerp = 0
+        elif lerp > 1:
+            lerp = 1
+
+        x = lerp * dx + self.tail.x
+        y = lerp * dy + self.tail.y
+        return Point(x, y)
+
     @classmethod
     def has_frontline_between(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> bool:
         return from_cp.has_frontline and to_cp.has_frontline
@@ -138,6 +153,7 @@ class Conflict:
         center_position, heading = cls.frontline_position(from_cp, to_cp)
 
         left_position = center_position
+
         for offset in range(0, int(FRONTLINE_LENGTH / 2), 1000):
             pos = center_position.point_from_heading(_heading_sum(heading, -90), offset)
             if not theater.is_on_land(pos):
@@ -266,7 +282,7 @@ class Conflict:
         position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
         attack_position = position.point_from_heading(heading, randint(0, int(distance)))
         attackers_position = attack_position.point_from_heading(heading - 90, AIR_DISTANCE)
-        defenders_position = attack_position.point_from_heading(heading + 90, CAP_CAS_DISTANCE)
+        defenders_position = attack_position.point_from_heading(heading + 90, random.randint(*CAP_CAS_DISTANCE))
 
         return cls(
             position=position,

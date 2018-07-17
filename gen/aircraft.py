@@ -262,11 +262,12 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_defenders_location))
 
-            pos = self.conflict.air_defenders_location.point_from_heading(self.conflict.heading-90, CAP_CAS_DISTANCE)
-            waypoint = group.add_waypoint(pos, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            location = self._group_point(self.conflict.air_defenders_location)
+            insertion_point = self.conflict.find_insertion_point(location)
+            waypoint = group.add_waypoint(insertion_point, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             if self.conflict.is_vector:
-                destination_tail = self.conflict.tail.distance_to_point(pos) > self.conflict.position.distance_to_point(pos)
+                destination_tail = self.conflict.tail.distance_to_point(insertion_point) > self.conflict.position.distance_to_point(insertion_point)
                 group.add_waypoint(destination_tail and self.conflict.tail or self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             group.task = CAS.name

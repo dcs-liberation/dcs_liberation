@@ -18,7 +18,7 @@ from gen import *
 WEATHER_CLOUD_BASE = 2000, 3000
 WEATHER_CLOUD_DENSITY = 1, 8
 WEATHER_CLOUD_THICKNESS = 100, 400
-WEATHER_CLOUD_BASE_MIN = 2400
+WEATHER_CLOUD_BASE_MIN = 1600
 
 RANDOM_TIME = {
     "night": 5,
@@ -28,10 +28,10 @@ RANDOM_TIME = {
 }
 
 RANDOM_WEATHER = {
-    1: 5,  # heavy rain
-    2: 15,  # rain
-    3: 25,  # dynamic
-    4: 35,  # clear
+    1: 10,  # heavy rain
+    2: 20,  # rain
+    3: 30,  # dynamic
+    4: 40,  # clear
     5: 100,  # random
 }
 
@@ -90,7 +90,12 @@ class EnviromentGenerator:
             self.mission.weather.wind_at_8000 = Wind(wind_direction, wind_speed * 3)
 
         if self.mission.weather.clouds_density > 0:
+            # sometimes clouds are randomized way too low and need to be fixed
             self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, WEATHER_CLOUD_BASE_MIN)
+
+        if self.mission.weather.wind_at_ground == 0:
+            # frontline smokes look silly w/o any wind
+            self.mission.weather.wind_at_ground = random.randint(1, 2)
 
     def generate(self) -> EnvironmentSettings:
         self._gen_random_time()

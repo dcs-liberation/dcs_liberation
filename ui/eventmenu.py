@@ -8,7 +8,7 @@ from game.event import *
 
 UNITTYPES_FOR_EVENTS = {
     FrontlineAttackEvent: [CAS, PinpointStrike],
-    FrontlinePatrolEvent: [CAP],
+    FrontlinePatrolEvent: [CAP, PinpointStrike],
     InterceptEvent: [CAP],
     InsurgentAttackEvent: [CAS],
     NavalInterceptEvent: [CAS],
@@ -218,7 +218,7 @@ class EventMenu(Menu):
             e.player_attacking(armor=scrambled_armor, strikegroup=scrambled_aircraft, clients=scrambled_clients)
         elif type(self.event) is FrontlinePatrolEvent:
             e = self.event  # type: FrontlinePatrolEvent
-            e.player_attacking(interceptors=scrambled_aircraft, clients=scrambled_clients)
+            e.player_attacking(interceptors=scrambled_aircraft, clients=scrambled_clients, armor=scrambled_armor)
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
 

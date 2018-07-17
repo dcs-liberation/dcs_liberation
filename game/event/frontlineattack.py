@@ -16,7 +16,7 @@ class FrontlineAttackEvent(Event):
     ATTACKER_AMOUNT_FACTOR = 0.4
     ATTACKER_DEFENDER_FACTOR = 0.7
     STRENGTH_INFLUENCE = 0.2
-    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.25
+    SUCCESS_FACTOR = 1.5
 
     defenders = None  # type: db.ArmorDict
 
@@ -28,16 +28,13 @@ class FrontlineAttackEvent(Event):
         return "Frontline attack from {} at {}".format(self.from_cp, self.to_cp)
 
     def is_successfull(self, debriefing: Debriefing):
-        total_targets = sum(self.defenders.values())
-        destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units[self.defender_name].items():
-            if unit in self.defenders:
-                destroyed_targets += count
-
+        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
+        attackers_success = (float(alive_attackers) / alive_defenders) > self.SUCCESS_FACTOR
         if self.from_cp.captured:
-            return float(destroyed_targets) / total_targets >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
+            return attackers_success
         else:
-            return float(destroyed_targets) / total_targets < self.SUCCESS_TARGETS_HIT_PERCENTAGE
+            return not attackers_success
 
     def commit(self, debriefing: Debriefing):
         super(FrontlineAttackEvent, self).commit(debriefing)
