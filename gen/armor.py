@@ -50,22 +50,28 @@ class ArmorConflictGenerator:
 
     def _generate_fight_at(self, attackers: db.ArmorDict, defenders: db.ArmorDict, position: Point):
         if attackers:
+            attack_pos = position.point_from_heading(self.conflict.heading - 90, 8000)
+            attack_dest = position.point_from_heading(self.conflict.heading + 90, 25000)
             for type, count in attackers.items():
                 self._generate_group(
                     side=self.conflict.attackers_side,
                     unit=type,
                     count=count,
-                    at=position.point_from_heading(self.conflict.heading - 90, 5000),
-                    to=position)
+                    at=attack_pos,
+                    to=attack_dest,
+                )
 
         if defenders:
+            def_pos = position.point_from_heading(self.conflict.heading + 90, 4000)
+            def_dest = position.point_from_heading(self.conflict.heading + 90, 25000)
             for type, count in defenders.items():
                 self._generate_group(
                     side=self.conflict.defenders_side,
                     unit=type,
                     count=count,
-                    at=position.point_from_heading(self.conflict.heading + 90, 1000),
-                    to=position)
+                    at=def_pos,
+                    to=def_dest,
+                )
 
     def generate(self, attackers: db.ArmorDict, defenders: db.ArmorDict):
         for type, count in attackers.items():

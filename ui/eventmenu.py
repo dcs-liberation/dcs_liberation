@@ -7,13 +7,13 @@ from game.event import *
 
 
 UNITTYPES_FOR_EVENTS = {
-    FrontlineAttackEvent: CAS,
-    FrontlinePatrolEvent: CAP,
-    InterceptEvent: CAP,
-    InsurgentAttackEvent: CAS,
-    NavalInterceptEvent: CAS,
-    AntiAAStrikeEvent: CAS,
-    InfantryTransportEvent: Embarking,
+    FrontlineAttackEvent: [CAS, PinpointStrike],
+    FrontlinePatrolEvent: [CAP],
+    InterceptEvent: [CAP],
+    InsurgentAttackEvent: [CAS],
+    NavalInterceptEvent: [CAS],
+    AntiAAStrikeEvent: [CAS],
+    InfantryTransportEvent: [Embarking],
 }
 
 
@@ -102,7 +102,7 @@ class EventMenu(Menu):
 
         filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__]
         for unit_type, count in self.base.aircraft.items():
-            if filter_to and db.unit_task(unit_type) != filter_to:
+            if filter_to and db.unit_task(unit_type) not in filter_to:
                 continue
 
             if unit_type in helicopter_map and self.event.__class__ != InsurgentAttackEvent:
@@ -115,6 +115,9 @@ class EventMenu(Menu):
 
         label("Armor")
         for unit_type, count in self.base.armor.items():
+            if filter_to and db.unit_task(unit_type) not in filter_to:
+                continue
+
             scramble_armor_row(unit_type, count)
 
         if not self.base.total_armor:

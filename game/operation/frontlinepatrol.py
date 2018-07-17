@@ -23,10 +23,16 @@ class FrontlinePatrolOperation(Operation):
     escort = None  # type: db.PlaneDict
     interceptors = None  # type: db.PlaneDict
 
-    def setup(self, cas: db.PlaneDict, escort: db.PlaneDict, interceptors: db.PlaneDict):
+    armor_attackers = None  # type: db.ArmorDict
+    armor_defenders = None  # type: db.ArmorDict
+
+    def setup(self, cas: db.PlaneDict, escort: db.PlaneDict, interceptors: db.PlaneDict, armor_attackers: db.ArmorDict, armor_defenders: db.ArmorDict):
         self.cas = cas
         self.escort = escort
         self.interceptors = interceptors
+
+        self.armor_attackers = armor_attackers
+        self.armor_defenders = armor_defenders
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(FrontlinePatrolOperation, self).prepare(terrain, is_quick)
@@ -46,8 +52,7 @@ class FrontlinePatrolOperation(Operation):
     def generate(self):
         self.airgen.generate_defenders_cas(self.cas, {}, self.defenders_starting_position)
         self.airgen.generate_defenders_escort(self.escort, {}, self.defenders_starting_position)
-        self.airgen.generate_patrol(self.interceptors, self.defender_clients, self.attackers_starting_position)
+        self.airgen.generate_patrol(self.interceptors, self.attacker_clients, self.attackers_starting_position)
 
-        # todo: generate armor
-
+        self.armorgen.generate_vec(self.armor_attackers, self.armor_defenders)
         super(FrontlinePatrolOperation, self).generate()

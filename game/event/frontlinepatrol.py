@@ -12,8 +12,8 @@ from userdata.debriefing import Debriefing
 
 class FrontlinePatrolEvent(Event):
     ESCORT_FACTOR = 0.5
-    STRENGTH_INFLUENCE = 0.3
-    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.6
+    STRENGTH_INFLUENCE = 0.2
+    SUCCESS_TARGETS_HIT_PERCENTAGE = 0.33
 
     cas = None  # type: db.PlaneDict
     escort = None  # type: db.PlaneDict
@@ -61,12 +61,14 @@ class FrontlinePatrolEvent(Event):
         op = FrontlinePatrolOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
-                                      attacker_clients={},
-                                      defender_clients=clients,
+                                      attacker_clients=clients,
+                                      defender_clients={},
                                       from_cp=self.from_cp,
                                       to_cp=self.to_cp)
         op.setup(cas=self.cas,
                  escort=self.escort,
-                 interceptors=interceptors)
+                 interceptors=interceptors,
+                 armor_attackers=self.from_cp.base.assemble_attack(),
+                 armor_defenders=self.to_cp.base.assemble_attack())
 
         self.operation = op
