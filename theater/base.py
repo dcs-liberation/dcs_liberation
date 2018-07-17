@@ -167,7 +167,7 @@ class Base:
     def scramble_interceptors(self, multiplier: float) -> typing.Dict[PlaneType, int]:
         return self._find_best_planes(CAP, self.scramble_count(multiplier, CAP))
 
-    def assemble_cap(self) -> typing.Dict[Armor, int]:
+    def assemble_attack(self) -> typing.Dict[Armor, int]:
         return self._find_best_armor(PinpointStrike, self.assemble_count())
 
     def assemble_defense(self) -> typing.Dict[Armor, int]:

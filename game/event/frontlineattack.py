@@ -15,7 +15,7 @@ class FrontlineAttackEvent(Event):
     TARGET_AMOUNT_FACTOR = 0.5
     ATTACKER_AMOUNT_FACTOR = 0.4
     ATTACKER_DEFENDER_FACTOR = 0.7
-    STRENGTH_INFLUENCE = 0.3
+    STRENGTH_INFLUENCE = 0.2
     SUCCESS_TARGETS_HIT_PERCENTAGE = 0.25
 
     defenders = None  # type: db.ArmorDict
@@ -58,7 +58,7 @@ class FrontlineAttackEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, armor: db.ArmorDict, strikegroup: db.PlaneDict, clients: db.PlaneDict):
-        self.defenders = self.to_cp.base.assemble_cap()
+        self.defenders = self.to_cp.base.assemble_attack()
 
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
