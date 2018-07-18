@@ -1,8 +1,10 @@
+import sys
+
 from dcs.lua.parse import *
+from dcs.lua.serialize import *
 
-
-a = loads(open("build/mission", "r").read())
-b = loads(open("build/mission_workin.lua", "r").read())
+a = loads(open(sys.argv[1], "r").read())
+b = loads(open(sys.argv[2], "r").read())
 
 
 def get(a, k):
@@ -32,7 +34,8 @@ def cycle(kk, ref, v):
             cycle(kk + " " + str(i), ref, v)
     else:
         if get(ref, kk) != v:
-            print(kk, v)
+            print(kk)
+            print(v)
             print(get(ref, kk))
 
 
