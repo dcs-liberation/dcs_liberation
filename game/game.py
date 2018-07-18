@@ -50,7 +50,7 @@ Events:
 EVENT_PROBABILITIES = {
     BaseAttackEvent: [100, 10],
     FrontlineAttackEvent: [100, 0],
-    FrontlinePatrolEvent: [1000, 0],
+    FrontlinePatrolEvent: [100, 0],
     InterceptEvent: [25, 10],
     InsurgentAttackEvent: [0, 10],
     NavalInterceptEvent: [25, 10],
@@ -217,13 +217,15 @@ class Game:
         else:
             print("finish_event: event not in the events!")
 
-    def is_player_attack(self, event: Event):
-        return event.attacker_name == self.player
+    def is_player_attack(self, event):
+        if isinstance(event, Event):
+            return event.attacker_name == self.player
+        else:
+            return event.name == self.player
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         for event in self.events:
-            if isinstance(event, UnitsDeliveryEvent):
-                event.skip()
+            event.skip()
 
         if not no_action:
             self._budget_player()

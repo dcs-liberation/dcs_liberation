@@ -81,7 +81,13 @@ class Operation:
         self.awacsgen.generate(self.is_awacs_enabled)
 
         self.extra_aagen.generate()
-        self.triggersgen.generate(self.is_quick, self.trigger_radius)
+
+        if self.game.is_player_attack(self.conflict.attackers_side):
+            cp = self.conflict.from_cp
+        else:
+            cp = self.conflict.to_cp
+
+        self.triggersgen.generate(cp, self.is_quick, self.trigger_radius)
 
         if self.environment_settings is None:
             self.environment_settings = self.envgen.generate()

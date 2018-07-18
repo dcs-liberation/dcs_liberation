@@ -63,7 +63,7 @@ class ArmorConflictGenerator:
 
         if defenders:
             def_pos = position.point_from_heading(self.conflict.heading + 90, 4000)
-            def_dest = position.point_from_heading(self.conflict.heading + 90, 25000)
+            def_dest = position.point_from_heading(self.conflict.heading - 90, 25000)
             for type, count in defenders.items():
                 self._generate_group(
                     side=self.conflict.defenders_side,

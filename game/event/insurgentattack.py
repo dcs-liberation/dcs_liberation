@@ -9,13 +9,26 @@ from game.event.frontlineattack import FrontlineAttackEvent
 from game.operation.insurgentattack import InsurgentAttackOperation
 
 
-class InsurgentAttackEvent(FrontlineAttackEvent):
-    def __str__(self):
-        return "Destroy insurgents at {}".format(self.to_cp)
+class InsurgentAttackEvent(Event):
+    SUCCESS_FACTOR = 0.7
+    TARGET_VARIETY = 2
+    TARGET_AMOUNT_FACTOR = 0.5
 
     @property
     def threat_description(self):
         return ""
+
+    def __str__(self):
+        return "Destroy insurgents at {}".format(self.to_cp)
+
+    def is_successfull(self, debriefing: Debriefing):
+        killed_units = sum([v for k, v in debriefing.destroyed_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
+        all_units = sum(self.targets.values())
+        attackers_success = (float(killed_units) / all_units + 0.01) > self.SUCCESS_FACTOR
+        if self.from_cp.captured:
+            return attackers_success
+        else:
+            return not attackers_success
 
     def player_defending(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
         suitable_unittypes = db.find_unittype(Reconnaissance, self.attacker_name)

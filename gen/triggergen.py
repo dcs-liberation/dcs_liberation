@@ -38,7 +38,7 @@ class TriggersGenerator:
         self.conflict = conflict
         self.game = game
 
-    def _gen_activation_trigger(self, radius: int, player_coalition: str, enemy_coalition: str):
+    def _gen_activation_trigger(self, radius: int, player_cp: ControlPoint, player_coalition: str, enemy_coalition: str):
         activate_by_trigger = []
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
@@ -51,7 +51,7 @@ class TriggersGenerator:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
-        conflict_distance = self.conflict.from_cp.position.distance_to_point(self.conflict.position)
+        conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
         minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
         if minimum_radius < 0:
             minimum_radius = 0
@@ -67,7 +67,7 @@ class TriggersGenerator:
 
         self.mission.triggerrules.triggers.append(activation_trigger)
 
-    def _gen_push_trigger(self, player_coalition: str):
+    def _gen_push_trigger(self, player_cp: ControlPoint, player_coalition: str):
         push_by_trigger = []
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
@@ -76,7 +76,7 @@ class TriggersGenerator:
                         if plane_group.task == AWACS.name or plane_group.task == Refueling.name:
                             continue
 
-                        regroup_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
+                        regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
 
                         pos1 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
                         pos2 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE+5000)
@@ -99,7 +99,7 @@ class TriggersGenerator:
                         plane_group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
                         push_by_trigger.append(plane_group)
 
-        push_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.from_cp.position, PUSH_TRIGGER_SIZE, name="Push zone")
+        push_trigger_zone = self.mission.triggers.add_triggerzone(player_cp.position, PUSH_TRIGGER_SIZE, name="Push zone")
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
 
         for group in push_by_trigger:
@@ -136,7 +136,7 @@ class TriggersGenerator:
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(Skill(skill_level))
 
-    def generate(self, is_quick: bool, activation_trigger_radius: int):
+    def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int):
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
@@ -148,6 +148,6 @@ class TriggersGenerator:
 
         if not is_quick:
             # TODO: waypoint parts of this should not be post-hacked but added in airgen
-            self._gen_activation_trigger(activation_trigger_radius, player_coalition, enemy_coalition)
-            self._gen_push_trigger(player_coalition)
+            self._gen_activation_trigger(activation_trigger_radius, player_cp, player_coalition, enemy_coalition)
+            self._gen_push_trigger(player_cp, player_coalition)
 
