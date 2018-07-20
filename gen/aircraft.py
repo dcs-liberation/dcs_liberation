@@ -45,6 +45,9 @@ class AircraftConflictGenerator:
         self.conflict = conflict
         self.escort_targets = []
 
+    def _start_type(self) -> StartType:
+        return self.settings.cold_start and StartType.Cold or StartType.Warm
+
     def _group_point(self, point) -> Point:
         distance = randint(
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[0]),
@@ -109,7 +112,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             airport=self.m.terrain.airport_by_id(airport.id),
             maintask=None,
-            start_type=StartType.Warm,
+            start_type=self._start_type(),
             group_size=count,
             parking_slots=None)
 
@@ -135,7 +138,7 @@ class AircraftConflictGenerator:
             altitude=alt,
             speed=speed,
             maintask=None,
-            start_type=StartType.Warm,
+            start_type=self._start_type(),
             group_size=count)
 
     def _generate_at_carrier(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: ShipGroup) -> FlyingGroup:
@@ -148,7 +151,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             pad_group=at,
             maintask=None,
-            start_type=StartType.Warm,
+            start_type=self._start_type(),
             group_size=count)
 
     def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
@@ -206,9 +209,11 @@ class AircraftConflictGenerator:
 
             group.task = Escort.name
 
+            """
             heading = group.position.heading_between_point(self.conflict.position)
             position = group.position  # type: Point
             wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE, WARM_START_AIRSPEED)
+            """
             self._setup_group(group, CAP, client_count)
 
             for escorted_group, waypoint_index in self.escort_targets:
@@ -216,7 +221,7 @@ class AircraftConflictGenerator:
                 if not is_quick:
                     waypoint_index += TRIGGER_WAYPOINT_OFFSET
 
-                wayp.tasks.append(EscortTaskAction(escorted_group.id, engagement_max_dist=ESCORT_ENGAGEMENT_MAX_DIST, lastwpt=waypoint_index))
+                group.points[0].tasks.append(EscortTaskAction(escorted_group.id, engagement_max_dist=ESCORT_ENGAGEMENT_MAX_DIST, lastwpt=waypoint_index))
 
             if should_orbit:
                 orbit_task = ControlledTask(OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))

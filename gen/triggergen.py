@@ -136,7 +136,7 @@ class TriggersGenerator:
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(Skill(skill_level))
 
-    def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int):
+    def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int, awacs_enabled: bool):
         player_coalition = self.game.player == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
@@ -145,6 +145,19 @@ class TriggersGenerator:
 
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
+
+        description = ""
+        description += "FREQUENCIES:"
+        description += "\nFlight: 251 MHz AM"
+        description += "\nTanker: 10X/140 MHz"
+
+        if awacs_enabled:
+            description += "\nAWACS: 180 MHz"
+
+        if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
+            description += "\nCarrier: 20X/ICLS CHAN1"
+
+        self.mission.set_description_text(description)
 
         if not is_quick:
             # TODO: waypoint parts of this should not be post-hacked but added in airgen

@@ -22,9 +22,13 @@ class InterceptEvent(Event):
     def __str__(self):
         return "Intercept from {} at {}".format(self.from_cp, self.to_cp)
 
+    def _enemy_scramble_multiplier(self) -> float:
+        is_global = self.from_cp.is_global or self.to_cp.is_global
+        return self.game.settings.multiplier * is_global and 0.5 or 1
+
     @property
     def threat_description(self):
-        return "{} aircraft".format(self.enemy_cp.base.scramble_count(self.game.settings.multiplier, CAP))
+        return "{} aircraft".format(self.enemy_cp.base.scramble_count(self._enemy_scramble_multiplier(), CAP))
 
     def is_successfull(self, debriefing: Debriefing):
         units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)
@@ -54,7 +58,7 @@ class InterceptEvent(Event):
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
-        escort = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)
+        escort = self.to_cp.base.scramble_sweep(self._enemy_scramble_multiplier())
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None

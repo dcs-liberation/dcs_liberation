@@ -20,11 +20,15 @@ class ConfigurationMenu(Menu):
         self.night_var = BooleanVar()
         self.night_var.set(self.game.settings.night_disabled)
 
+        self.cold_start_var = BooleanVar()
+        self.cold_start_var.set(self.game.settings.cold_start)
+
     def dismiss(self):
         self.game.settings.player_skill = self.player_skill_var.get()
         self.game.settings.enemy_skill = self.enemy_skill_var.get()
         self.game.settings.only_player_takeoff = self.takeoff_var.get()
         self.game.settings.night_disabled = self.night_var.get()
+        self.game.settings.cold_start = self.cold_start_var.get()
         super(ConfigurationMenu, self).dismiss()
 
     def display(self):
@@ -36,11 +40,16 @@ class ConfigurationMenu(Menu):
         OptionMenu(self.frame, self.player_skill_var, "Average", "Good", "High", "Excellent").grid(row=0, column=1)
         OptionMenu(self.frame, self.enemy_skill_var, "Average", "Good", "High", "Excellent").grid(row=1, column=1)
 
-        Checkbutton(self.frame, text="Takeoff only for player group", variable=self.takeoff_var).grid(row=2, column=0, columnspan=2)
-        Checkbutton(self.frame, text="Disable night missions", variable=self.night_var).grid(row=3, column=0, columnspan=2)
+        Label(self.frame, text="Aircraft cold start").grid(row=2, column=0)
+        Label(self.frame, text="Takeoff only for player group").grid(row=3, column=0)
+        Label(self.frame, text="Disable night missions").grid(row=4, column=0)
 
-        Button(self.frame, text="Back", command=self.dismiss).grid(row=4, column=0, columnspan=1)
-        Button(self.frame, text="Cheat +200m", command=self.cheat_money).grid(row=5, column=0)
+        Checkbutton(self.frame, variable=self.cold_start_var).grid(row=2, column=1)
+        Checkbutton(self.frame, variable=self.takeoff_var).grid(row=3, column=1)
+        Checkbutton(self.frame, variable=self.night_var).grid(row=4, column=1)
+
+        Button(self.frame, text="Back", command=self.dismiss).grid(row=5, column=0, columnspan=1)
+        Button(self.frame, text="Cheat +200m", command=self.cheat_money).grid(row=6, column=1)
 
     def cheat_money(self):
         self.game.budget += 200

@@ -87,7 +87,10 @@ class Operation:
         else:
             cp = self.conflict.to_cp
 
-        self.triggersgen.generate(cp, self.is_quick, self.trigger_radius)
+        self.triggersgen.generate(player_cp=cp,
+                                  is_quick=self.is_quick,
+                                  activation_trigger_radius=self.trigger_radius,
+                                  awacs_enabled=self.is_awacs_enabled)
 
         if self.environment_settings is None:
             self.environment_settings = self.envgen.generate()

@@ -28,20 +28,24 @@ class OverviewCanvas:
         point_b = list(self.game.theater.reference_points.keys())[1]
         point_b_img = self.game.theater.reference_points[point_b]
 
-        x_dist = point_a_img[0] - point_b_img[0]
+        Y_dist = point_a_img[0] - point_b_img[0]
         lon_dist = point_a[1] - point_b[1]
 
-        y_dist = point_a_img[1] - point_b_img[1]
+        X_dist = point_a_img[1] - point_b_img[1]
         lat_dist = point_b[0] - point_a[0]
 
-        x_scale = float(x_dist) / float(lon_dist)
-        y_scale = float(y_dist) / float(lat_dist)
+        Y_scale = float(Y_dist) / float(lon_dist)
+        X_scale = float(X_dist) / float(lat_dist)
 
         # ---
-        x_offset = p.x - point_a[0]
-        y_offset = p.y - point_a[1]
+        Y_offset = p.x - point_a[0]
+        X_offset = p.y - point_a[1]
 
-        return point_b_img[1] + y_offset * y_scale, point_a_img[0] - x_offset * x_scale
+        X = point_b_img[1] + X_offset * X_scale
+        Y = point_a_img[0] - Y_offset * Y_scale
+
+        treshold = 30
+        return X > treshold and X or treshold, Y > treshold and Y or treshold
 
     def create_cp_title(self, coords, cp: ControlPoint):
         title = cp.name

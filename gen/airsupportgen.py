@@ -25,7 +25,7 @@ class AirSupportConflictGenerator:
         tanker_unit = db.find_unittype(Refueling, self.conflict.attackers_side.name)[0]
         tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
         tanker_position = self.conflict.from_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
-        self.mission.refuel_flight(
+        tanker_group = self.mission.refuel_flight(
             country=self.mission.country(self.game.player),
             name=namegen.next_tanker_name(self.mission.country(self.game.player)),
             airport=None,
@@ -34,7 +34,10 @@ class AirSupportConflictGenerator:
             altitude=TANKER_ALT,
             frequency=140,
             start_type=StartType.Warm,
+            tacanchannel="99X",
         )
+
+        tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=10, unit_id=tanker_group.id, aa=False))
 
         if is_awacs_enabled:
             awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]
@@ -45,6 +48,6 @@ class AirSupportConflictGenerator:
                 altitude=AWACS_ALT,
                 airport=None,
                 position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
-                frequency=251,
+                frequency=180,
                 start_type=StartType.Warm,
             )

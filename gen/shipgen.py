@@ -15,11 +15,15 @@ class ShipGenerator:
         self.conflict = conflict
 
     def generate_carrier(self, type: ShipType, country: str, at: Point) -> ShipGroup:
-        return self.m.ship_group(
+        group = self.m.ship_group(
             country=self.m.country(country),
             name=namegen.next_carrier_name(self.m.country(country)),
             _type=type,
             position=at)
+
+        group.points[0].tasks.append(ActivateBeaconCommand(unit_id=group.id, channel=20, callsign="SHDW", aa=False))
+        group.points[0].tasks.append(ActivateICLSCommand(unit_id=group.id, channel=1))
+        return group
 
     def generate_cargo(self, units: db.ShipDict) -> typing.Collection[ShipGroup]:
         groups = []
