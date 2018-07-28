@@ -136,7 +136,6 @@ Following tasks are present:
 UNIT_BY_TASK = {
     CAP: [
         C_101CC,
-        AJS37,
         F_5E_3,
         Su_27,
         Su_33,
@@ -151,6 +150,7 @@ UNIT_BY_TASK = {
         MiG_15bis,
         L_39ZA,
         AV8BNA,
+        AJS37,
         A_10A,
         A_10C,
         Su_25,
@@ -345,6 +345,10 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     Su_33: {
         "*": "R-73*4,R-27R*2,R-27ER*6",
+    },
+
+    AJS37: {
+        CAS: "CAS (75 GUN): RB-75*2, AKAN",
     },
 
     AV8BNA: {

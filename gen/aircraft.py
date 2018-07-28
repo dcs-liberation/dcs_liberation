@@ -106,6 +106,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
+        print("airgen: {} for {} at {}".format(unit_type, side.id, airport))
         return self.m.flight_group_from_airport(
             country=side,
             name=name,
@@ -129,6 +130,7 @@ class AircraftConflictGenerator:
 
         pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
 
+        print("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
         return self.m.flight_group(
             country=side,
             name=name,
@@ -145,6 +147,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
+        print("airgen: {} for {} at carrier {}".format(unit_type, side.id, at))
         return self.m.flight_group_from_unit(
             country=side,
             name=name,

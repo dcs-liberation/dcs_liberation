@@ -22,9 +22,10 @@ class AirSupportConflictGenerator:
         self.game = game
 
     def generate(self, is_awacs_enabled):
+        player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
         tanker_unit = db.find_unittype(Refueling, self.conflict.attackers_side.name)[0]
         tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
-        tanker_position = self.conflict.from_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
+        tanker_position = player_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
         tanker_group = self.mission.refuel_flight(
             country=self.mission.country(self.game.player),
             name=namegen.next_tanker_name(self.mission.country(self.game.player)),

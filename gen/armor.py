@@ -34,6 +34,7 @@ class ArmorConflictGenerator:
 
     def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, to: Point = None):
         for c in range(count):
+            print("armorgen: {} for {}".format(unit, side.id))
             group = self.m.vehicle_group(
                     side,
                     namegen.next_unit_name(side, unit),
