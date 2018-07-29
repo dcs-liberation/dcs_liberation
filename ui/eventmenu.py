@@ -9,6 +9,7 @@ from game.event import *
 UNITTYPES_FOR_EVENTS = {
     FrontlineAttackEvent: [CAS, PinpointStrike],
     FrontlinePatrolEvent: [CAP, PinpointStrike],
+    BaseAttackEvent: [CAP, CAS, PinpointStrike],
     InterceptEvent: [CAP],
     InsurgentAttackEvent: [CAS],
     NavalInterceptEvent: [CAS],

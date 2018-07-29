@@ -1,3 +1,5 @@
+import logging
+
 from game import db
 from game.settings import Settings
 from .conflictgen import *
@@ -14,7 +16,7 @@ SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_ENGAGEMENT_MAX_DIST = 100000
 WORKAROUND_WAYP_DIST = 1000
 
-WARM_START_HELI_AIRSPEED = 200
+WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 1000
 
 WARM_START_ALTITUDE = 3000
@@ -106,7 +108,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        print("airgen: {} for {} at {}".format(unit_type, side.id, airport))
+        logging.info("airgen: {} for {} at {}".format(unit_type, side.id, airport))
         return self.m.flight_group_from_airport(
             country=side,
             name=name,
@@ -121,7 +123,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        if unit_type in helicopters.helicopter_map:
+        if unit_type in helicopters.helicopter_map.values():
             alt = WARM_START_HELI_ALT + random.randint(50, 200)
             speed = WARM_START_HELI_AIRSPEED
         else:
@@ -130,7 +132,7 @@ class AircraftConflictGenerator:
 
         pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
 
-        print("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
+        logging.info("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
         return self.m.flight_group(
             country=side,
             name=name,
@@ -147,7 +149,7 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        print("airgen: {} for {} at carrier {}".format(unit_type, side.id, at))
+        logging.info("airgen: {} for {} at carrier {}".format(unit_type, side.id, at))
         return self.m.flight_group_from_unit(
             country=side,
             name=name,

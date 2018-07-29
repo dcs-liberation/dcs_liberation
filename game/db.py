@@ -463,6 +463,9 @@ def unitdict_split(unit_dict: UnitsDict, count: int):
 
 
 def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict:
+    if total_count == 0:
+        return {}
+
     groups = list(unitdict_split(unit_dict, total_count))
     if len(groups) > 0:
         return groups[0]

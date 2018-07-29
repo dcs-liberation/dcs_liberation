@@ -16,7 +16,7 @@ class InfantryTransportEvent(Event):
     STRENGTH_INFLUENCE = 0.3
 
     def __str__(self):
-        return "Frontline transport troops to {}".format(self.to_cp)
+        return "Frontline transport troops"
 
     def is_successfull(self, debriefing: Debriefing):
         return True

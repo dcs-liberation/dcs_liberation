@@ -35,5 +35,5 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplie
             count = max(COUNT_BY_TASK[task] * multiplier * (1+count_log), 1)
             count_per_type = max(int(float(count) / len(unittypes)), 1)
             for unit_type in unittypes:
-                print("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
+                logging.info("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
                 cp.base.commision_units({unit_type: count_per_type})

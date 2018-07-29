@@ -14,7 +14,7 @@ import ui.corruptedsavemenu
 
 from game.game import Game
 from theater import start_generator
-from userdata import persistency
+from userdata import persistency, logging
 
 
 persistency.setup(sys.argv[1])

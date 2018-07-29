@@ -1,3 +1,4 @@
+import logging
 import typing
 import re
 import threading
@@ -83,17 +84,16 @@ class Debriefing:
 
                 try:
                     components = event["initiator"].split("|")
-                    print(components)
                     category, country_id, group_id, unit_type = components[0], int(components[1]), int(components[2]), db.unit_type_from_name(components[3])
                     if unit_type is None:
-                        print("Skipped due to no unit type")
+                        logging.info("Skipped due to no unit type")
                         continue
 
                     if category != "unit":
-                        print("Skipped due to category")
+                        logging.info("Skipped due to category")
                         continue
                 except Exception as e:
-                    print(e)
+                    logging.error(e)
                     continue
 
                 if country_id not in dead_units:

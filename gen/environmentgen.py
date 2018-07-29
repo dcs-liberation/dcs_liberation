@@ -1,3 +1,4 @@
+import logging
 import typing
 import random
 from datetime import datetime, timedelta, time
@@ -68,7 +69,7 @@ class EnviromentGenerator:
                 weather_type = k
                 break
 
-        print("generated weather {}".format(weather_type))
+        logging.info("generated weather {}".format(weather_type))
         if weather_type == 1:
             self.mission.weather.heavy_rain()
         elif weather_type == 2:

@@ -20,7 +20,7 @@ class InterceptEvent(Event):
     transport_unit = None  # type: FlyingType
 
     def __str__(self):
-        return "Intercept from {} at {}".format(self.from_cp, self.to_cp)
+        return "Intercept"
 
     def _enemy_scramble_multiplier(self) -> float:
         is_global = self.from_cp.is_global or self.to_cp.is_global

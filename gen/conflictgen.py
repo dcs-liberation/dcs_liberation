@@ -1,3 +1,4 @@
+import logging
 import typing
 import pdb
 import dcs
@@ -182,7 +183,7 @@ class Conflict:
 
             initial = initial.point_from_heading(heading, 800)
 
-        print("Didn't find ground position!")
+        logging.info("Didn't find ground position!")
         return None
 
     @classmethod

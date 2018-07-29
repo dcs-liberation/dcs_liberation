@@ -34,13 +34,18 @@ class MainMenu(Menu):
 
         def event_button(event):
             nonlocal row
-            Message(self.frame, text="{}{}".format(
+            Message(self.frame, text="{}{} at {}".format(
                 event.defender_name == self.game.player and "Enemy attacking: " or "",
-                event
+                event,
+                event.to_cp,
             ), aspect=1600).grid(column=0, row=row, sticky=NW)
-            Button(self.frame, text=">", command=self.start_event(event)).grid(column=0, row=row, sticky=NE+S)
-            row += 1
-            Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
+            Button(self.frame, text=">", command=self.start_event(event)).grid(column=0, row=row, sticky=NE+S); row += 1
+
+        def destination_header(text, separator=True):
+            nonlocal row
+            if separator:
+                Separator(self.frame, orient=HORIZONTAL).grid(row=row, sticky=EW); row += 1
+            Label(self.frame, text=text).grid(column=0, row=row, sticky=N); row += 1
 
         Button(self.frame, text="Configuration", command=self.configuration_menu).grid(column=0, row=0, sticky=NE)
         Button(self.frame, text="Pass turn", command=self.pass_turn).grid(column=0, row=0, sticky=NW)
@@ -48,9 +53,20 @@ class MainMenu(Menu):
         Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
 
         events = self.game.events
+        events.sort(key=lambda x: x.from_cp.name)
         events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
 
+        destination = None
         for event in events:
+            if not event.informational:
+                if self.game.is_player_attack(event):
+                    new_destination = event.from_cp.name
+                else:
+                    new_destination = "Enemy attack"
+                if destination != new_destination:
+                    destination_header(new_destination, destination is not None)
+                    destination = new_destination
+
             if event.informational:
                 label(str(event))
             else:

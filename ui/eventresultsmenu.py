@@ -22,21 +22,20 @@ class EventResultsMenu(Menu):
         self.window.clear_right_pane()
 
         if not self.finished:
-            """
-            For debugging purposes
-            
-            Button(self.frame, text="no losses, succ", command=self.simulate_result(0, 1)).grid()
-            Button(self.frame, text="no losses, fail", command=self.simulate_result(0, 1)).grid(row=1, column=1)
-
-            Button(self.frame, text="half losses, succ", command=self.simulate_result(0.5, 0.5)).grid(row=2, )
-            Button(self.frame, text="half losses, fail", command=self.simulate_result(0.5, 0.5)).grid(row=2, column=1)
-
-            Button(self.frame, text="full losses, succ", command=self.simulate_result(1, 0)).grid(row=3, )
-            Button(self.frame, text="full losses, fail", command=self.simulate_result(1, 0)).grid(row=3, column=1)
-            """
-
             Label(self.frame, text="Play the mission and save debriefing to").grid(row=0, column=0)
             Label(self.frame, text=debriefing_directory_location()).grid(row=1, column=0)
+
+            """
+            For debugging purposes
+            """
+
+            row = 3
+            Separator(self.frame, orient=HORIZONTAL).grid(row=row, sticky=EW); row += 1
+            Label(self.frame, text="Cheat operation results: ").grid(row=row); row += 1
+            Button(self.frame, text="full enemy losses", command=self.simulate_result(0, 1)).grid(row=row); row += 1
+            Button(self.frame, text="full player losses", command=self.simulate_result(1, 0)).grid(row=row); row += 1
+            Button(self.frame, text="some enemy losses", command=self.simulate_result(0, 0.8)).grid(row=row); row += 1
+            Button(self.frame, text="some player losses", command=self.simulate_result(0.8, 0)).grid(row=row); row += 1
         else:
             row = 0
             if self.event.is_successfull(self.debriefing):
@@ -81,27 +80,53 @@ class EventResultsMenu(Menu):
         def action():
             debriefing = Debriefing({})
 
-            def count_planes(groups: typing.List[FlyingGroup], mult: float) -> typing.Dict[UnitType, int]:
+            def count(country: Country) -> typing.Dict[UnitType, int]:
                 result = {}
-                for group in groups:
+                for g in country.plane_group + country.vehicle_group + country.helicopter_group + country.ship_group:
+                    group = g  # type: Group
                     for unit in group.units:
-                        result[unit.unit_type] = result.get(unit.unit_type, 0) + 1 * mult
+                        unit_type = None
+                        if isinstance(unit, Vehicle):
+                            unit_type = vehicle_map[unit.type]
+                        elif isinstance(unit, Ship):
+                            unit_type = ship_map[unit.type]
+                        else:
+                            unit_type = unit.unit_type
 
-                return {x: math.ceil(y) for x, y in result.items() if y >= 1}
+                        if unit_type in db.EXTRA_AA.values():
+                            continue
 
-            player_planes = self.event.operation.mission.country(self.game.player).plane_group
-            enemy_planes = self.event.operation.mission.country(self.game.enemy).plane_group
+                        result[unit_type] = result.get(unit_type, 0) + 1
 
-            self.player_losses = count_planes(player_planes, player_factor)
-            self.enemy_losses = count_planes(enemy_planes, enemy_factor)
+                return result
+
+            player = self.event.operation.mission.country(self.game.player)
+            enemy = self.event.operation.mission.country(self.game.enemy)
+
+            alive_player_units = count(player)
+            alive_enemy_units = count(enemy)
+
+            destroyed_player_units = db.unitdict_restrict_count(alive_player_units, math.ceil(sum(alive_player_units.values()) * player_factor))
+            destroyed_enemy_units = db.unitdict_restrict_count(alive_enemy_units, math.ceil(sum(alive_enemy_units.values()) * enemy_factor))
+
+            alive_player_units = {k: v - destroyed_player_units.get(k, 0) for k, v in alive_player_units.items()}
+            alive_enemy_units = {k: v - destroyed_enemy_units.get(k, 0) for k, v in alive_enemy_units.items()}
+
+            debriefing.alive_units = {
+                enemy.name: alive_enemy_units,
+                player.name: alive_player_units,
+            }
 
             debriefing.destroyed_units = {
-                self.game.player: self.player_losses,
-                self.game.enemy: self.enemy_losses,
+                player.name: destroyed_player_units,
+                enemy.name: destroyed_enemy_units,
             }
 
             self.finished = True
             self.debriefing = debriefing
+            self.player_losses = debriefing.destroyed_units.get(self.game.player, {})
+            self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy, {})
+
             self.game.finish_event(self.event, debriefing)
             self.display()
             self.game.pass_turn()

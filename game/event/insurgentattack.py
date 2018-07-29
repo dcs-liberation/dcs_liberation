@@ -19,7 +19,7 @@ class InsurgentAttackEvent(Event):
         return ""
 
     def __str__(self):
-        return "Destroy insurgents at {}".format(self.to_cp)
+        return "Destroy insurgents"
 
     def is_successfull(self, debriefing: Debriefing):
         killed_units = sum([v for k, v in debriefing.destroyed_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])

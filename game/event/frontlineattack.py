@@ -25,7 +25,7 @@ class FrontlineAttackEvent(Event):
         return "{} vehicles".format(self.to_cp.base.assemble_count())
 
     def __str__(self):
-        return "Frontline attack from {} at {}".format(self.from_cp, self.to_cp)
+        return "Frontline attack"
 
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])

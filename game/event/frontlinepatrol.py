@@ -23,7 +23,7 @@ class FrontlinePatrolEvent(Event):
         return "{} aircraft + ? CAS".format(self.to_cp.base.scramble_count(self.game.settings.multiplier * self.ESCORT_FACTOR, CAP))
 
     def __str__(self):
-        return "Frontline CAP from {} at {}".format(self.from_cp, self.to_cp)
+        return "Frontline CAP"
 
     """
     def is_successfull(self, debriefing: Debriefing):

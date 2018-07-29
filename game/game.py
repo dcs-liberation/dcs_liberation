@@ -1,3 +1,4 @@
+import logging
 import typing
 import random
 import math
@@ -171,7 +172,7 @@ class Game:
                 if points_to_spend > 0:
                     unittypes = self.commision_unit_types(cp, for_task)
                     d = {random.choice(unittypes): points_to_spend}
-                    print("Commision {}: {}".format(cp, d))
+                    logging.info("Commision {}: {}".format(cp, d))
                     cp.base.commision_units(d)
 
     @property
@@ -204,10 +205,13 @@ class Game:
     def initiate_event(self, event: Event):
         assert event in self.events
 
+        logging.info("Generating {} (regular)".format(event))
         event.generate()
+        logging.info("Generating {} (quick)".format(event))
         event.generate_quick()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
+        logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
         if event.is_successfull(debriefing):
             self.budget += event.bonus()
@@ -215,7 +219,7 @@ class Game:
         if event in self.events:
             self.events.remove(event)
         else:
-            print("finish_event: event not in the events!")
+            logging.info("finish_event: event not in the events!")
 
     def is_player_attack(self, event):
         if isinstance(event, Event):
@@ -224,6 +228,7 @@ class Game:
             return event.name == self.player
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
+        logging.info("Pass turn")
         for event in self.events:
             event.skip()
 

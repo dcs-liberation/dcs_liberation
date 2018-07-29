@@ -1,3 +1,5 @@
+import logging
+
 from game import db
 from .conflictgen import *
 from .naming import *
@@ -28,7 +30,7 @@ class ShipGenerator:
     def generate_cargo(self, units: db.ShipDict) -> typing.Collection[ShipGroup]:
         groups = []
         for unit_type, unit_count in units.items():
-            print("shipgen: {} ({}) for {}".format(unit_type, unit_count, self.conflict.defenders_side))
+            logging.info("shipgen: {} ({}) for {}".format(unit_type, unit_count, self.conflict.defenders_side))
             group = self.m.ship_group(
                 country=self.conflict.defenders_side,
                 name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),

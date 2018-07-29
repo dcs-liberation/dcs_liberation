@@ -17,7 +17,7 @@ class AntiAAStrikeEvent(Event):
     targets = None  # type: db.ArmorDict
 
     def __str__(self):
-        return "Anti-AA strike from {} at {}".format(self.from_cp, self.to_cp)
+        return "Anti-AA strike"
 
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())

@@ -1,3 +1,4 @@
+import logging
 import typing
 import pickle
 import os
@@ -56,5 +57,5 @@ def save_game(game) -> bool:
         shutil.copy(_temporary_save_file(), _save_file())
         return True
     except Exception as e:
-        print(e)
+        logging.error(e)
         return False

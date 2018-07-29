@@ -1,3 +1,4 @@
+import logging
 import typing
 import math
 import itertools
@@ -53,7 +54,7 @@ class Base:
 
     def _find_best_unit(self, dict, for_type: Task, count: int) -> typing.Dict:
         if count <= 0:
-            print("{}: no units for {}".format(self, for_type))
+            logging.info("{}: no units for {}".format(self, for_type))
             return {}
 
         sorted_units = [key for key in dict.keys() if key in db.UNIT_BY_TASK[for_type]]
@@ -74,7 +75,7 @@ class Base:
             assert result_unit_count > 0
             result[unit_type] = result.get(unit_type, 0) + result_unit_count
 
-        print("{} for {} ({}): {}".format(self, for_type, count, result))
+        logging.info("{} for {} ({}): {}".format(self, for_type, count, result))
         return result
 
     def _find_best_planes(self, for_type: Task, count: int) -> typing.Dict[PlaneType, int]:

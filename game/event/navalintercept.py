@@ -24,7 +24,7 @@ class NavalInterceptEvent(Event):
         return max(int(factor), 1)
 
     def __str__(self) -> str:
-        return "Naval intercept at {}".format(self.to_cp)
+        return "Naval intercept"
 
     @property
     def threat_description(self):
