@@ -26,4 +26,4 @@ def _handle_exception(self, exception: BaseException, *args):
 
 
 Tk.report_callback_exception = _handle_exception
-logging.info("DCS Libration 1.13 RC2")
+logging.info("DCS Libration 1.3 RC2")
