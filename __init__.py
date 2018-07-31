@@ -16,8 +16,8 @@ from game.game import Game
 from theater import start_generator
 from userdata import persistency, logging
 
-
 persistency.setup(sys.argv[1])
+logging.setup_version_string(sys.argv[2])
 dcs.planes.FlyingType.payload_dirs.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources\\payloads"))
 
 

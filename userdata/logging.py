@@ -6,11 +6,7 @@ from io import StringIO
 from tkinter import *
 from tkinter.scrolledtext import *
 
-if "-stdout" in sys.argv:
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-else:
-    log_stream = StringIO()
-    logging.basicConfig(stream=log_stream, level=logging.INFO)
+_version_string = None
 
 
 def _error_prompt():
@@ -29,5 +25,16 @@ def _handle_exception(self, exception: BaseException, *args):
     _error_prompt()
 
 
-Tk.report_callback_exception = _handle_exception
-logging.info("DCS Libration 1.3 RC2")
+def setup_version_string(str):
+    global _version_string
+    _version_string = str
+
+
+if "-stdout" in sys.argv:
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+else:
+    log_stream = StringIO()
+    logging.basicConfig(stream=log_stream, level=logging.INFO)
+    Tk.report_callback_exception = _handle_exception
+
+logging.info("DCS Libration {}".format(_version_string))
