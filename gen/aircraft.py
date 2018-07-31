@@ -127,10 +127,10 @@ class AircraftConflictGenerator:
             alt = WARM_START_HELI_ALT + random.randint(50, 200)
             speed = WARM_START_HELI_AIRSPEED
         else:
-            alt = WARM_START_ALTITUDE + random.randint(50, 200)
+            alt = WARM_START_ALTITUDE + random.randint(50, 800)
             speed = WARM_START_AIRSPEED
 
-        pos = Point(at.x + random.randint(100, 200), at.y + random.randint(100, 200))
+        pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
 
         logging.info("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
         return self.m.flight_group(
