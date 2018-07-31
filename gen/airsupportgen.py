@@ -33,7 +33,7 @@ class AirSupportConflictGenerator:
             plane_type=tanker_unit,
             position=tanker_position,
             altitude=TANKER_ALT,
-            frequency=140,
+            frequency=240,
             start_type=StartType.Warm,
             tacanchannel="99X",
         )
@@ -49,6 +49,6 @@ class AirSupportConflictGenerator:
                 altitude=AWACS_ALT,
                 airport=None,
                 position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
-                frequency=180,
+                frequency=244,
                 start_type=StartType.Warm,
             )

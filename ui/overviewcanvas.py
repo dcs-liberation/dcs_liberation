@@ -21,7 +21,7 @@ class OverviewCanvas:
         self.canvas = Canvas(frame, width=self.image.width(), height=self.image.height())
         self.canvas.grid(column=0, row=0, sticky=NSEW)
 
-    def transform_point(self, p: Point) -> (int, int):
+    def transform_point(self, p: Point, treshold=30) -> (int, int):
         point_a = list(self.game.theater.reference_points.keys())[0]
         point_a_img = self.game.theater.reference_points[point_a]
 
@@ -44,7 +44,6 @@ class OverviewCanvas:
         X = point_b_img[1] + X_offset * X_scale
         Y = point_a_img[0] - Y_offset * Y_scale
 
-        treshold = 30
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 
     def create_cp_title(self, coords, cp: ControlPoint):
@@ -81,7 +80,9 @@ class OverviewCanvas:
 
                 if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
                     frontline_pos, heading, distance = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
-                    start_coords, end_coords = self.transform_point(frontline_pos), self.transform_point(frontline_pos.point_from_heading(heading, distance))
+                    start_coords = self.transform_point(frontline_pos, treshold=10)
+                    end_coords = self.transform_point(frontline_pos.point_from_heading(heading, distance), treshold=60)
+
                     self.canvas.create_line((*start_coords, *end_coords), width=2, fill=color)
 
         for cp in self.game.theater.controlpoints:

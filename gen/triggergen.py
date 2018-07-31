@@ -149,10 +149,10 @@ class TriggersGenerator:
         description = ""
         description += "FREQUENCIES:"
         description += "\nFlight: 251 MHz AM"
-        description += "\nTanker: 10X/140 MHz"
+        description += "\nTanker: 10X/240 MHz"
 
         if awacs_enabled:
-            description += "\nAWACS: 180 MHz"
+            description += "\nAWACS: 244 MHz"
 
         if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
             description += "\nCarrier: 20X/ICLS CHAN1"
