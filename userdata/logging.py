@@ -1,12 +1,16 @@
 import logging
 import traceback
+import sys
 
 from io import StringIO
 from tkinter import *
 from tkinter.scrolledtext import *
 
-log_stream = StringIO()
-logging.basicConfig(stream=log_stream, level=logging.INFO)
+if "-stdout" in sys.argv:
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+else:
+    log_stream = StringIO()
+    logging.basicConfig(stream=log_stream, level=logging.INFO)
 
 
 def _error_prompt():

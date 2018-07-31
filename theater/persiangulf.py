@@ -35,11 +35,11 @@ class PersianGulfTheater(ConflictTheater):
     tunb_kochak = ControlPoint.from_airport(persiangulf.Tunb_Kochak, [135, 180], SIZE_SMALL, 1.2, has_frontline=False)
 
     bandar_lengeh = ControlPoint.from_airport(persiangulf.Bandar_Lengeh, [270, 315, 0, 45], SIZE_SMALL, 1.1)
-    qeshm = ControlPoint.from_airport(persiangulf.Qeshm_Island, [270, 315, 0, 45, 90, 135, 180], SIZE_SMALL, 1.3, has_frontline=False)
+    qeshm = ControlPoint.from_airport(persiangulf.Qeshm_Island, [270, 315, 0, 45, 90, 135, 180], SIZE_SMALL, 1.2, has_frontline=False)
 
-    havadarya = ControlPoint.from_airport(persiangulf.Havadarya, COAST_DL_W, SIZE_REGULAR, 1.2)
-    bandar_abbas = ControlPoint.from_airport(persiangulf.Bandar_Abbas_Intl, LAND, SIZE_BIG, 1.3)
-    lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, LAND, SIZE_REGULAR, 1.1)
+    havadarya = ControlPoint.from_airport(persiangulf.Havadarya, COAST_DL_W, SIZE_REGULAR, 1.1)
+    bandar_abbas = ControlPoint.from_airport(persiangulf.Bandar_Abbas_Intl, LAND, SIZE_BIG, 1.2)
+    lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
     shiraz = ControlPoint.from_airport(persiangulf.Shiraz_International_Airport, LAND, SIZE_BIG, IMPORTANCE_LOW)
     kerman = ControlPoint.from_airport(persiangulf.Kerman_Airport, LAND, SIZE_BIG, IMPORTANCE_LOW)
 
@@ -47,6 +47,10 @@ class PersianGulfTheater(ConflictTheater):
 
     def __init__(self):
         super(PersianGulfTheater, self).__init__()
+
+        self.add_controlpoint(self.shiraz, connected_to=[self.lar, self.kerman])
+        self.add_controlpoint(self.kerman, connected_to=[self.lar, self.shiraz])
+        self.add_controlpoint(self.lar, connected_to=[self.bandar_lengeh, self.qeshm, self.havadarya, self.shiraz, self.kerman])
 
         self.add_controlpoint(self.al_dhafra, connected_to=[self.sir_abu_nuayr, self.al_maktoum])
         self.add_controlpoint(self.al_maktoum, connected_to=[self.al_dhafra, self.al_minhad, self.sir_abu_nuayr])
@@ -66,9 +70,6 @@ class PersianGulfTheater(ConflictTheater):
         self.add_controlpoint(self.qeshm, connected_to=[self.bandar_lengeh, self.havadarya, self.tunb_island, self.lar])
         self.add_controlpoint(self.havadarya, connected_to=[self.lar, self.qeshm, self.bandar_abbas])
         self.add_controlpoint(self.bandar_abbas, connected_to=[self.havadarya])
-        self.add_controlpoint(self.lar, connected_to=[self.bandar_lengeh, self.qeshm, self.havadarya, self.shiraz, self.kerman])
-        self.add_controlpoint(self.shiraz, connected_to=[self.lar, self.kerman])
-        self.add_controlpoint(self.kerman, connected_to=[self.lar, self.shiraz])
 
         self.add_controlpoint(self.west_carrier)
 

@@ -37,10 +37,10 @@ and prioritization for the enemy (i.e. less important bases will receive units w
 PRICES = {
     # fighter
     C_101CC: 8,
-    MiG_23MLD: 20,
+    MiG_23MLD: 18,
     Su_27: 24,
     Su_33: 25,
-    MiG_29A: 22,
+    MiG_29A: 24,
     MiG_29S: 26,
 
     F_5E_3: 6,
@@ -137,6 +137,7 @@ UNIT_BY_TASK = {
     CAP: [
         C_101CC,
         F_5E_3,
+        MiG_23MLD,
         Su_27,
         Su_33,
         MiG_21Bis,
@@ -243,6 +244,7 @@ UNIT_BY_COUNTRY = {
     "Russia": [
         C_101CC,
         AJS37,
+        MiG_23MLD,
         F_5E_3,
         Su_25,
         Su_27,
