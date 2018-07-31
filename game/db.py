@@ -287,6 +287,7 @@ UNIT_BY_COUNTRY = {
     ],
 
     "USA": [
+        F_5E_3,
         F_15C,
         FA_18C_hornet,
         AJS37,
