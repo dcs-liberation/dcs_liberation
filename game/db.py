@@ -343,7 +343,7 @@ Payload will be used for operation of following type, "*" category will be used 
 """
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
-        "*": "AIM-9M*6, AIM-7M*2, FUEL*3",
+        "*": "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
     },
 
     Su_33: {

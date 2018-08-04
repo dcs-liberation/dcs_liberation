@@ -37,14 +37,18 @@ TRANSPORT_LANDING_ALT = 1000
 DEFENCE_ENGAGEMENT_MAX_DISTANCE = 60000
 INTERCEPT_MAX_DISTANCE = 200000
 
+GROUP_VERTICAL_OFFSET = 300
+
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[typing.Tuple[PlaneGroup, int]]
+    vertical_offset = None  # type: int
 
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings):
         self.m = mission
         self.settings = settings
         self.conflict = conflict
+        self.vertical_offset = 0
         self.escort_targets = []
 
     def _start_type(self) -> StartType:
@@ -123,11 +127,12 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
+        self.vertical_offset += GROUP_VERTICAL_OFFSET
         if unit_type in helicopters.helicopter_map.values():
-            alt = WARM_START_HELI_ALT + random.randint(50, 200)
+            alt = WARM_START_HELI_ALT + self.vertical_offset
             speed = WARM_START_HELI_AIRSPEED
         else:
-            alt = WARM_START_ALTITUDE + random.randint(50, 800)
+            alt = WARM_START_ALTITUDE + self.vertical_offset
             speed = WARM_START_AIRSPEED
 
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))

@@ -2,6 +2,7 @@ import logging
 import typing
 import pickle
 import os
+import sys
 import shutil
 
 _user_folder = None  # type: str
@@ -17,7 +18,7 @@ def base_path() -> str:
     assert _user_folder
 
     openbeta_path = os.path.join(_user_folder, "Saved Games", "DCS.openbeta")
-    if os.path.exists(openbeta_path):
+    if "--force-stable-DCS" not in sys.argv and os.path.exists(openbeta_path):
         return openbeta_path
     else:
         return os.path.join(_user_folder, "Saved Games", "DCS")

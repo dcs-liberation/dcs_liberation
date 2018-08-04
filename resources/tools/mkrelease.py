@@ -10,18 +10,17 @@ IGNORED_PATHS = [
     ".git",
     ".idea",
     ".DS_Store",
+    "submodules",
 
     "build",
+    "venv",
 ]
 
-VERSION = "1.3.2"
+VERSION = "1.3.3"
 
 
-def _mk_archieve():
-    archieve = ZipFile("build/dcs_liberation_{}.zip".format(VERSION), "w")
-    archieve.writestr("start.bat", "py.exe __init__.py \"%UserProfile%\" \"{}\"".format(VERSION))
-
-    for path, directories, files in os.walk("."):
+def _zip_dir(archieve, path):
+    for path, directories, files in os.walk(path):
         is_ignored = False
         for ignored_path in IGNORED_PATHS:
             if ignored_path in path:
@@ -32,7 +31,22 @@ def _mk_archieve():
             continue
 
         for file in files:
+            if file in IGNORED_PATHS:
+                continue
             archieve.write(os.path.join(path, file))
+
+
+def _mk_archieve():
+    path = os.path.join("build", "dcs_liberation_{}.zip".format(VERSION))
+    if os.path.exists(path):
+        print("version already exists")
+        return
+
+    archieve = ZipFile(path, "w")
+    archieve.writestr("start.bat", "py.exe __init__.py \"%UserProfile%\" \"{}\"".format(VERSION))
+    _zip_dir(archieve, ".")
+    os.chdir("submodules\\dcs")
+    _zip_dir(archieve, "dcs")
 
 
 _mk_archieve()

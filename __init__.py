@@ -2,6 +2,7 @@
 import os
 import sys
 import dcs
+import logging
 
 import theater.caucasus
 import theater.persiangulf
@@ -14,11 +15,13 @@ import ui.corruptedsavemenu
 
 from game.game import Game
 from theater import start_generator
-from userdata import persistency, logging
+from userdata import persistency, logging as logging_module
 
 persistency.setup(sys.argv[1])
-logging.setup_version_string(sys.argv[2])
-dcs.planes.FlyingType.payload_dirs.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources\\payloads"))
+dcs.planes.FlyingType.payload_dirs = [os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources\\payloads")]
+
+logging_module.setup_version_string(sys.argv[2])
+logging.info("Using {} as userdata folder".format(persistency.base_path()))
 
 
 def proceed_to_main_menu(game: Game):
