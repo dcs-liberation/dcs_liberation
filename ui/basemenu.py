@@ -55,7 +55,7 @@ class BaseMenu(Menu):
 
         self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget), **STYLES["widget"])
         self.budget_label.grid(row=row, sticky=W)
-        Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(column=4, row=row)
+        Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(column=4, row=row, padx=(0,15), pady=(0,5))
         row += 1
 
         for task_type, units in units.items():
