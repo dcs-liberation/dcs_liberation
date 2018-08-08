@@ -1,6 +1,6 @@
 from tkinter import *
 from game.game import *
-
+from .styles import BG_COLOR
 
 class Window:
     image = None
@@ -11,13 +11,14 @@ class Window:
         self.tk = Tk()
         self.tk.title("DCS Liberation")
         self.tk.iconbitmap("icon.ico")
+        self.tk.resizable(True, True)
         self.tk.grid_columnconfigure(0, weight=1)
         self.tk.grid_rowconfigure(0, weight=1)
 
-        self.frame = Frame(self.tk)
+        self.frame = Frame(self.tk, bg=BG_COLOR)
         self.frame.grid(column=0, row=0, sticky=NSEW)
-        self.frame.grid_columnconfigure(0, minsize=300)
-        self.frame.grid_columnconfigure(1, minsize=400)
+        self.frame.grid_columnconfigure(0)
+        self.frame.grid_columnconfigure(1)
 
         self.frame.grid_columnconfigure(0, weight=0)
         self.frame.grid_columnconfigure(1, weight=1)
