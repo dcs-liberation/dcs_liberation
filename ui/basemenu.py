@@ -45,7 +45,13 @@ class BaseMenu(Menu):
             AirDefence: db.find_unittype(AirDefence, self.game.player),
         }
 
-        self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget))
+        # Header
+        head = Frame(self.frame, **STYLES["header"])
+        head.grid(row=row, column=0, columnspan=5, sticky=NSEW, pady=5)
+        Label(head, text=self.cp.name, **STYLES["title"]).grid()
+        row += 1
+
+        self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget), **STYLES["widget"])
         self.budget_label.grid(row=row, sticky=W)
         Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(column=4, row=row)
         row += 1
