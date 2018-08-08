@@ -8,7 +8,7 @@ PADDING_Y = 5
 FG_COLOR = "white"
 FG_COLOR_LIGHT = "#dddddd"
 BG_COLOR = "#4E5760"
-BTN_COLOR = "#699245"
+GREEN = "#699245"
 YELLOW = "#BF9A46"
 RED = "#D0232E"
 BG_TITLE_COLOR = "#2D3E50"
@@ -36,8 +36,10 @@ STYLES["italic"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": P
 STYLES["radiobutton"] = {"bg": BG_COLOR, "fg": "black", "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT,
                          "activebackground": BG_COLOR, "highlightbackground": BG_COLOR, "selectcolor": "white"}
 STYLES["title"] = {"bg": BG_TITLE_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}
+STYLES["title-green"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}
+STYLES["title-red"] = {"bg": RED, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}
 STYLES["header"] = {"bg": BG_TITLE_COLOR}
 
-STYLES["btn-primary"] = {"bg": BTN_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
+STYLES["btn-primary"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
 STYLES["btn-danger"] = {"bg": RED, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
 STYLES["btn-warning"] = {"bg": YELLOW, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
