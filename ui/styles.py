@@ -16,6 +16,7 @@ BG_TITLE_COLOR = "#2D3E50"
 # Fonts
 FONT_FAMILY = "Trebuchet MS"
 DEFAULT_FONT = (FONT_FAMILY, 8)
+ITALIC = (FONT_FAMILY, 8, "italic")
 BOLD_FONT = (FONT_FAMILY, 10, "bold italic")
 TITLE_FONT = (FONT_FAMILY, 16, "bold italic")
 
@@ -31,6 +32,7 @@ STYLES["strong-grey"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR
 STYLES["mission-preview"] = {"font": BOLD_FONT, "bg": YELLOW, "fg": FG_COLOR}
 
 STYLES["widget"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT}
+STYLES["italic"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": ITALIC}
 STYLES["radiobutton"] = {"bg": BG_COLOR, "fg": "black", "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT,
                          "activebackground": BG_COLOR, "highlightbackground": BG_COLOR, "selectcolor": "white"}
 STYLES["title"] = {"bg": BG_TITLE_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}

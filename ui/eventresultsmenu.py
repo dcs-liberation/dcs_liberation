@@ -3,6 +3,7 @@ from ui.window import *
 
 from game.game import *
 from userdata.debriefing import *
+from .styles import STYLES
 
 
 class EventResultsMenu(Menu):
@@ -13,6 +14,7 @@ class EventResultsMenu(Menu):
     def __init__(self, window: Window, parent, game: Game, event: Event):
         super(EventResultsMenu, self).__init__(window, parent, game)
         self.frame = window.right_pane
+        self.frame.grid_rowconfigure(0, weight=0)
         self.event = event
         self.finished = False
 
@@ -21,46 +23,82 @@ class EventResultsMenu(Menu):
     def display(self):
         self.window.clear_right_pane()
 
+        row = 0
+
+        def header(text, style="strong"):
+            nonlocal row
+            head = Frame(self.frame, **STYLES["header"])
+            head.grid(row=row, column=0, sticky=N + EW, columnspan=2, pady=(0, 10))
+            Label(head, text=text, **STYLES[style]).grid()
+            row += 1
+
+        def label(text, style="widget"):
+            nonlocal row
+            Label(self.frame, text=text, **STYLES[style]).grid(row=row, column=0, sticky=NW, columnspan=2)
+            row += 1
+
         if not self.finished:
-            Label(self.frame, text="Play the mission and save debriefing to").grid(row=0, column=0)
-            Label(self.frame, text=debriefing_directory_location()).grid(row=1, column=0)
 
-            """
-            For debugging purposes
-            """
+            header("You are clear for take off !")
 
-            row = 3
-            Separator(self.frame, orient=HORIZONTAL).grid(row=row, sticky=EW); row += 1
-            Label(self.frame, text="Cheat operation results: ").grid(row=row); row += 1
-            Button(self.frame, text="full enemy losses", command=self.simulate_result(0, 1)).grid(row=row); row += 1
-            Button(self.frame, text="full player losses", command=self.simulate_result(1, 0)).grid(row=row); row += 1
-            Button(self.frame, text="some enemy losses", command=self.simulate_result(0, 0.8)).grid(row=row); row += 1
-            Button(self.frame, text="some player losses", command=self.simulate_result(0.8, 0)).grid(row=row); row += 1
+            label("In DCS, open and play the mission :")
+            label("liberation_nextturn", "italic")
+            label("or")
+            label("liberation_nextturn_quick", "italic")
+            header("Then save the debriefing to the folder:")
+            label(debriefing_directory_location(), "italic")
+            header("Waiting for results...")
+
+            pg = Progressbar(self.frame, orient="horizontal", length=200, mode="determinate")
+            pg.grid(row=row, column=0, columnspan=2, sticky=EW, pady=5, padx=5)
+            pg.start(10)
+            row += 1
+
+            Separator(self.frame, orient=HORIZONTAL).grid(row=row, sticky=EW);
+            row += 1
+
+            Label(self.frame, text="Cheat operation results: ", **STYLES["strong"]).grid(column=0, row=row,
+                                                                                         columnspan=2, sticky=NSEW,
+                                                                                         pady=5);
+
+            row += 1
+            Button(self.frame, text="full enemy losses", command=self.simulate_result(0, 1),
+                   **STYLES["btn-warning"]).grid(column=0, row=row, padx=5, pady=5)
+            Button(self.frame, text="full player losses", command=self.simulate_result(1, 0),
+                   **STYLES["btn-warning"]).grid(column=1, row=row, padx=5, pady=5)
+            row += 1
+            Button(self.frame, text="some enemy losses", command=self.simulate_result(0, 0.8),
+                   **STYLES["btn-warning"]).grid(column=0, row=row, padx=5, pady=5)
+            Button(self.frame, text="some player losses", command=self.simulate_result(0.8, 0),
+                   **STYLES["btn-warning"]).grid(column=1, row=row, padx=5, pady=5)
+            row += 1
+
         else:
             row = 0
             if self.event.is_successfull(self.debriefing):
-                Label(self.frame, text="Operation success").grid(row=row, columnspan=1); row += 1
+                header("Operation success")
             else:
-                Label(self.frame, text="Operation failed").grid(row=row, columnspan=1); row += 1
+                header("Operation failed")
 
-            Separator(self.frame, orient='horizontal').grid(row=row, columnspan=1, sticky=NE); row += 1
-            Label(self.frame, text="Player losses").grid(row=row, columnspan=1); row += 1
+            header("Player losses")
+
             for unit_type, count in self.player_losses.items():
-                Label(self.frame, text=db.unit_type_name(unit_type)).grid(row=row)
-                Label(self.frame, text="{}".format(count)).grid(column=1, row=row)
+                Label(self.frame, text=db.unit_type_name(unit_type), **STYLES["widget"]).grid(row=row)
+                Label(self.frame, text="{}".format(count), **STYLES["widget"]).grid(column=1, row=row)
                 row += 1
 
-            Separator(self.frame, orient='horizontal').grid(row=row, columnspan=1, sticky=NE); row += 1
-            Label(self.frame, text="Enemy losses").grid(columnspan=1, row=row); row += 1
+            header("Enemy losses")
+
             for unit_type, count in self.enemy_losses.items():
                 if count == 0:
                     continue
 
-                Label(self.frame, text=db.unit_type_name(unit_type)).grid(row=row)
-                Label(self.frame, text="{}".format(count)).grid(column=1, row=row)
+                Label(self.frame, text=db.unit_type_name(unit_type), **STYLES["widget"]).grid(row=row)
+                Label(self.frame, text="{}".format(count), **STYLES["widget"]).grid(column=1, row=row)
                 row += 1
 
-            Button(self.frame, text="Okay", command=self.dismiss).grid(columnspan=1, row=row); row += 1
+            Button(self.frame, text="Okay", command=self.dismiss, **STYLES["btn-primary"]).grid(columnspan=1, row=row);
+            row += 1
 
     def process_debriefing(self, debriefing: Debriefing):
         self.debriefing = debriefing
@@ -106,8 +144,10 @@ class EventResultsMenu(Menu):
             alive_player_units = count(player)
             alive_enemy_units = count(enemy)
 
-            destroyed_player_units = db.unitdict_restrict_count(alive_player_units, math.ceil(sum(alive_player_units.values()) * player_factor))
-            destroyed_enemy_units = db.unitdict_restrict_count(alive_enemy_units, math.ceil(sum(alive_enemy_units.values()) * enemy_factor))
+            destroyed_player_units = db.unitdict_restrict_count(alive_player_units, math.ceil(
+                sum(alive_player_units.values()) * player_factor))
+            destroyed_enemy_units = db.unitdict_restrict_count(alive_enemy_units, math.ceil(
+                sum(alive_enemy_units.values()) * enemy_factor))
 
             alive_player_units = {k: v - destroyed_player_units.get(k, 0) for k, v in alive_player_units.items()}
             alive_enemy_units = {k: v - destroyed_enemy_units.get(k, 0) for k, v in alive_enemy_units.items()}
