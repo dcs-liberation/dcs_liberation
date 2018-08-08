@@ -1,6 +1,7 @@
 from ui.eventmenu import *
 
 from game.game import *
+from .styles import STYLES
 
 
 class BaseMenu(Menu):
@@ -9,7 +10,6 @@ class BaseMenu(Menu):
 
     def __init__(self, window: Window, parent, game: Game, cp: ControlPoint):
         super(BaseMenu, self).__init__(window, parent, game)
-
         self.cp = cp
         self.base = cp.base
         self.frame = window.right_pane
@@ -26,15 +26,15 @@ class BaseMenu(Menu):
             existing_units = self.base.total_units_of_type(unit_type)
             scheduled_units = self.event.units.get(unit_type, 0)
 
-            Label(self.frame, text="{}".format(db.unit_type_name(unit_type))).grid(row=row, sticky=W)
+            Label(self.frame, text="{}".format(db.unit_type_name(unit_type)), **STYLES["widget"]).grid(row=row, sticky=W)
 
-            label = Label(self.frame, text="({})".format(existing_units))
+            label = Label(self.frame, text="({})".format(existing_units), **STYLES["widget"])
             label.grid(column=1, row=row)
             self.bought_amount_labels[unit_type] = label
 
-            Label(self.frame, text="{}m".format(unit_price)).grid(column=2, row=row)
-            Button(self.frame, text="+", command=self.buy(unit_type)).grid(column=3, row=row)
-            Button(self.frame, text="-", command=self.sell(unit_type)).grid(column=4, row=row)
+            Label(self.frame, text="{}m".format(unit_price), **STYLES["widget"]).grid(column=2, row=row, sticky=E)
+            Button(self.frame, text="+", command=self.buy(unit_type), **STYLES["btn-primary"]).grid(column=3, row=row, padx=(10,0))
+            Button(self.frame, text="-", command=self.sell(unit_type), **STYLES["btn-warning"]).grid(column=4, row=row, padx=(10,5))
             row += 1
 
         units = {
@@ -47,11 +47,11 @@ class BaseMenu(Menu):
 
         self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget))
         self.budget_label.grid(row=row, sticky=W)
-        Button(self.frame, text="Back", command=self.dismiss).grid(column=4, row=row)
+        Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(column=4, row=row)
         row += 1
 
         for task_type, units in units.items():
-            Label(self.frame, text="{}".format(db.task_name(task_type))).grid(row=row, columnspan=5); row += 1
+            Label(self.frame, text="{}".format(db.task_name(task_type)), **STYLES["strong"]).grid(row=row, columnspan=5, sticky=NSEW); row += 1
 
             units = list(set(units))
             units.sort(key=lambda x: db.PRICES[x])

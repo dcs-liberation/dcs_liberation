@@ -65,7 +65,7 @@ class NewGameMenu(Menu):
         head.grid(row=0, column=0, sticky=NSEW)
         Label(head, text="Start a new game", **STYLES["title"]).grid()
 
-        # Main Frame
+        # Body
         body = Frame(self.frame, **STYLES["body"])
         body.grid(row=1, column=0, sticky=NSEW)
 

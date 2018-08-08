@@ -1,6 +1,6 @@
 from tkinter import *
 from game.game import *
-from .styles import BG_COLOR
+from .styles import BG_COLOR,BG_TITLE_COLOR
 
 class Window:
     image = None
@@ -24,9 +24,9 @@ class Window:
         self.frame.grid_columnconfigure(1, weight=1)
         self.frame.grid_rowconfigure(0, weight=1)
 
-        self.left_pane = Frame(self.frame)
+        self.left_pane = Frame(self.frame, bg=BG_TITLE_COLOR)
         self.left_pane.grid(row=0, column=0, sticky=NSEW)
-        self.right_pane = Frame(self.frame)
+        self.right_pane = Frame(self.frame, bg=BG_COLOR)
         self.right_pane.grid(row=0, column=1, sticky=NSEW)
 
         self.tk.focus()
