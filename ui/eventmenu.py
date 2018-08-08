@@ -4,6 +4,7 @@ from ui.eventresultsmenu import *
 
 from game import *
 from game.event import *
+from .styles import STYLES
 
 
 UNITTYPES_FOR_EVENTS = {
@@ -44,39 +45,46 @@ class EventMenu(Menu):
         self.window.clear_right_pane()
         row = 0
 
+        def header(text, style="strong"):
+            nonlocal row
+            head = Frame(self.frame, **STYLES["header"])
+            head.grid(row=row, column=0, sticky=N+EW, columnspan=5)
+            Label(head, text=text, **STYLES[style]).grid()
+            row += 1
+
         def label(text, _row=None, _column=None, sticky=None):
             nonlocal row
-            Label(self.frame, text=text).grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
+            Label(self.frame, text=text, **STYLES["widget"]).grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
 
             if _row is None:
                 row += 1
 
         def scrable_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row, sticky=W)
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count), **STYLES["widget"]).grid(row=row, sticky=W)
 
             scramble_entry = Entry(self.frame, width=2)
-            scramble_entry.grid(column=1, row=row, sticky=W)
+            scramble_entry.grid(column=1, row=row, sticky=E, padx=5)
             scramble_entry.insert(0, "0")
             self.aircraft_scramble_entries[unit_type] = scramble_entry
-            Button(self.frame, text="+", command=self.scramble_half(True, unit_type)).grid(column=2, row=row)
+            Button(self.frame, text="+", command=self.scramble_half(True, unit_type), **STYLES["btn-primary"]).grid(column=2, row=row)
 
             client_entry = Entry(self.frame, width=2)
-            client_entry.grid(column=3, row=row, sticky=E)
+            client_entry.grid(column=3, row=row, sticky=E, padx=5)
             client_entry.insert(0, "0")
             self.aircraft_client_entries[unit_type] = client_entry
-            Button(self.frame, text="+", command=self.client_one(unit_type)).grid(column=4, row=row)
+            Button(self.frame, text="+", command=self.client_one(unit_type), **STYLES["btn-primary"]).grid(column=4, row=row)
 
             row += 1
 
         def scramble_armor_row(unit_type, unit_count):
             nonlocal row
-            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count)).grid(row=row, sticky=W)
+            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count), **STYLES["widget"]).grid(row=row, sticky=W)
             scramble_entry = Entry(self.frame, width=2)
             scramble_entry.insert(0, "0")
-            scramble_entry.grid(column=1, row=row)
+            scramble_entry.grid(column=1, row=row, sticky=E, padx=5)
             self.armor_scramble_entries[unit_type] = scramble_entry
-            Button(self.frame, text="+", command=self.scramble_half(False, unit_type)).grid(column=2, row=row)
+            Button(self.frame, text="+", command=self.scramble_half(False, unit_type),**STYLES["btn-primary"]).grid(column=2, row=row)
 
             row += 1
 
@@ -84,21 +92,18 @@ class EventMenu(Menu):
         if threat_descr:
             threat_descr = "Approx. {}".format(threat_descr)
 
-        Label(self.frame, text="{}. {}".format(self.event, threat_descr)).grid(row=row, column=0, columnspan=5)
+        # Header
+        header("Mission Menu", "title")
+
+        # Mission Description
+        Label(self.frame, text="{}. {}".format(self.event, threat_descr), **STYLES["mission-preview"]).grid(row=row, column=0, columnspan=5, sticky=S+EW, padx=5, pady=5)
         row += 1
 
-        Button(self.frame, text="Commit", command=self.start).grid(column=3, row=row, sticky=E)
-        Button(self.frame, text="Back", command=self.dismiss).grid(column=4, row=row, sticky=E)
-
-        awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
-        Checkbutton(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), var=self.awacs, state=awacs_enabled).grid(row=row, column=0, sticky=W)
-        row += 1
-
-        label("Aircraft")
+        header("Aircraft :")
 
         if self.base.aircraft:
-            Label(self.frame, text="Amount").grid(row=row, column=1, columnspan=2)
-            Label(self.frame, text="Client slots").grid(row=row, column=3, columnspan=2)
+            Label(self.frame, text="Amount", **STYLES["widget"]).grid(row=row, column=1, columnspan=2)
+            Label(self.frame, text="Client slots", **STYLES["widget"]).grid(row=row, column=3, columnspan=2)
             row += 1
 
         filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__]
@@ -114,15 +119,28 @@ class EventMenu(Menu):
         if not self.base.total_planes:
             label("None", sticky=W)
 
-        label("Armor")
+        header("Armor :")
+        armor_counter = 0
         for unit_type, count in self.base.armor.items():
             if filter_to and db.unit_task(unit_type) not in filter_to:
                 continue
-
             scramble_armor_row(unit_type, count)
+            armor_counter += 1
 
-        if not self.base.total_armor:
+        if not self.base.total_armor or armor_counter == 0:
             label("None", sticky=W)
+
+        header("Support :")
+        # Options
+        awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
+        Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=0, sticky=E)
+        Label(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), **STYLES["widget"]).grid(row=row, column=3, sticky=W, padx=5, pady=5)
+        row += 1
+
+        header("Ready ?")
+        Button(self.frame, text="Commit", command=self.start, **STYLES["btn-primary"]).grid(column=0, row=row, sticky=E, padx=5, pady=(10,10))
+        Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-warning"]).grid(column=3, row=row, sticky=E, padx=5, pady=(10,10))
+        row += 1
 
     def _scrambled_aircraft_count(self, unit_type: UnitType) -> int:
         value = self.aircraft_scramble_entries[unit_type].get()
