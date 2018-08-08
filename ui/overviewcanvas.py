@@ -50,9 +50,10 @@ class OverviewCanvas:
         title = cp.name
         font = ("Helvetica", 10)
 
-        id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
-        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
         id = self.canvas.create_text(coords[0], coords[1], text=title, font=font)
+        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
+
+        id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
         self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
 
     def _player_color(self):
@@ -116,7 +117,8 @@ class OverviewCanvas:
             self.create_cp_title((coords[0] + arc_size/4, coords[1] + arc_size/4), cp)
 
             units_title = "{}/{}/{}".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10))
+            self.canvas.create_text(coords[0]+1, coords[1] - arc_size / 1.5 +1, text=units_title, font=("Helvetica", 10), fill=color)
+            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10), fill="white")
 
     def display(self, cp: ControlPoint):
         def action(_):
