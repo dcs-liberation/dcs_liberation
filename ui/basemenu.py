@@ -48,7 +48,9 @@ class BaseMenu(Menu):
         # Header
         head = Frame(self.frame, **STYLES["header"])
         head.grid(row=row, column=0, columnspan=5, sticky=NSEW, pady=5)
-        Label(head, text=self.cp.name, **STYLES["title"]).grid()
+        Label(head, text=self.cp.name, **STYLES["title"]).grid(row=0, column=0, sticky=NW+S)
+        units_title = "{}/{}/{}".format(self.cp.base.total_planes, self.cp.base.total_armor, self.cp.base.total_aa)
+        Label(head, text=units_title, **STYLES["strong-grey"]).grid(row=0, column=1, sticky=NE+S)
         row += 1
 
         self.budget_label = Label(self.frame, text="Budget: {}m".format(self.game.budget), **STYLES["widget"])

@@ -6,6 +6,7 @@ PADDING_Y = 5
 
 # Colors
 FG_COLOR = "white"
+FG_COLOR_LIGHT = "#dddddd"
 BG_COLOR = "#4E5760"
 BTN_COLOR = "#699245"
 YELLOW = "#FDB731"
@@ -25,6 +26,7 @@ STYLES["frame-wrapper"] = {"bg": BG_COLOR, "relief":"sunken"}
 
 STYLES["body"] = {"bg": BG_COLOR, "padx": 25, "pady": 35}
 STYLES["strong"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR}
+STYLES["strong-grey"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR_LIGHT}
 STYLES["widget"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT}
 STYLES["radiobutton"] = {"bg": BG_COLOR, "fg": "black", "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT,
                          "activebackground": BG_COLOR, "highlightbackground": BG_COLOR, "selectcolor": "white"}
