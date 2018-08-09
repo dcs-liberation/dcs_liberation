@@ -39,7 +39,7 @@ class EventResultsMenu(Menu):
 
         if not self.finished:
 
-            header("You are clear for take off !")
+            header("You are clear for takeoff !")
 
             label("In DCS, open and play the mission :")
             label("liberation_nextturn", "italic")
