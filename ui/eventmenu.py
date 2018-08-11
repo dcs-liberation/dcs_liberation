@@ -9,7 +9,7 @@ from .styles import STYLES, RED
 
 class EventMenu(Menu):
     scramble_entries = None  # type: typing.Dict[typing.Type[Task], typing.Dict[typing.Type[UnitType], typing.Tuple[Entry, Entry]]]
-
+    ca_slot_entry = None
     error_label = None  # type: Label
     awacs = None  # type: IntVar
 
@@ -100,8 +100,15 @@ class EventMenu(Menu):
         header("Support:")
         # Options
         awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
-        Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=0, sticky=E)
-        Label(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), **STYLES["widget"]).grid(row=row, column=3, sticky=W, padx=5, pady=5)
+        Label(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), **STYLES["widget"]).grid(row=row, column=0, sticky=W)
+        Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=3, sticky=E)
+        row += 1
+
+        Label(self.frame, text="Combined Arms Slots", **STYLES["widget"]).grid(row=row, sticky=W)
+        self.ca_slot_entry = Entry(self.frame,  width=2)
+        self.ca_slot_entry.insert(0, "0")
+        self.ca_slot_entry.grid(column=2, row=row, sticky=E, padx=5)
+        Button(self.frame, text="+", command=self.add_ca_slot, **STYLES["btn-primary"]).grid(column=3, row=row, padx=15)
         row += 1
 
         header("Ready?")
@@ -124,6 +131,12 @@ class EventMenu(Menu):
 
         return action
 
+    def add_ca_slot(self):
+        value = self.ca_slot_entry.get()
+        amount = int(value and value or "0")
+        self.ca_slot_entry.delete(0, END)
+        self.ca_slot_entry.insert(0, str(amount+1))
+
     def client_one(self, task: typing.Type[Task], unit_type: UnitType) -> typing.Callable:
         def action():
             entry = self.scramble_entries[task][unit_type][1]  # type: Entry
@@ -139,6 +152,10 @@ class EventMenu(Menu):
             self.game.awacs_expense_commit()
         else:
             self.event.is_awacs_enabled = False
+
+        ca_slot_entry_value = self.ca_slot_entry.get()
+        ca_slots = int(ca_slot_entry_value and ca_slot_entry_value or "0")
+        self.event.ca_slots = ca_slots
 
         flights = {k: {} for k in self.event.tasks}  # type: db.TaskForceDict
         units_scramble_counts = {}  # type: typing.Dict[typing.Type[UnitType], int]

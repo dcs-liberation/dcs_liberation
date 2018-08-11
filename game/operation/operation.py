@@ -27,6 +27,7 @@ class Operation:
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
     is_awacs_enabled = False
+    ca_slots = 0
 
     def __init__(self,
                  game,
@@ -50,7 +51,6 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.mission = mission
         self.conflict = conflict
-
         self.armorgen = ArmorConflictGenerator(mission, conflict)
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.aagen = AAConflictGenerator(mission, conflict)
@@ -89,6 +89,11 @@ class Operation:
         self.briefinggen.append_frequency("Tanker", "10X/131 MHz AM")
         if self.is_awacs_enabled:
             self.briefinggen.append_frequency("AWACS", "133 MHz AM")
+
+        # combined arms
+        self.mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
+        self.mission.groundControl.blue_tactical_commander = self.ca_slots
+        self.mission.groundControl.red_tactical_commander = self.ca_slots
 
         # ground infrastructure
         self.groundobjectgen.generate()
