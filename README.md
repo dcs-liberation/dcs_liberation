@@ -4,7 +4,7 @@
 
 Inspired by *ARMA Liberation* mission.
 
-If you plan on using code from git, and not from release archieve, you should copy the `resources/payloads` from archieve to working directory.
+If you plan on using code from git, and not from release archieve, you should copy the files from `resources/payloads` from archieve to the same folder in working directory.
 
 Uses [pydcs](http://github.com/pydcs/dcs) for mission generation.
 
