@@ -34,8 +34,6 @@ class NavalInterceptionOperation(Operation):
         self.initialize(self.mission, conflict)
 
     def generate(self):
-        super(NavalInterceptionOperation, self).generate()
-
         target_groups = self.shipgen.generate_cargo(units=self.targets)
 
         self.airgen.generate_ship_strikegroup(
@@ -51,3 +49,9 @@ class NavalInterceptionOperation(Operation):
                 clients=self.defender_clients,
                 at=self.defenders_starting_position
             )
+
+        self.briefinggen.title = "Naval Intercept"
+        self.briefinggen.description = "Destroy supply transport ships. Lowers target strength. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+
+        super(NavalInterceptionOperation, self).generate()
+

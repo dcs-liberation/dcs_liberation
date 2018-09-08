@@ -59,14 +59,59 @@ def parse_mutliplayer_debriefing(contents: str):
 
 
 class Debriefing:
-    def __init__(self, dead_units):
+    def __init__(self, dead_units, dead_objects):
         self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
+        self.destroyed_objects = []  # type: typing.List[str]
 
         self._dead_units = dead_units
+        self._dead_objects = dead_objects
 
     @classmethod
     def parse(cls, path: str):
+        dead_units = {}
+        dead_objects = []
+
+        def append_dead_unit(country_id, unit_type):
+            nonlocal dead_units
+            if country_id not in dead_units:
+                dead_units[country_id] = {}
+
+            if unit_type not in dead_units[country_id]:
+                dead_units[country_id][unit_type] = 0
+
+            dead_units[country_id][unit_type] += 1
+
+        def append_dead_object(object_mission_id_str):
+            nonlocal dead_objects
+            object_mission_id = int(object_mission_id_str)
+            if object_mission_id in dead_objects:
+                logging.info("debriefing: failed to append_dead_object {}: already exists!".format(object_mission_id))
+                return
+
+            dead_objects.append(object_mission_id)
+
+        def parse_dead_unit(event):
+            try:
+                components = event["initiator"].split("|")
+                category, country_id, group_id, unit_type = components[0], int(components[1]), int(components[2]), db.unit_type_from_name(components[3])
+                if unit_type is None:
+                    logging.info("Skipped {} due to no unit type".format(event))
+                    return
+
+                if category == "unit":
+                    append_dead_unit(country_id, unit_type)
+                else:
+                    logging.info("Skipped {} due to category".format(event))
+            except Exception as e:
+                logging.error(e)
+
+        def parse_dead_object(event):
+            try:
+                append_dead_object(event["initiatorMissionID"])
+            except Exception as e:
+                logging.error(e)
+
         with open(path, "r") as f:
             table_string = f.read()
             try:
@@ -75,36 +120,18 @@ class Debriefing:
                 table = parse_mutliplayer_debriefing(table_string)
 
             events = table.get("debriefing", {}).get("events", {})
-            dead_units = {}
-
             for event in events.values():
                 event_type = event.get("type", None)
-                if event_type != "crash" and event_type != "dead":
-                    continue
+                if event_type in ["crash", "dead"]:
+                    object_initiator = event["initiator"] in ["SKLAD_CRUSH", "SKLADCDESTR", "TEC_A_CRUSH", "BAK_CRUSH"]
+                    defense_initiator = event["initiator"].startswith("defense|")
 
-                try:
-                    components = event["initiator"].split("|")
-                    category, country_id, group_id, unit_type = components[0], int(components[1]), int(components[2]), db.unit_type_from_name(components[3])
-                    if unit_type is None:
-                        logging.info("Skipped due to no unit type")
-                        continue
+                    if object_initiator or defense_initiator:
+                        parse_dead_object(event)
+                    else:
+                        parse_dead_unit(event)
 
-                    if category != "unit":
-                        logging.info("Skipped due to category")
-                        continue
-                except Exception as e:
-                    logging.error(e)
-                    continue
-
-                if country_id not in dead_units:
-                    dead_units[country_id] = {}
-
-                if unit_type not in dead_units[country_id]:
-                    dead_units[country_id][unit_type] = 0
-
-                dead_units[country_id][unit_type] += 1
-
-        return Debriefing(dead_units)
+        return Debriefing(dead_units, dead_objects)
 
     def calculate_units(self, mission: Mission, player_name: str, enemy_name: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
@@ -141,6 +168,13 @@ class Debriefing:
             player.name: {k: v - self.destroyed_units[player.name].get(k, 0) for k, v in player_units.items()},
             enemy.name: {k: v - self.destroyed_units[enemy.name].get(k, 0) for k, v in enemy_units.items()},
         }
+
+        for mission_id in self._dead_objects:
+            for group in mission.country(enemy.name).static_group + mission.country(enemy.name).vehicle_group:
+                if group.id == mission_id:
+                    self.destroyed_objects.append(str(group.name))
+
+        self.destroyed_objects += self._dead_defense
 
 
 def debriefing_directory_location() -> str:

@@ -52,10 +52,10 @@ EVENT_PROBABILITIES = {
     BaseAttackEvent: [100, 10],
     FrontlineAttackEvent: [100, 0],
     FrontlinePatrolEvent: [100, 0],
+    StrikeEvent: [100, 0],
     InterceptEvent: [25, 10],
     InsurgentAttackEvent: [0, 10],
     NavalInterceptEvent: [25, 10],
-    AntiAAStrikeEvent: [25, 10],
     InfantryTransportEvent: [25, 0],
 }
 

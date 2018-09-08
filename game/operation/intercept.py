@@ -55,5 +55,9 @@ class InterceptOperation(Operation):
         self.airgen.generate_defenders_escort(self.escort, clients=self.defender_clients)
 
         self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
+
+        self.briefinggen.title = "Air Intercept"
+        self.briefinggen.description = "Intercept enemy supply transport aircraft. Escort will also be present if there are available planes on the base. Operation will be considered successful if most of the targets are destroyed, lowering targets strength as a result"
+
         super(InterceptOperation, self).generate()
 

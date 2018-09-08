@@ -5,18 +5,23 @@ from dcs.mapping import *
 from dcs.country import *
 from dcs.terrain import Airport
 
+from .theatergroundobject import TheaterGroundObject
+
 
 class ControlPoint:
     connected_points = []  # type: typing.List[ControlPoint]
+    ground_objects = None  # type: typing.Collection[TheaterGroundObject]
     position = None  # type: Point
     captured = False
     has_frontline = True
+    id = 0
     base = None  # type: theater.base.Base
     at = None  # type: db.StartPosition
 
-    def __init__(self, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
+    def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
         import theater.base
 
+        self.id = id
         self.name = " ".join(re.split(r" |-", name)[:2])
         self.full_name = name
         self.position = position
@@ -33,12 +38,12 @@ class ControlPoint:
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
         assert airport
-        return cls(airport.name, airport.position, airport, radials, size, importance, has_frontline)
+        return cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline)
 
     @classmethod
     def carrier(cls, name: str, at: Point):
         import theater.conflicttheater
-        return cls(name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1)
+        return cls(0, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1)
 
     def __str__(self):
         return self.name

@@ -54,12 +54,9 @@ class EventResultsMenu(Menu):
             pg.start(10)
             row += 1
 
-            Separator(self.frame, orient=HORIZONTAL).grid(row=row, sticky=EW);
-            row += 1
-
             Label(self.frame, text="Cheat operation results: ", **STYLES["strong"]).grid(column=0, row=row,
                                                                                          columnspan=2, sticky=NSEW,
-                                                                                         pady=5);
+                                                                                         pady=5)
 
             row += 1
             Button(self.frame, text="full enemy losses", command=self.simulate_result(0, 1),
@@ -116,7 +113,7 @@ class EventResultsMenu(Menu):
 
     def simulate_result(self, player_factor: float, enemy_factor: float):
         def action():
-            debriefing = Debriefing({})
+            debriefing = Debriefing({}, [])
 
             def count(country: Country) -> typing.Dict[UnitType, int]:
                 result = {}

@@ -7,3 +7,4 @@ class Settings:
     multiplier = 1
     sams = True
     cold_start = False
+    version = None

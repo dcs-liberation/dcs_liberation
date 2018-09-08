@@ -4,18 +4,23 @@ from ui.eventresultsmenu import *
 
 from game import *
 from game.event import *
-from .styles import STYLES
+from .styles import STYLES, RED
 
 
 UNITTYPES_FOR_EVENTS = {
     FrontlineAttackEvent: [CAS, PinpointStrike],
     FrontlinePatrolEvent: [CAP, PinpointStrike],
     BaseAttackEvent: [CAP, CAS, PinpointStrike],
+    StrikeEvent: [CAP, CAS],
     InterceptEvent: [CAP],
     InsurgentAttackEvent: [CAS],
     NavalInterceptEvent: [CAS],
-    AntiAAStrikeEvent: [CAS],
     InfantryTransportEvent: [Embarking],
+}
+
+AI_BAN_FOR_EVENTS = {
+    InfantryTransportEvent: [Embarking],
+    StrikeEvent: [CAS],
 }
 
 
@@ -23,6 +28,7 @@ class EventMenu(Menu):
     aircraft_scramble_entries = None  # type: typing.Dict[PlaneType , Entry]
     aircraft_client_entries = None  # type: typing.Dict[PlaneType, Entry]
     armor_scramble_entries = None  # type: typing.Dict[VehicleType, Entry]
+    error_label = None  # type: Label
     awacs = None  # type: IntVar
 
     def __init__(self, window: Window, parent, game: Game, event: event.Event):
@@ -54,10 +60,13 @@ class EventMenu(Menu):
 
         def label(text, _row=None, _column=None, sticky=None):
             nonlocal row
-            Label(self.frame, text=text, **STYLES["widget"]).grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
+            new_label = Label(self.frame, text=text, **STYLES["widget"])
+            new_label.grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
 
             if _row is None:
                 row += 1
+
+            return new_label
 
         def scrable_row(unit_type, unit_count):
             nonlocal row
@@ -138,6 +147,8 @@ class EventMenu(Menu):
         row += 1
 
         header("Ready ?")
+        self.error_label = label("")
+        self.error_label["fg"] = RED
         Button(self.frame, text="Commit", command=self.start, **STYLES["btn-primary"]).grid(column=0, row=row, sticky=E, padx=5, pady=(10,10))
         Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-warning"]).grid(column=3, row=row, sticky=E, padx=5, pady=(10,10))
         row += 1
@@ -214,6 +225,16 @@ class EventMenu(Menu):
             if amount > 0:
                 scrambled_armor[unit_type] = amount
 
+        if type(self.event) in AI_BAN_FOR_EVENTS:
+            banned_tasks_for_ai = AI_BAN_FOR_EVENTS[type(self.event)]
+            for task in banned_tasks_for_ai:
+                scrambled_slots = [1 for x in scrambled_aircraft if db.unit_task(x) == task]
+                scrambled_client_slots = [1 for x in scrambled_clients if db.unit_task(x) == task]
+
+                if scrambled_slots != scrambled_client_slots:
+                    self.error_label["text"] = "AI slots of task {} are not supported for this operation".format(task.name)
+                    return
+
         if type(self.event) is BaseAttackEvent:
             e = self.event  # type: BaseAttackEvent
             if self.game.is_player_attack(self.event):
@@ -261,6 +282,14 @@ class EventMenu(Menu):
             e = self.event  # type: InfantryTransportEvent
             if self.game.is_player_attack(self.event):
                 e.player_attacking(transport=scrambled_aircraft, clients=scrambled_clients)
+            else:
+                assert False
+        elif type(self.event) is StrikeEvent:
+            e = self.event  # type: StrikeEvent
+            if self.game.is_player_attack(self.event):
+                e.player_attacking(strikegroup=scrambled_cas,
+                                   escort=scrambled_sweep,
+                                   clients=scrambled_clients)
             else:
                 assert False
 

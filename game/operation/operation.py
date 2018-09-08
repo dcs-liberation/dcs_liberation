@@ -18,9 +18,11 @@ class Operation:
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
-    awacsgen = None  # type: AirSupportConflictGenerator
+    airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
     envgen = None  # type: EnvironmentGenerator
+    groundobjectgen = None  # type: GroundObjectsGenerator
+    briefinggen = None  # type: BriefingGenerator
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
@@ -44,6 +46,12 @@ class Operation:
         self.to_cp = to_cp
         self.is_quick = False
 
+    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
+        return []
+
+    def is_successfull(self, debriefing: Debriefing) -> bool:
+        return True
+
     def initialize(self, mission: Mission, conflict: Conflict):
         self.mission = mission
         self.conflict = conflict
@@ -52,10 +60,12 @@ class Operation:
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
-        self.awacsgen = AirSupportConflictGenerator(mission, conflict, self.game)
+        self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
+        self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
+        self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
@@ -78,10 +88,18 @@ class Operation:
 
     def generate(self):
         self.visualgen.generate()
-        self.awacsgen.generate(self.is_awacs_enabled)
 
+        # air support
+        self.airsupportgen.generate(self.is_awacs_enabled)
+        self.briefinggen.append_frequency("Tanker", "10X/240 MHz FM")
+        if self.is_awacs_enabled:
+            self.briefinggen.append_frequency("AWACS", "244 MHz FM")
+
+        # ground infrastructure
+        self.groundobjectgen.generate()
         self.extra_aagen.generate()
 
+        # triggers
         if self.game.is_player_attack(self.conflict.attackers_side):
             cp = self.conflict.from_cp
         else:
@@ -92,13 +110,16 @@ class Operation:
                                   activation_trigger_radius=self.trigger_radius,
                                   awacs_enabled=self.is_awacs_enabled)
 
+        # env settings
         if self.environment_settings is None:
             self.environment_settings = self.envgen.generate()
         else:
             self.envgen.load(self.environment_settings)
 
-    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
-        return []
+        # main frequencies
+        self.briefinggen.append_frequency("Flight", "251 MHz FM")
+        if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
+            self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
 
-    def is_successfull(self, debriefing: Debriefing) -> bool:
-        return True
+        # briefing
+        self.briefinggen.generate()

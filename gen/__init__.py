@@ -7,6 +7,8 @@ from .shipgen import *
 from .visualgen import *
 from .triggergen import *
 from .environmentgen import *
+from .groundobjectsgen import *
+from .briefinggen import *
 
 from . import naming
 

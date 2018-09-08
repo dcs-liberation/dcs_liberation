@@ -52,7 +52,10 @@ class FrontlinePatrolOperation(Operation):
     def generate(self):
         self.airgen.generate_defenders_cas(self.cas, {}, self.defenders_starting_position)
         self.airgen.generate_defenders_escort(self.escort, {}, self.defenders_starting_position)
-        self.airgen.generate_patrol(self.interceptors, self.attacker_clients, self.attackers_starting_position)
+        self.airgen.generate_migcap(self.interceptors, self.attacker_clients, self.attackers_starting_position)
 
         self.armorgen.generate_vec(self.armor_attackers, self.armor_defenders)
+
+        self.briefinggen.title = "Frontline CAP"
+        self.briefinggen.description = "Providing CAP support for ground units attacking enemy lines. Enemy will scramble its CAS and your task is to intercept it. Operation will be considered successful if total number of friendly units will be lower than enemy by at least a factor of 0.8 (i.e. with 12 units from both sides, there should be at least 8 friendly units alive), lowering targets strength as a result."
         super(FrontlinePatrolOperation, self).generate()

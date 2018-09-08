@@ -41,4 +41,7 @@ class InsurgentAttackOperation(Operation):
         self.airgen.generate_defense(self.strikegroup, self.defender_clients, self.defenders_starting_position)
         self.armorgen.generate(self.target, {})
 
+        self.briefinggen.title = "Destroy insurgents"
+        self.briefinggen.description = "Destroy vehicles of insurgents in close proximity of the friendly base. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+
         super(InsurgentAttackOperation, self).generate()

@@ -16,7 +16,7 @@ IGNORED_PATHS = [
     "venv",
 ]
 
-VERSION = "1.3.3"
+VERSION = input("version str:")
 
 
 def _zip_dir(archieve, path):

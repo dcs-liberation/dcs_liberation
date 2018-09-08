@@ -73,7 +73,10 @@ class CaucasusTheater(ConflictTheater):
         self.carrier_1.captured = True
         self.soganlug.captured = True
 
+        with open("resources/cau_groundobjects.p", "rb") as f:
+            self.set_groundobject(pickle.load(f))
+
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
-        point.name = " ".join(re.split(r" |-", point.name)[:1])
+        point.name = " ".join(re.split(r"[ -]", point.name)[:1])
 
         super(CaucasusTheater, self).add_controlpoint(point, connected_to=connected_to)

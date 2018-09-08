@@ -100,7 +100,6 @@ PRICES = {
 
     AirDefence.AAA_Vulcan_M163: 5,
     AirDefence.SAM_Avenger_M1097: 10,
-    AirDefence.SAM_Patriot_ICC: 15,
 
     AirDefence.AAA_ZU_23_on_Ural_375: 5,
     AirDefence.SAM_SA_18_Igla_S_MANPADS: 8,
@@ -185,7 +184,6 @@ UNIT_BY_TASK = {
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Patriot_ICC,
 
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_on_Ural_375,
@@ -208,7 +206,6 @@ Units from AirDefense category of UNIT_BY_TASK that will be removed from use if 
 """
 SAM_BAN = [
     AirDefence.SAM_Avenger_M1097,
-    AirDefence.SAM_Patriot_ICC,
 
     AirDefence.SAM_SA_19_Tunguska_2S6,
     AirDefence.SAM_SA_8_Osa_9A33,
@@ -233,7 +230,7 @@ AirDefense units that will be spawned at control points not related to the curre
 """
 EXTRA_AA = {
     "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
-    "USA": AirDefence.SAM_Patriot_EPP_III,
+    "USA": AirDefence.SAM_Avenger_M1097,
 }
 
 """
@@ -318,7 +315,6 @@ UNIT_BY_COUNTRY = {
 
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Patriot_ICC,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,

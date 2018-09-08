@@ -1,3 +1,5 @@
+import logging
+
 from dcs.unittype import UnitType
 
 from game import *
@@ -71,7 +73,23 @@ class Event:
             else:
                 cp = self.to_cp
 
+            logging.info("base {} commit losses {}".format(cp.base, losses))
             cp.base.commit_losses(losses)
+
+        for object_identifier in debriefing.destroyed_objects:
+            for cp in self.game.theater.controlpoints:
+                remove_ids = []
+                if not cp.ground_objects:
+                    continue
+
+                for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.matches_string_identifier(object_identifier):
+                        logging.info("cp {} removing ground object {}".format(cp, ground_object.string_identifier))
+                        remove_ids.append(i)
+
+                remove_ids.reverse()
+                for i in remove_ids:
+                    del cp.ground_objects[i]
 
     def skip(self):
         pass

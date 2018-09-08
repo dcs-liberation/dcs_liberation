@@ -63,5 +63,8 @@ class BaseAttackOperation(Operation):
         self.airgen.generate_attackers_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
+
+        self.briefinggen.title = "Base attack"
+        self.briefinggen.description = "The goal of an attacker is to lower defender presence by destroying their armor and aircraft. Base will be considered captured if attackers on the ground overrun the defenders. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
         super(BaseAttackOperation, self).generate()
 

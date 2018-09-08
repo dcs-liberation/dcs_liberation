@@ -48,6 +48,9 @@ class InfantryTransportOperation(Operation):
         self.visualgen.generate_transportation_marker(self.conflict.ground_attackers_location)
         self.visualgen.generate_transportation_destination(self.conflict.position)
 
+        self.briefinggen.title = "Infantry transport"
+        self.briefinggen.description = "Helicopter operation to transport infantry troops from the base to the front line. Lowers target strength"
+
         # TODO: horrible, horrible hack
         # this will disable vehicle activation triggers,
         # which aren't needed on this type of missions

@@ -6,6 +6,7 @@ from dcs.mapping import Point
 
 from .landmap import ray_tracing
 from .controlpoint import ControlPoint
+from .theatergroundobject import TheaterGroundObject
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -48,6 +49,7 @@ COAST_DR_W = [135, 180, 225, 315]
 class ConflictTheater:
     terrain = None  # type: dcs.terrain.Terrain
     controlpoints = None  # type: typing.Collection[ControlPoint]
+
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str
     landmap_poly = None
@@ -55,6 +57,14 @@ class ConflictTheater:
 
     def __init__(self):
         self.controlpoints = []
+        self.groundobjects = []
+
+    def set_groundobject(self, dictionary: typing.Dict[int, typing.Collection[TheaterGroundObject]]):
+        for id, value in dictionary.items():
+            for cp in self.controlpoints:
+                if cp.id == id:
+                    cp.ground_objects = value
+                    break
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
         for connected_point in connected_to:

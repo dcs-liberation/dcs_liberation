@@ -146,19 +146,6 @@ class TriggersGenerator:
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
 
-        description = ""
-        description += "FREQUENCIES:"
-        description += "\nFlight: 251 MHz AM"
-        description += "\nTanker: 10X/240 MHz"
-
-        if awacs_enabled:
-            description += "\nAWACS: 244 MHz"
-
-        if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
-            description += "\nCarrier: 20X/ICLS CHAN1"
-
-        self.mission.set_description_text(description)
-
         if not is_quick:
             # TODO: waypoint parts of this should not be post-hacked but added in airgen
             self._gen_activation_trigger(activation_trigger_radius, player_cp, player_coalition, enemy_coalition)
