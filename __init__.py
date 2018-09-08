@@ -65,6 +65,7 @@ try:
     else:
         proceed_to_main_menu(game)
 except Exception as e:
+    print(e)
     ui.corruptedsavemenu.CorruptedSaveMenu(w).display()
 
 w.run()
