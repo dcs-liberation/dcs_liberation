@@ -1,10 +1,26 @@
-from dcs.terrain import Terrain
+import typing
+
 from dcs.lua.parse import loads
+from dcs.unittype import UnitType
 
 from userdata.debriefing import *
 
 from theater import *
 from gen import *
+
+FlightDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
+
+
+def flight_arguments(fd: FlightDict) -> typing.Tuple[db.PlaneDict, db.PlaneDict]:
+    return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
+
+
+def flight_dict_from(d: db.PlaneDict) -> FlightDict:
+    return {k: (v, 0) for k, v in d.items()}
+
+
+def dict_from_flight(fd: FlightDict) -> db.Dict:
+    return {k: v1 for k, (v1, v2) in fd.items()}
 
 
 class Operation:
@@ -33,15 +49,11 @@ class Operation:
                  game,
                  attacker_name: str,
                  defender_name: str,
-                 attacker_clients: db.PlaneDict,
-                 defender_clients: db.PlaneDict,
                  from_cp: ControlPoint,
                  to_cp: ControlPoint = None):
         self.game = game
         self.attacker_name = attacker_name
         self.defender_name = defender_name
-        self.attacker_clients = attacker_clients
-        self.defender_clients = defender_clients
         self.from_cp = from_cp
         self.to_cp = to_cp
         self.is_quick = False

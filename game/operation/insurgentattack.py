@@ -10,16 +10,16 @@ from gen.airsupportgen import *
 from gen.visualgen import *
 from gen.conflictgen import Conflict
 
-from .operation import Operation
+from .operation import *
 
 
 class InsurgentAttackOperation(Operation):
-    strikegroup = None  # type: db.PlaneDict
+    strikegroup = None  # type: FlightDict
     target = None  # type: db.ArmorDict
 
     def setup(self,
               target: db.ArmorDict,
-              strikegroup: db.PlaneDict):
+              strikegroup: FlightDict):
         self.strikegroup = strikegroup
         self.target = target
 
@@ -38,7 +38,7 @@ class InsurgentAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_defense(self.strikegroup, self.defender_clients, self.defenders_starting_position)
+        self.airgen.generate_defense(*flight_arguments(self.strikegroup), at=self.defenders_starting_position)
         self.armorgen.generate(self.target, {})
 
         self.briefinggen.title = "Destroy insurgents"

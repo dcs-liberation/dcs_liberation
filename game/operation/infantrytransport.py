@@ -10,14 +10,14 @@ from gen.airsupportgen import *
 from gen.visualgen import *
 from gen.conflictgen import Conflict
 
-from .operation import Operation
+from .operation import *
 
 
 class InfantryTransportOperation(Operation):
-    transport = None  # type: db.HeliDict
+    transport = None  # type: FlightDict
     aa = None  # type: db.AirDefenseDict
 
-    def setup(self, transport: db.HeliDict, aa: db.AirDefenseDict):
+    def setup(self, transport: FlightDict, aa: db.AirDefenseDict):
         self.transport = transport
         self.aa = aa
 
@@ -36,11 +36,7 @@ class InfantryTransportOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_passenger_transport(
-            helis=self.transport,
-            clients=self.attacker_clients,
-            at=self.attackers_starting_position
-        )
+        self.airgen.generate_passenger_transport(*flight_arguments(self.transport), at=self.attackers_starting_position)
 
         self.armorgen.generate_passengers(count=6)
         self.aagen.generate_at_defenders_location(self.aa)

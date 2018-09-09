@@ -24,6 +24,21 @@ class FrontlineAttackEvent(Event):
     def threat_description(self):
         return "{} vehicles".format(self.to_cp.base.assemble_count())
 
+    @property
+    def tasks(self) -> typing.Collection[typing.Type[Task]]:
+        if self.is_player_attacking:
+            return [CAS, PinpointStrike]
+        else:
+            return [CAP, PinpointStrike]
+
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        if for_task == CAS:
+            return "CAS flight"
+        elif for_task == CAP:
+            return "CAP flight"
+        elif for_task == PinpointStrike:
+            return "Ground attack"
+
     def __str__(self):
         return "Frontline attack"
 
@@ -54,20 +69,21 @@ class FrontlineAttackEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-0.1)
 
-    def player_attacking(self, armor: db.ArmorDict, strikegroup: db.PlaneDict, clients: db.PlaneDict):
+    def player_attacking(self, flights: ScrambledFlightsDict):
+        assert flights[CAS] and flights[PinpointStrike] and len(flights) == 2, "Invalid flights"
+
         self.defenders = self.to_cp.base.assemble_attack()
 
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
-                                      attacker_clients=clients,
-                                      defender_clients={},
                                       from_cp=self.from_cp,
                                       to_cp=self.to_cp)
 
+        armor = dict_from_flight(flights[PinpointStrike])
         op.setup(target=self.defenders,
                  attackers=db.unitdict_restrict_count(armor, sum(self.defenders.values())),
-                 strikegroup=strikegroup)
+                 strikegroup=flights[CAS])
 
         self.operation = op
 

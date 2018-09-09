@@ -1,18 +1,18 @@
 from dcs.terrain import Terrain
 
 from gen import *
-from .operation import Operation
+from .operation import *
 
 
 class NavalInterceptionOperation(Operation):
-    strikegroup = None  # type: db.PlaneDict
-    interceptors = None  # type: db.PlaneDict
+    strikegroup = None  # type: FlightDict
+    interceptors = None  # type: FlightDict
     targets = None  # type: db.ShipDict
     trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
-              strikegroup: db.PlaneDict,
-              interceptors: db.PlaneDict,
+              strikegroup: FlightDict,
+              interceptors: FlightDict,
               targets: db.ShipDict):
         self.strikegroup = strikegroup
         self.interceptors = interceptors
@@ -37,16 +37,14 @@ class NavalInterceptionOperation(Operation):
         target_groups = self.shipgen.generate_cargo(units=self.targets)
 
         self.airgen.generate_ship_strikegroup(
-            attackers=self.strikegroup,
-            clients=self.attacker_clients,
+            *flight_arguments(self.strikegroup),
             target_groups=target_groups,
             at=self.attackers_starting_position
         )
 
         if self.interceptors:
             self.airgen.generate_defense(
-                defenders=self.interceptors,
-                clients=self.defender_clients,
+                *flight_arguments(self.interceptors),
                 at=self.defenders_starting_position
             )
 

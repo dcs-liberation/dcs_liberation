@@ -7,27 +7,9 @@ from game.event import *
 from .styles import STYLES, RED
 
 
-UNITTYPES_FOR_EVENTS = {
-    FrontlineAttackEvent: [[CAS, PinpointStrike], [CAP]],
-    FrontlinePatrolEvent: [[CAP, PinpointStrike], [CAP]],
-    BaseAttackEvent: [[CAP, CAS, PinpointStrike], [CAP, CAS, PinpointStrike]],
-    StrikeEvent: [[CAP, CAS], [CAP]],
-    InterceptEvent: [[CAP], [CAP]],
-    InsurgentAttackEvent: [[CAS], [CAP]],
-    NavalInterceptEvent: [[CAS], [CAP]],
-    InfantryTransportEvent: [[Embarking], [CAP]],
-}
-
-AI_BAN_FOR_EVENTS = {
-    InfantryTransportEvent: [Embarking],
-    StrikeEvent: [CAS],
-}
-
-
 class EventMenu(Menu):
-    aircraft_scramble_entries = None  # type: typing.Dict[PlaneType , Entry]
-    aircraft_client_entries = None  # type: typing.Dict[PlaneType, Entry]
-    armor_scramble_entries = None  # type: typing.Dict[VehicleType, Entry]
+    scramble_entries = None  # type: typing.Dict[typing.Type[Task], typing.Dict[typing.Type[UnitType], typing.Tuple[Entry, Entry]]]
+
     error_label = None  # type: Label
     awacs = None  # type: IntVar
 
@@ -35,9 +17,7 @@ class EventMenu(Menu):
         super(EventMenu, self).__init__(window, parent, game)
 
         self.event = event
-        self.aircraft_scramble_entries = {}
-        self.armor_scramble_entries = {}
-        self.aircraft_client_entries = {}
+        self.scramble_entries = {k: {} for k in self.event.tasks}
 
         if self.event.attacker_name == self.game.player:
             self.base = self.event.from_cp.base
@@ -68,32 +48,24 @@ class EventMenu(Menu):
 
             return new_label
 
-        def scrable_row(unit_type, unit_count):
+        def scrable_row(task_type, unit_type, unit_count, client_slots: bool):
             nonlocal row
             Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count), **STYLES["widget"]).grid(row=row, sticky=W)
 
             scramble_entry = Entry(self.frame, width=2)
             scramble_entry.grid(column=1, row=row, sticky=E, padx=5)
             scramble_entry.insert(0, "0")
-            self.aircraft_scramble_entries[unit_type] = scramble_entry
-            Button(self.frame, text="+", command=self.scramble_half(True, unit_type), **STYLES["btn-primary"]).grid(column=2, row=row)
+            Button(self.frame, text="+", command=self.scramble_half(task_type, unit_type), **STYLES["btn-primary"]).grid(column=2, row=row)
 
-            client_entry = Entry(self.frame, width=2)
-            client_entry.grid(column=3, row=row, sticky=E, padx=5)
-            client_entry.insert(0, "0")
-            self.aircraft_client_entries[unit_type] = client_entry
-            Button(self.frame, text="+", command=self.client_one(unit_type), **STYLES["btn-primary"]).grid(column=4, row=row)
+            if client_slots:
+                client_entry = Entry(self.frame, width=2)
+                client_entry.grid(column=3, row=row, sticky=E, padx=5)
+                client_entry.insert(0, "0")
+                Button(self.frame, text="+", command=self.client_one(task_type, unit_type), **STYLES["btn-primary"]).grid(column=4, row=row)
+            else:
+                client_entry = None
 
-            row += 1
-
-        def scramble_armor_row(unit_type, unit_count):
-            nonlocal row
-            Label(self.frame, text="{} ({})".format(db.unit_type_name(unit_type), unit_count), **STYLES["widget"]).grid(row=row, sticky=W)
-            scramble_entry = Entry(self.frame, width=2)
-            scramble_entry.insert(0, "0")
-            scramble_entry.grid(column=1, row=row, sticky=E, padx=5)
-            self.armor_scramble_entries[unit_type] = scramble_entry
-            Button(self.frame, text="+", command=self.scramble_half(False, unit_type),**STYLES["btn-primary"]).grid(column=2, row=row)
+            self.scramble_entries[task_type][unit_type] = scramble_entry, client_entry
 
             row += 1
 
@@ -108,84 +80,53 @@ class EventMenu(Menu):
         Label(self.frame, text="{}. {}".format(self.event, threat_descr), **STYLES["mission-preview"]).grid(row=row, column=0, columnspan=5, sticky=S+EW, padx=5, pady=5)
         row += 1
 
-        header("Aircraft :")
+        Label(self.frame, text="Amount", **STYLES["widget"]).grid(row=row, column=1, columnspan=2)
+        Label(self.frame, text="Client slots", **STYLES["widget"]).grid(row=row, column=3, columnspan=2)
+        row += 1
 
-        if self.base.aircraft:
-            Label(self.frame, text="Amount", **STYLES["widget"]).grid(row=row, column=1, columnspan=2)
-            Label(self.frame, text="Client slots", **STYLES["widget"]).grid(row=row, column=3, columnspan=2)
-            row += 1
+        for flight_task in self.event.tasks:
+            header("{}:".format(self.event.flight_name(flight_task)))
+            if flight_task == PinpointStrike:
+                if not self.base.armor:
+                    label("No units")
+                for t, c in self.base.armor.items():
+                    scrable_row(flight_task, t, c, client_slots=False)
+            else:
+                if not self.base.aircraft:
+                    label("No units")
+                for t, c in self.base.aircraft.items():
+                    scrable_row(flight_task, t, c, client_slots=True)
 
-        filter_attackers_index = 0 if self.game.is_player_attack(self.event) else 1
-        filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__][filter_attackers_index]
-        for unit_type, count in self.base.aircraft.items():
-            if filter_to and db.unit_task(unit_type) not in filter_to:
-                continue
-
-            if unit_type in helicopter_map and self.event.__class__ != InsurgentAttackEvent:
-                continue
-
-            scrable_row(unit_type, count)
-
-        if not self.base.total_planes:
-            label("None", sticky=W)
-
-        header("Armor :")
-        armor_counter = 0
-        for unit_type, count in self.base.armor.items():
-            if filter_to and db.unit_task(unit_type) not in filter_to:
-                continue
-            scramble_armor_row(unit_type, count)
-            armor_counter += 1
-
-        if not self.base.total_armor or armor_counter == 0:
-            label("None", sticky=W)
-
-        header("Support :")
+        header("Support:")
         # Options
         awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
         Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=0, sticky=E)
         Label(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), **STYLES["widget"]).grid(row=row, column=3, sticky=W, padx=5, pady=5)
         row += 1
 
-        header("Ready ?")
+        header("Ready?")
         self.error_label = label("")
         self.error_label["fg"] = RED
         Button(self.frame, text="Commit", command=self.start, **STYLES["btn-primary"]).grid(column=0, row=row, sticky=E, padx=5, pady=(10,10))
         Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-warning"]).grid(column=3, row=row, sticky=E, padx=5, pady=(10,10))
         row += 1
 
-    def _scrambled_aircraft_count(self, unit_type: UnitType) -> int:
-        value = self.aircraft_scramble_entries[unit_type].get()
-        if value and int(value) > 0:
-            return min(int(value), self.base.aircraft[unit_type])
-        return 0
-
-    def _scrambled_armor_count(self, unit_type: UnitType) -> int:
-        value = self.armor_scramble_entries[unit_type].get()
-        if value and int(value) > 0:
-            return min(int(value), self.base.armor[unit_type])
-        return 0
-
-    def scramble_half(self, aircraft: bool, unit_type: UnitType) -> typing.Callable:
+    def scramble_half(self, task: typing.Type[UnitType], unit_type: UnitType) -> typing.Callable:
         def action():
-            entry = None  # type: Entry
-            total_count = 0
-            if aircraft:
-                entry = self.aircraft_scramble_entries[unit_type]
-                total_count = self.base.aircraft[unit_type]
-            else:
-                entry = self.armor_scramble_entries[unit_type]
-                total_count = self.base.armor[unit_type]
+            entry = self.scramble_entries[task][unit_type][0]  # type: Entry
+            value = entry.get()
 
-            existing_count = int(entry.get())
+            total_units = self.base.total_units_of_type(unit_type)
+
+            amount = int(value and value or "0")
             entry.delete(0, END)
-            entry.insert(0, "{}".format(int(existing_count + math.ceil(total_count/2))))
+            entry.insert(0, str(amount + int(math.ceil(total_units/2))))
 
         return action
 
-    def client_one(self, unit_type: UnitType) -> typing.Callable:
+    def client_one(self, task: typing.Type[Task], unit_type: UnitType) -> typing.Callable:
         def action():
-            entry = self.aircraft_client_entries[unit_type]  # type: Entry
+            entry = self.scramble_entries[task][unit_type][1]  # type: Entry
             value = entry.get()
             amount = int(value and value or "0")
             entry.delete(0, END)
@@ -199,94 +140,37 @@ class EventMenu(Menu):
         else:
             self.event.is_awacs_enabled = False
 
-        scrambled_aircraft = {}
-        scrambled_sweep = {}
-        scrambled_cas = {}
-        for unit_type, field in self.aircraft_scramble_entries.items():
-            amount = self._scrambled_aircraft_count(unit_type)
-            if amount > 0:
-                task = db.unit_task(unit_type)
+        flights = {k: {} for k in self.event.tasks}  # type: ScrambledFlightsDict
+        total_counts_scrambled = {}  # type: typing.Dict[typing.Type[UnitType], int]
 
-                scrambled_aircraft[unit_type] = amount
-                if task == CAS:
-                    scrambled_cas[unit_type] = amount
-                elif task == CAP:
-                    scrambled_sweep[unit_type] = amount
+        def dampen_count(unit_type: typing.Type[UnitType], count: int) -> int:
+            nonlocal total_counts_scrambled
+            total_count = self.base.total_units_of_type(unit_type)
 
-        scrambled_clients = {}
-        for unit_type, field in self.aircraft_client_entries.items():
-            value = field.get()
-            if value and int(value) > 0:
-                amount = int(value)
-                scrambled_clients[unit_type] = amount
+            total_scrambled = total_counts_scrambled.get(unit_type, 0)
+            dampened_value = count if count + total_scrambled < total_count else total_count - total_scrambled
+            total_counts_scrambled[unit_type] = total_counts_scrambled.get(unit_type, 0) + dampened_value
+            return dampened_value
 
-        scrambled_armor = {}
-        for unit_type, field in self.armor_scramble_entries.items():
-            amount = self._scrambled_armor_count(unit_type)
-            if amount > 0:
-                scrambled_armor[unit_type] = amount
+        for task_type, dict in self.scramble_entries.items():
+            for unit_type, (count_entry, clients_entry) in dict.items():
+                try:
+                    count = int(count_entry.get())
+                except:
+                    count = 0
 
-        if type(self.event) in AI_BAN_FOR_EVENTS:
-            banned_tasks_for_ai = AI_BAN_FOR_EVENTS[type(self.event)]
-            for task in banned_tasks_for_ai:
-                scrambled_slots = [1 for x in scrambled_aircraft if db.unit_task(x) == task]
-                scrambled_client_slots = [1 for x in scrambled_clients if db.unit_task(x) == task]
+                try:
+                    clients_count = int(clients_entry and clients_entry.get() or 0)
+                except:
+                    clients_count = 0
 
-                if scrambled_slots != scrambled_client_slots:
-                    self.error_label["text"] = "AI slots of task {} are not supported for this operation".format(task.name)
-                    return
+                flights[task_type][unit_type] = dampen_count(unit_type, count), clients_count
 
-        if type(self.event) is BaseAttackEvent:
-            e = self.event  # type: BaseAttackEvent
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(cas=scrambled_cas,
-                                   escort=scrambled_sweep,
-                                   armor=scrambled_armor,
-                                   clients=scrambled_clients)
-            else:
-                e.player_defending(interceptors=scrambled_aircraft,
-                                   clients=scrambled_clients)
-        elif type(self.event) is InterceptEvent:
-            e = self.event  # type: InterceptEvent
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(interceptors=scrambled_aircraft,
-                                   clients=scrambled_clients)
-            else:
-                e.player_defending(escort=scrambled_aircraft,
-                                   clients=scrambled_clients)
-        elif type(self.event) is FrontlineAttackEvent:
-            e = self.event  # type: FrontlineAttackEvent
-            e.player_attacking(armor=scrambled_armor, strikegroup=scrambled_aircraft, clients=scrambled_clients)
-        elif type(self.event) is FrontlinePatrolEvent:
-            e = self.event  # type: FrontlinePatrolEvent
-            e.player_attacking(interceptors=scrambled_aircraft, clients=scrambled_clients, armor=scrambled_armor)
-        elif type(self.event) is NavalInterceptEvent:
-            e = self.event  # type: NavalInterceptEvent
 
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
-            else:
-                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
-        elif type(self.event) is InsurgentAttackEvent:
-            e = self.event  # type: InsurgentAttackEvent
-            if self.game.is_player_attack(self.event):
-                assert False
-            else:
-                e.player_defending(strikegroup=scrambled_aircraft, clients=scrambled_clients)
-        elif type(self.event) is InfantryTransportEvent:
-            e = self.event  # type: InfantryTransportEvent
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(transport=scrambled_aircraft, clients=scrambled_clients)
-            else:
-                assert False
-        elif type(self.event) is StrikeEvent:
-            e = self.event  # type: StrikeEvent
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(strikegroup=scrambled_cas,
-                                   escort=scrambled_sweep,
-                                   clients=scrambled_clients)
-            else:
-                assert False
+        if self.game.is_player_attack(self.event):
+            self.event.player_attacking(flights)
+        else:
+            self.event.player_defending(flights)
 
         self.game.initiate_event(self.event)
         EventResultsMenu(self.window, self.parent, self.game, self.event).display()

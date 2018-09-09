@@ -1,22 +1,22 @@
 from dcs.terrain import Terrain
 
 from gen import *
-from .operation import Operation
+from .operation import *
 
 
 class InterceptOperation(Operation):
-    escort = None  # type: db.PlaneDict
+    escort = None  # type: FlightDict
     transport = None  # type: db.PlaneDict
-    interceptors = None  # type: db.PlaneDict
+    interceptors = None  # type: FlightDict
     airdefense = None  # type: db.AirDefenseDict
 
     trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
-              escort: db.PlaneDict,
+              escort: FlightDict,
               transport: db.PlaneDict,
               airdefense: db.AirDefenseDict,
-              interceptors: db.PlaneDict):
+              interceptors: FlightDict):
         self.escort = escort
         self.transport = transport
         self.airdefense = airdefense
@@ -52,9 +52,9 @@ class InterceptOperation(Operation):
                 self.attackers_starting_position = ship
 
         self.airgen.generate_transport(self.transport, self.to_cp.at)
-        self.airgen.generate_defenders_escort(self.escort, clients=self.defender_clients)
+        self.airgen.generate_defenders_escort(*flight_arguments(self.escort), at=self.defenders_starting_position)
 
-        self.airgen.generate_interception(self.interceptors, clients=self.attacker_clients, at=self.attackers_starting_position)
+        self.airgen.generate_interception(*flight_arguments(self.interceptors), at=self.attackers_starting_position)
 
         self.briefinggen.title = "Air Intercept"
         self.briefinggen.description = "Intercept enemy supply transport aircraft. Escort will also be present if there are available planes on the base. Operation will be considered successful if most of the targets are destroyed, lowering targets strength as a result"

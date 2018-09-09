@@ -42,6 +42,10 @@ class TheaterGroundObject:
         return "{}|{}|{}|{}".format(self.category, self.cp_id, self.group_id, self.object_id)
 
     @property
+    def group_identifier(self) -> str:
+        return "{}|{}".format(self.category, self.group_id)
+
+    @property
     def name_abbrev(self) -> str:
         return ABBREV_NAME[self.category]
 

@@ -1,4 +1,5 @@
 import typing
+import enum
 
 from dcs.vehicles import *
 from dcs.unitgroup import *

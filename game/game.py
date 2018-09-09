@@ -120,7 +120,7 @@ class Game:
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
-                if self._roll(player_probability, player_cp.base.strength):
+                if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):
                     if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
                         pass
                     else:
@@ -131,7 +131,7 @@ class Game:
                                 pass
                             else:
                                 self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
-                elif self._roll(enemy_probability, enemy_cp.base.strength):
+                elif enemy_probability == 100 or self._roll(enemy_probability, enemy_cp.base.strength):
                     if event_class in enemy_generated_types:
                         continue
 

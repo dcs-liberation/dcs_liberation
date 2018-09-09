@@ -265,7 +265,7 @@ class AircraftConflictGenerator:
             self.escort_targets.append((group, group.points.index(waypoint)))
             self._rtb_for(group, self.conflict.from_cp, at)
 
-    def generate_ground_attack_strikegroup(self, strikegroup: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], clients: db.PlaneDict, at: db.StartingPosition = None):
+    def generate_ground_attack_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition = None):
         assert len(self.escort_targets) == 0
 
         for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):

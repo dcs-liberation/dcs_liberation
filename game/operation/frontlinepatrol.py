@@ -12,21 +12,26 @@ from gen.airsupportgen import *
 from gen.visualgen import *
 from gen.conflictgen import Conflict
 
-from .operation import Operation
+from .operation import *
 
 
 MAX_DISTANCE_BETWEEN_GROUPS = 12000
 
 
 class FrontlinePatrolOperation(Operation):
-    cas = None  # type: db.PlaneDict
-    escort = None  # type: db.PlaneDict
-    interceptors = None  # type: db.PlaneDict
+    cas = None  # type: FlightDict
+    escort = None  # type: FlightDict
+    interceptors = None  # type: FlightDict
 
     armor_attackers = None  # type: db.ArmorDict
     armor_defenders = None  # type: db.ArmorDict
 
-    def setup(self, cas: db.PlaneDict, escort: db.PlaneDict, interceptors: db.PlaneDict, armor_attackers: db.ArmorDict, armor_defenders: db.ArmorDict):
+    def setup(self,
+              cas: FlightDict,
+              escort: FlightDict,
+              interceptors: FlightDict,
+              armor_attackers: db.ArmorDict,
+              armor_defenders: db.ArmorDict):
         self.cas = cas
         self.escort = escort
         self.interceptors = interceptors
@@ -50,9 +55,9 @@ class FrontlinePatrolOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_defenders_cas(self.cas, {}, self.defenders_starting_position)
-        self.airgen.generate_defenders_escort(self.escort, {}, self.defenders_starting_position)
-        self.airgen.generate_migcap(self.interceptors, self.attacker_clients, self.attackers_starting_position)
+        self.airgen.generate_defenders_cas(*flight_arguments(self.cas), at=self.defenders_starting_position)
+        self.airgen.generate_defenders_escort(*flight_arguments(self.escort), at=self.defenders_starting_position)
+        self.airgen.generate_migcap(*flight_arguments(self.interceptors), at=self.attackers_starting_position)
 
         self.armorgen.generate_vec(self.armor_attackers, self.armor_defenders)
 

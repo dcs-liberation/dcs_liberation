@@ -1,15 +1,21 @@
+import typing
 import logging
 
+from dcs.unittype import UnitType
+from dcs.task import Task
 from dcs.unittype import UnitType
 
 from game import *
 from theater import *
 from gen.environmentgen import EnvironmentSettings
+from game.operation.operation import flight_dict_from, dict_from_flight
 
 from userdata.debriefing import Debriefing
 from userdata import persistency
 
 DIFFICULTY_LOG_BASE = 1.1
+
+ScrambledFlightsDict = typing.Dict[typing.Type[Task], typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]]
 
 
 class Event:
@@ -44,11 +50,24 @@ class Event:
     def threat_description(self) -> str:
         return ""
 
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        return "Flight"
+
+    @property
+    def tasks(self) -> typing.Collection[Task]:
+        return []
+
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)
+
+    def player_attacking(self, flights: ScrambledFlightsDict):
+        pass
+
+    def player_defending(self, flights: ScrambledFlightsDict):
+        pass
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled

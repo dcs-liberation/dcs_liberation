@@ -9,7 +9,7 @@ from game.operation.intercept import InterceptOperation
 from theater.conflicttheater import *
 from userdata.debriefing import Debriefing
 
-from .event import Event
+from .event import *
 
 
 class InterceptEvent(Event):
@@ -21,6 +21,17 @@ class InterceptEvent(Event):
 
     def __str__(self):
         return "Air Intercept"
+
+    @property
+    def tasks(self):
+        return [CAP]
+
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        if for_task == CAP:
+            if self.is_player_attacking:
+                return "Intercept flight"
+            else:
+                return "Escort flight"
 
     def _enemy_scramble_multiplier(self) -> float:
         is_global = self.from_cp.is_global or self.to_cp.is_global
@@ -57,7 +68,9 @@ class InterceptEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
+    def player_attacking(self, flights: ScrambledFlightsDict):
+        assert flights[CAP] and len(flights) == 1, "Invalid flights"
+
         escort = self.to_cp.base.scramble_sweep(self._enemy_scramble_multiplier())
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
@@ -67,20 +80,17 @@ class InterceptEvent(Event):
         op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
-                                attacker_clients=clients,
-                                defender_clients={},
                                 from_cp=self.from_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=escort,
+        op.setup(escort=flight_dict_from(escort),
                  transport={self.transport_unit: 1},
                  airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
-                 interceptors=interceptors)
+                 interceptors=flights[CAP])
 
         self.operation = op
 
-    def player_defending(self, escort: db.PlaneDict, clients: db.PlaneDict):
-        # TODO: even not quick mission is too quick
+    def player_defending(self, flights: ScrambledFlightsDict):
         interceptors = self.from_cp.base.scramble_interceptors(self.game.settings.multiplier)
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
@@ -89,14 +99,12 @@ class InterceptEvent(Event):
         op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
-                                attacker_clients={},
-                                defender_clients=clients,
                                 from_cp=self.from_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=escort,
+        op.setup(escort=flights[CAP],
                  transport={self.transport_unit: 1},
-                 interceptors=interceptors,
+                 interceptors=flight_dict_from(interceptors),
                  airdefense={})
 
         self.operation = op

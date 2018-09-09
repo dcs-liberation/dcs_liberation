@@ -1,13 +1,16 @@
+import typing
 import math
 import random
 
 from dcs.task import *
+from dcs.unittype import UnitType
 
 from game import db
 from game.operation.baseattack import BaseAttackOperation
 from userdata.debriefing import Debriefing
 
-from .event import Event
+from .event import *
+from ..operation.operation import flight_dict_from
 
 
 class BaseAttackEvent(Event):
@@ -17,6 +20,18 @@ class BaseAttackEvent(Event):
 
     def __str__(self):
         return "Base attack"
+
+    @property
+    def tasks(self):
+        return [CAP, CAS, PinpointStrike]
+
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        if for_task == CAP:
+            return "Escort flight"
+        elif for_task == CAS:
+            return "CAS flight"
+        elif for_task == PinpointStrike:
+            return "Ground attack"
 
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
@@ -45,7 +60,9 @@ class BaseAttackEvent(Event):
         if not self.is_player_attacking and self.to_cp.captured:
             self.to_cp.captured = False
 
-    def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
+    def player_defending(self, flights: ScrambledFlightsDict):
+        assert len(flights) == 1 and flights[CAP], "Invalid scrambled flights"
+
         cas = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
         escort = self.from_cp.base.scramble_sweep(self.game.settings.multiplier)
         attackers = self.from_cp.base.armor
@@ -53,36 +70,34 @@ class BaseAttackEvent(Event):
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 attacker_clients={},
-                                 defender_clients=clients,
                                  from_cp=self.from_cp,
                                  to_cp=self.to_cp)
 
-        op.setup(cas=cas,
-                 escort=escort,
+        op.setup(cas=flight_dict_from(cas),
+                 escort=flight_dict_from(escort),
+                 intercept=flights[CAP],
                  attack=attackers,
-                 intercept=interceptors,
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.aa)
 
         self.operation = op
 
-    def player_attacking(self, cas: db.PlaneDict, escort: db.PlaneDict, armor: db.ArmorDict, clients: db.PlaneDict):
+    def player_attacking(self, flights: ScrambledFlightsDict):
+        assert flights[CAP] and flights[CAS] and flights[PinpointStrike] and len(flights) == 3, "Invalid flights"
+
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 attacker_clients=clients,
-                                 defender_clients={},
                                  from_cp=self.from_cp,
                                  to_cp=self.to_cp)
 
         defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)
         defenders.update(self.to_cp.base.scramble_cas(self.game.settings.multiplier))
 
-        op.setup(cas=cas,
-                 escort=escort,
-                 attack=armor,
-                 intercept=defenders,
+        op.setup(cas=flights[CAS],
+                 escort=flights[CAP],
+                 attack=flights[PinpointStrike],
+                 intercept=flight_dict_from(defenders),
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.assemble_aa())
 

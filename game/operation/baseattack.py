@@ -9,13 +9,13 @@ from gen.triggergen import *
 from gen.airsupportgen import *
 from gen.visualgen import *
 
-from .operation import Operation
+from .operation import *
 
 
 class BaseAttackOperation(Operation):
-    cas = None  # type: db.PlaneDict
-    escort = None  # type: db.PlaneDict
-    intercept = None  # type: db.PlaneDict
+    cas = None  # type: FlightDict
+    escort = None  # type: FlightDict
+    intercept = None  # type: FlightDict
     attack = None  # type: db.ArmorDict
     defense = None  # type: db.ArmorDict
     aa = None  # type: db.AirDefenseDict
@@ -23,10 +23,10 @@ class BaseAttackOperation(Operation):
     trigger_radius = TRIGGER_RADIUS_SMALL
 
     def setup(self,
-              cas: db.PlaneDict,
-              escort: db.PlaneDict,
-              attack: db.ArmorDict,
-              intercept: db.PlaneDict,
+              cas: FlightDict,
+              escort: FlightDict,
+              attack: FlightDict,
+              intercept: FlightDict,
               defense: db.ArmorDict,
               aa: db.AirDefenseDict):
         self.cas = cas
@@ -57,10 +57,10 @@ class BaseAttackOperation(Operation):
         self.armorgen.generate(self.attack, self.defense)
         self.aagen.generate(self.aa)
 
-        self.airgen.generate_defense(self.intercept, clients=self.defender_clients, at=self.defenders_starting_position)
+        self.airgen.generate_defense(*flight_arguments(self.intercept), at=self.defenders_starting_position)
 
-        self.airgen.generate_cas_strikegroup(self.cas, clients=self.attacker_clients, at=self.attackers_starting_position)
-        self.airgen.generate_attackers_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
+        self.airgen.generate_cas_strikegroup(*flight_arguments(self.cas), at=self.attackers_starting_position)
+        self.airgen.generate_attackers_escort(*flight_arguments(self.escort), at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
 
