@@ -69,7 +69,7 @@ class InterceptEvent(Event):
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAP] and len(flights) == 1, "Invalid flights"
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         escort = self.to_cp.base.scramble_sweep(self._enemy_scramble_multiplier())
 
@@ -91,6 +91,8 @@ class InterceptEvent(Event):
         self.operation = op
 
     def player_defending(self, flights: ScrambledFlightsDict):
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
+
         interceptors = self.from_cp.base.scramble_interceptors(self.game.settings.multiplier)
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))

@@ -8,6 +8,8 @@ from game.event import *
 from game.event.frontlineattack import FrontlineAttackEvent
 from game.operation.insurgentattack import InsurgentAttackOperation
 
+from .event import *
+
 
 class InsurgentAttackEvent(Event):
     SUCCESS_FACTOR = 0.7
@@ -39,7 +41,7 @@ class InsurgentAttackEvent(Event):
             return not attackers_success
 
     def player_defending(self, flights: ScrambledFlightsDict):
-        assert flights[CAS] and len(flights) == 1, "Invalid flights"
+        assert CAS in flights and len(flights) == 1, "Invalid flights"
 
         suitable_unittypes = db.find_unittype(Reconnaissance, self.attacker_name)
         random.shuffle(suitable_unittypes)
@@ -56,6 +58,3 @@ class InsurgentAttackEvent(Event):
                  strikegroup=flights[CAS])
 
         self.operation = op
-
-    def player_attacking(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
-        assert False

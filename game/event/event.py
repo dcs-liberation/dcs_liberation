@@ -68,10 +68,10 @@ class Event:
         return self.operation.is_successfull(debriefing)
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        pass
+        assert False
 
     def player_defending(self, flights: ScrambledFlightsDict):
-        pass
+        assert False
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled

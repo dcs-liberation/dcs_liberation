@@ -35,20 +35,6 @@ class FrontlinePatrolEvent(Event):
     def __str__(self):
         return "Frontline CAP"
 
-    """
-    def is_successfull(self, debriefing: Debriefing):
-        total_targets = sum(self.cas.values())
-        destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units[self.defender_name].items():
-            if unit in self.cas:
-                destroyed_targets += count
-
-        if self.from_cp.captured:
-            return float(destroyed_targets) / total_targets >= self.SUCCESS_TARGETS_HIT_PERCENTAGE
-        else:
-            return float(destroyed_targets) / total_targets < self.SUCCESS_TARGETS_HIT_PERCENTAGE
-    """
-
     def is_successfull(self, debriefing: Debriefing):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
         alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
@@ -76,7 +62,7 @@ class FrontlinePatrolEvent(Event):
         pass
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAP] and flights[PinpointStrike] and len(flights) == 2, "Invalid flights"
+        assert CAP in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
 
         self.cas = self.to_cp.base.scramble_cas(self.game.settings.multiplier)
         self.escort = self.to_cp.base.scramble_sweep(self.game.settings.multiplier * self.ESCORT_FACTOR)

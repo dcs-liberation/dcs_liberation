@@ -61,7 +61,7 @@ class BaseAttackEvent(Event):
             self.to_cp.captured = False
 
     def player_defending(self, flights: ScrambledFlightsDict):
-        assert len(flights) == 1 and flights[CAP], "Invalid scrambled flights"
+        assert CAP in flights and len(flights) == 1,  "Invalid scrambled flights"
 
         cas = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
         escort = self.from_cp.base.scramble_sweep(self.game.settings.multiplier)
@@ -83,7 +83,7 @@ class BaseAttackEvent(Event):
         self.operation = op
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAP] and flights[CAS] and flights[PinpointStrike] and len(flights) == 3, "Invalid flights"
+        assert CAP in flights and CAS in flights and PinpointStrike in flights and len(flights) == 3, "Invalid flights"
 
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,

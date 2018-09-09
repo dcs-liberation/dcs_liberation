@@ -78,7 +78,7 @@ class NavalInterceptEvent(Event):
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAS] and len(flights) == 1, "Invalid flights"
+        assert CAS in flights and len(flights) == 1, "Invalid flights"
 
         self.targets = {
             random.choice(db.find_unittype(CargoTransportation, self.defender_name)): self._targets_count(),
@@ -99,7 +99,7 @@ class NavalInterceptEvent(Event):
         self.operation = op
 
     def player_defending(self, flights: ScrambledFlightsDict):
-        assert flights[CAP] and len(flights) == 1, "Invalid flights"
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         self.targets = {
             random.choice(db.find_unittype(CargoTransportation, self.defender_name)): self._targets_count(),

@@ -23,6 +23,10 @@ class StrikeEvent(Event):
         return True
 
     @property
+    def threat_description(self):
+        return "{} aircraft + AA".format(self.to_cp.base.scramble_count(self.game.settings.multiplier, CAP))
+
+    @property
     def tasks(self):
         if self.is_player_attacking:
             return [CAP, CAS]
@@ -47,7 +51,7 @@ class StrikeEvent(Event):
         self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAP] and flights[CAS] and len(flights) == 2, "Invalid flights"
+        assert CAP in flights and CAS in flights and len(flights) == 2, "Invalid flights"
 
         op = StrikeOperation(
             self.game,

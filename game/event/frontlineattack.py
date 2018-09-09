@@ -70,7 +70,7 @@ class FrontlineAttackEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, flights: ScrambledFlightsDict):
-        assert flights[CAS] and flights[PinpointStrike] and len(flights) == 2, "Invalid flights"
+        assert CAS in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
 
         self.defenders = self.to_cp.base.assemble_attack()
 
