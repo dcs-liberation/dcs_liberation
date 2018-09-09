@@ -100,11 +100,10 @@ PRICES = {
     Unarmed.Transport_M818: 3,
 
     AirDefence.AAA_Vulcan_M163: 5,
-    AirDefence.SAM_Avenger_M1097: 10,
+    AirDefence.SAM_Linebacker_M6: 10,
 
-    AirDefence.AAA_ZU_23_on_Ural_375: 5,
-    AirDefence.SAM_SA_18_Igla_S_MANPADS: 8,
-    AirDefence.SAM_SA_19_Tunguska_2S6: 15,
+    AirDefence.SPAAA_ZSU_23_4_Shilka: 8,
+    AirDefence.SAM_SA_9_Strela_1_9P31: 15,
     AirDefence.SAM_SA_8_Osa_9A33: 13,
 
     # ship
@@ -181,17 +180,14 @@ UNIT_BY_TASK = {
     AirDefence: [
         # those are listed multiple times here to balance prioritization more into lower tier AAs
         AirDefence.AAA_Vulcan_M163,
-        AirDefence.AAA_Vulcan_M163,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Avenger_M1097,
+        AirDefence.SAM_Linebacker_M6,
 
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
     ],
 
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
@@ -206,9 +202,9 @@ UNIT_BY_TASK = {
 Units from AirDefense category of UNIT_BY_TASK that will be removed from use if "No SAM" option is checked at the start of the game
 """
 SAM_BAN = [
-    AirDefence.SAM_Avenger_M1097,
+    AirDefence.SAM_Linebacker_M6,
 
-    AirDefence.SAM_SA_19_Tunguska_2S6,
+    AirDefence.SAM_SA_9_Strela_1_9P31,
     AirDefence.SAM_SA_8_Osa_9A33,
 ]
 
@@ -230,8 +226,8 @@ CARRIER_TAKEOFF_BAN = [
 AirDefense units that will be spawned at control points not related to the current operation
 """
 EXTRA_AA = {
-    "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
-    "USA": AirDefence.SAM_Avenger_M1097,
+    "Russia": AirDefence.SAM_SA_19_Tunguska_2S6,
+    "USA": AirDefence.SAM_Linebacker_M6,
 }
 
 """
@@ -272,6 +268,10 @@ UNIT_BY_COUNTRY = {
         AirDefence.SAM_SA_18_Igla_S_MANPADS,
         AirDefence.SAM_SA_8_Osa_9A33,
         AirDefence.SAM_SA_19_Tunguska_2S6,
+
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.SAM_SA_8_Osa_9A33,
 
         Armor.APC_BTR_80,
         Armor.MBT_T_90,
@@ -315,7 +315,7 @@ UNIT_BY_COUNTRY = {
         Infantry.Infantry_M4,
 
         AirDefence.AAA_Vulcan_M163,
-        AirDefence.SAM_Avenger_M1097,
+        AirDefence.SAM_Linebacker_M6,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
@@ -340,11 +340,11 @@ Payload will be used for operation of following type, "*" category will be used 
 """
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
-        "*": "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
     },
 
     Su_33: {
-        "*": "R-73*4,R-27R*2,R-27ER*6",
+        CAP: "R-73*4,R-27R*2,R-27ER*6",
     },
 
     AJS37: {
@@ -364,7 +364,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
 
     M_2000C: {
-        "*": "Combat Air Patrol",
+        CAP: "Combat Air Patrol",
     },
 
     MiG_21Bis: {
