@@ -171,10 +171,9 @@ class Debriefing:
 
         for mission_id in self._dead_objects:
             for group in mission.country(enemy.name).static_group + mission.country(enemy.name).vehicle_group:
-                if group.id == mission_id:
+                if mission_id in [x.id for x in group.units]:
+                    logging.info("debriefing: connected id {} to group {}".format(mission_id, str(group.name)))
                     self.destroyed_objects.append(str(group.name))
-
-        self.destroyed_objects += self._dead_defense
 
 
 def debriefing_directory_location() -> str:

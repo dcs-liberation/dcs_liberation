@@ -354,6 +354,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     A_10C: {
         CAS: "AGM-65D*2,AGM-65H*2,GBU-12*2,GBU-38*2,AIM-9*2,TGP,ECM,MK151*7",
+        GroundAttack: "AGM-65K*2,GBU-12*8,AIM-9M*2.ECM,TGP",
     },
 
     Ka_50: {

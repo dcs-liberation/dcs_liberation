@@ -39,9 +39,9 @@ class EventResultsMenu(Menu):
 
         if not self.finished:
 
-            header("You are clear for takeoff !")
+            header("You are clear for takeoff!")
 
-            label("In DCS, open and play the mission :")
+            label("In DCS, open and play the mission:")
             label("liberation_nextturn", "italic")
             label("or")
             label("liberation_nextturn_quick", "italic")
@@ -78,7 +78,6 @@ class EventResultsMenu(Menu):
                 header("Operation failed", "title-red")
 
             header("Player losses")
-
             for unit_type, count in self.player_losses.items():
                 Label(self.frame, text=db.unit_type_name(unit_type), **STYLES["widget"]).grid(row=row)
                 Label(self.frame, text="{}".format(count), **STYLES["widget"]).grid(column=1, row=row)
@@ -89,6 +88,7 @@ class EventResultsMenu(Menu):
             if self.debriefing.destroyed_objects:
                 Label(self.frame, text="Ground assets", **STYLES["widget"]).grid(row=row)
                 Label(self.frame, text="{}".format(len(self.debriefing.destroyed_objects)), **STYLES["widget"]).grid(column=1, row=row)
+                row += 1
 
             for unit_type, count in self.enemy_losses.items():
                 if count == 0:

@@ -84,11 +84,15 @@ class AircraftConflictGenerator:
             override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
             if type(override_loadout) == dict:
                 if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                    group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task])
+                    payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
+                    group.load_loadout(payload_name)
                     did_load_loadout = True
+                    logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
                 elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                    group.load_loadout(db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"])
+                    payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"]
+                    group.load_loadout(payload_name)
                     did_load_loadout = True
+                    logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
             elif issubclass(override_loadout, MainTask):
                 group.load_task_default_loadout(override_loadout)
                 did_load_loadout = True
@@ -275,12 +279,12 @@ class AircraftConflictGenerator:
             escort_until_waypoint = None
 
             for name, pos in targets:
-                waypoint = group.add_waypoint(pos, WARM_START_ALTITUDE, WARM_START_AIRSPEED, self.m.translation.create_string(name))
+                waypoint = group.add_waypoint(pos, 0, WARM_START_AIRSPEED, self.m.translation.create_string(name))
                 if escort_until_waypoint is None:
                     escort_until_waypoint = waypoint
 
-            group.task = CAS.name
-            self._setup_group(group, CAS, client_count)
+            group.task = GroundAttack.name
+            self._setup_group(group, GroundAttack, client_count)
             self.escort_targets.append((group, group.points.index(escort_until_waypoint)))
             self._rtb_for(group, self.conflict.from_cp, at)
 
