@@ -24,6 +24,7 @@ WARM_START_AIRSPEED = 550
 
 INTERCEPTION_ALT = 3000
 INTERCEPTION_AIRSPEED = 1000
+BARCAP_RACETRACK_DISTANCE = 20000
 
 ATTACK_CIRCLE_ALT = 5000
 ATTACK_CIRCLE_DURATION = 15
@@ -218,12 +219,6 @@ class AircraftConflictGenerator:
                 at=at)
 
             group.task = Escort.name
-
-            """
-            heading = group.position.heading_between_point(self.conflict.position)
-            position = group.position  # type: Point
-            wayp = group.add_waypoint(position.point_from_heading(heading, WORKAROUND_WAYP_DIST), CAS_ALTITUDE, WARM_START_AIRSPEED)
-            """
             self._setup_group(group, CAP, client_count)
 
             for escorted_group, waypoint_index in self.escort_targets:
@@ -404,6 +399,10 @@ class AircraftConflictGenerator:
             if self.conflict.is_vector:
                 group.add_waypoint(self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
             else:
+                heading = group.position.heading_between_point(self.conflict.position)
+                waypoint = group.add_waypoint(self.conflict.position.point_from_heading(heading, BARCAP_RACETRACK_DISTANCE),
+                                              WARM_START_ALTITUDE,
+                                              WARM_START_AIRSPEED)
                 waypoint.tasks.append(OrbitAction(WARM_START_ALTITUDE, WARM_START_AIRSPEED))
 
             group.task = CAP.name

@@ -33,7 +33,7 @@ class StrikeOperation(Operation):
         if self.game.player == self.defender_name:
             self.attackers_starting_position = None
 
-        conflict = Conflict.capture_conflict(
+        conflict = Conflict.strike_conflict(
             attacker=self.mission.country(self.attacker_name),
             defender=self.mission.country(self.defender_name),
             from_cp=self.from_cp,

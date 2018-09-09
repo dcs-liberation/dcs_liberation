@@ -21,6 +21,9 @@ AIR_DISTANCE = 40000
 
 CAPTURE_AIR_ATTACKERS_DISTANCE = 25000
 CAPTURE_AIR_DEFENDERS_DISTANCE = 60000
+STRIKE_AIR_ATTACKERS_DISTANCE = 45000
+STRIKE_AIR_DEFENDERS_DISTANCE = 25000
+
 CAP_CAS_DISTANCE = 10000, 120000
 
 GROUND_INTERCEPT_SPREAD = 5000
@@ -223,6 +226,33 @@ class Conflict:
             ground_defenders_location=defenders_location,
             air_attackers_location=position.point_from_heading(attack_raw_heading, CAPTURE_AIR_ATTACKERS_DISTANCE),
             air_defenders_location=position.point_from_heading(_opposite_heading(attack_raw_heading), CAPTURE_AIR_DEFENDERS_DISTANCE)
+        )
+
+    @classmethod
+    def strike_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        position = to_cp.position
+        attack_raw_heading = to_cp.position.heading_between_point(from_cp.position)
+        attack_heading = to_cp.find_radial(attack_raw_heading)
+        defense_heading = to_cp.find_radial(from_cp.position.heading_between_point(to_cp.position), ignored_radial=attack_heading)
+
+        distance = to_cp.size * GROUND_DISTANCE_FACTOR
+        attackers_location = position.point_from_heading(attack_heading, distance)
+        attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
+
+        defenders_location = position.point_from_heading(defense_heading, distance)
+        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+
+        return cls(
+            position=position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=attackers_location,
+            ground_defenders_location=defenders_location,
+            air_attackers_location=position.point_from_heading(attack_raw_heading, STRIKE_AIR_ATTACKERS_DISTANCE),
+            air_defenders_location=position.point_from_heading(_opposite_heading(attack_raw_heading), STRIKE_AIR_DEFENDERS_DISTANCE)
         )
 
     @classmethod
