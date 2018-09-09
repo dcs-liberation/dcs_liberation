@@ -50,11 +50,15 @@ class Event:
     def threat_description(self) -> str:
         return ""
 
-    def flight_name(self, for_task: typing.Type[Task]) -> str:
+    def flight_name(self, for_task: typing.Type[typing.Type[Task]]) -> str:
         return "Flight"
 
     @property
-    def tasks(self) -> typing.Collection[Task]:
+    def tasks(self) -> typing.Collection[typing.Type[Task]]:
+        return []
+
+    @property
+    def ai_banned_tasks(self) -> typing.Collection[typing.Type[Task]]:
         return []
 
     def bonus(self) -> int:

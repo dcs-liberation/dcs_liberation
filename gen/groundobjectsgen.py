@@ -14,6 +14,8 @@ CATEGORY_MAPPING = {
     "fuel": [Warehouse.Tank],
     "ammo": [Warehouse.Ammunition_depot],
     "farp": [Fortification.FARP_Tent],
+    "comms": [Fortification.TV_tower],
+    "oil": [Fortification.Oil_platform],
 }
 
 

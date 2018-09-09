@@ -78,6 +78,7 @@ class EventResultsMenu(Menu):
                 header("Operation failed", "title-red")
 
             header("Player losses")
+
             for unit_type, count in self.player_losses.items():
                 Label(self.frame, text=db.unit_type_name(unit_type), **STYLES["widget"]).grid(row=row)
                 Label(self.frame, text="{}".format(count), **STYLES["widget"]).grid(column=1, row=row)

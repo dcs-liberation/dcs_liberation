@@ -9,6 +9,8 @@ NAME_BY_CATEGORY = {
     "defense": "AA Defense Site",
     "warehouse": "Warehouse",
     "farp": "FARP",
+    "comms": "Comms. tower",
+    "oil": "Oil platform"
 }
 
 ABBREV_NAME = {
@@ -18,6 +20,8 @@ ABBREV_NAME = {
     "defense": "AA",
     "warehouse": "WARE",
     "farp": "FARP",
+    "comms": "COMMST",
+    "oil": "OILP"
 }
 
 

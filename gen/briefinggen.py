@@ -37,12 +37,12 @@ class BriefingGenerator:
             description += "\n\n" + self.description
 
         if self.freqs:
-            description += "\n\n RADIO:"
+            description += "\n\nCOMMS:"
             for name, freq in self.freqs:
                 description += "\n{}: {}".format(name, freq)
 
         if self.targets:
-            description += "\n\n TARGETS:"
+            description += "\n\nTARGETS:"
             for name, tp in self.targets:
                 description += "\n{} {}".format(name, "(TP {})".format(tp) if tp else "")
 

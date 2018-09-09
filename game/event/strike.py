@@ -29,6 +29,10 @@ class StrikeEvent(Event):
         else:
             return [CAP]
 
+    @property
+    def ai_banned_tasks(self):
+        return [CAS]
+
     def flight_name(self, for_task: typing.Type[Task]) -> str:
         if for_task == CAP:
             if self.is_player_attacking:

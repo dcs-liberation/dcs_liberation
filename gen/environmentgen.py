@@ -49,7 +49,7 @@ class EnviromentGenerator:
         self.game = game
 
     def _gen_random_time(self):
-        start_time = datetime.combine(datetime.today(), time())
+        start_time = datetime.fromtimestamp(1527206400)
         time_range = None
         for k, v in RANDOM_TIME.items():
             if self.game.settings.night_disabled and k == "night":

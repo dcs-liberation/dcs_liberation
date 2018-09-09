@@ -99,7 +99,7 @@ class OverviewCanvas:
                 color = self._enemy_color()
 
             cp_id = self.canvas.create_arc((coords[0] - arc_size/2, coords[1] - arc_size/2),
-                                           (coords[0]+arc_size/2, coords[1]+arc_size/2),
+                                           (coords[0] + arc_size/2, coords[1] + arc_size/2),
                                            fill=color,
                                            style=PIESLICE,
                                            start=start,
@@ -118,8 +118,8 @@ class OverviewCanvas:
             self.create_cp_title((coords[0] + arc_size/4, coords[1] + arc_size/4), cp)
 
             units_title = "{}/{}/{}".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-            self.canvas.create_text(coords[0]+1, coords[1] - arc_size / 1.5 +1, text=units_title, font=("Helvetica", 10), fill=color)
-            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10), fill="white")
+            self.canvas.create_text(coords[0]+1, coords[1] - arc_size / 1.5 +1, text=units_title, font=("Helvetica", 8), fill=color)
+            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 8), fill="white")
 
     def display(self, cp: ControlPoint):
         def action(_):

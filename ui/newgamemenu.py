@@ -98,6 +98,9 @@ class NewGameMenu(Menu):
         Label(terrain, text="Persian Gulf", **STYLES["widget"]).grid(row=2, column=1, sticky=W)
         self.create_label_image(terrain, "terrain_pg.png").grid(row=2, column=2, padx=5)
 
+        Label(terrain, text="Currently strike missions are only\navailable for a number of airports only in Caucasus", **STYLES["widget"]) \
+            .grid(row=3, column=0, columnspan=3, sticky=W)
+
         # Misc Options
         options = LabelFrame(body, text="Misc Options", **STYLES["label-frame"])
         options.grid(row=0, column=2, sticky=NE, padx=5)

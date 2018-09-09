@@ -38,10 +38,10 @@ class EventMenu(Menu):
             Label(head, text=text, **STYLES[style]).grid()
             row += 1
 
-        def label(text, _row=None, _column=None, sticky=None):
+        def label(text, _row=None, _column=None, columnspan=None, sticky=None):
             nonlocal row
             new_label = Label(self.frame, text=text, **STYLES["widget"])
-            new_label.grid(row=_row and _row or row, column=_column and _column or 0, sticky=sticky)
+            new_label.grid(row=_row and _row or row, column=_column and _column or 0, columnspan=columnspan, sticky=sticky)
 
             if _row is None:
                 row += 1
@@ -105,7 +105,7 @@ class EventMenu(Menu):
         row += 1
 
         header("Ready?")
-        self.error_label = label("")
+        self.error_label = label("", columnspan=4)
         self.error_label["fg"] = RED
         Button(self.frame, text="Commit", command=self.start, **STYLES["btn-primary"]).grid(column=0, row=row, sticky=E, padx=5, pady=(10,10))
         Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-warning"]).grid(column=3, row=row, sticky=E, padx=5, pady=(10,10))
@@ -141,15 +141,18 @@ class EventMenu(Menu):
             self.event.is_awacs_enabled = False
 
         flights = {k: {} for k in self.event.tasks}  # type: ScrambledFlightsDict
-        total_counts_scrambled = {}  # type: typing.Dict[typing.Type[UnitType], int]
+        units_scramble_counts = {}  # type: typing.Dict[typing.Type[UnitType], int]
+        tasks_scramble_counts = {}  # type: typing.Dict[typing.Type[Task], int]
+        tasks_clients_counts = {}  # type: typing.Dict[typing.Type[Task], int]
 
-        def dampen_count(unit_type: typing.Type[UnitType], count: int) -> int:
-            nonlocal total_counts_scrambled
+        def dampen_count(for_task: typing.Type[Task], unit_type: typing.Type[UnitType], count: int) -> int:
+            nonlocal units_scramble_counts
             total_count = self.base.total_units_of_type(unit_type)
 
-            total_scrambled = total_counts_scrambled.get(unit_type, 0)
+            total_scrambled = units_scramble_counts.get(unit_type, 0)
             dampened_value = count if count + total_scrambled < total_count else total_count - total_scrambled
-            total_counts_scrambled[unit_type] = total_counts_scrambled.get(unit_type, 0) + dampened_value
+            units_scramble_counts[unit_type] = units_scramble_counts.get(unit_type, 0) + dampened_value
+
             return dampened_value
 
         for task_type, dict in self.scramble_entries.items():
@@ -164,8 +167,16 @@ class EventMenu(Menu):
                 except:
                     clients_count = 0
 
-                flights[task_type][unit_type] = dampen_count(unit_type, count), clients_count
+                dampened_count = dampen_count(task_type, unit_type, count)
+                tasks_clients_counts[task_type] = tasks_clients_counts.get(task_type, 0) + clients_count
+                tasks_scramble_counts[task_type] = tasks_scramble_counts.get(task_type, 0) + dampened_count
 
+                flights[task_type][unit_type] = dampened_count, clients_count
+
+        for task in self.event.ai_banned_tasks:
+            if tasks_clients_counts.get(task, 0) == 0 and tasks_scramble_counts.get(task, 0) > 0:
+                self.error_label["text"] = "Need at least one player in flight {}".format(self.event.flight_name(task))
+                return
 
         if self.game.is_player_attack(self.event):
             self.event.player_attacking(flights)
