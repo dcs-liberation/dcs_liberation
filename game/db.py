@@ -103,8 +103,8 @@ PRICES = {
     AirDefence.SAM_Linebacker_M6: 10,
 
     AirDefence.SPAAA_ZSU_23_4_Shilka: 8,
-    AirDefence.SAM_SA_9_Strela_1_9P31: 15,
-    AirDefence.SAM_SA_8_Osa_9A33: 13,
+    AirDefence.SAM_SA_9_Strela_1_9P31: 13,
+    AirDefence.SAM_SA_8_Osa_9A33: 18,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -179,6 +179,8 @@ UNIT_BY_TASK = {
     PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
     AirDefence: [
         # those are listed multiple times here to balance prioritization more into lower tier AAs
+        AirDefence.AAA_Vulcan_M163,
+        AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Linebacker_M6,
 
@@ -263,11 +265,6 @@ UNIT_BY_COUNTRY = {
         Ka_50,
         UH_1H,
         Mi_8MT,
-
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.SAM_SA_18_Igla_S_MANPADS,
-        AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
 
         AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.SAM_SA_9_Strela_1_9P31,
