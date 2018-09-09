@@ -9,7 +9,7 @@ from .theatergroundobject import TheaterGroundObject
 
 
 class ControlPoint:
-    connected_points = []  # type: typing.List[ControlPoint]
+    connected_points = None  # type: typing.List[ControlPoint]
     ground_objects = None  # type: typing.Collection[TheaterGroundObject]
     position = None  # type: Point
     captured = False
@@ -26,6 +26,7 @@ class ControlPoint:
         self.full_name = name
         self.position = position
         self.at = at
+        self.ground_objects = []
 
         self.size = size
         self.importance = importance

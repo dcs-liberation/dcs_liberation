@@ -17,7 +17,7 @@ from game.game import Game
 from theater import start_generator
 from userdata import persistency, logging as logging_module
 
-assert len(sys.argv) == 3, "__init__.py should be started with two mandatory arguments: %UserProfile% location and application version"
+assert len(sys.argv) >= 3, "__init__.py should be started with two mandatory arguments: %UserProfile% location and application version"
 
 persistency.setup(sys.argv[1])
 dcs.planes.FlyingType.payload_dirs = [os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources\\payloads")]
@@ -35,6 +35,9 @@ def proceed_to_main_menu(game: Game):
 def is_version_compatible(save_version):
     current_version = VERSION_STRING.split(".")
     save_version = save_version.split(".")
+
+    if "--ignore-save" in sys.argv:
+        return False
 
     if current_version[:2] == save_version[:2]:
         return True

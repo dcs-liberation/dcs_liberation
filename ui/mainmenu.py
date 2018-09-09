@@ -51,10 +51,9 @@ class MainMenu(Menu):
             nonlocal row, body
             frame = LabelFrame(body, **STYLES["label-frame"])
             frame.grid(row=row, sticky=NSEW)
-            Message(frame, text="{}{} at {}".format(
+            Message(frame, text="{}{}".format(
                 event.defender_name == self.game.player and "Enemy attacking: " or "",
-                event,
-                event.to_cp,
+                event
             ), aspect=1600, **STYLES["widget"]).grid(column=0, row=0, sticky=NSEW)
             Button(body, text=">", command=self.start_event(event), **STYLES["btn-primary"]).grid(column=1, row=row, sticky=E)
             row += 1
@@ -63,9 +62,8 @@ class MainMenu(Menu):
             nonlocal row, body
             Label(body, text=text, **STYLES["strong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(pady,0)); row += 1
 
-        #Separator(self.frame, orient='horizontal').grid(row=row, sticky=EW); row += 1
-
         events = self.game.events
+        events.sort(key=lambda x: x.to_cp.name)
         events.sort(key=lambda x: x.from_cp.name)
         events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
 
@@ -74,7 +72,7 @@ class MainMenu(Menu):
         for event in events:
             if not event.informational:
                 if self.game.is_player_attack(event):
-                    new_destination = event.from_cp.name
+                    new_destination = "From {} to {}".format(event.from_cp.name, event.to_cp.name)
                 else:
                     new_destination = "Enemy attack"
                 if destination != new_destination:

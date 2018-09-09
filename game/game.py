@@ -127,7 +127,10 @@ class Game:
                         if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
                             pass
                         else:
-                            self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+                            if event_class == StrikeEvent and not enemy_cp.ground_objects:
+                                pass
+                            else:
+                                self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
                 elif self._roll(enemy_probability, enemy_cp.base.strength):
                     if event_class in enemy_generated_types:
                         continue
@@ -141,15 +144,15 @@ class Game:
                     if event_class == NavalInterceptEvent:
                         if player_cp.radials == LAND:
                             continue
+                    elif event_class == StrikeEvent:
+                        if not player_cp.ground_objects:
+                            continue
                     elif event_class == BaseAttackEvent:
                         if enemy_cap_generated:
                             continue
                         if enemy_cp.base.total_armor == 0:
                             continue
                         enemy_cap_generated = True
-                    elif event_class == AntiAAStrikeEvent:
-                        if player_cp.base.total_aa == 0:
-                            continue
 
                     enemy_generated_types.append(event_class)
                     self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))

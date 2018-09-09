@@ -47,7 +47,13 @@ class StrikeOperation(Operation):
     def generate(self):
         targets = []  # type: typing.List[typing.Tuple[str, Point]]
         category_counters = {}  # type: typing.Dict[str, int]
+        processed_groups = []
         for object in self.to_cp.ground_objects:
+            if object.group_id in processed_groups:
+                continue
+
+            processed_groups.append(object.group_id)
+
             category_counters[object.category] = category_counters.get(object.category, 0) + 1
             markpoint_name = "{}{}".format(object.name_abbrev, category_counters[object.category])
             targets.append((markpoint_name, object.position))
@@ -68,4 +74,6 @@ class StrikeOperation(Operation):
                                     clients={},
                                     at=self.defenders_starting_position)
 
+        self.briefinggen.title = "Strike"
+        self.briefinggen.description = "Destroy infrastructure assets and military supplies in the region. Each building destroyed will lower targets strength."
         super(StrikeOperation, self).generate()

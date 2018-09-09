@@ -8,6 +8,7 @@ NAME_BY_CATEGORY = {
     "fuel": "Fuel depot",
     "defense": "AA Defense Site",
     "warehouse": "Warehouse",
+    "farp": "FARP",
 }
 
 ABBREV_NAME = {
@@ -16,6 +17,7 @@ ABBREV_NAME = {
     "fuel": "FUEL",
     "defense": "AA",
     "warehouse": "WARE",
+    "farp": "FARP",
 }
 
 
@@ -24,24 +26,20 @@ class TheaterGroundObject:
     cp_id = 0
     group_id = 0
     heading = 0
-    location = None  # type: typing.Collection[int]
+    position = None  # type: Point
     category = None  # type: str
 
-    def __init__(self, category, cp_id, group_id, object_id, location, heading):
+    def __init__(self, category, cp_id, group_id, object_id, position, heading):
         self.category = category
         self.cp_id = cp_id
         self.group_id = group_id
         self.object_id = object_id
-        self.location = location
+        self.position = position
         self.heading = heading
 
     @property
     def string_identifier(self):
         return "{}|{}|{}|{}".format(self.category, self.cp_id, self.group_id, self.object_id)
-
-    @property
-    def position(self) -> Point:
-        return Point(*self.location)
 
     @property
     def name_abbrev(self) -> str:

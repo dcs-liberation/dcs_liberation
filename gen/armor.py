@@ -100,8 +100,10 @@ class ArmorConflictGenerator:
         attacker_groups = list(db.unitdict_split(attackers, single_fight_attackers_count))
 
         for attacker_group_dict, target_group_dict in zip_longest(attacker_groups, defender_groups):
+            padding = FRONTLINE_CAS_PADDING if FRONTLINE_CAS_PADDING < self.conflict.distance else 0
+
             position = self.conflict.position.point_from_heading(self.conflict.heading,
-                                                                 random.randint(FRONTLINE_CAS_PADDING, int(self.conflict.distance - FRONTLINE_CAS_PADDING)))
+                                                                 random.randint(padding, int(self.conflict.distance - padding)))
             self._generate_fight_at(attacker_group_dict, target_group_dict, position)
 
     def generate_passengers(self, count: int):

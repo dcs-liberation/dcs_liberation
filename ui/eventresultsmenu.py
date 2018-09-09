@@ -86,6 +86,10 @@ class EventResultsMenu(Menu):
 
             header("Enemy losses")
 
+            if self.debriefing.destroyed_objects:
+                Label(self.frame, text="Ground assets", **STYLES["widget"]).grid(row=row)
+                Label(self.frame, text="{}".format(len(self.debriefing.destroyed_objects)), **STYLES["widget"]).grid(column=1, row=row)
+
             for unit_type, count in self.enemy_losses.items():
                 if count == 0:
                     continue

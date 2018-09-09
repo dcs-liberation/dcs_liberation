@@ -1,7 +1,10 @@
 import pickle
+import typing
+
+Landmap = typing.Collection[typing.Collection[typing.Tuple[float, float]]]
 
 
-def load_poly(filename: str):
+def load_landmap(filename: str) -> Landmap:
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
@@ -9,7 +12,7 @@ def load_poly(filename: str):
         return None
 
 
-def ray_tracing(x, y, poly):
+def poly_contains(x, y, poly):
     n = len(poly)
     inside = False
     xints = 0.0
@@ -25,3 +28,11 @@ def ray_tracing(x, y, poly):
                         inside = not inside
         p1x, p1y = p2x, p2y
     return inside
+
+def poly_centroid(poly) -> typing.Tuple[float, float]:
+    x_list = [vertex[0] for vertex in poly]
+    y_list = [vertex[1] for vertex in poly]
+    x = sum(x_list) / len(poly)
+    y = sum(y_list) / len(poly)
+    return (x, y)
+

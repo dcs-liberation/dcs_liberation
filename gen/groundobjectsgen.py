@@ -13,6 +13,7 @@ CATEGORY_MAPPING = {
     "warehouse": [Warehouse.Warehouse],
     "fuel": [Warehouse.Tank],
     "ammo": [Warehouse.Ammunition_depot],
+    "farp": [Fortification.FARP_Tent],
 }
 
 
@@ -40,7 +41,7 @@ class GroundObjectsGenerator:
                     country=side,
                     name=ground_object.string_identifier,
                     _type=unit_type,
-                    position=Point(*ground_object.location),
+                    position=ground_object.position,
                     heading=ground_object.heading
                 )
 
@@ -50,7 +51,7 @@ class GroundObjectsGenerator:
                     country=side,
                     name=ground_object.string_identifier,
                     _type=random.choice(CATEGORY_MAPPING[ground_object.category]),
-                    position=Point(*ground_object.location),
+                    position=ground_object.position,
                     heading=ground_object.heading
                 )
 

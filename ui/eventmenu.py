@@ -8,14 +8,14 @@ from .styles import STYLES, RED
 
 
 UNITTYPES_FOR_EVENTS = {
-    FrontlineAttackEvent: [CAS, PinpointStrike],
-    FrontlinePatrolEvent: [CAP, PinpointStrike],
-    BaseAttackEvent: [CAP, CAS, PinpointStrike],
-    StrikeEvent: [CAP, CAS],
-    InterceptEvent: [CAP],
-    InsurgentAttackEvent: [CAS],
-    NavalInterceptEvent: [CAS],
-    InfantryTransportEvent: [Embarking],
+    FrontlineAttackEvent: [[CAS, PinpointStrike], [CAP]],
+    FrontlinePatrolEvent: [[CAP, PinpointStrike], [CAP]],
+    BaseAttackEvent: [[CAP, CAS, PinpointStrike], [CAP, CAS, PinpointStrike]],
+    StrikeEvent: [[CAP, CAS], [CAP]],
+    InterceptEvent: [[CAP], [CAP]],
+    InsurgentAttackEvent: [[CAS], [CAP]],
+    NavalInterceptEvent: [[CAS], [CAP]],
+    InfantryTransportEvent: [[Embarking], [CAP]],
 }
 
 AI_BAN_FOR_EVENTS = {
@@ -115,7 +115,8 @@ class EventMenu(Menu):
             Label(self.frame, text="Client slots", **STYLES["widget"]).grid(row=row, column=3, columnspan=2)
             row += 1
 
-        filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__]
+        filter_attackers_index = 0 if self.game.is_player_attack(self.event) else 1
+        filter_to = UNITTYPES_FOR_EVENTS[self.event.__class__][filter_attackers_index]
         for unit_type, count in self.base.aircraft.items():
             if filter_to and db.unit_task(unit_type) not in filter_to:
                 continue
@@ -262,12 +263,6 @@ class EventMenu(Menu):
         elif type(self.event) is NavalInterceptEvent:
             e = self.event  # type: NavalInterceptEvent
 
-            if self.game.is_player_attack(self.event):
-                e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
-            else:
-                e.player_defending(interceptors=scrambled_aircraft, clients=scrambled_clients)
-        elif type(self.event) is AntiAAStrikeEvent:
-            e = self.event  # type: AntiAAStrikeEvent
             if self.game.is_player_attack(self.event):
                 e.player_attacking(strikegroup=scrambled_aircraft, clients=scrambled_clients)
             else:

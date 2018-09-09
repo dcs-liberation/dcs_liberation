@@ -81,6 +81,7 @@ class OverviewCanvas:
 
                 if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
                     frontline_pos, heading, distance = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
+                    distance = max(distance, 1000)
                     start_coords = self.transform_point(frontline_pos, treshold=10)
                     end_coords = self.transform_point(frontline_pos.point_from_heading(heading, distance), treshold=60)
 

@@ -152,36 +152,48 @@ class Conflict:
     @classmethod
     def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> typing.Tuple[Point, int, int]:
         center_position, heading = cls.frontline_position(from_cp, to_cp)
+        left_position, right_position = None, None
 
-        left_position = center_position
-
-        for offset in range(0, int(FRONTLINE_LENGTH / 2), 1000):
-            pos = center_position.point_from_heading(_heading_sum(heading, -90), offset)
-            if not theater.is_on_land(pos):
-                break
-            else:
-                left_position = pos
-
-        right_position = center_position
-        for offset in range(0, int(FRONTLINE_LENGTH / 2), 1000):
-            pos = center_position.point_from_heading(_heading_sum(heading, 90), offset)
-            if not theater.is_on_land(pos):
-                break
-            else:
+        if not theater.is_on_land(center_position):
+            pos = cls._find_ground_position(center_position, FRONTLINE_LENGTH, _heading_sum(heading, -90), theater)
+            if pos:
                 right_position = pos
+                center_position = pos
+            else:
+                pos = cls._find_ground_position(center_position, FRONTLINE_LENGTH, _heading_sum(heading, +90), theater)
+                if pos:
+                    left_position = pos
+                    center_position = pos
+        print("{} - {} {}".format(from_cp, to_cp, center_position))
 
-        return left_position, _heading_sum(heading, 90), right_position.distance_to_point(left_position)
+        if left_position is None:
+            left_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH/2), _heading_sum(heading, -90), theater)
+
+        if right_position is None:
+            right_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH/2), _heading_sum(heading, 90), theater)
+
+        return left_position, _heading_sum(heading, 90), int(right_position.distance_to_point(left_position))
 
     @classmethod
-    def _find_ground_location(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
-        for _ in range(0, int(max_distance), 800):
-            for _ in range(3):
-                if theater.is_on_land(initial):
-                    return initial
+    def _extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+        pos = initial
+        for offset in range(0, int(max_distance), 500):
+            new_pos = initial.point_from_heading(heading, offset)
+            if theater.is_on_land(new_pos):
+                pos = new_pos
+            else:
+                return pos
 
-                initial = initial.random_point_within(1000, 1000)
+        return pos
 
-            initial = initial.point_from_heading(heading, 800)
+    @classmethod
+    def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+        pos = initial
+        for _ in range(0, int(max_distance), 500):
+            if theater.is_on_land(pos):
+                return pos
+
+            pos = pos.point_from_heading(heading, 500)
 
         logging.info("Didn't find ground position!")
         return None
@@ -195,10 +207,10 @@ class Conflict:
 
         distance = to_cp.size * GROUND_DISTANCE_FACTOR
         attackers_location = position.point_from_heading(attack_heading, distance)
-        attackers_location = Conflict._find_ground_location(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
+        attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
 
         defenders_location = position.point_from_heading(defense_heading, distance)
-        defenders_location = Conflict._find_ground_location(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
 
         return cls(
             position=position,
@@ -238,7 +250,7 @@ class Conflict:
     def ground_attack_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         heading = random.choice(to_cp.radials)
         initial_location = to_cp.position.random_point_within(*GROUND_ATTACK_DISTANCE)
-        position = Conflict._find_ground_location(initial_location, GROUND_INTERCEPT_SPREAD, _heading_sum(heading, 180), theater)
+        position = Conflict._find_ground_position(initial_location, GROUND_INTERCEPT_SPREAD, _heading_sum(heading, 180), theater)
         if not position:
             heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
             position = to_cp.position.point_from_heading(heading, to_cp.size * GROUND_DISTANCE_FACTOR)
@@ -306,7 +318,7 @@ class Conflict:
 
         distance = to_cp.size * GROUND_DISTANCE_FACTOR
         defenders_location = position.point_from_heading(defense_heading, distance)
-        defenders_location = Conflict._find_ground_location(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
 
         return cls(
             position=position,
@@ -351,7 +363,7 @@ class Conflict:
     def transport_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         frontline_position, heading = cls.frontline_position(from_cp, to_cp)
         initial_dest = frontline_position.point_from_heading(heading, TRANSPORT_FRONTLINE_DIST)
-        dest = cls._find_ground_location(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)
+        dest = cls._find_ground_position(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)
         if not dest:
             radial = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
             dest = to_cp.position.point_from_heading(radial, to_cp.size * GROUND_DISTANCE_FACTOR)

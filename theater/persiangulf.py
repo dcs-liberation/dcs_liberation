@@ -3,7 +3,7 @@ from dcs import mapping
 
 from .conflicttheater import *
 from .base import *
-from .landmap import load_poly
+from .landmap import load_landmap
 
 
 class PersianGulfTheater(ConflictTheater):
@@ -11,7 +11,7 @@ class PersianGulfTheater(ConflictTheater):
     overview_image = "persiangulf.gif"
     reference_points = {(persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (321, 145),
                         (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (347, 82), }
-    landmap_poly = load_poly("resources\\gulflandmap.p")
+    landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
         "dawn": (6, 8),
         "day": (8, 16),

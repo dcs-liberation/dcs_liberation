@@ -1,3 +1,5 @@
+import webbrowser
+
 from tkinter import *
 from tkinter.ttk import *
 from .styles import STYLES
@@ -64,7 +66,16 @@ class ConfigurationMenu(Menu):
         Checkbutton(body, variable=self.night_var, **STYLES["radiobutton"]).grid(row=4, column=1, sticky=E)
 
         Button(body, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(row=5, column=1, sticky=E, pady=30)
-        Button(body, text="Cheat +200m", command=self.cheat_money, **STYLES["btn-danger"]).grid(row=6, column=1)
+
+        Label(body, text="Contributors: ", **STYLES["widget"]).grid(row=6, column=0, sticky=W)
+
+        Label(body, text="shdwp - author, maintainer", **STYLES["widget"]).grid(row=7, column=0, sticky=W)
+        Button(body, text="[github]", command=lambda: webbrowser.open_new_tab("http://github.com/shdwp"), **STYLES["widget"]).grid(row=7, column=1, sticky=E)
+
+        Label(body, text="Khopa - contributions", **STYLES["widget"]).grid(row=8, column=0, sticky=W)
+        Button(body, text="[github]", command=lambda: webbrowser.open_new_tab("http://github.com/Khopa"), **STYLES["widget"]).grid(row=8, column=1, sticky=E)
+
+        Button(body, text="Cheat +200m", command=self.cheat_money, **STYLES["btn-danger"]).grid(row=10, column=1, pady=30)
 
     def cheat_money(self):
         self.game.budget += 200

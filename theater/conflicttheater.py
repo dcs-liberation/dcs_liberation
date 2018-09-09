@@ -4,7 +4,7 @@ import itertools
 import dcs
 from dcs.mapping import Point
 
-from .landmap import ray_tracing
+from .landmap import Landmap, poly_contains
 from .controlpoint import ControlPoint
 from .theatergroundobject import TheaterGroundObject
 
@@ -52,12 +52,11 @@ class ConflictTheater:
 
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str
-    landmap_poly = None
+    landmap = None  # type: landmap.Landmap
     daytime_map = None  # type: typing.Dict[str, typing.Tuple[int, int]]
 
     def __init__(self):
         self.controlpoints = []
-        self.groundobjects = []
 
     def set_groundobject(self, dictionary: typing.Dict[int, typing.Collection[TheaterGroundObject]]):
         for id, value in dictionary.items():
@@ -73,14 +72,20 @@ class ConflictTheater:
         self.controlpoints.append(point)
 
     def is_on_land(self, point: Point) -> bool:
-        if not self.landmap_poly:
+        if not self.landmap:
             return True
 
-        for poly in self.landmap_poly:
-            if ray_tracing(point.x, point.y, poly):
-                return True
+        # check first poly (main land poly)
+        if not poly_contains(point.x, point.y, self.landmap[0]):
+            return False
 
-        return False
+        # check others polys (exclusion zones from main)
+        for poly in self.landmap[1:]:
+            if poly_contains(point.x, point.y, poly):
+                # point is in one of the exclusion zones, meaning that it's in the lake or something
+                return False
+
+        return True
 
     def player_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if point.captured]
