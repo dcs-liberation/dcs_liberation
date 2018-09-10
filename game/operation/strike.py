@@ -1,27 +1,17 @@
-from dcs.terrain import Terrain
-
-from game import db
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
-from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
-from gen.conflictgen import Conflict
+from game.db import assigned_units_split
 
 from .operation import *
 
 
 class StrikeOperation(Operation):
-    strikegroup = None  # type: FlightDict
-    escort = None  # type: FlightDict
-    interceptors = None  # type: FlightDict
+    strikegroup = None  # type: db.AssignedUnitsDict
+    escort = None  # type: db.AssignedUnitsDict
+    interceptors = None  # type: db.AssignedUnitsDict
 
     def setup(self,
-              strikegroup: FlightDict,
-              escort: FlightDict,
-              interceptors: FlightDict):
+              strikegroup: db.AssignedUnitsDict,
+              escort: db.AssignedUnitsDict,
+              interceptors: db.AssignedUnitsDict):
         self.strikegroup = strikegroup
         self.escort = escort
         self.interceptors = interceptors
@@ -61,13 +51,13 @@ class StrikeOperation(Operation):
 
         targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[1]))
 
-        self.airgen.generate_ground_attack_strikegroup(*flight_arguments(self.strikegroup),
+        self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(self.strikegroup),
                                                        targets=targets,
                                                        at=self.attackers_starting_position)
 
-        self.airgen.generate_attackers_escort(*flight_arguments(self.escort), at=self.attackers_starting_position)
+        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
 
-        self.airgen.generate_barcap(*flight_arguments(self.interceptors), at=self.defenders_starting_position)
+        self.airgen.generate_barcap(*assigned_units_split(self.interceptors), at=self.defenders_starting_position)
 
         self.briefinggen.title = "Strike"
         self.briefinggen.description = "Destroy infrastructure assets and military supplies in the region. Each building destroyed will lower targets strength."

@@ -1,13 +1,4 @@
-import typing
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import *
-
-from game import db
 from game.operation.navalintercept import NavalInterceptionOperation
-from userdata.debriefing import Debriefing
 
 from .event import *
 
@@ -19,7 +10,7 @@ class NavalInterceptEvent(Event):
     targets = None  # type: db.ShipDict
 
     def _targets_count(self) -> int:
-        from gen.conflictgen import IMPORTANCE_LOW, IMPORTANCE_HIGH
+        from gen.conflictgen import IMPORTANCE_LOW
         factor = (self.to_cp.importance - IMPORTANCE_LOW) * 10
         return max(int(factor), 1)
 
@@ -77,7 +68,7 @@ class NavalInterceptEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAS in flights and len(flights) == 1, "Invalid flights"
 
         self.targets = {
@@ -98,7 +89,7 @@ class NavalInterceptEvent(Event):
 
         self.operation = op
 
-    def player_defending(self, flights: ScrambledFlightsDict):
+    def player_defending(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         self.targets = {
@@ -114,7 +105,7 @@ class NavalInterceptEvent(Event):
         )
 
         strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
-        op.setup(strikegroup=flight_dict_from(strikegroup),
+        op.setup(strikegroup=assigned_units_from(strikegroup),
                  interceptors=flights[CAP],
                  targets=self.targets)
 

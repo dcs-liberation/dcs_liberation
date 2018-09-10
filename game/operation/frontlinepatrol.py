@@ -1,16 +1,4 @@
-from itertools import zip_longest
-
-from dcs.terrain import Terrain
-
-from game import db
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
-from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
-from gen.conflictgen import Conflict
+from game.db import assigned_units_split
 
 from .operation import *
 
@@ -19,17 +7,17 @@ MAX_DISTANCE_BETWEEN_GROUPS = 12000
 
 
 class FrontlinePatrolOperation(Operation):
-    cas = None  # type: FlightDict
-    escort = None  # type: FlightDict
-    interceptors = None  # type: FlightDict
+    cas = None  # type: db.AssignedUnitsDict
+    escort = None  # type: db.AssignedUnitsDict
+    interceptors = None  # type: db.AssignedUnitsDict
 
     armor_attackers = None  # type: db.ArmorDict
     armor_defenders = None  # type: db.ArmorDict
 
     def setup(self,
-              cas: FlightDict,
-              escort: FlightDict,
-              interceptors: FlightDict,
+              cas: db.AssignedUnitsDict,
+              escort: db.AssignedUnitsDict,
+              interceptors: db.AssignedUnitsDict,
               armor_attackers: db.ArmorDict,
               armor_defenders: db.ArmorDict):
         self.cas = cas
@@ -55,9 +43,9 @@ class FrontlinePatrolOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_defenders_cas(*flight_arguments(self.cas), at=self.defenders_starting_position)
-        self.airgen.generate_defenders_escort(*flight_arguments(self.escort), at=self.defenders_starting_position)
-        self.airgen.generate_migcap(*flight_arguments(self.interceptors), at=self.attackers_starting_position)
+        self.airgen.generate_defenders_cas(*assigned_units_split(self.cas), at=self.defenders_starting_position)
+        self.airgen.generate_defenders_escort(*assigned_units_split(self.escort), at=self.defenders_starting_position)
+        self.airgen.generate_migcap(*assigned_units_split(self.interceptors), at=self.attackers_starting_position)
 
         self.armorgen.generate_vec(self.armor_attackers, self.armor_defenders)
 

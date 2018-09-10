@@ -366,7 +366,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
 
     MiG_21Bis: {
-        "*": "Patrol, medium range",
+        CAP: "Patrol, medium range",
     }
 }
 
@@ -392,7 +392,11 @@ HeliDict = typing.Dict[HelicopterType, int]
 ArmorDict = typing.Dict[VehicleType, int]
 ShipDict = typing.Dict[ShipType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]
-StartingPosition = typing.Optional[typing.Union[ShipGroup, Airport, Point]]
+
+AssignedUnitsDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
+TaskForceDict = typing.Dict[typing.Type[Task], AssignedUnitsDict]
+
+StartingPosition = typing.Optional[typing.Union[ShipGroup, StaticGroup, Airport, Point]]
 
 
 def unit_task(unit: UnitType) -> Task:
@@ -469,6 +473,18 @@ def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict
         return groups[0]
     else:
         return {}
+
+
+def assigned_units_split(fd: AssignedUnitsDict) -> typing.Tuple[PlaneDict, PlaneDict]:
+    return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
+
+
+def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
+    return {k: (v, 0) for k, v in d.items()}
+
+
+def unitdict_from(fd: AssignedUnitsDict) -> Dict:
+    return {k: v1 for k, (v1, v2) in fd.items()}
 
 
 def _validate_db():

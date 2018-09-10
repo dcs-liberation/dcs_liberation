@@ -140,7 +140,7 @@ class EventMenu(Menu):
         else:
             self.event.is_awacs_enabled = False
 
-        flights = {k: {} for k in self.event.tasks}  # type: ScrambledFlightsDict
+        flights = {k: {} for k in self.event.tasks}  # type: db.TaskForceDict
         units_scramble_counts = {}  # type: typing.Dict[typing.Type[UnitType], int]
         tasks_scramble_counts = {}  # type: typing.Dict[typing.Type[Task], int]
         tasks_clients_counts = {}  # type: typing.Dict[typing.Type[Task], int]

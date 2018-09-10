@@ -1,23 +1,13 @@
-from dcs.terrain import Terrain
-
-from game import db
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
-from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
-from gen.conflictgen import Conflict
+from game.db import assigned_units_split
 
 from .operation import *
 
 
 class InfantryTransportOperation(Operation):
-    transport = None  # type: FlightDict
+    transport = None  # type: db.AssignedUnitsDict
     aa = None  # type: db.AirDefenseDict
 
-    def setup(self, transport: FlightDict, aa: db.AirDefenseDict):
+    def setup(self, transport: db.AssignedUnitsDict, aa: db.AirDefenseDict):
         self.transport = transport
         self.aa = aa
 
@@ -36,7 +26,7 @@ class InfantryTransportOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_passenger_transport(*flight_arguments(self.transport), at=self.attackers_starting_position)
+        self.airgen.generate_passenger_transport(*assigned_units_split(self.transport), at=self.attackers_starting_position)
 
         self.armorgen.generate_passengers(count=6)
         self.aagen.generate_at_defenders_location(self.aa)

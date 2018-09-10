@@ -1,13 +1,4 @@
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import *
-
-from game import db
 from game.operation.strike import StrikeOperation
-from theater.conflicttheater import *
-from userdata.debriefing import Debriefing
 
 from .event import *
 
@@ -50,7 +41,7 @@ class StrikeEvent(Event):
         super(StrikeEvent, self).commit(debriefing)
         self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAP in flights and CAS in flights and len(flights) == 2, "Invalid flights"
 
         op = StrikeOperation(
@@ -64,6 +55,6 @@ class StrikeEvent(Event):
         interceptors = self.to_cp.base.scramble_interceptors(self.game.settings.multiplier)
         op.setup(strikegroup=flights[CAS],
                  escort=flights[CAP],
-                 interceptors=flight_dict_from(interceptors))
+                 interceptors=assigned_units_from(interceptors))
 
         self.operation = op

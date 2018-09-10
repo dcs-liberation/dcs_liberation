@@ -40,7 +40,7 @@ class InsurgentAttackEvent(Event):
         else:
             return not attackers_success
 
-    def player_defending(self, flights: ScrambledFlightsDict):
+    def player_defending(self, flights: db.TaskForceDict):
         assert CAS in flights and len(flights) == 1, "Invalid flights"
 
         suitable_unittypes = db.find_unittype(Reconnaissance, self.attacker_name)

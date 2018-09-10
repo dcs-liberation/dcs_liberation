@@ -8,14 +8,12 @@ from dcs.unittype import UnitType
 from game import *
 from theater import *
 from gen.environmentgen import EnvironmentSettings
-from game.operation.operation import flight_dict_from, dict_from_flight
+from game.db import assigned_units_from, unitdict_from
 
 from userdata.debriefing import Debriefing
 from userdata import persistency
 
 DIFFICULTY_LOG_BASE = 1.1
-
-ScrambledFlightsDict = typing.Dict[typing.Type[Task], typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]]
 
 
 class Event:
@@ -67,10 +65,10 @@ class Event:
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert False
 
-    def player_defending(self, flights: ScrambledFlightsDict):
+    def player_defending(self, flights: db.TaskForceDict):
         assert False
 
     def generate(self):

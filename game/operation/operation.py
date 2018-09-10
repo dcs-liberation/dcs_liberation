@@ -1,31 +1,14 @@
-import typing
-
 from dcs.lua.parse import loads
-from dcs.unittype import UnitType
 
 from userdata.debriefing import *
 
-from theater import *
 from gen import *
-
-FlightDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
-
-
-def flight_arguments(fd: FlightDict) -> typing.Tuple[db.PlaneDict, db.PlaneDict]:
-    return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
-
-
-def flight_dict_from(d: db.PlaneDict) -> FlightDict:
-    return {k: (v, 0) for k, v in d.items()}
-
-
-def dict_from_flight(fd: FlightDict) -> db.Dict:
-    return {k: v1 for k, (v1, v2) in fd.items()}
 
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
     defenders_starting_position = None  # type: db.StartingPosition
+
     mission = None  # type: dcs.Mission
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator

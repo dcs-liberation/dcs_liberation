@@ -142,6 +142,9 @@ class Conflict:
         y = lerp * dy + self.tail.y
         return Point(x, y)
 
+    def find_ground_position(self, at: Point, heading: int, max_distance: int = 40000) -> typing.Optional[Point]:
+        return Conflict._find_ground_position(at, max_distance, heading, self.theater)
+
     @classmethod
     def has_frontline_between(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> bool:
         return from_cp.has_frontline and to_cp.has_frontline
@@ -190,7 +193,7 @@ class Conflict:
         return pos
 
     @classmethod
-    def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+    def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> typing.Optional[Point]:
         pos = initial
         for _ in range(0, int(max_distance), 500):
             if theater.is_on_land(pos):

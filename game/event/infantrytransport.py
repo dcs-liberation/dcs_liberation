@@ -37,7 +37,7 @@ class InfantryTransportEvent(Event):
         else:
             self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert Embarking in flights and len(flights) == 1, "Invalid flights"
 
         op = InfantryTransportOperation(

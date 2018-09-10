@@ -1,25 +1,15 @@
-from dcs.terrain import Terrain
-
-from game import db
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
-from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
-from gen.conflictgen import Conflict
+from game.db import assigned_units_split
 
 from .operation import *
 
 
 class InsurgentAttackOperation(Operation):
-    strikegroup = None  # type: FlightDict
+    strikegroup = None  # type: db.AssignedUnitsDict
     target = None  # type: db.ArmorDict
 
     def setup(self,
               target: db.ArmorDict,
-              strikegroup: FlightDict):
+              strikegroup: db.AssignedUnitsDict):
         self.strikegroup = strikegroup
         self.target = target
 
@@ -38,7 +28,7 @@ class InsurgentAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.airgen.generate_defense(*flight_arguments(self.strikegroup), at=self.defenders_starting_position)
+        self.airgen.generate_defense(*assigned_units_split(self.strikegroup), at=self.defenders_starting_position)
         self.armorgen.generate(self.target, {})
 
         self.briefinggen.title = "Destroy insurgents"

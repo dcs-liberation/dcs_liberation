@@ -1,18 +1,17 @@
-from dcs.terrain import Terrain
+from game.db import assigned_units_split
 
-from gen import *
 from .operation import *
 
 
 class NavalInterceptionOperation(Operation):
-    strikegroup = None  # type: FlightDict
-    interceptors = None  # type: FlightDict
+    strikegroup = None  # type: db.AssignedUnitsDict
+    interceptors = None  # type: db.AssignedUnitsDict
     targets = None  # type: db.ShipDict
     trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
-              strikegroup: FlightDict,
-              interceptors: FlightDict,
+              strikegroup: db.AssignedUnitsDict,
+              interceptors: db.AssignedUnitsDict,
               targets: db.ShipDict):
         self.strikegroup = strikegroup
         self.interceptors = interceptors
@@ -37,14 +36,14 @@ class NavalInterceptionOperation(Operation):
         target_groups = self.shipgen.generate_cargo(units=self.targets)
 
         self.airgen.generate_ship_strikegroup(
-            *flight_arguments(self.strikegroup),
+            *assigned_units_split(self.strikegroup),
             target_groups=target_groups,
             at=self.attackers_starting_position
         )
 
         if self.interceptors:
             self.airgen.generate_defense(
-                *flight_arguments(self.interceptors),
+                *assigned_units_split(self.interceptors),
                 at=self.defenders_starting_position
             )
 

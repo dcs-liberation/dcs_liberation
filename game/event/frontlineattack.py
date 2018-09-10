@@ -1,10 +1,3 @@
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import AirDefence
-
-from game import *
 from game.event import *
 from game.operation.frontlineattack import FrontlineAttackOperation
 from userdata.debriefing import Debriefing
@@ -69,7 +62,7 @@ class FrontlineAttackEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-0.1)
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAS in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
 
         self.defenders = self.to_cp.base.assemble_attack()
@@ -80,7 +73,7 @@ class FrontlineAttackEvent(Event):
                                       from_cp=self.from_cp,
                                       to_cp=self.to_cp)
 
-        armor = dict_from_flight(flights[PinpointStrike])
+        armor = unitdict_from(flights[PinpointStrike])
         op.setup(target=self.defenders,
                  attackers=db.unitdict_restrict_count(armor, sum(self.defenders.values())),
                  strikegroup=flights[CAS])

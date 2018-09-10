@@ -1,21 +1,14 @@
-from game import db
+from game.db import assigned_units_split
 
-from gen.conflictgen import Conflict
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
 from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
 
 from .operation import *
 
 
 class BaseAttackOperation(Operation):
-    cas = None  # type: FlightDict
-    escort = None  # type: FlightDict
-    intercept = None  # type: FlightDict
+    cas = None  # type: db.AssignedUnitsDict
+    escort = None  # type: db.AssignedUnitsDict
+    intercept = None  # type: db.AssignedUnitsDict
     attack = None  # type: db.ArmorDict
     defense = None  # type: db.ArmorDict
     aa = None  # type: db.AirDefenseDict
@@ -23,10 +16,10 @@ class BaseAttackOperation(Operation):
     trigger_radius = TRIGGER_RADIUS_SMALL
 
     def setup(self,
-              cas: FlightDict,
-              escort: FlightDict,
-              attack: FlightDict,
-              intercept: FlightDict,
+              cas: db.AssignedUnitsDict,
+              escort: db.AssignedUnitsDict,
+              attack: db.AssignedUnitsDict,
+              intercept: db.AssignedUnitsDict,
               defense: db.ArmorDict,
               aa: db.AirDefenseDict):
         self.cas = cas
@@ -57,10 +50,10 @@ class BaseAttackOperation(Operation):
         self.armorgen.generate(self.attack, self.defense)
         self.aagen.generate(self.aa)
 
-        self.airgen.generate_defense(*flight_arguments(self.intercept), at=self.defenders_starting_position)
+        self.airgen.generate_defense(*assigned_units_split(self.intercept), at=self.defenders_starting_position)
 
-        self.airgen.generate_cas_strikegroup(*flight_arguments(self.cas), at=self.attackers_starting_position)
-        self.airgen.generate_attackers_escort(*flight_arguments(self.escort), at=self.attackers_starting_position)
+        self.airgen.generate_cas_strikegroup(*assigned_units_split(self.cas), at=self.attackers_starting_position)
+        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
 

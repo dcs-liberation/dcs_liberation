@@ -42,7 +42,7 @@ GROUP_VERTICAL_OFFSET = 300
 
 
 class AircraftConflictGenerator:
-    escort_targets = [] # type: typing.List[typing.Tuple[PlaneGroup, int]]
+    escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
     vertical_offset = None  # type: int
 
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings):
@@ -77,7 +77,7 @@ class AircraftConflictGenerator:
                 count -= group_size
                 client_count -= client_size
 
-    def _setup_group(self, group: FlyingGroup, for_task: Task, client_count: int):
+    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], client_count: int):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:

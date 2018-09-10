@@ -1,10 +1,3 @@
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import AirDefence
-
-from game import *
 from game.event import *
 from game.operation.frontlinepatrol import FrontlinePatrolOperation
 from userdata.debriefing import Debriefing
@@ -61,7 +54,7 @@ class FrontlinePatrolEvent(Event):
     def skip(self):
         pass
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAP in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
 
         self.cas = self.to_cp.base.scramble_cas(self.game.settings.multiplier)
@@ -74,8 +67,8 @@ class FrontlinePatrolEvent(Event):
                                       to_cp=self.to_cp)
 
         defenders = self.to_cp.base.assemble_attack()
-        op.setup(cas=flight_dict_from(self.cas),
-                 escort=flight_dict_from(self.escort),
+        op.setup(cas=assigned_units_from(self.cas),
+                 escort=assigned_units_from(self.escort),
                  interceptors=flights[CAP],
                  armor_attackers=db.unitdict_restrict_count(dict_from_flight(flights[PinpointStrike]), sum(defenders.values())),
                  armor_defenders=defenders)

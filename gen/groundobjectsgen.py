@@ -7,6 +7,8 @@ from .naming import *
 from dcs.mission import *
 from dcs.statics import *
 
+FARP_FRONTLINE_DISTANCE = 10000
+
 
 CATEGORY_MAPPING = {
     "power": [Fortification.Workshop_A],
@@ -24,6 +26,17 @@ class GroundObjectsGenerator:
         self.m = mission
         self.conflict = conflict
         self.game = game
+
+    def generate_farp(self) -> StaticGroup:
+        assert self.conflict.is_vector, "FARP could be generated only on frontline conflicts!"
+
+        position = self.conflict.find_ground_position(self.conflict.center.point_from_heading(self.conflict.opposite_heading, FARP_FRONTLINE_DISTANCE))
+        return self.m.static_group(
+            country=self.m.country(self.game.player),
+            name="",
+            _type=Fortification.FARP_Command_Post,
+            position=position
+        )
 
     def generate(self):
         side = self.m.country(self.game.enemy)

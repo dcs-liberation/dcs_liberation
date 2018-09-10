@@ -1,16 +1,7 @@
-import typing
-import math
-import random
-
-from dcs.task import *
-from dcs.unittype import UnitType
-
-from game import db
 from game.operation.baseattack import BaseAttackOperation
-from userdata.debriefing import Debriefing
 
 from .event import *
-from ..operation.operation import flight_dict_from
+from game.db import assigned_units_from
 
 
 class BaseAttackEvent(Event):
@@ -60,7 +51,7 @@ class BaseAttackEvent(Event):
         if not self.is_player_attacking and self.to_cp.captured:
             self.to_cp.captured = False
 
-    def player_defending(self, flights: ScrambledFlightsDict):
+    def player_defending(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1,  "Invalid scrambled flights"
 
         cas = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
@@ -73,8 +64,8 @@ class BaseAttackEvent(Event):
                                  from_cp=self.from_cp,
                                  to_cp=self.to_cp)
 
-        op.setup(cas=flight_dict_from(cas),
-                 escort=flight_dict_from(escort),
+        op.setup(cas=assigned_units_from(cas),
+                 escort=assigned_units_from(escort),
                  intercept=flights[CAP],
                  attack=attackers,
                  defense=self.to_cp.base.armor,
@@ -82,7 +73,7 @@ class BaseAttackEvent(Event):
 
         self.operation = op
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAP in flights and CAS in flights and PinpointStrike in flights and len(flights) == 3, "Invalid flights"
 
         op = BaseAttackOperation(game=self.game,
@@ -97,7 +88,7 @@ class BaseAttackEvent(Event):
         op.setup(cas=flights[CAS],
                  escort=flights[CAP],
                  attack=flights[PinpointStrike],
-                 intercept=flight_dict_from(defenders),
+                 intercept=assigned_units_from(defenders),
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.assemble_aa())
 

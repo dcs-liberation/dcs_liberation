@@ -1,13 +1,4 @@
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import *
-
-from game import db
 from game.operation.intercept import InterceptOperation
-from theater.conflicttheater import *
-from userdata.debriefing import Debriefing
 
 from .event import *
 
@@ -68,7 +59,7 @@ class InterceptEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, flights: ScrambledFlightsDict):
+    def player_attacking(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         escort = self.to_cp.base.scramble_sweep(self._enemy_scramble_multiplier())
@@ -83,14 +74,14 @@ class InterceptEvent(Event):
                                 from_cp=self.from_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=flight_dict_from(escort),
+        op.setup(escort=assigned_units_from(escort),
                  transport={self.transport_unit: 1},
                  airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
                  interceptors=flights[CAP])
 
         self.operation = op
 
-    def player_defending(self, flights: ScrambledFlightsDict):
+    def player_defending(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         interceptors = self.from_cp.base.scramble_interceptors(self.game.settings.multiplier)
@@ -106,7 +97,7 @@ class InterceptEvent(Event):
 
         op.setup(escort=flights[CAP],
                  transport={self.transport_unit: 1},
-                 interceptors=flight_dict_from(interceptors),
+                 interceptors=assigned_units_from(interceptors),
                  airdefense={})
 
         self.operation = op
