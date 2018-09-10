@@ -86,17 +86,17 @@ class NewGameMenu(Menu):
         Radiobutton(terrain, variable=self.selected_terrain, value=0, **STYLES["radiobutton"]) \
             .grid(row=0, column=0, sticky=W)
         Label(terrain, text="Caucasus", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
-        self.create_label_image(terrain, "terrain_caucasus.png").grid(row=0, column=2, padx=5)
+        self.create_label_image(terrain, "terrain_caucasus.gif").grid(row=0, column=2, padx=5)
 
         Radiobutton(terrain, variable=self.selected_terrain, value=1, **STYLES["radiobutton"]) \
             .grid(row=1, column=0, sticky=W)
         Label(terrain, text="Nevada", **STYLES["widget"]).grid(row=1, column=1, sticky=W)
-        self.create_label_image(terrain, "terrain_nevada.png").grid(row=1, column=2, padx=5)
+        self.create_label_image(terrain, "terrain_nevada.gif").grid(row=1, column=2, padx=5)
 
         Radiobutton(terrain, variable=self.selected_terrain, value=2, **STYLES["radiobutton"]) \
             .grid(row=2, column=0, sticky=W)
         Label(terrain, text="Persian Gulf", **STYLES["widget"]).grid(row=2, column=1, sticky=W)
-        self.create_label_image(terrain, "terrain_pg.png").grid(row=2, column=2, padx=5)
+        self.create_label_image(terrain, "terrain_pg.gif").grid(row=2, column=2, padx=5)
 
         Label(terrain, text="Currently strike missions are only\navailable for a number of airports only in Caucasus", **STYLES["widget"]) \
             .grid(row=3, column=0, columnspan=3, sticky=W)
