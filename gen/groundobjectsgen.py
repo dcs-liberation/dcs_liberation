@@ -22,21 +22,26 @@ CATEGORY_MAPPING = {
 
 
 class GroundObjectsGenerator:
+    FARP_CAPACITY = 4
+
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.m = mission
         self.conflict = conflict
         self.game = game
 
-    def generate_farp(self) -> StaticGroup:
+    def generate_farps(self, number_of_units=1) -> typing.Collection[StaticGroup]:
         assert self.conflict.is_vector, "FARP could be generated only on frontline conflicts!"
 
-        position = self.conflict.find_ground_position(self.conflict.center.point_from_heading(self.conflict.opposite_heading, FARP_FRONTLINE_DISTANCE))
-        return self.m.static_group(
-            country=self.m.country(self.game.player),
-            name="",
-            _type=Fortification.FARP_Command_Post,
-            position=position
-        )
+        for i, _ in enumerate(range(0, number_of_units, self.FARP_CAPACITY)):
+            heading = self.conflict.heading - 90
+            position = self.conflict.find_ground_position(self.conflict.center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE), heading)
+            position = position.point_from_heading(0, i * 275)
+
+            yield self.m.farp(
+                country=self.m.country(self.game.player),
+                name="FARP",
+                position=position,
+            )
 
     def generate(self):
         side = self.m.country(self.game.enemy)

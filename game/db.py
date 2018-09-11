@@ -358,7 +358,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
 
     Ka_50: {
-      "*": "12x9A4172, 40xS-8",
+        CAS: "12x9A4172, 40xS-8",
+        GroundAttack: "12x9A4172, 40xS-8",
     },
 
     M_2000C: {
@@ -481,6 +482,27 @@ def assigned_units_split(fd: AssignedUnitsDict) -> typing.Tuple[PlaneDict, Plane
 
 def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
     return {k: (v, 0) for k, v in d.items()}
+
+
+def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
+    buffer_dict = {}
+    for unit_type, (unit_count, client_count) in dict.items():
+        for _ in range(unit_count):
+            new_count, new_client_count = buffer_dict.get(unit_type, (0, 0))
+
+            new_count += 1
+
+            if client_count > 0:
+                new_client_count += 1
+                client_count -= 1
+
+            buffer_dict[unit_type] = new_count, new_client_count
+            if new_count >= count:
+                yield buffer_dict
+                buffer_dict = {}
+
+    if len(buffer_dict):
+        yield buffer_dict
 
 
 def unitdict_from(fd: AssignedUnitsDict) -> Dict:

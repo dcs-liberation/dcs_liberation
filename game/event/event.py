@@ -2,7 +2,7 @@ import typing
 import logging
 
 from dcs.unittype import UnitType
-from dcs.task import Task
+from dcs.task import *
 from dcs.unittype import UnitType
 
 from game import *

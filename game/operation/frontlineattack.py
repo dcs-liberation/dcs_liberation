@@ -39,12 +39,15 @@ class FrontlineAttackOperation(Operation):
     def generate(self):
         self.armorgen.generate_vec(self.attackers, self.target)
 
-        planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map}
+        planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_cas_strikegroup(*assigned_units_split(planes_flights), at=self.attackers_starting_position)
 
-        heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map}
+        heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
         if heli_flights:
-            self.airgen.generate_cas_strikegroup(*assigned_units_split(heli_flights), at=self.groundobjectgen.generate_farp())
+            self.briefinggen.append_frequency("FARP", "127.5 MHz AM")
+            for farp, dict in zip(self.groundobjectgen.generate_farps(sum([x[0] for x in heli_flights.values()])),
+                                  db.assignedunits_split_to_count(heli_flights, self.groundobjectgen.FARP_CAPACITY)):
+                self.airgen.generate_cas_strikegroup(*assigned_units_split(dict), at=farp, escort=False)
 
         self.briefinggen.title = "Frontline CAS"
         self.briefinggen.description = "Provide CAS for the ground forces attacking enemy lines. Operation will be considered successful if total number of enemy units will be lower than your own by a factor of 1.5 (i.e. with 12 units from both sides, enemy forces need to be reduced to at least 8), meaning that you (and, probably, your wingmans) should concentrate on destroying the enemy units. Target base strength will be lowered as a result. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."

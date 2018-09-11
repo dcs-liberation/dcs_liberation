@@ -72,32 +72,35 @@ class TriggersGenerator:
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
                 if coalition_name == player_coalition:
-                    for plane_group in country.plane_group + country.helicopter_group:
-                        if plane_group.task == AWACS.name or plane_group.task == Refueling.name:
+                    for group in country.plane_group + country.helicopter_group:
+                        if group.task == AWACS.name or group.task == Refueling.name:
+                            continue
+
+                        if player_cp.position.distance_to_point(group.position) > PUSH_TRIGGER_SIZE * 3:
                             continue
 
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
 
-                        pos1 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
-                        pos2 = plane_group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE+5000)
-                        w1 = plane_group.add_waypoint(pos1, REGROUP_ALT)
-                        w2 = plane_group.add_waypoint(pos2, REGROUP_ALT)
+                        pos1 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
+                        pos2 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE+5000)
+                        w1 = group.add_waypoint(pos1, REGROUP_ALT)
+                        w2 = group.add_waypoint(pos2, REGROUP_ALT)
 
-                        plane_group.points.remove(w1)
-                        plane_group.points.remove(w2)
+                        group.points.remove(w1)
+                        group.points.remove(w2)
 
-                        plane_group.points.insert(1, w2)
-                        plane_group.points.insert(1, w1)
+                        group.points.insert(1, w2)
+                        group.points.insert(1, w1)
 
                         w1.tasks.append(Silence(True))
 
                         switch_waypoint_task = ControlledTask(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
                         switch_waypoint_task.start_if_user_flag(1, False)
                         w2.tasks.append(switch_waypoint_task)
-                        plane_group.points[3].tasks.append(Silence(False))
+                        group.points[3].tasks.append(Silence(False))
 
-                        plane_group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
-                        push_by_trigger.append(plane_group)
+                        group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
+                        push_by_trigger.append(group)
 
         push_trigger_zone = self.mission.triggers.add_triggerzone(player_cp.position, PUSH_TRIGGER_SIZE, name="Push zone")
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
