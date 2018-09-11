@@ -215,10 +215,10 @@ class Conflict:
 
         distance = GROUND_DISTANCE
         attackers_location = position.point_from_heading(attack_heading, distance)
-        attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
+        attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, attack_heading, theater)
 
         defenders_location = position.point_from_heading(defense_heading, 0)
-        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, defense_heading, theater)
 
         return cls(
             position=position,
