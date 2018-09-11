@@ -28,6 +28,8 @@ CAP_CAS_DISTANCE = 10000, 120000
 
 GROUND_INTERCEPT_SPREAD = 5000
 GROUND_DISTANCE_FACTOR = 1
+GROUND_DISTANCE = 4000
+
 GROUND_ATTACK_DISTANCE = 25000, 13000
 
 TRANSPORT_FRONTLINE_DIST = 1800
@@ -211,11 +213,11 @@ class Conflict:
         attack_heading = to_cp.find_radial(attack_raw_heading)
         defense_heading = to_cp.find_radial(from_cp.position.heading_between_point(to_cp.position), ignored_radial=attack_heading)
 
-        distance = to_cp.size * GROUND_DISTANCE_FACTOR
+        distance = GROUND_DISTANCE
         attackers_location = position.point_from_heading(attack_heading, distance)
         attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
 
-        defenders_location = position.point_from_heading(defense_heading, distance)
+        defenders_location = position.point_from_heading(defense_heading, 0)
         defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
 
         return cls(
