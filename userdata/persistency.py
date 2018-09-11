@@ -44,11 +44,8 @@ def restore_game():
     if not _save_file_exists():
         return None
 
-    try:
-        with open(_save_file(), "rb") as f:
-            return pickle.load(f)
-    except Exception as e:
-        raise e
+    with open(_save_file(), "rb") as f:
+        return pickle.load(f)
 
 
 def save_game(game) -> bool:

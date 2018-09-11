@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import re
 import sys
 import dcs
 import logging
@@ -33,13 +34,19 @@ def proceed_to_main_menu(game: Game):
 
 
 def is_version_compatible(save_version):
-    current_version = VERSION_STRING.split(".")
-    save_version = save_version.split(".")
+    current_version_components = re.split(r"[\._]", VERSION_STRING)
+    save_version_components = re.split(r"[\._]", save_version)
 
     if "--ignore-save" in sys.argv:
         return False
 
-    if current_version[:2] == save_version[:2]:
+    if current_version_components == save_version_components:
+        return True
+
+    if save_version == "1.4_rc1":
+        return False
+
+    if current_version_components[:2] == save_version_components[:2]:
         return True
 
     return False
@@ -80,9 +87,10 @@ try:
         new_game_menu = ui.newgamemenu.NewGameMenu(w, start_new_game)
         new_game_menu.display()
     else:
+        game.settings.version = VERSION_STRING
         proceed_to_main_menu(game)
 except Exception as e:
-    print(e)
+    logging.exception(e)
     ui.corruptedsavemenu.CorruptedSaveMenu(w).display()
 
 w.run()
