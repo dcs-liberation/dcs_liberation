@@ -86,9 +86,9 @@ class Operation:
 
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
-        self.briefinggen.append_frequency("Tanker", "10X/240 MHz FM")
+        self.briefinggen.append_frequency("Tanker", "10X/131 MHz AM")
         if self.is_awacs_enabled:
-            self.briefinggen.append_frequency("AWACS", "244 MHz FM")
+            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
 
         # ground infrastructure
         self.groundobjectgen.generate()
@@ -111,8 +111,10 @@ class Operation:
         else:
             self.envgen.load(self.environment_settings)
 
+        # @TODO: ADD WAYPOINT INFORMATION!
+
         # main frequencies
-        self.briefinggen.append_frequency("Flight", "251 MHz FM")
+        self.briefinggen.append_frequency("Flight", "251 MHz AM")
         if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
             self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
 

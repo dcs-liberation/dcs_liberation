@@ -79,6 +79,9 @@ class TriggersGenerator:
                         if player_cp.position.distance_to_point(group.position) > PUSH_TRIGGER_SIZE * 3:
                             continue
 
+                        if group.units[0].is_human():
+                            continue
+
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
 
                         pos1 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)

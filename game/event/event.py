@@ -3,6 +3,7 @@ import logging
 
 from dcs.unittype import UnitType
 from dcs.task import *
+from dcs.vehicles import AirDefence
 from dcs.unittype import UnitType
 
 from game import *

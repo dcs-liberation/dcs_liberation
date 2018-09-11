@@ -70,7 +70,7 @@ class FrontlinePatrolEvent(Event):
         op.setup(cas=assigned_units_from(self.cas),
                  escort=assigned_units_from(self.escort),
                  interceptors=flights[CAP],
-                 armor_attackers=db.unitdict_restrict_count(dict_from_flight(flights[PinpointStrike]), sum(defenders.values())),
+                 armor_attackers=db.unitdict_restrict_count(db.unitdict_from(flights[PinpointStrike]), sum(defenders.values())),
                  armor_defenders=defenders)
 
         self.operation = op
