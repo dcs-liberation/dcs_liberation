@@ -17,7 +17,7 @@ class CaucasusTheater(ConflictTheater):
     daytime_map = {
         "dawn": (6, 9),
         "day": (9, 18),
-        "dusk": (18, 21),
+        "dusk": (18, 20),
         "night": (0, 5),
     }
 
