@@ -1,86 +1,87 @@
 import pickle
 import typing
 
-from game import db
-from gen.groundobjectsgen import TheaterGroundObject
 from dcs.mission import Mission
 from dcs.mapping import Point
+from dcs.unitgroup import VehicleGroup, StaticGroup
+from dcs.unit import *
+from dcs.statics import warehouse_map, fortification_map
+
+from game import db
+from gen.groundobjectsgen import TheaterGroundObject
 
 m = Mission()
 m.load_file("./cau_groundobjects.miz")
 
-result = {}
-result_by_groups = {}  # type: typing.Dict[int, TheaterGroundObject]
-cp_counters = {}
-ids_counters = {}
-group_id_counter = 0
-previous_group_id = None
+
+def parse_name(name: str) -> int:
+    first_part = name.split()[0].split("|")
+    return int(first_part[0]) if len(first_part) == 1 else int(first_part[1])
 
 
-def append_group(cp_id, category, group_id, object_id, position, heading):
-    global result
-    global result_by_groups
+if __name__ == "__main__":
+    theater_objects = []
 
-    ground_object = TheaterGroundObject(category, cp_id, group_id, object_id, position, heading)
+    for group in m.country("Russia").static_group + m.country("Russia").vehicle_group:
+        for unit in group.units:
+            theater_object = TheaterGroundObject()
+            theater_object.object_id = len(theater_objects) + 1
 
-    if cp_id not in result:
-        result[cp_id] = []
-    result[cp_id].append(ground_object)
+            try:
+                theater_object.cp_id = parse_name(str(unit.name))
+            except Exception as e:
+                theater_object.cp_id = parse_name(str(group.name))
 
-    result_by_groups_key = "{}_{}_{}".format(cp_id, category, group_id)
-    if result_by_groups_key not in result_by_groups:
-        result_by_groups[result_by_groups_key] = []
-    result_by_groups[result_by_groups_key].append(ground_object)
+            theater_object.position = unit.position
+            theater_object.heading = unit.heading
 
+            if isinstance(unit, Vehicle):
+                theater_object.dcs_identifier = "AA"
+            else:
+                theater_object.dcs_identifier = unit.type
 
-def parse_name(name: str) -> typing.Tuple:
-    args = str(name.split()[0]).split("|")
+            airport_distance = m.terrain.airport_by_id(theater_object.cp_id).position.distance_to_point(theater_object.position)
+            if airport_distance > 150000:
+                print("Object {} {} is placed {}m from airport {}!".format(theater_object.dcs_identifier,
+                                                                           group.name,
+                                                                           airport_distance,
+                                                                           m.terrain.airport_by_id(theater_object.cp_id)))
 
-    if len(args) == 2:
-        global group_id_counter
-        group_id_counter += 1
-        args.append(str(group_id_counter))
-    else:
-        global previous_group_id
-        if previous_group_id != args[2]:
-            group_id_counter += 1
-            previous_group_id = args[2]
+            assert theater_object.dcs_identifier
+            assert theater_object.cp_id
+            assert theater_object.object_id
 
-    return args[0], int(args[1]), int(args[2])
+            theater_objects.append(theater_object)
 
+    group_ids = 1
+    for object_a in theater_objects:
+        for object_b in theater_objects:
+            if object_a.position.distance_to_point(object_b.position) < 2000:
+                if object_a.group_id and object_b.group_id:
+                    continue
+                elif object_a.group_id:
+                    object_b.group_id = object_a.group_id
+                elif object_b.group_id:
+                    object_a.group_id = object_b.group_id
+                else:
+                    object_a.group_id = group_ids
+                    object_b.group_id = group_ids
+                    group_ids += 1
 
-for group in m.country("Russia").static_group + m.country("Russia").vehicle_group:
-    try:
-        category, cp_id, group_id = parse_name(str(group.name))
-    except:
-        print("Failed to parse {}".format(group.name))
-        continue
+                assert object_a.cp_id == object_b.cp_id, "Object {} and {} are placed in group with different airports!".format(object_a.string_identifier, object_b.string_identifier)
 
-    ids_counters_key = "{}_{}".format(cp_id, group_id)
-    ids_counters[ids_counters_key] = ids_counters.get(ids_counters_key, 0) + 1
-    object_id = ids_counters[ids_counters_key]
-    cp_counters[cp_id] = cp_counters.get(cp_id, 0) + 1
+    for a in theater_objects:
+        if not a.group_id:
+            a.group_id = group_ids
+            group_ids += 1
 
-    append_group(cp_id, category, group_id, object_id, group.position, group.units[0].heading)
+    print("Total {} objects".format(len(theater_objects)))
+    with open("../cau_groundobjects.p", "wb") as f:
+        result = {}
+        for theater_object in theater_objects:
+            if theater_object.cp_id not in result:
+                result[theater_object.cp_id] = []
+            result[theater_object.cp_id].append(theater_object)
 
-GROUP_TRESHOLD = 2000
-did_check_pairs = []
-for group_id, objects_in_group in result_by_groups.items():
-    for a in objects_in_group:
-        for b in objects_in_group:
-            if (a, b) in did_check_pairs:
-                continue
-
-            did_check_pairs.append((a, b))
-            distance = a.position.distance_to_point(b.position)
-            if distance > GROUP_TRESHOLD:
-                print("Objects {} and {} in group {} are too far apart ({})!".format(a.string_identifier, b.string_identifier, group_id, distance))
-
-print("Total {} objects".format(sum([len(x) for x in result.values()])))
-for cp_id, count in cp_counters.items():
-    print("{} - {} objects".format(cp_id, count))
-
-
-with open("../cau_groundobjects.p", "wb") as f:
-    pickle.dump(result, f)
+        pickle.dump(result, f)
 

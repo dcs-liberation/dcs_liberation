@@ -10,17 +10,6 @@ from dcs.statics import *
 FARP_FRONTLINE_DISTANCE = 10000
 
 
-CATEGORY_MAPPING = {
-    "power": [Fortification.Workshop_A],
-    "warehouse": [Warehouse.Warehouse],
-    "fuel": [Warehouse.Tank],
-    "ammo": [Warehouse.Ammunition_depot],
-    "farp": [Fortification.FARP_Tent],
-    "comms": [Fortification.TV_tower],
-    "oil": [Fortification.Oil_platform],
-}
-
-
 class GroundObjectsGenerator:
     FARP_CAPACITY = 4
 
@@ -53,7 +42,10 @@ class GroundObjectsGenerator:
             cp = self.conflict.from_cp
 
         for ground_object in cp.ground_objects:
-            if ground_object.category == "defense":
+            if ground_object.dcs_identifier == "AA":
+                if ground_object.is_dead:
+                    continue
+
                 unit_type = random.choice(self.game.commision_unit_types(cp, AirDefence))
                 assert unit_type is not None, "Cannot find unit type for GroundObject defense ({})!".format(cp)
 
@@ -62,17 +54,23 @@ class GroundObjectsGenerator:
                     name=ground_object.string_identifier,
                     _type=unit_type,
                     position=ground_object.position,
-                    heading=ground_object.heading
+                    heading=ground_object.heading,
                 )
 
                 logging.info("generated defense object identifier {} with mission id {}".format(group.name, group.id))
             else:
+                if ground_object.dcs_identifier in warehouse_map:
+                    static_type = warehouse_map[ground_object.dcs_identifier]
+                else:
+                    static_type = fortification_map[ground_object.dcs_identifier]
+
                 group = self.m.static_group(
                     country=side,
                     name=ground_object.string_identifier,
-                    _type=random.choice(CATEGORY_MAPPING[ground_object.category]),
+                    _type=static_type,
                     position=ground_object.position,
-                    heading=ground_object.heading
+                    heading=ground_object.heading,
+                    dead=ground_object.is_dead,
                 )
 
                 logging.info("generated object identifier {} with mission id {}".format(group.name, group.id))

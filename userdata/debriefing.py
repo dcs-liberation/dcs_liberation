@@ -17,6 +17,7 @@ from dcs.unit import UnitType
 from game import db
 
 from .persistency import base_path
+from theater.theatergroundobject import CATEGORY_MAP
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -123,10 +124,9 @@ class Debriefing:
             for event in events.values():
                 event_type = event.get("type", None)
                 if event_type in ["crash", "dead"]:
-                    object_initiator = event["initiator"] in ["SKLAD_CRUSH", "SKLADCDESTR", "TEC_A_CRUSH", "BAK_CRUSH"]
-                    defense_initiator = event["initiator"].startswith("defense|")
+                    initiator_components = event["initiator"].split("|")
 
-                    if object_initiator or defense_initiator:
+                    if initiator_components[0] in CATEGORY_MAP:
                         parse_dead_object(event)
                     else:
                         parse_dead_unit(event)
@@ -138,7 +138,6 @@ class Debriefing:
             result = {}
             for group in groups:
                 for unit in group.units:
-                    unit_type = None
                     if isinstance(unit, Vehicle):
                         unit_type = vehicle_map[unit.type]
                     elif isinstance(unit, Ship):

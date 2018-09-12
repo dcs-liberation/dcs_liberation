@@ -6,7 +6,7 @@ NAME_BY_CATEGORY = {
     "power": "Power plant",
     "ammo": "Ammo depot",
     "fuel": "Fuel depot",
-    "defense": "AA Defense Site",
+    "aa": "AA Defense Site",
     "warehouse": "Warehouse",
     "farp": "FARP",
     "comms": "Comms. tower",
@@ -17,7 +17,7 @@ ABBREV_NAME = {
     "power": "PLANT",
     "ammo": "AMMO",
     "fuel": "FUEL",
-    "defense": "AA",
+    "aa": "AA",
     "warehouse": "WARE",
     "farp": "FARP",
     "comms": "COMMST",
@@ -25,21 +25,35 @@ ABBREV_NAME = {
 }
 
 
+CATEGORY_MAP = {
+    "aa": ["AA"],
+    "power": ["Workshop A"],
+    "warehouse": ["Warehouse"],
+    "fuel": ["Tank"],
+    "ammo": [".Ammunition depot"],
+    "farp": ["FARP Tent"],
+    "comms": ["TV tower", "Comms tower"],
+    "oil": ["Oil platform"],
+}
+
+
 class TheaterGroundObject:
-    object_id = 0
     cp_id = 0
     group_id = 0
+    object_id = 0
+
+    dcs_identifier = None  # type: str
+    is_dead = False
+
     heading = 0
     position = None  # type: Point
-    category = None  # type: str
 
-    def __init__(self, category, cp_id, group_id, object_id, position, heading):
-        self.category = category
-        self.cp_id = cp_id
-        self.group_id = group_id
-        self.object_id = object_id
-        self.position = position
-        self.heading = heading
+    @property
+    def category(self) -> str:
+        for k, v in CATEGORY_MAP.items():
+            if self.dcs_identifier in v:
+                return k
+        assert False, "Identifier not found in mapping: {}".format(self.dcs_identifier)
 
     @property
     def string_identifier(self):
