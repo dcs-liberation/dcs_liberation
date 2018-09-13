@@ -44,7 +44,7 @@ class CaucasusTheater(ConflictTheater):
 
     carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875))
 
-    def __init__(self):
+    def __init__(self, load_ground_objects=True):
         super(CaucasusTheater, self).__init__()
 
         self.add_controlpoint(self.soganlug, connected_to=[self.kutaisi, self.beslan])
@@ -73,8 +73,9 @@ class CaucasusTheater(ConflictTheater):
         self.carrier_1.captured = True
         self.soganlug.captured = True
 
-        with open("resources/cau_groundobjects.p", "rb") as f:
-            self.set_groundobject(pickle.load(f))
+        if load_ground_objects:
+            with open("resources/cau_groundobjects.p", "rb") as f:
+                self.set_groundobject(pickle.load(f))
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
         point.name = " ".join(re.split(r"[ -]", point.name)[:1])

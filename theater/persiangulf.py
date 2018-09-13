@@ -45,7 +45,7 @@ class PersianGulfTheater(ConflictTheater):
 
     west_carrier = ControlPoint.carrier("East carrier", Point(-100531.972946, 60939.275818))
 
-    def __init__(self):
+    def __init__(self, load_ground_objects=True):
         super(PersianGulfTheater, self).__init__()
 
         self.add_controlpoint(self.shiraz, connected_to=[self.lar, self.kerman])

@@ -449,10 +449,7 @@ class AircraftConflictGenerator:
                 at=at and at or self._group_point(self.conflict.air_attackers_location))
 
             group.task = CAP.name
-
-            heading = group.position.heading_between_point(self.conflict.position)
-            initial_wayp = group.add_waypoint(group.position.point_from_heading(heading, WORKAROUND_WAYP_DIST), INTERCEPTION_ALT, INTERCEPTION_AIRSPEED)
-            initial_wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
+            group.points[0].tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
 
             wayp = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
             wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))

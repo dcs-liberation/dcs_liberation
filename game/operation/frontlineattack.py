@@ -51,4 +51,6 @@ class FrontlineAttackOperation(Operation):
 
         self.briefinggen.title = "Frontline CAS"
         self.briefinggen.description = "Provide CAS for the ground forces attacking enemy lines. Operation will be considered successful if total number of enemy units will be lower than your own by a factor of 1.5 (i.e. with 12 units from both sides, enemy forces need to be reduced to at least 8), meaning that you (and, probably, your wingmans) should concentrate on destroying the enemy units. Target base strength will be lowered as a result. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+        self.briefinggen.append_waypoint("CAS AREA IP")
+        self.briefinggen.append_waypoint("CAS AREA EGRESS")
         super(FrontlineAttackOperation, self).generate()

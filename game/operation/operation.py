@@ -111,8 +111,6 @@ class Operation:
         else:
             self.envgen.load(self.environment_settings)
 
-        # @TODO: ADD WAYPOINT INFORMATION!
-
         # main frequencies
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
         if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:

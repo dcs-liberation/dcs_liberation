@@ -51,4 +51,6 @@ class FrontlinePatrolOperation(Operation):
 
         self.briefinggen.title = "Frontline CAP"
         self.briefinggen.description = "Providing CAP support for ground units attacking enemy lines. Enemy will scramble its CAS and your task is to intercept it. Operation will be considered successful if total number of friendly units will be lower than enemy by at least a factor of 0.8 (i.e. with 12 units from both sides, there should be at least 8 friendly units alive), lowering targets strength as a result."
+        self.briefinggen.append_waypoint("CAP AREA IP")
+        self.briefinggen.append_waypoint("CAP AREA EGRESS")
         super(FrontlinePatrolOperation, self).generate()

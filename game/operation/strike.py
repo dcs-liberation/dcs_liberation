@@ -47,7 +47,8 @@ class StrikeOperation(Operation):
             category_counters[object.category] = category_counters.get(object.category, 0) + 1
             markpoint_name = "{}{}".format(object.name_abbrev, category_counters[object.category])
             targets.append((markpoint_name, object.position))
-            self.briefinggen.append_target(str(object), markpoint_name)
+            self.briefinggen.append_target(str(object))
+            self.briefinggen.append_waypoint("TARGET {} (TP {})".format(str(object), markpoint_name))
 
         targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[1]))
 

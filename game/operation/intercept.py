@@ -56,7 +56,14 @@ class InterceptOperation(Operation):
         self.airgen.generate_interception(*assigned_units_split(self.interceptors), at=self.attackers_starting_position)
 
         self.briefinggen.title = "Air Intercept"
-        self.briefinggen.description = "Intercept enemy supply transport aircraft. Escort will also be present if there are available planes on the base. Operation will be considered successful if most of the targets are destroyed, lowering targets strength as a result"
+
+        if self.game.player == self.attacker_name:
+            self.briefinggen.description = "Intercept enemy supply transport aircraft. Escort will also be present if there are available planes on the base. Operation will be considered successful if most of the targets are destroyed, lowering targets strength as a result"
+            self.briefinggen.append_waypoint("TARGET")
+            for unit_type, count in self.transport.items():
+                self.briefinggen.append_target("{} ({})".format(db.unit_type_name(unit_type), count))
+        else:
+            self.briefinggen.description = "Escort friendly supply transport aircraft. Operation will be considered failed if most of the targets are destroyed, lowering CP strength as a result"
 
         super(InterceptOperation, self).generate()
 

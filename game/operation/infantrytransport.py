@@ -36,6 +36,7 @@ class InfantryTransportOperation(Operation):
 
         self.briefinggen.title = "Infantry transport"
         self.briefinggen.description = "Helicopter operation to transport infantry troops from the base to the front line. Lowers target strength"
+        self.briefinggen.append_waypoint("DROP POINT")
 
         # TODO: horrible, horrible hack
         # this will disable vehicle activation triggers,

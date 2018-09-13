@@ -59,5 +59,11 @@ class BaseAttackOperation(Operation):
 
         self.briefinggen.title = "Base attack"
         self.briefinggen.description = "The goal of an attacker is to lower defender presence by destroying their armor and aircraft. Base will be considered captured if attackers on the ground overrun the defenders. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+
+        if self.game.player == self.attacker_name:
+            self.briefinggen.append_waypoint("TARGET")
+        else:
+            pass
+
         super(BaseAttackOperation, self).generate()
 

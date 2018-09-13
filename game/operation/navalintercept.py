@@ -48,7 +48,13 @@ class NavalInterceptionOperation(Operation):
             )
 
         self.briefinggen.title = "Naval Intercept"
-        self.briefinggen.description = "Destroy supply transport ships. Lowers target strength. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+        if self.game.player == self.attacker_name:
+            self.briefinggen.description = "Destroy supply transport ships. Lowers target strength. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+            for unit_type, count in self.targets:
+                self.briefinggen.append_target("{} ({})".format(db.unit_type_name(unit_type), count))
+        else:
+            self.briefinggen.description = "Protect supply transport ships."
+        self.briefinggen.append_waypoint("TARGET")
 
         super(NavalInterceptionOperation, self).generate()
 

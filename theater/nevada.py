@@ -32,7 +32,7 @@ class NevadaTheater(ConflictTheater):
     jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, 1.2)
     laughlin = ControlPoint.from_airport(nevada.Laughlin_Airport, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 
-    def __init__(self):
+    def __init__(self, load_ground_objects=True):
         super(NevadaTheater, self).__init__()
 
         self.add_controlpoint(self.mina, connected_to=[self.tonopah])
