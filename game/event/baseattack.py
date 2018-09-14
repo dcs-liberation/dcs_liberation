@@ -87,7 +87,7 @@ class BaseAttackEvent(Event):
 
         op.setup(cas=flights[CAS],
                  escort=flights[CAP],
-                 attack=flights[PinpointStrike],
+                 attack=unitdict_from(flights[PinpointStrike]),
                  intercept=assigned_units_from(defenders),
                  defense=self.to_cp.base.armor,
                  aa=self.to_cp.base.assemble_aa())
