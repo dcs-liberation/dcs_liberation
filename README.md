@@ -25,6 +25,6 @@ You could also briefly check the troubleshooting page to get familiar with the k
 
 Modding tutorial will cover how to change default loadouts, configure which planes are present in the campaign (or add new altogether) and more. Check this out if you find that something is not going for your liking, there could be a tutorial for changing that. Although be aware that it would require changing source files and could easily result in non functioning application.
 
-* [Developing guide](https://github.com/shdwp/dcs_liberation/wiki/Developing-guide)
+* [Development guide](https://github.com/shdwp/dcs_liberation/wiki/Development-guide)
 
 If you want to contribute to the project, this will give you a brief overview and on how to actually run it from source files.
