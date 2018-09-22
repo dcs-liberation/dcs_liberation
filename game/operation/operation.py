@@ -92,8 +92,10 @@ class Operation:
 
         # combined arms
         self.mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
-        self.mission.groundControl.blue_tactical_commander = self.ca_slots
-        self.mission.groundControl.red_tactical_commander = self.ca_slots
+        if self.game.player == "USA":
+            self.mission.groundControl.blue_tactical_commander = self.ca_slots
+        else:
+            self.mission.groundControl.red_tactical_commander = self.ca_slots
 
         # ground infrastructure
         self.groundobjectgen.generate()
