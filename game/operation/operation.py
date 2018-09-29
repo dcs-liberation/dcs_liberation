@@ -92,7 +92,7 @@ class Operation:
 
         # combined arms
         self.mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
-        if self.game.player == "USA":
+        if self.game.player in [country.name for country in self.mission.coalition["blue"].countries.values()]:
             self.mission.groundControl.blue_tactical_commander = self.ca_slots
         else:
             self.mission.groundControl.red_tactical_commander = self.ca_slots
