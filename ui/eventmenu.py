@@ -9,7 +9,7 @@ from .styles import STYLES, RED
 
 class EventMenu(Menu):
     scramble_entries = None  # type: typing.Dict[typing.Type[Task], typing.Dict[typing.Type[UnitType], typing.Tuple[Entry, Entry]]]
-    ca_slot_entry = None
+    ca_slot_entry = None  # type: Entry
     error_label = None  # type: Label
     awacs = None  # type: IntVar
 
