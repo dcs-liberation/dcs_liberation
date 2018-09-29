@@ -154,7 +154,10 @@ class EventMenu(Menu):
             self.event.is_awacs_enabled = False
 
         ca_slot_entry_value = self.ca_slot_entry.get()
-        ca_slots = int(ca_slot_entry_value and ca_slot_entry_value or "0")
+        try:
+            ca_slots = int(ca_slot_entry_value and ca_slot_entry_value or "0")
+        except:
+            ca_slots = 0
         self.event.ca_slots = ca_slots
 
         flights = {k: {} for k in self.event.tasks}  # type: db.TaskForceDict
