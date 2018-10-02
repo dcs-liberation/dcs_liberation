@@ -21,6 +21,7 @@ class Event:
     silent = False
     informational = False
     is_awacs_enabled = False
+    ca_slots = 0
     operation = None  # type: Operation
     difficulty = 1  # type: int
     game = None  # type: Game
@@ -74,6 +75,7 @@ class Event:
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
+        self.operation.ca_slots = self.ca_slots
 
         self.operation.prepare(self.game.theater.terrain, is_quick=False)
         self.operation.generate()
