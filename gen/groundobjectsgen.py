@@ -19,11 +19,15 @@ class GroundObjectsGenerator:
         self.game = game
 
     def generate_farps(self, number_of_units=1) -> typing.Collection[StaticGroup]:
-        assert self.conflict.is_vector, "FARP could be generated only on frontline conflicts!"
-
-        for i, _ in enumerate(range(0, number_of_units, self.FARP_CAPACITY)):
+        if self.conflict.is_vector:
+            center = self.conflict.center
             heading = self.conflict.heading - 90
-            position = self.conflict.find_ground_position(self.conflict.center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE), heading)
+        else:
+            center, heading = self.conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp)
+            heading -= 90
+
+        position = self.conflict.find_ground_position(center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE), heading)
+        for i, _ in enumerate(range(0, number_of_units, self.FARP_CAPACITY)):
             position = position.point_from_heading(0, i * 275)
 
             yield self.m.farp(
@@ -63,6 +67,10 @@ class GroundObjectsGenerator:
                     static_type = warehouse_map[ground_object.dcs_identifier]
                 else:
                     static_type = fortification_map[ground_object.dcs_identifier]
+
+                if not static_type:
+                    print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
+                    continue
 
                 group = self.m.static_group(
                     country=side,

@@ -112,12 +112,16 @@ class Game:
         enemy_generated_types = []
 
         for player_cp, enemy_cp in self.theater.conflicts(True):
-            if player_cp.is_global or enemy_cp.is_global:
+            if enemy_cp.is_global:
                 continue
 
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
-                if event_class == FrontlineAttackEvent or event_class == InfantryTransportEvent or event_class == FrontlinePatrolEvent:
+                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent]:
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
+                        continue
+
+                if player_cp.is_global:
+                    if event_class not in [InterceptEvent, StrikeEvent, NavalInterceptEvent]:
                         continue
 
                 if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):

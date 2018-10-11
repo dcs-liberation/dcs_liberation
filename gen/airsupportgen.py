@@ -21,6 +21,10 @@ class AirSupportConflictGenerator:
         self.conflict = conflict
         self.game = game
 
+    @classmethod
+    def support_tasks(cls) -> typing.Collection[typing.Type[MainTask]]:
+        return [Refueling, AWACS]
+
     def generate(self, is_awacs_enabled):
         player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
         tanker_unit = db.find_unittype(Refueling, self.conflict.attackers_side.name)[0]

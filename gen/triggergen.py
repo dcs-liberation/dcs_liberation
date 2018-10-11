@@ -12,9 +12,11 @@ from dcs.action import *
 
 from game import db
 from theater import *
+from gen.airsupportgen import AirSupportConflictGenerator
 from gen import *
 
 PUSH_TRIGGER_SIZE = 3000
+PUSH_TRIGGER_ACTIVATION_AGL = 100
 
 REGROUP_ZONE_DISTANCE = 12000
 REGROUP_ALT = 5000
@@ -51,6 +53,11 @@ class TriggersGenerator:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
+                for plane_group in country.plane_group:
+                    if plane_group.task in [x.name for x in AirSupportConflictGenerator.support_tasks()]:
+                        plane_group.late_activation = True
+                        activate_by_trigger.append(plane_group)
+
         conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
         minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
         if minimum_radius < 0:
@@ -77,9 +84,6 @@ class TriggersGenerator:
                             continue
 
                         if player_cp.position.distance_to_point(group.position) > PUSH_TRIGGER_SIZE * 3:
-                            continue
-
-                        if group.units[0].is_human():
                             continue
 
                         regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
@@ -109,7 +113,9 @@ class TriggersGenerator:
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
 
         for group in push_by_trigger:
-            push_trigger.add_condition(AllOfGroupOutsideZone(group.id, push_trigger_zone.id))
+            for unit in group.units:
+                push_trigger.add_condition(UnitAltitudeHigherAGL(unit.id, PUSH_TRIGGER_ACTIVATION_AGL))
+
             push_trigger.add_action(AITaskPush(group.id, 1))
 
         message_string = self.mission.string("Task force is in the air, proceed with the objective (activate waypoint 3).")

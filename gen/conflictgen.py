@@ -130,19 +130,22 @@ class Conflict:
         return self.to_cp.size * GROUND_DISTANCE_FACTOR
 
     def find_insertion_point(self, other_point: Point) -> Point:
-        dx = self.position.x - self.tail.x
-        dy = self.position.y - self.tail.y
-        dr2 = float(dx ** 2 + dy ** 2)
+        if self.is_vector:
+            dx = self.position.x - self.tail.x
+            dy = self.position.y - self.tail.y
+            dr2 = float(dx ** 2 + dy ** 2)
 
-        lerp = ((other_point.x - self.tail.x) * dx + (other_point.y - self.tail.y) * dy) / dr2
-        if lerp < 0:
-            lerp = 0
-        elif lerp > 1:
-            lerp = 1
+            lerp = ((other_point.x - self.tail.x) * dx + (other_point.y - self.tail.y) * dy) / dr2
+            if lerp < 0:
+                lerp = 0
+            elif lerp > 1:
+                lerp = 1
 
-        x = lerp * dx + self.tail.x
-        y = lerp * dy + self.tail.y
-        return Point(x, y)
+            x = lerp * dx + self.tail.x
+            y = lerp * dy + self.tail.y
+            return Point(x, y)
+        else:
+            return self.position
 
     def find_ground_position(self, at: Point, heading: int, max_distance: int = 40000) -> typing.Optional[Point]:
         return Conflict._find_ground_position(at, max_distance, heading, self.theater)
@@ -153,7 +156,10 @@ class Conflict:
 
     @classmethod
     def frontline_position(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Tuple[Point, int]:
-        distance = max(from_cp.position.distance_to_point(to_cp.position) * FRONTLINE_DISTANCE_STRENGTH_FACTOR * to_cp.base.strength, FRONTLINE_MIN_CP_DISTANCE)
+        cp_distance = from_cp.position.distance_to_point(to_cp.position)
+        cp_distance -= cp_distance * to_cp.frontline_offset + cp_distance * from_cp.frontline_offset
+
+        distance = max(cp_distance * FRONTLINE_DISTANCE_STRENGTH_FACTOR * to_cp.base.strength, FRONTLINE_MIN_CP_DISTANCE)
         heading = to_cp.position.heading_between_point(from_cp.position)
         return to_cp.position.point_from_heading(heading, distance), heading
 
@@ -172,7 +178,6 @@ class Conflict:
                 if pos:
                     left_position = pos
                     center_position = pos
-        print("{} - {} {}".format(from_cp, to_cp, center_position))
 
         if left_position is None:
             left_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH/2), _heading_sum(heading, -90), theater)

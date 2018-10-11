@@ -52,12 +52,22 @@ class StrikeOperation(Operation):
 
         targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[1]))
 
-        self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(self.strikegroup),
+        planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
+        self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(planes_flights),
                                                        targets=targets,
                                                        at=self.attackers_starting_position)
 
-        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
+        heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
+        if heli_flights:
+            self.briefinggen.append_frequency("FARP", "127.5 MHz AM")
+            for farp, dict in zip(self.groundobjectgen.generate_farps(sum([x[0] for x in heli_flights.values()])),
+                                  db.assignedunits_split_to_count(heli_flights, self.groundobjectgen.FARP_CAPACITY)):
+                self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(dict),
+                                                               targets=targets,
+                                                               at=farp,
+                                                               escort=len(planes_flights) == 0)
 
+        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
         self.airgen.generate_barcap(*assigned_units_split(self.interceptors), at=self.defenders_starting_position)
 
         self.briefinggen.title = "Strike"

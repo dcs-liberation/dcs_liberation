@@ -1,6 +1,7 @@
 import typing
 
 from dcs.mapping import Point
+from dcs.statics import *
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
@@ -9,6 +10,8 @@ NAME_BY_CATEGORY = {
     "aa": "AA Defense Site",
     "warehouse": "Warehouse",
     "farp": "FARP",
+    "fob": "FOB",
+    "factory": "Factory",
     "comms": "Comms. tower",
     "oil": "Oil platform"
 }
@@ -20,6 +23,8 @@ ABBREV_NAME = {
     "aa": "AA",
     "warehouse": "WARE",
     "farp": "FARP",
+    "fob": "FOB",
+    "factory": "FACTORY",
     "comms": "COMMST",
     "oil": "OILP"
 }
@@ -27,12 +32,14 @@ ABBREV_NAME = {
 
 CATEGORY_MAP = {
     "aa": ["AA"],
-    "power": ["Workshop A"],
-    "warehouse": ["Warehouse"],
-    "fuel": ["Tank"],
-    "ammo": [".Ammunition depot"],
-    "farp": ["FARP Tent"],
-    "comms": ["TV tower", "Comms tower"],
+    "power": ["Workshop A", "Electric power box", "Garage A"],
+    "warehouse": ["Warehouse", "Hangar A"],
+    "fuel": ["Tank", "Tank 2", "Fuel tank"],
+    "ammo": [".Ammunition depot", "Hangar B"],
+    "farp": ["FARP Tent", "FARP Ammo Dump Coating", "FARP Fuel Depot", "FARP Command Post", "FARP CP Blindage"],
+    "fob": ["Bunker 2", "Bunker 1", "Garage small B", ".Command Center", "Barracks 2"],
+    "factory": ["Tech combine", "Tech hangar A"],
+    "comms": ["TV tower", "Comms tower M"],
     "oil": ["Oil platform"],
 }
 

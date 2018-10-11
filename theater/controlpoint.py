@@ -9,14 +9,19 @@ from .theatergroundobject import TheaterGroundObject
 
 
 class ControlPoint:
-    connected_points = None  # type: typing.List[ControlPoint]
-    ground_objects = None  # type: typing.Collection[TheaterGroundObject]
-    position = None  # type: Point
-    captured = False
-    has_frontline = True
     id = 0
+    position = None  # type: Point
+    name = None  # type: str
+    full_name = None  # type: str
     base = None  # type: theater.base.Base
     at = None  # type: db.StartPosition
+
+    connected_points = None  # type: typing.List[ControlPoint]
+    ground_objects = None  # type: typing.List[TheaterGroundObject]
+
+    captured = False
+    has_frontline = True
+    frontline_offset = 0.0
 
     def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
         import theater.base

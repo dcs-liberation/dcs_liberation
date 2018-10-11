@@ -1,7 +1,8 @@
 import pickle
 import typing
 
-Landmap = typing.Collection[typing.Collection[typing.Tuple[float, float]]]
+Zone = typing.Collection[typing.Tuple[float, float]]
+Landmap = typing.Tuple[typing.Collection[Zone], typing.Collection[Zone]]
 
 
 def load_landmap(filename: str) -> Landmap:

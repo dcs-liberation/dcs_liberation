@@ -5,6 +5,7 @@ from dcs.mission import Mission
 from dcs.mapping import Point
 from dcs.terrain import *
 from dcs.unitgroup import VehicleGroup, StaticGroup
+from dcs import vehicles
 from dcs.unit import *
 from dcs.statics import warehouse_map, fortification_map
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
             theater_object.position = unit.position
             theater_object.heading = unit.heading
 
-            if isinstance(unit, Vehicle):
+            if isinstance(unit, Vehicle) and unit.type in vehicles.AirDefence.__dict__.values():
                 theater_object.dcs_identifier = "AA"
             else:
                 theater_object.dcs_identifier = unit.type

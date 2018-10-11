@@ -1,4 +1,7 @@
 import math
+import pickle
+import random
+import typing
 
 from theater.base import *
 from theater.conflicttheater import *
@@ -15,7 +18,7 @@ COUNT_BY_TASK = {
 }
 
 
-def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
+def generate_inital_units(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
     for cp in theater.enemy_points():
         if cp.captured:
             continue
@@ -37,3 +40,49 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplie
             for unit_type in unittypes:
                 logging.info("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
                 cp.base.commision_units({unit_type: count_per_type})
+
+
+def generate_groundobjects(theater: ConflictTheater):
+    with open("resources/groundobject_templates.p", "rb") as f:
+        tpls = pickle.load(f)
+
+    def find_ground_location(near, theater, max, min) -> typing.Optional[Point]:
+        for _ in range(500):
+            p = near.random_point_within(max, min)
+            if theater.is_on_land(p):
+                return p
+
+        return None
+
+    group_id = 0
+    for cp in theater.enemy_points():
+        for _ in range(0, random.randrange(3, 6)):
+            point = find_ground_location(cp.position, theater, 120000, 5000)
+            if point is None:
+                print("Couldn't find point for {}".format(cp))
+                continue
+
+            dist = point.distance_to_point(cp.position)
+            for another_cp in theater.enemy_points():
+                if another_cp.position.distance_to_point(point) < dist:
+                    cp = another_cp
+
+            tpl = random.choice(list(random.choice(list(tpls.values())).values()))
+            random_heading = random.randrange(0, 360)
+
+            group_id += 1
+            object_id = 0
+
+            for object in tpl:
+                object_id += 1
+
+                g = TheaterGroundObject()
+                g.group_id = group_id
+                g.object_id = object_id
+                g.cp_id = cp.id
+
+                g.dcs_identifier = object["type"]
+                g.heading = object["heading"] + random_heading
+                g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
+
+                cp.ground_objects.append(g)
