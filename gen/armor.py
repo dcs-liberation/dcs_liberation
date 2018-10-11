@@ -45,6 +45,9 @@ class ArmorConflictGenerator:
                     group_size=1,
                     move_formation=PointAction.OffRoad)
 
+            vehicle: Vehicle = group.units[0]
+            vehicle.player_can_drive = True
+
             if not to:
                 to = self.conflict.position.point_from_heading(0, 500)
 
