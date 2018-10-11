@@ -11,7 +11,7 @@ def load_templates():
     temp_mis = Mission()
     temp_mis.load_file("resources/tools/groundobject_templates.miz")
 
-    groups = {}  # type: typing.Dict[str, typing.Dict[int, typing.Collection[Static]]]
+    groups = {}  # type: typing.Dict[str, typing.Dict[int, typing.List[Static]]]
 
     for static_group in temp_mis.country("USA").static_group:
         for static in static_group.units:
@@ -42,6 +42,7 @@ def load_templates():
                     "heading": static.heading,
                 })
 
+    tpls["aa"] = {0: [{"type": "AA", "offset": Point(0, 0), "heading": 0}]}
     return tpls
 
 

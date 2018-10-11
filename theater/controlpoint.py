@@ -49,7 +49,7 @@ class ControlPoint:
     @classmethod
     def carrier(cls, name: str, at: Point):
         import theater.conflicttheater
-        return cls(0, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1)
+        return cls(0, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1, has_frontline=False)
 
     def __str__(self):
         return self.name

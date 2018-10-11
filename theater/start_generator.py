@@ -59,7 +59,7 @@ def generate_groundobjects(theater: ConflictTheater):
     group_id = 0
     for cp in theater.enemy_points():
         for _ in range(0, random.randrange(3, 6)):
-            available_categories = list(tpls)
+            available_categories = list(tpls) + ["aa", "aa", "aa"]
             tpl_category = random.choice(available_categories)
 
             tpl = random.choice(list(tpls[tpl_category].values()))
@@ -87,7 +87,7 @@ def generate_groundobjects(theater: ConflictTheater):
                 g.cp_id = cp.id
 
                 g.dcs_identifier = object["type"]
-                g.heading = object["heading"],
+                g.heading = object["heading"]
                 g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
 
                 cp.ground_objects.append(g)

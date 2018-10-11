@@ -13,7 +13,7 @@ class NevadaTheater(ConflictTheater):
     daytime_map = {
         "dawn": (4, 6),
         "day": (6, 17),
-        "dusk": (17, 19),
+        "dusk": (17, 18),
         "night": (0, 5),
     }
 

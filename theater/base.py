@@ -3,17 +3,19 @@ import typing
 import math
 import itertools
 
-from game import db
-from theater.controlpoint import ControlPoint
-
 from dcs.planes import *
 from dcs.vehicles import *
 from dcs.task import *
+
+from game import db
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 4
 PLANES_SCRAMBLE_MAX_BASE = 8
 PLANES_SCRAMBLE_FACTOR = 0.6
+
+BASE_MAX_STRENGTH = 1
+BASE_MIN_STRENGTH = 0
 
 
 class Base:
@@ -136,10 +138,10 @@ class Base:
 
     def affect_strength(self, amount):
         self.strength += amount
-        if self.strength > 1:
-            self.strength = 1
-        elif self.strength < 0:
-            self.strength = 0.001
+        if self.strength > BASE_MAX_STRENGTH:
+            self.strength = BASE_MAX_STRENGTH
+        elif self.strength <= 0:
+            self.strength = BASE_MIN_STRENGTH
 
     def scramble_count(self, multiplier: float, task: Task = None) -> int:
         if task:

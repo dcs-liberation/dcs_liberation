@@ -35,6 +35,17 @@ class StrikeOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        for global_cp in self.game.theater.controlpoints:
+            if not global_cp.is_global:
+                continue
+
+            ship = self.shipgen.generate_carrier(type=db.find_unittype(Carriage, self.game.player)[0],
+                                                 country=self.game.player,
+                                                 at=global_cp.at)
+
+            if global_cp == self.from_cp and not self.is_quick:
+                self.attackers_starting_position = ship
+
         targets = []  # type: typing.List[typing.Tuple[str, Point]]
         category_counters = {}  # type: typing.Dict[str, int]
         processed_groups = []
