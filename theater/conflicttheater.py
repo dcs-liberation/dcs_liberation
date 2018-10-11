@@ -70,14 +70,18 @@ class ConflictTheater:
         if not self.landmap:
             return False
 
-        return poly_contains(point.x, point.y, self.landmap[0][0])
+        for inclusion_zone in self.landmap[0]:
+            if poly_contains(point.x, point.y, inclusion_zone):
+                return False
+
+        return True
 
     def is_on_land(self, point: Point) -> bool:
         if not self.landmap:
             return True
 
         is_point_included = False
-        for i, inclusion_zone in enumerate(self.landmap[0]):
+        for inclusion_zone in self.landmap[0]:
             if poly_contains(point.x, point.y, inclusion_zone):
                 is_point_included = True
 

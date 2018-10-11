@@ -46,10 +46,12 @@ def generate_groundobjects(theater: ConflictTheater):
     with open("resources/groundobject_templates.p", "rb") as f:
         tpls = pickle.load(f)
 
-    def find_ground_location(near, theater, max, min) -> typing.Optional[Point]:
+    def find_location(on_ground, near, theater, min, max) -> typing.Optional[Point]:
         for _ in range(500):
             p = near.random_point_within(max, min)
-            if theater.is_on_land(p):
+            if on_ground and theater.is_on_land(p):
+                return p
+            elif not on_ground and theater.is_in_sea(p):
                 return p
 
         return None
@@ -57,7 +59,13 @@ def generate_groundobjects(theater: ConflictTheater):
     group_id = 0
     for cp in theater.enemy_points():
         for _ in range(0, random.randrange(3, 6)):
-            point = find_ground_location(cp.position, theater, 120000, 5000)
+            available_categories = list(tpls)
+            tpl_category = random.choice(available_categories)
+
+            tpl = random.choice(list(tpls[tpl_category].values()))
+
+            point = find_location(tpl_category != "oil", cp.position, theater, 15000, 80000)
+
             if point is None:
                 print("Couldn't find point for {}".format(cp))
                 continue
@@ -66,9 +74,6 @@ def generate_groundobjects(theater: ConflictTheater):
             for another_cp in theater.enemy_points():
                 if another_cp.position.distance_to_point(point) < dist:
                     cp = another_cp
-
-            tpl = random.choice(list(random.choice(list(tpls.values())).values()))
-            random_heading = random.randrange(0, 360)
 
             group_id += 1
             object_id = 0
@@ -82,7 +87,7 @@ def generate_groundobjects(theater: ConflictTheater):
                 g.cp_id = cp.id
 
                 g.dcs_identifier = object["type"]
-                g.heading = object["heading"] + random_heading
+                g.heading = object["heading"],
                 g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
 
                 cp.ground_objects.append(g)

@@ -32,7 +32,7 @@ ABBREV_NAME = {
 
 CATEGORY_MAP = {
     "aa": ["AA"],
-    "power": ["Workshop A", "Electric power box", "Garage A"],
+    "power": ["Workshop A", "Electric power box", "Garage small A"],
     "warehouse": ["Warehouse", "Hangar A"],
     "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
     "ammo": [".Ammunition depot", "Hangar B"],

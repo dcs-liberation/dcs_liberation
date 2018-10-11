@@ -23,7 +23,7 @@ class ControlPoint:
     has_frontline = True
     frontline_offset = 0.0
 
-    def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
+    def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
         import theater.base
 
         self.id = id
@@ -42,7 +42,7 @@ class ControlPoint:
         self.base = theater.base.Base()
 
     @classmethod
-    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: int, has_frontline=True):
+    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
         assert airport
         return cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline)
 
