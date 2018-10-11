@@ -34,7 +34,7 @@ CATEGORY_MAP = {
     "aa": ["AA"],
     "power": ["Workshop A", "Electric power box", "Garage A"],
     "warehouse": ["Warehouse", "Hangar A"],
-    "fuel": ["Tank", "Tank 2", "Fuel tank"],
+    "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
     "ammo": [".Ammunition depot", "Hangar B"],
     "farp": ["FARP Tent", "FARP Ammo Dump Coating", "FARP Fuel Depot", "FARP Command Post", "FARP CP Blindage"],
     "fob": ["Bunker 2", "Bunker 1", "Garage small B", ".Command Center", "Barracks 2"],

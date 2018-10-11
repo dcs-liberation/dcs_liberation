@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter.ttk import *
 from .styles import STYLES
 
+from userdata.logging import ShowLogsException
 from ui.window import *
 
 
@@ -65,6 +66,7 @@ class ConfigurationMenu(Menu):
         Checkbutton(body, variable=self.takeoff_var, **STYLES["radiobutton"]).grid(row=3, column=1, sticky=E)
         Checkbutton(body, variable=self.night_var, **STYLES["radiobutton"]).grid(row=4, column=1, sticky=E)
 
+        Button(body, text="Display logs", command=self.display_logs, **STYLES["btn-primary"]).grid(row=5, column=0, sticky=E, pady=30)
         Button(body, text="Back", command=self.dismiss, **STYLES["btn-primary"]).grid(row=5, column=1, sticky=E, pady=30)
 
         Label(body, text="Contributors: ", **STYLES["widget"]).grid(row=6, column=0, sticky=W)
@@ -76,6 +78,9 @@ class ConfigurationMenu(Menu):
         Button(body, text="[github]", command=lambda: webbrowser.open_new_tab("http://github.com/Khopa"), **STYLES["widget"]).grid(row=8, column=1, sticky=E)
 
         Button(body, text="Cheat +200m", command=self.cheat_money, **STYLES["btn-danger"]).grid(row=10, column=1, pady=30)
+
+    def display_logs(self):
+        raise ShowLogsException()
 
     def cheat_money(self):
         self.game.budget += 200

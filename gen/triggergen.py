@@ -53,11 +53,6 @@ class TriggersGenerator:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
-                for plane_group in country.plane_group:
-                    if plane_group.task in [x.name for x in AirSupportConflictGenerator.support_tasks()]:
-                        plane_group.late_activation = True
-                        activate_by_trigger.append(plane_group)
-
         conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
         minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
         if minimum_radius < 0:
@@ -86,37 +81,39 @@ class TriggersGenerator:
                         if player_cp.position.distance_to_point(group.position) > PUSH_TRIGGER_SIZE * 3:
                             continue
 
-                        regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
-
-                        pos1 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
-                        pos2 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE+5000)
-                        w1 = group.add_waypoint(pos1, REGROUP_ALT)
-                        w2 = group.add_waypoint(pos2, REGROUP_ALT)
-
-                        group.points.remove(w1)
-                        group.points.remove(w2)
-
-                        group.points.insert(1, w2)
-                        group.points.insert(1, w1)
-
-                        w1.tasks.append(Silence(True))
-
-                        switch_waypoint_task = ControlledTask(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
-                        switch_waypoint_task.start_if_user_flag(1, False)
-                        w2.tasks.append(switch_waypoint_task)
-                        group.points[3].tasks.append(Silence(False))
-
-                        group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
                         push_by_trigger.append(group)
 
-        push_trigger_zone = self.mission.triggers.add_triggerzone(player_cp.position, PUSH_TRIGGER_SIZE, name="Push zone")
+                        if not group.units[0].is_human():
+                            regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
+
+                            pos1 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
+                            pos2 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE+5000)
+                            w1 = group.add_waypoint(pos1, REGROUP_ALT)
+                            w2 = group.add_waypoint(pos2, REGROUP_ALT)
+
+                            group.points.remove(w1)
+                            group.points.remove(w2)
+
+                            group.points.insert(1, w2)
+                            group.points.insert(1, w1)
+
+                            w1.tasks.append(Silence(True))
+
+                            switch_waypoint_task = ControlledTask(SwitchWaypoint(from_waypoint=3, to_waypoint=2))
+                            switch_waypoint_task.start_if_user_flag(1, False)
+                            w2.tasks.append(switch_waypoint_task)
+                            group.points[3].tasks.append(Silence(False))
+
+                            group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
+
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
 
         for group in push_by_trigger:
             for unit in group.units:
                 push_trigger.add_condition(UnitAltitudeHigherAGL(unit.id, PUSH_TRIGGER_ACTIVATION_AGL))
 
-            push_trigger.add_action(AITaskPush(group.id, 1))
+            if group.units[0].is_human():
+                push_trigger.add_action(AITaskPush(group.id, 1))
 
         message_string = self.mission.string("Task force is in the air, proceed with the objective (activate waypoint 3).")
         push_trigger.add_action(MessageToAll(message_string, clearview=True))
