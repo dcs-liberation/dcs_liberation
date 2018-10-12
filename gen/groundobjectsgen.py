@@ -8,6 +8,7 @@ from dcs.mission import *
 from dcs.statics import *
 
 FARP_FRONTLINE_DISTANCE = 10000
+AA_CP_MIN_DISTANCE = 40000
 
 
 class GroundObjectsGenerator:
@@ -47,6 +48,9 @@ class GroundObjectsGenerator:
 
         for ground_object in cp.ground_objects:
             if ground_object.dcs_identifier == "AA":
+                if ground_object.position.distance_to_point(self.conflict.from_cp.position) < AA_CP_MIN_DISTANCE:
+                    continue
+
                 if ground_object.is_dead:
                     continue
 

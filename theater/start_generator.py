@@ -47,12 +47,26 @@ def generate_groundobjects(theater: ConflictTheater):
         tpls = pickle.load(f)
 
     def find_location(on_ground, near, theater, min, max) -> typing.Optional[Point]:
-        for _ in range(500):
+        point = None
+        for _ in range(1000):
             p = near.random_point_within(max, min)
             if on_ground and theater.is_on_land(p):
-                return p
+                point = p
             elif not on_ground and theater.is_in_sea(p):
-                return p
+                point = p
+
+            if point:
+                for angle in range(0, 360, 45):
+                    p = point.point_from_heading(angle, 1000)
+                    if on_ground and not theater.is_on_land(p):
+                        point = None
+                        break
+                    elif not on_ground and not theater.is_in_sea(p):
+                        point = None
+                        break
+
+            if point:
+                return point
 
         return None
 

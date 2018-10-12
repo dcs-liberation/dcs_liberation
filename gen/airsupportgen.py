@@ -10,16 +10,20 @@ from dcs.terrain.terrain import NoParkingSlotError
 
 TANKER_DISTANCE = 15000
 TANKER_ALT = 10000
+TANKER_HEADING_OFFSET = 45
 
 AWACS_DISTANCE = 150000
 AWACS_ALT = 10000
 
 
 class AirSupportConflictGenerator:
+    generated_tankers = None  # type: typing.List[str]
+
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.mission = mission
         self.conflict = conflict
         self.game = game
+        self.generated_tankers = []
 
     @classmethod
     def support_tasks(cls) -> typing.Collection[typing.Type[MainTask]]:
@@ -27,22 +31,24 @@ class AirSupportConflictGenerator:
 
     def generate(self, is_awacs_enabled):
         player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
-        tanker_unit = db.find_unittype(Refueling, self.conflict.attackers_side.name)[0]
-        tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position)
-        tanker_position = player_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
-        tanker_group = self.mission.refuel_flight(
-            country=self.mission.country(self.game.player),
-            name=namegen.next_tanker_name(self.mission.country(self.game.player)),
-            airport=None,
-            plane_type=tanker_unit,
-            position=tanker_position,
-            altitude=TANKER_ALT,
-            frequency=131,
-            start_type=StartType.Warm,
-            tacanchannel="99X",
-        )
 
-        tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=10, unit_id=tanker_group.id, aa=False))
+        for i, tanker_unit_type in enumerate(db.find_unittype(Refueling, self.conflict.attackers_side.name)):
+            self.generated_tankers.append(db.unit_type_name(tanker_unit_type))
+            tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position) + TANKER_HEADING_OFFSET * i
+            tanker_position = player_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
+            tanker_group = self.mission.refuel_flight(
+                country=self.mission.country(self.game.player),
+                name=namegen.next_tanker_name(self.mission.country(self.game.player)),
+                airport=None,
+                plane_type=tanker_unit_type,
+                position=tanker_position,
+                altitude=TANKER_ALT,
+                frequency=130 + i,
+                start_type=StartType.Warm,
+                tacanchannel="{}X".format(97 + i),
+            )
+
+            tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=97 + i, unit_id=tanker_group.id, aa=False))
 
         if is_awacs_enabled:
             awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]

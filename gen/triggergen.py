@@ -130,9 +130,9 @@ class TriggersGenerator:
     def _set_skill(self, player_coalition: str, enemy_coalition: str):
         for coalition_name, coalition in self.mission.coalition.items():
             if coalition_name == player_coalition:
-                skill_level = self.game.settings.player_skill
+                skill_level = self.game.settings.player_skill, self.game.settings.player_skill
             elif coalition_name == enemy_coalition:
-                skill_level = self.game.settings.enemy_skill
+                skill_level = self.game.settings.enemy_skill, self.game.settings.enemy_vehicle_skill
             else:
                 continue
 
@@ -140,10 +140,10 @@ class TriggersGenerator:
                 for plane_group in country.plane_group:
                     for plane_unit in plane_group.units:
                         if plane_unit.skill != Skill.Client and plane_unit.skill != Skill.Player:
-                            plane_unit.skill = Skill(skill_level)
+                            plane_unit.skill = Skill(skill_level[0])
 
                 for vehicle_group in country.vehicle_group:
-                    vehicle_group.set_skill(Skill(skill_level))
+                    vehicle_group.set_skill(Skill(skill_level[1]))
 
     def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int, awacs_enabled: bool):
         player_coalition = self.game.player == "USA" and "blue" or "red"

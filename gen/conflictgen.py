@@ -155,32 +155,6 @@ class Conflict:
         return from_cp.has_frontline and to_cp.has_frontline
 
     @classmethod
-    def frontline_position0(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Tuple[Point, int]:
-        cp_distance = from_cp.position.distance_to_point(to_cp.position)
-        cp_distance -= cp_distance * to_cp.frontline_offset + cp_distance * from_cp.frontline_offset
-
-        distance = max(cp_distance * FRONTLINE_DISTANCE_STRENGTH_FACTOR * to_cp.base.strength, FRONTLINE_MIN_CP_DISTANCE)
-        heading = to_cp.position.heading_between_point(from_cp.position)
-        return to_cp.position.point_from_heading(heading, distance), heading
-
-    @classmethod
-    def frontline_position2(cls, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[typing.Tuple[Point, int]]:
-        attack_heading = from_cp.position.heading_between_point(to_cp.position)
-        attack_starting_position = cls._find_ground_position(from_cp.position, 200000, attack_heading, theater)
-        if not attack_starting_position:
-            return None
-
-        attack_ending_position = cls._find_ground_position(to_cp.position, 200000, _opposite_heading(attack_heading), theater)
-        if not attack_ending_position:
-            return None
-
-        attack_distance = attack_ending_position.distance_to_point(attack_starting_position)
-        strength_delta = (from_cp.base.strength - to_cp.base.strength) / 1.0
-        middle_position = attack_starting_position.point_from_heading(attack_heading, attack_distance / 2)
-
-        return middle_position.point_from_heading(attack_heading, strength_delta * attack_distance), _opposite_heading(attack_heading)
-
-    @classmethod
     def frontline_position(cls, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[typing.Tuple[Point, int]]:
         attack_heading = from_cp.position.heading_between_point(to_cp.position)
         attack_distance = from_cp.position.distance_to_point(to_cp.position)
@@ -190,10 +164,10 @@ class Conflict:
         position = middle_point.point_from_heading(attack_heading, strength_delta * attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE)
         ground_position = cls._find_ground_position(position, attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE, attack_heading, theater)
         if ground_position:
-            return ground_position, attack_heading
+            return ground_position, _opposite_heading(attack_heading)
         else:
-            print(from_cp, to_cp)
-            return None
+            print("Coudn't find frontline position between {} and {}!".format(from_cp, to_cp))
+            return position, _opposite_heading(attack_heading)
 
 
     @classmethod

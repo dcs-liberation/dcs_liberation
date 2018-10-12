@@ -12,6 +12,7 @@ GREEN = "#699245"
 YELLOW = "#BF9A46"
 RED = "#D0232E"
 BG_TITLE_COLOR = "#2D3E50"
+BG_SUBTITLE_COLOR = "#3E4F61"
 
 # Fonts
 FONT_FAMILY = "Trebuchet MS"
@@ -25,8 +26,9 @@ STYLES = {}
 STYLES["label-frame"] = {"font": BOLD_FONT, "bg": BG_COLOR, "fg": FG_COLOR}
 STYLES["frame-wrapper"] = {"bg": BG_COLOR, "relief":"sunken"}
 
-STYLES["body"] = {"bg": BG_COLOR, "padx": 25, "pady": 35}
+STYLES["body"] = {"bg": BG_COLOR, "padx": 10, "pady": 10}
 STYLES["strong"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR}
+STYLES["substrong"] = {"font": BOLD_FONT, "bg": BG_SUBTITLE_COLOR, "fg": FG_COLOR}
 STYLES["strong-grey"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR_LIGHT}
 
 STYLES["mission-preview"] = {"font": BOLD_FONT, "bg": YELLOW, "fg": FG_COLOR}
@@ -39,6 +41,7 @@ STYLES["title"] = {"bg": BG_TITLE_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pad
 STYLES["title-green"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}
 STYLES["title-red"] = {"bg": RED, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": TITLE_FONT}
 STYLES["header"] = {"bg": BG_TITLE_COLOR}
+STYLES["subheader"] = {"bg": BG_SUBTITLE_COLOR}
 
 STYLES["btn-primary"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
 STYLES["btn-danger"] = {"bg": RED, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}

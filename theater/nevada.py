@@ -1,6 +1,7 @@
 from dcs.terrain import nevada
 from dcs import mapping
 
+from .landmap import *
 from .conflicttheater import *
 from .base import *
 
@@ -10,6 +11,7 @@ class NevadaTheater(ConflictTheater):
     overview_image = "nevada.gif"
     reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45, -360),
                         (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440, 80), }
+    landmap = load_landmap("resources\\nev_landmap.p")
     daytime_map = {
         "dawn": (4, 6),
         "day": (6, 17),
@@ -32,7 +34,7 @@ class NevadaTheater(ConflictTheater):
     jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, 1.2)
     laughlin = ControlPoint.from_airport(nevada.Laughlin_Airport, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 
-    def __init__(self, load_ground_objects=True):
+    def __init__(self):
         super(NevadaTheater, self).__init__()
 
         self.add_controlpoint(self.mina, connected_to=[self.tonopah])

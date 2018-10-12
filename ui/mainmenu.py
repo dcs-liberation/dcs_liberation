@@ -28,17 +28,21 @@ class MainMenu(Menu):
 
         self.window.clear_right_pane()
         self.upd.update()
-        row = 0
 
         # Header :
         header = Frame(self.frame, **STYLES["header"])
-        Button(header, text="Configuration", command=self.configuration_menu, **STYLES["btn-primary"]).grid(column=0, row=0, sticky=NE)
+        Button(header, text="Configuration", command=self.configuration_menu, **STYLES["btn-primary"]).grid(column=0, row=0, sticky=NW)
         Label(header, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["strong"]).grid(column=1, row=0, sticky=NSEW, padx=50)
-        Button(header, text="Pass turn", command=self.pass_turn, **STYLES["btn-primary"]).grid(column=2, row=0, sticky=NW)
-        header.grid(column=0, row=0, sticky=N+EW)
+        Button(header, text="Pass turn", command=self.pass_turn, **STYLES["btn-primary"]).grid(column=2, row=0, sticky=NE)
+        header.grid(column=0, columnspan=99, row=0, sticky=N+EW)
 
-        body = LabelFrame(self.frame, **STYLES["body"])
-        body.grid(column=0, row=1, sticky=NSEW)
+        events = self.game.events
+        events.sort(key=lambda x: x.to_cp.name)
+        events.sort(key=lambda x: x.from_cp.name)
+        events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
+
+        column = 0
+        row = 0
 
         def label(text):
             nonlocal row, body
@@ -58,21 +62,30 @@ class MainMenu(Menu):
             Button(body, text=">", command=self.start_event(event), **STYLES["btn-primary"]).grid(column=1, row=row, sticky=E)
             row += 1
 
+        def departure_header(text):
+            nonlocal row, body
+            Label(body, text=text, **STYLES["strong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(0, 5)); row += 1
+
         def destination_header(text, pady=0):
             nonlocal row, body
-            Label(body, text=text, **STYLES["strong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(pady,0)); row += 1
-
-        events = self.game.events
-        events.sort(key=lambda x: x.to_cp.name)
-        events.sort(key=lambda x: x.from_cp.name)
-        events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
+            Label(body, text=text, **STYLES["substrong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(pady,0)); row += 1
 
         destination = None
+        departure = None
         deliveries = False
         for event in events:
             if not event.informational:
+                if event.from_cp.name != departure:
+                    body = LabelFrame(self.frame, **STYLES["body"])
+                    body.grid(column=column, row=1, sticky=NSEW)
+                    row = 0
+                    column += 1
+
+                    departure = event.from_cp.name
+                    departure_header(event.from_cp.name)
+
                 if self.game.is_player_attack(event):
-                    new_destination = "From {} to {}".format(event.from_cp.name, event.to_cp.name)
+                    new_destination = "At {}".format(event.to_cp.name)
                 else:
                     new_destination = "Enemy attack"
                 if destination != new_destination:

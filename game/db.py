@@ -76,6 +76,7 @@ PRICES = {
     S_3B_Tanker: 13,
     IL_78M: 13,
     KC_135: 13,
+    KC130: 13,
 
     A_50: 8,
     E_3A: 8,
@@ -172,6 +173,7 @@ UNIT_BY_TASK = {
     Refueling: [
         IL_78M,
         KC_135,
+        KC130,
     ],
 
     AWACS: [E_3A, A_50, ],
@@ -297,6 +299,7 @@ UNIT_BY_COUNTRY = {
         AV8BNA,
 
         KC_135,
+        KC130,
         S_3B_Tanker,
         C_130,
         E_3A,
