@@ -72,7 +72,7 @@ class ConfigurationMenu(Menu):
         Label(body, text="Disable night missions", **STYLES["widget"]).grid(row=5, column=0, sticky=W)
 
         Checkbutton(body, variable=self.cold_start_var, **STYLES["radiobutton"]).grid(row=3, column=1, sticky=E)
-        Checkbutton(body, variable=self.takeoff_var, **STYLES["radiobutton"]).grid(row=5, column=1, sticky=E)
+        Checkbutton(body, variable=self.takeoff_var, **STYLES["radiobutton"]).grid(row=4, column=1, sticky=E)
         Checkbutton(body, variable=self.night_var, **STYLES["radiobutton"]).grid(row=5, column=1, sticky=E)
 
         Button(body, text="Display logs", command=self.display_logs, **STYLES["btn-primary"]).grid(row=6, column=0, sticky=E, pady=30)

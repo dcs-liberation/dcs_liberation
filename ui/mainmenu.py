@@ -36,11 +36,6 @@ class MainMenu(Menu):
         Button(header, text="Pass turn", command=self.pass_turn, **STYLES["btn-primary"]).grid(column=2, row=0, sticky=NE)
         header.grid(column=0, columnspan=99, row=0, sticky=N+EW)
 
-        events = self.game.events
-        events.sort(key=lambda x: x.to_cp.name)
-        events.sort(key=lambda x: x.from_cp.name)
-        events.sort(key=lambda x: x.informational and 2 or (self.game.is_player_attack(x) and 1 or 0))
-
         column = 0
         row = 0
 
@@ -70,18 +65,25 @@ class MainMenu(Menu):
             nonlocal row, body
             Label(body, text=text, **STYLES["substrong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(pady,0)); row += 1
 
+        events = self.game.events
+        events.sort(key=lambda x: x.to_cp.name)
+        events.sort(key=lambda x: x.from_cp.name)
+        events.sort(key=lambda x: x.informational and 1 or (self.game.is_player_attack(x) and 2 or 0))
+
         destination = None
         departure = None
-        deliveries = False
+
         for event in events:
-            if event.from_cp.name != departure:
+            new_departure = event.from_cp.name if not event.informational else "Deliveries"
+            if new_departure != departure:
                 body = LabelFrame(self.frame, **STYLES["body"])
                 body.grid(column=column, row=1, sticky=NSEW)
                 row = 0
                 column += 1
 
-                departure = event.from_cp.name
-                departure_header(event.from_cp.name)
+                departure = new_departure
+                departure_header(new_departure)
+                destination = None
 
             if not event.informational:
                 if self.game.is_player_attack(event):
@@ -93,9 +95,6 @@ class MainMenu(Menu):
                     destination = new_destination
 
             if event.informational:
-                if not deliveries:
-                    deliveries = True
-                    destination_header("Deliveries", 15)
                 label(str(event))
             else:
                 event_button(event)
