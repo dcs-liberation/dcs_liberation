@@ -44,7 +44,6 @@ class BaseMenu(Menu):
         for i, tasks_column in [(i, tasks[idx:idx+tasks_per_column]) for i, idx in enumerate(range(0, len(tasks), tasks_per_column))]:
             row = 2
 
-
             def purchase_row(unit_type, unit_price):
                 nonlocal row
                 nonlocal column
@@ -54,7 +53,7 @@ class BaseMenu(Menu):
 
                 Label(self.frame, text="{}".format(db.unit_type_name(unit_type)), **STYLES["widget"]).grid(row=row, column=column, sticky=W)
 
-                label = Label(self.frame, text="({})".format(existing_units), **STYLES["widget"])
+                label = Label(self.frame, text="({})               ".format(existing_units), **STYLES["widget"])
                 label.grid(column=column + 1, row=row)
                 self.bought_amount_labels[unit_type] = label
 

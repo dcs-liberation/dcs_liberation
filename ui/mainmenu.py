@@ -74,16 +74,16 @@ class MainMenu(Menu):
         departure = None
         deliveries = False
         for event in events:
+            if event.from_cp.name != departure:
+                body = LabelFrame(self.frame, **STYLES["body"])
+                body.grid(column=column, row=1, sticky=NSEW)
+                row = 0
+                column += 1
+
+                departure = event.from_cp.name
+                departure_header(event.from_cp.name)
+
             if not event.informational:
-                if event.from_cp.name != departure:
-                    body = LabelFrame(self.frame, **STYLES["body"])
-                    body.grid(column=column, row=1, sticky=NSEW)
-                    row = 0
-                    column += 1
-
-                    departure = event.from_cp.name
-                    departure_header(event.from_cp.name)
-
                 if self.game.is_player_attack(event):
                     new_destination = "At {}".format(event.to_cp.name)
                 else:

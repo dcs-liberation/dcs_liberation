@@ -11,7 +11,7 @@ class Window:
         self.tk = Tk()
         self.tk.title("DCS Liberation")
         self.tk.iconbitmap("icon.ico")
-        self.tk.resizable(True, True)
+        self.tk.resizable(False, False)
         self.tk.grid_columnconfigure(0, weight=1)
         self.tk.grid_rowconfigure(0, weight=1)
 

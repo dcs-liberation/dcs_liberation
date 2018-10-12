@@ -127,9 +127,11 @@ class Base:
             elif unit_type in self.aa:
                 target_array = self.aa
             else:
+                print("Base didn't find event type {}".format(unit_type))
                 continue
 
             if unit_type not in target_array:
+                print("Base didn't find event type {}".format(unit_type))
                 continue
                 
             target_array[unit_type] = max(target_array[unit_type] - count, 0)

@@ -69,15 +69,11 @@ class EventMenu(Menu):
 
             row += 1
 
-        threat_descr = self.event.threat_description
-        if threat_descr:
-            threat_descr = "Approx. {}".format(threat_descr)
-
         # Header
         header("Mission Menu", "title")
 
         # Mission Description
-        Label(self.frame, text="{}. {}".format(self.event, threat_descr), **STYLES["mission-preview"]).grid(row=row, column=0, columnspan=5, sticky=S+EW, padx=5, pady=5)
+        Label(self.frame, text="{}".format(self.event), **STYLES["mission-preview"]).grid(row=row, column=0, columnspan=5, sticky=S+EW, padx=5, pady=5)
         row += 1
 
         Label(self.frame, text="Amount", **STYLES["widget"]).grid(row=row, column=1, columnspan=2)
