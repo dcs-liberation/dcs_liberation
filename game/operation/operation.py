@@ -4,6 +4,8 @@ from userdata.debriefing import *
 
 from gen import *
 
+TANKER_CALLSIGNS = ["Texaco", "Arco", "Shell"]
+
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
@@ -87,7 +89,7 @@ class Operation:
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            self.briefinggen.append_frequency("{} Tanker".format(tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
+            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
 
         if self.is_awacs_enabled:
             self.briefinggen.append_frequency("AWACS", "133 MHz AM")
