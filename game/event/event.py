@@ -106,9 +106,12 @@ class Event:
                     continue
 
                 for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.is_dead:
+                        continue
+
                     if ground_object.matches_string_identifier(object_identifier):
                         logging.info("cp {} killing ground object {}".format(cp, ground_object.string_identifier))
-                        ground_object.is_dead = True
+                        cp.ground_objects[i].is_dead = True
 
     def skip(self):
         pass

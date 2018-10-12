@@ -85,4 +85,4 @@ class GroundObjectsGenerator:
                     dead=ground_object.is_dead,
                 )
 
-                logging.info("generated object identifier {} with mission id {}".format(group.name, group.id))
+                logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
