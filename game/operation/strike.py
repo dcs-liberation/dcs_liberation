@@ -54,14 +54,14 @@ class StrikeOperation(Operation):
                 continue
 
             processed_groups.append(object.group_identifier)
-
             category_counters[object.category] = category_counters.get(object.category, 0) + 1
             markpoint_name = "{}{}".format(object.name_abbrev, category_counters[object.category])
             targets.append((markpoint_name, object.position))
-            self.briefinggen.append_target(str(object))
-            self.briefinggen.append_waypoint("TARGET {} (TP {})".format(str(object), markpoint_name))
 
         targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[1]))
+
+        for (name, markpoint_name) in targets:
+            self.briefinggen.append_waypoint("TARGET {} (TP {})".format(str(name), markpoint_name))
 
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(planes_flights),

@@ -112,10 +112,10 @@ class TriggersGenerator:
             for unit in group.units:
                 push_trigger.add_condition(UnitAltitudeHigherAGL(unit.id, PUSH_TRIGGER_ACTIVATION_AGL))
 
-            if group.units[0].is_human():
+            if not group.units[0].is_human():
                 push_trigger.add_action(AITaskPush(group.id, 1))
 
-        message_string = self.mission.string("Task force is in the air, proceed with the objective (activate waypoint 3).")
+        message_string = self.mission.string("Task force is in the air, proceed with the objective.")
         push_trigger.add_action(MessageToAll(message_string, clearview=True))
         push_trigger.add_action(SetFlagValue())
 

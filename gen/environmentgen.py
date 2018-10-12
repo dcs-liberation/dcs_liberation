@@ -85,7 +85,7 @@ class EnviromentGenerator:
             self.mission.weather.clouds_thickness = random.randint(*WEATHER_CLOUD_THICKNESS)
 
             wind_direction = random.randint(0, 360)
-            wind_speed = random.randint(0, 13)
+            wind_speed = random.randint(0, 4)
             self.mission.weather.wind_at_ground = Wind(wind_direction, wind_speed)
             self.mission.weather.wind_at_2000 = Wind(wind_direction, wind_speed * 2)
             self.mission.weather.wind_at_8000 = Wind(wind_direction, wind_speed * 3)
