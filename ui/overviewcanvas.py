@@ -67,6 +67,14 @@ class OverviewCanvas:
         self.canvas.create_image((self.image.width()/2, self.image.height()/2), image=self.image)
 
         for cp in self.game.theater.controlpoints:
+            for ground_object in cp.ground_objects:
+                x, y = self.transform_point(ground_object.position)
+                self.canvas.create_text(x,
+                                        y,
+                                        text=".",
+                                        fill="black" if ground_object.is_dead else self._enemy_color(),
+                                        font=("Helvetica", 18))
+
             coords = self.transform_point(cp.position)
             for connected_cp in cp.connected_points:
                 connected_coords = self.transform_point(connected_cp.position)

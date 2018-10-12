@@ -20,8 +20,8 @@ class MainMenu(Menu):
         self.upd.update()
 
         self.frame = self.window.right_pane
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=0)
+        self.frame.rowconfigure(1, weight=1)
 
     def display(self):
         persistency.save_game(self.game)
@@ -32,27 +32,29 @@ class MainMenu(Menu):
         # Header :
         header = Frame(self.frame, **STYLES["header"])
         Button(header, text="Configuration", command=self.configuration_menu, **STYLES["btn-primary"]).grid(column=0, row=0, sticky=NW)
-        Label(header, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["strong"]).grid(column=1, row=0, sticky=NSEW, padx=50)
+        Label(header, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["strong"]).grid(column=1, row=0, sticky=N+EW, padx=50)
         Button(header, text="Pass turn", command=self.pass_turn, **STYLES["btn-primary"]).grid(column=2, row=0, sticky=NE)
-        header.grid(column=0, columnspan=99, row=0, sticky=N+EW)
+        header.grid(column=0, row=0, sticky=N+EW)
 
+        content = Frame(self.frame, **STYLES["body"])
+        content.grid(column=0, row=1, sticky=NSEW)
         column = 0
         row = 0
 
         def label(text):
             nonlocal row, body
             frame = LabelFrame(body, **STYLES["label-frame"])
-            frame.grid(row=row, sticky=NSEW, columnspan=2)
+            frame.grid(row=row, sticky=N+EW, columnspan=2)
             Label(frame, text=text, **STYLES["widget"]).grid(row=row, sticky=NS)
             row += 1
 
         def event_button(event):
             nonlocal row, body
             frame = LabelFrame(body, **STYLES["label-frame"])
-            frame.grid(row=row, sticky=NSEW)
+            frame.grid(row=row, sticky=N+EW)
             Message(frame, text="{}".format(
                 event
-            ), aspect=1600, **STYLES["widget"]).grid(column=0, row=0, sticky=NSEW)
+            ), aspect=1600, **STYLES["widget"]).grid(column=0, row=0, sticky=N+EW)
             Button(body, text=">", command=self.start_event(event), **STYLES["btn-primary"]).grid(column=1, row=row, sticky=E)
             row += 1
 
@@ -83,7 +85,7 @@ class MainMenu(Menu):
                 new_departure = event.from_cp.name
 
             if new_departure != departure:
-                body = LabelFrame(self.frame, **STYLES["body"])
+                body = Frame(content, **STYLES["body"])
                 body.grid(column=column, row=1, sticky=N+EW)
                 row = 0
                 column += 1

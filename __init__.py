@@ -43,7 +43,7 @@ def is_version_compatible(save_version):
     if current_version_components == save_version_components:
         return True
 
-    if save_version == "1.4_rc1":
+    if save_version in ["1.4_rc1", "1.4_rc2", "1.4_rc3"]:
         return False
 
     if current_version_components[:2] == save_version_components[:2]:
