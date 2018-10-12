@@ -32,6 +32,10 @@ class Window:
         self.tk.focus()
 
     def clear_right_pane(self):
+        for i in range(100):
+            self.right_pane.grid_columnconfigure(1, weight=0)
+            self.right_pane.grid_rowconfigure(1, weight=0)
+
         for x in self.right_pane.winfo_children():
             x.grid_remove()
 
