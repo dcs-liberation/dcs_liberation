@@ -29,6 +29,7 @@ STYLES["frame-wrapper"] = {"bg": BG_COLOR, "relief":"sunken"}
 STYLES["body"] = {"bg": BG_COLOR, "padx": 10, "pady": 10}
 STYLES["strong"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR}
 STYLES["substrong"] = {"font": BOLD_FONT, "bg": BG_SUBTITLE_COLOR, "fg": FG_COLOR}
+STYLES["supstrong"] = {"font": BOLD_FONT, "bg": RED, "fg": FG_COLOR}
 STYLES["strong-grey"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR_LIGHT}
 
 STYLES["mission-preview"] = {"font": BOLD_FONT, "bg": YELLOW, "fg": FG_COLOR}

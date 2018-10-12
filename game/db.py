@@ -343,6 +343,10 @@ PLANE_PAYLOAD_OVERRIDES = {
         CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
     },
 
+    Su_25T: {
+        CAS: "APU-8 Vikhr-M*2,Kh-25ML,R-73*2,SPPU-22*2,Mercury LLTV Pod,MPS-410",
+    },
+
     Su_33: {
         CAP: "R-73*4,R-27R*2,R-27ER*6",
     },

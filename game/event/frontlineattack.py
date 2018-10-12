@@ -8,7 +8,7 @@ class FrontlineAttackEvent(Event):
     TARGET_AMOUNT_FACTOR = 0.5
     ATTACKER_AMOUNT_FACTOR = 0.4
     ATTACKER_DEFENDER_FACTOR = 0.7
-    STRENGTH_INFLUENCE = 0.2
+    STRENGTH_INFLUENCE = 0.3
     SUCCESS_FACTOR = 1.5
 
     defenders = None  # type: db.ArmorDict

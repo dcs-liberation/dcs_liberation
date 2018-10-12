@@ -5,7 +5,7 @@ from userdata.debriefing import Debriefing
 
 class FrontlinePatrolEvent(Event):
     ESCORT_FACTOR = 0.5
-    STRENGTH_INFLUENCE = 0.2
+    STRENGTH_INFLUENCE = 0.3
     SUCCESS_FACTOR = 0.8
 
     cas = None  # type: db.PlaneDict

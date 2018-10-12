@@ -118,7 +118,7 @@ class EventResultsMenu(Menu):
 
     def simulate_result(self, player_factor: float, enemy_factor: float):
         def action():
-            debriefing = Debriefing({}, [])
+            debriefing = Debriefing({})
 
             def count(country: Country) -> typing.Dict[UnitType, int]:
                 result = {}

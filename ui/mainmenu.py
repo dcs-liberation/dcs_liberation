@@ -50,20 +50,21 @@ class MainMenu(Menu):
             nonlocal row, body
             frame = LabelFrame(body, **STYLES["label-frame"])
             frame.grid(row=row, sticky=NSEW)
-            Message(frame, text="{}{}".format(
-                event.defender_name == self.game.player and "Enemy attacking: " or "",
+            Message(frame, text="{}".format(
                 event
             ), aspect=1600, **STYLES["widget"]).grid(column=0, row=0, sticky=NSEW)
             Button(body, text=">", command=self.start_event(event), **STYLES["btn-primary"]).grid(column=1, row=row, sticky=E)
             row += 1
 
-        def departure_header(text):
+        def departure_header(text, style="strong"):
             nonlocal row, body
-            Label(body, text=text, **STYLES["strong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(0, 5)); row += 1
+            Label(body, text=text, **STYLES[style]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(0, 5))
+            row += 1
 
-        def destination_header(text, pady=0):
+        def destination_header(text):
             nonlocal row, body
-            Label(body, text=text, **STYLES["substrong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW, pady=(pady,0)); row += 1
+            Label(body, text=text, **STYLES["substrong"]).grid(column=0, columnspan=2, row=row, sticky=N+EW)
+            row += 1
 
         events = self.game.events
         events.sort(key=lambda x: x.to_cp.name)
@@ -74,22 +75,25 @@ class MainMenu(Menu):
         departure = None
 
         for event in events:
-            new_departure = event.from_cp.name if not event.informational else "Deliveries"
+            if event.informational:
+                new_departure = "Deliveries"
+            elif not self.game.is_player_attack(event):
+                new_departure = "Enemy attack"
+            else:
+                new_departure = event.from_cp.name
+
             if new_departure != departure:
                 body = LabelFrame(self.frame, **STYLES["body"])
-                body.grid(column=column, row=1, sticky=NSEW)
+                body.grid(column=column, row=1, sticky=N+EW)
                 row = 0
                 column += 1
 
                 departure = new_departure
-                departure_header(new_departure)
+                departure_header(new_departure, style="strong" if self.game.is_player_attack(event) else "supstrong")
                 destination = None
 
             if not event.informational:
-                if self.game.is_player_attack(event):
-                    new_destination = "At {}".format(event.to_cp.name)
-                else:
-                    new_destination = "Enemy attack"
+                new_destination = "At {}".format(event.to_cp.name)
                 if destination != new_destination:
                     destination_header(new_destination)
                     destination = new_destination

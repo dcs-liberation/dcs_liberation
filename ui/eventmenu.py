@@ -96,15 +96,15 @@ class EventMenu(Menu):
         header("Support:")
         # Options
         awacs_enabled = self.game.budget >= AWACS_BUDGET_COST and NORMAL or DISABLED
-        Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=2, sticky=E)
         Label(self.frame, text="AWACS ({}m)".format(AWACS_BUDGET_COST), **STYLES["widget"]).grid(row=row, column=0, sticky=W, pady=5)
+        Checkbutton(self.frame, var=self.awacs, state=awacs_enabled,  **STYLES["radiobutton"]).grid(row=row, column=4, sticky=E)
         row += 1
 
         Label(self.frame, text="Combined Arms Slots", **STYLES["widget"]).grid(row=row, sticky=W)
         self.ca_slot_entry = Entry(self.frame,  width=2)
         self.ca_slot_entry.insert(0, "0")
-        self.ca_slot_entry.grid(column=1, row=row, sticky=W, padx=5)
-        Button(self.frame, text="+", command=self.add_ca_slot, **STYLES["btn-primary"]).grid(column=2, row=row, padx=5, sticky=W)
+        self.ca_slot_entry.grid(column=3, row=row, sticky=E, padx=5)
+        Button(self.frame, text="+", command=self.add_ca_slot, **STYLES["btn-primary"]).grid(column=4, row=row, padx=5, sticky=W)
         row += 1
 
         header("Ready?")

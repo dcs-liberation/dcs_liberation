@@ -5,7 +5,7 @@ from .event import *
 
 class StrikeEvent(Event):
     STRENGTH_INFLUENCE = 0.0
-    SINGLE_OBJECT_STRENGTH_INFLUENCE = 0.03
+    SINGLE_OBJECT_STRENGTH_INFLUENCE = 0.05
 
     def __str__(self):
         return "Strike"
@@ -39,6 +39,7 @@ class StrikeEvent(Event):
 
     def commit(self, debriefing: Debriefing):
         super(StrikeEvent, self).commit(debriefing)
+
         self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
 
     def player_attacking(self, flights: db.TaskForceDict):
