@@ -57,7 +57,7 @@ def generate_groundobjects(theater: ConflictTheater):
 
             if point:
                 for angle in range(0, 360, 45):
-                    p = point.point_from_heading(angle, 1000)
+                    p = point.point_from_heading(angle, 2500)
                     if on_ground and not theater.is_on_land(p):
                         point = None
                         break

@@ -3,7 +3,9 @@ import typing
 from dcs.mission import *
 from dcs.terrain import *
 
+from theater.nevada import *
 from theater.persiangulf import *
+from theater.caucasus import *
 from theater.controlpoint import *
 
 def find_ground_location(near, theater, max, min) -> typing.Optional[Point]:
@@ -15,8 +17,8 @@ def find_ground_location(near, theater, max, min) -> typing.Optional[Point]:
     return None
 
 
-mission = Mission(PersianGulf())
-theater = PersianGulfTheater()
+mission = Mission(Nevada())
+theater = NevadaTheater()
 
 for cp in theater.enemy_points():
     for _ in range(0, random.randrange(3, 6)):
@@ -33,4 +35,4 @@ for cp in theater.enemy_points():
             10000
         )
 
-mission.save("resources/tools/a.miz")
+mission.save("resources/tools/ground_objects_example.miz")
