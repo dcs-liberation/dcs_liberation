@@ -65,7 +65,8 @@ PRICES = {
 
     # heli
     Ka_50: 13,
-    UH_1H: 5,
+    SA342M: 8,
+    UH_1H: 4,
     Mi_8MT: 5,
 
     # special
@@ -158,6 +159,7 @@ UNIT_BY_TASK = {
         Su_25T,
         Su_34,
         Ka_50,
+        SA342M,
     ],
 
     Transport: [
@@ -264,6 +266,7 @@ UNIT_BY_COUNTRY = {
         A_50,
 
         Ka_50,
+        SA342M,
         UH_1H,
         Mi_8MT,
 
@@ -303,6 +306,7 @@ UNIT_BY_COUNTRY = {
         E_3A,
 
         Ka_50,
+        SA342M,
         UH_1H,
         Mi_8MT,
 
@@ -324,6 +328,7 @@ UNIT_BY_COUNTRY = {
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
     Ka_50: LHA_1_Tarawa,
+    SA342M: LHA_1_Tarawa,
     UH_1H: LHA_1_Tarawa,
     Mi_8MT: LHA_1_Tarawa,
     AV8BNA: LHA_1_Tarawa,

@@ -58,14 +58,14 @@ EVENT_PROBABILITIES = {
     InfantryTransportEvent: [25, 0],
 
     # events conditionally present; for both enemy and player
-    BaseAttackEvent: [100, 5],
+    BaseAttackEvent: [100, 8],
 
     # events randomly present; for both enemy and player
-    InterceptEvent: [25, 5],
-    NavalInterceptEvent: [25, 5],
+    InterceptEvent: [25, 8],
+    NavalInterceptEvent: [25, 8],
 
     # events randomly present; only for the enemy
-    InsurgentAttackEvent: [0, 4],
+    InsurgentAttackEvent: [0, 5],
 }
 
 # amount of strength player bases recover for the turn

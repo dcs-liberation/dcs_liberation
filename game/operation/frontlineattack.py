@@ -44,7 +44,7 @@ class FrontlineAttackOperation(Operation):
 
         heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
         if heli_flights:
-            self.briefinggen.append_frequency("FARP", "127.5 MHz AM")
+            self.briefinggen.append_frequency("FARP + Heli flights", "127.5 MHz AM")
             for farp, dict in zip(self.groundobjectgen.generate_farps(sum([x[0] for x in heli_flights.values()])),
                                   db.assignedunits_split_to_count(heli_flights, self.groundobjectgen.FARP_CAPACITY)):
                 self.airgen.generate_cas_strikegroup(*assigned_units_split(dict),
