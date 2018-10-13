@@ -15,6 +15,7 @@ class InsurgentAttackEvent(Event):
     SUCCESS_FACTOR = 0.7
     TARGET_VARIETY = 2
     TARGET_AMOUNT_FACTOR = 0.5
+    STRENGTH_INFLUENCE = 0.1
 
     @property
     def threat_description(self):
@@ -30,6 +31,9 @@ class InsurgentAttackEvent(Event):
 
     def __str__(self):
         return "Destroy insurgents"
+
+    def skip(self):
+        self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def is_successfull(self, debriefing: Debriefing):
         killed_units = sum([v for k, v in debriefing.destroyed_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])

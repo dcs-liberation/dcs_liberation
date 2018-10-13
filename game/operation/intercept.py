@@ -39,7 +39,7 @@ class InterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.prepare_carriers(self.interceptors.keys())
+        self.prepare_carriers(db.unitdict_from(self.interceptors))
 
         self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_defenders_escort(*assigned_units_split(self.escort), at=self.defenders_starting_position)

@@ -39,10 +39,10 @@ PRICES = {
     # fighter
     C_101CC: 8,
     MiG_23MLD: 18,
-    Su_27: 24,
-    Su_33: 25,
-    MiG_29A: 24,
-    MiG_29S: 26,
+    Su_27: 20,
+    Su_33: 22,
+    MiG_29A: 23,
+    MiG_29S: 25,
 
     F_5E_3: 6,
     MiG_15bis: 5,
@@ -52,7 +52,7 @@ PRICES = {
     AV8BNA: 13,
     M_2000C: 13,
     FA_18C_hornet: 18,
-    F_15C: 24,
+    F_15C: 20,
 
     # bomber
     Su_25: 15,

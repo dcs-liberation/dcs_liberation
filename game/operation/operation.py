@@ -88,7 +88,7 @@ class Operation:
             if not global_cp.is_global:
                 continue
 
-            ship = self.shipgen.generate_carrier(for_units=for_units,
+            ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
                                                  country=self.game.player,
                                                  at=global_cp.at)
 
