@@ -166,7 +166,7 @@ class Conflict:
         if ground_position:
             return ground_position, _opposite_heading(attack_heading)
         else:
-            print("Coudn't find frontline position between {} and {}!".format(from_cp, to_cp))
+            logging.warning("Coudn't find frontline position between {} and {}!".format(from_cp, to_cp))
             return position, _opposite_heading(attack_heading)
 
 

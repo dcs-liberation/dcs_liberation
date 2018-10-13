@@ -58,6 +58,6 @@ class BriefingGenerator:
         if self.waypoints:
             description += "\n\nWAYPOINTS:"
             for i, descr in enumerate(self.waypoints):
-                description += "\n#{}: {}".format(i+1, descr)
+                description += "\n#{}: {}".format(i, descr)
 
         self.m.set_description_text(description)

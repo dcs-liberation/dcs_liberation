@@ -90,7 +90,6 @@ class OverviewCanvas:
                 if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
                     frontline = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
                     if not frontline:
-                        print(cp, connected_cp)
                         continue
 
                     frontline_pos, heading, distance = frontline

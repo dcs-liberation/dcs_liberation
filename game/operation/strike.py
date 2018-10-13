@@ -46,7 +46,7 @@ class StrikeOperation(Operation):
             if global_cp == self.from_cp and not self.is_quick:
                 self.attackers_starting_position = ship
 
-        targets = []  # type: typing.List[typing.Tuple[str, Point]]
+        targets = []  # type: typing.List[typing.Tuple[str, str, Point]]
         category_counters = {}  # type: typing.Dict[str, int]
         processed_groups = []
         for object in self.to_cp.ground_objects:
@@ -56,16 +56,16 @@ class StrikeOperation(Operation):
             processed_groups.append(object.group_identifier)
             category_counters[object.category] = category_counters.get(object.category, 0) + 1
             markpoint_name = "{}{}".format(object.name_abbrev, category_counters[object.category])
-            targets.append((markpoint_name, object.position))
+            targets.append((str(object), markpoint_name, object.position))
 
-        targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[1]))
+        targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[2]))
 
-        for (name, markpoint_name) in targets:
+        for (name, markpoint_name, _) in targets:
             self.briefinggen.append_waypoint("TARGET {} (TP {})".format(str(name), markpoint_name))
 
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(planes_flights),
-                                                       targets=targets,
+                                                       targets=[(mp, pos) for (n, mp, pos) in targets],
                                                        at=self.attackers_starting_position)
 
         heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
@@ -74,7 +74,7 @@ class StrikeOperation(Operation):
             for farp, dict in zip(self.groundobjectgen.generate_farps(sum([x[0] for x in heli_flights.values()])),
                                   db.assignedunits_split_to_count(heli_flights, self.groundobjectgen.FARP_CAPACITY)):
                 self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(dict),
-                                                               targets=targets,
+                                                               targets=[(mp, pos) for (n, mp, pos) in targets],
                                                                at=farp,
                                                                escort=len(planes_flights) == 0)
 

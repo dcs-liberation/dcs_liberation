@@ -30,9 +30,9 @@ RANDOM_TIME = {
 
 RANDOM_WEATHER = {
     1: 0,  # heavy rain
-    2: 10,  # rain
-    3: 20,  # dynamic
-    4: 30,  # clear
+    2: 5,  # rain
+    3: 15,  # dynamic
+    4: 40,  # clear
     5: 100,  # random
 }
 
@@ -49,7 +49,8 @@ class EnviromentGenerator:
         self.game = game
 
     def _gen_random_time(self):
-        start_time = datetime.fromtimestamp(1527206400)
+        start_time = datetime.strptime('May 25 2018 12:00AM', '%b %d %Y %I:%M%p')
+
         time_range = None
         for k, v in RANDOM_TIME.items():
             if self.game.settings.night_disabled and k == "night":
@@ -60,6 +61,11 @@ class EnviromentGenerator:
                 break
 
         start_time += timedelta(hours=random.randint(*time_range))
+        logging.info("time - {}, slot - {}, night skipped - {}".format(
+            str(start_time),
+            str(time_range),
+            self.game.settings.night_disabled))
+
         self.mission.start_time = start_time
 
     def _gen_random_weather(self):

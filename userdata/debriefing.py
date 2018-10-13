@@ -163,7 +163,7 @@ class Debriefing:
                 self.destroyed_objects.append(str(group.name))
                 self._dead_units.remove(identifier)
 
-        print("debriefing: unsatistied ids: {}".format(self._dead_units))
+        logging.info("debriefing: unsatistied ids: {}".format(self._dead_units))
 
         self.alive_units = {
             player.name: {k: v - self.destroyed_units[player.name].get(k, 0) for k, v in player_units.items()},

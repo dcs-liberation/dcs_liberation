@@ -371,7 +371,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     M_2000C: {
         CAP: "Combat Air Patrol",
-        GroundAttack: "MK-82 Heavy Strike",
+        GroundAttack: "MK-82S Heavy Strike",
     },
 
     MiG_21Bis: {
