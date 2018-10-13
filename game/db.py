@@ -76,7 +76,6 @@ PRICES = {
     S_3B_Tanker: 13,
     IL_78M: 13,
     KC_135: 13,
-    KC130: 13,
 
     A_50: 8,
     E_3A: 8,
@@ -110,9 +109,10 @@ PRICES = {
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
+    LHA_1_Tarawa: 50,
 
-    LHA_1_Tarawa: 30,
     Bulk_cargo_ship_Yakushev: 10,
+    Armed_speedboat: 10,
     Dry_cargo_ship_Ivanov: 10,
     Tanker_Elnya_160: 10,
 }
@@ -166,14 +166,13 @@ UNIT_BY_TASK = {
         An_30M,
         Yak_40,
 
-        S_3B_Tanker,
         C_130,
     ],
 
     Refueling: [
         IL_78M,
         KC_135,
-        KC130,
+        S_3B_Tanker,
     ],
 
     AWACS: [E_3A, A_50, ],
@@ -198,8 +197,8 @@ UNIT_BY_TASK = {
     Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
     Embarking: [UH_1H, Mi_8MT, ],
 
-    Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
-    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, LHA_1_Tarawa],
+    Carriage: [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, ],
+    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ],
 }
 
 """
@@ -299,7 +298,6 @@ UNIT_BY_COUNTRY = {
         AV8BNA,
 
         KC_135,
-        KC130,
         S_3B_Tanker,
         C_130,
         E_3A,
@@ -319,7 +317,16 @@ UNIT_BY_COUNTRY = {
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
+        Armed_speedboat,
     ],
+}
+
+CARRIER_TYPE_BY_PLANE = {
+    FA_18C_hornet: CVN_74_John_C__Stennis,
+    Ka_50: LHA_1_Tarawa,
+    UH_1H: LHA_1_Tarawa,
+    Mi_8MT: LHA_1_Tarawa,
+    AV8BNA: LHA_1_Tarawa,
 }
 
 """
@@ -341,6 +348,8 @@ Payload will be used for operation of following type, "*" category will be used 
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+        AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
     },
 
     Su_25T: {
@@ -458,6 +467,14 @@ def choose_units(for_task: Task, factor: float, count: int, country: str) -> typ
 
 def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
     unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
+
+
+def unitdict_merge(a: UnitsDict, b: UnitsDict) -> UnitsDict:
+    b = b.copy()
+    for k, v in a.items():
+        b[k] = b.get(k, 0) + v
+
+    return b
 
 
 def unitdict_split(unit_dict: UnitsDict, count: int):

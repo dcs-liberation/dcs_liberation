@@ -2,6 +2,7 @@ import math
 import pickle
 import random
 import typing
+import logging
 
 from theater.base import *
 from theater.conflicttheater import *
@@ -72,8 +73,8 @@ def generate_groundobjects(theater: ConflictTheater):
 
     group_id = 0
     for cp in theater.enemy_points():
-        for _ in range(0, random.randrange(3, 6)):
-            available_categories = list(tpls) + ["aa", "aa", "aa"]
+        for _ in range(0, random.randrange(2, 4)):
+            available_categories = list(tpls) + ["aa", "aa"]
             tpl_category = random.choice(available_categories)
 
             tpl = random.choice(list(tpls[tpl_category].values()))
@@ -84,14 +85,17 @@ def generate_groundobjects(theater: ConflictTheater):
                 print("Couldn't find point for {}".format(cp))
                 continue
 
-            dist = point.distance_to_point(cp.position)
+            """
+            dist = point.distance_to_point(cp.position) - 15000
             for another_cp in theater.enemy_points():
                 if another_cp.position.distance_to_point(point) < dist:
                     cp = another_cp
+            """
 
             group_id += 1
             object_id = 0
 
+            logging.info("generated {} for {}".format(tpl_category, cp))
             for object in tpl:
                 object_id += 1
 

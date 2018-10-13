@@ -11,7 +11,7 @@ class NavalInterceptEvent(Event):
 
     def _targets_count(self) -> int:
         from gen.conflictgen import IMPORTANCE_LOW
-        factor = (self.to_cp.importance - IMPORTANCE_LOW) * 10
+        factor = (self.to_cp.importance - IMPORTANCE_LOW + 0.1) * 20
         return max(int(factor), 1)
 
     def __str__(self) -> str:

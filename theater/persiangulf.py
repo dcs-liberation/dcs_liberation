@@ -72,8 +72,8 @@ class PersianGulfTheater(ConflictTheater):
         self.add_controlpoint(self.havadarya, connected_to=[self.lar, self.qeshm, self.bandar_abbas])
         self.add_controlpoint(self.bandar_abbas, connected_to=[self.havadarya])
 
-        self.add_controlpoint(self.east_carrier)
         self.add_controlpoint(self.west_carrier)
+        self.add_controlpoint(self.east_carrier)
 
         self.west_carrier.captured = True
         self.east_carrier.captured = True

@@ -9,11 +9,11 @@ from dcs.task import *
 from dcs.terrain.terrain import NoParkingSlotError
 
 TANKER_DISTANCE = 15000
-TANKER_ALT = 6000
+TANKER_ALT = 4572
 TANKER_HEADING_OFFSET = 45
 
 AWACS_DISTANCE = 150000
-AWACS_ALT = 15000
+AWACS_ALT = 13000
 
 
 class AirSupportConflictGenerator:

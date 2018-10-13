@@ -79,9 +79,13 @@ class ConfigurationMenu(Menu):
         Label(body, text="Takeoff only for player group", **STYLES["widget"]).grid(row=row, column=0, sticky=W)
         Checkbutton(body, variable=self.takeoff_var, **STYLES["radiobutton"]).grid(row=row, column=1, sticky=E)
         row += 1
+        Label(body, text="Only player group will start on the ground. AI units will be circling in the air until player takes off.", **STYLES["widget"]).grid(row=row, column=0, columnspan=2)
+        row += 1
 
         Label(body, text="Disable night missions", **STYLES["widget"]).grid(row=row, column=0, sticky=W)
         Checkbutton(body, variable=self.night_var, **STYLES["radiobutton"]).grid(row=row, column=1, sticky=E)
+        row += 1
+        Label(body, text="No night missions. Dawns and dusks will still be present.", **STYLES["widget"]).grid(row=row, column=0, columnspan=2)
         row += 1
 
         Button(body, text="Display logs", command=self.display_logs, **STYLES["btn-primary"]).grid(row=row, column=1, sticky=E, pady=30)
