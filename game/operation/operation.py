@@ -11,7 +11,9 @@ class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
     defenders_starting_position = None  # type: db.StartingPosition
 
-    mission = None  # type: dcs.Mission
+    current_mission = None  # type: dcs.Mission
+    regular_mission = None  # type: dcs.Mission
+    quick_mission = None  # type: dcs.Mission
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
@@ -51,7 +53,7 @@ class Operation:
         return True
 
     def initialize(self, mission: Mission, conflict: Conflict):
-        self.mission = mission
+        self.current_mission = mission
         self.conflict = conflict
         self.armorgen = ArmorConflictGenerator(mission, conflict)
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
@@ -72,8 +74,13 @@ class Operation:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
 
-        self.mission = dcs.Mission(terrain)
-        self.mission.options.load_from_dict(options_dict)
+        self.current_mission = dcs.Mission(terrain)
+        if is_quick:
+            self.quick_mission = self.current_mission
+        else:
+            self.regular_mission = self.current_mission
+
+        self.current_mission.options.load_from_dict(options_dict)
         self.is_quick = is_quick
 
         if is_quick:
@@ -107,11 +114,11 @@ class Operation:
             self.briefinggen.append_frequency("AWACS", "133 MHz AM")
 
         # combined arms
-        self.mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
-        if self.game.player in [country.name for country in self.mission.coalition["blue"].countries.values()]:
-            self.mission.groundControl.blue_tactical_commander = self.ca_slots
+        self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
+        if self.game.player in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
+            self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
         else:
-            self.mission.groundControl.red_tactical_commander = self.ca_slots
+            self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
         # ground infrastructure
         self.groundobjectgen.generate()

@@ -17,14 +17,14 @@ class InsurgentAttackOperation(Operation):
         super(InsurgentAttackOperation, self).prepare(terrain, is_quick)
 
         conflict = Conflict.ground_attack_conflict(
-            attacker=self.mission.country(self.attacker_name),
-            defender=self.mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_name),
+            defender=self.current_mission.country(self.defender_name),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater
         )
 
-        self.initialize(mission=self.mission,
+        self.initialize(mission=self.current_mission,
                         conflict=conflict)
 
     def generate(self):

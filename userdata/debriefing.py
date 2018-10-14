@@ -60,11 +60,12 @@ def parse_mutliplayer_debriefing(contents: str):
 
 
 class Debriefing:
-    def __init__(self, dead_units):
+    def __init__(self, dead_units, trigger_state):
         self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.destroyed_objects = []  # type: typing.List[str]
 
+        self._trigger_state = trigger_state
         self._dead_units = dead_units
 
     @classmethod
@@ -99,18 +100,11 @@ class Debriefing:
                 if event_type in ["crash", "dead"]:
                     parse_dead_object(event)
 
-                    """
-                    initiator_components = event["initiator"].split("|")
+            trigger_state = table.get("debriefing", {}).get("triggers_state", {})
 
-                    if initiator_components[0] in CATEGORY_MAP:
-                        parse_dead_object(event)
-                    else:
-                        parse_dead_unit(event)
-                    """
+        return Debriefing(dead_units, trigger_state)
 
-        return Debriefing(dead_units)
-
-    def calculate_units(self, mission: Mission, player_name: str, enemy_name: str):
+    def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_name: str, enemy_name: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
             result = {}
             for group in groups:
@@ -128,6 +122,8 @@ class Debriefing:
                     result[unit_type] = result.get(unit_type, 0) + 1
 
             return result
+
+        mission = regular_mission if len(self._trigger_state) else quick_mission
 
         player = mission.country(player_name)
         enemy = mission.country(enemy_name)

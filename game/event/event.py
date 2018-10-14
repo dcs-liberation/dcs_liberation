@@ -79,7 +79,7 @@ class Event:
 
         self.operation.prepare(self.game.theater.terrain, is_quick=False)
         self.operation.generate()
-        self.operation.mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
+        self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
         self.environment_settings = self.operation.environment_settings
 
     def generate_quick(self):
@@ -88,7 +88,7 @@ class Event:
 
         self.operation.prepare(self.game.theater.terrain, is_quick=True)
         self.operation.generate()
-        self.operation.mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
+        self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
 
     def commit(self, debriefing: Debriefing):
         for country, losses in debriefing.destroyed_units.items():

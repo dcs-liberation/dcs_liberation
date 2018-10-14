@@ -99,12 +99,14 @@ class EventResultsMenu(Menu):
                 Label(self.frame, text="{}".format(count), **STYLES["widget"]).grid(column=1, row=row)
                 row += 1
 
-            Button(self.frame, text="Okay", command=self.dismiss, **STYLES["btn-primary"]).grid(columnspan=1, row=row);
+            Button(self.frame, text="Okay", command=self.dismiss, **STYLES["btn-primary"]).grid(columnspan=1, row=row)
             row += 1
 
     def process_debriefing(self, debriefing: Debriefing):
         self.debriefing = debriefing
-        debriefing.calculate_units(mission=self.event.operation.mission,
+
+        debriefing.calculate_units(regular_mission=self.event.operation.regular_mission,
+                                   quick_mission=self.event.operation.quick_mission,
                                    player_name=self.game.player,
                                    enemy_name=self.game.enemy)
 
