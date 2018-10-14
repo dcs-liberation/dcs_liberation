@@ -109,13 +109,7 @@ class Debriefing:
             result = {}
             for group in groups:
                 for unit in group.units:
-                    if isinstance(unit, Vehicle):
-                        unit_type = vehicle_map[unit.type]
-                    elif isinstance(unit, Ship):
-                        unit_type = ship_map[unit.type]
-                    else:
-                        unit_type = unit.unit_type
-
+                    unit_type = db.unit_type_of(unit)
                     if unit_type in db.EXTRA_AA.values():
                         continue
 
@@ -147,15 +141,20 @@ class Debriefing:
             for group in country_groups:
                 for unit in group.units:
                     if unit.id in self._dead_units:
-                        logging.info("debriefing: found dead unit {} ({})".format(str(unit.name), unit.id))
-                        unit_klass = db.unit_type_from_name(unit.type)
-                        self.destroyed_units[country_name][unit_klass] = self.destroyed_units[country_name].get(unit_klass, 0) + 1
+                        unit_type = db.unit_type_of(unit)
+                        logging.info("debriefing: found dead unit {} ({}, {})".format(str(unit.name), unit.id, unit_type))
+
+                        assert country_name
+                        assert unit_type
+                        self.destroyed_units[country_name][unit_type] = self.destroyed_units[country_name].get(unit_type, 0) + 1
                         self._dead_units.remove(unit.id)
 
         for group in static_groups:
             identifier = group.units[0].id
             if identifier in self._dead_units:
                 logging.info("debriefing: found dead static {} ({})".format(str(group.name), identifier))
+
+                assert str(group.name)
                 self.destroyed_objects.append(str(group.name))
                 self._dead_units.remove(identifier)
 

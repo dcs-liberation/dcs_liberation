@@ -2,12 +2,14 @@ import typing
 import enum
 
 from dcs.vehicles import *
-from dcs.unitgroup import *
 from dcs.ships import *
 from dcs.planes import *
 from dcs.helicopters import *
+
 from dcs.task import *
+from dcs.unit import *
 from dcs.unittype import *
+from dcs.unitgroup import *
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -447,6 +449,15 @@ def unit_type_from_name(name: str) -> UnitType:
         return ship_map[name]
     else:
         return None
+
+
+def unit_type_of(unit: Unit) -> UnitType:
+    if isinstance(unit, Vehicle):
+        return vehicle_map[unit.type]
+    elif isinstance(unit, Ship):
+        return ship_map[unit.type]
+    else:
+        return unit.unit_type
 
 
 def task_name(task) -> str:
