@@ -33,7 +33,6 @@ class CaucasusTheater(ConflictTheater):
     gelendzhik = ControlPoint.from_airport(caucasus.Gelendzhik, COAST_DR_E, SIZE_BIG, 1.1)
     maykop = ControlPoint.from_airport(caucasus.Maykop_Khanskaya, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
     krasnodar = ControlPoint.from_airport(caucasus.Krasnodar_Center, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
-    novorossiysk = ControlPoint.from_airport(caucasus.Novorossiysk, COAST_DR_E, SIZE_BIG, 1.2)
     krymsk = ControlPoint.from_airport(caucasus.Krymsk, LAND, SIZE_LARGE, 1.2)
     anapa = ControlPoint.from_airport(caucasus.Anapa_Vityazevo, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 

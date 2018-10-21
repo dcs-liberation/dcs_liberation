@@ -127,9 +127,9 @@ class EnviromentGenerator:
             # sometimes clouds are randomized way too low and need to be fixed
             self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, WEATHER_CLOUD_BASE_MIN)
 
-        if self.mission.weather.wind_at_ground == 0:
+        if self.mission.weather.wind_at_ground.speed == 0:
             # frontline smokes look silly w/o any wind
-            self.mission.weather.wind_at_ground = random.randint(1, 2)
+            self._generate_wind(1)
 
     def generate(self) -> EnvironmentSettings:
         self._gen_random_time()

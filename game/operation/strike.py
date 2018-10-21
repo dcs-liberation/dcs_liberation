@@ -8,6 +8,8 @@ class StrikeOperation(Operation):
     escort = None  # type: db.AssignedUnitsDict
     interceptors = None  # type: db.AssignedUnitsDict
 
+    trigger_radius = TRIGGER_RADIUS_ALL_MAP
+
     def setup(self,
               strikegroup: db.AssignedUnitsDict,
               escort: db.AssignedUnitsDict,

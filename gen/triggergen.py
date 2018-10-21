@@ -28,6 +28,7 @@ TRIGGER_RADIUS_MINIMUM = 20000
 TRIGGER_RADIUS_SMALL = 50000
 TRIGGER_RADIUS_MEDIUM = 100000
 TRIGGER_RADIUS_LARGE = 150000
+TRIGGER_RADIUS_ALL_MAP = 3000000
 
 
 class Silence(Option):
@@ -53,14 +54,16 @@ class TriggersGenerator:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
+        """
         conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
         minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
         if minimum_radius < 0:
             minimum_radius = 0
 
         result_radius = min(minimum_radius, radius)
+        """
 
-        activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, result_radius, name="Activation zone")
+        activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, radius, name="Activation zone")
         activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
         activation_trigger.add_condition(PartOfCoalitionInZone(player_coalition, activation_trigger_zone.id))
         activation_trigger.add_condition(FlagIsTrue())

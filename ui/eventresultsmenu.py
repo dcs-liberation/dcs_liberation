@@ -54,6 +54,7 @@ class EventResultsMenu(Menu):
             pg.start(10)
             row += 1
 
+            """
             Label(self.frame, text="Cheat operation results: ", **STYLES["strong"]).grid(column=0, row=row,
                                                                                          columnspan=2, sticky=NSEW,
                                                                                          pady=5)
@@ -69,6 +70,7 @@ class EventResultsMenu(Menu):
             Button(self.frame, text="some player losses", command=self.simulate_result(0.8, 0),
                    **STYLES["btn-warning"]).grid(column=1, row=row, padx=5, pady=5)
             row += 1
+            """
 
         else:
             row = 0
