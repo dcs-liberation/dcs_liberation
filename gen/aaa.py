@@ -1,13 +1,11 @@
-from game import *
-
-from theater.conflicttheater import ConflictTheater
 from .conflictgen import *
 from .naming import *
 
 from dcs.mission import *
 
 DISTANCE_FACTOR = 0.5, 1
-EXTRA_AA_MIN_DISTANCE = 35000
+EXTRA_AA_MIN_DISTANCE = 50000
+EXTRA_AA_MAX_DISTANCE = 150000
 EXTRA_AA_POSITION_FROM_CP = 550
 
 
@@ -61,6 +59,12 @@ class ExtraAAConflictGenerator:
             if cp.position.distance_to_point(self.conflict.from_cp.position) < EXTRA_AA_MIN_DISTANCE:
                 continue
 
+            if cp.position.distance_to_point(self.conflict.to_cp.position) < EXTRA_AA_MIN_DISTANCE:
+                continue
+
+            if cp.position.distance_to_point(self.conflict.position) > EXTRA_AA_MAX_DISTANCE:
+                continue
+
             country_name = cp.captured and self.player_name or self.enemy_name
             position = cp.position.point_from_heading(0, EXTRA_AA_POSITION_FROM_CP)
 
@@ -69,6 +73,6 @@ class ExtraAAConflictGenerator:
                 name=namegen.next_basedefense_name(),
                 _type=db.EXTRA_AA[country_name],
                 position=position,
-                group_size=2
+                group_size=1
             )
 

@@ -17,6 +17,7 @@ from dcs.unit import UnitType
 from game import db
 
 from .persistency import base_path
+from theater.theatergroundobject import CATEGORY_MAP
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -59,14 +60,33 @@ def parse_mutliplayer_debriefing(contents: str):
 
 
 class Debriefing:
-    def __init__(self, dead_units):
+    def __init__(self, dead_units, trigger_state):
         self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
+        self.destroyed_objects = []  # type: typing.List[str]
 
+        self._trigger_state = trigger_state
         self._dead_units = dead_units
 
     @classmethod
     def parse(cls, path: str):
+        dead_units = []
+
+        def append_dead_object(object_mission_id_str):
+            nonlocal dead_units
+            object_mission_id = int(object_mission_id_str)
+            if object_mission_id in dead_units:
+                logging.info("debriefing: failed to append_dead_object {}: already exists!".format(object_mission_id))
+                return
+
+            dead_units.append(object_mission_id)
+
+        def parse_dead_object(event):
+            try:
+                append_dead_object(event["initiatorMissionID"])
+            except Exception as e:
+                logging.error(e)
+
         with open(path, "r") as f:
             table_string = f.read()
             try:
@@ -75,56 +95,29 @@ class Debriefing:
                 table = parse_mutliplayer_debriefing(table_string)
 
             events = table.get("debriefing", {}).get("events", {})
-            dead_units = {}
-
             for event in events.values():
                 event_type = event.get("type", None)
-                if event_type != "crash" and event_type != "dead":
-                    continue
+                if event_type in ["crash", "dead"]:
+                    parse_dead_object(event)
 
-                try:
-                    components = event["initiator"].split("|")
-                    category, country_id, group_id, unit_type = components[0], int(components[1]), int(components[2]), db.unit_type_from_name(components[3])
-                    if unit_type is None:
-                        logging.info("Skipped due to no unit type")
-                        continue
+            trigger_state = table.get("debriefing", {}).get("triggers_state", {})
 
-                    if category != "unit":
-                        logging.info("Skipped due to category")
-                        continue
-                except Exception as e:
-                    logging.error(e)
-                    continue
+        return Debriefing(dead_units, trigger_state)
 
-                if country_id not in dead_units:
-                    dead_units[country_id] = {}
-
-                if unit_type not in dead_units[country_id]:
-                    dead_units[country_id][unit_type] = 0
-
-                dead_units[country_id][unit_type] += 1
-
-        return Debriefing(dead_units)
-
-    def calculate_units(self, mission: Mission, player_name: str, enemy_name: str):
+    def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_name: str, enemy_name: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
             result = {}
             for group in groups:
                 for unit in group.units:
-                    unit_type = None
-                    if isinstance(unit, Vehicle):
-                        unit_type = vehicle_map[unit.type]
-                    elif isinstance(unit, Ship):
-                        unit_type = ship_map[unit.type]
-                    else:
-                        unit_type = unit.unit_type
-
+                    unit_type = db.unit_type_of(unit)
                     if unit_type in db.EXTRA_AA.values():
                         continue
 
                     result[unit_type] = result.get(unit_type, 0) + 1
 
             return result
+
+        mission = regular_mission if len(self._trigger_state) else quick_mission
 
         player = mission.country(player_name)
         enemy = mission.country(enemy_name)
@@ -133,9 +126,39 @@ class Debriefing:
         enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)
 
         self.destroyed_units = {
-            player.name: self._dead_units.get(player.id, {}),
-            enemy.name: self._dead_units.get(enemy.id, {}),
+            player.name: {},
+            enemy.name: {},
         }
+
+        all_groups = {
+            player.name: player.plane_group + player.helicopter_group + player.vehicle_group + player.ship_group,
+            enemy.name: enemy.plane_group + enemy.helicopter_group + enemy.vehicle_group + enemy.ship_group,
+        }
+
+        static_groups = enemy.static_group
+
+        for country_name, country_groups in all_groups.items():
+            for group in country_groups:
+                for unit in group.units:
+                    if unit.id in self._dead_units:
+                        unit_type = db.unit_type_of(unit)
+                        logging.info("debriefing: found dead unit {} ({}, {})".format(str(unit.name), unit.id, unit_type))
+
+                        assert country_name
+                        assert unit_type
+                        self.destroyed_units[country_name][unit_type] = self.destroyed_units[country_name].get(unit_type, 0) + 1
+                        self._dead_units.remove(unit.id)
+
+        for group in static_groups:
+            identifier = group.units[0].id
+            if identifier in self._dead_units:
+                logging.info("debriefing: found dead static {} ({})".format(str(group.name), identifier))
+
+                assert str(group.name)
+                self.destroyed_objects.append(str(group.name))
+                self._dead_units.remove(identifier)
+
+        logging.info("debriefing: unsatistied ids: {}".format(self._dead_units))
 
         self.alive_units = {
             player.name: {k: v - self.destroyed_units[player.name].get(k, 0) for k, v in player_units.items()},

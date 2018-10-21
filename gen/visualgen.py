@@ -98,7 +98,14 @@ class VisualGenerator:
 
     def _generate_frontline_smokes(self):
         for from_cp, to_cp in self.game.theater.conflicts():
-            point, heading = Conflict.frontline_position(from_cp, to_cp)
+            if from_cp.is_global or to_cp.is_global:
+                continue
+
+            frontline = Conflict.frontline_position(self.game.theater, from_cp, to_cp)
+            if not frontline:
+                continue
+
+            point, heading = frontline
             plane_start = point.point_from_heading(turn_heading(heading, 90), FRONTLINE_LENGTH / 2)
 
             for offset in range(0, FRONTLINE_LENGTH, FRONT_SMOKE_SPACING):

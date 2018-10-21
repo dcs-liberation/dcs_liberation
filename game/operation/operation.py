@@ -1,16 +1,19 @@
-from dcs.terrain import Terrain
 from dcs.lua.parse import loads
 
 from userdata.debriefing import *
 
-from theater import *
 from gen import *
+
+TANKER_CALLSIGNS = ["Texaco", "Arco", "Shell"]
 
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
     defenders_starting_position = None  # type: db.StartingPosition
-    mission = None  # type: dcs.Mission
+
+    current_mission = None  # type: dcs.Mission
+    regular_mission = None  # type: dcs.Mission
+    quick_mission = None  # type: dcs.Mission
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
@@ -18,44 +21,50 @@ class Operation:
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
-    awacsgen = None  # type: AirSupportConflictGenerator
+    airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
     envgen = None  # type: EnvironmentGenerator
+    groundobjectgen = None  # type: GroundObjectsGenerator
+    briefinggen = None  # type: BriefingGenerator
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
     is_awacs_enabled = False
+    ca_slots = 0
 
     def __init__(self,
                  game,
                  attacker_name: str,
                  defender_name: str,
-                 attacker_clients: db.PlaneDict,
-                 defender_clients: db.PlaneDict,
                  from_cp: ControlPoint,
                  to_cp: ControlPoint = None):
         self.game = game
         self.attacker_name = attacker_name
         self.defender_name = defender_name
-        self.attacker_clients = attacker_clients
-        self.defender_clients = defender_clients
         self.from_cp = from_cp
         self.to_cp = to_cp
         self.is_quick = False
 
-    def initialize(self, mission: Mission, conflict: Conflict):
-        self.mission = mission
-        self.conflict = conflict
+    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
+        return []
 
+    def is_successfull(self, debriefing: Debriefing) -> bool:
+        return True
+
+    def initialize(self, mission: Mission, conflict: Conflict):
+        self.current_mission = mission
+        self.conflict = conflict
         self.armorgen = ArmorConflictGenerator(mission, conflict)
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
-        self.awacsgen = AirSupportConflictGenerator(mission, conflict, self.game)
+        self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
+        self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
+        self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
         player_name = self.from_cp.captured and self.attacker_name or self.defender_name
         enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
@@ -65,8 +74,13 @@ class Operation:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
 
-        self.mission = dcs.Mission(terrain)
-        self.mission.options.load_from_dict(options_dict)
+        self.current_mission = dcs.Mission(terrain)
+        if is_quick:
+            self.quick_mission = self.current_mission
+        else:
+            self.regular_mission = self.current_mission
+
+        self.current_mission.options.load_from_dict(options_dict)
         self.is_quick = is_quick
 
         if is_quick:
@@ -76,12 +90,41 @@ class Operation:
             self.attackers_starting_position = self.from_cp.at
             self.defenders_starting_position = self.to_cp.at
 
+    def prepare_carriers(self, for_units: db.UnitsDict):
+        for global_cp in self.game.theater.controlpoints:
+            if not global_cp.is_global:
+                continue
+
+            ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
+                                                 country=self.game.player,
+                                                 at=global_cp.at)
+
+            if global_cp == self.from_cp and not self.is_quick:
+                self.attackers_starting_position = ship
+
     def generate(self):
         self.visualgen.generate()
-        self.awacsgen.generate(self.is_awacs_enabled)
 
+        # air support
+        self.airsupportgen.generate(self.is_awacs_enabled)
+        for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
+            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
+
+        if self.is_awacs_enabled:
+            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
+
+        # combined arms
+        self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
+        if self.game.player in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
+            self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
+        else:
+            self.current_mission.groundControl.red_tactical_commander = self.ca_slots
+
+        # ground infrastructure
+        self.groundobjectgen.generate()
         self.extra_aagen.generate()
 
+        # triggers
         if self.game.is_player_attack(self.conflict.attackers_side):
             cp = self.conflict.from_cp
         else:
@@ -92,13 +135,16 @@ class Operation:
                                   activation_trigger_radius=self.trigger_radius,
                                   awacs_enabled=self.is_awacs_enabled)
 
+        # env settings
         if self.environment_settings is None:
             self.environment_settings = self.envgen.generate()
         else:
             self.envgen.load(self.environment_settings)
 
-    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
-        return []
+        # main frequencies
+        self.briefinggen.append_frequency("Flight", "251 MHz AM")
+        if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
+            self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
 
-    def is_successfull(self, debriefing: Debriefing) -> bool:
-        return True
+        # briefing
+        self.briefinggen.generate()

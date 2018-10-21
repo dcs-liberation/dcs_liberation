@@ -1,15 +1,6 @@
-import typing
-import math
-import random
-
-from dcs.task import *
-from dcs.vehicles import *
-
-from game import db
 from game.operation.navalintercept import NavalInterceptionOperation
-from userdata.debriefing import Debriefing
 
-from .event import Event
+from .event import *
 
 
 class NavalInterceptEvent(Event):
@@ -19,12 +10,25 @@ class NavalInterceptEvent(Event):
     targets = None  # type: db.ShipDict
 
     def _targets_count(self) -> int:
-        from gen.conflictgen import IMPORTANCE_LOW, IMPORTANCE_HIGH
-        factor = (self.to_cp.importance - IMPORTANCE_LOW) * 10
+        from gen.conflictgen import IMPORTANCE_LOW
+        factor = (self.to_cp.importance - IMPORTANCE_LOW + 0.1) * 20
         return max(int(factor), 1)
 
     def __str__(self) -> str:
         return "Naval intercept"
+
+    @property
+    def tasks(self):
+        if self.is_player_attacking:
+            return [CAS]
+        else:
+            return [CAP]
+
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        if for_task == CAS:
+            return "Naval intercept flight"
+        elif for_task == CAP:
+            return "CAP flight"
 
     @property
     def threat_description(self):
@@ -64,7 +68,9 @@ class NavalInterceptEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, strikegroup: db.PlaneDict, clients: db.PlaneDict):
+    def player_attacking(self, flights: db.TaskForceDict):
+        assert CAS in flights and len(flights) == 1, "Invalid flights"
+
         self.targets = {
             random.choice(db.find_unittype(CargoTransportation, self.defender_name)): self._targets_count(),
         }
@@ -73,19 +79,19 @@ class NavalInterceptEvent(Event):
             self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            attacker_clients=clients,
-            defender_clients={},
             from_cp=self.from_cp,
             to_cp=self.to_cp
         )
 
-        op.setup(strikegroup=strikegroup,
+        op.setup(strikegroup=flights[CAS],
                  interceptors={},
                  targets=self.targets)
 
         self.operation = op
 
-    def player_defending(self, interceptors: db.PlaneDict, clients: db.PlaneDict):
+    def player_defending(self, flights: db.TaskForceDict):
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
+
         self.targets = {
             random.choice(db.find_unittype(CargoTransportation, self.defender_name)): self._targets_count(),
         }
@@ -94,15 +100,13 @@ class NavalInterceptEvent(Event):
             self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            attacker_clients={},
-            defender_clients=clients,
             from_cp=self.from_cp,
             to_cp=self.to_cp
         )
 
         strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
-        op.setup(strikegroup=strikegroup,
-                 interceptors=interceptors,
+        op.setup(strikegroup=assigned_units_from(strikegroup),
+                 interceptors=flights[CAP],
                  targets=self.targets)
 
         self.operation = op

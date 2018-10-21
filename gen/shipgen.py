@@ -16,7 +16,13 @@ class ShipGenerator:
         self.m = mission
         self.conflict = conflict
 
-    def generate_carrier(self, type: ShipType, country: str, at: Point) -> ShipGroup:
+    def generate_carrier(self, for_units: typing.Collection[UnitType], country: str, at: Point) -> ShipGroup:
+        type = db.find_unittype(Carriage, country)[0]
+        for unit_type in for_units:
+            if unit_type in db.CARRIER_TYPE_BY_PLANE:
+                type = db.CARRIER_TYPE_BY_PLANE[unit_type]
+                break
+
         group = self.m.ship_group(
             country=self.m.country(country),
             name=namegen.next_carrier_name(self.m.country(country)),

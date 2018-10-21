@@ -1,10 +1,14 @@
+import os
 import dcs
 
-from gen.aircraft import AircraftConflictGenerator
 from game import db
+from gen.aircraft import AircraftConflictGenerator
+
+dcs.planes.FlyingType.payload_dirs = [os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\payloads")]
+
 mis = dcs.Mission(dcs.terrain.PersianGulf())
 pos = dcs.terrain.PersianGulf().khasab().position
-airgen = AircraftConflictGenerator(mis, None)
+airgen = AircraftConflictGenerator(mis, None, None)
 
 for t, uts in db.UNIT_BY_TASK.items():
     if t != dcs.task.CAP and t != dcs.task.CAS:
@@ -25,6 +29,6 @@ for t, uts in db.UNIT_BY_TASK.items():
                 altitude=10000
             )
             g.task = t.name
-            airgen._setup_group(g, t)
+            airgen._setup_group(g, t, 0)
 
 mis.save("loadout_test.miz")

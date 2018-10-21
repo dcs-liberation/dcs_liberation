@@ -17,11 +17,11 @@ def base_path() -> str:
     global _user_folder
     assert _user_folder
 
-    openbeta_path = os.path.join(_user_folder, "Saved Games", "DCS.openbeta")
+    openbeta_path = os.path.join(_user_folder, "DCS.openbeta")
     if "--force-stable-DCS" not in sys.argv and os.path.exists(openbeta_path):
         return openbeta_path
     else:
-        return os.path.join(_user_folder, "Saved Games", "DCS")
+        return os.path.join(_user_folder, "DCS")
 
 
 def _save_file() -> str:
@@ -44,11 +44,8 @@ def restore_game():
     if not _save_file_exists():
         return None
 
-    try:
-        with open(_save_file(), "rb") as f:
-            return pickle.load(f)
-    except Exception as e:
-        raise e
+    with open(_save_file(), "rb") as f:
+        return pickle.load(f)
 
 
 def save_game(game) -> bool:

@@ -20,6 +20,8 @@ FRONTLINE_CAS_FIGHTS_COUNT = 4, 8
 FRONTLINE_CAS_GROUP_MIN = 1, 2
 FRONTLINE_CAS_PADDING = 12000
 
+FIGHT_DISTANCE = 1500
+
 
 class ArmorConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict):
@@ -45,6 +47,9 @@ class ArmorConflictGenerator:
                     group_size=1,
                     move_formation=PointAction.OffRoad)
 
+            vehicle: Vehicle = group.units[0]
+            vehicle.player_can_drive = True
+
             if not to:
                 to = self.conflict.position.point_from_heading(0, 500)
 
@@ -53,8 +58,8 @@ class ArmorConflictGenerator:
 
     def _generate_fight_at(self, attackers: db.ArmorDict, defenders: db.ArmorDict, position: Point):
         if attackers:
-            attack_pos = position.point_from_heading(self.conflict.heading - 90, 8000)
-            attack_dest = position.point_from_heading(self.conflict.heading + 90, 25000)
+            attack_pos = position.point_from_heading(self.conflict.heading - 90, FIGHT_DISTANCE)
+            attack_dest = position.point_from_heading(self.conflict.heading + 90, FIGHT_DISTANCE * 2)
             for type, count in attackers.items():
                 self._generate_group(
                     side=self.conflict.attackers_side,
@@ -65,8 +70,8 @@ class ArmorConflictGenerator:
                 )
 
         if defenders:
-            def_pos = position.point_from_heading(self.conflict.heading + 90, 4000)
-            def_dest = position.point_from_heading(self.conflict.heading - 90, 25000)
+            def_pos = position.point_from_heading(self.conflict.heading + 90, FIGHT_DISTANCE)
+            def_dest = position.point_from_heading(self.conflict.heading - 90, FIGHT_DISTANCE * 2)
             for type, count in defenders.items():
                 self._generate_group(
                     side=self.conflict.defenders_side,
@@ -101,7 +106,7 @@ class ArmorConflictGenerator:
 
         for attacker_group_dict, target_group_dict in zip_longest(attacker_groups, defender_groups):
             position = self.conflict.position.point_from_heading(self.conflict.heading,
-                                                                 random.randint(FRONTLINE_CAS_PADDING, int(self.conflict.distance - FRONTLINE_CAS_PADDING)))
+                                                                 random.randint(0, self.conflict.distance))
             self._generate_fight_at(attacker_group_dict, target_group_dict, position)
 
     def generate_passengers(self, count: int):

@@ -1,12 +1,15 @@
 import typing
+import enum
 
 from dcs.vehicles import *
-from dcs.unitgroup import *
 from dcs.ships import *
 from dcs.planes import *
 from dcs.helicopters import *
+
 from dcs.task import *
+from dcs.unit import *
 from dcs.unittype import *
+from dcs.unitgroup import *
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -38,10 +41,10 @@ PRICES = {
     # fighter
     C_101CC: 8,
     MiG_23MLD: 18,
-    Su_27: 24,
-    Su_33: 25,
-    MiG_29A: 24,
-    MiG_29S: 26,
+    Su_27: 20,
+    Su_33: 22,
+    MiG_29A: 23,
+    MiG_29S: 25,
 
     F_5E_3: 6,
     MiG_15bis: 5,
@@ -51,7 +54,7 @@ PRICES = {
     AV8BNA: 13,
     M_2000C: 13,
     FA_18C_hornet: 18,
-    F_15C: 24,
+    F_15C: 20,
 
     # bomber
     Su_25: 15,
@@ -64,7 +67,8 @@ PRICES = {
 
     # heli
     Ka_50: 13,
-    UH_1H: 5,
+    SA342M: 8,
+    UH_1H: 4,
     Mi_8MT: 5,
 
     # special
@@ -99,20 +103,19 @@ PRICES = {
     Unarmed.Transport_M818: 3,
 
     AirDefence.AAA_Vulcan_M163: 5,
-    AirDefence.SAM_Avenger_M1097: 10,
-    AirDefence.SAM_Patriot_ICC: 15,
+    AirDefence.SAM_Linebacker_M6: 10,
 
-    AirDefence.AAA_ZU_23_on_Ural_375: 5,
-    AirDefence.SAM_SA_18_Igla_S_MANPADS: 8,
-    AirDefence.SAM_SA_19_Tunguska_2S6: 15,
-    AirDefence.SAM_SA_8_Osa_9A33: 13,
+    AirDefence.SPAAA_ZSU_23_4_Shilka: 8,
+    AirDefence.SAM_SA_9_Strela_1_9P31: 13,
+    AirDefence.SAM_SA_8_Osa_9A33: 18,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
+    LHA_1_Tarawa: 50,
 
-    LHA_1_Tarawa: 30,
     Bulk_cargo_ship_Yakushev: 10,
+    Armed_speedboat: 10,
     Dry_cargo_ship_Ivanov: 10,
     Tanker_Elnya_160: 10,
 }
@@ -158,6 +161,7 @@ UNIT_BY_TASK = {
         Su_25T,
         Su_34,
         Ka_50,
+        SA342M,
     ],
 
     Transport: [
@@ -166,13 +170,13 @@ UNIT_BY_TASK = {
         An_30M,
         Yak_40,
 
-        S_3B_Tanker,
         C_130,
     ],
 
     Refueling: [
         IL_78M,
         KC_135,
+        S_3B_Tanker,
     ],
 
     AWACS: [E_3A, A_50, ],
@@ -182,35 +186,32 @@ UNIT_BY_TASK = {
         # those are listed multiple times here to balance prioritization more into lower tier AAs
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Patriot_ICC,
+        AirDefence.AAA_Vulcan_M163,
+        AirDefence.SAM_Linebacker_M6,
 
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
     ],
 
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
     Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
     Embarking: [UH_1H, Mi_8MT, ],
 
-    Carriage: [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov, ],
-    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, LHA_1_Tarawa],
+    Carriage: [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, ],
+    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ],
 }
 
 """
 Units from AirDefense category of UNIT_BY_TASK that will be removed from use if "No SAM" option is checked at the start of the game
 """
 SAM_BAN = [
-    AirDefence.SAM_Avenger_M1097,
-    AirDefence.SAM_Patriot_ICC,
+    AirDefence.SAM_Linebacker_M6,
 
-    AirDefence.SAM_SA_19_Tunguska_2S6,
+    AirDefence.SAM_SA_9_Strela_1_9P31,
     AirDefence.SAM_SA_8_Osa_9A33,
 ]
 
@@ -232,8 +233,8 @@ CARRIER_TAKEOFF_BAN = [
 AirDefense units that will be spawned at control points not related to the current operation
 """
 EXTRA_AA = {
-    "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
-    "USA": AirDefence.SAM_Patriot_EPP_III,
+    "Russia": AirDefence.SAM_SA_19_Tunguska_2S6,
+    "USA": AirDefence.SAM_Linebacker_M6,
 }
 
 """
@@ -267,13 +268,13 @@ UNIT_BY_COUNTRY = {
         A_50,
 
         Ka_50,
+        SA342M,
         UH_1H,
         Mi_8MT,
 
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.SAM_SA_18_Igla_S_MANPADS,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
 
         Armor.APC_BTR_80,
         Armor.MBT_T_90,
@@ -307,6 +308,7 @@ UNIT_BY_COUNTRY = {
         E_3A,
 
         Ka_50,
+        SA342M,
         UH_1H,
         Mi_8MT,
 
@@ -317,12 +319,21 @@ UNIT_BY_COUNTRY = {
         Infantry.Infantry_M4,
 
         AirDefence.AAA_Vulcan_M163,
-        AirDefence.SAM_Avenger_M1097,
-        AirDefence.SAM_Patriot_ICC,
+        AirDefence.SAM_Linebacker_M6,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
+        Armed_speedboat,
     ],
+}
+
+CARRIER_TYPE_BY_PLANE = {
+    FA_18C_hornet: CVN_74_John_C__Stennis,
+    Ka_50: LHA_1_Tarawa,
+    SA342M: LHA_1_Tarawa,
+    UH_1H: LHA_1_Tarawa,
+    Mi_8MT: LHA_1_Tarawa,
+    AV8BNA: LHA_1_Tarawa,
 }
 
 """
@@ -343,11 +354,17 @@ Payload will be used for operation of following type, "*" category will be used 
 """
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
-        "*": "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+        AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+    },
+
+    Su_25T: {
+        CAS: "APU-8 Vikhr-M*2,Kh-25ML,R-73*2,SPPU-22*2,Mercury LLTV Pod,MPS-410",
     },
 
     Su_33: {
-        "*": "R-73*4,R-27R*2,R-27ER*6",
+        CAP: "R-73*4,R-27R*2,R-27ER*6",
     },
 
     AJS37: {
@@ -360,18 +377,21 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     A_10C: {
         CAS: "AGM-65D*2,AGM-65H*2,GBU-12*2,GBU-38*2,AIM-9*2,TGP,ECM,MK151*7",
+        GroundAttack: "AGM-65K*2,GBU-12*8,AIM-9M*2.ECM,TGP",
     },
 
     Ka_50: {
-      "*": "12x9A4172, 40xS-8",
+        CAS: "12x9A4172, 40xS-8",
+        GroundAttack: "12x9A4172, 40xS-8",
     },
 
     M_2000C: {
-        "*": "Combat Air Patrol",
+        CAP: "Combat Air Patrol",
+        GroundAttack: "MK-82S Heavy Strike",
     },
 
     MiG_21Bis: {
-        "*": "Patrol, medium range",
+        CAP: "Patrol, medium range",
     }
 }
 
@@ -397,7 +417,11 @@ HeliDict = typing.Dict[HelicopterType, int]
 ArmorDict = typing.Dict[VehicleType, int]
 ShipDict = typing.Dict[ShipType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]
-StartingPosition = typing.Optional[typing.Union[ShipGroup, Airport, Point]]
+
+AssignedUnitsDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
+TaskForceDict = typing.Dict[typing.Type[Task], AssignedUnitsDict]
+
+StartingPosition = typing.Optional[typing.Union[ShipGroup, StaticGroup, Airport, Point]]
 
 
 def unit_task(unit: UnitType) -> Task:
@@ -427,6 +451,15 @@ def unit_type_from_name(name: str) -> UnitType:
         return None
 
 
+def unit_type_of(unit: Unit) -> UnitType:
+    if isinstance(unit, Vehicle):
+        return vehicle_map[unit.type]
+    elif isinstance(unit, Ship):
+        return ship_map[unit.type]
+    else:
+        return unit.unit_type
+
+
 def task_name(task) -> str:
     if task == AirDefence:
         return "AirDefence"
@@ -452,6 +485,14 @@ def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
     unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
 
 
+def unitdict_merge(a: UnitsDict, b: UnitsDict) -> UnitsDict:
+    b = b.copy()
+    for k, v in a.items():
+        b[k] = b.get(k, 0) + v
+
+    return b
+
+
 def unitdict_split(unit_dict: UnitsDict, count: int):
     buffer_dict = {}
     for unit_type, unit_count in unit_dict.items():
@@ -474,6 +515,39 @@ def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict
         return groups[0]
     else:
         return {}
+
+
+def assigned_units_split(fd: AssignedUnitsDict) -> typing.Tuple[PlaneDict, PlaneDict]:
+    return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
+
+
+def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
+    return {k: (v, 0) for k, v in d.items()}
+
+
+def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
+    buffer_dict = {}
+    for unit_type, (unit_count, client_count) in dict.items():
+        for _ in range(unit_count):
+            new_count, new_client_count = buffer_dict.get(unit_type, (0, 0))
+
+            new_count += 1
+
+            if client_count > 0:
+                new_client_count += 1
+                client_count -= 1
+
+            buffer_dict[unit_type] = new_count, new_client_count
+            if new_count >= count:
+                yield buffer_dict
+                buffer_dict = {}
+
+    if len(buffer_dict):
+        yield buffer_dict
+
+
+def unitdict_from(fd: AssignedUnitsDict) -> Dict:
+    return {k: v1 for k, (v1, v2) in fd.items()}
 
 
 def _validate_db():

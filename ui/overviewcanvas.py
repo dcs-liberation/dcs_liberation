@@ -50,9 +50,10 @@ class OverviewCanvas:
         title = cp.name
         font = ("Helvetica", 10)
 
-        id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
-        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
         id = self.canvas.create_text(coords[0], coords[1], text=title, font=font)
+        self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
+
+        id = self.canvas.create_text(coords[0]+1, coords[1]+1, text=title, fill='white', font=font)
         self.canvas.tag_bind(id, "<Button-1>", self.display(cp))
 
     def _player_color(self):
@@ -66,6 +67,14 @@ class OverviewCanvas:
         self.canvas.create_image((self.image.width()/2, self.image.height()/2), image=self.image)
 
         for cp in self.game.theater.controlpoints:
+            for ground_object in cp.ground_objects:
+                x, y = self.transform_point(ground_object.position)
+                self.canvas.create_text(x,
+                                        y,
+                                        text=".",
+                                        fill="black" if ground_object.is_dead else self._enemy_color(),
+                                        font=("Helvetica", 18))
+
             coords = self.transform_point(cp.position)
             for connected_cp in cp.connected_points:
                 connected_coords = self.transform_point(connected_cp.position)
@@ -79,7 +88,15 @@ class OverviewCanvas:
                 self.canvas.create_line((coords[0], coords[1], connected_coords[0], connected_coords[1]), width=2, fill=color)
 
                 if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
-                    frontline_pos, heading, distance = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
+                    frontline = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
+                    if not frontline:
+                        continue
+
+                    frontline_pos, heading, distance = frontline
+                    if distance < 10000:
+                        frontline_pos = frontline_pos.point_from_heading(heading + 180, 5000)
+                        distance = 10000
+
                     start_coords = self.transform_point(frontline_pos, treshold=10)
                     end_coords = self.transform_point(frontline_pos.point_from_heading(heading, distance), treshold=60)
 
@@ -97,7 +114,7 @@ class OverviewCanvas:
                 color = self._enemy_color()
 
             cp_id = self.canvas.create_arc((coords[0] - arc_size/2, coords[1] - arc_size/2),
-                                           (coords[0]+arc_size/2, coords[1]+arc_size/2),
+                                           (coords[0] + arc_size/2, coords[1] + arc_size/2),
                                            fill=color,
                                            style=PIESLICE,
                                            start=start,
@@ -116,7 +133,8 @@ class OverviewCanvas:
             self.create_cp_title((coords[0] + arc_size/4, coords[1] + arc_size/4), cp)
 
             units_title = "{}/{}/{}".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 10))
+            self.canvas.create_text(coords[0]+1, coords[1] - arc_size / 1.5 +1, text=units_title, font=("Helvetica", 8), fill=color)
+            self.canvas.create_text(coords[0], coords[1] - arc_size / 1.5, text=units_title, font=("Helvetica", 8), fill="white")
 
     def display(self, cp: ControlPoint):
         def action(_):

@@ -21,6 +21,10 @@ WEATHER_CLOUD_DENSITY = 1, 8
 WEATHER_CLOUD_THICKNESS = 100, 400
 WEATHER_CLOUD_BASE_MIN = 1600
 
+WEATHER_FOG_CHANCE = 20
+WEATHER_FOG_VISIBILITY = 2500, 5000
+WEATHER_FOG_THICKNESS = 100, 500
+
 RANDOM_TIME = {
     "night": 5,
     "dusk": 30,
@@ -29,11 +33,10 @@ RANDOM_TIME = {
 }
 
 RANDOM_WEATHER = {
-    1: 0,  # heavy rain
-    2: 10,  # rain
-    3: 20,  # dynamic
-    4: 30,  # clear
-    5: 100,  # random
+    1: 0,  # thunderstorm
+    2: 20,  # rain
+    3: 80,  # clouds
+    4: 100,  # clear
 }
 
 
@@ -49,7 +52,8 @@ class EnviromentGenerator:
         self.game = game
 
     def _gen_random_time(self):
-        start_time = datetime.combine(datetime.today(), time())
+        start_time = datetime.strptime('May 25 2018 12:00AM', '%b %d %Y %I:%M%p')
+
         time_range = None
         for k, v in RANDOM_TIME.items():
             if self.game.settings.night_disabled and k == "night":
@@ -60,7 +64,35 @@ class EnviromentGenerator:
                 break
 
         start_time += timedelta(hours=random.randint(*time_range))
+        logging.info("time - {}, slot - {}, night skipped - {}".format(
+            str(start_time),
+            str(time_range),
+            self.game.settings.night_disabled))
+
         self.mission.start_time = start_time
+
+    def _generate_wind(self, wind_speed, wind_direction=None):
+        # wind
+        if not wind_direction:
+            wind_direction = random.randint(0, 360)
+
+        self.mission.weather.wind_at_ground = Wind(wind_direction, wind_speed)
+        self.mission.weather.wind_at_2000 = Wind(wind_direction, wind_speed * 2)
+        self.mission.weather.wind_at_8000 = Wind(wind_direction, wind_speed * 3)
+
+    def _generate_base_weather(self):
+        # clouds
+        self.mission.weather.clouds_base = random.randint(*WEATHER_CLOUD_BASE)
+        self.mission.weather.clouds_density = random.randint(*WEATHER_CLOUD_DENSITY)
+        self.mission.weather.clouds_thickness = random.randint(*WEATHER_CLOUD_THICKNESS)
+
+        # wind
+        self._generate_wind(random.randint(0, 4))
+
+        # fog
+        if random.randint(0, 100) < WEATHER_FOG_CHANCE:
+            self.mission.weather.fog_visibility = random.randint(*WEATHER_FOG_VISIBILITY)
+            self.mission.weather.fog_thickness = random.randint(*WEATHER_FOG_THICKNESS)
 
     def _gen_random_weather(self):
         weather_type = None
@@ -71,32 +103,33 @@ class EnviromentGenerator:
 
         logging.info("generated weather {}".format(weather_type))
         if weather_type == 1:
-            self.mission.weather.heavy_rain()
-        elif weather_type == 2:
-            self.mission.weather.heavy_rain()
-            self.mission.weather.enable_fog = False
-        elif weather_type == 3:
-            self.mission.weather.random(self.mission.start_time, self.conflict.theater.terrain)
-        elif weather_type == 4:
-            pass
-        elif weather_type == 5:
-            self.mission.weather.clouds_base = random.randint(*WEATHER_CLOUD_BASE)
-            self.mission.weather.clouds_density = random.randint(*WEATHER_CLOUD_DENSITY)
-            self.mission.weather.clouds_thickness = random.randint(*WEATHER_CLOUD_THICKNESS)
+            # thunderstorm
+            self._generate_base_weather()
+            self._generate_wind(random.randint(8, 12))
 
-            wind_direction = random.randint(0, 360)
-            wind_speed = random.randint(0, 13)
-            self.mission.weather.wind_at_ground = Wind(wind_direction, wind_speed)
-            self.mission.weather.wind_at_2000 = Wind(wind_direction, wind_speed * 2)
-            self.mission.weather.wind_at_8000 = Wind(wind_direction, wind_speed * 3)
+            self.mission.weather.clouds_density = random.randint(9, 10)
+            self.mission.weather.clouds_iprecptns = Weather.Preceptions.Thunderstorm
+        elif weather_type == 2:
+            # rain
+            self._generate_base_weather()
+            self.mission.weather.clouds_density = random.randint(5, 8)
+            self.mission.weather.clouds_iprecptns = Weather.Preceptions.Rain
+
+            self._generate_wind(random.randint(4, 8))
+        elif weather_type == 3:
+            # clouds
+            self._generate_base_weather()
+        elif weather_type == 4:
+            # clear
+            pass
 
         if self.mission.weather.clouds_density > 0:
             # sometimes clouds are randomized way too low and need to be fixed
             self.mission.weather.clouds_base = max(self.mission.weather.clouds_base, WEATHER_CLOUD_BASE_MIN)
 
-        if self.mission.weather.wind_at_ground == 0:
+        if self.mission.weather.wind_at_ground.speed == 0:
             # frontline smokes look silly w/o any wind
-            self.mission.weather.wind_at_ground = random.randint(1, 2)
+            self._generate_wind(1)
 
     def generate(self) -> EnvironmentSettings:
         self._gen_random_time()

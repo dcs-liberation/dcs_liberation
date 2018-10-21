@@ -16,7 +16,7 @@ IGNORED_PATHS = [
     "venv",
 ]
 
-VERSION = "1.3.3"
+VERSION = input("version str:")
 
 
 def _zip_dir(archieve, path):
@@ -43,7 +43,7 @@ def _mk_archieve():
         return
 
     archieve = ZipFile(path, "w")
-    archieve.writestr("start.bat", "py.exe __init__.py \"%UserProfile%\" \"{}\"".format(VERSION))
+    archieve.writestr("start.bat", "py.exe __init__.py \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
     _zip_dir(archieve, ".")
     os.chdir("submodules\\dcs")
     _zip_dir(archieve, "dcs")

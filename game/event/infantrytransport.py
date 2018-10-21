@@ -9,7 +9,7 @@ from game.operation.infantrytransport import InfantryTransportOperation
 from theater.conflicttheater import *
 from userdata.debriefing import Debriefing
 
-from .event import Event
+from .event import *
 
 
 class InfantryTransportEvent(Event):
@@ -17,6 +17,14 @@ class InfantryTransportEvent(Event):
 
     def __str__(self):
         return "Frontline transport troops"
+
+    @property
+    def tasks(self):
+        return [Embarking]
+
+    def flight_name(self, for_task: typing.Type[Task]) -> str:
+        if for_task == Embarking:
+            return "Transport flight"
 
     def is_successfull(self, debriefing: Debriefing):
         return True
@@ -29,19 +37,19 @@ class InfantryTransportEvent(Event):
         else:
             self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
-    def player_attacking(self, transport: db.HeliDict, clients: db.HeliDict):
+    def player_attacking(self, flights: db.TaskForceDict):
+        assert Embarking in flights and len(flights) == 1, "Invalid flights"
+
         op = InfantryTransportOperation(
             game=self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            attacker_clients=clients,
-            defender_clients={},
             from_cp=self.from_cp,
             to_cp=self.to_cp
         )
 
         air_defense = db.find_unittype(AirDefence, self.defender_name)[0]
-        op.setup(transport=transport,
+        op.setup(transport=flights[Embarking],
                  aa={air_defense: 2})
 
         self.operation = op

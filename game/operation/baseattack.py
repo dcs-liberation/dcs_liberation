@@ -1,21 +1,14 @@
-from game import db
+from game.db import assigned_units_split
 
-from gen.conflictgen import Conflict
-from gen.armor import *
-from gen.aircraft import *
-from gen.aaa import *
-from gen.shipgen import *
 from gen.triggergen import *
-from gen.airsupportgen import *
-from gen.visualgen import *
 
-from .operation import Operation
+from .operation import *
 
 
 class BaseAttackOperation(Operation):
-    cas = None  # type: db.PlaneDict
-    escort = None  # type: db.PlaneDict
-    intercept = None  # type: db.PlaneDict
+    cas = None  # type: db.AssignedUnitsDict
+    escort = None  # type: db.AssignedUnitsDict
+    intercept = None  # type: db.AssignedUnitsDict
     attack = None  # type: db.ArmorDict
     defense = None  # type: db.ArmorDict
     aa = None  # type: db.AirDefenseDict
@@ -23,10 +16,10 @@ class BaseAttackOperation(Operation):
     trigger_radius = TRIGGER_RADIUS_SMALL
 
     def setup(self,
-              cas: db.PlaneDict,
-              escort: db.PlaneDict,
-              attack: db.ArmorDict,
-              intercept: db.PlaneDict,
+              cas: db.AssignedUnitsDict,
+              escort: db.AssignedUnitsDict,
+              attack: db.AssignedUnitsDict,
+              intercept: db.AssignedUnitsDict,
               defense: db.ArmorDict,
               aa: db.AirDefenseDict):
         self.cas = cas
@@ -44,24 +37,33 @@ class BaseAttackOperation(Operation):
             self.attackers_starting_position = None
 
         conflict = Conflict.capture_conflict(
-            attacker=self.mission.country(self.attacker_name),
-            defender=self.mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_name),
+            defender=self.current_mission.country(self.defender_name),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater
         )
-        self.initialize(mission=self.mission,
+        self.initialize(mission=self.current_mission,
                         conflict=conflict)
 
     def generate(self):
         self.armorgen.generate(self.attack, self.defense)
         self.aagen.generate(self.aa)
 
-        self.airgen.generate_defense(self.intercept, clients=self.defender_clients, at=self.defenders_starting_position)
+        self.airgen.generate_defense(*assigned_units_split(self.intercept), at=self.defenders_starting_position)
 
-        self.airgen.generate_cas_strikegroup(self.cas, clients=self.attacker_clients, at=self.attackers_starting_position)
-        self.airgen.generate_attackers_escort(self.escort, clients=self.attacker_clients, at=self.attackers_starting_position)
+        self.airgen.generate_cas_strikegroup(*assigned_units_split(self.cas), at=self.attackers_starting_position)
+        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
 
         self.visualgen.generate_target_smokes(self.to_cp)
+
+        self.briefinggen.title = "Base attack"
+        self.briefinggen.description = "The goal of an attacker is to lower defender presence by destroying their armor and aircraft. Base will be considered captured if attackers on the ground overrun the defenders. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
+
+        if self.game.player == self.attacker_name:
+            self.briefinggen.append_waypoint("TARGET")
+        else:
+            pass
+
         super(BaseAttackOperation, self).generate()
 

@@ -1,4 +1,8 @@
 import math
+import pickle
+import random
+import typing
+import logging
 
 from theater.base import *
 from theater.conflicttheater import *
@@ -15,7 +19,7 @@ COUNT_BY_TASK = {
 }
 
 
-def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
+def generate_inital_units(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
     for cp in theater.enemy_points():
         if cp.captured:
             continue
@@ -37,3 +41,71 @@ def generate_initial(theater: ConflictTheater, enemy: str, sams: bool, multiplie
             for unit_type in unittypes:
                 logging.info("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
                 cp.base.commision_units({unit_type: count_per_type})
+
+
+def generate_groundobjects(theater: ConflictTheater):
+    with open("resources/groundobject_templates.p", "rb") as f:
+        tpls = pickle.load(f)
+
+    def find_location(on_ground, near, theater, min, max) -> typing.Optional[Point]:
+        point = None
+        for _ in range(1000):
+            p = near.random_point_within(max, min)
+            if on_ground and theater.is_on_land(p):
+                point = p
+            elif not on_ground and theater.is_in_sea(p):
+                point = p
+
+            if point:
+                for angle in range(0, 360, 45):
+                    p = point.point_from_heading(angle, 2500)
+                    if on_ground and not theater.is_on_land(p):
+                        point = None
+                        break
+                    elif not on_ground and not theater.is_in_sea(p):
+                        point = None
+                        break
+
+            if point:
+                return point
+
+        return None
+
+    group_id = 0
+    for cp in theater.enemy_points():
+        for _ in range(0, random.randrange(2, 4)):
+            available_categories = list(tpls) + ["aa", "aa"]
+            tpl_category = random.choice(available_categories)
+
+            tpl = random.choice(list(tpls[tpl_category].values()))
+
+            point = find_location(tpl_category != "oil", cp.position, theater, 15000, 80000)
+
+            if point is None:
+                print("Couldn't find point for {}".format(cp))
+                continue
+
+            """
+            dist = point.distance_to_point(cp.position) - 15000
+            for another_cp in theater.enemy_points():
+                if another_cp.position.distance_to_point(point) < dist:
+                    cp = another_cp
+            """
+
+            group_id += 1
+            object_id = 0
+
+            logging.info("generated {} for {}".format(tpl_category, cp))
+            for object in tpl:
+                object_id += 1
+
+                g = TheaterGroundObject()
+                g.group_id = group_id
+                g.object_id = object_id
+                g.cp_id = cp.id
+
+                g.dcs_identifier = object["type"]
+                g.heading = object["heading"]
+                g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
+
+                cp.ground_objects.append(g)

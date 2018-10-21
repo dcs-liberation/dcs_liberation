@@ -25,7 +25,7 @@ COMMISION_LIMITS_FACTORS = {
 
 COMMISION_AMOUNTS_SCALE = 1.5
 COMMISION_AMOUNTS_FACTORS = {
-    PinpointStrike: 6,
+    PinpointStrike: 3,
     CAS: 1,
     CAP: 2,
     AirDefence: 0.3,
@@ -33,30 +33,39 @@ COMMISION_AMOUNTS_FACTORS = {
 
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 30
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
-PLAYER_BASEATTACK_THRESHOLD = 0.2
+PLAYER_BASEATTACK_THRESHOLD = 0.4
 
 """
 Various events probabilities. First key is player probabilty, second is enemy probability.
 For the enemy events, only 1 event of each type could be generated for a turn.
 
 Events:
-* CaptureEvent - capture base
+* BaseAttackEvent - capture base
 * InterceptEvent - air intercept
-* FrontlineAttack - frontline attack
-* GroundAttackEvent - destroy insurgents
+* FrontlineAttackEvent - frontline attack
+* FrontlineCAPEvent - frontline attack
 * NavalInterceptEvent - naval intercept
-* AntiAAStrikeEvent - anti-AA strike
+* StrikeEvent - strike event
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
-    BaseAttackEvent: [100, 10],
+    # events always present; only for the player
     FrontlineAttackEvent: [100, 0],
     FrontlinePatrolEvent: [100, 0],
-    InterceptEvent: [25, 10],
-    InsurgentAttackEvent: [0, 10],
-    NavalInterceptEvent: [25, 10],
-    AntiAAStrikeEvent: [25, 10],
+    StrikeEvent: [100, 0],
+
+    # events randomly present; only for the player
     InfantryTransportEvent: [25, 0],
+
+    # events conditionally present; for both enemy and player
+    BaseAttackEvent: [100, 9],
+
+    # events randomly present; for both enemy and player
+    InterceptEvent: [25, 9],
+    NavalInterceptEvent: [25, 9],
+
+    # events randomly present; only for the enemy
+    InsurgentAttackEvent: [0, 6],
 }
 
 # amount of strength player bases recover for the turn
@@ -71,7 +80,7 @@ AWACS_BUDGET_COST = 4
 # Initial budget value
 PLAYER_BUDGET_INITIAL = 170
 # Base post-turn bonus value
-PLAYER_BUDGET_BASE = 17
+PLAYER_BUDGET_BASE = 14
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
@@ -107,52 +116,82 @@ class Game:
                                                   game=self))
                 break
 
-    def _generate_events(self):
-        enemy_cap_generated = False
-        enemy_generated_types = []
+    def _generate_player_event(self, event_class, player_cp, enemy_cp):
+        if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
+            # skip naval events for non-coastal CPs
+            return
 
+        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
+            # skip base attack events for CPs yet too strong
+            return
+
+        if event_class == StrikeEvent and not enemy_cp.ground_objects:
+            # skip strikes in case of no targets
+            return
+
+        self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+
+    def _generate_enemy_event(self, event_class, player_cp, enemy_cp):
+        if event_class in [type(x) for x in self.events if not self.is_player_attack(x)]:
+            # skip already generated enemy event types
+            return
+
+        if player_cp in self.ignored_cps:
+            # skip attacks against ignored CPs (for example just captured ones)
+            return
+
+        if enemy_cp.base.total_planes == 0:
+            # skip event if there's no planes on the base
+            return
+
+        if player_cp.is_global:
+            # skip carriers
+            return
+
+        if event_class == NavalInterceptEvent:
+            if player_cp.radials == LAND:
+                # skip naval events for non-coastal CPs
+                return
+        elif event_class == StrikeEvent:
+            if not player_cp.ground_objects:
+                # skip strikes if there's no ground objects
+                return
+        elif event_class == BaseAttackEvent:
+            if BaseAttackEvent in [type(x) for x in self.events]:
+                # skip base attack event if there's another one going on
+                return
+
+            if enemy_cp.base.total_armor == 0:
+                # skip base attack if there's no armor
+                return
+
+            if player_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
+                # skip base attack if strength is too high
+                return
+
+        self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
+
+    def _generate_events(self):
         for player_cp, enemy_cp in self.theater.conflicts(True):
-            if player_cp.is_global or enemy_cp.is_global:
+            if enemy_cp.is_global:
                 continue
 
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
-                if event_class == FrontlineAttackEvent or event_class == InfantryTransportEvent or event_class == FrontlinePatrolEvent:
+                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent]:
+                    # skip events requiring frontline
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
-                if self._roll(player_probability, player_cp.base.strength):
-                    if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
-                        pass
-                    else:
-                        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
-                            pass
-                        else:
-                            self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
-                elif self._roll(enemy_probability, enemy_cp.base.strength):
-                    if event_class in enemy_generated_types:
+                if player_cp.is_global:
+                    # skip events requiring ground CP
+                    if event_class not in [InterceptEvent, StrikeEvent, NavalInterceptEvent]:
                         continue
 
-                    if player_cp in self.ignored_cps:
-                        continue
+                if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):
+                    self._generate_player_event(event_class, player_cp, enemy_cp)
 
-                    if enemy_cp.base.total_planes == 0:
-                        continue
-
-                    if event_class == NavalInterceptEvent:
-                        if player_cp.radials == LAND:
-                            continue
-                    elif event_class == BaseAttackEvent:
-                        if enemy_cap_generated:
-                            continue
-                        if enemy_cp.base.total_armor == 0:
-                            continue
-                        enemy_cap_generated = True
-                    elif event_class == AntiAAStrikeEvent:
-                        if player_cp.base.total_aa == 0:
-                            continue
-
-                    enemy_generated_types.append(event_class)
-                    self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
+                if enemy_probability == 100 or self._roll(enemy_probability, enemy_cp.base.strength):
+                    self._generate_enemy_event(event_class, player_cp, enemy_cp)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)

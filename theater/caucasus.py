@@ -11,13 +11,13 @@ from .base import *
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
     overview_image = "caumap.gif"
-    reference_points = {(-317948.32727306, 635639.37385346): (282.5, 319),
-                        (-355692.3067714, 617269.96285781): (269, 352), }
-    landmap_poly = load_poly("resources\\caulandmap.p")
+    reference_points = {(-317948.32727306, 635639.37385346): (278.5, 319),
+                        (-355692.3067714, 617269.96285781): (263, 352), }
+    landmap = load_landmap("resources\\caulandmap.p")
     daytime_map = {
         "dawn": (6, 9),
         "day": (9, 18),
-        "dusk": (18, 21),
+        "dusk": (18, 20),
         "night": (0, 5),
     }
 
@@ -33,7 +33,6 @@ class CaucasusTheater(ConflictTheater):
     gelendzhik = ControlPoint.from_airport(caucasus.Gelendzhik, COAST_DR_E, SIZE_BIG, 1.1)
     maykop = ControlPoint.from_airport(caucasus.Maykop_Khanskaya, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
     krasnodar = ControlPoint.from_airport(caucasus.Krasnodar_Center, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
-    novorossiysk = ControlPoint.from_airport(caucasus.Novorossiysk, COAST_DR_E, SIZE_BIG, 1.2)
     krymsk = ControlPoint.from_airport(caucasus.Krymsk, LAND, SIZE_LARGE, 1.2)
     anapa = ControlPoint.from_airport(caucasus.Anapa_Vityazevo, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 
@@ -44,8 +43,11 @@ class CaucasusTheater(ConflictTheater):
 
     carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875))
 
-    def __init__(self):
+    def __init__(self, load_ground_objects=True):
         super(CaucasusTheater, self).__init__()
+
+        self.soganlug.frontline_offset = 0.5
+        self.soganlug.base.strength = 1
 
         self.add_controlpoint(self.soganlug, connected_to=[self.kutaisi, self.beslan])
         self.add_controlpoint(self.beslan, connected_to=[self.soganlug, self.mozdok, self.nalchik])
@@ -74,6 +76,6 @@ class CaucasusTheater(ConflictTheater):
         self.soganlug.captured = True
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
-        point.name = " ".join(re.split(r" |-", point.name)[:1])
+        point.name = " ".join(re.split(r"[ -]", point.name)[:1])
 
         super(CaucasusTheater, self).add_controlpoint(point, connected_to=connected_to)

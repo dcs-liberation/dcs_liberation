@@ -9,9 +9,14 @@ from tkinter.scrolledtext import *
 _version_string = None
 
 
-def _error_prompt():
+class ShowLogsException(Exception):
+    pass
+
+
+def _error_prompt(oops=True):
     tk = Tk()
-    Label(tk, text="Oops, something went wrong.").grid(row=0)
+    if oops:
+        Label(tk, text="Oops, something went wrong.").grid(row=0)
     Label(tk, text="Please send following text to the developer:").grid(row=1)
 
     text = ScrolledText(tk)
@@ -22,7 +27,7 @@ def _error_prompt():
 
 def _handle_exception(self, exception: BaseException, *args):
     logging.exception(exception)
-    _error_prompt()
+    _error_prompt(isinstance(exception, ShowLogsException))
 
 
 def setup_version_string(str):
