@@ -16,7 +16,6 @@ Uses [pydcs](http://github.com/pydcs/dcs) for mission generation.
 
 You should start with the manual, it covers everything you need to know before playing the campaign.
 
-
 * [Troubleshooting](https://github.com/shdwp/dcs_liberation/wiki/Troubleshooting)
 
 You could also briefly check the troubleshooting page to get familiar with the known issues that you could probably fix by yourself.
