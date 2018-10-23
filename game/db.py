@@ -85,14 +85,14 @@ PRICES = {
     C_130: 8,
 
     # armor
-    Armor.APC_BTR_80: 4,
-    Armor.MBT_T_55: 6,
-    Armor.MBT_T_80U: 8,
-    Armor.MBT_T_90: 10,
+    Armor.APC_BTR_80: 12,
+    Armor.MBT_T_55: 14,
+    Armor.MBT_T_80U: 18,
+    Armor.MBT_T_90: 20,
 
-    Armor.ATGM_M1134_Stryker: 4,
-    Armor.MBT_M60A3_Patton: 6,
-    Armor.MBT_M1A2_Abrams: 9,
+    Armor.ATGM_M1134_Stryker: 12,
+    Armor.MBT_M60A3_Patton: 14,
+    Armor.MBT_M1A2_Abrams: 18,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
