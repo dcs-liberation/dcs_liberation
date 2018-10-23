@@ -27,9 +27,10 @@ class GroundObjectsGenerator:
             center, heading = self.conflict.frontline_position(self.conflict.theater, self.conflict.from_cp, self.conflict.to_cp)
             heading -= 90
 
-        position = self.conflict.find_ground_position(center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE), heading)
+        initial_position = center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE)
+        position = self.conflict.find_ground_position(initial_position, heading)
         if not position:
-            return
+            position = initial_position
 
         for i, _ in enumerate(range(0, number_of_units, self.FARP_CAPACITY)):
             position = position.point_from_heading(0, i * 275)
