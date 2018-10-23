@@ -85,15 +85,14 @@ PRICES = {
     C_130: 8,
 
     # armor
-    Armor.MBT_T_55: 4,
+    Armor.APC_BTR_80: 4,
+    Armor.MBT_T_55: 6,
     Armor.MBT_T_80U: 8,
     Armor.MBT_T_90: 10,
 
+    Armor.ATGM_M1134_Stryker: 4,
     Armor.MBT_M60A3_Patton: 6,
     Armor.MBT_M1A2_Abrams: 9,
-
-    Armor.ATGM_M1134_Stryker: 6,
-    Armor.APC_BTR_80: 6,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -181,7 +180,24 @@ UNIT_BY_TASK = {
 
     AWACS: [E_3A, A_50, ],
 
-    PinpointStrike: [Armor.MBT_T_90, Armor.MBT_T_80U, Armor.MBT_T_55, Armor.MBT_M1A2_Abrams, Armor.MBT_M60A3_Patton, Armor.ATGM_M1134_Stryker, Armor.APC_BTR_80, ],
+    PinpointStrike: [
+        Armor.APC_BTR_80,
+        Armor.APC_BTR_80,
+        Armor.APC_BTR_80,
+        Armor.MBT_T_55,
+        Armor.MBT_T_55,
+        Armor.MBT_T_55,
+        Armor.MBT_T_80U,
+        Armor.MBT_T_80U,
+        Armor.MBT_T_90,
+
+        Armor.ATGM_M1134_Stryker,
+        Armor.ATGM_M1134_Stryker,
+        Armor.MBT_M60A3_Patton,
+        Armor.MBT_M60A3_Patton,
+        Armor.MBT_M60A3_Patton,
+        Armor.MBT_M1A2_Abrams,
+    ],
     AirDefence: [
         # those are listed multiple times here to balance prioritization more into lower tier AAs
         AirDefence.AAA_Vulcan_M163,
