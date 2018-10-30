@@ -20,6 +20,7 @@ class OverviewCanvas:
     RED = (255, 125, 125)
     BLUE = (164, 164, 255)
     WHITE = (255, 255, 255)
+    GREEN = (128, 186, 128)
     BLACK = (0, 0, 0)
     BACKGROUND = pygame.Color(0, 64, 64)
     ANTIALIASING = True
@@ -115,7 +116,7 @@ class OverviewCanvas:
 
         self.screen = pygame.display.set_mode((1066, 600), pygame.DOUBLEBUF | pygame.HWSURFACE)
         self.screen.fill(pygame.Color(0, 128, 128))
-        self.screen.set_alpha(None)
+        #self.screen.set_alpha(None)
 
         self.icon_tg = pygame.image.load(os.path.join("resources", "ui", "target.png"))
         self.icon_sam = pygame.image.load(os.path.join("resources", "ui", "sam.png"))
@@ -133,7 +134,10 @@ class OverviewCanvas:
         self.map = pygame.image.load(os.path.join("resources", self.game.theater.overview_image)).convert()
         pygame.draw.rect(self.map, self.BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
         pygame.draw.rect(self.map, self.WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
+
         self.surface = pygame.Surface((self.map.get_width(), self.map.get_height()))
+        self.surface.set_alpha(None)
+        self.overlay = pygame.Surface((1066,600),pygame.SRCALPHA)
 
         pygame.display.init()
         pygame.display.update()
@@ -200,23 +204,25 @@ class OverviewCanvas:
         if (self.redraw_required):
             # Fill
             self.screen.fill(self.BACKGROUND)
+            self.overlay.fill(pygame.Color(0,0,0,0))
 
             # Surface
             cursor_pos = pygame.mouse.get_pos()
             cursor_pos = (
                 (cursor_pos[0] - self.scroll[0]) / self.zoom, (cursor_pos[1] - self.scroll[1]) / self.zoom)
-            self.draw_map(self.surface, cursor_pos, (left_down, right_down));
+            self.draw_map(self.surface, self.overlay, cursor_pos, (left_down, right_down));
 
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
             int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
             self.screen.blit(scaled, self.scroll)
+            self.screen.blit(self.overlay, (0,0))
 
             pygame.display.flip()
 
         self.redraw_required = False
 
-    def draw_map(self, surface: pygame.Surface, mouse_pos: (int, int), mouse_down: (bool, bool)):
+    def draw_map(self, surface: pygame.Surface, overlay:pygame.Surface, mouse_pos: (int, int), mouse_down: (bool, bool)):
 
         self.surface.blit(self.map, (0, 0))
 
@@ -302,6 +308,9 @@ class OverviewCanvas:
                         self.parent.go_cp(cp)
                     else:
                         surface.blit(labelHover, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
+
+                    self.draw_base_info(overlay, cp, (0,0))
+
                 else:
                     surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
@@ -310,6 +319,47 @@ class OverviewCanvas:
                     label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
                     surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
+
+
+    def draw_base_info(self, surface:pygame.Surface, controlPoint:ControlPoint, pos):
+        title = self.font.render(controlPoint.name, self.ANTIALIASING, self.BLACK, self.GREEN)
+
+        armor_txt = ""
+        print(controlPoint.base.armor)
+        for key, value in controlPoint.base.armor.items():
+            armor_txt += key.id + " x "+str(value)+" | "
+        armor = self.font.render(armor_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+
+        aircraft_txt = ""
+        print(controlPoint.base.aircraft)
+        for key, value in controlPoint.base.aircraft.items():
+            aircraft_txt += key.id + " x "+str(value)+" | "
+        aircraft = self.font.render(aircraft_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+
+        aa_txt = ""
+        print(controlPoint.base.aa)
+        for key, value in controlPoint.base.aa.items():
+            aa_txt += key.id + " x "+str(value)+" | "
+        aa = self.font.render(aa_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+
+        w = max([a.get_width() for a in [title,armor,aircraft,aa]])
+        h = 4*title.get_height() + 3*5;
+
+
+        pygame.draw.rect(surface, self.GREEN, (pos[0], pos[1], w+8, h+8))
+        pygame.draw.rect(surface, self.BLACK, (pos[0]+2, pos[1]+2, w+4, h+4))
+        pygame.draw.rect(surface, self.GREEN, (pos[0]+2, pos[1], w+4, title.get_height()+4))
+
+
+        surface.blit(title, (pos[0]+4, 4+pos[1]))
+        surface.blit(armor, (pos[0]+4, 4+pos[1]+title.get_height()+5))
+        surface.blit(aircraft, (pos[0]+4, 4+pos[1]+title.get_height()+armor.get_height()+10))
+        surface.blit(aa, (pos[0]+4, 4+pos[1]+title.get_height()+armor.get_height()*2+15))
+
+
+
+
+
     def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
         x, y = self.transform_point(ground_object.position)
         rect = pygame.Rect(x, y, 16, 16)
@@ -317,6 +367,7 @@ class OverviewCanvas:
         if ground_object.is_dead:
             surface.blit(self.icon_clr, (x, y))
         else:
+            # TODO : refactor
             if ground_object.category == "aa":
                 surface.blit(self.icon_sam, (x, y))
             elif ground_object.category == "oil":
