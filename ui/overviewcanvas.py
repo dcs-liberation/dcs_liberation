@@ -71,6 +71,12 @@ class OverviewCanvas:
         self.init_sdl_thread()
 
     def build_map_options_panel(self):
+
+        def force_redraw():
+            if self.screen:
+                self.redraw_required = True
+                self.draw()
+
         col = 0
         Label(self.options, text="Ground targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
         Checkbutton(self.options, variable=self.display_ground_targets, **STYLES["radiobutton"]).grid(row=0,
@@ -113,7 +119,16 @@ class OverviewCanvas:
 
         self.icon_tg = pygame.image.load(os.path.join("resources", "ui", "target.png"))
         self.icon_sam = pygame.image.load(os.path.join("resources", "ui", "sam.png"))
+        self.icon_farp = pygame.image.load(os.path.join("resources", "ui", "farp.png"))
+        self.icon_oilp = pygame.image.load(os.path.join("resources", "ui", "oilp.png"))
+        self.icon_ware = pygame.image.load(os.path.join("resources", "ui", "ware.png"))
         self.icon_clr = pygame.image.load(os.path.join("resources", "ui", "cleared.png"))
+        self.icon_fuel = pygame.image.load(os.path.join("resources", "ui", "fuel.png"))
+        self.icon_comms = pygame.image.load(os.path.join("resources", "ui", "comms.png"))
+        self.icon_fob = pygame.image.load(os.path.join("resources", "ui", "fob.png"))
+        self.icon_power = pygame.image.load(os.path.join("resources", "ui", "power.png"))
+        self.icon_ammo = pygame.image.load(os.path.join("resources", "ui", "ammo.png"))
+        self.icon_factory = pygame.image.load(os.path.join("resources", "ui", "factory.png"))
 
         self.map = pygame.image.load(os.path.join("resources", self.game.theater.overview_image)).convert()
         pygame.draw.rect(self.map, self.BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
@@ -138,6 +153,8 @@ class OverviewCanvas:
             if i == 300:
                 self.frontline_vector_cache = {}
                 i = 300
+
+
 
     def draw(self):
 
@@ -208,16 +225,20 @@ class OverviewCanvas:
 
         for cp in self.game.theater.controlpoints:
 
+            coords = self.transform_point(cp.position)
+
             if self.display_ground_targets.get():
                 if cp.captured:
                     color = self._player_color()
                 else:
                     color = self._enemy_color()
                 for ground_object in cp.ground_objects:
+                    x, y = self.transform_point(ground_object.position)
+                    pygame.draw.line(surface, color, coords, (x+8,y+8), 1)
                     self.draw_ground_object(ground_object, surface, color, mouse_pos)
 
             if self.display_road.get():
-                coords = self.transform_point(cp.position)
+
                 for connected_cp in cp.connected_points:
                     connected_coords = self.transform_point(connected_cp.position)
                     if connected_cp.captured != cp.captured:
@@ -231,14 +252,13 @@ class OverviewCanvas:
 
                     if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
 
-                        # Cache mechanism to avoid performing frontline vector computation on every loop
-                        frontline = None
-                        hash = str(cp.id) + "_" + str(connected_cp.id)
-                        if hash in self.frontline_vector_cache:
-                            frontline = self.frontline_vector_cache[hash]
+                        # Cache mechanism to avoid performing frontline vector computation on every frame
+                        key = str(cp.id) + "_" + str(connected_cp.id)
+                        if key in self.frontline_vector_cache:
+                            frontline = self.frontline_vector_cache[key]
                         else:
                             frontline = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
-                            self.frontline_vector_cache[hash] = frontline
+                            self.frontline_vector_cache[key] = frontline
 
                         if not frontline:
                             continue
@@ -297,20 +317,34 @@ class OverviewCanvas:
         if ground_object.is_dead:
             surface.blit(self.icon_clr, (x, y))
         else:
-            if ground_object.name_abbrev == "AA":
+            if ground_object.category == "aa":
                 surface.blit(self.icon_sam, (x, y))
+            elif ground_object.category == "oil":
+                surface.blit(self.icon_oilp, (x, y))
+            elif ground_object.category == "warehouse":
+                surface.blit(self.icon_ware, (x, y))
+            elif ground_object.category == "farp":
+                surface.blit(self.icon_farp, (x, y))
+            elif ground_object.category == "fuel":
+                surface.blit(self.icon_fuel, (x, y))
+            elif ground_object.category == "ammo":
+                surface.blit(self.icon_ammo, (x, y))
+            elif ground_object.category == "fob":
+                surface.blit(self.icon_fob, (x, y))
+            elif ground_object.category == "power":
+                surface.blit(self.icon_power, (x, y))
+            elif ground_object.category == "comms":
+                surface.blit(self.icon_comms, (x, y))
+            elif ground_object.category == "factory":
+                surface.blit(self.icon_factory, (x, y))
             else:
                 surface.blit(self.icon_tg, (x, y))
 
         if rect.collidepoint(mouse_pos):
             self.draw_ground_object_info(ground_object, (x, y), color, surface);
 
-    def render_roads(self):
-        # Note : This is really slow. Viewport is much smoother when not rendering line.
-        pass
-
     def draw_ground_object_info(self, ground_object: TheaterGroundObject, pos, color, surface: pygame.Surface):
-        lb = self.font.render("Type : " + ground_object.name_abbrev, self.ANTIALIASING, color, self.BLACK);
+        lb = self.font.render(str(ground_object), self.ANTIALIASING, color, self.BLACK);
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def transform_point(self, p: Point, treshold=30) -> (int, int):
