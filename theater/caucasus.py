@@ -11,8 +11,8 @@ from .base import *
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
     overview_image = "caumap.gif"
-    reference_points = {(-317948.32727306, 635639.37385346): (278.5, 319),
-                        (-355692.3067714, 617269.96285781): (263, 352), }
+    reference_points = {(-317948.32727306, 635639.37385346): (278.5*2, 319*2),
+                        (-355692.3067714, 617269.96285781): (263*2, 352*2), }
     landmap = load_landmap("resources\\caulandmap.p")
     daytime_map = {
         "dawn": (6, 9),
