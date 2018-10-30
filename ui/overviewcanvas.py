@@ -199,7 +199,8 @@ class OverviewCanvas:
 
         self.surface.blit(self.map, (0, 0))
 
-        pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
+        # Debug
+        # pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
 
         for cp in self.game.theater.controlpoints:
 
@@ -248,7 +249,7 @@ class OverviewCanvas:
                         end_coords = self.transform_point(frontline_pos.point_from_heading(heading, distance),
                                                           treshold=60)
 
-                        pygame.draw.line(surface, color, start_coords, end_coords, 1)
+                        pygame.draw.line(surface, color, start_coords, end_coords, 4)
 
         if self.display_bases.get():
             for cp in self.game.theater.controlpoints:

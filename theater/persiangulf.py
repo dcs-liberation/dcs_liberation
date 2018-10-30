@@ -9,8 +9,8 @@ from .landmap import load_landmap
 class PersianGulfTheater(ConflictTheater):
     terrain = dcs.terrain.PersianGulf()
     overview_image = "persiangulf.gif"
-    reference_points = {(persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (321, 145),
-                        (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (347, 82), }
+    reference_points = {(persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (321*4, 145*4),
+                        (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (347*4, 82*4), }
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
         "dawn": (6, 8),
