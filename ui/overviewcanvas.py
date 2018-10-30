@@ -22,6 +22,7 @@ class OverviewCanvas:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     BACKGROUND = pygame.Color(0, 64, 64)
+    ANTIALIASING = True
 
     def __init__(self, frame: Frame, parent, game: Game):
 
@@ -59,11 +60,11 @@ class OverviewCanvas:
         self.wrapper.grid(column=0, row=0, sticky=NSEW)  # Adds grid
         self.wrapper.pack(side=LEFT)  # packs window to the left
 
-        self.embed = Frame(self.wrapper, width=1066, height=600)  # creates embed frame for pygame window
+        self.embed = Frame(self.wrapper, width=1066, height=600, borderwidth=2, **STYLES["frame-wrapper"])
         self.embed.grid(column=0, row=0, sticky=NSEW)  # Adds grid
 
-        self.options = Frame(self.wrapper, **STYLES["frame-wrapper"])
-        self.options.grid(column=0, row=1, sticky=SW)
+        self.options = Frame(self.wrapper, borderwidth=2, **STYLES["frame-wrapper"])
+        self.options.grid(column=0, row=1, sticky=NSEW)
         self.build_map_options_panel()
 
         self.init_sdl_layer()
@@ -73,8 +74,7 @@ class OverviewCanvas:
         col = 0
         Label(self.options, text="Ground targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
         Checkbutton(self.options, variable=self.display_ground_targets, **STYLES["radiobutton"]).grid(row=0,
-                                                                                                      column=col + 1,
-                                                                                                      sticky=E)
+                                                                                                      column=col + 1,                                                                                        sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
         col += 3
         Label(self.options, text="Forces", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
@@ -91,6 +91,10 @@ class OverviewCanvas:
         Checkbutton(self.options, variable=self.display_road, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
                                                                                             sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
+        col += 4
+        Label(self.options,
+              text="[ Use mouse wheel to zoom, right mouse click + move to pan the map view, click on one of your base to manage it ]",
+              **STYLES["widget"]).grid(row=0, column=col, sticky=W)
 
     def on_close(self):
         print("on_close")
@@ -265,12 +269,13 @@ class OverviewCanvas:
                 pygame.draw.circle(surface, self.BLACK, (int(coords[0]), int(coords[1])), int(radius))
                 pygame.draw.circle(surface, color, (int(coords[0]), int(coords[1])), int(radius_m))
 
-                label = self.font.render(cp.name, False, (225, 225, 225), self.BLACK)
-                labelHover = self.font.render(cp.name, False, (255, 255, 255), (128, 186, 128))
-                labelClick = self.font.render(cp.name, False, (255, 255, 255), (122, 122, 255))
+                label = self.font.render(cp.name, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+                labelHover = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (128, 186, 128))
+                labelClick = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (122, 122, 255))
 
                 rect = pygame.Rect(coords[0] - label.get_width() / 2 + 1, coords[1] + 1, label.get_width(),
                                    label.get_height())
+
                 if rect.collidepoint(mouse_pos):
                     if (mouse_down[0]):
                         surface.blit(labelClick, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
@@ -282,7 +287,7 @@ class OverviewCanvas:
 
                 if self.display_forces.get():
                     units_title = " {} / {} / {} ".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-                    label2 = self.fontsmall.render(units_title, False, color, (30, 30, 30))
+                    label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
                     surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
     def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
@@ -305,7 +310,7 @@ class OverviewCanvas:
         pass
 
     def draw_ground_object_info(self, ground_object: TheaterGroundObject, pos, color, surface: pygame.Surface):
-        lb = self.font.render("Type : " + ground_object.name_abbrev, False, color, self.BLACK);
+        lb = self.font.render("Type : " + ground_object.name_abbrev, self.ANTIALIASING, color, self.BLACK);
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def transform_point(self, p: Point, treshold=30) -> (int, int):
