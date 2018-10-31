@@ -25,10 +25,15 @@ class OverviewCanvas:
     BACKGROUND = pygame.Color(0, 64, 64)
     ANTIALIASING = True
 
+    started = None
+
     def __init__(self, frame: Frame, parent, game: Game):
 
         self.parent = parent
         self.game = game
+
+        # Remove any previously existing pygame instance
+        pygame.quit()
 
         # Pygame objects
         self.map = None
@@ -148,8 +153,12 @@ class OverviewCanvas:
         pygame.display.update()
 
     def init_sdl_thread(self):
+        if OverviewCanvas.started is not None:
+            OverviewCanvas.started.exited = True
         self.thread = Thread(target=self.sdl_thread)
         self.thread.start()
+        OverviewCanvas.started = self
+        print("Started SDL app")
 
     def sdl_thread(self):
         self.redraw_required = True
@@ -158,15 +167,17 @@ class OverviewCanvas:
             self.clock.tick(60)
             self.draw()
             i += 1
-
             if i == 300:
                 self.frontline_vector_cache = {}
-                i = 300
+                i = 0
+        print("Stopped SDL app")
 
     def draw(self):
 
         try:
-            self.parent.window.tk.winfo_ismapped()
+            #self.parent.window.tk.winfo_ismapped()
+            self.embed.winfo_ismapped()
+            self.embed.winfo_manager()
         except:
             self.exited = True
 
@@ -270,7 +281,7 @@ class OverviewCanvas:
                     else:
                         color = self.BLACK
 
-                    pygame.draw.line(surface, color, coords, connected_coords, 4)
+                    pygame.draw.line(surface, color, coords, connected_coords, 2)
 
                     if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
 
