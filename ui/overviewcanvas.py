@@ -236,7 +236,7 @@ class OverviewCanvas:
                                      self.overlay.get_height()-zoom_lvl.get_height()-5))
 
         # Debug
-        pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
+        # pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
 
         for cp in self.game.theater.controlpoints:
 
