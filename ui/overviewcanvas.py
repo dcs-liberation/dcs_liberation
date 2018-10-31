@@ -56,6 +56,7 @@ class OverviewCanvas:
         self.display_forces = BooleanVar(value=True)
         self.display_bases = BooleanVar(value=True)
         self.display_road = BooleanVar(value=True)
+        self.display_rules = self.compute_display_rules()
 
         parent.window.tk.protocol("<WM_DELETE_WINDOW>", self.on_close)
 
@@ -171,6 +172,12 @@ class OverviewCanvas:
 
         right_down = False
         left_down = False
+
+        # Detect changes on display rules
+        r = self.compute_display_rules()
+        if r != self.display_rules:
+            self.display_rules = r
+            self.redraw_required = True
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEMOTION:
@@ -426,6 +433,9 @@ class OverviewCanvas:
 
     def update(self):
         self.draw()
+
+    def compute_display_rules(self):
+        return sum([1 if a.get() else 0 for a in [self.display_forces, self.display_road, self.display_bases, self.display_ground_targets]])
 
     def display(self, cp: ControlPoint):
         def action(_):
