@@ -104,9 +104,6 @@ class ConfigurationMenu(Menu):
         Checkbutton(body, variable=self.night_var, **STYLES["radiobutton"]).grid(row=row, column=1, sticky=E)
         row += 1
 
-        Button(body, text="Display logs", command=self.display_logs, **STYLES["btn-primary"]).grid(row=row, column=1, sticky=E, pady=30)
-        row += 1
-
         Label(body, text="Contributors: ", **STYLES["strong"]).grid(row=row, column=0, columnspan=2, sticky=EW)
         row += 1
 
@@ -118,7 +115,8 @@ class ConfigurationMenu(Menu):
         Button(body, text="[github]", command=lambda: webbrowser.open_new_tab("http://github.com/Khopa"), **STYLES["widget"]).grid(row=row, column=1, sticky=E)
         row += 1
 
-        Button(body, text="Cheat +200m", command=self.cheat_money, **STYLES["btn-danger"]).grid(row=row, column=1, pady=30)
+        Button(body, text="Display logs", command=self.display_logs, **STYLES["btn-primary"]).grid(row=row, column=0, pady=5)
+        Button(body, text="Cheat +200m", command=self.cheat_money, **STYLES["btn-danger"]).grid(row=row, column=1)
 
     def display_logs(self):
         raise ShowLogsException()
