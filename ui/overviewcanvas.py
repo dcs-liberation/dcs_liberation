@@ -82,7 +82,17 @@ class OverviewCanvas:
                 self.draw()
 
         col = 0
-        Label(self.options, text="Ground targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
+        Label(self.options, text="Bases", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
+        Checkbutton(self.options, variable=self.display_bases, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
+                                                                                             sticky=E)
+        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
+        col += 3
+        Label(self.options, text="Roads", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
+        Checkbutton(self.options, variable=self.display_road, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
+                                                                                            sticky=E)
+        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
+        col += 3
+        Label(self.options, text="Strike targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
         Checkbutton(self.options, variable=self.display_ground_targets, **STYLES["radiobutton"]).grid(row=0,
                                                                                                       column=col + 1,                                                                                        sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
@@ -90,16 +100,6 @@ class OverviewCanvas:
         Label(self.options, text="Forces", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
         Checkbutton(self.options, variable=self.display_forces, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
                                                                                               sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 3
-        Label(self.options, text="Bases", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_bases, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
-                                                                                             sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 4
-        Label(self.options, text="Roads", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_road, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
-                                                                                            sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
         col += 4
         Label(self.options,
