@@ -26,6 +26,7 @@ class Operation:
     envgen = None  # type: EnvironmentGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
+    forcedoptionsgen = None  # type: ForcedOptionsGenerator
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
@@ -63,6 +64,7 @@ class Operation:
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
+        self.forcedoptionsgen = ForcedOptionsGenerator(mission, conflict, self.game)
         self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
@@ -140,6 +142,8 @@ class Operation:
             self.environment_settings = self.envgen.generate()
         else:
             self.envgen.load(self.environment_settings)
+
+        self.forcedoptionsgen.generate()
 
         # main frequencies
         self.briefinggen.append_frequency("Flight", "251 MHz AM")

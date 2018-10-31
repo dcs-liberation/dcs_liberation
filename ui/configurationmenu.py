@@ -21,6 +21,12 @@ class ConfigurationMenu(Menu):
         self.enemy_vehicle_var = StringVar()
         self.enemy_vehicle_var.set(self.game.settings.enemy_vehicle_skill)
 
+        self.map_coalition_visibility_var = StringVar()
+        self.map_coalition_visibility_var.set(self.game.settings.map_coalition_visibility)
+
+        self.labels_var = StringVar()
+        self.labels_var.set(self.game.settings.labels)
+
         self.takeoff_var = BooleanVar()
         self.takeoff_var.set(self.game.settings.only_player_takeoff)
 
@@ -34,6 +40,8 @@ class ConfigurationMenu(Menu):
         self.game.settings.player_skill = self.player_skill_var.get()
         self.game.settings.enemy_skill = self.enemy_skill_var.get()
         self.game.settings.enemy_vehicle_skill = self.enemy_vehicle_var.get()
+        self.game.settings.map_coalition_visibility = self.map_coalition_visibility_var.get()
+        self.game.settings.labels = self.labels_var.get()
         self.game.settings.only_player_takeoff = self.takeoff_var.get()
         self.game.settings.night_disabled = self.night_var.get()
         self.game.settings.cold_start = self.cold_start_var.get()
@@ -70,6 +78,18 @@ class ConfigurationMenu(Menu):
         e_skill = OptionMenu(body, self.enemy_vehicle_var, "Average", "Good", "High", "Excellent")
         e_skill.grid(row=row, column=1, sticky=E)
         e_skill.configure(**STYLES["btn-primary"])
+        row += 1
+
+        Label(body, text="F10 Map Coalition Visibility", **STYLES["widget"]).grid(row=row, column=0, sticky=W)
+        map_vis = OptionMenu(body, self.map_coalition_visibility_var, "All Units", "Allied Units", "Own Aircraft", "None")
+        map_vis.grid(row=row, column=1, sticky=E)
+        map_vis.configure(**STYLES["btn-primary"])
+        row += 1
+
+        Label(body, text="In Game Labels", **STYLES["widget"]).grid(row=row, column=0, sticky=W)
+        g_labels = OptionMenu(body, self.labels_var, "Full", "Abbreviated", "Dot Only", "Off")
+        g_labels.grid(row=row, column=1, sticky=E)
+        g_labels.configure(**STYLES["btn-primary"])
         row += 1
 
         Label(body, text="Aircraft cold start", **STYLES["widget"]).grid(row=row, column=0, sticky=W)
