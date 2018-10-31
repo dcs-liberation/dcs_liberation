@@ -18,6 +18,7 @@ class OverviewCanvas:
 
     RED = (255, 125, 125)
     BLUE = (164, 164, 255)
+    DARK_BLUE = (45, 62, 80)
     WHITE = (255, 255, 255)
     GREEN = (128, 186, 128)
     BLACK = (0, 0, 0)
@@ -217,7 +218,7 @@ class OverviewCanvas:
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
                 int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
-            self.screen.blit(scaled, (self.scroll[0]*self.zoom, self.scroll[1]*self.zoom))
+            self.screen.blit(scaled, (self.scroll[0], self.scroll[1]))
             self.screen.blit(self.overlay, (0, 0))
 
             pygame.display.flip()
@@ -229,8 +230,13 @@ class OverviewCanvas:
 
         self.surface.blit(self.map, (0, 0))
 
+        # Display zoom level on overlay
+        zoom_lvl = self.font.render("  x " + str(self.zoom) + "  ", self.ANTIALIASING, self.WHITE, self.DARK_BLUE)
+        self.overlay.blit(zoom_lvl, (self.overlay.get_width()-zoom_lvl.get_width()-5,
+                                     self.overlay.get_height()-zoom_lvl.get_height()-5))
+
         # Debug
-        # pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
+        pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
 
         for cp in self.game.theater.controlpoints:
 
