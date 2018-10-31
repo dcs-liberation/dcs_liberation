@@ -17,6 +17,9 @@ from theater.conflicttheater import *
 class OverviewCanvas:
     mainmenu = None  # type: ui.mainmenu.MainMenu
 
+    BRIGHT_RED = (200,64,64)
+    BRIGHT_GREEN = (64,200,64)
+
     RED = (255, 125, 125)
     BLUE = (164, 164, 255)
     WHITE = (255, 255, 255)
@@ -104,7 +107,6 @@ class OverviewCanvas:
               **STYLES["widget"]).grid(row=0, column=col, sticky=W)
 
     def on_close(self):
-        print("on_close")
         self.exited = True
         if self.thread is not None:
             self.thread.join()
@@ -320,45 +322,47 @@ class OverviewCanvas:
                     surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
 
-
     def draw_base_info(self, surface:pygame.Surface, controlPoint:ControlPoint, pos):
         title = self.font.render(controlPoint.name, self.ANTIALIASING, self.BLACK, self.GREEN)
+        hp = self.font.render("Strength : ", self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
-        armor_txt = ""
-        print(controlPoint.base.armor)
+        armor_txt = "ARMOR      >    "
         for key, value in controlPoint.base.armor.items():
             armor_txt += key.id + " x "+str(value)+" | "
         armor = self.font.render(armor_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
-        aircraft_txt = ""
-        print(controlPoint.base.aircraft)
+        aircraft_txt = "AIRCRAFT >    "
         for key, value in controlPoint.base.aircraft.items():
             aircraft_txt += key.id + " x "+str(value)+" | "
         aircraft = self.font.render(aircraft_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
-        aa_txt = ""
-        print(controlPoint.base.aa)
+        aa_txt = "AA/SAM       >    "
         for key, value in controlPoint.base.aa.items():
             aa_txt += key.id + " x "+str(value)+" | "
         aa = self.font.render(aa_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
-        w = max([a.get_width() for a in [title,armor,aircraft,aa]])
-        h = 4*title.get_height() + 3*5;
+        lineheight = title.get_height()
+        w = max([max([a.get_width() for a in [title,armor,aircraft,aa]]),150])
+        h = 5*lineheight + 4*5
 
-
+        # Draw frame
         pygame.draw.rect(surface, self.GREEN, (pos[0], pos[1], w+8, h+8))
         pygame.draw.rect(surface, self.BLACK, (pos[0]+2, pos[1]+2, w+4, h+4))
-        pygame.draw.rect(surface, self.GREEN, (pos[0]+2, pos[1], w+4, title.get_height()+4))
+        pygame.draw.rect(surface, self.GREEN, (pos[0]+2, pos[1], w+4, lineheight+4))
 
-
+        # Title
         surface.blit(title, (pos[0]+4, 4+pos[1]))
-        surface.blit(armor, (pos[0]+4, 4+pos[1]+title.get_height()+5))
-        surface.blit(aircraft, (pos[0]+4, 4+pos[1]+title.get_height()+armor.get_height()+10))
-        surface.blit(aa, (pos[0]+4, 4+pos[1]+title.get_height()+armor.get_height()*2+15))
+        surface.blit(hp, (pos[0]+4, 4+pos[1]+lineheight+5))
 
+        # Draw gauge
+        pygame.draw.rect(surface, self.WHITE, (pos[0]+hp.get_width()+3, 4+pos[1]+lineheight+5, 54, lineheight))
+        pygame.draw.rect(surface, self.BRIGHT_RED, (pos[0]+hp.get_width()+5, 4+pos[1]+lineheight+5+2, 50, lineheight-4))
+        pygame.draw.rect(surface, self.BRIGHT_GREEN, (pos[0]+hp.get_width()+5, 4+pos[1]+lineheight+5+2, 50*controlPoint.base.strength, lineheight-4))
 
-
-
+        # Text
+        surface.blit(armor, (pos[0]+4, 4+pos[1]+lineheight*2+10))
+        surface.blit(aircraft, (pos[0]+4, 4+pos[1]+lineheight*3+15))
+        surface.blit(aa, (pos[0]+4, 4+pos[1]+lineheight*4+20))
 
     def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
         x, y = self.transform_point(ground_object.position)
