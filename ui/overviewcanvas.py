@@ -1,24 +1,20 @@
 import os
-
-from tkinter import *
-
+import platform
+from threading import Thread
 from tkinter.ttk import *
 
+import pygame
+
+from theater.theatergroundobject import CATEGORY_MAP
 from ui.styles import STYLES
 from ui.window import *
-import pygame, platform
-from threading import Thread
-
-from game.game import *
-from gen.conflictgen import Conflict
-from theater.conflicttheater import *
 
 
 class OverviewCanvas:
     mainmenu = None  # type: ui.mainmenu.MainMenu
 
-    BRIGHT_RED = (200,64,64)
-    BRIGHT_GREEN = (64,200,64)
+    BRIGHT_RED = (200, 64, 64)
+    BRIGHT_GREEN = (64, 200, 64)
 
     RED = (255, 125, 125)
     BLUE = (164, 164, 255)
@@ -41,13 +37,15 @@ class OverviewCanvas:
         self.clock = pygame.time.Clock()
 
         pygame.font.init()
-        self.font = pygame.font.SysFont("arial", 15)
-        self.fontsmall = pygame.font.SysFont("arial", 10)
+        self.font:pygame.font.SysFont = pygame.font.SysFont("arial", 15)
+        self.fontsmall:pygame.font.SysFont = pygame.font.SysFont("arial", 10)
+        self.icons = {}
 
         # Frontline are too heavy on performance to compute in realtime, so keep them in a cache
         self.frontline_vector_cache = {}
 
         # Map state
+        self.redraw_required = True
         self.zoom = 1
         self.scroll = [0, 0]
         self.exited = False
@@ -94,7 +92,8 @@ class OverviewCanvas:
         col += 3
         Label(self.options, text="Strike targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
         Checkbutton(self.options, variable=self.display_ground_targets, **STYLES["radiobutton"]).grid(row=0,
-                                                                                                      column=col + 1,                                                                                        sticky=E)
+                                                                                                      column=col + 1,
+                                                                                                      sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
         col += 3
         Label(self.options, text="Forces", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
@@ -112,39 +111,43 @@ class OverviewCanvas:
             self.thread.join()
 
     def init_sdl_layer(self):
+
+        # Setup pygame to run in tk frame
         os.environ['SDL_WINDOWID'] = str(self.embed.winfo_id())
         if platform.system == "Windows":
             os.environ['SDL_VIDEODRIVER'] = 'windib'
 
+        # Create pygame 'screen'
         self.screen = pygame.display.set_mode((1066, 600), pygame.DOUBLEBUF | pygame.HWSURFACE)
-        self.screen.fill(pygame.Color(0, 128, 128))
-        #self.screen.set_alpha(None)
+        self.screen.fill(pygame.Color(0, 0, 0))
 
-        self.icon_tg = pygame.image.load(os.path.join("resources", "ui", "target.png"))
-        self.icon_sam = pygame.image.load(os.path.join("resources", "ui", "sam.png"))
-        self.icon_farp = pygame.image.load(os.path.join("resources", "ui", "farp.png"))
-        self.icon_oilp = pygame.image.load(os.path.join("resources", "ui", "oilp.png"))
-        self.icon_ware = pygame.image.load(os.path.join("resources", "ui", "ware.png"))
-        self.icon_clr = pygame.image.load(os.path.join("resources", "ui", "cleared.png"))
-        self.icon_fuel = pygame.image.load(os.path.join("resources", "ui", "fuel.png"))
-        self.icon_comms = pygame.image.load(os.path.join("resources", "ui", "comms.png"))
-        self.icon_fob = pygame.image.load(os.path.join("resources", "ui", "fob.png"))
-        self.icon_power = pygame.image.load(os.path.join("resources", "ui", "power.png"))
-        self.icon_ammo = pygame.image.load(os.path.join("resources", "ui", "ammo.png"))
-        self.icon_factory = pygame.image.load(os.path.join("resources", "ui", "factory.png"))
+        # Load icons resources
+        self.icons = {}
+        self.icons["target"] = pygame.image.load(os.path.join("resources", "ui", "target.png"))
+        self.icons["cleared"] = pygame.image.load(os.path.join("resources", "ui", "cleared.png"))
+        for category in CATEGORY_MAP.keys():
+            print(category)
+            try:
+                self.icons[category] = pygame.image.load(os.path.join("resources", "ui", category + ".png"))
+            except:
+                print("Couldn't load icon for : " + category)
 
+        # Load the map image
         self.map = pygame.image.load(os.path.join("resources", self.game.theater.overview_image)).convert()
         pygame.draw.rect(self.map, self.BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
         pygame.draw.rect(self.map, self.WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
 
+        # Create surfaces for drawing
         self.surface = pygame.Surface((self.map.get_width(), self.map.get_height()))
         self.surface.set_alpha(None)
-        self.overlay = pygame.Surface((1066,600),pygame.SRCALPHA)
+        self.overlay = pygame.Surface((1066, 600), pygame.SRCALPHA)
 
+        # Init pygame display
         pygame.display.init()
         pygame.display.update()
 
     def init_sdl_thread(self):
+        print("START THREAD")
         self.thread = Thread(target=self.sdl_thread)
         self.thread.start()
 
@@ -159,8 +162,6 @@ class OverviewCanvas:
             if i == 300:
                 self.frontline_vector_cache = {}
                 i = 300
-
-
 
     def draw(self):
 
@@ -203,10 +204,11 @@ class OverviewCanvas:
         elif self.zoom > 10:
             self.zoom = 10
 
-        if (self.redraw_required):
+        if self.redraw_required:
+
             # Fill
             self.screen.fill(self.BACKGROUND)
-            self.overlay.fill(pygame.Color(0,0,0,0))
+            self.overlay.fill(pygame.Color(0, 0, 0, 0))
 
             # Surface
             cursor_pos = pygame.mouse.get_pos()
@@ -216,15 +218,16 @@ class OverviewCanvas:
 
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
-            int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
+                int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
             self.screen.blit(scaled, self.scroll)
-            self.screen.blit(self.overlay, (0,0))
+            self.screen.blit(self.overlay, (0, 0))
 
             pygame.display.flip()
 
         self.redraw_required = False
 
-    def draw_map(self, surface: pygame.Surface, overlay:pygame.Surface, mouse_pos: (int, int), mouse_down: (bool, bool)):
+    def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int),
+                 mouse_down: (bool, bool)):
 
         self.surface.blit(self.map, (0, 0))
 
@@ -242,7 +245,7 @@ class OverviewCanvas:
                     color = self._enemy_color()
                 for ground_object in cp.ground_objects:
                     x, y = self.transform_point(ground_object.position)
-                    pygame.draw.line(surface, color, coords, (x+8,y+8), 1)
+                    pygame.draw.line(surface, color, coords, (x + 8, y + 8), 1)
                     self.draw_ground_object(ground_object, surface, color, mouse_pos)
 
             if self.display_road.get():
@@ -311,7 +314,7 @@ class OverviewCanvas:
                     else:
                         surface.blit(labelHover, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
-                    self.draw_base_info(overlay, cp, (0,0))
+                    self.draw_base_info(overlay, cp, (0, 0))
 
                 else:
                     surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
@@ -321,85 +324,69 @@ class OverviewCanvas:
                     label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
                     surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
-
-    def draw_base_info(self, surface:pygame.Surface, controlPoint:ControlPoint, pos):
+    def draw_base_info(self, surface: pygame.Surface, controlPoint: ControlPoint, pos):
         title = self.font.render(controlPoint.name, self.ANTIALIASING, self.BLACK, self.GREEN)
         hp = self.font.render("Strength : ", self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         armor_txt = "ARMOR      >    "
         for key, value in controlPoint.base.armor.items():
-            armor_txt += key.id + " x "+str(value)+" | "
+            armor_txt += key.id + " x " + str(value) + " | "
         armor = self.font.render(armor_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         aircraft_txt = "AIRCRAFT >    "
         for key, value in controlPoint.base.aircraft.items():
-            aircraft_txt += key.id + " x "+str(value)+" | "
+            aircraft_txt += key.id + " x " + str(value) + " | "
         aircraft = self.font.render(aircraft_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         aa_txt = "AA/SAM       >    "
         for key, value in controlPoint.base.aa.items():
-            aa_txt += key.id + " x "+str(value)+" | "
+            aa_txt += key.id + " x " + str(value) + " | "
         aa = self.font.render(aa_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         lineheight = title.get_height()
-        w = max([max([a.get_width() for a in [title,armor,aircraft,aa]]),150])
-        h = 5*lineheight + 4*5
+        w = max([max([a.get_width() for a in [title, armor, aircraft, aa]]), 150])
+        h = 5 * lineheight + 4 * 5
 
         # Draw frame
-        pygame.draw.rect(surface, self.GREEN, (pos[0], pos[1], w+8, h+8))
-        pygame.draw.rect(surface, self.BLACK, (pos[0]+2, pos[1]+2, w+4, h+4))
-        pygame.draw.rect(surface, self.GREEN, (pos[0]+2, pos[1], w+4, lineheight+4))
+        pygame.draw.rect(surface, self.GREEN, (pos[0], pos[1], w + 8, h + 8))
+        pygame.draw.rect(surface, self.BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
+        pygame.draw.rect(surface, self.GREEN, (pos[0] + 2, pos[1], w + 4, lineheight + 4))
 
         # Title
-        surface.blit(title, (pos[0]+4, 4+pos[1]))
-        surface.blit(hp, (pos[0]+4, 4+pos[1]+lineheight+5))
+        surface.blit(title, (pos[0] + 4, 4 + pos[1]))
+        surface.blit(hp, (pos[0] + 4, 4 + pos[1] + lineheight + 5))
 
         # Draw gauge
-        pygame.draw.rect(surface, self.WHITE, (pos[0]+hp.get_width()+3, 4+pos[1]+lineheight+5, 54, lineheight))
-        pygame.draw.rect(surface, self.BRIGHT_RED, (pos[0]+hp.get_width()+5, 4+pos[1]+lineheight+5+2, 50, lineheight-4))
-        pygame.draw.rect(surface, self.BRIGHT_GREEN, (pos[0]+hp.get_width()+5, 4+pos[1]+lineheight+5+2, 50*controlPoint.base.strength, lineheight-4))
+        pygame.draw.rect(surface, self.WHITE,
+                         (pos[0] + hp.get_width() + 3, 4 + pos[1] + lineheight + 5, 54, lineheight))
+        pygame.draw.rect(surface, self.BRIGHT_RED,
+                         (pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50, lineheight - 4))
+        pygame.draw.rect(surface, self.BRIGHT_GREEN, (
+        pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50 * controlPoint.base.strength, lineheight - 4))
 
         # Text
-        surface.blit(armor, (pos[0]+4, 4+pos[1]+lineheight*2+10))
-        surface.blit(aircraft, (pos[0]+4, 4+pos[1]+lineheight*3+15))
-        surface.blit(aa, (pos[0]+4, 4+pos[1]+lineheight*4+20))
+        surface.blit(armor, (pos[0] + 4, 4 + pos[1] + lineheight * 2 + 10))
+        surface.blit(aircraft, (pos[0] + 4, 4 + pos[1] + lineheight * 3 + 15))
+        surface.blit(aa, (pos[0] + 4, 4 + pos[1] + lineheight * 4 + 20))
 
     def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
         x, y = self.transform_point(ground_object.position)
         rect = pygame.Rect(x, y, 16, 16)
 
         if ground_object.is_dead:
-            surface.blit(self.icon_clr, (x, y))
+            surface.blit(self.icons["cleared"], (x, y))
         else:
-            # TODO : refactor
-            if ground_object.category == "aa":
-                surface.blit(self.icon_sam, (x, y))
-            elif ground_object.category == "oil":
-                surface.blit(self.icon_oilp, (x, y))
-            elif ground_object.category == "warehouse":
-                surface.blit(self.icon_ware, (x, y))
-            elif ground_object.category == "farp":
-                surface.blit(self.icon_farp, (x, y))
-            elif ground_object.category == "fuel":
-                surface.blit(self.icon_fuel, (x, y))
-            elif ground_object.category == "ammo":
-                surface.blit(self.icon_ammo, (x, y))
-            elif ground_object.category == "fob":
-                surface.blit(self.icon_fob, (x, y))
-            elif ground_object.category == "power":
-                surface.blit(self.icon_power, (x, y))
-            elif ground_object.category == "comms":
-                surface.blit(self.icon_comms, (x, y))
-            elif ground_object.category == "factory":
-                surface.blit(self.icon_factory, (x, y))
+            if ground_object.category in self.icons.keys():
+                icon = self.icons[ground_object.category]
             else:
-                surface.blit(self.icon_tg, (x, y))
+                icon = self.icons["target"]
+            surface.blit(icon, (x, y))
 
-        if rect.collidepoint(mouse_pos):
-            self.draw_ground_object_info(ground_object, (x, y), color, surface);
+        if rect.collidepoint(*mouse_pos):
+            self.draw_ground_object_info(ground_object, (x, y), color, surface)
 
     def draw_ground_object_info(self, ground_object: TheaterGroundObject, pos, color, surface: pygame.Surface):
-        lb = self.font.render(str(ground_object), self.ANTIALIASING, color, self.BLACK);
+        lb = self.font.render(str(ground_object), self.ANTIALIASING, color, self.BLACK)
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def transform_point(self, p: Point, treshold=30) -> (int, int):
