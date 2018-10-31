@@ -126,7 +126,6 @@ class OverviewCanvas:
         self.icons["target"] = pygame.image.load(os.path.join("resources", "ui", "target.png"))
         self.icons["cleared"] = pygame.image.load(os.path.join("resources", "ui", "cleared.png"))
         for category in CATEGORY_MAP.keys():
-            print(category)
             try:
                 self.icons[category] = pygame.image.load(os.path.join("resources", "ui", category + ".png"))
             except:
@@ -147,7 +146,6 @@ class OverviewCanvas:
         pygame.display.update()
 
     def init_sdl_thread(self):
-        print("START THREAD")
         self.thread = Thread(target=self.sdl_thread)
         self.thread.start()
 
@@ -219,7 +217,7 @@ class OverviewCanvas:
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
                 int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
-            self.screen.blit(scaled, self.scroll)
+            self.screen.blit(scaled, (self.scroll[0]*self.zoom, self.scroll[1]*self.zoom))
             self.screen.blit(self.overlay, (0, 0))
 
             pygame.display.flip()
