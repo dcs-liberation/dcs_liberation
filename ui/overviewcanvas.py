@@ -212,13 +212,13 @@ class OverviewCanvas:
             # Surface
             cursor_pos = pygame.mouse.get_pos()
             cursor_pos = (
-                (cursor_pos[0] - self.scroll[0]) / self.zoom, (cursor_pos[1] - self.scroll[1]) / self.zoom)
-            self.draw_map(self.surface, self.overlay, cursor_pos, (left_down, right_down));
+                cursor_pos[0] / self.zoom - self.scroll[0], cursor_pos[1] / self.zoom - self.scroll[1])
+            self.draw_map(self.surface, self.overlay, cursor_pos, (left_down, right_down))
 
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
                 int(self.surface.get_width() * self.zoom), int(self.surface.get_height() * self.zoom)))
-            self.screen.blit(scaled, (self.scroll[0], self.scroll[1]))
+            self.screen.blit(scaled, (self.scroll[0]*self.zoom, self.scroll[1]*self.zoom))
             self.screen.blit(self.overlay, (0, 0))
 
             pygame.display.flip()
