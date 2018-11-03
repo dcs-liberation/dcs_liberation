@@ -9,8 +9,8 @@ from .base import *
 class NevadaTheater(ConflictTheater):
     terrain = dcs.terrain.Nevada()
     overview_image = "nevada.gif"
-    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45, -360),
-                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440, 80), }
+    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45*2, -360*2),
+                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440*2, 80*2), }
     landmap = load_landmap("resources\\nev_landmap.p")
     daytime_map = {
         "dawn": (4, 6),
