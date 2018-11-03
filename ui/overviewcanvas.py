@@ -25,6 +25,9 @@ class OverviewCanvas:
     BACKGROUND = pygame.Color(0, 64, 64)
     ANTIALIASING = True
 
+    WIDTH = 1066
+    HEIGHT = 600
+
     started = None
 
     def __init__(self, frame: Frame, parent, game: Game):
@@ -41,6 +44,7 @@ class OverviewCanvas:
         self.surface: pygame.Surface = None
         self.thread: Thread = None
         self.clock = pygame.time.Clock()
+        self.expanded = True
 
         pygame.font.init()
         self.font:pygame.font.SysFont = pygame.font.SysFont("arial", 15)
@@ -69,7 +73,7 @@ class OverviewCanvas:
         self.wrapper.grid(column=0, row=0, sticky=NSEW)  # Adds grid
         self.wrapper.pack(side=LEFT)  # packs window to the left
 
-        self.embed = Frame(self.wrapper, width=1066, height=600, borderwidth=2, **STYLES["frame-wrapper"])
+        self.embed = Frame(self.wrapper, width=self.WIDTH, height=self.HEIGHT, borderwidth=2, **STYLES["frame-wrapper"])
         self.embed.grid(column=0, row=0, sticky=NSEW)  # Adds grid
 
         self.options = Frame(self.wrapper, borderwidth=2, **STYLES["frame-wrapper"])
@@ -108,9 +112,17 @@ class OverviewCanvas:
                                                                                               sticky=E)
         Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
         col += 4
-        Label(self.options,
-              text="[ Use mouse wheel to zoom, right mouse click + move to pan the map view, click on one of your base to manage it ]",
-              **STYLES["widget"]).grid(row=0, column=col, sticky=W)
+        Button(self.options, text="Toggle size", command=lambda: self.map_size_toggle(), **STYLES["btn-primary"]).grid(row=0, column=col, sticky=E, padx=(10,10))
+
+    def map_size_toggle(self):
+        if self.expanded:
+            self.embed.configure(width=0)
+            self.options.configure(width=0)
+            self.expanded = False
+        else:
+            self.embed.configure(width=self.WIDTH)
+            self.options.configure(width=self.WIDTH)
+            self.expanded = True
 
     def on_close(self):
         self.exited = True
@@ -125,8 +137,8 @@ class OverviewCanvas:
             os.environ['SDL_VIDEODRIVER'] = 'windib'
 
         # Create pygame 'screen'
-        self.screen = pygame.display.set_mode((1066, 600), pygame.DOUBLEBUF | pygame.HWSURFACE)
-        self.screen.fill(pygame.Color(0, 0, 0))
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
+        self.screen.fill(pygame.Color(*self.BLACK))
 
         # Load icons resources
         self.icons = {}
@@ -146,7 +158,7 @@ class OverviewCanvas:
         # Create surfaces for drawing
         self.surface = pygame.Surface((self.map.get_width(), self.map.get_height()))
         self.surface.set_alpha(None)
-        self.overlay = pygame.Surface((1066, 600), pygame.SRCALPHA)
+        self.overlay = pygame.Surface((self.WIDTH, self.HEIGHT), pygame.SRCALPHA)
 
         # Init pygame display
         pygame.display.init()
