@@ -42,6 +42,10 @@ def parse_mutliplayer_debriefing(contents: str):
             key = "initiator"
             if element is None:
                 element = {}
+        elif line.startswith("initiatorMissionID\t"):
+            key = "initiatorMissionID"
+            if element is None:
+                element = {}
         elif line.startswith("type\t"):
             key = "type"
             if element is None:

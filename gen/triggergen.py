@@ -81,9 +81,6 @@ class TriggersGenerator:
                         if group.task == AWACS.name or group.task == Refueling.name:
                             continue
 
-                        if player_cp.position.distance_to_point(group.position) > PUSH_TRIGGER_SIZE * 3:
-                            continue
-
                         push_by_trigger.append(group)
 
                         if not group.units[0].is_human():

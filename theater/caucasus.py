@@ -64,10 +64,9 @@ class CaucasusTheater(ConflictTheater):
         self.add_controlpoint(self.gudauta, connected_to=[self.sochi, self.sukhumi])
         self.add_controlpoint(self.sochi, connected_to=[self.gudauta, self.gelendzhik])
 
-        self.add_controlpoint(self.gelendzhik, connected_to=[self.sochi, self.novorossiysk])
-        self.add_controlpoint(self.novorossiysk, connected_to=[self.gelendzhik, self.anapa])
-        self.add_controlpoint(self.krymsk, connected_to=[self.novorossiysk, self.anapa, self.krasnodar])
-        self.add_controlpoint(self.anapa, connected_to=[self.novorossiysk, self.krymsk])
+        self.add_controlpoint(self.gelendzhik, connected_to=[self.sochi, ])
+        self.add_controlpoint(self.krymsk, connected_to=[self.anapa, self.krasnodar])
+        self.add_controlpoint(self.anapa, connected_to=[self.krymsk])
         self.add_controlpoint(self.krasnodar, connected_to=[self.krymsk, self.maykop])
 
         self.add_controlpoint(self.carrier_1)
