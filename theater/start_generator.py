@@ -72,7 +72,7 @@ def generate_groundobjects(theater: ConflictTheater):
         return None
 
     group_id = 0
-    for cp in theater.enemy_points():
+    for cp in theater.controlpoints:
         for _ in range(0, random.randrange(2, 4)):
             available_categories = list(tpls) + ["aa", "aa"]
             tpl_category = random.choice(available_categories)

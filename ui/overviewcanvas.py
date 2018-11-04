@@ -32,6 +32,8 @@ class OverviewCanvas:
     HEIGHT = 600
 
     started = None
+    ground_assets_icons = None  # type: typing.Dict[str, pygame.Surface]
+    event_icons = None  # type: typing.Dict[typing.Type, pygame.Surface]
     selected_event_info = None  # type: typing.Tuple[Event, typing.Tuple[int, int]]
     frontline_vector_cache = None  # type: typing.Dict[str, typing.Tuple[Point, int, int]]
 
@@ -54,7 +56,7 @@ class OverviewCanvas:
         pygame.font.init()
         self.font: pygame.font.SysFont = pygame.font.SysFont("arial", 15)
         self.fontsmall: pygame.font.SysFont = pygame.font.SysFont("arial", 10)
-        self.icons = {}
+        self.ground_assets_icons = {}
 
         # Frontline are too heavy on performance to compute in realtime, so keep them in a cache
         self.frontline_vector_cache = {}
@@ -144,14 +146,23 @@ class OverviewCanvas:
         self.screen.fill(pygame.Color(*self.BLACK))
 
         # Load icons resources
-        self.icons = {}
-        self.icons["target"] = pygame.image.load(os.path.join("resources", "ui", "target.png"))
-        self.icons["cleared"] = pygame.image.load(os.path.join("resources", "ui", "cleared.png"))
+        self.ground_assets_icons = {}
+        self.ground_assets_icons["target"] = pygame.image.load(os.path.join("resources", "ui", "ground_assets", "target.png"))
+        self.ground_assets_icons["cleared"] = pygame.image.load(os.path.join("resources", "ui", "ground_assets", "cleared.png"))
         for category in CATEGORY_MAP.keys():
-            try:
-                self.icons[category] = pygame.image.load(os.path.join("resources", "ui", category + ".png"))
-            except:
-                print("Couldn't load icon for : " + category)
+            self.ground_assets_icons[category] = pygame.image.load(os.path.join("resources", "ui", "ground_assets", category + ".png"))
+
+        self.event_icons = {}
+        for category, image in {BaseAttackEvent: "capture",
+                                FrontlinePatrolEvent: "attack",
+                                FrontlineAttackEvent: "attack",
+                                InfantryTransportEvent: "infantry",
+                                InsurgentAttackEvent: "insurgent_attack",
+                                InterceptEvent: "air_intercept",
+                                NavalInterceptEvent: "naval_intercept",
+                                StrikeEvent: "strike"}.items():
+            self.event_icons[category] = pygame.image.load(os.path.join("resources", "ui", "events", image + ".png"))
+
 
         # Load the map image
         self.map = pygame.image.load(os.path.join("resources", self.game.theater.overview_image)).convert()
@@ -409,12 +420,12 @@ class OverviewCanvas:
         rect = pygame.Rect(x, y, 16, 16)
 
         if ground_object.is_dead:
-            surface.blit(self.icons["cleared"], (x, y))
+            surface.blit(self.ground_assets_icons["cleared"], (x, y))
         else:
-            if ground_object.category in self.icons.keys():
-                icon = self.icons[ground_object.category]
+            if ground_object.category in self.ground_assets_icons.keys():
+                icon = self.ground_assets_icons[ground_object.category]
             else:
-                icon = self.icons["target"]
+                icon = self.ground_assets_icons["target"]
             surface.blit(icon, (x, y))
 
         if rect.collidepoint(*mouse_pos):
@@ -425,35 +436,45 @@ class OverviewCanvas:
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def draw_events(self, surface: pygame.Surface, mouse_pos, mouse_down):
-        location_point_counters = {}
+        occupied_rects = [pygame.Rect(*self._transform_point(x.position), 32, 32) for x in self.game.theater.controlpoints]
 
-        def _location_to_point(location: Point) -> typing.Tuple[int, int]:
-            nonlocal location_point_counters
-            key = str(location.x) + str(location.y)
-
+        def _location_to_rect(location: Point) -> pygame.Rect:
+            nonlocal occupied_rects
             point = self._transform_point(location)
-            point = point[0], point[1] + location_point_counters.get(key, 0) * 40
+            rect = pygame.Rect(*point, 32, 32)
+            i = 0
+            for occupied_rect in occupied_rects:
+                if rect.colliderect(occupied_rect):
+                    i += 1
+                    if i % 2:
+                        rect.y = occupied_rect.y + occupied_rect.height + 3
+                    else:
+                        rect.x = occupied_rect.x + occupied_rect.width + 3
 
-            location_point_counters[key] = location_point_counters.get(key, 0) + 1
-            return point
+            occupied_rects.append(rect)
+            return rect
 
+        label_to_draw = None
         for event in self.game.events:
             location = event.location
             if isinstance(event, FrontlinePatrolEvent) or isinstance(event, FrontlineAttackEvent):
                 location = self._frontline_center(event.from_cp, event.to_cp)
 
-            point = _location_to_point(location)
-            rect = pygame.Rect(*point, 30, 30)
-            pygame.draw.rect(surface, self.BLACK, rect)
+            rect = _location_to_rect(location)
+            pygame.draw.rect(surface, self.RED, rect)
+            self.surface.blit(self.event_icons[event.__class__], rect.topleft)
 
-            if rect.collidepoint(*mouse_pos) or self.selected_event_info == (event, point):
-                line = self.font.render(str(event), self.ANTIALIASING, self.WHITE, self.BLACK)
-                surface.blit(line, rect.center)
+            if rect.collidepoint(*mouse_pos) or self.selected_event_info == (event, rect.center):
+                if not label_to_draw:
+                    label_to_draw = self.font.render(str(event), self.ANTIALIASING, self.WHITE, self.BLACK), rect.center
 
             if rect.collidepoint(*mouse_pos):
                 if mouse_down[0]:
-                    self.selected_event_info = event, point
+                    self.selected_event_info = event, rect.center
                     mouse_down[0] = False
+
+        if label_to_draw:
+            surface.blit(*label_to_draw)
 
         return mouse_down
 

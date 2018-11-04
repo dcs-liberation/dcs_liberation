@@ -100,21 +100,11 @@ class Game:
         self.enemy = enemy_name
 
     def _roll(self, prob, mult):
-        return random.randint(1, 100) <= prob * mult
-
-    def _generate_globalinterceptions(self):
-        global_count = len([x for x in self.theater.player_points() if x.is_global])
-        for from_cp in [x for x in self.theater.player_points() if x.is_global]:
-            probability_base = max(PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE / global_count, 1)
-            probability = probability_base * math.log(len(self.theater.player_points()) + 1, PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG)
-            if self._roll(probability, from_cp.base.strength):
-                to_cp = random.choice([x for x in self.theater.enemy_points() if x not in self.theater.conflicts()])
-                self.events.append(InterceptEvent(attacker_name=self.player,
-                                                  defender_name=self.enemy,
-                                                  from_cp=from_cp,
-                                                  to_cp=to_cp,
-                                                  game=self))
-                break
+        if self.settings.version == "dev":
+            # always generate all events for dev
+            return 100
+        else:
+            return random.randint(1, 100) <= prob * mult
 
     def _generate_player_event(self, event_class, player_cp, enemy_cp):
         if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
@@ -173,18 +163,10 @@ class Game:
 
     def _generate_events(self):
         for player_cp, enemy_cp in self.theater.conflicts(True):
-            if enemy_cp.is_global:
-                continue
-
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
                 if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent]:
                     # skip events requiring frontline
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
-                        continue
-
-                if player_cp.is_global:
-                    # skip events requiring ground CP
-                    if event_class not in [InterceptEvent, StrikeEvent, NavalInterceptEvent]:
                         continue
 
                 if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):
