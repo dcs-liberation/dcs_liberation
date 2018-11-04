@@ -33,8 +33,8 @@ class NavalInterceptEvent(Event):
     @property
     def threat_description(self):
         s = "{} ship(s)".format(self._targets_count())
-        if not self.from_cp.captured:
-            s += ", {} aircraft".format(self.from_cp.base.scramble_count(self.game.settings.multiplier))
+        if not self.departure_cp.captured:
+            s += ", {} aircraft".format(self.departure_cp.base.scramble_count(self.game.settings.multiplier))
         return s
 
     def is_successfull(self, debriefing: Debriefing):
@@ -44,7 +44,7 @@ class NavalInterceptEvent(Event):
             if unit in self.targets:
                 destroyed_targets += count
 
-        if self.from_cp.captured:
+        if self.departure_cp.captured:
             return math.ceil(float(destroyed_targets) / total_targets) > self.SUCCESS_RATE
         else:
             return math.ceil(float(destroyed_targets) / total_targets) < self.SUCCESS_RATE
@@ -56,11 +56,11 @@ class NavalInterceptEvent(Event):
             if self.is_successfull(debriefing):
                 self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:
             # enemy attacking
             if self.is_successfull(debriefing):
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
                 self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
@@ -79,7 +79,7 @@ class NavalInterceptEvent(Event):
             self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            from_cp=self.from_cp,
+            from_cp=self.departure_cp,
             to_cp=self.to_cp
         )
 
@@ -100,11 +100,11 @@ class NavalInterceptEvent(Event):
             self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            from_cp=self.from_cp,
+            from_cp=self.departure_cp,
             to_cp=self.to_cp
         )
 
-        strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
+        strikegroup = self.departure_cp.base.scramble_cas(self.game.settings.multiplier)
         op.setup(strikegroup=assigned_units_from(strikegroup),
                  interceptors=flights[CAP],
                  targets=self.targets)

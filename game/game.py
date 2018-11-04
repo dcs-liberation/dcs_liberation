@@ -129,7 +129,7 @@ class Game:
             # skip strikes in case of no targets
             return
 
-        self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+        self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player, self.enemy))
 
     def _generate_enemy_event(self, event_class, player_cp, enemy_cp):
         if event_class in [type(x) for x in self.events if not self.is_player_attack(x)]:
@@ -169,7 +169,7 @@ class Game:
                 # skip base attack if strength is too high
                 return
 
-        self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
+        self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy, self.player))
 
     def _generate_events(self):
         for player_cp, enemy_cp in self.theater.conflicts(True):
@@ -269,7 +269,12 @@ class Game:
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         logging.info("Pass turn")
         for event in self.events:
-            event.skip()
+            if self.settings.version == "dev":
+                # don't damage player CPs in by skipping in dev mode
+                if isinstance(event, UnitsDeliveryEvent):
+                    event.skip()
+            else:
+                event.skip()
 
         if not no_action:
             self._budget_player()
@@ -286,5 +291,5 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._generate_events()
-        self._generate_globalinterceptions()
+        #self._generate_globalinterceptions()
 

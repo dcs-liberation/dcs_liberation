@@ -1,11 +1,15 @@
 from tkinter import *
 from tkinter import Menu as TkMenu
 from tkinter import messagebox
+
+from .styles import BG_COLOR,BG_TITLE_COLOR
 from game.game import *
 from theater import persiangulf, nevada, caucasus, start_generator
-from .styles import BG_COLOR,BG_TITLE_COLOR
+from userdata import logging as logging_module
+
 import sys
 import webbrowser
+
 
 class Window:
 
@@ -84,7 +88,6 @@ class Window:
         self.build()
 
     def start_new_game(self, player_name: str, enemy_name: str, terrain: str, sams: bool, midgame: bool, multiplier: float):
-
         if terrain == "persiangulf":
             conflicttheater = persiangulf.PersianGulfTheater()
         elif terrain == "nevada":
@@ -104,7 +107,7 @@ class Window:
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = sams
-        game.settings.version = "1.4.0"
+        game.settings.version = logging_module.version_string()
 
         if midgame:
             game.budget = game.budget * 4 * len(list(conflicttheater.conflicts()))

@@ -35,7 +35,7 @@ class InfantryTransportEvent(Event):
         if self.is_successfull(debriefing):
             self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:
-            self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+            self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def player_attacking(self, flights: db.TaskForceDict):
         assert Embarking in flights and len(flights) == 1, "Invalid flights"
@@ -44,7 +44,7 @@ class InfantryTransportEvent(Event):
             game=self.game,
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
-            from_cp=self.from_cp,
+            from_cp=self.departure_cp,
             to_cp=self.to_cp
         )
 

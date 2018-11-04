@@ -28,7 +28,7 @@ class BaseAttackEvent(Event):
         alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
         alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
         attackers_success = alive_attackers >= alive_defenders
-        if self.from_cp.captured:
+        if self.departure_cp.captured:
             return attackers_success
         else:
             return not attackers_success
@@ -36,14 +36,14 @@ class BaseAttackEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(BaseAttackEvent, self).commit(debriefing)
         if self.is_successfull(debriefing):
-            if self.from_cp.captured:
+            if self.departure_cp.captured:
                 self.to_cp.captured = True
                 self.to_cp.ground_objects = []
                 self.to_cp.base.filter_units(db.UNIT_BY_COUNTRY[self.attacker_name])
 
             self.to_cp.base.affect_strength(+self.STRENGTH_RECOVERY)
         else:
-            if not self.from_cp.captured:
+            if not self.departure_cp.captured:
                 self.to_cp.captured = False
             self.to_cp.base.affect_strength(+self.STRENGTH_RECOVERY)
 
@@ -54,14 +54,14 @@ class BaseAttackEvent(Event):
     def player_defending(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1,  "Invalid scrambled flights"
 
-        cas = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
-        escort = self.from_cp.base.scramble_sweep(self.game.settings.multiplier)
-        attackers = self.from_cp.base.armor
+        cas = self.departure_cp.base.scramble_cas(self.game.settings.multiplier)
+        escort = self.departure_cp.base.scramble_sweep(self.game.settings.multiplier)
+        attackers = self.departure_cp.base.armor
 
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 from_cp=self.from_cp,
+                                 from_cp=self.departure_cp,
                                  to_cp=self.to_cp)
 
         op.setup(cas=assigned_units_from(cas),
@@ -79,7 +79,7 @@ class BaseAttackEvent(Event):
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 from_cp=self.from_cp,
+                                 from_cp=self.departure_cp,
                                  to_cp=self.to_cp)
 
         defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)

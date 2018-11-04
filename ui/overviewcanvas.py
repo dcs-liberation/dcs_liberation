@@ -10,6 +10,9 @@ from ui.styles import STYLES
 from ui.window import *
 
 
+EVENT_DEPARTURE_MAX_DISTANCE = 250000
+
+
 class OverviewCanvas:
     mainmenu = None  # type: ui.mainmenu.MainMenu
 
@@ -29,6 +32,8 @@ class OverviewCanvas:
     HEIGHT = 600
 
     started = None
+    selected_event_info = None  # type: typing.Tuple[Event, typing.Tuple[int, int]]
+    frontline_vector_cache = None  # type: typing.Dict[str, typing.Tuple[Point, int, int]]
 
     def __init__(self, frame: Frame, parent, game: Game):
 
@@ -47,8 +52,8 @@ class OverviewCanvas:
         self.expanded = True
 
         pygame.font.init()
-        self.font:pygame.font.SysFont = pygame.font.SysFont("arial", 15)
-        self.fontsmall:pygame.font.SysFont = pygame.font.SysFont("arial", 10)
+        self.font: pygame.font.SysFont = pygame.font.SysFont("arial", 15)
+        self.fontsmall: pygame.font.SysFont = pygame.font.SysFont("arial", 10)
         self.icons = {}
 
         # Frontline are too heavy on performance to compute in realtime, so keep them in a cache
@@ -84,7 +89,6 @@ class OverviewCanvas:
         self.init_sdl_thread()
 
     def build_map_options_panel(self):
-
         def force_redraw():
             if self.screen:
                 self.redraw_required = True
@@ -130,7 +134,6 @@ class OverviewCanvas:
             self.thread.join()
 
     def init_sdl_layer(self):
-
         # Setup pygame to run in tk frame
         os.environ['SDL_WINDOWID'] = str(self.embed.winfo_id())
         if platform.system == "Windows":
@@ -185,9 +188,7 @@ class OverviewCanvas:
         print("Stopped SDL app")
 
     def draw(self):
-
         try:
-            #self.parent.window.tk.winfo_ismapped()
             self.embed.winfo_ismapped()
             self.embed.winfo_manager()
         except:
@@ -234,7 +235,6 @@ class OverviewCanvas:
             self.zoom = 10
 
         if self.redraw_required:
-
             # Fill
             self.screen.fill(self.BACKGROUND)
             self.overlay.fill(pygame.Color(0, 0, 0, 0))
@@ -243,7 +243,7 @@ class OverviewCanvas:
             cursor_pos = pygame.mouse.get_pos()
             cursor_pos = (
                 cursor_pos[0] / self.zoom - self.scroll[0], cursor_pos[1] / self.zoom - self.scroll[1])
-            self.draw_map(self.surface, self.overlay, cursor_pos, (left_down, right_down))
+            self.draw_map(self.surface, self.overlay, cursor_pos, [left_down, right_down])
 
             # Scaling
             scaled = pygame.transform.scale(self.surface, (
@@ -255,9 +255,7 @@ class OverviewCanvas:
 
         self.redraw_required = False
 
-    def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int),
-                 mouse_down: (bool, bool)):
-
+    def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int), mouse_down: [bool, bool]):
         self.surface.blit(self.map, (0, 0))
 
         # Display zoom level on overlay
@@ -269,8 +267,7 @@ class OverviewCanvas:
         # pygame.draw.rect(surface, (255, 0, 255), (mouse_pos[0], mouse_pos[1], 5, 5), 2)
 
         for cp in self.game.theater.controlpoints:
-
-            coords = self.transform_point(cp.position)
+            coords = self._transform_point(cp.position)
 
             if self.display_ground_targets.get():
                 if cp.captured:
@@ -278,14 +275,13 @@ class OverviewCanvas:
                 else:
                     color = self._enemy_color()
                 for ground_object in cp.ground_objects:
-                    x, y = self.transform_point(ground_object.position)
+                    x, y = self._transform_point(ground_object.position)
                     pygame.draw.line(surface, color, coords, (x + 8, y + 8), 1)
                     self.draw_ground_object(ground_object, surface, color, mouse_pos)
 
             if self.display_road.get():
-
                 for connected_cp in cp.connected_points:
-                    connected_coords = self.transform_point(connected_cp.position)
+                    connected_coords = self._transform_point(connected_cp.position)
                     if connected_cp.captured != cp.captured:
                         color = self._enemy_color()
                     elif connected_cp.captured and cp.captured:
@@ -296,15 +292,7 @@ class OverviewCanvas:
                     pygame.draw.line(surface, color, coords, connected_coords, 2)
 
                     if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
-
-                        # Cache mechanism to avoid performing frontline vector computation on every frame
-                        key = str(cp.id) + "_" + str(connected_cp.id)
-                        if key in self.frontline_vector_cache:
-                            frontline = self.frontline_vector_cache[key]
-                        else:
-                            frontline = Conflict.frontline_vector(cp, connected_cp, self.game.theater)
-                            self.frontline_vector_cache[key] = frontline
-
+                        frontline = self._frontline_vector(cp, connected_cp)
                         if not frontline:
                             continue
 
@@ -314,66 +302,79 @@ class OverviewCanvas:
                             frontline_pos = frontline_pos.point_from_heading(heading + 180, 5000)
                             distance = 10000
 
-                        start_coords = self.transform_point(frontline_pos, treshold=10)
-                        end_coords = self.transform_point(frontline_pos.point_from_heading(heading, distance),
-                                                          treshold=60)
+                        start_coords = self._transform_point(frontline_pos, treshold=10)
+                        end_coords = self._transform_point(frontline_pos.point_from_heading(heading, distance),
+                                                           treshold=60)
 
                         pygame.draw.line(surface, color, start_coords, end_coords, 4)
 
         if self.display_bases.get():
-            for cp in self.game.theater.controlpoints:
-                coords = self.transform_point(cp.position)
-                radius = 12 * math.pow(cp.importance, 1)
-                radius_m = radius * cp.base.strength - 2
+            mouse_down = self.draw_bases(mouse_pos, mouse_down)
 
-                if cp.captured:
-                    color = self._player_color()
+        mouse_down = self.draw_events(self.surface, mouse_pos, mouse_down)
+
+        if mouse_down[0]:
+            self.selected_event_info = None
+
+    def draw_bases(self, mouse_pos, mouse_down):
+        for cp in self.game.theater.controlpoints:
+            coords = self._transform_point(cp.position)
+            radius = 12 * math.pow(cp.importance, 1)
+            radius_m = radius * cp.base.strength - 2
+
+            if cp.captured:
+                color = self._player_color()
+            else:
+                color = self._enemy_color()
+
+            pygame.draw.circle(self.surface, self.BLACK, (int(coords[0]), int(coords[1])), int(radius))
+            pygame.draw.circle(self.surface, color, (int(coords[0]), int(coords[1])), int(radius_m))
+
+            label = self.font.render(cp.name, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+            labelHover = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (128, 186, 128))
+            labelClick = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (122, 122, 255))
+
+            point =  coords[0] - label.get_width() / 2 + 1, coords[1] + 1
+            rect = pygame.Rect(*point, label.get_width(), label.get_height())
+
+            if rect.collidepoint(*mouse_pos):
+                if mouse_down[0]:
+                    self.surface.blit(labelClick, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
+                    self._selected_cp(cp)
+                    mouse_down[0] = False
                 else:
-                    color = self._enemy_color()
+                    self.surface.blit(labelHover, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
-                pygame.draw.circle(surface, self.BLACK, (int(coords[0]), int(coords[1])), int(radius))
-                pygame.draw.circle(surface, color, (int(coords[0]), int(coords[1])), int(radius_m))
+                self.draw_base_info(self.overlay, cp, (0, 0))
+                if self.selected_event_info and cp.captured and self.selected_event_info[0].location.distance_to_point(cp.position) < EVENT_DEPARTURE_MAX_DISTANCE:
+                    pygame.draw.line(self.surface, self.WHITE, point, self.selected_event_info[1])
 
-                label = self.font.render(cp.name, self.ANTIALIASING, (225, 225, 225), self.BLACK)
-                labelHover = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (128, 186, 128))
-                labelClick = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (122, 122, 255))
+            else:
+                self.surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
-                rect = pygame.Rect(coords[0] - label.get_width() / 2 + 1, coords[1] + 1, label.get_width(),
-                                   label.get_height())
+            if self.display_forces.get():
+                units_title = " {} / {} / {} ".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
+                label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
+                self.surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
-                if rect.collidepoint(mouse_pos):
-                    if (mouse_down[0]):
-                        surface.blit(labelClick, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
-                        self.parent.go_cp(cp)
-                    else:
-                        surface.blit(labelHover, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
+        return mouse_down
 
-                    self.draw_base_info(overlay, cp, (0, 0))
-
-                else:
-                    surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
-
-                if self.display_forces.get():
-                    units_title = " {} / {} / {} ".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-                    label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
-                    surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
-
-    def draw_base_info(self, surface: pygame.Surface, controlPoint: ControlPoint, pos):
-        title = self.font.render(controlPoint.name, self.ANTIALIASING, self.BLACK, self.GREEN)
+    def draw_base_info(self, surface: pygame.Surface, control_point: ControlPoint, pos):
+        title = self.font.render(control_point.name, self.ANTIALIASING, self.BLACK, self.GREEN)
         hp = self.font.render("Strength : ", self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         armor_txt = "ARMOR      >    "
-        for key, value in controlPoint.base.armor.items():
+        for key, value in control_point.base.armor.items():
             armor_txt += key.id + " x " + str(value) + " | "
         armor = self.font.render(armor_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         aircraft_txt = "AIRCRAFT >    "
-        for key, value in controlPoint.base.aircraft.items():
+        for key, value in control_point.base.aircraft.items():
             aircraft_txt += key.id + " x " + str(value) + " | "
         aircraft = self.font.render(aircraft_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
         aa_txt = "AA/SAM       >    "
-        for key, value in controlPoint.base.aa.items():
+        for key, value in control_point.base.aa.items():
             aa_txt += key.id + " x " + str(value) + " | "
         aa = self.font.render(aa_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
 
@@ -396,7 +397,7 @@ class OverviewCanvas:
         pygame.draw.rect(surface, self.BRIGHT_RED,
                          (pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50, lineheight - 4))
         pygame.draw.rect(surface, self.BRIGHT_GREEN, (
-        pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50 * controlPoint.base.strength, lineheight - 4))
+            pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50 * control_point.base.strength, lineheight - 4))
 
         # Text
         surface.blit(armor, (pos[0] + 4, 4 + pos[1] + lineheight * 2 + 10))
@@ -404,7 +405,7 @@ class OverviewCanvas:
         surface.blit(aa, (pos[0] + 4, 4 + pos[1] + lineheight * 4 + 20))
 
     def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
-        x, y = self.transform_point(ground_object.position)
+        x, y = self._transform_point(ground_object.position)
         rect = pygame.Rect(x, y, 16, 16)
 
         if ground_object.is_dead:
@@ -423,7 +424,50 @@ class OverviewCanvas:
         lb = self.font.render(str(ground_object), self.ANTIALIASING, color, self.BLACK)
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
-    def transform_point(self, p: Point, treshold=30) -> (int, int):
+    def draw_events(self, surface: pygame.Surface, mouse_pos, mouse_down):
+        location_point_counters = {}
+
+        def _location_to_point(location: Point) -> typing.Tuple[int, int]:
+            nonlocal location_point_counters
+            key = str(location.x) + str(location.y)
+
+            point = self._transform_point(location)
+            point = point[0], point[1] + location_point_counters.get(key, 0) * 40
+
+            location_point_counters[key] = location_point_counters.get(key, 0) + 1
+            return point
+
+        for event in self.game.events:
+            location = event.location
+            if isinstance(event, FrontlinePatrolEvent) or isinstance(event, FrontlineAttackEvent):
+                location = self._frontline_center(event.from_cp, event.to_cp)
+
+            point = _location_to_point(location)
+            rect = pygame.Rect(*point, 30, 30)
+            pygame.draw.rect(surface, self.BLACK, rect)
+
+            if rect.collidepoint(*mouse_pos) or self.selected_event_info == (event, point):
+                line = self.font.render(str(event), self.ANTIALIASING, self.WHITE, self.BLACK)
+                surface.blit(line, rect.center)
+
+            if rect.collidepoint(*mouse_pos):
+                if mouse_down[0]:
+                    self.selected_event_info = event, point
+                    mouse_down[0] = False
+
+        return mouse_down
+
+    def _selected_cp(self, cp):
+        if self.selected_event_info:
+            event = self.selected_event_info[0]
+            event.departure_cp = cp
+
+            self.selected_event_info = None
+            self.parent.start_event(event)
+        else:
+            self.parent.go_cp(cp)
+
+    def _transform_point(self, p: Point, treshold=30) -> (int, int):
         point_a = list(self.game.theater.reference_points.keys())[0]
         point_a_img = self.game.theater.reference_points[point_a]
 
@@ -447,6 +491,23 @@ class OverviewCanvas:
         Y = point_a_img[0] - Y_offset * Y_scale
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
+
+    def _frontline_vector(self, from_cp: ControlPoint, to_cp: ControlPoint):
+        # Cache mechanism to avoid performing frontline vector computation on every frame
+        key = str(from_cp.id) + "_" + str(to_cp.id)
+        if key in self.frontline_vector_cache:
+            return self.frontline_vector_cache[key]
+        else:
+            frontline = Conflict.frontline_vector(from_cp, to_cp, self.game.theater)
+            self.frontline_vector_cache[key] = frontline
+            return frontline
+
+    def _frontline_center(self, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[Point]:
+        frontline_vector = self._frontline_vector(from_cp, to_cp)
+        if frontline_vector:
+            return frontline_vector[0].point_from_heading(frontline_vector[1], frontline_vector[2]/2)
+        else:
+            return None
 
     def _player_color(self):
         return self.game.player == "USA" and self.BLUE or self.RED

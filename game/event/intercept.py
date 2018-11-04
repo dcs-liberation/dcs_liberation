@@ -25,7 +25,7 @@ class InterceptEvent(Event):
                 return "Escort flight"
 
     def _enemy_scramble_multiplier(self) -> float:
-        is_global = self.from_cp.is_global or self.to_cp.is_global
+        is_global = self.departure_cp.is_global or self.to_cp.is_global
         return self.game.settings.multiplier * is_global and 0.5 or 1
 
     @property
@@ -34,7 +34,7 @@ class InterceptEvent(Event):
 
     def is_successfull(self, debriefing: Debriefing):
         units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)
-        if self.from_cp.captured:
+        if self.departure_cp.captured:
             return units_destroyed > 0
         else:
             return units_destroyed == 0
@@ -47,11 +47,11 @@ class InterceptEvent(Event):
                 for _, cp in self.game.theater.conflicts(True):
                     cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:
             # enemy attacking
             if self.is_successfull(debriefing):
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
                 self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
@@ -71,7 +71,7 @@ class InterceptEvent(Event):
         op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
-                                from_cp=self.from_cp,
+                                from_cp=self.departure_cp,
                                 to_cp=self.to_cp)
 
         op.setup(escort=assigned_units_from(escort),
@@ -84,7 +84,7 @@ class InterceptEvent(Event):
     def player_defending(self, flights: db.TaskForceDict):
         assert CAP in flights and len(flights) == 1, "Invalid flights"
 
-        interceptors = self.from_cp.base.scramble_interceptors(self.game.settings.multiplier)
+        interceptors = self.departure_cp.base.scramble_interceptors(self.game.settings.multiplier)
 
         self.transport_unit = random.choice(db.find_unittype(Transport, self.defender_name))
         assert self.transport_unit is not None
@@ -92,7 +92,7 @@ class InterceptEvent(Event):
         op = InterceptOperation(game=self.game,
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
-                                from_cp=self.from_cp,
+                                from_cp=self.departure_cp,
                                 to_cp=self.to_cp)
 
         op.setup(escort=flights[CAP],

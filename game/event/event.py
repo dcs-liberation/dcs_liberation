@@ -22,18 +22,26 @@ class Event:
     informational = False
     is_awacs_enabled = False
     ca_slots = 0
+
+    game = None  # type: Game
+    location = None  # type: Point
+    from_cp = None  # type: ControlPoint
+    departure_cp = None  # type: ControlPoint
+    to_cp = None  # type: ControlPoint
+
     operation = None  # type: Operation
     difficulty = 1  # type: int
-    game = None  # type: Game
     environment_settings = None  # type: EnvironmentSettings
     BONUS_BASE = 5
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
+    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
+        self.game = game
+        self.departure_cp = None
+        self.from_cp = from_cp
+        self.to_cp = target_cp
+        self.location = location
         self.attacker_name = attacker_name
         self.defender_name = defender_name
-        self.to_cp = to_cp
-        self.from_cp = from_cp
-        self.game = game
 
     @property
     def is_player_attacking(self) -> bool:
@@ -44,7 +52,7 @@ class Event:
         if self.attacker_name == self.game.player:
             return self.to_cp
         else:
-            return self.from_cp
+            return self.departure_cp
 
     @property
     def threat_description(self) -> str:
@@ -67,11 +75,17 @@ class Event:
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)
 
-    def player_attacking(self, flights: db.TaskForceDict):
-        assert False
+    def player_attacking(self, cp: ControlPoint, flights: db.TaskForceDict):
+        if self.is_player_attacking:
+            self.departure_cp = cp
+        else:
+            self.to_cp = cp
 
-    def player_defending(self, flights: db.TaskForceDict):
-        assert False
+    def player_defending(self, cp: ControlPoint, flights: db.TaskForceDict):
+        if self.is_player_attacking:
+            self.departure_cp = cp
+        else:
+            self.to_cp = cp
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
@@ -93,7 +107,7 @@ class Event:
     def commit(self, debriefing: Debriefing):
         for country, losses in debriefing.destroyed_units.items():
             if country == self.attacker_name:
-                cp = self.from_cp
+                cp = self.departure_cp
             else:
                 cp = self.to_cp
 
@@ -122,11 +136,12 @@ class UnitsDeliveryEvent(Event):
     units = None  # type: typing.Dict[UnitType, int]
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
-        super(UnitsDeliveryEvent, self).__init__(attacker_name=attacker_name,
-                                                 defender_name=defender_name,
+        super(UnitsDeliveryEvent, self).__init__(game=game,
+                                                 location=to_cp.position,
                                                  from_cp=from_cp,
-                                                 to_cp=to_cp,
-                                                 game=game)
+                                                 target_cp=to_cp,
+                                                 attacker_name=attacker_name,
+                                                 defender_name=defender_name)
 
         self.units = {}
 

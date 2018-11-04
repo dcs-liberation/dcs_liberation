@@ -102,9 +102,5 @@ class ConflictTheater:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
                 yield (cp, connected_point)
 
-                for global_cp in [x for x in self.controlpoints if x.is_global and x.captured == from_player]:
-                    if global_cp.position.distance_to_point(connected_point.position) < GLOBAL_CP_CONFLICT_DISTANCE_MIN:
-                        yield (global_cp, connected_point)
-
     def enemy_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]

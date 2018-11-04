@@ -20,7 +20,7 @@ class EventMenu(Menu):
         self.scramble_entries = {k: {} for k in self.event.tasks}
 
         if self.event.attacker_name == self.game.player:
-            self.base = self.event.from_cp.base
+            self.base = self.event.departure_cp.base
         else:
             self.base = self.event.to_cp.base
 
@@ -195,10 +195,9 @@ class EventMenu(Menu):
                 return
 
         if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
-            if tasks_scramble_counts.get(PinpointStrike, 0) == 0:
-                self.error_label["text"] = "No ground vehicles assigned to attack!"
+            if self.base.total_armor == 0:
+                self.error_label["text"] = "No ground vehicles available to attack!"
                 return
-
 
         if self.game.is_player_attack(self.event):
             self.event.player_attacking(flights)

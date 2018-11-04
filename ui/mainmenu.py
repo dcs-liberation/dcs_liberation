@@ -41,6 +41,7 @@ class MainMenu(Menu):
         column = 0
         row = 0
 
+        """
         def label(text):
             nonlocal row, body
             frame = LabelFrame(body, **STYLES["label-frame"])
@@ -104,6 +105,7 @@ class MainMenu(Menu):
                 label(str(event))
             else:
                 event_button(event)
+        """
 
     def pass_turn(self):
         self.game.pass_turn(no_action=True)
@@ -113,7 +115,7 @@ class MainMenu(Menu):
         ConfigurationMenu(self.window, self, self.game).display()
 
     def start_event(self, event) -> typing.Callable:
-        return lambda: EventMenu(self.window, self, self.game, event).display()
+        EventMenu(self.window, self, self.game, event).display()
 
     def go_cp(self, cp: ControlPoint):
         if not cp.captured:

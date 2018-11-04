@@ -35,6 +35,10 @@ def setup_version_string(str):
     _version_string = str
 
 
+def version_string():
+    return _version_string
+
+
 if "--stdout" in sys.argv:
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 else:
