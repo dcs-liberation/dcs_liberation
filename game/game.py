@@ -51,7 +51,7 @@ Events:
 EVENT_PROBABILITIES = {
     # events always present; only for the player
     FrontlineAttackEvent: [100, 0],
-    FrontlinePatrolEvent: [100, 0],
+    #FrontlinePatrolEvent: [100, 0],
     StrikeEvent: [100, 0],
 
     # events randomly present; only for the player
@@ -169,10 +169,10 @@ class Game:
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
-                if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):
+                if player_probability == 100 or player_probability > 0 and self._roll(player_probability, player_cp.base.strength):
                     self._generate_player_event(event_class, player_cp, enemy_cp)
 
-                if enemy_probability == 100 or self._roll(enemy_probability, enemy_cp.base.strength):
+                if enemy_probability == 100 or  enemy_probability > 0 and self._roll(enemy_probability, enemy_cp.base.strength):
                     self._generate_enemy_event(event_class, player_cp, enemy_cp)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:

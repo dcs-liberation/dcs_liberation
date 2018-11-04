@@ -10,7 +10,10 @@ from ui.styles import STYLES
 from ui.window import *
 
 
-EVENT_DEPARTURE_MAX_DISTANCE = 250000
+EVENT_DEPARTURE_MAX_DISTANCE = 340000
+
+EVENT_COLOR_ATTACK = (100, 100, 255)
+EVENT_COLOR_DEFENSE = (255, 100, 100)
 
 
 class OverviewCanvas:
@@ -30,6 +33,7 @@ class OverviewCanvas:
 
     WIDTH = 1066
     HEIGHT = 600
+    MAP_PADDING = 0
 
     started = None
     ground_assets_icons = None  # type: typing.Dict[str, pygame.Surface]
@@ -170,7 +174,8 @@ class OverviewCanvas:
         pygame.draw.rect(self.map, self.WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
 
         # Create surfaces for drawing
-        self.surface = pygame.Surface((self.map.get_width(), self.map.get_height()))
+        self.surface = pygame.Surface((self.map.get_width() + self.MAP_PADDING * 2,
+                                       self.map.get_height() + self.MAP_PADDING * 2))
         self.surface.set_alpha(None)
         self.overlay = pygame.Surface((self.WIDTH, self.HEIGHT), pygame.SRCALPHA)
 
@@ -190,10 +195,10 @@ class OverviewCanvas:
         self.redraw_required = True
         i = 0
         while not self.exited:
-            self.clock.tick(60)
+            self.clock.tick(30)
             self.draw()
             i += 1
-            if i == 300:
+            if i == 600:
                 self.frontline_vector_cache = {}
                 i = 0
         print("Stopped SDL app")
@@ -248,6 +253,7 @@ class OverviewCanvas:
         if self.redraw_required:
             # Fill
             self.screen.fill(self.BACKGROUND)
+            self.surface.fill(self.BACKGROUND)
             self.overlay.fill(pygame.Color(0, 0, 0, 0))
 
             # Surface
@@ -267,7 +273,7 @@ class OverviewCanvas:
         self.redraw_required = False
 
     def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int), mouse_down: [bool, bool]):
-        self.surface.blit(self.map, (0, 0))
+        self.surface.blit(self.map, (self.MAP_PADDING, self.MAP_PADDING))
 
         # Display zoom level on overlay
         zoom_lvl = self.font.render("  x " + str(self.zoom) + "  ", self.ANTIALIASING, self.WHITE, self.DARK_BLUE)
@@ -436,23 +442,46 @@ class OverviewCanvas:
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def draw_events(self, surface: pygame.Surface, mouse_pos, mouse_down):
-        occupied_rects = [pygame.Rect(*self._transform_point(x.position), 32, 32) for x in self.game.theater.controlpoints]
+        occupied_rects = []
+        for cp in self.game.theater.controlpoints:
+            point = self._transform_point(cp.position)
+            occupied_rects.append(pygame.Rect(point[0] - 16, point[1] - 16, 32, 48))
 
         def _location_to_rect(location: Point) -> pygame.Rect:
             nonlocal occupied_rects
             point = self._transform_point(location)
-            rect = pygame.Rect(*point, 32, 32)
+            rect = pygame.Rect(point[0] - 16, point[1] - 16, 32, 32)
+
             i = 0
-            for occupied_rect in occupied_rects:
-                if rect.colliderect(occupied_rect):
-                    i += 1
-                    if i % 2:
-                        rect.y = occupied_rect.y + occupied_rect.height + 3
-                    else:
-                        rect.x = occupied_rect.x + occupied_rect.width + 3
+            while True:
+                result = True
+                for occupied_rect in occupied_rects:
+                    if rect.colliderect(occupied_rect):
+                        i += 1
+
+                        if i % 2:
+                            rect.y += occupied_rect.height
+                        else:
+                            rect.x += occupied_rect.width
+
+                        result = False
+                        break
+                if result:
+                    break
 
             occupied_rects.append(rect)
             return rect
+
+        def _events_priority_key(event: Event) -> int:
+            priority_list = [InfantryTransportEvent, StrikeEvent, BaseAttackEvent]
+            if type(event) not in priority_list:
+                return 0
+            else:
+                return priority_list.index(type(event)) + 1
+
+        events = self.game.events
+        events.sort(key=_events_priority_key, reverse=True)
+        print(events)
 
         label_to_draw = None
         for event in self.game.events:
@@ -461,7 +490,7 @@ class OverviewCanvas:
                 location = self._frontline_center(event.from_cp, event.to_cp)
 
             rect = _location_to_rect(location)
-            pygame.draw.rect(surface, self.RED, rect)
+            pygame.draw.rect(surface, EVENT_COLOR_ATTACK if event.is_player_attacking else EVENT_COLOR_DEFENSE, rect)
             self.surface.blit(self.event_icons[event.__class__], rect.topleft)
 
             if rect.collidepoint(*mouse_pos) or self.selected_event_info == (event, rect.center):
@@ -510,6 +539,9 @@ class OverviewCanvas:
 
         X = point_b_img[1] + X_offset * X_scale
         Y = point_a_img[0] - Y_offset * Y_scale
+
+        X += self.MAP_PADDING
+        Y += self.MAP_PADDING
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 

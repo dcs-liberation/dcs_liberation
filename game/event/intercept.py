@@ -10,6 +10,11 @@ class InterceptEvent(Event):
 
     transport_unit = None  # type: FlyingType
 
+    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str,
+                 defender_name: str):
+        super().__init__(game, from_cp, target_cp, location, attacker_name, defender_name)
+        self.location = Conflict.intercept_position(self.from_cp, self.to_cp)
+
     def __str__(self):
         return "Air Intercept"
 
@@ -74,7 +79,8 @@ class InterceptEvent(Event):
                                 from_cp=self.departure_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=assigned_units_from(escort),
+        op.setup(location=self.location,
+                 escort=assigned_units_from(escort),
                  transport={self.transport_unit: 1},
                  airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
                  interceptors=flights[CAP])

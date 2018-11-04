@@ -9,6 +9,11 @@ class NavalInterceptEvent(Event):
 
     targets = None  # type: db.ShipDict
 
+    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str,
+                 defender_name: str):
+        super().__init__(game, from_cp, target_cp, location, attacker_name, defender_name)
+        self.location = Conflict.naval_intercept_position(from_cp, target_cp, game.theater)
+
     def _targets_count(self) -> int:
         from gen.conflictgen import IMPORTANCE_LOW
         factor = (self.to_cp.importance - IMPORTANCE_LOW + 0.1) * 20
@@ -83,7 +88,8 @@ class NavalInterceptEvent(Event):
             to_cp=self.to_cp
         )
 
-        op.setup(strikegroup=flights[CAS],
+        op.setup(location=self.location,
+                 strikegroup=flights[CAS],
                  interceptors={},
                  targets=self.targets)
 

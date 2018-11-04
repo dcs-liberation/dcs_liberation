@@ -9,6 +9,7 @@ from dcs.unittype import UnitType
 from game import *
 from theater import *
 from gen.environmentgen import EnvironmentSettings
+from gen.conflictgen import Conflict
 from game.db import assigned_units_from, unitdict_from
 
 from userdata.debriefing import Debriefing
