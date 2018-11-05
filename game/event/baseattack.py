@@ -61,7 +61,8 @@ class BaseAttackEvent(Event):
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 from_cp=self.departure_cp,
+                                 from_cp=self.from_cp,
+                                 departure_cp=self.departure_cp,
                                  to_cp=self.to_cp)
 
         op.setup(cas=assigned_units_from(cas),
@@ -79,7 +80,8 @@ class BaseAttackEvent(Event):
         op = BaseAttackOperation(game=self.game,
                                  attacker_name=self.attacker_name,
                                  defender_name=self.defender_name,
-                                 from_cp=self.departure_cp,
+                                 from_cp=self.from_cp,
+                                 departure_cp=self.departure_cp,
                                  to_cp=self.to_cp)
 
         defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)

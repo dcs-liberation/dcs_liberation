@@ -195,7 +195,7 @@ class EventMenu(Menu):
                 return
 
         if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
-            if self.base.total_armor == 0:
+            if self.event.from_cp.base.total_armor == 0:
                 self.error_label["text"] = "No ground vehicles available to attack!"
                 return
 

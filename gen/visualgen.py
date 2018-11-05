@@ -124,6 +124,17 @@ class VisualGenerator:
                             position=pos)
                         break
 
+    def _generate_stub_planes(self):
+        mission_units = set()
+        for coalition_name, coalition in self.mission.coalition.items():
+            for country in coalition.countries.values():
+                for group in country.plane_group + country.helicopter_group + country.vehicle_group:
+                    for unit in group.units:
+                        mission_units.add(db.unit_type_of(unit))
+
+        for unit_type in mission_units:
+            self.mission.static_group(self.mission.country("USA"), "a", unit_type, Point(0, 0))
+
     def generate_target_smokes(self, target):
         spread = target.size * DESTINATION_SMOKE_DISTANCE_FACTOR
         for _ in range(0, int(target.size * DESTINATION_SMOKE_AMOUNT_FACTOR * (1.1 - target.base.strength))):
@@ -159,3 +170,4 @@ class VisualGenerator:
 
     def generate(self):
         self._generate_frontline_smokes()
+        self._generate_stub_planes()

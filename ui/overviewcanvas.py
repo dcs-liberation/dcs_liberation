@@ -164,7 +164,8 @@ class OverviewCanvas:
                                 InsurgentAttackEvent: "insurgent_attack",
                                 InterceptEvent: "air_intercept",
                                 NavalInterceptEvent: "naval_intercept",
-                                StrikeEvent: "strike"}.items():
+                                StrikeEvent: "strike",
+                                UnitsDeliveryEvent: "delivery"}.items():
             self.event_icons[category] = pygame.image.load(os.path.join("resources", "ui", "events", image + ".png"))
 
 
@@ -473,7 +474,7 @@ class OverviewCanvas:
             return rect
 
         def _events_priority_key(event: Event) -> int:
-            priority_list = [InfantryTransportEvent, StrikeEvent, BaseAttackEvent]
+            priority_list = [InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent]
             if type(event) not in priority_list:
                 return 0
             else:
@@ -481,7 +482,6 @@ class OverviewCanvas:
 
         events = self.game.events
         events.sort(key=_events_priority_key, reverse=True)
-        print(events)
 
         label_to_draw = None
         for event in self.game.events:

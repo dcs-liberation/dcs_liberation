@@ -56,7 +56,8 @@ class InsurgentAttackEvent(Event):
         op = InsurgentAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
-                                      from_cp=self.departure_cp,
+                                      from_cp=self.from_cp,
+                                      departure_cp=self.departure_cp,
                                       to_cp=self.to_cp)
         op.setup(target=self.targets,
                  strikegroup=flights[CAS])

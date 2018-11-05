@@ -235,7 +235,6 @@ SAM_BAN = [
 Units that will always be spawned in the air
 """
 TAKEOFF_BAN = [
-    AV8BNA,  # AI takeoff currently bugged attempting VTOL with no regards for the total weight
 ]
 
 """
