@@ -15,7 +15,7 @@ DEFENDERS_AMOUNT_FACTOR = 4
 
 
 class ConvoyStrikeEvent(Event):
-    SUCCESS_FACTOR = 0.7
+    SUCCESS_FACTOR = 0.6
     STRENGTH_INFLUENCE = 0.25
 
     targets = None  # type: db.ArmorDict

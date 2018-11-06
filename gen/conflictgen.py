@@ -327,11 +327,15 @@ class Conflict:
         if not frontline_position:
             assert False
 
-        heading = _heading_sum(frontline_heading, +45)
-        starting_position = Conflict._find_ground_position(frontline_position.point_from_heading(heading, 15000),
+        heading = frontline_heading
+        starting_position = Conflict._find_ground_position(frontline_position.point_from_heading(heading, 7000),
                                                            GROUND_INTERCEPT_SPREAD,
                                                            _opposite_heading(heading), theater)
-        destination_position = frontline_position
+        if not starting_position:
+            starting_position = frontline_position
+            destination_position = frontline_position
+        else:
+            destination_position = frontline_position
 
         return cls(
             position=destination_position,

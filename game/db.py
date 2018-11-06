@@ -486,6 +486,7 @@ def task_name(task) -> str:
 
 def choose_units(for_task: Task, factor: float, count: int, country: str) -> typing.Collection[UnitType]:
     suitable_unittypes = find_unittype(for_task, country)
+    suitable_unittypes = [x for x in suitable_unittypes if x not in helicopter_map.values()]
     suitable_unittypes.sort(key=lambda x: PRICES[x])
 
     idx = int(len(suitable_unittypes) * factor)

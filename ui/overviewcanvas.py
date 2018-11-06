@@ -33,7 +33,7 @@ class OverviewCanvas:
 
     WIDTH = 1066
     HEIGHT = 600
-    MAP_PADDING = 0
+    MAP_PADDING = 100
 
     started = None
     ground_assets_icons = None  # type: typing.Dict[str, pygame.Surface]
@@ -99,30 +99,15 @@ class OverviewCanvas:
             if self.screen:
                 self.redraw_required = True
                 self.draw()
-
         col = 0
-        Label(self.options, text="Bases", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_bases, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
-                                                                                             sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 3
-        Label(self.options, text="Roads", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_road, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
-                                                                                            sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 3
-        Label(self.options, text="Strike targets", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_ground_targets, **STYLES["radiobutton"]).grid(row=0,
-                                                                                                      column=col + 1,
-                                                                                                      sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 3
-        Label(self.options, text="Forces", **STYLES["widget"]).grid(row=0, column=col, sticky=W)
-        Checkbutton(self.options, variable=self.display_forces, **STYLES["radiobutton"]).grid(row=0, column=col + 1,
-                                                                                              sticky=E)
-        Separator(self.options, orient=VERTICAL).grid(row=0, column=col + 2, sticky=NS)
-        col += 4
-        Button(self.options, text="Toggle size", command=lambda: self.map_size_toggle(), **STYLES["btn-primary"]).grid(row=0, column=col, sticky=E, padx=(10,10))
+        Button(self.options, text="Configuration", command=None, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
+        col += 1
+
+        Label(self.options, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["widget"]).grid(column=col, row=0, sticky=N+EW)
+        col += 1
+
+        Button(self.options, text="Pass turn", command=None, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
+        col += 1
 
     def map_size_toggle(self):
         if self.expanded:
@@ -249,8 +234,8 @@ class OverviewCanvas:
 
         if self.zoom <= 0.5:
             self.zoom = 0.5
-        elif self.zoom > 10:
-            self.zoom = 10
+        elif self.zoom > 3:
+            self.zoom = 3
 
         if self.redraw_required:
             # Fill
@@ -288,16 +273,6 @@ class OverviewCanvas:
         for cp in self.game.theater.controlpoints:
             coords = self._transform_point(cp.position)
 
-            if self.display_ground_targets.get():
-                if cp.captured:
-                    color = self._player_color()
-                else:
-                    color = self._enemy_color()
-                for ground_object in cp.ground_objects:
-                    x, y = self._transform_point(ground_object.position)
-                    pygame.draw.line(surface, color, coords, (x + 8, y + 8), 1)
-                    self.draw_ground_object(ground_object, surface, color, mouse_pos)
-
             if self.display_road.get():
                 for connected_cp in cp.connected_points:
                     connected_coords = self._transform_point(connected_cp.position)
@@ -326,6 +301,10 @@ class OverviewCanvas:
                                                            treshold=60)
 
                         pygame.draw.line(surface, color, start_coords, end_coords, 4)
+
+            if self.display_ground_targets.get():
+                for ground_object in cp.ground_objects:
+                    self.draw_ground_object(ground_object, surface, cp.captured, mouse_pos)
 
         if self.display_bases.get():
             mouse_down = self.draw_bases(mouse_pos, mouse_down)
@@ -367,7 +346,7 @@ class OverviewCanvas:
                 self.draw_base_info(self.overlay, cp, (0, 0))
                 if self.selected_event_info:
                     if self._cp_available_for_selected_event(cp):
-                        pygame.draw.line(self.surface, self.WHITE, point, self.selected_event_info[1])
+                        pygame.draw.line(self.surface, self.WHITE, rect.center, self.selected_event_info[1])
 
             else:
                 self.surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
@@ -424,11 +403,35 @@ class OverviewCanvas:
         surface.blit(aircraft, (pos[0] + 4, 4 + pos[1] + lineheight * 3 + 15))
         surface.blit(aa, (pos[0] + 4, 4 + pos[1] + lineheight * 4 + 20))
 
-    def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, color, mouse_pos):
+    def draw_selected_event_info(self):
+        event = self.selected_event_info[0]
+        title = self.font.render(str(event), self.ANTIALIASING, self.BLACK, self.GREEN)
+        hint = self.font.render("Select CP to depart from.", self.ANTIALIASING, (225, 225, 225), self.BLACK)
+
+        w = hint.get_width()
+        h = title.get_height() + hint.get_height() + 20
+
+        pos = self.overlay.get_width() / 2 - w / 2, self.overlay.get_height() - h
+
+        # Draw frame
+        pygame.draw.rect(self.overlay, self.GREEN, (pos[0], pos[1], w + 8, h + 8))
+        pygame.draw.rect(self.overlay, self.BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
+        pygame.draw.rect(self.overlay, self.GREEN, (pos[0] + 2, pos[1], w + 4, title.get_height() + 4))
+
+        # Title
+        self.overlay.blit(title, (pos[0] + 4, 4 + pos[1]))
+        self.overlay.blit(hint, (pos[0] + 4, 4 + pos[1] + title.get_height() + 5))
+
+    def draw_ground_object(self, ground_object: TheaterGroundObject, surface: pygame.Surface, captured: bool, mouse_pos):
+        if captured:
+            color = self._player_color()
+        else:
+            color = self._enemy_color()
+
         x, y = self._transform_point(ground_object.position)
         rect = pygame.Rect(x, y, 16, 16)
 
-        if ground_object.is_dead:
+        if ground_object.is_dead or captured:
             surface.blit(self.ground_assets_icons["cleared"], (x, y))
         else:
             if ground_object.category in self.ground_assets_icons.keys():
@@ -506,6 +509,9 @@ class OverviewCanvas:
 
         if label_to_draw:
             surface.blit(*label_to_draw)
+
+        if self.selected_event_info:
+            self.draw_selected_event_info()
 
         return mouse_down
 
@@ -588,6 +594,7 @@ class OverviewCanvas:
         return self.game.player == "USA" and self.RED or self.BLUE
 
     def update(self):
+        self.redraw_required = True
         self.draw()
 
     def compute_display_rules(self):

@@ -8,7 +8,7 @@ class StrikeEvent(Event):
     SINGLE_OBJECT_STRENGTH_INFLUENCE = 0.05
 
     def __str__(self):
-        return "Strike"
+        return "Strike / SEAD"
 
     def is_successfull(self, debriefing: Debriefing):
         return True
