@@ -39,7 +39,7 @@ class InsurgentAttackEvent(Event):
         killed_units = sum([v for k, v in debriefing.destroyed_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
         all_units = sum(self.targets.values())
         attackers_success = (float(killed_units) / (all_units + 0.01)) > self.SUCCESS_FACTOR
-        if self.departure_cp.captured:
+        if self.from_cp.captured:
             return attackers_success
         else:
             return not attackers_success

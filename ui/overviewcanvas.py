@@ -162,6 +162,7 @@ class OverviewCanvas:
                                 FrontlineAttackEvent: "attack",
                                 InfantryTransportEvent: "infantry",
                                 InsurgentAttackEvent: "insurgent_attack",
+                                ConvoyStrikeEvent: "convoy",
                                 InterceptEvent: "air_intercept",
                                 NavalInterceptEvent: "naval_intercept",
                                 StrikeEvent: "strike",
@@ -486,7 +487,7 @@ class OverviewCanvas:
         label_to_draw = None
         for event in self.game.events:
             location = event.location
-            if isinstance(event, FrontlinePatrolEvent) or isinstance(event, FrontlineAttackEvent):
+            if type(event) in [FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent]:
                 location = self._frontline_center(event.from_cp, event.to_cp)
 
             rect = _location_to_rect(location)

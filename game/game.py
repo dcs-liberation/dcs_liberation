@@ -56,6 +56,7 @@ EVENT_PROBABILITIES = {
 
     # events randomly present; only for the player
     InfantryTransportEvent: [25, 0],
+    ConvoyStrikeEvent: [25, 0],
 
     # events conditionally present; for both enemy and player
     BaseAttackEvent: [100, 9],
@@ -164,7 +165,7 @@ class Game:
     def _generate_events(self):
         for player_cp, enemy_cp in self.theater.conflicts(True):
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
-                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent]:
+                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent, ConvoyStrikeEvent]:
                     # skip events requiring frontline
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue

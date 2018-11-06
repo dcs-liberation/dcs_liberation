@@ -322,6 +322,31 @@ class Conflict:
         )
 
     @classmethod
+    def convoy_strike_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        frontline_position, frontline_heading, frontline_length = Conflict.frontline_vector(from_cp, to_cp, theater)
+        if not frontline_position:
+            assert False
+
+        heading = _heading_sum(frontline_heading, +45)
+        starting_position = Conflict._find_ground_position(frontline_position.point_from_heading(heading, 15000),
+                                                           GROUND_INTERCEPT_SPREAD,
+                                                           _opposite_heading(heading), theater)
+        destination_position = frontline_position
+
+        return cls(
+            position=destination_position,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker,
+            defenders_side=defender,
+            ground_attackers_location=None,
+            ground_defenders_location=starting_position,
+            air_attackers_location=starting_position.point_from_heading(_opposite_heading(heading), AIR_DISTANCE),
+            air_defenders_location=starting_position.point_from_heading(heading, AIR_DISTANCE),
+        )
+
+    @classmethod
     def frontline_cas_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
         assert cls.has_frontline_between(from_cp, to_cp)
         position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
