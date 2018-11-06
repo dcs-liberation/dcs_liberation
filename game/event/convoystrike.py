@@ -28,6 +28,10 @@ class ConvoyStrikeEvent(Event):
     def tasks(self):
         return [CAS]
 
+    @property
+    def global_cp_available(self) -> bool:
+        return True
+
     def flight_name(self, for_task: typing.Type[Task]) -> str:
         if for_task == CAS:
             return "Strike flight"

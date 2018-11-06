@@ -70,6 +70,10 @@ class Event:
     def ai_banned_tasks(self) -> typing.Collection[typing.Type[Task]]:
         return []
 
+    @property
+    def global_cp_available(self) -> bool:
+        return False
+
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 

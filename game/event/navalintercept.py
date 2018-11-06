@@ -42,6 +42,10 @@ class NavalInterceptEvent(Event):
             s += ", {} aircraft".format(self.departure_cp.base.scramble_count(self.game.settings.multiplier))
         return s
 
+    @property
+    def global_cp_available(self) -> bool:
+        return True
+
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())
         destroyed_targets = 0

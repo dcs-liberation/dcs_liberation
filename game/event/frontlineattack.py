@@ -22,6 +22,10 @@ class FrontlineAttackEvent(Event):
         else:
             return [CAP]
 
+    @property
+    def global_cp_available(self) -> bool:
+        return True
+
     def flight_name(self, for_task: typing.Type[Task]) -> str:
         if for_task == CAS:
             return "CAS flight"

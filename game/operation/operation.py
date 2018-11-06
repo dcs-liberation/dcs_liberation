@@ -55,6 +55,10 @@ class Operation:
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return True
 
+    @property
+    def is_player_attack(self) -> bool:
+        return self.from_cp.captured
+
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
@@ -104,7 +108,10 @@ class Operation:
                                                  at=global_cp.at)
 
             if global_cp == self.departure_cp and not self.is_quick:
-                self.attackers_starting_position = ship
+                if self.to_cp.captured:
+                    self.attackers_starting_position = ship
+                else:
+                    self.defenders_starting_position = ship
 
     def generate(self):
         # air support

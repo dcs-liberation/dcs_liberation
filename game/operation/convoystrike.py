@@ -28,6 +28,9 @@ class ConvoyStrikeOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.strikegroup))
+
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_cas_strikegroup(*assigned_units_split(planes_flights), at=self.attackers_starting_position)
 

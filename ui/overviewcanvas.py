@@ -365,8 +365,9 @@ class OverviewCanvas:
                     self.surface.blit(labelHover, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
                 self.draw_base_info(self.overlay, cp, (0, 0))
-                if self.selected_event_info and cp.captured and self.selected_event_info[0].location.distance_to_point(cp.position) < EVENT_DEPARTURE_MAX_DISTANCE:
-                    pygame.draw.line(self.surface, self.WHITE, point, self.selected_event_info[1])
+                if self.selected_event_info:
+                    if self._cp_available_for_selected_event(cp):
+                        pygame.draw.line(self.surface, self.WHITE, point, self.selected_event_info[1])
 
             else:
                 self.surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
@@ -510,11 +511,14 @@ class OverviewCanvas:
 
     def _selected_cp(self, cp):
         if self.selected_event_info:
-            event = self.selected_event_info[0]
-            event.departure_cp = cp
+            if self._cp_available_for_selected_event(cp):
+                event = self.selected_event_info[0]
+                event.departure_cp = cp
 
-            self.selected_event_info = None
-            self.parent.start_event(event)
+                self.selected_event_info = None
+                self.parent.start_event(event)
+            else:
+                return
         else:
             self.parent.go_cp(cp)
 
@@ -562,6 +566,20 @@ class OverviewCanvas:
             return frontline_vector[0].point_from_heading(frontline_vector[1], frontline_vector[2]/2)
         else:
             return None
+
+    def _cp_available_for_selected_event(self, cp: ControlPoint) -> bool:
+        event = self.selected_event_info[0]
+
+        if not cp.captured:
+            return False
+
+        if event.location.distance_to_point(cp.position) > EVENT_DEPARTURE_MAX_DISTANCE:
+            return False
+
+        if cp.is_global and not event.global_cp_available:
+            return False
+
+        return True
 
     def _player_color(self):
         return self.game.player == "USA" and self.BLUE or self.RED

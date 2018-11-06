@@ -37,6 +37,9 @@ class FrontlineAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.strikegroup))
+
         self.armorgen.generate_vec(self.attackers, self.target)
 
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}

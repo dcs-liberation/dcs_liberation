@@ -37,7 +37,8 @@ class NavalInterceptionOperation(Operation):
         self.initialize(self.current_mission, conflict)
 
     def generate(self):
-        self.prepare_carriers(db.unitdict_from(self.strikegroup))
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.strikegroup))
 
         target_groups = self.shipgen.generate_cargo(units=self.targets)
 

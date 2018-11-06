@@ -37,6 +37,10 @@ class InterceptEvent(Event):
     def threat_description(self):
         return "{} aircraft".format(self.enemy_cp.base.scramble_count(self._enemy_scramble_multiplier(), CAP))
 
+    @property
+    def global_cp_available(self) -> bool:
+        return True
+
     def is_successfull(self, debriefing: Debriefing):
         units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)
         if self.departure_cp.captured:
