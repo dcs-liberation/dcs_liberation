@@ -39,7 +39,6 @@ and prioritization for the enemy (i.e. less important bases will receive units w
 """
 PRICES = {
     # fighter
-    C_101CC: 8,
     MiG_23MLD: 18,
     Su_27: 20,
     Su_33: 22,
@@ -85,14 +84,14 @@ PRICES = {
     C_130: 8,
 
     # armor
-    Armor.APC_BTR_80: 12,
-    Armor.MBT_T_55: 14,
-    Armor.MBT_T_80U: 18,
-    Armor.MBT_T_90: 20,
+    Armor.APC_BTR_80: 16,
+    Armor.MBT_T_55: 22,
+    Armor.MBT_T_80U: 28,
+    Armor.MBT_T_90: 35,
 
-    Armor.ATGM_M1134_Stryker: 12,
-    Armor.MBT_M60A3_Patton: 14,
-    Armor.MBT_M1A2_Abrams: 18,
+    Armor.ATGM_M1134_Stryker: 18,
+    Armor.MBT_M60A3_Patton: 24,
+    Armor.MBT_M1A2_Abrams: 35,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -137,7 +136,6 @@ Following tasks are present:
 """
 UNIT_BY_TASK = {
     CAP: [
-        C_101CC,
         F_5E_3,
         MiG_23MLD,
         Su_27,
@@ -258,7 +256,6 @@ Be advised that putting unit to the country that have not access to the unit in 
 """
 UNIT_BY_COUNTRY = {
     "Russia": [
-        C_101CC,
         AJS37,
         MiG_23MLD,
         F_5E_3,

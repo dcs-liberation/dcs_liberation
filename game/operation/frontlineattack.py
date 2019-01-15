@@ -7,16 +7,24 @@ MAX_DISTANCE_BETWEEN_GROUPS = 12000
 
 
 class FrontlineAttackOperation(Operation):
+    interceptors = None  # type: db.AssignedUnitsDict
+    escort = None  # type: db.AssignedUnitsDict
     strikegroup = None  # type: db.AssignedUnitsDict
+
     attackers = None  # type: db.ArmorDict
-    target = None  # type: db.ArmorDict
+    defenders = None  # type: db.ArmorDict
 
     def setup(self,
-              target: db.ArmorDict,
+              defenders: db.ArmorDict,
               attackers: db.ArmorDict,
-              strikegroup: db.AssignedUnitsDict):
+              strikegroup: db.AssignedUnitsDict,
+              escort: db.AssignedUnitsDict,
+              interceptors: db.AssignedUnitsDict):
         self.strikegroup = strikegroup
-        self.target = target
+        self.escort = escort
+        self.interceptors = interceptors
+
+        self.defenders = defenders
         self.attackers = attackers
 
     def prepare(self, terrain: Terrain, is_quick: bool):
@@ -40,8 +48,10 @@ class FrontlineAttackOperation(Operation):
         if self.is_player_attack:
             self.prepare_carriers(db.unitdict_from(self.strikegroup))
 
-        self.armorgen.generate_vec(self.attackers, self.target)
+        # ground units
+        self.armorgen.generate_vec(self.attackers, self.defenders)
 
+        # strike group w/ heli support
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_cas_strikegroup(*assigned_units_split(planes_flights), at=self.attackers_starting_position)
 
@@ -53,6 +63,10 @@ class FrontlineAttackOperation(Operation):
                 self.airgen.generate_cas_strikegroup(*assigned_units_split(dict),
                                                      at=farp,
                                                      escort=len(planes_flights) == 0)
+
+        self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
+
+        self.airgen.generate_defense(*assigned_units_split(self.interceptors), at=self.defenders_starting_position)
 
         self.briefinggen.title = "Frontline CAS"
         self.briefinggen.description = "Provide CAS for the ground forces attacking enemy lines. Operation will be considered successful if total number of enemy units will be lower than your own by a factor of 1.5 (i.e. with 12 units from both sides, enemy forces need to be reduced to at least 8), meaning that you (and, probably, your wingmans) should concentrate on destroying the enemy units. Target base strength will be lowered as a result. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."

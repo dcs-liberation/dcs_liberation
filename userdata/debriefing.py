@@ -80,7 +80,7 @@ class Debriefing:
             nonlocal dead_units
             object_mission_id = int(object_mission_id_str)
             if object_mission_id in dead_units:
-                logging.info("debriefing: failed to append_dead_object {}: already exists!".format(object_mission_id))
+                logging.error("debriefing: failed to append_dead_object {}: already exists!".format(object_mission_id))
                 return
 
             dead_units.append(object_mission_id)

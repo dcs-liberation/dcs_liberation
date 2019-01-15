@@ -28,7 +28,7 @@ CAP_CAS_DISTANCE = 10000, 120000
 
 GROUND_INTERCEPT_SPREAD = 5000
 GROUND_DISTANCE_FACTOR = 1
-GROUND_DISTANCE = 4000
+GROUND_DISTANCE = 2000
 
 GROUND_ATTACK_DISTANCE = 25000, 13000
 
@@ -219,8 +219,8 @@ class Conflict:
 
             pos = pos.point_from_heading(heading, 500)
 
-        logging.info("Didn't find ground position!")
-        return None
+        logging.error("Didn't find ground position!")
+        return initial
 
     @classmethod
     def capture_conflict(cls, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
@@ -305,7 +305,7 @@ class Conflict:
         initial_location = to_cp.position.random_point_within(*GROUND_ATTACK_DISTANCE)
         position = Conflict._find_ground_position(initial_location, GROUND_INTERCEPT_SPREAD, _heading_sum(heading, 180), theater)
         if not position:
-            heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
+            heading = to_cp.find_radial(to_cp.positioN.heading_between_point(from_cp.position))
             position = to_cp.position.point_from_heading(heading, to_cp.size * GROUND_DISTANCE_FACTOR)
 
         return cls(

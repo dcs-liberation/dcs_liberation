@@ -16,6 +16,7 @@ from userdata.debriefing import Debriefing
 from userdata import persistency
 
 DIFFICULTY_LOG_BASE = 1.1
+EVENT_DEPARTURE_MAX_DISTANCE = 340000
 
 
 class Event:
@@ -73,6 +74,18 @@ class Event:
     @property
     def global_cp_available(self) -> bool:
         return False
+
+    def is_departure_available_from(self, cp: ControlPoint) -> bool:
+        if not cp.captured:
+            return False
+
+        if self.location.distance_to_point(cp.position) > EVENT_DEPARTURE_MAX_DISTANCE:
+            return False
+
+        if cp.is_global and not self.global_cp_available:
+            return False
+
+        return True
 
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)

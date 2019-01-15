@@ -17,23 +17,23 @@ ESCORT_ENGAGEMENT_MAX_DIST = 100000
 WORKAROUND_WAYP_DIST = 1000
 
 WARM_START_HELI_AIRSPEED = 120
-WARM_START_HELI_ALT = 1000
+WARM_START_HELI_ALT = 500
 
 WARM_START_ALTITUDE = 3000
 WARM_START_AIRSPEED = 550
 
-INTERCEPTION_ALT = 3000
 INTERCEPTION_AIRSPEED = 1000
 BARCAP_RACETRACK_DISTANCE = 20000
 
-ATTACK_CIRCLE_ALT = 5000
+ATTACK_CIRCLE_ALT = 1000
 ATTACK_CIRCLE_DURATION = 15
 
-CAS_ALTITUDE = 1000
-RTB_ALTITUDE = 3000
-HELI_ALT = 900
+CAS_ALTITUDE = 800
+RTB_ALTITUDE = 800
+RTB_DISTANCE = 5000
+HELI_ALT = 500
 
-TRANSPORT_LANDING_ALT = 1000
+TRANSPORT_LANDING_ALT = 2000
 
 DEFENCE_ENGAGEMENT_MAX_DISTANCE = 60000
 INTERCEPT_MAX_DISTANCE = 200000
@@ -149,7 +149,7 @@ class AircraftConflictGenerator:
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
 
         logging.info("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
-        return self.m.flight_group(
+        group = self.m.flight_group(
             country=side,
             name=name,
             aircraft_type=unit_type,
@@ -160,6 +160,9 @@ class AircraftConflictGenerator:
             maintask=None,
             start_type=self._start_type(),
             group_size=count)
+
+        group.points[0].alt_type = "RADIO"
+        return group
 
     def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup]) -> FlyingGroup:
         assert count > 0
@@ -197,17 +200,26 @@ class AircraftConflictGenerator:
         else:
             assert False
 
+    def _add_radio_waypoint(self, group: FlyingGroup, position, altitude: int, airspeed: int = 600):
+        point = group.add_waypoint(position, altitude, airspeed)
+        point.alt_type = "RADIO"
+        return point
+
     def _rtb_for(self, group: FlyingGroup, cp: ControlPoint, at: db.StartingPosition = None):
         if not at:
             at = cp.at
+        position = at if isinstance(at, Point) else at.position
 
-        if isinstance(at, Point):
-            group.add_waypoint(at, RTB_ALTITUDE)
-        elif isinstance(at, Group):
-            group.add_waypoint(at.position, RTB_ALTITUDE)
-        elif issubclass(at, Airport):
-            group.add_waypoint(at.position, RTB_ALTITUDE)
+        last_waypoint = group.points[-1]
+        if last_waypoint is not None:
+            heading = position.heading_between_point(last_waypoint.position)
+            tod_location = position.point_from_heading(heading, RTB_DISTANCE)
+            self._add_radio_waypoint(group, tod_location, last_waypoint.alt)
+
+        destination_waypoint = self._add_radio_waypoint(group, position, RTB_ALTITUDE)
+        if isinstance(at, Airport):
             group.land_at(at)
+        return destination_waypoint
 
     def _at_position(self, at) -> Point:
         if isinstance(at, Point):
@@ -244,7 +256,7 @@ class AircraftConflictGenerator:
                 orbit_task = ControlledTask(OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))
                 orbit_task.stop_after_duration(ATTACK_CIRCLE_DURATION * 60)
 
-                orbit_waypoint = group.add_waypoint(self.conflict.position, CAS_ALTITUDE)
+                orbit_waypoint = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE)
                 orbit_waypoint.tasks.append(orbit_task)
                 orbit_waypoint.tasks.append(EngageTargets(max_distance=DEFENCE_ENGAGEMENT_MAX_DISTANCE))
 
@@ -263,9 +275,9 @@ class AircraftConflictGenerator:
                     client_count=client_count,
                     at=at and at or self._group_point(self.conflict.air_attackers_location))
 
-            waypoint = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            waypoint = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             if self.conflict.is_vector:
-                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_AIRSPEED)
+                self._add_radio_waypoint(group, self.conflict.tail, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             group.task = CAS.name
             self._setup_group(group, CAS, client_count)
@@ -312,11 +324,11 @@ class AircraftConflictGenerator:
 
             location = self._group_point(self.conflict.air_defenders_location)
             insertion_point = self.conflict.find_insertion_point(location)
-            waypoint = group.add_waypoint(insertion_point, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            waypoint = self._add_radio_waypoint(group, insertion_point, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             if self.conflict.is_vector:
                 destination_tail = self.conflict.tail.distance_to_point(insertion_point) > self.conflict.position.distance_to_point(insertion_point)
-                group.add_waypoint(destination_tail and self.conflict.tail or self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+                self._add_radio_waypoint(group, destination_tail and self.conflict.tail or self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
 
             group.task = CAS.name
             self._setup_group(group, CAS, client_count)
@@ -336,7 +348,7 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_attackers_location))
 
-            wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            wayp = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             for target_group in target_groups:
                 wayp.tasks.append(AttackGroup(target_group.id))
 
@@ -377,7 +389,7 @@ class AircraftConflictGenerator:
                 at=at and at or self._group_point(self.conflict.air_defenders_location))
 
             group.task = CAP.name
-            wayp = group.add_waypoint(self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
+            wayp = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
             wayp.tasks.append(dcs.task.EngageTargets(max_distance=DEFENCE_ENGAGEMENT_MAX_DISTANCE))
             wayp.tasks.append(dcs.task.OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))
             self._setup_group(group, CAP, client_count)
@@ -393,9 +405,9 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_attackers_location))
 
-            waypoint = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+            waypoint = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
             if self.conflict.is_vector:
-                group.add_waypoint(self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+                self._add_radio_waypoint(group, self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
 
             group.task = CAP.name
             self._setup_group(group, CAP, client_count)
@@ -411,14 +423,14 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=at and at or self._group_point(self.conflict.air_defenders_location))
 
-            waypoint = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+            waypoint = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
             if self.conflict.is_vector:
-                group.add_waypoint(self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
+                self._add_radio_waypoint(group, self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
             else:
                 heading = group.position.heading_between_point(self.conflict.position)
-                waypoint = group.add_waypoint(self.conflict.position.point_from_heading(heading, BARCAP_RACETRACK_DISTANCE),
-                                              WARM_START_ALTITUDE,
-                                              WARM_START_AIRSPEED)
+                waypoint = self._add_radio_waypoint(group, self.conflict.position.point_from_heading(heading, BARCAP_RACETRACK_DISTANCE),
+                                                    WARM_START_ALTITUDE,
+                                                    WARM_START_AIRSPEED)
                 waypoint.tasks.append(OrbitAction(WARM_START_ALTITUDE, WARM_START_AIRSPEED))
 
             group.task = CAP.name
@@ -437,9 +449,11 @@ class AircraftConflictGenerator:
                 client_count=client_count,
                 at=self._group_point(self.conflict.air_defenders_location))
 
-            waypoint = group.add_waypoint(destination.position.random_point_within(0, 0), TRANSPORT_LANDING_ALT)
+            waypoint = self._rtb_for(group, self.conflict.to_cp)
             if escort:
                 self.escort_targets.append((group, group.points.index(waypoint)))
+
+            self._add_radio_waypoint(group, destination.position, RTB_ALTITUDE)
             group.task = Transport.name
             group.land_at(destination)
 
@@ -456,11 +470,11 @@ class AircraftConflictGenerator:
             group.task = CAP.name
             group.points[0].tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
 
-            wayp = group.add_waypoint(self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
+            wayp = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
             wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
             
             if self.conflict.is_vector:
-                group.add_waypoint(self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
+                self._add_radio_waypoint(group, self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
 
             self._setup_group(group, CAP, client_count)
             self._rtb_for(group, self.conflict.from_cp, at)
@@ -476,9 +490,5 @@ class AircraftConflictGenerator:
                 at=at and at or self._group_point(self.conflict.air_attackers_location)
             )
 
-            group.add_waypoint(
-                pos=self.conflict.position,
-                altitude=HELI_ALT,
-            )
-
+            self._add_radio_waypoint(group, self.conflict.position, HELI_ALT)
             self._setup_group(group, Transport, client_count)

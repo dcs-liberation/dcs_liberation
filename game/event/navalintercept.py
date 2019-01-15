@@ -49,7 +49,7 @@ class NavalInterceptEvent(Event):
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())
         destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units[self.defender_name].items():
+        for unit, count in debriefing.destroyed_units.get(self.defender_name, {}).items():
             if unit in self.targets:
                 destroyed_targets += count
 

@@ -10,30 +10,29 @@ from ui.styles import STYLES
 from ui.window import *
 
 
-EVENT_DEPARTURE_MAX_DISTANCE = 340000
-
 EVENT_COLOR_ATTACK = (100, 100, 255)
 EVENT_COLOR_DEFENSE = (255, 100, 100)
+
+RED = (255, 125, 125)
+BRIGHT_RED = (200, 64, 64)
+BLUE = (164, 164, 255)
+DARK_BLUE = (45, 62, 80)
+WHITE = (255, 255, 255)
+GREEN = (128, 186, 128)
+BRIGHT_GREEN = (64, 200, 64)
+BLACK = (0, 0, 0)
+
+BACKGROUND = pygame.Color(0, 64, 64)
+ANTIALIASING = True
+
+WIDTH = 1066
+HEIGHT = 600
+MAP_PADDING = 100
 
 
 class OverviewCanvas:
     mainmenu = None  # type: ui.mainmenu.MainMenu
-
-    BRIGHT_RED = (200, 64, 64)
-    BRIGHT_GREEN = (64, 200, 64)
-
-    RED = (255, 125, 125)
-    BLUE = (164, 164, 255)
-    DARK_BLUE = (45, 62, 80)
-    WHITE = (255, 255, 255)
-    GREEN = (128, 186, 128)
-    BLACK = (0, 0, 0)
-    BACKGROUND = pygame.Color(0, 64, 64)
-    ANTIALIASING = True
-
-    WIDTH = 1066
-    HEIGHT = 600
-    MAP_PADDING = 100
+    budget_label = None  # type: Label
 
     started = None
     ground_assets_icons = None  # type: typing.Dict[str, pygame.Surface]
@@ -84,29 +83,27 @@ class OverviewCanvas:
         self.wrapper.grid(column=0, row=0, sticky=NSEW)  # Adds grid
         self.wrapper.pack(side=LEFT)  # packs window to the left
 
-        self.embed = Frame(self.wrapper, width=self.WIDTH, height=self.HEIGHT, borderwidth=2, **STYLES["frame-wrapper"])
-        self.embed.grid(column=0, row=0, sticky=NSEW)  # Adds grid
+        self.embed = Frame(self.wrapper, width=WIDTH, height=HEIGHT, borderwidth=2, **STYLES["frame-wrapper"])
+        self.embed.grid(column=0, row=1, sticky=NSEW)  # Adds grid
 
         self.options = Frame(self.wrapper, borderwidth=2, **STYLES["frame-wrapper"])
-        self.options.grid(column=0, row=1, sticky=NSEW)
+        self.options.grid(column=0, row=0, sticky=NSEW)
+        self.options.grid_columnconfigure(1, weight=1)
         self.build_map_options_panel()
 
         self.init_sdl_layer()
         self.init_sdl_thread()
 
     def build_map_options_panel(self):
-        def force_redraw():
-            if self.screen:
-                self.redraw_required = True
-                self.draw()
         col = 0
-        Button(self.options, text="Configuration", command=None, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
+        Button(self.options, text="Configuration", command=self.parent.configuration_menu, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
         col += 1
 
-        Label(self.options, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["widget"]).grid(column=col, row=0, sticky=N+EW)
+        self.budget_label = Label(self.options, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["widget"])
+        self.budget_label.grid(column=col, row=0, sticky=N+EW)
         col += 1
 
-        Button(self.options, text="Pass turn", command=None, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
+        Button(self.options, text="Pass turn", command=self.parent.pass_turn, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NW)
         col += 1
 
     def map_size_toggle(self):
@@ -115,8 +112,8 @@ class OverviewCanvas:
             self.options.configure(width=0)
             self.expanded = False
         else:
-            self.embed.configure(width=self.WIDTH)
-            self.options.configure(width=self.WIDTH)
+            self.embed.configure(width=WIDTH)
+            self.options.configure(width=WIDTH)
             self.expanded = True
 
     def on_close(self):
@@ -131,8 +128,8 @@ class OverviewCanvas:
             os.environ['SDL_VIDEODRIVER'] = 'windib'
 
         # Create pygame 'screen'
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
-        self.screen.fill(pygame.Color(*self.BLACK))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
+        self.screen.fill(pygame.Color(*BLACK))
 
         # Load icons resources
         self.ground_assets_icons = {}
@@ -157,14 +154,14 @@ class OverviewCanvas:
 
         # Load the map image
         self.map = pygame.image.load(os.path.join("resources", self.game.theater.overview_image)).convert()
-        pygame.draw.rect(self.map, self.BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
-        pygame.draw.rect(self.map, self.WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
+        pygame.draw.rect(self.map, BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
+        pygame.draw.rect(self.map, WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
 
         # Create surfaces for drawing
-        self.surface = pygame.Surface((self.map.get_width() + self.MAP_PADDING * 2,
-                                       self.map.get_height() + self.MAP_PADDING * 2))
+        self.surface = pygame.Surface((self.map.get_width() + MAP_PADDING * 2,
+                                       self.map.get_height() + MAP_PADDING * 2))
         self.surface.set_alpha(None)
-        self.overlay = pygame.Surface((self.WIDTH, self.HEIGHT), pygame.SRCALPHA)
+        self.overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
         # Init pygame display
         pygame.display.init()
@@ -210,6 +207,10 @@ class OverviewCanvas:
             if event.type == pygame.MOUSEMOTION:
                 self.redraw_required = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                """
+                Due to rendering not really supporting the zoom this is currently disabled.
+                @TODO: improve rendering so zoom would actually make sense
+                
                 # Scroll wheel
                 if event.button == 4:
                     self.zoom += 0.25
@@ -217,6 +218,7 @@ class OverviewCanvas:
                 elif event.button == 5:
                     self.zoom -= 0.25
                     self.redraw_required = True
+                """
 
                 if event.button == 3:
                     right_down = True
@@ -239,8 +241,8 @@ class OverviewCanvas:
 
         if self.redraw_required:
             # Fill
-            self.screen.fill(self.BACKGROUND)
-            self.surface.fill(self.BACKGROUND)
+            self.screen.fill(BACKGROUND)
+            self.surface.fill(BACKGROUND)
             self.overlay.fill(pygame.Color(0, 0, 0, 0))
 
             # Surface
@@ -260,10 +262,10 @@ class OverviewCanvas:
         self.redraw_required = False
 
     def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int), mouse_down: [bool, bool]):
-        self.surface.blit(self.map, (self.MAP_PADDING, self.MAP_PADDING))
+        self.surface.blit(self.map, (MAP_PADDING, MAP_PADDING))
 
         # Display zoom level on overlay
-        zoom_lvl = self.font.render("  x " + str(self.zoom) + "  ", self.ANTIALIASING, self.WHITE, self.DARK_BLUE)
+        zoom_lvl = self.font.render("  x " + str(self.zoom) + "  ", ANTIALIASING, WHITE, DARK_BLUE)
         self.overlay.blit(zoom_lvl, (self.overlay.get_width()-zoom_lvl.get_width()-5,
                                      self.overlay.get_height()-zoom_lvl.get_height()-5))
 
@@ -281,7 +283,7 @@ class OverviewCanvas:
                     elif connected_cp.captured and cp.captured:
                         color = self._player_color()
                     else:
-                        color = self.BLACK
+                        color = BLACK
 
                     pygame.draw.line(surface, color, coords, connected_coords, 2)
 
@@ -325,12 +327,12 @@ class OverviewCanvas:
             else:
                 color = self._enemy_color()
 
-            pygame.draw.circle(self.surface, self.BLACK, (int(coords[0]), int(coords[1])), int(radius))
+            pygame.draw.circle(self.surface, BLACK, (int(coords[0]), int(coords[1])), int(radius))
             pygame.draw.circle(self.surface, color, (int(coords[0]), int(coords[1])), int(radius_m))
 
-            label = self.font.render(cp.name, self.ANTIALIASING, (225, 225, 225), self.BLACK)
-            labelHover = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (128, 186, 128))
-            labelClick = self.font.render(cp.name, self.ANTIALIASING, (255, 255, 255), (122, 122, 255))
+            label = self.font.render(cp.name, ANTIALIASING, (225, 225, 225), BLACK)
+            labelHover = self.font.render(cp.name, ANTIALIASING, (255, 255, 255), (128, 186, 128))
+            labelClick = self.font.render(cp.name, ANTIALIASING, (255, 255, 255), (122, 122, 255))
 
             point =  coords[0] - label.get_width() / 2 + 1, coords[1] + 1
             rect = pygame.Rect(*point, label.get_width(), label.get_height())
@@ -346,56 +348,56 @@ class OverviewCanvas:
                 self.draw_base_info(self.overlay, cp, (0, 0))
                 if self.selected_event_info:
                     if self._cp_available_for_selected_event(cp):
-                        pygame.draw.line(self.surface, self.WHITE, rect.center, self.selected_event_info[1])
+                        pygame.draw.line(self.surface, WHITE, rect.center, self.selected_event_info[1])
 
             else:
                 self.surface.blit(label, (coords[0] - label.get_width() / 2 + 1, coords[1] + 1))
 
             if self.display_forces.get():
                 units_title = " {} / {} / {} ".format(cp.base.total_planes, cp.base.total_armor, cp.base.total_aa)
-                label2 = self.fontsmall.render(units_title, self.ANTIALIASING, color, (30, 30, 30))
+                label2 = self.fontsmall.render(units_title, ANTIALIASING, color, (30, 30, 30))
                 self.surface.blit(label2, (coords[0] - label2.get_width() / 2, coords[1] + label.get_height() + 1))
 
         return mouse_down
 
     def draw_base_info(self, surface: pygame.Surface, control_point: ControlPoint, pos):
-        title = self.font.render(control_point.name, self.ANTIALIASING, self.BLACK, self.GREEN)
-        hp = self.font.render("Strength : ", self.ANTIALIASING, (225, 225, 225), self.BLACK)
+        title = self.font.render(control_point.name, ANTIALIASING, BLACK, GREEN)
+        hp = self.font.render("Strength : ", ANTIALIASING, (225, 225, 225), BLACK)
 
         armor_txt = "ARMOR      >    "
         for key, value in control_point.base.armor.items():
             armor_txt += key.id + " x " + str(value) + " | "
-        armor = self.font.render(armor_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+        armor = self.font.render(armor_txt, ANTIALIASING, (225, 225, 225), BLACK)
 
         aircraft_txt = "AIRCRAFT >    "
         for key, value in control_point.base.aircraft.items():
             aircraft_txt += key.id + " x " + str(value) + " | "
-        aircraft = self.font.render(aircraft_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+        aircraft = self.font.render(aircraft_txt, ANTIALIASING, (225, 225, 225), BLACK)
 
         aa_txt = "AA/SAM       >    "
         for key, value in control_point.base.aa.items():
             aa_txt += key.id + " x " + str(value) + " | "
-        aa = self.font.render(aa_txt, self.ANTIALIASING, (225, 225, 225), self.BLACK)
+        aa = self.font.render(aa_txt, ANTIALIASING, (225, 225, 225), BLACK)
 
         lineheight = title.get_height()
         w = max([max([a.get_width() for a in [title, armor, aircraft, aa]]), 150])
         h = 5 * lineheight + 4 * 5
 
         # Draw frame
-        pygame.draw.rect(surface, self.GREEN, (pos[0], pos[1], w + 8, h + 8))
-        pygame.draw.rect(surface, self.BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
-        pygame.draw.rect(surface, self.GREEN, (pos[0] + 2, pos[1], w + 4, lineheight + 4))
+        pygame.draw.rect(surface, GREEN, (pos[0], pos[1], w + 8, h + 8))
+        pygame.draw.rect(surface, BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
+        pygame.draw.rect(surface, GREEN, (pos[0] + 2, pos[1], w + 4, lineheight + 4))
 
         # Title
         surface.blit(title, (pos[0] + 4, 4 + pos[1]))
         surface.blit(hp, (pos[0] + 4, 4 + pos[1] + lineheight + 5))
 
         # Draw gauge
-        pygame.draw.rect(surface, self.WHITE,
+        pygame.draw.rect(surface, WHITE,
                          (pos[0] + hp.get_width() + 3, 4 + pos[1] + lineheight + 5, 54, lineheight))
-        pygame.draw.rect(surface, self.BRIGHT_RED,
+        pygame.draw.rect(surface, BRIGHT_RED,
                          (pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50, lineheight - 4))
-        pygame.draw.rect(surface, self.BRIGHT_GREEN, (
+        pygame.draw.rect(surface, BRIGHT_GREEN, (
             pos[0] + hp.get_width() + 5, 4 + pos[1] + lineheight + 5 + 2, 50 * control_point.base.strength, lineheight - 4))
 
         # Text
@@ -405,8 +407,8 @@ class OverviewCanvas:
 
     def draw_selected_event_info(self):
         event = self.selected_event_info[0]
-        title = self.font.render(str(event), self.ANTIALIASING, self.BLACK, self.GREEN)
-        hint = self.font.render("Select CP to depart from.", self.ANTIALIASING, (225, 225, 225), self.BLACK)
+        title = self.font.render(str(event), ANTIALIASING, BLACK, GREEN)
+        hint = self.font.render("Select CP to depart from.", ANTIALIASING, (225, 225, 225), BLACK)
 
         w = hint.get_width()
         h = title.get_height() + hint.get_height() + 20
@@ -414,9 +416,9 @@ class OverviewCanvas:
         pos = self.overlay.get_width() / 2 - w / 2, self.overlay.get_height() - h
 
         # Draw frame
-        pygame.draw.rect(self.overlay, self.GREEN, (pos[0], pos[1], w + 8, h + 8))
-        pygame.draw.rect(self.overlay, self.BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
-        pygame.draw.rect(self.overlay, self.GREEN, (pos[0] + 2, pos[1], w + 4, title.get_height() + 4))
+        pygame.draw.rect(self.overlay, GREEN, (pos[0], pos[1], w + 8, h + 8))
+        pygame.draw.rect(self.overlay, BLACK, (pos[0] + 2, pos[1] + 2, w + 4, h + 4))
+        pygame.draw.rect(self.overlay, GREEN, (pos[0] + 2, pos[1], w + 4, title.get_height() + 4))
 
         # Title
         self.overlay.blit(title, (pos[0] + 4, 4 + pos[1]))
@@ -444,7 +446,7 @@ class OverviewCanvas:
             self.draw_ground_object_info(ground_object, (x, y), color, surface)
 
     def draw_ground_object_info(self, ground_object: TheaterGroundObject, pos, color, surface: pygame.Surface):
-        lb = self.font.render(str(ground_object), self.ANTIALIASING, color, self.BLACK)
+        lb = self.font.render(str(ground_object), ANTIALIASING, color, BLACK)
         surface.blit(lb, (pos[0] + 18, pos[1]))
 
     def draw_events(self, surface: pygame.Surface, mouse_pos, mouse_down):
@@ -500,7 +502,7 @@ class OverviewCanvas:
 
             if rect.collidepoint(*mouse_pos) or self.selected_event_info == (event, rect.center):
                 if not label_to_draw:
-                    label_to_draw = self.font.render(str(event), self.ANTIALIASING, self.WHITE, self.BLACK), rect.center
+                    label_to_draw = self.font.render(str(event), ANTIALIASING, WHITE, BLACK), rect.center
 
             if rect.collidepoint(*mouse_pos):
                 if mouse_down[0]:
@@ -517,7 +519,7 @@ class OverviewCanvas:
 
     def _selected_cp(self, cp):
         if self.selected_event_info:
-            if self._cp_available_for_selected_event(cp):
+            if self. _cp_available_for_selected_event(cp):
                 event = self.selected_event_info[0]
                 event.departure_cp = cp
 
@@ -551,8 +553,8 @@ class OverviewCanvas:
         X = point_b_img[1] + X_offset * X_scale
         Y = point_a_img[0] - Y_offset * Y_scale
 
-        X += self.MAP_PADDING
-        Y += self.MAP_PADDING
+        X += MAP_PADDING
+        Y += MAP_PADDING
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 
@@ -575,27 +577,18 @@ class OverviewCanvas:
 
     def _cp_available_for_selected_event(self, cp: ControlPoint) -> bool:
         event = self.selected_event_info[0]
-
-        if not cp.captured:
-            return False
-
-        if event.location.distance_to_point(cp.position) > EVENT_DEPARTURE_MAX_DISTANCE:
-            return False
-
-        if cp.is_global and not event.global_cp_available:
-            return False
-
-        return True
+        return event.is_departure_available_from(cp)
 
     def _player_color(self):
-        return self.game.player == "USA" and self.BLUE or self.RED
+        return self.game.player == "USA" and BLUE or RED
 
     def _enemy_color(self):
-        return self.game.player == "USA" and self.RED or self.BLUE
+        return self.game.player == "USA" and RED or BLUE
 
     def update(self):
         self.redraw_required = True
         self.draw()
+        self.budget_label.text = "Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)
 
     def compute_display_rules(self):
         return sum([1 if a.get() else 0 for a in [self.display_forces, self.display_road, self.display_bases, self.display_ground_targets]])

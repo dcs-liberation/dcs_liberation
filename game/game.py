@@ -43,19 +43,18 @@ Events:
 * BaseAttackEvent - capture base
 * InterceptEvent - air intercept
 * FrontlineAttackEvent - frontline attack
-* FrontlineCAPEvent - frontline attack
 * NavalInterceptEvent - naval intercept
 * StrikeEvent - strike event
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
     # events always present; only for the player
-    FrontlineAttackEvent: [100, 0],
+    FrontlineAttackEvent: [100, 9],
     #FrontlinePatrolEvent: [100, 0],
     StrikeEvent: [100, 0],
 
     # events randomly present; only for the player
-    InfantryTransportEvent: [25, 0],
+    #InfantryTransportEvent: [25, 0],
     ConvoyStrikeEvent: [25, 0],
 
     # events conditionally present; for both enemy and player
@@ -163,6 +162,8 @@ class Game:
         self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy, self.player))
 
     def _generate_events(self):
+        strikes_generated_for = set()
+
         for player_cp, enemy_cp in self.theater.conflicts(True):
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
                 if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent, ConvoyStrikeEvent]:
@@ -170,8 +171,15 @@ class Game:
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
+                if event_class in [StrikeEvent]:
+                    # don't generate multiple 100% strike events from each attack direction
+                    if enemy_cp in strikes_generated_for:
+                        continue
+
                 if player_probability == 100 or player_probability > 0 and self._roll(player_probability, player_cp.base.strength):
                     self._generate_player_event(event_class, player_cp, enemy_cp)
+                    if event_class in [StrikeEvent]:
+                        strikes_generated_for.add(enemy_cp)
 
                 if enemy_probability == 100 or  enemy_probability > 0 and self._roll(enemy_probability, enemy_cp.base.strength):
                     self._generate_enemy_event(event_class, player_cp, enemy_cp)

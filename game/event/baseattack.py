@@ -25,8 +25,8 @@ class BaseAttackEvent(Event):
             return "Ground attack"
 
     def is_successfull(self, debriefing: Debriefing):
-        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
-        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
+        alive_attackers = sum([v for k, v in debriefing.alive_units.get(self.attacker_name, {}).items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units.get(self.defender_name, {}).items() if db.unit_task(k) == PinpointStrike])
         attackers_success = alive_attackers >= alive_defenders
         if self.departure_cp.captured:
             return attackers_success
