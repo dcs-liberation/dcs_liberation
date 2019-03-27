@@ -76,10 +76,13 @@ def generate_groundobjects(theater: ConflictTheater):
         if cp.is_global:
             continue
 
-        amount = random.randrange(5, 7)
+        if not cp.has_frontline:
+            continue
+
+        amount = random.randrange(5, 6)
         for i in range(0, amount):
             available_categories = list(tpls)
-            if i >= amount - 2:
+            if i >= amount - 1:
                 tpl_category = "aa"
             else:
                 tpl_category = random.choice(available_categories)

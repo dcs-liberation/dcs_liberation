@@ -108,7 +108,7 @@ class Operation:
                                                  at=global_cp.at)
 
             if global_cp == self.departure_cp and not self.is_quick:
-                if self.to_cp.captured:
+                if not self.to_cp.captured:
                     self.attackers_starting_position = ship
                 else:
                     self.defenders_starting_position = ship

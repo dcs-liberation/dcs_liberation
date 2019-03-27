@@ -344,6 +344,7 @@ UNIT_BY_COUNTRY = {
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
+    F_14B: CVN_74_John_C__Stennis,
     Ka_50: LHA_1_Tarawa,
     SA342M: LHA_1_Tarawa,
     UH_1H: LHA_1_Tarawa,

@@ -49,8 +49,8 @@ class AirSupportConflictGenerator:
             )
 
             tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=97 + i, unit_id=tanker_group.id, aa=False))
-            tanker_group.tasks.append(SetInvisibleCommand(True))
-            tanker_group.tasks.append(SetImmortalCommand(True))
+            tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
+            tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
         if is_awacs_enabled:
             awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]
@@ -65,5 +65,5 @@ class AirSupportConflictGenerator:
                 start_type=StartType.Warm,
             )
 
-            awacs_flight.tasks.append(SetInvisibleCommand(True))
-            awacs_flight.tasks.append(SetImmortalCommand(True))
+            awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
+            awacs_flight.points[0].tasks.append(SetImmortalCommand(True))

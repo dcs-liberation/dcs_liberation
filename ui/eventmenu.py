@@ -194,14 +194,19 @@ class EventMenu(Menu):
                 self.error_label["text"] = "Need at least one player in flight {}".format(self.event.flight_name(task))
                 return
 
-        if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
-            if self.event.from_cp.base.total_armor == 0:
-                self.error_label["text"] = "No ground vehicles available to attack!"
-                return
-
         if self.game.is_player_attack(self.event):
+            if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
+                if self.event.from_cp.base.total_armor == 0:
+                    self.error_label["text"] = "No ground vehicles available to attack!"
+                    return
+
             self.event.player_attacking(flights)
         else:
+            if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
+                if self.event.to_cp.base.total_armor == 0:
+                    self.error_label["text"] = "No ground vehicles available to defend!"
+                    return
+
             self.event.player_defending(flights)
 
         self.game.initiate_event(self.event)

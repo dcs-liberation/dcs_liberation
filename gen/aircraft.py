@@ -69,9 +69,15 @@ class AircraftConflictGenerator:
             else:
                 client_count = 0
 
+            if flying_type == F_14B:
+                # workaround since 2 and 3 tomcat collide on carrier
+                group_size = 2
+            else:
+                group_size = 4
+
             while count > 0:
-                group_size = min(count, 4)
-                client_size = max(min(client_count, 4), 0)
+                group_size = min(count, group_size)
+                client_size = max(min(client_count, group_size), 0)
 
                 yield (flying_type, group_size, client_size)
                 count -= group_size
@@ -183,7 +189,9 @@ class AircraftConflictGenerator:
             return self._generate_inflight(name, side, unit_type, count, client_count, at)
         elif isinstance(at, Group):
             takeoff_ban = unit_type in db.CARRIER_TAKEOFF_BAN
-            if not takeoff_ban:
+            ai_ban = client_count == 0 and self.settings.only_player_takeoff
+
+            if not takeoff_ban and not ai_ban:
                 return self._generate_at_group(name, side, unit_type, count, client_count, at)
             else:
                 return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
