@@ -53,10 +53,18 @@ class ConflictTheater:
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str
     landmap = None  # type: landmap.Landmap
+    """
+    land_poly = None  # type: Polygon
+    """
     daytime_map = None  # type: typing.Dict[str, typing.Tuple[int, int]]
 
     def __init__(self):
         self.controlpoints = []
+        """
+        self.land_poly = geometry.Polygon(self.landmap[0][0])
+        for x in self.landmap[1]:
+            self.land_poly = self.land_poly.difference(geometry.Polygon(x))
+        """
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
         for connected_point in connected_to:

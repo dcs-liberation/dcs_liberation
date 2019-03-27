@@ -111,7 +111,7 @@ class Game:
             # skip naval events for non-coastal CPs
             return
 
-        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
+        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD and self.settings.version != "dev":
             # skip base attack events for CPs yet too strong
             return
 
@@ -163,6 +163,7 @@ class Game:
 
     def _generate_events(self):
         strikes_generated_for = set()
+        base_attack_generated_for = set()
 
         for player_cp, enemy_cp in self.theater.conflicts(True):
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
@@ -171,15 +172,20 @@ class Game:
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
-                if event_class in [StrikeEvent]:
-                    # don't generate multiple 100% strike events from each attack direction
+                # don't generate multiple 100% events from each attack direction
+                if event_class is StrikeEvent:
                     if enemy_cp in strikes_generated_for:
+                        continue
+                if event_class is BaseAttackEvent:
+                    if enemy_cp in base_attack_generated_for:
                         continue
 
                 if player_probability == 100 or player_probability > 0 and self._roll(player_probability, player_cp.base.strength):
                     self._generate_player_event(event_class, player_cp, enemy_cp)
-                    if event_class in [StrikeEvent]:
+                    if event_class is StrikeEvent:
                         strikes_generated_for.add(enemy_cp)
+                    if event_class is BaseAttackEvent:
+                        base_attack_generated_for.add(enemy_cp)
 
                 if enemy_probability == 100 or  enemy_probability > 0 and self._roll(enemy_probability, enemy_cp.base.strength):
                     self._generate_enemy_event(event_class, player_cp, enemy_cp)

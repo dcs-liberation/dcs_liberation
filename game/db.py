@@ -39,11 +39,11 @@ and prioritization for the enemy (i.e. less important bases will receive units w
 """
 PRICES = {
     # fighter
-    MiG_23MLD: 18,
-    Su_27: 20,
+    MiG_23MLD: 13,
+    Su_27: 18,
     Su_33: 22,
-    MiG_29A: 23,
-    MiG_29S: 25,
+    MiG_29A: 18,
+    MiG_29S: 20,
 
     F_5E_3: 6,
     MiG_15bis: 5,
@@ -54,6 +54,7 @@ PRICES = {
     M_2000C: 13,
     FA_18C_hornet: 18,
     F_15C: 20,
+    F_14B: 14,
 
     # bomber
     Su_25: 15,
@@ -145,6 +146,7 @@ UNIT_BY_TASK = {
         MiG_29S,
         FA_18C_hornet,
         F_15C,
+        F_14B,
         M_2000C,
     ],
     CAS: [
@@ -304,6 +306,7 @@ UNIT_BY_COUNTRY = {
     "USA": [
         F_5E_3,
         F_15C,
+        F_14B,
         FA_18C_hornet,
         AJS37,
         M_2000C,
@@ -367,8 +370,16 @@ Payload will be used for operation of following type, "*" category will be used 
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        Escort: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
         PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
         AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+    },
+
+    F_14B: {
+        CAP: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
+        Escort: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
+        CAS: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
+        GroundAttack: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
     },
 
     Su_25T: {
@@ -377,6 +388,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     Su_33: {
         CAP: "R-73*4,R-27R*2,R-27ER*6",
+        Escort: "R-73*4,R-27R*2,R-27ER*6",
     },
 
     AJS37: {
@@ -399,6 +411,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     M_2000C: {
         CAP: "Combat Air Patrol",
+        Escort: "Combat Air Patrol",
         GroundAttack: "MK-82S Heavy Strike",
     },
 

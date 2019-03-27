@@ -52,9 +52,7 @@ w = ui.window.Window()
 try:
     game = persistency.restore_game()
     if not game or not is_version_compatible(game.settings.version):
-        new_game_menu = None  # type: NewGameMenu
-        new_game_menu = ui.newgamemenu.NewGameMenu(w, w.start_new_game)
-        new_game_menu.display()
+        ui.newgamemenu.NewGameMenu(w, w.start_new_game).display()
     else:
         game.settings.version = VERSION_STRING
         proceed_to_main_menu(game)

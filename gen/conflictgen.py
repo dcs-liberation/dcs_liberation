@@ -162,6 +162,8 @@ class Conflict:
 
         strength_delta = (from_cp.base.strength - to_cp.base.strength) / 1.0
         position = middle_point.point_from_heading(attack_heading, strength_delta * attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE)
+        return position, _opposite_heading(attack_heading)
+
         ground_position = cls._find_ground_position(position, attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE, attack_heading, theater)
         if ground_position:
             return ground_position, _opposite_heading(attack_heading)
@@ -172,6 +174,23 @@ class Conflict:
 
     @classmethod
     def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> typing.Optional[typing.Tuple[Point, int, int]]:
+        initial, heading = cls.frontline_position(theater, from_cp, to_cp)
+
+        """
+        probe_end_point = initial.point_from_heading(heading, FRONTLINE_LENGTH)
+        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y) ])
+        intersection = probe.intersection(theater.land_poly)
+
+        if isinstance(intersection, geometry.LineString):
+            intersection = intersection
+        elif isinstance(intersection, geometry.MultiLineString):
+            intersection = intersection.geoms[0]
+        else:
+            print(intersection)
+            return None
+
+        return Point(*intersection.xy[0]), _heading_sum(heading, 90), intersection.length
+        """
         frontline = cls.frontline_position(theater, from_cp, to_cp)
         if not frontline:
             return None
@@ -207,8 +226,20 @@ class Conflict:
                 pos = new_pos
             else:
                 return pos
-
         return pos
+
+        """
+        probe_end_point = initial.point_from_heading(heading, max_distance)
+        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y)])
+
+        intersection = probe.intersection(theater.land_poly)
+        if intersection is geometry.LineString:
+            return Point(*intersection.xy[1])
+        elif intersection is geometry.MultiLineString:
+            return Point(*intersection.geoms[0].xy[1])
+
+        return None
+        """
 
     @classmethod
     def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> typing.Optional[Point]:
@@ -218,8 +249,18 @@ class Conflict:
                 return pos
 
             pos = pos.point_from_heading(heading, 500)
+        """
+        probe_end_point = initial.point_from_heading(heading, max_distance)
+        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y) ])
 
-        logging.error("Didn't find ground position!")
+        intersection = probe.intersection(theater.land_poly)
+        if isinstance(intersection, geometry.LineString):
+            return Point(*intersection.xy[1])
+        elif isinstance(intersection, geometry.MultiLineString):
+            return Point(*intersection.geoms[0].xy[1])
+        """
+
+        logging.error("Didn't find ground position ({})!".format(initial))
         return initial
 
     @classmethod
@@ -305,7 +346,7 @@ class Conflict:
         initial_location = to_cp.position.random_point_within(*GROUND_ATTACK_DISTANCE)
         position = Conflict._find_ground_position(initial_location, GROUND_INTERCEPT_SPREAD, _heading_sum(heading, 180), theater)
         if not position:
-            heading = to_cp.find_radial(to_cp.positioN.heading_between_point(from_cp.position))
+            heading = to_cp.find_radial(to_cp.position.heading_between_point(from_cp.position))
             position = to_cp.position.point_from_heading(heading, to_cp.size * GROUND_DISTANCE_FACTOR)
 
         return cls(

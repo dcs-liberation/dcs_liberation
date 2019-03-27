@@ -20,7 +20,7 @@ class Window:
     def __init__(self):
         self.tk = Tk()
         self.tk.title("DCS Liberation")
-        self.tk.iconbitmap("icon.ico")
+        self.tk.iconbitmap("resources/icon.ico")
         self.tk.resizable(False, False)
         self.tk.grid_columnconfigure(0, weight=1)
         self.tk.grid_rowconfigure(0, weight=1)
@@ -44,7 +44,7 @@ class Window:
         helpmenu.add_separator()
         helpmenu.add_command(label="Contribute", command=lambda: webbrowser.open_new_tab("https://github.com/shdwp/dcs_liberation"))
         helpmenu.add_command(label="Forum Thread", command=lambda: webbrowser.open_new_tab("https://forums.eagle.ru/showthread.php?t=214834"))
-        helpmenu.add_command(label="Report an issue", command=lambda: webbrowser.open_new_tab("https://github.com/shdwp/dcs_liberation/issues"))
+        helpmenu.add_command(label="Report an issue", command=self.report_issue)
         menubar.add_cascade(label="Help", menu=helpmenu)
 
         self.tk.config(menu=menubar)
@@ -132,6 +132,9 @@ class Window:
             self.proceed_to_new_game_menu()
         else:
             pass
+
+    def report_issue(self):
+        raise logging_module.ShowLogsException()
 
     def exit(self):
         self.tk.destroy()
