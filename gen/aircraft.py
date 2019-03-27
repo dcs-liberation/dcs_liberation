@@ -309,6 +309,7 @@ class AircraftConflictGenerator:
 
             for name, pos in targets:
                 waypoint = group.add_waypoint(pos, 0, WARM_START_AIRSPEED, self.m.translation.create_string(name))
+                waypoint.tasks.append(Bombing(pos, attack_qty=2))
                 if escort_until_waypoint is None:
                     escort_until_waypoint = waypoint
 
@@ -316,6 +317,32 @@ class AircraftConflictGenerator:
             self._setup_group(group, GroundAttack, client_count)
             if escort:
                 self.escort_targets.append((group, group.points.index(escort_until_waypoint)))
+            self._rtb_for(group, self.conflict.from_cp, at)
+
+    def generate_sead_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition, escort=True):
+        assert not escort or len(self.escort_targets) == 0
+
+        for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):
+            group = self._generate_group(
+                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
+                side=self.conflict.attackers_side,
+                unit_type=flying_type,
+                count=count,
+                client_count=client_count,
+                at=at and at or self._group_point(self.conflict.air_attackers_location))
+
+            escort_until_waypoint = None
+
+            for name, pos in targets:
+                waypoint = group.add_waypoint(pos, 0, WARM_START_AIRSPEED, self.m.translation.create_string(name))
+                if escort_until_waypoint is None:
+                    escort_until_waypoint = waypoint
+
+            group.task = SEAD.name
+            self._setup_group(group, SEAD, client_count)
+            if escort:
+                self.escort_targets.append((group, group.points.index(escort_until_waypoint)))
+
             self._rtb_for(group, self.conflict.from_cp, at)
 
     def generate_defenders_cas(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None, escort=True):

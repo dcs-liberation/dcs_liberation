@@ -380,7 +380,7 @@ PLANE_PAYLOAD_OVERRIDES = {
         CAP: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
         Escort: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
         CAS: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
-        GroundAttack: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
+        GroundAttack: "AIM54, AIM-9M*2, XT*2, GBU-12*4, LANTIRN",
     },
 
     Su_25T: {

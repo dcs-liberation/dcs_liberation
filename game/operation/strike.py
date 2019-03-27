@@ -5,6 +5,7 @@ from .operation import *
 
 class StrikeOperation(Operation):
     strikegroup = None  # type: db.AssignedUnitsDict
+    sead = None  # type: db.AssignedUnitsDict
     escort = None  # type: db.AssignedUnitsDict
     interceptors = None  # type: db.AssignedUnitsDict
 
@@ -12,9 +13,11 @@ class StrikeOperation(Operation):
 
     def setup(self,
               strikegroup: db.AssignedUnitsDict,
+              sead: db.AssignedUnitsDict,
               escort: db.AssignedUnitsDict,
               interceptors: db.AssignedUnitsDict):
         self.strikegroup = strikegroup
+        self.sead = sead
         self.escort = escort
         self.interceptors = interceptors
 
@@ -40,8 +43,10 @@ class StrikeOperation(Operation):
         self.prepare_carriers(db.unitdict_merge(db.unitdict_from(self.strikegroup), db.unitdict_from(self.escort)))
 
         targets = []  # type: typing.List[typing.Tuple[str, str, Point]]
+        sead_targets = []  # type: typing.List[typing.Tuple[str, str, Point]]
         category_counters = {}  # type: typing.Dict[str, int]
         processed_groups = []
+
         for object in self.to_cp.ground_objects:
             if object.group_identifier in processed_groups:
                 continue
@@ -49,6 +54,10 @@ class StrikeOperation(Operation):
             processed_groups.append(object.group_identifier)
             category_counters[object.category] = category_counters.get(object.category, 0) + 1
             markpoint_name = "{}{}".format(object.name_abbrev, category_counters[object.category])
+
+            if object.category == "aa":
+                sead_targets.append((str(object), markpoint_name, object.position))
+
             targets.append((str(object), markpoint_name, object.position))
 
         targets.sort(key=lambda x: self.from_cp.position.distance_to_point(x[2]))
@@ -59,7 +68,13 @@ class StrikeOperation(Operation):
         planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
         self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(planes_flights),
                                                        targets=[(mp, pos) for (n, mp, pos) in targets],
-                                                       at=self.attackers_starting_position)
+                                                       at=self.attackers_starting_position,
+                                                       escort=True)
+
+        self.airgen.generate_sead_strikegroup(*assigned_units_split(self.sead),
+                                              targets=[(mp, pos) for (n, mp, pos) in sead_targets],
+                                              at=self.attackers_starting_position,
+                                              escort=False)
 
         heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
         if heli_flights:

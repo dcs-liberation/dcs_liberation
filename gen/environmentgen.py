@@ -26,9 +26,9 @@ WEATHER_FOG_VISIBILITY = 2500, 5000
 WEATHER_FOG_THICKNESS = 100, 500
 
 RANDOM_TIME = {
-    "night": 5,
-    "dusk": 30,
-    "dawn": 30,
+    "night": 7,
+    "dusk": 40,
+    "dawn": 40,
     "day": 100,
 }
 

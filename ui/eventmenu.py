@@ -194,6 +194,11 @@ class EventMenu(Menu):
                 self.error_label["text"] = "Need at least one player in flight {}".format(self.event.flight_name(task))
                 return
 
+        for task in self.event.player_banned_tasks:
+            if tasks_clients_counts.get(task, 0) != 0:
+                self.error_label["text"] = "Players are not allowed on flight {}".format(self.event.flight_name(task))
+                return
+
         if self.game.is_player_attack(self.event):
             if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
                 if self.event.from_cp.base.total_armor == 0:

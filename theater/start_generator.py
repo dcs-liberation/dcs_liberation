@@ -79,7 +79,7 @@ def generate_groundobjects(theater: ConflictTheater):
         if not cp.has_frontline:
             continue
 
-        amount = random.randrange(5, 6)
+        amount = random.randrange(5, 7)
         for i in range(0, amount):
             available_categories = list(tpls)
             if i >= amount - 1:

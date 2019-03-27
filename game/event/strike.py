@@ -20,13 +20,17 @@ class StrikeEvent(Event):
     @property
     def tasks(self):
         if self.is_player_attacking:
-            return [CAP, CAS]
+            return [CAP, CAS, SEAD]
         else:
             return [CAP]
 
     @property
     def ai_banned_tasks(self):
         return [CAS]
+
+    @property
+    def player_banned_tasks(self):
+        return [SEAD]
 
     @property
     def global_cp_available(self) -> bool:
@@ -38,6 +42,8 @@ class StrikeEvent(Event):
                 return "Escort flight"
             else:
                 return "CAP flight"
+        elif for_task == SEAD:
+            return "SEAD flight"
         elif for_task == CAS:
             return "Strike flight"
 
@@ -47,7 +53,7 @@ class StrikeEvent(Event):
         self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
 
     def player_attacking(self, flights: db.TaskForceDict):
-        assert CAP in flights and CAS in flights and len(flights) == 2, "Invalid flights"
+        assert CAP in flights and CAS in flights and SEAD in flights and len(flights) == 3, "Invalid flights"
 
         op = StrikeOperation(
             self.game,
@@ -60,6 +66,7 @@ class StrikeEvent(Event):
 
         interceptors = self.to_cp.base.scramble_interceptors(self.game.settings.multiplier)
         op.setup(strikegroup=flights[CAS],
+                 sead=flights[SEAD],
                  escort=flights[CAP],
                  interceptors=assigned_units_from(interceptors))
 

@@ -99,19 +99,18 @@ class Operation:
             self.defenders_starting_position = self.to_cp.at
 
     def prepare_carriers(self, for_units: db.UnitsDict):
-        for global_cp in self.game.theater.controlpoints:
-            if not global_cp.is_global:
-                continue
+        if not self.departure_cp.is_global:
+            return
 
-            ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
-                                                 country=self.game.player,
-                                                 at=global_cp.at)
+        ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
+                                             country=self.game.player,
+                                             at=self.departure_cp.at)
 
-            if global_cp == self.departure_cp and not self.is_quick:
-                if not self.to_cp.captured:
-                    self.attackers_starting_position = ship
-                else:
-                    self.defenders_starting_position = ship
+        if not self.is_quick:
+            if not self.to_cp.captured:
+                self.attackers_starting_position = ship
+            else:
+                self.defenders_starting_position = ship
 
     def generate(self):
         # air support

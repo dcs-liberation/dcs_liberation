@@ -72,6 +72,10 @@ class Event:
         return []
 
     @property
+    def player_banned_tasks(self) -> typing.Collection[typing.Type[Task]]:
+        return []
+
+    @property
     def global_cp_available(self) -> bool:
         return False
 
