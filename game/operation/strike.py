@@ -69,12 +69,12 @@ class StrikeOperation(Operation):
         self.airgen.generate_ground_attack_strikegroup(*assigned_units_split(planes_flights),
                                                        targets=[(mp, pos) for (n, mp, pos) in targets],
                                                        at=self.attackers_starting_position,
-                                                       escort=True)
+                                                       escort=len(self.sead) == 0)
 
         self.airgen.generate_sead_strikegroup(*assigned_units_split(self.sead),
                                               targets=[(mp, pos) for (n, mp, pos) in sead_targets],
                                               at=self.attackers_starting_position,
-                                              escort=False)
+                                              escort=len(self.sead) > 0)
 
         heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
         if heli_flights:

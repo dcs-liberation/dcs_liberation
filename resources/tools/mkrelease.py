@@ -48,7 +48,7 @@ def _mk_archieve():
     os.system("pyinstaller.exe pyinstaller.spec")
 
     archieve = ZipFile(path, "w")
-    archieve.writestr("dcs_liberation.bat", "cd dist\\dcs_liberation;\nliberation_main \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
+    archieve.writestr("dcs_liberation.bat", "cd dist\\dcs_liberation\r\nliberation_main \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
     _zip_dir(archieve, "./dist/dcs_liberation")
 
 
