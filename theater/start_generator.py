@@ -72,10 +72,20 @@ def generate_groundobjects(theater: ConflictTheater):
         return None
 
     group_id = 0
-    for cp in theater.enemy_points():
-        for _ in range(0, random.randrange(2, 4)):
-            available_categories = list(tpls) + ["aa", "aa"]
-            tpl_category = random.choice(available_categories)
+    for cp in theater.controlpoints:
+        if cp.is_global:
+            continue
+
+        if not cp.has_frontline:
+            continue
+
+        amount = random.randrange(5, 7)
+        for i in range(0, amount):
+            available_categories = list(tpls)
+            if i >= amount - 1:
+                tpl_category = "aa"
+            else:
+                tpl_category = random.choice(available_categories)
 
             tpl = random.choice(list(tpls[tpl_category].values()))
 
@@ -84,13 +94,6 @@ def generate_groundobjects(theater: ConflictTheater):
             if point is None:
                 print("Couldn't find point for {}".format(cp))
                 continue
-
-            """
-            dist = point.distance_to_point(cp.position) - 15000
-            for another_cp in theater.enemy_points():
-                if another_cp.position.distance_to_point(point) < dist:
-                    cp = another_cp
-            """
 
             group_id += 1
             object_id = 0

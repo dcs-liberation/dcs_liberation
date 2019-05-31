@@ -9,6 +9,11 @@ class NavalInterceptEvent(Event):
 
     targets = None  # type: db.ShipDict
 
+    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str,
+                 defender_name: str):
+        super().__init__(game, from_cp, target_cp, location, attacker_name, defender_name)
+        self.location = Conflict.naval_intercept_position(from_cp, target_cp, game.theater)
+
     def _targets_count(self) -> int:
         from gen.conflictgen import IMPORTANCE_LOW
         factor = (self.to_cp.importance - IMPORTANCE_LOW + 0.1) * 20
@@ -33,18 +38,22 @@ class NavalInterceptEvent(Event):
     @property
     def threat_description(self):
         s = "{} ship(s)".format(self._targets_count())
-        if not self.from_cp.captured:
-            s += ", {} aircraft".format(self.from_cp.base.scramble_count(self.game.settings.multiplier))
+        if not self.departure_cp.captured:
+            s += ", {} aircraft".format(self.departure_cp.base.scramble_count(self.game.settings.multiplier))
         return s
+
+    @property
+    def global_cp_available(self) -> bool:
+        return True
 
     def is_successfull(self, debriefing: Debriefing):
         total_targets = sum(self.targets.values())
         destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units[self.defender_name].items():
+        for unit, count in debriefing.destroyed_units.get(self.defender_name, {}).items():
             if unit in self.targets:
                 destroyed_targets += count
 
-        if self.from_cp.captured:
+        if self.departure_cp.captured:
             return math.ceil(float(destroyed_targets) / total_targets) > self.SUCCESS_RATE
         else:
             return math.ceil(float(destroyed_targets) / total_targets) < self.SUCCESS_RATE
@@ -56,11 +65,11 @@ class NavalInterceptEvent(Event):
             if self.is_successfull(debriefing):
                 self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
         else:
             # enemy attacking
             if self.is_successfull(debriefing):
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
+                self.departure_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
             else:
                 self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
@@ -80,10 +89,12 @@ class NavalInterceptEvent(Event):
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
             from_cp=self.from_cp,
+            departure_cp=self.departure_cp,
             to_cp=self.to_cp
         )
 
-        op.setup(strikegroup=flights[CAS],
+        op.setup(location=self.location,
+                 strikegroup=flights[CAS],
                  interceptors={},
                  targets=self.targets)
 
@@ -101,10 +112,11 @@ class NavalInterceptEvent(Event):
             attacker_name=self.attacker_name,
             defender_name=self.defender_name,
             from_cp=self.from_cp,
+            departure_cp=self.departure_cp,
             to_cp=self.to_cp
         )
 
-        strikegroup = self.from_cp.base.scramble_cas(self.game.settings.multiplier)
+        strikegroup = self.departure_cp.base.scramble_cas(self.game.settings.multiplier)
         op.setup(strikegroup=assigned_units_from(strikegroup),
                  interceptors=flights[CAP],
                  targets=self.targets)

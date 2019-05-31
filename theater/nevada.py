@@ -9,8 +9,8 @@ from .base import *
 class NevadaTheater(ConflictTheater):
     terrain = dcs.terrain.Nevada()
     overview_image = "nevada.gif"
-    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45, -360),
-                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440, 80), }
+    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45*2, -360*2),
+                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440*2, 80*2), }
     landmap = load_landmap("resources\\nev_landmap.p")
     daytime_map = {
         "dawn": (4, 6),
@@ -19,7 +19,6 @@ class NevadaTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    mina = ControlPoint.from_airport(nevada.Mina_Airport_3Q0, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah = ControlPoint.from_airport(nevada.Tonopah_Airport, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     tonopah_test_range = ControlPoint.from_airport(nevada.Tonopah_Test_Range_Airfield, LAND, SIZE_SMALL, IMPORTANCE_LOW)
     lincoln_conty = ControlPoint.from_airport(nevada.Lincoln_County, LAND, SIZE_SMALL, 1.2)
@@ -37,8 +36,7 @@ class NevadaTheater(ConflictTheater):
     def __init__(self):
         super(NevadaTheater, self).__init__()
 
-        self.add_controlpoint(self.mina, connected_to=[self.tonopah])
-        self.add_controlpoint(self.tonopah, connected_to=[self.mina, self.tonopah_test_range, self.lincoln_conty])
+        self.add_controlpoint(self.tonopah, connected_to=[self.tonopah_test_range, self.lincoln_conty])
         self.add_controlpoint(self.tonopah_test_range, connected_to=[self.tonopah, self.lincoln_conty, self.groom_lake, self.pahute_mesa])
         self.add_controlpoint(self.lincoln_conty, connected_to=[self.tonopah_test_range, self.mesquite])
 
@@ -52,5 +50,5 @@ class NevadaTheater(ConflictTheater):
         self.add_controlpoint(self.jean, connected_to=[self.laughlin, self.las_vegas])
         self.add_controlpoint(self.laughlin, connected_to=[self.jean, self.las_vegas])
 
-        self.mina.captured = True
+        self.tonopah.captured = True
 

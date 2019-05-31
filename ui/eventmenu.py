@@ -20,7 +20,7 @@ class EventMenu(Menu):
         self.scramble_entries = {k: {} for k in self.event.tasks}
 
         if self.event.attacker_name == self.game.player:
-            self.base = self.event.from_cp.base
+            self.base = self.event.departure_cp.base
         else:
             self.base = self.event.to_cp.base
 
@@ -194,15 +194,24 @@ class EventMenu(Menu):
                 self.error_label["text"] = "Need at least one player in flight {}".format(self.event.flight_name(task))
                 return
 
-        if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
-            if tasks_scramble_counts.get(PinpointStrike, 0) == 0:
-                self.error_label["text"] = "No ground vehicles assigned to attack!"
+        for task in self.event.player_banned_tasks:
+            if tasks_clients_counts.get(task, 0) != 0:
+                self.error_label["text"] = "Players are not allowed on flight {}".format(self.event.flight_name(task))
                 return
 
-
         if self.game.is_player_attack(self.event):
+            if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
+                if self.event.from_cp.base.total_armor == 0:
+                    self.error_label["text"] = "No ground vehicles available to attack!"
+                    return
+
             self.event.player_attacking(flights)
         else:
+            if isinstance(self.event, FrontlineAttackEvent) or isinstance(self.event, FrontlinePatrolEvent):
+                if self.event.to_cp.base.total_armor == 0:
+                    self.error_label["text"] = "No ground vehicles available to defend!"
+                    return
+
             self.event.player_defending(flights)
 
         self.game.initiate_event(self.event)

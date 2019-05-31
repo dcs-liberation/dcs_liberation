@@ -11,8 +11,6 @@ class FrontlineAttackEvent(Event):
     STRENGTH_INFLUENCE = 0.3
     SUCCESS_FACTOR = 1.5
 
-    defenders = None  # type: db.ArmorDict
-
     @property
     def threat_description(self):
         return "{} vehicles".format(self.to_cp.base.assemble_count())
@@ -20,9 +18,13 @@ class FrontlineAttackEvent(Event):
     @property
     def tasks(self) -> typing.Collection[typing.Type[Task]]:
         if self.is_player_attacking:
-            return [CAS, PinpointStrike]
+            return [CAS, CAP]
         else:
-            return [CAP, PinpointStrike]
+            return [CAP]
+
+    @property
+    def global_cp_available(self) -> bool:
+        return True
 
     def flight_name(self, for_task: typing.Type[Task]) -> str:
         if for_task == CAS:
@@ -36,8 +38,8 @@ class FrontlineAttackEvent(Event):
         return "Frontline attack"
 
     def is_successfull(self, debriefing: Debriefing):
-        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
-        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
+        alive_attackers = sum([v for k, v in debriefing.alive_units.get(self.attacker_name, {}).items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units.get(self.defender_name, {}).items() if db.unit_task(k) == PinpointStrike])
         attackers_success = (float(alive_attackers) / (alive_defenders + 0.01)) > self.SUCCESS_FACTOR
         if self.from_cp.captured:
             return attackers_success
@@ -63,20 +65,46 @@ class FrontlineAttackEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, flights: db.TaskForceDict):
-        assert CAS in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
-
-        self.defenders = self.to_cp.base.assemble_attack()
+        assert CAS in flights and CAP in flights and len(flights) == 2, "Invalid flights"
 
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       from_cp=self.from_cp,
+                                      departure_cp=self.departure_cp,
                                       to_cp=self.to_cp)
 
-        armor = unitdict_from(flights[PinpointStrike])
-        op.setup(target=self.defenders,
-                 attackers=db.unitdict_restrict_count(armor, sum(self.defenders.values())),
-                 strikegroup=flights[CAS])
+        defenders = self.to_cp.base.assemble_attack()
+        max_attackers = int(math.ceil(sum(defenders.values()) * self.ATTACKER_DEFENDER_FACTOR))
+        attackers = db.unitdict_restrict_count(self.from_cp.base.assemble_attack(), max_attackers)
+        op.setup(defenders=defenders,
+                 attackers=attackers,
+                 strikegroup=flights[CAS],
+                 escort=flights[CAP],
+                 interceptors=assigned_units_from(self.to_cp.base.scramble_interceptors(1)))
+
+        self.operation = op
+
+    def player_defending(self, flights: db.TaskForceDict):
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
+
+        op = FrontlineAttackOperation(game=self.game,
+                                      attacker_name=self.attacker_name,
+                                      defender_name=self.defender_name,
+                                      from_cp=self.from_cp,
+                                      departure_cp=self.departure_cp,
+                                      to_cp=self.to_cp)
+
+        defenders = self.to_cp.base.assemble_attack()
+
+        max_attackers = int(math.ceil(sum(defenders.values())))
+        attackers = db.unitdict_restrict_count(self.from_cp.base.assemble_attack(), max_attackers)
+
+        op.setup(defenders=defenders,
+                 attackers=attackers,
+                 strikegroup=assigned_units_from(self.from_cp.base.scramble_cas(1)),
+                 escort=assigned_units_from(self.from_cp.base.scramble_sweep(1)),
+                 interceptors=flights[CAP])
 
         self.operation = op
 

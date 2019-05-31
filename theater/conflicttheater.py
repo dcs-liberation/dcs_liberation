@@ -18,8 +18,6 @@ IMPORTANCE_LOW = 1
 IMPORTANCE_MEDIUM = 1.2
 IMPORTANCE_HIGH = 1.4
 
-GLOBAL_CP_CONFLICT_DISTANCE_MIN = 340000
-
 """
 ALL_RADIALS = [0, 45, 90, 135, 180, 225, 270, 315, ]
 COAST_NS_E = [45, 90, 135, ]
@@ -55,10 +53,18 @@ class ConflictTheater:
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str
     landmap = None  # type: landmap.Landmap
+    """
+    land_poly = None  # type: Polygon
+    """
     daytime_map = None  # type: typing.Dict[str, typing.Tuple[int, int]]
 
     def __init__(self):
         self.controlpoints = []
+        """
+        self.land_poly = geometry.Polygon(self.landmap[0][0])
+        for x in self.landmap[1]:
+            self.land_poly = self.land_poly.difference(geometry.Polygon(x))
+        """
 
     def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
         for connected_point in connected_to:
@@ -101,10 +107,6 @@ class ConflictTheater:
         for cp in [x for x in self.controlpoints if x.captured == from_player]:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
                 yield (cp, connected_point)
-
-                for global_cp in [x for x in self.controlpoints if x.is_global and x.captured == from_player]:
-                    if global_cp.position.distance_to_point(connected_point.position) < GLOBAL_CP_CONFLICT_DISTANCE_MIN:
-                        yield (global_cp, connected_point)
 
     def enemy_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]

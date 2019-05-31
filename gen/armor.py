@@ -36,7 +36,7 @@ class ArmorConflictGenerator:
 
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
 
-    def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, to: Point = None):
+    def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, to: Point = None, move_formation: PointAction = PointAction.OffRoad):
         for c in range(count):
             logging.info("armorgen: {} for {}".format(unit, side.id))
             group = self.m.vehicle_group(
@@ -45,7 +45,7 @@ class ArmorConflictGenerator:
                     unit,
                     position=self._group_point(at),
                     group_size=1,
-                    move_formation=PointAction.OffRoad)
+                    move_formation=move_formation)
 
             vehicle: Vehicle = group.units[0]
             vehicle.player_can_drive = True
@@ -53,7 +53,7 @@ class ArmorConflictGenerator:
             if not to:
                 to = self.conflict.position.point_from_heading(0, 500)
 
-            wayp = group.add_waypoint(self._group_point(to))
+            wayp = group.add_waypoint(self._group_point(to), move_formation=move_formation)
             wayp.tasks = []
 
     def _generate_fight_at(self, attackers: db.ArmorDict, defenders: db.ArmorDict, position: Point):
@@ -108,6 +108,16 @@ class ArmorConflictGenerator:
             position = self.conflict.position.point_from_heading(self.conflict.heading,
                                                                  random.randint(0, self.conflict.distance))
             self._generate_fight_at(attacker_group_dict, target_group_dict, position)
+
+    def generate_convoy(self, units: db.ArmorDict):
+        for type, count in units.items():
+            self._generate_group(
+                side=self.conflict.defenders_side,
+                unit=type,
+                count=count,
+                at=self.conflict.ground_defenders_location,
+                to=self.conflict.position,
+                move_formation=PointAction.OnRoad)
 
     def generate_passengers(self, count: int):
         unit_type = random.choice(db.find_unittype(Nothing, self.conflict.attackers_side.name))

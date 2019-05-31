@@ -17,7 +17,7 @@ class FrontlinePatrolEvent(Event):
 
     @property
     def tasks(self):
-        return [CAP, PinpointStrike]
+        return [CAP]
 
     def flight_name(self, for_task: typing.Type[Task]) -> str:
         if for_task == CAP:
@@ -55,7 +55,7 @@ class FrontlinePatrolEvent(Event):
         pass
 
     def player_attacking(self, flights: db.TaskForceDict):
-        assert CAP in flights and PinpointStrike in flights and len(flights) == 2, "Invalid flights"
+        assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         self.cas = self.to_cp.base.scramble_cas(self.game.settings.multiplier)
         self.escort = self.to_cp.base.scramble_sweep(self.game.settings.multiplier * self.ESCORT_FACTOR)
@@ -64,13 +64,15 @@ class FrontlinePatrolEvent(Event):
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       from_cp=self.from_cp,
+                                      departure_cp=self.departure_cp,
                                       to_cp=self.to_cp)
 
         defenders = self.to_cp.base.assemble_attack()
+        attackers = db.unitdict_restrict_count(self.from_cp.base.assemble_attack(), sum(defenders.values()))
         op.setup(cas=assigned_units_from(self.cas),
                  escort=assigned_units_from(self.escort),
                  interceptors=flights[CAP],
-                 armor_attackers=db.unitdict_restrict_count(db.unitdict_from(flights[PinpointStrike]), sum(defenders.values())),
+                 armor_attackers=attackers,
                  armor_defenders=defenders)
 
         self.operation = op

@@ -10,6 +10,11 @@ class InterceptEvent(Event):
 
     transport_unit = None  # type: FlyingType
 
+    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str,
+                 defender_name: str):
+        super().__init__(game, from_cp, target_cp, location, attacker_name, defender_name)
+        self.location = Conflict.intercept_position(self.from_cp, self.to_cp)
+
     def __str__(self):
         return "Air Intercept"
 
@@ -25,15 +30,19 @@ class InterceptEvent(Event):
                 return "Escort flight"
 
     def _enemy_scramble_multiplier(self) -> float:
-        is_global = self.from_cp.is_global or self.to_cp.is_global
+        is_global = self.departure_cp.is_global or self.to_cp.is_global
         return self.game.settings.multiplier * is_global and 0.5 or 1
 
     @property
     def threat_description(self):
         return "{} aircraft".format(self.enemy_cp.base.scramble_count(self._enemy_scramble_multiplier(), CAP))
 
+    @property
+    def global_cp_available(self) -> bool:
+        return True
+
     def is_successfull(self, debriefing: Debriefing):
-        units_destroyed = debriefing.destroyed_units[self.defender_name].get(self.transport_unit, 0)
+        units_destroyed = debriefing.destroyed_units.get(self.defender_name, {}).get(self.transport_unit, 0)
         if self.from_cp.captured:
             return units_destroyed > 0
         else:
@@ -72,9 +81,11 @@ class InterceptEvent(Event):
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 from_cp=self.from_cp,
+                                departure_cp=self.departure_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=assigned_units_from(escort),
+        op.setup(location=self.location,
+                 escort=assigned_units_from(escort),
                  transport={self.transport_unit: 1},
                  airdefense={airdefense_unit: self.AIRDEFENSE_COUNT},
                  interceptors=flights[CAP])
@@ -93,9 +104,11 @@ class InterceptEvent(Event):
                                 attacker_name=self.attacker_name,
                                 defender_name=self.defender_name,
                                 from_cp=self.from_cp,
+                                departure_cp=self.departure_cp,
                                 to_cp=self.to_cp)
 
-        op.setup(escort=flights[CAP],
+        op.setup(location=self.location,
+                 escort=flights[CAP],
                  transport={self.transport_unit: 1},
                  interceptors=assigned_units_from(interceptors),
                  airdefense={})

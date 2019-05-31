@@ -26,6 +26,7 @@ class Operation:
     envgen = None  # type: EnvironmentGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
+    forcedoptionsgen = None  # type: ForcedOptionsGenerator
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
@@ -38,11 +39,13 @@ class Operation:
                  attacker_name: str,
                  defender_name: str,
                  from_cp: ControlPoint,
+                 departure_cp: ControlPoint,
                  to_cp: ControlPoint = None):
         self.game = game
         self.attacker_name = attacker_name
         self.defender_name = defender_name
         self.from_cp = from_cp
+        self.departure_cp = departure_cp
         self.to_cp = to_cp
         self.is_quick = False
 
@@ -51,6 +54,10 @@ class Operation:
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return True
+
+    @property
+    def is_player_attack(self) -> bool:
+        return self.from_cp.captured
 
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
@@ -63,6 +70,7 @@ class Operation:
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
+        self.forcedoptionsgen = ForcedOptionsGenerator(mission, conflict, self.game)
         self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
@@ -87,24 +95,24 @@ class Operation:
             self.attackers_starting_position = None
             self.defenders_starting_position = None
         else:
-            self.attackers_starting_position = self.from_cp.at
+            self.attackers_starting_position = self.departure_cp.at
             self.defenders_starting_position = self.to_cp.at
 
     def prepare_carriers(self, for_units: db.UnitsDict):
-        for global_cp in self.game.theater.controlpoints:
-            if not global_cp.is_global:
-                continue
+        if not self.departure_cp.is_global:
+            return
 
-            ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
-                                                 country=self.game.player,
-                                                 at=global_cp.at)
+        ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
+                                             country=self.game.player,
+                                             at=self.departure_cp.at)
 
-            if global_cp == self.from_cp and not self.is_quick:
+        if not self.is_quick:
+            if not self.to_cp.captured:
                 self.attackers_starting_position = ship
+            else:
+                self.defenders_starting_position = ship
 
     def generate(self):
-        self.visualgen.generate()
-
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
@@ -141,10 +149,17 @@ class Operation:
         else:
             self.envgen.load(self.environment_settings)
 
+        # options
+        self.forcedoptionsgen.generate()
+
         # main frequencies
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
-        if self.conflict.from_cp.is_global or self.conflict.to_cp.is_global:
+        if self.departure_cp.is_global or self.conflict.to_cp.is_global:
             self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
 
         # briefing
         self.briefinggen.generate()
+
+        # visuals
+        self.visualgen.generate()
+

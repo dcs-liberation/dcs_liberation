@@ -49,12 +49,14 @@ class AirSupportConflictGenerator:
             )
 
             tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=97 + i, unit_id=tanker_group.id, aa=False))
+            tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
+            tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
         if is_awacs_enabled:
             awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]
-            self.mission.awacs_flight(
+            awacs_flight = self.mission.awacs_flight(
                 country=self.mission.country(self.game.player),
-                name=namegen.next_awacs_name(self.mission.country(self.game.player),),
+                name=namegen.next_awacs_name(self.mission.country(self.game.player)),
                 plane_type=awacs_unit,
                 altitude=AWACS_ALT,
                 airport=None,
@@ -62,3 +64,6 @@ class AirSupportConflictGenerator:
                 frequency=133,
                 start_type=StartType.Warm,
             )
+
+            awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
+            awacs_flight.points[0].tasks.append(SetImmortalCommand(True))

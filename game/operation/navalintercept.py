@@ -4,15 +4,18 @@ from .operation import *
 
 
 class NavalInterceptionOperation(Operation):
+    location = None  # type: Point
     strikegroup = None  # type: db.AssignedUnitsDict
     interceptors = None  # type: db.AssignedUnitsDict
     targets = None  # type: db.ShipDict
     trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
+              location: Point,
               strikegroup: db.AssignedUnitsDict,
               interceptors: db.AssignedUnitsDict,
               targets: db.ShipDict):
+        self.location = location
         self.strikegroup = strikegroup
         self.interceptors = interceptors
         self.targets = targets
@@ -25,6 +28,7 @@ class NavalInterceptionOperation(Operation):
         conflict = Conflict.naval_intercept_conflict(
             attacker=self.current_mission.country(self.attacker_name),
             defender=self.current_mission.country(self.defender_name),
+            position=self.location,
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater
@@ -33,7 +37,8 @@ class NavalInterceptionOperation(Operation):
         self.initialize(self.current_mission, conflict)
 
     def generate(self):
-        self.prepare_carriers(db.unitdict_from(self.strikegroup))
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.strikegroup))
 
         target_groups = self.shipgen.generate_cargo(units=self.targets)
 

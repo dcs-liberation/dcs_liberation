@@ -43,19 +43,19 @@ Events:
 * BaseAttackEvent - capture base
 * InterceptEvent - air intercept
 * FrontlineAttackEvent - frontline attack
-* FrontlineCAPEvent - frontline attack
 * NavalInterceptEvent - naval intercept
 * StrikeEvent - strike event
 * InfantryTransportEvent - helicopter infantry transport
 """
 EVENT_PROBABILITIES = {
     # events always present; only for the player
-    FrontlineAttackEvent: [100, 0],
-    FrontlinePatrolEvent: [100, 0],
+    FrontlineAttackEvent: [100, 9],
+    #FrontlinePatrolEvent: [100, 0],
     StrikeEvent: [100, 0],
 
     # events randomly present; only for the player
-    InfantryTransportEvent: [25, 0],
+    #InfantryTransportEvent: [25, 0],
+    ConvoyStrikeEvent: [25, 0],
 
     # events conditionally present; for both enemy and player
     BaseAttackEvent: [100, 9],
@@ -100,28 +100,18 @@ class Game:
         self.enemy = enemy_name
 
     def _roll(self, prob, mult):
-        return random.randint(1, 100) <= prob * mult
-
-    def _generate_globalinterceptions(self):
-        global_count = len([x for x in self.theater.player_points() if x.is_global])
-        for from_cp in [x for x in self.theater.player_points() if x.is_global]:
-            probability_base = max(PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE / global_count, 1)
-            probability = probability_base * math.log(len(self.theater.player_points()) + 1, PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG)
-            if self._roll(probability, from_cp.base.strength):
-                to_cp = random.choice([x for x in self.theater.enemy_points() if x not in self.theater.conflicts()])
-                self.events.append(InterceptEvent(attacker_name=self.player,
-                                                  defender_name=self.enemy,
-                                                  from_cp=from_cp,
-                                                  to_cp=to_cp,
-                                                  game=self))
-                break
+        if self.settings.version == "dev":
+            # always generate all events for dev
+            return 100
+        else:
+            return random.randint(1, 100) <= prob * mult
 
     def _generate_player_event(self, event_class, player_cp, enemy_cp):
         if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
             # skip naval events for non-coastal CPs
             return
 
-        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
+        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD and self.settings.version != "dev":
             # skip base attack events for CPs yet too strong
             return
 
@@ -129,7 +119,7 @@ class Game:
             # skip strikes in case of no targets
             return
 
-        self.events.append(event_class(self.player, self.enemy, player_cp, enemy_cp, self))
+        self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player, self.enemy))
 
     def _generate_enemy_event(self, event_class, player_cp, enemy_cp):
         if event_class in [type(x) for x in self.events if not self.is_player_attack(x)]:
@@ -169,28 +159,35 @@ class Game:
                 # skip base attack if strength is too high
                 return
 
-        self.events.append(event_class(self.enemy, self.player, enemy_cp, player_cp, self))
+        self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy, self.player))
 
     def _generate_events(self):
-        for player_cp, enemy_cp in self.theater.conflicts(True):
-            if enemy_cp.is_global:
-                continue
+        strikes_generated_for = set()
+        base_attack_generated_for = set()
 
+        for player_cp, enemy_cp in self.theater.conflicts(True):
             for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
-                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent]:
+                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent, ConvoyStrikeEvent]:
                     # skip events requiring frontline
                     if not Conflict.has_frontline_between(player_cp, enemy_cp):
                         continue
 
-                if player_cp.is_global:
-                    # skip events requiring ground CP
-                    if event_class not in [InterceptEvent, StrikeEvent, NavalInterceptEvent]:
+                # don't generate multiple 100% events from each attack direction
+                if event_class is StrikeEvent:
+                    if enemy_cp in strikes_generated_for:
+                        continue
+                if event_class is BaseAttackEvent:
+                    if enemy_cp in base_attack_generated_for:
                         continue
 
-                if player_probability == 100 or self._roll(player_probability, player_cp.base.strength):
+                if player_probability == 100 or player_probability > 0 and self._roll(player_probability, player_cp.base.strength):
                     self._generate_player_event(event_class, player_cp, enemy_cp)
+                    if event_class is StrikeEvent:
+                        strikes_generated_for.add(enemy_cp)
+                    if event_class is BaseAttackEvent:
+                        base_attack_generated_for.add(enemy_cp)
 
-                if enemy_probability == 100 or self._roll(enemy_probability, enemy_cp.base.strength):
+                if enemy_probability == 100 or  enemy_probability > 0 and self._roll(enemy_probability, enemy_cp.base.strength):
                     self._generate_enemy_event(event_class, player_cp, enemy_cp)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
@@ -269,7 +266,12 @@ class Game:
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         logging.info("Pass turn")
         for event in self.events:
-            event.skip()
+            if self.settings.version == "dev":
+                # don't damage player CPs in by skipping in dev mode
+                if isinstance(event, UnitsDeliveryEvent):
+                    event.skip()
+            else:
+                event.skip()
 
         if not no_action:
             self._budget_player()
@@ -286,5 +288,5 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._generate_events()
-        self._generate_globalinterceptions()
+        #self._generate_globalinterceptions()
 

@@ -35,17 +35,19 @@ class ShipGenerator:
 
     def generate_cargo(self, units: db.ShipDict) -> typing.Collection[ShipGroup]:
         groups = []
+        offset = 0
         for unit_type, unit_count in units.items():
-            logging.info("shipgen: {} ({}) for {}".format(unit_type, unit_count, self.conflict.defenders_side))
-            group = self.m.ship_group(
-                country=self.conflict.defenders_side,
-                name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),
-                _type=unit_type,
-                position=self.conflict.ground_defenders_location.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD),
-                group_size=unit_count,
-            )
+            for _ in range(unit_count):
+                offset += 1
+                logging.info("shipgen: {} ({}) for {}".format(unit_type, unit_count, self.conflict.defenders_side))
+                group = self.m.ship_group(
+                    country=self.conflict.defenders_side,
+                    name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),
+                    _type=unit_type,
+                    position=self.conflict.ground_defenders_location.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD).point_from_heading(0, offset * SHIP_RANDOM_SPREAD)
+                )
 
-            group.add_waypoint(self.conflict.to_cp.position)
-            groups.append(group)
+                group.add_waypoint(self.conflict.to_cp.position)
+                groups.append(group)
 
         return groups

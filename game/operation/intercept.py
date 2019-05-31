@@ -4,6 +4,7 @@ from .operation import *
 
 
 class InterceptOperation(Operation):
+    location = None  # type: Point
     escort = None  # type: db.AssignedUnitsDict
     transport = None  # type: db.PlaneDict
     interceptors = None  # type: db.AssignedUnitsDict
@@ -12,10 +13,12 @@ class InterceptOperation(Operation):
     trigger_radius = TRIGGER_RADIUS_LARGE
 
     def setup(self,
+              location: Point,
               escort: db.AssignedUnitsDict,
               transport: db.PlaneDict,
               airdefense: db.AirDefenseDict,
               interceptors: db.AssignedUnitsDict):
+        self.location = location
         self.escort = escort
         self.transport = transport
         self.airdefense = airdefense
@@ -30,6 +33,7 @@ class InterceptOperation(Operation):
         conflict = Conflict.intercept_conflict(
             attacker=self.current_mission.country(self.attacker_name),
             defender=self.current_mission.country(self.defender_name),
+            position=self.location,
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater
@@ -39,7 +43,8 @@ class InterceptOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        self.prepare_carriers(db.unitdict_from(self.interceptors))
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.interceptors))
 
         self.airgen.generate_transport(self.transport, self.to_cp.at)
         self.airgen.generate_defenders_escort(*assigned_units_split(self.escort), at=self.defenders_starting_position)

@@ -9,6 +9,7 @@ from .triggergen import *
 from .environmentgen import *
 from .groundobjectsgen import *
 from .briefinggen import *
+from .forcedoptionsgen import *
 
 from . import naming
 

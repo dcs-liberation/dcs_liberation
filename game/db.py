@@ -39,12 +39,11 @@ and prioritization for the enemy (i.e. less important bases will receive units w
 """
 PRICES = {
     # fighter
-    C_101CC: 8,
-    MiG_23MLD: 18,
-    Su_27: 20,
+    MiG_23MLD: 13,
+    Su_27: 18,
     Su_33: 22,
-    MiG_29A: 23,
-    MiG_29S: 25,
+    MiG_29A: 18,
+    MiG_29S: 20,
 
     F_5E_3: 6,
     MiG_15bis: 5,
@@ -55,6 +54,7 @@ PRICES = {
     M_2000C: 13,
     FA_18C_hornet: 18,
     F_15C: 20,
+    F_14B: 14,
 
     # bomber
     Su_25: 15,
@@ -85,14 +85,14 @@ PRICES = {
     C_130: 8,
 
     # armor
-    Armor.APC_BTR_80: 12,
-    Armor.MBT_T_55: 14,
-    Armor.MBT_T_80U: 18,
-    Armor.MBT_T_90: 20,
+    Armor.APC_BTR_80: 16,
+    Armor.MBT_T_55: 22,
+    Armor.MBT_T_80U: 28,
+    Armor.MBT_T_90: 35,
 
-    Armor.ATGM_M1134_Stryker: 12,
-    Armor.MBT_M60A3_Patton: 14,
-    Armor.MBT_M1A2_Abrams: 18,
+    Armor.ATGM_M1134_Stryker: 18,
+    Armor.MBT_M60A3_Patton: 24,
+    Armor.MBT_M1A2_Abrams: 35,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -137,7 +137,6 @@ Following tasks are present:
 """
 UNIT_BY_TASK = {
     CAP: [
-        C_101CC,
         F_5E_3,
         MiG_23MLD,
         Su_27,
@@ -147,6 +146,7 @@ UNIT_BY_TASK = {
         MiG_29S,
         FA_18C_hornet,
         F_15C,
+        F_14B,
         M_2000C,
     ],
     CAS: [
@@ -235,7 +235,6 @@ SAM_BAN = [
 Units that will always be spawned in the air
 """
 TAKEOFF_BAN = [
-    AV8BNA,  # AI takeoff currently bugged attempting VTOL with no regards for the total weight
 ]
 
 """
@@ -259,7 +258,6 @@ Be advised that putting unit to the country that have not access to the unit in 
 """
 UNIT_BY_COUNTRY = {
     "Russia": [
-        C_101CC,
         AJS37,
         MiG_23MLD,
         F_5E_3,
@@ -308,6 +306,7 @@ UNIT_BY_COUNTRY = {
     "USA": [
         F_5E_3,
         F_15C,
+        F_14B,
         FA_18C_hornet,
         AJS37,
         M_2000C,
@@ -345,6 +344,7 @@ UNIT_BY_COUNTRY = {
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
+    F_14B: CVN_74_John_C__Stennis,
     Ka_50: LHA_1_Tarawa,
     SA342M: LHA_1_Tarawa,
     UH_1H: LHA_1_Tarawa,
@@ -371,8 +371,16 @@ Payload will be used for operation of following type, "*" category will be used 
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
         CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
+        Escort: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
         PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
         AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+    },
+
+    F_14B: {
+        CAP: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
+        Escort: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
+        CAS: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
+        GroundAttack: "AIM54, AIM-9M*2, XT*2, GBU-12*4, LANTIRN",
     },
 
     Su_25T: {
@@ -381,6 +389,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     Su_33: {
         CAP: "R-73*4,R-27R*2,R-27ER*6",
+        Escort: "R-73*4,R-27R*2,R-27ER*6",
     },
 
     AJS37: {
@@ -403,6 +412,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     M_2000C: {
         CAP: "Combat Air Patrol",
+        Escort: "Combat Air Patrol",
         GroundAttack: "MK-82S Heavy Strike",
     },
 
@@ -487,6 +497,7 @@ def task_name(task) -> str:
 
 def choose_units(for_task: Task, factor: float, count: int, country: str) -> typing.Collection[UnitType]:
     suitable_unittypes = find_unittype(for_task, country)
+    suitable_unittypes = [x for x in suitable_unittypes if x not in helicopter_map.values()]
     suitable_unittypes.sort(key=lambda x: PRICES[x])
 
     idx = int(len(suitable_unittypes) * factor)

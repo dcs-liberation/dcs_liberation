@@ -43,6 +43,9 @@ class FrontlinePatrolOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
+        if self.is_player_attack:
+            self.prepare_carriers(db.unitdict_from(self.interceptors))
+
         self.airgen.generate_defenders_cas(*assigned_units_split(self.cas), at=self.defenders_starting_position)
         self.airgen.generate_defenders_escort(*assigned_units_split(self.escort), at=self.defenders_starting_position)
         self.airgen.generate_migcap(*assigned_units_split(self.interceptors), at=self.attackers_starting_position)
