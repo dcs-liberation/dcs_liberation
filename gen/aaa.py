@@ -289,8 +289,8 @@ class AAConflictGenerator:
     def generate(self, units: db.AirDefenseDict):
         for type, count in units.items():
             for _, radial in zip(range(count), self.conflict.radials):
-                distance = randint(self.conflict.size * DISTANCE_FACTOR[0], self.conflict.size * DISTANCE_FACTOR[1])
-                p = self.conflict.position.point_from_heading(radial, distance)
+                distance = randint(self.conflict.size * DISTANCE_FACTOR[0] + 9000, self.conflict.size * DISTANCE_FACTOR[1] + 14000)
+                p = self.conflict.position.point_from_heading(random.choice(self.conflict.radials), distance)
 
                 self.m.aaa_vehicle_group(
                         country=self.conflict.defenders_side,
