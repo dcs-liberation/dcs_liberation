@@ -82,6 +82,7 @@ class Operation:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
 
+        dcs.Mission.aaa_vehicle_group = aaa.aaa_vehicle_group
         self.current_mission = dcs.Mission(terrain)
         if is_quick:
             self.quick_mission = self.current_mission
