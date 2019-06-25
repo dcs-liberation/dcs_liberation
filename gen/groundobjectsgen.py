@@ -52,8 +52,6 @@ class GroundObjectsGenerator:
 
         for ground_object in cp.ground_objects:
             if ground_object.dcs_identifier == "AA":
-                if ground_object.position.distance_to_point(self.conflict.from_cp.position) < AA_CP_MIN_DISTANCE:
-                    continue
 
                 if ground_object.is_dead:
                     continue
@@ -61,7 +59,7 @@ class GroundObjectsGenerator:
                 unit_type = random.choice(self.game.commision_unit_types(cp, AirDefence))
                 assert unit_type is not None, "Cannot find unit type for GroundObject defense ({})!".format(cp)
 
-                group = self.m.vehicle_group(
+                group = self.m.aaa_vehicle_group(
                     country=side,
                     name=ground_object.string_identifier,
                     _type=unit_type,
