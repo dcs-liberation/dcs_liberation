@@ -50,10 +50,10 @@ class GroundObjectsGenerator:
         else:
             cp = self.conflict.from_cp
 
+        consumed_farps = set()
+
         for ground_object in cp.ground_objects:
             if ground_object.dcs_identifier == "AA":
-                if ground_object.position.distance_to_point(self.conflict.from_cp.position) < AA_CP_MIN_DISTANCE:
-                    continue
 
                 if ground_object.is_dead:
                     continue
@@ -61,7 +61,7 @@ class GroundObjectsGenerator:
                 unit_type = random.choice(self.game.commision_unit_types(cp, AirDefence))
                 assert unit_type is not None, "Cannot find unit type for GroundObject defense ({})!".format(cp)
 
-                group = self.m.vehicle_group(
+                group = self.m.aaa_vehicle_group(
                     country=side,
                     name=ground_object.string_identifier,
                     _type=unit_type,
@@ -80,6 +80,16 @@ class GroundObjectsGenerator:
                     print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
                     continue
 
+                if ground_object.group_id not in consumed_farps:
+                    consumed_farps.add(ground_object.group_id)
+                    if random.randint(0, 100) > 50:
+                        farp_aa(
+                            self.m,
+                            side,
+                            ground_object.string_identifier,
+                            ground_object.position,
+                        )
+
                 group = self.m.static_group(
                     country=side,
                     name=ground_object.string_identifier,
@@ -90,3 +100,39 @@ class GroundObjectsGenerator:
                 )
 
                 logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
+
+
+def farp_aa(mission_obj, country, name, position: mapping.Point):
+    """
+    Add AAA to a FARP :)
+    :param mission_obj:
+    :param country:
+    :param name:
+    :param position:
+    :return:
+    """
+    vg = unitgroup.VehicleGroup(mission_obj.next_group_id(), mission_obj.string(name))
+
+    units = [
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.AAA_ZU_23_Closed,
+        AirDefence.AAA_ZU_23_Emplacement,
+        AirDefence.AAA_ZU_23_on_Ural_375,
+        AirDefence.AAA_ZU_23_Insurgent_Closed,
+        AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
+        Armor.MBT_T_55,
+        Armor.IFV_BMP_3,
+    ]
+
+    v = mission_obj.vehicle(name + "_AAA", random.choice(units))
+    v.position.x = position.x - random.randint(5, 30)
+    v.position.y = position.y - random.randint(5, 30)
+    v.heading = random.randint(0, 359)
+    vg.add_unit(v)
+
+    wp = vg.add_waypoint(vg.units[0].position, PointAction.OffRoad, 0)
+    wp.ETA_locked = True
+
+    country.add_vehicle_group(vg)
+    return vg
+

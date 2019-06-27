@@ -84,8 +84,8 @@ class BaseAttackEvent(Event):
                                  departure_cp=self.departure_cp,
                                  to_cp=self.to_cp)
 
-        defenders = self.to_cp.base.scramble_sweep(self.game.settings.multiplier)
-        defenders.update(self.to_cp.base.scramble_cas(self.game.settings.multiplier))
+        defenders = self.to_cp.base.scramble_last_defense()
+        #defenders.update(self.to_cp.base.scramble_cas(self.game.settings.multiplier))
 
         op.setup(cas=flights[CAS],
                  escort=flights[CAP],

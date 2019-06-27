@@ -320,7 +320,7 @@ class OverviewCanvas:
         for cp in self.game.theater.controlpoints:
             coords = self._transform_point(cp.position)
             radius = 12 * math.pow(cp.importance, 1)
-            radius_m = max(radius * cp.base.strength - 2, 0)
+            radius_m = radius * max(cp.base.strength - 2, 0)
 
             if cp.captured:
                 color = self._player_color()

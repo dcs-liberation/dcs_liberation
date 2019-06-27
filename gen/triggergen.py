@@ -42,29 +42,34 @@ class TriggersGenerator:
         self.game = game
 
     def _gen_activation_trigger(self, radius: int, player_cp: ControlPoint, player_coalition: str, enemy_coalition: str):
+        conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
+        minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
+        if minimum_radius < 0:
+            minimum_radius = 0
+        radius = min(minimum_radius, radius)
+        activation_trigger_zone = self.mission.triggers.add_triggerzone(
+            self.conflict.position,
+            radius,
+            name="Activation zone",
+        )
+        activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
+        activation_trigger.add_condition(PartOfCoalitionInZone(player_coalition, activation_trigger_zone.id))
+        activation_trigger.add_condition(FlagIsTrue())
         activate_by_trigger = []
+        flag_id = 2
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
                 if coalition_name == enemy_coalition:
                     for plane_group in country.plane_group + country.helicopter_group:
                         plane_group.late_activation = True
-                        activate_by_trigger.append(plane_group)
+                        #activate_by_trigger.append(plane_group)
+                        self.delayed_trigger(plane_group, flag_id)
+                        flag_id += 1
 
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.late_activation = True
                     activate_by_trigger.append(vehicle_group)
 
-        conflict_distance = player_cp.position.distance_to_point(self.conflict.position)
-        minimum_radius = max(conflict_distance - TRIGGER_MIN_DISTANCE_FROM_START, TRIGGER_RADIUS_MINIMUM)
-        if minimum_radius < 0:
-            minimum_radius = 0
-
-        radius = min(minimum_radius, radius)
-
-        activation_trigger_zone = self.mission.triggers.add_triggerzone(self.conflict.position, radius, name="Activation zone")
-        activation_trigger = TriggerOnce(Event.NoEvent, "Activation trigger")
-        activation_trigger.add_condition(PartOfCoalitionInZone(player_coalition, activation_trigger_zone.id))
-        activation_trigger.add_condition(FlagIsTrue())
         for group in activate_by_trigger:
             activation_trigger.add_action(ActivateGroup(group.id))
 
@@ -142,6 +147,22 @@ class TriggersGenerator:
 
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(Skill(skill_level[1]))
+
+    def delayed_trigger(self, group, flag_id):
+        trigger_one = TriggerOnce(Event.NoEvent, "Activation trigger")
+        trigger_one.add_action(SetFlagValue(flag_id, random.randint(0, 1200)))
+
+        trigger_two = TriggerCondition()
+        trigger_two.add_condition(TimeSinceFlag(flag_id, seconds=1))
+        trigger_two.add_action(DecreaseFlag(flag_id, 1))
+
+        trigger_three = TriggerOnce()
+        trigger_three.add_condition(FlagEquals(flag_id, 1))
+        trigger_three.add_action(ActivateGroup(group.id))
+
+        self.mission.triggerrules.triggers.append(trigger_one)
+        self.mission.triggerrules.triggers.append(trigger_two)
+        self.mission.triggerrules.triggers.append(trigger_three)
 
     def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int, awacs_enabled: bool):
         player_coalition = self.game.player == "USA" and "blue" or "red"

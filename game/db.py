@@ -104,9 +104,14 @@ PRICES = {
     AirDefence.AAA_Vulcan_M163: 5,
     AirDefence.SAM_Linebacker_M6: 10,
 
-    AirDefence.SPAAA_ZSU_23_4_Shilka: 8,
+    AirDefence.AAA_ZU_23_Closed: 2,
+    AirDefence.SPAAA_ZSU_23_4_Shilka: 4,
     AirDefence.SAM_SA_9_Strela_1_9P31: 13,
-    AirDefence.SAM_SA_8_Osa_9A33: 18,
+    AirDefence.SAM_SA_19_Tunguska_2S6: 15,
+    AirDefence.SAM_SA_6_Kub_LN_2P25: 12,
+    AirDefence.SAM_SA_8_Osa_9A33: 6,
+    AirDefence.SAM_SA_3_S_125_LN_5P73: 10,
+    AirDefence.SAM_SA_11_Buk_LN_9A310M1: 20,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -206,11 +211,13 @@ UNIT_BY_TASK = {
         AirDefence.SAM_Linebacker_M6,
 
         AirDefence.SPAAA_ZSU_23_4_Shilka,
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
-        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.AAA_ZU_23_Closed,
         AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
+        AirDefence.SAM_SA_6_Kub_LN_2P25,
+        AirDefence.SAM_SA_3_S_125_LN_5P73,
+        AirDefence.SAM_SA_11_Buk_LN_9A310M1,
     ],
 
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
@@ -229,6 +236,11 @@ SAM_BAN = [
 
     AirDefence.SAM_SA_9_Strela_1_9P31,
     AirDefence.SAM_SA_8_Osa_9A33,
+    AirDefence.SAM_SA_19_Tunguska_2S6,
+    AirDefence.SAM_SA_6_Kub_LN_2P25,
+    AirDefence.SAM_SA_8_Osa_9A33,
+    AirDefence.SAM_SA_3_S_125_LN_5P73,
+    AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 ]
 
 """
@@ -248,7 +260,7 @@ CARRIER_TAKEOFF_BAN = [
 AirDefense units that will be spawned at control points not related to the current operation
 """
 EXTRA_AA = {
-    "Russia": AirDefence.SAM_SA_19_Tunguska_2S6,
+    "Russia": AirDefence.SAM_SA_8_Osa_9A33,
     "USA": AirDefence.SAM_Linebacker_M6,
 }
 
@@ -289,6 +301,11 @@ UNIT_BY_COUNTRY = {
         AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.AAA_ZU_23_Closed,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
+        AirDefence.SAM_SA_6_Kub_LN_2P25,
+        AirDefence.SAM_SA_3_S_125_LN_5P73,
+        AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 
         Armor.APC_BTR_80,
         Armor.MBT_T_90,

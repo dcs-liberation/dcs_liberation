@@ -158,13 +158,16 @@ class Base:
         return int(self.total_armor * 0.5)
 
     def assemble_aa_count(self) -> int:
-        if self.strength > STRENGTH_AA_ASSEMBLE_MIN:
-            return self.total_aa
-        else:
-            return 0
+        # previous logic removed because we always want the full air defense capabilities.
+        return self.total_aa
 
     def scramble_sweep(self, multiplier: float) -> typing.Dict[PlaneType, int]:
         return self._find_best_planes(CAP, self.scramble_count(multiplier, CAP))
+
+    def scramble_last_defense(self):
+        # return as many CAP-capable aircraft as we can since this is the last defense of the base
+        # (but not more than 20 - that's just nuts)
+        return self._find_best_planes(CAP, min(self.total_planes, 20))
 
     def scramble_cas(self, multiplier: float) -> typing.Dict[PlaneType, int]:
         return self._find_best_planes(CAS, self.scramble_count(multiplier, CAS))
