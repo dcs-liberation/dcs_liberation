@@ -3,8 +3,6 @@ This utility classes provides methods to check players installed DCS environment
 
 TODO : add method 'is_using_open_beta', 'is_using_stable'
 TODO : [NICE to have] add method to check list of installed DCS modules (could be done either through window registry, or through filesystem analysis)
-TODO : add method 'get DCS save path'
-
 """
 
 import winreg
@@ -119,7 +117,16 @@ def get_dcs_install_directory():
         print("Couldn't detect any installed DCS World version")
 
 
+def get_dcs_saved_games_directory():
+    """
+    Get the save game directory for DCS World
+    :return: Save game directory as string
+    """
+    return os.path.join(os.path.expanduser("~"), "Saved Games", "DCS")
+
+
 if __name__ == "__main__":
     print("Using STEAM Edition : " + str(is_using_dcs_steam_edition()))
     print("Using Standalone Edition : " + str(is_using_dcs_standalone_edition()))
     print("DCS Installation directory : " + get_dcs_install_directory())
+    print("DCS saved games directory : " + get_dcs_saved_games_directory())
