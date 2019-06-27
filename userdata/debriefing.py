@@ -1,23 +1,16 @@
 import logging
-import typing
+import os
 import re
 import threading
 import time
-import os
+import typing
 
 from dcs.lua import parse
 from dcs.mission import Mission
-
-from dcs.unit import Vehicle, Ship
-from dcs.vehicles import vehicle_map
-from dcs.ships import ship_map
-from dcs.planes import plane_map
 from dcs.unit import UnitType
 
 from game import db
-
 from .persistency import base_path
-from theater.theatergroundobject import CATEGORY_MAP
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
