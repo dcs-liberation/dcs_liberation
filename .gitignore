@@ -18,3 +18,5 @@ tests/**
 .idea/*.iml
 *.iml
 .idea
+.idea/*.xml
+.idea/**/*.xml
