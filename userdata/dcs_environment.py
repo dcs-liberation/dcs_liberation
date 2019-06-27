@@ -98,8 +98,8 @@ def _find_steam_dcs_directory():
 
 def get_dcs_install_directory():
     """
-    Get the Steam install directory for this computer
-    :return Steam installation path
+    Get the DCS World install directory for this computer
+    :return DCS World install directory
     """
     if is_using_dcs_standalone_edition():
         try:
