@@ -114,13 +114,13 @@ class OverviewCanvas:
         self.budget_label.grid(column=col, row=0, sticky=NW)
         col += 1
 
+        self.daytime_icon = Label(self.options, image=self.DAWN_ICON, **STYLES["widget-big"])
+        self.daytime_icon.grid(column=col, row=0, sticky=NE)
+        col += 1
+
         self.current_turn = StringVar()
         self.turn_label = Label(self.options, textvariable=self.current_turn, **STYLES["widget-big"])
         self.turn_label.grid(column=col, row=0, sticky=NE)
-        col += 1
-
-        self.daytime_icon = Label(self.options, image=self.DAWN_ICON, **STYLES["widget-big"])
-        self.daytime_icon.grid(column=col, row=0, sticky=NE)
         col += 1
 
         Button(self.options, text="Pass turn", command=self.parent.pass_turn,
@@ -641,8 +641,7 @@ class OverviewCanvas:
         return action
 
     def updateOptions(self):
-        self.current_turn.set("Turn : {} [{} {}]".format(self.game.turn, self.game.current_day.strftime("%d %b %Y"),
-                                                         self.game.current_turn_daytime))
+        self.current_turn.set("Turn : {} - {}".format(self.game.turn, self.game.current_day.strftime("%d %b %Y")))
         self.current_budget.set("{}M $ (+{}M $)".format(self.game.budget, self.game.budget_reward_amount))
 
         daytime = self.game.current_turn_daytime
