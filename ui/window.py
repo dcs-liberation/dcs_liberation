@@ -103,7 +103,8 @@ class Window:
         start_generator.generate_groundobjects(conflicttheater)
         game = Game(player_name=player_name,
                     enemy_name=enemy_name,
-                    theater=conflicttheater)
+                    theater=conflicttheater,
+                    start_date=datetime.now())
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = sams

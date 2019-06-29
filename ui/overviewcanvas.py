@@ -616,5 +616,6 @@ class OverviewCanvas:
         return action
 
     def updateOptions(self):
-        self.current_turn.set("Turn : {}".format(self.game.turn))
+        self.current_turn.set("Turn : {} [{} {}]".format(self.game.turn, self.game.current_day.strftime("%d %b %Y"),
+                                                         self.game.current_turn_daytime))
         self.current_budget.set("Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount))

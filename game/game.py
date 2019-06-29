@@ -13,6 +13,7 @@ from theater import *
 from . import db
 from .settings import Settings
 from .event import *
+from datetime import datetime, timedelta
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -85,6 +86,10 @@ PLAYER_BUDGET_BASE = 14
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
+
+
+
+
 class Game:
     settings = None  # type: Settings
     budget = PLAYER_BUDGET_INITIAL
@@ -93,13 +98,14 @@ class Game:
     ignored_cps = None  # type: typing.Collection[ControlPoint]
     turn = 0
 
-    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater):
+    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime):
         self.settings = Settings()
         self.events = []
         self.theater = theater
         self.player = player_name
         self.enemy = enemy_name
         self.turn = 0
+        self.date = start_date
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -293,4 +299,12 @@ class Game:
         self.events = []  # type: typing.List[Event]
         self._generate_events()
         #self._generate_globalinterceptions()
+
+    @property
+    def current_turn_daytime(self):
+        return ["dawn", "day", "dusk", "night"][self.turn % 4]
+
+    @property
+    def current_day(self):
+        return self.date + timedelta(days=self.turn//4)
 
