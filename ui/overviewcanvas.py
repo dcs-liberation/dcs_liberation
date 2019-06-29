@@ -25,8 +25,8 @@ BLACK = (0, 0, 0)
 BACKGROUND = pygame.Color(0, 64, 64)
 ANTIALIASING = True
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1000
+HEIGHT = 700
 MAP_PADDING = 100
 
 class OverviewCanvas:
@@ -55,6 +55,8 @@ class OverviewCanvas:
 
         # Pygame objects
         self.map = None
+        self.map_dusk_dawn = None
+        self.map_night = None
         self.screen = None
         self.surface: pygame.Surface = None
         self.thread: Thread = None
@@ -188,6 +190,14 @@ class OverviewCanvas:
         pygame.draw.rect(self.map, BLACK, (0, 0, self.map.get_width(), self.map.get_height()), 10)
         pygame.draw.rect(self.map, WHITE, (0, 0, self.map.get_width(), self.map.get_height()), 5)
 
+        # Generate map for night and dusk/dawn
+        self.map_night = self.map.copy()
+        self.map_night.fill((100, 100, 110, 128), special_flags=pygame.BLEND_MULT)
+
+        self.map_dusk_dawn = self.map.copy()
+        self.map_dusk_dawn.fill((220, 150, 125, 128), special_flags=pygame.BLEND_MULT)
+
+
         # Create surfaces for drawing
         self.surface = pygame.Surface((self.map.get_width() + MAP_PADDING * 2,
                                        self.map.get_height() + MAP_PADDING * 2))
@@ -303,8 +313,17 @@ class OverviewCanvas:
 
         self.redraw_required = False
 
+
     def draw_map(self, surface: pygame.Surface, overlay: pygame.Surface, mouse_pos: (int, int), mouse_down: [bool, bool]):
-        self.surface.blit(self.map, (MAP_PADDING, MAP_PADDING))
+
+        daytime = self.game.current_turn_daytime
+        if daytime == "day":
+            self.surface.blit(self.map, (MAP_PADDING, MAP_PADDING))
+        elif daytime == "night":
+            self.surface.blit(self.map_night, (MAP_PADDING, MAP_PADDING))
+        else:
+            self.surface.blit(self.map_dusk_dawn, (MAP_PADDING, MAP_PADDING))
+
 
         # Display zoom level on overlay
         zoom_lvl = self.font.render("  x " + str(self.zoom) + "  ", ANTIALIASING, WHITE, DARK_BLUE)
@@ -647,9 +666,9 @@ class OverviewCanvas:
         daytime = self.game.current_turn_daytime
         if daytime == "dawn":
             self.daytime_icon.configure(image=self.DAWN_ICON)
-        if daytime == "day":
+        elif daytime == "day":
             self.daytime_icon.configure(image=self.DAY_ICON)
-        if daytime == "dusk":
+        elif daytime == "dusk":
             self.daytime_icon.configure(image=self.DUSK_ICON)
-        if daytime == "night":
+        elif daytime == "night":
             self.daytime_icon.configure(image=self.NIGHT_ICON)
