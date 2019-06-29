@@ -105,7 +105,7 @@ class Game:
         self.player = player_name
         self.enemy = enemy_name
         self.turn = 0
-        self.date = start_date
+        self.date = datetime(start_date.year, start_date.month, start_date.day)
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":

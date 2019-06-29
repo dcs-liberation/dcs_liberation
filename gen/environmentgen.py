@@ -52,10 +52,14 @@ class EnviromentGenerator:
         self.game = game
 
     def _gen_time(self):
+
         start_time = self.game.current_day
+
         daytime = self.game.current_turn_daytime
         if self.game.settings.night_disabled and daytime == "night":
             daytime = "day"
+        logging.info("Mission time will be {}".format(daytime))
+
         time_range = self.game.theater.daytime_map[daytime]
         start_time += timedelta(hours=random.randint(*time_range))
 
@@ -127,7 +131,7 @@ class EnviromentGenerator:
             self._generate_wind(1)
 
     def generate(self) -> EnvironmentSettings:
-        self._gen_random_time()
+        self._gen_time()
         self._gen_random_weather()
 
         settings = EnvironmentSettings()
