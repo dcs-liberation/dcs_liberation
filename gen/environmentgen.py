@@ -51,19 +51,14 @@ class EnviromentGenerator:
         self.conflict = conflict
         self.game = game
 
-    def _gen_random_time(self):
-        start_time = datetime.strptime('May 25 2018 12:00AM', '%b %d %Y %I:%M%p')
-
-        time_range = None
-        for k, v in RANDOM_TIME.items():
-            if self.game.settings.night_disabled and k == "night":
-                continue
-
-            if random.randint(0, 100) <= v:
-                time_range = self.game.theater.daytime_map[k]
-                break
-
+    def _gen_time(self):
+        start_time = self.game.current_day
+        daytime = self.game.current_turn_daytime
+        if self.game.settings.night_disabled and daytime == "night":
+            daytime = "day"
+        time_range = self.game.theater.daytime_map[daytime]
         start_time += timedelta(hours=random.randint(*time_range))
+
         logging.info("time - {}, slot - {}, night skipped - {}".format(
             str(start_time),
             str(time_range),
