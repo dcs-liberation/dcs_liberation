@@ -17,6 +17,7 @@ BG_SUBTITLE_COLOR = "#3E4F61"
 # Fonts
 FONT_FAMILY = "Trebuchet MS"
 DEFAULT_FONT = (FONT_FAMILY, 8)
+FONT_BIG = (FONT_FAMILY, 12)
 ITALIC = (FONT_FAMILY, 8, "italic")
 BOLD_FONT = (FONT_FAMILY, 10, "bold italic")
 TITLE_FONT = (FONT_FAMILY, 16, "bold italic")
@@ -35,6 +36,7 @@ STYLES["strong-grey"] = {"font": BOLD_FONT, "bg": BG_TITLE_COLOR, "fg": FG_COLOR
 STYLES["mission-preview"] = {"font": BOLD_FONT, "bg": YELLOW, "fg": FG_COLOR}
 
 STYLES["widget"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT}
+STYLES["widget-big"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": FONT_BIG, "relief": "ridge", "borderwidth": 1, "highlightcolor": "white"}
 STYLES["italic"] = {"bg": BG_COLOR, "fg": FG_COLOR, "padx": PADDING_X, "pady": PADDING_Y, "font": ITALIC}
 STYLES["radiobutton"] = {"bg": BG_COLOR, "fg": "black", "padx": PADDING_X, "pady": PADDING_Y, "font": DEFAULT_FONT,
                          "activebackground": BG_COLOR, "highlightbackground": BG_COLOR, "selectcolor": "white"}
@@ -45,5 +47,6 @@ STYLES["header"] = {"bg": BG_TITLE_COLOR}
 STYLES["subheader"] = {"bg": BG_SUBTITLE_COLOR}
 
 STYLES["btn-primary"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
+STYLES["btn-primary-big"] = {"bg": GREEN, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": FONT_BIG}
 STYLES["btn-danger"] = {"bg": RED, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}
 STYLES["btn-warning"] = {"bg": YELLOW, "fg": FG_COLOR, "padx": PADDING_X, "pady": 2, "font": DEFAULT_FONT}

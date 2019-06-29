@@ -29,7 +29,6 @@ WIDTH = 800
 HEIGHT = 600
 MAP_PADDING = 100
 
-
 class OverviewCanvas:
     mainmenu = None  # type: ui.mainmenu.MainMenu
     budget_label = None  # type: Label
@@ -40,11 +39,17 @@ class OverviewCanvas:
     selected_event_info = None  # type: typing.Tuple[Event, typing.Tuple[int, int]]
     frontline_vector_cache = None  # type: typing.Dict[str, typing.Tuple[Point, int, int]]
 
+    DAWN_ICON = None
+    DAY_ICON = None
+    DUSK_ICON = None
+    NIGHT_ICON = None
+
     def __init__(self, frame: Frame, parent, game: Game):
 
         self.parent = parent
         self.game = game
 
+        self.load_icons()
         # Remove any previously existing pygame instance
         pygame.quit()
 
@@ -96,21 +101,32 @@ class OverviewCanvas:
 
     def build_map_options_panel(self):
         col = 0
-        Button(self.options, text="Configuration", command=self.parent.configuration_menu, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
+        Button(self.options, text="Configuration", command=self.parent.configuration_menu,
+               **{**STYLES["btn-primary"],**{ "pady": 4}}).grid(column=col, row=0, sticky=NW)
+        col += 1
+
+        money_icon = Label(self.options, image=self.MONEY_ICON, **STYLES["widget-big"])
+        money_icon.grid(column=col, row=0, sticky=NE)
         col += 1
 
         self.current_budget = StringVar()
-        self.budget_label = Label(self.options, textvariable=self.current_budget, **STYLES["widget"])
-        self.budget_label.grid(column=col, row=0, sticky=N+EW)
+        self.budget_label = Label(self.options, textvariable=self.current_budget, **STYLES["widget-big"])
+        self.budget_label.grid(column=col, row=0, sticky=NW)
         col += 1
 
         self.current_turn = StringVar()
-        self.turn_label = Label(self.options, textvariable=self.current_turn, **STYLES["widget"])
-        self.turn_label.grid(column=col, row=0, sticky=N+EW)
+        self.turn_label = Label(self.options, textvariable=self.current_turn, **STYLES["widget-big"])
+        self.turn_label.grid(column=col, row=0, sticky=NE)
         col += 1
 
-        Button(self.options, text="Pass turn", command=self.parent.pass_turn, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NW)
+        self.daytime_icon = Label(self.options, image=self.DAWN_ICON, **STYLES["widget-big"])
+        self.daytime_icon.grid(column=col, row=0, sticky=NE)
         col += 1
+
+        Button(self.options, text="Pass turn", command=self.parent.pass_turn,
+               **{**STYLES["btn-primary"],**{ "pady": 4}}).grid(column=col, row=0, sticky=NE)
+        col += 1
+
 
     def map_size_toggle(self):
         if self.expanded:
@@ -126,6 +142,15 @@ class OverviewCanvas:
         self.exited = True
         if self.thread is not None:
             self.thread.join()
+
+    def load_icons(self):
+        if self.DAWN_ICON is None :
+            self.DAWN_ICON = PhotoImage(file="./resources/ui/daytime/dawn.png")
+            self.DAY_ICON = PhotoImage(file="./resources/ui/daytime/day.png")
+            self.DUSK_ICON = PhotoImage(file="./resources/ui/daytime/dusk.png")
+            self.NIGHT_ICON = PhotoImage(file="./resources/ui/daytime/night.png")
+            self.MONEY_ICON = PhotoImage(file="./resources/ui/misc/money_icon.png")
+            self.ORDNANCE_ICON = PhotoImage(file="./resources/ui/misc/ordnance_icon.png")
 
     def init_sdl_layer(self):
         # Setup pygame to run in tk frame
@@ -618,4 +643,14 @@ class OverviewCanvas:
     def updateOptions(self):
         self.current_turn.set("Turn : {} [{} {}]".format(self.game.turn, self.game.current_day.strftime("%d %b %Y"),
                                                          self.game.current_turn_daytime))
-        self.current_budget.set("Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount))
+        self.current_budget.set("{}M $ (+{}M $)".format(self.game.budget, self.game.budget_reward_amount))
+
+        daytime = self.game.current_turn_daytime
+        if daytime == "dawn":
+            self.daytime_icon.configure(image=self.DAWN_ICON)
+        if daytime == "day":
+            self.daytime_icon.configure(image=self.DAY_ICON)
+        if daytime == "dusk":
+            self.daytime_icon.configure(image=self.DUSK_ICON)
+        if daytime == "night":
+            self.daytime_icon.configure(image=self.NIGHT_ICON)
