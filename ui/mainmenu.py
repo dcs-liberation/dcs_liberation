@@ -33,6 +33,7 @@ class MainMenu(Menu):
 
     def pass_turn(self):
         self.game.pass_turn(no_action=True)
+        self.upd.update()
         self.display()
 
     def configuration_menu(self):

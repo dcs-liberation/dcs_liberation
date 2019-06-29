@@ -99,8 +99,14 @@ class OverviewCanvas:
         Button(self.options, text="Configuration", command=self.parent.configuration_menu, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NE)
         col += 1
 
-        self.budget_label = Label(self.options, text="Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount), **STYLES["widget"])
+        self.current_budget = StringVar()
+        self.budget_label = Label(self.options, textvariable=self.current_budget, **STYLES["widget"])
         self.budget_label.grid(column=col, row=0, sticky=N+EW)
+        col += 1
+
+        self.current_turn = StringVar()
+        self.turn_label = Label(self.options, textvariable=self.current_turn, **STYLES["widget"])
+        self.turn_label.grid(column=col, row=0, sticky=N+EW)
         col += 1
 
         Button(self.options, text="Pass turn", command=self.parent.pass_turn, **STYLES["btn-primary"]).grid(column=col, row=0, sticky=NW)
@@ -180,6 +186,7 @@ class OverviewCanvas:
         i = 0
         while not self.exited:
             self.clock.tick(30)
+            self.updateOptions()
             self.draw()
             i += 1
             if i == 600:
@@ -207,18 +214,19 @@ class OverviewCanvas:
             if event.type == pygame.MOUSEMOTION:
                 self.redraw_required = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
                 """
                 Due to rendering not really supporting the zoom this is currently disabled.
                 @TODO: improve rendering so zoom would actually make sense
                 
-                # Scroll wheel
+                # Scroll wheel"""
                 if event.button == 4:
                     self.zoom += 0.25
                     self.redraw_required = True
                 elif event.button == 5:
                     self.zoom -= 0.25
                     self.redraw_required = True
-                """
+                """"""
 
                 if event.button == 3:
                     right_down = True
@@ -226,6 +234,15 @@ class OverviewCanvas:
                 if event.button == 1:
                     left_down = True
                     self.redraw_required = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F2:
+                    self.display_bases.set(not self.display_bases.get())
+                elif event.key == pygame.K_F3:
+                    self.display_forces.set(not self.display_forces.get())
+                elif event.key == pygame.K_F4:
+                    self.display_ground_targets.set(not self.display_ground_targets.get())
+                elif event.key == pygame.K_F5:
+                    self.display_road.set(not self.display_road.get())
 
         # If Right click pressed
         if pygame.mouse.get_pressed()[2] == 1 and not right_down:
@@ -320,7 +337,7 @@ class OverviewCanvas:
         for cp in self.game.theater.controlpoints:
             coords = self._transform_point(cp.position)
             radius = 12 * math.pow(cp.importance, 1)
-            radius_m = radius * max(cp.base.strength - 2, 0)
+            radius_m = max(radius * cp.base.strength - 2, 0)
 
             if cp.captured:
                 color = self._player_color()
@@ -588,7 +605,6 @@ class OverviewCanvas:
     def update(self):
         self.redraw_required = True
         self.draw()
-        self.budget_label.text = "Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount)
 
     def compute_display_rules(self):
         return sum([1 if a.get() else 0 for a in [self.display_forces, self.display_road, self.display_bases, self.display_ground_targets]])
@@ -598,3 +614,7 @@ class OverviewCanvas:
             return self.parent.go_cp(cp)
 
         return action
+
+    def updateOptions(self):
+        self.current_turn.set("Turn : {}".format(self.game.turn))
+        self.current_budget.set("Budget: {}m (+{}m)".format(self.game.budget, self.game.budget_reward_amount))

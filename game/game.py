@@ -91,6 +91,7 @@ class Game:
     events = None  # type: typing.List[Event]
     pending_transfers = None  # type: typing.Dict[]
     ignored_cps = None  # type: typing.Collection[ControlPoint]
+    turn = 0
 
     def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater):
         self.settings = Settings()
@@ -98,6 +99,7 @@ class Game:
         self.theater = theater
         self.player = player_name
         self.enemy = enemy_name
+        self.turn = 0
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -265,6 +267,9 @@ class Game:
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         logging.info("Pass turn")
+
+        self.turn = self.turn + 1
+
         for event in self.events:
             if self.settings.version == "dev":
                 # don't damage player CPs in by skipping in dev mode
