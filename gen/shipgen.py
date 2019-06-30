@@ -41,8 +41,8 @@ class ShipGenerator:
                 offset += 1
                 logging.info("shipgen: {} ({}) for {}".format(unit_type, unit_count, self.conflict.defenders_side))
                 group = self.m.ship_group(
-                    country=self.conflict.defenders_side,
-                    name=namegen.next_unit_name(self.conflict.defenders_side, unit_type),
+                    country=self.conflict.defenders_country,
+                    name=namegen.next_unit_name(self.conflict.defenders_country, unit_type),
                     _type=unit_type,
                     position=self.conflict.ground_defenders_location.random_point_within(SHIP_RANDOM_SPREAD, SHIP_RANDOM_SPREAD).point_from_heading(0, offset * SHIP_RANDOM_SPREAD)
                 )
