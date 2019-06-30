@@ -87,7 +87,7 @@ class Window:
         self.right_pane.grid_remove()
         self.build()
 
-    def start_new_game(self, player_name: str, enemy_name: str, terrain: str, sams: bool, midgame: bool, multiplier: float):
+    def start_new_game(self, player_name: str, enemy_name: str, terrain: str, sams: bool, midgame: bool, multiplier: float, period:datetime):
         if terrain == "persiangulf":
             conflicttheater = persiangulf.PersianGulfTheater()
         elif terrain == "nevada":
@@ -104,7 +104,7 @@ class Window:
         game = Game(player_name=player_name,
                     enemy_name=enemy_name,
                     theater=conflicttheater,
-                    start_date=datetime.now())
+                    start_date=period)
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = sams

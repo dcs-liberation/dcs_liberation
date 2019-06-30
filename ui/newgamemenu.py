@@ -4,7 +4,7 @@ from tkinter.ttk import *
 
 from ui.window import *
 from .styles import STYLES
-
+from game import db
 
 class NewGameMenu(Menu):
     selected_country = None  # type: IntVar
@@ -24,6 +24,8 @@ class NewGameMenu(Menu):
 
         self.selected_terrain = IntVar()
         self.selected_terrain.set(0)
+
+        self.selected_time_period = StringVar()
 
         self.sams = BooleanVar()
         self.sams.set(1)
@@ -98,9 +100,20 @@ class NewGameMenu(Menu):
         Label(terrain, text="Persian Gulf", **STYLES["widget"]).grid(row=2, column=1, sticky=W)
         self.create_label_image(terrain, "terrain_pg.gif").grid(row=2, column=2, padx=5)
 
+        # Period selection
+        period = LabelFrame(body, text="Time Period", **STYLES["label-frame"])
+        period.grid(row=0, column=2, sticky=N, padx=5)
+
+        vals = list(db.TIME_PERIODS)
+        self.selected_time_period.set(vals[21])
+        period_select = OptionMenu(period, self.selected_time_period, *vals)
+        period_select.configure(**STYLES["btn-primary"])
+        period_select.grid(row=0, column=0, sticky=W)
+        #Label(terrain, text="Caucasus", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
+
         # Misc Options
         options = LabelFrame(body, text="Misc Options", **STYLES["label-frame"])
-        options.grid(row=0, column=2, sticky=NE, padx=5)
+        options.grid(row=0, column=3, sticky=NE, padx=5)
 
         Checkbutton(options, variable=self.sams, **STYLES["radiobutton"]).grid(row=0, column=0, sticky=W)
         Label(options, text="SAMs", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
@@ -130,4 +143,5 @@ class NewGameMenu(Menu):
                       self.terrain_name,
                       bool(self.sams.get()),
                       bool(self.midgame.get()),
-                      float(self.multiplier.get()))
+                      float(self.multiplier.get()),
+                      db.TIME_PERIODS[self.selected_time_period.get()])
