@@ -26,6 +26,8 @@ class NavalInterceptionOperation(Operation):
             self.attackers_starting_position = None
 
         conflict = Conflict.naval_intercept_conflict(
+            attacker_name=self.attacker_name,
+            defender_name=self.defender_name,
             attacker=self.current_mission.country(self.attacker_country),
             defender=self.current_mission.country(self.defender_country),
             position=self.location,

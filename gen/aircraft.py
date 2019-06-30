@@ -276,8 +276,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(attackers, clients):
             group = self._generate_group(
-                    name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                    side=self.conflict.attackers_side,
+                    name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                    side=self.conflict.attackers_country,
                     unit_type=flying_type,
                     count=count,
                     client_count=client_count,
@@ -298,8 +298,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.attackers_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -324,8 +324,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.attackers_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -350,8 +350,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(defenders, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.defenders_side, flying_type),
-                side=self.conflict.defenders_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.defenders_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -376,8 +376,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(attackers, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.attackers_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -395,7 +395,7 @@ class AircraftConflictGenerator:
 
     def generate_attackers_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
-                side=self.conflict.attackers_side,
+                side=self.conflict.attackers_country,
                 units=attackers,
                 clients=clients,
                 at=at and at or self._group_point(self.conflict.air_attackers_location),
@@ -405,7 +405,7 @@ class AircraftConflictGenerator:
 
     def generate_defenders_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for g in self._generate_escort(
-                side=self.conflict.defenders_side,
+                side=self.conflict.defenders_country,
                 units=escort,
                 clients=clients,
                 at=at and at or self._group_point(self.conflict.air_defenders_location),
@@ -416,8 +416,8 @@ class AircraftConflictGenerator:
     def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for flying_type, count, client_count in self._split_to_groups(defenders, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.defenders_side, flying_type),
-                side=self.conflict.defenders_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.defenders_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -433,8 +433,8 @@ class AircraftConflictGenerator:
     def generate_migcap(self, patrol: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for flying_type, count, client_count in self._split_to_groups(patrol, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.attackers_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -451,8 +451,8 @@ class AircraftConflictGenerator:
     def generate_barcap(self, patrol: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for flying_type, count, client_count in self._split_to_groups(patrol, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.defenders_side, flying_type),
-                side=self.conflict.defenders_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.defenders_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -477,8 +477,8 @@ class AircraftConflictGenerator:
 
         for flying_type, count, client_count in self._split_to_groups(transport):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.defenders_side, flying_type),
-                side=self.conflict.defenders_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.defenders_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -495,8 +495,8 @@ class AircraftConflictGenerator:
     def generate_interception(self, interceptors: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
         for flying_type, count, client_count in self._split_to_groups(interceptors, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, flying_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, flying_type),
+                side=self.conflict.attackers_country,
                 unit_type=flying_type,
                 count=count,
                 client_count=client_count,
@@ -517,8 +517,8 @@ class AircraftConflictGenerator:
     def generate_passenger_transport(self, helis: db.HeliDict, clients: db.HeliDict, at: db.StartingPosition):
         for heli_type, count, client_count in self._split_to_groups(helis, clients):
             group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_side, heli_type),
-                side=self.conflict.attackers_side,
+                name=namegen.next_unit_name(self.conflict.attackers_country, heli_type),
+                side=self.conflict.attackers_country,
                 unit_type=heli_type,
                 count=count,
                 client_count=client_count,

@@ -20,7 +20,7 @@ for t, uts in db.UNIT_BY_TASK.items():
         pos.x += 10000
         for ut in uts:
             pos.y += 5000
-            ctr = mis.country([v["country"] for k, v in db.UNIT_BY_COUNTRY.items() if ut in v["units"]][0])
+            ctr = mis.country([v["country"] for k, v in db.FACTIONS.items() if ut in v["units"]][0])
 
             g = mis.flight_group_inflight(
                 country=ctr,

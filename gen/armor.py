@@ -62,7 +62,7 @@ class ArmorConflictGenerator:
             attack_dest = position.point_from_heading(self.conflict.heading + 90, FIGHT_DISTANCE * 2)
             for type, count in attackers.items():
                 self._generate_group(
-                    side=self.conflict.attackers_side,
+                    side=self.conflict.attackers_country,
                     unit=type,
                     count=count,
                     at=attack_pos,
@@ -74,7 +74,7 @@ class ArmorConflictGenerator:
             def_dest = position.point_from_heading(self.conflict.heading - 90, FIGHT_DISTANCE * 2)
             for type, count in defenders.items():
                 self._generate_group(
-                    side=self.conflict.defenders_side,
+                    side=self.conflict.defenders_country,
                     unit=type,
                     count=count,
                     at=def_pos,
@@ -84,14 +84,14 @@ class ArmorConflictGenerator:
     def generate(self, attackers: db.ArmorDict, defenders: db.ArmorDict):
         for type, count in attackers.items():
             self._generate_group(
-                side=self.conflict.attackers_side,
+                side=self.conflict.attackers_country,
                 unit=type,
                 count=count,
                 at=self.conflict.ground_attackers_location)
 
         for type, count in defenders.items():
             self._generate_group(
-                side=self.conflict.defenders_side,
+                side=self.conflict.defenders_country,
                 unit=type,
                 count=count,
                 at=self.conflict.ground_defenders_location)
@@ -112,7 +112,7 @@ class ArmorConflictGenerator:
     def generate_convoy(self, units: db.ArmorDict):
         for type, count in units.items():
             self._generate_group(
-                side=self.conflict.defenders_side,
+                side=self.conflict.defenders_country,
                 unit=type,
                 count=count,
                 at=self.conflict.ground_defenders_location,

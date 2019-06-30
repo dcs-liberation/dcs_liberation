@@ -45,7 +45,7 @@ class GroundObjectsGenerator:
         side = self.m.country(self.game.enemy_country)
 
         cp = None  # type: ControlPoint
-        if self.conflict.attackers_side.name == self.game.player_country:
+        if self.conflict.attackers_country.name == self.game.player_country:
             cp = self.conflict.to_cp
         else:
             cp = self.conflict.from_cp

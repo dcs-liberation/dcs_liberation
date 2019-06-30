@@ -367,6 +367,7 @@ class OverviewCanvas:
 
             if self.display_ground_targets.get():
                 for ground_object in cp.ground_objects:
+                    pygame.draw.line(surface, RED, self._transform_point(cp.position), self._transform_point(ground_object.position), 1)
                     self.draw_ground_object(ground_object, surface, cp.captured, mouse_pos)
 
         if self.display_bases.get():

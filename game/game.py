@@ -103,9 +103,9 @@ class Game:
         self.events = []
         self.theater = theater
         self.player_name = player_name
-        self.player_country = db.UNIT_BY_COUNTRY[player_name]["country"]
+        self.player_country = db.FACTIONS[player_name]["country"]
         self.enemy_name = enemy_name
-        self.enemy_country = db.UNIT_BY_COUNTRY[enemy_name]["country"]
+        self.enemy_country = db.FACTIONS[enemy_name]["country"]
         self.turn = 0
         self.date = datetime(start_date.year, start_date.month, start_date.day)
 
@@ -206,7 +206,7 @@ class Game:
         if for_task == AirDefence and not self.settings.sams:
             return [x for x in db.find_unittype(AirDefence, self.enemy_name) if x not in db.SAM_BAN]
         else:
-            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_country)
+            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_name)
 
     def _commision_units(self, cp: ControlPoint):
         for for_task in [PinpointStrike, CAS, CAP, AirDefence]:

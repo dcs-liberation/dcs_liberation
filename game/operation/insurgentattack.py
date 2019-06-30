@@ -17,6 +17,8 @@ class InsurgentAttackOperation(Operation):
         super(InsurgentAttackOperation, self).prepare(terrain, is_quick)
 
         conflict = Conflict.ground_attack_conflict(
+            attacker_name=self.attacker_name,
+            defender_name=self.defender_name,
             attacker=self.current_mission.country(self.attacker_country),
             defender=self.current_mission.country(self.defender_country),
             from_cp=self.from_cp,

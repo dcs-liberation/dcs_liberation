@@ -27,6 +27,9 @@ class NewGameMenu(Menu):
 
         self.selected_time_period = StringVar()
 
+        self.selected_blue_faction = StringVar()
+        self.selected_red_faction = StringVar()
+
         self.sams = BooleanVar()
         self.sams.set(1)
 
@@ -39,16 +42,16 @@ class NewGameMenu(Menu):
     @property
     def player_country_name(self):
         if self.selected_country.get() == 0:
-            return "USA 1965"
+            return self.selected_blue_faction.get()
         else:
-            return "Russia 1955"
+            return self.selected_red_faction.get()
 
     @property
     def enemy_country_name(self):
         if self.selected_country.get() == 1:
-            return "USA 1965"
+            return self.selected_blue_faction.get()
         else:
-            return "Russia 1955"
+            return self.selected_red_faction.get()
 
     @property
     def terrain_name(self) -> str:
@@ -71,15 +74,36 @@ class NewGameMenu(Menu):
         body = Frame(self.frame, **STYLES["body"])
         body.grid(row=1, column=0, sticky=NSEW)
 
+        # Side Selection
+        side = LabelFrame(body, text="Player Side", **STYLES["label-frame"])
+        side.grid(row=2, column=0, sticky=NW, padx=5)
+        Radiobutton(side, variable=self.selected_country, value=0, **STYLES["radiobutton"]).grid(row=0, column=0,
+                                                                                                    sticky=W)
+        Label(side, text="BLUEFOR", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
+        Radiobutton(side, variable=self.selected_country, value=1, **STYLES["radiobutton"]).grid(row=1, column=0,
+                                                                                                    sticky=W)
+        Label(side, text="REDFOR", **STYLES["widget"]).grid(row=1, column=1, sticky=W)
+
         # Country Selection
-        country = LabelFrame(body, text="Player Side", **STYLES["label-frame"])
-        country.grid(row=0, column=0, sticky=NW, padx=5)
-        Radiobutton(country, variable=self.selected_country, value=0, **STYLES["radiobutton"]).grid(row=0, column=0,
-                                                                                                    sticky=W)
-        Label(country, text="USA 1965", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
-        Radiobutton(country, variable=self.selected_country, value=1, **STYLES["radiobutton"]).grid(row=1, column=0,
-                                                                                                    sticky=W)
-        Label(country, text="Russia 1955", **STYLES["widget"]).grid(row=1, column=1, sticky=W)
+
+        blues = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "blue"]
+        reds = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "red"]
+
+        factions = LabelFrame(body, text="Factions", **STYLES["label-frame"])
+        factions.grid(row=0, column=0, sticky=NW, padx=5)
+
+        Label(factions, text="Blue Faction", **STYLES["widget"]).grid(row=1, column=0, sticky=SE)
+
+        self.selected_blue_faction.set(blues[0])
+        blue_select = OptionMenu(factions, self.selected_blue_faction, *blues)
+        blue_select.configure(**STYLES["btn-primary"])
+        blue_select.grid(row=1, column=1, sticky=W)
+
+        self.selected_red_faction.set(reds[1])
+        Label(factions, text="Red Faction", **STYLES["widget"]).grid(row=2, column=0, sticky=W)
+        red_select = OptionMenu(factions, self.selected_red_faction, *reds)
+        red_select.configure(**STYLES["btn-primary"])
+        red_select.grid(row=2, column=1, sticky=W)
 
         # Terrain Selection
         terrain = LabelFrame(body, text="Terrain", **STYLES["label-frame"])
