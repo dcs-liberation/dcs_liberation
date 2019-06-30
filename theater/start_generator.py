@@ -19,10 +19,17 @@ COUNT_BY_TASK = {
 }
 
 
-def generate_inital_units(theater: ConflictTheater, enemy: str, sams: bool, multiplier: float):
+def generate_inital_units(theater: ConflictTheater, enemy_country: str, sams: bool, multiplier: float):
     for cp in theater.enemy_points():
         if cp.captured:
             continue
+
+        # Force reset cp on generation
+        cp.base.aircraft = {}
+        cp.base.armor = {}
+        cp.base.aa = {}
+        cp.base.commision_points = {}
+        cp.base.strength = 1
 
         for task in [PinpointStrike, CAP, CAS, AirDefence]:
             assert cp.importance <= IMPORTANCE_HIGH, "invalid importance {}".format(cp.importance)
@@ -30,17 +37,19 @@ def generate_inital_units(theater: ConflictTheater, enemy: str, sams: bool, mult
 
             importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
             variety = int(UNIT_VARIETY)
-            unittypes = db.choose_units(task, importance_factor, variety, enemy)
+            unittypes = db.choose_units(task, importance_factor, variety, enemy_country)
 
             if not sams and task == AirDefence:
-                unittypes = [x for x in db.find_unittype(AirDefence, enemy) if x not in db.SAM_BAN]
+                unittypes = [x for x in db.find_unittype(AirDefence, enemy_country) if x not in db.SAM_BAN]
 
             count_log = math.log(cp.importance + 0.01, UNIT_COUNT_IMPORTANCE_LOG)
             count = max(COUNT_BY_TASK[task] * multiplier * (1+count_log), 1)
-            count_per_type = max(int(float(count) / len(unittypes)), 1)
-            for unit_type in unittypes:
-                logging.info("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
-                cp.base.commision_units({unit_type: count_per_type})
+
+            if len(unittypes) > 0:
+                count_per_type = max(int(float(count) / len(unittypes)), 1)
+                for unit_type in unittypes:
+                    logging.info("{} - {} {}".format(cp.name, db.unit_type_name(unit_type), count_per_type))
+                    cp.base.commision_units({unit_type: count_per_type})
 
 
 def generate_groundobjects(theater: ConflictTheater):
@@ -73,6 +82,10 @@ def generate_groundobjects(theater: ConflictTheater):
 
     group_id = 0
     for cp in theater.controlpoints:
+
+        # Reset cp ground objects
+        cp.ground_objects = []
+
         if cp.is_global:
             continue
 

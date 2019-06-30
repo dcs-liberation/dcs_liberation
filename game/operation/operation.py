@@ -43,7 +43,10 @@ class Operation:
                  to_cp: ControlPoint = None):
         self.game = game
         self.attacker_name = attacker_name
+        self.attacker_country = db.UNIT_BY_COUNTRY[attacker_name]["country"]
         self.defender_name = defender_name
+        self.defender_country = db.UNIT_BY_COUNTRY[defender_name]["country"]
+        print(self.defender_country, self.attacker_country)
         self.from_cp = from_cp
         self.departure_cp = departure_cp
         self.to_cp = to_cp
@@ -74,9 +77,9 @@ class Operation:
         self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
-        player_name = self.from_cp.captured and self.attacker_name or self.defender_name
-        enemy_name = self.from_cp.captured and self.defender_name or self.attacker_name
-        self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_name, enemy_name)
+        player_country = self.from_cp.captured and self.attacker_country or self.defender_country
+        enemy_country = self.from_cp.captured and self.defender_country or self.attacker_country
+        self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_country, enemy_country)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
@@ -104,7 +107,7 @@ class Operation:
             return
 
         ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
-                                             country=self.game.player,
+                                             country=self.game.player_country,
                                              at=self.departure_cp.at)
 
         if not self.is_quick:
@@ -124,7 +127,7 @@ class Operation:
 
         # combined arms
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
-        if self.game.player in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
+        if self.game.player_country in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
             self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots

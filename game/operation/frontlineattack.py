@@ -29,13 +29,13 @@ class FrontlineAttackOperation(Operation):
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(FrontlineAttackOperation, self).prepare(terrain, is_quick)
-        if self.defender_name == self.game.player:
+        if self.defender_name == self.game.player_name:
             self.attackers_starting_position = None
             self.defenders_starting_position = None
 
         conflict = Conflict.frontline_cas_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater

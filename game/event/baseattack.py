@@ -39,7 +39,7 @@ class BaseAttackEvent(Event):
             if self.departure_cp.captured:
                 self.to_cp.captured = True
                 self.to_cp.ground_objects = []
-                self.to_cp.base.filter_units(db.UNIT_BY_COUNTRY[self.attacker_name])
+                self.to_cp.base.filter_units(db.UNIT_BY_COUNTRY[self.attacker_name]["units"])
 
             self.to_cp.base.affect_strength(+self.STRENGTH_RECOVERY)
         else:

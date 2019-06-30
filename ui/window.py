@@ -88,6 +88,10 @@ class Window:
         self.build()
 
     def start_new_game(self, player_name: str, enemy_name: str, terrain: str, sams: bool, midgame: bool, multiplier: float, period:datetime):
+
+        player_country = db.UNIT_BY_COUNTRY[player_name]["country"]
+        enemy_country = db.UNIT_BY_COUNTRY[enemy_name]["country"]
+
         if terrain == "persiangulf":
             conflicttheater = persiangulf.PersianGulfTheater()
         elif terrain == "nevada":

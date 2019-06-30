@@ -641,10 +641,10 @@ class OverviewCanvas:
         return event.is_departure_available_from(cp)
 
     def _player_color(self):
-        return self.game.player == "USA" and BLUE or RED
+        return self.game.player_country == "USA" and BLUE or RED
 
     def _enemy_color(self):
-        return self.game.player == "USA" and RED or BLUE
+        return self.game.player_country == "USA" and RED or BLUE
 
     def update(self):
         self.redraw_required = True

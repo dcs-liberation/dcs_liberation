@@ -101,7 +101,7 @@ class Debriefing:
 
         return Debriefing(dead_units, trigger_state)
 
-    def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_name: str, enemy_name: str):
+    def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_country: str, enemy_country: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
             result = {}
             for group in groups:
@@ -116,8 +116,8 @@ class Debriefing:
 
         mission = regular_mission if len(self._trigger_state) else quick_mission
 
-        player = mission.country(player_name)
-        enemy = mission.country(enemy_name)
+        player = mission.country(player_country)
+        enemy = mission.country(enemy_country)
         
         player_units = count_groups(player.plane_group + player.vehicle_group + player.ship_group)
         enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)

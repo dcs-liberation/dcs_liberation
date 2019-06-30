@@ -165,7 +165,7 @@ class TriggersGenerator:
         self.mission.triggerrules.triggers.append(trigger_three)
 
     def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int, awacs_enabled: bool):
-        player_coalition = self.game.player == "USA" and "blue" or "red"
+        player_coalition = self.game.player_country == "USA" and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
         self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,

@@ -109,15 +109,15 @@ class EventResultsMenu(Menu):
 
         debriefing.calculate_units(regular_mission=self.event.operation.regular_mission,
                                    quick_mission=self.event.operation.quick_mission,
-                                   player_name=self.game.player,
-                                   enemy_name=self.game.enemy)
+                                   player_country=self.game.player_country,
+                                   enemy_country=self.game.enemy_country)
 
         self.game.finish_event(event=self.event, debriefing=debriefing)
         self.game.pass_turn(ignored_cps=[self.event.to_cp, ])
 
         self.finished = True
-        self.player_losses = debriefing.destroyed_units.get(self.game.player, {})
-        self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy, {})
+        self.player_losses = debriefing.destroyed_units.get(self.game.player_country, {})
+        self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy_country, {})
         self.display()
 
     def simulate_result(self, player_factor: float, enemy_factor: float):
@@ -144,8 +144,8 @@ class EventResultsMenu(Menu):
 
                 return result
 
-            player = self.event.operation.mission.country(self.game.player)
-            enemy = self.event.operation.mission.country(self.game.enemy)
+            player = self.event.operation.mission.country(self.game.player_country)
+            enemy = self.event.operation.mission.country(self.game.enemy_country)
 
             alive_player_units = count(player)
             alive_enemy_units = count(enemy)
@@ -170,8 +170,8 @@ class EventResultsMenu(Menu):
 
             self.finished = True
             self.debriefing = debriefing
-            self.player_losses = debriefing.destroyed_units.get(self.game.player, {})
-            self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy, {})
+            self.player_losses = debriefing.destroyed_units.get(self.game.player_country, {})
+            self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy_country, {})
 
             self.game.finish_event(self.event, debriefing)
             self.display()

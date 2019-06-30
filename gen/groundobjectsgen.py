@@ -36,16 +36,16 @@ class GroundObjectsGenerator:
             position = position.point_from_heading(0, i * 275)
 
             yield self.m.farp(
-                country=self.m.country(self.game.player),
+                country=self.m.country(self.game.player_country),
                 name="FARP",
                 position=position,
             )
 
     def generate(self):
-        side = self.m.country(self.game.enemy)
+        side = self.m.country(self.game.enemy_country)
 
         cp = None  # type: ControlPoint
-        if self.conflict.attackers_side.name == self.game.player:
+        if self.conflict.attackers_side.name == self.game.player_country:
             cp = self.conflict.to_cp
         else:
             cp = self.conflict.from_cp

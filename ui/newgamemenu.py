@@ -39,16 +39,16 @@ class NewGameMenu(Menu):
     @property
     def player_country_name(self):
         if self.selected_country.get() == 0:
-            return "USA"
+            return "USA 1965"
         else:
-            return "Russia"
+            return "Russia 1955"
 
     @property
     def enemy_country_name(self):
         if self.selected_country.get() == 1:
-            return "USA"
+            return "USA 1965"
         else:
-            return "Russia"
+            return "Russia 1955"
 
     @property
     def terrain_name(self) -> str:
@@ -76,10 +76,10 @@ class NewGameMenu(Menu):
         country.grid(row=0, column=0, sticky=NW, padx=5)
         Radiobutton(country, variable=self.selected_country, value=0, **STYLES["radiobutton"]).grid(row=0, column=0,
                                                                                                     sticky=W)
-        Label(country, text="USA", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
+        Label(country, text="USA 1965", **STYLES["widget"]).grid(row=0, column=1, sticky=W)
         Radiobutton(country, variable=self.selected_country, value=1, **STYLES["radiobutton"]).grid(row=1, column=0,
                                                                                                     sticky=W)
-        Label(country, text="Russia", **STYLES["widget"]).grid(row=1, column=1, sticky=W)
+        Label(country, text="Russia 1955", **STYLES["widget"]).grid(row=1, column=1, sticky=W)
 
         # Terrain Selection
         terrain = LabelFrame(body, text="Terrain", **STYLES["label-frame"])

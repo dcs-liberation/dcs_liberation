@@ -119,7 +119,7 @@ class VisualGenerator:
                             break
 
                         self.mission.static_group(
-                            self.mission.country(self.game.enemy),
+                            self.mission.country(self.game.enemy_country),
                             "",
                             _type=v,
                             position=pos)
@@ -146,7 +146,7 @@ class VisualGenerator:
                         break
 
                     self.mission.static_group(
-                        self.mission.country(self.game.enemy),
+                        self.mission.country(self.game.enemy_country),
                         "",
                         _type=v,
                         position=position)
@@ -154,7 +154,7 @@ class VisualGenerator:
 
     def generate_transportation_marker(self, at: Point):
         self.mission.static_group(
-            self.mission.country(self.game.player),
+            self.mission.country(self.game.player_country),
             "",
             _type=MarkerSmoke,
             position=at
@@ -163,7 +163,7 @@ class VisualGenerator:
     def generate_transportation_destination(self, at: Point):
         self.generate_transportation_marker(at.point_from_heading(0, 20))
         self.mission.static_group(
-            self.mission.country(self.game.player),
+            self.mission.country(self.game.player_country),
             "",
             _type=Outpost,
             position=at

@@ -25,12 +25,12 @@ class StrikeOperation(Operation):
         super(StrikeOperation, self).prepare(terrain, is_quick)
 
         self.defenders_starting_position = None
-        if self.game.player == self.defender_name:
+        if self.game.player_name == self.defender_name:
             self.attackers_starting_position = None
 
         conflict = Conflict.strike_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater

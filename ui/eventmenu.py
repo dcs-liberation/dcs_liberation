@@ -19,7 +19,7 @@ class EventMenu(Menu):
         self.event = event
         self.scramble_entries = {k: {} for k in self.event.tasks}
 
-        if self.event.attacker_name == self.game.player:
+        if self.event.attacker_name == self.game.player_name:
             self.base = self.event.departure_cp.base
         else:
             self.base = self.event.to_cp.base

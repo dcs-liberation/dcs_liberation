@@ -102,8 +102,10 @@ class Game:
         self.settings = Settings()
         self.events = []
         self.theater = theater
-        self.player = player_name
-        self.enemy = enemy_name
+        self.player_name = player_name
+        self.player_country = db.UNIT_BY_COUNTRY[player_name]["country"]
+        self.enemy_name = enemy_name
+        self.enemy_country = db.UNIT_BY_COUNTRY[enemy_name]["country"]
         self.turn = 0
         self.date = datetime(start_date.year, start_date.month, start_date.day)
 
@@ -127,7 +129,7 @@ class Game:
             # skip strikes in case of no targets
             return
 
-        self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player, self.enemy))
+        self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
 
     def _generate_enemy_event(self, event_class, player_cp, enemy_cp):
         if event_class in [type(x) for x in self.events if not self.is_player_attack(x)]:
@@ -167,7 +169,7 @@ class Game:
                 # skip base attack if strength is too high
                 return
 
-        self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy, self.player))
+        self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy_name, self.player_name))
 
     def _generate_events(self):
         strikes_generated_for = set()
@@ -202,9 +204,9 @@ class Game:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
 
         if for_task == AirDefence and not self.settings.sams:
-            return [x for x in db.find_unittype(AirDefence, self.enemy) if x not in db.SAM_BAN]
+            return [x for x in db.find_unittype(AirDefence, self.enemy_name) if x not in db.SAM_BAN]
         else:
-            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy)
+            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_country)
 
     def _commision_units(self, cp: ControlPoint):
         for for_task in [PinpointStrike, CAS, CAP, AirDefence]:
@@ -234,8 +236,8 @@ class Game:
         self.budget -= AWACS_BUDGET_COST
 
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
-        event = UnitsDeliveryEvent(attacker_name=self.player,
-                                   defender_name=self.player,
+        event = UnitsDeliveryEvent(attacker_name=self.player_name,
+                                   defender_name=self.player_name,
                                    from_cp=to_cp,
                                    to_cp=to_cp,
                                    game=self)
@@ -267,9 +269,9 @@ class Game:
 
     def is_player_attack(self, event):
         if isinstance(event, Event):
-            return event.attacker_name == self.player
+            return event.attacker_name == self.player_name
         else:
-            return event.name == self.player
+            return event.name == self.player_name
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
         logging.info("Pass turn")

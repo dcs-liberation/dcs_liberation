@@ -33,12 +33,12 @@ class BaseAttackOperation(Operation):
         super(BaseAttackOperation, self).prepare(terrain, is_quick)
 
         self.defenders_starting_position = None
-        if self.game.player == self.defender_name:
+        if self.game.player_name == self.defender_name:
             self.attackers_starting_position = None
 
         conflict = Conflict.capture_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater
@@ -60,7 +60,7 @@ class BaseAttackOperation(Operation):
         self.briefinggen.title = "Base attack"
         self.briefinggen.description = "The goal of an attacker is to lower defender presence by destroying their armor and aircraft. Base will be considered captured if attackers on the ground overrun the defenders. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
 
-        if self.game.player == self.attacker_name:
+        if self.game.player_name == self.attacker_name:
             self.briefinggen.append_waypoint("TARGET")
         else:
             pass

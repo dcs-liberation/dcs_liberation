@@ -17,8 +17,8 @@ class ConvoyStrikeOperation(Operation):
         super(ConvoyStrikeOperation, self).prepare(terrain, is_quick)
 
         conflict = Conflict.convoy_strike_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             from_cp=self.from_cp,
             to_cp=self.to_cp,
             theater=self.game.theater

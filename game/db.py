@@ -90,6 +90,7 @@ PRICES = {
     Armor.MBT_T_55: 22,
     Armor.MBT_T_80U: 28,
     Armor.MBT_T_90: 35,
+    Armor.APC_M113: 5,
 
     Armor.ATGM_M1134_Stryker: 18,
     Armor.MBT_M60A3_Patton: 24,
@@ -263,6 +264,8 @@ AirDefense units that will be spawned at control points not related to the curre
 EXTRA_AA = {
     "Russia": AirDefence.SAM_SA_8_Osa_9A33,
     "USA": AirDefence.SAM_Linebacker_M6,
+    "Russia 1955": AirDefence.AAA_ZU_23_Closed,
+    "USA 1965": AirDefence.AAA_Vulcan_M163,
 }
 
 """
@@ -270,94 +273,160 @@ Units separated by country. Currently only Russia and USA are supported.
 Be advised that putting unit to the country that have not access to the unit in the game itself will result in incorrect missions generated!
 """
 UNIT_BY_COUNTRY = {
-    "Russia": [
-        AJS37,
-        MiG_23MLD,
-        F_5E_3,
-        Su_25,
-        Su_27,
-        Su_33,
-        MiG_15bis,
-        MiG_21Bis,
-        MiG_29A,
-        MiG_29S,
-        M_2000C,
+    "Russia 2010": {
+        "country": "Russia",
+        "units": [
+            AJS37,
+            MiG_23MLD,
+            F_5E_3,
+            Su_25,
+            Su_27,
+            Su_33,
+            MiG_15bis,
+            MiG_21Bis,
+            MiG_29A,
+            MiG_29S,
+            M_2000C,
 
-        Su_25T,
-        Su_34,
-        L_39ZA,
+            Su_25T,
+            Su_34,
+            L_39ZA,
 
-        IL_76MD,
-        IL_78M,
-        An_26B,
-        An_30M,
-        Yak_40,
-        A_50,
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
+            A_50,
 
-        Ka_50,
-        SA342M,
-        UH_1H,
-        Mi_8MT,
+            Ka_50,
+            SA342M,
+            UH_1H,
+            Mi_8MT,
 
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
-        AirDefence.SAM_SA_9_Strela_1_9P31,
-        AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.AAA_ZU_23_Closed,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
-        AirDefence.SAM_SA_6_Kub_LN_2P25,
-        AirDefence.SAM_SA_3_S_125_LN_5P73,
-        AirDefence.SAM_SA_11_Buk_LN_9A310M1,
+            AirDefence.SPAAA_ZSU_23_4_Shilka,
+            AirDefence.SAM_SA_9_Strela_1_9P31,
+            AirDefence.SAM_SA_8_Osa_9A33,
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.SAM_SA_19_Tunguska_2S6,
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_3_S_125_LN_5P73,
+            AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 
-        Armor.APC_BTR_80,
-        Armor.MBT_T_90,
-        Armor.MBT_T_80U,
-        Armor.MBT_T_55,
-        Unarmed.Transport_Ural_375,
-        Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
-        CV_1143_5_Admiral_Kuznetsov,
-        Bulk_cargo_ship_Yakushev,
-        Dry_cargo_ship_Ivanov,
-        Tanker_Elnya_160,
-    ],
+            Armor.APC_BTR_80,
+            Armor.MBT_T_90,
+            Armor.MBT_T_80U,
+            Armor.MBT_T_55,
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160,
+        ]
+    },
 
-    "USA": [
-        F_5E_3,
-        F_15C,
-        F_14B,
-        FA_18C_hornet,
-        AJS37,
-        M_2000C,
-        MiG_21Bis,
-        MiG_15bis,
+    "Russia 1955": {
+        "country": "Russia",
+        "units": [
+            MiG_15bis,
 
-        A_10A,
-        A_10C,
-        AV8BNA,
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
 
-        KC_135,
-        S_3B_Tanker,
-        C_130,
-        E_3A,
+            A_50,
 
-        Ka_50,
-        SA342M,
-        UH_1H,
-        Mi_8MT,
+            Mi_8MT,
 
-        Armor.MBT_M1A2_Abrams,
-        Armor.MBT_M60A3_Patton,
-        Armor.ATGM_M1134_Stryker,
-        Unarmed.Transport_M818,
-        Infantry.Infantry_M4,
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_3_S_125_LN_5P73,
 
-        AirDefence.AAA_Vulcan_M163,
-        AirDefence.SAM_Linebacker_M6,
+            Armor.APC_BTR_80,
+            Armor.MBT_T_55,
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160
+        ]
+    },
 
-        CVN_74_John_C__Stennis,
-        LHA_1_Tarawa,
-        Armed_speedboat,
-    ],
+    "USA 2010": {
+        "country":"USA",
+        "units":[
+            F_5E_3,
+            F_15C,
+            F_14B,
+            FA_18C_hornet,
+            AJS37,
+            M_2000C,
+            MiG_21Bis,
+            MiG_15bis,
+
+            A_10A,
+            A_10C,
+            AV8BNA,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            Ka_50,
+            SA342M,
+            UH_1H,
+            Mi_8MT,
+
+            Armor.MBT_M1A2_Abrams,
+            Armor.MBT_M60A3_Patton,
+            Armor.ATGM_M1134_Stryker,
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.AAA_Vulcan_M163,
+            AirDefence.SAM_Linebacker_M6,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "USA 1965": {
+        "country":"USA",
+        "units":[
+            F_86F_Sabre,
+            F_5E_3,
+
+            A_10A,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            UH_1H,
+
+            Armor.MBT_M60A3_Patton,
+            Armor.APC_M113,
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.AAA_Vulcan_M163,
+            AirDefence.SAM_Linebacker_M6,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
 }
 
 CARRIER_TYPE_BY_PLANE = {
@@ -519,7 +588,7 @@ def unit_task(unit: UnitType) -> Task:
 
 
 def find_unittype(for_task: Task, country_name: str) -> typing.List[UnitType]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in UNIT_BY_COUNTRY[country_name]]
+    return [x for x in UNIT_BY_TASK[for_task] if x in UNIT_BY_COUNTRY[country_name]["units"]]
 
 
 def unit_type_name(unit_type) -> str:
@@ -649,7 +718,7 @@ def _validate_db():
     for unit_type in total_set:
         did_find = False
         for country_units_list in UNIT_BY_COUNTRY.values():
-            if unit_type in country_units_list:
+            if unit_type in country_units_list["units"]:
                 did_find = True
         assert did_find, "{} not in country list".format(unit_type)
 

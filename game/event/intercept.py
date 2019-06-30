@@ -51,7 +51,7 @@ class InterceptEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(InterceptEvent, self).commit(debriefing)
 
-        if self.attacker_name == self.game.player:
+        if self.attacker_name == self.game.player_name:
             if self.is_successfull(debriefing):
                 for _, cp in self.game.theater.conflicts(True):
                     cp.base.affect_strength(-self.STRENGTH_INFLUENCE)

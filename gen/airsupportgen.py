@@ -37,8 +37,8 @@ class AirSupportConflictGenerator:
             tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position) + TANKER_HEADING_OFFSET * i
             tanker_position = player_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
             tanker_group = self.mission.refuel_flight(
-                country=self.mission.country(self.game.player),
-                name=namegen.next_tanker_name(self.mission.country(self.game.player)),
+                country=self.mission.country(self.game.player_country),
+                name=namegen.next_tanker_name(self.mission.country(self.game.player_country)),
                 airport=None,
                 plane_type=tanker_unit_type,
                 position=tanker_position,
@@ -55,8 +55,8 @@ class AirSupportConflictGenerator:
         if is_awacs_enabled:
             awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side.name)[0]
             awacs_flight = self.mission.awacs_flight(
-                country=self.mission.country(self.game.player),
-                name=namegen.next_awacs_name(self.mission.country(self.game.player)),
+                country=self.mission.country(self.game.player_country),
+                name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
                 plane_type=awacs_unit,
                 altitude=AWACS_ALT,
                 airport=None,

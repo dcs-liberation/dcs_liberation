@@ -22,12 +22,12 @@ class NavalInterceptionOperation(Operation):
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(NavalInterceptionOperation, self).prepare(terrain, is_quick)
-        if self.defender_name == self.game.player:
+        if self.defender_name == self.game.player_name:
             self.attackers_starting_position = None
 
         conflict = Conflict.naval_intercept_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             position=self.location,
             from_cp=self.from_cp,
             to_cp=self.to_cp,
@@ -55,7 +55,7 @@ class NavalInterceptionOperation(Operation):
             )
 
         self.briefinggen.title = "Naval Intercept"
-        if self.game.player == self.attacker_name:
+        if self.game.player_name == self.attacker_name:
             self.briefinggen.description = "Destroy supply transport ships. Lowers target strength. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
             for unit_type, count in self.targets.items():
                 self.briefinggen.append_target("{} ({})".format(db.unit_type_name(unit_type), count))

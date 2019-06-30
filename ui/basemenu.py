@@ -19,11 +19,11 @@ class BaseMenu(Menu):
     def display(self):
         self.window.clear_right_pane()
         units = {
-            CAP: db.find_unittype(CAP, self.game.player),
-            Embarking: db.find_unittype(Embarking, self.game.player),
-            AirDefence: db.find_unittype(AirDefence, self.game.player),
-            CAS: db.find_unittype(CAS, self.game.player),
-            PinpointStrike: db.find_unittype(PinpointStrike, self.game.player),
+            CAP: db.find_unittype(CAP, self.game.player_name),
+            Embarking: db.find_unittype(Embarking, self.game.player_name),
+            AirDefence: db.find_unittype(AirDefence, self.game.player_name),
+            CAS: db.find_unittype(CAS, self.game.player_name),
+            PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
         }
 
         # Header

@@ -27,12 +27,12 @@ class InterceptOperation(Operation):
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(InterceptOperation, self).prepare(terrain, is_quick)
         self.defenders_starting_position = None
-        if self.defender_name == self.game.player:
+        if self.defender_name == self.game.player_name:
             self.attackers_starting_position = None
 
         conflict = Conflict.intercept_conflict(
-            attacker=self.current_mission.country(self.attacker_name),
-            defender=self.current_mission.country(self.defender_name),
+            attacker=self.current_mission.country(self.attacker_country),
+            defender=self.current_mission.country(self.defender_country),
             position=self.location,
             from_cp=self.from_cp,
             to_cp=self.to_cp,
@@ -53,7 +53,7 @@ class InterceptOperation(Operation):
 
         self.briefinggen.title = "Air Intercept"
 
-        if self.game.player == self.attacker_name:
+        if self.game.player_name == self.attacker_name:
             self.briefinggen.description = "Intercept enemy supply transport aircraft. Escort will also be present if there are available planes on the base. Operation will be considered successful if most of the targets are destroyed, lowering targets strength as a result"
             self.briefinggen.append_waypoint("TARGET")
             for unit_type, count in self.transport.items():

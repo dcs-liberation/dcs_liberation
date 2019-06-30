@@ -47,11 +47,11 @@ class Event:
 
     @property
     def is_player_attacking(self) -> bool:
-        return self.attacker_name == self.game.player
+        return self.attacker_name == self.game.player_name
 
     @property
     def enemy_cp(self) -> ControlPoint:
-        if self.attacker_name == self.game.player:
+        if self.attacker_name == self.game.player_name:
             return self.to_cp
         else:
             return self.departure_cp
