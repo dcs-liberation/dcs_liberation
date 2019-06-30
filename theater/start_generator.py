@@ -56,7 +56,7 @@ def generate_groundobjects(theater: ConflictTheater):
     with open("resources/groundobject_templates.p", "rb") as f:
         tpls = pickle.load(f)
 
-    def find_location(on_ground, near, theater, min, max) -> typing.Optional[Point]:
+    def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:
         point = None
         for _ in range(1000):
             p = near.random_point_within(max, min)
@@ -72,6 +72,13 @@ def generate_groundobjects(theater: ConflictTheater):
                         point = None
                         break
                     elif not on_ground and not theater.is_in_sea(p):
+                        point = None
+                        break
+
+
+            if point:
+                for other in others:
+                    if other.position.distance_to_point(point) < 10000:
                         point = None
                         break
 
@@ -92,7 +99,7 @@ def generate_groundobjects(theater: ConflictTheater):
         if not cp.has_frontline:
             continue
 
-        amount = random.randrange(5, 7)
+        amount = random.randrange(1, 5)
         for i in range(0, amount):
             available_categories = list(tpls)
             if i >= amount - 1:
@@ -102,7 +109,7 @@ def generate_groundobjects(theater: ConflictTheater):
 
             tpl = random.choice(list(tpls[tpl_category].values()))
 
-            point = find_location(tpl_category != "oil", cp.position, theater, 15000, 80000)
+            point = find_location(tpl_category != "oil", cp.position, theater, 10000, 40000, cp.ground_objects)
 
             if point is None:
                 print("Couldn't find point for {}".format(cp))
