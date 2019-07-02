@@ -11,6 +11,33 @@ EXTRA_AA_MAX_DISTANCE = 150000
 EXTRA_AA_POSITION_FROM_CP = 550
 
 
+def num_sam_dead(sam_type, destroyed_count):
+    """
+    Given a type and count of SAM units, determine if enough units were destroyed to warrant the
+     loss of a site
+    :param sam_type:
+        inidivudal unit name in SAM site which was destroyed
+    :param destroyed_count:
+        count of that unit type which was destroyed *in the sortie*
+    :return:
+        INT: number of sites lost
+    """
+    sam_threshold = {
+        AirDefence.SAM_SR_P_19: 1,
+        AirDefence.SAM_SA_3_S_125_TR_SNR: 1,
+        AirDefence.SAM_SA_6_Kub_STR_9S91: 1,
+        AirDefence.SAM_SA_10_S_300PS_SR_5N66M: 1,
+        AirDefence.SAM_SA_10_S_300PS_TR_30N6: 1,
+        AirDefence.SAM_SA_10_S_300PS_CP_54K6: 1,
+        AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 1,
+        AirDefence.SAM_SA_3_S_125_LN_5P73: 4,
+        AirDefence.SAM_SA_6_Kub_LN_2P25: 6,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 8,
+    }
+
+    return int(destroyed_count / sam_threshold[sam_type])
+
+
 def determine_positions(position, heading, num_units, launcher_distance, coverage=90):
     """
     Given a position on the map, array a group of units in a circle a uniform distance from the unit
@@ -69,7 +96,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             num_launchers = 4
             # search radar
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-sr".format(nr=i),
                 AirDefence.SAM_SR_P_19,
             )
             v.position.x = position.x
@@ -78,7 +105,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             vg.add_unit(v)
             # track radar
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-tr".format(nr=i),
                 AirDefence.SAM_SA_3_S_125_TR_SNR,
             )
 
@@ -98,7 +125,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             )
             for x in range(0, num_launchers):
                 v = self.vehicle(
-                    name + " Unit #{nr}".format(nr=i),
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
                     AirDefence.SAM_SA_3_S_125_LN_5P73,
                 )
 
@@ -113,7 +140,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             # search/track radar
             num_launchers = 6
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-str".format(nr=i),
                 AirDefence.SAM_SA_6_Kub_STR_9S91,
             )
             v.position.x = position.x
@@ -130,7 +157,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             )
             for x in range(0, num_launchers):
                 v = self.vehicle(
-                    name + " Unit #{nr}".format(nr=i),
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
                     AirDefence.SAM_SA_6_Kub_LN_2P25,
                 )
 
@@ -145,7 +172,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             # search radar
             num_launchers = 8
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-sr".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_SR_5N66M,
             )
             v.position.x = position.x
@@ -154,7 +181,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             vg.add_unit(v)
             # track radar
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-tr".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_TR_30N6,
             )
 
@@ -167,7 +194,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             vg.add_unit(v)
             # command center
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-c".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_CP_54K6,
             )
 
@@ -188,7 +215,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             )
             for x in range(0, num_launchers):
                 v = self.vehicle(
-                    name + " Unit #{nr}".format(nr=i),
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
                     AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
                 )
 
@@ -204,7 +231,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             # search radar
             num_launchers = 8
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-sr".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_SR_64H6E,
             )
             v.position.x = position.x
@@ -213,7 +240,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             vg.add_unit(v)
             # track radar
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-tr".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_TR_30N6,
             )
 
@@ -226,7 +253,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             vg.add_unit(v)
             # command center
             v = self.vehicle(
-                name + " Unit #{nr}".format(nr=i),
+                name + " Unit #{nr}-c".format(nr=i),
                 AirDefence.SAM_SA_10_S_300PS_CP_54K6,
             )
 
@@ -247,7 +274,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             )
             for x in range(0, num_launchers):
                 v = self.vehicle(
-                    name + " Unit #{nr}".format(nr=i),
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
                     AirDefence.SAM_SA_10_S_300PS_LN_5P85D,
                 )
 
@@ -256,7 +283,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
                 v.heading = plop_positions[x][2]
                 vg.add_unit(v)
         else:
-            v = self.vehicle(name + " Unit #{nr}".format(nr=i), _type)
+            v = self.vehicle(name + " Unit #{nr}-sam".format(nr=i), _type)
             v.position.x = position.x
             v.position.y = position.y + (i - 1) * 20
             v.heading = heading
