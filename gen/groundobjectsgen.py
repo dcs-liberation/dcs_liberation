@@ -116,12 +116,7 @@ def farp_aa(mission_obj, country, name, position: mapping.Point):
     units = [
         AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.AAA_ZU_23_Closed,
-        AirDefence.AAA_ZU_23_Emplacement,
-        AirDefence.AAA_ZU_23_on_Ural_375,
-        AirDefence.AAA_ZU_23_Insurgent_Closed,
-        AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
         Armor.MBT_T_55,
-        Armor.IFV_BMP_3,
     ]
 
     v = mission_obj.vehicle(name + "_AAA", random.choice(units))
