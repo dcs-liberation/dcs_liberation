@@ -45,6 +45,7 @@ PRICES = {
     Su_33: 22,
     MiG_29A: 18,
     MiG_29S: 20,
+    MiG_31: 30,
 
     F_5E_3: 8,
     MiG_15bis: 4,
@@ -57,25 +58,33 @@ PRICES = {
     AV8BNA: 14,
     M_2000C: 16,
     Mirage_2000_5: 22,
-    FA_18C_hornet: 22,
-    F_15C: 24,
-    F_14B: 18,
+    FA_18C_hornet: 24,
+    F_15C: 26,
+    F_16C_bl_52d: 20,
+    F_14B: 22,
 
     # bomber
     Su_17M4: 10,
     Su_25: 15,
-    Su_25T: 13,
+    Su_25T: 18,
     L_39ZA: 10,
-    Su_34: 18,
+    Su_34: 24,
+    Su_24M: 20,
+    Su_24MR: 24,
 
-    A_10A: 18,
-    A_10C: 20,
+    A_10A: 16,
+    A_10C: 22,
 
     # heli
     Ka_50: 13,
     SA342M: 8,
     UH_1H: 4,
     Mi_8MT: 5,
+    Mi_24V: 12,
+    AH_1W: 10,
+    AH_64A: 12,
+    AH_64D: 15,
+    OH_58D: 6,
 
     # special
     IL_76MD: 13,
@@ -91,8 +100,10 @@ PRICES = {
     C_130: 8,
 
     # armor
-    Armor.ARV_BRDM_2: 4,
-    Armor.ARV_BTR_RD: 6,
+    Armor.APC_MTLB: 4,
+    Armor.ARV_MTLB_U_BOMAN: 5,
+    Armor.ARV_BRDM_2: 6,
+    Armor.ARV_BTR_RD: 8,
     Armor.APC_BTR_80: 8,
     Armor.MBT_T_55: 18,
     Armor.MBT_T_72B: 25,
@@ -103,13 +114,18 @@ PRICES = {
     Armor.IFV_BMP_2: 16,
     Armor.IFV_BMP_3: 20,
 
-    Armor.APC_M113: 5,
+    Armor.APC_M113: 6,
+    Armor.APC_M1043_HMMWV_Armament: 2,
+    Armor.ATGM_M1045_HMMWV_TOW: 8,
     Armor.IFV_M2A2_Bradley: 12,
     Armor.APC_M1126_Stryker_ICV: 16,
     Armor.ATGM_M1134_Stryker: 18,
     Armor.MBT_M60A3_Patton: 18,
     Armor.MBT_M1A2_Abrams: 35,
     Armor.MBT_Leclerc: 35,
+    Armor.MBT_Leopard_1A3: 24,
+    Armor.MBT_Leopard_2: 35,
+    Armor.TPz_Fuchs: 8,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -169,7 +185,9 @@ UNIT_BY_TASK = {
         FA_18C_hornet,
         F_15C,
         F_14B,
+        F_16C_bl_52d,
         M_2000C,
+        Mirage_2000_5
     ],
     CAS: [
         MiG_15bis,
@@ -186,6 +204,11 @@ UNIT_BY_TASK = {
         Ka_50,
         F_4E,
         SA342M,
+        Su_24M,
+        Su_24MR,
+        AH_64A,
+        AH_64D,
+        OH_58D
     ],
 
     Transport: [
@@ -206,6 +229,18 @@ UNIT_BY_TASK = {
     AWACS: [E_3A, A_50, ],
 
     PinpointStrike: [
+        Armor.APC_MTLB,
+        Armor.APC_MTLB,
+        Armor.APC_MTLB,
+        Armor.APC_MTLB,
+        Armor.APC_MTLB,
+        Armor.ARV_MTLB_U_BOMAN,
+        Armor.ARV_MTLB_U_BOMAN,
+        Armor.ARV_MTLB_U_BOMAN,
+        Armor.ARV_MTLB_U_BOMAN,
+        Armor.ARV_MTLB_U_BOMAN,
+        Armor.ARV_BRDM_2,
+        Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
@@ -226,6 +261,14 @@ UNIT_BY_TASK = {
         Armor.APC_M113,
         Armor.APC_M113,
         Armor.APC_M113,
+        Armor.TPz_Fuchs,
+        Armor.TPz_Fuchs,
+        Armor.TPz_Fuchs,
+        Armor.TPz_Fuchs,
+        Armor.ATGM_M1045_HMMWV_TOW,
+        Armor.ATGM_M1045_HMMWV_TOW,
+        Armor.APC_M1043_HMMWV_Armament,
+        Armor.APC_M1043_HMMWV_Armament,
         Armor.IFV_M2A2_Bradley,
         Armor.IFV_M2A2_Bradley,
         Armor.ATGM_M1134_Stryker,
@@ -233,9 +276,14 @@ UNIT_BY_TASK = {
         Armor.MBT_M60A3_Patton,
         Armor.MBT_M60A3_Patton,
         Armor.MBT_M60A3_Patton,
+        Armor.MBT_Leopard_1A3,
+        Armor.MBT_Leopard_1A3,
         Armor.MBT_M1A2_Abrams,
+        Armor.MBT_Leclerc,
+        Armor.MBT_Leopard_2,
     ],
     AirDefence: [
+
         # those are listed multiple times here to balance prioritization more into lower tier AAs
         AirDefence.AAA_Vulcan_M163,
         AirDefence.AAA_Vulcan_M163,
@@ -297,9 +345,12 @@ EXTRA_AA = {
     "Russia 1955": AirDefence.AAA_ZU_23_Closed,
     "USA 1955": AirDefence.AAA_Vulcan_M163,
     "Russia 1965": AirDefence.AAA_ZU_23_Closed,
+    "Russia 1975": AirDefence.AAA_ZU_23_Closed,
     "USA 1965": AirDefence.AAA_Vulcan_M163,
-    "Russia 1990": AirDefence.AAA_ZU_23_Closed,
+    "Russia 1988": AirDefence.AAA_ZU_23_Closed,
     "USA 1990": AirDefence.AAA_Vulcan_M163,
+    "France 1990": AirDefence.AAA_Vulcan_M163,
+    "Germany 1990": AirDefence.AAA_Vulcan_M163
 }
 
 """
@@ -327,7 +378,7 @@ FACTIONS = {
 
             Su_25T,
             Su_34,
-            Su_17M4,
+            Su_24MR,
             L_39ZA,
 
             IL_76MD,
@@ -367,6 +418,100 @@ FACTIONS = {
         ]
     },
 
+    "Russia 1988": {
+        "country": "Russia",
+        "side": "red",
+        "units": [
+
+            MiG_23MLD,
+            MiG_25PD,
+            MiG_29A,
+            MiG_29S,
+            MiG_31,
+            Su_27,
+
+            Su_24M,
+            Su_24MR,
+            Su_25,
+
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
+
+            A_50,
+
+            Mi_8MT,
+            Mi_24V,
+
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_3_S_125_LN_5P73,
+
+            Armor.ARV_BRDM_2,
+            Armor.APC_BTR_80,
+            Armor.IFV_BMD_1,
+            Armor.IFV_BMP_1,
+            Armor.MBT_T_55,
+
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160
+        ]
+    },
+
+    "Russia 1975": {
+        "country": "Russia",
+        "side": "red",
+        "units": [
+
+            MiG_21Bis,
+            MiG_23MLD,
+            MiG_25PD,
+            MiG_29A,
+
+            Su_17M4,
+            Su_24M,
+            Su_25,
+
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
+
+            A_50,
+
+            Mi_8MT,
+            Mi_24V,
+
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_3_S_125_LN_5P73,
+
+            Armor.ARV_BRDM_2,
+            Armor.APC_BTR_80,
+            Armor.IFV_BMD_1,
+            Armor.IFV_BMP_1,
+            Armor.MBT_T_55,
+
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160
+        ]
+    },
+
     "Russia 1965": {
         "country": "Russia",
         "side": "red",
@@ -390,7 +535,10 @@ FACTIONS = {
             AirDefence.SAM_SA_3_S_125_LN_5P73,
 
             Armor.ARV_BRDM_2,
+            Armor.APC_BTR_80,
             Armor.ARV_BTR_RD,
+            Armor.IFV_BMD_1,
+            Armor.IFV_BMP_1,
             Armor.MBT_T_55,
 
             Unarmed.Transport_Ural_375,
@@ -421,6 +569,8 @@ FACTIONS = {
             AirDefence.SAM_SA_3_S_125_LN_5P73,
 
             Armor.ARV_BRDM_2,
+            Armor.ARV_MTLB_U_BOMAN,
+            Armor.APC_MTLB,
             Armor.MBT_T_55,
 
             Unarmed.Transport_Ural_375,
@@ -506,9 +656,13 @@ FACTIONS = {
             E_3A,
 
             UH_1H,
+            AH_64A,
+            OH_58D,
 
             Armor.MBT_M1A2_Abrams,
-            Armor.MBT_M60A3_Patton,
+            Armor.IFV_LAV_25,
+            Armor.APC_M1043_HMMWV_Armament,
+            Armor.ATGM_M1045_HMMWV_TOW,
             Armor.ATGM_M1134_Stryker,
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
@@ -529,8 +683,8 @@ FACTIONS = {
             F_15C,
             F_14B,
             FA_18C_hornet,
+            F_16C_bl_52d,
 
-            A_10A,
             A_10C,
             AV8BNA,
 
@@ -540,6 +694,8 @@ FACTIONS = {
             E_3A,
 
             UH_1H,
+            AH_64D,
+            OH_58D,
 
             Armor.MBT_M1A2_Abrams,
             Armor.ATGM_M1134_Stryker,
@@ -576,6 +732,35 @@ FACTIONS = {
             Infantry.Infantry_M4,
 
             AirDefence.AAA_Vulcan_M163,
+            AirDefence.SAM_Linebacker_M6,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "Germany 1990": {
+        "country": "USA",
+        "side": "blue",
+        "units":[
+            MiG_29G,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            UH_1H,
+            SA342M,
+
+            Armor.TPz_Fuchs,
+            Armor.MBT_Leopard_1A3,
+            Armor.MBT_Leopard_2,
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SPAAA_Gepard,
             AirDefence.SAM_Linebacker_M6,
 
             CVN_74_John_C__Stennis,

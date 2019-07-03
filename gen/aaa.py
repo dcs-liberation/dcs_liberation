@@ -280,7 +280,7 @@ class AAConflictGenerator:
         for unit_type, count in units.items():
             for _ in range(count):
                 self.m.vehicle_group(
-                    country=self.conflict.defenders_side,
+                    country=self.conflict.defenders_country,
                     name=namegen.next_unit_name(self.conflict.defenders_country, unit_type),
                     _type=unit_type,
                     position=self.conflict.ground_defenders_location.random_point_within(100, 100),
@@ -293,11 +293,10 @@ class AAConflictGenerator:
                 p = self.conflict.position.point_from_heading(random.choice(self.conflict.radials), distance)
 
                 self.m.aaa_vehicle_group(
-                        country=self.conflict.defenders_side,
+                        country=self.conflict.defenders_country,
                         name=namegen.next_unit_name(self.conflict.defenders_country, type),
                         _type=type,
-                        position=p,
-                        group_size=1)
+                        position=p)
 
 
 class ExtraAAConflictGenerator:
