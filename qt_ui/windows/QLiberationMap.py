@@ -27,7 +27,7 @@ class QLiberationMap(QGraphicsView):
         "ally_sam_ranges": True
     }
 
-    def __init__(self):
+    def __init__(self, game: Game):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
 
@@ -37,7 +37,6 @@ class QLiberationMap(QGraphicsView):
         self.setMaximumHeight(2160)
         self._zoom = 0
         self.init_scene()
-        game = persistency.restore_game()
         self.loadGame(game)
 
     def init_scene(self):
@@ -58,10 +57,13 @@ class QLiberationMap(QGraphicsView):
         scene = self.scene()
         self.reload_scene()
 
+    def setGame(self, game: Game):
+        self.loadGame(game)
+
     def reload_scene(self):
         scene = self.scene()
         scene.clear()
-        scene.addPixmap(QPixmap("../resources/" + self.game.theater.overview_image))
+        scene.addPixmap(QPixmap("./resources/" + self.game.theater.overview_image))
         for cp in self.game.theater.controlpoints:
 
             pos = self._transform_point(cp.position)

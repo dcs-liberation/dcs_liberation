@@ -14,7 +14,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Splash screen setup
-    pixmap = QPixmap("../resources/ui/splash_screen.png")
+    pixmap = QPixmap("./resources/ui/splash_screen.png")
     splash = QSplashScreen(pixmap)
     splash.show()
 

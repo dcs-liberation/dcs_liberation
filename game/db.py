@@ -99,6 +99,10 @@ PRICES = {
     E_3A: 8,
     C_130: 8,
 
+    # WW2
+    P_51D_30_NA: 3,
+    P_51D: 3,
+
     # armor
     Armor.APC_MTLB: 4,
     Armor.ARV_MTLB_U_BOMAN: 5,
@@ -187,9 +191,12 @@ UNIT_BY_TASK = {
         F_14B,
         F_16C_bl_52d,
         M_2000C,
-        Mirage_2000_5
+        Mirage_2000_5,
+        P_51D_30_NA,
+        P_51D
     ],
     CAS: [
+        F_86F_Sabre,
         MiG_15bis,
         MiG_19P,
         L_39ZA,
@@ -379,76 +386,46 @@ country : DCS Country name
 
 """
 FACTIONS = {
-    "Russia 2010": {
-        "country": "Russia",
-        "side":"red",
-        "units": [
-            AJS37,
-            MiG_23MLD,
-            Su_25,
-            Su_27,
-            Su_33,
-            MiG_21Bis,
-            MiG_29A,
-            MiG_29S,
 
-            Su_25T,
-            Su_34,
-            Su_24MR,
-            L_39ZA,
+    "Russia 1955": {
+        "country": "Russia",
+        "side": "red",
+        "units": [
+            MiG_15bis,
 
             IL_76MD,
             IL_78M,
             An_26B,
             An_30M,
             Yak_40,
-            A_50,
 
-            Ka_50,
-            SA342M,
-            UH_1H,
-            Mi_8MT,
-
-            AirDefence.SPAAA_ZSU_23_4_Shilka,
-            AirDefence.SAM_SA_9_Strela_1_9P31,
-            AirDefence.SAM_SA_8_Osa_9A33,
             AirDefence.AAA_ZU_23_Closed,
-            AirDefence.SAM_SA_19_Tunguska_2S6,
             AirDefence.SAM_SA_6_Kub_LN_2P25,
             AirDefence.SAM_SA_3_S_125_LN_5P73,
-            AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 
-            Armor.APC_BTR_80,
-            Armor.MBT_T_90,
-            Armor.MBT_T_80U,
-            Armor.MBT_T_72B,
-
+            Armor.ARV_BRDM_2,
+            Armor.ARV_MTLB_U_BOMAN,
+            Armor.APC_MTLB,
+            Armor.MBT_T_55,
 
             Unarmed.Transport_Ural_375,
             Unarmed.Transport_UAZ_469,
             Infantry.Soldier_AK,
+
             CV_1143_5_Admiral_Kuznetsov,
             Bulk_cargo_ship_Yakushev,
             Dry_cargo_ship_Ivanov,
-            Tanker_Elnya_160,
+            Tanker_Elnya_160
         ]
     },
 
-    "Russia 1988": {
+    "Russia 1965": {
         "country": "Russia",
         "side": "red",
         "units": [
-
-            MiG_23MLD,
-            MiG_25PD,
-            MiG_29A,
-            MiG_29S,
-            MiG_31,
-            Su_27,
-
-            Su_24M,
-            Su_24MR,
-            Su_25,
+            MiG_15bis,
+            MiG_19P,
+            MiG_21Bis,
 
             IL_76MD,
             IL_78M,
@@ -459,7 +436,6 @@ FACTIONS = {
             A_50,
 
             Mi_8MT,
-            Mi_24V,
 
             AirDefence.AAA_ZU_23_Closed,
             AirDefence.SAM_SA_6_Kub_LN_2P25,
@@ -467,6 +443,7 @@ FACTIONS = {
 
             Armor.ARV_BRDM_2,
             Armor.APC_BTR_80,
+            Armor.ARV_BTR_RD,
             Armor.IFV_BMD_1,
             Armor.IFV_BMP_1,
             Armor.MBT_T_55,
@@ -528,13 +505,21 @@ FACTIONS = {
         ]
     },
 
-    "Russia 1965": {
+    "Russia 1988": {
         "country": "Russia",
         "side": "red",
         "units": [
-            MiG_15bis,
-            MiG_19P,
-            MiG_21Bis,
+
+            MiG_23MLD,
+            MiG_25PD,
+            MiG_29A,
+            MiG_29S,
+            MiG_31,
+            Su_27,
+
+            Su_24M,
+            Su_24MR,
+            Su_25,
 
             IL_76MD,
             IL_78M,
@@ -545,6 +530,7 @@ FACTIONS = {
             A_50,
 
             Mi_8MT,
+            Mi_24V,
 
             AirDefence.AAA_ZU_23_Closed,
             AirDefence.SAM_SA_6_Kub_LN_2P25,
@@ -552,7 +538,6 @@ FACTIONS = {
 
             Armor.ARV_BRDM_2,
             Armor.APC_BTR_80,
-            Armor.ARV_BTR_RD,
             Armor.IFV_BMD_1,
             Armor.IFV_BMP_1,
             Armor.MBT_T_55,
@@ -568,35 +553,53 @@ FACTIONS = {
         ]
     },
 
-    "Russia 1955": {
+    "Russia 2010": {
         "country": "Russia",
-        "side": "red",
+        "side":"red",
         "units": [
-            MiG_15bis,
+            AJS37,
+            MiG_23MLD,
+            Su_25,
+            Su_27,
+            Su_33,
+            MiG_29S,
+
+            Su_25T,
+            Su_34,
+            Su_24MR,
+            L_39ZA,
 
             IL_76MD,
             IL_78M,
             An_26B,
             An_30M,
             Yak_40,
+            A_50,
 
+            Ka_50,
+            Mi_8MT,
+
+            AirDefence.SPAAA_ZSU_23_4_Shilka,
+            AirDefence.SAM_SA_9_Strela_1_9P31,
+            AirDefence.SAM_SA_8_Osa_9A33,
             AirDefence.AAA_ZU_23_Closed,
+            AirDefence.SAM_SA_19_Tunguska_2S6,
             AirDefence.SAM_SA_6_Kub_LN_2P25,
             AirDefence.SAM_SA_3_S_125_LN_5P73,
+            AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 
-            Armor.ARV_BRDM_2,
-            Armor.ARV_MTLB_U_BOMAN,
-            Armor.APC_MTLB,
-            Armor.MBT_T_55,
+            Armor.APC_BTR_80,
+            Armor.MBT_T_90,
+            Armor.MBT_T_80U,
+            Armor.MBT_T_72B,
 
             Unarmed.Transport_Ural_375,
             Unarmed.Transport_UAZ_469,
             Infantry.Soldier_AK,
-
             CV_1143_5_Admiral_Kuznetsov,
             Bulk_cargo_ship_Yakushev,
             Dry_cargo_ship_Ivanov,
-            Tanker_Elnya_160
+            Tanker_Elnya_160,
         ]
     },
 

@@ -36,18 +36,22 @@ ICONS: Dict[str, QPixmap] = {}
 
 def load_icons():
 
-    ICONS["New"] = QPixmap("../resources/ui/misc/new.png")
-    ICONS["Open"] = QPixmap("../resources/ui/misc/open.png")
-    ICONS["Save"] = QPixmap("../resources/ui/misc/save.png")
+    ICONS["New"] = QPixmap("./resources/ui/misc/new.png")
+    ICONS["Open"] = QPixmap("./resources/ui/misc/open.png")
+    ICONS["Save"] = QPixmap("./resources/ui/misc/save.png")
 
-    ICONS["Dawn"] = QPixmap("../resources/ui/daytime/dawn.png")
-    ICONS["Day"] = QPixmap("../resources/ui/daytime/day.png")
-    ICONS["Dusk"] = QPixmap("../resources/ui/daytime/dusk.png")
-    ICONS["Night"] = QPixmap("../resources/ui/daytime/night.png")
-    ICONS["Money"] = QPixmap("../resources/ui/misc/money_icon.png")
-    ICONS["Ordnance"] = QPixmap("../resources/ui/misc/ordnance_icon.png")
+    ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
+    ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
+    ICONS["Terrain_Nevada"] = QPixmap("./resources/ui/terrain_nevada.gif")
 
-    ICONS["target"] = QPixmap("../resources/ui/ground_assets/target.png")
-    ICONS["cleared"] = QPixmap("../resources/ui/ground_assets/cleared.png")
+    ICONS["Dawn"] = QPixmap("./resources/ui/daytime/dawn.png")
+    ICONS["Day"] = QPixmap("./resources/ui/daytime/day.png")
+    ICONS["Dusk"] = QPixmap("./resources/ui/daytime/dusk.png")
+    ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
+    ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
+    ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")
+
+    ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")
+    ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")
     for category in CATEGORY_MAP.keys():
-        ICONS[category] = QPixmap("../resources/ui/ground_assets/" + category + ".png")
+        ICONS[category] = QPixmap("./resources/ui/ground_assets/" + category + ".png")

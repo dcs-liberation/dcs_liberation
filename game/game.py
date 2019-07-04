@@ -86,10 +86,6 @@ PLAYER_BUDGET_BASE = 14
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
-
-
-
-
 class Game:
     settings = None  # type: Settings
     budget = PLAYER_BUDGET_INITIAL
