@@ -28,13 +28,12 @@ class QLiberationWindow(QMainWindow):
         hbox.addWidget(okButton)
         hbox.addWidget(cancelButton)
 
-        self.liberationMap = QLiberationMap()
-        hbox.addWidget(self.liberationMap)
+        self.liberation_map = QLiberationMap()
+        hbox.addWidget(self.liberation_map)
 
         vbox = QVBoxLayout()
         vbox.addStretch(1)
         vbox.addLayout(hbox)
-
 
         central_widget = QWidget()
         central_widget.setLayout(vbox)
