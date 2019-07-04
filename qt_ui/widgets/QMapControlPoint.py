@@ -14,28 +14,32 @@ class QMapControlPoint(QGraphicsRectItem):
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(1)
-        self.setToolTip(self.model.base)
+        self.setToolTip(self.model.name)
 
 
     def paint(self, painter, option, widget=None):
         #super(QMapControlPoint, self).paint(painter, option, widget)
-        painter.save()
-        painter.setRenderHint(QPainter.Antialiasing)
-        painter.setBrush(self.brush_color)
-        painter.setPen(self.pen_color)
 
-        if self.isUnderMouse():
-            painter.setBrush(CONST.COLORS["green"])
+        if self.parent.get_display_rule("cp"):
+            painter.save()
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setBrush(self.brush_color)
             painter.setPen(self.pen_color)
 
-        painter.drawEllipse(option.rect)
+            if self.isUnderMouse():
+                painter.setBrush(CONST.COLORS["green"])
+                painter.setPen(self.pen_color)
 
-        r = option.rect
-        painter.setPen(QPen(CONST.COLORS["white"], CONST.CP_SIZE/5))
-        painter.setBrush(CONST.COLORS["white"])
-        painter.drawLine(QLine(r.x(), r.y(), r.x()+r.width(), r.y()+r.height()))
+            painter.drawEllipse(option.rect)
 
-        painter.restore()
+            r = option.rect
+            painter.setPen(QPen(CONST.COLORS["white"], CONST.CP_SIZE/5))
+            painter.setBrush(CONST.COLORS["white"])
+            painter.drawLine(QLine(r.x()+CONST.CP_SIZE/5, r.y()+CONST.CP_SIZE/5,
+                                   r.x()+r.width()-CONST.CP_SIZE/5,
+                                   r.y()+r.height()-CONST.CP_SIZE/5))
+
+            painter.restore()
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
