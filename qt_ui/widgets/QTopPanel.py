@@ -4,6 +4,7 @@ from game import Game
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 
+import qt_ui.uiconstants as CONST
 
 class QTopPanel(QFrame):
 
@@ -21,6 +22,7 @@ class QTopPanel(QFrame):
         self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
 
         self.passTurn = QPushButton("Pass Turn")
+        self.passTurn.setIcon(CONST.ICONS["PassTurn"])
         self.passTurn.setProperty("style", "btn-primary")
 
         self.layout = QHBoxLayout()

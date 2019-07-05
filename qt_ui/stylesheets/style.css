@@ -3,7 +3,7 @@
 QLiberationWindow{
 }
 
-QTopPanel,
+/*QTopPanel,
 QTopPanel *{
     background-color: #4E5760;
     color: white;
@@ -16,4 +16,4 @@ QPushButton[style="btn-primary"]{
     color:white;
     padding: 21px 5px 21px 5px;
     margin-top: 6px;
-}
+}*/

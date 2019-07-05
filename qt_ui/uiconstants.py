@@ -48,7 +48,9 @@ def load_icons():
     ICONS["Day"] = QPixmap("./resources/ui/daytime/day.png")
     ICONS["Dusk"] = QPixmap("./resources/ui/daytime/dusk.png")
     ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
+
     ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
+    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/pass_turn.png")
     ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")
 
     ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")

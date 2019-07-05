@@ -1,14 +1,16 @@
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QFrame
 import webbrowser
 
+from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox
+
+import qt_ui.uiconstants as CONST
+from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-import qt_ui.uiconstants as CONST
 from qt_ui.windows.QNewGameWizard import NewGameWizard
 from userdata import persistency
-from game import Game
+
 
 class QLiberationWindow(QMainWindow):
 
@@ -18,7 +20,6 @@ class QLiberationWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle("DCS Liberation")
         self.setWindowIcon(QIcon("../resources/icon.png"))
@@ -51,6 +52,10 @@ class QLiberationWindow(QMainWindow):
         self.saveGameAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveGameAction.triggered.connect(self.saveGame)
 
+        self.showAboutDialogAction = QAction("About DCS Liberation", self)
+        self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
+        self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
+
     def init_toolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -74,6 +79,8 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction("Contribute", lambda: webbrowser.open_new_tab(URLS["Repository"]))
         help_menu.addAction("Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+        help_menu.addSeparator()
+        help_menu.addAction(self.showAboutDialogAction)
 
         displayMenu = self.menu.addMenu("Display")
 
@@ -90,7 +97,8 @@ class QLiberationWindow(QMainWindow):
         tg_line_visibility = QAction('Lines', displayMenu)
         tg_line_visibility.setCheckable(True)
         tg_line_visibility.setChecked(True)
-        tg_line_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
+        tg_line_visibility.toggled.connect(
+            lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
 
         displayMenu.addAction(tg_go_visibility)
         displayMenu.addAction(tg_cp_visibility)
@@ -99,7 +107,7 @@ class QLiberationWindow(QMainWindow):
     def newGame(self):
         wizard = NewGameWizard(self)
         wizard.show()
-        wizard.accepted.connect(lambda : self.setGame(wizard.generatedGame))
+        wizard.accepted.connect(lambda: self.setGame(wizard.generatedGame))
 
     def saveGame(self):
         print("Saving game")
@@ -108,3 +116,18 @@ class QLiberationWindow(QMainWindow):
     def setGame(self, game: Game):
         self.game = game
         self.liberation_map.setGame(game)
+
+    def showAboutDialog(self):
+        text = "<h3>DCS Liberation</h3>" + \
+               "<h4>Repository</h4>" + \
+               "<b>Source code :</b> https://github.com/shdwp/dcs_liberation<br/>" + \
+               "<h4>Contributors</h4>" + \
+               "<b>Author :</b> sdwp<br/>" + \
+               "<b>Contributors :</b>" + " Khopa, Wrycu, calvinmorrow, JohanAberg<br/>"
+
+        about = QMessageBox()
+        about.setWindowTitle("About DCS Liberation")
+        about.setIcon(QMessageBox.Icon.Information)
+        about.setText(text)
+        print(about.textFormat())
+        about.exec_()
