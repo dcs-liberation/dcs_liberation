@@ -48,10 +48,12 @@ class QMapControlPoint(QGraphicsRectItem):
         self.update()
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
+        # TODO : improve this and add contextual actions (just a placholder for now)
         menu = QMenu("Menu", self.parent)
         menu.addAction("Plan a strike on " + self.model.name + " airbase")
         menu.addAction("See available intel")
         menu.exec_(event.screenPos())
+
 
     @property
     def brush_color(self)->QColor:

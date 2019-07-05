@@ -8,6 +8,7 @@ from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QNewGameWizard import NewGameWizard
 from userdata import persistency
 
@@ -17,17 +18,19 @@ class QLiberationWindow(QMainWindow):
     def __init__(self):
         super(QLiberationWindow, self).__init__()
         self.game = persistency.restore_game()
-        self.init_ui()
 
-    def init_ui(self):
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle("DCS Liberation")
         self.setWindowIcon(QIcon("../resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
+        self.initUi()
         self.initActions()
-        self.init_menubar()
-        self.init_toolbar()
+        self.initMenuBar()
+        self.initToolbar()
+        self.connectSignals()
+
+    def initUi(self):
 
         hbox = QHBoxLayout()
         hbox.addStretch(1)
@@ -43,6 +46,9 @@ class QLiberationWindow(QMainWindow):
         central_widget.setLayout(vbox)
         self.setCentralWidget(central_widget)
 
+    def connectSignals(self):
+        GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
+
     def initActions(self):
         self.newGameAction = QAction("New Game", self)
         self.newGameAction.setIcon(QIcon(CONST.ICONS["New"]))
@@ -56,13 +62,13 @@ class QLiberationWindow(QMainWindow):
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
 
-    def init_toolbar(self):
+    def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
         self.tool_bar.addAction(QIcon(CONST.ICONS["Open"]), "Open")
         self.tool_bar.addAction(self.saveGameAction)
 
-    def init_menubar(self):
+    def initMenuBar(self):
         self.menu = self.menuBar()
 
         file_menu = self.menu.addMenu("File")
@@ -112,10 +118,13 @@ class QLiberationWindow(QMainWindow):
     def saveGame(self):
         print("Saving game")
         persistency.save_game(self.game)
+        GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def onGameGenerated(self):
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def setGame(self, game: Game):
         self.game = game
-        self.liberation_map.setGame(game)
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation</h3>" + \

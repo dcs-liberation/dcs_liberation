@@ -5,6 +5,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QLabel, QSplashScreen
 
 from qt_ui import uiconstants
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from userdata import persistency
 
@@ -28,6 +29,8 @@ if __name__ == "__main__":
     sleep(0.5)
     uiconstants.load_icons()
     app.processEvents()
+
+    GameUpdateSignal()
 
     # Start window
     window = QLiberationWindow()

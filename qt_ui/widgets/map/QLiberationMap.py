@@ -10,6 +10,7 @@ from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from dcs import Point
 
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint
 from game import Game
 import qt_ui.uiconstants as CONST
@@ -36,7 +37,8 @@ class QLiberationMap(QGraphicsView):
         self.setMaximumHeight(2160)
         self._zoom = 0
         self.init_scene()
-        self.loadGame(game)
+        self.connectSignals()
+        self.setGame(game)
 
     def init_scene(self):
         scene = QLiberationScene(self)
@@ -45,19 +47,17 @@ class QLiberationMap(QGraphicsView):
         self.setScene(scene)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-        #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setBackgroundBrush(QBrush(QColor(30, 30, 30)))
         self.setFrameShape(QFrame.NoFrame)
         self.setDragMode(QGraphicsView.ScrollHandDrag)
 
-    def loadGame(self, game: Game):
-        self.game = game
-        scene = self.scene()
-        self.reload_scene()
+    def connectSignals(self):
+        GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
     def setGame(self, game: Game):
-        self.loadGame(game)
+        self.game = game
+        print("Reloading Map Canvas")
+        self.reload_scene()
 
     def reload_scene(self):
         scene = self.scene()

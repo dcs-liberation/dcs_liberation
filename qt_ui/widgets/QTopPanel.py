@@ -5,6 +5,8 @@ from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 
 import qt_ui.uiconstants as CONST
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+
 
 class QTopPanel(QFrame):
 
@@ -12,6 +14,7 @@ class QTopPanel(QFrame):
         super(QTopPanel, self).__init__()
         self.game = game
         self.init_ui()
+        GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
     def init_ui(self):
 
@@ -61,4 +64,4 @@ class QTopPanel(QFrame):
 
     def passTurn(self):
         self.game.pass_turn()
-        self.setGame(self.game)
+        GameUpdateSignal.get_instance().updateGame(self.game)
