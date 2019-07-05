@@ -1,7 +1,9 @@
 from PySide2.QtCore import QLine
 from PySide2.QtGui import QColor, QPainter, QCursor, QTextItem, QPen
-from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGraphicsSceneContextMenuEvent, QMenu
+from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGraphicsSceneContextMenuEvent, QMenu, \
+    QAction
 
+from qt_ui.windows.QBaseMenu import QBaseMenu
 from theater import ControlPoint
 import qt_ui.uiconstants as CONST
 
@@ -49,9 +51,14 @@ class QMapControlPoint(QGraphicsRectItem):
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
         # TODO : improve this and add contextual actions (just a placholder for now)
+
+        openBaseMenu = QAction("Open base menu")
+        openBaseMenu.triggered.connect(self.openBaseMenu)
+
         menu = QMenu("Menu", self.parent)
         menu.addAction("Plan a strike on " + self.model.name + " airbase")
         menu.addAction("See available intel")
+        menu.addAction(openBaseMenu)
         menu.exec_(event.screenPos())
 
 
@@ -68,3 +75,7 @@ class QMapControlPoint(QGraphicsRectItem):
             return self.model.captured and CONST.COLORS["dark_blue"] or CONST.COLORS["bright_red"]
         else:
             return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]
+
+    def openBaseMenu(self):
+        window = QBaseMenu(self.window(), self.model)
+        window.show()
