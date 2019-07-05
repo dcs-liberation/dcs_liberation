@@ -51,6 +51,8 @@ def load_icons():
 
     ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
     ICONS["PassTurn"] = QPixmap("./resources/ui/misc/pass_turn.png")
+    ICONS["Settings"] = QPixmap("./resources/ui/misc/settings.png")
+    ICONS["Statistics"] = QPixmap("./resources/ui/misc/statistics.png")
     ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")
 
     ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")

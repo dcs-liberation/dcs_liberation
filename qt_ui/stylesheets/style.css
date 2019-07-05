@@ -3,17 +3,17 @@
 QLiberationWindow{
 }
 
-/*QTopPanel,
+QTopPanel,
 QTopPanel *{
-    background-color: #4E5760;
-    color: white;
+    /*background-color: #4E5760;*/
+    /*color: white;*/
     font-size: 12px;
     font-weight: bold;
 }
 
 QPushButton[style="btn-primary"]{
-    background-color:#699245;
-    color:white;
-    padding: 21px 5px 21px 5px;
-    margin-top: 6px;
-}*/
+    /*background-color:#699245;*/
+    /*color:white;*/
+    /*padding: 21px 5px 21px 5px;
+    margin-top: 6px;*/
+}
