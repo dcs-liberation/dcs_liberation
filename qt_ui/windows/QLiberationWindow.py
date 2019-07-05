@@ -1,10 +1,10 @@
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QMenuBar, QMainWindow, QAction, QToolBar, \
-    QFrame
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QFrame
 import webbrowser
 
 from qt_ui.uiconstants import URLS
-from qt_ui.windows.QLiberationMap import QLiberationMap
+from qt_ui.widgets.QTopPanel import QTopPanel
+from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 import qt_ui.uiconstants as CONST
 from qt_ui.windows.QNewGameWizard import NewGameWizard
 from userdata import persistency
@@ -24,7 +24,6 @@ class QLiberationWindow(QMainWindow):
         self.setWindowIcon(QIcon("../resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
-
         self.initActions()
         self.init_menubar()
         self.init_toolbar()
@@ -36,9 +35,7 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        frame = QFrame()
-        frame.setFrameShape(frame.Box)
-        vbox.addWidget(frame)
+        vbox.addWidget(QTopPanel(self.game))
         vbox.addLayout(hbox)
 
         central_widget = QWidget()

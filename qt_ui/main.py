@@ -20,13 +20,19 @@ if __name__ == "__main__":
 
     # Load stuff
     persistency.setup(sys.argv[1])
+
+    css = ""
+    with open("./qt_ui/stylesheets/style.css") as stylesheet:
+        css = stylesheet.read()
+
     sleep(0.5)
     uiconstants.load_icons()
     app.processEvents()
 
     # Start window
     window = QLiberationWindow()
+    window.setStyleSheet(css)
     window.show()
-    splash.finish(window)
 
+    splash.finish(window)
     sys.exit(app.exec_())

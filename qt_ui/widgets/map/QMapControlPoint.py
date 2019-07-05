@@ -49,11 +49,8 @@ class QMapControlPoint(QGraphicsRectItem):
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
         menu = QMenu("Menu", self.parent)
-        menu.addAction("Attack")
-        menu.addAction("See Info")
-        menu.addSeparator()
-        menu.addAction("Show Base Info")
-        menu.addAction("Show Base Info")
+        menu.addAction("Plan a strike on " + self.model.name + " airbase")
+        menu.addAction("See available intel")
         menu.exec_(event.screenPos())
 
     @property

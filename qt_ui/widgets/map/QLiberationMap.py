@@ -2,16 +2,15 @@ from typing import Dict
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
-from PySide2.QtWidgets import QWidget, QGraphicsWidget, QGraphicsView, QFrame, QGraphicsTextItem
+from PySide2.QtWidgets import QGraphicsView, QFrame
 
 from gen import Conflict
-from qt_ui.widgets.QMapControlPoint import QMapControlPoint
-from qt_ui.widgets.QMapGroundObject import QMapGroundObject
-from qt_ui.windows.QLiberationScene import QLiberationScene
+from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
+from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
+from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from dcs import Point
 
 from theater import ControlPoint
-from userdata import persistency
 from game import Game
 import qt_ui.uiconstants as CONST
 
