@@ -45,7 +45,7 @@ class QBaseMenu(QDialog):
         purchaseLayout = QGridLayout()
         self.bought_amount_labels = {}
 
-        if not self.cp.captured:
+        if self.cp.captured:
             column = 0
             for i, tasks_column in [(i, tasks[idx:idx+tasks_per_column]) for i, idx in enumerate(range(0, len(tasks), tasks_per_column))]:
                 row = 2
