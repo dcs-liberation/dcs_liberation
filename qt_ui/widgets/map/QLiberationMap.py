@@ -57,7 +57,9 @@ class QLiberationMap(QGraphicsView):
     def setGame(self, game: Game):
         self.game = game
         print("Reloading Map Canvas")
-        self.reload_scene()
+        print(self.game)
+        if self.game is not None:
+            self.reload_scene()
 
     def reload_scene(self):
         scene = self.scene()
@@ -67,7 +69,7 @@ class QLiberationMap(QGraphicsView):
 
             pos = self._transform_point(cp.position)
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
-                                           CONST.CP_SIZE, cp))
+                                           CONST.CP_SIZE, cp, self.game))
 
             # e = scene.addEllipse(pos[0]-CONST.CP_SIZE/2, pos[1]-CONST.CP_SIZE/2, CONST.CP_SIZE, CONST.CP_SIZE, QPen(brush=QBrush(color=color), width=5), brush=color)
 

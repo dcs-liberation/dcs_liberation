@@ -17,3 +17,8 @@ QPushButton[style="btn-primary"]{
     /*padding: 21px 5px 21px 5px;
     margin-top: 6px;*/
 }
+
+QBaseMenu{
+    background-color:#699245;
+    color:white;
+}

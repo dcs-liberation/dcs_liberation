@@ -19,10 +19,7 @@ class QTopPanel(QFrame):
     def init_ui(self):
 
         self.turnCounter = QTurnCounter()
-        self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
-
         self.budgetBox = QBudgetBox()
-        self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
 
         self.passTurnButton = QPushButton("Pass Turn")
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
@@ -53,8 +50,9 @@ class QTopPanel(QFrame):
 
     def setGame(self, game:Game):
         self.game = game
-        self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
-        self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
+        if game is not None:
+            self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
+            self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
 
     def openSettings(self):
         QMessageBox.information(self, "Settings", "Todo open game settings")

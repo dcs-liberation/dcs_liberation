@@ -5,14 +5,16 @@ from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGrap
 
 from qt_ui.windows.QBaseMenu import QBaseMenu
 from theater import ControlPoint
+from game import Game
 import qt_ui.uiconstants as CONST
 
 
 class QMapControlPoint(QGraphicsRectItem):
 
-    def __init__(self, parent, x: float, y: float, w: float, h: float, model: ControlPoint):
+    def __init__(self, parent, x: float, y: float, w: float, h: float, model: ControlPoint, game: Game):
         super(QMapControlPoint, self).__init__(x, y, w, h)
         self.model = model
+        self.game = game
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(1)
@@ -77,5 +79,5 @@ class QMapControlPoint(QGraphicsRectItem):
             return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]
 
     def openBaseMenu(self):
-        window = QBaseMenu(self.window(), self.model)
-        window.show()
+        self.baseMenu = QBaseMenu(self.window(), self.model, self.game)
+        self.baseMenu.show()

@@ -17,11 +17,12 @@ class QLiberationWindow(QMainWindow):
 
     def __init__(self):
         super(QLiberationWindow, self).__init__()
-        self.game = persistency.restore_game()
+
+        self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle("DCS Liberation")
-        self.setWindowIcon(QIcon("../resources/icon.png"))
+        self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
         self.initUi()
@@ -29,6 +30,8 @@ class QLiberationWindow(QMainWindow):
         self.initMenuBar()
         self.initToolbar()
         self.connectSignals()
+        self.onGameGenerated(self.game)
+
 
     def initUi(self):
 
@@ -40,7 +43,8 @@ class QLiberationWindow(QMainWindow):
         vbox = QVBoxLayout()
         vbox.setMargin(0)
         vbox.addWidget(QTopPanel(self.game))
-        vbox.addLayout(hbox)
+        vbox.addWidget(self.liberation_map)
+        #vbox.addLayout(hbox)
 
         central_widget = QWidget()
         central_widget.setLayout(vbox)
@@ -113,14 +117,16 @@ class QLiberationWindow(QMainWindow):
     def newGame(self):
         wizard = NewGameWizard(self)
         wizard.show()
-        wizard.accepted.connect(lambda: self.setGame(wizard.generatedGame))
+        wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def saveGame(self):
         print("Saving game")
         persistency.save_game(self.game)
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-    def onGameGenerated(self):
+    def onGameGenerated(self, game: Game):
+        print("On Game generated")
+        self.game = game
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def setGame(self, game: Game):
