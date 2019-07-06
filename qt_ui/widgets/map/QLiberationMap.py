@@ -1,11 +1,15 @@
 from typing import Dict
 
-from PySide2.QtCore import Qt
+import typing
+from PySide2.QtCore import Qt, QRect
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
 from PySide2.QtWidgets import QGraphicsView, QFrame
 
+from game.event import InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent, Event, \
+    FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent
 from gen import Conflict
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
+from qt_ui.widgets.map.QMapEvent import QMapEvent
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from dcs import Point
@@ -65,6 +69,9 @@ class QLiberationMap(QGraphicsView):
         scene = self.scene()
         scene.clear()
         scene.addPixmap(QPixmap("./resources/" + self.game.theater.overview_image))
+
+        self.add_game_events()
+
         for cp in self.game.theater.controlpoints:
 
             pos = self._transform_point(cp.position)
@@ -122,7 +129,6 @@ class QLiberationMap(QGraphicsView):
                 # frontline_pen.setDashPattern([0,1])
                 scene.addLine(start_coords[0], start_coords[1], end_coords[0], end_coords[1], pen=frontline_pen)
 
-
     def _frontline_vector(self, from_cp: ControlPoint, to_cp: ControlPoint):
         # Cache mechanism to avoid performing frontline vector computation on every frame
         key = str(from_cp.id) + "_" + str(to_cp.id)
@@ -132,6 +138,13 @@ class QLiberationMap(QGraphicsView):
             frontline = Conflict.frontline_vector(from_cp, to_cp, self.game.theater)
             self.frontline_vector_cache[key] = frontline
             return frontline
+
+    def _frontline_center(self, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[Point]:
+        frontline_vector = self._frontline_vector(from_cp, to_cp)
+        if frontline_vector:
+            return frontline_vector[0].point_from_heading(frontline_vector[1], frontline_vector[2]/2)
+        else:
+            return None
 
     def wheelEvent(self, event: QWheelEvent):
 
@@ -174,6 +187,56 @@ class QLiberationMap(QGraphicsView):
         #Y += 5
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
+
+    def add_game_events(self):
+
+        occupied_rects = []
+
+        for cp in self.game.theater.controlpoints:
+            point = self._transform_point(cp.position)
+            occupied_rects.append(QRect(point[0] - 16, point[1] - 16, 32, 48))
+
+        def _location_to_rect(location: Point) -> QRect:
+            nonlocal occupied_rects
+            point = self._transform_point(location)
+            rect = QRect(point[0] - 16, point[1] - 16, 32, 32)
+
+            i = 0
+            while True:
+                result = True
+                for occupied_rect in occupied_rects:
+                    if rect.intersects(occupied_rect):
+                        i += 1
+                        if i % 2:
+                            rect.setY(rect.y() + occupied_rect.height())
+                        else:
+                            rect.setX(rect.x() + occupied_rect.width())
+                        result = False
+                        break
+                if result:
+                    break
+            occupied_rects.append(rect)
+            return rect
+
+        def _events_priority_key(event: Event) -> int:
+            priority_list = [InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent]
+            if type(event) not in priority_list:
+                return 0
+            else:
+                return priority_list.index(type(event)) + 1
+
+        scene = self.scene()
+        events = self.game.events
+        events.sort(key=_events_priority_key, reverse=True)
+
+        for event in events:
+
+            location = event.location
+            if type(event) in [FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent]:
+                location = self._frontline_center(event.from_cp, event.to_cp)
+
+            rect = _location_to_rect(location)
+            scene.addItem(QMapEvent(self, rect.x(), rect.y(), rect.width(), rect.height(), event))
 
     @staticmethod
     def set_display_rule(rule: str, value: bool):

@@ -15,6 +15,7 @@ class QBaseMenu(QDialog):
         self.game = game
         self.deliveryEvent = self.game.units_delivery_event(self.cp)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.setMinimumSize(200,200)
         self.initUi()
 
     def initUi(self):
@@ -42,7 +43,6 @@ class QBaseMenu(QDialog):
         tasks = list(units.keys())
         tasks_per_column = 3
 
-        purchaseLayout = QGridLayout()
         self.bought_amount_labels = {}
 
         if self.cp.captured:

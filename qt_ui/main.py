@@ -19,15 +19,15 @@ if __name__ == "__main__":
     splash = QSplashScreen(pixmap)
     splash.show()
 
-    # Load stuff
+    # Once splash screen is up : load resources & setup stuff
     persistency.setup(sys.argv[1])
 
     css = ""
     with open("./qt_ui/stylesheets/style.css") as stylesheet:
         css = stylesheet.read()
 
-    sleep(0.5)
     uiconstants.load_icons()
+    uiconstants.load_event_icons()
     app.processEvents()
 
     GameUpdateSignal()

@@ -3,6 +3,8 @@ from typing import Dict
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
+from game.event import BaseAttackEvent, FrontlinePatrolEvent, FrontlineAttackEvent, InfantryTransportEvent, \
+    InsurgentAttackEvent, ConvoyStrikeEvent, InterceptEvent, NavalInterceptEvent, StrikeEvent, UnitsDeliveryEvent
 from theater.theatergroundobject import CATEGORY_MAP
 
 URLS : Dict[str, str] = {
@@ -59,3 +61,20 @@ def load_icons():
     ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")
     for category in CATEGORY_MAP.keys():
         ICONS[category] = QPixmap("./resources/ui/ground_assets/" + category + ".png")
+
+
+EVENT_ICONS: Dict[str, QPixmap] = {}
+
+
+def load_event_icons():
+    for category, image in {BaseAttackEvent: "capture",
+                            FrontlinePatrolEvent: "attack",
+                            FrontlineAttackEvent: "attack",
+                            InfantryTransportEvent: "infantry",
+                            InsurgentAttackEvent: "insurgent_attack",
+                            ConvoyStrikeEvent: "convoy",
+                            InterceptEvent: "air_intercept",
+                            NavalInterceptEvent: "naval_intercept",
+                            StrikeEvent: "strike",
+                            UnitsDeliveryEvent: "delivery"}.items():
+        EVENT_ICONS[category] = QPixmap("./resources/ui/events/" + image + ".png")
