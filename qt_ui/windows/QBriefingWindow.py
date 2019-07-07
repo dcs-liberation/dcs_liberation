@@ -1,17 +1,20 @@
 from PySide2.QtGui import QWindow
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog
 
 
-class QBriefingWindow(QWindow):
+class QBriefingWindow(QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, event):
         super(QBriefingWindow, self).__init__(parent)
+        self.gameEvent = event
+        self.setWindowTitle("Briefing : " + str(event))
+        self.setMinimumSize(200,200)
+        self.setModal(True)
         self.initUi()
 
     def initUi(self):
+
         layout = QHBoxLayout()
         layout.addWidget(QLabel("TODO : This will be the briefing window"))
 
-        central_widget = QWidget()
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+        self.setLayout(layout)

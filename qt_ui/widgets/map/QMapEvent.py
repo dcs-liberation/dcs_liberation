@@ -1,8 +1,9 @@
 from PySide2.QtGui import QPen
-from PySide2.QtWidgets import QGraphicsRectItem
+from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneMouseEvent
 
 import qt_ui.uiconstants as CONST
 from game.event import Event
+from qt_ui.windows.QBriefingWindow import QBriefingWindow
 from theater import TheaterGroundObject, ControlPoint
 
 
@@ -14,22 +15,29 @@ class QMapEvent(QGraphicsRectItem):
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
+        print(x,y,w,h)
         self.setToolTip(str(self.gameEvent))
-
 
     def paint(self, painter, option, widget=None):
 
-        painter.save()
+        if self.parent.get_display_rule("events"):
+            painter.save()
 
-        if self.gameEvent.is_player_attacking:
-            painter.setPen(QPen(brush=CONST.COLORS["blue"]))
-            painter.setBrush(CONST.COLORS["blue"])
-        else:
-            painter.setPen(QPen(brush=CONST.COLORS["red"]))
-            painter.setBrush(CONST.COLORS["red"])
+            if self.gameEvent.is_player_attacking:
+                painter.setPen(QPen(brush=CONST.COLORS["blue"]))
+                painter.setBrush(CONST.COLORS["blue"])
+            else:
+                painter.setPen(QPen(brush=CONST.COLORS["red"]))
+                painter.setBrush(CONST.COLORS["red"])
 
-        painter.drawRect(option.rect)
+            painter.drawRect(option.rect)
+            print(option.rect)
+            painter.drawPixmap(option.rect, CONST.EVENT_ICONS[self.gameEvent.__class__])
+            painter.restore()
 
-        painter.drawPixmap(option.rect, CONST.EVENT_ICONS[self.gameEvent.__class__])
+    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
+        self.openBriefing()
 
-        painter.restore()
+    def openBriefing(self):
+        self.briefing = QBriefingWindow(self.window(), self.gameEvent)
+        self.briefing.show()

@@ -27,6 +27,7 @@ class QLiberationMap(QGraphicsView):
         "cp": True,
         "go": True,
         "lines": True,
+        "events": True,
         "ennemy_sam_ranges": True,
         "ally_sam_ranges": True
     }
@@ -200,6 +201,7 @@ class QLiberationMap(QGraphicsView):
             nonlocal occupied_rects
             point = self._transform_point(location)
             rect = QRect(point[0] - 16, point[1] - 16, 32, 32)
+            print(rect)
 
             i = 0
             while True:
@@ -236,7 +238,7 @@ class QLiberationMap(QGraphicsView):
                 location = self._frontline_center(event.from_cp, event.to_cp)
 
             rect = _location_to_rect(location)
-            scene.addItem(QMapEvent(self, rect.x(), rect.y(), rect.width(), rect.height(), event))
+            scene.addItem(QMapEvent(self, rect.x(), rect.y(), 32, 32, event))
 
     @staticmethod
     def set_display_rule(rule: str, value: bool):

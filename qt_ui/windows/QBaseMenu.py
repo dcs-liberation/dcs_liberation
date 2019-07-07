@@ -1,8 +1,10 @@
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QWindow
+from PySide2.QtGui import QWindow, QCloseEvent
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QFrame, QDialog, QVBoxLayout, QGridLayout, QPushButton
 from dcs.unittype import UnitType
 
+from game.event import UnitsDeliveryEvent
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, CAP, Embarking, AirDefence, CAS, PinpointStrike, db
 from game import Game
 
@@ -13,20 +15,42 @@ class QBaseMenu(QDialog):
         super(QBaseMenu, self).__init__(parent)
         self.cp = controlPoint
         self.game = game
-        self.deliveryEvent = self.game.units_delivery_event(self.cp)
+
+
+        if self.cp.captured:
+            self.deliveryEvent = None
+            for event in self.game.events:
+                print(event.__class__)
+                print(UnitsDeliveryEvent.__class__)
+                if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
+                    self.deliveryEvent = event
+                    break
+            if not self.deliveryEvent:
+                print("Rebuild event")
+                self.deliveryEvent = self.game.units_delivery_event(self.cp)
+
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setMinimumSize(200,200)
+        self.setMinimumSize(200, 200)
+        self.setModal(True)
         self.initUi()
 
     def initUi(self):
 
         self.setWindowTitle(self.cp.name)
 
+        self.topLayoutWidget = QWidget()
         self.topLayout = QHBoxLayout()
-        self.topLayout.setProperty("style", "baseMenuHeader")
-        self.topLayout.addWidget(QLabel("<b>" + self.cp.name + "</b>"))
-        self.topLayout.addWidget(
-            QLabel("{} / {} / {}".format(self.cp.base.total_planes, self.cp.base.total_armor, self.cp.base.total_aa)))
+
+        title = QLabel("<b>" + self.cp.name + "</b>")
+        title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        unitsPower = QLabel("{} / {} / {}".format(self.cp.base.total_planes, self.cp.base.total_armor, self.cp.base.total_aa))
+        unitsPower.setAlignment(Qt.AlignLeft |Qt.AlignTop)
+
+        self.topLayout.addWidget(title)
+        self.topLayout.addWidget(unitsPower)
+        self.topLayout.setAlignment(Qt.AlignTop)
+        self.topLayoutWidget.setProperty("style", "baseMenuHeader")
+        self.topLayoutWidget.setLayout(self.topLayout)
 
         units = {
             CAP: db.find_unittype(CAP, self.game.player_name),
@@ -37,65 +61,65 @@ class QBaseMenu(QDialog):
         }
 
         self.mainLayout = QVBoxLayout()
-        self.mainLayout.addLayout(self.topLayout)
+        self.mainLayout.addWidget(self.topLayoutWidget)
 
-        print(units)
         tasks = list(units.keys())
         tasks_per_column = 3
 
+        self.unitLayout = QGridLayout()
         self.bought_amount_labels = {}
 
+        row = 0
+
+        def add_purchase_row(unit_type):
+
+            nonlocal row
+            existing_units = self.cp.base.total_units_of_type(unit_type)
+            scheduled_units = self.deliveryEvent.units.get(unit_type, 0)
+
+            unitName = QLabel("<b>" + db.unit_type_name(unit_type) + "</b>")
+            amountBought = QLabel("{} ({})".format(existing_units, scheduled_units))
+            self.bought_amount_labels[unit_type] = amountBought
+
+            price = QLabel("{}m".format(db.PRICES[unit_type]))
+
+            buy = QPushButton("+")
+            buy.clicked.connect(lambda: self.buy(unit_type))
+
+            sell = QPushButton("-")
+            sell.clicked.connect(lambda: self.sell(unit_type))
+
+            self.unitLayout.addWidget(unitName, row, 0)
+            self.unitLayout.addWidget(amountBought, row, 1)
+            self.unitLayout.addWidget(price, row, 2)
+            self.unitLayout.addWidget(buy, row, 3)
+            self.unitLayout.addWidget(sell, row, 4)
+
+            row = row + 1
+
         if self.cp.captured:
-            column = 0
-            for i, tasks_column in [(i, tasks[idx:idx+tasks_per_column]) for i, idx in enumerate(range(0, len(tasks), tasks_per_column))]:
-                row = 2
 
-                def purchase_row(unit_type, unit_price):
-                    layout = QHBoxLayout()
-                    existing_units = self.cp.base.total_units_of_type(unit_type)
-                    scheduled_units = self.deliveryEvent.units.get(unit_type, 0)
+            for task_type in units.keys():
 
-                    unitName = QLabel(db.unit_type_name(unit_type))
-                    amountBought = QLabel("{} ({})".format(existing_units, scheduled_units))
-                    self.bought_amount_labels[unit_type] = amountBought
+                units_column = list(set(units[task_type]))
+                if len(units_column) == 0: continue
+                units_column.sort(key=lambda x: db.PRICES[x])
 
-                    price = QLabel("{}m".format(unit_price))
+                taskTypeLabel = QLabel("<b>{}</b>".format(db.task_name(task_type)))
+                self.unitLayout.addWidget(taskTypeLabel, row, 0)
+                row = row + 1
 
-                    buy = QPushButton("+")
-                    buy.clicked.connect(lambda: self.buy(unit_type))
+                for unit_type in units_column:
+                    add_purchase_row(unit_type)
 
-                    sell = QPushButton("-")
-                    sell.clicked.connect(lambda: self.sell(unit_type))
-
-                    layout.addWidget(unitName)
-                    layout.addWidget(amountBought)
-                    layout.addWidget(price)
-
-                    layout.addWidget(buy)
-                    layout.addWidget(sell)
-
-                    return layout
-
-                for task_type in tasks_column:
-                    QLabel("<b>{}</b>".format(db.task_name(task_type)))
-                    row += 1
-
-                    units_column = list(set(units[task_type]))
-                    units_column.sort(key=lambda x: db.PRICES[x])
-                    for unit_type in units_column:
-                        layout = purchase_row(unit_type, db.PRICES[unit_type])
-                        self.mainLayout.addLayout(layout)
-
-                column += 5
-
-
+        self.mainLayout.addLayout(self.unitLayout)
         self.setLayout(self.mainLayout)
 
 
     def _update_count_label(self, unit_type: UnitType):
-        self.bought_amount_labels[unit_type].setText("({}{})".format(
+        self.bought_amount_labels[unit_type].setText("{}{}".format(
             self.cp.base.total_units_of_type(unit_type),
-            unit_type in self.deliveryEvent.units and ", bought {}".format(self.deliveryEvent.units[unit_type]) or ""
+            unit_type in self.deliveryEvent.units and " ({})".format(self.deliveryEvent.units[unit_type]) or ""
         ))
 
     def buy(self, unit_type):
@@ -119,3 +143,6 @@ class QBaseMenu(QDialog):
             self.cp.base.commit_losses({unit_type: 1})
 
         self._update_count_label(unit_type)
+
+    def closeEvent(self, closeEvent:QCloseEvent):
+        GameUpdateSignal.get_instance().updateGame(self.game)
