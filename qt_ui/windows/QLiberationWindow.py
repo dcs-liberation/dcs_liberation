@@ -144,8 +144,9 @@ class QLiberationWindow(QMainWindow):
                "<h4>Repository</h4>" + \
                "<b>Source code :</b> https://github.com/shdwp/dcs_liberation<br/>" + \
                "<h4>Contributors</h4>" + \
-               "<b>Author :</b> sdwp<br/>" + \
-               "<b>Contributors :</b>" + " Khopa, Wrycu, calvinmorrow, JohanAberg<br/>"
+               "<b>Author :</b> sdwp<br/><br/>" + \
+               "<b>Contributors :</b> Khopa, Wrycu, calvinmorrow, JohanAberg<br/><br/>" + \
+               "<b>Special Thanks  :</b>  rp- (pydcs framework) "
 
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
