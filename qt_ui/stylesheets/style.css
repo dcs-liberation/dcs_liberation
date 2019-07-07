@@ -23,7 +23,7 @@ QBaseMenu{
     color:white;
 }
 
-QWidgte[style="baseMenuHeader"]{
+QWidget[style="baseMenuHeader"]{
     font-size: 24px;
     font-weight: bold;
 }

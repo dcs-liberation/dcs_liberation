@@ -69,6 +69,7 @@ class QLiberationMap(QGraphicsView):
     def reload_scene(self):
         scene = self.scene()
         scene.clear()
+
         scene.addPixmap(QPixmap("./resources/" + self.game.theater.overview_image))
 
         self.add_game_events()
