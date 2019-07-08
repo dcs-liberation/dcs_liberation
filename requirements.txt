@@ -1,0 +1,2 @@
+pygame
+pydcs>=0.9.3
