@@ -34,7 +34,8 @@ class QMapEvent(QGraphicsRectItem):
             painter.restore()
 
     def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
-        self.openBriefing()
+        if self.parent.get_display_rule("events"):
+            self.openBriefing()
 
     def openBriefing(self):
         self.briefing = QBriefingWindow(self.gameEvent)
