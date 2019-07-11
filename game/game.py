@@ -213,9 +213,10 @@ class Game:
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
                     unittypes = self.commision_unit_types(cp, for_task)
-                    d = {random.choice(unittypes): points_to_spend}
-                    logging.info("Commision {}: {}".format(cp, d))
-                    cp.base.commision_units(d)
+                    if len(unittypes) > 0:
+                        d = {random.choice(unittypes): points_to_spend}
+                        logging.info("Commision {}: {}".format(cp, d))
+                        cp.base.commision_units(d)
 
     @property
     def budget_reward_amount(self):
