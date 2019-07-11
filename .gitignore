@@ -10,13 +10,4 @@ a.py
 resources/tools/a.miz
 tests/**
 # User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/dictionaries
-.idea/**/shelf
-.idea/misc.xml
-.idea/*.iml
-*.iml
-.idea
-.idea/*.xml
-.idea/**/*.xml
+.idea/
