@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/dcs_pmcliberation.iml" filepath="$PROJECT_DIR$/.idea/dcs_pmcliberation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/dcs_liberation.iml" filepath="$PROJECT_DIR$/.idea/dcs_liberation.iml" />
     </modules>
   </component>
 </project>
