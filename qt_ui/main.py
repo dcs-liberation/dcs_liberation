@@ -12,8 +12,6 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from userdata import persistency, logging as logging_module
 
-
-
 if __name__ == "__main__":
 
     assert len(sys.argv) >= 3, "__init__.py should be started with two mandatory arguments: %UserProfile% location and application version"
@@ -27,6 +25,8 @@ if __name__ == "__main__":
     logging.info("Using {} as userdata folder".format(persistency.base_path()))
 
     app = QApplication(sys.argv)
+    uiconstants.load_icons()
+    uiconstants.load_event_icons()
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -40,8 +40,6 @@ if __name__ == "__main__":
     with open("./qt_ui/stylesheets/style.css") as stylesheet:
         css = stylesheet.read()
 
-    uiconstants.load_icons()
-    uiconstants.load_event_icons()
     app.processEvents()
 
     GameUpdateSignal()
