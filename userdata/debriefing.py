@@ -139,7 +139,7 @@ class Debriefing:
                 for unit in group.units:
                     if unit.id in self._dead_units:
                         unit_type = db.unit_type_of(unit)
-                        logging.info("debriefing: found dead unit {} ({}, {})".format(str(unit.name), unit.id, unit_type))
+                        logging.info("debriefing: found dead unit {} ({}, {}) for country {}".format(str(unit.name), unit.id, unit_type, country_name))
 
                         assert country_name
                         assert unit_type

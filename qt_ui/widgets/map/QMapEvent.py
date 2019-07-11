@@ -15,7 +15,6 @@ class QMapEvent(QGraphicsRectItem):
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
-        print(x,y,w,h)
         self.setToolTip(str(self.gameEvent))
 
     def paint(self, painter, option, widget=None):
@@ -31,7 +30,6 @@ class QMapEvent(QGraphicsRectItem):
                 painter.setBrush(CONST.COLORS["red"])
 
             painter.drawRect(option.rect)
-            print(option.rect)
             painter.drawPixmap(option.rect, CONST.EVENT_ICONS[self.gameEvent.__class__])
             painter.restore()
 
@@ -39,5 +37,5 @@ class QMapEvent(QGraphicsRectItem):
         self.openBriefing()
 
     def openBriefing(self):
-        self.briefing = QBriefingWindow(self.window(), self.gameEvent)
+        self.briefing = QBriefingWindow(self.gameEvent)
         self.briefing.show()

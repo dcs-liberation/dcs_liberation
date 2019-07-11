@@ -8,7 +8,8 @@ from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
+from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.QNewGameWizard import NewGameWizard
 from userdata import persistency
 
@@ -52,6 +53,7 @@ class QLiberationWindow(QMainWindow):
 
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
+        GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
 
     def initActions(self):
         self.newGameAction = QAction("New Game", self)
@@ -154,3 +156,8 @@ class QLiberationWindow(QMainWindow):
         about.setText(text)
         print(about.textFormat())
         about.exec_()
+
+    def onDebriefing(self, debrief: DebriefingSignal):
+        print("On Debriefing")
+        self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
+        self.debriefing.show()

@@ -52,7 +52,12 @@ class QMapControlPoint(QGraphicsRectItem):
         self.update()
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
-        openBaseMenu = QAction("Open base menu")
+
+        if self.model.captured:
+            openBaseMenu = QAction("Open base menu")
+        else:
+            openBaseMenu = QAction("Open intel menu")
+
         openBaseMenu.triggered.connect(self.openBaseMenu)
 
         menu = QMenu("Menu", self.parent)

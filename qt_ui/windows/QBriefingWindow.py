@@ -7,14 +7,15 @@ from pip._internal.utils import typing
 
 from game.game import AWACS_BUDGET_COST, PinpointStrike, db, Event, FrontlineAttackEvent, FrontlinePatrolEvent, Task, \
     UnitType
+from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from userdata.persistency import base_path
 import qt_ui.uiconstants as CONST
 
 
 class QBriefingWindow(QDialog):
 
-    def __init__(self, parent, gameEvent: Event):
-        super(QBriefingWindow, self).__init__(parent)
+    def __init__(self, gameEvent: Event):
+        super(QBriefingWindow, self).__init__()
         self.gameEvent = gameEvent
         self.setWindowTitle("Briefing : " + str(gameEvent))
         self.setMinimumSize(200,200)
@@ -40,7 +41,7 @@ class QBriefingWindow(QDialog):
         self.depart_from = QComboBox()
 
         for cp in [b for b in self.game.theater.controlpoints if b.captured]:
-            self.depart_from.addItem(str(cp.name))
+            self.depart_from.addItem(str(cp.name), cp)
 
         self.depart_layout.addWidget(self.depart_from_label)
         self.depart_layout.addWidget(self.depart_from)
@@ -91,24 +92,11 @@ class QBriefingWindow(QDialog):
                     scramble_row(flight_task, t, c, True, row)
                     row += 1
 
-        # Options
-
-
-        """
-        header("Ready?")
-        self.error_label = label("", columnspan=4)
-        self.error_label["fg"] = RED
-        Button(self.frame, text="Commit", command=self.start, **STYLES["btn-primary"]).grid(column=0, row=row,
-                                                                                            sticky=E, padx=5,
-                                                                                            pady=(10, 10))
-        Button(self.frame, text="Back", command=self.dismiss, **STYLES["btn-warning"]).grid(column=3, row=row,
-                                                                                            sticky=E, padx=5,
-                                                                                            pady=(10, 10))"""
-
         self.action_layout = QHBoxLayout()
         self.commit_button = QPushButton("Commit")
-        self.back_button = QPushButton("Commit")
+        self.back_button = QPushButton("Cancel")
         self.commit_button.clicked.connect(self.start)
+        self.back_button.clicked.connect(self.close)
         self.action_layout.addWidget(self.commit_button)
         self.action_layout.addWidget(self.back_button)
 
@@ -169,7 +157,6 @@ class QBriefingWindow(QDialog):
     def debriefing_directory_location(self) -> str:
         return os.path.join(base_path(), "liberation_debriefings")
 
-
     def start(self):
 
         if self.awacs_checkbox.isChecked() == 1:
@@ -184,6 +171,11 @@ class QBriefingWindow(QDialog):
         except:
             ca_slots = 0
         self.gameEvent.ca_slots = ca_slots
+
+
+        # Resolve Departure CP
+        self.gameEvent.departure_cp = self.depart_from.itemData(self.depart_from.currentIndex())
+
 
         flights = {k: {} for k in self.gameEvent.tasks}  # type: db.TaskForceDict
         units_scramble_counts = {}  # type: typing.Dict[typing.Type[UnitType], int]
@@ -243,11 +235,12 @@ class QBriefingWindow(QDialog):
 
             self.gameEvent.player_defending(flights)
 
-        self.gameEvent.departure_cp = self.gameEvent.from_cp
         self.game.initiate_event(self.gameEvent)
 
-        # EventResultsMenu(self.window, self.parent, self.game, self.gameEvent).display()
+        waiting = QWaitingForMissionResultWindow(self.gameEvent, self.game)
+        waiting.show()
 
+        self.close()
 
     def showErrorMessage(self, text):
         about = QMessageBox()

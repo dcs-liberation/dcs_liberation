@@ -1,6 +1,7 @@
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QWindow, QCloseEvent
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QFrame, QDialog, QVBoxLayout, QGridLayout, QPushButton
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QFrame, QDialog, QVBoxLayout, QGridLayout, QPushButton, \
+    QGroupBox
 from dcs.unittype import UnitType
 
 from game.event import UnitsDeliveryEvent
@@ -30,7 +31,7 @@ class QBaseMenu(QDialog):
                 self.deliveryEvent = self.game.units_delivery_event(self.cp)
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setMinimumSize(200, 200)
+        self.setMinimumSize(300, 200)
         self.setModal(True)
         self.initUi()
 
@@ -52,13 +53,22 @@ class QBaseMenu(QDialog):
         self.topLayoutWidget.setProperty("style", "baseMenuHeader")
         self.topLayoutWidget.setLayout(self.topLayout)
 
-        units = {
-            CAP: db.find_unittype(CAP, self.game.player_name),
-            Embarking: db.find_unittype(Embarking, self.game.player_name),
-            AirDefence: db.find_unittype(AirDefence, self.game.player_name),
-            CAS: db.find_unittype(CAS, self.game.player_name),
-            PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
-        }
+        if self.cp.captured:
+            units = {
+                CAP: db.find_unittype(CAP, self.game.player_name),
+                Embarking: db.find_unittype(Embarking, self.game.player_name),
+                CAS: db.find_unittype(CAS, self.game.player_name),
+                PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
+                AirDefence: db.find_unittype(AirDefence, self.game.player_name),
+            }
+        else:
+            units = {
+                CAP: db.find_unittype(CAP, self.game.enemy_name),
+                Embarking: db.find_unittype(Embarking, self.game.enemy_name),
+                AirDefence: db.find_unittype(AirDefence, self.game.enemy_name),
+                CAS: db.find_unittype(CAS, self.game.enemy_name),
+                PinpointStrike: db.find_unittype(PinpointStrike, self.game.enemy_name),
+            }
 
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.topLayoutWidget)
@@ -111,8 +121,33 @@ class QBaseMenu(QDialog):
 
                 for unit_type in units_column:
                     add_purchase_row(unit_type)
+            self.mainLayout.addLayout(self.unitLayout)
+        else:
+            intel = QGroupBox("Intel")
+            intelLayout = QVBoxLayout()
 
-        self.mainLayout.addLayout(self.unitLayout)
+            row = 0
+            for task_type in units.keys():
+                units_column = list(set(units[task_type]))
+
+                if sum([self.cp.base.total_units_of_type(u) for u in units_column]) > 0:
+
+                    group = QGroupBox(db.task_name(task_type))
+                    groupLayout = QGridLayout()
+                    group.setLayout(groupLayout)
+
+                    row = 0
+                    for unit_type in units_column:
+                        existing_units = self.cp.base.total_units_of_type(unit_type)
+                        if existing_units == 0:
+                            continue
+                        groupLayout.addWidget(QLabel("<b>" + db.unit_type_name(unit_type) + "</b>"), row, 0)
+                        groupLayout.addWidget(QLabel(str(existing_units)), row, 1)
+                        row += 1
+
+                    intelLayout.addWidget(group)
+            self.mainLayout.addLayout(intelLayout)
+
         self.setLayout(self.mainLayout)
 
 
