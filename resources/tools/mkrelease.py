@@ -7,12 +7,10 @@ from zipfile import *
 IGNORED_PATHS = [
     "__pycache__",
     ".gitignore",
-    ".gitmodules",
     ".git",
     ".idea",
     ".DS_Store",
-    "submodules",
-
+    "requirements.txt",
     "build",
     "venv",
 ]
@@ -38,15 +36,16 @@ def _zip_dir(archieve, path):
 
 
 def _mk_archieve():
-    path = os.path.join("build", "dcs_liberation_{}.zip".format(VERSION))
+    path = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "build", "dcs_liberation_{}.zip".format(VERSION))
     if os.path.exists(path):
         print("version already exists")
         return
 
-    shutil.rmtree("./dist")
-
+    try:
+        shutil.rmtree("./dist")
+    except FileNotFoundError:
+        pass
     os.system("pyinstaller.exe pyinstaller.spec")
-
     archieve = ZipFile(path, "w")
     archieve.writestr("dcs_liberation.bat", "cd dist\\dcs_liberation\r\nliberation_main \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
     _zip_dir(archieve, "./dist/dcs_liberation")
