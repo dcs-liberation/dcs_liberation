@@ -1,12 +1,12 @@
-from PySide2.QtCore import QLine
-from PySide2.QtGui import QColor, QPainter, QCursor, QTextItem, QPen
+from PySide2.QtCore import QRect
+from PySide2.QtGui import QColor, QPainter
 from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGraphicsSceneContextMenuEvent, QMenu, \
     QAction
 
+import qt_ui.uiconstants as CONST
+from game import Game
 from qt_ui.windows.QBaseMenu import QBaseMenu
 from theater import ControlPoint
-from game import Game
-import qt_ui.uiconstants as CONST
 
 
 class QMapControlPoint(QGraphicsRectItem):
@@ -31,18 +31,28 @@ class QMapControlPoint(QGraphicsRectItem):
             painter.setPen(self.pen_color)
 
             if self.isUnderMouse():
-                painter.setBrush(CONST.COLORS["green"])
+                painter.setBrush(CONST.COLORS["white"])
                 painter.setPen(self.pen_color)
 
-            painter.drawEllipse(option.rect)
-
             r = option.rect
-            painter.setPen(QPen(CONST.COLORS["white"], CONST.CP_SIZE/5))
-            painter.setBrush(CONST.COLORS["white"])
-            painter.drawLine(QLine(r.x()+CONST.CP_SIZE/5, r.y()+CONST.CP_SIZE/5,
-                                   r.x()+r.width()-CONST.CP_SIZE/5,
-                                   r.y()+r.height()-CONST.CP_SIZE/5))
+            painter.drawChord(r, -180*16, -180*16)
 
+            gauge = QRect(r.x(),
+                          r.y()+CONST.CP_SIZE/2 + 2,
+                          r.width(),
+                          CONST.CP_SIZE / 4)
+
+            painter.setBrush(CONST.COLORS["bright_red"])
+            painter.setPen(CONST.COLORS["black"])
+            painter.drawRect(gauge)
+
+            gauge2 = QRect(r.x(),
+                           r.y() + CONST.CP_SIZE / 2 + 2,
+                           r.width()*self.model.base.strength,
+                           CONST.CP_SIZE / 4)
+
+            painter.setBrush(CONST.COLORS["green"])
+            painter.drawRect(gauge2)
             painter.restore()
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
