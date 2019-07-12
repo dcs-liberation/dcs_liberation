@@ -1,7 +1,7 @@
-from PySide2.QtCore import QRect
+from PySide2.QtCore import QRect, Qt
 from PySide2.QtGui import QColor, QPainter
 from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGraphicsSceneContextMenuEvent, QMenu, \
-    QAction
+    QAction, QGraphicsSceneMouseEvent
 
 import qt_ui.uiconstants as CONST
 from game import Game
@@ -57,9 +57,13 @@ class QMapControlPoint(QGraphicsRectItem):
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
+        self.setCursor(Qt.PointingHandCursor)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
+
+    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
+        self.contextMenuEvent(event)
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
 

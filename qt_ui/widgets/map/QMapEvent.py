@@ -1,5 +1,5 @@
-from PySide2.QtGui import QPen
-from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneMouseEvent
+from PySide2.QtGui import QPen, Qt
+from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent
 
 import qt_ui.uiconstants as CONST
 from game.event import Event
@@ -29,6 +29,9 @@ class QMapEvent(QGraphicsRectItem):
                 painter.setPen(QPen(brush=CONST.COLORS["red"]))
                 painter.setBrush(CONST.COLORS["red"])
 
+            if self.isUnderMouse():
+                painter.setBrush(CONST.COLORS["white"])
+
             painter.drawRect(option.rect)
             painter.drawPixmap(option.rect, CONST.EVENT_ICONS[self.gameEvent.__class__])
             painter.restore()
@@ -36,6 +39,10 @@ class QMapEvent(QGraphicsRectItem):
     def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
         if self.parent.get_display_rule("events"):
             self.openBriefing()
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
+        self.update()
+        self.setCursor(Qt.PointingHandCursor)
 
     def openBriefing(self):
         self.briefing = QBriefingWindow(self.gameEvent)

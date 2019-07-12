@@ -84,6 +84,10 @@ class QLiberationMap(QGraphicsView):
             text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
             text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
 
+            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text.setDefaultTextColor(Qt.white)
+            text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
+
             for ground_object in cp.ground_objects:
                 go_pos = self._transform_point(ground_object.position)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
@@ -127,7 +131,6 @@ class QLiberationMap(QGraphicsView):
                 frontline_pen.setColor(CONST.COLORS["bright_red"])
                 frontline_pen.setWidth(4)
                 frontline_pen.setStyle(Qt.DashDotLine)
-                # frontline_pen.setDashPattern([0,1])
                 scene.addLine(start_coords[0], start_coords[1], end_coords[0], end_coords[1], pen=frontline_pen)
 
     def _frontline_vector(self, from_cp: ControlPoint, to_cp: ControlPoint):
