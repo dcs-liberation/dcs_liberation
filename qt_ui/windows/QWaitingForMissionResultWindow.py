@@ -44,8 +44,6 @@ class QWaitingForMissionResultWindow(QDialog):
 
     def process_debriefing(self, debriefing: Debriefing):
 
-        print("DEBRIEFING !!")
-
         debriefing.calculate_units(regular_mission=self.gameEvent.operation.regular_mission,
                                    quick_mission=self.gameEvent.operation.quick_mission,
                                    player_country=self.game.player_country,

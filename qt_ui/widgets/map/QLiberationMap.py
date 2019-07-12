@@ -62,7 +62,6 @@ class QLiberationMap(QGraphicsView):
     def setGame(self, game: Game):
         self.game = game
         print("Reloading Map Canvas")
-        print(self.game)
         if self.game is not None:
             self.reload_scene()
 
@@ -202,7 +201,6 @@ class QLiberationMap(QGraphicsView):
             nonlocal occupied_rects
             point = self._transform_point(location)
             rect = QRect(point[0] - 16, point[1] - 16, 32, 32)
-            print(rect)
 
             i = 0
             while True:
