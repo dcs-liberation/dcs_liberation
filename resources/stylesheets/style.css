@@ -1,21 +1,39 @@
 
 
+QWidget {
+    background-color: #4E5760;
+    color:white;
+}
+
+QComboxBox {
+    background-color: #fff;
+    color:white;
+}
+
 QLiberationWindow{
+    background-color: #4E5760;
+    color:white;
 }
 
 QTopPanel,
 QTopPanel *{
-    /*background-color: #4E5760;*/
-    /*color: white;*/
+    background-color: #aaa;
+    color: white;
     font-size: 12px;
     font-weight: bold;
 }
 
 QPushButton[style="btn-primary"]{
-    /*background-color:#699245;*/
-    /*color:white;*/
-    /*padding: 21px 5px 21px 5px;
-    margin-top: 6px;*/
+    background-color:#699245;
+    cursor:pointer;
+    padding: 5px 5px 5px 5px;
+    border-radius:2px;
+}
+
+QPushButton[style="btn-primary"]:hover{
+    background-color:#f00;
+    padding: 5px 5px 5px 5px;
+    border-radius:2px;
 }
 
 QBaseMenu{

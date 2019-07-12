@@ -42,11 +42,13 @@ if __name__ == "__main__":
 
     app.processEvents()
 
+    # Uncomment to apply CSS (need works)
+    #app.setStyleSheet(css)
+
     GameUpdateSignal()
 
     # Start window
     window = QLiberationWindow()
-    window.setStyleSheet(css)
     window.show()
 
     splash.finish(window)

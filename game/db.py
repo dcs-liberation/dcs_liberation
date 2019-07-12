@@ -184,6 +184,7 @@ UNIT_BY_TASK = {
         Su_27,
         Su_33,
         MiG_21Bis,
+        MiG_19P,
         MiG_29A,
         MiG_29S,
         FA_18C_hornet,
@@ -198,7 +199,6 @@ UNIT_BY_TASK = {
     CAS: [
         F_86F_Sabre,
         MiG_15bis,
-        MiG_19P,
         L_39ZA,
         AV8BNA,
         AJS37,

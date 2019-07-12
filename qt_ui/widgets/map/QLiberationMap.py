@@ -78,8 +78,6 @@ class QLiberationMap(QGraphicsView):
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
                                            CONST.CP_SIZE, cp, self.game))
 
-            # e = scene.addEllipse(pos[0]-CONST.CP_SIZE/2, pos[1]-CONST.CP_SIZE/2, CONST.CP_SIZE, CONST.CP_SIZE, QPen(brush=QBrush(color=color), width=5), brush=color)
-
             text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
             text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
 
@@ -254,14 +252,14 @@ class QLiberationMap(QGraphicsView):
             ov = QPixmap(bg.width(), bg.height())
             ov.fill(QColor(40, 40, 150))
             overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect();
+            effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.7)
             overlay.setGraphicsEffect(effect)
         else:
             ov = QPixmap(bg.width(), bg.height())
             ov.fill(QColor(165, 100, 100))
             overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect();
+            effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.3)
             overlay.setGraphicsEffect(effect)
 
