@@ -4,7 +4,7 @@ block_cipher = None
 
 
 analysis = Analysis(
-    ['__init__.py'],
+    ['./qt_ui/main.py'],
     pathex=['.'],
     binaries=[],
     datas=[

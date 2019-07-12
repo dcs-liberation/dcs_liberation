@@ -37,7 +37,7 @@ if __name__ == "__main__":
     persistency.setup(sys.argv[1])
 
     css = ""
-    with open("./qt_ui/stylesheets/style.css") as stylesheet:
+    with open("./resources/stylesheets/style.css") as stylesheet:
         css = stylesheet.read()
 
     app.processEvents()
