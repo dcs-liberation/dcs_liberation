@@ -1,23 +1,22 @@
+import typing
 from typing import Dict
 
-import typing
 from PySide2.QtCore import Qt, QRect
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
-from PySide2.QtWidgets import QGraphicsView, QFrame
+from PySide2.QtWidgets import QGraphicsView, QFrame, QGraphicsOpacityEffect
+from dcs import Point
 
+import qt_ui.uiconstants as CONST
+from game import Game
 from game.event import InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent, Event, \
     FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent
 from gen import Conflict
+from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapEvent import QMapEvent
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
-from qt_ui.widgets.map.QLiberationScene import QLiberationScene
-from dcs import Point
-
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint
-from game import Game
-import qt_ui.uiconstants as CONST
 
 
 class QLiberationMap(QGraphicsView):
@@ -69,7 +68,7 @@ class QLiberationMap(QGraphicsView):
         scene = self.scene()
         scene.clear()
 
-        scene.addPixmap(QPixmap("./resources/" + self.game.theater.overview_image))
+        self.addBackground()
 
         self.add_game_events()
 
@@ -241,6 +240,40 @@ class QLiberationMap(QGraphicsView):
 
             rect = _location_to_rect(location)
             scene.addItem(QMapEvent(self, rect.x(), rect.y(), 32, 32, event))
+
+    def addBackground(self):
+        scene = self.scene()
+
+        bg = QPixmap("./resources/" + self.game.theater.overview_image)
+        scene.addPixmap(bg)
+
+        # Apply graphical effects to simulate current daytime
+        if self.game.current_turn_daytime == "day":
+            pass
+        elif self.game.current_turn_daytime == "night":
+            ov = QPixmap(bg.width(), bg.height())
+            ov.fill(QColor(40, 40, 150))
+            overlay = scene.addPixmap(ov)
+            effect = QGraphicsOpacityEffect();
+            effect.setOpacity(0.7)
+            overlay.setGraphicsEffect(effect)
+        else:
+            ov = QPixmap(bg.width(), bg.height())
+            ov.fill(QColor(165, 100, 100))
+            overlay = scene.addPixmap(ov)
+            effect = QGraphicsOpacityEffect();
+            effect.setOpacity(0.3)
+            overlay.setGraphicsEffect(effect)
+
+
+
+
+
+
+
+
+
+
 
     @staticmethod
     def set_display_rule(rule: str, value: bool):
