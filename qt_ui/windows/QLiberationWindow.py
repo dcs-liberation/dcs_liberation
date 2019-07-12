@@ -36,16 +36,12 @@ class QLiberationWindow(QMainWindow):
 
     def initUi(self):
 
-        hbox = QHBoxLayout()
-        hbox.addStretch(1)
         self.liberation_map = QLiberationMap(self.game)
-        hbox.addWidget(self.liberation_map)
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
         vbox.addWidget(QTopPanel(self.game))
         vbox.addWidget(self.liberation_map)
-        #vbox.addLayout(hbox)
 
         central_widget = QWidget()
         central_widget.setLayout(vbox)

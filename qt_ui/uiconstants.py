@@ -16,6 +16,9 @@ URLS : Dict[str, str] = {
     "Issues": "https://github.com/shdwp/dcs_liberation/issues"
 }
 
+LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
+SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
+
 COLORS: Dict[str, QColor] = {
     "red": QColor(255, 125, 125),
     "bright_red": QColor(200, 64, 64),
@@ -30,9 +33,9 @@ COLORS: Dict[str, QColor] = {
 
 
 CP_SIZE = 25
-
-
 FONT = QFont("Arial", 12, weight=5, italic=True)
+
+
 
 ICONS: Dict[str, QPixmap] = {}
 
@@ -61,6 +64,10 @@ def load_icons():
     ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")
     for category in CATEGORY_MAP.keys():
         ICONS[category] = QPixmap("./resources/ui/ground_assets/" + category + ".png")
+
+    ICONS["Generator"] = QPixmap("./resources/ui/misc/generator.png")
+    ICONS["Missile"] = QPixmap("./resources/ui/misc/missile.png")
+    ICONS["Cheat"] = QPixmap("./resources/ui/misc/cheat.png")
 
 
 EVENT_ICONS: Dict[str, QPixmap] = {}

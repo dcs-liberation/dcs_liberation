@@ -6,6 +6,7 @@ from qt_ui.widgets.QTurnCounter import QTurnCounter
 
 import qt_ui.uiconstants as CONST
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 
 
 class QTopPanel(QFrame):
@@ -55,7 +56,8 @@ class QTopPanel(QFrame):
             self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
 
     def openSettings(self):
-        QMessageBox.information(self, "Settings", "Todo open game settings")
+        self.subwindow = QSettingsWindow(self.game)
+        self.subwindow.show()
 
     def openStatisticsWindow(self):
         QMessageBox.information(self, "Stats", "Todo open stats window")
