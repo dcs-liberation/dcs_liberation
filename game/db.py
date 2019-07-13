@@ -86,6 +86,10 @@ PRICES = {
     AH_64D: 15,
     OH_58D: 6,
 
+    # Bombers
+    B_52H: 25,
+    B_1B: 50,
+
     # special
     IL_76MD: 13,
     An_26B: 13,
@@ -183,8 +187,8 @@ UNIT_BY_TASK = {
         MiG_23MLD,
         Su_27,
         Su_33,
-        MiG_21Bis,
         MiG_19P,
+        MiG_21Bis,
         MiG_29A,
         MiG_29S,
         FA_18C_hornet,
@@ -215,7 +219,9 @@ UNIT_BY_TASK = {
         Su_24MR,
         AH_64A,
         AH_64D,
-        OH_58D
+        OH_58D,
+        B_52H,
+        B_1B,
     ],
     Transport: [
         IL_76MD,
@@ -642,6 +648,8 @@ FACTIONS = {
             C_130,
             E_3A,
 
+            B_52H,
+
             UH_1H,
 
             Armor.MBT_M60A3_Patton,
@@ -668,6 +676,8 @@ FACTIONS = {
 
             A_10A,
             AV8BNA,
+
+            B_1B,
 
             KC_135,
             S_3B_Tanker,
@@ -706,6 +716,8 @@ FACTIONS = {
 
             A_10C,
             AV8BNA,
+
+            B_1B,
 
             KC_135,
             S_3B_Tanker,

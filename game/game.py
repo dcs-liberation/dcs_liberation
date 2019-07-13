@@ -6,6 +6,7 @@ import math
 from dcs.task import *
 from dcs.vehicles import *
 
+from game.game_stats import GameStats
 from gen.conflictgen import Conflict
 from userdata.debriefing import Debriefing
 from theater import *
@@ -93,6 +94,7 @@ class Game:
     pending_transfers = None  # type: typing.Dict[]
     ignored_cps = None  # type: typing.Collection[ControlPoint]
     turn = 0
+    game_stats: GameStats = None
 
     def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime):
         self.settings = Settings()
@@ -104,6 +106,8 @@ class Game:
         self.enemy_country = db.FACTIONS[enemy_name]["country"]
         self.turn = 0
         self.date = datetime(start_date.year, start_date.month, start_date.day)
+        self.game_stats = GameStats()
+        self.game_stats.update(self)
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -297,7 +301,11 @@ class Game:
 
         self.events = []  # type: typing.List[Event]
         self._generate_events()
+
         #self._generate_globalinterceptions()
+
+        # Update statistics
+        self.game_stats.update(self)
 
     @property
     def current_turn_daytime(self):

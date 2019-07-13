@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QMe
 
 from game import Game
 from qt_ui.widgets.QBudgetBox import QBudgetBox
+from qt_ui.widgets.QStatsWindow import QStatsWindow
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 
 import qt_ui.uiconstants as CONST
@@ -60,7 +61,8 @@ class QTopPanel(QFrame):
         self.subwindow.show()
 
     def openStatisticsWindow(self):
-        QMessageBox.information(self, "Stats", "Todo open stats window")
+        self.subwindow = QStatsWindow(self.game)
+        self.subwindow.show()
 
     def passTurn(self):
         self.game.pass_turn()

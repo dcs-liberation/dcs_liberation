@@ -1,16 +1,11 @@
-import os
-
-from PySide2 import QtCore
-from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QModelIndex, QPoint
-from PySide2.QtGui import QMovie, QStandardItemModel, QStandardItem
-from PySide2.QtWidgets import QLabel, QDialog, QVBoxLayout, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
+from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
+from PySide2.QtGui import QStandardItemModel, QStandardItem
+from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
     QAbstractItemView, QPushButton, QGroupBox, QCheckBox
 
-from game.game import Event, Game
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 import qt_ui.uiconstants as CONST
-from userdata.debriefing import wait_for_debriefing, Debriefing
-from userdata.persistency import base_path
+from game.game import Game
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 class QSettingsWindow(QDialog):
