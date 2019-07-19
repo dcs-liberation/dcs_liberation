@@ -32,4 +32,4 @@ class QTurnCounter(QGroupBox):
         """
         self.daytime_icon.setPixmap(self.icons[turn % 4])
         self.turn_info.setText(current_day.strftime("%d %b %Y"))
-        self.setTitle("Turn " + str(turn))
+        self.setTitle("Turn " + str(turn + 1))
