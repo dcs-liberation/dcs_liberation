@@ -21,8 +21,15 @@ class QBriefingWindow(QDialog):
         self.setMinimumSize(200,200)
         self.setWindowIcon(CONST.EVENT_ICONS[self.gameEvent.__class__])
         self.setModal(True)
-        self.base = self.gameEvent.from_cp.base
         self.game = self.gameEvent.game
+
+        if self.gameEvent.attacker_name == self.game.player_name:
+            self.base = self.gameEvent.from_cp.base
+            self.playerFromCp = self.gameEvent.from_cp
+        else:
+            self.base = self.gameEvent.to_cp.base
+            self.playerFromCp = self.gameEvent.to_cp
+
         self.scramble_entries = {k: {} for k in self.gameEvent.tasks}
         self.initUi()
 
@@ -30,21 +37,45 @@ class QBriefingWindow(QDialog):
 
         self.layout = QVBoxLayout()
 
-        self.scramble_box = QGroupBox("Units")
-        self.gridLayout = QGridLayout()
-        self.scramble_box.setLayout(self.gridLayout)
-
         self.depart_box = QGroupBox("Departure")
         self.depart_layout = QHBoxLayout()
         self.depart_box.setLayout(self.depart_layout)
         self.depart_from_label = QLabel("Depart from : ")
         self.depart_from = QComboBox()
 
-        for cp in [b for b in self.game.theater.controlpoints if b.captured]:
+        for i, cp in enumerate([b for b in self.game.theater.controlpoints if b.captured]):
             self.depart_from.addItem(str(cp.name), cp)
+            if cp.name == self.playerFromCp.name:
+                self.depart_from.setCurrentIndex(i)
 
+        self.depart_from.currentTextChanged.connect(self.on_departure_cp_changed)
         self.depart_layout.addWidget(self.depart_from_label)
         self.depart_layout.addWidget(self.depart_from)
+
+        # Mission Description
+        self.gridLayout = QGridLayout()
+        self.initUnitRows()
+        self.scramble_box = QGroupBox("Units")
+        self.scramble_box.setLayout(self.gridLayout)
+
+        self.action_layout = QHBoxLayout()
+        self.commit_button = QPushButton("Commit")
+        self.back_button = QPushButton("Cancel")
+        self.commit_button.clicked.connect(self.start)
+        self.back_button.clicked.connect(self.close)
+        self.action_layout.addWidget(self.commit_button)
+        self.action_layout.addWidget(self.back_button)
+
+        self.support_box = self.initSupportBox()
+        self.layout.addWidget(QLabel("<h2>{} on {}</h2>".format(self.gameEvent, self.gameEvent.to_cp.name)))
+        self.layout.addWidget(self.depart_box)
+        self.layout.addWidget(self.scramble_box)
+        self.layout.addWidget(self.support_box)
+        self.layout.addWidget(QLabel("<b>Ready?</b>"))
+        self.layout.addLayout(self.action_layout)
+        self.setLayout(self.layout)
+
+    def initUnitRows(self):
 
         row = 0
 
@@ -65,8 +96,6 @@ class QBriefingWindow(QDialog):
                 client_entry = None
 
             self.scramble_entries[task_type][unit_type] = scramble_entry, client_entry
-
-        # Mission Description
 
         # Table headers
         self.gridLayout.addWidget(QLabel("Amount"), row, 1)
@@ -89,26 +118,11 @@ class QBriefingWindow(QDialog):
                     self.gridLayout.addWidget(QLabel("No units"), row, 1)
                     row += 1
                 for t, c in self.base.aircraft.items():
+                    print(t,c)
                     scramble_row(flight_task, t, c, True, row)
                     row += 1
 
-        self.action_layout = QHBoxLayout()
-        self.commit_button = QPushButton("Commit")
-        self.back_button = QPushButton("Cancel")
-        self.commit_button.clicked.connect(self.start)
-        self.back_button.clicked.connect(self.close)
-        self.action_layout.addWidget(self.commit_button)
-        self.action_layout.addWidget(self.back_button)
-
-        self.support_box = self.initSupportBox()
-        self.layout.addWidget(QLabel("<h2>{} on {}</h2>".format(self.gameEvent, self.gameEvent.to_cp.name)))
-        self.layout.addWidget(self.depart_box)
-        self.layout.addWidget(self.scramble_box)
-        self.layout.addWidget(self.support_box)
-        self.layout.addWidget(QLabel("<b>Ready?</b>"))
-        self.layout.addLayout(self.action_layout)
-        self.setLayout(self.layout)
-
+        return self.gridLayout
 
     def initSupportBox(self):
 
@@ -222,7 +236,7 @@ class QBriefingWindow(QDialog):
 
         if self.game.is_player_attack(self.gameEvent):
             if isinstance(self.gameEvent, FrontlineAttackEvent) or isinstance(self.gameEvent, FrontlinePatrolEvent):
-                if self.gameEvent.from_cp.base.total_armor == 0:
+                if self.base.total_armor == 0:
                     self.showErrorMessage("No ground vehicles available to attack!")
                     return
 
@@ -248,3 +262,23 @@ class QBriefingWindow(QDialog):
         about.setIcon(QMessageBox.Icon.Critical)
         about.setText(text)
         about.exec_()
+
+    def on_departure_cp_changed(self):
+
+        selectedBase = self.depart_from.itemData(self.depart_from.currentIndex())
+
+        for i, cp in enumerate([b for b in self.game.theater.controlpoints if b.captured]):
+            if cp.name == selectedBase.name:
+                self.base = cp.base
+                self.playerFromCp = cp
+                break
+
+        # Clear current selection
+        self.scramble_entries = {k: {} for k in self.gameEvent.tasks}
+
+        # Clear the grid layout
+        for i in reversed(range(self.gridLayout.count())):
+            self.gridLayout.itemAt(i).widget().setParent(None)
+
+        # Rebuild the grid layout, so that it correspond to the newly selected CP
+        self.initUnitRows()
