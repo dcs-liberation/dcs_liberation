@@ -2,9 +2,8 @@ from PySide2.QtGui import QPen, Qt
 from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneMouseEvent, QGraphicsSceneHoverEvent
 
 import qt_ui.uiconstants as CONST
-from game.event import Event
+from game.event import Event, UnitsDeliveryEvent
 from qt_ui.windows.QBriefingWindow import QBriefingWindow
-from theater import TheaterGroundObject, ControlPoint
 
 
 class QMapEvent(QGraphicsRectItem):
@@ -16,6 +15,7 @@ class QMapEvent(QGraphicsRectItem):
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
         self.setToolTip(str(self.gameEvent))
+        self.playable = not isinstance(self.gameEvent, UnitsDeliveryEvent)
 
     def paint(self, painter, option, widget=None):
 
@@ -29,7 +29,7 @@ class QMapEvent(QGraphicsRectItem):
                 painter.setPen(QPen(brush=CONST.COLORS["red"]))
                 painter.setBrush(CONST.COLORS["red"])
 
-            if self.isUnderMouse():
+            if self.isUnderMouse() and self.playable:
                 painter.setBrush(CONST.COLORS["white"])
 
             painter.drawRect(option.rect)
@@ -42,8 +42,10 @@ class QMapEvent(QGraphicsRectItem):
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
-        self.setCursor(Qt.PointingHandCursor)
+        if self.playable:
+            self.setCursor(Qt.PointingHandCursor)
 
     def openBriefing(self):
-        self.briefing = QBriefingWindow(self.gameEvent)
-        self.briefing.show()
+        if self.playable:
+            self.briefing = QBriefingWindow(self.gameEvent)
+            self.briefing.show()
