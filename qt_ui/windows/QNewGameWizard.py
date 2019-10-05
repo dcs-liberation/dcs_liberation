@@ -34,6 +34,7 @@ class NewGameWizard(QtWidgets.QWizard):
         playerIsBlue = self.field("playerIsBlue")
         isTerrainPg = self.field("isTerrainPg")
         isTerrainNttr = self.field("isTerrainNttr")
+        isTerrainCaucasusSmall = self.field("isTerrainCaucasusSmall")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         sams = self.field("sams")
         midGame = self.field("midGame")
@@ -46,6 +47,8 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = persiangulf.PersianGulfTheater()
         elif isTerrainNttr:
             conflicttheater = nevada.NevadaTheater()
+        elif isTerrainCaucasusSmall:
+            conflicttheater = caucasus.WesternGeorgia()
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
@@ -195,6 +198,9 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroup = QtWidgets.QGroupBox("Terrain")
         terrainCaucasus = QtWidgets.QRadioButton("Caucasus")
         terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
+        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus Western Georgia")
+        terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
+
         terrainPg = QtWidgets.QRadioButton("Persian Gulf")
         terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
         terrainNttr = QtWidgets.QRadioButton("Nevada")
@@ -212,6 +218,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Register fields
         self.registerField('isTerrainCaucasus', terrainCaucasus)
+        self.registerField('isTerrainCaucasusSmall', terrainCaucasusSmall)
         self.registerField('isTerrainPg', terrainPg)
         self.registerField('isTerrainNttr', terrainNttr)
         self.registerField('timePeriod', timePeriodSelect)
@@ -219,6 +226,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Build layout
         terrainGroupLayout = QtWidgets.QVBoxLayout()
         terrainGroupLayout.addWidget(terrainCaucasus)
+        terrainGroupLayout.addWidget(terrainCaucasusSmall)
         terrainGroupLayout.addWidget(terrainPg)
         terrainGroupLayout.addWidget(terrainNttr)
         terrainGroup.setLayout(terrainGroupLayout)

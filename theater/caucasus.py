@@ -78,3 +78,43 @@ class CaucasusTheater(ConflictTheater):
         point.name = " ".join(re.split(r"[ -]", point.name)[:1])
 
         super(CaucasusTheater, self).add_controlpoint(point, connected_to=connected_to)
+
+
+"""
+A smaller version of the caucasus map in western georgia.
+Ideal for smaller scale campaign
+"""
+class WesternGeorgia(ConflictTheater):
+
+    terrain = caucasus.Caucasus()
+    overview_image = "caumap.gif"
+    reference_points = {(-317948.32727306, 635639.37385346): (278.5 * 4, 319 * 4),
+                        (-355692.3067714, 617269.96285781): (263 * 4, 352 * 4), }
+    landmap = load_landmap("resources\\caulandmap.p")
+    daytime_map = {
+        "dawn": (6, 9),
+        "day": (9, 18),
+        "dusk": (18, 20),
+        "night": (0, 5),
+    }
+
+    kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+    senaki = ControlPoint.from_airport(caucasus.Senaki_Kolkhi, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
+    kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_A_E, SIZE_SMALL, 1.1)
+    sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_DR_E, SIZE_REGULAR, 1.2)
+    gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_DR_E, SIZE_REGULAR, 1.2)
+    sochi = ControlPoint.from_airport(caucasus.Sochi_Adler, COAST_DR_E, SIZE_BIG, IMPORTANCE_HIGH)
+    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875))
+
+    def __init__(self, load_ground_objects=True):
+        super(WesternGeorgia, self).__init__()
+
+        self.add_controlpoint(self.kutaisi, connected_to=[self.senaki])
+        self.add_controlpoint(self.senaki, connected_to=[self.kobuleti, self.sukhumi, self.kutaisi])
+        self.add_controlpoint(self.kobuleti, connected_to=[self.senaki])
+        self.add_controlpoint(self.sukhumi, connected_to=[self.gudauta, self.senaki])
+        self.add_controlpoint(self.gudauta, connected_to=[self.sochi, self.sukhumi])
+        self.add_controlpoint(self.sochi, connected_to=[self.gudauta])
+
+        self.carrier_1.captured = True
+        self.kobuleti.captured = True
