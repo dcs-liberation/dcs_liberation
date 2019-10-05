@@ -29,8 +29,16 @@ class FrontlinePatrolEvent(Event):
         return "Frontline CAP"
 
     def is_successfull(self, debriefing: Debriefing):
-        alive_attackers = sum([v for k, v in debriefing.alive_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
-        alive_defenders = sum([v for k, v in debriefing.alive_units[self.defender_name].items() if db.unit_task(k) == PinpointStrike])
+
+        if self.game.player_name == self.attacker_name:
+            attacker_country = self.game.player_country
+            defender_country = self.game.enemy_country
+        else:
+            attacker_country = self.game.enemy_country
+            defender_country = self.game.player_country
+
+        alive_attackers = sum([v for k, v in debriefing.alive_units[attacker_country].items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units[defender_country].items() if db.unit_task(k) == PinpointStrike])
         attackers_success = (float(alive_attackers) / (alive_defenders + 0.01)) >= self.SUCCESS_FACTOR
         if self.from_cp.captured:
             return attackers_success

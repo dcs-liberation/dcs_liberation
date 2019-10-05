@@ -36,7 +36,13 @@ class InsurgentAttackEvent(Event):
         self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
 
     def is_successfull(self, debriefing: Debriefing):
-        killed_units = sum([v for k, v in debriefing.destroyed_units[self.attacker_name].items() if db.unit_task(k) == PinpointStrike])
+
+        if self.game.player_name == self.attacker_name:
+            attacker_country = self.game.player_country
+        else:
+            attacker_country = self.game.enemy_country
+
+        killed_units = sum([v for k, v in debriefing.destroyed_units[attacker_country].items() if db.unit_task(k) == PinpointStrike])
         all_units = sum(self.targets.values())
         attackers_success = (float(killed_units) / (all_units + 0.01)) > self.SUCCESS_FACTOR
         if self.from_cp.captured:

@@ -25,8 +25,16 @@ class BaseAttackEvent(Event):
             return "Ground attack"
 
     def is_successfull(self, debriefing: Debriefing):
-        alive_attackers = sum([v for k, v in debriefing.alive_units.get(self.attacker_name, {}).items() if db.unit_task(k) == PinpointStrike])
-        alive_defenders = sum([v for k, v in debriefing.alive_units.get(self.defender_name, {}).items() if db.unit_task(k) == PinpointStrike])
+
+        if self.game.player_name == self.attacker_name:
+            attacker_country = self.game.player_country
+            defender_country = self.game.enemy_country
+        else:
+            attacker_country = self.game.enemy_country
+            defender_country = self.game.player_country
+
+        alive_attackers = sum([v for k, v in debriefing.alive_units.get(attacker_country, {}).items() if db.unit_task(k) == PinpointStrike])
+        alive_defenders = sum([v for k, v in debriefing.alive_units.get(defender_country, {}).items() if db.unit_task(k) == PinpointStrike])
         attackers_success = alive_attackers >= alive_defenders
         if self.departure_cp.captured:
             return attackers_success

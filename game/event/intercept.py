@@ -42,7 +42,13 @@ class InterceptEvent(Event):
         return True
 
     def is_successfull(self, debriefing: Debriefing):
-        units_destroyed = debriefing.destroyed_units.get(self.defender_name, {}).get(self.transport_unit, 0)
+
+        if self.game.player_name == self.attacker_name:
+            defender_country = self.game.enemy_country
+        else:
+            defender_country = self.game.player_country
+
+        units_destroyed = debriefing.destroyed_units.get(defender_country, {}).get(self.transport_unit, 0)
         if self.from_cp.captured:
             return units_destroyed > 0
         else:
