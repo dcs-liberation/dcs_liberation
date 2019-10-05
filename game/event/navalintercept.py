@@ -47,9 +47,15 @@ class NavalInterceptEvent(Event):
         return True
 
     def is_successfull(self, debriefing: Debriefing):
+
+        if self.game.player_name == self.attacker_name:
+            defender_country = self.game.enemy_country
+        else:
+            defender_country = self.game.player_country
+
         total_targets = sum(self.targets.values())
         destroyed_targets = 0
-        for unit, count in debriefing.destroyed_units.get(self.defender_name, {}).items():
+        for unit, count in debriefing.destroyed_units.get(defender_country, {}).items():
             if unit in self.targets:
                 destroyed_targets += count
 
