@@ -33,6 +33,12 @@ def num_sam_dead(sam_type, destroyed_count):
         AirDefence.SAM_SA_3_S_125_LN_5P73: 4,
         AirDefence.SAM_SA_6_Kub_LN_2P25: 6,
         AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 8,
+        AirDefence.SAM_SA_2_LN_SM_90:4,
+        AirDefence.SAM_SA_2_TR_SNR_75_Fan_Song: 1,
+        AirDefence.SAM_Hawk_PCP: 1,
+        AirDefence.SAM_Hawk_LN_M192: 4,
+        AirDefence.SAM_Hawk_SR_AN_MPQ_50: 1,
+        AirDefence.SAM_Hawk_TR_AN_MPQ_46: 1
     }
 
     return int(destroyed_count / sam_threshold[sam_type])
@@ -192,6 +198,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             v.position.y = center_y
             v.heading = heading
             vg.add_unit(v)
+
             # command center
             v = self.vehicle(
                 name + " Unit #{nr}-c".format(nr=i),
@@ -251,6 +258,7 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
             v.position.y = center_y
             v.heading = heading
             vg.add_unit(v)
+
             # command center
             v = self.vehicle(
                 name + " Unit #{nr}-c".format(nr=i),
@@ -276,6 +284,107 @@ def aaa_vehicle_group(self, country, name, _type: unittype.VehicleType, position
                 v = self.vehicle(
                     name + " Unit #{nr}-{x}".format(nr=i, x=x),
                     AirDefence.SAM_SA_10_S_300PS_LN_5P85D,
+                )
+
+                v.position.x = plop_positions[x][0]
+                v.position.y = plop_positions[x][1]
+                v.heading = plop_positions[x][2]
+                vg.add_unit(v)
+        elif _type == AirDefence.SAM_Hawk_PCP:
+            # 4 launchers (180 degrees all facing the same direction), 1 SR, 1 TR, 1 PCP
+            num_launchers = 4
+
+            # search radar
+            v = self.vehicle(
+                name + " Unit #{nr}-sr".format(nr=i),
+                AirDefence.SAM_Hawk_SR_AN_MPQ_50,
+            )
+            v.position.x = position.x
+            v.position.y = position.y + (i - 1) * 20
+            v.heading = heading
+            vg.add_unit(v)
+
+
+            # track radar
+            v = self.vehicle(
+                name + " Unit #{nr}-tr".format(nr=i),
+                AirDefence.SAM_Hawk_TR_AN_MPQ_46,
+            )
+            center_x = position.x + randint(20, 40)
+            center_y = position.y + (i - 1) * 20
+            v.position.x = center_x
+            v.position.y = center_y
+            v.heading = heading
+            vg.add_unit(v)
+
+            # PCP
+            v = self.vehicle(
+                name + " Unit #{nr}-pcp".format(nr=i),
+                AirDefence.SAM_Hawk_PCP,
+            )
+
+            center_x = position.x + randint(60, 80)
+            center_y = position.y + 20
+            v.position.x = center_x
+            v.position.y = center_y
+            v.heading = heading
+            vg.add_unit(v)
+
+            plop_positions = determine_positions(
+                position,
+                heading,
+                num_launchers,
+                launcher_distance=100,
+                coverage=180,
+            )
+            for x in range(0, num_launchers):
+                v = self.vehicle(
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
+                    AirDefence.SAM_Hawk_LN_M192,
+                )
+
+                v.position.x = plop_positions[x][0]
+                v.position.y = plop_positions[x][1]
+                v.heading = plop_positions[x][2]
+                vg.add_unit(v)
+        elif _type == AirDefence.SAM_SA_2_LN_SM_90:
+            # 4 launchers (180 degrees all facing the same direction), 1 SR, 1 TR
+            num_launchers = 4
+
+            # search radar
+            v = self.vehicle(
+                name + " Unit #{nr}-sr".format(nr=i),
+                AirDefence.SAM_SR_P_19,
+            )
+            v.position.x = position.x
+            v.position.y = position.y + (i - 1) * 20
+            v.heading = heading
+            vg.add_unit(v)
+
+
+            # track radar
+            v = self.vehicle(
+                name + " Unit #{nr}-tr".format(nr=i),
+                AirDefence.SAM_SA_2_TR_SNR_75_Fan_Song,
+            )
+            center_x = position.x + randint(20, 40)
+            center_y = position.y + (i - 1) * 20
+            v.position.x = center_x
+            v.position.y = center_y
+            v.heading = heading
+            vg.add_unit(v)
+
+            plop_positions = determine_positions(
+                position,
+                heading,
+                num_launchers,
+                launcher_distance=100,
+                coverage=180,
+            )
+            for x in range(0, num_launchers):
+                v = self.vehicle(
+                    name + " Unit #{nr}-{x}".format(nr=i, x=x),
+                    AirDefence.SAM_SA_2_LN_SM_90,
                 )
 
                 v.position.x = plop_positions[x][0]

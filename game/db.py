@@ -151,8 +151,10 @@ PRICES = {
     AirDefence.SAM_SA_19_Tunguska_2S6: 15,
     AirDefence.SAM_SA_6_Kub_LN_2P25: 22,
     AirDefence.SAM_SA_8_Osa_9A33: 12,
-    AirDefence.SAM_SA_3_S_125_LN_5P73: 35,
+    AirDefence.SAM_SA_3_S_125_LN_5P73: 20,
+    AirDefence.SAM_SA_2_LN_SM_90: 15,
     AirDefence.SAM_SA_11_Buk_LN_9A310M1: 25,
+    AirDefence.SAM_Hawk_PCP: 20,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -299,14 +301,16 @@ UNIT_BY_TASK = {
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Linebacker_M6,
 
-        #AirDefence.SPAAA_ZSU_23_4_Shilka,
-        #AirDefence.AAA_ZU_23_Closed,
-        #AirDefence.SAM_SA_9_Strela_1_9P31,
-        #AirDefence.SAM_SA_8_Osa_9A33,
-        #AirDefence.SAM_SA_19_Tunguska_2S6,
-        #AirDefence.SAM_SA_6_Kub_LN_2P25,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.AAA_ZU_23_Closed,
+        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_19_Tunguska_2S6,
+        AirDefence.SAM_SA_6_Kub_LN_2P25,
         AirDefence.SAM_SA_3_S_125_LN_5P73,
-        #AirDefence.SAM_SA_11_Buk_LN_9A310M1,
+        AirDefence.SAM_Hawk_PCP,
+        AirDefence.SAM_SA_2_LN_SM_90,
+        AirDefence.SAM_SA_11_Buk_LN_9A310M1,
     ],
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
     Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
@@ -327,6 +331,8 @@ SAM_BAN = [
     AirDefence.SAM_SA_6_Kub_LN_2P25,
     AirDefence.SAM_SA_8_Osa_9A33,
     AirDefence.SAM_SA_3_S_125_LN_5P73,
+    AirDefence.SAM_Hawk_PCP,
+    AirDefence.SAM_SA_2_LN_SM_90,
     AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 ]
 
@@ -344,11 +350,15 @@ SAM_CONVERT = {
     AirDefence.SAM_SA_10_S_300PS_TR_30N6: AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
     AirDefence.SAM_SA_10_S_300PS_CP_54K6: AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
     AirDefence.SAM_SA_10_S_300PS_SR_64H6E: AirDefence.SAM_SA_10_S_300PS_CP_54K6,
+    AirDefence.SAM_Hawk_TR_AN_MPQ_46: AirDefence.SAM_Hawk_PCP,
+    AirDefence.SAM_Hawk_SR_AN_MPQ_50: AirDefence.SAM_Hawk_PCP,
+    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_PCP,
     'except': {
         # this radar is shared between the two S300's. if we attempt to find a SAM site at a base and can't find one
         #  model, we can safely assume the other was deployed
         # well, perhaps not safely, but we'll make the assumption anyway :p
         AirDefence.SAM_SA_10_S_300PS_TR_30N6: AirDefence.SAM_SA_10_S_300PS_CP_54K6,
+        AirDefence.SAM_SR_P_19: AirDefence.SAM_SA_2_LN_SM_90
     }
 }
 
@@ -606,6 +616,54 @@ FACTIONS = {
             Bulk_cargo_ship_Yakushev,
             Dry_cargo_ship_Ivanov,
             Tanker_Elnya_160,
+        ]
+    },
+
+    "Iran 2015": {
+        "country": "Russia",
+        "side": "red",
+        "units": [
+
+            MiG_29A,
+            F_4E,
+            F_14B,
+            F_5E_3,
+
+            MiG_21Bis,
+            Su_24M,
+            Su_25,
+            Su_17M4,
+
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
+
+            A_50,
+
+            Mi_28N,
+            Mi_24V,
+
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
+            AirDefence.SPAAA_ZSU_23_4_Shilka,
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_SA_2_LN_SM_90,
+
+            Armor.APC_M113,
+            Armor.APC_BTR_80,
+            Armor.MBT_M60A3_Patton,
+            Armor.MBT_T_72B,
+
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160
         ]
     },
 
@@ -959,6 +1017,7 @@ def unit_task(unit: UnitType) -> Task:
     if unit in SAM_CONVERT:
         return unit_task(SAM_CONVERT[unit])
 
+    print(unit.name + " cause issue")
     assert False
 
 

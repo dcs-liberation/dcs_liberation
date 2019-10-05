@@ -168,12 +168,13 @@ class Base:
             except KeyError:
                 modified_sam_site = db.SAM_CONVERT[sam_site]['except']
 
-            self.aa[modified_sam_site] = max(
-                self.aa[modified_sam_site] - dead_count,
-                0
-            )
-            if self.aa[modified_sam_site] == 0:
-                del self.aa[modified_sam_site]
+            if modified_sam_site in self.aa:
+                self.aa[modified_sam_site] = max(
+                    self.aa[modified_sam_site] - dead_count,
+                    0
+                )
+                if self.aa[modified_sam_site] == 0:
+                    del self.aa[modified_sam_site]
 
     def affect_strength(self, amount):
         self.strength += amount
