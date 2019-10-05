@@ -118,8 +118,7 @@ class QBriefingWindow(QDialog):
                     self.gridLayout.addWidget(QLabel("No units"), row, 1)
                     row += 1
                 for t, c in self.base.aircraft.items():
-                    print(t,c)
-                    scramble_row(flight_task, t, c, True, row)
+                    scramble_row(flight_task, t, c, t.flyable, row)
                     row += 1
 
         return self.gridLayout
