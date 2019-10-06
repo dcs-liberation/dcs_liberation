@@ -25,7 +25,7 @@ class QMapGroundObject(QGraphicsRectItem):
             tooltip = ""
             for unit in units.keys():
                 tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
-            self.setToolTip(tooltip + str(model.groups[0].id) + str(model.groups[0].name))
+            self.setToolTip(tooltip[:-1])
         else:
             self.setToolTip(cp.name + "'s " + self.model.category)
 

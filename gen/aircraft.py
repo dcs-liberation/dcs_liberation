@@ -10,7 +10,7 @@ from dcs.mission import *
 from dcs.unitgroup import *
 from dcs.unittype import *
 from dcs.task import *
-from dcs.terrain.terrain import NoParkingSlotError
+from dcs.terrain.terrain import NoParkingSlotError, RunwayOccupiedError
 
 SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_ENGAGEMENT_MAX_DIST = 100000
@@ -125,9 +125,12 @@ class AircraftConflictGenerator:
         else:
             group.set_frequency(251.0)
 
-    def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None) -> FlyingGroup:
+    def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
         assert unit is not None
+
+        if start_type is None:
+            start_type = self._start_type()
 
         logging.info("airgen: {} for {} at {}".format(unit_type, side.id, airport))
         return self.m.flight_group_from_airport(
@@ -136,7 +139,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             airport=self.m.terrain.airport_by_id(airport.id),
             maintask=None,
-            start_type=self._start_type(),
+            start_type=start_type,
             group_size=count,
             parking_slots=None)
 
@@ -292,6 +295,51 @@ class AircraftConflictGenerator:
             if escort:
                 self.escort_targets.append((group, group.points.index(waypoint)))
             self._rtb_for(group, self.conflict.from_cp, at)
+
+    def generate_patrol_group(self, cp: ControlPoint, country):
+
+        aircraft = dict({k:v for k,v in cp.base.aircraft.items() if k in [u for u in db.UNIT_BY_TASK[CAP]]})
+        delta = random.randint(10, 20)
+
+        for i in range(12):
+            if(len(aircraft.keys())) > 0:
+                print(aircraft.keys())
+                type = random.choice(list(aircraft.keys()))
+                number = random.choice([2, 4])
+                if(number > aircraft[type]):
+                    del aircraft[type]
+                else:
+                    aircraft[type] = aircraft[type] - number
+
+                try:
+                    group = self._generate_at_airport(
+                        name=namegen.next_unit_name(country, type),
+                        side=country,
+                        unit_type=type,
+                        count=number,
+                        client_count=0,
+                        airport=self.m.terrain.airport_by_id(cp.at.id),
+                        start_type=StartType.Runway)
+                except RunwayOccupiedError:
+                    group = self._generate_group(
+                        name=namegen.next_unit_name(country, type),
+                        side=country,
+                        unit_type=type,
+                        count=number,
+                        client_count=0,
+                        at=cp.position)
+
+                patrol_alt = random.randint(3600, 7000)
+
+                group.points[0].alt = patrol_alt
+                group.points[0].ETA = delta*60 + i*10*60
+
+                patrolled = []
+                for ground_object in cp.ground_objects:
+                    if not ground_object.group_id in patrolled:
+                        group.add_waypoint(ground_object.position, patrol_alt)
+                        patrolled.append(ground_object.group_id)
+
 
     def generate_ground_attack_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition = None, escort=True):
         assert not escort or len(self.escort_targets) == 0

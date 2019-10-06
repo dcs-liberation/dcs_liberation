@@ -45,7 +45,10 @@ PRICES = {
     Su_33: 22,
     MiG_29A: 18,
     MiG_29S: 20,
+    MiG_29G: 18,
     MiG_31: 30,
+    J_11A: 26,
+    Su_30: 24,
 
     F_5E_3: 8,
     MiG_15bis: 4,
@@ -62,6 +65,8 @@ PRICES = {
     F_15C: 26,
     F_16C_bl_52d: 20,
     F_14B: 22,
+    Tornado_IDS: 24,
+    # Tornado_GR4: 24,
 
     # bomber
     Su_17M4: 10,
@@ -200,7 +205,10 @@ UNIT_BY_TASK = {
         M_2000C,
         Mirage_2000_5,
         P_51D_30_NA,
-        P_51D
+        P_51D,
+        MiG_29G,
+        Su_30,
+        J_11A
     ],
     CAS: [
         F_86F_Sabre,
@@ -224,6 +232,8 @@ UNIT_BY_TASK = {
         OH_58D,
         B_52H,
         B_1B,
+        Tornado_IDS,
+        # Tornado_GR4,
     ],
     Transport: [
         IL_76MD,
@@ -379,8 +389,12 @@ CARRIER_TAKEOFF_BAN = [
 AirDefense units that will be spawned at control points not related to the current operation
 """
 EXTRA_AA = {
-    "Russia": AirDefence.SAM_SA_8_Osa_9A33,
+    "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
     "USA": AirDefence.SAM_Linebacker_M6,
+    "France": AirDefence.SPAAA_Gepard,
+    "Germany": AirDefence.SPAAA_Gepard,
+    "China": AirDefence.SPAAA_ZSU_23_4_Shilka,
+    "UK": AirDefence.AAA_Vulcan_M163,
     "Russia 1955": AirDefence.AAA_ZU_23_Closed,
     "USA 1955": AirDefence.AAA_Vulcan_M163,
     "Russia 1965": AirDefence.AAA_ZU_23_Closed,
@@ -389,7 +403,9 @@ EXTRA_AA = {
     "Russia 1988": AirDefence.AAA_ZU_23_Closed,
     "USA 1990": AirDefence.AAA_Vulcan_M163,
     "France 1990": AirDefence.AAA_Vulcan_M163,
-    "Germany 1990": AirDefence.AAA_Vulcan_M163
+    "Germany 1990": AirDefence.AAA_Vulcan_M163,
+    "Iran 2015": AirDefence.SPAAA_ZSU_23_4_Shilka,
+    "China 2015": AirDefence.SPAAA_ZSU_23_4_Shilka
 }
 
 """
@@ -596,13 +612,9 @@ FACTIONS = {
             Mi_8MT,
 
             AirDefence.SPAAA_ZSU_23_4_Shilka,
-            AirDefence.SAM_SA_9_Strela_1_9P31,
-            AirDefence.SAM_SA_8_Osa_9A33,
-            AirDefence.AAA_ZU_23_Closed,
             AirDefence.SAM_SA_19_Tunguska_2S6,
-            AirDefence.SAM_SA_6_Kub_LN_2P25,
-            AirDefence.SAM_SA_3_S_125_LN_5P73,
             AirDefence.SAM_SA_11_Buk_LN_9A310M1,
+            AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
 
             Armor.APC_BTR_80,
             Armor.MBT_T_90,
@@ -620,7 +632,7 @@ FACTIONS = {
     },
 
     "Iran 2015": {
-        "country": "Russia",
+        "country": "Iran",
         "side": "red",
         "units": [
 
@@ -655,6 +667,46 @@ FACTIONS = {
             Armor.APC_BTR_80,
             Armor.MBT_M60A3_Patton,
             Armor.MBT_T_72B,
+
+            Unarmed.Transport_Ural_375,
+            Unarmed.Transport_UAZ_469,
+            Infantry.Soldier_AK,
+
+            CV_1143_5_Admiral_Kuznetsov,
+            Bulk_cargo_ship_Yakushev,
+            Dry_cargo_ship_Ivanov,
+            Tanker_Elnya_160
+        ]
+    },
+
+    "China 2000": {
+        "country": "China",
+        "side": "red",
+        "units": [
+
+            MiG_21Bis, # Standing as J-7
+            Su_30,
+            J_11A,
+
+            IL_76MD,
+            IL_78M,
+            An_26B,
+            An_30M,
+            Yak_40,
+
+            A_50,
+
+            Mi_8MT,
+
+            AirDefence.AAA_ZU_23_Closed,
+            AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
+            AirDefence.SAM_SA_10_S_300PS_LN_5P85C, # Standing as HQ-9+
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            # TODO : ADD HQ-7 (need pydcs support)
+
+            Armor.MBT_T_55,
+            Armor.ZBD_04A,
+            Armor.IFV_BMP_1,
 
             Unarmed.Transport_Ural_375,
             Unarmed.Transport_UAZ_469,
@@ -803,7 +855,7 @@ FACTIONS = {
     },
 
     "France 1990": {
-        "country": "USA",
+        "country": "France",
         "side": "blue",
         "units":[
             M_2000C,
@@ -820,8 +872,7 @@ FACTIONS = {
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.AAA_Vulcan_M163,
-            AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Roland_ADS,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -830,10 +881,12 @@ FACTIONS = {
     },
 
     "Germany 1990": {
-        "country": "USA",
+        "country": "Germany",
         "side": "blue",
         "units":[
             MiG_29G,
+            Tornado_IDS,
+            F_4E,
 
             KC_135,
             S_3B_Tanker,
@@ -850,7 +903,7 @@ FACTIONS = {
             Infantry.Infantry_M4,
 
             AirDefence.SPAAA_Gepard,
-            AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Roland_ADS,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -1153,7 +1206,7 @@ def _validate_db():
         for country_units_list in FACTIONS.values():
             if unit_type in country_units_list["units"]:
                 did_find = True
-        assert did_find, "{} not in country list".format(unit_type)
+        print("WARN : {} not in country list".format(unit_type))
 
     # check prices
     for unit_type in total_set:

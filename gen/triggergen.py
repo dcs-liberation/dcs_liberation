@@ -91,7 +91,7 @@ class TriggersGenerator:
 
                         push_by_trigger.append(group)
 
-                        if not group.units[0].is_human():
+                        """if not group.units[0].is_human():
                             regroup_heading = self.conflict.to_cp.position.heading_between_point(player_cp.position)
 
                             pos1 = group.position.point_from_heading(regroup_heading, REGROUP_ZONE_DISTANCE)
@@ -112,7 +112,7 @@ class TriggersGenerator:
                             w2.tasks.append(switch_waypoint_task)
                             group.points[3].tasks.append(Silence(False))
 
-                            group.add_trigger_action(SwitchWaypoint(to_waypoint=4))
+                            group.add_trigger_action(SwitchWaypoint(to_waypoint=4))"""
 
         push_trigger = TriggerOnce(Event.NoEvent, "Push trigger")
 
@@ -187,7 +187,7 @@ class TriggersGenerator:
         self.mission.triggerrules.triggers.append(trigger_two)
 
     def generate(self, player_cp: ControlPoint, is_quick: bool, activation_trigger_radius: int, awacs_enabled: bool):
-        player_coalition = self.game.player_country == "USA" and "blue" or "red"
+        player_coalition = self.game.player_country in ["USA", "France", "Germany", "Uk"] and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
         self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,

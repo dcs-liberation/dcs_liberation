@@ -125,6 +125,13 @@ class Operation:
 
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
+
+        for cp in self.game.theater.controlpoints:
+            if not cp.captured:
+                self.airgen.generate_patrol_group(cp, self.current_mission.country(self.game.enemy_country))
+            else:
+                self.airgen.generate_patrol_group(cp, self.current_mission.country(self.game.player_country))
+
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
             self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
 
