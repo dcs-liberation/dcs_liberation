@@ -67,11 +67,11 @@ class NewGameWizard(QtWidgets.QWizard):
                 conflicttheater.controlpoints[i].captured = True
 
         start_generator.generate_inital_units(conflicttheater, enemy_name, sams, multiplier)
-        start_generator.generate_groundobjects(conflicttheater)
         game = Game(player_name=player_name,
                     enemy_name=enemy_name,
                     theater=conflicttheater,
                     start_date=period)
+        start_generator.generate_groundobjects(conflicttheater, game)
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = sams

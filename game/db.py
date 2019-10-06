@@ -1018,8 +1018,7 @@ def unit_task(unit: UnitType) -> Task:
         return unit_task(SAM_CONVERT[unit])
 
     print(unit.name + " cause issue")
-    assert False
-
+    return None
 
 def find_unittype(for_task: Task, country_name: str) -> typing.List[UnitType]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name]["units"]]

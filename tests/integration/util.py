@@ -22,8 +22,9 @@ def init(player_country: str, enemy_country: str, theater_klass: typing.Type[Con
     persistency.setup("./tests/userfolder/")
     theater = theater_klass()
     start_generator.generate_inital_units(theater, ENEMY_COUNTRY, True, 1)
-    start_generator.generate_groundobjects(theater)
-    return Game(PLAYER_COUNTRY, ENEMY_COUNTRY, theater), theater
+    game = Game(PLAYER_COUNTRY, ENEMY_COUNTRY, theater)
+    start_generator.generate_groundobjects(theater, game)
+    return game, theater
 
 
 def autoflights_for(event: Event, country: str) -> TaskForceDict:
@@ -55,7 +56,7 @@ def autodebrief_for(event: Event, type: AutodebriefType) -> Debriefing:
             for unit in group.units:
                 dead_units.append(str(unit.name))
 
-    return Debriefing(dead_units, [])
+    return Debriefing(dead_units, [], [])
 
 
 def event_state_save(e: Event) -> typing.Tuple[Base, Base]:

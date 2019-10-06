@@ -57,19 +57,21 @@ def parse_mutliplayer_debriefing(contents: str):
 
 
 class Debriefing:
-    def __init__(self, dead_units, trigger_state):
+    def __init__(self, dead_units, dead_units_name, trigger_state):
         self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
         self.destroyed_objects = []  # type: typing.List[str]
 
         self._trigger_state = trigger_state
         self._dead_units = dead_units
+        self.dead_units_name = dead_units_name
 
     @classmethod
     def parse(cls, path: str):
         dead_units = []
+        dead_units_name = []
 
-        def append_dead_object(object_mission_id_str):
+        def append_dead_object(object_mission_id_str, object_name):
             nonlocal dead_units
             object_mission_id = int(object_mission_id_str)
             if object_mission_id in dead_units:
@@ -77,10 +79,12 @@ class Debriefing:
                 return
 
             dead_units.append(object_mission_id)
+            dead_units_name.append(object_name)
 
         def parse_dead_object(event):
+            print(event)
             try:
-                append_dead_object(event["initiatorMissionID"])
+                append_dead_object(event["initiatorMissionID"], event["initiator"])
             except Exception as e:
                 logging.error(e)
 
@@ -99,7 +103,7 @@ class Debriefing:
 
             trigger_state = table.get("debriefing", {}).get("triggers_state", {})
 
-        return Debriefing(dead_units, trigger_state)
+        return Debriefing(dead_units, dead_units_name, trigger_state)
 
     def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_country: str, enemy_country: str):
         def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:

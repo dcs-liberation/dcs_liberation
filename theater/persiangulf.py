@@ -58,7 +58,7 @@ class PersianGulfTheater(ConflictTheater):
         self.add_controlpoint(self.al_ain, connected_to=[self.al_dhafra, self.al_maktoum])
         self.add_controlpoint(self.al_maktoum, connected_to=[self.al_dhafra, self.al_minhad, self.sir_abu_nuayr, self.al_ain])
         self.add_controlpoint(self.al_minhad, connected_to=[self.al_maktoum, self.dubai])
-        self.add_controlpoint(self.dubai, connected_to=[self.al_minhad, self.sharjah])
+        self.add_controlpoint(self.dubai, connected_to=[self.al_minhad, self.sharjah, self.fujairah])
         self.add_controlpoint(self.sharjah, connected_to=[self.dubai, self.ras_al_khaimah])
         self.add_controlpoint(self.ras_al_khaimah, connected_to=[self.sharjah, self.khasab])
         self.add_controlpoint(self.fujairah, connected_to=[self.dubai, self.khasab])

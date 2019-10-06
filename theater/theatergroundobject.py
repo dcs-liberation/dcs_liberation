@@ -55,6 +55,8 @@ class TheaterGroundObject:
     heading = 0
     position = None  # type: Point
 
+    groups = []
+
     @property
     def category(self) -> str:
         for k, v in CATEGORY_MAP.items():

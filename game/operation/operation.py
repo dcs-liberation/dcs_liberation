@@ -86,7 +86,9 @@ class Operation:
             options_dict = loads(f.read())["options"]
 
         dcs.Mission.aaa_vehicle_group = aaa.aaa_vehicle_group
+
         self.current_mission = dcs.Mission(terrain)
+
         if is_quick:
             self.quick_mission = self.current_mission
         else:
@@ -117,6 +119,10 @@ class Operation:
                 self.defenders_starting_position = ship
 
     def generate(self):
+
+        # Generate ground object first
+        self.groundobjectgen.generate()
+
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
@@ -132,8 +138,6 @@ class Operation:
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
-        # ground infrastructure
-        self.groundobjectgen.generate()
         self.extra_aagen.generate()
 
         # triggers

@@ -264,15 +264,6 @@ class QLiberationMap(QGraphicsView):
             overlay.setGraphicsEffect(effect)
 
 
-
-
-
-
-
-
-
-
-
     @staticmethod
     def set_display_rule(rule: str, value: bool):
         QLiberationMap.display_rules[rule] = value

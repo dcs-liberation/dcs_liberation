@@ -13,7 +13,21 @@ class QMapGroundObject(QGraphicsRectItem):
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
-        self.setToolTip(cp.name + "'s " + self.model.category)
+
+        if len(self.model.groups) > 0:
+            units = {}
+            for g in self.model.groups:
+                for u in g.units:
+                    if u.type in units.keys():
+                        units[u.type] = units[u.type]+1
+                    else:
+                        units[u.type] = 1
+            tooltip = ""
+            for unit in units.keys():
+                tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
+            self.setToolTip(tooltip + str(model.groups[0].id) + str(model.groups[0].name))
+        else:
+            self.setToolTip(cp.name + "'s " + self.model.category)
 
 
     def paint(self, painter, option, widget=None):

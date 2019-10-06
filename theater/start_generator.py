@@ -4,6 +4,7 @@ import random
 import typing
 import logging
 
+from gen.sam.sam_group_generator import generate_anti_air_group
 from theater.base import *
 from theater.conflicttheater import *
 
@@ -52,7 +53,7 @@ def generate_inital_units(theater: ConflictTheater, enemy_country: str, sams: bo
                     cp.base.commision_units({unit_type: count_per_type})
 
 
-def generate_groundobjects(theater: ConflictTheater):
+def generate_groundobjects(theater: ConflictTheater, game):
     with open("resources/groundobject_templates.p", "rb") as f:
         tpls = pickle.load(f)
 
@@ -130,5 +131,12 @@ def generate_groundobjects(theater: ConflictTheater):
                 g.dcs_identifier = object["type"]
                 g.heading = object["heading"]
                 g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
+
+                if g.dcs_identifier == "AA":
+                    if cp.captured:
+                        faction = game.player_name
+                    else:
+                        faction = game.enemy_name
+                    generate_anti_air_group(game, cp, g, faction)
 
                 cp.ground_objects.append(g)

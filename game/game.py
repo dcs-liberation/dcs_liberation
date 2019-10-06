@@ -96,6 +96,9 @@ class Game:
     turn = 0
     game_stats: GameStats = None
 
+    current_unit_id = 0
+    current_group_id = 0
+
     def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime):
         self.settings = Settings()
         self.events = []
@@ -315,3 +318,16 @@ class Game:
     def current_day(self):
         return self.date + timedelta(days=self.turn//4)
 
+    def next_unit_id(self):
+        """
+        Next unit id for pre-generated units
+        """
+        self.current_unit_id += 1
+        return self.current_unit_id
+
+    def next_group_id(self):
+        """
+        Next unit id for pre-generated units
+        """
+        self.current_group_id += 1
+        return self.current_group_id

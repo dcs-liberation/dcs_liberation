@@ -15,6 +15,8 @@ from game.db import assigned_units_from, unitdict_from
 from userdata.debriefing import Debriefing
 from userdata import persistency
 
+import game.db as db
+
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
 
@@ -127,6 +129,23 @@ class Event:
         self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
 
     def commit(self, debriefing: Debriefing):
+
+        for destroyed_unit_name in debriefing.dead_units_name:
+
+            for cp in self.game.theater.controlpoints:
+
+                for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.dcs_identifier == "AA":
+                        for g in ground_object.groups:
+                            for u in g.units:
+                                if u.name == destroyed_unit_name:
+                                    g.units.remove(u)
+                        ucount = sum([len(g.units) for g in ground_object.groups])
+                        print(ucount)
+                        if ucount == 0:
+                            print("SET DEAD")
+                            ground_object.is_dead = True
+
         for country, losses in debriefing.destroyed_units.items():
             if country == self.attacker_name:
                 cp = self.departure_cp

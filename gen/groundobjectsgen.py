@@ -1,6 +1,7 @@
 import logging
 
 from game import db
+from game.db import unit_type_from_name
 from .conflictgen import *
 from .naming import *
 
@@ -42,7 +43,6 @@ class GroundObjectsGenerator:
             )
 
     def generate(self):
-        side = self.m.country(self.game.enemy_country)
 
         cp = None  # type: ControlPoint
         if self.conflict.attackers_country.name == self.game.player_country:
@@ -52,54 +52,58 @@ class GroundObjectsGenerator:
 
         consumed_farps = set()
 
-        for ground_object in cp.ground_objects:
-            if ground_object.dcs_identifier == "AA":
 
-                if ground_object.is_dead:
-                    continue
+        for cp in self.game.theater.controlpoints:
 
-                unit_type = random.choice(self.game.commision_unit_types(cp, AirDefence))
-                assert unit_type is not None, "Cannot find unit type for GroundObject defense ({})!".format(cp)
-
-                group = self.m.aaa_vehicle_group(
-                    country=side,
-                    name=ground_object.string_identifier,
-                    _type=unit_type,
-                    position=ground_object.position,
-                    heading=ground_object.heading,
-                )
-
-                logging.info("generated defense object identifier {} with mission id {}".format(group.name, group.id))
+            if cp.captured:
+                country = self.game.player_country
             else:
-                if ground_object.dcs_identifier in warehouse_map:
-                    static_type = warehouse_map[ground_object.dcs_identifier]
+                country = self.game.enemy_country
+            side = self.m.country(country)
+
+            for ground_object in cp.ground_objects:
+                if ground_object.dcs_identifier == "AA":
+                    for g in ground_object.groups:
+                        if len(g.units) > 0:
+                            vg = self.m.vehicle_group(side, g.name, unit_type_from_name(g.units[0].type), position=g.position)
+                            vg.units[0].name = self.m.string(g.units[0].name)
+                            for i,u in enumerate(g.units):
+                                if i > 0:
+                                    vehicle = Vehicle(self.m.next_unit_id(), self.m.string(u.name), u.type)
+                                    vehicle.position.x = u.position.x
+                                    vehicle.position.y = u.position.y
+                                    vehicle.heading = u.heading
+                                    vg.add_unit(vehicle)
                 else:
-                    static_type = fortification_map[ground_object.dcs_identifier]
+                    if ground_object.dcs_identifier in warehouse_map:
+                        static_type = warehouse_map[ground_object.dcs_identifier]
+                    else:
+                        static_type = fortification_map[ground_object.dcs_identifier]
 
-                if not static_type:
-                    print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
-                    continue
+                    if not static_type:
+                        print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
+                        continue
 
-                if ground_object.group_id not in consumed_farps:
-                    consumed_farps.add(ground_object.group_id)
-                    if random.randint(0, 100) > 50:
-                        farp_aa(
-                            self.m,
-                            side,
-                            ground_object.string_identifier,
-                            ground_object.position,
-                        )
+                    if ground_object.group_id not in consumed_farps:
+                        consumed_farps.add(ground_object.group_id)
+                        if random.randint(0, 100) > 50:
+                            farp_aa(
+                                self.m,
+                                side,
+                                ground_object.string_identifier,
+                                ground_object.position,
+                            )
 
-                group = self.m.static_group(
-                    country=side,
-                    name=ground_object.string_identifier,
-                    _type=static_type,
-                    position=ground_object.position,
-                    heading=ground_object.heading,
-                    dead=ground_object.is_dead,
-                )
+                    group = self.m.static_group(
+                        country=side,
+                        name=ground_object.string_identifier,
+                        _type=static_type,
+                        position=ground_object.position,
+                        heading=ground_object.heading,
+                        dead=ground_object.is_dead,
+                    )
 
-                logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
+                    logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
 
 
 def farp_aa(mission_obj, country, name, position: mapping.Point):
@@ -116,7 +120,6 @@ def farp_aa(mission_obj, country, name, position: mapping.Point):
     units = [
         AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.AAA_ZU_23_Closed,
-        Armor.MBT_T_55,
     ]
 
     v = mission_obj.vehicle(name + "_AAA", random.choice(units))
