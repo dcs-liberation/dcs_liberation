@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     persistency.setup(sys.argv[1])
     dcs.planes.FlyingType.payload_dirs = [
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources\\payloads")]
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")]
 
     VERSION_STRING = sys.argv[2]
     logging_module.setup_version_string(VERSION_STRING)
