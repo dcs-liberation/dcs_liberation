@@ -66,7 +66,7 @@ PRICES = {
     F_16C_50: 20,
     F_14B: 22,
     Tornado_IDS: 24,
-    # Tornado_GR4: 24,
+    Tornado_GR4: 24,
 
     # bomber
     Su_17M4: 10,
@@ -83,6 +83,7 @@ PRICES = {
     # heli
     Ka_50: 13,
     SA342M: 8,
+    SA342L: 5,
     UH_1H: 4,
     Mi_8MT: 5,
     Mi_24V: 12,
@@ -210,7 +211,8 @@ UNIT_BY_TASK = {
         P_51D,
         MiG_29G,
         Su_30,
-        J_11A
+        J_11A,
+        F_4E,
     ],
     CAS: [
         F_86F_Sabre,
@@ -225,8 +227,8 @@ UNIT_BY_TASK = {
         Su_25T,
         Su_34,
         Ka_50,
-        F_4E,
         SA342M,
+        SA342L,
         Su_24M,
         Su_24MR,
         AH_64A,
@@ -235,7 +237,7 @@ UNIT_BY_TASK = {
         B_52H,
         B_1B,
         Tornado_IDS,
-        # Tornado_GR4,
+        Tornado_GR4,
     ],
     Transport: [
         IL_76MD,
@@ -704,7 +706,7 @@ FACTIONS = {
             AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
             AirDefence.SAM_SA_10_S_300PS_LN_5P85C, # Standing as HQ-9+
             AirDefence.SAM_SA_6_Kub_LN_2P25,
-            # TODO : ADD HQ-7 (need pydcs support)
+            AirDefence.HQ_7_Self_Propelled_LN,
 
             Armor.MBT_T_55,
             Armor.ZBD_04A,
@@ -869,13 +871,17 @@ FACTIONS = {
             E_3A,
 
             SA342M,
+            SA342L,
 
             Armor.MBT_Leclerc,
+            Armor.TPz_Fuchs, # Standing as VAB
+
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
             AirDefence.SAM_Roland_ADS,
             AirDefence.SAM_Hawk_PCP,
+            AirDefence.HQ_7_Self_Propelled_STR, # Standing as Crotale
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -898,16 +904,49 @@ FACTIONS = {
 
             UH_1H,
             SA342M,
+            SA342L,
 
             Armor.TPz_Fuchs,
             Armor.MBT_Leopard_1A3,
             Armor.MBT_Leopard_2,
+
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
             AirDefence.SPAAA_Gepard,
             AirDefence.SAM_Roland_ADS,
             AirDefence.SAM_Hawk_PCP,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "United Kingdown 1990": {
+        "country": "UK",
+        "side": "blue",
+        "units":[
+            AV8BNA, # Standing as BAE Harrier 2
+            Tornado_GR4,
+            F_4E,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            SA342L,
+            AH_64A,
+
+            Armor.MBT_Challenger_II,
+            Armor.IFV_M2A2_Bradley, # Standing as Warrior IFV
+
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.Rapier_FSA_Launcher,
+            AirDefence.SAM_Avenger_M1097, # Standing as Starstreak
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,

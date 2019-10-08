@@ -299,9 +299,9 @@ class AircraftConflictGenerator:
     def generate_patrol_group(self, cp: ControlPoint, country):
 
         aircraft = dict({k:v for k,v in cp.base.aircraft.items() if k in [u for u in db.UNIT_BY_TASK[CAP]]})
-        delta = random.randint(10, 20)
+        delta = random.randint(1, 20)
 
-        for i in range(12):
+        for i in range(8):
             if(len(aircraft.keys())) > 0:
                 print(aircraft.keys())
                 type = random.choice(list(aircraft.keys()))
@@ -320,7 +320,7 @@ class AircraftConflictGenerator:
                         client_count=0,
                         airport=self.m.terrain.airport_by_id(cp.at.id),
                         start_type=StartType.Runway)
-                except RunwayOccupiedError:
+                except Exception:
                     group = self._generate_group(
                         name=namegen.next_unit_name(country, type),
                         side=country,
@@ -329,10 +329,12 @@ class AircraftConflictGenerator:
                         client_count=0,
                         at=cp.position)
 
-                patrol_alt = random.randint(3600, 7000)
+                self._setup_group(group, CAP, 0)
 
+                patrol_alt = random.randint(3600, 7000)
                 group.points[0].alt = patrol_alt
                 group.points[0].ETA = delta*60 + i*10*60
+
 
                 patrolled = []
                 for ground_object in cp.ground_objects:

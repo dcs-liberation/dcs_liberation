@@ -12,6 +12,7 @@ from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
 from gen.sam.sam_hawk import HawkGenerator
+from gen.sam.sam_hq7 import HQ7Generator
 from gen.sam.sam_linebacker import LinebackerGenerator
 from gen.sam.sam_patriot import PatriotGenerator
 from gen.sam.sam_rapier import RapierGenerator
@@ -68,6 +69,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3: SA13Generator,
         AirDefence.SAM_SA_15_Tor_9A331: SA15Generator,
         AirDefence.SAM_SA_19_Tunguska_2S6: SA19Generator,
+        AirDefence.HQ_7_Self_Propelled_LN: HQ7Generator
     }
 
     possible_sams = [u for u in db.FACTIONS[faction]["units"] if u in AirDefence.__dict__.values()]
