@@ -1,3 +1,4 @@
+from PySide2.QtGui import QPainter
 from PySide2.QtWidgets import QGraphicsRectItem
 
 import qt_ui.uiconstants as CONST
@@ -37,6 +38,8 @@ class QMapGroundObject(QGraphicsRectItem):
             painter.save()
             if not self.model.is_dead and not self.cp.captured:
                 painter.drawPixmap(option.rect, CONST.ICONS[self.model.category])
+            elif not self.model.is_dead and self.model.category == "aa":
+                painter.drawPixmap(option.rect, CONST.ICONS["aa_blue"])
             else:
                 painter.drawPixmap(option.rect, CONST.ICONS["cleared"])
             painter.restore()
