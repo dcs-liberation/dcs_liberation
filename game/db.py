@@ -63,7 +63,7 @@ PRICES = {
     Mirage_2000_5: 22,
     FA_18C_hornet: 24,
     F_15C: 26,
-    F_16C_bl_52d: 20,
+    F_16C_50: 20,
     F_14B: 22,
     Tornado_IDS: 24,
     # Tornado_GR4: 24,
@@ -160,6 +160,8 @@ PRICES = {
     AirDefence.SAM_SA_2_LN_SM_90: 15,
     AirDefence.SAM_SA_11_Buk_LN_9A310M1: 25,
     AirDefence.SAM_Hawk_PCP: 20,
+    AirDefence.SAM_Patriot_LN_M901: 60,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 60,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -201,7 +203,7 @@ UNIT_BY_TASK = {
         FA_18C_hornet,
         F_15C,
         F_14B,
-        F_16C_bl_52d,
+        F_16C_50,
         M_2000C,
         Mirage_2000_5,
         P_51D_30_NA,
@@ -822,7 +824,7 @@ FACTIONS = {
             F_15C,
             F_14B,
             FA_18C_hornet,
-            F_16C_bl_52d,
+            F_16C_50,
 
             A_10C,
             AV8BNA,
@@ -845,8 +847,7 @@ FACTIONS = {
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.AAA_Vulcan_M163,
-            AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Patriot_EPP_III,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -940,6 +941,7 @@ Payload will be used for operation of following type, "*" category will be used 
 """
 PLANE_PAYLOAD_OVERRIDES = {
     FA_18C_hornet: {
+        CAS: "AIM-9M*2,AGM-65D*2,Mk-82*4,FLIR Pod,Fuel",
         CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
         Escort: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
         PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
@@ -984,6 +986,10 @@ PLANE_PAYLOAD_OVERRIDES = {
         CAP: "Combat Air Patrol",
         Escort: "Combat Air Patrol",
         GroundAttack: "MK-82S Heavy Strike",
+    },
+
+    Mirage_2000_5: {
+        CAP: "R 550*2,MICA IR*2,MICA AR*2,Fuel*3",
     },
 
     MiG_21Bis: {
