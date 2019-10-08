@@ -54,6 +54,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
         AirDefence.SPAAA_Gepard: GepardGenerator,
         AirDefence.SAM_Roland_ADS: RolandGenerator,
         AirDefence.SAM_Patriot_LN_M901: PatriotGenerator,
+        AirDefence.SAM_Patriot_EPP_III: PatriotGenerator,
         AirDefence.SAM_Chaparral_M48: ChaparralGenerator,
 
         AirDefence.SAM_SA_2_LN_SM_90: SA2Generator,

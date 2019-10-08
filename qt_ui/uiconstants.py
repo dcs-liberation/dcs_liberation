@@ -28,7 +28,9 @@ COLORS: Dict[str, QColor] = {
     "green": QColor(128, 186, 128),
     "bright_green": QColor(64, 200, 64),
     "black": QColor(0, 0, 0),
-    "black_transparent": QColor(0, 0, 0, 64)
+    "black_transparent": QColor(0, 0, 0, 64),
+    "blue_transparent": QColor(164, 164, 255, 64),
+    "red_transparent": QColor(255, 125, 125, 64)
 }
 
 

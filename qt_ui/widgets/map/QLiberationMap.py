@@ -1,13 +1,13 @@
 import typing
 from typing import Dict
 
-from PySide2.QtCore import Qt, QRect
+from PySide2.QtCore import Qt, QRect, QPointF
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
 from PySide2.QtWidgets import QGraphicsView, QFrame, QGraphicsOpacityEffect
 from dcs import Point
 
 import qt_ui.uiconstants as CONST
-from game import Game
+from game import Game, db
 from game.event import InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent, Event, \
     FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent
 from gen import Conflict
@@ -75,6 +75,7 @@ class QLiberationMap(QGraphicsView):
         for cp in self.game.theater.controlpoints:
 
             pos = self._transform_point(cp.position)
+
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
                                            CONST.CP_SIZE, cp, self.game))
 
@@ -88,6 +89,23 @@ class QLiberationMap(QGraphicsView):
             for ground_object in cp.ground_objects:
                 go_pos = self._transform_point(ground_object.position)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
+
+                if(ground_object.category == "aa"):
+                    max_range = 0
+                    if ground_object.groups:
+                        for g in ground_object.groups:
+                            for u in g.units:
+                                unit = db.unit_type_from_name(u.type)
+                                if unit.threat_range > max_range:
+                                    max_range = unit.threat_range
+                    if cp.captured:
+                        pen = QPen(brush=CONST.COLORS["blue"])
+                        brush = CONST.COLORS["blue_transparent"]
+                    else:
+                        pen = QPen(brush=CONST.COLORS["red"])
+                        brush = CONST.COLORS["red_transparent"]
+                    scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
+
 
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp)

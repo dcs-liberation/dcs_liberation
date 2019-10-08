@@ -771,6 +771,7 @@ FACTIONS = {
 
             AirDefence.AAA_Vulcan_M163,
             AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Hawk_PCP,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -808,8 +809,7 @@ FACTIONS = {
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.AAA_Vulcan_M163,
-            AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Hawk_PCP,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -847,6 +847,7 @@ FACTIONS = {
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
+            AirDefence.SAM_Hawk_PCP,
             AirDefence.SAM_Patriot_EPP_III,
 
             CVN_74_John_C__Stennis,
@@ -874,6 +875,7 @@ FACTIONS = {
             Infantry.Infantry_M4,
 
             AirDefence.SAM_Roland_ADS,
+            AirDefence.SAM_Hawk_PCP,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -905,6 +907,7 @@ FACTIONS = {
 
             AirDefence.SPAAA_Gepard,
             AirDefence.SAM_Roland_ADS,
+            AirDefence.SAM_Hawk_PCP,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,

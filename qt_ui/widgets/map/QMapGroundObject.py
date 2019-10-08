@@ -1,7 +1,9 @@
+from PySide2.QtCore import QPoint, QRect, QPointF
 from PySide2.QtGui import QPainter
 from PySide2.QtWidgets import QGraphicsRectItem
 
 import qt_ui.uiconstants as CONST
+from game import db
 from theater import TheaterGroundObject, ControlPoint
 
 
@@ -33,7 +35,6 @@ class QMapGroundObject(QGraphicsRectItem):
 
     def paint(self, painter, option, widget=None):
         #super(QMapControlPoint, self).paint(painter, option, widget)
-
         if self.parent.get_display_rule("go"):
             painter.save()
             if not self.model.is_dead and not self.cp.captured:
