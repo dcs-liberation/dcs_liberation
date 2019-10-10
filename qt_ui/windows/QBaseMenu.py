@@ -59,13 +59,11 @@ class QBaseMenu(QDialog):
                 Embarking: db.find_unittype(Embarking, self.game.player_name),
                 CAS: db.find_unittype(CAS, self.game.player_name),
                 PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
-                AirDefence: db.find_unittype(AirDefence, self.game.player_name),
             }
         else:
             units = {
                 CAP: db.find_unittype(CAP, self.game.enemy_name),
                 Embarking: db.find_unittype(Embarking, self.game.enemy_name),
-                AirDefence: db.find_unittype(AirDefence, self.game.enemy_name),
                 CAS: db.find_unittype(CAS, self.game.enemy_name),
                 PinpointStrike: db.find_unittype(PinpointStrike, self.game.enemy_name),
             }
@@ -76,12 +74,12 @@ class QBaseMenu(QDialog):
         tasks = list(units.keys())
         tasks_per_column = 3
 
-        self.unitLayout = QGridLayout()
+        self.unitLayout = QVBoxLayout()
         self.bought_amount_labels = {}
 
         row = 0
 
-        def add_purchase_row(unit_type):
+        def add_purchase_row(unit_type, layout):
 
             nonlocal row
             existing_units = self.cp.base.total_units_of_type(unit_type)
@@ -94,16 +92,18 @@ class QBaseMenu(QDialog):
             price = QLabel("{}m".format(db.PRICES[unit_type]))
 
             buy = QPushButton("+")
+            buy.setProperty("style", "btn-success")
             buy.clicked.connect(lambda: self.buy(unit_type))
 
             sell = QPushButton("-")
+            sell.setProperty("style", "btn-danger")
             sell.clicked.connect(lambda: self.sell(unit_type))
 
-            self.unitLayout.addWidget(unitName, row, 0)
-            self.unitLayout.addWidget(amountBought, row, 1)
-            self.unitLayout.addWidget(price, row, 2)
-            self.unitLayout.addWidget(buy, row, 3)
-            self.unitLayout.addWidget(sell, row, 4)
+            layout.addWidget(unitName, row, 0)
+            layout.addWidget(amountBought, row, 1)
+            layout.addWidget(price, row, 2)
+            layout.addWidget(buy, row, 3)
+            layout.addWidget(sell, row, 4)
 
             row = row + 1
 
@@ -115,12 +115,14 @@ class QBaseMenu(QDialog):
                 if len(units_column) == 0: continue
                 units_column.sort(key=lambda x: db.PRICES[x])
 
-                taskTypeLabel = QLabel("<b>{}</b>".format(db.task_name(task_type)))
-                self.unitLayout.addWidget(taskTypeLabel, row, 0)
-                row = row + 1
-
+                taskBox = QGroupBox("{}".format(db.task_name(task_type)))
+                taskBoxLayout = QGridLayout()
+                taskBox.setLayout(taskBoxLayout)
+                row = 0
                 for unit_type in units_column:
-                    add_purchase_row(unit_type)
+                    add_purchase_row(unit_type, taskBoxLayout)
+
+                self.unitLayout.addWidget(taskBox)
             self.mainLayout.addLayout(self.unitLayout)
         else:
             intel = QGroupBox("Intel")

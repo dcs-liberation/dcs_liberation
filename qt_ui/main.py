@@ -43,7 +43,7 @@ if __name__ == "__main__":
     app.processEvents()
 
     # Uncomment to apply CSS (need works)
-    #app.setStyleSheet(css)
+    app.setStyleSheet(css)
 
     GameUpdateSignal()
 

@@ -1130,7 +1130,7 @@ FACTIONS = {
         ]
     },
 
-    "USA 1944 (WIP)": {
+    "USA 1944 (WIP) (Require WW2 Pack)": {
         "country": "USA",
         "side": "blue",
         "units": [
@@ -1150,7 +1150,7 @@ FACTIONS = {
         ]
     },
 
-    "Germany 1944 (WIP)": {
+    "Germany 1944 (WIP) (Require WW2 Pack)": {
         "country": "Russia", # WIP
         "side": "red",
         "units": [
@@ -1405,6 +1405,8 @@ def task_name(task) -> str:
         return "AirDefence"
     elif task == Embarking:
         return "Transportation"
+    elif task == PinpointStrike:
+        return "Ground units"
     else:
         return task.name
 

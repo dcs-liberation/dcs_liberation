@@ -72,6 +72,11 @@ def load_icons():
     ICONS["Missile"] = QPixmap("./resources/ui/misc/missile.png")
     ICONS["Cheat"] = QPixmap("./resources/ui/misc/cheat.png")
 
+    ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
+    ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")
+    ICONS["TaskSEAD"] = QPixmap("./resources/ui/tasks/sead.png")
+    ICONS["TaskEmpty"] = QPixmap("./resources/ui/tasks/empty.png")
+
 
 EVENT_ICONS: Dict[str, QPixmap] = {}
 

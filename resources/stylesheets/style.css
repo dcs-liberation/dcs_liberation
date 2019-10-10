@@ -1,6 +1,6 @@
 
 
-QWidget {
+/*QWidget {
     background-color: #4E5760;
     color:white;
 }
@@ -21,22 +21,39 @@ QTopPanel *{
     color: white;
     font-size: 12px;
     font-weight: bold;
-}
+}*/
 
-QPushButton[style="btn-primary"]{
+QPushButton[style="btn-success"]{
     background-color:#699245;
+    color: white;
     cursor:pointer;
     padding: 5px 5px 5px 5px;
-    border-radius:2px;
+    border-radius:5px;
 }
 
-QPushButton[style="btn-primary"]:hover{
-    background-color:#f00;
+QPushButton[style="btn-success"]:hover{
+    background-color:#8ABC5A;
     padding: 5px 5px 5px 5px;
-    border-radius:2px;
+    border-radius:5px;
+    cursor: pointer;
 }
 
-QBaseMenu{
+QPushButton[style="btn-danger"]{
+    background-color:#9E3232;
+    color: white;
+    cursor:pointer;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QPushButton[style="btn-danger"]:hover{
+    background-color:#D84545;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+    cursor: pointer;
+}
+
+/*QBaseMenu{
     background-color:#699245;
     color:white;
 }
@@ -44,4 +61,4 @@ QBaseMenu{
 QWidget[style="baseMenuHeader"]{
     font-size: 24px;
     font-weight: bold;
-}
+}*/

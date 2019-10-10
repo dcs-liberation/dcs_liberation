@@ -1,7 +1,7 @@
 import os
 
 from PySide2 import QtCore
-from PySide2.QtGui import QMovie
+from PySide2.QtGui import QMovie, QIcon
 from PySide2.QtWidgets import QLabel, QDialog, QVBoxLayout
 
 from game.game import Event, Game
@@ -19,6 +19,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.game = game
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
+        self.setWindowIcon(QIcon("./resources/icon.png"))
 
         self.initUi()
         wait_for_debriefing(lambda debriefing: self.process_debriefing(debriefing))

@@ -1,12 +1,8 @@
-import os
-
-from PySide2 import QtCore
-from PySide2.QtGui import QMovie
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLabel, QDialog, QVBoxLayout, QGroupBox, QGridLayout, QPushButton
 
 from game.game import Event, db, Game
-from userdata.debriefing import wait_for_debriefing, Debriefing
-from userdata.persistency import base_path
+from userdata.debriefing import Debriefing
 
 
 class QDebriefingWindow(QDialog):
@@ -17,6 +13,7 @@ class QDebriefingWindow(QDialog):
         self.setModal(True)
         self.setWindowTitle("Debriefing")
         self.setMinimumSize(300, 200)
+        self.setWindowIcon(QIcon("./resources/icon.png"))
 
         self.game = game
         self.gameEvent = gameEvent
