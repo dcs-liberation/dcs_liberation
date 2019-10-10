@@ -45,8 +45,6 @@ class QLiberationMap(QGraphicsView):
 
     def init_scene(self):
         scene = QLiberationScene(self)
-        scene.addText("Hello World")
-
         self.setScene(scene)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
