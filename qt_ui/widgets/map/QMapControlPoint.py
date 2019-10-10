@@ -81,14 +81,14 @@ class QMapControlPoint(QGraphicsRectItem):
 
     @property
     def brush_color(self)->QColor:
-        if self.parent.game.player_country in ["USA", "France", "Germany", "UK"]:
+        if self.parent.game.player_country in ["USA", "France", "Germany", "UK", "The Netherlands", "Italy", "Spain", "India"]:
             return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["red"]
         else:
             return self.model.captured and CONST.COLORS["red"] or CONST.COLORS["blue"]
 
     @property
     def pen_color(self) -> QColor:
-        if self.parent.game.player_country in ["USA", "France", "Germany", "UK"]:
+        if self.parent.game.player_country in ["USA", "France", "Germany", "UK", "The Netherlands", "Italy", "Spain", "India"]:
             return self.model.captured and CONST.COLORS["dark_blue"] or CONST.COLORS["bright_red"]
         else:
             return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]

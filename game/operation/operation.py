@@ -126,11 +126,24 @@ class Operation:
         # air support
         self.airsupportgen.generate(self.is_awacs_enabled)
 
+
+        # Generate Activity on the map
         for cp in self.game.theater.controlpoints:
-            if not cp.captured:
-                self.airgen.generate_patrol_group(cp, self.current_mission.country(self.game.enemy_country))
+            side = cp.captured
+            if side:
+                country = self.current_mission.country(self.game.player_country)
             else:
-                self.airgen.generate_patrol_group(cp, self.current_mission.country(self.game.player_country))
+                country = self.current_mission.country(self.game.enemy_country)
+
+            # CAP
+            self.airgen.generate_patrol_group(cp, country)
+
+            # CAS
+            self.airgen.generate_patrol_cas(cp, country)
+
+            # SEAD
+            self.airgen.generate_dead_sead(cp, country)
+
 
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
             self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))

@@ -100,13 +100,16 @@ def generate_groundobjects(theater: ConflictTheater, game):
         if not cp.has_frontline:
             continue
 
-        amount = random.randrange(1, 5)
+        amount = random.randrange(1, 11)
         for i in range(0, amount):
             available_categories = list(tpls)
             if i >= amount - 1:
                 tpl_category = "aa"
             else:
-                tpl_category = random.choice(available_categories)
+                if random.randint(0,1) == 1:
+                    tpl_category = random.choice(available_categories)
+                else:
+                    tpl_category = "aa"
 
             tpl = random.choice(list(tpls[tpl_category].values()))
 

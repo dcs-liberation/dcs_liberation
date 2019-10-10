@@ -8,6 +8,8 @@ from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
 
 from game import db
+from gen.sam.aaa_bofors import BoforsGenerator
+from gen.sam.aaa_flak36 import Flak36Generator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
@@ -57,6 +59,8 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
         AirDefence.SAM_Patriot_LN_M901: PatriotGenerator,
         AirDefence.SAM_Patriot_EPP_III: PatriotGenerator,
         AirDefence.SAM_Chaparral_M48: ChaparralGenerator,
+        AirDefence.AAA_Bofors_40mm: BoforsGenerator,
+        AirDefence.AAA_Flak_36: Flak36Generator,
 
         AirDefence.SAM_SA_2_LN_SM_90: SA2Generator,
         AirDefence.SAM_SA_3_S_125_LN_5P73: SA3Generator,

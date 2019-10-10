@@ -49,6 +49,11 @@ PRICES = {
     MiG_31: 30,
     J_11A: 26,
     Su_30: 24,
+    SpitfireLFMkIX:3,
+    SpitfireLFMkIXCW:3,
+    Bf_109K_4:3,
+    FW_190D9:3,
+    FW_190A8:3,
 
     F_5E_3: 8,
     MiG_15bis: 4,
@@ -57,6 +62,7 @@ PRICES = {
     MiG_21Bis: 8,
     F_4E: 10,
     AJS37: 12,
+    C_101CC: 6,
 
     AV8BNA: 14,
     M_2000C: 16,
@@ -76,6 +82,7 @@ PRICES = {
     Su_34: 24,
     Su_24M: 20,
     Su_24MR: 24,
+    MiG_27K: 20,
 
     A_10A: 16,
     A_10C: 22,
@@ -87,9 +94,10 @@ PRICES = {
     UH_1H: 4,
     Mi_8MT: 5,
     Mi_24V: 12,
+    Mi_28N: 16,
     AH_1W: 10,
     AH_64A: 12,
-    AH_64D: 15,
+    AH_64D: 16,
     OH_58D: 6,
 
     # Bombers
@@ -140,6 +148,7 @@ PRICES = {
     Armor.MBT_Leopard_1A3: 24,
     Armor.MBT_Leopard_2: 35,
     Armor.TPz_Fuchs: 8,
+    Armor.MBT_Challenger_II: 30,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -163,6 +172,21 @@ PRICES = {
     AirDefence.SAM_Hawk_PCP: 20,
     AirDefence.SAM_Patriot_LN_M901: 60,
     AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 60,
+    AirDefence.SAM_Chaparral_M48: 10,
+
+    # WW2
+    Armor.MT_Pz_Kpfw_V_Panther_Ausf_G:7,
+    Armor.MT_Pz_Kpfw_IV_Ausf_H:4,
+    Armor.HT_Pz_Kpfw_VI_Tiger_I:10,
+    Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II:12,
+    Armor.APC_Sd_Kfz_251:3,
+    Armor.IFV_Sd_Kfz_234_2_Puma:4,
+    Armor.MT_M4_Sherman:4,
+    Armor.MT_M4A4_Sherman_Firefly:6,
+    Armor.M30_Cargo_Carrier:2,
+    AirDefence.AAA_Bofors_40mm:4,
+    AirDefence.AAA_Flak_36:6,
+    AirDefence.AAA_Flak_18:4,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -213,6 +237,12 @@ UNIT_BY_TASK = {
         Su_30,
         J_11A,
         F_4E,
+        C_101CC,
+        Bf_109K_4,
+        FW_190D9,
+        FW_190A8,
+        SpitfireLFMkIXCW,
+        SpitfireLFMkIX
     ],
     CAS: [
         F_86F_Sabre,
@@ -238,6 +268,11 @@ UNIT_BY_TASK = {
         B_1B,
         Tornado_IDS,
         Tornado_GR4,
+        UH_1H,
+        Mi_8MT,
+        Mi_28N,
+        Mi_24V,
+        MiG_27K
     ],
     Transport: [
         IL_76MD,
@@ -306,6 +341,18 @@ UNIT_BY_TASK = {
         Armor.MBT_M1A2_Abrams,
         Armor.MBT_Leclerc,
         Armor.MBT_Leopard_2,
+        Armor.MBT_Challenger_II,
+
+        Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
+        Armor.MT_Pz_Kpfw_IV_Ausf_H,
+        Armor.HT_Pz_Kpfw_VI_Tiger_I,
+        Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+        Armor.APC_Sd_Kfz_251,
+        Armor.IFV_Sd_Kfz_234_2_Puma,
+        Armor.MT_M4_Sherman,
+        Armor.MT_M4A4_Sherman_Firefly,
+        Armor.M30_Cargo_Carrier,
+
     ],
     AirDefence: [
 
@@ -328,7 +375,7 @@ UNIT_BY_TASK = {
     ],
     Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
     Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
-    Embarking: [UH_1H, Mi_8MT, ],
+    Embarking: [],
     Carriage: [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, ],
     CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ],
 }
@@ -399,6 +446,7 @@ EXTRA_AA = {
     "Germany": AirDefence.SPAAA_Gepard,
     "China": AirDefence.SPAAA_ZSU_23_4_Shilka,
     "UK": AirDefence.AAA_Vulcan_M163,
+    "Iran": AirDefence.SPAAA_ZSU_23_4_Shilka,
     "Russia 1955": AirDefence.AAA_ZU_23_Closed,
     "USA 1955": AirDefence.AAA_Vulcan_M163,
     "Russia 1965": AirDefence.AAA_ZU_23_Closed,
@@ -475,6 +523,7 @@ FACTIONS = {
 
             AirDefence.AAA_ZU_23_Closed,
             AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_2_LN_SM_90,
             AirDefence.SAM_SA_3_S_125_LN_5P73,
 
             Armor.ARV_BRDM_2,
@@ -708,6 +757,7 @@ FACTIONS = {
             AirDefence.SAM_SA_6_Kub_LN_2P25,
             AirDefence.HQ_7_Self_Propelled_LN,
 
+            Armor.MBT_T_72B, # Type 99
             Armor.MBT_T_55,
             Armor.ZBD_04A,
             Armor.IFV_BMP_1,
@@ -772,7 +822,7 @@ FACTIONS = {
             Infantry.Infantry_M4,
 
             AirDefence.AAA_Vulcan_M163,
-            AirDefence.SAM_Linebacker_M6,
+            AirDefence.SAM_Chaparral_M48,
             AirDefence.SAM_Hawk_PCP,
 
             CVN_74_John_C__Stennis,
@@ -801,7 +851,6 @@ FACTIONS = {
 
             UH_1H,
             AH_64A,
-            OH_58D,
 
             Armor.MBT_M1A2_Abrams,
             Armor.IFV_LAV_25,
@@ -812,6 +861,7 @@ FACTIONS = {
             Infantry.Infantry_M4,
 
             AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Avenger_M1097,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -840,7 +890,6 @@ FACTIONS = {
 
             UH_1H,
             AH_64D,
-            OH_58D,
 
             Armor.MBT_M1A2_Abrams,
             Armor.ATGM_M1134_Stryker,
@@ -858,7 +907,7 @@ FACTIONS = {
         ]
     },
 
-    "France 1990": {
+    "France 1995": {
         "country": "France",
         "side": "blue",
         "units":[
@@ -881,7 +930,7 @@ FACTIONS = {
 
             AirDefence.SAM_Roland_ADS,
             AirDefence.SAM_Hawk_PCP,
-            AirDefence.HQ_7_Self_Propelled_STR, # Standing as Crotale
+            AirDefence.HQ_7_Self_Propelled_LN, # Standing as Crotale
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -923,6 +972,35 @@ FACTIONS = {
         ]
     },
 
+    "Netherlands 1990": {
+        "country": "The Netherlands",
+        "side": "blue",
+        "units": [
+            F_16C_bl_50,
+            F_5E_3,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            AH_64A,
+
+            Armor.APC_M113,
+            Armor.MBT_Leopard_1A3,
+
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Avenger_M1097,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
     "United Kingdown 1990": {
         "country": "UK",
         "side": "blue",
@@ -951,6 +1029,149 @@ FACTIONS = {
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
             Armed_speedboat,
+        ]
+    },
+
+    "Spain 1990": {
+        "country": "Spain",
+        "side": "blue",
+        "units": [
+            FA_18C_hornet,
+            AV8BNA,
+            F_5E_3,
+            C_101CC,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            Armor.MBT_M60A3_Patton,
+            Armor.APC_M113,
+
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Avenger_M1097,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "Italy 1990": {
+        "country": "Italy",
+        "side": "blue",
+        "units": [
+            Tornado_IDS,
+            AV8BNA,
+            # MB339,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            AH_1W,
+            UH_1H,
+
+            Armor.MBT_Leopard_1A3, # OF-40 MBT
+            Armor.APC_M113,
+
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Avenger_M1097,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "India 2010": {
+        "country": "India",
+        "side": "blue",
+        "units": [
+            Mirage_2000_5,
+            M_2000C,
+            MiG_27K,
+            MiG_21Bis,
+            MiG_29S,
+            Su_30,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            AH_64A,
+            Mi_8MT, # under designation Mi-17
+
+            Armor.MBT_T_90,
+            Armor.MBT_T_72B,
+            Armor.IFV_BMP_2,
+
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SAM_SA_6_Kub_LN_2P25,
+            AirDefence.SAM_SA_3_S_125_LN_5P73,
+            AirDefence.SAM_SA_8_Osa_9A33,
+            AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
+            AirDefence.SAM_SA_19_Tunguska_2S6,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "USA 1944 (WIP)": {
+        "country": "USA",
+        "side": "blue",
+        "units": [
+            P_51D,
+            P_51D_30_NA,
+            SpitfireLFMkIX,
+            SpitfireLFMkIXCW,
+
+            Armor.MT_M4_Sherman,
+            Armor.MT_M4A4_Sherman_Firefly,
+            Armor.M30_Cargo_Carrier,
+
+            Infantry.Infantry_M1_Garand,
+
+            Unarmed.CCKW_353,
+            AirDefence.AAA_Bofors_40mm,
+        ]
+    },
+
+    "Germany 1944 (WIP)": {
+        "country": "Russia", # WIP
+        "side": "red",
+        "units": [
+            FW_190A8,
+            FW_190D9,
+            Bf_109K_4,
+
+            Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
+            Armor.MT_Pz_Kpfw_IV_Ausf_H,
+            Armor.HT_Pz_Kpfw_VI_Tiger_I,
+            Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+            Armor.APC_Sd_Kfz_251,
+            Armor.IFV_Sd_Kfz_234_2_Puma,
+
+            Unarmed.Sd_Kfz_2,
+            Unarmed.Sd_Kfz_7,
+            Unarmed.Kübelwagen_82,
+
+            Infantry.Infantry_Mauser_98,
+
+            AirDefence.AAA_Flak_36,
         ]
     },
 }
@@ -988,6 +1209,7 @@ PLANE_PAYLOAD_OVERRIDES = {
         Escort: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
         PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
         AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
+        SEAD: "AGM-88*2,AIM-9*2,AIM-7,FLIR Pod,Fuel*3"
     },
 
     F_14B: {
@@ -999,6 +1221,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     Su_25T: {
         CAS: "APU-8 Vikhr-M*2,Kh-25ML,R-73*2,SPPU-22*2,Mercury LLTV Pod,MPS-410",
+        SEAD: "Kh58*2_Kh25MPU*2_Kh25ML*2_R73*2_L-081_MPS-410"
     },
 
     Su_33: {
@@ -1012,6 +1235,7 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     AV8BNA: {
         CAS: "AS 2",
+        SEAD: "Stand Off 2"
     },
 
     A_10C: {
@@ -1036,6 +1260,34 @@ PLANE_PAYLOAD_OVERRIDES = {
 
     MiG_21Bis: {
         CAP: "Patrol, medium range",
+    },
+
+    Su_24M: {
+        SEAD: "Kh25MPU*2_Kh25ML*2_L-081"
+    },
+
+    Su_25TM: {
+        SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
+    },
+
+    Su_17M4: {
+        SEAD: "Kh25MPU*2_Kh25ML*2_,R60M*2_Fuel*2"
+    },
+
+    Su_30: {
+        SEAD: "Kh-31P*4,R-73*2,R-77*2,ECM",
+    },
+
+    Su_34: {
+        SEAD: "Kh-25MPU*6,R-73*2,R-77*2,ECM",
+    },
+
+    MiG_27K: {
+        SEAD: "Kh-25MPU*2,R-60M*2,Fuel"
+    },
+
+    F_4E: {
+        SEAD: "AGM-45*4,AIM-7*2,ECM"
     }
 }
 
@@ -1050,7 +1302,6 @@ is livery name as found in mission editor.
 PLANE_LIVERY_OVERRIDES = {
     FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
 }
-
 
 
 

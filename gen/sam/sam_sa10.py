@@ -15,10 +15,10 @@ class SA10Generator(AntiAirGroupGenerator):
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_CP_54K6, "CP", self.position.x, self.position.y, self.heading)
 
         # Search Radar
-        self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_5N66M, "SR", self.position.x, self.position.y, self.heading)
+        self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_5N66M, "SR1", self.position.x, self.position.y + 40, self.heading)
 
         # Search radar for missiles (optionnal)
-        self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_64H6E, "SR", self.position.x, self.position.y, self.heading)
+        self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_64H6E, "SR2", self.position.x - 40, self.position.y, self.heading)
 
         # 2 different launcher type (C & D)
         num_launchers = random.randint(6, 8)
