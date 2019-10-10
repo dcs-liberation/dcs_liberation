@@ -27,8 +27,7 @@ class QLiberationMap(QGraphicsView):
         "go": True,
         "lines": True,
         "events": True,
-        "ennemy_sam_ranges": True,
-        "ally_sam_ranges": True
+        "sam": True,
     }
 
     def __init__(self, game: Game):
@@ -69,7 +68,6 @@ class QLiberationMap(QGraphicsView):
         scene.clear()
 
         self.addBackground()
-
         self.add_game_events()
 
         for cp in self.game.theater.controlpoints:
@@ -86,11 +84,12 @@ class QLiberationMap(QGraphicsView):
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
+
             for ground_object in cp.ground_objects:
                 go_pos = self._transform_point(ground_object.position)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
 
-                if(ground_object.category == "aa"):
+                if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0
                     if ground_object.groups:
                         for g in ground_object.groups:
@@ -105,7 +104,6 @@ class QLiberationMap(QGraphicsView):
                         pen = QPen(brush=CONST.COLORS["red"])
                         brush = CONST.COLORS["red_transparent"]
                     scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
-
 
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp)

@@ -111,13 +111,18 @@ class QLiberationWindow(QMainWindow):
         tg_event_visibility = QAction('Events', displayMenu)
         tg_event_visibility.setCheckable(True)
         tg_event_visibility.setChecked(True)
-        tg_event_visibility.toggled.connect(
-            lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
+        tg_event_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
+
+        tg_sam_visibility = QAction('SAM Range', displayMenu)
+        tg_sam_visibility.setCheckable(True)
+        tg_sam_visibility.setChecked(True)
+        tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
 
         displayMenu.addAction(tg_go_visibility)
         displayMenu.addAction(tg_cp_visibility)
         displayMenu.addAction(tg_line_visibility)
         displayMenu.addAction(tg_event_visibility)
+        displayMenu.addAction(tg_sam_visibility)
 
     def newGame(self):
         wizard = NewGameWizard(self)
