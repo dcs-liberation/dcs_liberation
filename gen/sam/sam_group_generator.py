@@ -48,6 +48,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
 
         AirDefence.SAM_Hawk_PCP:HawkGenerator,
         AirDefence.AAA_ZU_23_Closed:ZU23Generator,
+        AirDefence.AAA_ZU_23_on_Ural_375: ZU23UralGenerator,
         AirDefence.AAA_ZU_23_Insurgent_on_Ural_375:ZU23UralGenerator,
         AirDefence.SPAAA_ZSU_23_4_Shilka:ZSU23Generator,
         AirDefence.AAA_Vulcan_M163: VulcanGenerator,
