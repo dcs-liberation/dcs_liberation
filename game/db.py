@@ -484,8 +484,7 @@ FACTIONS = {
             Yak_40,
 
             AirDefence.AAA_ZU_23_Closed,
-            AirDefence.SAM_SA_6_Kub_LN_2P25,
-            AirDefence.SAM_SA_3_S_125_LN_5P73,
+            AirDefence.AAA_ZU_23_on_Ural_375,
 
             Armor.ARV_BRDM_2,
             Armor.ARV_MTLB_U_BOMAN,
@@ -773,13 +772,19 @@ FACTIONS = {
         ]
     },
 
-    "USA 1955": {
+    "USA 2005": {
         "country": "USA",
         "side": "blue",
         "units": [
-            F_86F_Sabre,
-            P_51D,
-            P_51D_30_NA,
+            F_15C,
+            F_14B,
+            FA_18C_hornet,
+            F_16C_50,
+
+            A_10C,
+            AV8BNA,
+
+            B_1B,
 
             KC_135,
             S_3B_Tanker,
@@ -787,11 +792,55 @@ FACTIONS = {
             E_3A,
 
             UH_1H,
+            AH_64D,
+
+            Armor.MBT_M1A2_Abrams,
+            Armor.ATGM_M1134_Stryker,
+            Armor.IFV_M2A2_Bradley,
 
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.AAA_Vulcan_M163,
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Patriot_EPP_III,
+
+            CVN_74_John_C__Stennis,
+            LHA_1_Tarawa,
+            Armed_speedboat,
+        ]
+    },
+
+    "USA 1990": {
+        "country": "USA",
+        "side": "blue",
+        "units": [
+            F_15C,
+            F_14B,
+            FA_18C_hornet,
+
+            A_10A,
+            AV8BNA,
+
+            B_1B,
+
+            KC_135,
+            S_3B_Tanker,
+            C_130,
+            E_3A,
+
+            UH_1H,
+            AH_64A,
+
+            Armor.MBT_M1A2_Abrams,
+            Armor.IFV_LAV_25,
+            Armor.APC_M1043_HMMWV_Armament,
+            Armor.ATGM_M1045_HMMWV_TOW,
+            Armor.ATGM_M1134_Stryker,
+            Unarmed.Transport_M818,
+            Infantry.Infantry_M4,
+
+            AirDefence.SAM_Hawk_PCP,
+            AirDefence.SAM_Avenger_M1097,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -831,18 +880,12 @@ FACTIONS = {
         ]
     },
 
-    "USA 1990": {
-        "country":"USA",
-        "side":"blue",
-        "units":[
-            F_15C,
-            F_14B,
-            FA_18C_hornet,
-
-            A_10A,
-            AV8BNA,
-
-            B_1B,
+    "USA 1960": {
+        "country": "USA",
+        "side": "blue",
+        "units": [
+            F_86F_Sabre,
+            P_51D,
 
             KC_135,
             S_3B_Tanker,
@@ -850,18 +893,14 @@ FACTIONS = {
             E_3A,
 
             UH_1H,
-            AH_64A,
 
-            Armor.MBT_M1A2_Abrams,
-            Armor.IFV_LAV_25,
-            Armor.APC_M1043_HMMWV_Armament,
-            Armor.ATGM_M1045_HMMWV_TOW,
-            Armor.ATGM_M1134_Stryker,
+            Armor.MBT_M60A3_Patton,
+            Armor.APC_M113,
+
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.SAM_Hawk_PCP,
-            AirDefence.SAM_Avenger_M1097,
+            AirDefence.AAA_Vulcan_M163,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
@@ -869,41 +908,50 @@ FACTIONS = {
         ]
     },
 
-    "USA 2005": {
+    "USA 1955 (Require WW2 Pack)": {
         "country": "USA",
         "side": "blue",
         "units": [
-            F_15C,
-            F_14B,
-            FA_18C_hornet,
-            F_16C_50,
-
-            A_10C,
-            AV8BNA,
-
-            B_1B,
+            F_86F_Sabre,
+            P_51D,
 
             KC_135,
             S_3B_Tanker,
             C_130,
             E_3A,
 
-            UH_1H,
-            AH_64D,
-
-            Armor.MBT_M1A2_Abrams,
-            Armor.ATGM_M1134_Stryker,
-            Armor.IFV_M2A2_Bradley,
+            Armor.MT_M4A4_Sherman_Firefly,
+            Armor.MT_M4_Sherman,
+            Armor.M30_Cargo_Carrier,
 
             Unarmed.Transport_M818,
             Infantry.Infantry_M4,
 
-            AirDefence.SAM_Hawk_PCP,
-            AirDefence.SAM_Patriot_EPP_III,
+            AirDefence.AAA_Bofors_40mm,
 
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
             Armed_speedboat,
+        ]
+    },
+
+    "USA 1944 (Require WW2 Pack)": {
+        "country": "USA",
+        "side": "blue",
+        "units": [
+            P_51D,
+            P_51D_30_NA,
+            SpitfireLFMkIX,
+            SpitfireLFMkIXCW,
+
+            Armor.MT_M4_Sherman,
+            Armor.MT_M4A4_Sherman_Firefly,
+            Armor.M30_Cargo_Carrier,
+
+            Infantry.Infantry_M1_Garand,
+
+            Unarmed.CCKW_353,
+            AirDefence.AAA_Bofors_40mm,
         ]
     },
 
@@ -1127,26 +1175,6 @@ FACTIONS = {
             CVN_74_John_C__Stennis,
             LHA_1_Tarawa,
             Armed_speedboat,
-        ]
-    },
-
-    "USA 1944 (WIP) (Require WW2 Pack)": {
-        "country": "USA",
-        "side": "blue",
-        "units": [
-            P_51D,
-            P_51D_30_NA,
-            SpitfireLFMkIX,
-            SpitfireLFMkIXCW,
-
-            Armor.MT_M4_Sherman,
-            Armor.MT_M4A4_Sherman_Firefly,
-            Armor.M30_Cargo_Carrier,
-
-            Infantry.Infantry_M1_Garand,
-
-            Unarmed.CCKW_353,
-            AirDefence.AAA_Bofors_40mm,
         ]
     },
 
