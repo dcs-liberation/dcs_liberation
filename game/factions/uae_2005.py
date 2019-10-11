@@ -3,28 +3,29 @@ from dcs.ships import *
 from dcs.planes import *
 from dcs.helicopters import *
 
-Netherlands_1990 = {
-    "country": "The Netherlands",
+UAE_2005 = {
+    "country": "United Arab Emirates",
     "side": "blue",
-    "units": [
+    "units":[
+        M_2000C,
+        Mirage_2000_5,
         F_16C_50,
-        F_5E_3,
 
         KC_135,
         S_3B_Tanker,
         C_130,
         E_3A,
 
-        AH_64A,
+        AH_64D,
 
-        Armor.APC_M113,
-        Armor.MBT_Leopard_1A3,
+        Armor.MBT_Leclerc,
+        Armor.IFV_BMP_3,
+        Armor.TPz_Fuchs,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
 
-        AirDefence.SAM_Hawk_PCP,
-        AirDefence.SAM_Avenger_M1097,
+        AirDefence.Rapier_FSA_Launcher,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,

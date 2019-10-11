@@ -16,8 +16,10 @@ from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.germany_1990 import Germany_1990
 from game.factions.iran_2015 import Iran_2015
+from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.netherlands_1990 import Netherlands_1990
+from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.russia_1975 import Russia_1975
 from game.factions.germany_1944 import Germany_1944
 from game.factions.india_2010 import India_2010
@@ -26,6 +28,8 @@ from game.factions.russia_1965 import Russia_1965
 from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
 from game.factions.spain_1990 import Spain_1990
+from game.factions.turkey_2005 import Turkey_2005
+from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1990 import UnitedKingdom_1990
 from game.factions.usa_1944 import USA_1944
 from game.factions.usa_1955 import USA_1955
@@ -469,17 +473,14 @@ EXTRA_AA = {
     "China": AirDefence.SPAAA_ZSU_23_4_Shilka,
     "UK": AirDefence.AAA_Vulcan_M163,
     "Iran": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "Russia 1955": AirDefence.AAA_ZU_23_Closed,
-    "USA 1955": AirDefence.AAA_Vulcan_M163,
-    "Russia 1965": AirDefence.AAA_ZU_23_Closed,
-    "Russia 1975": AirDefence.AAA_ZU_23_Closed,
-    "USA 1965": AirDefence.AAA_Vulcan_M163,
-    "Russia 1988": AirDefence.AAA_ZU_23_Closed,
-    "USA 1990": AirDefence.AAA_Vulcan_M163,
-    "France 1990": AirDefence.AAA_Vulcan_M163,
-    "Germany 1990": AirDefence.AAA_Vulcan_M163,
-    "Iran 2015": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "China 2015": AirDefence.SPAAA_ZSU_23_4_Shilka
+    "North Korea": AirDefence.AAA_ZU_23_Closed,
+    "Italy": AirDefence.AAA_Vulcan_M163,
+    "Spain": AirDefence.AAA_Vulcan_M163,
+    "The Netherlands": AirDefence.AAA_Vulcan_M163,
+    "Turkey": AirDefence.AAA_Vulcan_M163,
+    "Israel": AirDefence.AAA_Vulcan_M163,
+    "India": AirDefence.SPAAA_ZSU_23_4_Shilka,
+    "United Arab Emirates": AirDefence.Stinger_MANPADS
 }
 
 """
@@ -494,6 +495,7 @@ FACTIONS = {
     "Russia 2010": Russia_2010,
     "Iran 2015": Iran_2015,
     "China 2000": China_2000,
+    "North Korea 2000": NorthKorea_2000,
 
     "USA 2005": USA_2005,
     "USA 1990": USA_1990,
@@ -508,8 +510,14 @@ FACTIONS = {
     "Spain 1990": Spain_1990,
     "Italy 1990": Italy_1990,
     "India 2010": India_2010,
+    "Israel 2000": Israel_2000,
+    "Turkey 2005": Turkey_2005,
+    "United Arab Emirates 2005": UAE_2005,
     "Germany 1944 (Require WW2 Pack)": Germany_1944
 }
+BLUEFOR_FACTIONS = [FACTIONS[f]["country"] for f in FACTIONS if FACTIONS[f]["side"] == "blue"]
+print(BLUEFOR_FACTIONS)
+
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
@@ -840,7 +848,6 @@ def _validate_db():
     for unit_type in total_set:
         did_find = False
         for country_units_list in FACTIONS.values():
-            print(country_units_list)
             if unit_type in country_units_list["units"]:
                 did_find = True
         print("WARN : {} not in country list".format(unit_type))
@@ -849,5 +856,10 @@ def _validate_db():
     for unit_type in total_set:
         assert unit_type in PRICES, "{} not in prices".format(unit_type)
 
-
 _validate_db()
+
+class DefaultLiveries:
+    class Default(Enum):
+        af_standard = ""
+
+OH_58D.Liveries = DefaultLiveries
