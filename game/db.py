@@ -862,4 +862,6 @@ class DefaultLiveries:
     class Default(Enum):
         af_standard = ""
 
+# TODO : refactor/remove
 OH_58D.Liveries = DefaultLiveries
+F_16C_50.Liveries = DefaultLiveries
