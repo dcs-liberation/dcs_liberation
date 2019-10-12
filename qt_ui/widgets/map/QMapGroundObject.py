@@ -1,6 +1,6 @@
 from PySide2.QtCore import QPoint, QRect, QPointF
 from PySide2.QtGui import QPainter
-from PySide2.QtWidgets import QGraphicsRectItem
+from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsItem
 
 import qt_ui.uiconstants as CONST
 from game import db
@@ -16,6 +16,7 @@ class QMapGroundObject(QGraphicsRectItem):
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
+        #self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
         if len(self.model.groups) > 0:
             units = {}

@@ -191,3 +191,18 @@ class Operation:
         # visuals
         self.visualgen.generate()
 
+        # Scripts
+        load_mist = TriggerStart(comment="Load Mist Lua Framework")
+        with open(os.path.abspath("./resources/scripts/mist_4_3_74.lua")) as f:
+            load_mist.add_action(DoScript(String(f.read())))
+        self.current_mission.triggerrules.triggers.append(load_mist)
+
+        load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
+        with open(os.path.abspath("./resources/scripts/dcs_liberation.lua")) as f:
+            script = f.read()
+            script = script.replace("{{json_file_abs_location}}", "'"+os.path.abspath("./resources/scripts/json.lua"+"'"))
+            load_dcs_libe.add_action(DoScript(String(script)))
+        self.current_mission.triggerrules.triggers.append(load_dcs_libe)
+
+
+

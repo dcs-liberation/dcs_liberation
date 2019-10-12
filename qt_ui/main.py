@@ -1,11 +1,13 @@
 import logging
 import os
 import sys
+from shutil import copyfile
 from time import sleep
 
 import dcs
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QLabel, QSplashScreen
+from dcs import installation
 
 from qt_ui import uiconstants
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -40,11 +42,19 @@ if __name__ == "__main__":
     with open("./resources/stylesheets/style.css") as stylesheet:
         css = stylesheet.read()
 
+    # Replace DCS Mission scripting file to allow DCS Liberation to work
+    print("Replace : " + installation.get_dcs_install_directory() + os.path.sep + "Scripts/MissionScripting.lua")
+    copyfile("./resources/scripts/MissionScripting.lua", installation.get_dcs_install_directory() + os.path.sep + "Scripts/MissionScripting.lua")
     app.processEvents()
 
-    # Uncomment to apply CSS (need works)
-    app.setStyleSheet(css)
+    # Create DCS Liberation script folder
+    script_dir = installation.get_dcs_saved_games_directory() + os.sep + "Scripts" + os.sep + "DCSLiberation"
+    if not os.path.exists(script_dir):
+        os.makedirs(script_dir)
+    copyfile("./resources/scripts/json.lua", script_dir + os.path.sep + "json.lua")
 
+    # Apply CSS (need works)
+    app.setStyleSheet(css)
     GameUpdateSignal()
 
     # Start window
