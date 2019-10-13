@@ -50,6 +50,7 @@ def load_icons():
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
     ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
     ICONS["Terrain_Nevada"] = QPixmap("./resources/ui/terrain_nevada.gif")
+    ICONS["Terrain_Normandy"] = QPixmap("./resources/ui/terrain_normandy.gif")
 
     ICONS["Dawn"] = QPixmap("./resources/ui/daytime/dawn.png")
     ICONS["Day"] = QPixmap("./resources/ui/daytime/day.png")

@@ -57,89 +57,105 @@ def generate_groundobjects(theater: ConflictTheater, game):
     with open("resources/groundobject_templates.p", "rb") as f:
         tpls = pickle.load(f)
 
-    def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:
-        point = None
-        for _ in range(1000):
-            p = near.random_point_within(max, min)
-            if on_ground and theater.is_on_land(p):
-                point = p
-            elif not on_ground and theater.is_in_sea(p):
-                point = p
-
-            if point:
-                for angle in range(0, 360, 45):
-                    p = point.point_from_heading(angle, 2500)
-                    if on_ground and not theater.is_on_land(p):
-                        point = None
-                        break
-                    elif not on_ground and not theater.is_in_sea(p):
-                        point = None
-                        break
-
-
-            if point:
-                for other in others:
-                    if other.position.distance_to_point(point) < 10000:
-                        point = None
-                        break
-
-            if point:
-                return point
-
-        return None
-
     group_id = 0
     for cp in theater.controlpoints:
+        group_id = generate_cp_ground_points(cp, theater, game, group_id, tpls)
 
-        # Reset cp ground objects
-        cp.ground_objects = []
+def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:
+    """
+    Find a valid ground object location
+    :param on_ground: Whether it should be on ground or on sea (True = on ground)
+    :param near: Point
+    :param theater: Theater object
+    :param min: Minimal range from point
+    :param max: Max range from point
+    :param others: Other already existing ground objects
+    :return:
+    """
+    point = None
+    for _ in range(1000):
+        p = near.random_point_within(max, min)
+        if on_ground and theater.is_on_land(p):
+            point = p
+        elif not on_ground and theater.is_in_sea(p):
+            point = p
 
-        if cp.is_global:
-            continue
+        if point:
+            for angle in range(0, 360, 45):
+                p = point.point_from_heading(angle, 2500)
+                if on_ground and not theater.is_on_land(p):
+                    point = None
+                    break
+                elif not on_ground and not theater.is_in_sea(p):
+                    point = None
+                    break
+        if point:
+            for other in others:
+                if other.position.distance_to_point(point) < 10000:
+                    point = None
+                    break
+        if point:
+            return point
+    return None
 
-        if not cp.has_frontline:
-            continue
 
-        amount = random.randrange(1, 11)
-        for i in range(0, amount):
-            available_categories = list(tpls)
-            if i >= amount - 1:
-                tpl_category = "aa"
+def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templates):
+    """
+    Generate inital ground objects and AA site for given control point
+    :param cp: Control point to initialize
+    :param theater: Theater
+    :param game: Game object
+    :param group_id: Group id
+    :param templates: Ground object templates
+    :return: True if something was generated
+    """
+    # Reset cp ground objects
+    cp.ground_objects = []
+
+    if cp.is_global:
+        return False
+
+    amount = random.randrange(1, 11)
+    for i in range(0, amount):
+        available_categories = list(templates)
+        if i >= amount - 1:
+            tpl_category = "aa"
+        else:
+            if random.randint(0, 1) == 1:
+                tpl_category = random.choice(available_categories)
             else:
-                if random.randint(0,1) == 1:
-                    tpl_category = random.choice(available_categories)
+                tpl_category = "aa"
+
+        tpl = random.choice(list(templates[tpl_category].values()))
+
+        point = find_location(tpl_category != "oil", cp.position, theater, 10000, 40000, cp.ground_objects)
+
+        if point is None:
+            print("Couldn't find point for {}".format(cp))
+            continue
+
+        object_id = 0
+        group_id = group_id + 1
+
+        logging.info("generated {} for {}".format(tpl_category, cp))
+        for object in tpl:
+            object_id += 1
+
+            g = TheaterGroundObject()
+            g.group_id = group_id
+            g.object_id = object_id
+            g.cp_id = cp.id
+
+            g.dcs_identifier = object["type"]
+            g.heading = object["heading"]
+            g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
+
+            if g.dcs_identifier == "AA":
+                if cp.captured:
+                    faction = game.player_name
                 else:
-                    tpl_category = "aa"
+                    faction = game.enemy_name
+                generate_anti_air_group(game, cp, g, faction)
 
-            tpl = random.choice(list(tpls[tpl_category].values()))
-
-            point = find_location(tpl_category != "oil", cp.position, theater, 10000, 40000, cp.ground_objects)
-
-            if point is None:
-                print("Couldn't find point for {}".format(cp))
-                continue
-
-            group_id += 1
-            object_id = 0
-
-            logging.info("generated {} for {}".format(tpl_category, cp))
-            for object in tpl:
-                object_id += 1
-
-                g = TheaterGroundObject()
-                g.group_id = group_id
-                g.object_id = object_id
-                g.cp_id = cp.id
-
-                g.dcs_identifier = object["type"]
-                g.heading = object["heading"]
-                g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
-
-                if g.dcs_identifier == "AA":
-                    if cp.captured:
-                        faction = game.player_name
-                    else:
-                        faction = game.enemy_name
-                    generate_anti_air_group(game, cp, g, faction)
-
-                cp.ground_objects.append(g)
+            cp.ground_objects.append(g)
+    return group_id

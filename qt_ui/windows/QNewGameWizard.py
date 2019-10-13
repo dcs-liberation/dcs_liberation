@@ -7,7 +7,7 @@ from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
 from game import db, Game
-from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater
+from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy
 from userdata.logging import version_string
 
 
@@ -36,6 +36,7 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainNttr = self.field("isTerrainNttr")
         isTerrainCaucasusSmall = self.field("isTerrainCaucasusSmall")
         isIranianCampaignTheater = self.field("isIranianCampaignTheater")
+        isTerrainNormandy = self.field("isTerrainNormandy")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         sams = self.field("sams")
         midGame = self.field("midGame")
@@ -52,6 +53,8 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = caucasus.WesternGeorgia()
         elif isIranianCampaignTheater:
             conflicttheater = persiangulf.IranianCampaign()
+        elif isTerrainNormandy:
+            conflicttheater = normandy.NormandyTheater()
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
@@ -212,6 +215,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
         terrainNttr = QtWidgets.QRadioButton("Nevada - Full")
         terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
+        terrainNormandy = QtWidgets.QRadioButton("Normandy")
+        terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
         terrainCaucasus.setChecked(True)
 
         # Time Period
@@ -229,6 +234,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.registerField('isTerrainPg', terrainPg)
         self.registerField('isIranianCampaignTheater', terrainIran)
         self.registerField('isTerrainNttr', terrainNttr)
+        self.registerField('isTerrainNormandy', terrainNormandy)
         self.registerField('timePeriod', timePeriodSelect)
 
         # Build layout
@@ -238,6 +244,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroupLayout.addWidget(terrainPg)
         terrainGroupLayout.addWidget(terrainIran)
         terrainGroupLayout.addWidget(terrainNttr)
+        terrainGroupLayout.addWidget(terrainNormandy)
         terrainGroup.setLayout(terrainGroupLayout)
 
         timeGroupLayout = QtWidgets.QGridLayout()

@@ -120,10 +120,13 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
         if unit_type in helicopters.helicopter_map.values():
-            print(unit_type)
             group.set_frequency(127.5)
         else:
-            group.set_frequency(251.0)
+            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4]:
+                group.set_frequency(251.0)
+            else:
+                # WW2
+                group.set_frequency(124.0)
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
