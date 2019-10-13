@@ -25,6 +25,9 @@ class DebriefingDeadUnitInfo:
         self.player_unit = player_unit
         self.type = type
 
+    def __repr__(self):
+        return str(self.country_id) + " " + str(self.player_unit) + " " + str(self.type)
+
 class Debriefing:
     def __init__(self, state_data, game):
         self.base_capture_events = state_data["base_capture_events"]
@@ -70,6 +73,11 @@ class Debriefing:
         self.player_dead_units = [a for a in self.dead_units if a.country_id == self.player_country_id]
         self.enemy_dead_units = [a for a in self.dead_units if a.country_id == self.enemy_country_id]
 
+        print(self.player_dead_aircraft)
+        print(self.enemy_dead_aircraft)
+        print(self.player_dead_units)
+        print(self.enemy_dead_units)
+
         self.player_dead_aircraft_dict = {}
         for a in self.player_dead_aircraft:
             if a.type in self.player_dead_aircraft_dict.keys():
@@ -97,6 +105,12 @@ class Debriefing:
                 self.enemy_dead_units_dict[a.type] = self.enemy_dead_units_dict[a.type] + 1
             else:
                 self.enemy_dead_units_dict[a.type] = 1
+
+        print(self.player_dead_aircraft_dict)
+        print(self.enemy_dead_aircraft_dict)
+        print(self.player_dead_units_dict)
+        print(self.enemy_dead_units_dict)
+
 
 def _poll_new_debriefing_log(callback: typing.Callable, game):
     if os.path.isfile("state.json"):

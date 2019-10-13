@@ -1,3 +1,4 @@
+from dcs.countries import country_dict
 from dcs.lua.parse import loads
 
 from gen import *
@@ -83,6 +84,22 @@ class Operation:
             options_dict = loads(f.read())["options"]
 
         self.current_mission = dcs.Mission(terrain)
+
+        print(self.game.player_country)
+        print(country_dict[db.country_id_from_name(self.game.player_country)])
+        print(country_dict[db.country_id_from_name(self.game.player_country)]())
+
+        # Setup coalition :
+        self.current_mission.coalition["blue"] = Coalition("blue")
+        self.current_mission.coalition["red"] = Coalition("red")
+        if self.game.player_country and self.game.player_country in db.BLUEFOR_FACTIONS:
+            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
+            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
+        else:
+            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
+            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
+        print([c for c in self.current_mission.coalition["blue"].countries.keys()])
+        print([c for c in self.current_mission.coalition["red"].countries.keys()])
 
         if is_quick:
             self.quick_mission = self.current_mission

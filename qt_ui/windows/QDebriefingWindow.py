@@ -42,14 +42,20 @@ class QDebriefingWindow(QDialog):
 
         row = 0
         for unit_type, count in self.debriefing.player_dead_aircraft_dict.items():
-            lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-            lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
-            row += 1
+            try:
+                lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
+                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                row += 1
+            except:
+                print("Issue adding " + str(unit_type) + " to debriefing information")
 
         for unit_type, count in self.debriefing.player_dead_units_dict.items():
-            lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-            lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
-            row += 1
+            try:
+                lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
+                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                row += 1
+            except:
+                print("Issue adding " + str(unit_type) + " to debriefing information")
 
         self.layout.addWidget(lostUnits)
 
@@ -67,9 +73,12 @@ class QDebriefingWindow(QDialog):
         for unit_type, count in self.debriefing.enemy_dead_aircraft_dict.items():
             if count == 0:
                 continue
-            enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-            enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
-            row += 1
+            try:
+                enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
+                enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                row += 1
+            except:
+                print("Issue adding " + str(unit_type) + " to debriefing information")
 
         for unit_type, count in self.debriefing.enemy_dead_units_dict.items():
             if count == 0:

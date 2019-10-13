@@ -20,7 +20,7 @@ local function messageAll(message)
 end
 
 write_state = function()
-    messageAll("Writing DCS Liberation State...")
+    --messageAll("Writing DCS Liberation State...")
     local fp = io.open(debriefing_file_location, 'w')
     local game_state = {
         ["killed_aircrafts"] = killed_aircrafts,
@@ -31,7 +31,7 @@ write_state = function()
     }
     fp:write(json:encode(game_state))
     fp:close()
-    messageAll("Done writing DCS Liberation state.")
+    --messageAll("Done writing DCS Liberation state.")
 end
 
 mist.scheduleFunction(write_state, {}, timer.getTime() + 10, 60, timer.getTime() + 3600)
@@ -39,7 +39,7 @@ mist.scheduleFunction(write_state, {}, timer.getTime() + 10, 60, timer.getTime()
 activeWeapons = {}
 local function onEvent(event)
    if event.id == world.event.S_EVENT_CRASH and event.initiator then
-       messageAll("Crash :" .. event.initiator.getName(event.initiator))
+       messageAll("Destroyed  :" .. event.initiator.getName(event.initiator))
        killed_aircrafts[#killed_aircrafts + 1] = event.initiator.getName(event.initiator)
    end
 
@@ -52,6 +52,7 @@ local function onEvent(event)
     end
 
     if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
+        messageAll("Base captured  :" .. event.place.getName(event.place))
         base_capture_events[#base_capture_events + 1] = event.place.getID(event.place) .. "||" .. event.place.getCoalition(event.place) .. "||" .. event.place.getName(event.place)
     end
 

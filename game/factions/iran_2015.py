@@ -29,11 +29,11 @@ Iran_2015 = {
         Mi_28N,
         Mi_24V,
 
-        AirDefence.AAA_ZU_23_Closed,
-        AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.SAM_Hawk_PCP,
         AirDefence.SAM_SA_2_LN_SM_90,
+        AirDefence.SAM_SA_6_Kub_LN_2P25,
+        AirDefence.HQ_7_Self_Propelled_LN,
+        AirDefence.SAM_SA_11_Buk_LN_9A310M1,
 
         Armor.APC_M113,
         Armor.APC_BTR_80,

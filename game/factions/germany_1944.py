@@ -2,7 +2,7 @@ from dcs.planes import *
 from dcs.vehicles import *
 
 Germany_1944 = {
-    "country": "Russia",  # WIP
+    "country": "Third Reich",
     "side": "red",
     "units": [
 

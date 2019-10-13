@@ -10,6 +10,7 @@ from dcs.vehicles import AirDefence
 from game import db
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak36 import Flak36Generator
+from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
@@ -33,6 +34,7 @@ from gen.sam.sam_vulcan import VulcanGenerator
 from gen.sam.sam_zsu23 import ZSU23Generator
 from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
+from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
 
 
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
@@ -47,9 +49,12 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     SAM_MAP = {
 
         AirDefence.SAM_Hawk_PCP:HawkGenerator,
+        AirDefence.AAA_ZU_23_Emplacement: ZU23Generator,
         AirDefence.AAA_ZU_23_Closed:ZU23Generator,
         AirDefence.AAA_ZU_23_on_Ural_375: ZU23UralGenerator,
-        AirDefence.AAA_ZU_23_Insurgent_on_Ural_375:ZU23UralGenerator,
+        AirDefence.AAA_ZU_23_Insurgent_on_Ural_375:ZU23UralInsurgentGenerator,
+        AirDefence.AAA_ZU_23_Insurgent_Closed: ZU23InsurgentGenerator,
+        AirDefence.AAA_ZU_23_Insurgent: ZU23InsurgentGenerator,
         AirDefence.SPAAA_ZSU_23_4_Shilka:ZSU23Generator,
         AirDefence.AAA_Vulcan_M163: VulcanGenerator,
         AirDefence.SAM_Linebacker_M6: LinebackerGenerator,

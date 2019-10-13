@@ -16,6 +16,7 @@ from dcs.unitgroup import *
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.germany_1990 import Germany_1990
+from game.factions.insurgent import Insurgent
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
@@ -163,6 +164,7 @@ PRICES = {
     Armor.IFV_BMP_2: 16,
     Armor.IFV_BMP_3: 20,
 
+    Armor.APC_Cobra: 4,
     Armor.APC_M113: 6,
     Armor.APC_M1043_HMMWV_Armament: 2,
     Armor.ATGM_M1045_HMMWV_TOW: 8,
@@ -174,6 +176,7 @@ PRICES = {
     Armor.MBT_Leclerc: 35,
     Armor.MBT_Leopard_1A3: 24,
     Armor.MBT_Leopard_2: 35,
+    Armor.MBT_Merkava_Mk__4: 35,
     Armor.TPz_Fuchs: 8,
     Armor.MBT_Challenger_II: 30,
 
@@ -211,6 +214,7 @@ PRICES = {
     Armor.MT_M4_Sherman:4,
     Armor.MT_M4A4_Sherman_Firefly:6,
     Armor.M30_Cargo_Carrier:2,
+    Armor.APC_M2A1:2,
     AirDefence.AAA_Bofors_40mm:4,
     AirDefence.AAA_Flak_36:6,
     AirDefence.AAA_Flak_18:4,
@@ -344,6 +348,10 @@ UNIT_BY_TASK = {
         Armor.MBT_T_80U,
         Armor.MBT_T_90,
 
+        Armor.APC_Cobra,
+        Armor.APC_Cobra,
+        Armor.APC_Cobra,
+        Armor.APC_Cobra,
         Armor.APC_M113,
         Armor.APC_M113,
         Armor.APC_M113,
@@ -369,16 +377,26 @@ UNIT_BY_TASK = {
         Armor.MBT_Leclerc,
         Armor.MBT_Leopard_2,
         Armor.MBT_Challenger_II,
+        Armor.MBT_Merkava_Mk__4,
 
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
         Armor.MT_Pz_Kpfw_IV_Ausf_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
         Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
         Armor.APC_Sd_Kfz_251,
+        Armor.APC_Sd_Kfz_251,
+        Armor.APC_Sd_Kfz_251,
+        Armor.APC_Sd_Kfz_251,
+        Armor.IFV_Sd_Kfz_234_2_Puma,
         Armor.IFV_Sd_Kfz_234_2_Puma,
         Armor.MT_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.M30_Cargo_Carrier,
+        Armor.M30_Cargo_Carrier,
+        Armor.APC_M2A1,
+        Armor.APC_M2A1,
+        Armor.APC_M2A1,
+        Armor.APC_M2A1,
 
     ],
     AirDefence: [
@@ -481,7 +499,8 @@ EXTRA_AA = {
     "Turkey": AirDefence.AAA_Vulcan_M163,
     "Israel": AirDefence.AAA_Vulcan_M163,
     "India": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "United Arab Emirates": AirDefence.Stinger_MANPADS
+    "United Arab Emirates": AirDefence.Stinger_MANPADS,
+    "Insurgents": AirDefence.AAA_ZU_23_Insurgent_on_Ural_375
 }
 
 """
@@ -497,6 +516,7 @@ FACTIONS = {
     "Iran 2015": Iran_2015,
     "China 2000": China_2000,
     "North Korea 2000": NorthKorea_2000,
+    "Insurgent": Insurgent,
 
     "USA 2005": USA_2005,
     "USA 1990": USA_1990,
@@ -731,6 +751,8 @@ def unit_type_from_name(name: str) -> UnitType:
         return plane_map[name]
     elif name in ship_map:
         return ship_map[name]
+    if name in helicopter_map:
+        return helicopter_map[name]
     else:
         return None
 
