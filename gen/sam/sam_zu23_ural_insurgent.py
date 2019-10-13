@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class ZU23UralInsurgentGenerator(AntiAirGroupGenerator):
+class ZU23UralInsurgentGenerator(GroupGenerator):
     """
     This generate a Zu23 Ural group
     """

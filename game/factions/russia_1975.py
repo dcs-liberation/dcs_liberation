@@ -47,5 +47,9 @@ Russia_1975 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160
+    ],
+    "shorad":[
+        AirDefence.AAA_ZU_23_Emplacement,
+        AirDefence.SPAAA_ZSU_23_4_Shilka
     ]
 }

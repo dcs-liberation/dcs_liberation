@@ -340,7 +340,7 @@ class AircraftConflictGenerator:
 
                 patrolled = []
                 for ground_object in cp.ground_objects:
-                    if not ground_object.group_id in patrolled:
+                    if not ground_object.group_id in patrolled and not ground_object.airbase_group:
                         group.add_waypoint(ground_object.position, patrol_alt)
                         patrolled.append(ground_object.group_id)
 

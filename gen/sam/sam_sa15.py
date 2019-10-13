@@ -1,9 +1,9 @@
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class SA15Generator(AntiAirGroupGenerator):
+class SA15Generator(GroupGenerator):
     """
     This generate a SA-15 group
     """

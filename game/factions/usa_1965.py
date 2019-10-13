@@ -25,12 +25,15 @@ USA_1965 = {
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
 
-        AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Chaparral_M48,
         AirDefence.SAM_Hawk_PCP,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ],
+    "shorad":[
+        AirDefence.AAA_Vulcan_M163,
+        AirDefence.SAM_Chaparral_M48
     ]
 }

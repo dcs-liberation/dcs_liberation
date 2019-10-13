@@ -170,7 +170,7 @@ class Operation:
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
-        self.extra_aagen.generate()
+        #self.extra_aagen.generate()
 
         # triggers
         if self.game.is_player_attack(self.conflict.attackers_country):

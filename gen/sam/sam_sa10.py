@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class SA10Generator(AntiAirGroupGenerator):
+class SA10Generator(GroupGenerator):
     """
     This generate a SA-10 group
     """

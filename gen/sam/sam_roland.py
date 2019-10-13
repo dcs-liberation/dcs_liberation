@@ -1,9 +1,9 @@
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class RolandGenerator(AntiAirGroupGenerator):
+class RolandGenerator(GroupGenerator):
     """
     This generate a Roland group
     """

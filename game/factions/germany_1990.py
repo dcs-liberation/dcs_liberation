@@ -27,12 +27,15 @@ Germany_1990 = {
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
 
-        AirDefence.SPAAA_Gepard,
         AirDefence.SAM_Roland_ADS,
         AirDefence.SAM_Hawk_PCP,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ],
+    "shorad":[
+        AirDefence.SPAAA_Gepard,
+        AirDefence.SAM_Roland_ADS,
     ]
 }

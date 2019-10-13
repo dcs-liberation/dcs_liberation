@@ -51,6 +51,7 @@ class TheaterGroundObject:
 
     dcs_identifier = None  # type: str
     is_dead = False
+    airbase_group = False
 
     heading = 0
     position = None  # type: Point

@@ -31,5 +31,9 @@ France_1995 = {
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+        
+    ], "shorad":[
+        AirDefence.HQ_7_Self_Propelled_LN,
+        AirDefence.SAM_Roland_ADS
     ]
 }

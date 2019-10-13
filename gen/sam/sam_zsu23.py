@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class ZSU23Generator(AntiAirGroupGenerator):
+class ZSU23Generator(GroupGenerator):
     """
     This generate a ZSU 23 group
     """

@@ -38,5 +38,7 @@ USA_2005 = {
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ], "shorad":[
+        AirDefence.SAM_Avenger_M1097,
     ]
 }

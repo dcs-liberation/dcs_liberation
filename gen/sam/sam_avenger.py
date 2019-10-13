@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class AvengerGenerator(AntiAirGroupGenerator):
+class AvengerGenerator(GroupGenerator):
     """
     This generate an Avenger group
     """

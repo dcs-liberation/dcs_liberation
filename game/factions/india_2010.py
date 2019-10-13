@@ -31,12 +31,17 @@ India_2010 = {
 
         AirDefence.SAM_SA_6_Kub_LN_2P25,
         AirDefence.SAM_SA_3_S_125_LN_5P73,
-        AirDefence.SAM_SA_8_Osa_9A33,
-        AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
-        AirDefence.SAM_SA_19_Tunguska_2S6,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ],
+    "shorad":[
+        AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.AAA_ZU_23_Emplacement,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
+        AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
+        AirDefence.SAM_SA_8_Osa_9A33,
+        AirDefence.SAM_SA_19_Tunguska_2S6
     ]
 }

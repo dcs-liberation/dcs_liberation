@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class GepardGenerator(AntiAirGroupGenerator):
+class GepardGenerator(GroupGenerator):
     """
     This generate a Gepard group
     """

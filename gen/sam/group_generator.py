@@ -6,9 +6,9 @@ from dcs.point import PointAction
 from dcs.unit import Vehicle
 
 
-class AntiAirGroupGenerator():
+class GroupGenerator():
 
-    def __init__(self, game, ground_object, group_object_group_id):
+    def __init__(self, game, ground_object):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position

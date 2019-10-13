@@ -48,5 +48,10 @@ Russia_1990 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160
+    ],
+    "shorad":[
+        AirDefence.SAM_SA_9_Strela_1_9P31,
+        AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
+        AirDefence.SPAAA_ZSU_23_4_Shilka
     ]
 }

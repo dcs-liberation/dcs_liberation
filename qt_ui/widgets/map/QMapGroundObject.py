@@ -21,6 +21,7 @@ class QMapGroundObject(QGraphicsRectItem):
         if len(self.model.groups) > 0:
             units = {}
             for g in self.model.groups:
+                print(g)
                 for u in g.units:
                     if u.type in units.keys():
                         units[u.type] = units[u.type]+1

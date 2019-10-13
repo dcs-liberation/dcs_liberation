@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class ZU23InsurgentGenerator(AntiAirGroupGenerator):
+class ZU23InsurgentGenerator(GroupGenerator):
     """
     This generate a ZU23 insurgent flak artillery group
     """

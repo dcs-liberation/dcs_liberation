@@ -28,5 +28,8 @@ USA_1960 = {
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ],
+    "shorad":[
+        AirDefence.AAA_Vulcan_M163
     ]
 }

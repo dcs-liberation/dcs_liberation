@@ -33,10 +33,12 @@ USA_1990 = {
         Infantry.Infantry_M4,
 
         AirDefence.SAM_Hawk_PCP,
-        AirDefence.SAM_Avenger_M1097,
+
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ], "shorad":[
+        AirDefence.SAM_Avenger_M1097,
     ]
 }

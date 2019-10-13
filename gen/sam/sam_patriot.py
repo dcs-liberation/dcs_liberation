@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class PatriotGenerator(AntiAirGroupGenerator):
+class PatriotGenerator(GroupGenerator):
     """
     This generate a Patriot group
     """

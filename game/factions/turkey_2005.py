@@ -21,7 +21,7 @@ Turkey_2005 = {
 
         Armor.MBT_Leopard_2,
         Armor.MBT_Leopard_1A3,
-        Armor.MBT_M60A3_Patton, # Standing as VAB
+        Armor.MBT_M60A3_Patton,
         Armor.APC_Cobra,
         Armor.APC_BTR_80,
 
@@ -33,5 +33,8 @@ Turkey_2005 = {
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ], "shorad":[
+        AirDefence.AAA_ZU_23_Emplacement,
+        AirDefence.SPAAA_ZSU_23_4_Shilka
     ]
 }

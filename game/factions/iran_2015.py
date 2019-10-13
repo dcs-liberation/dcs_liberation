@@ -48,5 +48,9 @@ Iran_2015 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160
+    ],
+    "shorad":[
+        AirDefence.HQ_7_Self_Propelled_LN,
+        AirDefence.AAA_ZU_23_Insurgent_Closed
     ]
 }

@@ -29,7 +29,6 @@ Russia_2010 = {
         Ka_50,
         Mi_8MT,
 
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_11_Buk_LN_9A310M1,
         AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
@@ -46,5 +45,9 @@ Russia_2010 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160,
+    ],
+    "shorad":[
+        AirDefence.SAM_SA_19_Tunguska_2S6,
+        AirDefence.SAM_SA_13_Strela_10M3_9A35M3
     ]
 }

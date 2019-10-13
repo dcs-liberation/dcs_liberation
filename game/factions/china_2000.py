@@ -22,8 +22,6 @@ China_2000 = {
 
         Mi_8MT,
 
-        AirDefence.AAA_ZU_23_Closed,
-        AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
         AirDefence.SAM_SA_10_S_300PS_LN_5P85C, # Standing as HQ-9+
         AirDefence.SAM_SA_6_Kub_LN_2P25,
         AirDefence.HQ_7_Self_Propelled_LN,
@@ -41,5 +39,10 @@ China_2000 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160
+    ],
+    "shorad":[
+        AirDefence.AAA_ZU_23_Closed,
+        AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
+        AirDefence.HQ_7_Self_Propelled_LN
     ]
 }

@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class VulcanGenerator(AntiAirGroupGenerator):
+class VulcanGenerator(GroupGenerator):
     """
     This generate a Vulcan group
     """

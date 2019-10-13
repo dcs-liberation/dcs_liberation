@@ -21,7 +21,6 @@ Russia_1965 = {
 
         Mi_8MT,
 
-        AirDefence.AAA_ZU_23_Closed,
         AirDefence.SAM_SA_6_Kub_LN_2P25,
         AirDefence.SAM_SA_2_LN_SM_90,
         AirDefence.SAM_SA_3_S_125_LN_5P73,
@@ -41,5 +40,8 @@ Russia_1965 = {
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160
+    ],
+    "shorad":[
+        AirDefence.AAA_ZU_23_Closed
     ]
 }

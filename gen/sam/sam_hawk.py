@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class HawkGenerator(AntiAirGroupGenerator):
+class HawkGenerator(GroupGenerator):
     """
     This generate an HAWK group
     """

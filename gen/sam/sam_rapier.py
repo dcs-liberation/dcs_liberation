@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import AntiAirGroupGenerator
+from gen.sam.group_generator import GroupGenerator
 
 
-class RapierGenerator(AntiAirGroupGenerator):
+class RapierGenerator(GroupGenerator):
     """
     This generate a Rapier Group
     """
