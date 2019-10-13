@@ -1,6 +1,7 @@
 import typing
 import logging
 
+from dcs.action import Coalition
 from dcs.unittype import UnitType
 from dcs.task import *
 from dcs.vehicles import AirDefence
@@ -188,6 +189,38 @@ class Event:
                         ucount = sum([len(g.units) for g in ground_object.groups])
                         if ucount == 0:
                             ground_object.is_dead = True
+
+        # ------------------------------
+        # Captured bases
+
+        if self.game.player_country in db.BLUEFOR_FACTIONS:
+            coalition = 2 # Value in DCS mission event for BLUE
+        else:
+            coalition = 1 # Value in DCS mission event for RED
+
+        for captured in debriefing.base_capture_events:
+            try:
+                id = int(captured.split("||")[0])
+                new_owner_coalition = int(captured.split("||")[1])
+
+                for cp in self.game.theater.controlpoints:
+                    if cp.id == id:
+                        if cp.captured and new_owner_coalition != coalition:
+                            cp.captured = False
+                            cp.base.aircraft = {}
+                            cp.base.armor = {}
+                            cp.base.aa = {}
+                            for g in cp.ground_objects:
+                                g.groups = []
+                        elif not(cp.captured) and new_owner_coalition == coalition:
+                            cp.captured = True
+                            cp.base.aircraft = {}
+                            cp.base.armor = {}
+                            cp.base.aa = {}
+                            for g in cp.ground_objects:
+                                g.groups = []
+            except Exception as e:
+                print(e)
 
     def skip(self):
         pass

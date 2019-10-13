@@ -33,6 +33,12 @@ class Debriefing:
         self.weapons_fired = state_data["weapons_fired"]
         self.mission_ended = state_data["mission_ended"]
 
+        print(self.base_capture_events)
+        print(self.killed_aircrafts)
+        print(self.killed_ground_units)
+        print(self.weapons_fired)
+        print(self.mission_ended)
+
         self.player_country_id = db.country_id_from_name(game.player_country)
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 

@@ -50,7 +50,8 @@ class StrikeEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(StrikeEvent, self).commit(debriefing)
 
-        self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
+        #self.to_cp.base.affect_strength(-self.SINGLE_OBJECT_STRENGTH_INFLUENCE * len(debriefing.destroyed_objects))
+        pass
 
     def player_attacking(self, flights: db.TaskForceDict):
         assert CAP in flights and CAS in flights and SEAD in flights and len(flights) == 3, "Invalid flights"
