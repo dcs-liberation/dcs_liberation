@@ -1,9 +1,15 @@
-local jsonlib = lfs.writedir() .. "Scripts\\DCSLiberation\\json.lua"
+local jsonlib = {{json_file_abs_location}}
 json = loadfile(jsonlib)()
 
-killed_aircrafts = {};
-killed_ground_units = {};
+logger = mist.Logger:new("DCSLiberation", "info")
+
+debriefing_file_location = {{debriefing_file_location}}
+
+killed_aircrafts = {}
+killed_ground_units = {}
 weapons_fired = {}
+base_capture_events = {}
+mission_ended = false
 
 local function messageAll(message)
     local msg = {}
@@ -14,23 +20,24 @@ local function messageAll(message)
 end
 
 write_state = function()
-    log("Writing DCS Liberation State...")
-    local stateFile = lfs.writedir()..[[Scripts\DCSLiberation\state.json]]
-    local fp = io.open(stateFile, 'w')
+    messageAll("Writing DCS Liberation State...")
+    local fp = io.open(debriefing_file_location, 'w')
     local game_state = {
         ["killed_aircrafts"] = killed_aircrafts,
         ["killed_ground_units"] = killed_ground_units,
         ["weapons_fired"] = weapons_fired,
+        ["base_capture_events"] = base_capture_events,
+        ["mission_ended"] = mission_ended,
     }
     fp:write(json:encode(game_state))
     fp:close()
-    log("Done writing DCS Liberation state.")
+    messageAll("Done writing DCS Liberation state.")
 end
 
 mist.scheduleFunction(write_state, {}, timer.getTime() + 10, 60, timer.getTime() + 3600)
 
 activeWeapons = {}
-local function onCrash(event)
+local function onEvent(event)
    if event.id == world.event.S_EVENT_CRASH and event.initiator then
        messageAll("Crash :" .. event.initiator.getName(event.initiator))
        killed_aircrafts[#killed_aircrafts + 1] = event.initiator.getName(event.initiator)
@@ -43,8 +50,16 @@ local function onCrash(event)
     if event.id == world.event.S_EVENT_SHOT and event.weapon then
         weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
     end
+
+    if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
+        base_capture_events[#base_capture_events + 1] = event.place.getName(event.place) .. "||" .. event.place.getCoalition(event.place)
+    end
+
+    if event.id == world.event.S_EVENT_MISSION_END then
+        mission_ended = true
+        write_state()
+    end
+
 end
 
-
-
-mist.addEventHandler(onCrash)
+mist.addEventHandler(onEvent)

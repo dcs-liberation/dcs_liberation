@@ -46,10 +46,12 @@ class FrontlineAttackEvent(Event):
             attacker_country = self.game.enemy_country
             defender_country = self.game.player_country
 
-        alive_attackers = sum([v for k, v in debriefing.alive_units.get(attacker_country, {}).items() if db.unit_task(k) == PinpointStrike])
-        alive_defenders = sum([v for k, v in debriefing.alive_units.get(defender_country, {}).items() if db.unit_task(k) == PinpointStrike])
+        # TODO : Rework
+        #alive_attackers = sum([v for k, v in debriefing.alive_units.get(attacker_country, {}).items() if db.unit_task(k) == PinpointStrike])
+        #alive_defenders = sum([v for k, v in debriefing.alive_units.get(defender_country, {}).items() if db.unit_task(k) == PinpointStrike])
+        #attackers_success = (float(alive_attackers) / (alive_defenders + 0.01)) > self.SUCCESS_FACTOR
+        attackers_success = True
 
-        attackers_success = (float(alive_attackers) / (alive_defenders + 0.01)) > self.SUCCESS_FACTOR
         if self.from_cp.captured:
             return attackers_success
         else:

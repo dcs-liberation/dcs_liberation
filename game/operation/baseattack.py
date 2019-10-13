@@ -50,7 +50,6 @@ class BaseAttackOperation(Operation):
 
     def generate(self):
         self.armorgen.generate(self.attack, self.defense)
-        self.aagen.generate(self.aa)
 
         self.airgen.generate_defense(*assigned_units_split(self.intercept), at=self.defenders_starting_position)
 

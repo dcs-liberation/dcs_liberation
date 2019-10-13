@@ -47,12 +47,6 @@ if __name__ == "__main__":
     copyfile("./resources/scripts/MissionScripting.lua", installation.get_dcs_install_directory() + os.path.sep + "Scripts/MissionScripting.lua")
     app.processEvents()
 
-    # Create DCS Liberation script folder
-    script_dir = installation.get_dcs_saved_games_directory() + os.sep + "Scripts" + os.sep + "DCSLiberation"
-    if not os.path.exists(script_dir):
-        os.makedirs(script_dir)
-    copyfile("./resources/scripts/json.lua", script_dir + os.path.sep + "json.lua")
-
     # Apply CSS (need works)
     app.setStyleSheet(css)
     GameUpdateSignal()

@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -14,188 +15,97 @@ from .persistency import base_path
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
+class DebriefingDeadUnitInfo:
+    country_id = -1
+    player_unit = False
+    type = None
 
-def parse_mutliplayer_debriefing(contents: str):
-    result = {}
-    element = None
-
-    in_events = False
-
-    for line in [x.strip() for x in contents.splitlines()]:
-        if line.startswith("events ="):
-            in_events = True
-        elif line.startswith("} -- end of events"):
-            in_events = False
-
-        if not in_events:
-            continue
-
-        key = None
-        if line.startswith("initiator\t"):
-            key = "initiator"
-            if element is None:
-                element = {}
-        elif line.startswith("initiatorMissionID\t"):
-            key = "initiatorMissionID"
-            if element is None:
-                element = {}
-        elif line.startswith("type\t"):
-            key = "type"
-            if element is None:
-                element = {}
-        elif line.startswith("}, -- end of ["):
-            result[len(result)] = element
-            element = None
-            continue
-        else:
-            continue
-
-        value = re.findall(r"=\s*\"(.*?)\",", line)[0]
-        element[key] = value
-
-    return {"debriefing": {"events": result}}
-
+    def __init__(self, country_id, player_unit , type):
+        self.country_id = country_id
+        self.player_unit = player_unit
+        self.type = type
 
 class Debriefing:
-    def __init__(self, dead_units, dead_units_name, trigger_state):
-        self.destroyed_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
-        self.alive_units = {}  # type: typing.Dict[str, typing.Dict[UnitType, int]]
-        self.destroyed_objects = []  # type: typing.List[str]
+    def __init__(self, state_data, game):
+        self.base_capture_events = state_data["base_capture_events"]
+        self.killed_aircrafts = state_data["killed_aircrafts"]
+        self.killed_ground_units = state_data["killed_ground_units"]
+        self.weapons_fired = state_data["weapons_fired"]
+        self.mission_ended = state_data["mission_ended"]
 
-        self._trigger_state = trigger_state
-        self._dead_units = dead_units
-        self.dead_units_name = dead_units_name
+        self.player_country_id = db.country_id_from_name(game.player_country)
+        self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 
-    @classmethod
-    def parse(cls, path: str):
-        dead_units = []
-        dead_units_name = []
+        self.dead_aircraft = []
+        self.dead_units = []
 
-        def append_dead_object(object_mission_id_str, object_name):
-            nonlocal dead_units
-            object_mission_id = int(object_mission_id_str)
-            if object_mission_id in dead_units:
-                logging.error("debriefing: failed to append_dead_object {}: already exists!".format(object_mission_id))
-                return
-
-            dead_units.append(object_mission_id)
-            dead_units_name.append(object_name)
-
-        def parse_dead_object(event):
-            print(event)
+        for aircraft in self.killed_aircrafts:
             try:
-                append_dead_object(event["initiatorMissionID"], event["initiator"])
+                country = int(aircraft.split("|")[1])
+                type = db.unit_type_from_name(aircraft.split("|")[4])
+                player_unit = (country == self.player_country_id)
+                aircraft = DebriefingDeadUnitInfo(country, player_unit, type)
+                self.dead_aircraft.append(aircraft)
             except Exception as e:
-                logging.error(e)
+                print(e)
 
-        with open(path, "r") as f:
-            table_string = f.read()
+        for unit in self.killed_ground_units:
             try:
-                table = parse.loads(table_string)
+                country = int(unit.split("|")[1])
+                type = db.unit_type_from_name(unit.split("|")[4])
+                player_unit = (country == self.player_country_id)
+                unit = DebriefingDeadUnitInfo(country, player_unit, type)
+                self.dead_units.append(unit)
             except Exception as e:
-                table = parse_mutliplayer_debriefing(table_string)
+                print(e)
 
-            events = table.get("debriefing", {}).get("events", {})
-            for event in events.values():
-                event_type = event.get("type", None)
-                if event_type in ["crash", "dead"]:
-                    parse_dead_object(event)
+        self.player_dead_aircraft = [a for a in self.dead_aircraft if a.country_id == self.player_country_id]
+        self.enemy_dead_aircraft = [a for a in self.dead_aircraft if a.country_id == self.enemy_country_id]
+        self.player_dead_units = [a for a in self.dead_units if a.country_id == self.player_country_id]
+        self.enemy_dead_units = [a for a in self.dead_units if a.country_id == self.enemy_country_id]
 
-            trigger_state = table.get("debriefing", {}).get("triggers_state", {})
+        self.player_dead_aircraft_dict = {}
+        for a in self.player_dead_aircraft:
+            if a.type in self.player_dead_aircraft_dict.keys():
+                self.player_dead_aircraft_dict[a.type] = self.player_dead_aircraft_dict[a.type] + 1
+            else:
+                self.player_dead_aircraft_dict[a.type] = 1
 
-        return Debriefing(dead_units, dead_units_name, trigger_state)
+        self.enemy_dead_aircraft_dict = {}
+        for a in self.enemy_dead_aircraft:
+            if a.type in self.enemy_dead_aircraft_dict.keys():
+                self.enemy_dead_aircraft_dict[a.type] = self.enemy_dead_aircraft_dict[a.type] + 1
+            else:
+                self.enemy_dead_aircraft_dict[a.type] = 1
 
-    def calculate_units(self, regular_mission: Mission, quick_mission: Mission, player_country: str, enemy_country: str):
-        def count_groups(groups: typing.List[UnitType]) -> typing.Dict[UnitType, int]:
-            result = {}
-            for group in groups:
-                for unit in group.units:
-                    unit_type = db.unit_type_of(unit)
-                    if unit_type in db.EXTRA_AA.values():
-                        continue
+        self.player_dead_units_dict = {}
+        for a in self.player_dead_units:
+            if a.type in self.player_dead_units_dict.keys():
+                self.player_dead_units_dict[a.type] = self.player_dead_units_dict[a.type] + 1
+            else:
+                self.player_dead_units_dict[a.type] = 1
 
-                    result[unit_type] = result.get(unit_type, 0) + 1
+        self.enemy_dead_units_dict = {}
+        for a in self.enemy_dead_units:
+            if a.type in self.enemy_dead_units_dict.keys():
+                self.enemy_dead_units_dict[a.type] = self.enemy_dead_units_dict[a.type] + 1
+            else:
+                self.enemy_dead_units_dict[a.type] = 1
 
-            return result
-
-        mission = regular_mission if len(self._trigger_state) else quick_mission
-
-        player = mission.country(player_country)
-        enemy = mission.country(enemy_country)
-        
-        player_units = count_groups(player.plane_group + player.vehicle_group + player.ship_group)
-        enemy_units = count_groups(enemy.plane_group + enemy.vehicle_group + enemy.ship_group)
-
-        self.destroyed_units = {
-            player.name: {},
-            enemy.name: {},
-        }
-
-        all_groups = {
-            player.name: player.plane_group + player.helicopter_group + player.vehicle_group + player.ship_group,
-            enemy.name: enemy.plane_group + enemy.helicopter_group + enemy.vehicle_group + enemy.ship_group,
-        }
-
-        static_groups = enemy.static_group
-
-        for country_name, country_groups in all_groups.items():
-            for group in country_groups:
-                for unit in group.units:
-                    if unit.id in self._dead_units:
-                        unit_type = db.unit_type_of(unit)
-                        logging.info("debriefing: found dead unit {} ({}, {}) for country {}".format(str(unit.name), unit.id, unit_type, country_name))
-
-                        assert country_name
-                        assert unit_type
-                        self.destroyed_units[country_name][unit_type] = self.destroyed_units[country_name].get(unit_type, 0) + 1
-                        self._dead_units.remove(unit.id)
-
-        for group in static_groups:
-            identifier = group.units[0].id
-            if identifier in self._dead_units:
-                logging.info("debriefing: found dead static {} ({})".format(str(group.name), identifier))
-
-                assert str(group.name)
-                self.destroyed_objects.append(str(group.name))
-                self._dead_units.remove(identifier)
-
-        logging.info("debriefing: unsatistied ids: {}".format(self._dead_units))
-
-        self.alive_units = {
-            player.name: {k: v - self.destroyed_units[player.name].get(k, 0) for k, v in player_units.items()},
-            enemy.name: {k: v - self.destroyed_units[enemy.name].get(k, 0) for k, v in enemy_units.items()},
-        }
-
-
-def debriefing_directory_location() -> str:
-    return os.path.join(base_path(), "liberation_debriefings")
-
-
-def _logfiles_snapshot() -> typing.Dict[str, float]:
-    result = {}
-    for file in os.listdir(debriefing_directory_location()):
-        fullpath = os.path.join(debriefing_directory_location(), file)
-        result[file] = os.path.getmtime(fullpath)
-
-    return result
-
-
-def _poll_new_debriefing_log(snapshot: typing.Dict[str, float], callback: typing.Callable):
-    should_run = True
-    while should_run:
-        for file, timestamp in _logfiles_snapshot().items():
-            if file not in snapshot or timestamp != snapshot[file]:
-                debriefing = Debriefing.parse(os.path.join(debriefing_directory_location(), file))
+def _poll_new_debriefing_log(callback: typing.Callable, game):
+    if os.path.isfile("state.json"):
+        last_modified = os.path.getmtime("state.json")
+    else:
+        last_modified = 0
+    while True:
+        if os.path.isfile("state.json") and os.path.getmtime("state.json") > last_modified:
+            with open("state.json", "r") as json_file:
+                json_data = json.load(json_file) #Debriefing.parse(os.path.join(debriefing_directory_location(), file))
+                debriefing = Debriefing(json_data, game)
                 callback(debriefing)
-                should_run = False
-                break
+            break
+        time.sleep(5)
 
-        time.sleep(3)
-
-
-def wait_for_debriefing(callback: typing.Callable):
-    if not os.path.exists(debriefing_directory_location()):
-        os.mkdir(debriefing_directory_location())
-
-    threading.Thread(target=_poll_new_debriefing_log, args=(_logfiles_snapshot(), callback)).start()
+def wait_for_debriefing(callback: typing.Callable, game):
+    threading.Thread(target=_poll_new_debriefing_log, args=[callback, game]).start()
 

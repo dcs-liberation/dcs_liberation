@@ -19,9 +19,6 @@ class QDebriefingWindow(QDialog):
         self.gameEvent = gameEvent
         self.debriefing = debriefing
 
-        self.player_losses = debriefing.destroyed_units.get(self.game.player_country, {})
-        self.enemy_losses = debriefing.destroyed_units.get(self.game.enemy_country, {})
-
         self.initUI()
 
     def initUI(self):
@@ -44,7 +41,12 @@ class QDebriefingWindow(QDialog):
         lostUnits.setLayout(lostUnitsLayout)
 
         row = 0
-        for unit_type, count in self.player_losses.items():
+        for unit_type, count in self.debriefing.player_dead_aircraft_dict.items():
+            lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
+            lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+            row += 1
+
+        for unit_type, count in self.debriefing.player_dead_units_dict.items():
             lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
             lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
             row += 1
@@ -56,13 +58,20 @@ class QDebriefingWindow(QDialog):
         enemylostUnitsLayout = QGridLayout()
         enemylostUnits.setLayout(enemylostUnitsLayout)
 
-        row = 0
-        if self.debriefing.destroyed_objects:
-            enemylostUnitsLayout.addWidget(QLabel("Ground assets"), row, 0)
-            enemylostUnitsLayout.addWidget(QLabel("{}".format(len(self.debriefing.destroyed_objects))), row, 1)
+        #row = 0
+        #if self.debriefing.destroyed_objects:
+        #    enemylostUnitsLayout.addWidget(QLabel("Ground assets"), row, 0)
+        #    enemylostUnitsLayout.addWidget(QLabel("{}".format(len(self.debriefing.destroyed_objects))), row, 1)
+        #    row += 1
+
+        for unit_type, count in self.debriefing.enemy_dead_aircraft_dict.items():
+            if count == 0:
+                continue
+            enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
+            enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
             row += 1
 
-        for unit_type, count in self.enemy_losses.items():
+        for unit_type, count in self.debriefing.enemy_dead_units_dict.items():
             if count == 0:
                 continue
             enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)

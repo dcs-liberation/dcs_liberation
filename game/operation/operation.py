@@ -1,8 +1,7 @@
 from dcs.lua.parse import loads
 
-from userdata.debriefing import *
-
 from gen import *
+from userdata.debriefing import *
 
 TANKER_CALLSIGNS = ["Texaco", "Arco", "Shell"]
 
@@ -17,7 +16,6 @@ class Operation:
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
-    aagen = None  # type: AAConflictGenerator
     extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
@@ -67,7 +65,6 @@ class Operation:
         self.conflict = conflict
         self.armorgen = ArmorConflictGenerator(mission, conflict)
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
-        self.aagen = AAConflictGenerator(mission, conflict)
         self.shipgen = ShipGenerator(mission, conflict)
         self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
@@ -84,8 +81,6 @@ class Operation:
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
-
-        dcs.Mission.aaa_vehicle_group = aaa.aaa_vehicle_group
 
         self.current_mission = dcs.Mission(terrain)
 
@@ -200,7 +195,10 @@ class Operation:
         load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
         with open(os.path.abspath("./resources/scripts/dcs_liberation.lua")) as f:
             script = f.read()
-            script = script.replace("{{json_file_abs_location}}", "'"+os.path.abspath("./resources/scripts/json.lua"+"'"))
+            json_location = "[["+os.path.abspath("resources\\scripts\\json.lua")+"]]"
+            state_location = "[[" + os.path.abspath("state.json") + "]]"
+            script = script.replace("{{json_file_abs_location}}", json_location)
+            script = script.replace("{{debriefing_file_location}}", state_location)
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
 

@@ -31,7 +31,6 @@ class InfantryTransportOperation(Operation):
         self.airgen.generate_passenger_transport(*assigned_units_split(self.transport), at=self.attackers_starting_position)
 
         self.armorgen.generate_passengers(count=6)
-        self.aagen.generate_at_defenders_location(self.aa)
 
         self.visualgen.generate_transportation_marker(self.conflict.ground_attackers_location)
         self.visualgen.generate_transportation_destination(self.conflict.position)

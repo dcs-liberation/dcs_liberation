@@ -2,6 +2,7 @@ import typing
 import enum
 from datetime import datetime
 
+from dcs.countries import get_by_id, country_dict
 from dcs.vehicles import *
 from dcs.ships import *
 from dcs.planes import *
@@ -834,6 +835,13 @@ def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
 
 def unitdict_from(fd: AssignedUnitsDict) -> Dict:
     return {k: v1 for k, (v1, v2) in fd.items()}
+
+
+def country_id_from_name(name):
+    for k,v in country_dict.items():
+        if v.name == name:
+            return k
+    return -1
 
 
 def _validate_db():

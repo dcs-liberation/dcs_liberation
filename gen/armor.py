@@ -37,11 +37,17 @@ class ArmorConflictGenerator:
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
 
     def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, to: Point = None, move_formation: PointAction = PointAction.OffRoad):
+
+        if side == self.conflict.attackers_country:
+            cp = self.conflict.from_cp
+        else:
+            cp = self.conflict.to_cp
+
         for c in range(count):
             logging.info("armorgen: {} for {}".format(unit, side.id))
             group = self.m.vehicle_group(
                     side,
-                    namegen.next_unit_name(side, unit),
+                    namegen.next_unit_name(side, cp.id, unit),
                     unit,
                     position=self._group_point(at),
                     group_size=1,

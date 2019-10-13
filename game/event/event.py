@@ -130,43 +130,64 @@ class Event:
 
     def commit(self, debriefing: Debriefing):
 
-        for destroyed_unit_name in debriefing.dead_units_name:
+        logging.info("Commiting mission results")
 
-            for cp in self.game.theater.controlpoints:
+        # ------------------------------
+        # Destroyed aircrafts
+        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
+        for destroyed_aircraft in debriefing.killed_aircrafts:
+            try:
+                cpid = int(destroyed_aircraft.split("|")[3])
+                type = db.unit_type_from_name(destroyed_aircraft.split("|")[4])
+                if cpid in cp_map.keys():
+                    cp = cp_map[cpid]
+                    if type in cp.base.aircraft.keys():
+                        logging.info("Aircraft destroyed : " + str(type))
+                        cp.base.aircraft[type] = max(0, cp.base.aircraft[type]-1)
+            except Exception as e:
+                print(e)
 
-                for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.dcs_identifier == "AA":
-                        for g in ground_object.groups:
-                            for u in g.units:
-                                if u.name == destroyed_unit_name:
-                                    g.units.remove(u)
-                        ucount = sum([len(g.units) for g in ground_object.groups])
-                        print(ucount)
-                        if ucount == 0:
-                            print("SET DEAD")
-                            ground_object.is_dead = True
+        # ------------------------------
+        # Destroyed ground units
+        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
+        for killed_ground_unit in debriefing.killed_ground_units:
+            try:
+                cpid = int(killed_ground_unit.split("|")[3])
+                type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
+                if cpid in cp_map.keys():
+                    cp = cp_map[cpid]
+                    if type in cp.base.armor.keys():
+                        logging.info("Ground unit destroyed : " + str(type))
+                        cp.base.armor[type] = max(0, cp.base.armor[type] - 1)
+            except Exception as e:
+                print(e)
 
-        for country, losses in debriefing.destroyed_units.items():
-            if country == self.attacker_name:
-                cp = self.departure_cp
-            else:
-                cp = self.to_cp
-
-            logging.info("base {} commit losses {}".format(cp.base, losses))
-            cp.base.commit_losses(losses)
-
-        for object_identifier in debriefing.destroyed_objects:
+        # ------------------------------
+        # Static ground objects
+        for destroyed_ground_unit_name in debriefing.killed_ground_units:
             for cp in self.game.theater.controlpoints:
                 if not cp.ground_objects:
                     continue
 
+                # -- Static ground objects
                 for i, ground_object in enumerate(cp.ground_objects):
                     if ground_object.is_dead:
                         continue
 
-                    if ground_object.matches_string_identifier(object_identifier):
+                    if ground_object.matches_string_identifier(destroyed_ground_unit_name):
                         logging.info("cp {} killing ground object {}".format(cp, ground_object.string_identifier))
                         cp.ground_objects[i].is_dead = True
+
+                # -- AA Site groups
+                for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.dcs_identifier == "AA":
+                        for g in ground_object.groups:
+                            for u in g.units:
+                                if u.name == destroyed_ground_unit_name:
+                                    g.units.remove(u)
+                        ucount = sum([len(g.units) for g in ground_object.groups])
+                        if ucount == 0:
+                            ground_object.is_dead = True
 
     def skip(self):
         pass
