@@ -303,7 +303,7 @@ UNIT_BY_TASK = {
         Mi_8MT,
         Mi_28N,
         Mi_24V,
-        MiG_27K
+        MiG_27K,
     ],
     Transport: [
         IL_76MD,
@@ -500,7 +500,8 @@ EXTRA_AA = {
     "Israel": AirDefence.AAA_Vulcan_M163,
     "India": AirDefence.SPAAA_ZSU_23_4_Shilka,
     "United Arab Emirates": AirDefence.Stinger_MANPADS,
-    "Insurgents": AirDefence.AAA_ZU_23_Insurgent_on_Ural_375
+    "Insurgents": AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
+    "Third Reich": AirDefence.AAA_Flak_Vierling_38,
 }
 
 """
@@ -895,3 +896,4 @@ class DefaultLiveries:
 # TODO : refactor/remove
 OH_58D.Liveries = DefaultLiveries
 F_16C_50.Liveries = DefaultLiveries
+P_51D_30_NA.Liveries = DefaultLiveries
