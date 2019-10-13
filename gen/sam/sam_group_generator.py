@@ -1,15 +1,10 @@
-import math
 import random
 
-from dcs import unitgroup
-from dcs.point import PointAction
-from dcs.unit import Vehicle
-from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
 
 from game import db
 from gen.sam.aaa_bofors import BoforsGenerator
-from gen.sam.aaa_flak36 import Flak36Generator
+from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
@@ -55,7 +50,7 @@ SAM_MAP = {
     AirDefence.SAM_Patriot_EPP_III: PatriotGenerator,
     AirDefence.SAM_Chaparral_M48: ChaparralGenerator,
     AirDefence.AAA_Bofors_40mm: BoforsGenerator,
-    AirDefence.AAA_Flak_36: Flak36Generator,
+    AirDefence.AAA_Flak_36: FlakGenerator,
     AirDefence.SAM_SA_2_LN_SM_90: SA2Generator,
     AirDefence.SAM_SA_3_S_125_LN_5P73: SA3Generator,
     AirDefence.SAM_SA_6_Kub_LN_2P25: SA6Generator,
