@@ -86,6 +86,7 @@ class AircraftConflictGenerator:
     def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], client_count: int):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
+
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
             override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
             if type(override_loadout) == dict:
@@ -116,6 +117,10 @@ class AircraftConflictGenerator:
                 group.units[idx].set_player()
             else:
                 group.units[idx].set_client()
+
+            # Set up F-14 Client to have pre-stored alignement
+            if unit_type is F_14B:
+                group.units[idx].set_property(F_14B.Properties.INSAlignmentStored.id, True)
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
