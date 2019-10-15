@@ -7,8 +7,8 @@ from .landmap import *
 class NormandyTheater(ConflictTheater):
     terrain = dcs.terrain.Normandy()
     overview_image = "normandy.gif"
-    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-50, -500),
-                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (970, 250)}
+    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-170, -1000),
+                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (2020, 500)}
     landmap = load_landmap("resources\\normandylandmap.p")
     daytime_map = {
         "dawn": (6, 8),
