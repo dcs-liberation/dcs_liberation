@@ -84,6 +84,10 @@ class QLiberationMap(QGraphicsView):
 
 
             for ground_object in cp.ground_objects:
+
+                if ground_object.airbase_group:
+                    continue
+
                 go_pos = self._transform_point(ground_object.position)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
 
