@@ -8,6 +8,7 @@ from dcs.vehicles import *
 
 from game.game_stats import GameStats
 from gen.conflictgen import Conflict
+from gen.flights.ai_flight_planner import FlightPlanner
 from userdata.debriefing import Debriefing
 from theater import *
 
@@ -111,6 +112,7 @@ class Game:
         self.date = datetime(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
+        self.planners = {}
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -309,6 +311,15 @@ class Game:
 
         # Update statistics
         self.game_stats.update(self)
+
+        # Plan flights for next turn
+        self.planners = {}
+        for cp in self.theater.controlpoints:
+            planner = FlightPlanner(cp, self)
+            planner.plan_flights()
+            self.planners[cp.id] = planner
+            print(planner)
+
 
     @property
     def current_turn_daytime(self):

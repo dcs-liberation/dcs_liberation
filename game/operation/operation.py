@@ -135,9 +135,8 @@ class Operation:
         # Generate ground object first
         self.groundobjectgen.generate()
 
-        # air support
+        # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)
-
 
         # Generate Activity on the map
         for cp in self.game.theater.controlpoints:
@@ -157,20 +156,15 @@ class Operation:
             self.airgen.generate_dead_sead(cp, country)
 
 
-        for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
 
-        if self.is_awacs_enabled:
-            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
 
-        # combined arms
+        #Setup combined arms parameters
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
         if self.game.player_country in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
             self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
-        #self.extra_aagen.generate()
 
         # triggers
         if self.game.is_player_attack(self.conflict.attackers_country):
@@ -192,18 +186,10 @@ class Operation:
         # options
         self.forcedoptionsgen.generate()
 
-        # main frequencies
-        self.briefinggen.append_frequency("Flight", "251 MHz AM")
-        if self.departure_cp.is_global or self.conflict.to_cp.is_global:
-            self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
-
-        # briefing
-        self.briefinggen.generate()
-
-        # visuals
+        # Generate Visuals Smoke Effects
         self.visualgen.generate()
 
-        # Scripts
+        # Inject Lua Scripts
         load_mist = TriggerStart(comment="Load Mist Lua Framework")
         with open(os.path.abspath("./resources/scripts/mist_4_3_74.lua")) as f:
             load_mist.add_action(DoScript(String(f.read())))
@@ -218,6 +204,20 @@ class Operation:
             script = script.replace("{{debriefing_file_location}}", state_location)
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
+
+        # Briefing Generation
+        for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
+            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
+
+        if self.is_awacs_enabled:
+            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
+
+        self.briefinggen.append_frequency("Flight", "251 MHz AM")
+        if self.departure_cp.is_global or self.conflict.to_cp.is_global:
+            self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
+
+        # Generate the briefing
+        self.briefinggen.generate()
 
 
 

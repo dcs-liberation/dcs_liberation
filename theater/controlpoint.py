@@ -1,8 +1,7 @@
-import typing
 import re
+import typing
 
 from dcs.mapping import *
-from dcs.country import *
 from dcs.terrain import Airport
 
 from .theatergroundobject import TheaterGroundObject
