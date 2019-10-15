@@ -21,6 +21,10 @@ class FlightType(Enum):
     LOGISTICS = 12
     EVAC = 13
 
+    ELINT = 14
+    RECON = 15
+    EWAR = 16
+
 
 class Flight:
 

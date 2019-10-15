@@ -69,6 +69,7 @@ CAS_CAPABLE = [
     Su_24MR,
     Su_25,
     Su_25T,
+    Su_25TM,
     Su_34,
 
     M_2000C,
