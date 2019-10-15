@@ -5,6 +5,8 @@ from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QFrame, QDialog, QVB
 from dcs.unittype import UnitType
 
 from game.event import UnitsDeliveryEvent
+from qt_ui.widgets.QBaseInformation import QBaseInformation
+from qt_ui.widgets.QPlannedFlightView import QPlannedFlightView
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, CAP, Embarking, AirDefence, CAS, PinpointStrike, db
 from game import Game
@@ -14,8 +16,14 @@ class QBaseMenu(QDialog):
 
     def __init__(self, parent, controlPoint: ControlPoint, game: Game):
         super(QBaseMenu, self).__init__(parent)
+
         self.cp = controlPoint
         self.game = game
+
+        try:
+            self.airport = game.theater.terrain.airport_by_id(self.cp.id)
+        except:
+            self.airport = None
 
 
         if self.cp.captured:
@@ -68,8 +76,10 @@ class QBaseMenu(QDialog):
                 PinpointStrike: db.find_unittype(PinpointStrike, self.game.enemy_name),
             }
 
-        self.mainLayout = QVBoxLayout()
-        self.mainLayout.addWidget(self.topLayoutWidget)
+        self.mainLayout = QGridLayout()
+
+        self.leftLayout = QVBoxLayout()
+        self.leftLayout.addWidget(self.topLayoutWidget)
 
         tasks = list(units.keys())
         tasks_per_column = 3
@@ -123,7 +133,7 @@ class QBaseMenu(QDialog):
                     add_purchase_row(unit_type, taskBoxLayout)
 
                 self.unitLayout.addWidget(taskBox)
-            self.mainLayout.addLayout(self.unitLayout)
+            self.leftLayout.addLayout(self.unitLayout)
         else:
             intel = QGroupBox("Intel")
             intelLayout = QVBoxLayout()
@@ -148,7 +158,15 @@ class QBaseMenu(QDialog):
                         row += 1
 
                     intelLayout.addWidget(group)
-            self.mainLayout.addLayout(intelLayout)
+            self.leftLayout.addLayout(intelLayout)
+
+        self.mainLayout.addLayout(self.leftLayout, 0, 0)
+
+        try:
+            self.mainLayout.addWidget(QPlannedFlightView(self.game.planners[self.cp.id]), 0, 1)
+        except Exception as e:
+            print(e)
+        self.mainLayout.addWidget(QBaseInformation(self.cp, self.airport), 0, 3)
 
         self.setLayout(self.mainLayout)
 

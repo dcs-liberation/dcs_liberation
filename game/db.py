@@ -773,7 +773,7 @@ def task_name(task) -> str:
     elif task == Embarking:
         return "Transportation"
     elif task == PinpointStrike:
-        return "Ground units"
+        return "Frontline units"
     else:
         return task.name
 
