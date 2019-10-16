@@ -24,6 +24,7 @@ FIGHT_DISTANCE = 3500
 
 
 class ArmorConflictGenerator:
+
     def __init__(self, mission: Mission, conflict: Conflict):
         self.m = mission
         self.conflict = conflict

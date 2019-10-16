@@ -145,17 +145,20 @@ class Operation:
                 country = self.current_mission.country(self.game.player_country)
             else:
                 country = self.current_mission.country(self.game.enemy_country)
-            ## # CAP
-            ## self.airgen.generate_patrol_group(cp, country)
-            ## # CAS
-            ## self.airgen.generate_patrol_cas(cp, country)
-            ## # SEAD
-            ## self.airgen.generate_dead_sead(cp, country)
             if cp.id in self.game.planners.keys():
                 self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
 
-
-
+        # Generate ground units on frontline everywhere
+        for cp in self.game.theater.controlpoints:
+            if cp.captured:
+                for cp_enn in cp.connected_points:
+                    if not cp_enn.captured:
+                        conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
+                                                                   self.current_mission.country(self.attacker_country),
+                                                                   self.current_mission.country(self.defender_country),
+                                                                   cp, cp_enn, self.game.theater)
+                        armorgen = ArmorConflictGenerator(self.current_mission, conflict)
+                        armorgen.generate_vec(cp.base.armor, cp_enn.base.armor)
 
         #Setup combined arms parameters
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0

@@ -603,6 +603,10 @@ PLANE_PAYLOAD_OVERRIDES = {
         SEAD: "Stand Off 2"
     },
 
+    AH_64D:{
+        CAS: "AGM-114K*16"
+    },
+
     A_10C: {
         CAS: "AGM-65D*2,AGM-65H*2,GBU-12*2,GBU-38*2,AIM-9*2,TGP,ECM,MK151*7",
         GroundAttack: "AGM-65K*2,GBU-12*8,AIM-9M*2.ECM,TGP",
@@ -628,6 +632,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
 
     Su_24M: {
+        CAS: "S-24*6",
         SEAD: "Kh25MPU*2_Kh25ML*2_L-081"
     },
 
@@ -636,6 +641,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
 
     Su_17M4: {
+        CAS: "Kh-25MR*4,R-60M*2,Fuel*2",
         SEAD: "Kh25MPU*2_Kh25ML*2_,R60M*2_Fuel*2"
     },
 
