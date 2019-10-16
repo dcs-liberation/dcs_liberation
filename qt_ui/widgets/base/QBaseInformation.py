@@ -1,6 +1,5 @@
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox
+from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout
 
-from game import db
 from theater import ControlPoint, Airport
 
 
@@ -30,4 +29,7 @@ class QBaseInformation(QGroupBox):
             self.layout.addWidget(QLabel(str(v) + " x " + k), i, 0)
             i = i + 1
 
+        stretch = QVBoxLayout()
+        stretch.addStretch()
+        self.layout.addLayout(stretch, len(unit_dict) + 1, 0)
         self.setLayout(self.layout)

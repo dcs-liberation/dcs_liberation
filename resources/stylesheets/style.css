@@ -53,6 +53,12 @@ QPushButton[style="btn-danger"]:hover{
     cursor: pointer;
 }
 
+QLabel[style="base-title"]{
+    font-size: 24px;
+    font-color: #ccc;
+    border: 1px solid #ccc;
+}
+
 /*QBaseMenu{
     background-color:#699245;
     color:white;
