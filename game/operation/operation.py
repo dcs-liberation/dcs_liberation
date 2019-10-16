@@ -145,15 +145,14 @@ class Operation:
                 country = self.current_mission.country(self.game.player_country)
             else:
                 country = self.current_mission.country(self.game.enemy_country)
-
-            # CAP
-            self.airgen.generate_patrol_group(cp, country)
-
-            # CAS
-            self.airgen.generate_patrol_cas(cp, country)
-
-            # SEAD
-            self.airgen.generate_dead_sead(cp, country)
+            ## # CAP
+            ## self.airgen.generate_patrol_group(cp, country)
+            ## # CAS
+            ## self.airgen.generate_patrol_cas(cp, country)
+            ## # SEAD
+            ## self.airgen.generate_dead_sead(cp, country)
+            if cp.id in self.game.planners.keys():
+                self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
 
 
 

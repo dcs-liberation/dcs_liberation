@@ -169,6 +169,7 @@ class FlightPlanner:
                 flight.scheduled_in = offset + i*random.randint(CAS_EVERY_X_MINUTES-5, CAS_EVERY_X_MINUTES+5)
 
                 location = random.choice(cas_location)
+                flight.targets.append(cas_location)
                 flight.points.append([location[0], location[1], 1000]) # TODO : Egress / Ingress points
 
                 self.cas_flights.append(flight)

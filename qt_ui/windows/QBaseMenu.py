@@ -111,7 +111,6 @@ class QBaseMenu(QDialog):
                 self.recruitmentLayout.addWidget(task_box)
                 self.recruitmentLayout.addStretch()
 
-
             self.recruitment.setLayout(self.recruitmentLayout)
             self.leftLayout.addWidget(self.recruitment)
             self.leftLayout.addStretch()

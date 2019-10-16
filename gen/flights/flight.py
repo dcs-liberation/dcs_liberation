@@ -34,6 +34,7 @@ class Flight:
     type = ""
     count = 0
     client_count = 0
+    targets = []
 
     # How long before this flight should take off
     scheduled_in = 0

@@ -2,6 +2,8 @@ import logging
 
 from game import db
 from game.settings import Settings
+from gen.flights.ai_flight_planner import FlightPlanner
+from gen.flights.flight import Flight, FlightType
 from .conflictgen import *
 from .naming import *
 from .triggergen import TRIGGER_WAYPOINT_OFFSET
@@ -282,6 +284,71 @@ class AircraftConflictGenerator:
             groups.append(group)
         return groups
 
+
+    def generate_flights(self, cp, country, flight_planner:FlightPlanner):
+
+        for flight in flight_planner.cap_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            self.setup_group_as_cap_flight(group, flight)
+
+        for flight in flight_planner.cas_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            self.setup_group_as_cas_flight(group, flight)
+
+        for flight in flight_planner.sead_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            self.setup_group_as_sead_flight(group, flight)
+
+    def generate_planned_flight(self, cp, country, flight:Flight):
+        try:
+            group = self._generate_at_airport(
+                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                side=country,
+                unit_type=flight.unit_type,
+                count=flight.count,
+                client_count=0,
+                airport=self.m.terrain.airport_by_id(cp.at.id),
+                start_type=StartType.Runway)
+        except Exception:
+            group = self._generate_group(
+                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                side=country,
+                unit_type=flight.unit_type,
+                count=flight.count,
+                client_count=0,
+                at=cp.position)
+            group.points[0].alt = 1500
+        group.points[0].ETA = flight.scheduled_in * 60
+        return group
+
+    def setup_group_as_cap_flight(self, group, flight):
+        self._setup_group(group, CAP, flight.client_count)
+        for point in flight.points:
+            group.add_waypoint(Point(point[0],point[1]), point[2])
+
+    def setup_group_as_cas_flight(self, group, flight):
+        group.task = CAS.name
+        self._setup_group(group, CAS, 0)
+
+        group.points[0].tasks.clear()
+        group.points[0].tasks.append(CASTaskAction())
+        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+
+        for location in flight.points:
+            group.add_waypoint(Point(location[0], location[1]), location[2])
+
+    def setup_group_as_sead_flight(self, group, flight):
+        self._setup_group(group, SEAD, flight.client_count)
+
+        group.points[0].tasks.clear()
+        group.points[0].tasks.append(SEADTaskAction())
+        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+        group.points[0].tasks.append(OptROE(OptROE.Values.WeaponFree))
+
+        for point in flight.points:
+            group.add_waypoint(Point(point[0], point[1]), point[2])
+
     def generate_cas_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None, escort=True):
         assert not escort or len(self.escort_targets) == 0
 
@@ -303,155 +370,6 @@ class AircraftConflictGenerator:
             if escort:
                 self.escort_targets.append((group, group.points.index(waypoint)))
             self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_patrol_group(self, cp: ControlPoint, country):
-
-        aircraft = dict({k:v for k,v in cp.base.aircraft.items() if k in [u for u in db.UNIT_BY_TASK[CAP]]})
-        delta = random.randint(1, 7)
-
-        for i in range(6):
-            if(len(aircraft.keys())) > 0:
-                print(aircraft.keys())
-                type = random.choice(list(aircraft.keys()))
-                number = random.choice([2, 2, 2, 4])
-                if(number > aircraft[type]):
-                    del aircraft[type]
-                else:
-                    aircraft[type] = aircraft[type] - number
-
-                try:
-                    group = self._generate_at_airport(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        airport=self.m.terrain.airport_by_id(cp.at.id),
-                        start_type=StartType.Runway)
-                except Exception:
-                    group = self._generate_group(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        at=cp.position)
-
-                self._setup_group(group, CAP, 0)
-
-                patrol_alt = random.randint(3600, 7000)
-                group.points[0].alt = patrol_alt
-                group.points[0].ETA = delta*60 + i*random.randint(18,23)*60
-
-                patrolled = []
-                for ground_object in cp.ground_objects:
-                    if not ground_object.group_id in patrolled and not ground_object.airbase_group:
-                        group.add_waypoint(ground_object.position, patrol_alt)
-                        patrolled.append(ground_object.group_id)
-
-    def generate_patrol_cas(self, cp: ControlPoint, country):
-        connected_enemy_cp = [c for c in cp.connected_points if c.captured != cp.captured]
-        if len(connected_enemy_cp) <= 0: return
-
-        aircraft = dict({k: v for k, v in cp.base.aircraft.items() if k in [u for u in db.UNIT_BY_TASK[CAS]]})
-        delta = random.randint(1, 7)
-
-        for i in range(3):
-            target_cp = random.choice(connected_enemy_cp)
-            if (len(aircraft.keys())) > 0:
-                type = random.choice(list(aircraft.keys()))
-                number = random.choice([2, 2, 2, 2, 2, 4])
-                if (number > aircraft[type]):
-                    del aircraft[type]
-                else:
-                    aircraft[type] = aircraft[type] - number
-
-                try:
-                    group = self._generate_at_airport(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        airport=self.m.terrain.airport_by_id(cp.at.id),
-                        start_type=StartType.Runway)
-                except Exception:
-                    group = self._generate_group(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        at=cp.position)
-
-                group.task = CAS.name
-                self._setup_group(group, CAS, 0)
-
-                alt = random.randint(500, 2500)
-                group.points[0].alt = 4000
-                group.points[0].ETA = delta * 60 + i * random.randint(36, 46) * 60
-                group.points[0].tasks.clear()
-                group.points[0].tasks.append(CASTaskAction())
-                group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-                group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
-
-                target_cas_point_x = (cp.position.x + target_cp.position.x) / 2
-                target_cas_point_y = (cp.position.y + target_cp.position.y) / 2
-
-                group.add_waypoint(Point(target_cas_point_x, target_cas_point_y), alt)
-
-    def generate_dead_sead(self, cp: ControlPoint, country):
-        connected_enemy_cp = [c for c in cp.connected_points if c.captured != cp.captured]
-        if len(connected_enemy_cp) <= 0: return
-
-        possible_sead_units = [craft for craft in db.PLANE_PAYLOAD_OVERRIDES if SEAD in db.PLANE_PAYLOAD_OVERRIDES[craft].keys()]
-        aircraft = dict({k: v for k, v in cp.base.aircraft.items() if k in possible_sead_units})
-
-        delta = random.randint(1, 7)
-
-        for i in range(3):
-            target_cp = random.choice(connected_enemy_cp)
-            if (len(aircraft.keys())) > 0:
-                type = random.choice(list(aircraft.keys()))
-                number = random.choice([2, 2, 2, 2, 2, 4])
-                if (number > aircraft[type]):
-                    del aircraft[type]
-                else:
-                    aircraft[type] = aircraft[type] - number
-
-                try:
-                    group = self._generate_at_airport(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        airport=self.m.terrain.airport_by_id(cp.at.id),
-                        start_type=StartType.Runway)
-                except Exception:
-                    group = self._generate_group(
-                        name=namegen.next_unit_name(country, cp.id, type),
-                        side=country,
-                        unit_type=type,
-                        count=number,
-                        client_count=0,
-                        at=cp.position)
-
-                group.task = SEAD.name
-                self._setup_group(group, SEAD, 0)
-
-                patrol_alt = random.randint(3600, 7000)
-                group.points[0].alt = patrol_alt
-                group.points[0].ETA = delta * 60 + i * random.randint(36, 46) * 6
-                group.points[0].tasks.clear()
-                group.points[0].tasks.append(SEADTaskAction())
-                group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-                group.points[0].tasks.append(OptROE(OptROE.Values.WeaponFree))
-
-                target_cas_point_x = (cp.position.x + target_cp.position.x) / 2
-                target_cas_point_y = (cp.position.y + target_cp.position.y) / 2
-
-                group.add_waypoint(Point(target_cas_point_x, target_cas_point_y), patrol_alt)
 
     def generate_ground_attack_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition = None, escort=True):
         assert not escort or len(self.escort_targets) == 0
@@ -689,3 +607,5 @@ class AircraftConflictGenerator:
 
             self._add_radio_waypoint(group, self.conflict.position, HELI_ALT)
             self._setup_group(group, Transport, client_count)
+
+
