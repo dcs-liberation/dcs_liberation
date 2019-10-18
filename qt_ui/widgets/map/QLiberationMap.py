@@ -83,13 +83,28 @@ class QLiberationMap(QGraphicsView):
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
 
+            if cp.captured:
+                pen = QPen(brush=CONST.COLORS["blue"])
+                brush = CONST.COLORS["blue_transparent"]
+
+                flight_path_pen = QPen(brush=CONST.COLORS["blue"])
+                flight_path_pen.setColor(CONST.COLORS["blue"])
+                flight_path_pen.setWidth(1)
+                flight_path_pen.setStyle(Qt.DashDotLine)
+            else:
+                pen = QPen(brush=CONST.COLORS["red"])
+                brush = CONST.COLORS["red_transparent"]
+
+                flight_path_pen = QPen(brush=CONST.COLORS["bright_red"])
+                flight_path_pen.setColor(CONST.COLORS["bright_red"])
+                flight_path_pen.setWidth(1)
+                flight_path_pen.setStyle(Qt.DashDotLine)
+
             for ground_object in cp.ground_objects:
 
-                if ground_object.airbase_group:
-                    continue
-
                 go_pos = self._transform_point(ground_object.position)
-                scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
+                if not ground_object.airbase_group:
+                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0
@@ -99,16 +114,23 @@ class QLiberationMap(QGraphicsView):
                                 unit = db.unit_type_from_name(u.type)
                                 if unit.threat_range > max_range:
                                     max_range = unit.threat_range
-                    if cp.captured:
-                        pen = QPen(brush=CONST.COLORS["blue"])
-                        brush = CONST.COLORS["blue_transparent"]
-                    else:
-                        pen = QPen(brush=CONST.COLORS["red"])
-                        brush = CONST.COLORS["red_transparent"]
+
                     scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
 
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp)
+
+            if cp.id in self.game.planners.keys():
+                planner = self.game.planners[cp.id]
+                for flight in planner.flights:
+                    scene.addEllipse(pos[0], pos[1], 4, 4)
+                    prev_pos = list(pos)
+                    for points in flight.points:
+                        new_pos = self._transform_point(Point(points[0], points[1]))
+                        scene.addLine(prev_pos[0]+2, prev_pos[1]+2, new_pos[0]+2, new_pos[1]+2, flight_path_pen)
+                        scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
+                        prev_pos = list(new_pos)
+                    scene.addLine(prev_pos[0] + 2, prev_pos[1] + 2, pos[0] + 2, pos[1] + 2, flight_path_pen)
 
     def scene_create_lines_for_cp(self, cp: ControlPoint):
         scene = self.scene()

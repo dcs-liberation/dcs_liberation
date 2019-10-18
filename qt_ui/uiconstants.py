@@ -1,4 +1,5 @@
 # URL for UI links
+import os
 from typing import Dict
 
 from PySide2.QtGui import QColor, QFont, QPixmap
@@ -38,7 +39,8 @@ CP_SIZE = 25
 FONT = QFont("Arial", 12, weight=5, italic=True)
 
 
-
+AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
+VEHICLES_ICONS: Dict[str, QPixmap] = {}
 ICONS: Dict[str, QPixmap] = {}
 
 def load_icons():
@@ -94,3 +96,21 @@ def load_event_icons():
                             StrikeEvent: "strike",
                             UnitsDeliveryEvent: "delivery"}.items():
         EVENT_ICONS[category] = QPixmap("./resources/ui/events/" + image + ".png")
+
+
+def load_aircraft_icons():
+    for aircraft in os.listdir("./resources/ui/units/aircrafts/"):
+        print(aircraft)
+        if aircraft.endswith(".jpg"):
+            print(aircraft[:-7] + " : " + os.path.join("./resources/ui/units/aircrafts/", aircraft) + " ")
+            AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/", aircraft))
+    AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
+    AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
+
+
+def load_vehicle_icons():
+    for vehicle in os.listdir("./resources/ui/units/vehicles/"):
+        print(vehicle)
+        if vehicle.endswith(".jpg"):
+            print(vehicle[:-7] + " : " + os.path.join("./resources/ui/units/vehicles/", vehicle) + " ")
+            VEHICLES_ICONS[vehicle[:-7]] = QPixmap(os.path.join("./resources/ui/units/vehicles/", vehicle))

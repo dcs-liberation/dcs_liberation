@@ -1,5 +1,7 @@
 from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout
 
+from game import db
+from qt_ui.uiconstants import AIRCRAFT_ICONS, VEHICLES_ICONS
 from theater import ControlPoint, Airport
 
 
@@ -26,7 +28,14 @@ class QBaseInformation(QGroupBox):
 
         i = 0
         for k,v in unit_dict.items():
-            self.layout.addWidget(QLabel(str(v) + " x " + k), i, 0)
+            icon = QLabel()
+            if k in VEHICLES_ICONS.keys():
+                icon.setPixmap(VEHICLES_ICONS[k])
+            else:
+                icon.setText("<b>"+k[:6]+"</b>")
+            icon.setProperty("style", "icon-plane")
+            self.layout.addWidget(icon, i, 0)
+            self.layout.addWidget(QLabel(str(v) + " x " + k), i, 1)
             i = i + 1
 
         stretch = QVBoxLayout()

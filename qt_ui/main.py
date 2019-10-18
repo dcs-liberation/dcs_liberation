@@ -29,6 +29,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     uiconstants.load_icons()
     uiconstants.load_event_icons()
+    uiconstants.load_aircraft_icons()
+    uiconstants.load_vehicle_icons()
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")

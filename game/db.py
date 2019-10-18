@@ -30,9 +30,11 @@ from game.factions.russia_1965 import Russia_1965
 from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
 from game.factions.spain_1990 import Spain_1990
+from game.factions.sweden_1990 import Sweden_1990
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1990 import UnitedKingdom_1990
+from game.factions.ukraine_2010 import Ukraine_2010
 from game.factions.usa_1944 import USA_1944
 from game.factions.usa_1955 import USA_1955
 from game.factions.usa_1960 import USA_1960
@@ -162,23 +164,26 @@ PRICES = {
     Armor.IFV_BMD_1: 8,
     Armor.IFV_BMP_1: 14,
     Armor.IFV_BMP_2: 16,
-    Armor.IFV_BMP_3: 20,
+    Armor.IFV_BMP_3: 18,
+    Armor.ZBD_04A: 12,
 
     Armor.APC_Cobra: 4,
     Armor.APC_M113: 6,
     Armor.APC_M1043_HMMWV_Armament: 2,
     Armor.ATGM_M1045_HMMWV_TOW: 8,
     Armor.IFV_M2A2_Bradley: 12,
-    Armor.APC_M1126_Stryker_ICV: 16,
-    Armor.ATGM_M1134_Stryker: 18,
+    Armor.APC_M1126_Stryker_ICV: 10,
+    Armor.ATGM_M1134_Stryker: 12,
     Armor.MBT_M60A3_Patton: 18,
     Armor.MBT_M1A2_Abrams: 35,
     Armor.MBT_Leclerc: 35,
     Armor.MBT_Leopard_1A3: 24,
     Armor.MBT_Leopard_2: 35,
     Armor.MBT_Merkava_Mk__4: 35,
-    Armor.TPz_Fuchs: 8,
+    Armor.TPz_Fuchs: 5,
     Armor.MBT_Challenger_II: 30,
+    Armor.IFV_Marder: 10,
+    Armor.IFV_MCV_80: 10,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -336,9 +341,24 @@ UNIT_BY_TASK = {
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
         Armor.ARV_BTR_RD,
+        Armor.ARV_BTR_RD,
+        Armor.ARV_BTR_RD,
+        Armor.ARV_BTR_RD,
         Armor.APC_BTR_80,
         Armor.APC_BTR_80,
         Armor.APC_BTR_80,
+        Armor.APC_BTR_80,
+        Armor.APC_BTR_80,
+        Armor.IFV_BMP_1,
+        Armor.IFV_BMP_1,
+        Armor.IFV_BMP_1,
+        Armor.IFV_BMP_2,
+        Armor.IFV_BMP_2,
+        Armor.IFV_BMP_3,
+        Armor.IFV_BMP_3,
+        Armor.ZBD_04A,
+        Armor.ZBD_04A,
+        Armor.ZBD_04A,
         Armor.MBT_T_55,
         Armor.MBT_T_55,
         Armor.MBT_T_55,
@@ -368,6 +388,16 @@ UNIT_BY_TASK = {
         Armor.IFV_M2A2_Bradley,
         Armor.ATGM_M1134_Stryker,
         Armor.ATGM_M1134_Stryker,
+        Armor.APC_M1126_Stryker_ICV,
+        Armor.APC_M1126_Stryker_ICV,
+        Armor.APC_M1126_Stryker_ICV,
+        Armor.IFV_MCV_80,
+        Armor.IFV_MCV_80,
+        Armor.IFV_MCV_80,
+        Armor.IFV_Marder,
+        Armor.IFV_Marder,
+        Armor.IFV_Marder,
+        Armor.IFV_Marder,
         Armor.MBT_M60A3_Patton,
         Armor.MBT_M60A3_Patton,
         Armor.MBT_M60A3_Patton,
@@ -531,6 +561,8 @@ FACTIONS = {
     "United Kingdown 1990": UnitedKingdom_1990,
     "Spain 1990": Spain_1990,
     "Italy 1990": Italy_1990,
+    "Sweden 1990": Sweden_1990,
+    "Ukrain 2010": Ukraine_2010,
     "India 2010": India_2010,
     "Israel 2000": Israel_2000,
     "Turkey 2005": Turkey_2005,
@@ -899,7 +931,6 @@ class DefaultLiveries:
     class Default(Enum):
         af_standard = ""
 
-# TODO : refactor/remove
 OH_58D.Liveries = DefaultLiveries
 F_16C_50.Liveries = DefaultLiveries
 P_51D_30_NA.Liveries = DefaultLiveries

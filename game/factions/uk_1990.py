@@ -20,7 +20,7 @@ UnitedKingdom_1990 = {
         AH_64A,
 
         Armor.MBT_Challenger_II,
-        Armor.IFV_M2A2_Bradley, # Standing as Warrior IFV
+        Armor.IFV_MCV_80,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,

@@ -7,9 +7,10 @@ from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QVBoxLayout
 from dcs.unittype import UnitType
 
 from game.event import UnitsDeliveryEvent
+from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.base.QAirportInformation import QAirportInformation
 from qt_ui.widgets.base.QBaseInformation import QBaseInformation
-from qt_ui.widgets.base.QPlannedFlightView import QPlannedFlightView
+from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, CAP, Embarking, CAS, PinpointStrike, db
 from game import Game
@@ -90,6 +91,9 @@ class QBaseMenu(QDialog):
 
             self.recruitment = QGroupBox("Recruitment")
             self.recruitmentLayout = QVBoxLayout()
+            self.budget = QBudgetBox()
+            self.budget.setBudget(self.game.budget, self.game.budget_reward_amount)
+            self.recruitmentLayout.addWidget(self.budget)
 
             for task_type in units.keys():
 
@@ -147,7 +151,7 @@ class QBaseMenu(QDialog):
 
         self.rightLayout = QVBoxLayout()
         try:
-            self.rightLayout.addWidget(QPlannedFlightView(self.game.planners[self.cp.id]))
+            self.rightLayout.addWidget(QPlannedFlightsView(self.game.planners[self.cp.id]))
         except Exception:
             traceback.print_exc()
         self.rightLayout.addWidget(QAirportInformation(self.cp, self.airport))
@@ -212,7 +216,7 @@ class QBaseMenu(QDialog):
         if self.game.budget >= price:
             self.deliveryEvent.deliver({unit_type: 1})
             self.game.budget -= price
-
+        self.budget.setBudget(self.game.budget, self.game.budget_reward_amount)
         self._update_count_label(unit_type)
 
     def sell(self, unit_type):

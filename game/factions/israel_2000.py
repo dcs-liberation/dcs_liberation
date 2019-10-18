@@ -20,7 +20,7 @@ Israel_2000 = {
         AH_64D,
 
         Armor.MBT_Merkava_Mk__4,
-        Armor.APC_M113, # Standing as VAB
+        Armor.APC_M113,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,

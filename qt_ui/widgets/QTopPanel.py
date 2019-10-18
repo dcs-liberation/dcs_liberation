@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QMessageBox
+from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QMessageBox, QGridLayout
 
 from game import Game
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -7,6 +7,7 @@ from qt_ui.widgets.QTurnCounter import QTurnCounter
 
 import qt_ui.uiconstants as CONST
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.mission.QMissionPlanning import QMissionPlanning
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 
 
@@ -23,10 +24,16 @@ class QTopPanel(QFrame):
         self.turnCounter = QTurnCounter()
         self.budgetBox = QBudgetBox()
 
+
         self.passTurnButton = QPushButton("Pass Turn")
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
+
+        self.proceedButton = QPushButton("Proceed")
+        self.proceedButton.setIcon(CONST.ICONS["PassTurn"])
+        self.proceedButton.setProperty("style", "btn-primary")
+        self.proceedButton.clicked.connect(self.proceed)
 
         self.submenus = QVBoxLayout()
         self.settings = QPushButton("Settings")
@@ -48,6 +55,7 @@ class QTopPanel(QFrame):
         self.layout.addWidget(self.turnCounter)
         self.layout.addWidget(self.budgetBox)
         self.layout.addWidget(self.passTurnButton)
+        self.layout.addWidget(self.proceedButton)
         self.setLayout(self.layout)
 
     def setGame(self, game:Game):
@@ -67,3 +75,7 @@ class QTopPanel(QFrame):
     def passTurn(self):
         self.game.pass_turn()
         GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def proceed(self):
+        self.subwindow = QMissionPlanning(self.game)
+        self.subwindow.show()

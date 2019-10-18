@@ -23,6 +23,7 @@ Germany_1990 = {
         Armor.TPz_Fuchs,
         Armor.MBT_Leopard_1A3,
         Armor.MBT_Leopard_2,
+        Armor.IFV_Marder,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
