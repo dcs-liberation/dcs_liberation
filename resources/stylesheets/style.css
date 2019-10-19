@@ -38,6 +38,21 @@ QPushButton[style="btn-success"]:hover{
     cursor: pointer;
 }
 
+QPushButton[style="start-button"]{
+    background-color:#699245;
+    color: white;
+    cursor:pointer;
+    padding: 15px 15px 15px 15px;
+    border-radius:5px;
+}
+
+QPushButton[style="start-button"]:hover{
+    background-color:#8ABC5A;
+    padding: 15px 15px 15px 15px;
+    border-radius:5px;
+    cursor: pointer;
+}
+
 QPushButton[style="btn-danger"]{
     background-color:#9E3232;
     color: white;

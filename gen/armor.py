@@ -64,6 +64,10 @@ class ArmorConflictGenerator:
             wayp.tasks = []
 
     def _generate_fight_at(self, attackers: db.ArmorDict, defenders: db.ArmorDict, position: Point):
+
+        print(attackers)
+        print(defenders)
+
         if attackers:
             attack_pos = position.point_from_heading(self.conflict.heading - 90, FIGHT_DISTANCE)
             attack_dest = position.point_from_heading(self.conflict.heading + 90, FIGHT_DISTANCE * 2)

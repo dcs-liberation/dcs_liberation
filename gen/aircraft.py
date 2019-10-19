@@ -328,7 +328,7 @@ class AircraftConflictGenerator:
 
     def setup_group_as_cas_flight(self, group, flight):
         group.task = CAS.name
-        self._setup_group(group, CAS, 0)
+        self._setup_group(group, CAS, flight.client_count)
 
         group.points[0].tasks.clear()
         group.points[0].tasks.append(CASTaskAction())

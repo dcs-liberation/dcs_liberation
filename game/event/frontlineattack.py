@@ -76,7 +76,7 @@ class FrontlineAttackEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, flights: db.TaskForceDict):
-        assert CAS in flights and CAP in flights and len(flights) == 2, "Invalid flights"
+        # assert CAS in flights and CAP in flights and len(flights) == 2, "Invalid flights"
 
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
@@ -97,7 +97,7 @@ class FrontlineAttackEvent(Event):
         self.operation = op
 
     def player_defending(self, flights: db.TaskForceDict):
-        assert CAP in flights and len(flights) == 1, "Invalid flights"
+        # assert CAP in flights and len(flights) == 1, "Invalid flights"
 
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,

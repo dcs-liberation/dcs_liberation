@@ -1,8 +1,8 @@
-from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QMessageBox, QGridLayout
+from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout
 
 from game import Game
 from qt_ui.widgets.QBudgetBox import QBudgetBox
-from qt_ui.widgets.QStatsWindow import QStatsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 
 import qt_ui.uiconstants as CONST

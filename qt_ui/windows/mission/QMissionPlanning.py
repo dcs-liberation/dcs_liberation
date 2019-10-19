@@ -1,6 +1,9 @@
 from PySide2.QtCore import Qt, Slot, QItemSelectionModel, QPoint
-from PySide2.QtWidgets import QDialog, QGridLayout, QScrollArea, QVBoxLayout
+from PySide2.QtWidgets import QDialog, QGridLayout, QScrollArea, QVBoxLayout, QPushButton
 from game import Game
+from game.event import StrikeEvent, InsurgentAttackEvent, FrontlineAttackEvent, CAP, CAS
+from qt_ui.uiconstants import EVENT_ICONS
+from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
 from qt_ui.windows.mission.QChooseAirbase import QChooseAirbase
 from qt_ui.windows.mission.flight.QFlightPlanner import QFlightPlanner
@@ -15,6 +18,7 @@ class QMissionPlanning(QDialog):
         self.setMinimumSize(750, 350)
         self.setModal(True)
         self.setWindowTitle("Mission Preparation")
+        self.setWindowIcon(EVENT_ICONS[StrikeEvent])
         self.init_ui()
         print("DONE")
 
@@ -37,12 +41,16 @@ class QMissionPlanning(QDialog):
 
         self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game)
 
+        self.mission_start_button = QPushButton("Take Off")
+        self.mission_start_button.setProperty("style", "start-button")
+        self.mission_start_button.clicked.connect(self.on_start)
 
         self.left_bar_layout.addWidget(self.select_airbase)
         self.left_bar_layout.addWidget(self.planned_flight_view)
 
         self.layout.addLayout(self.left_bar_layout, 0, 0)
         self.layout.addWidget(self.flight_planner, 0, 1)
+        self.layout.addWidget(self.mission_start_button, 1, 1, alignment=Qt.AlignRight)
 
         self.setLayout(self.layout)
 
@@ -61,3 +69,31 @@ class QMissionPlanning(QDialog):
 
         self.flight_planner = QFlightPlanner(flight, self.game)
         self.layout.addWidget(self.flight_planner,0 ,1)
+
+    def on_start(self):
+
+        for event in self.game.events:
+            if isinstance(event, FrontlineAttackEvent) and event.is_player_attacking:
+                self.gameEvent = event
+
+        #if self.awacs_checkbox.isChecked() == 1:
+        #    self.gameEvent.is_awacs_enabled = True
+        #    self.game.awacs_expense_commit()
+        #else:
+        #    self.gameEvent.is_awacs_enabled = False
+        self.gameEvent.is_awacs_enabled = False
+        self.gameEvent.ca_slots = 1
+        self.gameEvent.departure_cp = self.game.theater.controlpoints[0]
+
+        if self.game.is_player_attack(self.gameEvent):
+            self.gameEvent.player_attacking({CAS:{}, CAP:{}})
+        else:
+            self.gameEvent.player_defending({CAS: {}, CAP: {}})
+        self.gameEvent.depart_from = self.game.theater.controlpoints[0]
+
+        self.game.initiate_event(self.gameEvent)
+        waiting = QWaitingForMissionResultWindow(self.gameEvent, self.game)
+        waiting.show()
+        self.close()
+
+

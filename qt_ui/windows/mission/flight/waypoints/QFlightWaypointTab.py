@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QFrame, QGridLayout, QLabel
 
 from gen.flights.flight import Flight
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import QFlightWaypointList
 
 
 class QFlightWaypointTab(QFrame):
@@ -12,5 +13,6 @@ class QFlightWaypointTab(QFrame):
 
     def init_ui(self):
         layout = QGridLayout()
-        layout.addWidget(QLabel("Coming in two weeks"))
+        self.flight_waypoint_list = QFlightWaypointList(self.flight)
+        layout.addWidget(self.flight_waypoint_list)
         self.setLayout(layout)

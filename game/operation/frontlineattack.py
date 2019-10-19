@@ -47,11 +47,11 @@ class FrontlineAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        if self.is_player_attack:
-            self.prepare_carriers(db.unitdict_from(self.strikegroup))
+        #if self.is_player_attack:
+        #    self.prepare_carriers(db.unitdict_from(self.strikegroup))
 
         # ground units
-        self.armorgen.generate_vec(self.attackers, self.defenders)
+        # self.armorgen.generate_vec(self.attackers, self.defenders)
 
         ## strike group w/ heli support
         #planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}

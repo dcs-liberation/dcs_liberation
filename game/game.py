@@ -307,8 +307,6 @@ class Game:
         self.events = []  # type: typing.List[Event]
         self._generate_events()
 
-        #self._generate_globalinterceptions()
-
         # Update statistics
         self.game_stats.update(self)
 

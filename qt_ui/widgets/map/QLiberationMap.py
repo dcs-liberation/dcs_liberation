@@ -66,7 +66,7 @@ class QLiberationMap(QGraphicsView):
         scene.clear()
 
         self.addBackground()
-        self.add_game_events()
+        #self.add_game_events()
 
         for cp in self.game.theater.controlpoints:
 
