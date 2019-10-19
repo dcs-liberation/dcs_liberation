@@ -12,7 +12,7 @@ class QFlightPlanner(QTabWidget):
     def __init__(self, flight: Flight, game: Game):
         super(QFlightPlanner, self).__init__()
         self.general_settings_tab = QGeneralFlightSettingsTab(flight, game)
-        self.payload_tab = QFlightPayloadTab(flight)
+        self.payload_tab = QFlightPayloadTab(flight, game)
         self.waypoint_tab = QFlightWaypointTab(flight)
         self.addTab(self.general_settings_tab, "General Flight settings")
         self.addTab(self.payload_tab, "Payload")

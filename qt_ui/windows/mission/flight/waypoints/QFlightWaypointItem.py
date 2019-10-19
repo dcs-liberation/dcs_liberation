@@ -2,11 +2,12 @@ from typing import List
 
 from PySide2.QtGui import QStandardItem
 
+from gen.flights.flight import FlightWaypoint
+
 
 class QWaypointItem(QStandardItem):
 
-    def __init__(self, point: List[int]):
+    def __init__(self, point: FlightWaypoint):
         super(QWaypointItem, self).__init__()
-
-        self.setText("X: " + str(int(point[0])) + "; Y: " + str(int(point[1])) + "; Alt: " + str(int(point[2])) + "m")
+        self.setText('{0: <16}'.format(point.description) + " -- [X: " + str(int(point.x)) + "; Y: " + str(int(point.y)) + "; Alt: " + str(int(point.alt)) + "m]")
 

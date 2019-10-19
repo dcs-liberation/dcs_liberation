@@ -120,6 +120,10 @@ class AircraftConflictGenerator:
             else:
                 group.units[idx].set_client()
 
+            # Do not generate player group with late activation.
+            if group.late_activation:
+                group.late_activation = False
+
             # Set up F-14 Client to have pre-stored alignement
             if unit_type is F_14B:
                 group.units[idx].set_property(F_14B.Properties.INSAlignmentStored.id, True)
@@ -284,20 +288,45 @@ class AircraftConflictGenerator:
             groups.append(group)
         return groups
 
+    def _setup_custom_payload(self, flight, group:FlyingGroup):
+        if flight.use_custom_loadout:
+
+            logging.info("Custom loadout for flight : " + flight.__repr__())
+            for p in group.units:
+                p.pylons.clear()
+
+            for key in flight.loadout.keys():
+                if "Pylon" + key in flight.unit_type.__dict__.keys():
+                    print(flight.loadout)
+                    weapon_dict = flight.unit_type.__dict__["Pylon" + key].__dict__
+                    if flight.loadout[key] in weapon_dict.keys():
+                        weapon = weapon_dict[flight.loadout[key]]
+                        group.load_pylon(weapon, int(key))
+                else:
+                    logging.warning("Pylon not found ! => Pylon" + key + " on " + str(flight.unit_type))
+
 
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
+
+        for flight in flight_planner.interceptor_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            self.setup_group_as_intercept_flight(group, flight)
+            self._setup_custom_payload(flight, group)
 
         for flight in flight_planner.cap_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_cap_flight(group, flight)
+            self._setup_custom_payload(flight, group)
 
         for flight in flight_planner.cas_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_cas_flight(group, flight)
+            self._setup_custom_payload(flight, group)
 
         for flight in flight_planner.sead_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_sead_flight(group, flight)
+            self._setup_custom_payload(flight, group)
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
@@ -321,10 +350,16 @@ class AircraftConflictGenerator:
         group.points[0].ETA = flight.scheduled_in * 60
         return group
 
+    def setup_group_as_intercept_flight(self, group, flight):
+        group.points[0].ETA = 0
+        group.late_activation = True
+        self._setup_group(group, Intercept, flight.client_count)
+
+
     def setup_group_as_cap_flight(self, group, flight):
         self._setup_group(group, CAP, flight.client_count)
         for point in flight.points:
-            group.add_waypoint(Point(point[0],point[1]), point[2])
+            group.add_waypoint(Point(point.x,point.y), point.alt)
 
     def setup_group_as_cas_flight(self, group, flight):
         group.task = CAS.name
@@ -335,8 +370,8 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
         group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
 
-        for location in flight.points:
-            group.add_waypoint(Point(location[0], location[1]), location[2])
+        for point in flight.points:
+            group.add_waypoint(Point(point.x,point.y), point.alt)
 
     def setup_group_as_sead_flight(self, group, flight):
         self._setup_group(group, SEAD, flight.client_count)
@@ -347,7 +382,7 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptROE(OptROE.Values.WeaponFree))
 
         for point in flight.points:
-            group.add_waypoint(Point(point[0], point[1]), point[2])
+            group.add_waypoint(Point(point.x,point.y), point.alt)
 
     def generate_cas_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None, escort=True):
         assert not escort or len(self.escort_targets) == 0

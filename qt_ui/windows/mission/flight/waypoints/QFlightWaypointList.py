@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2.QtWidgets import QListView
 
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightWaypoint
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
 
 
@@ -13,6 +13,8 @@ class QFlightWaypointList(QListView):
         self.setModel(self.model)
         self.flight = flight
 
-        self.model.appendRow(QWaypointItem([flight.from_cp.position.x, flight.from_cp.position.y, 0]))
+        takeoff = FlightWaypoint(flight.from_cp.position.x, flight.from_cp.position.y, 0)
+        takeoff.description = "Take Off"
+        self.model.appendRow(QWaypointItem(takeoff))
         for i, point in enumerate(self.flight.points):
             self.model.appendRow(QWaypointItem(point))

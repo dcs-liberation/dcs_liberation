@@ -125,8 +125,8 @@ class QLiberationMap(QGraphicsView):
                 for flight in planner.flights:
                     scene.addEllipse(pos[0], pos[1], 4, 4)
                     prev_pos = list(pos)
-                    for points in flight.points:
-                        new_pos = self._transform_point(Point(points[0], points[1]))
+                    for point in flight.points:
+                        new_pos = self._transform_point(Point(point.x, point.y))
                         scene.addLine(prev_pos[0]+2, prev_pos[1]+2, new_pos[0]+2, new_pos[1]+2, flight_path_pen)
                         scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
                         prev_pos = list(new_pos)

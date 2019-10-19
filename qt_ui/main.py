@@ -27,10 +27,6 @@ if __name__ == "__main__":
     logging.info("Using {} as userdata folder".format(persistency.base_path()))
 
     app = QApplication(sys.argv)
-    uiconstants.load_icons()
-    uiconstants.load_event_icons()
-    uiconstants.load_aircraft_icons()
-    uiconstants.load_vehicle_icons()
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -38,6 +34,11 @@ if __name__ == "__main__":
     splash.show()
 
     # Once splash screen is up : load resources & setup stuff
+    uiconstants.load_icons()
+    uiconstants.load_event_icons()
+    uiconstants.load_aircraft_icons()
+    uiconstants.load_vehicle_icons()
+
     persistency.setup(sys.argv[1])
 
     css = ""

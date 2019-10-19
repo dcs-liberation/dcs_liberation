@@ -24,7 +24,6 @@ class QTopPanel(QFrame):
         self.turnCounter = QTurnCounter()
         self.budgetBox = QBudgetBox()
 
-
         self.passTurnButton = QPushButton("Pass Turn")
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
@@ -34,6 +33,9 @@ class QTopPanel(QFrame):
         self.proceedButton.setIcon(CONST.ICONS["PassTurn"])
         self.proceedButton.setProperty("style", "btn-primary")
         self.proceedButton.clicked.connect(self.proceed)
+        if self.game.turn == 0:
+            self.proceedButton.setEnabled(False)
+
 
         self.submenus = QVBoxLayout()
         self.settings = QPushButton("Settings")
@@ -75,6 +77,7 @@ class QTopPanel(QFrame):
     def passTurn(self):
         self.game.pass_turn()
         GameUpdateSignal.get_instance().updateGame(self.game)
+        self.proceedButton.setEnabled(True)
 
     def proceed(self):
         self.subwindow = QMissionPlanning(self.game)

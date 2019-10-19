@@ -26,9 +26,7 @@ class QChooseAirbase(QGroupBox):
 
     def _on_airbase_selected(self):
         selected = self.depart_from.currentText()
-        print("Airbase changed to : " + selected)
         self.selected_airbase_changed.emit(selected)
-        print("Airbase changed to : " + selected)
 
 
 

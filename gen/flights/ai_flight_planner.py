@@ -5,8 +5,7 @@ import random
 
 from game import db
 from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE
-from gen.flights.flight import Flight, FlightType
-
+from gen.flights.flight import Flight, FlightType, FlightWaypoint
 
 # TODO : Ideally should be based on the aircraft type instead / Availability of fuel
 STRIKE_MAX_RANGE = 150000
@@ -36,6 +35,7 @@ class FlightPlanner:
 
     def __init__(self, from_cp, game):
         # TODO : have the flight planner depend on a 'stance' setting : [Defensive, Aggresive... etc] and faction doctrine
+        # TODO : the flight planner should plan package and operations
         self.from_cp = from_cp
         self.game = game
         self.aircraft_inventory = {} # local copy of the airbase inventory
@@ -132,7 +132,9 @@ class FlightPlanner:
             patrolled = []
             for ground_object in self.from_cp.ground_objects:
                 if ground_object.group_id not in patrolled and not ground_object.airbase_group:
-                    flight.points.append([ground_object.position.x, ground_object.position.y, patrol_alt])
+                    point = FlightWaypoint(ground_object.position.x, ground_object.position.y, patrol_alt)
+                    point.description = "Patrol #" + str(len(flight.points))
+                    flight.points.append(point)
                     patrolled.append(ground_object.group_id)
 
             self.cap_flights.append(flight)
@@ -170,7 +172,9 @@ class FlightPlanner:
 
                 location = random.choice(cas_location)
                 flight.targets.append(cas_location)
-                flight.points.append([location[0], location[1], 1000]) # TODO : Egress / Ingress points
+                point = FlightWaypoint(location[0], location[1], 1000)
+                point.description = "PROVIDE CAS"
+                flight.points.append(point)
 
                 self.cas_flights.append(flight)
                 self.flights.append(flight)
@@ -203,13 +207,16 @@ class FlightPlanner:
                 inventory[unit] = inventory[unit] - 2
                 flight = Flight(unit, 2, self.from_cp, random.choice([FlightType.SEAD, FlightType.DEAD]))
 
-                # Flight path : fly over each ground object (TODO : improve)
                 flight.points = []
                 flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
 
                 location = self.potential_sead_targets[0][0]
                 self.potential_sead_targets.pop(0)
-                flight.points.append([location.position.x, location.position.y, 1000]) # TODO : Egress / Ingress points
+
+                point = FlightWaypoint(location.position.x, location.position.y, 1000)
+                point.description = "SEAD"
+                point.targets.append(location)
+                flight.points.append(point)
 
                 self.cas_flights.append(flight)
                 self.flights.append(flight)
