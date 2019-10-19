@@ -39,7 +39,10 @@ class QMissionPlanning(QDialog):
         self.planned_flight_view.selectionModel().setCurrentIndex(self.planned_flight_view.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
         self.planned_flight_view.selectionModel().selectionChanged.connect(self.on_flight_selection_change)
 
-        self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game)
+        if len(self.planned_flight_view.flight_planner.flights) > 0:
+            self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game)
+        else:
+            self.flight_planner = QFlightPlanner(None, self.game)
 
         self.mission_start_button = QPushButton("Take Off")
         self.mission_start_button.setProperty("style", "start-button")
