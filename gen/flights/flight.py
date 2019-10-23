@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List
 
+from dcs.mission import StartType
 from dcs.unittype import UnitType
 
 from game import db
@@ -51,6 +52,7 @@ class Flight:
     use_custom_loadout = False
     loadout = {}
     preset_loadout_name = ""
+    start_type = "Runway"
 
     # How long before this flight should take off
     scheduled_in = 0
@@ -63,6 +65,7 @@ class Flight:
         self.points = []
         self.targets = []
         self.loadout = {}
+        self.start_type = "Runway"
 
     def __repr__(self):
         return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \

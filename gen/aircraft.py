@@ -330,15 +330,31 @@ class AircraftConflictGenerator:
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
-            group = self._generate_at_airport(
-                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
-                side=country,
-                unit_type=flight.unit_type,
-                count=flight.count,
-                client_count=0,
-                airport=self.m.terrain.airport_by_id(cp.at.id),
-                start_type=StartType.Runway)
+            if flight.start_type == "In Flight" or flight.client_count == 0:
+                group = self._generate_group(
+                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    side=country,
+                    unit_type=flight.unit_type,
+                    count=flight.count,
+                    client_count=0,
+                    at=cp.position)
+            else:
+                st = StartType.Runway
+                if flight.start_type == "Cold":
+                    st = StartType.Cold
+                elif flight.start_type == "Warm":
+                    st = StartType.Warm
+
+                group = self._generate_at_airport(
+                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    side=country,
+                    unit_type=flight.unit_type,
+                    count=flight.count,
+                    client_count=0,
+                    airport=self.m.terrain.airport_by_id(cp.at.id),
+                    start_type=st)
         except Exception:
+            # Generated when there is no place on Runway or on Parking Slots
             group = self._generate_group(
                 name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                 side=country,
@@ -348,6 +364,7 @@ class AircraftConflictGenerator:
                 at=cp.position)
             group.points[0].alt = 1500
         group.points[0].ETA = flight.scheduled_in * 60
+
         return group
 
     def setup_group_as_intercept_flight(self, group, flight):

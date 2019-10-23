@@ -4,6 +4,7 @@ from gen.flights.flight import Flight
 from game import Game
 from qt_ui.windows.mission.flight.settings.QFlightDepartureEditor import QFlightDepartureEditor
 from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import QFlightSlotEditor
+from qt_ui.windows.mission.flight.settings.QFlightStartType import QFlightStartType
 from qt_ui.windows.mission.flight.settings.QFlightTypeTaskInfo import QFlightTypeTaskInfo
 
 
@@ -20,10 +21,15 @@ class QGeneralFlightSettingsTab(QFrame):
         self.flight_info = QFlightTypeTaskInfo(self.flight)
         self.flight_departure = QFlightDepartureEditor(self.flight)
         self.flight_slots = QFlightSlotEditor(self.flight, self.game)
+        self.flight_start_type = QFlightStartType(self.flight)
         layout.addWidget(self.flight_info, 0, 0)
         layout.addWidget(self.flight_departure, 1, 0)
         layout.addWidget(self.flight_slots, 2, 0)
+        layout.addWidget(self.flight_start_type, 3, 0)
         vstretch = QVBoxLayout()
         vstretch.addStretch()
         layout.addLayout(vstretch, 3, 0)
         self.setLayout(layout)
+
+        self.flight_start_type.setEnabled(self.flight.client_count > 0)
+        self.flight_slots.changed.connect(lambda: self.flight_start_type.setEnabled(self.flight.client_count > 0))

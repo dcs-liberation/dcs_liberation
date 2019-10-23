@@ -1,13 +1,15 @@
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QSpinBox, QGridLayout
 
 
 class QFlightSlotEditor(QGroupBox):
 
+    changed = Signal()
+
     def __init__(self, flight, game):
         super(QFlightSlotEditor, self).__init__("Slots")
         self.flight = flight
         self.game = game
-
         layout = QGridLayout()
 
         self.aircraft_count = QLabel("Aircraft count :")
@@ -38,11 +40,13 @@ class QFlightSlotEditor(QGroupBox):
 
     def _changed_aircraft_count(self):
         self.flight.count = int(self.aircraft_count_spinner.value())
+        self.changed.emit()
         # TODO check if enough aircraft are available
 
     def _changed_client_count(self):
         self.flight.client_count = int(self.client_count_spinner.value())
         self._cap_client_count()
+        self.changed.emit()
 
     def _cap_client_count(self):
         if self.flight.client_count > self.flight.count:
