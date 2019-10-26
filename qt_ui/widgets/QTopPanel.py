@@ -33,7 +33,7 @@ class QTopPanel(QFrame):
         self.proceedButton.setIcon(CONST.ICONS["PassTurn"])
         self.proceedButton.setProperty("style", "btn-primary")
         self.proceedButton.clicked.connect(self.proceed)
-        if self.game.turn == 0:
+        if self.game and self.game.turn == 0:
             self.proceedButton.setEnabled(False)
 
 
