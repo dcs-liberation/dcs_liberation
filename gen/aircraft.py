@@ -339,20 +339,31 @@ class AircraftConflictGenerator:
                     client_count=0,
                     at=cp.position)
             else:
+
                 st = StartType.Runway
                 if flight.start_type == "Cold":
                     st = StartType.Cold
                 elif flight.start_type == "Warm":
                     st = StartType.Warm
 
-                group = self._generate_at_airport(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
-                    side=country,
-                    unit_type=flight.unit_type,
-                    count=flight.count,
-                    client_count=0,
-                    airport=self.m.terrain.airport_by_id(cp.at.id),
-                    start_type=st)
+                if cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
+                    group_name = cp.get_carrier_group_name()
+                    group = self._generate_at_group(
+                        name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                        side=country,
+                        unit_type=flight.unit_type,
+                        count=flight.count,
+                        client_count=0,
+                        at=self.m.find_group(group_name),)
+                else:
+                    group = self._generate_at_airport(
+                        name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                        side=country,
+                        unit_type=flight.unit_type,
+                        count=flight.count,
+                        client_count=0,
+                        airport=self.m.terrain.airport_by_id(cp.at.id),
+                        start_type=st)
         except Exception:
             # Generated when there is no place on Runway or on Parking Slots
             group = self._generate_group(

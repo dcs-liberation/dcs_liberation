@@ -69,7 +69,7 @@ class QLiberationMap(QGraphicsView):
         #self.add_game_events()
 
         for cp in self.game.theater.controlpoints:
-
+        
             pos = self._transform_point(cp.position)
 
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,

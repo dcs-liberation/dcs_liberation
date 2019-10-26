@@ -106,6 +106,20 @@ class ControlPoint:
         else:
             return True
 
+    def get_carrier_group_name(self):
+        """
+        Get the carrier group name if the airbase is a carrier
+        :return: Carrier group name
+        """
+        if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP] :
+            for g in self.ground_objects:
+                if g.dcs_identifier == "CARRIER":
+                    for group in g.groups:
+                        for u in group.units:
+                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov]:
+                                return group.name
+        return None
+
     def is_connected(self, to) -> bool:
         return to in self.connected_points
 

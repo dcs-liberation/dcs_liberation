@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QVBoxLayout
     QGroupBox, QSizePolicy, QSpacerItem
 from dcs.unittype import UnitType
 
-from game.event import UnitsDeliveryEvent
+from game.event import UnitsDeliveryEvent, ControlPointType
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.base.QAirportInformation import QAirportInformation
 from qt_ui.widgets.base.QBaseInformation import QBaseInformation
@@ -23,6 +23,7 @@ class QBaseMenu(QDialog):
 
         self.cp = controlPoint
         self.game = game
+        self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
 
         try:
             self.airport = game.theater.terrain.airport_by_id(self.cp.id)
@@ -98,6 +99,9 @@ class QBaseMenu(QDialog):
 
             for task_type in units.keys():
 
+                if task_type == PinpointStrike and self.is_carrier:
+                    continue
+
                 units_column = list(set(units[task_type]))
                 if len(units_column) == 0: continue
                 units_column.sort(key=lambda x: db.PRICES[x])
@@ -107,6 +111,8 @@ class QBaseMenu(QDialog):
                 task_box.setLayout(task_box_layout)
                 row = 0
                 for unit_type in units_column:
+                    if self.is_carrier and not unit_type in db.CARRIER_CAPABLE:
+                        continue
                     row = self.add_purchase_row(unit_type, task_box_layout, row)
 
                 stretch = QVBoxLayout()

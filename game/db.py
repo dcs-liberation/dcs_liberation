@@ -745,7 +745,20 @@ TIME_PERIODS = {
     "Syrian War [2011]": datetime(2011, 8, 7),
 }
 
+CARRIER_CAPABLE = [
+    FA_18C_hornet,
+    F_14B,
+    AV8BNA,
 
+    UH_1H,
+    Mi_8MT,
+    Ka_50,
+
+    SA342L,
+    SA342M,
+    SA342Minigun,
+    SA342Mistral
+]
 
 """
 ---------- END OF CONFIGURATION SECTION

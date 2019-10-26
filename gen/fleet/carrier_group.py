@@ -12,9 +12,11 @@ class CarrierGroupGenerator(GroupGenerator):
     def generate(self):
 
         # Add carrier
-        if self.faction["aircraft_carrier"]:
+        if "aircraft_carrier" in self.faction.keys():
             carrier_type = random.choice(self.faction["aircraft_carrier"])
             self.add_unit(carrier_type, "Carrier", self.position.x, self.position.y, self.heading)
+        else:
+            return
 
         # Add destroyers escort
         dd_type = random.choice(self.faction["destroyer"])

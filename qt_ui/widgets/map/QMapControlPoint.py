@@ -30,29 +30,33 @@ class QMapControlPoint(QGraphicsRectItem):
             painter.setBrush(self.brush_color)
             painter.setPen(self.pen_color)
 
-            if self.isUnderMouse():
-                painter.setBrush(CONST.COLORS["white"])
-                painter.setPen(self.pen_color)
+            if self.model.has_runway():
+                if self.isUnderMouse():
+                    painter.setBrush(CONST.COLORS["white"])
+                    painter.setPen(self.pen_color)
 
-            r = option.rect
-            painter.drawChord(r, -180*16, -180*16)
+                r = option.rect
+                painter.drawChord(r, -180*16, -180*16)
 
-            gauge = QRect(r.x(),
-                          r.y()+CONST.CP_SIZE/2 + 2,
-                          r.width(),
-                          CONST.CP_SIZE / 4)
+                gauge = QRect(r.x(),
+                              r.y()+CONST.CP_SIZE/2 + 2,
+                              r.width(),
+                              CONST.CP_SIZE / 4)
 
-            painter.setBrush(CONST.COLORS["bright_red"])
-            painter.setPen(CONST.COLORS["black"])
-            painter.drawRect(gauge)
+                painter.setBrush(CONST.COLORS["bright_red"])
+                painter.setPen(CONST.COLORS["black"])
+                painter.drawRect(gauge)
 
-            gauge2 = QRect(r.x(),
-                           r.y() + CONST.CP_SIZE / 2 + 2,
-                           r.width()*self.model.base.strength,
-                           CONST.CP_SIZE / 4)
+                gauge2 = QRect(r.x(),
+                               r.y() + CONST.CP_SIZE / 2 + 2,
+                               r.width()*self.model.base.strength,
+                               CONST.CP_SIZE / 4)
 
-            painter.setBrush(CONST.COLORS["green"])
-            painter.drawRect(gauge2)
+                painter.setBrush(CONST.COLORS["green"])
+                painter.drawRect(gauge2)
+            else:
+                # TODO : not drawing sunk carriers. Can be improved to display sunk carrier.
+                pass
             painter.restore()
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
