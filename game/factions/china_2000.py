@@ -44,5 +44,12 @@ China_2000 = {
         AirDefence.AAA_ZU_23_Closed,
         AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
         AirDefence.HQ_7_Self_Propelled_LN
+    ], "aircraft_carrier": [
+        CV_1143_5_Admiral_Kuznetsov,
+    ], "destroyer": [
+        Type_052B_Destroyer,
+        Type_052C_Destroyer
+    ], "cruiser": [
+        Type_054A_Frigate,
     ]
 }

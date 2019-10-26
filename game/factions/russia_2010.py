@@ -49,5 +49,11 @@ Russia_2010 = {
     "shorad":[
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3
+    ], "aircraft_carrier": [
+        CV_1143_5_Admiral_Kuznetsov,
+    ], "destroyer": [
+        FF_1135M_Rezky,
+    ], "cruiser": [
+        FSG_1241_1MP_Molniya,
     ]
 }

@@ -54,7 +54,8 @@ class Debriefing:
                 type = db.unit_type_from_name(aircraft.split("|")[4])
                 player_unit = (country == self.player_country_id)
                 aircraft = DebriefingDeadUnitInfo(country, player_unit, type)
-                self.dead_aircraft.append(aircraft)
+                if type is not None:
+                    self.dead_aircraft.append(aircraft)
             except Exception as e:
                 print(e)
 
@@ -64,7 +65,8 @@ class Debriefing:
                 type = db.unit_type_from_name(unit.split("|")[4])
                 player_unit = (country == self.player_country_id)
                 unit = DebriefingDeadUnitInfo(country, player_unit, type)
-                self.dead_units.append(unit)
+                if type is not None:
+                    self.dead_units.append(unit)
             except Exception as e:
                 print(e)
 

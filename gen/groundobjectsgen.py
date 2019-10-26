@@ -65,15 +65,37 @@ class GroundObjectsGenerator:
                 if ground_object.dcs_identifier == "AA":
                     for g in ground_object.groups:
                         if len(g.units) > 0:
-                            vg = self.m.vehicle_group(side, g.name, unit_type_from_name(g.units[0].type), position=g.position)
+
+                            utype = unit_type_from_name(g.units[0].type)
+
+                            vg = self.m.vehicle_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
                             vg.units[0].name = self.m.string(g.units[0].name)
-                            for i,u in enumerate(g.units):
+                            for i, u in enumerate(g.units):
                                 if i > 0:
                                     vehicle = Vehicle(self.m.next_unit_id(), self.m.string(u.name), u.type)
                                     vehicle.position.x = u.position.x
                                     vehicle.position.y = u.position.y
                                     vehicle.heading = u.heading
                                     vg.add_unit(vehicle)
+                elif ground_object.dcs_identifier == "CARRIER":
+                    for g in ground_object.groups:
+                        if len(g.units) > 0:
+
+                            utype = unit_type_from_name(g.units[0].type)
+
+                            sg = self.m.ship_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
+
+                            sg.units[0].name = self.m.string(g.units[0].name)
+                            for i, u in enumerate(g.units):
+                                if i > 0:
+                                    print(u.type)
+                                    print(type(u.type))
+                                    ship = Ship(self.m.next_unit_id(), self.m.string(u.name), unit_type_from_name(u.type))
+                                    ship.position.x = u.position.x
+                                    ship.position.y = u.position.y
+                                    ship.heading = u.heading
+                                    sg.add_unit(ship)
+
                 else:
                     if ground_object.dcs_identifier in warehouse_map:
                         static_type = warehouse_map[ground_object.dcs_identifier]

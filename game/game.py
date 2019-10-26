@@ -313,10 +313,10 @@ class Game:
         # Plan flights for next turn
         self.planners = {}
         for cp in self.theater.controlpoints:
-            planner = FlightPlanner(cp, self)
-            planner.plan_flights()
-            self.planners[cp.id] = planner
-            print(planner)
+            if cp.has_runway():
+                planner = FlightPlanner(cp, self)
+                planner.plan_flights()
+                self.planners[cp.id] = planner
 
 
     @property

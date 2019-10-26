@@ -56,7 +56,8 @@ class QBaseMenu(QDialog):
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
-        unitsPower = QLabel("{} / {}".format(self.cp.base.total_planes, self.cp.base.total_armor))
+        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_planes, self.cp.base.total_armor,
+                                                            "Available" if self.cp.has_runway() else "Unavailable"))
 
         self.topLayout.addWidget(title)
         self.topLayout.addWidget(unitsPower)
@@ -154,7 +155,9 @@ class QBaseMenu(QDialog):
             self.rightLayout.addWidget(QPlannedFlightsView(self.game.planners[self.cp.id]))
         except Exception:
             traceback.print_exc()
-        self.rightLayout.addWidget(QAirportInformation(self.cp, self.airport))
+
+        if self.airport:
+            self.rightLayout.addWidget(QAirportInformation(self.cp, self.airport))
         self.mainLayout.addLayout(self.rightLayout, 1, 2)
 
         self.setLayout(self.mainLayout)

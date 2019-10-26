@@ -5,7 +5,9 @@ import typing
 import logging
 
 from gen.defenses.armor_group_generator import generate_armor_group
+from gen.fleet.ship_group_generator import generate_carrier_group
 from gen.sam.sam_group_generator import generate_anti_air_group, generate_shorad_group
+from theater import ControlPointType
 from theater.base import *
 from theater.conflicttheater import *
 
@@ -68,12 +70,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
         else:
             faction = game.enemy_name
 
-        for i in range(random.randint(2,6)):
-            point = find_location(True, cp.position, theater, 1000, 2800, [])
-
-            if point is None:
-                print("Couldn't find point for {}".format(cp))
-                continue
+        if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
+            # Create ground object group
 
             group_id = group_id + 1
 
@@ -82,28 +80,52 @@ def generate_groundobjects(theater: ConflictTheater, game):
             g.object_id = 0
             g.cp_id = cp.id
             g.airbase_group = True
-            g.dcs_identifier = "AA"
+            g.dcs_identifier = "CARRIER"
             g.heading = 0
-            g.position = Point(point.x, point.y)
-
-            if i == 0:
-                group = generate_armor_group(faction, game, g)
-            elif i == 1 and random.randint(0,1) == 0:
-                group = generate_anti_air_group(game, cp, g, faction)
-            elif random.randint(0, 2) == 1:
-                group = generate_shorad_group(game, cp, g, faction)
-            else:
-                group = generate_armor_group(faction, game, g)
-
+            g.position = Point(cp.position.x, cp.position.y)
+            group = generate_carrier_group(faction, game, g)
             g.groups = []
             if group is not None:
                 g.groups.append(group)
             cp.ground_objects.append(g)
 
-        print("---------------------------")
-        print("CP Generation : " + cp.name)
-        for ground_object in cp.ground_objects:
-            print(ground_object.groups)
+        else:
+            for i in range(random.randint(2,6)):
+                point = find_location(True, cp.position, theater, 1000, 2800, [])
+
+                if point is None:
+                    print("Couldn't find point for {}".format(cp))
+                    continue
+
+                group_id = group_id + 1
+
+                g = TheaterGroundObject()
+                g.group_id = group_id
+                g.object_id = 0
+                g.cp_id = cp.id
+                g.airbase_group = True
+                g.dcs_identifier = "AA"
+                g.heading = 0
+                g.position = Point(point.x, point.y)
+
+                if i == 0:
+                    group = generate_armor_group(faction, game, g)
+                elif i == 1 and random.randint(0,1) == 0:
+                    group = generate_anti_air_group(game, cp, g, faction)
+                elif random.randint(0, 2) == 1:
+                    group = generate_shorad_group(game, cp, g, faction)
+                else:
+                    group = generate_armor_group(faction, game, g)
+
+                g.groups = []
+                if group is not None:
+                    g.groups.append(group)
+                cp.ground_objects.append(g)
+
+            print("---------------------------")
+            print("CP Generation : " + cp.name)
+            for ground_object in cp.ground_objects:
+                print(ground_object.groups)
 
 
 def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:

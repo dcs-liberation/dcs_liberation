@@ -138,6 +138,9 @@ class Operation:
         # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)
 
+        # Generate carrier groups & ships
+
+
         # Generate Activity on the map
         for cp in self.game.theater.controlpoints:
             side = cp.captured
@@ -163,7 +166,6 @@ class Operation:
             self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
-
 
         # triggers
         if self.game.is_player_attack(self.conflict.attackers_country):

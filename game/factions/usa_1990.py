@@ -34,11 +34,18 @@ USA_1990 = {
 
         AirDefence.SAM_Hawk_PCP,
 
-
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
     ], "shorad":[
         AirDefence.SAM_Avenger_M1097,
+    ], "aircraft_carrier": [
+        CVN_74_John_C__Stennis,
+    ], "helicopter_carrier": [
+        LHA_1_Tarawa,
+    ], "destroyer": [
+        Oliver_Hazzard_Perry_class,
+    ], "cruiser": [
+        Ticonderoga_class,
     ]
 }

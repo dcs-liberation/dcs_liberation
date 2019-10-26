@@ -8,11 +8,11 @@ from gen.defenses.armored_group_generator import ArmoredGroupGenerator
 
 def generate_armor_group(faction:str, game, ground_object):
     """
-    This generate a SAM group
+    This generate a group of ground units
     :param parentCp: The parent control point
-    :param ground_object: The ground object which will own the sam group
+    :param ground_object: The ground object which will own the group
     :param country: Owner country
-    :return: Nothing, but put the group reference inside the ground object
+    :return: Generated group
     """
 
     possible_unit = [u for u in db.FACTIONS[faction]["units"] if u in Armor.__dict__.values()]
