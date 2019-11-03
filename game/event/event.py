@@ -122,12 +122,15 @@ class Event:
         self.environment_settings = self.operation.environment_settings
 
     def generate_quick(self):
-        self.operation.is_awacs_enabled = self.is_awacs_enabled
-        self.operation.environment_settings = self.environment_settings
-
-        self.operation.prepare(self.game.theater.terrain, is_quick=True)
-        self.operation.generate()
-        self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
+        pass
+        # TODO : This is not needed anymore. The player can start mission in flight from the flight planner if he want it to be quick.
+        # TODO : remove this method
+        #self.operation.is_awacs_enabled = self.is_awacs_enabled
+        #self.operation.environment_settings = self.environment_settings
+        #
+        #self.operation.prepare(self.game.theater.terrain, is_quick=True)
+        #self.operation.generate()
+        #self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
 
     def commit(self, debriefing: Debriefing):
 

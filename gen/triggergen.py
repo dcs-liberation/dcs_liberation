@@ -196,8 +196,8 @@ class TriggersGenerator:
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
 
-        if not is_quick:
-            # TODO: waypoint parts of this should not be post-hacked but added in airgen
-            self._gen_activation_trigger(activation_trigger_radius, player_cp, player_coalition, enemy_coalition)
-            self._gen_push_trigger(player_cp, player_coalition)
+        #if not is_quick:
+        #    # TODO: waypoint parts of this should not be post-hacked but added in airgen
+        #    self._gen_activation_trigger(activation_trigger_radius, player_cp, player_coalition, enemy_coalition)
+        #    self._gen_push_trigger(player_cp, player_coalition)
 

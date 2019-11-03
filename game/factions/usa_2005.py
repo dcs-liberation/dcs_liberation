@@ -28,6 +28,9 @@ USA_2005 = {
         Armor.MBT_M1A2_Abrams,
         Armor.ATGM_M1134_Stryker,
         Armor.IFV_M2A2_Bradley,
+        Armor.IFV_LAV_25,
+        Armor.APC_M1043_HMMWV_Armament,
+        Armor.ATGM_M1045_HMMWV_TOW,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,

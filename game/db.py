@@ -562,7 +562,7 @@ FACTIONS = {
     "Spain 1990": Spain_1990,
     "Italy 1990": Italy_1990,
     "Sweden 1990": Sweden_1990,
-    "Ukrain 2010": Ukraine_2010,
+    "Ukraine 2010": Ukraine_2010,
     "India 2010": India_2010,
     "Israel 2000": Israel_2000,
     "Turkey 2005": Turkey_2005,

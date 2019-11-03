@@ -8,8 +8,8 @@ from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS
 from gen.flights.flight import Flight, FlightType, FlightWaypoint
 
 # TODO : Ideally should be based on the aircraft type instead / Availability of fuel
-STRIKE_MAX_RANGE = 150000
-SEAD_MAX_RANGE = 150000
+STRIKE_MAX_RANGE = 1500000
+SEAD_MAX_RANGE = 1500000
 
 MAX_NUMBER_OF_INTERCEPTION_GROUP = 3
 MISSION_DURATION = 120 # in minutes
@@ -42,7 +42,7 @@ class FlightPlanner:
 
     def reset(self):
         """
-        Reset the planned flights and avaialble units
+        Reset the planned flights and available units
         """
         self.aircraft_inventory = dict({k: v for k, v in self.from_cp.base.aircraft.items()})
         self.interceptor_flights = []
