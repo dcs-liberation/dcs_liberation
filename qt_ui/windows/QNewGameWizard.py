@@ -206,18 +206,18 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroup = QtWidgets.QGroupBox("Terrain")
         terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map")
         terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia")
+        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia [RECOMMENDED]")
         terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
 
         terrainPg = QtWidgets.QRadioButton("Persian Gulf - Full Map")
         terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Iranian Campaign")
+        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Iranian Campaign [RECOMMENDED]")
         terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
         terrainNttr = QtWidgets.QRadioButton("Nevada - Full")
         terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
         terrainNormandy = QtWidgets.QRadioButton("Normandy")
         terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainCaucasus.setChecked(True)
+        terrainCaucasusSmall.setChecked(True)
 
         # Time Period
         timeGroup = QtWidgets.QGroupBox("Time Period")
@@ -239,10 +239,10 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Build layout
         terrainGroupLayout = QtWidgets.QVBoxLayout()
-        terrainGroupLayout.addWidget(terrainCaucasus)
         terrainGroupLayout.addWidget(terrainCaucasusSmall)
-        terrainGroupLayout.addWidget(terrainPg)
+        terrainGroupLayout.addWidget(terrainCaucasus)
         terrainGroupLayout.addWidget(terrainIran)
+        terrainGroupLayout.addWidget(terrainPg)
         terrainGroupLayout.addWidget(terrainNttr)
         terrainGroupLayout.addWidget(terrainNormandy)
         terrainGroup.setLayout(terrainGroupLayout)
