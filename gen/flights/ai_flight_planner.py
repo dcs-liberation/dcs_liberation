@@ -218,7 +218,7 @@ class FlightPlanner:
                 point.targets.append(location)
                 flight.points.append(point)
 
-                self.cas_flights.append(flight)
+                self.sead_flights.append(flight)
                 self.flights.append(flight)
 
             # Update inventory
