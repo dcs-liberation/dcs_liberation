@@ -52,5 +52,4 @@ USA_2005 = {
     ], "cruiser": [
         Ticonderoga_class,
     ]
-
 }

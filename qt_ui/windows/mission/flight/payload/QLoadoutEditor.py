@@ -21,7 +21,7 @@ class QLoadoutEditor(QGroupBox):
         pylons = [v for v in self.flight.unit_type.__dict__.values() if inspect.isclass(v) and v.__name__.startswith("Pylon")]
         for i, pylon in enumerate(pylons):
             label = QLabel("<b>{}</b>".format(pylon.__name__[len("Pylon"):]))
-            label.setSizePolicy(QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed))
+            label.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
             layout.addWidget(label, i, 0)
             layout.addWidget(QPylonEditor(flight, pylon, i+1), i, 1)
 

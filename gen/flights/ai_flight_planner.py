@@ -4,6 +4,7 @@ import typing
 import random
 
 from game import db
+from gen import Conflict
 from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE
 from gen.flights.flight import Flight, FlightType, FlightWaypoint
 
@@ -166,15 +167,27 @@ class FlightPlanner:
                 inventory[unit] = inventory[unit] - 2
                 flight = Flight(unit, 2, self.from_cp, FlightType.CAS)
 
-                # Flight path : fly over each ground object (TODO : improve)
                 flight.points = []
                 flight.scheduled_in = offset + i*random.randint(CAS_EVERY_X_MINUTES-5, CAS_EVERY_X_MINUTES+5)
 
                 location = random.choice(cas_location)
-                flight.targets.append(cas_location)
-                point = FlightWaypoint(location[0], location[1], 1000)
-                point.description = "PROVIDE CAS"
-                flight.points.append(point)
+                ingress, heading, distance = Conflict.frontline_vector(self.from_cp, location, self.game.theater)
+                center = ingress.point_from_heading(heading, distance/2)
+                egress = ingress.point_from_heading(heading, distance)
+
+                flight.targets.append(center)
+
+                ingress_point = FlightWaypoint(ingress.x, ingress.y, 1000)
+                ingress_point.description = "INGRESS CAS"
+                flight.points.append(ingress_point)
+
+                center_point = FlightWaypoint(center.x, center.y, 1000)
+                center_point.description = "PROVIDE CAS"
+                flight.points.append(center_point)
+
+                egress_point = FlightWaypoint(egress.x, egress.y, 1000)
+                egress_point.description = "EGRESS FROM CAS AREA"
+                flight.points.append(egress_point)
 
                 self.cas_flights.append(flight)
                 self.flights.append(flight)
@@ -229,7 +242,7 @@ class FlightPlanner:
         cas_locations = []
         for cp in self.from_cp.connected_points:
             if cp.captured != self.from_cp.captured:
-                cas_locations.append(((self.from_cp.position.x + cp.position.x)/2, (self.from_cp.position.y + cp.position.y)/2))
+                cas_locations.append(cp)
         return cas_locations
 
     def compute_strike_targets(self):
