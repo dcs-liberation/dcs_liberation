@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Start window
     window = QLiberationWindow()
-    window.show()
+    window.showMaximized()
 
     splash.finish(window)
     sys.exit(app.exec_())

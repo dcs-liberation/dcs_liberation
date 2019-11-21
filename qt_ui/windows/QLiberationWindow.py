@@ -1,7 +1,9 @@
 import webbrowser
 
+from PySide2 import QtGui
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget
 
 import qt_ui.uiconstants as CONST
 from game import Game
@@ -32,6 +34,10 @@ class QLiberationWindow(QMainWindow):
         self.initToolbar()
         self.connectSignals()
         self.onGameGenerated(self.game)
+
+        screen = QDesktopWidget().screenGeometry()
+        self.setGeometry(0, 0, screen.width(), screen.height())
+        self.setWindowState(Qt.WindowMaximized)
 
 
     def initUi(self):
