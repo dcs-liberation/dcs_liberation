@@ -104,7 +104,7 @@ class WesternGeorgia(ConflictTheater):
     sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_DR_E, SIZE_REGULAR, 1.2)
     gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_DR_E, SIZE_REGULAR, 1.2)
     sochi = ControlPoint.from_airport(caucasus.Sochi_Adler, COAST_DR_E, SIZE_BIG, IMPORTANCE_HIGH)
-    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875))
+    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-285810.6875, 496399.1875))
 
     def __init__(self, load_ground_objects=True):
         super(WesternGeorgia, self).__init__()
@@ -115,6 +115,7 @@ class WesternGeorgia(ConflictTheater):
         self.add_controlpoint(self.sukhumi, connected_to=[self.gudauta, self.senaki])
         self.add_controlpoint(self.gudauta, connected_to=[self.sochi, self.sukhumi])
         self.add_controlpoint(self.sochi, connected_to=[self.gudauta])
+        self.add_controlpoint(self.carrier_1)
 
         self.carrier_1.captured = True
         self.kobuleti.captured = True
