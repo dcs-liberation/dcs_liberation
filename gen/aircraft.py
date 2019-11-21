@@ -1,5 +1,7 @@
 import logging
 
+from dcs.helicopters import UH_1H
+
 from game import db
 from game.settings import Settings
 from gen.flights.ai_flight_planner import FlightPlanner
@@ -130,7 +132,7 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
-        if unit_type in helicopters.helicopter_map.values():
+        if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
             group.set_frequency(127.5)
         else:
             if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4]:
