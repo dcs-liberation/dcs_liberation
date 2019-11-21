@@ -1,5 +1,6 @@
 from dcs.countries import country_dict
 from dcs.lua.parse import loads
+from dcs.terrain import Terrain
 
 from gen import *
 from userdata.debriefing import *
