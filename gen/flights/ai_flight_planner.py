@@ -134,6 +134,7 @@ class FlightPlanner:
             for ground_object in self.from_cp.ground_objects:
                 if ground_object.group_id not in patrolled and not ground_object.airbase_group:
                     point = FlightWaypoint(ground_object.position.x, ground_object.position.y, patrol_alt)
+                    point.name = "Patrol point"
                     point.description = "Patrol #" + str(len(flight.points))
                     flight.points.append(point)
                     patrolled.append(ground_object.group_id)
@@ -178,15 +179,18 @@ class FlightPlanner:
                 flight.targets.append(center)
 
                 ingress_point = FlightWaypoint(ingress.x, ingress.y, 1000)
-                ingress_point.description = "INGRESS CAS"
+                ingress_point.name = "INGRESS"
+                ingress_point.description = "Ingress into CAS area"
                 flight.points.append(ingress_point)
 
                 center_point = FlightWaypoint(center.x, center.y, 1000)
-                center_point.description = "PROVIDE CAS"
+                center_point.description = "Provide CAS"
+                center_point.name = "CAS"
                 flight.points.append(center_point)
 
                 egress_point = FlightWaypoint(egress.x, egress.y, 1000)
-                egress_point.description = "EGRESS FROM CAS AREA"
+                egress_point.description = "Egress from CAS area"
+                egress_point.name = "EGRESS"
                 flight.points.append(egress_point)
 
                 self.cas_flights.append(flight)

@@ -18,6 +18,7 @@ class BriefingGenerator:
         self.m = mission
         self.conflict = conflict
         self.game = game
+        self.description = ""
 
         self.freqs = []
         self.targets = []
@@ -32,32 +33,44 @@ class BriefingGenerator:
     def append_waypoint(self, description: str):
         self.waypoints.append(description)
 
+    def add_flight_description(self, flight):
+
+        if flight.client_count <= 0:
+            return
+
+        flight_unit_name = db.unit_type_name(flight.unit_type)
+        self.description += 2 * "\n" + "-" * 50 + "\n"
+        self.description += flight_unit_name + " x " + str(flight.count) + 2 * "\n"
+
+        self.description += "# 0 -- TAKEOFF : Take off"
+        for i, wpt in enumerate(flight.points):
+            self.description += "#" + str(1+i) + " -- " + wpt.name + " : " + wpt.description + "\n"
+        self.description += "# " + str(len(flight.points)) + " -- RTB"
+
+        self.description += "-" * 50 + "\n"
+
     def generate(self):
-        self.waypoints.insert(0, "INITIAL")
-        self.waypoints.append("RTB")
-        self.waypoints.append("RTB Landing")
 
-        description = ""
+        self.description = ""
 
-        if self.title:
-            description += self.title
+        self.description += "DCS Liberation turn #" + str(self.game.turn) + "\n"
+        self.description += "-"*50 + "\n"
 
-        if self.description:
-            description += "\n\n" + self.description
+        for planner in self.game.planners.values():
+            for flight in planner.cap_flights:
+                self.add_flight_description(flight)
+            for flight in planner.cas_flights:
+                self.add_flight_description(flight)
+            for flight in planner.sead_flights:
+                self.add_flight_description(flight)
 
         if self.freqs:
-            description += "\n\nCOMMS:"
+            self.description += "\n\nComms Frequencies:\n"
+            self.description += "-" * 50 + "\n"
             for name, freq in self.freqs:
-                description += "\n{}: {}".format(name, freq)
+                self.description += "\n{}: {}".format(name, freq)
 
-        if self.targets:
-            description += "\n\nTARGETS:"
-            for i, (name, tp) in enumerate(self.targets):
-                description += "\n#{} {} {}".format(i+1, name, "(TP {})".format(tp) if tp else "")
 
-        if self.waypoints:
-            description += "\n\nWAYPOINTS:"
-            for i, descr in enumerate(self.waypoints):
-                description += "\n#{}: {}".format(i, descr)
+        self.m.set_description_text(self.description)
 
-        self.m.set_description_text(description)
+
