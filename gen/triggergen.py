@@ -190,8 +190,10 @@ class TriggersGenerator:
         player_coalition = self.game.player_country in db.BLUEFOR_FACTIONS and "blue" or "red"
         enemy_coalition = player_coalition == "blue" and "red" or "blue"
 
-        self.mission.coalition[player_coalition].bullseye = {"x": self.conflict.position.x,
+        self.mission.coalition["blue"].bullseye = {"x": self.conflict.position.x,
                                                              "y": self.conflict.position.y}
+        self.mission.coalition["red"].bullseye = {"x": self.conflict.position.x,
+                                                  "y": self.conflict.position.y}
 
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
