@@ -42,10 +42,10 @@ class BriefingGenerator:
         self.description += 2 * "\n" + "-" * 50 + "\n"
         self.description += flight_unit_name + " x " + str(flight.count) + 2 * "\n"
 
-        self.description += "# 0 -- TAKEOFF : Take off\n"
+        self.description += "#0 -- TAKEOFF : Take off\n"
         for i, wpt in enumerate(flight.points):
             self.description += "#" + str(1+i) + " -- " + wpt.name + " : " + wpt.description + "\n"
-        self.description += "# " + str(len(flight.points)) + " -- RTB\n"
+        self.description += "#" + str(len(flight.points) + 1) + " -- RTB\n"
 
         self.description += "-" * 50 + "\n"
 
