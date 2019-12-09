@@ -22,6 +22,7 @@ from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
+from game.factions.pakistan_2015 import Pakistan_2015
 from game.factions.russia_1975 import Russia_1975
 from game.factions.germany_1944 import Germany_1944
 from game.factions.india_2010 import India_2010
@@ -78,6 +79,7 @@ PRICES = {
     MiG_29G: 18,
     MiG_31: 30,
     J_11A: 26,
+    JF_17: 20,
     Su_30: 24,
     SpitfireLFMkIX:3,
     SpitfireLFMkIXCW:3,
@@ -272,6 +274,7 @@ UNIT_BY_TASK = {
         MiG_29G,
         Su_30,
         J_11A,
+        JF_17,
         F_4E,
         C_101CC,
         Bf_109K_4,
@@ -564,6 +567,7 @@ FACTIONS = {
     "Sweden 1990": Sweden_1990,
     "Ukraine 2010": Ukraine_2010,
     "India 2010": India_2010,
+    "Pakistan 2015": Pakistan_2015,
     "Israel 2000": Israel_2000,
     "Turkey 2005": Turkey_2005,
     "United Arab Emirates 2005": UAE_2005,
@@ -607,6 +611,12 @@ PLANE_PAYLOAD_OVERRIDES = {
         PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
         AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
         SEAD: "AGM-88*2,AIM-9*2,AIM-7,FLIR Pod,Fuel*3"
+    },
+
+    JF_17: {
+        CAS: "PL-5Ex2, 2*SD-10x2, 800L Tank",
+        CAP: "PL-5Ex2, 2*GBU-12x2, BRM1x2, WMD7",
+        SEAD: "PL-5Ex2, LD-10x2, 1100L Tankx2, WMD7"
     },
 
     F_14B: {

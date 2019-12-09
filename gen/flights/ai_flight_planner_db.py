@@ -28,6 +28,7 @@ CAP_CAPABLE = [
 
     Su_27,
     J_11A,
+    JF_17,
     Su_30,
     Su_33,
 
@@ -71,6 +72,8 @@ CAS_CAPABLE = [
     Su_25T,
     Su_25TM,
     Su_34,
+
+    JF_17,
 
     M_2000C,
 
@@ -118,6 +121,7 @@ SEAD_CAPABLE = [
     FA_18C_hornet,
     F_16C_50,
     AV8BNA,
+    JF_17,
 
     Su_24M,
     Su_25T,
@@ -141,6 +145,8 @@ STRIKE_CAPABLE = [
     Su_25,
     Su_25T,
     Su_34,
+
+    JF_17,
 
     M_2000C,
 
@@ -175,4 +181,5 @@ ANTISHIP_CAPABLE = [
     Su_24M,
     F_A_18C,
     AV8BNA,
+    JF_17
 ]
