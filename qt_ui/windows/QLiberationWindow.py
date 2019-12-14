@@ -124,11 +124,17 @@ class QLiberationWindow(QMainWindow):
         tg_sam_visibility.setChecked(True)
         tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
 
+        tg_flight_path_visibility = QAction('Flight Paths', displayMenu)
+        tg_flight_path_visibility.setCheckable(True)
+        tg_flight_path_visibility.setChecked(False)
+        tg_flight_path_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("flight_paths", tg_flight_path_visibility.isChecked()))
+
         displayMenu.addAction(tg_go_visibility)
         displayMenu.addAction(tg_cp_visibility)
         displayMenu.addAction(tg_line_visibility)
         displayMenu.addAction(tg_event_visibility)
         displayMenu.addAction(tg_sam_visibility)
+        displayMenu.addAction(tg_flight_path_visibility)
 
     def newGame(self):
         wizard = NewGameWizard(self)

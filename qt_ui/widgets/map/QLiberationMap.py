@@ -28,6 +28,7 @@ class QLiberationMap(QGraphicsView):
         "lines": True,
         "events": True,
         "sam": True,
+        "flight_paths": False
     }
 
     def __init__(self, game: Game):
@@ -120,17 +121,18 @@ class QLiberationMap(QGraphicsView):
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp)
 
-            if cp.id in self.game.planners.keys():
-                planner = self.game.planners[cp.id]
-                for flight in planner.flights:
-                    scene.addEllipse(pos[0], pos[1], 4, 4)
-                    prev_pos = list(pos)
-                    for point in flight.points:
-                        new_pos = self._transform_point(Point(point.x, point.y))
-                        scene.addLine(prev_pos[0]+2, prev_pos[1]+2, new_pos[0]+2, new_pos[1]+2, flight_path_pen)
-                        scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
-                        prev_pos = list(new_pos)
-                    scene.addLine(prev_pos[0] + 2, prev_pos[1] + 2, pos[0] + 2, pos[1] + 2, flight_path_pen)
+            if self.get_display_rule("flight_paths"):
+                if cp.id in self.game.planners.keys():
+                    planner = self.game.planners[cp.id]
+                    for flight in planner.flights:
+                        scene.addEllipse(pos[0], pos[1], 4, 4)
+                        prev_pos = list(pos)
+                        for point in flight.points:
+                            new_pos = self._transform_point(Point(point.x, point.y))
+                            scene.addLine(prev_pos[0]+2, prev_pos[1]+2, new_pos[0]+2, new_pos[1]+2, flight_path_pen)
+                            scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
+                            prev_pos = list(new_pos)
+                        scene.addLine(prev_pos[0] + 2, prev_pos[1] + 2, pos[0] + 2, pos[1] + 2, flight_path_pen)
 
     def scene_create_lines_for_cp(self, cp: ControlPoint):
         scene = self.scene()
