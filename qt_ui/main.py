@@ -19,8 +19,17 @@ if __name__ == "__main__":
     assert len(sys.argv) >= 3, "__init__.py should be started with two mandatory arguments: %UserProfile% location and application version"
 
     persistency.setup(sys.argv[1])
+    source_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")
+    compiled_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")
+    the_path = None
+    if os.path.exists(source_path):
+        the_path = source_path
+    else:
+        the_path = compiled_path
+
     dcs.planes.FlyingType.payload_dirs = [
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")]
+        the_path
+    ]
 
     VERSION_STRING = sys.argv[2]
     logging_module.setup_version_string(VERSION_STRING)
