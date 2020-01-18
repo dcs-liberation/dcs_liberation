@@ -18,7 +18,6 @@ def base_path() -> str:
     global _user_folder
     assert _user_folder
 
-    return installation.get_dcs_saved_games_directory()
     openbeta_path = os.path.join(_user_folder, "DCS.openbeta")
     if "--force-stable-DCS" not in sys.argv and os.path.exists(openbeta_path):
         return openbeta_path
