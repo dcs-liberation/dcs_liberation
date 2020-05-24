@@ -14,7 +14,7 @@ class QFlightPlanner(QTabWidget):
         if flight:
             self.general_settings_tab = QGeneralFlightSettingsTab(flight, game)
             self.payload_tab = QFlightPayloadTab(flight, game)
-            self.waypoint_tab = QFlightWaypointTab(flight)
+            self.waypoint_tab = QFlightWaypointTab(game, flight)
             self.addTab(self.general_settings_tab, "General Flight settings")
             self.addTab(self.payload_tab, "Payload")
             self.addTab(self.waypoint_tab, "Waypoints")
