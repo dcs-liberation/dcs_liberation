@@ -37,8 +37,8 @@ class NevadaTheater(ConflictTheater):
         super(NevadaTheater, self).__init__()
 
         self.add_controlpoint(self.tonopah, connected_to=[self.tonopah_test_range, self.lincoln_conty])
-        self.add_controlpoint(self.tonopah_test_range, connected_to=[self.tonopah, self.lincoln_conty, self.groom_lake, self.pahute_mesa])
-        self.add_controlpoint(self.lincoln_conty, connected_to=[self.tonopah_test_range, self.mesquite])
+        self.add_controlpoint(self.tonopah_test_range, connected_to=[self.tonopah, self.lincoln_conty, self.pahute_mesa])
+        self.add_controlpoint(self.lincoln_conty, connected_to=[self.tonopah_test_range, self.tonopah, self.mesquite])
 
         self.add_controlpoint(self.groom_lake, connected_to=[self.pahute_mesa, self.lincoln_conty, self.mesquite])
         self.add_controlpoint(self.pahute_mesa, connected_to=[self.groom_lake, self.tonopah_test_range, self.beatty, self.creech])
