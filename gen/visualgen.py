@@ -126,6 +126,8 @@ class VisualGenerator:
                         break
 
     def _generate_stub_planes(self):
+        pass
+        """
         mission_units = set()
         for coalition_name, coalition in self.mission.coalition.items():
             for country in coalition.countries.values():
@@ -134,7 +136,7 @@ class VisualGenerator:
                         mission_units.add(db.unit_type_of(unit))
 
         for unit_type in mission_units:
-            self.mission.static_group(self.mission.country(self.game.player_country), "a", unit_type, Point(0, 300000), hidden=True)
+            self.mission.static_group(self.mission.country(self.game.player_country), "a", unit_type, Point(0, 300000), hidden=True)"""
 
     def generate_target_smokes(self, target):
         spread = target.size * DESTINATION_SMOKE_DISTANCE_FACTOR

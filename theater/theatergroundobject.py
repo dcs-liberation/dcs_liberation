@@ -29,7 +29,6 @@ ABBREV_NAME = {
     "oil": "OILP"
 }
 
-
 CATEGORY_MAP = {
     "CARRIER": ["CARRIER"],
     "aa": ["AA"],

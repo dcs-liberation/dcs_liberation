@@ -8,8 +8,7 @@ from dcs import Point
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.event import InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent, Event, \
-    FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent, ControlPointType
+from game.event import UnitsDeliveryEvent, Event, ControlPointType
 from gen import Conflict
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint

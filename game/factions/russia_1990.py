@@ -16,7 +16,6 @@ Russia_1990 = {
         Su_27,
 
         Su_24M,
-        Su_24MR,
         Su_25,
 
         IL_76MD,
@@ -39,15 +38,21 @@ Russia_1990 = {
         Armor.IFV_BMD_1,
         Armor.IFV_BMP_1,
         Armor.MBT_T_55,
+        Artillery.MLRS_9K57_Uragan_BM_27,
+        Artillery.SPH_2S19_Msta,
 
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
 
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
-        Tanker_Elnya_160
+        Tanker_Elnya_160,
+
+        # Infantry squad
+        Infantry.Paratrooper_AKS,
+        Infantry.Infantry_Soldier_Rus,
+        Infantry.Paratrooper_RPG_16,
     ],
     "shorad":[
         AirDefence.SAM_SA_9_Strela_1_9P31,

@@ -1,7 +1,7 @@
 from PySide2.QtCore import Qt, Slot, QItemSelectionModel, QPoint
 from PySide2.QtWidgets import QDialog, QGridLayout, QScrollArea, QVBoxLayout, QPushButton
 from game import Game
-from game.event import StrikeEvent, InsurgentAttackEvent, FrontlineAttackEvent, CAP, CAS
+from game.event import CAP, CAS, FrontlineAttackEvent
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
@@ -18,7 +18,7 @@ class QMissionPlanning(QDialog):
         self.setMinimumSize(750, 420)
         self.setModal(True)
         self.setWindowTitle("Mission Preparation")
-        self.setWindowIcon(EVENT_ICONS[StrikeEvent])
+        self.setWindowIcon(EVENT_ICONS["strike"])
         self.init_ui()
         print("DONE")
 
@@ -84,14 +84,10 @@ class QMissionPlanning(QDialog):
         #    self.game.awacs_expense_commit()
         #else:
         #    self.gameEvent.is_awacs_enabled = False
-        self.gameEvent.is_awacs_enabled = False
+        self.gameEvent.is_awacs_enabled = True
         self.gameEvent.ca_slots = 1
         self.gameEvent.departure_cp = self.game.theater.controlpoints[0]
-
-        if self.game.is_player_attack(self.gameEvent):
-            self.gameEvent.player_attacking({CAS:{}, CAP:{}})
-        else:
-            self.gameEvent.player_defending({CAS: {}, CAP: {}})
+        self.gameEvent.player_attacking({CAS:{}, CAP:{}})
         self.gameEvent.depart_from = self.game.theater.controlpoints[0]
 
         self.game.initiate_event(self.gameEvent)

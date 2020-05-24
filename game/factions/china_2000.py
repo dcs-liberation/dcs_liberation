@@ -10,7 +10,9 @@ China_2000 = {
 
         MiG_21Bis, # Standing as J-7
         Su_30,
+        Su_33,
         J_11A,
+        JF_17,
 
         IL_76MD,
         IL_78M,
@@ -26,14 +28,17 @@ China_2000 = {
         AirDefence.SAM_SA_6_Kub_LN_2P25,
         AirDefence.HQ_7_Self_Propelled_LN,
 
-        Armor.MBT_T_72B, # Type 99
+        Armor.ZTZ_96B,
         Armor.MBT_T_55,
         Armor.ZBD_04A,
         Armor.IFV_BMP_1,
+        Artillery.MLRS_9A52_Smerch,
+        Artillery.SPH_2S9_Nona,
 
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
         Infantry.Soldier_AK,
+        Infantry.Paratrooper_RPG_16,
 
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,

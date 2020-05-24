@@ -96,6 +96,8 @@ class GroundObjectsGenerator:
                                     ship.heading = u.heading
                                     sg.add_unit(ship)
 
+                            sg.add_waypoint(sg.points[0].position.point_from_heading(g.units[0].heading, 100000))
+
                 else:
                     if ground_object.dcs_identifier in warehouse_map:
                         static_type = warehouse_map[ground_object.dcs_identifier]

@@ -4,8 +4,7 @@ from typing import Dict
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
-from game.event import BaseAttackEvent, FrontlinePatrolEvent, FrontlineAttackEvent, InfantryTransportEvent, \
-    InsurgentAttackEvent, ConvoyStrikeEvent, InterceptEvent, NavalInterceptEvent, StrikeEvent, UnitsDeliveryEvent
+from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
 
 URLS : Dict[str, str] = {
@@ -85,15 +84,9 @@ EVENT_ICONS: Dict[str, QPixmap] = {}
 
 
 def load_event_icons():
-    for category, image in {BaseAttackEvent: "capture",
-                            FrontlinePatrolEvent: "attack",
+    for category, image in {
+                            "strike": "strike",
                             FrontlineAttackEvent: "attack",
-                            InfantryTransportEvent: "infantry",
-                            InsurgentAttackEvent: "insurgent_attack",
-                            ConvoyStrikeEvent: "convoy",
-                            InterceptEvent: "air_intercept",
-                            NavalInterceptEvent: "naval_intercept",
-                            StrikeEvent: "strike",
                             UnitsDeliveryEvent: "delivery"}.items():
         EVENT_ICONS[category] = QPixmap("./resources/ui/events/" + image + ".png")
 

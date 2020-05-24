@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QVBoxLayout
     QSpinBox, QPushButton, QMessageBox, QComboBox
 from pip._internal.utils import typing
 
-from game.game import AWACS_BUDGET_COST, PinpointStrike, db, Event, FrontlineAttackEvent, FrontlinePatrolEvent, Task, \
+from game.game import AWACS_BUDGET_COST, PinpointStrike, db, Event, FrontlineAttackEvent, Task, \
     UnitType
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from userdata.persistency import base_path
@@ -234,14 +234,14 @@ class QBriefingWindow(QDialog):
                 return
 
         if self.game.is_player_attack(self.gameEvent):
-            if isinstance(self.gameEvent, FrontlineAttackEvent) or isinstance(self.gameEvent, FrontlinePatrolEvent):
+            if isinstance(self.gameEvent, FrontlineAttackEvent):
                 if self.base.total_armor == 0:
                     self.showErrorMessage("No ground vehicles available to attack!")
                     return
 
             self.gameEvent.player_attacking(flights)
         else:
-            if isinstance(self.gameEvent, FrontlineAttackEvent) or isinstance(self.gameEvent, FrontlinePatrolEvent):
+            if isinstance(self.gameEvent, FrontlineAttackEvent):
                 if self.gameEvent.to_cp.base.total_armor == 0:
                     self.showErrorMessage("No ground vehicles available to defend!")
                     return

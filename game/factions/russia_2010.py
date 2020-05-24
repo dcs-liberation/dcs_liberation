@@ -16,7 +16,7 @@ Russia_2010 = {
 
         Su_25T,
         Su_34,
-        Su_24MR,
+        Su_24M,
         L_39ZA,
 
         IL_76MD,
@@ -38,13 +38,21 @@ Russia_2010 = {
         Armor.MBT_T_80U,
         Armor.MBT_T_72B,
 
+        Artillery.MLRS_9K57_Uragan_BM_27,
+        Artillery.SPH_2S19_Msta,
+
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
+
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160,
+
+        # Infantry squad
+        Infantry.Paratrooper_AKS,
+        Infantry.Infantry_Soldier_Rus,
+        Infantry.Paratrooper_RPG_16,
     ],
     "shorad":[
         AirDefence.SAM_SA_19_Tunguska_2S6,

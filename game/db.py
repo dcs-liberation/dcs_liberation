@@ -168,6 +168,7 @@ PRICES = {
     Armor.IFV_BMP_2: 16,
     Armor.IFV_BMP_3: 18,
     Armor.ZBD_04A: 12,
+    Armor.ZTZ_96B: 35,
 
     Armor.APC_Cobra: 4,
     Armor.APC_M113: 6,
@@ -186,6 +187,17 @@ PRICES = {
     Armor.MBT_Challenger_II: 30,
     Armor.IFV_Marder: 10,
     Armor.IFV_MCV_80: 10,
+
+    Artillery.MLRS_M270: 55,
+    Artillery.SPH_M109_Paladin: 25,
+
+    Artillery.SPH_2S9_Nona: 12,
+    Artillery.SPH_2S1_Gvozdika: 18,
+    Artillery.SPH_2S3_Akatsia: 24,
+    Artillery.SPH_2S19_Msta: 30,
+    Artillery.MLRS_BM_21_Grad: 15,
+    Artillery.MLRS_9K57_Uragan_BM_27: 40,
+    Artillery.MLRS_9A52_Smerch: 40,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -220,11 +232,14 @@ PRICES = {
     Armor.IFV_Sd_Kfz_234_2_Puma:4,
     Armor.MT_M4_Sherman:4,
     Armor.MT_M4A4_Sherman_Firefly:6,
+    Armor.CT_Cromwell_IV:8,
     Armor.M30_Cargo_Carrier:2,
     Armor.APC_M2A1:2,
     AirDefence.AAA_Bofors_40mm:4,
     AirDefence.AAA_Flak_36:6,
     AirDefence.AAA_Flak_18:4,
+    Artillery.M12_GMC:2,
+    Artillery.Sturmpanzer_IV_Brummbär:2,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -341,8 +356,6 @@ UNIT_BY_TASK = {
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
-        Armor.ARV_BRDM_2,
-        Armor.ARV_BRDM_2,
         Armor.ARV_BTR_RD,
         Armor.ARV_BTR_RD,
         Armor.ARV_BTR_RD,
@@ -370,6 +383,7 @@ UNIT_BY_TASK = {
         Armor.MBT_T_80U,
         Armor.MBT_T_80U,
         Armor.MBT_T_90,
+        Armor.ZTZ_96B,
 
         Armor.APC_Cobra,
         Armor.APC_Cobra,
@@ -424,12 +438,26 @@ UNIT_BY_TASK = {
         Armor.IFV_Sd_Kfz_234_2_Puma,
         Armor.MT_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
+        Armor.CT_Cromwell_IV,
         Armor.M30_Cargo_Carrier,
         Armor.M30_Cargo_Carrier,
         Armor.APC_M2A1,
         Armor.APC_M2A1,
         Armor.APC_M2A1,
         Armor.APC_M2A1,
+
+        Artillery.MLRS_M270,
+        Artillery.SPH_M109_Paladin,
+        Artillery.SPH_2S9_Nona,
+        Artillery.SPH_2S1_Gvozdika,
+        Artillery.SPH_2S3_Akatsia,
+        Artillery.SPH_2S19_Msta,
+        Artillery.MLRS_BM_21_Grad,
+        Artillery.MLRS_BM_21_Grad,
+        Artillery.MLRS_9K57_Uragan_BM_27,
+        Artillery.MLRS_9A52_Smerch,
+        Artillery.M12_GMC,
+        Artillery.Sturmpanzer_IV_Brummbär,
 
     ],
     AirDefence: [
@@ -455,7 +483,7 @@ UNIT_BY_TASK = {
     Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
     Embarking: [],
     Carriage: [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, ],
-    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ],
+    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ]
 }
 
 """
@@ -801,6 +829,22 @@ def unit_task(unit: UnitType) -> Task:
 def find_unittype(for_task: Task, country_name: str) -> typing.List[UnitType]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name]["units"]]
 
+def find_infantry(country_name: str) -> typing.List[UnitType]:
+    inf = [
+        Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+        Infantry.Soldier_RPG,
+        Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
+        Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
+        Infantry.Paratrooper_RPG_16,
+        Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
+        Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+        Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
+        Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+        Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
+        Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
+    ]
+    return [x for x in inf if x in FACTIONS[country_name]["units"]]
 
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
@@ -825,7 +869,7 @@ def unit_type_of(unit: Unit) -> UnitType:
     elif isinstance(unit, Ship):
         return ship_map[unit.type]
     else:
-        return unit.unit_type
+        return unit.type
 
 
 def task_name(task) -> str:

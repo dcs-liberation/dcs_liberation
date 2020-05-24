@@ -5,7 +5,8 @@ from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGrap
 
 import qt_ui.uiconstants as CONST
 from game import Game
-from qt_ui.windows.QBaseMenu import QBaseMenu
+from qt_ui.windows.basemenu.QBaseMenu import QBaseMenu
+from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from theater import ControlPoint, db
 
 
@@ -98,5 +99,5 @@ class QMapControlPoint(QGraphicsRectItem):
             return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]
 
     def openBaseMenu(self):
-        self.baseMenu = QBaseMenu(self.window(), self.model, self.game)
+        self.baseMenu = QBaseMenu2(self.window(), self.model, self.game)
         self.baseMenu.show()

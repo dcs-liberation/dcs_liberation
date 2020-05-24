@@ -15,6 +15,8 @@ USA_1944 = {
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.M30_Cargo_Carrier,
         Armor.APC_M2A1,
+        Armor.CT_Cromwell_IV,
+        Artillery.M12_GMC,
 
         Infantry.Infantry_M1_Garand,
 

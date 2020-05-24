@@ -65,7 +65,6 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
-        self.armorgen = ArmorConflictGenerator(mission, conflict)
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
         self.shipgen = ShipGenerator(mission, conflict)
         self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
@@ -158,10 +157,13 @@ class Operation:
                                                        self.current_mission.country(self.attacker_country),
                                                        self.current_mission.country(self.defender_country),
                                                        player_cp, enemy_cp, self.game.theater)
-            armorgen = ArmorConflictGenerator(self.current_mission, conflict)
-            armorgen.generate_vec(player_cp.base.armor, enemy_cp.base.armor)
+            # Generate frontline ops
+            player_gp = self.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
+            enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
+            groundConflictGen = GroundConflictGenerator(self.current_mission, conflict, self.game, player_gp, enemy_gp, player_cp.stances[enemy_cp.id])
+            groundConflictGen.generate()
 
-        #Setup combined arms parameters
+        # Setup combined arms parameters
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
         if self.game.player_country in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
             self.current_mission.groundControl.blue_tactical_commander = self.ca_slots

@@ -2,7 +2,7 @@ from dcs.helicopters import Mi_8MT, Mi_24V
 from dcs.planes import MiG_21Bis, MiG_23MLD, MiG_25PD, MiG_29A, Su_17M4, Su_24M, Su_25, IL_76MD, IL_78M, An_26B, An_30M, \
     Yak_40, A_50
 from dcs.ships import *
-from dcs.vehicles import AirDefence, Armor, Unarmed, Infantry
+from dcs.vehicles import AirDefence, Armor, Unarmed, Infantry, Artillery
 
 Russia_1975 = {
     "country": "Russia",
@@ -39,14 +39,22 @@ Russia_1975 = {
         Armor.IFV_BMP_1,
         Armor.MBT_T_55,
 
+        Artillery.SPH_2S9_Nona,
+        Artillery.SPH_2S1_Gvozdika,
+
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
 
         CV_1143_5_Admiral_Kuznetsov,
         Bulk_cargo_ship_Yakushev,
         Dry_cargo_ship_Ivanov,
-        Tanker_Elnya_160
+        Tanker_Elnya_160,
+
+        # Infantry squad
+        Infantry.Paratrooper_AKS,
+        Infantry.Infantry_Soldier_Rus,
+        Infantry.Paratrooper_RPG_16,
+
     ],
     "shorad": [
         AirDefence.AAA_ZU_23_Emplacement,

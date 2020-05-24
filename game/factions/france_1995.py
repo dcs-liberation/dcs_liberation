@@ -23,6 +23,7 @@ France_1995 = {
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Infantry_M4,
 
         AirDefence.SAM_Roland_ADS,
         AirDefence.SAM_Hawk_PCP,

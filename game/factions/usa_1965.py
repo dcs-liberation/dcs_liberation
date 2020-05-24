@@ -24,6 +24,7 @@ USA_1965 = {
         Armor.APC_M113,
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.SAM_Chaparral_M48,
         AirDefence.SAM_Hawk_PCP,

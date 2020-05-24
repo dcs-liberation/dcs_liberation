@@ -11,6 +11,7 @@ USA_2005 = {
         F_14B,
         FA_18C_hornet,
         F_16C_50,
+        JF_17,
 
         A_10C,
         AV8BNA,
@@ -32,8 +33,12 @@ USA_2005 = {
         Armor.APC_M1043_HMMWV_Armament,
         Armor.ATGM_M1045_HMMWV_TOW,
 
+        Artillery.MLRS_M270,
+        Artillery.SPH_M109_Paladin,
+
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.SAM_Hawk_PCP,
         AirDefence.SAM_Patriot_EPP_III,

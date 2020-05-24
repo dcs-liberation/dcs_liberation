@@ -9,6 +9,7 @@ from dcs.vehicles import *
 from game.game_stats import GameStats
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import FlightPlanner
+from gen.ground_forces.ai_ground_planner import GroundPlanner
 from userdata.debriefing import Debriefing
 from theater import *
 
@@ -38,39 +39,6 @@ PLAYER_INTERCEPT_GLOBAL_PROBABILITY_BASE = 30
 PLAYER_INTERCEPT_GLOBAL_PROBABILITY_LOG = 2
 PLAYER_BASEATTACK_THRESHOLD = 0.4
 
-"""
-Various events probabilities. First key is player probabilty, second is enemy probability.
-For the enemy events, only 1 event of each type could be generated for a turn.
-
-Events:
-* BaseAttackEvent - capture base
-* InterceptEvent - air intercept
-* FrontlineAttackEvent - frontline attack
-* NavalInterceptEvent - naval intercept
-* StrikeEvent - strike event
-* InfantryTransportEvent - helicopter infantry transport
-"""
-EVENT_PROBABILITIES = {
-    # events always present; only for the player
-    FrontlineAttackEvent: [100, 9],
-    #FrontlinePatrolEvent: [100, 0],
-    StrikeEvent: [100, 0],
-
-    # events randomly present; only for the player
-    #InfantryTransportEvent: [25, 0],
-    ConvoyStrikeEvent: [25, 0],
-
-    # events conditionally present; for both enemy and player
-    BaseAttackEvent: [100, 9],
-
-    # events randomly present; for both enemy and player
-    InterceptEvent: [25, 9],
-    NavalInterceptEvent: [25, 9],
-
-    # events randomly present; only for the enemy
-    InsurgentAttackEvent: [0, 6],
-}
-
 # amount of strength player bases recover for the turn
 PLAYER_BASE_STRENGTH_RECOVERY = 0.2
 
@@ -81,9 +49,11 @@ ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 AWACS_BUDGET_COST = 4
 
 # Initial budget value
-PLAYER_BUDGET_INITIAL = 170
+PLAYER_BUDGET_INITIAL = 450
+
 # Base post-turn bonus value
-PLAYER_BUDGET_BASE = 14
+PLAYER_BUDGET_BASE = 10
+
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
@@ -113,6 +83,7 @@ class Game:
         self.game_stats = GameStats()
         self.game_stats.update(self)
         self.planners = {}
+        self.ground_planners = {}
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -122,88 +93,11 @@ class Game:
             return random.randint(1, 100) <= prob * mult
 
     def _generate_player_event(self, event_class, player_cp, enemy_cp):
-        if event_class == NavalInterceptEvent and enemy_cp.radials == LAND:
-            # skip naval events for non-coastal CPs
-            return
-
-        if event_class == BaseAttackEvent and enemy_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD and self.settings.version != "dev":
-            # skip base attack events for CPs yet too strong
-            return
-
-        if event_class == StrikeEvent and not enemy_cp.ground_objects:
-            # skip strikes in case of no targets
-            return
-
         self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
 
-    def _generate_enemy_event(self, event_class, player_cp, enemy_cp):
-        if event_class in [type(x) for x in self.events if not self.is_player_attack(x)]:
-            # skip already generated enemy event types
-            return
-
-        if player_cp in self.ignored_cps:
-            # skip attacks against ignored CPs (for example just captured ones)
-            return
-
-        if enemy_cp.base.total_planes == 0:
-            # skip event if there's no planes on the base
-            return
-
-        if player_cp.is_global:
-            # skip carriers
-            return
-
-        if event_class == NavalInterceptEvent:
-            if player_cp.radials == LAND:
-                # skip naval events for non-coastal CPs
-                return
-        elif event_class == StrikeEvent:
-            if not player_cp.ground_objects:
-                # skip strikes if there's no ground objects
-                return
-        elif event_class == BaseAttackEvent:
-            if BaseAttackEvent in [type(x) for x in self.events]:
-                # skip base attack event if there's another one going on
-                return
-
-            if enemy_cp.base.total_armor == 0:
-                # skip base attack if there's no armor
-                return
-
-            if player_cp.base.strength > PLAYER_BASEATTACK_THRESHOLD:
-                # skip base attack if strength is too high
-                return
-
-        self.events.append(event_class(self, enemy_cp, player_cp, player_cp.position, self.enemy_name, self.player_name))
-
     def _generate_events(self):
-        strikes_generated_for = set()
-        base_attack_generated_for = set()
-
         for player_cp, enemy_cp in self.theater.conflicts(True):
-            for event_class, (player_probability, enemy_probability) in EVENT_PROBABILITIES.items():
-                if event_class in [FrontlineAttackEvent, FrontlinePatrolEvent, InfantryTransportEvent, ConvoyStrikeEvent]:
-                    # skip events requiring frontline
-                    if not Conflict.has_frontline_between(player_cp, enemy_cp):
-                        continue
-
-                # don't generate multiple 100% events from each attack direction
-                if event_class is StrikeEvent:
-                    if enemy_cp in strikes_generated_for:
-                        continue
-                if event_class is BaseAttackEvent:
-                    if enemy_cp in base_attack_generated_for:
-                        continue
-
-                if player_probability == 100 or player_probability > 0 and self._roll(player_probability, player_cp.base.strength):
-                    self._generate_player_event(event_class, player_cp, enemy_cp)
-                    if event_class is StrikeEvent:
-                        strikes_generated_for.add(enemy_cp)
-                    if event_class is BaseAttackEvent:
-                        base_attack_generated_for.add(enemy_cp)
-
-                if enemy_probability == 100 or enemy_probability > 0 and self._roll(enemy_probability, enemy_cp.base.strength):
-                    self._generate_enemy_event(event_class, player_cp, enemy_cp)
+            self._generate_player_event(FrontlineAttackEvent, player_cp, enemy_cp)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
@@ -214,7 +108,7 @@ class Game:
             return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_name)
 
     def _commision_units(self, cp: ControlPoint):
-        for for_task in [PinpointStrike, CAS, CAP, AirDefence]:
+        for for_task in [CAS, CAP, AirDefence]:
             limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE) * self.settings.multiplier
             missing_units = limit - cp.base.total_units(for_task)
             if missing_units > 0:
@@ -229,11 +123,32 @@ class Game:
 
     @property
     def budget_reward_amount(self):
+        reward = 0
         if len(self.theater.player_points()) > 0:
-            total_importance = sum([x.importance * x.base.strength for x in self.theater.player_points()])
-            return math.ceil(math.log(total_importance + 1, PLAYER_BUDGET_IMPORTANCE_LOG) * PLAYER_BUDGET_BASE * self.settings.multiplier)
+            reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
+            for cp in self.theater.player_points():
+                for g in cp.ground_objects:
+                    if g.category == "power":
+                        reward = reward + 10
+                    elif g.category == "warehouse":
+                        reward = reward + 8
+                    elif g.category == "fuel":
+                        reward = reward + 10
+                    elif g.category == "ammo":
+                        reward = reward + 6
+                    elif g.category == "farp":
+                        reward = reward + 4
+                    elif g.category == "fob":
+                        reward = reward + 4
+                    elif g.category == "factory":
+                        reward = reward + 25
+                    elif g.category == "comms":
+                        reward = reward + 25
+                    elif g.category == "oil":
+                        reward = reward + 45
+            return reward
         else:
-            return 0
+            return reward
 
     def _budget_player(self):
         self.budget += self.budget_reward_amount
@@ -310,13 +225,20 @@ class Game:
         # Update statistics
         self.game_stats.update(self)
 
-        # Plan flights for next turn
+        # Plan flights & combat for next turn
         self.planners = {}
+        self.ground_planners = {}
         for cp in self.theater.controlpoints:
             if cp.has_runway():
                 planner = FlightPlanner(cp, self)
                 planner.plan_flights()
                 self.planners[cp.id] = planner
+
+            if cp.has_frontline:
+                gplanner = GroundPlanner(cp, self)
+                gplanner.plan_groundwar()
+                self.ground_planners[cp.id] = gplanner
+
 
 
     @property

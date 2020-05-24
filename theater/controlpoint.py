@@ -7,8 +7,8 @@ from dcs.terrain import Airport
 from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov
 
 from game import db
+from gen.ground_forces.combat_stance import CombatStance
 from .theatergroundobject import TheaterGroundObject
-
 
 
 class ControlPointType(Enum):
@@ -56,6 +56,7 @@ class ControlPoint:
         self.connected_points = []
         self.base = theater.base.Base()
         self.cptype = cptype
+        self.stances = {}
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
@@ -76,6 +77,10 @@ class ControlPoint:
         return not self.connected_points
 
     @property
+    def is_carrier(self):
+        return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+
+    @property
     def sea_radials(self) -> typing.Collection[int]:
         # TODO: fix imports
         all_radials = [0, 45, 90, 135, 180, 225, 270, 315, ]
@@ -87,6 +92,7 @@ class ControlPoint:
 
     def connect(self, to):
         self.connected_points.append(to)
+        self.stances[to.id] = CombatStance.DEFENSIVE
 
     def has_runway(self):
         """

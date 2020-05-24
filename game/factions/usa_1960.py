@@ -22,6 +22,7 @@ USA_1960 = {
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.AAA_Vulcan_M163,
 

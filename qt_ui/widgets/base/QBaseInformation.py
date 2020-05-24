@@ -11,6 +11,7 @@ class QBaseInformation(QGroupBox):
         super(QBaseInformation, self).__init__("Base defenses")
         self.cp = cp
         self.airport = airport
+        self.setMinimumWidth(500)
         self.init_ui()
 
     def init_ui(self):

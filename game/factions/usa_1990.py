@@ -31,6 +31,7 @@ USA_1990 = {
         Armor.ATGM_M1134_Stryker,
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.SAM_Hawk_PCP,
 
