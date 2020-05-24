@@ -128,24 +128,25 @@ class Game:
             reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
             for cp in self.theater.player_points():
                 for g in cp.ground_objects:
+                    # (Reward is per building)
                     if g.category == "power":
-                        reward = reward + 10
+                        reward = reward + 4
                     elif g.category == "warehouse":
-                        reward = reward + 8
+                        reward = reward + 2
                     elif g.category == "fuel":
-                        reward = reward + 10
+                        reward = reward + 2
                     elif g.category == "ammo":
-                        reward = reward + 6
+                        reward = reward + 2
                     elif g.category == "farp":
-                        reward = reward + 4
+                        reward = reward + 1
                     elif g.category == "fob":
-                        reward = reward + 4
+                        reward = reward + 1
                     elif g.category == "factory":
-                        reward = reward + 25
+                        reward = reward + 10
                     elif g.category == "comms":
-                        reward = reward + 25
+                        reward = reward + 10
                     elif g.category == "oil":
-                        reward = reward + 45
+                        reward = reward + 10
             return reward
         else:
             return reward

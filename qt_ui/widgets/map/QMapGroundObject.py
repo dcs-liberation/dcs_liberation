@@ -42,7 +42,7 @@ class QMapGroundObject(QGraphicsRectItem):
             if not self.model.is_dead and not self.cp.captured:
                 painter.drawPixmap(option.rect, CONST.ICONS[self.model.category])
             elif not self.model.is_dead and self.model.category == "aa":
-                painter.drawPixmap(option.rect, CONST.ICONS["aa_blue"])
+                painter.drawPixmap(option.rect, CONST.ICONS[self.model.category + "_blue"])
             else:
-                painter.drawPixmap(option.rect, CONST.ICONS["cleared"])
+                painter.drawPixmap(option.rect, CONST.ICONS["destroyed"])
             painter.restore()
