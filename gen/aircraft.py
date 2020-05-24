@@ -384,6 +384,8 @@ class AircraftConflictGenerator:
         group.points[0].ETA = 0
         group.late_activation = True
         self._setup_group(group, Intercept, flight.client_count)
+        for point in flight.points:
+            group.add_waypoint(Point(point.x,point.y), point.alt)
 
 
     def setup_group_as_cap_flight(self, group, flight):
