@@ -15,11 +15,11 @@ PREDEFINED_WAYPOINT_CATEGORIES = [
 ]
 
 
-class QWaypointSelectionWindow(QDialog):
+class QPredefinedWaypointSelectionWindow(QDialog):
 
 
     def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QWaypointSelectionWindow, self).__init__()
+        super(QPredefinedWaypointSelectionWindow, self).__init__()
         self.game = game
         self.flight = flight
         self.setWindowFlags(Qt.WindowStaysOnTopHint)

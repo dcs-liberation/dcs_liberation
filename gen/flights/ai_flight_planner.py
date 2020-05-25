@@ -29,6 +29,7 @@ class FlightPlanner:
     cas_flights = []
     strike_flights = []
     sead_flights = []
+    custom_flights = []
     flights = []
 
     potential_sead_targets = []
@@ -74,6 +75,20 @@ class FlightPlanner:
         self.commision_sead()
 
         # TODO : commision STRIKE / ANTISHIP
+
+    def remove_flight(self, index):
+        try:
+            flight = self.flights[index]
+            if flight in self.interceptor_flights: self.interceptor_flights.remove(flight)
+            if flight in self.cap_flights: self.cap_flights.remove(flight)
+            if flight in self.cas_flights: self.cas_flights.remove(flight)
+            if flight in self.strike_flights: self.strike_flights.remove(flight)
+            if flight in self.sead_flights: self.sead_flights.remove(flight)
+            if flight in self.custom_flights: self.custom_flights.remove(flight)
+            self.flights.remove(flight)
+        except IndexError:
+            return
+
 
     def commision_interceptors(self):
         """

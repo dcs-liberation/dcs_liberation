@@ -330,6 +330,18 @@ class AircraftConflictGenerator:
             self.setup_group_as_sead_flight(group, flight)
             self._setup_custom_payload(flight, group)
 
+        for flight in flight_planner.custom_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            if flight.flight_type == FlightType.INTERCEPTION:
+                self.setup_group_as_intercept_flight(group, flight)
+            elif flight.flight_type == FlightType.CAP:
+                self.setup_group_as_cap_flight(group, flight)
+            elif flight.flight_type == FlightType.CAS:
+                self.setup_group_as_cas_flight(group, flight)
+            elif flight.flight_type == FlightType.SEAD or flight.flight_type == FlightType.DEAD:
+                self.setup_group_as_sead_flight(group, flight)
+            self._setup_custom_payload(flight, group)
+
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
             if flight.start_type == "In Flight" or flight.client_count == 0:

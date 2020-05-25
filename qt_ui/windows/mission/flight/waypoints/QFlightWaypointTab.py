@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QVBoxLay
 
 from gen.flights.flight import Flight
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints.QWaypointSelectionWindow import QWaypointSelectionWindow
+from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import QPredefinedWaypointSelectionWindow
 from game import Game
 
 class QFlightWaypointTab(QFrame):
@@ -22,7 +22,6 @@ class QFlightWaypointTab(QFrame):
         self.delete_selected = QPushButton("Delete Selected")
         self.delete_selected.clicked.connect(self.on_delete_waypoint)
 
-
         layout.addWidget(self.flight_waypoint_list,0,0)
         rlayout.addWidget(self.open_fast_waypoint_button)
         rlayout.addWidget(self.delete_selected)
@@ -37,5 +36,5 @@ class QFlightWaypointTab(QFrame):
             self.flight_waypoint_list.update_list()
 
     def on_fast_waypoint(self):
-        self.subwindow = QWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
         self.subwindow.show()
