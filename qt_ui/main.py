@@ -2,11 +2,10 @@ import logging
 import os
 import sys
 from shutil import copyfile
-from time import sleep
 
 import dcs
 from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QLabel, QSplashScreen
+from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs import installation
 
 from qt_ui import uiconstants

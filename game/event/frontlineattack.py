@@ -60,17 +60,6 @@ class FrontlineAttackEvent(Event):
     def commit(self, debriefing: Debriefing):
         super(FrontlineAttackEvent, self).commit(debriefing)
 
-        if self.from_cp.captured:
-            if self.is_successfull(debriefing):
-                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
-            else:
-                self.to_cp.base.affect_strength(+self.STRENGTH_INFLUENCE)
-        else:
-            if self.is_successfull(debriefing):
-                self.from_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
-            else:
-                self.to_cp.base.affect_strength(-self.STRENGTH_INFLUENCE)
-
     def skip(self):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-0.1)

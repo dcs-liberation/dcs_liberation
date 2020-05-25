@@ -25,7 +25,7 @@ class GroundConflictGenerator:
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
         self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = CombatStance.AGGRESIVE if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else CombatStance.DEFENSIVE
+        self.enemy_stance = random.choice([CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESIVE])
         self.game = game
 
     def _group_point(self, point) -> Point:
@@ -283,7 +283,7 @@ class GroundConflictGenerator:
         while i < 25: # 25 attempt for valid position
             heading_diff = -90 if isplayer else 90
             shifted = conflict_position[0].point_from_heading(self.conflict.heading,
-                                                     random.randint(-combat_width / 2, combat_width / 2))
+                                                     random.randint((int)(-combat_width / 2), (int)(combat_width / 2)))
             final_position = shifted.point_from_heading(self.conflict.heading + heading_diff, distance_from_frontline)
 
             if self.conflict.theater.is_on_land(final_position):

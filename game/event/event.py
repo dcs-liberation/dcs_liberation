@@ -22,6 +22,10 @@ DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
 
 
+MINOR_DEFEAT_INFLUENCE = 0.1
+DEFEAT_INFLUENCE = 0.3
+STRONG_DEFEAT_INFLUENCE = 0.5
+
 class Event:
     silent = False
     informational = False
@@ -153,12 +157,14 @@ class Event:
 
         # ------------------------------
         # Destroyed ground units
+        killed_unit_count_by_cp = {cp.id: 0 for cp in self.game.theater.controlpoints}
         cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
         for killed_ground_unit in debriefing.killed_ground_units:
             try:
                 cpid = int(killed_ground_unit.split("|")[3])
                 type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
                 if cpid in cp_map.keys():
+                    killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
                     cp = cp_map[cpid]
                     if type in cp.base.armor.keys():
                         logging.info("Ground unit destroyed : " + str(type))
@@ -195,7 +201,6 @@ class Event:
 
         # ------------------------------
         # Captured bases
-
         if self.game.player_country in db.BLUEFOR_FACTIONS:
             coalition = 2 # Value in DCS mission event for BLUE
         else:
@@ -224,6 +229,69 @@ class Event:
                                 g.groups = []
             except Exception as e:
                 print(e)
+
+        # -----------------------------------
+        # Compute damage to bases
+        for cp in self.game.theater.player_points():
+            enemy_cps = [e for e in cp.connected_points if not e.captured]
+            for enemy_cp in enemy_cps:
+                print("Compute frontline progression for : " + cp.name + " to " + enemy_cp.name)
+
+                delta = 0
+                player_won = True
+                ally_casualties = killed_unit_count_by_cp[cp.id]
+                enemy_casualties = killed_unit_count_by_cp[enemy_cp.id]
+                ally_units_alive = cp.base.total_armor
+                enemy_units_alive = enemy_cp.base.total_armor
+
+                print(ally_units_alive)
+                print(enemy_units_alive)
+                print(ally_casualties)
+                print(enemy_casualties)
+
+                ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
+
+                if ally_units_alive == 0:
+                    player_won = False
+                    delta = STRONG_DEFEAT_INFLUENCE
+                elif enemy_units_alive == 0:
+                    player_won = True
+                    delta = STRONG_DEFEAT_INFLUENCE
+                elif cp.stances[enemy_cp.id] == CombatStance.RETREAT:
+                    player_won = False
+                    delta = STRONG_DEFEAT_INFLUENCE
+                else:
+                    if enemy_casualties > ally_casualties:
+                        player_won = True
+                        if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
+                            delta = STRONG_DEFEAT_INFLUENCE
+                        else:
+                            if ratio > 3:
+                                delta = STRONG_DEFEAT_INFLUENCE
+                            elif ratio < 1.5:
+                                delta = MINOR_DEFEAT_INFLUENCE
+                            else:
+                                delta = DEFEAT_INFLUENCE
+                    elif ally_casualties > enemy_casualties:
+                        player_won = False
+                        if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
+                            delta = STRONG_DEFEAT_INFLUENCE
+                        else:
+                            delta = STRONG_DEFEAT_INFLUENCE
+
+                    # No progress with defensive strategies
+                    if player_won and cp.stances[enemy_cp.id] in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
+                        print("Defensive stance, no progress")
+                        delta = 0
+
+                if player_won:
+                    print(cp.name + " won !  factor > " + str(delta))
+                    cp.base.affect_strength(delta)
+                    enemy_cp.base.affect_strength(-delta)
+                else:
+                    print(enemy_cp.name + " won ! factor > " + str(delta))
+                    enemy_cp.base.affect_strength(delta)
+                    cp.base.affect_strength(-delta)
 
     def skip(self):
         pass
