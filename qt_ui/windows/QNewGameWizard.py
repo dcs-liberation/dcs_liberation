@@ -35,8 +35,10 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainPg = self.field("isTerrainPg")
         isTerrainNttr = self.field("isTerrainNttr")
         isTerrainCaucasusSmall = self.field("isTerrainCaucasusSmall")
+        isTerrainCaucasusSmallInverted = self.field("isTerrainCaucasusSmallInverted")
         isIranianCampaignTheater = self.field("isIranianCampaignTheater")
         isTerrainNormandy = self.field("isTerrainNormandy")
+        isTerrainEmirates = self.field("isTerrainEmirates")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         sams = self.field("sams")
         midGame = self.field("midGame")
@@ -51,17 +53,17 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = nevada.NevadaTheater()
         elif isTerrainCaucasusSmall:
             conflicttheater = caucasus.WesternGeorgia()
+        elif isTerrainCaucasusSmallInverted:
+            conflicttheater = caucasus.WesternGeorgiaInverted()
         elif isIranianCampaignTheater:
             conflicttheater = persiangulf.IranianCampaign()
+        elif isTerrainEmirates:
+            conflicttheater = persiangulf.Emirates()
         elif isTerrainNormandy:
             conflicttheater = normandy.NormandyTheater()
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
-
-        print("player_name, enemy_name, conflicttheater, sams, midGame, multiplier, timePeriod")
-        print(player_name, enemy_name, conflicttheater, sams, midGame, multiplier, timePeriod)
-        print(isIranianCampaignTheater, isTerrainPg)
         self.generatedGame = self.start_new_game(player_name, enemy_name, conflicttheater, sams, midGame, multiplier,
                                                  timePeriod)
 
@@ -204,18 +206,22 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Terrain selection
         terrainGroup = QtWidgets.QGroupBox("Terrain")
-        terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map")
-        terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
         terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia [RECOMMENDED]")
         terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
+        terrainCaucasusSmallInverted = QtWidgets.QRadioButton("Caucasus - Western Georgia Inverted [RECOMMENDED]")
+        terrainCaucasusSmallInverted.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
+        terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map")
+        terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
 
         terrainPg = QtWidgets.QRadioButton("Persian Gulf - Full Map")
         terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Iranian Campaign [RECOMMENDED]")
+        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Invasion of Iran [RECOMMENDED]")
         terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
+        terrainEmirates = QtWidgets.QRadioButton("Persian Gulf - Emirates [RECOMMENDED]")
+        terrainEmirates.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
         terrainNttr = QtWidgets.QRadioButton("Nevada - Full")
         terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
-        terrainNormandy = QtWidgets.QRadioButton("Normandy")
+        terrainNormandy = QtWidgets.QRadioButton("Normandy [Alpha]")
         terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
         terrainCaucasusSmall.setChecked(True)
 
@@ -231,8 +237,10 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Register fields
         self.registerField('isTerrainCaucasus', terrainCaucasus)
         self.registerField('isTerrainCaucasusSmall', terrainCaucasusSmall)
+        self.registerField('isTerrainCaucasusSmallInverted', terrainCaucasusSmallInverted)
         self.registerField('isTerrainPg', terrainPg)
         self.registerField('isIranianCampaignTheater', terrainIran)
+        self.registerField('isTerrainEmirates', terrainEmirates)
         self.registerField('isTerrainNttr', terrainNttr)
         self.registerField('isTerrainNormandy', terrainNormandy)
         self.registerField('timePeriod', timePeriodSelect)
@@ -240,8 +248,10 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Build layout
         terrainGroupLayout = QtWidgets.QVBoxLayout()
         terrainGroupLayout.addWidget(terrainCaucasusSmall)
+        terrainGroupLayout.addWidget(terrainCaucasusSmallInverted)
         terrainGroupLayout.addWidget(terrainCaucasus)
         terrainGroupLayout.addWidget(terrainIran)
+        terrainGroupLayout.addWidget(terrainEmirates)
         terrainGroupLayout.addWidget(terrainPg)
         terrainGroupLayout.addWidget(terrainNttr)
         terrainGroupLayout.addWidget(terrainNormandy)

@@ -3,6 +3,7 @@ from enum import Enum
 
 from dcs.vehicles import *
 
+from gen import Conflict
 from gen.ground_forces.combat_stance import CombatStance
 from theater import ControlPoint
 
@@ -156,6 +157,7 @@ class CombatGroup:
         self.units = []
         self.role = role
         self.assigned_enemy_cp = None
+        self.start_position = None
 
     def __str__(self):
         s = ""

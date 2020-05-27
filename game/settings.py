@@ -7,7 +7,7 @@ class Settings:
     labels = "Full"
     only_player_takeoff = True
     night_disabled = False
-
+    supercarrier = False
     multiplier = 1
     sams = True
     cold_start = False

@@ -17,15 +17,15 @@ class NormandyTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    st_pierre = ControlPoint.from_airport(normandy.Saint_Pierre_du_Mont, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-    maupertus = ControlPoint.from_airport(normandy.Maupertus, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    azeville = ControlPoint.from_airport(normandy.Azeville, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    lessay = ControlPoint.from_airport(normandy.Lessay, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    meautis = ControlPoint.from_airport(normandy.Meautis, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-    chippelle = ControlPoint.from_airport(normandy.Chippelle, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-
     def __init__(self):
         super(NormandyTheater, self).__init__()
+
+        self.st_pierre = ControlPoint.from_airport(normandy.Saint_Pierre_du_Mont, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
+        self.maupertus = ControlPoint.from_airport(normandy.Maupertus, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.azeville = ControlPoint.from_airport(normandy.Azeville, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.lessay = ControlPoint.from_airport(normandy.Lessay, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.meautis = ControlPoint.from_airport(normandy.Meautis, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.chippelle = ControlPoint.from_airport(normandy.Chippelle, LAND, SIZE_SMALL, IMPORTANCE_LOW)
 
         self.add_controlpoint(self.st_pierre, connected_to=[self.chippelle])
         self.add_controlpoint(self.maupertus, connected_to=[self.azeville])

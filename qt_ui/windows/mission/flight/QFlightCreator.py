@@ -42,14 +42,16 @@ class QFlightCreator(QDialog):
         self.select_type_aircraft.setCurrentIndex(0)
 
         self.select_flight_type = QComboBox()
-        self.select_flight_type.addItem("CAP", userData=FlightType.CAP)
-        self.select_flight_type.addItem("BARCAP", userData=FlightType.BARCAP)
-        self.select_flight_type.addItem("TARCAP", userData=FlightType.TARCAP)
-        self.select_flight_type.addItem("INTERCEPT", userData=FlightType.INTERCEPTION)
-        self.select_flight_type.addItem("CAS", userData=FlightType.CAS)
-        self.select_flight_type.addItem("SEAD", userData=FlightType.SEAD)
-        self.select_flight_type.addItem("DEAD", userData=FlightType.DEAD)
-        self.select_flight_type.addItem("STRIKE", userData=FlightType.STRIKE)
+        self.select_flight_type.addItem("CAP [Combat Air Patrol]", userData=FlightType.CAP)
+        self.select_flight_type.addItem("BARCAP [Barrier Combat Air Patrol]", userData=FlightType.BARCAP)
+        self.select_flight_type.addItem("TARCAP [Target Combat Air Patrol]", userData=FlightType.TARCAP)
+        self.select_flight_type.addItem("INTERCEPT [Interception]", userData=FlightType.INTERCEPTION)
+        self.select_flight_type.addItem("CAS [Close Air Support]", userData=FlightType.CAS)
+        self.select_flight_type.addItem("BAI [Battlefield Interdiction]", userData=FlightType.CAS)
+        self.select_flight_type.addItem("SEAD [Suppression of Enemy Air Defenses]", userData=FlightType.SEAD)
+        self.select_flight_type.addItem("DEAD [Destruction of Enemy Air Defenses]", userData=FlightType.DEAD)
+        self.select_flight_type.addItem("STRIKE [Strike]", userData=FlightType.STRIKE)
+        self.select_flight_type.addItem("ANTISHIP [Antiship Attack]", userData=FlightType.ANTISHIP)
         self.select_flight_type.setCurrentIndex(0)
 
         self.select_count_of_aircraft = QSpinBox()
@@ -71,12 +73,10 @@ class QFlightCreator(QDialog):
         type_layout.addStretch()
         type_layout.addWidget(self.select_type_aircraft, alignment=Qt.AlignRight)
 
-
         count_layout = QHBoxLayout()
         count_layout.addWidget(QLabel("Count : "))
         count_layout.addStretch()
         count_layout.addWidget(self.select_count_of_aircraft, alignment=Qt.AlignRight)
-
 
         flight_type_layout = QHBoxLayout()
         flight_type_layout.addWidget(QLabel("Task : "))

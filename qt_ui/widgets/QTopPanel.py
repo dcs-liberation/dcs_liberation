@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout
 
 from game import Game
 from qt_ui.widgets.QBudgetBox import QBudgetBox
+from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 
@@ -30,12 +31,17 @@ class QTopPanel(QFrame):
         self.passTurnButton.clicked.connect(self.passTurn)
 
         self.proceedButton = QPushButton("Proceed")
-        self.proceedButton.setIcon(CONST.ICONS["PassTurn"])
+        self.proceedButton.setIcon(CONST.ICONS["Proceed"])
         self.proceedButton.setProperty("style", "btn-primary")
         self.proceedButton.clicked.connect(self.proceed)
         if self.game and self.game.turn == 0:
             self.proceedButton.setEnabled(False)
+        elif not len(self.game.planners.keys()) == self.game.theater.controlpoints:
+            self.proceedButton.setEnabled(False)
+        else:
+            self.proceedButton.setEnabled(True)
 
+        self.factionsInfos = QFactionsInfos(self.game)
 
         self.submenus = QVBoxLayout()
         self.settings = QPushButton("Settings")
@@ -52,10 +58,11 @@ class QTopPanel(QFrame):
         self.submenus.addWidget(self.statistics)
 
         self.layout = QHBoxLayout()
-        self.layout.addStretch(1)
-        self.layout.addLayout(self.submenus)
+        self.layout.addWidget(self.factionsInfos)
         self.layout.addWidget(self.turnCounter)
         self.layout.addWidget(self.budgetBox)
+        self.layout.addLayout(self.submenus)
+        self.layout.addStretch(1)
         self.layout.addWidget(self.passTurnButton)
         self.layout.addWidget(self.proceedButton)
         self.setLayout(self.layout)
@@ -65,6 +72,10 @@ class QTopPanel(QFrame):
         if game is not None:
             self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
             self.budgetBox.setBudget(self.game.budget, self.game.budget_reward_amount)
+            self.factionsInfos.setGame(self.game)
+
+            if not len(self.game.planners.keys()) == self.game.theater.controlpoints:
+                self.proceedButton.setEnabled(False)
 
     def openSettings(self):
         self.subwindow = QSettingsWindow(self.game)
@@ -75,7 +86,7 @@ class QTopPanel(QFrame):
         self.subwindow.show()
 
     def passTurn(self):
-        self.game.pass_turn()
+        self.game.pass_turn(no_action=True)
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
 

@@ -7,6 +7,7 @@ from dcs.task import *
 from dcs.vehicles import *
 
 from game.game_stats import GameStats
+from game.infos.information import Information
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
@@ -52,7 +53,7 @@ AWACS_BUDGET_COST = 4
 PLAYER_BUDGET_INITIAL = 450
 
 # Base post-turn bonus value
-PLAYER_BUDGET_BASE = 10
+PLAYER_BUDGET_BASE = 20
 
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
@@ -84,6 +85,7 @@ class Game:
         self.game_stats.update(self)
         self.planners = {}
         self.ground_planners = {}
+        self.informations = []
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -208,13 +210,17 @@ class Game:
             else:
                 event.skip()
 
-        for cp in self.theater.enemy_points():
-            self._commision_units(cp)
+
+        self._enemy_reinforcement()
         self._budget_player()
 
         if not no_action:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
+        else:
+            for cp in self.theater.player_points():
+                if not cp.is_carrier and not cp.is_lha:
+                    cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.ignored_cps = []
         if ignored_cps:
@@ -239,6 +245,89 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
+
+
+
+    def _enemy_reinforcement(self):
+        MAX_ARMOR = 50 * self.settings.multiplier
+        MAX_AIRCRAFT = 50 * self.settings.multiplier
+
+        production = 0
+        for enemy_point in self.theater.enemy_points():
+            for g in enemy_point.ground_objects:
+                if g.category == "power":
+                    production = production + 4
+                elif g.category == "warehouse":
+                    production = production + 2
+                elif g.category == "fuel":
+                    production = production + 2
+                elif g.category == "ammo":
+                    production = production + 2
+                elif g.category == "farp":
+                    production = production + 1
+                elif g.category == "fob":
+                    production = production + 1
+                elif g.category == "factory":
+                    production = production + 10
+                elif g.category == "comms":
+                    production = production + 8
+                elif g.category == "oil":
+                    production = production + 8
+
+        budget_for_armored_units = production / 2
+        budget_for_aircraft = production / 2
+
+        potential_cp_armor = []
+        for cp in self.theater.enemy_points():
+            for cpe in cp.connected_points:
+                if cpe.captured and cp.base.total_armor < MAX_ARMOR:
+                    potential_cp_armor.append(cp)
+        if len(potential_cp_armor) == 0:
+            potential_cp_armor = self.theater.enemy_points()
+
+        i = 0
+        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[PinpointStrike]]
+
+        print("Enemy Recruiting")
+        print(potential_cp_armor)
+        print(budget_for_armored_units)
+        print(potential_units)
+
+        if len(potential_units) > 0 and len(potential_cp_armor) > 0:
+            while budget_for_armored_units > 0:
+                i = i + 1
+                if i > 50 or budget_for_armored_units <= 0:
+                    break
+                target_cp = random.choice(potential_cp_armor)
+                if target_cp.base.total_armor >= MAX_ARMOR:
+                    continue
+                unit = random.choice(potential_units)
+                price = db.PRICES[unit]*2
+                budget_for_armored_units -= price * 2
+                target_cp.base.armor[unit] = target_cp.base.armor.get(unit, 0) + 2
+                info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
+                print(str(info))
+                self.informations.append(info)
+
+        if budget_for_armored_units > 0:
+            budget_for_aircraft += budget_for_armored_units
+
+        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+        if len(potential_units) > 0 and len(potential_cp_armor) > 0:
+            while budget_for_aircraft > 0:
+                i = i + 1
+                if i > 50 or budget_for_aircraft <= 0:
+                    break
+                target_cp = random.choice(potential_cp_armor)
+                if target_cp.base.total_planes >= MAX_AIRCRAFT:
+                    continue
+                unit = random.choice(potential_units)
+                price = db.PRICES[unit]*2
+                budget_for_aircraft -= price * 2
+                target_cp.base.aircraft[unit] = target_cp.base.aircraft.get(unit, 0) + 2
+                info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
+                print(str(info))
+                self.informations.append(info)
 
 
 

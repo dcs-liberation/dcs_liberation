@@ -1,3 +1,4 @@
+import sys
 import webbrowser
 
 from PySide2 import QtGui
@@ -73,7 +74,7 @@ class QLiberationWindow(QMainWindow):
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
-        self.tool_bar.addAction(QIcon(CONST.ICONS["Open"]), "Open")
+        #self.tool_bar.addAction(QIcon(CONST.ICONS["Open"]), "Open")
         self.tool_bar.addAction(self.saveGameAction)
 
     def initMenuBar(self):
@@ -81,15 +82,18 @@ class QLiberationWindow(QMainWindow):
 
         file_menu = self.menu.addMenu("File")
         file_menu.addAction(self.newGameAction)
-        file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open")
+        #file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open") # TODO : implement
         file_menu.addAction(self.saveGameAction)
-        file_menu.addAction("Save As")
+        #file_menu.addAction("Save As") # TODO : implement
+        #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
+        file_menu.addAction("Exit" , lambda: self.exit())
+
 
         help_menu = self.menu.addMenu("Help")
-        help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
-        help_menu.addAction("Troubleshooting Guide", lambda: webbrowser.open_new_tab(URLS["Troubleshooting"]))
-        help_menu.addAction("Modding Guide", lambda: webbrowser.open_new_tab(URLS["Modding"]))
-        help_menu.addSeparator()
+        #help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
+        #help_menu.addAction("Troubleshooting Guide", lambda: webbrowser.open_new_tab(URLS["Troubleshooting"]))
+        #help_menu.addAction("Modding Guide", lambda: webbrowser.open_new_tab(URLS["Modding"]))
+        #help_menu.addSeparator() ----> Note from Khopa : I disable these links since it's not up to date for this branch
         help_menu.addAction("Contribute", lambda: webbrowser.open_new_tab(URLS["Repository"]))
         help_menu.addAction("Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
@@ -151,6 +155,13 @@ class QLiberationWindow(QMainWindow):
         self.game = game
         GameUpdateSignal.get_instance().updateGame(self.game)
 
+    def closeGame(self):
+        self.game = None
+        GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def exit(self):
+        sys.exit(0)
+
     def setGame(self, game: Game):
         self.game = game
 
@@ -158,10 +169,11 @@ class QLiberationWindow(QMainWindow):
         text = "<h3>DCS Liberation</h3>" + \
                "<h4>Repository</h4>" + \
                "<b>Source code :</b> https://github.com/shdwp/dcs_liberation<br/>" + \
-               "<h4>Contributors</h4>" + \
-               "<b>Author :</b> sdwp<br/><br/>" + \
-               "<b>Contributors :</b> Khopa, Wrycu, calvinmorrow, JohanAberg<br/><br/>" + \
-               "<b>Special Thanks  :</b>  rp- (pydcs framework) "
+               "<h4>Authors/Contributors</h4><br/>" + \
+               "<b>shdwp</b>, <b>Khopa</b>, <b>Wrycu</b>, <b>calvinmorrow</b>, <b>JohanAberg</b><br/>" + \
+               "<h4>Special Thanks  :</h4>" \
+               "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
+               "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"
 
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")

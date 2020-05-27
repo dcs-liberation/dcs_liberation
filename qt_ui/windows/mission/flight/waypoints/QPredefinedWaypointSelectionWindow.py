@@ -108,7 +108,7 @@ class QPredefinedWaypointSelectionWindow(QDialog):
                 for ecp in enemy_cp:
                     wpt = FlightWaypoint((select_cp.position.x + ecp.position.x)/2, (select_cp.position.y + ecp.position.y)/2, 800)
                     wpt.name = "Frontline with " + ecp.name + " [CAS]"
-                    wpt.description = "Provide CAS"
+                    wpt.description = "Frontline"
                     self.wpt_selection_box.addItem(wpt.name, userData=wpt)
                 if len(enemy_cp) == 0:
                     self.wpt_selection_box.addItem("None", userData=None)
@@ -117,7 +117,10 @@ class QPredefinedWaypointSelectionWindow(QDialog):
                     if not ground_object.is_dead and not ground_object.dcs_identifier == "AA":
                         wpt = FlightWaypoint(ground_object.position.x,ground_object.position.y, 0)
                         wpt.name = ground_object.category + " #" + str(ground_object.object_id) + " @ site #" + str(ground_object.group_id)
-                        wpt.description = "Ennemy Building"
+                        if select_cp.captured:
+                            wpt.description = "Friendly Building"
+                        else:
+                            wpt.description = "Enemy Building"
                         self.wpt_selection_box.addItem(wpt.name, userData=wpt)
             elif selected_wpt_type == PREDEFINED_WAYPOINT_CATEGORIES[2]:  # Known units position
                 for ground_object in select_cp.ground_objects:
@@ -126,12 +129,18 @@ class QPredefinedWaypointSelectionWindow(QDialog):
                             for u in g.units:
                                 wpt = FlightWaypoint(ground_object.position.x, ground_object.position.y, 0)
                                 wpt.name = u.type + " @ site #" + str(ground_object.group_id)
-                                wpt.description = "Ennemy unit to be destroyed"
+                                if select_cp.captured:
+                                    wpt.description = "Friendly unit :" + u.type
+                                else:
+                                    wpt.description = "Enemy unit :" + u.type
                                 self.wpt_selection_box.addItem(wpt.name, userData=wpt)
             elif selected_wpt_type == PREDEFINED_WAYPOINT_CATEGORIES[3]:  # CAS
                 wpt = FlightWaypoint(select_cp.position.x, select_cp.position.y, 0)
                 wpt.name = select_cp.name
-                wpt.description = "Position of " + select_cp.name
+                if select_cp.captured:
+                    wpt.description = "Position of " + select_cp.name + " [Friendly Airbase]"
+                else:
+                    wpt.description = "Position of " + select_cp.name + " [Enemy Airbase]"
                 self.wpt_selection_box.addItem("Airbase", userData=wpt)
             else:
                 self.wpt_selection_box.addItem("None", userData=None)

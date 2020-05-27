@@ -92,6 +92,18 @@ QLabel[style="BARCAP"]{
     color:white;
 }
 
+QLabel[style="TARCAP"]{
+    border: 1px solid black;
+    background-color: #445299;
+    color:white;
+}
+
+QLabel[style="CAP"]{
+    border: 1px solid black;
+    background-color: #445299;
+    color:white;
+}
+
 QLabel[style="INTERCEPTION"]{
     border: 1px solid black;
     background-color: #7752bc;
@@ -99,6 +111,24 @@ QLabel[style="INTERCEPTION"]{
 }
 
 QLabel[style="CAS"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="BAI"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="ANTISHIP"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="STRIKE"]{
     border: 1px solid black;
     background-color: #ab2244;
     color:white;

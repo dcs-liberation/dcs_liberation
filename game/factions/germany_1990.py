@@ -27,6 +27,7 @@ Germany_1990 = {
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.SAM_Roland_ADS,
         AirDefence.SAM_Hawk_PCP,

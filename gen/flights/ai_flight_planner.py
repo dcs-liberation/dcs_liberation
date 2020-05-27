@@ -21,20 +21,6 @@ SEAD_EVERY_X_MINUTES = 40
 
 class FlightPlanner:
 
-    from_cp = None
-    game = None
-
-    interceptor_flights = []
-    cap_flights = []
-    cas_flights = []
-    strike_flights = []
-    sead_flights = []
-    custom_flights = []
-    flights = []
-
-    potential_sead_targets = []
-    potential_strike_targets = []
-
     def __init__(self, from_cp, game):
         # TODO : have the flight planner depend on a 'stance' setting : [Defensive, Aggresive... etc] and faction doctrine
         # TODO : the flight planner should plan package and operations
@@ -52,6 +38,7 @@ class FlightPlanner:
         self.cas_flights = []
         self.strike_flights = []
         self.sead_flights = []
+        self.custom_flights = []
         self.flights = []
         self.potential_sead_targets = []
         self.potential_strike_targets = []

@@ -16,8 +16,6 @@ USA_2005 = {
         A_10C,
         AV8BNA,
 
-        B_1B,
-
         KC_135,
         S_3B_Tanker,
         C_130,
@@ -28,6 +26,7 @@ USA_2005 = {
 
         Armor.MBT_M1A2_Abrams,
         Armor.ATGM_M1134_Stryker,
+        Armor.APC_M1126_Stryker_ICV,
         Armor.IFV_M2A2_Bradley,
         Armor.IFV_LAV_25,
         Armor.APC_M1043_HMMWV_Armament,
@@ -56,5 +55,15 @@ USA_2005 = {
         Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
+    ], "carrier_names": [
+        "CVN-72 Abraham Lincoln",
+        "CVN-73 Georges Washington",
+        "CVN-74 John C. Stennis",
+    ], "lhanames": [
+        "LHA-1 Tarawa",
+        "LHA-2 Saipan",
+        "LHA-3 Belleau Wood",
+        "LHA-4 Nassau",
+        "LHA-5 Peleliu"
     ]
 }

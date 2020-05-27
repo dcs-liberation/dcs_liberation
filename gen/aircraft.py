@@ -42,18 +42,14 @@ TRANSPORT_LANDING_ALT = 2000
 DEFENCE_ENGAGEMENT_MAX_DISTANCE = 60000
 INTERCEPT_MAX_DISTANCE = 200000
 
-GROUP_VERTICAL_OFFSET = 300
-
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
-    vertical_offset = None  # type: int
 
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings):
         self.m = mission
         self.settings = settings
         self.conflict = conflict
-        self.vertical_offset = 0
         self.escort_targets = []
 
     def _start_type(self) -> StartType:
@@ -90,6 +86,8 @@ class AircraftConflictGenerator:
     def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], client_count: int):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
+
+        print("SETUP GROUP : " + str(for_task) + " -- " + str(group.name))
 
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
             override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
@@ -163,12 +161,11 @@ class AircraftConflictGenerator:
         assert count > 0
         assert unit is not None
 
-        self.vertical_offset += GROUP_VERTICAL_OFFSET
         if unit_type in helicopters.helicopter_map.values():
-            alt = WARM_START_HELI_ALT + self.vertical_offset
+            alt = WARM_START_HELI_ALT
             speed = WARM_START_HELI_AIRSPEED
         else:
-            alt = WARM_START_ALTITUDE + self.vertical_offset
+            alt = WARM_START_ALTITUDE
             speed = WARM_START_AIRSPEED
 
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
@@ -334,12 +331,18 @@ class AircraftConflictGenerator:
             group = self.generate_planned_flight(cp, country, flight)
             if flight.flight_type == FlightType.INTERCEPTION:
                 self.setup_group_as_intercept_flight(group, flight)
-            elif flight.flight_type == FlightType.CAP:
+            elif flight.flight_type in [FlightType.CAP, FlightType.TARCAP, FlightType.BARCAP]:
                 self.setup_group_as_cap_flight(group, flight)
-            elif flight.flight_type == FlightType.CAS:
+            elif flight.flight_type in [FlightType.CAS, FlightType.BAI]:
                 self.setup_group_as_cas_flight(group, flight)
-            elif flight.flight_type == FlightType.SEAD or flight.flight_type == FlightType.DEAD:
+            elif flight.flight_type in [FlightType.STRIKE]:
+                self.setup_group_as_strike_flight(group, flight)
+            elif flight.flight_type in [FlightType.ANTISHIP]:
+                self.setup_group_as_antiship_flight(group, flight)
+            elif flight.flight_type in [FlightType.SEAD, FlightType.DEAD]:
                 self.setup_group_as_sead_flight(group, flight)
+            else:
+                self.setup_group_as_cap_flight(group, flight)
             self._setup_custom_payload(flight, group)
 
     def generate_planned_flight(self, cp, country, flight:Flight):
@@ -413,17 +416,50 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(CASTaskAction())
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
         group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+        group.points[0].tasks.append(OptRestrictJettison(True))
 
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
 
     def setup_group_as_sead_flight(self, group, flight):
+        group.task = SEAD.name
         self._setup_group(group, SEAD, flight.client_count)
 
         group.points[0].tasks.clear()
         group.points[0].tasks.append(SEADTaskAction())
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-        group.points[0].tasks.append(OptROE(OptROE.Values.WeaponFree))
+        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+        group.points[0].tasks.append(OptRestrictJettison(True))
+
+        i = 1
+        for point in flight.points:
+            group.add_waypoint(Point(point.x,point.y), point.alt)
+            group.points[i].tasks.clear()
+            group.points[i].tasks.append(SEADTaskAction())
+            i = i + 1
+
+    def setup_group_as_strike_flight(self, group, flight):
+        group.task = PinpointStrike.name
+        self._setup_group(group, GroundAttack, flight.client_count)
+
+        group.points[0].tasks.clear()
+        group.points[0].tasks.append(CASTaskAction())
+        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+        group.points[0].tasks.append(OptRestrictJettison(True))
+
+        for point in flight.points:
+            group.add_waypoint(Point(point.x,point.y), point.alt)
+
+    def setup_group_as_antiship_flight(self, group, flight):
+        group.task = AntishipStrike.name
+        self._setup_group(group, AntishipStrike, flight.client_count)
+
+        group.points[0].tasks.clear()
+        group.points[0].tasks.append(AntishipStrikeTaskAction())
+        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+        group.points[0].tasks.append(OptRestrictJettison(True))
 
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)

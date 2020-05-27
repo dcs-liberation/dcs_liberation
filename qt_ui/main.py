@@ -15,22 +15,13 @@ from userdata import persistency, logging as logging_module
 
 if __name__ == "__main__":
 
-    assert len(sys.argv) >= 3, "__init__.py should be started with two mandatory arguments: %UserProfile% location and application version"
+    persistency.setup(installation.get_dcs_saved_games_directory())
 
-    persistency.setup(sys.argv[1])
-    source_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")
-    compiled_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\payloads")
-    the_path = None
-    if os.path.exists(source_path):
-        the_path = source_path
-    else:
-        the_path = compiled_path
+    custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")
+    if os.path.exists(custom_payloads):
+        dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
 
-    dcs.planes.FlyingType.payload_dirs = [
-        the_path
-    ]
-
-    VERSION_STRING = sys.argv[2]
+    VERSION_STRING = "2.0"
     logging_module.setup_version_string(VERSION_STRING)
     logging.info("Using {} as userdata folder".format(persistency.base_path()))
 
@@ -47,7 +38,6 @@ if __name__ == "__main__":
     uiconstants.load_aircraft_icons()
     uiconstants.load_vehicle_icons()
 
-    persistency.setup(sys.argv[1])
 
     css = ""
     with open("./resources/stylesheets/style.css") as stylesheet:

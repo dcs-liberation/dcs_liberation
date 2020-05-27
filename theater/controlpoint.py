@@ -64,10 +64,16 @@ class ControlPoint:
         return cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
 
     @classmethod
-    def carrier(cls, name: str, at: Point):
+    def carrier(cls, name: str, at: Point, id: int = 1001):
         import theater.conflicttheater
-        return cls(0, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
+        return cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
+
+    @classmethod
+    def lha(cls, name: str, at: Point, id: int = 1002):
+        import theater.conflicttheater
+        return cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
+                   has_frontline=False, cptype=ControlPointType.LHA_GROUP)
 
     def __str__(self):
         return self.name
@@ -79,6 +85,14 @@ class ControlPoint:
     @property
     def is_carrier(self):
         return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+
+    @property
+    def is_fleet(self):
+        return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+
+    @property
+    def is_lha(self):
+        return self.cptype in [ControlPointType.LHA_GROUP]
 
     @property
     def sea_radials(self) -> typing.Collection[int]:
@@ -101,7 +115,7 @@ class ControlPoint:
         """
         if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP] :
             for g in self.ground_objects:
-                if g.dcs_identifier == "CARRIER":
+                if g.dcs_identifier in ["CARRIER", "LHA"]:
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov]:
@@ -122,7 +136,12 @@ class ControlPoint:
                 if g.dcs_identifier == "CARRIER":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov]:
+                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov]:
+                                return group.name
+                elif g.dcs_identifier == "LHA":
+                    for group in g.groups:
+                        for u in group.units:
+                            if db.unit_type_from_name(u.type) in [LHA_1_Tarawa]:
                                 return group.name
         return None
 

@@ -15,11 +15,13 @@ from dcs.unitgroup import *
 
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
+from game.factions.france_2005 import France_2005
 from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
+from game.factions.libya_2011 import Lybia_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.pakistan_2015 import Pakistan_2015
@@ -187,6 +189,7 @@ PRICES = {
     Armor.MBT_Challenger_II: 30,
     Armor.IFV_Marder: 10,
     Armor.IFV_MCV_80: 10,
+    Armor.IFV_LAV_25: 7,
 
     Artillery.MLRS_M270: 55,
     Artillery.SPH_M109_Paladin: 25,
@@ -411,6 +414,8 @@ UNIT_BY_TASK = {
         Armor.IFV_MCV_80,
         Armor.IFV_MCV_80,
         Armor.IFV_MCV_80,
+        Armor.IFV_LAV_25,
+        Armor.IFV_LAV_25,
         Armor.IFV_Marder,
         Armor.IFV_Marder,
         Armor.IFV_Marder,
@@ -543,29 +548,6 @@ CARRIER_TAKEOFF_BAN = [
 ]
 
 """
-AirDefense units that will be spawned at control points not related to the current operation
-"""
-EXTRA_AA = {
-    "Russia": AirDefence.SAM_SA_9_Strela_1_9P31,
-    "USA": AirDefence.SAM_Linebacker_M6,
-    "France": AirDefence.SPAAA_Gepard,
-    "Germany": AirDefence.SPAAA_Gepard,
-    "China": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "UK": AirDefence.AAA_Vulcan_M163,
-    "Iran": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "North Korea": AirDefence.AAA_ZU_23_Closed,
-    "Italy": AirDefence.AAA_Vulcan_M163,
-    "Spain": AirDefence.AAA_Vulcan_M163,
-    "The Netherlands": AirDefence.AAA_Vulcan_M163,
-    "Turkey": AirDefence.AAA_Vulcan_M163,
-    "Israel": AirDefence.AAA_Vulcan_M163,
-    "India": AirDefence.SPAAA_ZSU_23_4_Shilka,
-    "United Arab Emirates": AirDefence.Stinger_MANPADS,
-    "Insurgents": AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
-    "Third Reich": AirDefence.AAA_Flak_Vierling_38,
-}
-
-"""
 Units separated by country. Currently only Russia and USA are supported. 
 country : DCS Country name
 """
@@ -576,6 +558,7 @@ FACTIONS = {
     "Russia 1990": Russia_1990,
     "Russia 2010": Russia_2010,
     "Iran 2015": Iran_2015,
+    "Lybia 2011": Lybia_2011,
     "China 2000": China_2000,
     "North Korea 2000": NorthKorea_2000,
     "Insurgent": Insurgent,
@@ -587,6 +570,7 @@ FACTIONS = {
     "USA 1955 (Require WW2 Pack)": USA_1955,
     "USA 1944 (Require WW2 Pack)": USA_1944,
     "France 1995": France_1995,
+    "France 2005": France_2005,
     "Germany 1990": Germany_1990,
     "Netherlands 1990": Netherlands_1990,
     "United Kingdown 1990": UnitedKingdom_1990,
@@ -631,105 +615,77 @@ where:
                      
 Payload will be used for operation of following type, "*" category will be used always, no matter the operation.
 """
+
+COMMON_OVERRIDE = {
+    CAP: "CAP",
+    Intercept: "CAP",
+    CAS: "CAS",
+    PinpointStrike: "STRIKE",
+    SEAD: "SEAD",
+    AntishipStrike: "ANTISHIP",
+    GroundAttack: "STRIKE"
+}
+
 PLANE_PAYLOAD_OVERRIDES = {
+
     FA_18C_hornet: {
-        CAS: "AIM-9M*2,AGM-65D*2,Mk-82*4,FLIR Pod,Fuel",
-        CAP: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
-        Escort: "AIM-120*4,AIM-9*2,AIM-7*2,Fuel",
-        PinpointStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
-        AntishipStrike: "MK-82*8,AIM-9*2,AIM-7,FLIR Pod,Fuel",
-        SEAD: "AGM-88*2,AIM-9*2,AIM-7,FLIR Pod,Fuel*3"
+        CAP: "CAP HEAVY",
+        Intercept: "CAP HEAVY",
+        CAS: "CAS MAVERICK F",
+        PinpointStrike: "STRIKE",
+        SEAD: "SEAD",
+        AntishipStrike: "ANTISHIP",
+        GroundAttack: "STRIKE"
     },
 
-    JF_17: {
-        CAS: "PL-5Ex2, 2*SD-10x2, 800L Tank",
-        CAP: "PL-5Ex2, 2*GBU-12x2, BRM1x2, WMD7",
-        SEAD: "PL-5Ex2, LD-10x2, 1100L Tankx2, WMD7"
-    },
-
-    F_14B: {
-        CAP: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
-        Escort: "AIM-54A-MK47*4, AIM-7M*2, AIM-9M*2, XT*2",
-        CAS: "AIM-54A-MK60*1, AIM-7M*1, AIM-9M*2, XT*2, Mk-82*2, LANTIRN",
-        GroundAttack: "AIM54, AIM-9M*2, XT*2, GBU-12*4, LANTIRN",
-    },
-
-    Su_25T: {
-        CAS: "APU-8 Vikhr-M*2,Kh-25ML,R-73*2,SPPU-22*2,Mercury LLTV Pod,MPS-410",
-        SEAD: "Kh58*2_Kh25MPU*2_Kh25ML*2_R73*2_L-081_MPS-410"
-    },
-
-    Su_33: {
-        CAP: "R-73*4,R-27R*2,R-27ER*6",
-        Escort: "R-73*4,R-27R*2,R-27ER*6",
-    },
-
-    AJS37: {
-        CAS: "CAS (75 GUN): RB-75*2, AKAN",
-    },
-
-    AV8BNA: {
-        CAS: "AS 2",
-        SEAD: "Stand Off 2"
-    },
+    A_10A: COMMON_OVERRIDE,
+    A_10C: COMMON_OVERRIDE,
+    AV8BNA: COMMON_OVERRIDE,
+    C_101CC: COMMON_OVERRIDE,
+    F_5E_3: COMMON_OVERRIDE,
+    F_14B: COMMON_OVERRIDE,
+    F_15C: COMMON_OVERRIDE,
+    F_16C_50: COMMON_OVERRIDE,
+    JF_17: COMMON_OVERRIDE,
+    M_2000C: COMMON_OVERRIDE,
+    MiG_15bis: COMMON_OVERRIDE,
+    MiG_19P: COMMON_OVERRIDE,
+    MiG_21Bis: COMMON_OVERRIDE,
+    AJS37: COMMON_OVERRIDE,
+    Su_25T:COMMON_OVERRIDE,
+    Su_25:COMMON_OVERRIDE,
+    Su_27:COMMON_OVERRIDE,
+    Su_33:COMMON_OVERRIDE,
+    MiG_29A:COMMON_OVERRIDE,
+    MiG_29G:COMMON_OVERRIDE,
+    MiG_29S:COMMON_OVERRIDE,
+    Su_24M:COMMON_OVERRIDE,
+    Su_30: COMMON_OVERRIDE,
+    Su_34: COMMON_OVERRIDE,
+    MiG_23MLD: COMMON_OVERRIDE,
+    MiG_27K: COMMON_OVERRIDE,
+    Tornado_GR4: COMMON_OVERRIDE,
+    Tornado_IDS: COMMON_OVERRIDE,
+    Mirage_2000_5: COMMON_OVERRIDE,
+    MiG_31:COMMON_OVERRIDE,
+    SA342M:COMMON_OVERRIDE,
+    SA342L:COMMON_OVERRIDE,
+    SA342Mistral:COMMON_OVERRIDE,
+    Mi_8MT:COMMON_OVERRIDE,
+    Ka_50:COMMON_OVERRIDE,
+    L_39ZA:COMMON_OVERRIDE,
+    L_39C:COMMON_OVERRIDE,
+    Su_17M4: COMMON_OVERRIDE,
+    F_4E: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
-    },
-
-    A_10C: {
-        CAS: "AGM-65D*2,AGM-65H*2,GBU-12*2,GBU-38*2,AIM-9*2,TGP,ECM,MK151*7",
-        GroundAttack: "AGM-65K*2,GBU-12*8,AIM-9M*2.ECM,TGP",
-    },
-
-    Ka_50: {
-        CAS: "12x9A4172, 40xS-8",
-        GroundAttack: "12x9A4172, 40xS-8",
-    },
-
-    M_2000C: {
-        CAP: "Combat Air Patrol",
-        Escort: "Combat Air Patrol",
-        GroundAttack: "MK-82S Heavy Strike",
-    },
-
-    Mirage_2000_5: {
-        CAP: "R 550*2,MICA IR*2,MICA AR*2,Fuel*3",
-    },
-
-    MiG_21Bis: {
-        CAP: "Patrol, medium range",
-    },
-
-    Su_24M: {
-        CAS: "S-24*6",
-        SEAD: "Kh25MPU*2_Kh25ML*2_L-081"
     },
 
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
     },
 
-    Su_17M4: {
-        CAS: "Kh-25MR*4,R-60M*2,Fuel*2",
-        SEAD: "Kh25MPU*2_Kh25ML*2_,R60M*2_Fuel*2"
-    },
-
-    Su_30: {
-        SEAD: "Kh-31P*4,R-73*2,R-77*2,ECM",
-    },
-
-    Su_34: {
-        SEAD: "Kh-25MPU*6,R-73*2,R-77*2,ECM",
-    },
-
-    MiG_27K: {
-        SEAD: "Kh-25MPU*2,R-60M*2,Fuel"
-    },
-
-    F_4E: {
-        SEAD: "AGM-45*4,AIM-7*2,ECM"
-    }
 }
 
 """
@@ -787,10 +743,28 @@ CARRIER_CAPABLE = [
     FA_18C_hornet,
     F_14B,
     AV8BNA,
+    Su_33,
 
     UH_1H,
     Mi_8MT,
     Ka_50,
+    AH_1W,
+    OH_58D,
+
+    SA342L,
+    SA342M,
+    SA342Minigun,
+    SA342Mistral,
+]
+
+LHA_CAPABLE = [
+    AV8BNA,
+
+    UH_1H,
+    Mi_8MT,
+    Ka_50,
+    AH_1W,
+    OH_58D,
 
     SA342L,
     SA342M,

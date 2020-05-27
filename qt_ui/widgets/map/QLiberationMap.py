@@ -5,6 +5,7 @@ from PySide2.QtCore import Qt, QRect, QPointF
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
 from PySide2.QtWidgets import QGraphicsView, QFrame, QGraphicsOpacityEffect
 from dcs import Point
+from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
@@ -114,12 +115,17 @@ class QLiberationMap(QGraphicsView):
                                 unit = db.unit_type_from_name(u.type)
                                 if unit.threat_range > max_range:
                                     max_range = unit.threat_range
+                    if max_range >= 6000:
+                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
 
-                    scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
-
+        for cp in self.game.theater.enemy_points():
+            if self.get_display_rule("lines"):
+                self.scene_create_lines_for_cp(cp)
+        for cp in self.game.theater.player_points():
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp)
 
+        for cp in self.game.theater.controlpoints:
             if self.get_display_rule("flight_paths"):
                 if cp.id in self.game.planners.keys():
                     planner = self.game.planners[cp.id]
@@ -138,38 +144,33 @@ class QLiberationMap(QGraphicsView):
         pos = self._transform_point(cp.position)
         for connected_cp in cp.connected_points:
             pos2 = self._transform_point(connected_cp.position)
-            if connected_cp.captured != cp.captured:
+            if not cp.captured:
                 color = CONST.COLORS["red"]
-            elif connected_cp.captured and cp.captured:
+            elif cp.captured:
                 color = CONST.COLORS["blue"]
             else:
-                color = CONST.COLORS["black_transparent"]
+                color = CONST.COLORS["red"]
 
             pen = QPen(brush=color)
             pen.setColor(color)
-            pen.setWidth(4)
-            scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
-
+            pen.setWidth(16)
             if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
-                frontline = self._frontline_vector(cp, connected_cp)
-                if not frontline:
-                    continue
+                if not cp.captured:
+                    scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
+                else:
+                    posx, h = Conflict.frontline_position(self.game.theater, cp, connected_cp)
+                    pos2 = self._transform_point(posx)
+                    scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
-                frontline_pos, heading, distance = frontline
+                    p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
+                    p2 = point_from_heading(pos2[0], pos2[1], h, 25)
+                    frontline_pen = QPen(brush=CONST.COLORS["bright_red"])
+                    frontline_pen.setColor(CONST.COLORS["bright_red"])
+                    frontline_pen.setWidth(18)
+                    scene.addLine(p1[0], p1[1], p2[0], p2[1], pen=frontline_pen)
 
-                if distance < 10000:
-                    frontline_pos = frontline_pos.point_from_heading(heading + 180, 5000)
-                    distance = 10000
-
-                start_coords = self._transform_point(frontline_pos, treshold=10)
-                end_coords = self._transform_point(frontline_pos.point_from_heading(heading, distance),
-                                                   treshold=60)
-
-                frontline_pen = QPen(brush=CONST.COLORS["bright_red"])
-                frontline_pen.setColor(CONST.COLORS["bright_red"])
-                frontline_pen.setWidth(4)
-                frontline_pen.setStyle(Qt.DashDotLine)
-                scene.addLine(start_coords[0], start_coords[1], end_coords[0], end_coords[1], pen=frontline_pen)
+            else:
+                scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
     def _frontline_vector(self, from_cp: ControlPoint, to_cp: ControlPoint):
         # Cache mechanism to avoid performing frontline vector computation on every frame

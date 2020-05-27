@@ -73,12 +73,17 @@ class QMissionPlanning(QDialog):
     @Slot(str)
     def on_departure_cp_changed(self, cp_name):
         cps = [cp for cp in self.game.theater.controlpoints if cp.name == cp_name]
+
+        print(cps)
+
         if len(cps) == 1:
             self.selected_cp = cps[0]
             self.planner = self.game.planners[cps[0].id]
             self.planned_flight_view.set_flight_planner(self.planner)
         else:
             self.planned_flight_view.set_flight_planner(None)
+
+        print(self.selected_cp.id)
 
     def on_flight_selection_change(self):
         index = self.planned_flight_view.selectionModel().currentIndex().row()

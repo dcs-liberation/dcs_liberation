@@ -46,7 +46,7 @@ China_2000 = {
         Tanker_Elnya_160
     ],
     "shorad":[
-        AirDefence.AAA_ZU_23_Closed,
+        AirDefence.SPAAA_ZSU_23_4_Shilka,
         AirDefence.Rapier_FSA_Launcher, # Standing as PL-9C Shorad
         AirDefence.HQ_7_Self_Propelled_LN
     ], "aircraft_carrier": [
@@ -56,5 +56,8 @@ China_2000 = {
         Type_052C_Destroyer
     ], "cruiser": [
         Type_054A_Frigate,
+    ], "carrier_names": [
+        "001 Liaoning",
+        "002 Shandong",
     ]
 }

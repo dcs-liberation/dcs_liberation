@@ -31,7 +31,16 @@ Italy_1990 = {
          CVN_74_John_C__Stennis,
          LHA_1_Tarawa,
          Armed_speedboat,
-     ], "shorad":[
+    ], "shorad":[
         AirDefence.SAM_Avenger_M1097,
+    ], "helicopter_carrier": [
+        LHA_1_Tarawa,
+    ], "destroyer": [
+        Oliver_Hazzard_Perry_class,
+    ], "cruiser": [
+        Ticonderoga_class,
+    ], "lha_names": [
+        "Giuseppe Garibaldi",
+        "Cavour",
     ]
 }

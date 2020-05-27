@@ -6,23 +6,23 @@ import sys
 
 from dcs import installation
 
-_user_folder = None  # type: str
+_dcs_saved_game_folder = None  # type: str
 
 
 def setup(user_folder: str):
-    global _user_folder
-    _user_folder = user_folder
+    global _dcs_saved_game_folder
+    _dcs_saved_game_folder = user_folder
 
 
 def base_path() -> str:
-    global _user_folder
-    assert _user_folder
+    global _dcs_saved_game_folder
+    assert _dcs_saved_game_folder
 
-    openbeta_path = os.path.join(_user_folder, "DCS.openbeta")
-    if "--force-stable-DCS" not in sys.argv and os.path.exists(openbeta_path):
-        return openbeta_path
+    openbeta_path = _dcs_saved_game_folder + ".openbeta"
+    if os.path.exists(openbeta_path):
+        return openbeta_path  # For standalone openbeta users
     else:
-        return os.path.join(_user_folder, "DCS")
+        return _dcs_saved_game_folder # For standalone stable users & steam users (any branch)
 
 
 def _save_file() -> str:

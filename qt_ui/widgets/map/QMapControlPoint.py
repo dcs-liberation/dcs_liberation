@@ -37,24 +37,24 @@ class QMapControlPoint(QGraphicsRectItem):
                     painter.setPen(self.pen_color)
 
                 r = option.rect
-                painter.drawChord(r, -180*16, -180*16)
+                painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
 
-                gauge = QRect(r.x(),
-                              r.y()+CONST.CP_SIZE/2 + 2,
-                              r.width(),
-                              CONST.CP_SIZE / 4)
+                #gauge = QRect(r.x(),
+                #              r.y()+CONST.CP_SIZE/2 + 2,
+                #              r.width(),
+                #              CONST.CP_SIZE / 4)
 
-                painter.setBrush(CONST.COLORS["bright_red"])
-                painter.setPen(CONST.COLORS["black"])
-                painter.drawRect(gauge)
+                #painter.setBrush(CONST.COLORS["bright_red"])
+                #painter.setPen(CONST.COLORS["black"])
+                #painter.drawRect(gauge)
 
-                gauge2 = QRect(r.x(),
-                               r.y() + CONST.CP_SIZE / 2 + 2,
-                               r.width()*self.model.base.strength,
-                               CONST.CP_SIZE / 4)
+                #gauge2 = QRect(r.x(),
+                #               r.y() + CONST.CP_SIZE / 2 + 2,
+                #               r.width()*self.model.base.strength,
+                #               CONST.CP_SIZE / 4)
 
-                painter.setBrush(CONST.COLORS["green"])
-                painter.drawRect(gauge2)
+                #painter.setBrush(CONST.COLORS["green"])
+                #painter.drawRect(gauge2)
             else:
                 # TODO : not drawing sunk carriers. Can be improved to display sunk carrier.
                 pass
@@ -63,6 +63,9 @@ class QMapControlPoint(QGraphicsRectItem):
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
         self.setCursor(Qt.PointingHandCursor)
+
+    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent):
+        self.update()
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
@@ -87,9 +90,9 @@ class QMapControlPoint(QGraphicsRectItem):
     @property
     def brush_color(self)->QColor:
         if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["red"]
+            return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
         else:
-            return self.model.captured and CONST.COLORS["red"] or CONST.COLORS["blue"]
+            return self.model.captured and CONST.COLORS["super_red"] or CONST.COLORS["blue"]
 
     @property
     def pen_color(self) -> QColor:

@@ -20,8 +20,10 @@ LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
 COLORS: Dict[str, QColor] = {
-    "red": QColor(255, 125, 125),
-    "bright_red": QColor(200, 64, 64),
+    "dark_red": QColor(140, 20, 20),
+    "red": QColor(200, 80, 80),
+    "bright_red": QColor(150, 80, 80),
+    "super_red": QColor(200, 120, 120),
     "blue": QColor(164, 164, 255),
     "dark_blue": QColor(45, 62, 80),
     "white": QColor(255, 255, 255),
@@ -29,8 +31,8 @@ COLORS: Dict[str, QColor] = {
     "bright_green": QColor(64, 200, 64),
     "black": QColor(0, 0, 0),
     "black_transparent": QColor(0, 0, 0, 64),
-    "blue_transparent": QColor(164, 164, 255, 64),
-    "red_transparent": QColor(255, 125, 125, 64)
+    "blue_transparent": QColor(164, 164, 255, 32),
+    "red_transparent": QColor(255, 125, 125, 32)
 }
 
 
@@ -59,7 +61,8 @@ def load_icons():
     ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
 
     ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
-    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/pass_turn.png")
+    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/hourglass.png")
+    ICONS["Proceed"] = QPixmap("./resources/ui/misc/proceed.png")
     ICONS["Settings"] = QPixmap("./resources/ui/misc/settings.png")
     ICONS["Statistics"] = QPixmap("./resources/ui/misc/statistics.png")
     ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")

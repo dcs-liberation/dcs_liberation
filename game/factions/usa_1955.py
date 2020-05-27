@@ -17,6 +17,8 @@ USA_1955 = {
 
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.MT_M4_Sherman,
+        Armor.MBT_M60A3_Patton,
+        Armor.APC_M2A1,
         Armor.M30_Cargo_Carrier,
 
         Unarmed.Transport_M818,

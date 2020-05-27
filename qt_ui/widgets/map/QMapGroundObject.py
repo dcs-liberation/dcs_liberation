@@ -1,6 +1,6 @@
-from PySide2.QtCore import QPoint, QRect, QPointF
+from PySide2.QtCore import QPoint, QRect, QPointF, Qt
 from PySide2.QtGui import QPainter
-from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsItem
+from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsItem, QGraphicsSceneHoverEvent, QGraphicsSceneMouseEvent
 
 import qt_ui.uiconstants as CONST
 from game import db
@@ -41,8 +41,20 @@ class QMapGroundObject(QGraphicsRectItem):
             painter.save()
             if not self.model.is_dead and not self.cp.captured:
                 painter.drawPixmap(option.rect, CONST.ICONS[self.model.category])
-            elif not self.model.is_dead and self.model.category == "aa":
+            elif not self.model.is_dead:
                 painter.drawPixmap(option.rect, CONST.ICONS[self.model.category + "_blue"])
             else:
                 painter.drawPixmap(option.rect, CONST.ICONS["destroyed"])
             painter.restore()
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
+        self.update()
+        self.setCursor(Qt.PointingHandCursor)
+
+    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent):
+        self.update()
+        self.setCursor(Qt.PointingHandCursor)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
+        self.update()
+

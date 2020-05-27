@@ -53,6 +53,8 @@ class QAircraftRecruitmentMenu(QGroupBox, QRecruitBehaviour):
             for unit_type in units_column:
                 if self.cp.is_carrier and not unit_type in db.CARRIER_CAPABLE:
                     continue
+                if self.cp.is_lha and not unit_type in db.LHA_CAPABLE:
+                    continue
                 row = self.add_purchase_row(unit_type, task_box_layout, row)
             stretch = QVBoxLayout()
             stretch.addStretch()

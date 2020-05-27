@@ -5,7 +5,7 @@ import typing
 import logging
 
 from gen.defenses.armor_group_generator import generate_armor_group
-from gen.fleet.ship_group_generator import generate_carrier_group
+from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group
 from gen.sam.sam_group_generator import generate_anti_air_group, generate_shorad_group
 from theater import ControlPointType
 from theater.base import *
@@ -72,9 +72,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
         if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             # Create ground object group
-
             group_id = group_id + 1
-
             g = TheaterGroundObject()
             g.group_id = group_id
             g.object_id = 0
@@ -88,7 +86,28 @@ def generate_groundobjects(theater: ConflictTheater, game):
             if group is not None:
                 g.groups.append(group)
             cp.ground_objects.append(g)
-
+            # Set new name :
+            if "carrier_names" in db.FACTIONS[faction]:
+                cp.name = random.choice(db.FACTIONS[faction]["carrier_names"])
+        elif cp.cptype == ControlPointType.LHA_GROUP:
+            # Create ground object group
+            group_id = group_id + 1
+            g = TheaterGroundObject()
+            g.group_id = group_id
+            g.object_id = 0
+            g.cp_id = cp.id
+            g.airbase_group = True
+            g.dcs_identifier = "LHA"
+            g.heading = 0
+            g.position = Point(cp.position.x, cp.position.y)
+            group = generate_lha_group(faction, game, g)
+            g.groups = []
+            if group is not None:
+                g.groups.append(group)
+            cp.ground_objects.append(g)
+            # Set new name :
+            if "lhanames" in db.FACTIONS[faction]:
+                cp.name = random.choice(db.FACTIONS[faction]["lhanames"])
         else:
             for i in range(random.randint(2,6)):
                 point = find_location(True, cp.position, theater, 1000, 2800, [])

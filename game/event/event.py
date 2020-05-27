@@ -190,7 +190,7 @@ class Event:
 
                 # -- AA Site groups
                 for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.dcs_identifier in ["AA", "CARRIER"]:
+                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:
                         for g in ground_object.groups:
                             for u in g.units:
                                 if u.name == destroyed_ground_unit_name:

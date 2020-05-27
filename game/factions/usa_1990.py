@@ -48,5 +48,15 @@ USA_1990 = {
         Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
+    ], "carrier_names": [
+        "CVN-72 Abraham Lincoln",
+        "CVN-73 Georges Washington",
+        "CVN-74 John C. Stennis",
+    ], "lhanames": [
+        "LHA-1 Tarawa",
+        "LHA-2 Saipan",
+        "LHA-3 Belleau Wood",
+        "LHA-4 Nassau",
+        "LHA-5 Peleliu"
     ]
 }

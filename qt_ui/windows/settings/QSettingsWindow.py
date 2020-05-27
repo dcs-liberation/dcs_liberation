@@ -131,10 +131,21 @@ class QSettingsWindow(QDialog):
         self.takeOffOnlyForPlayerGroup.setChecked(self.game.settings.only_player_takeoff)
         self.takeOffOnlyForPlayerGroup.toggled.connect(self.applySettings)
 
-        self.generatorLayout.addWidget(QLabel("Aircraft cold start"), 0, 0)
-        self.generatorLayout.addWidget(self.coldStart, 0, 1)
-        self.generatorLayout.addWidget(QLabel("Takeoff only for player group"), 1, 0)
-        self.generatorLayout.addWidget(self.takeOffOnlyForPlayerGroup, 1, 1)
+        self.coldStart = QCheckBox()
+        self.coldStart.setChecked(self.game.settings.cold_start)
+        self.coldStart.toggled.connect(self.applySettings)
+
+        self.supercarrier = QCheckBox()
+        self.supercarrier.setChecked(self.game.settings.supercarrier)
+        self.supercarrier.toggled.connect(self.applySettings)
+
+        # Settings not used anymore
+        # self.generatorLayout.addWidget(QLabel("Aircraft cold start"), 0, 0)
+        # self.generatorLayout.addWidget(self.coldStart, 0, 1)
+        # self.generatorLayout.addWidget(QLabel("Takeoff only for player group"), 1, 0)
+        # self.generatorLayout.addWidget(self.takeOffOnlyForPlayerGroup, 1, 1)
+        self.generatorLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
+        self.generatorLayout.addWidget(self.supercarrier, 0, 1)
 
 
     def initCheatLayout(self):
@@ -177,6 +188,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.night_disabled = self.noNightMission.isChecked()
         self.game.settings.only_player_takeoff = self.takeOffOnlyForPlayerGroup.isChecked()
         self.game.settings.cold_start = self.coldStart.isChecked()
+        self.game.settings.supercarrier = self.supercarrier.isChecked()
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

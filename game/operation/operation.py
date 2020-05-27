@@ -18,7 +18,6 @@ class Operation:
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
-    extra_aagen = None  # type: ExtraAAConflictGenerator
     shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
@@ -77,7 +76,6 @@ class Operation:
 
         player_country = self.from_cp.captured and self.attacker_country or self.defender_country
         enemy_country = self.from_cp.captured and self.defender_country or self.attacker_country
-        self.extra_aagen = ExtraAAConflictGenerator(mission, conflict, self.game, player_country, enemy_country)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
@@ -195,12 +193,12 @@ class Operation:
 
         # Inject Lua Scripts
         load_mist = TriggerStart(comment="Load Mist Lua Framework")
-        with open(os.path.abspath("./resources/scripts/mist_4_3_74.lua")) as f:
+        with open("./resources/scripts/mist_4_3_74.lua") as f:
             load_mist.add_action(DoScript(String(f.read())))
         self.current_mission.triggerrules.triggers.append(load_mist)
 
         load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
-        with open(os.path.abspath("./resources/scripts/dcs_liberation.lua")) as f:
+        with open("./resources/scripts/dcs_liberation.lua") as f:
             script = f.read()
             json_location = "[["+os.path.abspath("resources\\scripts\\json.lua")+"]]"
             state_location = "[[" + os.path.abspath("state.json") + "]]"

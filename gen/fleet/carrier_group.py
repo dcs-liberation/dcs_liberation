@@ -13,7 +13,11 @@ class CarrierGroupGenerator(GroupGenerator):
 
         # Add carrier
         if "aircraft_carrier" in self.faction.keys():
-            carrier_type = random.choice(self.faction["aircraft_carrier"])
+
+            if "supercarrier" in self.faction.keys() and self.game.settings.supercarrier:
+                carrier_type = random.choice(self.faction["supercarrier"])
+            else:
+                carrier_type = random.choice(self.faction["aircraft_carrier"])
             self.add_unit(carrier_type, "Carrier", self.position.x, self.position.y, self.heading)
         else:
             return
@@ -25,3 +29,5 @@ class CarrierGroupGenerator(GroupGenerator):
 
         self.add_unit(dd_type, "DD3", self.position.x + 450, self.position.y + 850, self.heading)
         self.add_unit(dd_type, "DD4", self.position.x + 450, self.position.y - 850, self.heading)
+
+        self.get_generated_group().points[0].speed = 20

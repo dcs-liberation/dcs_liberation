@@ -43,5 +43,11 @@ India_2010 = {
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
         AirDefence.SAM_SA_8_Osa_9A33,
         AirDefence.SAM_SA_19_Tunguska_2S6
+    ], "aircraft_carrier": [
+        CV_1143_5_Admiral_Kuznetsov,
+    ], "destroyer": [
+        FSG_1241_1MP_Molniya,
+    ], "carrier_names": [
+        "INS Vikramaditya"
     ]
 }

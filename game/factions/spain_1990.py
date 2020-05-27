@@ -17,10 +17,12 @@ Spain_1990 = {
         E_3A,
 
         Armor.MBT_M60A3_Patton,
+        Armor.MBT_Leopard_2,
         Armor.APC_M113,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
+        Infantry.Soldier_M249,
 
         AirDefence.SAM_Hawk_PCP,
         AirDefence.SAM_Avenger_M1097,
@@ -30,5 +32,17 @@ Spain_1990 = {
         Armed_speedboat,
     ], "shorad":[
         AirDefence.SAM_Avenger_M1097,
+    ], "aircraft_carrier": [
+        CVN_74_John_C__Stennis, # Standing as Principe de Asturias
+    ], "helicopter_carrier": [
+        LHA_1_Tarawa, # Standing as Juan Carlos
+    ], "destroyer": [
+        Oliver_Hazzard_Perry_class,
+    ], "cruiser": [
+        Ticonderoga_class,
+    ], "carrier_names": [
+        "Principe de Asturias",
+    ], "lhanames": [
+        "Juan Carlos I",
     ]
 }

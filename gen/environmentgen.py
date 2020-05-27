@@ -56,11 +56,20 @@ class EnviromentGenerator:
         start_time = self.game.current_day
 
         daytime = self.game.current_turn_daytime
-        if self.game.settings.night_disabled and daytime == "night":
-            daytime = "day"
         logging.info("Mission time will be {}".format(daytime))
+        if self.game.settings.night_disabled:
+            logging.info("Skip Night mission due to user settings")
+            if daytime == "dawn":
+                time_range = (8, 9)
+            elif daytime == "noon":
+                time_range = (10, 12)
+            elif daytime == "dusk":
+                time_range = (12, 14)
+            elif daytime == "night":
+                time_range = (14, 17)
+        else:
+            time_range = self.game.theater.daytime_map[daytime]
 
-        time_range = self.game.theater.daytime_map[daytime]
         start_time += timedelta(hours=random.randint(*time_range))
 
         logging.info("time - {}, slot - {}, night skipped - {}".format(
