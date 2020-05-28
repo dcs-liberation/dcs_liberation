@@ -6,6 +6,7 @@ import math
 from dcs.task import *
 from dcs.vehicles import *
 
+from game.db import REWARDS, PLAYER_BUDGET_BASE
 from game.game_stats import GameStats
 from game.infos.information import Information
 from gen.conflictgen import Conflict
@@ -50,10 +51,7 @@ ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 AWACS_BUDGET_COST = 4
 
 # Initial budget value
-PLAYER_BUDGET_INITIAL = 450
-
-# Base post-turn bonus value
-PLAYER_BUDGET_BASE = 20
+PLAYER_BUDGET_INITIAL = 650
 
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
@@ -86,6 +84,7 @@ class Game:
         self.planners = {}
         self.ground_planners = {}
         self.informations = []
+        self.informations.append(Information("Game Start", "-" * 40, 0))
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -111,10 +110,12 @@ class Game:
 
     def _commision_units(self, cp: ControlPoint):
         for for_task in [CAS, CAP, AirDefence]:
-            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_LIMITS_SCALE) * self.settings.multiplier
+            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance,
+                                                                  COMMISION_LIMITS_SCALE) * self.settings.multiplier
             missing_units = limit - cp.base.total_units(for_task)
             if missing_units > 0:
-                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance, COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
+                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance,
+                                                                                COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
                 points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
                 if points_to_spend > 0:
                     unittypes = self.commision_unit_types(cp, for_task)
@@ -130,25 +131,8 @@ class Game:
             reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
             for cp in self.theater.player_points():
                 for g in cp.ground_objects:
-                    # (Reward is per building)
-                    if g.category == "power":
-                        reward = reward + 4
-                    elif g.category == "warehouse":
-                        reward = reward + 2
-                    elif g.category == "fuel":
-                        reward = reward + 2
-                    elif g.category == "ammo":
-                        reward = reward + 2
-                    elif g.category == "farp":
-                        reward = reward + 1
-                    elif g.category == "fob":
-                        reward = reward + 1
-                    elif g.category == "factory":
-                        reward = reward + 10
-                    elif g.category == "comms":
-                        reward = reward + 10
-                    elif g.category == "oil":
-                        reward = reward + 10
+                    if g.category in REWARDS.keys():
+                        reward = reward + REWARDS[g.category]
             return reward
         else:
             return reward
@@ -197,9 +181,9 @@ class Game:
         else:
             return event.name == self.player_name
 
-    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint]=None):
+    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
         logging.info("Pass turn")
-
+        self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn = self.turn + 1
 
         for event in self.events:
@@ -209,7 +193,6 @@ class Game:
                     event.skip()
             else:
                 event.skip()
-
 
         self._enemy_reinforcement()
         self._budget_player()
@@ -246,34 +229,17 @@ class Game:
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
 
-
-
     def _enemy_reinforcement(self):
-        MAX_ARMOR = 50 * self.settings.multiplier
-        MAX_AIRCRAFT = 50 * self.settings.multiplier
+        MAX_ARMOR = 30 * self.settings.multiplier
+        MAX_AIRCRAFT = 25 * self.settings.multiplier
 
-        production = 0
+        production = 0.0
         for enemy_point in self.theater.enemy_points():
             for g in enemy_point.ground_objects:
-                if g.category == "power":
-                    production = production + 4
-                elif g.category == "warehouse":
-                    production = production + 2
-                elif g.category == "fuel":
-                    production = production + 2
-                elif g.category == "ammo":
-                    production = production + 2
-                elif g.category == "farp":
-                    production = production + 1
-                elif g.category == "fob":
-                    production = production + 1
-                elif g.category == "factory":
-                    production = production + 10
-                elif g.category == "comms":
-                    production = production + 8
-                elif g.category == "oil":
-                    production = production + 8
+                if g.category in REWARDS.keys():
+                    production = production + REWARDS[g.category]
 
+        production = production * 0.75
         budget_for_armored_units = production / 2
         budget_for_aircraft = production / 2
 
@@ -302,7 +268,7 @@ class Game:
                 if target_cp.base.total_armor >= MAX_ARMOR:
                     continue
                 unit = random.choice(potential_units)
-                price = db.PRICES[unit]*2
+                price = db.PRICES[unit] * 2
                 budget_for_armored_units -= price * 2
                 target_cp.base.armor[unit] = target_cp.base.armor.get(unit, 0) + 2
                 info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
@@ -312,7 +278,8 @@ class Game:
         if budget_for_armored_units > 0:
             budget_for_aircraft += budget_for_armored_units
 
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if
+                           u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
         if len(potential_units) > 0 and len(potential_cp_armor) > 0:
             while budget_for_aircraft > 0:
                 i = i + 1
@@ -322,14 +289,12 @@ class Game:
                 if target_cp.base.total_planes >= MAX_AIRCRAFT:
                     continue
                 unit = random.choice(potential_units)
-                price = db.PRICES[unit]*2
+                price = db.PRICES[unit] * 2
                 budget_for_aircraft -= price * 2
                 target_cp.base.aircraft[unit] = target_cp.base.aircraft.get(unit, 0) + 2
                 info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
                 print(str(info))
                 self.informations.append(info)
-
-
 
     @property
     def current_turn_daytime(self):
@@ -337,7 +302,7 @@ class Game:
 
     @property
     def current_day(self):
-        return self.date + timedelta(days=self.turn//4)
+        return self.date + timedelta(days=self.turn // 4)
 
     def next_unit_id(self):
         """

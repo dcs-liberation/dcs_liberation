@@ -88,12 +88,10 @@ EVENT_ICONS: Dict[str, QPixmap] = {}
 
 
 def load_event_icons():
-    for category, image in {
-                            "strike": "strike",
-                            FrontlineAttackEvent: "attack",
-                            UnitsDeliveryEvent: "delivery"}.items():
-        EVENT_ICONS[category] = QPixmap("./resources/ui/events/" + image + ".png")
-
+    for image in os.listdir("./resources/ui/events/"):
+        print(image)
+        if image.endswith(".PNG"):
+            EVENT_ICONS[image[:-4]] = QPixmap(os.path.join("./resources/ui/events/", image))
 
 def load_aircraft_icons():
     for aircraft in os.listdir("./resources/ui/units/aircrafts/"):

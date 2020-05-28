@@ -4,7 +4,8 @@ import webbrowser
 from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
+    QSplitter
 
 import qt_ui.uiconstants as CONST
 from game import Game
@@ -14,6 +15,7 @@ from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.QNewGameWizard import NewGameWizard
+from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from userdata import persistency
 
 
@@ -22,6 +24,7 @@ class QLiberationWindow(QMainWindow):
     def __init__(self):
         super(QLiberationWindow, self).__init__()
 
+        self.info_panel = None
         self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
@@ -44,11 +47,16 @@ class QLiberationWindow(QMainWindow):
     def initUi(self):
 
         self.liberation_map = QLiberationMap(self.game)
+        self.info_panel = QInfoPanel(self.game)
+
+        hbox = QSplitter(Qt.Horizontal)
+        hbox.addWidget(self.info_panel)
+        hbox.addWidget(self.liberation_map)
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
         vbox.addWidget(QTopPanel(self.game))
-        vbox.addWidget(self.liberation_map)
+        vbox.addWidget(hbox)
 
         central_widget = QWidget()
         central_widget.setLayout(vbox)
@@ -164,6 +172,8 @@ class QLiberationWindow(QMainWindow):
 
     def setGame(self, game: Game):
         self.game = game
+        if self.info_panel:
+            self.info_panel.setGame(game)
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation</h3>" + \

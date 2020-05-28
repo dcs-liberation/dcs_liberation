@@ -166,16 +166,13 @@ class Emirates(ConflictTheater):
     def __init__(self):
         super(Emirates, self).__init__()
 
-        self.al_dhafra = ControlPoint.from_airport(persiangulf.Al_Dhafra_AB, LAND, SIZE_BIG, IMPORTANCE_LOW)
+        self.al_dhafra = ControlPoint.from_airport(persiangulf.Al_Dhafra_AB, LAND, SIZE_BIG, IMPORTANCE_MEDIUM)
         self.al_maktoum = ControlPoint.from_airport(persiangulf.Al_Maktoum_Intl, LAND, SIZE_BIG, IMPORTANCE_LOW)
-        self.al_minhad = ControlPoint.from_airport(persiangulf.Al_Minhad_AB, LAND, SIZE_REGULAR, 1.1)
-        self.sir_abu_nuayr = ControlPoint.from_airport(persiangulf.Sir_Abu_Nuayr, [0, 330], SIZE_SMALL, 1.1, has_frontline=False)
-        self.dubai = ControlPoint.from_airport(persiangulf.Dubai_Intl, COAST_DL_E, SIZE_LARGE, IMPORTANCE_MEDIUM)
-        self.sharjah = ControlPoint.from_airport(persiangulf.Sharjah_Intl, LAND, SIZE_BIG, 1.0)
-        self.fujairah = ControlPoint.from_airport(persiangulf.Fujairah_Intl, COAST_V_W, SIZE_REGULAR, 1.0)
-        self.ras_al_khaimah = ControlPoint.from_airport(persiangulf.Ras_Al_Khaimah, LAND, SIZE_REGULAR,IMPORTANCE_MEDIUM)
-        self.al_ain = ControlPoint.from_airport(persiangulf.Al_Ain_International_Airport, LAND, SIZE_BIG,
-                                                IMPORTANCE_HIGH)
+        self.al_minhad = ControlPoint.from_airport(persiangulf.Al_Minhad_AB, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
+        self.sharjah = ControlPoint.from_airport(persiangulf.Sharjah_Intl, LAND, SIZE_BIG, IMPORTANCE_LOW)
+        self.fujairah = ControlPoint.from_airport(persiangulf.Fujairah_Intl, COAST_V_W, SIZE_REGULAR, IMPORTANCE_LOW)
+        self.ras_al_khaimah = ControlPoint.from_airport(persiangulf.Ras_Al_Khaimah, LAND, SIZE_REGULAR,IMPORTANCE_LOW)
+        self.al_ain = ControlPoint.from_airport(persiangulf.Al_Ain_International_Airport, LAND, SIZE_BIG,IMPORTANCE_LOW)
 
         self.east_carrier = ControlPoint.carrier("Carrier", Point(-61770, 69039), 1001)
         self.tarawa_carrier = ControlPoint.lha("LHA Carrier", Point(-79770, 49430), 1002)
@@ -183,12 +180,10 @@ class Emirates(ConflictTheater):
         self.add_controlpoint(self.al_dhafra, connected_to=[self.al_ain, self.al_maktoum])
         self.add_controlpoint(self.al_ain, connected_to=[self.fujairah, self.al_maktoum, self.al_dhafra])
         self.add_controlpoint(self.al_maktoum, connected_to=[self.al_dhafra, self.al_minhad, self.al_ain])
-        self.add_controlpoint(self.al_minhad, connected_to=[self.al_maktoum, self.dubai])
-        self.add_controlpoint(self.dubai, connected_to=[self.al_minhad, self.sharjah])
-        self.add_controlpoint(self.sharjah, connected_to=[self.dubai, self.ras_al_khaimah, self.fujairah])
+        self.add_controlpoint(self.al_minhad, connected_to=[self.al_maktoum, self.sharjah])
+        self.add_controlpoint(self.sharjah, connected_to=[self.al_minhad, self.ras_al_khaimah, self.fujairah])
         self.add_controlpoint(self.ras_al_khaimah, connected_to=[self.sharjah])
         self.add_controlpoint(self.fujairah, connected_to=[self.sharjah, self.al_ain])
-        self.add_controlpoint(self.sir_abu_nuayr, connected_to=[])
 
         self.add_controlpoint(self.tarawa_carrier)
         self.add_controlpoint(self.east_carrier)

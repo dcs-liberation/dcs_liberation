@@ -4,7 +4,7 @@ from dcs.planes import *
 from dcs.helicopters import *
 
 Lybia_2011 = {
-    "country": "Libya",
+    "country": "Russia",
     "side": "red",
     "units": [
 

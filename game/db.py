@@ -739,6 +739,14 @@ TIME_PERIODS = {
     "Syrian War [2011]": datetime(2011, 8, 7),
 }
 
+REWARDS = {
+    "power": 4, "warehouse": 2, "fuel": 2, "ammo": 2,
+    "farp": 1, "fob": 1, "factory": 10, "comms": 10, "oil": 10
+}
+
+# Base post-turn bonus value
+PLAYER_BUDGET_BASE = 20
+
 CARRIER_CAPABLE = [
     FA_18C_hornet,
     F_14B,

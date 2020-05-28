@@ -1,20 +1,13 @@
-import traceback
-
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QVBoxLayout, QGridLayout, QPushButton, \
-    QGroupBox, QSizePolicy, QSpacerItem
-from dcs.unittype import UnitType
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QGridLayout
 
-from game.event import UnitsDeliveryEvent, ControlPointType
-from qt_ui.widgets.QBudgetBox import QBudgetBox
-from qt_ui.widgets.base.QAirportInformation import QAirportInformation
-from qt_ui.widgets.base.QBaseInformation import QBaseInformation
-from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
-from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint, CAP, Embarking, CAS, PinpointStrike, db
 from game import Game
+from game.event import ControlPointType
+from qt_ui.uiconstants import EVENT_ICONS
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
+from theater import ControlPoint
 
 
 class QBaseMenu2(QDialog):
@@ -37,6 +30,8 @@ class QBaseMenu2(QDialog):
 
         if self.cp.captured:
             self.deliveryEvent = None
+
+        self.setWindowIcon(EVENT_ICONS["capture"])
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setMinimumSize(300, 200)

@@ -76,13 +76,6 @@ class QLiberationMap(QGraphicsView):
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
                                            CONST.CP_SIZE, cp, self.game))
 
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-            text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
-
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-            text.setDefaultTextColor(Qt.white)
-            text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
-
 
             if cp.captured:
                 pen = QPen(brush=CONST.COLORS["blue"])
@@ -105,7 +98,7 @@ class QLiberationMap(QGraphicsView):
 
                 go_pos = self._transform_point(ground_object.position)
                 if not ground_object.airbase_group:
-                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 16, 16, cp, ground_object))
+                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 12, 12, cp, ground_object))
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0
@@ -126,6 +119,7 @@ class QLiberationMap(QGraphicsView):
                 self.scene_create_lines_for_cp(cp)
 
         for cp in self.game.theater.controlpoints:
+            pos = self._transform_point(cp.position)
             if self.get_display_rule("flight_paths"):
                 if cp.id in self.game.planners.keys():
                     planner = self.game.planners[cp.id]
@@ -138,6 +132,14 @@ class QLiberationMap(QGraphicsView):
                             scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
                             prev_pos = list(new_pos)
                         scene.addLine(prev_pos[0] + 2, prev_pos[1] + 2, pos[0] + 2, pos[1] + 2, flight_path_pen)
+
+        for cp in self.game.theater.controlpoints:
+            pos = self._transform_point(cp.position)
+            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
+            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text.setDefaultTextColor(Qt.white)
+            text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
     def scene_create_lines_for_cp(self, cp: ControlPoint):
         scene = self.scene()

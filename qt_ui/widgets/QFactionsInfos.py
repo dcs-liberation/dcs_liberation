@@ -15,6 +15,7 @@ class QFactionsInfos(QGroupBox):
         self.setGame(game)
 
         self.layout = QGridLayout()
+        self.layout.setSpacing(0)
         self.layout.addWidget(QLabel("<b>Player : </b>"),0,0)
         self.layout.addWidget(self.player_name,0,1)
         self.layout.addWidget(QLabel("<b>Enemy : </b>"),1,0)

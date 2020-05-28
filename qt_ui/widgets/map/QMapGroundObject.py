@@ -27,12 +27,12 @@ class QMapGroundObject(QGraphicsRectItem):
                         units[u.type] = units[u.type]+1
                     else:
                         units[u.type] = 1
-            tooltip = ""
+            tooltip = "[" + self.model.obj_name + "]" + "\n"
             for unit in units.keys():
                 tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
             self.setToolTip(tooltip[:-1])
         else:
-            self.setToolTip(cp.name + "'s " + self.model.category)
+            self.setToolTip("[" + self.model.obj_name + "] : " + self.model.category)
 
 
     def paint(self, painter, option, widget=None):

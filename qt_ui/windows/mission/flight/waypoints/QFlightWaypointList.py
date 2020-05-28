@@ -28,7 +28,8 @@ class QFlightWaypointList(QListView):
         self.model.clear()
         takeoff = FlightWaypoint(self.flight.from_cp.position.x, self.flight.from_cp.position.y, 0)
         takeoff.description = "Take Off"
-        self.model.appendRow(QWaypointItem(takeoff))
+        takeoff.name = takeoff.pretty_name = "Take Off from " + self.flight.from_cp.name
+        self.model.appendRow(QWaypointItem(takeoff, 0))
         for i, point in enumerate(self.flight.points):
-            self.model.appendRow(QWaypointItem(point))
+            self.model.appendRow(QWaypointItem(point, i + 1))
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)

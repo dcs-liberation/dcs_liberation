@@ -8,6 +8,7 @@ from dcs.vehicles import AirDefence
 from dcs.unittype import UnitType
 
 from game import *
+from game.infos.information import Information
 from theater import *
 from gen.environmentgen import EnvironmentSettings
 from gen.conflictgen import Conflict
@@ -220,6 +221,10 @@ class Event:
                             cp.base.aa = {}
                             for g in cp.ground_objects:
                                 g.groups = []
+                            info = Information(cp.name + " lost !",
+                                               "The ennemy took control of " + cp.name + "\nShame on us !",
+                                               self.game.turn)
+                            self.game.informations.append(info)
                         elif not(cp.captured) and new_owner_coalition == coalition:
                             cp.captured = True
                             cp.base.aircraft = {}
@@ -227,6 +232,10 @@ class Event:
                             cp.base.aa = {}
                             for g in cp.ground_objects:
                                 g.groups = []
+                            info = Information(cp.name + " captured !",
+                                               "The ennemy took control of " + cp.name + "\nShame on us !",
+                                               self.game.turn)
+                            self.game.informations.append(info)
             except Exception as e:
                 print(e)
 
@@ -281,17 +290,25 @@ class Event:
 
                     # No progress with defensive strategies
                     if player_won and cp.stances[enemy_cp.id] in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
-                        print("Defensive stance, no progress")
-                        delta = 0
+                        print("Defensive stance, progress is limited")
+                        delta = MINOR_DEFEAT_INFLUENCE
 
                 if player_won:
                     print(cp.name + " won !  factor > " + str(delta))
                     cp.base.affect_strength(delta)
                     enemy_cp.base.affect_strength(-delta)
+                    info = Information("Frontline Report",
+                                       "Our ground forces from " + cp.name + " are making progress toward " + enemy_cp.name,
+                                       self.game.turn)
+                    self.game.informations.append(info)
                 else:
-                    print(enemy_cp.name + " won ! factor > " + str(delta))
+                    print(cp.name + " lost !  factor > " + str(delta))
                     enemy_cp.base.affect_strength(delta)
                     cp.base.affect_strength(-delta)
+                    info = Information("Frontline Report",
+                                       "Our ground forces from " + cp.name + " are losing ground against the enemy forces from" + enemy_cp.name,
+                                       self.game.turn)
+                    self.game.informations.append(info)
 
     def skip(self):
         pass
@@ -319,4 +336,9 @@ class UnitsDeliveryEvent(Event):
             self.units[k] = self.units.get(k, 0) + v
 
     def skip(self):
+
+        for k, v in self.units.items():
+            info = Information("Ally Reinforcement", str(k.id) + " x " + str(v) + " at " + self.to_cp.name, self.game.turn)
+            self.game.informations.append(info)
+
         self.to_cp.base.commision_units(self.units)

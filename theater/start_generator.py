@@ -4,6 +4,7 @@ import random
 import typing
 import logging
 
+from gen import namegen
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group
 from gen.sam.sam_group_generator import generate_anti_air_group, generate_shorad_group
@@ -79,6 +80,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
             g.cp_id = cp.id
             g.airbase_group = True
             g.dcs_identifier = "CARRIER"
+            g.obj_name = namegen.random_objective_name()
             g.heading = 0
             g.position = Point(cp.position.x, cp.position.y)
             group = generate_carrier_group(faction, game, g)
@@ -98,6 +100,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
             g.cp_id = cp.id
             g.airbase_group = True
             g.dcs_identifier = "LHA"
+            g.obj_name = namegen.random_objective_name()
             g.heading = 0
             g.position = Point(cp.position.x, cp.position.y)
             group = generate_lha_group(faction, game, g)
@@ -124,6 +127,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.cp_id = cp.id
                 g.airbase_group = True
                 g.dcs_identifier = "AA"
+                g.obj_name = namegen.random_objective_name()
                 g.heading = 0
                 g.position = Point(point.x, point.y)
 
@@ -160,6 +164,8 @@ def find_location(on_ground, near, theater, min, max, others) -> typing.Optional
     """
     point = None
     for _ in range(1000):
+
+        # Check if on land or sea
         p = near.random_point_within(max, min)
         if on_ground and theater.is_on_land(p):
             point = p
@@ -180,6 +186,20 @@ def find_location(on_ground, near, theater, min, max, others) -> typing.Optional
                 if other.position.distance_to_point(point) < 10000:
                     point = None
                     break
+
+        if point:
+            for other in theater.controlpoints:
+                if other.position != near:
+                    if point is None:
+                        break
+                    if other.position.distance_to_point(point) < 30000:
+                        point = None
+                        break
+                    for ground_obj in other.ground_objects:
+                        if ground_obj.position.distance_to_point(point) < 10000:
+                            point = None
+                            break
+
         if point:
             return point
     return None
@@ -201,13 +221,16 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
     if cp.is_global:
         return False
 
-    amount = random.randrange(1, 7)
+    amount = random.randrange(3, 8)
     for i in range(0, amount):
+
         available_categories = list(templates)
+        obj_name = namegen.random_objective_name()
+
         if i >= amount - 1:
             tpl_category = "aa"
         else:
-            if random.randint(0, 2) == 0:
+            if random.randint(0, 3) == 0:
                 tpl_category = "aa"
             else:
                 tpl_category = random.choice(available_categories)
@@ -223,6 +246,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
         group_id = group_id + 1
 
         logging.info("generated {} for {}".format(tpl_category, cp))
+
         for object in tpl:
             object_id += 1
 
@@ -231,11 +255,11 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
             g.object_id = object_id
             g.cp_id = cp.id
             g.airbase_gorup = False
+            g.obj_name = obj_name
 
             g.dcs_identifier = object["type"]
             g.heading = object["heading"]
             g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
-
 
             if g.dcs_identifier == "AA":
                 if cp.captured:

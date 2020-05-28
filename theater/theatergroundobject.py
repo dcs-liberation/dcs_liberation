@@ -49,15 +49,13 @@ class TheaterGroundObject:
     cp_id = 0
     group_id = 0
     object_id = 0
-
     dcs_identifier = None  # type: str
     is_dead = False
     airbase_group = False
-
     heading = 0
     position = None  # type: Point
-
     groups = []
+    obj_name = ""
 
     @property
     def category(self) -> str:

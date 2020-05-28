@@ -39,6 +39,8 @@ class FlightWaypoint():
         self.name = ""
         self.description = ""
         self.targets = []
+        self.obj_name = ""
+        self.pretty_name = ""
 
 
 class Flight:
