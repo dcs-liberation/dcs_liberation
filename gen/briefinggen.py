@@ -70,6 +70,18 @@ class BriefingGenerator:
             for name, freq in self.freqs:
                 self.description += "\n{}: {}".format(name, freq)
 
+        for cp in self.game.theater.controlpoints:
+            if cp.captured and cp.cptype in [ControlPointType.LHA_GROUP, ControlPointType.AIRCRAFT_CARRIER_GROUP]:
+                self.description += "\n"
+                self.description += cp.name + " TACAN : "
+
+                self.description += str(cp.tacanN)
+                if cp.tacanY:
+                    self.description += "Y"
+                else:
+                    self.description += "X"
+                self.description += " " + str(cp.tacanI) + "\n"
+
 
         self.m.set_description_text(self.description)
 

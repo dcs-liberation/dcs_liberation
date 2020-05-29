@@ -93,7 +93,12 @@ class GroundObjectsGenerator:
                                     ship.heading = u.heading
                                     sg.add_unit(ship)
 
+                            # TODO : make sure the point is not on Land
                             sg.add_waypoint(sg.points[0].position.point_from_heading(g.units[0].heading, 100000))
+
+                            # SET UP TACAN
+                            modeChannel = "X" if not cp.tacanY else "Y"
+                            sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id))
 
                 else:
                     if ground_object.dcs_identifier in warehouse_map:

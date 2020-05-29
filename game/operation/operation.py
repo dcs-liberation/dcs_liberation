@@ -114,20 +114,6 @@ class Operation:
             self.attackers_starting_position = self.departure_cp.at
             self.defenders_starting_position = self.to_cp.at
 
-    def prepare_carriers(self, for_units: db.UnitsDict):
-        if not self.departure_cp.is_global:
-            return
-
-        ship = self.shipgen.generate_carrier(for_units=[t for t, c in for_units.items() if c > 0],
-                                             country=self.game.player_country,
-                                             at=self.departure_cp.at)
-
-        if not self.is_quick:
-            if not self.to_cp.captured:
-                self.attackers_starting_position = ship
-            else:
-                self.defenders_starting_position = ship
-
     def generate(self):
 
         # Generate ground object first
@@ -135,9 +121,6 @@ class Operation:
 
         # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)
-
-        # Generate carrier groups & ships
-
 
         # Generate Activity on the map
         for cp in self.game.theater.controlpoints:

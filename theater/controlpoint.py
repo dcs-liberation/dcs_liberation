@@ -57,6 +57,9 @@ class ControlPoint:
         self.base = theater.base.Base()
         self.cptype = cptype
         self.stances = {}
+        self.tacanY = False
+        self.tacanN = None
+        self.tacanI = "TAC"
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
@@ -66,14 +69,22 @@ class ControlPoint:
     @classmethod
     def carrier(cls, name: str, at: Point, id: int = 1001):
         import theater.conflicttheater
-        return cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
+        cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
+        cp.tacanY = random.choice([True, False])
+        cp.tacanN = random.randint(26, 49)
+        cp.tacanI = random.choice(["STE", "CVN", "CVH", "CCV", "ACC", "ARC", "GER", "ABR", "LIN", "TRU"])
+        return cp
 
     @classmethod
     def lha(cls, name: str, at: Point, id: int = 1002):
         import theater.conflicttheater
-        return cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
+        cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.LHA_GROUP)
+        cp.tacanY = random.choice([True, False])
+        cp.tacanN = random.randint(1,25)
+        cp.tacanI = random.choice(["LHD", "LHA", "LHB", "LHC", "LHD", "LDS"])
+        return cp
 
     def __str__(self):
         return self.name
