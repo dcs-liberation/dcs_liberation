@@ -46,7 +46,12 @@ def restore_game():
         return None
 
     with open(_save_file(), "rb") as f:
-        return pickle.load(f)
+        try:
+            save = pickle.load(f)
+            return save
+        except:
+            print("Invalid Save game")
+            return None
 
 
 def save_game(game) -> bool:
