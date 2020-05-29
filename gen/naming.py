@@ -68,7 +68,7 @@ class NameGenerator:
 
     def random_objective_name(self):
         if len(self.ANIMALS) == 0:
-            random.choice(ALPHA_MILITARY).upper() + " #" + str(random.randint(0, 100))
+            return random.choice(ALPHA_MILITARY).upper() + "#" + str(random.randint(0, 100))
         else:
             animal = random.choice(self.ANIMALS)
             self.ANIMALS.remove(animal)
