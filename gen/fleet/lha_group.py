@@ -17,8 +17,9 @@ class LHAGroupGenerator(GroupGenerator):
             self.add_unit(carrier_type, "LHA", self.position.x, self.position.y, self.heading)
 
         # Add destroyers escort
-        dd_type = random.choice(self.faction["destroyer"])
-        self.add_unit(dd_type, "DD1", self.position.x + 50, self.position.y + 150, self.heading)
-        self.add_unit(dd_type, "DD2", self.position.x + 50, self.position.y - 150, self.heading)
+        if "destroyer" in self.faction.keys():
+            dd_type = random.choice(self.faction["destroyer"])
+            self.add_unit(dd_type, "DD1", self.position.x + 250, self.position.y + 450, self.heading)
+            self.add_unit(dd_type, "DD2", self.position.x + 250, self.position.y - 450, self.heading)
 
         self.get_generated_group().points[0].speed = 20

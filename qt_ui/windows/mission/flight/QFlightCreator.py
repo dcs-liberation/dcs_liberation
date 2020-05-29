@@ -1,7 +1,8 @@
 from typing import List
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QGridLayout, QLabel, QComboBox, QHBoxLayout, QVBoxLayout, QPushButton, QSpinBox
+from PySide2.QtWidgets import QDialog, QGridLayout, QLabel, QComboBox, QHBoxLayout, QVBoxLayout, QPushButton, QSpinBox, \
+    QMessageBox
 from dcs import Point
 from dcs.unittype import UnitType
 
@@ -28,6 +29,7 @@ class QFlightCreator(QDialog):
         self.from_cp = from_cp
         self.flight_view = flight_view
         self.planner = self.game.planners[from_cp.id]
+        self.available = self.planner.get_available_aircraft()
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setModal(True)
@@ -35,7 +37,7 @@ class QFlightCreator(QDialog):
         self.setWindowIcon(EVENT_ICONS["strike"])
 
         self.select_type_aircraft = QComboBox()
-        for aircraft_type in possible_aircraft_type:
+        for aircraft_type in self.planner.get_available_aircraft().keys():
             print(aircraft_type)
             print(aircraft_type.name)
             self.select_type_aircraft.addItem(aircraft_type.id, userData=aircraft_type)
@@ -47,7 +49,7 @@ class QFlightCreator(QDialog):
         self.select_flight_type.addItem("TARCAP [Target Combat Air Patrol]", userData=FlightType.TARCAP)
         self.select_flight_type.addItem("INTERCEPT [Interception]", userData=FlightType.INTERCEPTION)
         self.select_flight_type.addItem("CAS [Close Air Support]", userData=FlightType.CAS)
-        self.select_flight_type.addItem("BAI [Battlefield Interdiction]", userData=FlightType.CAS)
+        self.select_flight_type.addItem("BAI [Battlefield Interdiction]", userData=FlightType.BAI)
         self.select_flight_type.addItem("SEAD [Suppression of Enemy Air Defenses]", userData=FlightType.SEAD)
         self.select_flight_type.addItem("DEAD [Destruction of Enemy Air Defenses]", userData=FlightType.DEAD)
         self.select_flight_type.addItem("STRIKE [Strike]", userData=FlightType.STRIKE)
@@ -60,7 +62,7 @@ class QFlightCreator(QDialog):
         self.select_count_of_aircraft.setValue(2)
 
         self.add_button = QPushButton("Add")
-        self.add_button.clicked.connect(self.create)
+        self.add_button.clicked.connect(self.create_flight)
 
         self.init_ui()
 
@@ -91,13 +93,24 @@ class QFlightCreator(QDialog):
 
         self.setLayout(layout)
 
-    def create(self):
+    def create_flight(self):
         aircraft_type = self.select_type_aircraft.currentData()
         count = self.select_count_of_aircraft.value()
-        flight = Flight(aircraft_type, count, self.from_cp, self.select_flight_type.currentData())
-        self.planner.flights.append(flight)
-        self.planner.custom_flights.append(flight)
-        if self.flight_view is not None:
-            self.flight_view.set_flight_planner(self.planner)
-        self.close()
+
+        if self.available[aircraft_type] < count:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Not enough aircraft of this type are available. Only " + str(self.available[aircraft_type]) + " available.")
+            msg.setWindowTitle("Not enough aircraft")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.setWindowFlags(Qt.WindowStaysOnTopHint)
+            msg.exec_()
+            return
+        else:
+            flight = Flight(aircraft_type, count, self.from_cp, self.select_flight_type.currentData())
+            self.planner.flights.append(flight)
+            self.planner.custom_flights.append(flight)
+            if self.flight_view is not None:
+                self.flight_view.set_flight_planner(self.planner)
+            self.close()
 

@@ -30,23 +30,20 @@ class NevadaTheater(ConflictTheater):
         self.mesquite = ControlPoint.from_airport(nevada.Mesquite, LAND, SIZE_REGULAR, 1.3)
         self.beatty = ControlPoint.from_airport(nevada.Beatty_Airport, LAND, SIZE_REGULAR, 1.1)
         self.creech = ControlPoint.from_airport(nevada.Creech_AFB, LAND, SIZE_BIG, IMPORTANCE_HIGH)
-        self.las_vegas = ControlPoint.from_airport(nevada.North_Las_Vegas, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
-        self.jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, 1.2)
-        self.laughlin = ControlPoint.from_airport(nevada.Laughlin_Airport, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
+        #self.las_vegas = ControlPoint.from_airport(nevada.North_Las_Vegas, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
+        #self.jean = ControlPoint.from_airport(nevada.Jean_Airport, LAND, SIZE_REGULAR, 1.2)
+        #self.laughlin = ControlPoint.from_airport(nevada.Laughlin_Airport, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
 
-        self.add_controlpoint(self.tonopah, connected_to=[self.tonopah_test_range, self.lincoln_conty])
+        self.add_controlpoint(self.tonopah, connected_to=[self.tonopah_test_range])
+
         self.add_controlpoint(self.tonopah_test_range, connected_to=[self.tonopah, self.lincoln_conty, self.pahute_mesa])
-        self.add_controlpoint(self.lincoln_conty, connected_to=[self.tonopah_test_range, self.tonopah, self.mesquite])
-
-        self.add_controlpoint(self.groom_lake, connected_to=[self.pahute_mesa, self.lincoln_conty, self.mesquite])
+        self.add_controlpoint(self.lincoln_conty, connected_to=[self.tonopah_test_range, self.mesquite, self.groom_lake])
         self.add_controlpoint(self.pahute_mesa, connected_to=[self.groom_lake, self.tonopah_test_range, self.beatty, self.creech])
-        self.add_controlpoint(self.mesquite, connected_to=[self.lincoln_conty, self.groom_lake, self.creech, self.las_vegas])
-        self.add_controlpoint(self.beatty, connected_to=[self.pahute_mesa, self.creech])
+        self.add_controlpoint(self.groom_lake, connected_to=[self.pahute_mesa, self.lincoln_conty, self.mesquite])
 
-        self.add_controlpoint(self.creech, connected_to=[self.beatty, self.mesquite, self.pahute_mesa, self.las_vegas])
-        self.add_controlpoint(self.las_vegas, connected_to=[self.mesquite, self.creech, self.jean, self.laughlin])
-        self.add_controlpoint(self.jean, connected_to=[self.laughlin, self.las_vegas])
-        self.add_controlpoint(self.laughlin, connected_to=[self.jean, self.las_vegas])
+        self.add_controlpoint(self.beatty, connected_to=[self.pahute_mesa])
+        self.add_controlpoint(self.creech, connected_to=[self.mesquite, self.pahute_mesa])
+        self.add_controlpoint(self.mesquite, connected_to=[self.lincoln_conty, self.groom_lake, self.creech])
 
         self.tonopah.captured = True
 

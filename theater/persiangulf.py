@@ -123,7 +123,9 @@ class IranianCampaign(ConflictTheater):
         self.jiroft = ControlPoint.from_airport(persiangulf.Jiroft_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
         self.bandar_e_jask = ControlPoint.from_airport(persiangulf.Bandar_e_Jask_airfield, LAND, SIZE_TINY,IMPORTANCE_LOW)
         self.ras_al_khaimah = ControlPoint.from_airport(persiangulf.Ras_Al_Khaimah, LAND, SIZE_REGULAR,IMPORTANCE_MEDIUM)
-        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635))
+
+        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635), 1001)
+        self.west_carrier = ControlPoint.lha("Tarawa", Point(-27500.813952358, -147000.65947136), 1002)
 
         self.add_controlpoint(self.ras_al_khaimah, connected_to=[self.khasab])
         self.add_controlpoint(self.khasab, connected_to=[self.ras_al_khaimah])
@@ -139,7 +141,10 @@ class IranianCampaign(ConflictTheater):
         self.add_controlpoint(self.lar, connected_to=[self.bandar_lengeh, self.havadarya, self.shiraz, self.kerman])
 
         self.add_controlpoint(self.east_carrier)
+        self.add_controlpoint(self.west_carrier)
+
         self.east_carrier.captured = True
+        self.west_carrier.captured = True
         self.al_dhafra.captured = True
         self.ras_al_khaimah.captured = True
         self.khasab.captured = True

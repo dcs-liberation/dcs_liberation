@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedL
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
+from game.infos.information import Information
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
@@ -163,21 +164,28 @@ class QSettingsWindow(QDialog):
         self.cheat50M = QPushButton("Cheat +50M")
         self.cheat100M = QPushButton("Cheat +100M")
         self.cheat200M = QPushButton("Cheat +200M")
+        self.cheat500M = QPushButton("Cheat +500M")
+        self.cheat1000M = QPushButton("Cheat +1000M")
 
         self.cheat25M.clicked.connect(lambda: self.cheatMoney(25))
         self.cheat50M.clicked.connect(lambda: self.cheatMoney(50))
         self.cheat100M.clicked.connect(lambda: self.cheatMoney(100))
         self.cheat200M.clicked.connect(lambda: self.cheatMoney(200))
+        self.cheat500M.clicked.connect(lambda: self.cheatMoney(500))
+        self.cheat1000M.clicked.connect(lambda: self.cheatMoney(1000))
 
         self.moneyCheatBoxLayout.addWidget(self.cheat25M, 0, 0)
         self.moneyCheatBoxLayout.addWidget(self.cheat50M, 0, 1)
         self.moneyCheatBoxLayout.addWidget(self.cheat100M, 1, 0)
         self.moneyCheatBoxLayout.addWidget(self.cheat200M, 1, 1)
+        self.moneyCheatBoxLayout.addWidget(self.cheat500M, 2, 0)
+        self.moneyCheatBoxLayout.addWidget(self.cheat1000M, 2, 1)
 
         self.cheatLayout.addWidget(self.moneyCheatBox, 0, 0)
 
     def cheatMoney(self, amount):
         self.game.budget += amount
+        self.game.informations.append(Information("CHEATER", "You are a cheater and you should feel bad", self.game.turn))
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def applySettings(self):

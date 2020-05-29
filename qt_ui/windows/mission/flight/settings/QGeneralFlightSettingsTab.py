@@ -10,17 +10,18 @@ from qt_ui.windows.mission.flight.settings.QFlightTypeTaskInfo import QFlightTyp
 
 class QGeneralFlightSettingsTab(QFrame):
 
-    def __init__(self, flight: Flight, game: Game):
+    def __init__(self, flight: Flight, game: Game, planner):
         super(QGeneralFlightSettingsTab, self).__init__()
         self.flight = flight
         self.game = game
+        self.planner = planner
         self.init_ui()
 
     def init_ui(self):
         layout = QGridLayout()
         self.flight_info = QFlightTypeTaskInfo(self.flight)
         self.flight_departure = QFlightDepartureEditor(self.flight)
-        self.flight_slots = QFlightSlotEditor(self.flight, self.game)
+        self.flight_slots = QFlightSlotEditor(self.flight, self.game, self.planner)
         self.flight_start_type = QFlightStartType(self.flight)
         layout.addWidget(self.flight_info, 0, 0)
         layout.addWidget(self.flight_departure, 1, 0)

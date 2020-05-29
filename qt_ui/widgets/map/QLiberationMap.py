@@ -76,23 +76,12 @@ class QLiberationMap(QGraphicsView):
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
                                            CONST.CP_SIZE, cp, self.game))
 
-
             if cp.captured:
                 pen = QPen(brush=CONST.COLORS["blue"])
                 brush = CONST.COLORS["blue_transparent"]
-
-                flight_path_pen = QPen(brush=CONST.COLORS["blue"])
-                flight_path_pen.setColor(CONST.COLORS["blue"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
             else:
                 pen = QPen(brush=CONST.COLORS["red"])
                 brush = CONST.COLORS["red_transparent"]
-
-                flight_path_pen = QPen(brush=CONST.COLORS["bright_red"])
-                flight_path_pen.setColor(CONST.COLORS["bright_red"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
 
             for ground_object in cp.ground_objects:
 
@@ -119,6 +108,24 @@ class QLiberationMap(QGraphicsView):
                 self.scene_create_lines_for_cp(cp)
 
         for cp in self.game.theater.controlpoints:
+
+            if cp.captured:
+                pen = QPen(brush=CONST.COLORS["blue"])
+                brush = CONST.COLORS["blue_transparent"]
+
+                flight_path_pen = QPen(brush=CONST.COLORS["blue"])
+                flight_path_pen.setColor(CONST.COLORS["blue"])
+                flight_path_pen.setWidth(1)
+                flight_path_pen.setStyle(Qt.DashDotLine)
+            else:
+                pen = QPen(brush=CONST.COLORS["red"])
+                brush = CONST.COLORS["red_transparent"]
+
+                flight_path_pen = QPen(brush=CONST.COLORS["bright_red"])
+                flight_path_pen.setColor(CONST.COLORS["bright_red"])
+                flight_path_pen.setWidth(1)
+                flight_path_pen.setStyle(Qt.DashDotLine)
+
             pos = self._transform_point(cp.position)
             if self.get_display_rule("flight_paths"):
                 if cp.id in self.game.planners.keys():

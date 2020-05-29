@@ -1,6 +1,6 @@
-from PySide2.QtWidgets import QFrame, QGridLayout, QLabel
+from PySide2.QtWidgets import QFrame, QGridLayout
 from game import Game
-from qt_ui.widgets.base.QBaseInformation import QBaseInformation
+from qt_ui.windows.basemenu.base_defenses.QBaseInformation import QBaseInformation
 from theater import ControlPoint
 
 

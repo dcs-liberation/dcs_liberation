@@ -50,7 +50,7 @@ class FlightPlanner:
         self.compute_strike_targets()
 
         # The priority is to assign air-superiority fighter or interceptor to interception roles, so they can scramble if there is an attacker
-        self.commision_interceptors()
+        #self.commision_interceptors()
 
         # Then some CAP patrol for the next 2 hours
         self.commision_barcap()
@@ -138,8 +138,18 @@ class FlightPlanner:
                     point = FlightWaypoint(ground_object.position.x, ground_object.position.y, patrol_alt)
                     point.name = "Patrol point"
                     point.description = "Patrol #" + str(len(flight.points))
+                    point.pretty_name = "Patrol #" + str(len(flight.points))
                     flight.points.append(point)
                     patrolled.append(ground_object.group_id)
+
+            if len(flight.points) == 0:
+                for i in range(3):
+                    pos = self.from_cp.position.point_from_heading(random.randint(0,360), random.randint(30000, 80000))
+                    point = FlightWaypoint(pos.x, pos.y, patrol_alt)
+                    point.name = "Patrol point"
+                    point.description = "Patrol #" + str(len(flight.points))
+                    point.pretty_name = "Patrol #" + str(len(flight.points))
+                    flight.points.append(point)
 
             self.cap_flights.append(flight)
             self.flights.append(flight)
@@ -182,17 +192,20 @@ class FlightPlanner:
 
                 ingress_point = FlightWaypoint(ingress.x, ingress.y, 1000)
                 ingress_point.name = "INGRESS"
+                ingress_point.pretty_name = "INGRESS"
                 ingress_point.description = "Ingress into CAS area"
                 flight.points.append(ingress_point)
 
                 center_point = FlightWaypoint(center.x, center.y, 1000)
                 center_point.description = "Provide CAS"
                 center_point.name = "CAS"
+                center_point.pretty_name = "INGRESS"
                 flight.points.append(center_point)
 
                 egress_point = FlightWaypoint(egress.x, egress.y, 1000)
                 egress_point.description = "Egress from CAS area"
                 egress_point.name = "EGRESS"
+                egress_point.pretty_name = "EGRESS"
                 flight.points.append(egress_point)
 
                 self.cas_flights.append(flight)
@@ -234,6 +247,7 @@ class FlightPlanner:
 
                 point = FlightWaypoint(location.position.x, location.position.y, 1000)
                 point.description = "SEAD"
+                point.pretty_name = "SEAD"
                 point.targets.append(location)
                 flight.points.append(point)
 
@@ -324,8 +338,12 @@ class FlightPlanner:
         return "-"*40 + "\n" + self.from_cp.name + " planned flights :\n"\
                + "-"*40 + "\n" + "\n".join([repr(f) for f in self.flights]) + "\n" + "-"*40
 
-
-
-
-
+    def get_available_aircraft(self):
+        base_aircraft_inventory = dict({k: v for k, v in self.from_cp.base.aircraft.items()})
+        for f in self.flights:
+            if f.unit_type in base_aircraft_inventory.keys():
+                base_aircraft_inventory[f.unit_type] = base_aircraft_inventory[f.unit_type] - f.count
+                if base_aircraft_inventory[f.unit_type] <= 0:
+                    del base_aircraft_inventory[f.unit_type]
+        return base_aircraft_inventory
 

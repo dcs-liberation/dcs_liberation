@@ -9,10 +9,10 @@ from qt_ui.windows.mission.flight.waypoints.QFlightWaypointTab import QFlightWay
 
 class QFlightPlanner(QTabWidget):
 
-    def __init__(self, flight: Flight, game: Game):
+    def __init__(self, flight: Flight, game: Game, planner):
         super(QFlightPlanner, self).__init__()
         if flight:
-            self.general_settings_tab = QGeneralFlightSettingsTab(flight, game)
+            self.general_settings_tab = QGeneralFlightSettingsTab(flight, game, planner)
             self.payload_tab = QFlightPayloadTab(flight, game)
             self.waypoint_tab = QFlightWaypointTab(game, flight)
             self.addTab(self.general_settings_tab, "General Flight settings")

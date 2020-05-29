@@ -1,19 +1,8 @@
-import traceback
+from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QCloseEvent
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QVBoxLayout, QGridLayout, QPushButton, \
-    QGroupBox, QSizePolicy, QSpacerItem, QFrame
-from dcs.unittype import UnitType
-
-from game.event import UnitsDeliveryEvent, ControlPointType
-from qt_ui.widgets.QBudgetBox import QBudgetBox
-from qt_ui.widgets.base.QAirportInformation import QAirportInformation
-from qt_ui.widgets.base.QBaseInformation import QBaseInformation
+from game.event import UnitsDeliveryEvent
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint, CAP, Embarking, CAS, PinpointStrike, db
+from theater import ControlPoint, CAP, CAS, db
 from game import Game
 
 

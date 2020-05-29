@@ -42,9 +42,9 @@ class QMissionPlanning(QDialog):
         self.planned_flight_view.selectionModel().selectionChanged.connect(self.on_flight_selection_change)
 
         if len(self.planned_flight_view.flight_planner.flights) > 0:
-            self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game)
+            self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game, self.planned_flight_view.flight_planner)
         else:
-            self.flight_planner = QFlightPlanner(None, self.game)
+            self.flight_planner = QFlightPlanner(None, self.game, self.planned_flight_view.flight_planner)
 
         self.add_flight_button = QPushButton("Add Flight")
         self.add_flight_button.clicked.connect(self.on_add_flight)
@@ -89,7 +89,7 @@ class QMissionPlanning(QDialog):
         index = self.planned_flight_view.selectionModel().currentIndex().row()
         flight = self.planner.flights[index]
 
-        self.flight_planner = QFlightPlanner(flight, self.game)
+        self.flight_planner = QFlightPlanner(flight, self.game, self.planner)
         self.layout.addWidget(self.flight_planner, 0, 1)
 
     def on_add_flight(self):

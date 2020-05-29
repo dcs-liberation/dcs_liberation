@@ -81,7 +81,7 @@ class QTopPanel(QFrame):
             self.budgetBox.setGame(self.game)
             self.factionsInfos.setGame(self.game)
 
-            if not len(self.game.planners.keys()) == len(self.game.theater.controlpoints):
+            if self.game and self.game.turn == 0:
                 self.proceedButton.setEnabled(False)
             else:
                 self.proceedButton.setEnabled(True)
