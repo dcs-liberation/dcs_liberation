@@ -46,4 +46,4 @@ else:
     logging.basicConfig(stream=log_stream, level=logging.INFO)
     Tk.report_callback_exception = _handle_exception
 
-logging.info("DCS Libration {}".format(_version_string))
+logging.info("DCS Liberation {}".format(_version_string))

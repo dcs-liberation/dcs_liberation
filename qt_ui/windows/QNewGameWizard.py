@@ -7,6 +7,7 @@ from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
 from game import db, Game
+from gen import namegen
 from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy
 from userdata.logging import version_string
 
@@ -29,6 +30,7 @@ class NewGameWizard(QtWidgets.QWizard):
         self.generatedGame = None
 
     def accept(self):
+
         blueFaction = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "blue"][self.field("blueFaction")]
         redFaction = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "red"][self.field("redFaction")]
         playerIsBlue = self.field("playerIsBlue")
@@ -40,7 +42,6 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainNormandy = self.field("isTerrainNormandy")
         isTerrainEmirates = self.field("isTerrainEmirates")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
-        sams = self.field("sams")
         midGame = self.field("midGame")
         multiplier = self.field("multiplier")
 
@@ -64,27 +65,38 @@ class NewGameWizard(QtWidgets.QWizard):
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
-        self.generatedGame = self.start_new_game(player_name, enemy_name, conflicttheater, sams, midGame, multiplier,
+        self.generatedGame = self.start_new_game(player_name, enemy_name, conflicttheater, midGame, multiplier,
                                                  timePeriod)
 
         super(NewGameWizard, self).accept()
 
-    def start_new_game(self, player_name: str, enemy_name: str, conflicttheater: ConflictTheater, sams: bool,
+    def start_new_game(self, player_name: str, enemy_name: str, conflicttheater: ConflictTheater,
                        midgame: bool, multiplier: float, period: datetime):
 
         if midgame:
             for i in range(0, int(len(conflicttheater.controlpoints) / 2)):
                 conflicttheater.controlpoints[i].captured = True
 
-        start_generator.generate_inital_units(conflicttheater, enemy_name, sams, multiplier)
+        # Reset name generator
+        namegen.reset()
+
+        print("-- Starting New Game Generator")
+        print("Enemy name : " + enemy_name)
+        print("Player name : " + player_name)
+        print("Midgame : " + str(midgame))
+        start_generator.generate_inital_units(conflicttheater, enemy_name, True, multiplier)
+
+        print("-- Initial units generated")
         game = Game(player_name=player_name,
                     enemy_name=enemy_name,
                     theater=conflicttheater,
                     start_date=period)
+
+        print("-- Game Object generated")
         start_generator.generate_groundobjects(conflicttheater, game)
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
-        game.settings.sams = sams
+        game.settings.sams = True
         game.settings.version = version_string()
 
         if midgame:
@@ -278,21 +290,16 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
-        sams = QtWidgets.QCheckBox()
-        sams.setChecked(True)
         midGame = QtWidgets.QCheckBox()
         multiplier = QtWidgets.QSpinBox()
         multiplier.setEnabled(False)
         multiplier.setMinimum(1)
         multiplier.setMaximum(5)
 
-        self.registerField('sams', sams)
         self.registerField('midGame', midGame)
         self.registerField('multiplier', multiplier)
 
         layout = QtWidgets.QGridLayout()
-        #layout.addWidget(QtWidgets.QLabel("With SAM Systems :"), 0, 0)
-        #layout.addWidget(sams, 0, 1)
         layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
         layout.addWidget(midGame, 1, 1)
         layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)

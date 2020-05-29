@@ -163,7 +163,7 @@ def find_location(on_ground, near, theater, min, max, others) -> typing.Optional
     :return:
     """
     point = None
-    for _ in range(1000):
+    for _ in range(300):
 
         # Check if on land or sea
         p = near.random_point_within(max, min)
