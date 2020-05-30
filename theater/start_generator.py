@@ -112,6 +112,9 @@ def generate_groundobjects(theater: ConflictTheater, game):
             if "lhanames" in db.FACTIONS[faction]:
                 cp.name = random.choice(db.FACTIONS[faction]["lhanames"])
         else:
+
+
+
             for i in range(random.randint(2,6)):
                 point = find_location(True, cp.position, theater, 1000, 2800, [])
 
@@ -131,24 +134,29 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.heading = 0
                 g.position = Point(point.x, point.y)
 
-                if i == 0:
-                    group = generate_armor_group(faction, game, g)
-                elif i == 1 and random.randint(0,1) == 0:
-                    group = generate_anti_air_group(game, cp, g, faction)
-                elif random.randint(0, 2) == 1:
-                    group = generate_shorad_group(game, cp, g, faction)
-                else:
-                    group = generate_armor_group(faction, game, g)
-
-                g.groups = []
-                if group is not None:
-                    g.groups.append(group)
+                generate_airbase_defense_group(i, g, faction, game, cp)
                 cp.ground_objects.append(g)
 
             print("---------------------------")
             print("CP Generation : " + cp.name)
             for ground_object in cp.ground_objects:
                 print(ground_object.groups)
+
+
+def generate_airbase_defense_group(airbase_defense_group_id, ground_obj:TheaterGroundObject, faction, game, cp):
+
+    if airbase_defense_group_id == 0:
+        group = generate_armor_group(faction, game, ground_obj)
+    elif airbase_defense_group_id == 1 and random.randint(0, 1) == 0:
+        group = generate_anti_air_group(game, cp, ground_obj, faction)
+    elif random.randint(0, 2) == 1:
+        group = generate_shorad_group(game, cp, ground_obj, faction)
+    else:
+        group = generate_armor_group(faction, game, ground_obj)
+
+    ground_obj.groups = []
+    if group is not None:
+        ground_obj.groups.append(group)
 
 
 def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:

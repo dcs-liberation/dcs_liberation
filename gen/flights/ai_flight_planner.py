@@ -17,7 +17,13 @@ MISSION_DURATION = 120 # in minutes
 CAP_EVERY_X_MINUTES = 20
 CAS_EVERY_X_MINUTES = 30
 SEAD_EVERY_X_MINUTES = 40
+STRIKE_EVERY_X_MINUTES = 40
 
+INGRESS_EGRESS_DISTANCE = 45000
+INGRESS_ALT = 6096 # 20k feet
+EGRESS_ALT = 6096 # 20k feet
+PATROL_ALT_RANGE = (3600, 9200)
+NAV_ALT = 9144
 
 class FlightPlanner:
 
@@ -60,6 +66,8 @@ class FlightPlanner:
 
         # Then prepare some sead flights if required
         self.commision_sead()
+
+        self.commision_strike()
 
         # TODO : commision STRIKE / ANTISHIP
 
@@ -130,7 +138,7 @@ class FlightPlanner:
             flight.points = []
             flight.scheduled_in = offset + i*random.randint(CAP_EVERY_X_MINUTES-5, CAP_EVERY_X_MINUTES+5)
 
-            patrol_alt = random.randint(3600, 7000)
+            patrol_alt = random.randint(PATROL_ALT_RANGE[0], PATROL_ALT_RANGE[1])
 
             patrolled = []
             for ground_object in self.from_cp.ground_objects:
@@ -245,13 +253,102 @@ class FlightPlanner:
                 location = self.potential_sead_targets[0][0]
                 self.potential_sead_targets.pop(0)
 
+                heading = self.from_cp.position.heading_between_point(location.position)
+                ingress_heading = heading - 180 + 25
+                egress_heading = heading - 180 - 25
+
+                ingress_pos = location.position.point_from_heading(ingress_heading, INGRESS_EGRESS_DISTANCE)
+                ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
+                ingress_point.pretty_name = "INGRESS on " + location.obj_name
+                ingress_point.description = "INGRESS on " + location.obj_name
+                flight.points.append(ingress_point)
+
                 point = FlightWaypoint(location.position.x, location.position.y, 1000)
-                point.description = "SEAD"
-                point.pretty_name = "SEAD"
+                if flight.flight_type == FlightType.DEAD:
+                    point.description = "SEAD on " + location.obj_name
+                    point.pretty_name = "SEAD on " + location.obj_name
+                else:
+                    point.description = "DEAD on " + location.obj_name
+                    point.pretty_name = "DEAD on " + location.obj_name
+
                 point.targets.append(location)
                 flight.points.append(point)
 
+                egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
+                egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
+                egress_point.pretty_name = "EGRESS on " + location.obj_name
+                egress_point.description = "EGRESS on " + location.obj_name
+                flight.points.append(egress_point)
+
                 self.sead_flights.append(flight)
+                self.flights.append(flight)
+
+            # Update inventory
+            for k, v in inventory.items():
+                self.aircraft_inventory[k] = v
+
+
+    def commision_strike(self):
+        """
+        Pick some aircraft to assign them to STRIKE tasks
+        """
+        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in CAS_CAPABLE and v >= 2]
+        inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
+
+        if len(self.potential_strike_targets) > 0:
+
+            offset = random.randint(0,5)
+            for i in range(int(MISSION_DURATION/STRIKE_EVERY_X_MINUTES)):
+
+                if len(self.potential_strike_targets) <= 0:
+                    break
+
+                try:
+                    unit = random.choice([k for k, v in inventory.items() if v >= 2])
+                except IndexError:
+                    break
+
+                inventory[unit] = inventory[unit] - 2
+                flight = Flight(unit, 2, self.from_cp, FlightType.STRIKE)
+
+                flight.points = []
+                flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
+
+                location = self.potential_strike_targets[0][0]
+                self.potential_strike_targets.pop(0)
+
+                heading = self.from_cp.position.heading_between_point(location.position)
+                ingress_heading = heading - 180 + 25
+                egress_heading = heading - 180 - 25
+
+                ingress_pos = location.position.point_from_heading(ingress_heading, INGRESS_EGRESS_DISTANCE)
+                ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
+                ingress_point.pretty_name = "INGRESS on " + location.obj_name
+                ingress_point.description = "INGRESS on " + location.obj_name
+                flight.points.append(ingress_point)
+
+                if len(location.groups) > 0:
+                    for g in location.groups:
+                        for j, u in enumerate(g.units):
+                            point = FlightWaypoint(u.position.x, u.position.y, 0)
+                            point.description = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
+                            point.pretty_name = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
+                            point.targets.append(location)
+                            flight.points.append(point)
+                else:
+                    point = FlightWaypoint(location.position.x, location.position.y, 0)
+                    point.description = "STRIKE on " + location.obj_name + " " + str(location.category)
+                    point.pretty_name = "STRIKE on " + location.obj_name + " " + str(location.category)
+                    point.targets.append(location)
+                    flight.points.append(point)
+
+                egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
+                egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
+                egress_point.pretty_name = "EGRESS on " + location.obj_name
+                egress_point.description = "EGRESS on " + location.obj_name
+                flight.points.append(egress_point)
+
+                self.strike_flights.append(flight)
                 self.flights.append(flight)
 
             # Update inventory
@@ -285,7 +382,7 @@ class FlightPlanner:
 
             added_group = []
             for g in cp.ground_objects:
-                if g.group_id in added_group: continue
+                if g.group_id in added_group or g.is_dead: continue
 
                 # Compute distance to current cp
                 distance = math.hypot(cp.position.x - self.from_cp.position.x,

@@ -13,6 +13,7 @@ from theater import *
 from gen.environmentgen import EnvironmentSettings
 from gen.conflictgen import Conflict
 from game.db import assigned_units_from, unitdict_from
+from theater.start_generator import generate_airbase_defense_group
 
 from userdata.debriefing import Debriefing
 from userdata import persistency
@@ -214,28 +215,35 @@ class Event:
 
                 for cp in self.game.theater.controlpoints:
                     if cp.id == id:
+
+                        pname = ""
                         if cp.captured and new_owner_coalition != coalition:
                             cp.captured = False
-                            cp.base.aircraft = {}
-                            cp.base.armor = {}
-                            cp.base.aa = {}
-                            for g in cp.ground_objects:
-                                g.groups = []
                             info = Information(cp.name + " lost !",
                                                "The ennemy took control of " + cp.name + "\nShame on us !",
                                                self.game.turn)
                             self.game.informations.append(info)
+                            pname = self.game.enemy_name
                         elif not(cp.captured) and new_owner_coalition == coalition:
                             cp.captured = True
-                            cp.base.aircraft = {}
-                            cp.base.armor = {}
-                            cp.base.aa = {}
-                            for g in cp.ground_objects:
-                                g.groups = []
-                            info = Information(cp.name + " captured !",
-                                               "The ennemy took control of " + cp.name + "\nShame on us !",
-                                               self.game.turn)
+                            info = Information(cp.name + " captured !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
                             self.game.informations.append(info)
+                            pname = self.game.player_name
+                        else:
+                            continue
+
+                        cp.base.aircraft = {}
+                        cp.base.armor = {}
+                        cp.base.aa = {}
+
+                        airbase_def_id = 0
+                        for g in cp.ground_objects:
+                            g.groups = []
+                            if g.airbase_group and pname != "":
+                                generate_airbase_defense_group(airbase_def_id, g, pname, self.game, cp)
+                                airbase_def_id = airbase_def_id + 1
+
+
             except Exception as e:
                 print(e)
 

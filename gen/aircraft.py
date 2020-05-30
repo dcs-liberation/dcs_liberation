@@ -327,6 +327,11 @@ class AircraftConflictGenerator:
             self.setup_group_as_sead_flight(group, flight)
             self._setup_custom_payload(flight, group)
 
+        for flight in flight_planner.strike_flights:
+            group = self.generate_planned_flight(cp, country, flight)
+            self.setup_group_as_strike_flight(group, flight)
+            self._setup_custom_payload(flight, group)
+
         for flight in flight_planner.custom_flights:
             group = self.generate_planned_flight(cp, country, flight)
             if flight.flight_type == FlightType.INTERCEPTION:
@@ -445,11 +450,16 @@ class AircraftConflictGenerator:
         group.points[0].tasks.clear()
         group.points[0].tasks.append(CASTaskAction())
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
         group.points[0].tasks.append(OptRestrictJettison(True))
 
+        i = 1
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
+            for t in point.targets:
+                group.points[i].tasks.append(Bombing(t.position))
+            i = i + 1
+
 
     def setup_group_as_antiship_flight(self, group, flight):
         group.task = AntishipStrike.name
@@ -463,264 +473,5 @@ class AircraftConflictGenerator:
 
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
-
-    def generate_cas_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(attackers, clients):
-            group = self._generate_group(
-                    name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                    side=self.conflict.attackers_country,
-                    unit_type=flying_type,
-                    count=count,
-                    client_count=client_count,
-                    at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            waypoint = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
-            if self.conflict.is_vector:
-                self._add_radio_waypoint(group, self.conflict.tail, CAS_ALTITUDE, WARM_START_AIRSPEED)
-
-            group.task = CAS.name
-            self._setup_group(group, CAS, client_count)
-            if escort:
-                self.escort_targets.append((group, group.points.index(waypoint)))
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_ground_attack_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition = None, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.attackers_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            escort_until_waypoint = None
-
-            for name, pos in targets:
-                waypoint = group.add_waypoint(pos, 0, WARM_START_AIRSPEED, self.m.translation.create_string(name))
-                waypoint.tasks.append(Bombing(pos, attack_qty=2))
-                if escort_until_waypoint is None:
-                    escort_until_waypoint = waypoint
-
-            group.task = GroundAttack.name
-            self._setup_group(group, GroundAttack, client_count)
-            if escort:
-                self.escort_targets.append((group, group.points.index(escort_until_waypoint)))
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_sead_strikegroup(self, strikegroup: db.PlaneDict, clients: db.PlaneDict, targets: typing.List[typing.Tuple[str, Point]], at: db.StartingPosition, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(strikegroup, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.attackers_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            escort_until_waypoint = None
-
-            for name, pos in targets:
-                waypoint = group.add_waypoint(pos, 0, WARM_START_AIRSPEED, self.m.translation.create_string(name))
-                if escort_until_waypoint is None:
-                    escort_until_waypoint = waypoint
-
-            group.task = SEAD.name
-            self._setup_group(group, SEAD, client_count)
-            if escort:
-                self.escort_targets.append((group, group.points.index(escort_until_waypoint)))
-
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_defenders_cas(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(defenders, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.defenders_country, self.conflict.to_cp.id, flying_type),
-                side=self.conflict.defenders_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_defenders_location))
-
-            location = self._group_point(self.conflict.air_defenders_location)
-            insertion_point = self.conflict.find_insertion_point(location)
-            waypoint = self._add_radio_waypoint(group, insertion_point, CAS_ALTITUDE, WARM_START_AIRSPEED)
-
-            if self.conflict.is_vector:
-                destination_tail = self.conflict.tail.distance_to_point(insertion_point) > self.conflict.position.distance_to_point(insertion_point)
-                self._add_radio_waypoint(group, destination_tail and self.conflict.tail or self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
-
-            group.task = CAS.name
-            self._setup_group(group, CAS, client_count)
-            if escort:
-                self.escort_targets.append((group, group.points.index(waypoint)))
-            self._rtb_for(group, self.conflict.to_cp, at)
-
-    def generate_ship_strikegroup(self, attackers: db.PlaneDict, clients: db.PlaneDict, target_groups: typing.Collection[ShipGroup], at: db.StartingPosition = None, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(attackers, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.attackers_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            wayp = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
-            for target_group in target_groups:
-                wayp.tasks.append(AttackGroup(target_group.id))
-
-            group.task = AntishipStrike.name
-            self._setup_group(group, AntishipStrike, client_count)
-            if escort:
-                self.escort_targets.append((group, group.points.index(wayp)))
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_attackers_escort(self, attackers: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for g in self._generate_escort(
-                side=self.conflict.attackers_country,
-                units=attackers,
-                clients=clients,
-                at=at and at or self._group_point(self.conflict.air_attackers_location),
-                is_quick=at is None,
-                cp=self.conflict.from_cp,
-                should_orbit=True):
-            self._rtb_for(g, self.conflict.from_cp, at)
-
-    def generate_defenders_escort(self, escort: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for g in self._generate_escort(
-                side=self.conflict.defenders_country,
-                units=escort,
-                clients=clients,
-                at=at and at or self._group_point(self.conflict.air_defenders_location),
-                is_quick=at is None,
-                cp=self.conflict.to_cp,
-                should_orbit=False):
-            self._rtb_for(g, self.conflict.to_cp, at)
-
-    def generate_defense(self, defenders: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for flying_type, count, client_count in self._split_to_groups(defenders, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.to_cp.id, flying_type),
-                side=self.conflict.defenders_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_defenders_location))
-
-            group.task = CAP.name
-            wayp = self._add_radio_waypoint(group, self.conflict.position, CAS_ALTITUDE, WARM_START_AIRSPEED)
-            wayp.tasks.append(dcs.task.EngageTargets(max_distance=DEFENCE_ENGAGEMENT_MAX_DISTANCE))
-            wayp.tasks.append(dcs.task.OrbitAction(ATTACK_CIRCLE_ALT, pattern=OrbitAction.OrbitPattern.Circle))
-            self._setup_group(group, CAP, client_count)
-            self._rtb_for(group, self.conflict.to_cp, at)
-
-    def generate_migcap(self, patrol: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for flying_type, count, client_count in self._split_to_groups(patrol, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.attackers_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            waypoint = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
-            if self.conflict.is_vector:
-                self._add_radio_waypoint(group, self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
-
-            group.task = CAP.name
-            self._setup_group(group, CAP, client_count)
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_barcap(self, patrol: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for flying_type, count, client_count in self._split_to_groups(patrol, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.defenders_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_defenders_location))
-
-            waypoint = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
-            if self.conflict.is_vector:
-                self._add_radio_waypoint(group, self.conflict.tail, WARM_START_ALTITUDE, WARM_START_AIRSPEED)
-            else:
-                heading = group.position.heading_between_point(self.conflict.position)
-                waypoint = self._add_radio_waypoint(group, self.conflict.position.point_from_heading(heading, BARCAP_RACETRACK_DISTANCE),
-                                                    WARM_START_ALTITUDE,
-                                                    WARM_START_AIRSPEED)
-                waypoint.tasks.append(OrbitAction(WARM_START_ALTITUDE, WARM_START_AIRSPEED))
-
-            group.task = CAP.name
-            self._setup_group(group, CAP, client_count)
-            self._rtb_for(group, self.conflict.to_cp, at)
-
-    def generate_transport(self, transport: db.PlaneDict, destination: Airport, escort=True):
-        assert not escort or len(self.escort_targets) == 0
-
-        for flying_type, count, client_count in self._split_to_groups(transport):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.defenders_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=self._group_point(self.conflict.air_defenders_location))
-
-            waypoint = self._rtb_for(group, self.conflict.to_cp)
-            if escort:
-                self.escort_targets.append((group, group.points.index(waypoint)))
-
-            self._add_radio_waypoint(group, destination.position, RTB_ALTITUDE)
-            group.task = Transport.name
-            group.land_at(destination)
-
-    def generate_interception(self, interceptors: db.PlaneDict, clients: db.PlaneDict, at: db.StartingPosition = None):
-        for flying_type, count, client_count in self._split_to_groups(interceptors, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, flying_type),
-                side=self.conflict.attackers_country,
-                unit_type=flying_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location))
-
-            group.task = CAP.name
-            group.points[0].tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
-
-            wayp = self._add_radio_waypoint(group, self.conflict.position, WARM_START_ALTITUDE, INTERCEPTION_AIRSPEED)
-            wayp.tasks.append(EngageTargets(max_distance=INTERCEPT_MAX_DISTANCE))
-            
-            if self.conflict.is_vector:
-                self._add_radio_waypoint(group, self.conflict.tail, CAS_ALTITUDE, WARM_START_ALTITUDE)
-
-            self._setup_group(group, CAP, client_count)
-            self._rtb_for(group, self.conflict.from_cp, at)
-
-    def generate_passenger_transport(self, helis: db.HeliDict, clients: db.HeliDict, at: db.StartingPosition):
-        for heli_type, count, client_count in self._split_to_groups(helis, clients):
-            group = self._generate_group(
-                name=namegen.next_unit_name(self.conflict.attackers_country, self.conflict.from_cp.id, heli_type),
-                side=self.conflict.attackers_country,
-                unit_type=heli_type,
-                count=count,
-                client_count=client_count,
-                at=at and at or self._group_point(self.conflict.air_attackers_location)
-            )
-
-            self._add_radio_waypoint(group, self.conflict.position, HELI_ALT)
-            self._setup_group(group, Transport, client_count)
 
 

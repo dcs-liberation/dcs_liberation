@@ -119,7 +119,7 @@ CAS_CAPABLE = [
 SEAD_CAPABLE = [
     F_4E,
     FA_18C_hornet,
-    F_16C_50,
+    # F_16C_50, Not yet
     AV8BNA,
     JF_17,
 
@@ -179,7 +179,12 @@ STRIKE_CAPABLE = [
 
 ANTISHIP_CAPABLE = [
     Su_24M,
+    Su_17M4,
     F_A_18C,
     AV8BNA,
-    JF_17
+    JF_17,
+    F_16C_50,
+    A_10C,
+    A_10A,
+
 ]

@@ -172,13 +172,6 @@ class Conflict:
         position = middle_point.point_from_heading(attack_heading, strength_delta * attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE)
         return position, _opposite_heading(attack_heading)
 
-        ground_position = cls._find_ground_position(position, attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE, attack_heading, theater)
-        if ground_position:
-            return ground_position, _opposite_heading(attack_heading)
-        else:
-            logging.warning("Coudn't find frontline position between {} and {}!".format(from_cp, to_cp))
-            return position, _opposite_heading(attack_heading)
-
 
     @classmethod
     def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> typing.Optional[typing.Tuple[Point, int, int]]:

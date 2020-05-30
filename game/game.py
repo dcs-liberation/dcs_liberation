@@ -1,24 +1,11 @@
-import logging
-import typing
-import random
-import math
-
-from dcs.task import *
-from dcs.vehicles import *
+from datetime import datetime, timedelta
 
 from game.db import REWARDS, PLAYER_BUDGET_BASE
 from game.game_stats import GameStats
-from game.infos.information import Information
-from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
-from userdata.debriefing import Debriefing
-from theater import *
-
-from . import db
-from .settings import Settings
 from .event import *
-from datetime import datetime, timedelta
+from .settings import Settings
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -230,6 +217,10 @@ class Game:
                 self.ground_planners[cp.id] = gplanner
 
     def _enemy_reinforcement(self):
+        """
+        Compute and commision reinforcement for enemy bases
+        """
+
         MAX_ARMOR = 30 * self.settings.multiplier
         MAX_AIRCRAFT = 25 * self.settings.multiplier
 

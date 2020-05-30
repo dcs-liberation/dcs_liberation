@@ -2,6 +2,7 @@ from PySide2.QtCore import QSortFilterProxyModel, Qt, QModelIndex
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QComboBox, QCompleter
 from game import Game
+from gen import Conflict
 from gen.flights.flight import FlightWaypoint
 from theater import ControlPointType
 
@@ -89,7 +90,8 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
             if cp.captured:
                 enemy_cp = [ecp for ecp in cp.connected_points if ecp.captured != cp.captured]
                 for ecp in enemy_cp:
-                    wpt = FlightWaypoint((cp.position.x + ecp.position.x)/2, (cp.position.y + ecp.position.y)/2, 800)
+                    pos = Conflict.frontline_position(self.game.theater, cp, ecp)[0]
+                    wpt = FlightWaypoint(pos.x, pos.y, 800)
                     wpt.name = "Frontline " + cp.name + "/" + ecp.name + " [CAS]"
                     wpt.pretty_name = wpt.name
                     wpt.description = "Frontline"
