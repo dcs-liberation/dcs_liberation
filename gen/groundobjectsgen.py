@@ -103,6 +103,9 @@ class GroundObjectsGenerator:
                             modeChannel = "X" if not cp.tacanY else "Y"
                             sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id))
 
+                            if ground_object.dcs_identifier == "CARRIER" and hasattr(cp, "icls"):
+                                sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
+
                 else:
                     if ground_object.dcs_identifier in warehouse_map:
                         static_type = warehouse_map[ground_object.dcs_identifier]

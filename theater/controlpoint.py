@@ -27,6 +27,7 @@ class ControlPoint:
     full_name = None  # type: str
     base = None  # type: theater.base.Base
     at = None  # type: db.StartPosition
+    icls = 1
 
     connected_points = None  # type: typing.List[ControlPoint]
     ground_objects = None  # type: typing.List[TheaterGroundObject]
@@ -35,6 +36,8 @@ class ControlPoint:
     has_frontline = True
     frontline_offset = 0.0
     cptype: ControlPointType = None
+
+    ICLS_counter = 1
 
     def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: float,
                  has_frontline=True, cptype=ControlPointType.AIRBASE):
@@ -60,6 +63,7 @@ class ControlPoint:
         self.tacanY = False
         self.tacanN = None
         self.tacanI = "TAC"
+        self.icls = 0
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
@@ -74,6 +78,8 @@ class ControlPoint:
         cp.tacanY = random.choice([True, False])
         cp.tacanN = random.randint(26, 49)
         cp.tacanI = random.choice(["STE", "CVN", "CVH", "CCV", "ACC", "ARC", "GER", "ABR", "LIN", "TRU"])
+        ControlPoint.ICLS_counter = ControlPoint.ICLS_counter + 1
+        cp.icls = ControlPoint.ICLS_counter
         return cp
 
     @classmethod
