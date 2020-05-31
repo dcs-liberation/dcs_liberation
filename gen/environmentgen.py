@@ -61,12 +61,14 @@ class EnviromentGenerator:
             logging.info("Skip Night mission due to user settings")
             if daytime == "dawn":
                 time_range = (8, 9)
-            elif daytime == "noon":
+            elif daytime == "day":
                 time_range = (10, 12)
             elif daytime == "dusk":
                 time_range = (12, 14)
             elif daytime == "night":
                 time_range = (14, 17)
+            else:
+                time_range = (10, 12)
         else:
             time_range = self.game.theater.daytime_map[daytime]
 
