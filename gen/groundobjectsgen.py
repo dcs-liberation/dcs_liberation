@@ -82,9 +82,12 @@ class GroundObjectsGenerator:
                         if len(g.units) > 0:
 
                             utype = unit_type_from_name(g.units[0].type)
-                            sg = self.m.ship_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
+                            if ground_object.dcs_identifier == "CARRIER" and self.game.settings.supercarrier == True:
+                                utype = db.upgrade_to_supercarrier(utype, cp.name)
 
+                            sg = self.m.ship_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
                             sg.units[0].name = self.m.string(g.units[0].name)
+
                             for i, u in enumerate(g.units):
                                 if i > 0:
                                     ship = Ship(self.m.next_unit_id(), self.m.string(u.name), unit_type_from_name(u.type))

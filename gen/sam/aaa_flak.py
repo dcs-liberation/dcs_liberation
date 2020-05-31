@@ -4,7 +4,7 @@ from dcs.vehicles import AirDefence, Unarmed
 
 from gen.sam.group_generator import GroupGenerator
 
-GFLAK = [AirDefence.AAA_Flak_Vierling_38, AirDefence.AAA_Flak_Vierling_38, AirDefence.AAA_Flak_18, AirDefence.AAA_Flak_36, AirDefence.AAA_Flak_37, AirDefence.AAA_Flak_38]
+GFLAK = [AirDefence.AAA_Flak_Vierling_38, AirDefence.AAA_8_8cm_Flak_18, AirDefence.AAA_8_8cm_Flak_36, AirDefence.AAA_8_8cm_Flak_37, AirDefence.AAA_8_8cm_Flak_41, AirDefence.AAA_Flak_38]
 
 class FlakGenerator(GroupGenerator):
     """

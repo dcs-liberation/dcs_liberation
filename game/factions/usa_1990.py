@@ -46,6 +46,7 @@ USA_1990 = {
         LHA_1_Tarawa,
     ], "destroyer": [
         Oliver_Hazzard_Perry_class,
+        USS_Arleigh_Burke_IIa,
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [

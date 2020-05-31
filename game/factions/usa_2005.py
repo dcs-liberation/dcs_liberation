@@ -53,11 +53,13 @@ USA_2005 = {
         LHA_1_Tarawa,
     ], "destroyer": [
         Oliver_Hazzard_Perry_class,
+        USS_Arleigh_Burke_IIa,
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [
+        "CVN-71 Theodore Roosevelt",
         "CVN-72 Abraham Lincoln",
-        "CVN-73 Georges Washington",
+        "CVN-73 George Washington",
         "CVN-74 John C. Stennis",
     ], "lhanames": [
         "LHA-1 Tarawa",

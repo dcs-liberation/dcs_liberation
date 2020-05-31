@@ -28,7 +28,7 @@ Lybia_2011 = {
         AirDefence.HQ_7_Self_Propelled_LN,
 
         Armor.IFV_BMP_1,
-        Armor.ARV_MTLB_U_BOMAN,
+        Armor.FDDM_Grad,
         Armor.ARV_BRDM_2,
         Armor.MBT_T_55,
         Armor.MBT_T_72B,

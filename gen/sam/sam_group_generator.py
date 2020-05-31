@@ -50,7 +50,7 @@ SAM_MAP = {
     AirDefence.SAM_Patriot_EPP_III: PatriotGenerator,
     AirDefence.SAM_Chaparral_M48: ChaparralGenerator,
     AirDefence.AAA_Bofors_40mm: BoforsGenerator,
-    AirDefence.AAA_Flak_36: FlakGenerator,
+    AirDefence.AAA_8_8cm_Flak_36: FlakGenerator,
     AirDefence.SAM_SA_2_LN_SM_90: SA2Generator,
     AirDefence.SAM_SA_3_S_125_LN_5P73: SA3Generator,
     AirDefence.SAM_SA_6_Kub_LN_2P25: SA6Generator,

@@ -157,7 +157,7 @@ PRICES = {
 
     # armor
     Armor.APC_MTLB: 4,
-    Armor.ARV_MTLB_U_BOMAN: 5,
+    Armor.FDDM_Grad: 5,
     Armor.ARV_BRDM_2: 6,
     Armor.ARV_BTR_RD: 8,
     Armor.APC_BTR_80: 8,
@@ -239,8 +239,8 @@ PRICES = {
     Armor.M30_Cargo_Carrier:2,
     Armor.APC_M2A1:2,
     AirDefence.AAA_Bofors_40mm:4,
-    AirDefence.AAA_Flak_36:6,
-    AirDefence.AAA_Flak_18:4,
+    AirDefence.AAA_8_8cm_Flak_36:6,
+    AirDefence.AAA_8_8cm_Flak_18:4,
     Artillery.M12_GMC:2,
     Artillery.Sturmpanzer_IV_Brummbär:2,
 
@@ -351,11 +351,11 @@ UNIT_BY_TASK = {
         Armor.APC_MTLB,
         Armor.APC_MTLB,
         Armor.APC_MTLB,
-        Armor.ARV_MTLB_U_BOMAN,
-        Armor.ARV_MTLB_U_BOMAN,
-        Armor.ARV_MTLB_U_BOMAN,
-        Armor.ARV_MTLB_U_BOMAN,
-        Armor.ARV_MTLB_U_BOMAN,
+        Armor.FDDM_Grad,
+        Armor.FDDM_Grad,
+        Armor.FDDM_Grad,
+        Armor.FDDM_Grad,
+        Armor.FDDM_Grad,
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
         Armor.ARV_BRDM_2,
@@ -533,6 +533,7 @@ SAM_CONVERT = {
         AirDefence.SAM_SR_P_19: AirDefence.SAM_SA_2_LN_SM_90
     }
 }
+
 
 """
 Units that will always be spawned in the air
@@ -796,6 +797,21 @@ TaskForceDict = typing.Dict[typing.Type[Task], AssignedUnitsDict]
 
 StartingPosition = typing.Optional[typing.Union[ShipGroup, StaticGroup, Airport, Point]]
 
+
+def upgrade_to_supercarrier(unit, name: str):
+    if unit == CVN_74_John_C__Stennis:
+        if name == "CVN-71 Theodore Roosevelt":
+            return CVN_71_Theodore_Roosevelt
+        elif name == "CVN-72 Abraham Lincoln":
+            return CVN_72_Abraham_Lincoln
+        elif name == "CVN-73 George Washington":
+            return CVN_73_George_Washington
+        else:
+            return CVN_71_Theodore_Roosevelt
+    elif unit == CV_1143_5_Admiral_Kuznetsov:
+        return CV_1143_5_Admiral_Kuznetsov_2017
+    else:
+        return unit
 
 def unit_task(unit: UnitType) -> Task:
     for task, units in UNIT_BY_TASK.items():

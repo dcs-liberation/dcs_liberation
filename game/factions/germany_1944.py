@@ -23,6 +23,6 @@ Germany_1944 = {
 
         Infantry.Infantry_Mauser_98,
 
-        AirDefence.AAA_Flak_36,
+        AirDefence.AAA_8_8cm_Flak_36,
     ]
 }

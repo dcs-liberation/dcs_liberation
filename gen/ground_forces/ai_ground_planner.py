@@ -63,7 +63,7 @@ TYPE_APC = [
     Armor.TPz_Fuchs,
     Armor.ARV_BRDM_2,
     Armor.ARV_BTR_RD,
-    Armor.ARV_MTLB_U_BOMAN,
+    Armor.FDDM_Grad,
     Armor.M30_Cargo_Carrier,
     Armor.APC_M2A1,
 ]

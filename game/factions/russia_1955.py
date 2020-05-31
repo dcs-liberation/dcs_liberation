@@ -17,7 +17,7 @@ Russia_1955 = {
         AirDefence.AAA_ZU_23_Closed,
         AirDefence.AAA_ZU_23_on_Ural_375,
         Armor.ARV_BRDM_2,
-        Armor.ARV_MTLB_U_BOMAN,
+        Armor.FDDM_Grad,
         Armor.APC_MTLB,
         Armor.MBT_T_55,
         Artillery.MLRS_BM_21_Grad,
