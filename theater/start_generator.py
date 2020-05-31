@@ -113,13 +113,14 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 cp.name = random.choice(db.FACTIONS[faction]["lhanames"])
         else:
 
-
-
             for i in range(random.randint(2,6)):
-                point = find_location(True, cp.position, theater, 1000, 2800, [])
+
+                print("GENERATE BASE DEFENSE")
+                point = find_location(True, cp.position, theater, 1000, 2800, [], True)
+                print(point)
 
                 if point is None:
-                    print("Couldn't find point for {}".format(cp))
+                    print("Couldn't find point for {} base defense".format(cp))
                     continue
 
                 group_id = group_id + 1
@@ -145,6 +146,10 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
 def generate_airbase_defense_group(airbase_defense_group_id, ground_obj:TheaterGroundObject, faction, game, cp):
 
+    print("GENERATE AIR DEFENSE GROUP")
+    print(faction)
+    print(airbase_defense_group_id)
+
     if airbase_defense_group_id == 0:
         group = generate_armor_group(faction, game, ground_obj)
     elif airbase_defense_group_id == 1 and random.randint(0, 1) == 0:
@@ -159,7 +164,7 @@ def generate_airbase_defense_group(airbase_defense_group_id, ground_obj:TheaterG
         ground_obj.groups.append(group)
 
 
-def find_location(on_ground, near, theater, min, max, others) -> typing.Optional[Point]:
+def find_location(on_ground, near, theater, min, max, others, is_base_defense=False) -> typing.Optional[Point]:
     """
     Find a valid ground object location
     :param on_ground: Whether it should be on ground or on sea (True = on ground)
@@ -197,6 +202,7 @@ def find_location(on_ground, near, theater, min, max, others) -> typing.Optional
 
         if point:
             for other in theater.controlpoints:
+                if is_base_defense: break
                 if other.position != near:
                     if point is None:
                         break
