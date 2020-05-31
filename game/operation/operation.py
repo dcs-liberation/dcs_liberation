@@ -172,7 +172,8 @@ class Operation:
         self.forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
-        self.visualgen.generate()
+        if self.game.settings.perf_smoke_gen:
+            self.visualgen.generate()
 
         # Inject Lua Scripts
         load_mist = TriggerStart(comment="Load Mist Lua Framework")

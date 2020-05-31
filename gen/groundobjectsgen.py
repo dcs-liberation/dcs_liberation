@@ -77,6 +77,12 @@ class GroundObjectsGenerator:
                                     vehicle.position.y = u.position.y
                                     vehicle.heading = u.heading
                                     vg.add_unit(vehicle)
+
+                            if self.game.settings.perf_red_alert_state:
+                                vg.points[0].tasks.append(OptAlarmState(2))
+                            else:
+                                vg.points[0].tasks.append(OptAlarmState(1))
+
                 elif ground_object.dcs_identifier in ["CARRIER", "LHA"]:
                     for g in ground_object.groups:
                         if len(g.units) > 0:

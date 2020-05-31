@@ -1,7 +1,7 @@
 from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
-    QAbstractItemView, QPushButton, QGroupBox, QCheckBox
+    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
@@ -121,32 +121,61 @@ class QSettingsWindow(QDialog):
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()
-        self.generatorLayout = QGridLayout()
+        self.generatorLayout = QVBoxLayout()
         self.generatorLayout.setAlignment(Qt.AlignTop)
         self.generatorPage.setLayout(self.generatorLayout)
 
-        self.coldStart = QCheckBox()
-        self.coldStart.setChecked(self.game.settings.cold_start)
-        self.coldStart.toggled.connect(self.applySettings)
-        self.takeOffOnlyForPlayerGroup = QCheckBox()
-        self.takeOffOnlyForPlayerGroup.setChecked(self.game.settings.only_player_takeoff)
-        self.takeOffOnlyForPlayerGroup.toggled.connect(self.applySettings)
-
-        self.coldStart = QCheckBox()
-        self.coldStart.setChecked(self.game.settings.cold_start)
-        self.coldStart.toggled.connect(self.applySettings)
+        self.gameplay = QGroupBox("Gameplay")
+        self.gameplayLayout = QGridLayout();
+        self.gameplayLayout.setAlignment(Qt.AlignTop)
+        self.gameplay.setLayout(self.gameplayLayout)
 
         self.supercarrier = QCheckBox()
         self.supercarrier.setChecked(self.game.settings.supercarrier)
         self.supercarrier.toggled.connect(self.applySettings)
 
-        # Settings not used anymore
-        # self.generatorLayout.addWidget(QLabel("Aircraft cold start"), 0, 0)
-        # self.generatorLayout.addWidget(self.coldStart, 0, 1)
-        # self.generatorLayout.addWidget(QLabel("Takeoff only for player group"), 1, 0)
-        # self.generatorLayout.addWidget(self.takeOffOnlyForPlayerGroup, 1, 1)
-        self.generatorLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
-        self.generatorLayout.addWidget(self.supercarrier, 0, 1)
+        self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
+        self.gameplayLayout.addWidget(self.supercarrier, 0, 1)
+
+        self.performance = QGroupBox("Performance")
+        self.performanceLayout = QGridLayout();
+        self.performanceLayout.setAlignment(Qt.AlignTop)
+        self.performance.setLayout(self.performanceLayout)
+
+        self.smoke = QCheckBox()
+        self.smoke.setChecked(self.game.settings.perf_smoke_gen)
+        self.smoke.toggled.connect(self.applySettings)
+
+        self.red_alert = QCheckBox()
+        self.red_alert.setChecked(self.game.settings.perf_red_alert_state)
+        self.red_alert.toggled.connect(self.applySettings)
+
+        self.arti = QCheckBox()
+        self.arti.setChecked(self.game.settings.perf_artillery)
+        self.arti.toggled.connect(self.applySettings)
+
+        self.moving_units = QCheckBox()
+        self.moving_units.setChecked(self.game.settings.perf_moving_units)
+        self.moving_units.toggled.connect(self.applySettings)
+
+        self.infantry = QCheckBox()
+        self.infantry.setChecked(self.game.settings.perf_infantry)
+        self.infantry.toggled.connect(self.applySettings)
+
+        self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
+        self.performanceLayout.addWidget(self.smoke, 0, 1)
+        self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
+        self.performanceLayout.addWidget(self.red_alert, 1, 1)
+        self.performanceLayout.addWidget(QLabel("Artillery strikes"), 2, 0)
+        self.performanceLayout.addWidget(self.arti, 2, 1)
+        self.performanceLayout.addWidget(QLabel("Moving ground units"), 3, 0)
+        self.performanceLayout.addWidget(self.moving_units, 3, 1)
+        self.performanceLayout.addWidget(QLabel("Generate infantry squads along vehicles"), 4, 0)
+        self.performanceLayout.addWidget(self.infantry, 4, 1)
+
+        self.generatorLayout.addWidget(self.gameplay)
+        self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
+        self.generatorLayout.addWidget(self.performance)
 
 
     def initCheatLayout(self):
@@ -194,9 +223,13 @@ class QSettingsWindow(QDialog):
         self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
         self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
         self.game.settings.night_disabled = self.noNightMission.isChecked()
-        self.game.settings.only_player_takeoff = self.takeOffOnlyForPlayerGroup.isChecked()
-        self.game.settings.cold_start = self.coldStart.isChecked()
         self.game.settings.supercarrier = self.supercarrier.isChecked()
+
+        self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
+        self.game.settings.perf_smoke_gen = self.smoke.isChecked()
+        self.game.settings.perf_artillery = self.arti.isChecked()
+        self.game.settings.perf_moving_units = self.moving_units.isChecked()
+        self.game.settings.perf_infantry = self.infantry.isChecked()
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

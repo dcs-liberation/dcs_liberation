@@ -96,6 +96,11 @@ class GroundConflictGenerator:
 
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
+
+        # Disable infantry unit gen if disabled
+        if not self.game.settings.perf_infantry:
+            return
+
         infantry_position = group.points[0].position.random_point_within(250, 50)
 
         if side == self.conflict.attackers_country:
@@ -135,12 +140,16 @@ class GroundConflictGenerator:
 
     def plan_action_for_groups(self, stance, ally_groups, enemy_groups, forward_heading, from_cp, to_cp):
 
+        if not self.game.settings.perf_moving_units:
+            return
+
         for dcs_group, group in ally_groups:
             if group.role == CombatGroupRole.ARTILLERY:
                 # Fire on any ennemy in range
-                target = self.get_artillery_target_in_range(dcs_group, group, enemy_groups)
-                if target is not None:
-                    dcs_group.points[0].tasks.append(FireAtPoint(target, len(group.units) * 10, 100))
+                if self.game.settings.perf_artillery:
+                    target = self.get_artillery_target_in_range(dcs_group, group, enemy_groups)
+                    if target is not None:
+                        dcs_group.points[0].tasks.append(FireAtPoint(target, len(group.units) * 10, 100))
             elif group.role in [CombatGroupRole.TANK, CombatGroupRole.IFV]:
                 if stance == CombatStance.AGGRESIVE:
                     # Attack nearest enemy if any
