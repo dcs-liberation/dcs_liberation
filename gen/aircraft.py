@@ -46,8 +46,9 @@ INTERCEPT_MAX_DISTANCE = 200000
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
 
-    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings):
+    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings, game):
         self.m = mission
+        self.game = game
         self.settings = settings
         self.conflict = conflict
         self.escort_targets = []
@@ -457,7 +458,12 @@ class AircraftConflictGenerator:
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
             for t in point.targets:
-                group.points[i].tasks.append(Bombing(t.position))
+                if hasattr(t, "obj_name"):
+                    buildings = self.game.theater.find_ground_objects_by_obj_name(t.obj_name)
+                    for building in buildings:
+                        group.points[i].tasks.append(Bombing(building.position))
+                else:
+                    group.points[i].tasks.append(Bombing(t.position))
             i = i + 1
 
 

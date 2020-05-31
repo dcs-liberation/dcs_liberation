@@ -170,3 +170,10 @@ class ControlPoint:
 
         return closest_radial
 
+    def find_ground_objects_by_obj_name(self, obj_name):
+        found = []
+        for g in self.ground_objects:
+            if g.obj_name == obj_name:
+                found.append(g)
+        return found
+

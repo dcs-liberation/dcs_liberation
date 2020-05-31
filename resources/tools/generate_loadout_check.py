@@ -9,7 +9,7 @@ dcs.planes.FlyingType.payload_dirs = [os.path.join(os.path.dirname(os.path.realp
 
 mis = dcs.Mission(dcs.terrain.PersianGulf())
 pos = dcs.terrain.PersianGulf().khasab().position
-airgen = AircraftConflictGenerator(mis, None, None)
+airgen = AircraftConflictGenerator(mis, None, None, None)
 
 for t, uts in db.UNIT_BY_TASK.items():
     if t != dcs.task.CAP and t != dcs.task.CAS:

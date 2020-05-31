@@ -72,6 +72,14 @@ class ConflictTheater:
 
         self.controlpoints.append(point)
 
+    def find_ground_objects_by_obj_name(self, obj_name):
+        found = []
+        for cp in self.controlpoints:
+            for g in cp.ground_objects:
+                if g.obj_name == obj_name:
+                    found.append(g)
+        return found
+
     def is_in_sea(self, point: Point) -> bool:
         if not self.landmap:
             return False

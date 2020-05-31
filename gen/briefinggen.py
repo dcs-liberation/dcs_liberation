@@ -57,11 +57,7 @@ class BriefingGenerator:
         self.description += "-"*50 + "\n"
 
         for planner in self.game.planners.values():
-            for flight in planner.cap_flights:
-                self.add_flight_description(flight)
-            for flight in planner.cas_flights:
-                self.add_flight_description(flight)
-            for flight in planner.sead_flights:
+            for flight in planner.flights:
                 self.add_flight_description(flight)
 
         if self.freqs:
@@ -81,7 +77,6 @@ class BriefingGenerator:
                 else:
                     self.description += "X"
                 self.description += " " + str(cp.tacanI) + "\n"
-
 
         self.m.set_description_text(self.description)
 

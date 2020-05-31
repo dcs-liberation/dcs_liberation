@@ -64,7 +64,7 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
-        self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings)
+        self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings, self.game)
         self.shipgen = ShipGenerator(mission, conflict)
         self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
@@ -198,8 +198,6 @@ class Operation:
             self.briefinggen.append_frequency("AWACS", "133 MHz AM")
 
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
-        if self.departure_cp.is_global or self.conflict.to_cp.is_global:
-            self.briefinggen.append_frequency("Carrier", "20X/ICLS CHAN1")
 
         # Generate the briefing
         self.briefinggen.generate()
