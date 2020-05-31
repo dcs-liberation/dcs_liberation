@@ -114,7 +114,6 @@ CAS_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-    Ju_88A4,
 ]
 
 # Aircraft used for SEAD / DEAD tasks
