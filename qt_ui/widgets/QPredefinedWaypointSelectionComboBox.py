@@ -105,6 +105,7 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
                     wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + ground_object.category + " #" + str(ground_object.object_id)
                     wpt.pretty_name = wpt.name
                     wpt.obj_name = ground_object.obj_name
+                    wpt.targets.append(ground_object)
                     if cp.captured:
                         wpt.description = "Friendly Building"
                     else:
@@ -120,6 +121,7 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
                             wpt = FlightWaypoint(u.position.x, u.position.y, 0)
                             wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + u.type + " #" + str(j)
                             wpt.pretty_name = wpt.name
+                            wpt.targets.append(u)
                             wpt.obj_name = ground_object.obj_name
                             if cp.captured:
                                 wpt.description = "Friendly unit : " + u.type

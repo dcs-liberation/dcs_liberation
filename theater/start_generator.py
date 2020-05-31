@@ -262,22 +262,22 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
             g.group_id = group_id
             g.object_id = object_id
             g.cp_id = cp.id
-            g.airbase_gorup = False
+            g.airbase_group = False
             g.obj_name = obj_name
 
             g.dcs_identifier = object["type"]
             g.heading = object["heading"]
             g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
 
-            if g.dcs_identifier == "AA":
-                if cp.captured:
-                    faction = game.player_name
-                else:
-                    faction = game.enemy_name
-                g.groups = []
-                group = generate_anti_air_group(game, cp, g, faction)
-                if group is not None:
-                    g.groups.append(group)
+            #if g.dcs_identifier == "AA":
+            #    if cp.captured:
+            #        faction = game.player_name
+            #    else:
+            #        faction = game.enemy_name
+            #    g.groups = []
+            #    group = generate_anti_air_group(game, cp, g, faction)
+            #    if group is not None:
+            #        g.groups.append(group)
 
             cp.ground_objects.append(g)
     return group_id

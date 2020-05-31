@@ -455,15 +455,18 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptRestrictJettison(True))
 
         i = 1
+        bombing_point_found = False
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
-            for t in point.targets:
-                if hasattr(t, "obj_name"):
-                    buildings = self.game.theater.find_ground_objects_by_obj_name(t.obj_name)
-                    for building in buildings:
-                        group.points[i].tasks.append(Bombing(building.position))
-                else:
-                    group.points[i].tasks.append(Bombing(t.position))
+            if not bombing_point_found:
+                for t in point.targets:
+                    if hasattr(t, "obj_name"):
+                        buildings = self.game.theater.find_ground_objects_by_obj_name(t.obj_name)
+                        for building in buildings:
+                            group.points[i].tasks.append(Bombing(building.position))
+                    else:
+                        group.points[i].tasks.append(Bombing(t.position))
+                    bombing_point_found = True
             i = i + 1
 
 

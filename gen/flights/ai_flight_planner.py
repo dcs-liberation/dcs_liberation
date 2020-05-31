@@ -333,7 +333,7 @@ class FlightPlanner:
                             point = FlightWaypoint(u.position.x, u.position.y, 0)
                             point.description = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
                             point.pretty_name = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
-                            point.targets.append(location)
+                            ingress_point.targets.append(location)
                             flight.points.append(point)
                 else:
                     point = FlightWaypoint(location.position.x, location.position.y, 0)
