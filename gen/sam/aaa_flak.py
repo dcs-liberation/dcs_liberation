@@ -31,7 +31,7 @@ class FlakGenerator(GroupGenerator):
                 if(mixed):
                     unit_type = random.choice(GFLAK)
 
-        # Enough Opel truck to transport the guns
+        # Enough Opel Blitz truck to transport the guns
         for i in range(grid_x):
             for j in range(grid_y):
                 self.add_unit(Unarmed.Blitz_3_6_6700A, "AAA#" + str(index),

@@ -106,6 +106,7 @@ CAS_CAPABLE = [
 
     P_51D_30_NA,
     P_51D,
+    A_20G,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
@@ -113,6 +114,7 @@ CAS_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+    Ju_88A4,
 ]
 
 # Aircraft used for SEAD / DEAD tasks
@@ -168,6 +170,7 @@ STRIKE_CAPABLE = [
 
     P_51D_30_NA,
     P_51D,
+    A_20G,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
@@ -175,6 +178,7 @@ STRIKE_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+
 ]
 
 ANTISHIP_CAPABLE = [
@@ -187,4 +191,5 @@ ANTISHIP_CAPABLE = [
     A_10C,
     A_10A,
 
+    Ju_88A4,
 ]

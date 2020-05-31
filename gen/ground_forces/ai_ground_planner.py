@@ -19,6 +19,9 @@ TYPE_TANKS = [
     Armor.MBT_M1A2_Abrams,
     Armor.MBT_M60A3_Patton,
     Armor.MBT_Merkava_Mk__4,
+    Armor.ZTZ_96B,
+
+    # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
     Armor.MT_Pz_Kpfw_IV_Ausf_H,
     Armor.HT_Pz_Kpfw_VI_Tiger_I,
@@ -26,13 +29,21 @@ TYPE_TANKS = [
     Armor.MT_M4_Sherman,
     Armor.MT_M4A4_Sherman_Firefly,
     Armor.StuG_IV,
-    Armor.ZTZ_96B
+    Armor.ST_Centaur_IV,
+    Armor.CT_Cromwell_IV,
+    Armor.HIT_Churchill_VII,
 ]
 
 TYPE_ATGM = [
     Armor.ATGM_M1045_HMMWV_TOW,
     Armor.ATGM_M1134_Stryker,
     Armor.IFV_BMP_2,
+
+    # WW2 (Tank Destroyers)
+    Armor.M30_Cargo_Carrier,
+    Armor.TD_Jagdpanzer_IV,
+    Armor.TD_Jagdpanther_G1,
+    Armor.TD_M10_GMC,
 ]
 
 TYPE_IFV = [
@@ -46,8 +57,10 @@ TYPE_IFV = [
     Armor.IFV_M2A2_Bradley,
     Armor.IFV_BMD_1,
     Armor.ZBD_04A,
-    Armor.APC_Sd_Kfz_251,
+
+    # WW2
     Armor.IFV_Sd_Kfz_234_2_Puma,
+    Armor.LAC_M8_Greyhound,
 ]
 
 TYPE_APC = [
@@ -64,8 +77,10 @@ TYPE_APC = [
     Armor.ARV_BRDM_2,
     Armor.ARV_BTR_RD,
     Armor.FDDM_Grad,
-    Armor.M30_Cargo_Carrier,
+
+    # WW2
     Armor.APC_M2A1,
+    Armor.APC_Sd_Kfz_251,
 ]
 
 TYPE_ARTILLERY = [
@@ -79,9 +94,11 @@ TYPE_ARTILLERY = [
     Artillery.SPH_2S9_Nona,
     Artillery.SpGH_Dana,
     Artillery.SPH_2S19_Msta,
-    Artillery.M12_GMC,
     Artillery.MLRS_FDDM,
-    Artillery.Sturmpanzer_IV_Brummbär
+
+    # WW2
+    Artillery.Sturmpanzer_IV_Brummbär,
+    Artillery.M12_GMC
 ]
 
 TYPE_LOGI = [
