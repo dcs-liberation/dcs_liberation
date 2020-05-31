@@ -44,6 +44,7 @@ from game.factions.usa_1960 import USA_1960
 from game.factions.usa_1965 import USA_1965
 from game.factions.usa_1990 import USA_1990
 from game.factions.usa_2005 import USA_2005
+from game.factions.bluefor_modern import BLUEFOR_MODERN
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -570,8 +571,9 @@ FACTIONS = {
     "USA 1960": USA_1960,
     "USA 1955 (Require WW2 Pack)": USA_1955,
     "USA 1944 (Require WW2 Pack)": USA_1944,
-    "France 1995": France_1995,
+    "Bluefor Modern": BLUEFOR_MODERN,
     "France 2005": France_2005,
+    "France 1995": France_1995,
     "Germany 1990": Germany_1990,
     "Netherlands 1990": Netherlands_1990,
     "United Kingdown 1990": UnitedKingdom_1990,
