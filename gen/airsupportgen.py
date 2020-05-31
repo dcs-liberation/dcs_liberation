@@ -53,17 +53,20 @@ class AirSupportConflictGenerator:
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
         if is_awacs_enabled:
-            awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
-            awacs_flight = self.mission.awacs_flight(
-                country=self.mission.country(self.game.player_country),
-                name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
-                plane_type=awacs_unit,
-                altitude=AWACS_ALT,
-                airport=None,
-                position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
-                frequency=133,
-                start_type=StartType.Warm,
-            )
+            try:
+                awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
+                awacs_flight = self.mission.awacs_flight(
+                    country=self.mission.country(self.game.player_country),
+                    name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
+                    plane_type=awacs_unit,
+                    altitude=AWACS_ALT,
+                    airport=None,
+                    position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
+                    frequency=133,
+                    start_type=StartType.Warm,
+                )
+                awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
+                awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
+            except:
+                print("No AWACS for faction")
 
-            awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
-            awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
