@@ -122,16 +122,6 @@ class GroundObjectsGenerator:
                         print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
                         continue
 
-                    if ground_object.group_id not in consumed_farps:
-                        consumed_farps.add(ground_object.group_id)
-                        if random.randint(0, 100) > 50:
-                            farp_aa(
-                                self.m,
-                                side,
-                                ground_object.string_identifier,
-                                ground_object.position,
-                            )
-
                     group = self.m.static_group(
                         country=side,
                         name=ground_object.string_identifier,
