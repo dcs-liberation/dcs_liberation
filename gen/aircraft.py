@@ -422,7 +422,7 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(CASTaskAction())
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
         group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
-        group.points[0].tasks.append(OptRestrictJettison(True))
+        #group.points[0].tasks.append(OptRestrictJettison(True))
 
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
