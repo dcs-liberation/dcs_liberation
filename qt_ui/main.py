@@ -21,12 +21,13 @@ if __name__ == "__main__":
     if os.path.exists(custom_payloads):
         dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
     else:
+        # For release version the path is different.
         custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                        "resources\\customized_payloads")
         if os.path.exists(custom_payloads):
             dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
 
-    VERSION_STRING = "2.0"
+    VERSION_STRING = "2.0RC6"
     logging_module.setup_version_string(VERSION_STRING)
     logging.info("Using {} as userdata folder".format(persistency.base_path()))
 

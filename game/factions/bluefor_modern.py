@@ -15,6 +15,7 @@ BLUEFOR_MODERN = {
         JF_17,
         M_2000C,
         F_5E_3,
+        Su_27,
 
         Su_25T,
         A_10A,
