@@ -20,6 +20,11 @@ if __name__ == "__main__":
     custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")
     if os.path.exists(custom_payloads):
         dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
+    else:
+        custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                       "resources\\customized_payloads")
+        if os.path.exists(custom_payloads):
+            dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
 
     VERSION_STRING = "2.0"
     logging_module.setup_version_string(VERSION_STRING)
