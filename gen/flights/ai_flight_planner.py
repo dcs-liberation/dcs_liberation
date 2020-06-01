@@ -132,7 +132,8 @@ class FlightPlanner:
                 break
 
             inventory[unit] = inventory[unit] - 2
-            flight = Flight(unit, 2, self.from_cp, FlightType.BARCAP)
+            ftype = FlightType.BARCAP if self.from_cp.is_carrier else FlightType.CAP
+            flight = Flight(unit, 2, self.from_cp, ftype)
 
             # Flight path : fly over each ground object (TODO : improve)
             flight.points = []
