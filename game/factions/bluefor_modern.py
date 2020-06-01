@@ -29,6 +29,7 @@ BLUEFOR_MODERN = {
 
         UH_1H,
         AH_64D,
+        Ka_50,
 
         Armor.MBT_M1A2_Abrams,
         Armor.MBT_Leopard_2,
