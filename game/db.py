@@ -681,7 +681,15 @@ PLANE_PAYLOAD_OVERRIDES = {
         AntishipStrike: "ANTISHIP",
         GroundAttack: "STRIKE"
     },
-
+    F_A_18C: {
+        CAP: "CAP HEAVY",
+        Intercept: "CAP HEAVY",
+        CAS: "CAS MAVERICK F",
+        PinpointStrike: "STRIKE",
+        SEAD: "SEAD",
+        AntishipStrike: "ANTISHIP",
+        GroundAttack: "STRIKE"
+    },
     A_10A: COMMON_OVERRIDE,
     A_10C: COMMON_OVERRIDE,
     AV8BNA: COMMON_OVERRIDE,

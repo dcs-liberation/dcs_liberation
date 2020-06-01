@@ -38,7 +38,7 @@ class QMissionPlanning(QDialog):
             self.planned_flight_view.set_flight_planner(self.planner)
             self.selected_cp = self.captured_cp[0]
 
-        self.planned_flight_view.selectionModel().setCurrentIndex(self.planned_flight_view.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
+        self.planned_flight_view.selectionModel().setCurrentIndex(self.planned_flight_view.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         self.planned_flight_view.selectionModel().selectionChanged.connect(self.on_flight_selection_change)
 
         if len(self.planned_flight_view.flight_planner.flights) > 0:
@@ -83,14 +83,23 @@ class QMissionPlanning(QDialog):
         else:
             self.planned_flight_view.set_flight_planner(None)
 
-        print(self.selected_cp.id)
-
     def on_flight_selection_change(self):
-        index = self.planned_flight_view.selectionModel().currentIndex().row()
-        flight = self.planner.flights[index]
 
+        print("On flight selection change")
+
+        index = self.planned_flight_view.selectionModel().currentIndex().row()
+        self.planned_flight_view.repaint();
+
+        if self.flight_planner is not None:
+            self.flight_planner.clearTabs()
+
+        try:
+            flight = self.planner.flights[index]
+        except IndexError:
+            flight = None
         self.flight_planner = QFlightPlanner(flight, self.game, self.planner)
         self.layout.addWidget(self.flight_planner, 0, 1)
+
 
     def on_add_flight(self):
         possible_aircraft_type = list(self.selected_cp.base.aircraft.keys())
@@ -110,7 +119,8 @@ class QMissionPlanning(QDialog):
     def on_delete_flight(self):
         index = self.planned_flight_view.selectionModel().currentIndex().row()
         self.planner.remove_flight(index)
-        self.planned_flight_view.set_flight_planner(self.planner)
+        self.planned_flight_view.set_flight_planner(self.planner, index)
+
 
     def on_start(self):
 

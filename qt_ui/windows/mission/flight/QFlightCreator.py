@@ -111,6 +111,6 @@ class QFlightCreator(QDialog):
             self.planner.flights.append(flight)
             self.planner.custom_flights.append(flight)
             if self.flight_view is not None:
-                self.flight_view.set_flight_planner(self.planner)
+                self.flight_view.set_flight_planner(self.planner, len(self.planner.flights)-1)
             self.close()
 

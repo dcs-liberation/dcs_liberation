@@ -59,7 +59,7 @@ class FlightPlanner:
         #self.commision_interceptors()
 
         # Then some CAP patrol for the next 2 hours
-        self.commision_barcap()
+        self.commision_cap()
 
         # Then setup cas
         self.commision_cas()
@@ -115,7 +115,7 @@ class FlightPlanner:
             for k, v in inventory.items():
                 self.aircraft_inventory[k] = v
 
-    def commision_barcap(self):
+    def commision_cap(self):
         """
         Pick some aircraft to assign them to defensive CAP roles (BARCAP)
         """
@@ -153,7 +153,7 @@ class FlightPlanner:
 
             if len(flight.points) == 0:
                 for i in range(3):
-                    pos = self.from_cp.position.point_from_heading(random.randint(0,360), random.randint(30000, 80000))
+                    pos = self.from_cp.position.point_from_heading(random.randint(0, 360), random.randint(30000, 80000))
                     point = FlightWaypoint(pos.x, pos.y, patrol_alt)
                     point.name = "Patrol point"
                     point.description = "Patrol #" + str(len(flight.points))
