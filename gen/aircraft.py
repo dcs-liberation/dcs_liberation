@@ -1,20 +1,15 @@
-import logging
-
+from dcs.action import ActivateGroup
+from dcs.condition import TimeAfter, CoalitionHasAirdrome
 from dcs.helicopters import UH_1H
+from dcs.terrain.terrain import NoParkingSlotError
+from dcs.triggers import TriggerOnce, Event
 
-from game import db
 from game.settings import Settings
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType
 from .conflictgen import *
 from .naming import *
 from .triggergen import TRIGGER_WAYPOINT_OFFSET
-
-from dcs.mission import *
-from dcs.unitgroup import *
-from dcs.unittype import *
-from dcs.task import *
-from dcs.terrain.terrain import NoParkingSlotError, RunwayOccupiedError
 
 SPREAD_DISTANCE_FACTOR = 1, 2
 ESCORT_ENGAGEMENT_MAX_DIST = 100000
@@ -312,26 +307,31 @@ class AircraftConflictGenerator:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_intercept_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
 
         for flight in flight_planner.cap_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_cap_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
 
         for flight in flight_planner.cas_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_cas_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
 
         for flight in flight_planner.sead_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_sead_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
 
         for flight in flight_planner.strike_flights:
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_group_as_strike_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
 
         for flight in flight_planner.custom_flights:
             group = self.generate_planned_flight(cp, country, flight)
@@ -350,6 +350,23 @@ class AircraftConflictGenerator:
             else:
                 self.setup_group_as_cap_flight(group, flight)
             self._setup_custom_payload(flight, group)
+            self.setup_group_activation_trigger(flight, group)
+
+    def setup_group_activation_trigger(self, flight, group):
+        if flight.scheduled_in > 0:
+            group.late_activation = True
+            activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
+            activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
+
+            if(flight.from_cp.cptype == ControlPointType.AIRBASE):
+                if not flight.from_cp.captured:
+                    activation_trigger.add_condition(CoalitionHasAirdrome(1, flight.from_cp.id))
+                else:
+                    activation_trigger.add_condition(CoalitionHasAirdrome(2, flight.from_cp.id))
+
+
+            activation_trigger.add_action(ActivateGroup(group.id))
+            self.m.triggerrules.triggers.append(activation_trigger)
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
@@ -397,7 +414,6 @@ class AircraftConflictGenerator:
                 client_count=0,
                 at=cp.position)
             group.points[0].alt = 1500
-        group.points[0].ETA = flight.scheduled_in * 60
 
         return group
 
