@@ -353,16 +353,16 @@ class AircraftConflictGenerator:
             self.setup_group_activation_trigger(flight, group)
 
     def setup_group_activation_trigger(self, flight, group):
-        if flight.scheduled_in > 0:
+        if flight.scheduled_in > 0 and flight.client_count == 0:
             group.late_activation = True
             activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
             activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
 
             if(flight.from_cp.cptype == ControlPointType.AIRBASE):
                 if not flight.from_cp.captured:
-                    activation_trigger.add_condition(CoalitionHasAirdrome(1, flight.from_cp.id))
+                    activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
                 else:
-                    activation_trigger.add_condition(CoalitionHasAirdrome(2, flight.from_cp.id))
+                    activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
 
             activation_trigger.add_action(ActivateGroup(group.id))
@@ -475,11 +475,15 @@ class AircraftConflictGenerator:
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
             if not bombing_point_found:
-                for t in point.targets:
+                for j, t in enumerate(point.targets):
                     if hasattr(t, "obj_name"):
                         buildings = self.game.theater.find_ground_objects_by_obj_name(t.obj_name)
-                        for building in buildings:
+                        for j, building in enumerate(buildings):
                             group.points[i].tasks.append(Bombing(building.position))
+                            if group.units[0].unit_type == JF_17 and j < 4:
+                                group.add_nav_target_point(building.position, "PP" + str(j+1))
+                            if group.units[0].unit_type == F_14B and j == 0:
+                                group.add_nav_target_point(building.position, "ST")
                     else:
                         group.points[i].tasks.append(Bombing(t.position))
                     bombing_point_found = True

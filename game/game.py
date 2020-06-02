@@ -168,6 +168,18 @@ class Game:
         else:
             return event.name == self.player_name
 
+    def get_player_coalition_id(self):
+        if self.player_country in db.BLUEFOR_FACTIONS:
+            return 2
+        else:
+            return 1
+
+    def get_enemy_coalition_id(self):
+        if self.get_player_coalition_id() == 1:
+            return 2
+        else:
+            return 1
+
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))

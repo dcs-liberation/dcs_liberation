@@ -30,7 +30,7 @@ class FlightType(Enum):
     EWAR = 16
 
 
-class FlightWaypoint():
+class FlightWaypoint:
 
     def __init__(self, x: float, y: float, alt=0):
         self.x = x
