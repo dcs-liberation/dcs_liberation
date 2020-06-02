@@ -30,6 +30,24 @@ class FlightType(Enum):
     EWAR = 16
 
 
+class FlightWaypointType(Enum):
+    TAKEOFF = 0             # Take off point
+    ASCEND_POINT = 1        # Ascension point after take off
+    PATROL = 2              # Patrol point
+    PATROL_TRACK = 3        # Patrol race track
+    NAV = 4                 # Nav point
+    INGRESS_STRIKE = 5      # Ingress strike (For generator, means that this should have bombing on next TARGET_POINT points)
+    INGRESS_SEAD = 6        # Ingress sead (For generator, means that this should attack groups on TARGET_GROUP_LOC points)
+    INGRESS_CAS = 7         # Ingress cas (should start CAS task)
+    CAS = 8                 # Should do CAS there
+    EGRESS = 9              # Should stop attack
+    DESCENT_POINT = 10       # Should start descending to pattern alt
+    LANDING_POINT = 11      # Should land there
+    TARGET_POINT = 12       # A target building or static object, position
+    TARGET_GROUP_LOC = 13   # A target group approximate location
+    TARGET_SHIP = 14        # A target ship known location
+
+
 class FlightWaypoint:
 
     def __init__(self, x: float, y: float, alt=0):
@@ -41,6 +59,8 @@ class FlightWaypoint:
         self.targets = []
         self.obj_name = ""
         self.pretty_name = ""
+        self.waypoint_type = FlightWaypointType.TAKEOFF  # type: FlightWaypointType
+        self.only_for_player = False
 
 
 class Flight:

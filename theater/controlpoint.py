@@ -38,6 +38,7 @@ class ControlPoint:
     cptype: ControlPointType = None
 
     ICLS_counter = 1
+    alt = 0
 
     def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: float,
                  has_frontline=True, cptype=ControlPointType.AIRBASE):

@@ -6,7 +6,24 @@ import random
 from game import db
 from gen import Conflict
 from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE
-from gen.flights.flight import Flight, FlightType, FlightWaypoint
+from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
+
+
+def meter_to_feet(value_in_meter):
+    return int(3.28084 * value_in_meter)
+
+
+def feet_to_meter(value_in_feet):
+    return int(float(value_in_feet)/3.048)
+
+
+def meter_to_nm(value_in_meter):
+    return int(float(value_in_meter)*0.000539957)
+
+
+def nm_to_meter(value_in_nm):
+    return int(float(value_in_nm)*1852)
+
 
 # TODO : Ideally should be based on the aircraft type instead / Availability of fuel
 STRIKE_MAX_RANGE = 1500000
@@ -19,11 +36,15 @@ CAS_EVERY_X_MINUTES = 30
 SEAD_EVERY_X_MINUTES = 40
 STRIKE_EVERY_X_MINUTES = 40
 
-INGRESS_EGRESS_DISTANCE = 45000
-INGRESS_ALT = 6096 # 20k feet
-EGRESS_ALT = 6096 # 20k feet
-PATROL_ALT_RANGE = (3600, 9200)
+INGRESS_EGRESS_DISTANCE = nm_to_meter(45)
+INGRESS_ALT = feet_to_meter(20000)
+EGRESS_ALT = feet_to_meter(20000)
+PATROL_ALT_RANGE = (feet_to_meter(15000), feet_to_meter(33000))
 NAV_ALT = 9144
+PATTERN_ALTITUDE = feet_to_meter(5000)
+
+CAP_DEFAULT_ENGAGE_DISTANCE = nm_to_meter(40)
+
 
 class FlightPlanner:
 
@@ -69,7 +90,7 @@ class FlightPlanner:
 
         self.commision_strike()
 
-        # TODO : commision STRIKE / ANTISHIP
+        # TODO : commision ANTISHIP
 
     def remove_flight(self, index):
         try:
@@ -135,30 +156,81 @@ class FlightPlanner:
             ftype = FlightType.BARCAP if self.from_cp.is_carrier else FlightType.CAP
             flight = Flight(unit, 2, self.from_cp, ftype)
 
-            # Flight path : fly over each ground object (TODO : improve)
             flight.points = []
             flight.scheduled_in = offset + i*random.randint(CAP_EVERY_X_MINUTES-5, CAP_EVERY_X_MINUTES+5)
 
             patrol_alt = random.randint(PATROL_ALT_RANGE[0], PATROL_ALT_RANGE[1])
 
-            patrolled = []
-            for ground_object in self.from_cp.ground_objects:
-                if ground_object.group_id not in patrolled and not ground_object.airbase_group:
-                    point = FlightWaypoint(ground_object.position.x, ground_object.position.y, patrol_alt)
-                    point.name = "Patrol point"
-                    point.description = "Patrol #" + str(len(flight.points))
-                    point.pretty_name = "Patrol #" + str(len(flight.points))
-                    flight.points.append(point)
-                    patrolled.append(ground_object.group_id)
+            # Choose a location for CAP patrols (Either behind frontline, or to protect ground objects)
+            rng = random.randint(0,100)
+            if rng < 80 and len(self._get_cas_locations()) > 0:
+                loc = random.choice(self._get_cas_locations())
+                ingress, heading, distance = Conflict.frontline_vector(self.from_cp, loc, self.game.theater)
+                center = ingress.point_from_heading(heading, distance / 2)
+                orbit_center = center.point_from_heading(heading - 90, random.randint(nm_to_meter(6), nm_to_meter(15)))
+                radius = distance * 2
+                orbit0p = orbit_center.point_from_heading(heading, radius)
+                orbit1p = orbit_center.point_from_heading(heading + 180, radius)
+            elif len(self.from_cp.ground_objects) > 0:
+                loc = random.choice(self.from_cp.ground_objects)
+                hdg = self.from_cp.position.heading_between_point(loc.position)
+                radius = random.randint(nm_to_meter(5), nm_to_meter(10))
+                orbit0p = loc.position.point_from_heading(hdg - 90, radius)
+                orbit1p = loc.position.point_from_heading(hdg + 90, radius)
+            else:
+                loc = self.from_cp.position.point_from_heading(random.randint(0, 360), random.randint(nm_to_meter(5), nm_to_meter(40)))
+                hdg = self.from_cp.position.heading_between_point(loc.position)
+                radius = random.randint(nm_to_meter(40), nm_to_meter(120))
+                orbit0p = loc.position.point_from_heading(hdg - 90, radius)
+                orbit1p = loc.position.point_from_heading(hdg + 90, radius)
 
-            if len(flight.points) == 0:
-                for i in range(3):
-                    pos = self.from_cp.position.point_from_heading(random.randint(0, 360), random.randint(30000, 80000))
-                    point = FlightWaypoint(pos.x, pos.y, patrol_alt)
-                    point.name = "Patrol point"
-                    point.description = "Patrol #" + str(len(flight.points))
-                    point.pretty_name = "Patrol #" + str(len(flight.points))
-                    flight.points.append(point)
+
+            # Create points
+            ascend_heading = random.randint(0, 360)
+            pos_ascend = self.from_cp.position.point_from_heading(ascend_heading, 30000)
+            ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, patrol_alt)
+            ascend.name = "ASCEND"
+            ascend.description = "Ascend to alt [" + str(meter_to_feet(patrol_alt)) + " ft]"
+            ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(patrol_alt)) + " ft]"
+            ascend.waypoint_type = FlightWaypointType.ASCEND_POINT
+            flight.points.append(ascend)
+
+            orbit0 = FlightWaypoint(orbit0p.x, orbit0p.y, patrol_alt)
+            orbit0.name = "ORBIT 0"
+            orbit0.description = "Standby between this point and the next one"
+            orbit0.pretty_name = "Orbit race-track start"
+            orbit0.waypoint_type = FlightWaypointType.PATROL_TRACK
+            flight.points.append(orbit0)
+
+            orbit1 = FlightWaypoint(orbit1p.x, orbit1p.y, patrol_alt)
+            orbit1.name = "ORBIT 1"
+            orbit1.description = "Standby between this point and the previous one"
+            orbit1.pretty_name = "Orbit race-track end"
+            orbit1.waypoint_type = FlightWaypointType.PATROL
+            flight.points.append(orbit1)
+
+            orbit0.targets.append(self.from_cp)
+            obj_added = []
+            for ground_object in self.from_cp.ground_objects:
+                if ground_object.obj_name not in obj_added and not ground_object.airbase_group:
+                    orbit0.targets.append(ground_object)
+                    obj_added.append(ground_object.obj_name)
+
+            descend = self.from_cp.position.point_from_heading(ascend_heading-180, 30000)
+            descend = FlightWaypoint(descend.x, descend.y, PATTERN_ALTITUDE)
+            descend.name = "DESCEND"
+            descend.description = "Descend to pattern alt [5000ft]"
+            descend.pretty_name = "Descend to pattern alt [5000ft]"
+            descend.waypoint_type = FlightWaypointType.DESCENT_POINT
+            flight.points.append(descend)
+
+            rtb = self.from_cp.position.point_from_heading(ascend_heading - 180, 30000)
+            rtb = FlightWaypoint(rtb.x, rtb.y, PATTERN_ALTITUDE)
+            rtb.name = "LANDING"
+            rtb.description = "RTB"
+            rtb.pretty_name = "RTB"
+            rtb.waypoint_type = FlightWaypointType.LANDING_POINT
+            flight.points.append(rtb)
 
             self.cap_flights.append(flight)
             self.flights.append(flight)
@@ -203,18 +275,21 @@ class FlightPlanner:
                 ingress_point.name = "INGRESS"
                 ingress_point.pretty_name = "INGRESS"
                 ingress_point.description = "Ingress into CAS area"
+                ingress_point.waypoint_type = FlightWaypointType.INGRESS_CAS
                 flight.points.append(ingress_point)
 
                 center_point = FlightWaypoint(center.x, center.y, 1000)
                 center_point.description = "Provide CAS"
                 center_point.name = "CAS"
                 center_point.pretty_name = "INGRESS"
+                center_point.waypoint_type = FlightWaypointType.CAS
                 flight.points.append(center_point)
 
                 egress_point = FlightWaypoint(egress.x, egress.y, 1000)
                 egress_point.description = "Egress from CAS area"
                 egress_point.name = "EGRESS"
                 egress_point.pretty_name = "EGRESS"
+                egress_point.waypoint_type = FlightWaypointType.EGRESS
                 flight.points.append(egress_point)
 
                 self.cas_flights.append(flight)
@@ -262,23 +337,27 @@ class FlightPlanner:
                 ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
                 ingress_point.pretty_name = "INGRESS on " + location.obj_name
                 ingress_point.description = "INGRESS on " + location.obj_name
+                ingress_point.waypoint_type = FlightWaypointType.INGRESS_SEAD
                 flight.points.append(ingress_point)
 
-                point = FlightWaypoint(location.position.x, location.position.y, 1000)
+                point = FlightWaypoint(location.position.x, location.position.y, 0)
                 if flight.flight_type == FlightType.DEAD:
                     point.description = "SEAD on " + location.obj_name
                     point.pretty_name = "SEAD on " + location.obj_name
+                    point.only_for_player = True
                 else:
                     point.description = "DEAD on " + location.obj_name
                     point.pretty_name = "DEAD on " + location.obj_name
+                    point.only_for_player = True
 
-                point.targets.append(location)
+                ingress_point.targets.append(location)
                 flight.points.append(point)
 
                 egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
                 egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
                 egress_point.pretty_name = "EGRESS on " + location.obj_name
                 egress_point.description = "EGRESS on " + location.obj_name
+                egress_point.waypoint_type = FlightWaypointType.EGRESS
                 flight.points.append(egress_point)
 
                 self.sead_flights.append(flight)

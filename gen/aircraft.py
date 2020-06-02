@@ -1,12 +1,12 @@
-from dcs.action import ActivateGroup
+from dcs.action import ActivateGroup, AITaskPush
 from dcs.condition import TimeAfter, CoalitionHasAirdrome
 from dcs.helicopters import UH_1H
 from dcs.terrain.terrain import NoParkingSlotError
 from dcs.triggers import TriggerOnce, Event
 
 from game.settings import Settings
-from gen.flights.ai_flight_planner import FlightPlanner
-from gen.flights.flight import Flight, FlightType
+from gen.flights.ai_flight_planner import FlightPlanner, CAP_DEFAULT_ENGAGE_DISTANCE, nm_to_meter
+from gen.flights.flight import Flight, FlightType, FlightWaypointType
 from .conflictgen import *
 from .naming import *
 from .triggergen import TRIGGER_WAYPOINT_OFFSET
@@ -354,23 +354,48 @@ class AircraftConflictGenerator:
 
     def setup_group_activation_trigger(self, flight, group):
         if flight.scheduled_in > 0 and flight.client_count == 0:
-            group.late_activation = True
-            activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
-            activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
 
-            if(flight.from_cp.cptype == ControlPointType.AIRBASE):
-                if not flight.from_cp.captured:
-                    activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
-                else:
-                    activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
+            if flight.start_type != "In Flight":
+                group.late_activation = False
+                group.uncontrolled = True
+
+                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationControlTriggerForGroup" + str(group.id))
+                activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in * 60))
+                if (flight.from_cp.cptype == ControlPointType.AIRBASE):
+                    if flight.from_cp.captured:
+                        activation_trigger.add_condition(
+                            CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
+                    else:
+                        activation_trigger.add_condition(
+                            CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
+
+                group.add_trigger_action(StartCommand())
+                activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
+                self.m.triggerrules.triggers.append(activation_trigger)
+                print("ADD TRIG CTRL")
+            else:
+                group.late_activation = True
+                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
+                activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
+
+                if(flight.from_cp.cptype == ControlPointType.AIRBASE):
+                    if flight.from_cp.captured:
+                        activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
+                    else:
+                        activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
 
-            activation_trigger.add_action(ActivateGroup(group.id))
-            self.m.triggerrules.triggers.append(activation_trigger)
+                activation_trigger.add_action(ActivateGroup(group.id))
+                self.m.triggerrules.triggers.append(activation_trigger)
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
-            if flight.start_type == "In Flight" or flight.client_count == 0:
+            if flight.client_count == 0:
+                flight.start_type = "Warm"
+
+            print(flight.start_type)
+
+            if flight.start_type == "In Flight":
                 group = self._generate_group(
                     name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                     side=country,
@@ -406,6 +431,7 @@ class AircraftConflictGenerator:
                         start_type=st)
         except Exception:
             # Generated when there is no place on Runway or on Parking Slots
+            flight.start_type = "In Flight"
             group = self._generate_group(
                 name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                 side=country,
@@ -427,8 +453,27 @@ class AircraftConflictGenerator:
 
     def setup_group_as_cap_flight(self, group, flight):
         self._setup_group(group, CAP, flight.client_count)
-        for point in flight.points:
-            group.add_waypoint(Point(point.x,point.y), point.alt)
+
+        #group.points[0].tasks.clear()
+        #group.tasks.clear()
+        #group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
+        #group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
+
+        for i, point in enumerate(flight.points):
+
+            if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
+                pt = group.add_waypoint(Point(point.x, point.y), point.alt)
+
+                if point.waypoint_type == FlightWaypointType.PATROL_TRACK:
+                    action = OrbitAction(altitude=pt.alt, pattern=OrbitAction.OrbitPattern.RaceTrack)
+                    pt.tasks.append(action)
+                    #for tgt in point.targets:
+                    #    if hasattr(tgt, "position"):
+                    #        engagetgt = EngageTargetsInZone(tgt.position, radius=CAP_DEFAULT_ENGAGE_DISTANCE, targets=[Targets.All.Air])
+                    #        pt.tasks.append(engagetgt)
+                elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
+                    pt.type = "Land"
+
 
     def setup_group_as_cas_flight(self, group, flight):
         group.task = CAS.name
