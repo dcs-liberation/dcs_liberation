@@ -158,6 +158,7 @@ PRICES = {
     # WW2
     P_51D_30_NA: 6,
     P_51D: 6,
+    P_47D_30: 6,
 
     # armor
     Armor.APC_MTLB: 4,
@@ -344,6 +345,7 @@ UNIT_BY_TASK = {
         Mi_24V,
         MiG_27K,
         A_20G,
+        P_47D_30,
         Ju_88A4,
     ],
     Transport: [
