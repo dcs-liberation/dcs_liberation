@@ -8,6 +8,7 @@ USA_1944 = {
     "units": [
         P_51D,
         P_51D_30_NA,
+        P_47D_30,
         SpitfireLFMkIX,
         SpitfireLFMkIXCW,
         A_20G,
