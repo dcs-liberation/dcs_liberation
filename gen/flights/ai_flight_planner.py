@@ -161,9 +161,8 @@ class FlightPlanner:
 
             patrol_alt = random.randint(PATROL_ALT_RANGE[0], PATROL_ALT_RANGE[1])
 
-            # Choose a location for CAP patrols (Either behind frontline, or to protect ground objects)
-            rng = random.randint(0,100)
-            if rng < 80 and len(self._get_cas_locations()) > 0:
+            # Choose a location for CAP patrols (Either behind frontline if there is one, or to protect ground objects)
+            if len(self._get_cas_locations()) > 0:
                 loc = random.choice(self._get_cas_locations())
                 ingress, heading, distance = Conflict.frontline_vector(self.from_cp, loc, self.game.theater)
                 center = ingress.point_from_heading(heading, distance / 2)
@@ -186,13 +185,7 @@ class FlightPlanner:
 
 
             # Create points
-            ascend_heading = random.randint(0, 360)
-            pos_ascend = self.from_cp.position.point_from_heading(ascend_heading, 30000)
-            ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, patrol_alt)
-            ascend.name = "ASCEND"
-            ascend.description = "Ascend to alt [" + str(meter_to_feet(patrol_alt)) + " ft]"
-            ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(patrol_alt)) + " ft]"
-            ascend.waypoint_type = FlightWaypointType.ASCEND_POINT
+            ascend = self.generate_ascend_point(self.from_cp)
             flight.points.append(ascend)
 
             orbit0 = FlightWaypoint(orbit0p.x, orbit0p.y, patrol_alt)
@@ -216,20 +209,10 @@ class FlightPlanner:
                     orbit0.targets.append(ground_object)
                     obj_added.append(ground_object.obj_name)
 
-            descend = self.from_cp.position.point_from_heading(ascend_heading-180, 30000)
-            descend = FlightWaypoint(descend.x, descend.y, PATTERN_ALTITUDE)
-            descend.name = "DESCEND"
-            descend.description = "Descend to pattern alt [5000ft]"
-            descend.pretty_name = "Descend to pattern alt [5000ft]"
-            descend.waypoint_type = FlightWaypointType.DESCENT_POINT
+            descend = self.generate_descend_point(self.from_cp)
             flight.points.append(descend)
 
-            rtb = self.from_cp.position.point_from_heading(ascend_heading - 180, 30000)
-            rtb = FlightWaypoint(rtb.x, rtb.y, PATTERN_ALTITUDE)
-            rtb.name = "LANDING"
-            rtb.description = "RTB"
-            rtb.pretty_name = "RTB"
-            rtb.waypoint_type = FlightWaypointType.LANDING_POINT
+            rtb = self.generate_rtb_waypoint(self.from_cp)
             flight.points.append(rtb)
 
             self.cap_flights.append(flight)
@@ -269,9 +252,11 @@ class FlightPlanner:
                 center = ingress.point_from_heading(heading, distance/2)
                 egress = ingress.point_from_heading(heading, distance)
 
-                flight.targets.append(center)
+                ascend = self.generate_ascend_point(self.from_cp)
+                flight.points.append(ascend)
 
                 ingress_point = FlightWaypoint(ingress.x, ingress.y, 1000)
+                ingress_point.alt_type = "RADIO"
                 ingress_point.name = "INGRESS"
                 ingress_point.pretty_name = "INGRESS"
                 ingress_point.description = "Ingress into CAS area"
@@ -279,6 +264,7 @@ class FlightPlanner:
                 flight.points.append(ingress_point)
 
                 center_point = FlightWaypoint(center.x, center.y, 1000)
+                center_point.alt_type = "RADIO"
                 center_point.description = "Provide CAS"
                 center_point.name = "CAS"
                 center_point.pretty_name = "INGRESS"
@@ -286,11 +272,18 @@ class FlightPlanner:
                 flight.points.append(center_point)
 
                 egress_point = FlightWaypoint(egress.x, egress.y, 1000)
+                egress_point.alt_type = "RADIO"
                 egress_point.description = "Egress from CAS area"
                 egress_point.name = "EGRESS"
                 egress_point.pretty_name = "EGRESS"
                 egress_point.waypoint_type = FlightWaypointType.EGRESS
                 flight.points.append(egress_point)
+
+                descend = self.generate_descend_point(self.from_cp)
+                flight.points.append(descend)
+
+                rtb = self.generate_rtb_waypoint(self.from_cp)
+                flight.points.append(rtb)
 
                 self.cas_flights.append(flight)
                 self.flights.append(flight)
@@ -326,6 +319,9 @@ class FlightPlanner:
                 flight.points = []
                 flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
 
+                ascend = self.generate_ascend_point(self.from_cp)
+                flight.points.append(ascend)
+
                 location = self.potential_sead_targets[0][0]
                 self.potential_sead_targets.pop(0)
 
@@ -341,6 +337,7 @@ class FlightPlanner:
                 flight.points.append(ingress_point)
 
                 point = FlightWaypoint(location.position.x, location.position.y, 0)
+                point.alt_type = "RADIO"
                 if flight.flight_type == FlightType.DEAD:
                     point.description = "SEAD on " + location.obj_name
                     point.pretty_name = "SEAD on " + location.obj_name
@@ -355,10 +352,16 @@ class FlightPlanner:
 
                 egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
                 egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
-                egress_point.pretty_name = "EGRESS on " + location.obj_name
-                egress_point.description = "EGRESS on " + location.obj_name
+                egress_point.pretty_name = "EGRESS from " + location.obj_name
+                egress_point.description = "EGRESS from " + location.obj_name
                 egress_point.waypoint_type = FlightWaypointType.EGRESS
                 flight.points.append(egress_point)
+
+                descend = self.generate_descend_point(self.from_cp)
+                flight.points.append(descend)
+
+                rtb = self.generate_rtb_waypoint(self.from_cp)
+                flight.points.append(rtb)
 
                 self.sead_flights.append(flight)
                 self.flights.append(flight)
@@ -394,6 +397,9 @@ class FlightPlanner:
                 flight.points = []
                 flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
 
+                ascend = self.generate_ascend_point(self.from_cp)
+                flight.points.append(ascend)
+
                 location = self.potential_strike_targets[0][0]
                 self.potential_strike_targets.pop(0)
 
@@ -424,9 +430,15 @@ class FlightPlanner:
 
                 egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
                 egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
-                egress_point.pretty_name = "EGRESS on " + location.obj_name
-                egress_point.description = "EGRESS on " + location.obj_name
+                egress_point.pretty_name = "EGRESS from " + location.obj_name
+                egress_point.description = "EGRESS from " + location.obj_name
                 flight.points.append(egress_point)
+
+                descend = self.generate_descend_point(self.from_cp)
+                flight.points.append(descend)
+
+                rtb = self.generate_rtb_waypoint(self.from_cp)
+                flight.points.append(rtb)
 
                 self.strike_flights.append(flight)
                 self.flights.append(flight)
@@ -523,4 +535,37 @@ class FlightPlanner:
                 if base_aircraft_inventory[f.unit_type] <= 0:
                     del base_aircraft_inventory[f.unit_type]
         return base_aircraft_inventory
+
+    def generate_ascend_point(self, from_cp):
+        ascend_heading = from_cp.heading
+        pos_ascend = from_cp.position.point_from_heading(ascend_heading, 10000)
+        ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, PATTERN_ALTITUDE)
+        ascend.name = "ASCEND"
+        ascend.alt_type = "RADIO"
+        ascend.description = "Ascend to alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL], then proceed to next waypoint"
+        ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL]"
+        ascend.waypoint_type = FlightWaypointType.ASCEND_POINT
+        return ascend
+
+    def generate_descend_point(self, from_cp):
+        ascend_heading = from_cp.heading
+        descend = from_cp.position.point_from_heading(ascend_heading - 180, 30000)
+        descend = FlightWaypoint(descend.x, descend.y, PATTERN_ALTITUDE)
+        descend.name = "DESCEND"
+        descend.alt_type = "RADIO"
+        descend.description = "Descend to pattern alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL], contact tower, and land"
+        descend.pretty_name = "Descend to pattern alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL]"
+        descend.waypoint_type = FlightWaypointType.DESCENT_POINT
+        return descend
+
+    def generate_rtb_waypoint(self, from_cp):
+        ascend_heading = from_cp.heading
+        rtb = from_cp.position.point_from_heading(ascend_heading - 180, 30000)
+        rtb = FlightWaypoint(rtb.x, rtb.y, 0)
+        rtb.name = "LANDING"
+        rtb.alt_type = "RADIO"
+        rtb.description = "RTB"
+        rtb.pretty_name = "RTB"
+        rtb.waypoint_type = FlightWaypointType.LANDING_POINT
+        return rtb
 

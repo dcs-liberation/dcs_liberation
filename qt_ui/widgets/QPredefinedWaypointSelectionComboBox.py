@@ -93,15 +93,16 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
                     pos = Conflict.frontline_position(self.game.theater, cp, ecp)[0]
                     wpt = FlightWaypoint(pos.x, pos.y, 800)
                     wpt.name = "Frontline " + cp.name + "/" + ecp.name + " [CAS]"
+                    wpt.alt_type = "RADIO"
                     wpt.pretty_name = wpt.name
                     wpt.description = "Frontline"
                     i = add_model_item(i, model, wpt.pretty_name, wpt)
-
 
         for cp in self.game.theater.controlpoints:
             for ground_object in cp.ground_objects:
                 if not ground_object.is_dead and not ground_object.dcs_identifier == "AA":
                     wpt = FlightWaypoint(ground_object.position.x,ground_object.position.y, 0)
+                    wpt.alt_type = "RADIO"
                     wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + ground_object.category + " #" + str(ground_object.object_id)
                     wpt.pretty_name = wpt.name
                     wpt.obj_name = ground_object.obj_name
@@ -119,6 +120,7 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
                     for g in ground_object.groups:
                         for j, u in enumerate(g.units):
                             wpt = FlightWaypoint(u.position.x, u.position.y, 0)
+                            wpt.alt_type = "RADIO"
                             wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + u.type + " #" + str(j)
                             wpt.pretty_name = wpt.name
                             wpt.targets.append(u)
@@ -132,6 +134,7 @@ class QPredefinedWaypointSelectionComboBox(QComboBox):
         for cp in self.game.theater.controlpoints:
 
             wpt = FlightWaypoint(cp.position.x, cp.position.y, 0)
+            wpt.alt_type = "RADIO"
             wpt.name = cp.name
             if cp.captured:
                 wpt.description = "Position of " + cp.name + " [Friendly Airbase]"

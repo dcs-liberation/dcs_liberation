@@ -54,6 +54,7 @@ class FlightWaypoint:
         self.x = x
         self.y = y
         self.alt = alt
+        self.alt_type = "BARO"
         self.name = ""
         self.description = ""
         self.targets = []

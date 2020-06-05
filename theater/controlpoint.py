@@ -65,18 +65,21 @@ class ControlPoint:
         self.tacanN = None
         self.tacanI = "TAC"
         self.icls = 0
+        self.airport = None
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
         assert airport
-        return cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
+        obj = cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
+        obj.airport = airport()
+        return obj
 
     @classmethod
     def carrier(cls, name: str, at: Point, id: int = 1001):
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
-        cp.tacanY = random.choice([True, False])
+        cp.tacanY = False
         cp.tacanN = random.randint(26, 49)
         cp.tacanI = random.choice(["STE", "CVN", "CVH", "CCV", "ACC", "ARC", "GER", "ABR", "LIN", "TRU"])
         ControlPoint.ICLS_counter = ControlPoint.ICLS_counter + 1
@@ -88,10 +91,19 @@ class ControlPoint:
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.LHA_GROUP)
-        cp.tacanY = random.choice([True, False])
+        cp.tacanY = False
         cp.tacanN = random.randint(1,25)
         cp.tacanI = random.choice(["LHD", "LHA", "LHB", "LHC", "LHD", "LDS"])
         return cp
+
+    @property
+    def heading(self):
+        if self.cptype == ControlPointType.AIRBASE:
+            return self.airport.runways[0].heading
+        elif self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
+            return 0 # TODO compute heading
+        else:
+            return 0
 
     def __str__(self):
         return self.name

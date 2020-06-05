@@ -180,7 +180,7 @@ class NorthCaucasus(ConflictTheater):
         super(NorthCaucasus, self).__init__()
 
         self.kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-        self.soganlug = ControlPoint.from_airport(caucasus.Soganlug, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.vaziani = ControlPoint.from_airport(caucasus.Vaziani, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         self.maykop = ControlPoint.from_airport(caucasus.Maykop_Khanskaya, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
         self.beslan = ControlPoint.from_airport(caucasus.Beslan, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
         self.nalchik = ControlPoint.from_airport(caucasus.Nalchik, LAND, SIZE_REGULAR, 1.1)
@@ -188,12 +188,12 @@ class NorthCaucasus(ConflictTheater):
         self.mozdok = ControlPoint.from_airport(caucasus.Mozdok, LAND, SIZE_BIG, 1.1)
         self.carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-285810.6875, 496399.1875))
 
-        self.soganlug.frontline_offset = 0.5
-        self.soganlug.base.strength = 1
+        self.vaziani.frontline_offset = 0.5
+        self.vaziani.base.strength = 1
 
-        self.add_controlpoint(self.kutaisi, connected_to=[self.soganlug])
-        self.add_controlpoint(self.soganlug, connected_to=[self.beslan, self.kutaisi])
-        self.add_controlpoint(self.beslan, connected_to=[self.soganlug, self.mozdok, self.nalchik])
+        self.add_controlpoint(self.kutaisi, connected_to=[self.vaziani])
+        self.add_controlpoint(self.vaziani, connected_to=[self.beslan, self.kutaisi])
+        self.add_controlpoint(self.beslan, connected_to=[self.vaziani, self.mozdok, self.nalchik])
         self.add_controlpoint(self.nalchik, connected_to=[self.beslan, self.mozdok, self.mineralnye])
         self.add_controlpoint(self.mozdok, connected_to=[self.nalchik, self.beslan, self.mineralnye])
         self.add_controlpoint(self.mineralnye, connected_to=[self.nalchik, self.mozdok, self.maykop])
@@ -201,5 +201,5 @@ class NorthCaucasus(ConflictTheater):
         self.add_controlpoint(self.carrier_1, connected_to=[])
 
         self.carrier_1.captured = True
-        self.soganlug.captured = True
+        self.vaziani.captured = True
         self.kutaisi.captured = True

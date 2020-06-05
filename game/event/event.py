@@ -220,7 +220,7 @@ class Event:
                         if cp.captured and new_owner_coalition != coalition:
                             cp.captured = False
                             info = Information(cp.name + " lost !",
-                                               "The ennemy took control of " + cp.name + "\nShame on us !",
+                                               "We took control of " + cp.name + "! Great job !",
                                                self.game.turn)
                             self.game.informations.append(info)
                             pname = self.game.enemy_name
