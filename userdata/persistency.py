@@ -2,9 +2,6 @@ import logging
 import os
 import pickle
 import shutil
-import sys
-
-from dcs import installation
 
 _dcs_saved_game_folder = None  # type: str
 
@@ -17,12 +14,7 @@ def setup(user_folder: str):
 def base_path() -> str:
     global _dcs_saved_game_folder
     assert _dcs_saved_game_folder
-
-    openbeta_path = _dcs_saved_game_folder + ".openbeta"
-    if os.path.exists(openbeta_path):
-        return openbeta_path  # For standalone openbeta users
-    else:
-        return _dcs_saved_game_folder # For standalone stable users & steam users (any branch)
+    return _dcs_saved_game_folder
 
 
 def _save_file() -> str:

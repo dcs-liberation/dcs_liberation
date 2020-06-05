@@ -4,6 +4,7 @@ import sys
 from shutil import copyfile
 
 import dcs
+from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs import installation
@@ -11,12 +12,22 @@ from dcs import installation
 from qt_ui import uiconstants
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
-from userdata import persistency, logging as logging_module
+from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
+from userdata import persistency, logging as logging_module, liberation_install
 
 if __name__ == "__main__":
 
-    persistency.setup(installation.get_dcs_saved_games_directory())
+    app = QApplication(sys.argv)
 
+    css = ""
+    with open("./resources/stylesheets/style.css") as stylesheet:
+        app.setStyleSheet(stylesheet.read())
+
+    # Logging setup
+    VERSION_STRING = "2.0RC6"
+    logging_module.setup_version_string(VERSION_STRING)
+
+    # Inject custom payload in pydcs framework
     custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")
     if os.path.exists(custom_payloads):
         dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
@@ -27,11 +38,14 @@ if __name__ == "__main__":
         if os.path.exists(custom_payloads):
             dcs.planes.FlyingType.payload_dirs.append(custom_payloads)
 
-    VERSION_STRING = "2.0RC6"
-    logging_module.setup_version_string(VERSION_STRING)
-    logging.info("Using {} as userdata folder".format(persistency.base_path()))
 
-    app = QApplication(sys.argv)
+    first_start = liberation_install.init()
+    if first_start:
+        window = QLiberationFirstStartWindow()
+        window.exec_()
+
+    logging.info("Using {} as 'Saved Game Folder'".format(persistency.base_path()))
+    logging.info("Using {} as 'DCS installation folder'".format(liberation_install.get_dcs_install_directory()))
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -44,24 +58,28 @@ if __name__ == "__main__":
     uiconstants.load_aircraft_icons()
     uiconstants.load_vehicle_icons()
 
-
-    css = ""
-    with open("./resources/stylesheets/style.css") as stylesheet:
-        css = stylesheet.read()
-
     # Replace DCS Mission scripting file to allow DCS Liberation to work
-    print("Replace : " + installation.get_dcs_install_directory() + os.path.sep + "Scripts/MissionScripting.lua")
-    copyfile("./resources/scripts/MissionScripting.lua", installation.get_dcs_install_directory() + os.path.sep + "Scripts/MissionScripting.lua")
-    app.processEvents()
+    try:
+        liberation_install.replace_mission_scripting_file()
+    except:
+        error_dialog = QtWidgets.QErrorMessage()
+        error_dialog.setWindowTitle("Wrong DCS installation directory.")
+        error_dialog.showMessage("Unable to modify Mission Scripting file. Possible issues with rights. Try running as admin, or please perform the modification of the MissionScripting file manually.")
+        error_dialog.exec_()
 
     # Apply CSS (need works)
-    app.setStyleSheet(css)
     GameUpdateSignal()
 
     # Start window
     window = QLiberationWindow()
     window.showMaximized()
-
     splash.finish(window)
-    sys.exit(app.exec_())
+    qt_execution_code = app.exec_()
+
+    # Restore Mission Scripting file
+    logging.info("QT App terminated with status code : " + str(qt_execution_code))
+    logging.info("Attempt to restore original mission scripting file")
+    liberation_install.restore_original_mission_scripting()
+    sys.exit(qt_execution_code)
+
 

@@ -98,11 +98,11 @@ class QSettingsWindow(QDialog):
         self.enemyAASkill.currentIndexChanged.connect(self.applySettings)
 
         self.difficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
-        self.difficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1)
+        self.difficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1, Qt.AlignRight)
         self.difficultyLayout.addWidget(QLabel("Enemy skill"), 1, 0)
-        self.difficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1)
+        self.difficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
         self.difficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
-        self.difficultyLayout.addWidget(self.enemyAASkill, 2, 1)
+        self.difficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
 
         self.difficultyLabel = QComboBox()
         [self.difficultyLabel.addItem(t) for t in CONST.LABELS_OPTIONS]
@@ -110,13 +110,13 @@ class QSettingsWindow(QDialog):
         self.difficultyLabel.currentIndexChanged.connect(self.applySettings)
 
         self.difficultyLayout.addWidget(QLabel("In Game Labels"), 3, 0)
-        self.difficultyLayout.addWidget(self.difficultyLabel, 3, 1)
+        self.difficultyLayout.addWidget(self.difficultyLabel, 3, 1, Qt.AlignRight)
 
         self.noNightMission = QCheckBox()
         self.noNightMission.setChecked(self.game.settings.night_disabled)
         self.noNightMission.toggled.connect(self.applySettings)
         self.difficultyLayout.addWidget(QLabel("No night missions"), 4, 0)
-        self.difficultyLayout.addWidget(self.noNightMission, 4, 1)
+        self.difficultyLayout.addWidget(self.noNightMission, 4, 1, Qt.AlignRight)
 
 
     def initGeneratorLayout(self):
@@ -135,7 +135,7 @@ class QSettingsWindow(QDialog):
         self.supercarrier.toggled.connect(self.applySettings)
 
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
-        self.gameplayLayout.addWidget(self.supercarrier, 0, 1)
+        self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout();
@@ -162,16 +162,22 @@ class QSettingsWindow(QDialog):
         self.infantry.setChecked(self.game.settings.perf_infantry)
         self.infantry.toggled.connect(self.applySettings)
 
+        self.ai_parking_start = QCheckBox()
+        self.ai_parking_start.setChecked(self.game.settings.perf_ai_parking_start)
+        self.ai_parking_start.toggled.connect(self.applySettings)
+
         self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
-        self.performanceLayout.addWidget(self.smoke, 0, 1)
+        self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
-        self.performanceLayout.addWidget(self.red_alert, 1, 1)
+        self.performanceLayout.addWidget(self.red_alert, 1, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Artillery strikes"), 2, 0)
-        self.performanceLayout.addWidget(self.arti, 2, 1)
+        self.performanceLayout.addWidget(self.arti, 2, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Moving ground units"), 3, 0)
-        self.performanceLayout.addWidget(self.moving_units, 3, 1)
+        self.performanceLayout.addWidget(self.moving_units, 3, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Generate infantry squads along vehicles"), 4, 0)
-        self.performanceLayout.addWidget(self.infantry, 4, 1)
+        self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("AI planes parking start (AI starts in flight if disabled)"), 5, 0)
+        self.performanceLayout.addWidget(self.ai_parking_start, 5, 1, alignment=Qt.AlignRight)
 
         self.generatorLayout.addWidget(self.gameplay)
         self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
@@ -230,6 +236,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_artillery = self.arti.isChecked()
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
+        self.game.settings.perf_ai_parking_start = self.ai_parking_start.isChecked()
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

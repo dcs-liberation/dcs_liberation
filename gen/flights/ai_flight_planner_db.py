@@ -48,6 +48,7 @@ CAP_CAPABLE = [
 
     P_51D_30_NA,
     P_51D,
+    P_47D_30,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
@@ -106,6 +107,7 @@ CAS_CAPABLE = [
 
     P_51D_30_NA,
     P_51D,
+    P_47D_30,
     A_20G,
 
     SpitfireLFMkIXCW,
@@ -169,6 +171,7 @@ STRIKE_CAPABLE = [
 
     P_51D_30_NA,
     P_51D,
+    P_47D_30,
     A_20G,
 
     SpitfireLFMkIXCW,

@@ -8,12 +8,12 @@ from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
 
 URLS : Dict[str, str] = {
-    "Manual": "https://github.com/shdwp/dcs_liberation/wiki/Manual",
+    "Manual": "https://github.com/khopa/dcs_liberation/wiki",
     "Troubleshooting": "https://github.com/shdwp/dcs_liberation/wiki/Troubleshooting",
     "Modding": "https://github.com/shdwp/dcs_liberation/wiki/Modding-tutorial",
-    "Repository": "https://github.com/shdwp/dcs_liberation",
+    "Repository": "https://github.com/khopa/dcs_liberation",
     "ForumThread": "https://forums.eagle.ru/showthread.php?t=214834",
-    "Issues": "https://github.com/shdwp/dcs_liberation/issues"
+    "Issues": "https://github.com/khopa/dcs_liberation/issues"
 }
 
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]

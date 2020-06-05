@@ -1,10 +1,9 @@
 import sys
 import webbrowser
 
-from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
     QSplitter
 
 import qt_ui.uiconstants as CONST
@@ -12,10 +11,12 @@ from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.windows.preferences import QLiberationPreferences
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.QNewGameWizard import NewGameWizard
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
+from qt_ui.windows.preferences.QLiberationPreferencesWindow import QLiberationPreferencesWindow
 from userdata import persistency
 
 
@@ -79,6 +80,10 @@ class QLiberationWindow(QMainWindow):
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
 
+        self.showLiberationPrefDialogAction = QAction("Preferences", self)
+        self.showLiberationPrefDialogAction.setIcon(QIcon.fromTheme("help-about"))
+        self.showLiberationPrefDialogAction.triggered.connect(self.showLiberationDialog)
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -92,17 +97,21 @@ class QLiberationWindow(QMainWindow):
         file_menu.addAction(self.newGameAction)
         #file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open") # TODO : implement
         file_menu.addAction(self.saveGameAction)
+        file_menu.addSeparator()
+        file_menu.addAction(self.showLiberationPrefDialogAction)
+        file_menu.addSeparator()
         #file_menu.addAction("Save As") # TODO : implement
         #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
         file_menu.addAction("Exit" , lambda: self.exit())
 
 
         help_menu = self.menu.addMenu("Help")
-        #help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
+        help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
+        help_menu.addAction("Discord", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
         #help_menu.addAction("Troubleshooting Guide", lambda: webbrowser.open_new_tab(URLS["Troubleshooting"]))
         #help_menu.addAction("Modding Guide", lambda: webbrowser.open_new_tab(URLS["Modding"]))
         #help_menu.addSeparator() ----> Note from Khopa : I disable these links since it's not up to date for this branch
-        help_menu.addAction("Contribute", lambda: webbrowser.open_new_tab(URLS["Repository"]))
+        #help_menu.addAction("Contribute", lambda: webbrowser.open_new_tab(URLS["Repository"]))
         help_menu.addAction("Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
         help_menu.addSeparator()
@@ -191,6 +200,10 @@ class QLiberationWindow(QMainWindow):
         about.setText(text)
         print(about.textFormat())
         about.exec_()
+
+    def showLiberationDialog(self):
+        self.subwindow = QLiberationPreferencesWindow()
+        self.subwindow.show()
 
     def onDebriefing(self, debrief: DebriefingSignal):
         print("On Debriefing")

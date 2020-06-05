@@ -21,5 +21,6 @@ class Settings:
     perf_artillery = True
     perf_moving_units = True
     perf_infantry = True
+    perf_ai_parking_start = True
 
 

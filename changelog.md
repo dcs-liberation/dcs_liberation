@@ -1,3 +1,18 @@
+#2.0 RC 7
+
+##Features/Improvements :
+* **[Units/Factions]** Added P-47D-30 for factions allies_1944
+* **[Mission Generator]** CAP flights have been slightly reworked
+* **[Mission Generator]** Add PP points for JF-17 on STRIKE missions
+* **[Mission Generator]** Add ST point for F-14B on STRIKE missions
+* **[Mission Generator]** Flights with client slots will never be delayed
+* **[Mission Generator]** AI units can start from parking
+
+##Fixed issues :
+* **[Mission Generator]** When playing as RED the activation trigger would not be properly generated
+* **[Mission Generator]** Changed "strike" payload for Su-24M
+* **[Mission Generator]** FW-190A8 is now properly considered as flyable
+
 #2.0 RC 6
 
 Saves file from RC5 are not compatible with the new version. 
