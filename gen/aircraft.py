@@ -372,7 +372,6 @@ class AircraftConflictGenerator:
                 group.add_trigger_action(StartCommand())
                 activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
                 self.m.triggerrules.triggers.append(activation_trigger)
-                print("ADD TRIG CTRL")
             else:
                 group.late_activation = True
                 activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
@@ -390,10 +389,8 @@ class AircraftConflictGenerator:
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
-            if flight.client_count == 0:
+            if flight.client_count == 0 and self.game.perf_ai_parking_start:
                 flight.start_type = "Warm"
-
-            print(flight.start_type)
 
             if flight.start_type == "In Flight":
                 group = self._generate_group(
@@ -404,7 +401,6 @@ class AircraftConflictGenerator:
                     client_count=0,
                     at=cp.position)
             else:
-
                 st = StartType.Runway
                 if flight.start_type == "Cold":
                     st = StartType.Cold
