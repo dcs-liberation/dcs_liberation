@@ -47,6 +47,8 @@ class Debriefing:
 
         self.dead_aircraft = []
         self.dead_units = []
+        self.dead_aaa_groups = []
+        self.dead_buildings = []
 
         for aircraft in self.killed_aircrafts:
             try:
@@ -70,10 +72,36 @@ class Debriefing:
             except Exception as e:
                 print(e)
 
+        for unit in self.killed_ground_units:
+            for cp in game.theater.controlpoints:
+
+                print(cp.name)
+                print(cp.captured)
+                if cp.captured:
+                    country = self.player_country_id
+                else:
+                    country = self.enemy_country_id
+                player_unit = (country == self.player_country_id)
+
+                for i, ground_object in enumerate(cp.ground_objects):
+                    print(unit)
+                    print(ground_object.string_identifier)
+                    if ground_object.matches_string_identifier(unit):
+                        unit = DebriefingDeadUnitInfo(country, player_unit, ground_object.dcs_identifier)
+                        self.dead_buildings.append(unit)
+                    elif ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:
+                        for g in ground_object.groups:
+                            for u in g.units:
+                                if u.name == unit:
+                                    unit = DebriefingDeadUnitInfo(country, player_unit, db.unit_type_from_name(u.type))
+                                    self.dead_units.append(unit)
+
         self.player_dead_aircraft = [a for a in self.dead_aircraft if a.country_id == self.player_country_id]
         self.enemy_dead_aircraft = [a for a in self.dead_aircraft if a.country_id == self.enemy_country_id]
         self.player_dead_units = [a for a in self.dead_units if a.country_id == self.player_country_id]
         self.enemy_dead_units = [a for a in self.dead_units if a.country_id == self.enemy_country_id]
+        self.player_dead_buildings = [a for a in self.dead_buildings if a.country_id == self.player_country_id]
+        self.enemy_dead_buildings = [a for a in self.dead_buildings if a.country_id == self.enemy_country_id]
 
         print(self.player_dead_aircraft)
         print(self.enemy_dead_aircraft)
@@ -108,10 +136,27 @@ class Debriefing:
             else:
                 self.enemy_dead_units_dict[a.type] = 1
 
+        self.player_dead_buildings_dict = {}
+        for a in self.player_dead_buildings:
+            if a.type in self.player_dead_buildings_dict.keys():
+                self.player_dead_buildings_dict[a.type] = self.player_dead_buildings_dict[a.type] + 1
+            else:
+                self.player_dead_buildings_dict[a.type] = 1
+
+        self.enemy_dead_buildings_dict = {}
+        for a in self.enemy_dead_buildings:
+            if a.type in self.enemy_dead_buildings_dict.keys():
+                self.enemy_dead_buildings_dict[a.type] = self.enemy_dead_buildings_dict[a.type] + 1
+            else:
+                self.enemy_dead_buildings_dict[a.type] = 1
+
+        print("DEBRIEFING PRE PROCESS")
         print(self.player_dead_aircraft_dict)
         print(self.enemy_dead_aircraft_dict)
         print(self.player_dead_units_dict)
         print(self.enemy_dead_units_dict)
+        print(self.player_dead_buildings_dict)
+        print(self.enemy_dead_buildings_dict)
 
 
 def _poll_new_debriefing_log(callback: typing.Callable, game):

@@ -57,6 +57,14 @@ class QDebriefingWindow(QDialog):
             except:
                 print("Issue adding " + str(unit_type) + " to debriefing information")
 
+        for building, count in self.debriefing.player_dead_buildings_dict.items():
+            try:
+                lostUnitsLayout.addWidget(QLabel(building, row, 0))
+                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                row += 1
+            except:
+                print("Issue adding " + str(building) + " to debriefing information")
+
         self.layout.addWidget(lostUnits)
 
         # Enemy lost units
@@ -86,6 +94,14 @@ class QDebriefingWindow(QDialog):
             enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
             enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
             row += 1
+
+        for building, count in self.debriefing.enemy_dead_buildings_dict.items():
+            try:
+                enemylostUnitsLayout.addWidget(QLabel(building), row, 0)
+                enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                row += 1
+            except:
+                print("Issue adding " + str(building) + " to debriefing information")
 
         self.layout.addWidget(enemylostUnits)
 

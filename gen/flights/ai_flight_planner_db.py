@@ -167,8 +167,6 @@ STRIKE_CAPABLE = [
     L_39ZA,
     AJS37,
 
-    M_2000C,
-
     P_51D_30_NA,
     P_51D,
     P_47D_30,

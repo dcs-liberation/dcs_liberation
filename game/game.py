@@ -145,11 +145,8 @@ class Game:
 
     def initiate_event(self, event: Event):
         assert event in self.events
-
         logging.info("Generating {} (regular)".format(event))
         event.generate()
-        logging.info("Generating {} (quick)".format(event))
-        event.generate_quick()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))

@@ -12,7 +12,7 @@ France_2005 = {
         FA_18C_hornet, # Standing as Rafale M
 
         KC_135,
-        S_3B_Tanker,
+        KC130,
         C_130,
         E_3A,
 

@@ -351,8 +351,8 @@ class AircraftConflictGenerator:
 
     def setup_flight_group(self, group, flight, flight_type):
 
-
         if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP]:
+            group.task = CAP.name
             self._setup_group(group, CAP, flight.client_count)
             # group.points[0].tasks.clear()
             # group.tasks.clear()
@@ -360,12 +360,14 @@ class AircraftConflictGenerator:
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
             pass
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
+            group.task = CAS.name
             self._setup_group(group, CAS, flight.client_count)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(CASTaskAction())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
+            group.task = SEAD.name
             self._setup_group(group, SEAD, flight.client_count)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(SEADTaskAction())
@@ -373,9 +375,16 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.STRIKE]:
-            self._setup_group(group, PinpointStrike, flight.client_count)
+            group.task = PinpointStrike.name
+            self._setup_group(group, GroundAttack, flight.client_count)
             group.points[0].tasks.clear()
-            group.points[0].tasks.append(CASTaskAction())
+            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
+            group.points[0].tasks.append(OptRestrictJettison(True))
+        elif flight_type in [FlightType.ANTISHIP]:
+            group.task = AntishipStrike.name
+            self._setup_group(group, AntishipStrike, flight.client_count)
+            group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
@@ -393,19 +402,19 @@ class AircraftConflictGenerator:
                 elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
                     pt.type = "Land"
                 elif point.waypoint_type == FlightWaypointType.INGRESS_STRIKE:
+                    print("TGTS :")
+                    print(point.targets)
                     for j, t in enumerate(point.targets):
-                        if hasattr(t, "obj_name"):
-                            buildings = self.game.theater.find_ground_objects_by_obj_name(t.obj_name)
-                            for j, building in enumerate(buildings):
-                                group.points[i].tasks.append(Bombing(building.position))
-                                if group.units[0].unit_type == JF_17 and j < 4:
-                                    group.add_nav_target_point(building.position, "PP" + str(j + 1))
-                                if group.units[0].unit_type == F_14B and j == 0:
-                                    group.add_nav_target_point(building.position, "ST")
-                        else:
-                            group.points[i].tasks.append(Bombing(t.position))
+                        print(t.position)
+                        pt.tasks.append(Bombing(t.position))
+                        if group.units[0].unit_type == JF_17 and j < 4:
+                            group.add_nav_target_point(t.position, "PP" + str(j + 1))
+                        if group.units[0].unit_type == F_14B and j == 0:
+                            group.add_nav_target_point(t.position, "ST")
+
                 if pt is not None:
                     pt.alt_type = point.alt_type
+                    pt.name = String(point.name)
 
         self._setup_custom_payload(flight, group)
 

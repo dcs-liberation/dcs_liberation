@@ -127,17 +127,6 @@ class Event:
         self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
         self.environment_settings = self.operation.environment_settings
 
-    def generate_quick(self):
-        pass
-        # TODO : This is not needed anymore. The player can start mission in flight from the flight planner if he want it to be quick.
-        # TODO : remove this method
-        #self.operation.is_awacs_enabled = self.is_awacs_enabled
-        #self.operation.environment_settings = self.environment_settings
-        #
-        #self.operation.prepare(self.game.theater.terrain, is_quick=True)
-        #self.operation.generate()
-        #self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn_quick.miz"))
-
     def commit(self, debriefing: Debriefing):
 
         logging.info("Commiting mission results")
@@ -190,16 +179,30 @@ class Event:
                         logging.info("cp {} killing ground object {}".format(cp, ground_object.string_identifier))
                         cp.ground_objects[i].is_dead = True
 
+                        info = Information("Building destroyed",
+                                           ground_object.dcs_identifier + " has been destroyed at location " + ground_object.obj_name,
+                                           self.game.turn)
+                        self.game.informations.append(info)
+
+
                 # -- AA Site groups
+                destroyed_units = 0
+                info = Information("Units destroyed at " + ground_object.obj_name,
+                                   "",
+                                   self.game.turn)
                 for i, ground_object in enumerate(cp.ground_objects):
                     if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:
                         for g in ground_object.groups:
                             for u in g.units:
                                 if u.name == destroyed_ground_unit_name:
                                     g.units.remove(u)
+                                    destroyed_units = destroyed_units + 1
+                                    info.text = u.type
                         ucount = sum([len(g.units) for g in ground_object.groups])
                         if ucount == 0:
                             ground_object.is_dead = True
+                if destroyed_units > 0:
+                    self.game.informations.append(info)
 
         # ------------------------------
         # Captured bases

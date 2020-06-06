@@ -5,7 +5,7 @@ import random
 
 from game import db
 from gen import Conflict
-from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE
+from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE, STRIKE_CAPABLE
 from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 
 
@@ -267,7 +267,7 @@ class FlightPlanner:
                 center_point.alt_type = "RADIO"
                 center_point.description = "Provide CAS"
                 center_point.name = "CAS"
-                center_point.pretty_name = "INGRESS"
+                center_point.pretty_name = "CAS"
                 center_point.waypoint_type = FlightWaypointType.CAS
                 flight.points.append(center_point)
 
@@ -375,7 +375,7 @@ class FlightPlanner:
         """
         Pick some aircraft to assign them to STRIKE tasks
         """
-        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in CAS_CAPABLE and v >= 2]
+        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in STRIKE_CAPABLE and v >= 2]
         inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
 
         if len(self.potential_strike_targets) > 0:
@@ -411,27 +411,54 @@ class FlightPlanner:
                 ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
                 ingress_point.pretty_name = "INGRESS on " + location.obj_name
                 ingress_point.description = "INGRESS on " + location.obj_name
+                ingress_point.name = "INGRESS"
+                ingress_point.waypoint_type = FlightWaypointType.INGRESS_STRIKE
                 flight.points.append(ingress_point)
 
-                if len(location.groups) > 0:
+                if len(location.groups) > 0 and location.dcs_identifier == "AA":
                     for g in location.groups:
                         for j, u in enumerate(g.units):
                             point = FlightWaypoint(u.position.x, u.position.y, 0)
                             point.description = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
                             point.pretty_name = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
+                            point.name = location.obj_name + "#" + str(j)
+                            point.only_for_player = True
                             ingress_point.targets.append(location)
                             flight.points.append(point)
                 else:
-                    point = FlightWaypoint(location.position.x, location.position.y, 0)
-                    point.description = "STRIKE on " + location.obj_name + " " + str(location.category)
-                    point.pretty_name = "STRIKE on " + location.obj_name + " " + str(location.category)
-                    point.targets.append(location)
-                    flight.points.append(point)
+                    if hasattr(location, "obj_name"):
+                        buildings = self.game.theater.find_ground_objects_by_obj_name(location.obj_name)
+                        print(buildings)
+                        for building in buildings:
+                            print("BUILDING " + str(building.is_dead) + " " + str(building.dcs_identifier))
+                            if building.is_dead:
+                                continue
+
+                            point = FlightWaypoint(building.position.x, building.position.y, 0)
+                            point.description = "STRIKE on " + building.obj_name + " " + str(building.category)
+                            point.pretty_name = "STRIKE on " + building.obj_name + " " + str(building.category)
+                            point.name = building.obj_name
+                            point.only_for_player = True
+                            ingress_point.targets.append(building)
+                            flight.points.append(point)
+                    else:
+                        point = FlightWaypoint(location.position.x, location.position.y, 0)
+                        point.description = "STRIKE on " + location.obj_name + " " + str(location.category)
+                        point.pretty_name = "STRIKE on " + location.obj_name + " " + str(location.category)
+                        point.name = location.obj_name
+                        point.only_for_player = True
+                        ingress_point.targets.append(location)
+                        flight.points.append(point)
+
+
+
 
                 egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
                 egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
+                egress_point.name = "EGRESS"
                 egress_point.pretty_name = "EGRESS from " + location.obj_name
                 egress_point.description = "EGRESS from " + location.obj_name
+                egress_point.waypoint_type = FlightWaypointType.EGRESS
                 flight.points.append(egress_point)
 
                 descend = self.generate_descend_point(self.from_cp)
@@ -559,8 +586,7 @@ class FlightPlanner:
         return descend
 
     def generate_rtb_waypoint(self, from_cp):
-        ascend_heading = from_cp.heading
-        rtb = from_cp.position.point_from_heading(ascend_heading - 180, 30000)
+        rtb = from_cp.position
         rtb = FlightWaypoint(rtb.x, rtb.y, 0)
         rtb.name = "LANDING"
         rtb.alt_type = "RADIO"

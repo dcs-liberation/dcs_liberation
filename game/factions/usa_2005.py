@@ -12,12 +12,11 @@ USA_2005 = {
         FA_18C_hornet,
         F_16C_50,
         JF_17,
-
         A_10C,
         AV8BNA,
 
         KC_135,
-        S_3B_Tanker,
+        KC130,
         C_130,
         E_3A,
 

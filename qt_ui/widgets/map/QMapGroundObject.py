@@ -9,13 +9,14 @@ from theater import TheaterGroundObject, ControlPoint
 
 class QMapGroundObject(QGraphicsRectItem):
 
-    def __init__(self, parent, x: float, y: float, w: float, h: float, cp: ControlPoint, model: TheaterGroundObject):
+    def __init__(self, parent, x: float, y: float, w: float, h: float, cp: ControlPoint, model: TheaterGroundObject, buildings=[]):
         super(QMapGroundObject, self).__init__(x, y, w, h)
         self.model = model
         self.cp = cp
         self.parent = parent
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
+        self.buildings = buildings
         #self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
         if len(self.model.groups) > 0:
@@ -32,7 +33,11 @@ class QMapGroundObject(QGraphicsRectItem):
                 tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
             self.setToolTip(tooltip[:-1])
         else:
-            self.setToolTip("[" + self.model.obj_name + "] : " + self.model.category)
+            tooltip = "[" + self.model.obj_name + "]" + "\n"
+            for building in buildings:
+                if not building.is_dead:
+                    tooltip = tooltip + str(building.dcs_identifier) + "\n"
+            self.setToolTip(tooltip[:-1])
 
 
     def paint(self, painter, option, widget=None):

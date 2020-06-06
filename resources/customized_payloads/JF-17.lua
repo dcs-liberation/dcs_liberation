@@ -73,32 +73,28 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "DIS_WMD7",
-					["num"] = 4,
+					["CLSID"] = "DIS_LS_6_500",
+					["num"] = 6,
 				},
 				[2] = {
+					["CLSID"] = "DIS_LS_6_500",
+					["num"] = 5,
+				},
+				[3] = {
+					["CLSID"] = "DIS_LS_6_500",
+					["num"] = 3,
+				},
+				[4] = {
+					["CLSID"] = "DIS_LS_6_500",
+					["num"] = 2,
+				},
+				[5] = {
 					["CLSID"] = "DIS_PL-5EII",
 					["num"] = 1,
 				},
-				[3] = {
+				[6] = {
 					["CLSID"] = "DIS_PL-5EII",
 					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "DIS_GBU_12_DUAL",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "DIS_GBU_12_DUAL",
-					["num"] = 2,
-				},
-				[6] = {
-					["CLSID"] = "DIS_GBU_16",
-					["num"] = 3,
-				},
-				[7] = {
-					["CLSID"] = "DIS_GBU_16",
-					["num"] = 5,
 				},
 			},
 			["tasks"] = {

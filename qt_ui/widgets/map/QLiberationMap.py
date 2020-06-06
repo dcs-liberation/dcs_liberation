@@ -83,11 +83,16 @@ class QLiberationMap(QGraphicsView):
                 pen = QPen(brush=CONST.COLORS["red"])
                 brush = CONST.COLORS["red_transparent"]
 
+            added_objects = []
             for ground_object in cp.ground_objects:
+                if ground_object.obj_name in added_objects:
+                    continue
+
 
                 go_pos = self._transform_point(ground_object.position)
                 if not ground_object.airbase_group:
-                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 12, 12, cp, ground_object))
+                    buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
+                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 12, 12, cp, ground_object, buildings))
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0
@@ -99,6 +104,7 @@ class QLiberationMap(QGraphicsView):
                                     max_range = unit.threat_range
                     if max_range >= 6000:
                         scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
+                added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
             if self.get_display_rule("lines"):

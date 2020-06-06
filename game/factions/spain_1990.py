@@ -12,7 +12,7 @@ Spain_1990 = {
         C_101CC,
 
         KC_135,
-        S_3B_Tanker,
+        KC130,
         C_130,
         E_3A,
 

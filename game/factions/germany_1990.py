@@ -12,7 +12,7 @@ Germany_1990 = {
         F_4E,
 
         KC_135,
-        S_3B_Tanker,
+        KC130,
         C_130,
         E_3A,
 
