@@ -47,11 +47,9 @@ class GameStats:
         for cp in game.theater.controlpoints:
             if cp.captured:
                 turn_data.allied_units.aircraft_count += sum(cp.base.aircraft.values())
-                turn_data.allied_units.sam_count += sum(cp.base.aa.values())
                 turn_data.allied_units.vehicles_count += sum(cp.base.armor.values())
             else:
                 turn_data.enemy_units.aircraft_count += sum(cp.base.aircraft.values())
-                turn_data.enemy_units.sam_count += sum(cp.base.aa.values())
                 turn_data.enemy_units.vehicles_count += sum(cp.base.armor.values())
 
         self.data_per_turn.append(turn_data)

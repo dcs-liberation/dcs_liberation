@@ -120,34 +120,13 @@ class Base:
             target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
 
     def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
-        # advanced SAM sites have multiple units - this code was not at all set up to handle that
-        #   to avoid having to restructure a bunch of upstream code, we track total destroyed units and
-        #   use that to determine if a site was destroyed
-        # this can be thought of as the enemy re-distributing parts of SAM sites to keep as many
-        #  operational as possible (pulling specific units from ...storage... to bring them back online
-        #  if non-letal damage was done)
-        # in the future, I may add more depth to this (e.g. a base having a certain number of spares and tracking
-        #  the number of pieces of each site), but for now this is what we get
-        sams_destroyed = {}
-        # we count complex SAM sites at the end - don't double count
-        aa_skip = [
-            AirDefence.SAM_SA_6_Kub_LN_2P25,
-            AirDefence.SAM_SA_3_S_125_LN_5P73,
-            AirDefence.SAM_SA_11_Buk_LN_9A310M1
-        ]
+
         for unit_type, count in units_lost.items():
-            if unit_type in db.SAM_CONVERT or unit_type in db.SAM_CONVERT['except']:
-                # unit is part of an advanced SAM site, which means it will fail the below check
-                try:
-                    sams_destroyed[unit_type] += 1
-                except KeyError:
-                    sams_destroyed[unit_type] = 1
+
             if unit_type in self.aircraft:
                 target_array = self.aircraft
             elif unit_type in self.armor:
                 target_array = self.armor
-            elif unit_type in self.aa and unit_type not in aa_skip:
-                target_array = self.aa
             else:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
@@ -159,22 +138,6 @@ class Base:
             target_array[unit_type] = max(target_array[unit_type] - count, 0)
             if target_array[unit_type] == 0:
                 del target_array[unit_type]
-
-        # now that we have a complete picture of the SAM sites destroyed, determine if any were destroyed
-        for sam_site, count in sams_destroyed.items():
-            dead_count = aaa.num_sam_dead(sam_site, count)
-            try:
-                modified_sam_site = db.SAM_CONVERT[sam_site]
-            except KeyError:
-                modified_sam_site = db.SAM_CONVERT[sam_site]['except']
-
-            if modified_sam_site in self.aa:
-                self.aa[modified_sam_site] = max(
-                    self.aa[modified_sam_site] - dead_count,
-                    0
-                )
-                if self.aa[modified_sam_site] == 0:
-                    del self.aa[modified_sam_site]
 
     def affect_strength(self, amount):
         self.strength += amount

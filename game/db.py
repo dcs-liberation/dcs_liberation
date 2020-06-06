@@ -1033,14 +1033,6 @@ def _validate_db():
             assert unit_type not in total_set, "{} is duplicate for task {}".format(unit_type, t)
             total_set.add(unit_type)
 
-    # check country allegiance
-    for unit_type in total_set:
-        did_find = False
-        for country_units_list in FACTIONS.values():
-            if unit_type in country_units_list["units"]:
-                did_find = True
-        print("WARN : {} not in country list".format(unit_type))
-
     # check prices
     for unit_type in total_set:
         assert unit_type in PRICES, "{} not in prices".format(unit_type)

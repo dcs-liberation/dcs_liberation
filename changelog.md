@@ -2,7 +2,8 @@
 
 ##Features/Improvements :
 * **[Units/Factions]** Added P-47D-30 for factions allies_1944
-* **[Mission Generator]** CAP flights have been slightly reworked
+* **[Units/Factions]** Replaced S3-B Tanker by KC130 for most factions
+* **[Mission Generator]** AI Flight generator has been reworked
 * **[Mission Generator]** Add PP points for JF-17 on STRIKE missions
 * **[Mission Generator]** Add ST point for F-14B on STRIKE missions
 * **[Mission Generator]** Flights with client slots will never be delayed
@@ -18,12 +19,13 @@
 
 ##Fixed issues :
 * **[Mission Generator]** When playing as RED the activation trigger would not be properly generated
-* **[Mission Generator]** Changed "strike" payload for Su-24M
-* **[Mission Generator]** Changed "strike" payload for JF-17
+* **[Mission Generator]** Changed "strike" payload for Su-24M that was innefective
+* **[Mission Generator]** Changed "strike" payload for JF-17 to use LS-6 bombs instead of GBU
 * **[Mission Generator]** FW-190A8 is now properly considered as a flyable
 * **[Maps/Campaign]** Now using Vasiani airport instead of Soganlung in North Caucasus campaign (More parking slots)
 * **[Info Panel]** Message displayed on base capture event stated that the ennemy captured an airbase, while it was the player who captured it.
 * **[Map]** Graphical glitch on map when one building of an objective was destroyed, but not the others
+* **[Map]** Change power station template. (Buildings could end up superposed).
 
 #2.0 RC 6
 

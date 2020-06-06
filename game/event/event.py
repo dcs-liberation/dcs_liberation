@@ -216,28 +216,27 @@ class Event:
                 id = int(captured.split("||")[0])
                 new_owner_coalition = int(captured.split("||")[1])
 
+                captured_cps = []
                 for cp in self.game.theater.controlpoints:
                     if cp.id == id:
 
-                        pname = ""
                         if cp.captured and new_owner_coalition != coalition:
                             cp.captured = False
-                            info = Information(cp.name + " lost !",
-                                               "We took control of " + cp.name + "! Great job !",
-                                               self.game.turn)
-                            self.game.informations.append(info)
-                            pname = self.game.enemy_name
-                        elif not(cp.captured) and new_owner_coalition == coalition:
-                            cp.captured = True
                             info = Information(cp.name + " captured !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
                             self.game.informations.append(info)
+                            pname = self.game.enemy_name
+                            captured_cps.append(cp)
+                        elif not(cp.captured) and new_owner_coalition == coalition:
+                            cp.captured = True
+                            info = Information(cp.name + " lost !", "We took control of " + cp.name + "! Great job !", self.game.turn)
+                            self.game.informations.append(info)
                             pname = self.game.player_name
+                            captured_cps.append(cp)
                         else:
                             continue
 
                         cp.base.aircraft = {}
                         cp.base.armor = {}
-                        cp.base.aa = {}
 
                         airbase_def_id = 0
                         for g in cp.ground_objects:
@@ -245,6 +244,10 @@ class Event:
                             if g.airbase_group and pname != "":
                                 generate_airbase_defense_group(airbase_def_id, g, pname, self.game, cp)
                                 airbase_def_id = airbase_def_id + 1
+
+                for cp in captured_cps:
+                    logging.info("Will run redeploy for " + cp.name)
+                    self.redeploy_units(cp)
 
 
             except Exception as e:
@@ -323,6 +326,47 @@ class Event:
 
     def skip(self):
         pass
+
+    def redeploy_units(self, cp):
+        """"
+        Auto redeploy units to newly captured base
+        """
+
+        ally_connected_cps = [ocp for ocp in cp.connected_points if cp.captured == ocp.captured]
+        enemy_connected_cps = [ocp for ocp in cp.connected_points if cp.captured != ocp.captured]
+
+        # If the newly captured cp does not have enemy connected cp,
+        # then it is not necessary to redeploy frontline units there.
+        if len(enemy_connected_cps) == 0:
+            return
+        else:
+            # From each ally cp, send reinforcements
+            for ally_cp in ally_connected_cps:
+                total_units_redeployed = 0
+                own_enemy_cp = [ocp for ocp in ally_cp.connected_points if ally_cp.captured != ocp.captured]
+
+                moved_units = {}
+
+                # If the connected base, does not have any more enemy cp connected.
+                # Or if it is not the opponent redeploying forces there (enemy AI will never redeploy all their forces at once)
+                if len(own_enemy_cp) > 0 or not cp.captured:
+                    for frontline_unit, count in ally_cp.base.armor.items():
+                        moved_units[frontline_unit] = int(count/2)
+                        total_units_redeployed = total_units_redeployed + int(count/2)
+                else: # So if the old base, does not have any more enemy cp connected, or if it is an enemy base
+                    for frontline_unit, count in ally_cp.base.armor.items():
+                        moved_units[frontline_unit] = count
+                        total_units_redeployed = total_units_redeployed + count
+
+                cp.base.commision_units(moved_units)
+                ally_cp.base.commit_losses(moved_units)
+
+                if total_units_redeployed > 0:
+                    info = Information("Units redeployed", "", self.game.turn)
+                    info.text = str(total_units_redeployed) + " have been redeployed from " + ally_cp.name + " to " + cp.name
+                    self.game.informations.append(info)
+                    logging.info(info.text)
+
 
 
 class UnitsDeliveryEvent(Event):
