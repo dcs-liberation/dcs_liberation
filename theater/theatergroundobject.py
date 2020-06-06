@@ -30,9 +30,11 @@ ABBREV_NAME = {
 }
 
 CATEGORY_MAP = {
+    # Special cases
     "CARRIER": ["CARRIER"],
     "LHA": ["LHA"],
     "aa": ["AA"],
+    # Buildings
     "power": ["Workshop A", "Electric power box", "Garage small A", "Farm B", "Repair workshop", "Garage B"],
     "warehouse": ["Warehouse", "Hangar A"],
     "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
@@ -42,6 +44,7 @@ CATEGORY_MAP = {
     "factory": ["Tech combine", "Tech hangar A"],
     "comms": ["TV tower", "Comms tower M"],
     "oil": ["Oil platform"],
+    "derrick": ["Oil derrick", "Pump station", "Subsidiary structure 2"],
 }
 
 
