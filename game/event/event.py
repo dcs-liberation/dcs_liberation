@@ -222,13 +222,13 @@ class Event:
 
                         if cp.captured and new_owner_coalition != coalition:
                             cp.captured = False
-                            info = Information(cp.name + " captured !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
+                            info = Information(cp.name + " lost !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
                             self.game.informations.append(info)
                             pname = self.game.enemy_name
                             captured_cps.append(cp)
                         elif not(cp.captured) and new_owner_coalition == coalition:
                             cp.captured = True
-                            info = Information(cp.name + " lost !", "We took control of " + cp.name + "! Great job !", self.game.turn)
+                            info = Information(cp.name + " captured !", "We took control of " + cp.name + "! Great job !", self.game.turn)
                             self.game.informations.append(info)
                             pname = self.game.player_name
                             captured_cps.append(cp)
@@ -363,7 +363,7 @@ class Event:
 
                 if total_units_redeployed > 0:
                     info = Information("Units redeployed", "", self.game.turn)
-                    info.text = str(total_units_redeployed) + " have been redeployed from " + ally_cp.name + " to " + cp.name
+                    info.text = str(total_units_redeployed) + " units have been redeployed from " + ally_cp.name + " to " + cp.name
                     self.game.informations.append(info)
                     logging.info(info.text)
 
