@@ -33,7 +33,7 @@ CATEGORY_MAP = {
     "CARRIER": ["CARRIER"],
     "LHA": ["LHA"],
     "aa": ["AA"],
-    "power": ["Workshop A", "Electric power box", "Garage small A"],
+    "power": ["Workshop A", "Electric power box", "Garage small A", "Farm B", "Repair workshop", "Garage B"],
     "warehouse": ["Warehouse", "Hangar A"],
     "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
     "ammo": [".Ammunition depot", "Hangar B"],
