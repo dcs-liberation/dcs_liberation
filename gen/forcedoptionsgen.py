@@ -22,14 +22,21 @@ class ForcedOptionsGenerator:
         self.game = game
 
     def _set_options_view(self):
-        if self.game.settings.map_coalition_visibility == "All Units":
+
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.All:
             self.mission.forced_options.options_view = ForcedOptions.Views.All
-        elif self.game.settings.map_coalition_visibility == "Allied Units":
+        elif self.game.settings.map_coalition_visibility == ForcedOptions.Views.Allies:
             self.mission.forced_options.options_view = ForcedOptions.Views.Allies
-        elif self.game.settings.map_coalition_visibility == "Own Aircraft":
+        elif self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyAllies:
+            self.mission.forced_options.options_view = ForcedOptions.Views.OnlyAllies
+        elif self.game.settings.map_coalition_visibility == ForcedOptions.Views.MyAircraft:
             self.mission.forced_options.options_view = ForcedOptions.Views.MyAircraft
-        elif self.game.settings.map_coalition_visibility == "None":
+        elif self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
             self.mission.forced_options.options_view = ForcedOptions.Views.OnlyMap
+
+    def _set_external_views(self):
+        if not self.game.settings.external_views_allowed:
+            self.mission.forced_options.external_views = self.game.settings.external_views_allowed
 
     def _set_labels(self):
         if self.game.settings.labels == "Abbreviated":
@@ -41,5 +48,8 @@ class ForcedOptionsGenerator:
 
     def generate(self):
         self._set_options_view()
+        self._set_external_views()
         self._set_labels()
+
+
         

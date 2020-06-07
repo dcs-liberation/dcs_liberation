@@ -156,11 +156,7 @@ class Operation:
             cp = self.conflict.from_cp
         else:
             cp = self.conflict.to_cp
-
-        self.triggersgen.generate(player_cp=cp,
-                                  is_quick=False,
-                                  activation_trigger_radius=self.trigger_radius,
-                                  awacs_enabled=self.is_awacs_enabled)
+        self.triggersgen.generate()
 
         # env settings
         if self.environment_settings is None:

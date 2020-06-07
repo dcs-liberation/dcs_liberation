@@ -2,6 +2,7 @@ from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
     QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout
+from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
@@ -118,6 +119,32 @@ class QSettingsWindow(QDialog):
         self.difficultyLayout.addWidget(QLabel("No night missions"), 4, 0)
         self.difficultyLayout.addWidget(self.noNightMission, 4, 1, Qt.AlignRight)
 
+        self.mapVisibiitySelection = QComboBox()
+        self.mapVisibiitySelection.addItem("All", ForcedOptions.Views.All)
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.All:
+            self.mapVisibiitySelection.setCurrentIndex(0)
+        self.mapVisibiitySelection.addItem("Fog of War", ForcedOptions.Views.Allies)
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.Allies:
+            self.mapVisibiitySelection.setCurrentIndex(1)
+        self.mapVisibiitySelection.addItem("Allies Only", ForcedOptions.Views.OnlyAllies)
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyAllies:
+            self.mapVisibiitySelection.setCurrentIndex(2)
+        self.mapVisibiitySelection.addItem("Own Aircraft Only", ForcedOptions.Views.MyAircraft)
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.MyAircraft:
+            self.mapVisibiitySelection.setCurrentIndex(3)
+        self.mapVisibiitySelection.addItem("Map Only", ForcedOptions.Views.OnlyMap)
+        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
+            self.mapVisibiitySelection.setCurrentIndex(4)
+        self.mapVisibiitySelection.currentIndexChanged.connect(self.applySettings)
+        self.difficultyLayout.addWidget(QLabel("Map visibility options"), 5, 0)
+        self.difficultyLayout.addWidget(self.mapVisibiitySelection, 5, 1, Qt.AlignRight)
+
+        self.ext_views = QCheckBox()
+        self.ext_views.setChecked(self.game.settings.external_views_allowed)
+        self.ext_views.toggled.connect(self.applySettings)
+        self.difficultyLayout.addWidget(QLabel("Allow external views"), 6, 0)
+        self.difficultyLayout.addWidget(self.ext_views, 6, 1, Qt.AlignRight)
+
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()
@@ -134,8 +161,14 @@ class QSettingsWindow(QDialog):
         self.supercarrier.setChecked(self.game.settings.supercarrier)
         self.supercarrier.toggled.connect(self.applySettings)
 
+        self.generate_marks = QCheckBox()
+        self.generate_marks.setChecked(self.game.settings.generate_marks)
+        self.generate_marks.toggled.connect(self.applySettings)
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
+        self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout();
@@ -229,6 +262,12 @@ class QSettingsWindow(QDialog):
         self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
         self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
         self.game.settings.night_disabled = self.noNightMission.isChecked()
+        self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
+        self.game.settings.external_views_allowed = self.ext_views.isChecked()
+        self.game.settings.generate_marks = self.generate_marks.isChecked()
+
+        print(self.game.settings.map_coalition_visibility)
+
         self.game.settings.supercarrier = self.supercarrier.isChecked()
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()

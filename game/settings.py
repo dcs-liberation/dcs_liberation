@@ -9,8 +9,10 @@ class Settings:
     labels = "Full"
     only_player_takeoff = True  # Legacy parameter do not use
     night_disabled = False
+    external_views_allowed = True
     supercarrier = False
     multiplier = 1
+    generate_marks = True
     sams = True # Legacy parameter do not use
     cold_start = False # Legacy parameter do not use
     version = None

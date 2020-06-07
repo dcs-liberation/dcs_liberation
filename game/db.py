@@ -595,7 +595,7 @@ CARRIER_TAKEOFF_BAN = [
 ]
 
 """
-Units separated by country. Currently only Russia and USA are supported. 
+Units separated by country. 
 country : DCS Country name
 """
 FACTIONS = {
