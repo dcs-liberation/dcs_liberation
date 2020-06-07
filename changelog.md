@@ -15,6 +15,7 @@
 * **[Info Panel]** Added information about units destroyed outside the frontline in the debriefing window
 * **[Info Panel]** Added information about buildings destroyed in the debriefing window
 * **[Map]** Tooltip now contains the list of building for Strike targets on the map
+* **[Map]** Added "Oil derrick" building
 * **[Misc]** Made it possible to setup DCS Saved Games directory and DCS installation directory manually
 
 ##Fixed issues :
