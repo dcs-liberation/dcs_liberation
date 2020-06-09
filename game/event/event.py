@@ -320,7 +320,7 @@ class Event:
                     enemy_cp.base.affect_strength(delta)
                     cp.base.affect_strength(-delta)
                     info = Information("Frontline Report",
-                                       "Our ground forces from " + cp.name + " are losing ground against the enemy forces from" + enemy_cp.name,
+                                       "Our ground forces from " + cp.name + " are losing ground against the enemy forces from " + enemy_cp.name,
                                        self.game.turn)
                     self.game.informations.append(info)
 

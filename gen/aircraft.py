@@ -258,7 +258,7 @@ class AircraftConflictGenerator:
     def setup_group_activation_trigger(self, flight, group):
         if flight.scheduled_in > 0 and flight.client_count == 0:
 
-            if flight.start_type != "In Flight":
+            if flight.start_type != "In Flight" and flight.from_cp.cptype not in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
                 group.late_activation = False
                 group.uncontrolled = True
 
@@ -402,11 +402,15 @@ class AircraftConflictGenerator:
                 elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
                     pt.type = "Land"
                 elif point.waypoint_type == FlightWaypointType.INGRESS_STRIKE:
-                    print("TGTS :")
-                    print(point.targets)
                     for j, t in enumerate(point.targets):
                         print(t.position)
                         pt.tasks.append(Bombing(t.position))
+                        if group.units[0].unit_type == JF_17 and j < 4:
+                            group.add_nav_target_point(t.position, "PP" + str(j + 1))
+                        if group.units[0].unit_type == F_14B and j == 0:
+                            group.add_nav_target_point(t.position, "ST")
+                elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
+                    for j, t in enumerate(point.targets):
                         if group.units[0].unit_type == JF_17 and j < 4:
                             group.add_nav_target_point(t.position, "PP" + str(j + 1))
                         if group.units[0].unit_type == F_14B and j == 0:

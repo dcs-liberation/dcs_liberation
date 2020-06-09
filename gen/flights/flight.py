@@ -46,6 +46,18 @@ class FlightWaypointType(Enum):
     TARGET_POINT = 12       # A target building or static object, position
     TARGET_GROUP_LOC = 13   # A target group approximate location
     TARGET_SHIP = 14        # A target ship known location
+    CUSTOM = 15             # User waypoint (no specific behaviour)
+
+
+class PredefinedWaypointCategory(Enum):
+    NOT_PREDEFINED = 0
+    ALLY_CP = 1
+    ENEMY_CP = 2
+    FRONTLINE = 3
+    ENEMY_BUILDING = 4
+    ENEMY_UNIT = 5
+    ALLY_BUILDING = 6
+    ALLY_UNIT = 7
 
 
 class FlightWaypoint:
@@ -61,7 +73,9 @@ class FlightWaypoint:
         self.obj_name = ""
         self.pretty_name = ""
         self.waypoint_type = FlightWaypointType.TAKEOFF  # type: FlightWaypointType
+        self.category = PredefinedWaypointCategory.NOT_PREDEFINED# type: PredefinedWaypointCategory
         self.only_for_player = False
+        self.data = None
 
 
 class Flight:

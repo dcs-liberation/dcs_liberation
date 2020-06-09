@@ -1,13 +1,11 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QGridLayout, QLabel, QComboBox, QHBoxLayout, QVBoxLayout, QPushButton, QCheckBox
-from dcs import Point
+from PySide2.QtWidgets import QDialog, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QCheckBox
 
 from game import Game
-from gen.flights.flight import Flight, FlightWaypoint
+from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.widgets.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
+from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import QFlightWaypointInfoBox
-from theater import ControlPointType
 
 PREDEFINED_WAYPOINT_CATEGORIES = [
     "Frontline (CAS AREA)",
