@@ -1,10 +1,11 @@
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
+from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 
 from game import Game
 from gen.flights.ai_flight_planner import meter_to_nm
 from gen.flights.flight import Flight
 from qt_ui.widgets.combos.QSEADTargetSelectionComboBox import QSEADTargetSelectionComboBox
+from qt_ui.widgets.views.QSeadTargetInfoView import QSeadTargetInfoView
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
 
 
@@ -20,14 +21,17 @@ class QSEADMissionGenerator(QAbstractMissionGenerator):
         self.distanceToTargetLabel = QLabel("0 nm")
         self.threatRangeLabel = QLabel("0 nm")
         self.detectionRangeLabel = QLabel("0 nm")
+        self.seadTargetInfoView = QSeadTargetInfoView(None)
         self.init_ui()
         self.on_selected_target_changed()
 
     def on_selected_target_changed(self):
         target = self.tgt_selection_box.get_selected_target()
-        self.distanceToTargetLabel.setText("~" + str(meter_to_nm(self.flight.from_cp.position.distance_to_point(target.location.position))) + " nm")
-        self.threatRangeLabel.setText(str(meter_to_nm(target.threat_range)) + " nm")
-        self.detectionRangeLabel.setText(str(meter_to_nm(target.detection_range)) + " nm")
+        if target is not None:
+            self.distanceToTargetLabel.setText("~" + str(meter_to_nm(self.flight.from_cp.position.distance_to_point(target.location.position))) + " nm")
+            self.threatRangeLabel.setText(str(meter_to_nm(target.threat_range)) + " nm")
+            self.detectionRangeLabel.setText(str(meter_to_nm(target.detection_range)) + " nm")
+            self.seadTargetInfoView.setTarget(target)
 
     def init_ui(self):
         layout = QVBoxLayout()
@@ -36,6 +40,9 @@ class QSEADMissionGenerator(QAbstractMissionGenerator):
         wpt_layout.addWidget(QLabel("SEAD/DEAD target : "))
         wpt_layout.addStretch()
         wpt_layout.addWidget(self.tgt_selection_box, alignment=Qt.AlignRight)
+
+        distThreatBox = QGroupBox("Infos :")
+        threatLayout = QVBoxLayout()
 
         distToTarget = QHBoxLayout()
         distToTarget.addWidget(QLabel("Distance to site : "))
@@ -52,10 +59,14 @@ class QSEADMissionGenerator(QAbstractMissionGenerator):
         detectionRangeLayout.addStretch()
         detectionRangeLayout.addWidget(self.detectionRangeLabel, alignment=Qt.AlignRight)
 
+        threatLayout.addLayout(distToTarget)
+        threatLayout.addLayout(threatRangeLayout)
+        threatLayout.addLayout(detectionRangeLayout)
+        distThreatBox.setLayout(threatLayout)
+
         layout.addLayout(wpt_layout)
-        layout.addLayout(distToTarget)
-        layout.addLayout(threatRangeLayout)
-        layout.addLayout(detectionRangeLayout)
+        layout.addWidget(self.seadTargetInfoView)
+        layout.addWidget(distThreatBox)
         layout.addStretch()
         layout.addWidget(self.ok_button)
 

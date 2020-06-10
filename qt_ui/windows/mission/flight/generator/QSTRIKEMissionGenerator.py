@@ -1,10 +1,11 @@
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
+from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 
 from game import Game
 from gen.flights.ai_flight_planner import meter_to_nm
 from gen.flights.flight import Flight
 from qt_ui.widgets.combos.QStrikeTargetSelectionComboBox import QStrikeTargetSelectionComboBox
+from qt_ui.widgets.views.QStrikeTargetInfoView import QStrikeTargetInfoView
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
 
 
@@ -17,13 +18,16 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
         self.tgt_selection_box.setMinimumWidth(200)
         self.tgt_selection_box.currentTextChanged.connect(self.on_selected_target_changed)
 
+
         self.distanceToTargetLabel = QLabel("0 nm")
+        self.strike_infos = QStrikeTargetInfoView(None)
         self.init_ui()
         self.on_selected_target_changed()
 
     def on_selected_target_changed(self):
         target = self.tgt_selection_box.get_selected_target()
         self.distanceToTargetLabel.setText("~" + str(meter_to_nm(self.flight.from_cp.position.distance_to_point(target.location.position))) + " nm")
+        self.strike_infos.setTarget(target)
 
     def init_ui(self):
         layout = QVBoxLayout()
@@ -33,13 +37,16 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
         wpt_layout.addStretch()
         wpt_layout.addWidget(self.tgt_selection_box, alignment=Qt.AlignRight)
 
+        distToTargetBox = QGroupBox("Infos :")
         distToTarget = QHBoxLayout()
         distToTarget.addWidget(QLabel("Distance to target : "))
         distToTarget.addStretch()
         distToTarget.addWidget(self.distanceToTargetLabel, alignment=Qt.AlignRight)
+        distToTargetBox.setLayout(distToTarget)
 
         layout.addLayout(wpt_layout)
-        layout.addLayout(distToTarget)
+        layout.addWidget(self.strike_infos)
+        layout.addWidget(distToTargetBox)
         layout.addStretch()
         layout.addWidget(self.ok_button)
 
@@ -47,10 +54,10 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
 
     def apply(self):
         self.flight.points = []
-        # target = self.tgt_selection_box.get_selected_target()
-        # self.planner.generate_sead(self.flight, target.location, target.radars)
-        # self.flight_waypoint_list.update_list()
-        # self.close()
+        target = self.tgt_selection_box.get_selected_target()
+        self.planner.generate_strike(self.flight, target.location)
+        self.flight_waypoint_list.update_list()
+        self.close()
 
 
 

@@ -1,11 +1,9 @@
-from PySide2.QtCore import QSortFilterProxyModel, Qt, QModelIndex
 from PySide2.QtGui import QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import QComboBox, QCompleter
+
 from game import Game
-from gen import Conflict, FlightWaypointType, db
-from gen.flights.flight import FlightWaypoint, PredefinedWaypointCategory
+from game.data.radar_db import UNITS_WITH_RADAR
+from gen import db
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
-from theater import ControlPointType
 
 
 class SEADTargetInfo:
@@ -24,7 +22,7 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
         self.game = game
         self.find_possible_sead_targets()
 
-    def get_selected_target(self):
+    def get_selected_target(self) -> SEADTargetInfo:
         n = self.currentText()
         for target in self.targets:
             if target.name == n:
@@ -53,10 +51,13 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
                     for group in g.groups:
                         for u in group.units:
                             utype = db.unit_type_from_name(u.type)
-                            if hasattr(utype, "detection_range") and utype.detection_range > 1000:
-                                if utype.detection_range > detection_range:
-                                    detection_range = utype.detection_range
+
+                            if utype in UNITS_WITH_RADAR:
+                                if hasattr(utype, "detection_range") and utype.detection_range > 1000:
+                                    if utype.detection_range > detection_range:
+                                        detection_range = utype.detection_range
                                 radars.append(u)
+
                             if hasattr(utype, "threat_range"):
                                 if utype.threat_range > threat_range:
                                     threat_range = utype.threat_range

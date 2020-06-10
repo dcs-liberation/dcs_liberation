@@ -1,5 +1,5 @@
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
+from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 from dcs import Point
 
 from game import Game
@@ -31,8 +31,6 @@ class QCASMissionGenerator(QAbstractMissionGenerator):
         else:
             self.distanceToTargetLabel.setText("??? nm")
 
-
-
     def init_ui(self):
         layout = QVBoxLayout()
 
@@ -41,14 +39,16 @@ class QCASMissionGenerator(QAbstractMissionGenerator):
         wpt_layout.addWidget(self.wpt_selection_box)
         wpt_layout.addStretch()
 
+        distToTargetBox = QGroupBox("Infos :")
         distToTarget = QHBoxLayout()
         distToTarget.addWidget(QLabel("Distance to target : "))
         distToTarget.addStretch()
         distToTarget.addWidget(self.distanceToTargetLabel, alignment=Qt.AlignRight)
+        distToTargetBox.setLayout(distToTarget)
 
         layout.addLayout(wpt_layout)
         layout.addWidget(self.wpt_info)
-        layout.addLayout(distToTarget)
+        layout.addWidget(distToTargetBox)
         layout.addStretch()
         layout.addWidget(self.ok_button)
 

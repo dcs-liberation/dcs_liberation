@@ -9,6 +9,7 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.data.radar_db import UNITS_WITH_RADAR
 from game.event import UnitsDeliveryEvent, Event, ControlPointType
 from gen import Conflict
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
@@ -96,13 +97,16 @@ class QLiberationMap(QGraphicsView):
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0
+                    has_radar = False
                     if ground_object.groups:
                         for g in ground_object.groups:
                             for u in g.units:
                                 unit = db.unit_type_from_name(u.type)
+                                if unit in UNITS_WITH_RADAR:
+                                    has_radar = True
                                 if unit.threat_range > max_range:
                                     max_range = unit.threat_range
-                    if max_range >= 6000:
+                    if has_radar:
                         scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
                 added_objects.append(ground_object.obj_name)
 

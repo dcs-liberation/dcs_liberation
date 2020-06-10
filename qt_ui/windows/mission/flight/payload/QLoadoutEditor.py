@@ -16,7 +16,8 @@ class QLoadoutEditor(QGroupBox):
 
         self.toggled.connect(self.on_toggle)
 
-        layout = QGridLayout()
+        hboxLayout = QVBoxLayout(self)
+        layout = QGridLayout(self)
 
         pylons = [v for v in self.flight.unit_type.__dict__.values() if inspect.isclass(v) and v.__name__.startswith("Pylon")]
         for i, pylon in enumerate(pylons):
@@ -25,7 +26,9 @@ class QLoadoutEditor(QGroupBox):
             layout.addWidget(label, i, 0)
             layout.addWidget(QPylonEditor(flight, pylon, i+1), i, 1)
 
-        self.setLayout(layout)
+        hboxLayout.addLayout(layout)
+        hboxLayout.addStretch()
+        self.setLayout(hboxLayout)
 
     def on_toggle(self):
         self.flight.use_custom_loadout = self.isChecked()

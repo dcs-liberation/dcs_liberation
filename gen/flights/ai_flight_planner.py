@@ -1,6 +1,5 @@
 import math
 import operator
-import typing
 import random
 
 from game import db
@@ -414,8 +413,8 @@ class FlightPlanner:
                         continue
 
                     point = FlightWaypoint(building.position.x, building.position.y, 0)
-                    point.description = "STRIKE on " + building.obj_name + " " + str(building.category)
-                    point.pretty_name = "STRIKE on " + building.obj_name + " " + str(building.category)
+                    point.description = "STRIKE on " + building.obj_name + " " + building.category + " [" + str(building.dcs_identifier) + " ]"
+                    point.pretty_name = "STRIKE on " + building.obj_name + " " + building.category + " [" + str(building.dcs_identifier) + " ]"
                     point.name = building.obj_name
                     point.only_for_player = True
                     ingress_point.targets.append(building)

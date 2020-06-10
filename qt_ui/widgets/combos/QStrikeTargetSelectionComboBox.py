@@ -20,7 +20,12 @@ class QStrikeTargetSelectionComboBox(QFilteredComboBox):
         self.game = game
         self.find_possible_strike_targets()
 
-    def get_selected_target(self):
+
+        for t in self.targets:
+            print(t.name + " - " + str(len(t.units)) + " " + str(len(t.buildings)))
+
+
+    def get_selected_target(self) -> StrikeTargetInfo:
         n = self.currentText()
         for target in self.targets:
             if target.name == n:

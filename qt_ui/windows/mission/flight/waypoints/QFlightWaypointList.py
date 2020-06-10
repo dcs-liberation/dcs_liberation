@@ -1,17 +1,19 @@
-from PySide2.QtCore import QItemSelectionModel, QPoint
+from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
 from PySide2.QtGui import QStandardItemModel
-from PySide2.QtWidgets import QListView
+from PySide2.QtWidgets import QListView, QTableView, QHeaderView
 
 from gen.flights.flight import Flight, FlightWaypoint
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
 
 
-class QFlightWaypointList(QListView):
+class QFlightWaypointList(QTableView):
 
     def __init__(self, flight: Flight):
         super(QFlightWaypointList, self).__init__()
         self.model = QStandardItemModel(self)
         self.setModel(self.model)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.model.setHorizontalHeaderLabels(["Name"])
         self.flight = flight
 
         if len(self.flight.points) > 0:
