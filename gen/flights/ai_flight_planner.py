@@ -460,11 +460,11 @@ class FlightPlanner:
             orbit0p = loc.position.point_from_heading(hdg - 90, radius)
             orbit1p = loc.position.point_from_heading(hdg + 90, radius)
         else:
-            loc = for_cp.position.point_from_heading(random.randint(0, 360),random.randint(nm_to_meter(10), nm_to_meter(40)))
-            hdg = for_cp.position.heading_between_point(loc.position)
+            loc = for_cp.position.point_from_heading(random.randint(0, 360), random.randint(nm_to_meter(10), nm_to_meter(40)))
+            hdg = for_cp.position.heading_between_point(loc)
             radius = nm_to_meter(random.randint(15, 40))
-            orbit0p = loc.position.point_from_heading(hdg - 90, radius)
-            orbit1p = loc.position.point_from_heading(hdg + 90, radius)
+            orbit0p = loc.point_from_heading(hdg - 90, radius)
+            orbit1p = loc.point_from_heading(hdg + 90, radius)
 
         # Create points
         ascend = self.generate_ascend_point(flight.from_cp)

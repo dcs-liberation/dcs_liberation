@@ -41,6 +41,7 @@ class QLiberationMap(QGraphicsView):
         self.setMinimumSize(800,600)
         self.setMaximumHeight(2160)
         self._zoom = 0
+        self.factor = 1
         self.init_scene()
         self.connectSignals()
         self.setGame(game)
@@ -221,6 +222,7 @@ class QLiberationMap(QGraphicsView):
             self.scale(factor, factor)
         else:
             self._zoom = -5
+
 
     def _transform_point(self, p: Point, treshold=30) -> (int, int):
         point_a = list(self.game.theater.reference_points.keys())[0]

@@ -2,6 +2,8 @@ from dcs.planes import *
 from dcs.ships import *
 from dcs.vehicles import *
 
+from game.data.building_data import WW2_ALLIES_BUILDINGS
+
 USA_1944 = {
     "country": "USA",
     "side": "blue",
@@ -36,5 +38,5 @@ USA_1944 = {
         AirDefence.AAA_Bofors_40mm,
     ], "shorad":[
         AirDefence.AAA_Bofors_40mm,
-    ]
+    ], "objects": WW2_ALLIES_BUILDINGS
 }

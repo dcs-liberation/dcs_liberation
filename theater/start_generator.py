@@ -4,6 +4,7 @@ import random
 import typing
 import logging
 
+from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
 from gen import namegen
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group
@@ -74,7 +75,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
         if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             # Create ground object group
             group_id = group_id + 1
-            g = TheaterGroundObject()
+            g = TheaterGroundObject("CARRIER")
             g.group_id = group_id
             g.object_id = 0
             g.cp_id = cp.id
@@ -94,7 +95,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
         elif cp.cptype == ControlPointType.LHA_GROUP:
             # Create ground object group
             group_id = group_id + 1
-            g = TheaterGroundObject()
+            g = TheaterGroundObject("LHA")
             g.group_id = group_id
             g.object_id = 0
             g.cp_id = cp.id
@@ -125,7 +126,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
                 group_id = group_id + 1
 
-                g = TheaterGroundObject()
+                g = TheaterGroundObject("aa")
                 g.group_id = group_id
                 g.object_id = 0
                 g.cp_id = cp.id
@@ -235,10 +236,22 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
     if cp.is_global:
         return False
 
+    if cp.captured:
+        faction = game.player_name
+    else:
+        faction = game.enemy_name
+    faction_data = db.FACTIONS[faction]
+
+    available_categories = DEFAULT_AVAILABLE_BUILDINGS
+    if "objects" in faction_data.keys():
+        available_categories = faction_data["objects"]
+
+    if len(available_categories) == 0:
+        return False
+
     amount = random.randrange(3, 8)
     for i in range(0, amount):
 
-        available_categories = list(templates)
         obj_name = namegen.random_objective_name()
 
         if i >= amount - 1:
@@ -264,7 +277,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
         for object in tpl:
             object_id += 1
 
-            g = TheaterGroundObject()
+            g = TheaterGroundObject(tpl_category)
             g.group_id = group_id
             g.object_id = object_id
             g.cp_id = cp.id
@@ -276,10 +289,6 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
             g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
 
             if g.dcs_identifier == "AA":
-                if cp.captured:
-                    faction = game.player_name
-                else:
-                    faction = game.enemy_name
                 g.groups = []
                 group = generate_anti_air_group(game, cp, g, faction)
                 if group is not None:

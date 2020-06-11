@@ -1,6 +1,7 @@
 import logging
 
 from game import db
+from game.data.building_data import FORTIFICATION_UNITS_ID, FORTIFICATION_UNITS
 from game.db import unit_type_from_name
 from .conflictgen import *
 from .naming import *
@@ -49,9 +50,6 @@ class GroundObjectsGenerator:
             cp = self.conflict.to_cp
         else:
             cp = self.conflict.from_cp
-
-        consumed_farps = set()
-
 
         for cp in self.game.theater.controlpoints:
 
@@ -113,25 +111,42 @@ class GroundObjectsGenerator:
                                 sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
 
                 else:
+                    static_type = None
                     if ground_object.dcs_identifier in warehouse_map:
                         static_type = warehouse_map[ground_object.dcs_identifier]
-                    else:
+                    elif ground_object.dcs_identifier in fortification_map:
                         static_type = fortification_map[ground_object.dcs_identifier]
-
-                    if not static_type:
+                    elif ground_object.dcs_identifier in FORTIFICATION_UNITS_ID:
+                        for f in FORTIFICATION_UNITS:
+                            if f.id == ground_object.dcs_identifier:
+                                unit_type = f
+                                break
+                    else:
                         print("Didn't find {} in static _map(s)!".format(ground_object.dcs_identifier))
                         continue
 
-                    group = self.m.static_group(
-                        country=side,
-                        name=ground_object.string_identifier,
-                        _type=static_type,
-                        position=ground_object.position,
-                        heading=ground_object.heading,
-                        dead=ground_object.is_dead,
-                    )
+                    if static_type is None:
+                        if not ground_object.is_dead:
+                            group = self.m.vehicle_group(
+                                country=side,
+                                name=ground_object.string_identifier,
+                                _type=unit_type,
+                                position=ground_object.position,
+                                heading=ground_object.heading,
+                            )
+                            logging.info("generated {}object identifier {} with mission id {}".format(
+                                "dead " if ground_object.is_dead else "", group.name, group.id))
+                    else:
+                        group = self.m.static_group(
+                            country=side,
+                            name=ground_object.string_identifier,
+                            _type=static_type,
+                            position=ground_object.position,
+                            heading=ground_object.heading,
+                            dead=ground_object.is_dead,
+                        )
 
-                    logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
+                        logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
 
 
 def farp_aa(mission_obj, country, name, position: mapping.Point):

@@ -1,19 +1,15 @@
 import pickle
-import typing
 
-from dcs.mission import Mission
-from dcs.mapping import Point
-from dcs.terrain import *
-from dcs.unitgroup import VehicleGroup, StaticGroup
 from dcs import vehicles
+from dcs.mapping import Point
+from dcs.mission import Mission
+from dcs.terrain import *
 from dcs.unit import *
-from dcs.statics import warehouse_map, fortification_map
 
-from game import db
 from gen.groundobjectsgen import TheaterGroundObject
 from theater.caucasus import CaucasusTheater
-from theater.persiangulf import PersianGulfTheater
 from theater.nevada import NevadaTheater
+from theater.persiangulf import PersianGulfTheater
 
 m = Mission()
 m.load_file("resources/tools/cau_groundobjects.miz")

@@ -13,7 +13,7 @@ def load_templates():
 
     groups = {}  # type: typing.Dict[str, typing.Dict[int, typing.List[Static]]]
 
-    for static_group in temp_mis.country("USA").static_group:
+    for static_group in temp_mis.country("USA").static_group + temp_mis.country("USAF Aggressors").static_group:
         for static in static_group.units:
             static_name = str(static.name).split()[0]
             tpl_name, tpl_idx = static_name[:-1], int(static_name[-1])

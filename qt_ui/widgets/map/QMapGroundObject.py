@@ -17,7 +17,7 @@ class QMapGroundObject(QGraphicsRectItem):
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
         self.buildings = buildings
-        #self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+        self.setFlag(QGraphicsItem.ItemIgnoresTransformations, False)
 
         if len(self.model.groups) > 0:
             units = {}

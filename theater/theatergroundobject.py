@@ -1,19 +1,20 @@
-import typing
-
 from dcs.mapping import Point
-from dcs.statics import *
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
     "ammo": "Ammo depot",
     "fuel": "Fuel depot",
     "aa": "AA Defense Site",
-    "warehouse": "Warehouse",
+    "ware": "Warehouse",
     "farp": "FARP",
     "fob": "FOB",
     "factory": "Factory",
     "comms": "Comms. tower",
-    "oil": "Oil platform"
+    "oil": "Oil platform",
+    "derrick": "Derrick",
+    "ww2bunker": "Bunker",
+    "village": "Village",
+    "allycamp": "Camp"
 }
 
 ABBREV_NAME = {
@@ -21,22 +22,28 @@ ABBREV_NAME = {
     "ammo": "AMMO",
     "fuel": "FUEL",
     "aa": "AA",
-    "warehouse": "WARE",
+    "ware": "WARE",
     "farp": "FARP",
     "fob": "FOB",
     "factory": "FACTORY",
     "comms": "COMMST",
-    "oil": "OILP"
+    "oil": "OILP",
+    "derrick": "DERK",
+    "ww2bunker": "BUNK",
+    "village": "VLG",
+    "allycamp": "CMP",
 }
 
 CATEGORY_MAP = {
+
     # Special cases
     "CARRIER": ["CARRIER"],
     "LHA": ["LHA"],
     "aa": ["AA"],
+
     # Buildings
     "power": ["Workshop A", "Electric power box", "Garage small A", "Farm B", "Repair workshop", "Garage B"],
-    "warehouse": ["Warehouse", "Hangar A"],
+    "ware": ["Warehouse", "Hangar A"],
     "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
     "ammo": [".Ammunition depot", "Hangar B"],
     "farp": ["FARP Tent", "FARP Ammo Dump Coating", "FARP Fuel Depot", "FARP Command Post", "FARP CP Blindage"],
@@ -45,6 +52,9 @@ CATEGORY_MAP = {
     "comms": ["TV tower", "Comms tower M"],
     "oil": ["Oil platform"],
     "derrick": ["Oil derrick", "Pump station", "Subsidiary structure 2"],
+    "ww2bunker": ["Siegfried Line", "Fire Control Bunker", "SK_C_28_naval_gun", "Concertina Wire", "Czech hedgehogs 1"],
+    "village": ["Small house 1B", "Small House 1A", "Small warehouse 1"],
+    "allycamp": [],
 }
 
 
@@ -60,12 +70,8 @@ class TheaterGroundObject:
     groups = []
     obj_name = ""
 
-    @property
-    def category(self) -> str:
-        for k, v in CATEGORY_MAP.items():
-            if self.dcs_identifier in v:
-                return k
-        assert False, "Identifier not found in mapping: {}".format(self.dcs_identifier)
+    def __init__(self, category: str):
+        self.category = category
 
     @property
     def string_identifier(self):

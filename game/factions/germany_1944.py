@@ -1,6 +1,8 @@
 from dcs.planes import *
 from dcs.vehicles import *
 
+from game.data.building_data import WW2_GERMANY_BUILDINGS
+
 Germany_1944 = {
     "country": "Third Reich",
     "side": "red",
@@ -32,5 +34,9 @@ Germany_1944 = {
     ],
     "shorad":[
         AirDefence.AAA_8_8cm_Flak_36,
-    ]
+    ],
+    "objects": WW2_GERMANY_BUILDINGS,
+    "doctrine": {
+        # TODO
+    }
 }
