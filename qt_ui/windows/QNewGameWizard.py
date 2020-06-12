@@ -8,7 +8,7 @@ from dcs.task import CAP, CAS
 import qt_ui.uiconstants as CONST
 from game import db, Game
 from gen import namegen
-from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy
+from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
 from userdata.logging import version_string
 
 
@@ -41,6 +41,8 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainCaucasusNorth= self.field("isTerrainCaucasusNorth")
         isIranianCampaignTheater = self.field("isIranianCampaignTheater")
         isTerrainNormandy = self.field("isTerrainNormandy")
+        isTerrainNormandySmall = self.field("isTerrainNormandySmall")
+        isTerrainChannel = self.field("isTerrainChannel")
         isTerrainEmirates = self.field("isTerrainEmirates")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -65,6 +67,10 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = persiangulf.Emirates()
         elif isTerrainNormandy:
             conflicttheater = normandy.NormandyTheater()
+        elif isTerrainNormandySmall:
+            conflicttheater = normandy.NormandySmall()
+        elif isTerrainChannel:
+            conflicttheater = thechannel.ChannelTheater()
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
@@ -238,8 +244,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainEmirates.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
         terrainNttr = QtWidgets.QRadioButton("Nevada - North Nevada [RECOMMENDED]")
         terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
-        terrainNormandy = QtWidgets.QRadioButton("Normandy [Alpha]")
+        terrainNormandy = QtWidgets.QRadioButton("Normandy")
         terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
+        terrainNormandySmall = QtWidgets.QRadioButton("Normandy Small")
+        terrainNormandySmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
+        terrainChannel = QtWidgets.QRadioButton("Channel")
+        terrainChannel.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
         terrainCaucasusSmall.setChecked(True)
 
         # Time Period
@@ -261,6 +271,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.registerField('isTerrainEmirates', terrainEmirates)
         self.registerField('isTerrainNttr', terrainNttr)
         self.registerField('isTerrainNormandy', terrainNormandy)
+        self.registerField('isTerrainNormandySmall', terrainNormandySmall)
+        self.registerField('isTerrainChannel', terrainChannel)
         self.registerField('timePeriod', timePeriodSelect)
 
         # Build layout
@@ -274,6 +286,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroupLayout.addWidget(terrainPg)
         terrainGroupLayout.addWidget(terrainNttr)
         terrainGroupLayout.addWidget(terrainNormandy)
+        terrainGroupLayout.addWidget(terrainNormandySmall)
+        terrainGroupLayout.addWidget(terrainChannel)
         terrainGroup.setLayout(terrainGroupLayout)
 
         timeGroupLayout = QtWidgets.QGridLayout()

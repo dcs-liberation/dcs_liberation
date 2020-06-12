@@ -1,6 +1,7 @@
 import typing
 from typing import Dict
 
+from PySide2 import QtCore
 from PySide2.QtCore import Qt, QRect, QPointF
 from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
 from PySide2.QtWidgets import QGraphicsView, QFrame, QGraphicsOpacityEffect
@@ -64,12 +65,60 @@ class QLiberationMap(QGraphicsView):
         if self.game is not None:
             self.reload_scene()
 
+
+
+    """
+    
+    Uncomment to set up theather reference points
+    
+    def keyPressEvent(self, event):
+        #super(QLiberationMap, self).keyPressEvent(event)
+
+        numpad_mod = int(event.modifiers()) & QtCore.Qt.KeypadModifier
+        i = 0
+        for k,v in self.game.theater.reference_points.items():
+            if i == 0:
+                point_0 = k
+            else:
+                point_1 = k
+            i = i + 1
+
+        if event.key() == QtCore.Qt.Key_Down:
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 100, self.game.theater.reference_points[point_0][1]
+        if event.key() == QtCore.Qt.Key_Up:
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 100, self.game.theater.reference_points[point_0][1]
+        if event.key() == QtCore.Qt.Key_Left:
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 100
+        if event.key() == QtCore.Qt.Key_Right:
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 100
+
+
+        if event.key() == QtCore.Qt.Key_2 and numpad_mod:
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 100, self.game.theater.reference_points[point_1][1]
+        if event.key() == QtCore.Qt.Key_8 and numpad_mod:
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 100, self.game.theater.reference_points[point_1][1]
+        if event.key() == QtCore.Qt.Key_4 and numpad_mod:
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 100
+        if event.key() == QtCore.Qt.Key_6 and numpad_mod:
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 100
+
+        print(self.game.theater.reference_points)
+        self.reload_scene()
+    """
+
+
+
     def reload_scene(self):
         scene = self.scene()
         scene.clear()
 
         self.addBackground()
-        #self.add_game_events()
+
+        # Uncomment below to help set up theater reference points
+        #for i, r in enumerate(self.game.theater.reference_points.items()):
+        #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+        #    text.setPos(0, i * 24)
+
 
         for cp in self.game.theater.controlpoints:
         
@@ -251,56 +300,6 @@ class QLiberationMap(QGraphicsView):
         #Y += 5
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
-
-    def add_game_events(self):
-
-        occupied_rects = []
-
-        for cp in self.game.theater.controlpoints:
-            point = self._transform_point(cp.position)
-            occupied_rects.append(QRect(point[0] - 16, point[1] - 16, 32, 48))
-
-        def _location_to_rect(location: Point) -> QRect:
-            nonlocal occupied_rects
-            point = self._transform_point(location)
-            rect = QRect(point[0] - 16, point[1] - 16, 32, 32)
-
-            i = 0
-            while True:
-                result = True
-                for occupied_rect in occupied_rects:
-                    if rect.intersects(occupied_rect):
-                        i += 1
-                        if i % 2:
-                            rect.setY(rect.y() + occupied_rect.height())
-                        else:
-                            rect.setX(rect.x() + occupied_rect.width())
-                        result = False
-                        break
-                if result:
-                    break
-            occupied_rects.append(rect)
-            return rect
-
-        def _events_priority_key(event: Event) -> int:
-            priority_list = [InfantryTransportEvent, StrikeEvent, BaseAttackEvent, UnitsDeliveryEvent]
-            if type(event) not in priority_list:
-                return 0
-            else:
-                return priority_list.index(type(event)) + 1
-
-        scene = self.scene()
-        events = self.game.events
-        events.sort(key=_events_priority_key, reverse=True)
-
-        for event in events:
-
-            location = event.location
-            if type(event) in [FrontlineAttackEvent, FrontlinePatrolEvent, ConvoyStrikeEvent]:
-                location = self._frontline_center(event.from_cp, event.to_cp)
-
-            rect = _location_to_rect(location)
-            scene.addItem(QMapEvent(self, rect.x(), rect.y(), 32, 32, event))
 
     def addBackground(self):
         scene = self.scene()

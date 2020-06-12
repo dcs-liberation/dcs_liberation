@@ -13,9 +13,11 @@ from dcs.unit import *
 from dcs.unittype import *
 from dcs.unitgroup import *
 
+from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
+from game.factions.germany_1944_easy import Germany_1944_Easy
 from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
 from game.factions.iran_2015 import Iran_2015
@@ -609,14 +611,18 @@ FACTIONS = {
     "China 2000": China_2000,
     "North Korea 2000": NorthKorea_2000,
     "Insurgent": Insurgent,
+    "Germany 1944 (WW2 Pack)": Germany_1944,
+    "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
 
+    "Bluefor Modern": BLUEFOR_MODERN,
+    "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
     "USA 2005": USA_2005,
     "USA 1990": USA_1990,
     "USA 1965": USA_1965,
     "USA 1960": USA_1960,
-    "USA 1955 (Require WW2 Pack)": USA_1955,
-    "Allies 1944 (Require WW2 Pack)": USA_1944,
-    "Bluefor Modern": BLUEFOR_MODERN,
+    "USA 1955 (WW2 Pack)": USA_1955,
+    "Allies 1944 (WW2 Pack)": USA_1944,
+
     "France 2005": France_2005,
     "France 1995": France_1995,
     "Germany 1990": Germany_1990,
@@ -631,7 +637,7 @@ FACTIONS = {
     "Israel 2000": Israel_2000,
     "Turkey 2005": Turkey_2005,
     "United Arab Emirates 2005": UAE_2005,
-    "Germany 1944 (Require WW2 Pack)": Germany_1944
+
 }
 BLUEFOR_FACTIONS = [FACTIONS[f]["country"] for f in FACTIONS if FACTIONS[f]["side"] == "blue"]
 print(BLUEFOR_FACTIONS)

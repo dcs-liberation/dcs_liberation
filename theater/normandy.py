@@ -20,18 +20,60 @@ class NormandyTheater(ConflictTheater):
     def __init__(self):
         super(NormandyTheater, self).__init__()
 
-        self.st_pierre = ControlPoint.from_airport(normandy.Saint_Pierre_du_Mont, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
-        self.maupertus = ControlPoint.from_airport(normandy.Maupertus, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-        self.azeville = ControlPoint.from_airport(normandy.Azeville, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.needOarPoint = ControlPoint.from_airport(normandy.Needs_Oar_Point, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.chailey = ControlPoint.from_airport(normandy.Chailey, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+
+        self.deuxjumeaux = ControlPoint.from_airport(normandy.Deux_Jumeaux, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.lignerolles = ControlPoint.from_airport(normandy.Lignerolles, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.carpiquet = ControlPoint.from_airport(normandy.Carpiquet, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         self.lessay = ControlPoint.from_airport(normandy.Lessay, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-        self.meautis = ControlPoint.from_airport(normandy.Meautis, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-        self.chippelle = ControlPoint.from_airport(normandy.Chippelle, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.maupertus = ControlPoint.from_airport(normandy.Maupertus, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.evreux = ControlPoint.from_airport(normandy.Evreux, LAND, SIZE_SMALL, IMPORTANCE_LOW)
 
-        self.add_controlpoint(self.st_pierre, connected_to=[self.chippelle])
-        self.add_controlpoint(self.maupertus, connected_to=[self.azeville])
-        self.add_controlpoint(self.azeville, connected_to=[self.meautis, self.maupertus])
-        self.add_controlpoint(self.lessay, connected_to=[self.meautis])
-        self.add_controlpoint(self.meautis, connected_to=[self.chippelle, self.lessay, self.azeville])
-        self.add_controlpoint(self.chippelle, connected_to=[self.st_pierre, self.meautis])
+        self.add_controlpoint(self.chailey, connected_to=[self.needOarPoint])
+        self.add_controlpoint(self.needOarPoint, connected_to=[self.chailey])
 
-        self.st_pierre.captured = True
+        self.add_controlpoint(self.deuxjumeaux, connected_to=[self.lignerolles])
+        self.add_controlpoint(self.lignerolles, connected_to=[self.deuxjumeaux, self.lessay, self.carpiquet])
+        self.add_controlpoint(self.lessay, connected_to=[self.lignerolles, self.maupertus])
+        self.add_controlpoint(self.carpiquet, connected_to=[self.lignerolles, self.evreux])
+        self.add_controlpoint(self.maupertus, connected_to=[self.lessay])
+        self.add_controlpoint(self.evreux, connected_to=[self.carpiquet])
+
+        self.deuxjumeaux.captured = True
+        self.chailey.captured = True
+        self.needOarPoint.captured = True
+
+
+class NormandySmall(ConflictTheater):
+    terrain = dcs.terrain.Normandy()
+    overview_image = "normandy.gif"
+    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-170, -1000),
+                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (2020, 500)}
+    landmap = load_landmap("resources\\normandylandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (10, 17),
+        "dusk": (17, 18),
+        "night": (0, 5),
+    }
+
+    def __init__(self):
+        super(NormandySmall, self).__init__()
+
+        self.needOarPoint = ControlPoint.from_airport(normandy.Needs_Oar_Point, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+
+        self.deuxjumeaux = ControlPoint.from_airport(normandy.Deux_Jumeaux, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.lignerolles = ControlPoint.from_airport(normandy.Lignerolles, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.carpiquet = ControlPoint.from_airport(normandy.Carpiquet, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.evreux = ControlPoint.from_airport(normandy.Evreux, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+
+        self.add_controlpoint(self.needOarPoint, connected_to=[self.needOarPoint])
+
+        self.add_controlpoint(self.deuxjumeaux, connected_to=[self.lignerolles])
+        self.add_controlpoint(self.lignerolles, connected_to=[self.deuxjumeaux, self.carpiquet])
+        self.add_controlpoint(self.carpiquet, connected_to=[self.lignerolles, self.evreux])
+        self.add_controlpoint(self.evreux, connected_to=[self.carpiquet])
+
+        self.deuxjumeaux.captured = True
+        self.needOarPoint.captured = True

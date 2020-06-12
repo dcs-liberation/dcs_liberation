@@ -124,10 +124,14 @@ class QMissionPlanning(QDialog):
 
     def on_start(self):
 
+        # TODO : refactor this nonsense
+        self.gameEvent = None
         for event in self.game.events:
             if isinstance(event, FrontlineAttackEvent) and event.is_player_attacking:
                 self.gameEvent = event
-
+        if self.gameEvent is None:
+            self.gameEvent = FrontlineAttackEvent(self.game, self.game.theater.controlpoints[0], self.game.theater.controlpoints[0],
+                                                  self.game.theater.controlpoints[0].position, self.game.player_name, self.game.enemy_name)
         #if self.awacs_checkbox.isChecked() == 1:
         #    self.gameEvent.is_awacs_enabled = True
         #    self.game.awacs_expense_commit()

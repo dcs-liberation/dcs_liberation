@@ -144,7 +144,7 @@ class Game:
             self.events.remove(event)
 
     def initiate_event(self, event: Event):
-        assert event in self.events
+        #assert event in self.events
         logging.info("Generating {} (regular)".format(event))
         event.generate()
 
