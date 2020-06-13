@@ -5,37 +5,21 @@ from dcs.terrain.terrain import NoParkingSlotError
 from dcs.triggers import TriggerOnce, Event
 
 from game.settings import Settings
-from gen.flights.ai_flight_planner import FlightPlanner, CAP_DEFAULT_ENGAGE_DISTANCE, nm_to_meter
+from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType, FlightWaypointType
 from .conflictgen import *
 from .naming import *
-from .triggergen import TRIGGER_WAYPOINT_OFFSET
-
-SPREAD_DISTANCE_FACTOR = 1, 2
-ESCORT_ENGAGEMENT_MAX_DIST = 100000
-WORKAROUND_WAYP_DIST = 1000
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
-
 WARM_START_ALTITUDE = 3000
 WARM_START_AIRSPEED = 550
 
-INTERCEPTION_AIRSPEED = 1000
-BARCAP_RACETRACK_DISTANCE = 20000
+CAP_DURATION = 30 # minutes
 
-ATTACK_CIRCLE_ALT = 1000
-ATTACK_CIRCLE_DURATION = 15
-
-CAS_ALTITUDE = 800
 RTB_ALTITUDE = 800
 RTB_DISTANCE = 5000
 HELI_ALT = 500
-
-TRANSPORT_LANDING_ALT = 2000
-
-DEFENCE_ENGAGEMENT_MAX_DISTANCE = 60000
-INTERCEPT_MAX_DISTANCE = 200000
 
 
 class AircraftConflictGenerator:
@@ -393,8 +377,8 @@ class AircraftConflictGenerator:
             if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
                 pt = group.add_waypoint(Point(point.x, point.y), point.alt)
                 if point.waypoint_type == FlightWaypointType.PATROL_TRACK:
-                    action = OrbitAction(altitude=pt.alt, pattern=OrbitAction.OrbitPattern.RaceTrack)
-                    pt.tasks.append(action)
+                    action = ControlledTask(OrbitAction(altitude=pt.alt, pattern=OrbitAction.OrbitPattern.RaceTrack))
+                    action.stop_after_duration(CAP_DURATION * 60)
                     #for tgt in point.targets:
                     #    if hasattr(tgt, "position"):
                     #        engagetgt = EngageTargetsInZone(tgt.position, radius=CAP_DEFAULT_ENGAGE_DISTANCE, targets=[Targets.All.Air])

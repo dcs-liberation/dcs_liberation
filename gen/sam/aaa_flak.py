@@ -15,7 +15,7 @@ class FlakGenerator(GroupGenerator):
         grid_x = random.randint(2, 4)
         grid_y = random.randint(2, 4)
 
-        spacing = random.randint(10,40)
+        spacing = random.randint(30,60)
 
         index = 0
         mixed = random.choice([True, False])
@@ -25,8 +25,8 @@ class FlakGenerator(GroupGenerator):
             for j in range(grid_y):
                 index = index+1
                 self.add_unit(unit_type, "AAA#" + str(index),
-                              self.position.x + spacing*i,
-                              self.position.y + spacing*j, self.heading)
+                              self.position.x + spacing*i + random.randint(1,5),
+                              self.position.y + spacing*j + random.randint(1,5), self.heading)
 
                 if(mixed):
                     unit_type = random.choice(GFLAK)
@@ -35,5 +35,5 @@ class FlakGenerator(GroupGenerator):
         for i in range(grid_x):
             for j in range(grid_y):
                 self.add_unit(Unarmed.Blitz_3_6_6700A, "AAA#" + str(index),
-                              self.position.x + 200 + 9*i,
-                              self.position.y + 9*j, 90)
+                              self.position.x + 200 + 15*i + random.randint(1,5),
+                              self.position.y + 15*j + random.randint(1,5), 90)

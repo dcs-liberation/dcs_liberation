@@ -162,6 +162,7 @@ PRICES = {
     P_51D_30_NA: 6,
     P_51D: 6,
     P_47D_30: 6,
+    B_17G: 18,
 
     # armor
     Armor.APC_MTLB: 4,
@@ -260,7 +261,6 @@ PRICES = {
     Artillery.M12_GMC: 2,
     Artillery.Sturmpanzer_IV_Brummbär: 2,
 
-
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
@@ -350,6 +350,7 @@ UNIT_BY_TASK = {
         A_20G,
         P_47D_30,
         Ju_88A4,
+        B_17G
     ],
     Transport: [
         IL_76MD,
@@ -739,6 +740,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     L_39C:COMMON_OVERRIDE,
     Su_17M4: COMMON_OVERRIDE,
     F_4E: COMMON_OVERRIDE,
+    P_47D_30:COMMON_OVERRIDE,
+    B_17G: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -1054,3 +1057,4 @@ OH_58D.Liveries = DefaultLiveries
 F_16C_50.Liveries = DefaultLiveries
 P_51D_30_NA.Liveries = DefaultLiveries
 Ju_88A4.Liveries = DefaultLiveries
+B_17G.Liveries = DefaultLiveries

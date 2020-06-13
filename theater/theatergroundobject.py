@@ -69,6 +69,7 @@ class TheaterGroundObject:
     position = None  # type: Point
     groups = []
     obj_name = ""
+    sea_object = False
 
     def __init__(self, category: str):
         self.category = category

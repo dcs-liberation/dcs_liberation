@@ -171,6 +171,7 @@ STRIKE_CAPABLE = [
     P_51D,
     P_47D_30,
     A_20G,
+    B_17G,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,

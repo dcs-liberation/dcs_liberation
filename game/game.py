@@ -73,6 +73,15 @@ class Game:
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
 
+
+    @property
+    def player_faction(self):
+        return db.FACTIONS[self.player_name]
+
+    @property
+    def enemy_faction(self):
+        return db.FACTIONS[self.enemy_name]
+
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
             # always generate all events for dev

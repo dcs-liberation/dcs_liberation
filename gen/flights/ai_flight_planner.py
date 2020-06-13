@@ -3,46 +3,15 @@ import operator
 import random
 
 from game import db
+from game.data.doctrine import MODERN_DOCTRINE
+from game.data.radar_db import UNITS_WITH_RADAR
+from game.utils import meter_to_feet, nm_to_meter
 from gen import Conflict
 from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE, STRIKE_CAPABLE
 from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 
 
-def meter_to_feet(value_in_meter):
-    return int(3.28084 * value_in_meter)
-
-
-def feet_to_meter(value_in_feet):
-    return int(float(value_in_feet)/3.048)
-
-
-def meter_to_nm(value_in_meter):
-    return int(float(value_in_meter)*0.000539957)
-
-
-def nm_to_meter(value_in_nm):
-    return int(float(value_in_nm)*1852)
-
-
-# TODO : Ideally should be based on the aircraft type instead / Availability of fuel
-STRIKE_MAX_RANGE = 1500000
-SEAD_MAX_RANGE = 1500000
-
-MAX_NUMBER_OF_INTERCEPTION_GROUP = 3
-MISSION_DURATION = 120 # in minutes
-CAP_EVERY_X_MINUTES = 20
-CAS_EVERY_X_MINUTES = 30
-SEAD_EVERY_X_MINUTES = 40
-STRIKE_EVERY_X_MINUTES = 40
-
-INGRESS_EGRESS_DISTANCE = nm_to_meter(45)
-INGRESS_ALT = feet_to_meter(20000)
-EGRESS_ALT = feet_to_meter(20000)
-PATROL_ALT_RANGE = (feet_to_meter(15000), feet_to_meter(33000))
-NAV_ALT = 9144
-PATTERN_ALTITUDE = feet_to_meter(5000)
-
-CAP_DEFAULT_ENGAGE_DISTANCE = nm_to_meter(40)
+MISSION_DURATION = 120
 
 
 class FlightPlanner:
@@ -53,6 +22,17 @@ class FlightPlanner:
         self.from_cp = from_cp
         self.game = game
         self.aircraft_inventory = {} # local copy of the airbase inventory
+
+        if from_cp.captured:
+            self.faction = self.game.player_faction
+        else:
+            self.faction = self.game.enemy_faction
+
+        if "doctrine" in self.faction.keys():
+            self.doctrine = self.faction["doctrine"]
+        else:
+            self.doctrine = MODERN_DOCTRINE
+
 
     def reset(self):
         """
@@ -111,7 +91,7 @@ class FlightPlanner:
         """
 
         # At least try to generate one interceptor group
-        number_of_interceptor_groups = min(max(sum([v for k, v in self.aircraft_inventory.items()]) / 4, MAX_NUMBER_OF_INTERCEPTION_GROUP), 1)
+        number_of_interceptor_groups = min(max(sum([v for k, v in self.aircraft_inventory.items()]) / 4, self.doctrine["MAX_NUMBER_OF_INTERCEPTION_GROUP"]), 1)
         possible_interceptors = [k for k in self.aircraft_inventory.keys() if k in INTERCEPT_CAPABLE]
 
         if len(possible_interceptors) <= 0:
@@ -144,7 +124,7 @@ class FlightPlanner:
         inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
 
         offset = random.randint(0,5)
-        for i in range(int(MISSION_DURATION/CAP_EVERY_X_MINUTES)):
+        for i in range(int(MISSION_DURATION/self.doctrine["CAP_EVERY_X_MINUTES"])):
 
             try:
                 unit = random.choice([k for k, v in inventory.items() if v >= 2])
@@ -155,7 +135,7 @@ class FlightPlanner:
             flight = Flight(unit, 2, self.from_cp, FlightType.CAP)
 
             flight.points = []
-            flight.scheduled_in = offset + i*random.randint(CAP_EVERY_X_MINUTES-5, CAP_EVERY_X_MINUTES+5)
+            flight.scheduled_in = offset + i*random.randint(self.doctrine["CAP_EVERY_X_MINUTES"] - 5, self.doctrine["CAP_EVERY_X_MINUTES"] + 5)
 
             if len(self._get_cas_locations()) > 0:
                 enemy_cp = random.choice(self._get_cas_locations())
@@ -182,7 +162,7 @@ class FlightPlanner:
         if len(cas_location) > 0:
 
             offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/CAS_EVERY_X_MINUTES)):
+            for i in range(int(MISSION_DURATION/self.doctrine["CAS_EVERY_X_MINUTES"])):
 
                 try:
                     unit = random.choice([k for k, v in inventory.items() if v >= 2])
@@ -192,7 +172,7 @@ class FlightPlanner:
                 inventory[unit] = inventory[unit] - 2
                 flight = Flight(unit, 2, self.from_cp, FlightType.CAS)
                 flight.points = []
-                flight.scheduled_in = offset + i * random.randint(CAS_EVERY_X_MINUTES - 5, CAS_EVERY_X_MINUTES + 5)
+                flight.scheduled_in = offset + i * random.randint(self.doctrine["CAS_EVERY_X_MINUTES"] - 5, self.doctrine["CAS_EVERY_X_MINUTES"] + 5)
                 location = random.choice(cas_location)
 
                 self.generate_cas(flight, flight.from_cp, location)
@@ -215,7 +195,7 @@ class FlightPlanner:
         if len(self.potential_sead_targets) > 0:
 
             offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/SEAD_EVERY_X_MINUTES)):
+            for i in range(int(MISSION_DURATION/self.doctrine["SEAD_EVERY_X_MINUTES"])):
 
                 if len(self.potential_sead_targets) <= 0:
                     break
@@ -229,7 +209,7 @@ class FlightPlanner:
                 flight = Flight(unit, 2, self.from_cp, random.choice([FlightType.SEAD, FlightType.DEAD]))
 
                 flight.points = []
-                flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
+                flight.scheduled_in = offset + i*random.randint(self.doctrine["SEAD_EVERY_X_MINUTES"] - 5, self.doctrine["SEAD_EVERY_X_MINUTES"] + 5)
 
                 location = self.potential_sead_targets[0][0]
                 self.potential_sead_targets.pop(0)
@@ -254,7 +234,7 @@ class FlightPlanner:
         if len(self.potential_strike_targets) > 0:
 
             offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/STRIKE_EVERY_X_MINUTES)):
+            for i in range(int(MISSION_DURATION/self.doctrine["STRIKE_EVERY_X_MINUTES"])):
 
                 if len(self.potential_strike_targets) <= 0:
                     break
@@ -268,7 +248,7 @@ class FlightPlanner:
                 flight = Flight(unit, 2, self.from_cp, FlightType.STRIKE)
 
                 flight.points = []
-                flight.scheduled_in = offset + i*random.randint(SEAD_EVERY_X_MINUTES-5, SEAD_EVERY_X_MINUTES+5)
+                flight.scheduled_in = offset + i*random.randint(self.doctrine["STRIKE_EVERY_X_MINUTES"] - 5, self.doctrine["STRIKE_EVERY_X_MINUTES"] + 5)
 
                 location = self.potential_strike_targets[0][0]
                 self.potential_strike_targets.pop(0)
@@ -306,7 +286,7 @@ class FlightPlanner:
             distance = math.hypot(cp.position.x - self.from_cp.position.x,
                                   cp.position.y - self.from_cp.position.y)
 
-            if distance > 2*STRIKE_MAX_RANGE:
+            if distance > 2*self.doctrine["STRIKE_MAX_RANGE"]:
                 # Then it's unlikely any child ground object is in range
                 return
 
@@ -318,7 +298,7 @@ class FlightPlanner:
                 distance = math.hypot(cp.position.x - self.from_cp.position.x,
                                       cp.position.y - self.from_cp.position.y)
 
-                if distance < SEAD_MAX_RANGE:
+                if distance < self.doctrine["SEAD_MAX_RANGE"]:
                     self.potential_strike_targets.append((g, distance))
                     added_group.append(g)
 
@@ -339,7 +319,7 @@ class FlightPlanner:
                                   cp.position.y - self.from_cp.position.y)
 
             # Then it's unlikely any ground object is range
-            if distance > 2*SEAD_MAX_RANGE:
+            if distance > 2*self.doctrine["SEAD_MAX_RANGE"]:
                 return
 
             for g in cp.ground_objects:
@@ -347,8 +327,7 @@ class FlightPlanner:
                 if g.dcs_identifier == "AA":
 
                     # Check that there is at least one unit with a radar in the ground objects unit groups
-                    number_of_units = sum([len([r for r in group.units if hasattr(db.unit_type_from_name(r.type), "detection_range")
-                                                and db.unit_type_from_name(r.type).detection_range > 1000]) for group in g.groups])
+                    number_of_units = sum([len([r for r in group.units if db.unit_type_from_name(r.type) in UNITS_WITH_RADAR]) for group in g.groups])
                     if number_of_units <= 0:
                         continue
 
@@ -356,7 +335,7 @@ class FlightPlanner:
                     distance = math.hypot(cp.position.x - self.from_cp.position.x,
                                           cp.position.y - self.from_cp.position.y)
 
-                    if distance < SEAD_MAX_RANGE:
+                    if distance < self.doctrine["SEAD_MAX_RANGE"]:
                         self.potential_sead_targets.append((g, distance))
 
         self.potential_sead_targets.sort(key=operator.itemgetter(1))
@@ -385,8 +364,8 @@ class FlightPlanner:
         ingress_heading = heading - 180 + 25
         egress_heading = heading - 180 - 25
 
-        ingress_pos = location.position.point_from_heading(ingress_heading, INGRESS_EGRESS_DISTANCE)
-        ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
+        ingress_pos = location.position.point_from_heading(ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
+        ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, self.doctrine["INGRESS_ALT"])
         ingress_point.pretty_name = "INGRESS on " + location.obj_name
         ingress_point.description = "INGRESS on " + location.obj_name
         ingress_point.name = "INGRESS"
@@ -428,8 +407,8 @@ class FlightPlanner:
                 ingress_point.targets.append(location)
                 flight.points.append(point)
 
-        egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
-        egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
+        egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
+        egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, self.doctrine["EGRESS_ALT"])
         egress_point.name = "EGRESS"
         egress_point.pretty_name = "EGRESS from " + location.obj_name
         egress_point.description = "EGRESS from " + location.obj_name
@@ -447,22 +426,20 @@ class FlightPlanner:
         Generate a barcap flight at a given location
         :param flight: Flight to setup
         :param for_cp: CP to protect
-        :param location: Location to protect in priority
-        :param location: Is the location to protect a frontline
         """
         flight.flight_type = FlightType.BARCAP if for_cp.is_carrier else FlightType.CAP
-        patrol_alt = random.randint(PATROL_ALT_RANGE[0], PATROL_ALT_RANGE[1])
+        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0], self.doctrine["PATROL_ALT_RANGE"][1])
 
         if len(for_cp.ground_objects) > 0:
             loc = random.choice(for_cp.ground_objects)
             hdg = for_cp.position.heading_between_point(loc.position)
-            radius = nm_to_meter(random.randint(15, 40))
+            radius = random.randint(self.doctrine["CAP_PATTERN_LENGTH"][0], self.doctrine["CAP_PATTERN_LENGTH"][1])
             orbit0p = loc.position.point_from_heading(hdg - 90, radius)
             orbit1p = loc.position.point_from_heading(hdg + 90, radius)
         else:
-            loc = for_cp.position.point_from_heading(random.randint(0, 360), random.randint(nm_to_meter(10), nm_to_meter(40)))
+            loc = for_cp.position.point_from_heading(random.randint(0, 360), random.randint(self.doctrine["CAP_DISTANCE_FROM_CP"][0], self.doctrine["CAP_DISTANCE_FROM_CP"][1]))
             hdg = for_cp.position.heading_between_point(loc)
-            radius = nm_to_meter(random.randint(15, 40))
+            radius = random.randint(self.doctrine["CAP_PATTERN_LENGTH"][0], self.doctrine["CAP_PATTERN_LENGTH"][1])
             orbit0p = loc.point_from_heading(hdg - 90, radius)
             orbit1p = loc.point_from_heading(hdg + 90, radius)
 
@@ -507,7 +484,7 @@ class FlightPlanner:
         :param enemy_cp: Enemy connected cp
         """
         flight.flight_type = FlightType.CAP
-        patrol_alt = random.randint(PATROL_ALT_RANGE[0], PATROL_ALT_RANGE[1])
+        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0], self.doctrine["PATROL_ALT_RANGE"][1])
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(ally_cp, enemy_cp, self.game.theater)
@@ -563,8 +540,8 @@ class FlightPlanner:
         ingress_heading = heading - 180 + 25
         egress_heading = heading - 180 - 25
 
-        ingress_pos = location.position.point_from_heading(ingress_heading, INGRESS_EGRESS_DISTANCE)
-        ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, INGRESS_ALT)
+        ingress_pos = location.position.point_from_heading(ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
+        ingress_point = FlightWaypoint(ingress_pos.x, ingress_pos.y, self.doctrine["INGRESS_ALT"])
         ingress_point.name = "INGRESS"
         ingress_point.pretty_name = "INGRESS on " + location.obj_name
         ingress_point.description = "INGRESS on " + location.obj_name
@@ -599,8 +576,8 @@ class FlightPlanner:
             ingress_point.targets.append(location)
             flight.points.append(point)
 
-        egress_pos = location.position.point_from_heading(egress_heading, INGRESS_EGRESS_DISTANCE)
-        egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, EGRESS_ALT)
+        egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
+        egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, self.doctrine["EGRESS_ALT"])
         egress_point.name = "INGRESS"
         egress_point.pretty_name = "EGRESS from " + location.obj_name
         egress_point.description = "EGRESS from " + location.obj_name
@@ -670,11 +647,11 @@ class FlightPlanner:
         """
         ascend_heading = from_cp.heading
         pos_ascend = from_cp.position.point_from_heading(ascend_heading, 10000)
-        ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, PATTERN_ALTITUDE)
+        ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, self.doctrine["PATTERN_ALTITUDE"])
         ascend.name = "ASCEND"
         ascend.alt_type = "RADIO"
-        ascend.description = "Ascend to alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL], then proceed to next waypoint"
-        ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL]"
+        ascend.description = "Ascend to alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL], then proceed to next waypoint"
+        ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL]"
         ascend.waypoint_type = FlightWaypointType.ASCEND_POINT
         return ascend
 
@@ -687,11 +664,11 @@ class FlightPlanner:
         """
         ascend_heading = from_cp.heading
         descend = from_cp.position.point_from_heading(ascend_heading - 180, 10000)
-        descend = FlightWaypoint(descend.x, descend.y, PATTERN_ALTITUDE)
+        descend = FlightWaypoint(descend.x, descend.y, self.doctrine["PATTERN_ALTITUDE"])
         descend.name = "DESCEND"
         descend.alt_type = "RADIO"
-        descend.description = "Descend to pattern alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL], contact tower, and land"
-        descend.pretty_name = "Descend to pattern alt [" + str(meter_to_feet(PATTERN_ALTITUDE)) + " ft AGL]"
+        descend.description = "Descend to pattern alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL], contact tower, and land"
+        descend.pretty_name = "Descend to pattern alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL]"
         descend.waypoint_type = FlightWaypointType.DESCENT_POINT
         return descend
 

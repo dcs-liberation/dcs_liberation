@@ -1,7 +1,9 @@
 from dcs.planes import *
+from dcs.ships import Uboat_VIIC_U_flak, Schnellboot_type_S130
 from dcs.vehicles import *
 
 from game.data.building_data import WW2_GERMANY_BUILDINGS
+from game.data.doctrine import WWII_DOCTRINE
 
 Germany_1944 = {
     "country": "Third Reich",
@@ -32,11 +34,10 @@ Germany_1944 = {
         Infantry.Infantry_Mauser_98,
         AirDefence.AAA_8_8cm_Flak_36,
     ],
-    "shorad":[
+    "shorad": [
         AirDefence.AAA_8_8cm_Flak_36,
     ],
     "objects": WW2_GERMANY_BUILDINGS,
-    "doctrine": {
-        # TODO
-    }
+    "doctrine": WWII_DOCTRINE,
+    "boat": [Uboat_VIIC_U_flak, Schnellboot_type_S130]
 }

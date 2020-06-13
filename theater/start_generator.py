@@ -7,7 +7,7 @@ import logging
 from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
 from gen import namegen
 from gen.defenses.armor_group_generator import generate_armor_group
-from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group
+from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group, generate_ship_group
 from gen.sam.sam_group_generator import generate_anti_air_group, generate_shorad_group
 from theater import ControlPointType
 from theater.base import *
@@ -81,6 +81,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
             g.cp_id = cp.id
             g.airbase_group = True
             g.dcs_identifier = "CARRIER"
+            g.sea_object = True
             g.obj_name = namegen.random_objective_name()
             g.heading = 0
             g.position = Point(cp.position.x, cp.position.y)
@@ -101,6 +102,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
             g.cp_id = cp.id
             g.airbase_group = True
             g.dcs_identifier = "LHA"
+            g.sea_object = True
             g.obj_name = namegen.random_objective_name()
             g.heading = 0
             g.position = Point(cp.position.x, cp.position.y)
@@ -114,7 +116,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 cp.name = random.choice(db.FACTIONS[faction]["lhanames"])
         else:
 
-            for i in range(random.randint(2,6)):
+            for i in range(random.randint(3,6)):
 
                 print("GENERATE BASE DEFENSE")
                 point = find_location(True, cp.position, theater, 1000, 2800, [], True)
@@ -132,6 +134,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.cp_id = cp.id
                 g.airbase_group = True
                 g.dcs_identifier = "AA"
+                g.sea_object = False
                 g.obj_name = namegen.random_objective_name()
                 g.heading = 0
                 g.position = Point(point.x, point.y)
@@ -143,6 +146,35 @@ def generate_groundobjects(theater: ConflictTheater, game):
             print("CP Generation : " + cp.name)
             for ground_object in cp.ground_objects:
                 print(ground_object.groups)
+
+        for i in range(random.randint(2, 3)):
+
+            print("GENERATE SHIPS")
+            point = find_location(False, cp.position, theater, 5000, 40000, [], False)
+            print(point)
+
+            if point is None:
+                print("Couldn't find point for {} ships".format(cp))
+                continue
+
+            group_id = group_id + 1
+
+            g = TheaterGroundObject("aa")
+            g.group_id = group_id
+            g.object_id = 0
+            g.cp_id = cp.id
+            g.airbase_group = False
+            g.dcs_identifier = "AA"
+            g.sea_object = True
+            g.obj_name = namegen.random_objective_name()
+            g.heading = 0
+            g.position = Point(point.x, point.y)
+
+            group = generate_ship_group(game, g, faction)
+            g.groups = []
+            if group is not None:
+                g.groups.append(group)
+                cp.ground_objects.append(g)
 
 
 def generate_airbase_defense_group(airbase_defense_group_id, ground_obj:TheaterGroundObject, faction, game, cp):
@@ -286,6 +318,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
 
             g.dcs_identifier = object["type"]
             g.heading = object["heading"]
+            g.sea_object = False
             g.position = Point(point.x + object["offset"].x, point.y + object["offset"].y)
 
             if g.dcs_identifier == "AA":

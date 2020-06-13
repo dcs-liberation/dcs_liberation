@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 from dcs import Point
 
 from game import Game
-from gen.flights.ai_flight_planner import meter_to_nm
+from game.utils import meter_to_nm
 from gen.flights.flight import Flight
 from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator

@@ -3,6 +3,7 @@ from dcs.ships import *
 from dcs.vehicles import *
 
 from game.data.building_data import WW2_ALLIES_BUILDINGS
+from game.data.doctrine import WWII_DOCTRINE
 
 USA_1944 = {
     "country": "USA",
@@ -14,6 +15,7 @@ USA_1944 = {
         SpitfireLFMkIX,
         SpitfireLFMkIXCW,
         A_20G,
+        B_17G,
 
         Armor.MT_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
@@ -38,5 +40,8 @@ USA_1944 = {
         AirDefence.AAA_Bofors_40mm,
     ], "shorad":[
         AirDefence.AAA_Bofors_40mm,
-    ], "objects": WW2_ALLIES_BUILDINGS
+    ],
+    "objects": WW2_ALLIES_BUILDINGS,
+    "doctrine": WWII_DOCTRINE,
+    "boat": [LS_Samuel_Chase]
 }

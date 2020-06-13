@@ -2,7 +2,7 @@ from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 
 from game import Game
-from gen.flights.ai_flight_planner import meter_to_nm
+from game.utils import meter_to_nm
 from gen.flights.flight import Flight
 from qt_ui.widgets.combos.QStrikeTargetSelectionComboBox import QStrikeTargetSelectionComboBox
 from qt_ui.widgets.views.QStrikeTargetInfoView import QStrikeTargetInfoView

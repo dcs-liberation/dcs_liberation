@@ -66,20 +66,34 @@ class GroundObjectsGenerator:
 
                             utype = unit_type_from_name(g.units[0].type)
 
-                            vg = self.m.vehicle_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
-                            vg.units[0].name = self.m.string(g.units[0].name)
-                            for i, u in enumerate(g.units):
-                                if i > 0:
-                                    vehicle = Vehicle(self.m.next_unit_id(), self.m.string(u.name), u.type)
-                                    vehicle.position.x = u.position.x
-                                    vehicle.position.y = u.position.y
-                                    vehicle.heading = u.heading
-                                    vg.add_unit(vehicle)
+                            if not ground_object.sea_object:
+                                vg = self.m.vehicle_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
+                                vg.units[0].name = self.m.string(g.units[0].name)
+                                for i, u in enumerate(g.units):
+                                    if i > 0:
+                                        vehicle = Vehicle(self.m.next_unit_id(), self.m.string(u.name), u.type)
+                                        vehicle.position.x = u.position.x
+                                        vehicle.position.y = u.position.y
+                                        vehicle.heading = u.heading
+                                        vg.add_unit(vehicle)
+                            else:
+                                vg = self.m.ship_group(side, g.name, utype, position=g.position,
+                                                          heading=g.units[0].heading)
+                                vg.units[0].name = self.m.string(g.units[0].name)
+                                for i, u in enumerate(g.units):
+                                    utype = unit_type_from_name(u.type)
+                                    if i > 0:
+                                        ship = Ship(self.m.next_unit_id(), self.m.string(u.name), utype)
+                                        ship.position.x = u.position.x
+                                        ship.position.y = u.position.y
+                                        ship.heading = u.heading
+                                        vg.add_unit(ship)
 
                             if self.game.settings.perf_red_alert_state:
                                 vg.points[0].tasks.append(OptAlarmState(2))
                             else:
                                 vg.points[0].tasks.append(OptAlarmState(1))
+
 
                 elif ground_object.dcs_identifier in ["CARRIER", "LHA"]:
                     for g in ground_object.groups:

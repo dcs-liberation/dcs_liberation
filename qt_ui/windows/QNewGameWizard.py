@@ -43,6 +43,7 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainNormandy = self.field("isTerrainNormandy")
         isTerrainNormandySmall = self.field("isTerrainNormandySmall")
         isTerrainChannel = self.field("isTerrainChannel")
+        isTerrainChannelComplete = self.field("isTerrainChannelComplete")
         isTerrainEmirates = self.field("isTerrainEmirates")
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -71,6 +72,8 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = normandy.NormandySmall()
         elif isTerrainChannel:
             conflicttheater = thechannel.ChannelTheater()
+        elif isTerrainChannelComplete:
+            conflicttheater = thechannel.ChannelTheaterComplete()
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
@@ -248,8 +251,10 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
         terrainNormandySmall = QtWidgets.QRadioButton("Normandy Small")
         terrainNormandySmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainChannel = QtWidgets.QRadioButton("Channel")
+        terrainChannel = QtWidgets.QRadioButton("The Channel : Start in Dunkirk")
         terrainChannel.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
+        terrainChannelComplete = QtWidgets.QRadioButton("The Channel : Battle of Britain")
+        terrainChannelComplete.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
         terrainCaucasusSmall.setChecked(True)
 
         # Time Period
@@ -273,6 +278,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.registerField('isTerrainNormandy', terrainNormandy)
         self.registerField('isTerrainNormandySmall', terrainNormandySmall)
         self.registerField('isTerrainChannel', terrainChannel)
+        self.registerField('isTerrainChannelComplete', terrainChannelComplete)
         self.registerField('timePeriod', timePeriodSelect)
 
         # Build layout
@@ -287,6 +293,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroupLayout.addWidget(terrainNttr)
         terrainGroupLayout.addWidget(terrainNormandy)
         terrainGroupLayout.addWidget(terrainNormandySmall)
+        terrainGroupLayout.addWidget(terrainChannelComplete)
         terrainGroupLayout.addWidget(terrainChannel)
         terrainGroup.setLayout(terrainGroupLayout)
 
