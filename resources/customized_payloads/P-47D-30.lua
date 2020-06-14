@@ -42,7 +42,7 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "ANTISTRIKE",
+			["name"] = "ANTISHIP",
 			["pylons"] = {
 			},
 			["tasks"] = {

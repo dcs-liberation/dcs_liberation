@@ -44,10 +44,15 @@ class QMapGroundObject(QGraphicsRectItem):
         #super(QMapControlPoint, self).paint(painter, option, widget)
         if self.parent.get_display_rule("go"):
             painter.save()
+
+            cat = self.model.category
+            if cat == "aa" and self.model.sea_object:
+                cat = "ship"
+
             if not self.model.is_dead and not self.cp.captured:
-                painter.drawPixmap(option.rect, CONST.ICONS[self.model.category])
+                painter.drawPixmap(option.rect, CONST.ICONS[cat])
             elif not self.model.is_dead:
-                painter.drawPixmap(option.rect, CONST.ICONS[self.model.category + "_blue"])
+                painter.drawPixmap(option.rect, CONST.ICONS[cat + "_blue"])
             else:
                 painter.drawPixmap(option.rect, CONST.ICONS["destroyed"])
             painter.restore()

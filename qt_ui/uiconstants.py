@@ -74,6 +74,8 @@ def load_icons():
         ICONS[category] = QPixmap("./resources/ui/ground_assets/" + category + ".png")
         ICONS[category + "_blue"] = QPixmap("./resources/ui/ground_assets/" + category + "_blue.png")
     ICONS["destroyed"] = QPixmap("./resources/ui/ground_assets/destroyed.png")
+    ICONS["ship"] = QPixmap("./resources/ui/ground_assets/ship.png")
+    ICONS["ship_blue"] = QPixmap("./resources/ui/ground_assets/ship_blue.png")
 
     ICONS["Generator"] = QPixmap("./resources/ui/misc/generator.png")
     ICONS["Missile"] = QPixmap("./resources/ui/misc/missile.png")

@@ -1,26 +1,8 @@
 from game.utils import nm_to_meter, feet_to_meter
 
-MAX_NUMBER_OF_INTERCEPTION_GROUP = 3
-MISSION_DURATION = 120 # in minutes
-CAP_EVERY_X_MINUTES = 20
-CAS_EVERY_X_MINUTES = 30
-SEAD_EVERY_X_MINUTES = 40
-STRIKE_EVERY_X_MINUTES = 40
-
-INGRESS_EGRESS_DISTANCE = nm_to_meter(45)
-INGRESS_ALT = feet_to_meter(20000)
-EGRESS_ALT = feet_to_meter(20000)
-PATROL_ALT_RANGE = (feet_to_meter(15000), feet_to_meter(33000))
-NAV_ALT = 9144
-PATTERN_ALTITUDE = feet_to_meter(5000)
-
-CAP_DEFAULT_ENGAGE_DISTANCE = nm_to_meter(40)
-
-
-
 MODERN_DOCTRINE = {
 
-    "GENERATORS":{
+    "GENERATORS": {
         "CAS": True,
         "CAP": True,
         "SEAD": True,
