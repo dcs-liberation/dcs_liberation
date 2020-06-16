@@ -179,10 +179,10 @@ class FlightPlanner:
                 orbit1p = loc.position.point_from_heading(hdg + 90, radius)
             else:
                 loc = self.from_cp.position.point_from_heading(random.randint(0, 360), random.randint(nm_to_meter(5), nm_to_meter(40)))
-                hdg = self.from_cp.position.heading_between_point(loc.position)
+                hdg = self.from_cp.position.heading_between_point(loc)
                 radius = random.randint(nm_to_meter(40), nm_to_meter(120))
-                orbit0p = loc.position.point_from_heading(hdg - 90, radius)
-                orbit1p = loc.position.point_from_heading(hdg + 90, radius)
+                orbit0p = loc.point_from_heading(hdg - 90, radius)
+                orbit1p = loc.point_from_heading(hdg + 90, radius)
 
 
             # Create points

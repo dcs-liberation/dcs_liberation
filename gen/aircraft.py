@@ -389,7 +389,7 @@ class AircraftConflictGenerator:
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
-            if flight.client_count == 0 and self.game.perf_ai_parking_start:
+            if flight.client_count == 0 and self.game.settings.perf_ai_parking_start:
                 flight.start_type = "Warm"
 
             if flight.start_type == "In Flight":
