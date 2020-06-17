@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 France_2005 = {
     "country": "France",
@@ -55,5 +55,7 @@ France_2005 = {
         "L9013 Mistral",
         "L9014 Tonerre",
         "L9015 Dixmude"
+    ], "boat":[
+        "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
     ]
 }

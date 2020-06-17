@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 USA_2005 = {
     "country": "USA",
@@ -51,7 +51,6 @@ USA_2005 = {
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
     ], "destroyer": [
-        Oliver_Hazzard_Perry_class,
         USS_Arleigh_Burke_IIa,
     ], "cruiser": [
         Ticonderoga_class,
@@ -66,5 +65,7 @@ USA_2005 = {
         "LHA-3 Belleau Wood",
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
+    ], "boat":[
+        "ArleighBurkeGroupGenerator"
     ]
 }

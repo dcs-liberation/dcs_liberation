@@ -11,7 +11,7 @@ from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS
 from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 
 
-MISSION_DURATION = 120
+MISSION_DURATION = 80
 
 
 class FlightPlanner:
@@ -490,7 +490,14 @@ class FlightPlanner:
         ingress, heading, distance = Conflict.frontline_vector(ally_cp, enemy_cp, self.game.theater)
         center = ingress.point_from_heading(heading, distance / 2)
         orbit_center = center.point_from_heading(heading - 90, random.randint(nm_to_meter(6), nm_to_meter(15)))
-        radius = distance * 2
+
+        combat_width = distance / 2
+        if combat_width > 500000:
+            combat_width = 500000
+        if combat_width < 35000:
+            combat_width = 35000
+
+        radius = combat_width*1.25
         orbit0p = orbit_center.point_from_heading(heading, radius)
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 

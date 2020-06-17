@@ -1,7 +1,6 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.vehicles import *
 
 Lybia_2011 = {
     "country": "Russia",
@@ -44,5 +43,7 @@ Lybia_2011 = {
     "shorad":[
         AirDefence.HQ_7_Self_Propelled_LN,
         AirDefence.SAM_SA_8_Osa_9A33,
+    ], "boat": [
+        "GrishaGroupGenerator", "MolniyaGroupGenerator"
     ]
 }

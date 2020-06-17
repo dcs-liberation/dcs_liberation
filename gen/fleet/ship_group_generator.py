@@ -1,18 +1,30 @@
+import logging
 import random
 
 from game import db
 from gen.fleet.carrier_group import CarrierGroupGenerator
+from gen.fleet.cn_dd_group import ChineseNavyGroupGenerator, Type54GroupGenerator
+from gen.fleet.dd_group import ArleighBurkeGroupGenerator, OliverHazardPerryGroupGenerator
 from gen.fleet.lha_group import LHAGroupGenerator
-from dcs.ships import *
-
+from gen.fleet.ru_dd_group import RussianNavyGroupGenerator, GrishaGroupGenerator, MolniyaGroupGenerator, \
+    KiloSubGroupGenerator, TangoSubGroupGenerator
 from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
 
 SHIP_MAP = {
-    Schnellboot_type_S130: SchnellbootGroupGenerator,
-    LS_Samuel_Chase: WW2LSTGroupGenerator,
-    Uboat_VIIC_U_flak: UBoatGroupGenerator
+    "SchnellbootGroupGenerator": SchnellbootGroupGenerator,
+    "WW2LSTGroupGenerator": WW2LSTGroupGenerator,
+    "UBoatGroupGenerator": UBoatGroupGenerator,
+    "OliverHazardPerryGroupGenerator": OliverHazardPerryGroupGenerator,
+    "ArleighBurkeGroupGenerator": ArleighBurkeGroupGenerator,
+    "RussianNavyGroupGenerator": RussianNavyGroupGenerator,
+    "ChineseNavyGroupGenerator": ChineseNavyGroupGenerator,
+    "GrishaGroupGenerator": GrishaGroupGenerator,
+    "MolniyaGroupGenerator": MolniyaGroupGenerator,
+    "KiloSubGroupGenerator": KiloSubGroupGenerator,
+    "TangoSubGroupGenerator": TangoSubGroupGenerator,
+    "Type54GroupGenerator": Type54GroupGenerator
 }
 
 
@@ -23,12 +35,15 @@ def generate_ship_group(game, ground_object, faction:str):
     """
     faction = db.FACTIONS[faction]
     if "boat" in faction.keys():
-        ships = faction["boat"]
-        if len(ships) > 0:
-            sam = random.choice(ships)
-            generator = SHIP_MAP[sam](game, ground_object, faction)
-            generator.generate()
-            return generator.get_generated_group()
+        generators = faction["boat"]
+        if len(generators) > 0:
+            gen = random.choice(generators)
+            if gen in SHIP_MAP.keys():
+                generator = SHIP_MAP[gen](game, ground_object, faction)
+                generator.generate()
+                return generator.get_generated_group()
+            else:
+                logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
     return None
 
 

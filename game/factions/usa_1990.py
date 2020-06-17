@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 USA_1990 = {
     "country": "USA",
@@ -59,5 +59,7 @@ USA_1990 = {
         "LHA-3 Belleau Wood",
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
+    ], "boat":[
+        "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
     ]
 }

@@ -31,9 +31,23 @@ class FlakGenerator(GroupGenerator):
                 if(mixed):
                     unit_type = random.choice(GFLAK)
 
-        # Enough Opel Blitz truck to transport the guns
-        for i in range(grid_x):
-            for j in range(grid_y):
+        # Search lights
+        search_pos = self.get_circular_position(random.randint(2,5), 90)
+        for index, pos in enumerate(search_pos):
+            self.add_unit(AirDefence.Flak_Searchlight_37, "SearchLight#" + str(index), pos[0], pos[1], self.heading)
+
+        # Support
+        self.add_unit(AirDefence.Maschinensatz_33, "MC33#", self.position.x-20, self.position.y-20, self.heading)
+        self.add_unit(AirDefence.AAA_Kdo_G_40, "KDO#", self.position.x - 25, self.position.y - 20,
+                      self.heading)
+
+        # Commander
+        self.add_unit(Unarmed.Kübelwagen_82, "Kubel#", self.position.x - 35, self.position.y - 20,
+                      self.heading)
+
+        # Some Opel Blitz trucks
+        for i in range(int(max(1,grid_x/2))):
+            for j in range(int(max(1,grid_x/2))):
                 self.add_unit(Unarmed.Blitz_3_6_6700A, "AAA#" + str(index),
                               self.position.x + 200 + 15*i + random.randint(1,5),
                               self.position.y + 15*j + random.randint(1,5), 90)

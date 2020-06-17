@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Ukraine_2010 = {
     "country": "Ukraine",
@@ -47,5 +47,7 @@ Ukraine_2010 = {
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
         AirDefence.AAA_ZU_23_on_Ural_375
+    ], "boat":[
+        "GrishaGroupGenerator"
     ]
 }

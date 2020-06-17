@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 France_1995 = {
     "country": "France",
@@ -40,5 +40,7 @@ France_1995 = {
     ], "shorad": [
         AirDefence.HQ_7_Self_Propelled_LN,
         AirDefence.SAM_Roland_ADS
+    ], "boat":[
+        "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
     ]
 }

@@ -88,7 +88,7 @@ WWII_DOCTRINE = {
 
     "CAP_PATTERN_LENGTH": (nm_to_meter(8), nm_to_meter(18)),
     "FRONTLINE_CAP_DISTANCE_FROM_FRONTLINE": (nm_to_meter(1), nm_to_meter(6)),
-    "CAP_DISTANCE_FROM_CP": (nm_to_meter(5), nm_to_meter(15)),
+    "CAP_DISTANCE_FROM_CP": (nm_to_meter(0), nm_to_meter(5)),
 
     "MAX_NUMBER_OF_INTERCEPTION_GROUP": 3,
 

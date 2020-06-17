@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 USA_1965 = {
     "country": "USA",
@@ -36,5 +36,7 @@ USA_1965 = {
     "shorad":[
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Chaparral_M48
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

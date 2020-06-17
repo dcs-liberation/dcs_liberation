@@ -43,5 +43,6 @@ USA_1944 = {
     ],
     "objects": WW2_ALLIES_BUILDINGS,
     "doctrine": WWII_DOCTRINE,
-    "boat": [LS_Samuel_Chase]
+    "boat": ["WW2LSTGroupGenerator"],
+    "boat_count": 2
 }

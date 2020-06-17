@@ -25,7 +25,7 @@ Sweden_1990 = {
         Dry_cargo_ship_Ivanov,
         Tanker_Elnya_160,
     ],
-    "shorad":[
+    "shorad": [
         AirDefence.SAM_Avenger_M1097
     ]
 }

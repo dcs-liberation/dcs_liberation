@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Pakistan_2015 = {
     "country": "Pakistan",
@@ -34,5 +34,7 @@ Pakistan_2015 = {
         AirDefence.HQ_7_Self_Propelled_LN,
         AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
         AirDefence.AAA_ZU_23_Closed
+    ], "boat": [
+        "Type54GroupGenerator", "OliverHazardPerryGroupGenerator"
     ]
 }

@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 China_2000 = {
     "country": "China",
@@ -59,5 +59,7 @@ China_2000 = {
     ], "carrier_names": [
         "001 Liaoning",
         "002 Shandong",
+    ], "boat":[
+        "ChineseNavyGroupGenerator", "Type54GroupGenerator"
     ]
 }

@@ -17,6 +17,6 @@ class WW2LSTGroupGenerator(GroupGenerator):
         self.add_unit(LS_Samuel_Chase, "SamuelChase", self.position.x, self.position.y, self.heading)
 
         for i in range(random.randint(2, 4)):
-            self.add_unit(LST_Mk_II, "LST" + str(i), self.position.x + i * random.randint(400, 600), self.position.y, self.heading)
+            self.add_unit(LST_Mk_II, "LST" + str(i), self.position.x + i * random.randint(800, 1200), self.position.y, self.heading)
 
         self.get_generated_group().points[0].speed = 20

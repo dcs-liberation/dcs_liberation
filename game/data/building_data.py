@@ -4,7 +4,7 @@ import dcs
 DEFAULT_AVAILABLE_BUILDINGS = ['fuel', 'ammo', 'comms', 'oil', 'ware', 'farp', 'fob', 'power', 'factory', 'derrick', 'aa']
 
 WW2_GERMANY_BUILDINGS = ['fuel', 'factory', 'ww2bunker', 'ww2bunker', 'ww2bunker', 'allycamp', 'allycamp', 'aa']
-WW2_ALLIES_BUILDINGS = ['fuel', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'aa']
+WW2_ALLIES_BUILDINGS = ['fuel', 'factory', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'aa']
 
 FORTIFICATION_BUILDINGS = ['Siegfried Line', 'Concertina Wire', 'Czech hedgehogs 1', 'Czech hedgehogs 2',
                            'Dragonteeth 1', 'Dragonteeth 2', 'Dragonteeth 3', 'Dragonteeth 4', 'Dragonteeth 5',

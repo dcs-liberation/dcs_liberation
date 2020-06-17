@@ -65,5 +65,7 @@ Russia_1975 = {
         FF_1135M_Rezky,
     ], "cruiser": [
         CGN_1144_2_Pyotr_Velikiy,
+    ], "boat": [
+        "RussianNavyGroupGenerator", "KiloSubGroupGenerator", "MolniyaGroupGenerator"
     ]
 }

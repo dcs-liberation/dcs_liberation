@@ -1,6 +1,5 @@
 from dcs.planes import *
 from dcs.vehicles import *
-from dcs.ships import *
 
 from game.data.building_data import WW2_GERMANY_BUILDINGS
 from game.data.doctrine import WWII_DOCTRINE
@@ -32,5 +31,8 @@ Germany_1944_Easy = {
     ],
     "objects": WW2_GERMANY_BUILDINGS,
     "doctrine": WWII_DOCTRINE,
-    "boat": [Uboat_VIIC_U_flak, Schnellboot_type_S130]
+    "boat": ["UBoatGroupGenerator", "SchnellbootGroupGenerator"],
+    "boat_count": 4,
+    "missiles": ["V1GroupGenerator"],
+    "missiles_count": 1
 }

@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 BLUEFOR_COLDWAR = {
     "country": "USA",
@@ -57,5 +57,7 @@ BLUEFOR_COLDWAR = {
         "LHA-3 Belleau Wood",
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

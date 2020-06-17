@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 India_2010 = {
     "country": "India",
@@ -49,5 +49,7 @@ India_2010 = {
         FSG_1241_1MP_Molniya,
     ], "carrier_names": [
         "INS Vikramaditya"
+    ], "boat":[
+        "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator", "MolniyaGroupGenerator"
     ]
 }

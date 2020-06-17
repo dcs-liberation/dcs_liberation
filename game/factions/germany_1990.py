@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Germany_1990 = {
     "country": "Germany",
@@ -39,5 +39,7 @@ Germany_1990 = {
     "shorad":[
         AirDefence.SPAAA_Gepard,
         AirDefence.SAM_Roland_ADS,
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

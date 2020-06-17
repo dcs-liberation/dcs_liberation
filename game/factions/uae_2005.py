@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 UAE_2005 = {
     "country": "United Arab Emirates",
@@ -30,5 +30,7 @@ UAE_2005 = {
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Turkey_2005 = {
     "country": "Turkey",
@@ -36,5 +36,7 @@ Turkey_2005 = {
     ], "shorad":[
         AirDefence.AAA_ZU_23_Emplacement,
         AirDefence.SPAAA_ZSU_23_4_Shilka
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

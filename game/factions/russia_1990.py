@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Russia_1990 = {
     "country": "Russia",
@@ -64,5 +64,7 @@ Russia_1990 = {
         FF_1135M_Rezky,
     ], "cruiser": [
         FSG_1241_1MP_Molniya,
+    ], "boat":[
+        "RussianNavyGroupGenerator", "KiloSubGroupGenerator"
     ]
 }

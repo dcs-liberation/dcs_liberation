@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 UnitedKingdom_1990 = {
     "country": "UK",
@@ -46,5 +46,7 @@ UnitedKingdom_1990 = {
         "HMS Invincible",
         "HMS Illustrious",
         "HMS Ark Royal",
+    ], "boat":[
+        "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
     ]
 }

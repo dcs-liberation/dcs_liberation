@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Italy_1990 = {
      "country": "Italy",
@@ -42,5 +42,7 @@ Italy_1990 = {
     ], "lha_names": [
         "Giuseppe Garibaldi",
         "Cavour",
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

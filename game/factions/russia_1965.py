@@ -49,5 +49,7 @@ Russia_1965 = {
     ],
     "shorad":[
         AirDefence.AAA_ZU_23_Closed
+    ], "boat": [
+        "GrishaGroupGenerator"
     ]
 }

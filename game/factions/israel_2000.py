@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Israel_2000 = {
     "country": "Israel",
@@ -31,7 +31,9 @@ Israel_2000 = {
         LHA_1_Tarawa,
         Armed_speedboat,
     ],
-    "shorad":[
+    "shorad": [
         AirDefence.SAM_Avenger_M1097
+    ], "boat": [
+        "ArleighBurkeGroupGenerator"
     ]
 }

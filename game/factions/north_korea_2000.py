@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 NorthKorea_2000 = {
     "country": "North Korea",
@@ -46,5 +46,8 @@ NorthKorea_2000 = {
     "shorad":[
         AirDefence.AAA_ZU_23_Emplacement,
         AirDefence.SPAAA_ZSU_23_4_Shilka
+    ],
+    "boat": [
+        "GrishaGroupGenerator", "MolniyaGroupGenerator"
     ]
 }

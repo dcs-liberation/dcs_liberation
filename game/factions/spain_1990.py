@@ -1,6 +1,6 @@
-from dcs.vehicles import *
-from dcs.ships import *
 from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Spain_1990 = {
     "country": "Spain",
@@ -44,5 +44,7 @@ Spain_1990 = {
         "Principe de Asturias",
     ], "lhanames": [
         "Juan Carlos I",
+    ], "boat":[
+        "OliverHazardPerryGroupGenerator"
     ]
 }

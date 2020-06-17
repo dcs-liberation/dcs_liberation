@@ -1,6 +1,6 @@
-#2.0 RC 7
+# 2.0 RC 7
 
-##Features/Improvements :
+## Features/Improvements :
 
 * **[Units/Factions]** Added P-47D-30 for factions allies_1944
 * **[Units/Factions]** Added factions : Bluefor Coldwar, Germany 1944 Easy
@@ -38,13 +38,11 @@
 * **[Map]** Added "Oil derrick" building
 * **[Map]** Added "ww2 bunker" building (WW2)
 * **[Map]** Added "ally camp" building (WW2)
-
-* **[Map]** Added "V1 Launch Site" building (WW2)
-* **[Map]** Added "A camp" building (WW2)
+* **[Map]** Added "V1 Site" (WW2)
 
 * **[Misc]** Made it possible to setup DCS Saved Games directory and DCS installation directory manually at first start
 
-##Fixed issues :
+## Fixed issues :
 
 * **[Units/Factions]** Replaced S3-B Tanker by KC130 for most factions (More fuel)
 * **[Units/Factions]** WW2 factions will not have offshore oil station and other modern buildings generated. No more third-reich operated offshore stations will spawn on normandy's coast. 
@@ -56,19 +54,17 @@
 * **[Mission Generator]** Change power station template. (Buildings could end up superposed).
 
 * **[Maps/Campaign]** Now using Vasiani airbase instead of Soganlung airport in North Caucasus campaign (More parking slots)
-
 * **[Info Panel]** Message displayed on base capture event stated that the enemy captured an airbase, while it was the player who captured it.
-
 * **[Map View]** Graphical glitch on map when one building of an objective was destroyed, but not the others 
 
 
 
-#2.0 RC 6
+# 2.0 RC 6
 
 Saves file from RC5 are not compatible with the new version. 
 Sorry :(
 
-##Features/Improvements :
+## Features/Improvements :
 * **[Units/Factions]** Supercarrier support (You have to go to settings to enable it, if you have the supercarrier module)
 * **[Units/Factions]** Added 'Modern Bluefor' factions, containing all most popular DCS flyable units
 * **[Units/Factions]** Factions US 2005 / 1990 will now sometimes have Arleigh Burke class ships instead of Perry as carrier escorts 
@@ -82,7 +78,7 @@ Sorry :(
 * **[Mission Generator]** Using Late Activation & Trigger in attempt to improve performance & reduce stutter (Previously they were spawned through 'ETA' feature)
 * **[UX]** : Improved flight selection behaviour in the Mission Planning Window
  
-##Fixed issues :
+## Fixed issues :
 * **[Mission Generator]** Payloads were not correctly assigned in the release version. 
 * **[Mission Generator]** Game generation does not work when "no night mission" settings was selected and the current time was "day"
 * **[Mission Generator]** Game generation does not work when the player selected faction has no AWACS

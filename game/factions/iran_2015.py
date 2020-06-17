@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Iran_2015 = {
     "country": "Iran",
@@ -52,5 +52,7 @@ Iran_2015 = {
     "shorad":[
         AirDefence.HQ_7_Self_Propelled_LN,
         AirDefence.AAA_ZU_23_Insurgent_Closed
+    ], "boat":[
+        "GrishaGroupGenerator", "MolniyaGroupGenerator", "KiloSubGroupGenerator"
     ]
 }

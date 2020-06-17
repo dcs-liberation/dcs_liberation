@@ -1,7 +1,7 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
 from dcs.helicopters import *
+from dcs.planes import *
+from dcs.ships import *
+from dcs.vehicles import *
 
 Netherlands_1990 = {
     "country": "The Netherlands",
@@ -30,7 +30,9 @@ Netherlands_1990 = {
         LHA_1_Tarawa,
         Armed_speedboat,
     ],
-    "shorad":[
+    "shorad": [
         AirDefence.SAM_Avenger_M1097
+    ], "boat": [
+        "OliverHazardPerryGroupGenerator"
     ]
 }
