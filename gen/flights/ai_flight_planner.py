@@ -585,7 +585,7 @@ class FlightPlanner:
 
         egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
         egress_point = FlightWaypoint(egress_pos.x, egress_pos.y, self.doctrine["EGRESS_ALT"])
-        egress_point.name = "INGRESS"
+        egress_point.name = "EGRESS"
         egress_point.pretty_name = "EGRESS from " + location.obj_name
         egress_point.description = "EGRESS from " + location.obj_name
         egress_point.waypoint_type = FlightWaypointType.EGRESS
