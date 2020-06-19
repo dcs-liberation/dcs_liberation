@@ -230,6 +230,11 @@ class AircraftConflictGenerator:
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
 
         for flight in flight_planner.flights:
+
+            if flight.client_count == 0 and self.game.position_culled(flight.from_cp.position):
+                logging.info("Flight not generated : culled")
+                continue
+
             group = self.generate_planned_flight(cp, country, flight)
             if flight.flight_type == FlightType.INTERCEPTION:
                 self.setup_group_as_intercept_flight(group, flight)

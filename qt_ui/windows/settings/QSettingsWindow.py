@@ -1,13 +1,14 @@
 from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
-    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout
+    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout, QSpinBox
 from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 
 
 class QSettingsWindow(QDialog):
@@ -199,6 +200,16 @@ class QSettingsWindow(QDialog):
         self.ai_parking_start.setChecked(self.game.settings.perf_ai_parking_start)
         self.ai_parking_start.toggled.connect(self.applySettings)
 
+        self.culling = QCheckBox()
+        self.culling.setChecked(self.game.settings.perf_culling)
+        self.culling.toggled.connect(self.applySettings)
+
+        self.culling_distance = QSpinBox()
+        self.culling_distance.setMinimum(50)
+        self.culling_distance.setMaximum(10000)
+        self.culling_distance.setValue(self.game.settings.perf_culling_distance)
+        self.culling_distance.valueChanged.connect(self.applySettings())
+
         self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
@@ -211,6 +222,12 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("AI planes parking start (AI starts in flight if disabled)"), 5, 0)
         self.performanceLayout.addWidget(self.ai_parking_start, 5, 1, alignment=Qt.AlignRight)
+
+        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 6, 0, 1, 2)
+        self.performanceLayout.addWidget(QLabel("Culling of distant units enabled"), 7, 0)
+        self.performanceLayout.addWidget(self.culling, 7, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 8, 0)
+        self.performanceLayout.addWidget(self.culling_distance, 8, 1, alignment=Qt.AlignRight)
 
         self.generatorLayout.addWidget(self.gameplay)
         self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
@@ -276,6 +293,9 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
         self.game.settings.perf_ai_parking_start = self.ai_parking_start.isChecked()
+
+        self.game.settings.perf_culling = self.culling.isChecked()
+        self.game.settings.perf_culling_distance = int(self.culling_distance.value())
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

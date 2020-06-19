@@ -72,6 +72,7 @@ class Game:
         self.ground_planners = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
+        self.__culling_points = self.compute_conflicts_position()
 
 
     @property
@@ -187,6 +188,7 @@ class Game:
             return 1
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
+
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn = self.turn + 1
@@ -202,7 +204,7 @@ class Game:
         self._enemy_reinforcement()
         self._budget_player()
 
-        if not no_action:
+        if not no_action and self.turn > 1:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
         else:
@@ -221,6 +223,7 @@ class Game:
         self.game_stats.update(self)
 
         # Plan flights & combat for next turn
+        self.__culling_points = self.compute_conflicts_position()
         self.planners = {}
         self.ground_planners = {}
         for cp in self.theater.controlpoints:
@@ -326,3 +329,49 @@ class Game:
         """
         self.current_group_id += 1
         return self.current_group_id
+
+    def compute_conflicts_position(self):
+        """
+        Compute the current conflict center position(s), mainly used for culling calculation
+        :return: List of points of interests
+        """
+        points = []
+
+        # By default, use the existing frontline conflict position
+        for conflict in self.theater.conflicts():
+            points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
+
+        # If there is no conflict take the center point between the two nearest opposing bases
+        if len(points) == 0:
+            cpoint = None
+            min_distance = sys.maxsize
+            for cp in self.theater.player_points():
+                for cp2 in self.theater.enemy_points():
+                    d = cp.position.distance_to_point(cp2.position)
+                    if d < min_distance:
+                        min_distance = d
+                        cpoint = Point((cp.position.x + cp2.position.x) / 2, (cp.position.y + cp2.position.y) / 2)
+            if cpoint is not None:
+                points.append(cpoint)
+
+        # Else 0,0, since we need a default value
+        # (in this case this means the whole map is owned by the same player, so it is not an issue)
+        if len(points) == 0:
+            points.append(Point(0, 0))
+
+        return points
+
+    def position_culled(self, pos):
+        """
+        Check if unit can be generated at given position depending on culling performance settings
+        :param pos: Position you are tryng to spawn stuff at
+        :return: True if units can not be added at given position
+        """
+        if self.settings.perf_culling == False:
+            return False
+        else:
+            for c in self.__culling_points:
+                if c.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
+                    return False
+            return True
+

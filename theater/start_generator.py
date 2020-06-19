@@ -5,7 +5,7 @@ import typing
 import logging
 
 from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
-from gen import namegen
+from gen import namegen, TheaterGroundObject
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group, generate_ship_group
 from gen.missiles.missiles_group_generator import generate_missile_group

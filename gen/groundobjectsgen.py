@@ -61,9 +61,12 @@ class GroundObjectsGenerator:
 
             for ground_object in cp.ground_objects:
                 if ground_object.dcs_identifier == "AA":
+
+                    if self.game.position_culled(ground_object.position):
+                        continue
+
                     for g in ground_object.groups:
                         if len(g.units) > 0:
-
                             utype = unit_type_from_name(g.units[0].type)
 
                             if not ground_object.sea_object:
@@ -125,6 +128,10 @@ class GroundObjectsGenerator:
                                 sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
 
                 else:
+
+                    if self.game.position_culled(ground_object.position):
+                        continue
+
                     static_type = None
                     if ground_object.dcs_identifier in warehouse_map:
                         static_type = warehouse_map[ground_object.dcs_identifier]
@@ -161,33 +168,3 @@ class GroundObjectsGenerator:
                         )
 
                         logging.info("generated {}object identifier {} with mission id {}".format("dead " if ground_object.is_dead else "", group.name, group.id))
-
-
-def farp_aa(mission_obj, country, name, position: mapping.Point):
-    """
-    Add AAA to a FARP :)
-    :param mission_obj:
-    :param country:
-    :param name:
-    :param position:
-    :return:
-    """
-    vg = unitgroup.VehicleGroup(mission_obj.next_group_id(), mission_obj.string(name))
-
-    units = [
-        AirDefence.SPAAA_ZSU_23_4_Shilka,
-        AirDefence.AAA_ZU_23_Closed,
-    ]
-
-    v = mission_obj.vehicle(name + "_AAA", random.choice(units))
-    v.position.x = position.x - random.randint(5, 30)
-    v.position.y = position.y - random.randint(5, 30)
-    v.heading = random.randint(0, 359)
-    vg.add_unit(v)
-
-    wp = vg.add_waypoint(vg.units[0].position, PointAction.OffRoad, 0)
-    wp.ETA_locked = True
-
-    country.add_vehicle_group(vg)
-    return vg
-

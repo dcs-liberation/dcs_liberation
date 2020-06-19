@@ -25,4 +25,8 @@ class Settings:
     perf_infantry = True
     perf_ai_parking_start = True
 
+    # Performance culling
+    perf_culling = False
+    perf_culling_distance = 0
+
 

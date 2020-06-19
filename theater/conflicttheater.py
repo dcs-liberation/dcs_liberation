@@ -1,12 +1,10 @@
 import typing
-import itertools
 
 import dcs
 from dcs.mapping import Point
 
-from .landmap import Landmap, poly_contains
 from .controlpoint import ControlPoint
-from .theatergroundobject import TheaterGroundObject
+from .landmap import poly_contains
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -66,7 +64,7 @@ class ConflictTheater:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
 
-    def add_controlpoint(self, point: ControlPoint, connected_to: typing.Collection[ControlPoint] = []):
+    def add_controlpoint(self, point: ControlPoint, connected_to: [ControlPoint] = []):
         for connected_point in connected_to:
             point.connect(to=connected_point)
 
@@ -118,3 +116,5 @@ class ConflictTheater:
 
     def enemy_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]
+
+
