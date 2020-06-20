@@ -40,11 +40,15 @@ class AircraftConflictGenerator:
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
-        print("SETUP GROUP : " + str(for_task) + " -- " + str(group.name))
-
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
             override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
             if type(override_loadout) == dict:
+
+                # Clear pylons
+                for p in group.units:
+                    p.pylons.clear()
+
+                # Now load loadout
                 if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
                     payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
                     group.load_loadout(payload_name)

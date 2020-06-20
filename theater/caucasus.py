@@ -27,7 +27,7 @@ class CaucasusTheater(ConflictTheater):
     def __init__(self, load_ground_objects=True):
         super(CaucasusTheater, self).__init__()
 
-        self.soganlug = ControlPoint.from_airport(caucasus.Soganlug, LAND, SIZE_SMALL, IMPORTANCE_LOW)
+        self.vaziani = ControlPoint.from_airport(caucasus.Vaziani, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         self.kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         self.senaki = ControlPoint.from_airport(caucasus.Senaki_Kolkhi, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
         self.kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_A_E, SIZE_SMALL, 1.1)
@@ -45,17 +45,17 @@ class CaucasusTheater(ConflictTheater):
         self.mineralnye = ControlPoint.from_airport(caucasus.Mineralnye_Vody, LAND, SIZE_BIG, 1.3)
         self.mozdok = ControlPoint.from_airport(caucasus.Mozdok, LAND, SIZE_BIG, 1.1)
 
-        self.soganlug.frontline_offset = 0.5
-        self.soganlug.base.strength = 1
+        self.vaziani.frontline_offset = 0.5
+        self.vaziani.base.strength = 1
 
-        self.add_controlpoint(self.soganlug, connected_to=[self.kutaisi, self.beslan])
-        self.add_controlpoint(self.beslan, connected_to=[self.soganlug, self.mozdok, self.nalchik])
+        self.add_controlpoint(self.vaziani, connected_to=[self.kutaisi, self.beslan])
+        self.add_controlpoint(self.beslan, connected_to=[self.vaziani, self.mozdok, self.nalchik])
         self.add_controlpoint(self.nalchik, connected_to=[self.beslan, self.mozdok, self.mineralnye])
         self.add_controlpoint(self.mozdok, connected_to=[self.nalchik, self.beslan, self.mineralnye])
         self.add_controlpoint(self.mineralnye, connected_to=[self.nalchik, self.mozdok, self.maykop])
         self.add_controlpoint(self.maykop, connected_to=[self.mineralnye, self.krasnodar])
 
-        self.add_controlpoint(self.kutaisi, connected_to=[self.soganlug, self.senaki])
+        self.add_controlpoint(self.kutaisi, connected_to=[self.vaziani, self.senaki])
         self.add_controlpoint(self.senaki, connected_to=[self.kobuleti, self.sukhumi, self.kutaisi])
         self.add_controlpoint(self.kobuleti, connected_to=[self.batumi, self.senaki])
         self.add_controlpoint(self.batumi, connected_to=[self.kobuleti])

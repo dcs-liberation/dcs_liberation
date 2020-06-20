@@ -41,11 +41,14 @@
 * **[Map]** Added "V1 Site" (WW2)
 
 * **[Misc]** Made it possible to setup DCS Saved Games directory and DCS installation directory manually at first start
+* **[Misc]** Added culling performance settings 
 
 ## Fixed issues :
 
 * **[Units/Factions]** Replaced S3-B Tanker by KC130 for most factions (More fuel)
 * **[Units/Factions]** WW2 factions will not have offshore oil station and other modern buildings generated. No more third-reich operated offshore stations will spawn on normandy's coast. 
+
+* **[Units/Factions]** Missing icons added for some aircraft
 
 * **[Mission Generator]** When playing as RED the activation trigger would not be properly generated
 * **[Mission Generator]** FW-190A8 is now properly considered as a flyable aircraft
@@ -53,7 +56,7 @@
 * **[Mission Generator]** Changed "strike" payload for JF-17 to use LS-6 bombs instead of GBU
 * **[Mission Generator]** Change power station template. (Buildings could end up superposed).
 
-* **[Maps/Campaign]** Now using Vasiani airbase instead of Soganlung airport in North Caucasus campaign (More parking slots)
+* **[Maps/Campaign]** Now using Vasiani airbase instead of Soganlung airport in Caucasus campaigns (more parking slot)
 * **[Info Panel]** Message displayed on base capture event stated that the enemy captured an airbase, while it was the player who captured it.
 * **[Map View]** Graphical glitch on map when one building of an objective was destroyed, but not the others 
 
