@@ -395,13 +395,33 @@ class AircraftConflictGenerator:
                 elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
                     pt.type = "Land"
                 elif point.waypoint_type == FlightWaypointType.INGRESS_STRIKE:
-                    for j, t in enumerate(point.targets):
-                        print(t.position)
-                        pt.tasks.append(Bombing(t.position))
-                        if group.units[0].unit_type == JF_17 and j < 4:
-                            group.add_nav_target_point(t.position, "PP" + str(j + 1))
-                        if group.units[0].unit_type == F_14B and j == 0:
-                            group.add_nav_target_point(t.position, "ST")
+
+                    if group.units[0].unit_type == B_17G:
+                        if len(point.targets) > 0:
+                            bcenter = Point(0,0)
+                            for j, t in enumerate(point.targets):
+                                bcenter.x += t.position.x
+                                bcenter.y += t.position.y
+                            bcenter.x = bcenter.x / len(point.targets)
+                            bcenter.y = bcenter.y / len(point.targets)
+                            bombing = Bombing(bcenter)
+                            bombing.params["expend"] = "All"
+                            bombing.params["attackQtyLimit"] = False
+                            bombing.params["attackQty"] = 1
+                            bombing.params["expend"] = "All"
+                            bombing.params["directionEnabled"] = False
+                            bombing.params["altitudeEnabled"] = False
+                            bombing.params["weaponType"] = 2032
+                            bombing.params["groupAttack"] = True
+                            pt.tasks.append(bombing)
+                    else:
+                        for j, t in enumerate(point.targets):
+                            print(t.position)
+                            pt.tasks.append(Bombing(t.position))
+                            if group.units[0].unit_type == JF_17 and j < 4:
+                                group.add_nav_target_point(t.position, "PP" + str(j + 1))
+                            if group.units[0].unit_type == F_14B and j == 0:
+                                group.add_nav_target_point(t.position, "ST")
                 elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
                     for j, t in enumerate(point.targets):
                         if group.units[0].unit_type == JF_17 and j < 4:
