@@ -115,7 +115,7 @@ class EnviromentGenerator:
         if weather_type == 1:
             # thunderstorm
             self._generate_base_weather()
-            self._generate_wind(random.randint(8, 12))
+            self._generate_wind(random.randint(0, 8))
 
             self.mission.weather.clouds_density = random.randint(9, 10)
             self.mission.weather.clouds_iprecptns = Weather.Preceptions.Thunderstorm
@@ -125,7 +125,7 @@ class EnviromentGenerator:
             self.mission.weather.clouds_density = random.randint(5, 8)
             self.mission.weather.clouds_iprecptns = Weather.Preceptions.Rain
 
-            self._generate_wind(random.randint(4, 8))
+            self._generate_wind(random.randint(0, 6))
         elif weather_type == 3:
             # clouds
             self._generate_base_weather()
