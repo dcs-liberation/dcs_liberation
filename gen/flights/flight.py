@@ -70,6 +70,7 @@ class FlightWaypoint:
         self.name = ""
         self.description = ""
         self.targets = []
+        self.targetGroup = None
         self.obj_name = ""
         self.pretty_name = ""
         self.waypoint_type = FlightWaypointType.TAKEOFF  # type: FlightWaypointType

@@ -22,14 +22,14 @@ class QBaseDefenseGroupInfo(QGroupBox):
                     unit_dict[u.type] = 1
         i = 0
         for k, v in unit_dict.items():
-            icon = QLabel()
-            if k in VEHICLES_ICONS.keys():
-                icon.setPixmap(VEHICLES_ICONS[k])
-            else:
-                icon.setText("<b>" + k[:6] + "</b>")
-            icon.setProperty("style", "icon-plane")
-            layout.addWidget(icon, i, 0)
-            layout.addWidget(QLabel(str(v) + " x " + k), i, 1)
+            #icon = QLabel()
+            #if k in VEHICLES_ICONS.keys():
+            #    icon.setPixmap(VEHICLES_ICONS[k])
+            #else:
+            #    icon.setText("<b>" + k[:6] + "</b>")
+            #icon.setProperty("style", "icon-plane")
+            #layout.addWidget(icon, i, 0)
+            layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
             i = i + 1
         self.setLayout(layout)
 

@@ -32,7 +32,7 @@ class QTopPanel(QFrame):
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
 
-        self.proceedButton = QPushButton("Proceed")
+        self.proceedButton = QPushButton("Mission Planning")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
         self.proceedButton.setProperty("style", "btn-primary")
         self.proceedButton.clicked.connect(self.proceed)

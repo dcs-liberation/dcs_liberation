@@ -274,6 +274,8 @@ class Event:
 
                 ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
 
+                player_aggresive = cp.stances[enemy_cp.id] in [CombatStance.AGGRESIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]
+
                 if ally_units_alive == 0:
                     player_won = False
                     delta = STRONG_DEFEAT_INFLUENCE
@@ -296,11 +298,21 @@ class Event:
                             else:
                                 delta = DEFEAT_INFLUENCE
                     elif ally_casualties > enemy_casualties:
-                        player_won = False
-                        if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
+
+                        if ally_units_alive > 2*enemy_units_alive and player_aggresive:
+                            # Even with casualties if the enemy is overwhelmed, they are going to lose ground
+                            player_won = True
+                            delta = MINOR_DEFEAT_INFLUENCE
+                        elif ally_units_alive > 3*enemy_units_alive and player_aggresive:
+                            player_won = True
                             delta = STRONG_DEFEAT_INFLUENCE
                         else:
-                            delta = STRONG_DEFEAT_INFLUENCE
+                            # But is the enemy is not outnumbered, we lose
+                            player_won = False
+                            if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
+                                delta = STRONG_DEFEAT_INFLUENCE
+                            else:
+                                delta = STRONG_DEFEAT_INFLUENCE
 
                     # No progress with defensive strategies
                     if player_won and cp.stances[enemy_cp.id] in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:

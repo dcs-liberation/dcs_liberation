@@ -363,9 +363,9 @@ class AircraftConflictGenerator:
             group.task = SEAD.name
             self._setup_group(group, SEAD, flight.client_count)
             group.points[0].tasks.clear()
-            group.points[0].tasks.append(SEADTaskAction())
+            #group.points[0].tasks.append(SEADTaskAction())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
@@ -407,8 +407,6 @@ class AircraftConflictGenerator:
                             bombing = Bombing(bcenter)
                             bombing.params["expend"] = "All"
                             bombing.params["attackQtyLimit"] = False
-                            bombing.params["attackQty"] = 1
-                            bombing.params["expend"] = "All"
                             bombing.params["directionEnabled"] = False
                             bombing.params["altitudeEnabled"] = False
                             bombing.params["weaponType"] = 2032
@@ -423,6 +421,18 @@ class AircraftConflictGenerator:
                             if group.units[0].unit_type == F_14B and j == 0:
                                 group.add_nav_target_point(t.position, "ST")
                 elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
+
+                    tgroup = self.m.find_group(point.targetGroup.group_identifier)
+                    if group is not None:
+                        task = AttackGroup(tgroup.id)
+                        task.params["expend"] = "All"
+                        task.params["attackQtyLimit"] = False
+                        task.params["directionEnabled"] = False
+                        task.params["altitudeEnabled"] = False
+                        task.params["weaponType"] = 268402702 # Guided Weapons
+                        task.params["groupAttack"] = True
+                        pt.tasks.append(task)
+
                     for j, t in enumerate(point.targets):
                         if group.units[0].unit_type == JF_17 and j < 4:
                             group.add_nav_target_point(t.position, "PP" + str(j + 1))

@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout
+from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout, QFrame
 
 from game import db
 from qt_ui.uiconstants import AIRCRAFT_ICONS, VEHICLES_ICONS
@@ -6,10 +6,10 @@ from qt_ui.windows.basemenu.base_defenses.QBaseDefenseGroupInfo import QBaseDefe
 from theater import ControlPoint, Airport
 
 
-class QBaseInformation(QGroupBox):
+class QBaseInformation(QFrame):
 
     def __init__(self, cp:ControlPoint, airport:Airport):
-        super(QBaseInformation, self).__init__("Base defenses")
+        super(QBaseInformation, self).__init__()
         self.cp = cp
         self.airport = airport
         self.setMinimumWidth(500)

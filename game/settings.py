@@ -27,6 +27,6 @@ class Settings:
 
     # Performance culling
     perf_culling = False
-    perf_culling_distance = 0
+    perf_culling_distance = 100
 
 

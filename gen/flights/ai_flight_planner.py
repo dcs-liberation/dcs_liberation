@@ -567,8 +567,9 @@ class FlightPlanner:
                     point.description = "DEAD on " + location.obj_name
                     point.pretty_name = "DEAD on " + location.obj_name
                     point.only_for_player = True
-                ingress_point.targets.append(location)
-                flight.points.append(point)
+            ingress_point.targets.append(location)
+            ingress_point.targetGroup = location
+            flight.points.append(point)
         else:
             point = FlightWaypoint(location.position.x, location.position.y, 0)
             point.alt_type = "RADIO"
@@ -581,6 +582,7 @@ class FlightPlanner:
                 point.pretty_name = "DEAD on " + location.obj_name
                 point.only_for_player = True
             ingress_point.targets.append(location)
+            ingress_point.targetGroup = location
             flight.points.append(point)
 
         egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
