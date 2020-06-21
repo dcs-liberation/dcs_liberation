@@ -47,12 +47,12 @@
 
 * **[Units/Factions]** Replaced S3-B Tanker by KC130 for most factions (More fuel)
 * **[Units/Factions]** WW2 factions will not have offshore oil station and other modern buildings generated. No more third-reich operated offshore stations will spawn on normandy's coast. 
-
+* **[Units/Factions]** Aircraft carrier will try to move in the wind direction
 * **[Units/Factions]** Missing icons added for some aircraft
 
 * **[Mission Generator]** When playing as RED the activation trigger would not be properly generated
 * **[Mission Generator]** FW-190A8 is now properly considered as a flyable aircraft
-* **[Mission Generator]** Changed "strike" payload for Su-24M that was innefective
+* **[Mission Generator]** Changed "strike" payload for Su-24M that was ineffective
 * **[Mission Generator]** Changed "strike" payload for JF-17 to use LS-6 bombs instead of GBU
 * **[Mission Generator]** Change power station template. (Buildings could end up superposed).
 

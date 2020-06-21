@@ -116,6 +116,12 @@ class Operation:
 
     def generate(self):
 
+        # Generate meteo
+        if self.environment_settings is None:
+            self.environment_settings = self.envgen.generate()
+        else:
+            self.envgen.load(self.environment_settings)
+
         # Generate ground object first
         self.groundobjectgen.generate()
 
@@ -157,12 +163,6 @@ class Operation:
         else:
             cp = self.conflict.to_cp
         self.triggersgen.generate()
-
-        # env settings
-        if self.environment_settings is None:
-            self.environment_settings = self.envgen.generate()
-        else:
-            self.envgen.load(self.environment_settings)
 
         # options
         self.forcedoptionsgen.generate()

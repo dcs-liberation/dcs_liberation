@@ -117,13 +117,20 @@ class GroundObjectsGenerator:
                                     ship.heading = u.heading
                                     sg.add_unit(ship)
 
-                            # TODO : make sure the point is not on Land
-                            sg.add_waypoint(sg.points[0].position.point_from_heading(g.units[0].heading, 100000))
+                            # Find carrier direction (In the wind)
+                            found_carrier_destination = False
+                            attempt = 0
+                            while not found_carrier_destination and attempt < 5:
+                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction, 100000-attempt*20000)
+                                if self.game.theater.is_in_sea(point):
+                                    found_carrier_destination = True
+                                    sg.add_waypoint(point)
+                                else:
+                                    attempt = attempt + 1
 
-                            # SET UP TACAN
+                            # Set UP TACAN and ICLS
                             modeChannel = "X" if not cp.tacanY else "Y"
                             sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id))
-
                             if ground_object.dcs_identifier == "CARRIER" and hasattr(cp, "icls"):
                                 sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
 
