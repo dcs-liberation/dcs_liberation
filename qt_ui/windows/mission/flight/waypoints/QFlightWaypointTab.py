@@ -1,15 +1,19 @@
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QVBoxLayout
 
-from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from game import Game
+from gen.flights.flight import Flight
 from qt_ui.windows.mission.flight.generator.QCAPMissionGenerator import QCAPMissionGenerator
 from qt_ui.windows.mission.flight.generator.QCASMissionGenerator import QCASMissionGenerator
 from qt_ui.windows.mission.flight.generator.QSEADMissionGenerator import QSEADMissionGenerator
 from qt_ui.windows.mission.flight.generator.QSTRIKEMissionGenerator import QSTRIKEMissionGenerator
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import QFlightWaypointList
 from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import QPredefinedWaypointSelectionWindow
-from game import Game
+
 
 class QFlightWaypointTab(QFrame):
+
+    on_flight_changed = Signal()
 
     def __init__(self, game: Game, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
@@ -73,39 +77,53 @@ class QFlightWaypointTab(QFrame):
         if wpt > 0:
             del self.flight.points[wpt-1]
             self.flight_waypoint_list.update_list()
+        self.on_change()
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_ascend_waypoint(self):
         ascend = self.planner.generate_ascend_point(self.flight.from_cp)
         self.flight.points.append(ascend)
         self.flight_waypoint_list.update_list()
+        self.on_change()
 
     def on_rtb_waypoint(self):
         rtb = self.planner.generate_rtb_waypoint(self.flight.from_cp)
         self.flight.points.append(rtb)
         self.flight_waypoint_list.update_list()
+        self.on_change()
 
     def on_descend_waypoint(self):
         descend = self.planner.generate_descend_point(self.flight.from_cp)
         self.flight.points.append(descend)
         self.flight_waypoint_list.update_list()
+        self.on_change()
 
     def on_cas_generator(self):
         self.subwindow = QCASMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_cap_generator(self):
         self.subwindow = QCAPMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_sead_generator(self):
         self.subwindow = QSEADMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_strike_generator(self):
         self.subwindow = QSTRIKEMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
+
+    def on_change(self):
+        self.flight_waypoint_list.update_list()
+        self.on_flight_changed.emit()
+
 

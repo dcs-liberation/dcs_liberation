@@ -208,7 +208,7 @@ class QSettingsWindow(QDialog):
         self.culling_distance.setMinimum(50)
         self.culling_distance.setMaximum(10000)
         self.culling_distance.setValue(self.game.settings.perf_culling_distance)
-        self.culling_distance.valueChanged.connect(self.applySettings())
+        self.culling_distance.valueChanged.connect(self.applySettings)
 
         self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)

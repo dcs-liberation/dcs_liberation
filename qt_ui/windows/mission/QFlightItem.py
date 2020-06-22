@@ -18,3 +18,9 @@ class QFlightItem(QStandardItem):
         self.setText("["+str(self.flight.flight_type.name[:6])+"] "
                      + str(self.flight.count) + " x " + db.unit_type_name(self.flight.unit_type)
                      + "   in " + str(self.flight.scheduled_in) + " minutes")
+
+    def update(self, flight):
+        self.flight = flight
+        self.setText("[" + str(self.flight.flight_type.name[:6]) + "] "
+                     + str(self.flight.count) + " x " + db.unit_type_name(self.flight.unit_type)
+                     + "   in " + str(self.flight.scheduled_in) + " minutes")

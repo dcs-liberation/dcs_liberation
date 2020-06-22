@@ -1,19 +1,17 @@
 import logging
 import os
 import sys
-from shutil import copyfile
 
 import dcs
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
-from dcs import installation
 
 from qt_ui import uiconstants
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
-from userdata import persistency, logging as logging_module, liberation_install
+from userdata import liberation_install, persistency, logging_config
 
 if __name__ == "__main__":
 
@@ -24,8 +22,8 @@ if __name__ == "__main__":
         app.setStyleSheet(stylesheet.read())
 
     # Logging setup
-    VERSION_STRING = "2.0RC6"
-    logging_module.setup_version_string(VERSION_STRING)
+    VERSION_STRING = "2.0RC7"
+    logging_config.init_logging(VERSION_STRING)
 
     # Inject custom payload in pydcs framework
     custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")
@@ -80,6 +78,7 @@ if __name__ == "__main__":
     logging.info("QT App terminated with status code : " + str(qt_execution_code))
     logging.info("Attempt to restore original mission scripting file")
     liberation_install.restore_original_mission_scripting()
-    sys.exit(qt_execution_code)
+    logging.info("QT process exited with code : " + str(qt_execution_code))
+    sys.exit(0)
 
 

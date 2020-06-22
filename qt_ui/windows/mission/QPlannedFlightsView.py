@@ -12,14 +12,21 @@ class QPlannedFlightsView(QListView):
         super(QPlannedFlightsView, self).__init__()
         self.model = QStandardItemModel(self)
         self.setModel(self.model)
+        self.flightitems = []
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         if flight_planner:
             self.set_flight_planner(flight_planner)
 
-    def update_content(self, row=0):
+    def update_content(self):
         for i, f in enumerate(self.flight_planner.flights):
-            self.model.appendRow(QFlightItem(f))
+            self.flightitems[i].update(f)
+
+    def setup_content(self, row=0):
+        for i, f in enumerate(self.flight_planner.flights):
+            item = QFlightItem(f)
+            self.model.appendRow(item)
+            self.flightitems.append(item)
         self.setSelectedFlight(row)
         self.repaint()
 
@@ -38,4 +45,4 @@ class QPlannedFlightsView(QListView):
         self.clear_layout()
         self.flight_planner = flight_planner
         if self.flight_planner:
-            self.update_content(row)
+            self.setup_content(row)

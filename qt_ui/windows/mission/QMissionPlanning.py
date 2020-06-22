@@ -16,7 +16,7 @@ class QMissionPlanning(QDialog):
         super(QMissionPlanning, self).__init__()
         self.game = game
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setMinimumSize(800, 420)
+        self.setMinimumSize(1000, 420)
         self.setModal(True)
         self.setWindowTitle("Mission Preparation")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -42,9 +42,11 @@ class QMissionPlanning(QDialog):
         self.planned_flight_view.selectionModel().selectionChanged.connect(self.on_flight_selection_change)
 
         if len(self.planned_flight_view.flight_planner.flights) > 0:
-            self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game, self.planned_flight_view.flight_planner)
+            self.flight_planner = QFlightPlanner(self.planned_flight_view.flight_planner.flights[0], self.game, self.planned_flight_view.flight_planner, 0)
+            self.flight_planner.on_planned_flight_changed.connect(self.update_planned_flight_view)
         else:
-            self.flight_planner = QFlightPlanner(None, self.game, self.planned_flight_view.flight_planner)
+            self.flight_planner = QFlightPlanner(None, self.game, self.planned_flight_view.flight_planner, 0)
+            self.flight_planner.on_planned_flight_changed.connect(self.update_planned_flight_view)
 
         self.add_flight_button = QPushButton("Add Flight")
         self.add_flight_button.clicked.connect(self.on_add_flight)
@@ -88,7 +90,7 @@ class QMissionPlanning(QDialog):
         print("On flight selection change")
 
         index = self.planned_flight_view.selectionModel().currentIndex().row()
-        self.planned_flight_view.repaint();
+        self.planned_flight_view.repaint()
 
         if self.flight_planner is not None:
             self.flight_planner.clearTabs()
@@ -97,9 +99,12 @@ class QMissionPlanning(QDialog):
             flight = self.planner.flights[index]
         except IndexError:
             flight = None
-        self.flight_planner = QFlightPlanner(flight, self.game, self.planner)
+        self.flight_planner = QFlightPlanner(flight, self.game, self.planner, self.flight_planner.currentIndex())
+        self.flight_planner.on_planned_flight_changed.connect(self.update_planned_flight_view)
         self.layout.addWidget(self.flight_planner, 0, 1)
 
+    def update_planned_flight_view(self):
+        self.planned_flight_view.update_content()
 
     def on_add_flight(self):
         possible_aircraft_type = list(self.selected_cp.base.aircraft.keys())

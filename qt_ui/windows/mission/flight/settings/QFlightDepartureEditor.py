@@ -24,5 +24,7 @@ class QFlightDepartureEditor(QGroupBox):
         layout.addWidget(self.minutes)
         self.setLayout(layout)
 
+        self.changed = self.departure_delta.valueChanged
+
     def change_scheduled(self):
         self.flight.scheduled_in = int(self.departure_delta.value())

@@ -9,7 +9,6 @@ import qt_ui.uiconstants as CONST
 from game import db, Game
 from gen import namegen
 from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
-from userdata.logging import version_string
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -109,7 +108,7 @@ class NewGameWizard(QtWidgets.QWizard):
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = True
-        game.settings.version = version_string()
+        game.settings.version = "2.0RC7"
 
         if midgame:
             game.budget = game.budget * 4 * len(list(conflicttheater.conflicts()))

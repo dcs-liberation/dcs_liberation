@@ -59,7 +59,7 @@
 * **[Maps/Campaign]** Now using Vasiani airbase instead of Soganlung airport in Caucasus campaigns (more parking slot)
 * **[Info Panel]** Message displayed on base capture event stated that the enemy captured an airbase, while it was the player who captured it.
 * **[Map View]** Graphical glitch on map when one building of an objective was destroyed, but not the others 
-
+* **[Mission Planner]** The list of flights was not updated on departure time change. 
 
 
 # 2.0 RC 6

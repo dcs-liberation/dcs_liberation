@@ -659,8 +659,8 @@ class FlightPlanner:
         ascend = FlightWaypoint(pos_ascend.x, pos_ascend.y, self.doctrine["PATTERN_ALTITUDE"])
         ascend.name = "ASCEND"
         ascend.alt_type = "RADIO"
-        ascend.description = "Ascend to alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL], then proceed to next waypoint"
-        ascend.pretty_name = "Ascend to alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL]"
+        ascend.description = "Ascend"
+        ascend.pretty_name = "Ascend"
         ascend.waypoint_type = FlightWaypointType.ASCEND_POINT
         return ascend
 
@@ -676,8 +676,8 @@ class FlightPlanner:
         descend = FlightWaypoint(descend.x, descend.y, self.doctrine["PATTERN_ALTITUDE"])
         descend.name = "DESCEND"
         descend.alt_type = "RADIO"
-        descend.description = "Descend to pattern alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL], contact tower, and land"
-        descend.pretty_name = "Descend to pattern alt [" + str(meter_to_feet(self.doctrine["PATTERN_ALTITUDE"])) + " ft AGL]"
+        descend.description = "Descend to pattern alt"
+        descend.pretty_name = "Descend to pattern alt"
         descend.waypoint_type = FlightWaypointType.DESCENT_POINT
         return descend
 
