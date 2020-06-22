@@ -16,7 +16,7 @@ class QChooseAirbase(QGroupBox):
         self.depart_from_label = QLabel("Airbase : ")
         self.depart_from = QComboBox()
 
-        for i, cp in enumerate([b for b in self.game.theater.controlpoints if b.captured]):
+        for i, cp in enumerate([b for b in self.game.theater.controlpoints if b.captured and b.id in self.game.planners]):
             self.depart_from.addItem(str(cp.name), cp)
         self.depart_from.setCurrentIndex(0)
         self.depart_from.currentTextChanged.connect(self._on_airbase_selected)
