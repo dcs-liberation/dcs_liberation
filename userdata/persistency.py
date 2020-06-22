@@ -42,7 +42,7 @@ def restore_game():
             save = pickle.load(f)
             return save
         except:
-            print("Invalid Save game")
+            logging.error("Invalid Save game")
             return None
 
 

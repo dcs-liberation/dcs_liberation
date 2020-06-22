@@ -119,12 +119,12 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
             for i in range(random.randint(3,6)):
 
-                print("GENERATE BASE DEFENSE")
+                logging.info("GENERATE BASE DEFENSE")
                 point = find_location(True, cp.position, theater, 1000, 2800, [], True)
-                print(point)
+                logging.info(point)
 
                 if point is None:
-                    print("Couldn't find point for {} base defense".format(cp))
+                    logging.info("Couldn't find point for {} base defense".format(cp))
                     continue
 
                 group_id = group_id + 1
@@ -143,10 +143,10 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 generate_airbase_defense_group(i, g, faction_name, game, cp)
                 cp.ground_objects.append(g)
 
-            print("---------------------------")
-            print("CP Generation : " + cp.name)
+            logging.info("---------------------------")
+            logging.info("CP Generation : " + cp.name)
             for ground_object in cp.ground_objects:
-                print(ground_object.groups)
+                logging.info(ground_object.groups)
 
         if "boat" in db.FACTIONS[faction_name].keys():
 
@@ -159,7 +159,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 point = find_location(False, cp.position, theater, 5000, 40000, [], False)
 
                 if point is None:
-                    print("Couldn't find point for {} ships".format(cp))
+                    logging.info("Couldn't find point for {} ships".format(cp))
                     continue
 
                 group_id = group_id + 1
@@ -192,7 +192,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 point = find_location(True, cp.position, theater, 2500, 40000, [], False)
 
                 if point is None:
-                    print("Couldn't find point for {} missiles".format(cp))
+                    logging.info("Couldn't find point for {} missiles".format(cp))
                     continue
 
                 group_id = group_id + 1
@@ -218,9 +218,9 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
 def generate_airbase_defense_group(airbase_defense_group_id, ground_obj:TheaterGroundObject, faction, game, cp):
 
-    print("GENERATE AIR DEFENSE GROUP")
-    print(faction)
-    print(airbase_defense_group_id)
+    logging.info("GENERATE AIR DEFENSE GROUP")
+    logging.info(faction)
+    logging.info(airbase_defense_group_id)
 
     if airbase_defense_group_id == 0:
         group = generate_armor_group(faction, game, ground_obj)
@@ -337,7 +337,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
         point = find_location(tpl_category != "oil", cp.position, theater, 10000, 40000, cp.ground_objects)
 
         if point is None:
-            print("Couldn't find point for {}".format(cp))
+            logging.info("Couldn't find point for {}".format(cp))
             continue
 
         object_id = 0

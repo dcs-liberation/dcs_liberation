@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from game.db import REWARDS, PLAYER_BUDGET_BASE
+from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
 from game.game_stats import GameStats
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner

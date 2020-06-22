@@ -1,12 +1,10 @@
-import typing
-
 from dcs.mission import *
 from dcs.terrain import *
 
-from theater.nevada import *
-from theater.persiangulf import *
 from theater.caucasus import *
 from theater.controlpoint import *
+from theater.nevada import *
+
 
 def find_ground_location(near, theater, max, min) -> typing.Optional[Point]:
     for _ in range(500):
@@ -24,7 +22,7 @@ for cp in theater.enemy_points():
     for _ in range(0, random.randrange(3, 6)):
         p = find_ground_location(cp.position, theater, 120000, 5000)
         if not p:
-            print("Didn't find ground location for {}".format(cp))
+            logging.info("Didn't find ground location for {}".format(cp))
             continue
 
         mission.flight_group_inflight(

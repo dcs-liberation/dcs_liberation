@@ -363,7 +363,7 @@ class AircraftConflictGenerator:
             group.task = SEAD.name
             self._setup_group(group, SEAD, flight.client_count)
             group.points[0].tasks.clear()
-            #group.points[0].tasks.append(SEADTaskAction())
+            group.points[0].tasks.append(NoTask())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
@@ -423,7 +423,7 @@ class AircraftConflictGenerator:
                 elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
 
                     tgroup = self.m.find_group(point.targetGroup.group_identifier)
-                    if group is not None:
+                    if tgroup is not None:
                         task = AttackGroup(tgroup.id)
                         task.params["expend"] = "All"
                         task.params["attackQtyLimit"] = False

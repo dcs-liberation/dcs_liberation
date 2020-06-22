@@ -1,3 +1,4 @@
+import logging
 import sys
 import webbrowser
 
@@ -163,12 +164,12 @@ class QLiberationWindow(QMainWindow):
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def saveGame(self):
-        print("Saving game")
+        logging.info("Saving game")
         persistency.save_game(self.game)
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def onGameGenerated(self, game: Game):
-        print("On Game generated")
+        logging.info("On Game generated")
         self.game = game
         GameUpdateSignal.get_instance().updateGame(self.game)
 
@@ -198,7 +199,7 @@ class QLiberationWindow(QMainWindow):
         about.setWindowTitle("About DCS Liberation")
         about.setIcon(QMessageBox.Icon.Information)
         about.setText(text)
-        print(about.textFormat())
+        logging.info(about.textFormat())
         about.exec_()
 
     def showLiberationDialog(self):
@@ -206,6 +207,6 @@ class QLiberationWindow(QMainWindow):
         self.subwindow.show()
 
     def onDebriefing(self, debrief: DebriefingSignal):
-        print("On Debriefing")
+        logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
         self.debriefing.show()

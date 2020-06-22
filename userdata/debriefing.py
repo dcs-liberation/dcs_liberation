@@ -36,11 +36,15 @@ class Debriefing:
         self.weapons_fired = state_data["weapons_fired"]
         self.mission_ended = state_data["mission_ended"]
 
-        print(self.base_capture_events)
-        print(self.killed_aircrafts)
-        print(self.killed_ground_units)
-        print(self.weapons_fired)
-        print(self.mission_ended)
+        logging.info("--------------------------------")
+        logging.info("Starting Debriefing preprocessing")
+        logging.info("--------------------------------")
+        logging.info(self.base_capture_events)
+        logging.info(self.killed_aircrafts)
+        logging.info(self.killed_ground_units)
+        logging.info(self.weapons_fired)
+        logging.info(self.mission_ended)
+        logging.info("--------------------------------")
 
         self.player_country_id = db.country_id_from_name(game.player_country)
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
@@ -59,7 +63,7 @@ class Debriefing:
                 if type is not None:
                     self.dead_aircraft.append(aircraft)
             except Exception as e:
-                print(e)
+                logging.error(e)
 
         for unit in self.killed_ground_units:
             try:
@@ -70,13 +74,14 @@ class Debriefing:
                 if type is not None:
                     self.dead_units.append(unit)
             except Exception as e:
-                print(e)
+                logging.error(e)
 
         for unit in self.killed_ground_units:
             for cp in game.theater.controlpoints:
 
-                print(cp.name)
-                print(cp.captured)
+                logging.info(cp.name)
+                logging.info(cp.captured)
+
                 if cp.captured:
                     country = self.player_country_id
                 else:
@@ -84,8 +89,8 @@ class Debriefing:
                 player_unit = (country == self.player_country_id)
 
                 for i, ground_object in enumerate(cp.ground_objects):
-                    print(unit)
-                    print(ground_object.string_identifier)
+                    logging.info(unit)
+                    logging.info(ground_object.string_identifier)
                     if ground_object.matches_string_identifier(unit):
                         unit = DebriefingDeadUnitInfo(country, player_unit, ground_object.dcs_identifier)
                         self.dead_buildings.append(unit)
@@ -103,10 +108,10 @@ class Debriefing:
         self.player_dead_buildings = [a for a in self.dead_buildings if a.country_id == self.player_country_id]
         self.enemy_dead_buildings = [a for a in self.dead_buildings if a.country_id == self.enemy_country_id]
 
-        print(self.player_dead_aircraft)
-        print(self.enemy_dead_aircraft)
-        print(self.player_dead_units)
-        print(self.enemy_dead_units)
+        logging.info(self.player_dead_aircraft)
+        logging.info(self.enemy_dead_aircraft)
+        logging.info(self.player_dead_units)
+        logging.info(self.enemy_dead_units)
 
         self.player_dead_aircraft_dict = {}
         for a in self.player_dead_aircraft:
@@ -150,13 +155,15 @@ class Debriefing:
             else:
                 self.enemy_dead_buildings_dict[a.type] = 1
 
-        print("DEBRIEFING PRE PROCESS")
-        print(self.player_dead_aircraft_dict)
-        print(self.enemy_dead_aircraft_dict)
-        print(self.player_dead_units_dict)
-        print(self.enemy_dead_units_dict)
-        print(self.player_dead_buildings_dict)
-        print(self.enemy_dead_buildings_dict)
+        logging.info("--------------------------------")
+        logging.info("Debriefing pre process results :")
+        logging.info("--------------------------------")
+        logging.info(self.player_dead_aircraft_dict)
+        logging.info(self.enemy_dead_aircraft_dict)
+        logging.info(self.player_dead_units_dict)
+        logging.info(self.enemy_dead_units_dict)
+        logging.info(self.player_dead_buildings_dict)
+        logging.info(self.enemy_dead_buildings_dict)
 
 
 def _poll_new_debriefing_log(callback: typing.Callable, game):

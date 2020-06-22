@@ -1,3 +1,9 @@
+from userdata import logging_config
+
+# Logging setup
+VERSION_STRING = "2.0RC7"
+logging_config.init_logging(VERSION_STRING)
+
 import logging
 import os
 import sys
@@ -11,7 +17,7 @@ from qt_ui import uiconstants
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
-from userdata import liberation_install, persistency, logging_config
+from userdata import liberation_install, persistency
 
 if __name__ == "__main__":
 
@@ -21,9 +27,8 @@ if __name__ == "__main__":
     with open("./resources/stylesheets/style.css") as stylesheet:
         app.setStyleSheet(stylesheet.read())
 
-    # Logging setup
-    VERSION_STRING = "2.0RC7"
-    logging_config.init_logging(VERSION_STRING)
+
+
 
     # Inject custom payload in pydcs framework
     custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")

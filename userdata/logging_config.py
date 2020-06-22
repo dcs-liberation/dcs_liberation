@@ -7,6 +7,7 @@ def init_logging(version_string):
     if not os.path.isdir("./logs"):
         os.mkdir("logs")
 
+    logging.basicConfig(level="DEBUG")
     logger = logging.getLogger()
 
     formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
