@@ -1,3 +1,11 @@
+# 2.0 RC 8
+
+## Fixed issues :
+* **[Mission Generator]** Frequency for P-47D-30 changed to 124Mhz (Generated mission with 251Mhz would not work)
+* **[Mission Generator]** Reduced the maximum number of uboat per generated group
+* **[Mission Generator]** Fixed an issue with the WW2 LST groups (superposed units).
+* **[UI]** Fixed issue with the zoom
+
 # 2.0 RC 7
 
 ## Features/Improvements :
