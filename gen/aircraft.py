@@ -90,7 +90,7 @@ class AircraftConflictGenerator:
         if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
             group.set_frequency(127.5)
         else:
-            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4]:
+            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4, P_47D_30]:
                 group.set_frequency(251.0)
             else:
                 # WW2
