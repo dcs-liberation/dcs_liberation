@@ -43,6 +43,7 @@ class QLiberationMap(QGraphicsView):
         self.setMaximumHeight(2160)
         self._zoom = 0
         self.factor = 1
+        self.factorized = 1
         self.init_scene()
         self.connectSignals()
         self.setGame(game)
@@ -118,7 +119,6 @@ class QLiberationMap(QGraphicsView):
         #for i, r in enumerate(self.game.theater.reference_points.items()):
         #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
         #    text.setPos(0, i * 24)
-
 
         for cp in self.game.theater.controlpoints:
         
@@ -263,15 +263,21 @@ class QLiberationMap(QGraphicsView):
         if event.angleDelta().y() > 0:
             factor = 1.25
             self._zoom += 1
+            if self._zoom < 10:
+                self.scale(factor, factor)
+                self.factorized *= factor
+            else:
+                self._zoom = 9
         else:
             factor = 0.8
             self._zoom -= 1
+            if self._zoom > -5:
+                self.scale(factor, factor)
+                self.factorized *= factor
+            else:
+                self._zoom = -4
 
-        if self._zoom > -5:
-            self.scale(factor, factor)
-        else:
-            self._zoom = -5
-
+        #print(self.factorized, factor, self._zoom)
 
     def _transform_point(self, p: Point, treshold=30) -> (int, int):
         point_a = list(self.game.theater.reference_points.keys())[0]
