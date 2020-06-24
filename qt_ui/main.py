@@ -24,7 +24,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     css = ""
-    with open("./resources/stylesheets/style.css") as stylesheet:
+    with open("./resources/stylesheets/style-dcs.css") as stylesheet:
         app.setStyleSheet(stylesheet.read())
 
 
