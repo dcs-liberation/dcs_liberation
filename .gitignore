@@ -11,3 +11,11 @@ resources/tools/a.miz
 tests/**
 # User-specific stuff
 .idea/
+
+liberation_preferences.json
+
+logs/liberation.log
+
+qt_ui/logs/liberation.log
+
+*.psd
