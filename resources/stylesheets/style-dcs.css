@@ -201,8 +201,8 @@ margin:5px;
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: top left; /* position at the top center */
-    padding: 0 3px;
+    subcontrol-position: top left; /* position at the top left */
+    padding: 3px;
     color: #B7C0C6;
     font-weight: 800;
 }
@@ -214,12 +214,11 @@ QGroupBox::indicator , QCheckBox::indicator {
     height: 14px;
     border: 1px solid #435466;
 
-
 }
 
 QGroupBox::indicator:hover , QCheckBox::indicator:hover {
     border-color: #fff;
-image: url(resources/stylesheets/check-hover.png);
+    image: url(resources/stylesheets/check-hover.png);
 }
 
 QGroupBox::indicator:unchecked , QCheckBox::indicator:unchecked {
@@ -233,6 +232,12 @@ image: url(resources/stylesheets/check.png);
 
 /*QDialog*/
 QDialog{
+
+}
+
+
+QListView {
+border: none;
 }
 
 /*QTabWidget*/
@@ -267,14 +272,40 @@ QTabBar::tab:selected {
 
 /*QComboxBox*/
 QComboxBox {
-    padding: 6px;
+    padding:10px;
+    margin:10px;
     border:1px solid #3B4656;
-    background: #465C74;
+    background: #1D2731;
     color: #fff;
 }
-QComboBox::down-arrow {
-
+QComboBox:editable {
+    background: #465C74;
 }
+
+QComboBox:!editable{
+     background: #1D2731;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    padding: 10px;
+    border:none;
+    background: #1D2731;
+    color: #fff;
+    height: 20px;
+}
+
+QComboBox::down-arrow {
+    image: url(resources/stylesheets/chevron-down.png);
+}
+
+QComboBox QAbstractItemView {
+      padding: 10px;
+    border:1px solid #3B4656;
+    background: #465C74;
+
+  }
+
 
 QLineEdit{
     padding: 6px;
