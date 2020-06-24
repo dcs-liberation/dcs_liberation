@@ -1,3 +1,8 @@
+# 2.0 RC 9
+
+## Fixed issues :
+* **[Mission Generator]** Carrier TACAN was wrongfully set up as an A/A TACAN
+
 # 2.0 RC 8
 
 ## Fixed issues :

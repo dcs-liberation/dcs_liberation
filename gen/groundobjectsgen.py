@@ -130,7 +130,7 @@ class GroundObjectsGenerator:
 
                             # Set UP TACAN and ICLS
                             modeChannel = "X" if not cp.tacanY else "Y"
-                            sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id))
+                            sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id, aa=False))
                             if ground_object.dcs_identifier == "CARRIER" and hasattr(cp, "icls"):
                                 sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
 
