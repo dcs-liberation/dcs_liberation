@@ -6,6 +6,7 @@ colors
 
 Backgrounds
 mainbg ---------------------- #2D3E50
+med/grey/blue --------------- #435466
 dark blue ------------------- #1D2731
 dark grey ------------------- #4E5760
 button blue/grey gradient --- qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
@@ -14,7 +15,7 @@ button green gradient --- qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #82A466,
 Text
 white text ------------------- #ffffff
 blue text -------------------- #3592C4
-grey text -------------------- #A7B0B6
+grey text -------------------- #B7C0C6
 
 */
 
@@ -36,7 +37,7 @@ QLiberationWindow{
 QTopPanel,
 QTopPanel * {
     background-color: #1D2731;
-    color: #A7B0B6;
+    color: #B7C0C6;
     font-size: 12px;
     font-weight: bold;
 
@@ -47,7 +48,7 @@ QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
     border: 1px solid #97A9A9;
     color:#fff;
-    padding: 8px 30px;
+    padding: 6px 20px;
     cursor: pointer;
 }
 
@@ -56,27 +57,34 @@ QPushButton:hover {
     cursor:pointer;
 }
 
+
+
+/*btn-success = a small green button*/
 QPushButton[style="btn-success"]{
-    background-color:#699245;
+    background-color:#82A466;
     color: white;
     cursor:pointer;
-    padding: 5px 5px 5px 5px;
-    border-radius:5px;
+    padding: 5px;
+    border-radius:2px;
+    border:none;
 }
 
 QPushButton[style="btn-success"]:hover{
-    background-color:#8ABC5A;
-    padding: 5px 5px 5px 5px;
-    border-radius:5px;
+    background-color:#5C863F;
+    padding: 5px;
+    border-radius:2px;
     cursor: pointer;
 }
 
+
+/*mission start button*/
 QPushButton[style="start-button"]{
     background:qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #82A466, stop:1 #5C863F);
     border-radius:2px;
     border: none;
     text-transform: uppercase;
     text-weight: bold;
+     padding: 8px 30px;
 }
 
 QPushButton[style="start-button"]:hover{
@@ -183,9 +191,45 @@ QLabel[style="SEAD"]{
     color:white;
 }
 
-/*QGroupBox*/
+/*QGroupBox these are the sections that look like fieldsets*/
 QGroupBox {
+margin-top: 1ex; /* leave space at the top for the title */
+border:1px solid #435466;
+padding:5px;
+margin:5px;
 }
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left; /* position at the top center */
+    padding: 0 3px;
+    color: #B7C0C6;
+    font-weight: 800;
+}
+
+
+/*checkboxes*/
+QGroupBox::indicator , QCheckBox::indicator {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #435466;
+
+
+}
+
+QGroupBox::indicator:hover , QCheckBox::indicator:hover {
+    border-color: #fff;
+image: url(resources/stylesheets/check-hover.png);
+}
+
+QGroupBox::indicator:unchecked , QCheckBox::indicator:unchecked {
+
+}
+
+QGroupBox::indicator:checked , QCheckBox::indicator:checked {
+image: url(resources/stylesheets/check.png);
+}
+
 
 /*QDialog*/
 QDialog{
@@ -211,6 +255,7 @@ QTabBar::tab {
 
 QTabBar::tab:hover {
     background: #1D2731;
+    color:#fff;
 }
 
 QTabBar::tab:selected {
@@ -241,10 +286,10 @@ QLineEdit{
 
 /*table view*/
 QHeaderView{
-    background-color: #646464;
+    background-color: #202C3A;
 }
 QHeaderView::section {
-    background-color: #646464;
+    background-color: #202C3A;
     padding: 4px;
     border-style: none;
     border-bottom: 1px solid #1D2731;
@@ -254,6 +299,7 @@ QHeaderView::section:horizontal
 {
     border: none;
     text-align:left;
+
 }
 
 QHeaderView::section:vertical
@@ -264,6 +310,12 @@ QHeaderView::section:vertical
 QTableWidget {
     gridline-color: #646464;
 
+}
+
+
+/*helper modifiers*/
+*[style="no-border"] {
+border:none;
 }
 
 
