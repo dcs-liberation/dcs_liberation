@@ -19,6 +19,28 @@ grey text -------------------- #B7C0C6
 
 */
 
+/*QMenuBar*/
+QMenuBar {
+    spacing: 2px; /* spacing between menu bar items */
+    border-bottom:none;
+}
+
+QMenuBar::item {
+    padding: 4px 10px;
+    background: transparent;
+    border-radius: 2px;
+    margin: 4px 0;
+}
+
+QMenuBar::item:selected { /* when selected using mouse or keyboard */
+    background: #1D2731;
+}
+
+QMenuBar::item:pressed {
+    background: #1D2731;
+}
+
+
 
 /*QWidget*/
 QWidget {
@@ -48,7 +70,7 @@ QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
     border: 1px solid #97A9A9;
     color:#fff;
-    padding: 6px 20px;
+    padding: 4px 10px;
     cursor: pointer;
 }
 
@@ -57,16 +79,27 @@ QPushButton:hover {
     cursor:pointer;
 }
 
+/*btn-success = a green button*/
+QPushButton[style="btn-primary"]{
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
+    border: 1px solid #97A9A9;
+    color:#fff;
+    padding: 6px 20px;
+    border-radius:2px;
+    cursor: pointer;
+    font-weight:bold;
+    text-transform:uppercase;
+}
 
-
-/*btn-success = a small green button*/
+/*btn-success = a green button*/
 QPushButton[style="btn-success"]{
     background-color:#82A466;
     color: white;
     cursor:pointer;
-    padding: 5px;
+    padding: 6px 20px;
     border-radius:2px;
-    border:none;
+    font-weight:bold;
+    text-transform:uppercase;
 }
 
 QPushButton[style="btn-success"]:hover{
