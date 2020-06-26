@@ -6,6 +6,7 @@ from PySide2.QtGui import QColor, QFont, QPixmap
 
 from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
+from userdata.liberation_theme import get_theme_icons
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
@@ -64,9 +65,9 @@ ICONS: Dict[str, QPixmap] = {}
 
 def load_icons():
 
-    ICONS["New"] = QPixmap("./resources/ui/misc/new.png")
-    ICONS["Open"] = QPixmap("./resources/ui/misc/open.png")
-    ICONS["Save"] = QPixmap("./resources/ui/misc/save.png")
+    ICONS["New"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/new.png")
+    ICONS["Open"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/open.png")
+    ICONS["Save"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/save.png")
 
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
     ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
@@ -79,12 +80,12 @@ def load_icons():
     ICONS["Dusk"] = QPixmap("./resources/ui/daytime/dusk.png")
     ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
 
-    ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
-    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/hourglass.png")
-    ICONS["Proceed"] = QPixmap("./resources/ui/misc/proceed.png")
-    ICONS["Settings"] = QPixmap("./resources/ui/misc/settings.png")
-    ICONS["Statistics"] = QPixmap("./resources/ui/misc/statistics.png")
-    ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")
+    ICONS["Money"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/money_icon.png")
+    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/hourglass.png")
+    ICONS["Proceed"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/proceed.png")
+    ICONS["Settings"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/settings.png")
+    ICONS["Statistics"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/statistics.png")
+    ICONS["Ordnance"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/ordnance_icon.png")
 
     ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")
     ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")

@@ -1,8 +1,6 @@
 from userdata import logging_config
 
 # Logging setup
-from userdata.liberation_theme import get_theme_file
-
 VERSION_STRING = "2.0RC7"
 logging_config.init_logging(VERSION_STRING)
 
@@ -28,7 +26,7 @@ if __name__ == "__main__":
 
     liberation_theme.init();
     css = ""
-    with open("./resources/stylesheets/"+get_theme_file()) as stylesheet:
+    with open("./resources/stylesheets/"+liberation_theme.get_theme_file()) as stylesheet:
         app.setStyleSheet(stylesheet.read())
 
     # Inject custom payload in pydcs framework

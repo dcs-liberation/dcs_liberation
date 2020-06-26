@@ -67,8 +67,8 @@ def set_theme_icons():
 
 
 def get_theme_icons():
-    global __theme_icons
-    return str(__theme_icons)
+    theme_icons = CONST.THEMES[get_theme_index()]['themeIcons']
+    return str(theme_icons)
 
 
 # get or set theme from json file
