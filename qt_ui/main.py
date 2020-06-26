@@ -17,16 +17,16 @@ from qt_ui import uiconstants
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
-from userdata import liberation_install, persistency
-from userdata import liberation_theme, persistency
+from userdata import liberation_install, persistency, liberation_theme
 
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
+    # init the theme and load the stylesheet based on the theme index
     liberation_theme.init();
     css = ""
-    with open("./resources/stylesheets/"+liberation_theme.get_theme_file()) as stylesheet:
+    with open("./resources/stylesheets/"+liberation_theme.get_theme_css_file()) as stylesheet:
         app.setStyleSheet(stylesheet.read())
 
     # Inject custom payload in pydcs framework

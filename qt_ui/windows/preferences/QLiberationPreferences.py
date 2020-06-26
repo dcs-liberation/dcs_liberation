@@ -10,7 +10,7 @@ import sys
 
 import userdata
 from userdata import liberation_install, liberation_theme
-from userdata.liberation_theme import get_theme_file, set_theme_name, get_theme_index, set_theme_index
+from userdata.liberation_theme import get_theme_index, set_theme_index
 
 
 class QLiberationPreferences(QFrame):
@@ -34,12 +34,9 @@ class QLiberationPreferences(QFrame):
         self.browse_install_dir = QPushButton("Browse...")
         self.browse_install_dir.clicked.connect(self.on_browse_installation_dir)
         self.themeSelect = QComboBox()
-
-        for x, y in CONST.THEMES.items():
-            self.themeSelect.addItem(y['themeName'])
+        [self.themeSelect.addItem(y['themeName']) for x, y in CONST.THEMES.items()]
 
         self.initUi()
-
 
     def initUi(self):
         main_layout = QVBoxLayout()
@@ -92,7 +89,8 @@ class QLiberationPreferences(QFrame):
             error_dialog.exec_()
             return False
 
-        if not os.path.isdir(os.path.join(self.dcs_install_dir, "Scripts")) and os.path.isfile(os.path.join(self.dcs_install_dir, "bin", "DCS.exe")):
+        if not os.path.isdir(os.path.join(self.dcs_install_dir, "Scripts")) and os.path.isfile(
+                os.path.join(self.dcs_install_dir, "bin", "DCS.exe")):
             error_dialog = QMessageBox.critical(self, "Wrong DCS installation directory.",
                                                 self.dcs_install_dir + " is not a valid DCS installation directory",
                                                 QMessageBox.StandardButton.Ok)
@@ -101,8 +99,5 @@ class QLiberationPreferences(QFrame):
 
         liberation_install.setup(self.saved_game_dir, self.dcs_install_dir)
         liberation_install.save_config()
-        liberation_theme.set_theme_file()
+        liberation_theme.save_theme_config()
         return True
-
-
-

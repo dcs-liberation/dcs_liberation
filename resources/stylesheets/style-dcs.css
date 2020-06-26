@@ -82,7 +82,7 @@ QPushButton:hover {
     cursor:pointer;
 }
 
-/*btn-success = a green button*/
+/*btn-primary*/
 QPushButton[style="btn-primary"]{
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
     border: 1px solid #97A9A9;
@@ -93,9 +93,13 @@ QPushButton[style="btn-primary"]{
     font-weight:bold;
     text-transform:uppercase;
 }
+QPushButton[style="btn-primary"]:hover{
+    background: #85989D;
+}
 
-/*btn-success = a green button*/
-QPushButton[style="btn-success"]{
+
+/*highlighted buttons*/
+QPushButton[style="btn-success"] , QPushButton[style="start-button"]{
     background-color:#82A466;
     color: white;
     cursor:pointer;
@@ -105,27 +109,12 @@ QPushButton[style="btn-success"]{
     text-transform:uppercase;
 }
 
-QPushButton[style="btn-success"]:hover{
-    background-color:#5C863F;
-    padding: 5px;
-    border-radius:2px;
-    cursor: pointer;
-}
-
-
-/*mission start button*/
 QPushButton[style="start-button"]{
-    background:qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #82A466, stop:1 #5C863F);
-    border-radius:2px;
-    border: none;
-    text-transform: uppercase;
-    text-weight: bold;
-     padding: 8px 30px;
+    padding: 8px 30px;
 }
 
-QPushButton[style="start-button"]:hover{
+QPushButton[style="btn-success"]:hover , QPushButton[style="start-button"]:hover{
     background:#5C863F;
-
 }
 
 QPushButton[style="btn-danger"]{
@@ -145,13 +134,12 @@ QPushButton[style="btn-danger"]:hover{
 
 /*QLabel*/
 QLabel{
-border: none;
+    border: none;
 }
 
 QLabel[style="base-title"]{
     font-size: 24px;
     font-color: #ccc;
-    /*border: 1px solid #ccc;*/
 }
 
 QLabel[style="icon-plane"]{
@@ -163,68 +151,74 @@ QLabel[style="icon-plane"]{
     color:white;
 }
 
-QLabel[style="bordered"]{
-    border: 1px solid black;
-}
-
 QLabel[style="BARCAP"]{
     border: 1px solid black;
     background-color: #445299;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="TARCAP"]{
     border: 1px solid black;
     background-color: #445299;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="CAP"]{
     border: 1px solid black;
     background-color: #445299;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="INTERCEPTION"]{
     border: 1px solid black;
     background-color: #7752bc;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="CAS"]{
     border: 1px solid black;
     background-color: #ab2244;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="BAI"]{
     border: 1px solid black;
     background-color: #ab2244;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="ANTISHIP"]{
     border: 1px solid black;
     background-color: #ab2244;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="STRIKE"]{
     border: 1px solid black;
     background-color: #ab2244;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="DEAD"]{
     border: 1px solid black;
     background-color: #cc8844;
     color:white;
+    padding:2px 6px;
 }
 
 QLabel[style="SEAD"]{
     border: 1px solid black;
     background-color: #aa7744;
     color:white;
+    padding:2px 6px;
 }
 
 /*QGroupBox these are the sections that look like fieldsets*/
@@ -311,7 +305,6 @@ QComboxBox {
     padding:10px;
     margin:10px;
     border:1px solid #3B4656;
-    background: #1D2731;
     color: #fff;
 }
 QComboBox:editable {
@@ -319,14 +312,13 @@ QComboBox:editable {
 }
 
 QComboBox:!editable{
-     background: #1D2731;
+     /*background: #1D2731;*/
 }
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
     padding: 10px;
     border:none;
-    background: #1D2731;
     color: #fff;
     height: 20px;
 }
@@ -336,11 +328,16 @@ QComboBox::down-arrow {
 }
 
 QComboBox QAbstractItemView {
-      padding: 10px;
+    padding: 10px;
     border:1px solid #3B4656;
     background: #465C74;
 
   }
+
+
+QSpinBox{
+  /*TODO:style this*/
+}
 
 
 QLineEdit{
@@ -382,7 +379,11 @@ QTableWidget {
 
 /*helper modifiers*/
 *[style="no-border"] {
-border:none;
+    border:none;
+}
+
+*[style="bordered"]{
+    border: 1px solid #1D2731;
 }
 
 

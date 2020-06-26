@@ -22,7 +22,7 @@ SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
 # new themes can be added here
 THEMES: Dict[int, Dict[str, str]] = {
-    0: {'themeName': 'Windows',
+    0: {'themeName': 'Vanilla',
         'themeFile': 'windows-style.css',
         'themeIcons': 'medium',
         },
@@ -32,10 +32,6 @@ THEMES: Dict[int, Dict[str, str]] = {
         'themeIcons': 'light',
         },
 
-    2: {'themeName': 'Blue',
-        'themeFile': 'style.css',
-        'themeIcons': 'dark',
-        },
 }
 
 COLORS: Dict[str, QColor] = {
@@ -96,9 +92,9 @@ def load_icons():
     ICONS["ship"] = QPixmap("./resources/ui/ground_assets/ship.png")
     ICONS["ship_blue"] = QPixmap("./resources/ui/ground_assets/ship_blue.png")
 
-    ICONS["Generator"] = QPixmap("./resources/ui/misc/generator.png")
-    ICONS["Missile"] = QPixmap("./resources/ui/misc/missile.png")
-    ICONS["Cheat"] = QPixmap("./resources/ui/misc/cheat.png")
+    ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
+    ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
+    ICONS["Cheat"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/cheat.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")
