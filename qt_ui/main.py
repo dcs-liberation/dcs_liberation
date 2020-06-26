@@ -1,6 +1,8 @@
 from userdata import logging_config
 
 # Logging setup
+from userdata.liberation_theme import get_theme_file
+
 VERSION_STRING = "2.0RC7"
 logging_config.init_logging(VERSION_STRING)
 
@@ -18,17 +20,16 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
 from userdata import liberation_install, persistency
+from userdata import liberation_theme, persistency
 
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
+    liberation_theme.init();
     css = ""
-    with open("./resources/stylesheets/style-dcs.css") as stylesheet:
+    with open("./resources/stylesheets/"+get_theme_file()) as stylesheet:
         app.setStyleSheet(stylesheet.read())
-
-
-
 
     # Inject custom payload in pydcs framework
     custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")

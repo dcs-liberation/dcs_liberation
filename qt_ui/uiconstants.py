@@ -19,6 +19,24 @@ URLS : Dict[str, str] = {
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
+# new themes can be added here
+THEMES: Dict[int, Dict[str, str]] = {
+    0: {'themeName': 'Windows',
+        'themeFile': 'windows-style.css',
+        'themeIcons': 'medium',
+        },
+
+    1: {'themeName': 'DCS World',
+        'themeFile': 'style-dcs.css',
+        'themeIcons': 'light',
+        },
+
+    2: {'themeName': 'Blue',
+        'themeFile': 'style.css',
+        'themeIcons': 'dark',
+        },
+}
+
 COLORS: Dict[str, QColor] = {
     "dark_red": QColor(140, 20, 20),
     "red": QColor(200, 80, 80),

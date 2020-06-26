@@ -40,6 +40,9 @@ QMenuBar::item:pressed {
     background: #1D2731;
 }
 
+QLabel{
+font-weight:bold;
+}
 
 
 /*QWidget*/
