@@ -45,7 +45,7 @@ class GrishaGroupGenerator(DDGroupGenerator):
 
 class MolniyaGroupGenerator(DDGroupGenerator):
     def __init__(self, game, ground_object, faction):
-        super(MolniyaGroupGenerator, self).__init__(game, ground_object, faction, MolniyaGroupGenerator)
+        super(MolniyaGroupGenerator, self).__init__(game, ground_object, faction, FSG_1241_1MP_Molniya)
 
 
 class KiloSubGroupGenerator(DDGroupGenerator):

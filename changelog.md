@@ -1,3 +1,12 @@
+# 2.0 RC 9
+
+## Features/Improvements :
+* **[UI/UX]** New icons from contributor Deus
+
+## Fixed issues :
+* **[Mission Generator]** Carrier TACAN was wrongfully set up as an A/A TACAN
+* **[Campaign Generator]** Fixed issue with Russian navy group generator causing a random crash on campaign creation.
+
 # 2.0 RC 8
 
 ## Fixed issues :

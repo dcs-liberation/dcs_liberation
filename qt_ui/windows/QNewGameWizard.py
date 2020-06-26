@@ -108,7 +108,7 @@ class NewGameWizard(QtWidgets.QWizard):
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = True
-        game.settings.version = "2.0RC7"
+        game.settings.version = "2.0RC9"
 
         if midgame:
             game.budget = game.budget * 4 * len(list(conflicttheater.conflicts()))
