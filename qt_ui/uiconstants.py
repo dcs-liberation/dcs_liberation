@@ -46,16 +46,19 @@ COLORS: Dict[str, QColor] = {
     "dark_red": QColor(140, 20, 20),
     "red": QColor(200, 80, 80),
     "bright_red": QColor(150, 80, 80),
-    "super_red": QColor(200, 120, 120),
-    "blue": QColor(164, 164, 255),
+    "super_red": QColor(227, 32, 0),
+    "blue": QColor(0, 132, 255),
     "dark_blue": QColor(45, 62, 80),
     "white": QColor(255, 255, 255),
     "green": QColor(128, 186, 128),
     "bright_green": QColor(64, 200, 64),
     "black": QColor(0, 0, 0),
-    "black_transparent": QColor(0, 0, 0, 64),
-    "blue_transparent": QColor(164, 164, 255, 32),
-    "red_transparent": QColor(255, 125, 125, 32)
+    "black_transparent": QColor(0, 0, 0, 5),
+    "blue_transparent": QColor(0, 132, 255, 20),
+    "red_transparent": QColor(227, 32, 0, 20),
+    "orange": QColor(254, 125, 10),
+    "night_overlay": QColor(12, 20, 69),
+    "dawn_dust_overlay": QColor(46, 38, 85),
 }
 
 CP_SIZE = 24
