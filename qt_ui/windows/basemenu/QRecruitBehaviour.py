@@ -28,13 +28,13 @@ class QRecruitBehaviour:
         existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        amount_bought = QLabel("[{}]".format(str(scheduled_units)))
+        amount_bought = QLabel("{}".format(str(scheduled_units)))
         amount_bought.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         self.existing_units_labels[unit_type] = existing_units
         self.bought_amount_labels[unit_type] = amount_bought
 
-        price = QLabel("{}m".format(db.PRICES[unit_type]))
+        price = QLabel("$ <b>{}</b> m".format(db.PRICES[unit_type]))
         price.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         buy = QPushButton("+")
@@ -52,17 +52,18 @@ class QRecruitBehaviour:
         layout.addWidget(unitName, row, 0)
         layout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum), row, 1)
         layout.addWidget(existing_units, row, 2)
-        layout.addWidget(amount_bought, row, 3)
+        layout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum), row, 3)
         layout.addWidget(price, row, 4)
-        layout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum), row, 5)
-        layout.addWidget(buy, row, 6)
-        layout.addWidget(sell, row, 7)
+
+        layout.addWidget(sell, row, 5)
+        layout.addWidget(amount_bought, row, 6)
+        layout.addWidget(buy, row, 7)
 
         return row + 1
 
     def _update_count_label(self, unit_type: UnitType):
 
-        self.bought_amount_labels[unit_type].setText("[{}]".format(
+        self.bought_amount_labels[unit_type].setText("{}".format(
             unit_type in self.deliveryEvent.units and "{}".format(self.deliveryEvent.units[unit_type]) or "0"
         ))
 
