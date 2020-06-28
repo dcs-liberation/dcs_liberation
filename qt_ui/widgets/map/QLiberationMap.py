@@ -202,9 +202,9 @@ class QLiberationMap(QGraphicsView):
 
         for cp in self.game.theater.controlpoints:
             pos = self._transform_point(cp.position)
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text = scene.addText(cp.name, font=CONST.FONT_MAP)
             text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text = scene.addText(cp.name, font=CONST.FONT_MAP)
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 

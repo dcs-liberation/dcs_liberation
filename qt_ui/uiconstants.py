@@ -20,6 +20,14 @@ URLS : Dict[str, str] = {
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
+FONT_SIZE = 8
+FONT_NAME = "Arial"
+# FONT = QFont("Arial", 12, weight=5, italic=True)
+FONT_PRIMARY = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=False)
+FONT_PRIMARY_I = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=True)
+FONT_PRIMARY_B = QFont(FONT_NAME, FONT_SIZE, weight=75, italic=False)
+FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
+
 # new themes can be added here
 THEMES: Dict[int, Dict[str, str]] = {
     0: {'themeName': 'Vanilla',
@@ -50,10 +58,7 @@ COLORS: Dict[str, QColor] = {
     "red_transparent": QColor(255, 125, 125, 32)
 }
 
-
-CP_SIZE = 25
-FONT = QFont("Arial", 12, weight=5, italic=True)
-
+CP_SIZE = 24
 
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}
