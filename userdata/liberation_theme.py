@@ -7,7 +7,7 @@ global __theme_index
 
 THEME_PREFERENCES_FILE_PATH = "liberation_theme.json"
 
-DEFAULT_THEME_INDEX = 0
+DEFAULT_THEME_INDEX = 1
 
 
 def init():
