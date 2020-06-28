@@ -235,7 +235,7 @@ class QLiberationMap(QGraphicsView):
                     p2 = point_from_heading(pos2[0], pos2[1], h, 25)
                     frontline_pen = QPen(brush=CONST.COLORS["bright_red"])
                     frontline_pen.setColor(CONST.COLORS["orange"])
-                    frontline_pen.setWidth(18)
+                    frontline_pen.setWidth(8)
                     scene.addLine(p1[0], p1[1], p2[0], p2[1], pen=frontline_pen)
 
             else:
