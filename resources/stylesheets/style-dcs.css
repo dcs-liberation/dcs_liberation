@@ -41,7 +41,8 @@ QMenuBar::item:pressed {
 }
 
 QLabel{
-font-weight:bold;
+font-weight:normal;
+text-align:right;
 }
 
 
@@ -121,15 +122,12 @@ QPushButton[style="btn-danger"]{
     background-color:#9E3232;
     color: white;
     cursor:pointer;
-    padding: 5px 5px 5px 5px;
-    border-radius:5px;
+    padding: 6px;
+    border-radius:2px;
 }
 
 QPushButton[style="btn-danger"]:hover{
     background-color:#D84545;
-    padding: 5px 5px 5px 5px;
-    border-radius:5px;
-    cursor: pointer;
 }
 
 /*QLabel*/
@@ -350,10 +348,10 @@ QLineEdit{
 
 /*table view*/
 QHeaderView{
-    background-color: #202C3A;
+    background: #4B5B74;
 }
 QHeaderView::section {
-    background-color: #202C3A;
+    background: #4B5B74;
     padding: 4px;
     border-style: none;
     border-bottom: 1px solid #1D2731;
@@ -363,6 +361,7 @@ QHeaderView::section:horizontal
 {
     border: none;
     text-align:left;
+    background: #4B5B74;
 
 }
 
@@ -370,9 +369,11 @@ QHeaderView::section:vertical
 {
     border: none;
     text-align:left;
+    background: #4B5B74;
 }
 QTableWidget {
-    gridline-color: #646464;
+    gridline-color: #1D2731;
+    background: #4B5B74;
 
 }
 
