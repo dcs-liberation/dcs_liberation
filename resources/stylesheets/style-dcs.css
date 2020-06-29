@@ -130,6 +130,11 @@ QPushButton[style="btn-danger"]:hover{
     background-color:#D84545;
 }
 
+QPushButton:disabled{
+
+    background:#d6d6d6;
+}
+
 /*QLabel*/
 QLabel{
     border: none;
