@@ -157,7 +157,7 @@ class QLiberationMap(QGraphicsView):
                                 if unit.threat_range > max_range:
                                     max_range = unit.threat_range
                     if has_radar:
-                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, brush, brush)
+                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, CONST.COLORS["white_transparent"], CONST.COLORS["grey_transparent"])
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():

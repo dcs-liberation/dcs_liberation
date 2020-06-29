@@ -59,6 +59,8 @@ COLORS: Dict[str, QColor] = {
     "orange": QColor(254, 125, 10),
     "night_overlay": QColor(12, 20, 69),
     "dawn_dust_overlay": QColor(46, 38, 85),
+    "white_transparent": QColor(255, 255, 255, 30),
+    "grey_transparent": QColor(150, 150, 150, 20),
 }
 
 CP_SIZE = 24
