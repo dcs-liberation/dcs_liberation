@@ -113,6 +113,9 @@ class QLiberationMap(QGraphicsView):
         scene = self.scene()
         scene.clear()
 
+        playerColor = self.game.get_player_color()
+        enemyColor = self.game.get_enemy_color()
+
         self.addBackground()
 
         # Uncomment below to help set up theater reference points
@@ -128,11 +131,11 @@ class QLiberationMap(QGraphicsView):
                                            CONST.CP_SIZE, cp, self.game))
 
             if cp.captured:
-                pen = QPen(brush=CONST.COLORS["blue"])
-                brush = CONST.COLORS["blue_transparent"]
+                pen = QPen(brush=CONST.COLORS[playerColor])
+                brush = CONST.COLORS[playerColor+"_transparent"]
             else:
-                pen = QPen(brush=CONST.COLORS["red"])
-                brush = CONST.COLORS["red_transparent"]
+                pen = QPen(brush=CONST.COLORS[enemyColor])
+                brush = CONST.COLORS[enemyColor+"_transparent"]
 
             added_objects = []
             for ground_object in cp.ground_objects:
@@ -162,29 +165,30 @@ class QLiberationMap(QGraphicsView):
 
         for cp in self.game.theater.enemy_points():
             if self.get_display_rule("lines"):
-                self.scene_create_lines_for_cp(cp)
+                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
+
         for cp in self.game.theater.player_points():
             if self.get_display_rule("lines"):
-                self.scene_create_lines_for_cp(cp)
+                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         for cp in self.game.theater.controlpoints:
 
             if cp.captured:
-                pen = QPen(brush=CONST.COLORS["blue"])
-                brush = CONST.COLORS["blue_transparent"]
+                pen = QPen(brush=CONST.COLORS[playerColor])
+                brush = CONST.COLORS[playerColor+"_transparent"]
 
-                flight_path_pen = QPen(brush=CONST.COLORS["blue"])
-                flight_path_pen.setColor(CONST.COLORS["blue"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
+                flight_path_pen = QPen(brush=CONST.COLORS[playerColor])
+                flight_path_pen.setColor(CONST.COLORS[playerColor])
+
             else:
-                pen = QPen(brush=CONST.COLORS["red"])
-                brush = CONST.COLORS["red_transparent"]
+                pen = QPen(brush=CONST.COLORS[enemyColor])
+                brush = CONST.COLORS[enemyColor+"_transparent"]
 
-                flight_path_pen = QPen(brush=CONST.COLORS["bright_red"])
-                flight_path_pen.setColor(CONST.COLORS["bright_red"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
+                flight_path_pen = QPen(brush=CONST.COLORS[enemyColor])
+                flight_path_pen.setColor(CONST.COLORS[enemyColor])
+
+            flight_path_pen.setWidth(1)
+            flight_path_pen.setStyle(Qt.DashDotLine)
 
             pos = self._transform_point(cp.position)
             if self.get_display_rule("flight_paths"):
@@ -208,17 +212,17 @@ class QLiberationMap(QGraphicsView):
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
-    def scene_create_lines_for_cp(self, cp: ControlPoint):
+    def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
         scene = self.scene()
         pos = self._transform_point(cp.position)
         for connected_cp in cp.connected_points:
             pos2 = self._transform_point(connected_cp.position)
             if not cp.captured:
-                color = CONST.COLORS["dark_red"]
+                color = CONST.COLORS["dark_"+enemyColor]
             elif cp.captured:
-                color = CONST.COLORS["dark_blue"]
+                color = CONST.COLORS["dark_"+playerColor]
             else:
-                color = CONST.COLORS["dark_red"]
+                color = CONST.COLORS["dark_"+enemyColor]
 
             pen = QPen(brush=color)
             pen.setColor(color)
