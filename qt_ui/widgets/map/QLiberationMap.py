@@ -113,6 +113,9 @@ class QLiberationMap(QGraphicsView):
         scene = self.scene()
         scene.clear()
 
+        playerColor = self.game.get_player_color()
+        enemyColor = self.game.get_enemy_color()
+
         self.addBackground()
 
         # Uncomment below to help set up theater reference points
@@ -128,11 +131,11 @@ class QLiberationMap(QGraphicsView):
                                            CONST.CP_SIZE, cp, self.game))
 
             if cp.captured:
-                pen = QPen(brush=CONST.COLORS["blue"])
-                brush = CONST.COLORS["blue_transparent"]
+                pen = QPen(brush=CONST.COLORS[playerColor])
+                brush = CONST.COLORS[playerColor+"_transparent"]
             else:
-                pen = QPen(brush=CONST.COLORS["red"])
-                brush = CONST.COLORS["red_transparent"]
+                pen = QPen(brush=CONST.COLORS[enemyColor])
+                brush = CONST.COLORS[enemyColor+"_transparent"]
 
             added_objects = []
             for ground_object in cp.ground_objects:
@@ -157,34 +160,35 @@ class QLiberationMap(QGraphicsView):
                                 if unit.threat_range > max_range:
                                     max_range = unit.threat_range
                     if has_radar:
-                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, pen, brush)
+                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, CONST.COLORS["white_transparent"], CONST.COLORS["grey_transparent"])
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
             if self.get_display_rule("lines"):
-                self.scene_create_lines_for_cp(cp)
+                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
+
         for cp in self.game.theater.player_points():
             if self.get_display_rule("lines"):
-                self.scene_create_lines_for_cp(cp)
+                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         for cp in self.game.theater.controlpoints:
 
             if cp.captured:
-                pen = QPen(brush=CONST.COLORS["blue"])
-                brush = CONST.COLORS["blue_transparent"]
+                pen = QPen(brush=CONST.COLORS[playerColor])
+                brush = CONST.COLORS[playerColor+"_transparent"]
 
-                flight_path_pen = QPen(brush=CONST.COLORS["blue"])
-                flight_path_pen.setColor(CONST.COLORS["blue"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
+                flight_path_pen = QPen(brush=CONST.COLORS[playerColor])
+                flight_path_pen.setColor(CONST.COLORS[playerColor])
+
             else:
-                pen = QPen(brush=CONST.COLORS["red"])
-                brush = CONST.COLORS["red_transparent"]
+                pen = QPen(brush=CONST.COLORS[enemyColor])
+                brush = CONST.COLORS[enemyColor+"_transparent"]
 
-                flight_path_pen = QPen(brush=CONST.COLORS["bright_red"])
-                flight_path_pen.setColor(CONST.COLORS["bright_red"])
-                flight_path_pen.setWidth(1)
-                flight_path_pen.setStyle(Qt.DashDotLine)
+                flight_path_pen = QPen(brush=CONST.COLORS[enemyColor])
+                flight_path_pen.setColor(CONST.COLORS[enemyColor])
+
+            flight_path_pen.setWidth(1)
+            flight_path_pen.setStyle(Qt.DashDotLine)
 
             pos = self._transform_point(cp.position)
             if self.get_display_rule("flight_paths"):
@@ -202,27 +206,27 @@ class QLiberationMap(QGraphicsView):
 
         for cp in self.game.theater.controlpoints:
             pos = self._transform_point(cp.position)
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text = scene.addText(cp.name, font=CONST.FONT_MAP)
             text.setPos(pos[0] + CONST.CP_SIZE, pos[1] - CONST.CP_SIZE / 2)
-            text = scene.addText(cp.name, font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text = scene.addText(cp.name, font=CONST.FONT_MAP)
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
-    def scene_create_lines_for_cp(self, cp: ControlPoint):
+    def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
         scene = self.scene()
         pos = self._transform_point(cp.position)
         for connected_cp in cp.connected_points:
             pos2 = self._transform_point(connected_cp.position)
             if not cp.captured:
-                color = CONST.COLORS["red"]
+                color = CONST.COLORS["dark_"+enemyColor]
             elif cp.captured:
-                color = CONST.COLORS["blue"]
+                color = CONST.COLORS["dark_"+playerColor]
             else:
-                color = CONST.COLORS["red"]
+                color = CONST.COLORS["dark_"+enemyColor]
 
             pen = QPen(brush=color)
             pen.setColor(color)
-            pen.setWidth(16)
+            pen.setWidth(6)
             if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
                 if not cp.captured:
                     scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
@@ -234,8 +238,8 @@ class QLiberationMap(QGraphicsView):
                     p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
                     p2 = point_from_heading(pos2[0], pos2[1], h, 25)
                     frontline_pen = QPen(brush=CONST.COLORS["bright_red"])
-                    frontline_pen.setColor(CONST.COLORS["bright_red"])
-                    frontline_pen.setWidth(18)
+                    frontline_pen.setColor(CONST.COLORS["orange"])
+                    frontline_pen.setWidth(8)
                     scene.addLine(p1[0], p1[1], p2[0], p2[1], pen=frontline_pen)
 
             else:
@@ -318,14 +322,14 @@ class QLiberationMap(QGraphicsView):
             pass
         elif self.game.current_turn_daytime == "night":
             ov = QPixmap(bg.width(), bg.height())
-            ov.fill(QColor(40, 40, 150))
+            ov.fill(CONST.COLORS["night_overlay"])
             overlay = scene.addPixmap(ov)
             effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.7)
             overlay.setGraphicsEffect(effect)
         else:
             ov = QPixmap(bg.width(), bg.height())
-            ov.fill(QColor(165, 100, 100))
+            ov.fill(CONST.COLORS["dawn_dust_overlay"])
             overlay = scene.addPixmap(ov)
             effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.3)

@@ -175,6 +175,7 @@ class Game:
         else:
             return event.name == self.player_name
 
+    # 1 = red, 2 = blue
     def get_player_coalition_id(self):
         if self.player_country in db.BLUEFOR_FACTIONS:
             return 2
@@ -186,6 +187,20 @@ class Game:
             return 2
         else:
             return 1
+
+    def get_player_color(self):
+        if self.get_player_coalition_id() == 1:
+            return "red"
+        else:
+            return "blue"
+
+    def get_enemy_color(self):
+        if self.get_player_coalition_id() == 1:
+            return "blue"
+        else:
+            return "red"
+
+
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
 

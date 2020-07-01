@@ -108,7 +108,7 @@ class NewGameWizard(QtWidgets.QWizard):
         game.budget = int(game.budget * multiplier)
         game.settings.multiplier = multiplier
         game.settings.sams = True
-        game.settings.version = "2.0RC7"
+        game.settings.version = "2.0RC9"
 
         if midgame:
             game.budget = game.budget * 4 * len(list(conflicttheater.conflicts()))
@@ -140,7 +140,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.setTitle("Faction selection")
         self.setSubTitle("\nChoose the two opposing factions and select the player side.")
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
+                       QtGui.QPixmap('./resources/ui/misc/generator.png'))
 
         self.setMinimumHeight(250)
 
@@ -167,10 +167,10 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         # Unit Preview
         self.blueSideRecap = QtWidgets.QLabel("")
-        self.blueSideRecap.setFont(QtGui.QFont("Arial", italic=True))
+        self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
         self.blueSideRecap.setWordWrap(True)
         self.redSideRecap = QtWidgets.QLabel("")
-        self.redSideRecap.setFont(QtGui.QFont("Arial", italic=True))
+        self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
         self.redSideRecap.setWordWrap(True)
 
         # Link form fields

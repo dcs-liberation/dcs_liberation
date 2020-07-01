@@ -34,7 +34,7 @@ class QTopPanel(QFrame):
 
         self.proceedButton = QPushButton("Mission Planning")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
-        self.proceedButton.setProperty("style", "btn-primary")
+        self.proceedButton.setProperty("style", "btn-success")
         self.proceedButton.clicked.connect(self.proceed)
         if self.game and self.game.turn == 0:
             self.proceedButton.setEnabled(False)

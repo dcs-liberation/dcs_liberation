@@ -42,6 +42,13 @@ class QMapGroundObject(QGraphicsRectItem):
 
     def paint(self, painter, option, widget=None):
         #super(QMapControlPoint, self).paint(painter, option, widget)
+        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
+            playerIcons = "_blue"
+            enemyIcons = ""
+        else:
+            playerIcons = ""
+            enemyIcons = "_blue"
+
         if self.parent.get_display_rule("go"):
             painter.save()
 
@@ -50,9 +57,9 @@ class QMapGroundObject(QGraphicsRectItem):
                 cat = "ship"
 
             if not self.model.is_dead and not self.cp.captured:
-                painter.drawPixmap(option.rect, CONST.ICONS[cat])
+                painter.drawPixmap(option.rect, CONST.ICONS[cat + enemyIcons])
             elif not self.model.is_dead:
-                painter.drawPixmap(option.rect, CONST.ICONS[cat + "_blue"])
+                painter.drawPixmap(option.rect, CONST.ICONS[cat + playerIcons])
             else:
                 painter.drawPixmap(option.rect, CONST.ICONS["destroyed"])
             painter.restore()

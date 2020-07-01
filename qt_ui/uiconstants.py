@@ -6,6 +6,7 @@ from PySide2.QtGui import QColor, QFont, QPixmap
 
 from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
+from userdata.liberation_theme import get_theme_icons
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
@@ -19,26 +20,58 @@ URLS : Dict[str, str] = {
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
-COLORS: Dict[str, QColor] = {
-    "dark_red": QColor(140, 20, 20),
-    "red": QColor(200, 80, 80),
-    "bright_red": QColor(150, 80, 80),
-    "super_red": QColor(200, 120, 120),
-    "blue": QColor(164, 164, 255),
-    "dark_blue": QColor(45, 62, 80),
-    "white": QColor(255, 255, 255),
-    "green": QColor(128, 186, 128),
-    "bright_green": QColor(64, 200, 64),
-    "black": QColor(0, 0, 0),
-    "black_transparent": QColor(0, 0, 0, 64),
-    "blue_transparent": QColor(164, 164, 255, 32),
-    "red_transparent": QColor(255, 125, 125, 32)
+FONT_SIZE = 8
+FONT_NAME = "Arial"
+# FONT = QFont("Arial", 12, weight=5, italic=True)
+FONT_PRIMARY = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=False)
+FONT_PRIMARY_I = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=True)
+FONT_PRIMARY_B = QFont(FONT_NAME, FONT_SIZE, weight=75, italic=False)
+FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
+
+# new themes can be added here
+THEMES: Dict[int, Dict[str, str]] = {
+    0: {'themeName': 'Vanilla',
+        'themeFile': 'windows-style.css',
+        'themeIcons': 'medium',
+        },
+
+    1: {'themeName': 'DCS World',
+        'themeFile': 'style-dcs.css',
+        'themeIcons': 'light',
+        },
+
 }
 
+COLORS: Dict[str, QColor] = {
+    "white": QColor(255, 255, 255),
+    "white_transparent": QColor(255, 255, 255, 35),
+    "grey_transparent": QColor(150, 150, 150, 30),
 
-CP_SIZE = 25
-FONT = QFont("Arial", 12, weight=5, italic=True)
+    "red": QColor(200, 80, 80),
+    "dark_red": QColor(140, 20, 20),
+    "red_transparent": QColor(227, 32, 0, 20),
 
+    "blue": QColor(0, 132, 255),
+    "dark_blue": QColor(45, 62, 80),
+    "blue_transparent": QColor(0, 132, 255, 20),
+
+    "bright_red": QColor(150, 80, 80),
+    "super_red": QColor(227, 32, 0),
+
+    "green": QColor(128, 186, 128),
+    "bright_green": QColor(64, 200, 64),
+
+    "black": QColor(0, 0, 0),
+    "black_transparent": QColor(0, 0, 0, 5),
+
+    "orange": QColor(254, 125, 10),
+
+    "night_overlay": QColor(12, 20, 69),
+    "dawn_dust_overlay": QColor(46, 38, 85),
+
+}
+
+CP_SIZE = 24
 
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}
@@ -46,9 +79,9 @@ ICONS: Dict[str, QPixmap] = {}
 
 def load_icons():
 
-    ICONS["New"] = QPixmap("./resources/ui/misc/new.png")
-    ICONS["Open"] = QPixmap("./resources/ui/misc/open.png")
-    ICONS["Save"] = QPixmap("./resources/ui/misc/save.png")
+    ICONS["New"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/new.png")
+    ICONS["Open"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/open.png")
+    ICONS["Save"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/save.png")
 
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
     ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
@@ -61,12 +94,12 @@ def load_icons():
     ICONS["Dusk"] = QPixmap("./resources/ui/daytime/dusk.png")
     ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
 
-    ICONS["Money"] = QPixmap("./resources/ui/misc/money_icon.png")
-    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/hourglass.png")
-    ICONS["Proceed"] = QPixmap("./resources/ui/misc/proceed.png")
-    ICONS["Settings"] = QPixmap("./resources/ui/misc/settings.png")
-    ICONS["Statistics"] = QPixmap("./resources/ui/misc/statistics.png")
-    ICONS["Ordnance"] = QPixmap("./resources/ui/misc/ordnance_icon.png")
+    ICONS["Money"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/money_icon.png")
+    ICONS["PassTurn"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/hourglass.png")
+    ICONS["Proceed"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/proceed.png")
+    ICONS["Settings"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/settings.png")
+    ICONS["Statistics"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/statistics.png")
+    ICONS["Ordnance"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/ordnance_icon.png")
 
     ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")
     ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")
@@ -77,9 +110,9 @@ def load_icons():
     ICONS["ship"] = QPixmap("./resources/ui/ground_assets/ship.png")
     ICONS["ship_blue"] = QPixmap("./resources/ui/ground_assets/ship_blue.png")
 
-    ICONS["Generator"] = QPixmap("./resources/ui/misc/generator.png")
-    ICONS["Missile"] = QPixmap("./resources/ui/misc/missile.png")
-    ICONS["Cheat"] = QPixmap("./resources/ui/misc/cheat.png")
+    ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
+    ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
+    ICONS["Cheat"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/cheat.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")

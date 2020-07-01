@@ -96,10 +96,7 @@ class QMapControlPoint(QGraphicsRectItem):
 
     @property
     def pen_color(self) -> QColor:
-        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            return self.model.captured and CONST.COLORS["dark_blue"] or CONST.COLORS["bright_red"]
-        else:
-            return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]
+            return self.model.captured and CONST.COLORS["white"] or CONST.COLORS["white"]
 
     def openBaseMenu(self):
         self.baseMenu = QBaseMenu2(self.window(), self.model, self.game)
