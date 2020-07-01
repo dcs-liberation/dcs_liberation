@@ -51,12 +51,13 @@ class QMissionPlanning(QDialog):
         self.add_flight_button = QPushButton("Add Flight")
         self.add_flight_button.clicked.connect(self.on_add_flight)
         self.delete_flight_button = QPushButton("Delete Selected")
+        self.delete_flight_button.setProperty("style", "btn-danger")
         self.delete_flight_button.clicked.connect(self.on_delete_flight)
 
         self.button_layout = QHBoxLayout()
         self.button_layout.addStretch()
-        self.button_layout.addWidget(self.add_flight_button)
         self.button_layout.addWidget(self.delete_flight_button)
+        self.button_layout.addWidget(self.add_flight_button)
 
         self.mission_start_button = QPushButton("Take Off")
         self.mission_start_button.setProperty("style", "start-button")

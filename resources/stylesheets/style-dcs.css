@@ -5,9 +5,9 @@
 colors
 
 Backgrounds
-mainbg ---------------------- #2D3E50
-med/grey/blue --------------- #435466
+blue ------------------------ #2D3E50
 dark blue ------------------- #1D2731
+med/grey/blue --------------- #435466
 dark grey ------------------- #4E5760
 button blue/grey gradient --- qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
 button green gradient --- qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #82A466, stop:1 #5C863F);
@@ -40,6 +40,11 @@ QMenuBar::item:pressed {
     background: #1D2731;
 }
 
+QMenu::item:selected  {
+    background: #435466;
+}
+
+
 QLabel{
 font-weight:normal;
 text-align:right;
@@ -66,20 +71,21 @@ QTopPanel * {
     color: #B7C0C6;
     font-size: 12px;
     font-weight: bold;
-
 }
+
 
 /*QPushButton*/
 QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
     border: 1px solid #97A9A9;
     color:#fff;
-    padding: 4px 10px;
+    padding: 6px 10px;
     cursor: pointer;
+    border-radius:2px;
 }
 
 QPushButton:hover {
-    background: #85989D;
+    background: #6c7b7f;
     cursor:pointer;
 }
 
@@ -95,7 +101,7 @@ QPushButton[style="btn-primary"]{
     text-transform:uppercase;
 }
 QPushButton[style="btn-primary"]:hover{
-    background: #85989D;
+    background: #6c7b7f;
 }
 
 
@@ -124,6 +130,7 @@ QPushButton[style="btn-danger"]{
     cursor:pointer;
     padding: 6px;
     border-radius:2px;
+    border: 1px solid #9E3232;
 }
 
 QPushButton[style="btn-danger"]:hover{
@@ -226,10 +233,10 @@ QLabel[style="SEAD"]{
 
 /*QGroupBox these are the sections that look like fieldsets*/
 QGroupBox {
-margin-top: 1ex; /* leave space at the top for the title */
-border:1px solid #435466;
-padding:5px;
-margin:5px;
+    margin-top: 1ex; /* leave space at the top for the title */
+    border:1px solid #435466;
+    padding:5px;
+    margin:5px;
 }
 
 QGroupBox::title {
@@ -303,24 +310,31 @@ QTabBar::tab:selected {
 
 
 
-/*QComboxBox*/
-QComboxBox {
-    padding:10px;
-    margin:10px;
+/*QComboBox*/
+QComboBox {
     border:1px solid #3B4656;
     color: #fff;
-}
-QComboBox:editable {
-    background: #465C74;
+    padding: 4px 10px;
+    background: #1D2731;
 }
 
-QComboBox:!editable{
-     /*background: #1D2731;*/
+QComboBox::editable {
+    border:4px solid red;
 }
+
+QComboBox:hover{
+    border-color: #3592C4;
+}
+
+QComboBox:disabled, QComboBox::drop-down:disabled{
+    color: #B7C0C6;
+    background: #435466;
+}
+
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    padding: 10px;
+    padding: 2px;
     border:none;
     color: #fff;
     height: 20px;
@@ -331,23 +345,46 @@ QComboBox::down-arrow {
 }
 
 QComboBox QAbstractItemView {
-    padding: 10px;
+    padding: 4px;
     border:1px solid #3B4656;
     background: #465C74;
 
   }
 
 
+/*QSpinBox number input with up down arrows*/
 QSpinBox{
-  /*TODO:style this*/
+    border:1px solid #3B4656;
+    color: #fff;
+    padding: 4px 10px;
+    background: #1D2731;
+    min-width:40px;
+}
+
+QSpinBox:hover{
+     border-color: #3592C4;
+}
+
+QSpinBox::up-button , QSpinBox::down-button{
+    border:none;
+}
+
+QSpinBox::up-button{
+    image: url(resources/stylesheets/chevron-up.png);
+}
+
+QSpinBox::down-button{
+    image: url(resources/stylesheets/chevron-down.png);
 }
 
 
+
 QLineEdit{
-    padding: 6px;
+    padding: 4px 10px;
     border:1px solid #3B4656;
     background: #465C74;
     color: #fff;
+    margin-bottom:10px;
 }
 
 
@@ -379,7 +416,6 @@ QHeaderView::section:vertical
 QTableWidget {
     gridline-color: #1D2731;
     background: #4B5B74;
-
 }
 
 
