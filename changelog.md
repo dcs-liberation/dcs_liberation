@@ -1,3 +1,10 @@
+# 2.0 RC 10
+
+## Features :
+* **[UI/UX]** DCS UI Theme by Deus
+* **[Units/Factions]** Added Community A-4E-C support for faction Bluefor Cold War 
+
+
 # 2.0 RC 9
 
 ## Features/Improvements :

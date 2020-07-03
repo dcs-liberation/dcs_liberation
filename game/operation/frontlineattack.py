@@ -47,29 +47,6 @@ class FrontlineAttackOperation(Operation):
                         conflict=conflict)
 
     def generate(self):
-        #if self.is_player_attack:
-        #    self.prepare_carriers(db.unitdict_from(self.strikegroup))
-
-        # ground units
-        # self.armorgen.generate_vec(self.attackers, self.defenders)
-
-        ## strike group w/ heli support
-        #planes_flights = {k: v for k, v in self.strikegroup.items() if k in plane_map.values()}
-        #self.airgen.generate_cas_strikegroup(*assigned_units_split(planes_flights), at=self.attackers_starting_position)
-
-        #heli_flights = {k: v for k, v in self.strikegroup.items() if k in helicopters.helicopter_map.values()}
-        #if heli_flights:
-        #    self.briefinggen.append_frequency("FARP + Heli flights", "127.5 MHz AM")
-        #    for farp, dict in zip(self.groundobjectgen.generate_farps(sum([x[0] for x in heli_flights.values()])),
-        #                          db.assignedunits_split_to_count(heli_flights, self.groundobjectgen.FARP_CAPACITY)):
-        #        self.airgen.generate_cas_strikegroup(*assigned_units_split(dict),
-        #                                             at=farp,
-        #                                             escort=len(planes_flights) == 0)
-
-        #self.airgen.generate_attackers_escort(*assigned_units_split(self.escort), at=self.attackers_starting_position)
-
-        #self.airgen.generate_defense(*assigned_units_split(self.interceptors), at=self.defenders_starting_position)
-
         self.briefinggen.title = "Frontline CAS"
         self.briefinggen.description = "Provide CAS for the ground forces attacking enemy lines. Operation will be considered successful if total number of enemy units will be lower than your own by a factor of 1.5 (i.e. with 12 units from both sides, enemy forces need to be reduced to at least 8), meaning that you (and, probably, your wingmans) should concentrate on destroying the enemy units. Target base strength will be lowered as a result. Be advised that your flight will not attack anything until you explicitly tell them so by comms menu."
         self.briefinggen.append_waypoint("CAS AREA IP")

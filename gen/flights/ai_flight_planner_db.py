@@ -3,6 +3,8 @@ from dcs.helicopters import *
 
 # Interceptor are the aircraft prioritized for interception tasks
 # If none is available, the AI will use regular CAP-capable aircraft instead
+from pydcs_extensions.a4ec.a4ec import A_4E_C
+
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
     MiG_25PD,
@@ -56,6 +58,8 @@ CAP_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+
+    A_4E_C
 ]
 
 # USed for CAS (Close air support) and BAI (Battlefield Interdiction)
@@ -116,6 +120,8 @@ CAS_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+
+    A_4E_C
 ]
 
 # Aircraft used for SEAD / DEAD tasks
@@ -133,6 +139,8 @@ SEAD_CAPABLE = [
     Su_30,
     Su_34,
     MiG_27K,
+
+    A_4E_C
 ]
 
 # Aircraft used for Strike mission
@@ -179,6 +187,8 @@ STRIKE_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+
+    A_4E_C
 
 ]
 

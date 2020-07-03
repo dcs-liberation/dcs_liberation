@@ -3,7 +3,9 @@ from dcs.planes import *
 from dcs.ships import *
 from dcs.vehicles import *
 
-BLUEFOR_COLDWAR = {
+from pydcs_extensions.a4ec.a4ec import A_4E_C
+
+BLUEFOR_COLDWAR_A4 = {
     "country": "USA",
     "side": "blue",
     "units": [
@@ -13,6 +15,7 @@ BLUEFOR_COLDWAR = {
         F_5E_3,
         A_10A,
         AJS37,
+        A_4E_C,
 
         KC_135,
         KC130,

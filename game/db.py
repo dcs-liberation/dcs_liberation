@@ -14,6 +14,7 @@ from dcs.unittype import *
 from dcs.unitgroup import *
 
 from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
+from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
@@ -47,6 +48,12 @@ from game.factions.usa_1965 import USA_1965
 from game.factions.usa_1990 import USA_1990
 from game.factions.usa_2005 import USA_2005
 from game.factions.bluefor_modern import BLUEFOR_MODERN
+from pydcs_extensions.a4ec.a4ec import A_4E_C
+
+
+# PATCH pydcs data with MODS
+plane_map["A-4E-C"] = A_4E_C
+
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -103,6 +110,7 @@ PRICES = {
     F_4E: 10,
     AJS37: 12,
     C_101CC: 6,
+    A_4E_C: 8,
 
     AV8BNA: 14,
     M_2000C: 16,
@@ -317,6 +325,7 @@ UNIT_BY_TASK = {
         FW_190A8,
         SpitfireLFMkIXCW,
         SpitfireLFMkIX,
+        A_4E_C
     ],
     CAS: [
         F_86F_Sabre,
@@ -617,6 +626,7 @@ FACTIONS = {
 
     "Bluefor Modern": BLUEFOR_MODERN,
     "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
+    "Bluefor Cold War (with A-4E-C)": BLUEFOR_COLDWAR_A4,
     "USA 2005": USA_2005,
     "USA 1990": USA_1990,
     "USA 1965": USA_1965,
@@ -749,6 +759,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     Bf_109K_4: COMMON_OVERRIDE,
     SpitfireLFMkIXCW: COMMON_OVERRIDE,
     SpitfireLFMkIX: COMMON_OVERRIDE,
+    A_4E_C: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"

@@ -71,7 +71,7 @@ class QLiberationMap(QGraphicsView):
     """
     
     Uncomment to set up theather reference points
-    
+    """
     def keyPressEvent(self, event):
         #super(QLiberationMap, self).keyPressEvent(event)
 
@@ -85,28 +85,26 @@ class QLiberationMap(QGraphicsView):
             i = i + 1
 
         if event.key() == QtCore.Qt.Key_Down:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 100, self.game.theater.reference_points[point_0][1]
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 10, self.game.theater.reference_points[point_0][1]
         if event.key() == QtCore.Qt.Key_Up:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 100, self.game.theater.reference_points[point_0][1]
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 10, self.game.theater.reference_points[point_0][1]
         if event.key() == QtCore.Qt.Key_Left:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 100
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 10
         if event.key() == QtCore.Qt.Key_Right:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 100
+            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 10
 
 
         if event.key() == QtCore.Qt.Key_2 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 100, self.game.theater.reference_points[point_1][1]
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 10, self.game.theater.reference_points[point_1][1]
         if event.key() == QtCore.Qt.Key_8 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 100, self.game.theater.reference_points[point_1][1]
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 10, self.game.theater.reference_points[point_1][1]
         if event.key() == QtCore.Qt.Key_4 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 100
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 10
         if event.key() == QtCore.Qt.Key_6 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 100
+            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 10
 
         print(self.game.theater.reference_points)
         self.reload_scene()
-    """
-
 
 
     def reload_scene(self):
@@ -119,9 +117,9 @@ class QLiberationMap(QGraphicsView):
         self.addBackground()
 
         # Uncomment below to help set up theater reference points
-        #for i, r in enumerate(self.game.theater.reference_points.items()):
-        #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-        #    text.setPos(0, i * 24)
+        for i, r in enumerate(self.game.theater.reference_points.items()):
+            text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+            text.setPos(0, i * 24)
 
         for cp in self.game.theater.controlpoints:
         
