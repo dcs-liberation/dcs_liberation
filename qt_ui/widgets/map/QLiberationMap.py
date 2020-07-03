@@ -71,7 +71,6 @@ class QLiberationMap(QGraphicsView):
     """
     
     Uncomment to set up theather reference points
-    """
     def keyPressEvent(self, event):
         #super(QLiberationMap, self).keyPressEvent(event)
 
@@ -105,6 +104,7 @@ class QLiberationMap(QGraphicsView):
 
         print(self.game.theater.reference_points)
         self.reload_scene()
+    """
 
 
     def reload_scene(self):
@@ -117,9 +117,9 @@ class QLiberationMap(QGraphicsView):
         self.addBackground()
 
         # Uncomment below to help set up theater reference points
-        for i, r in enumerate(self.game.theater.reference_points.items()):
-            text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-            text.setPos(0, i * 24)
+        #for i, r in enumerate(self.game.theater.reference_points.items()):
+        #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+        #    text.setPos(0, i * 24)
 
         for cp in self.game.theater.controlpoints:
         
