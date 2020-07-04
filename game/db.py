@@ -48,6 +48,7 @@ from game.factions.usa_1965 import USA_1965
 from game.factions.usa_1990 import USA_1990
 from game.factions.usa_2005 import USA_2005
 from game.factions.bluefor_modern import BLUEFOR_MODERN
+
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 
 
@@ -836,6 +837,7 @@ CARRIER_CAPABLE = [
     F_14B,
     AV8BNA,
     Su_33,
+    A_4E_C,
 
     UH_1H,
     Mi_8MT,
