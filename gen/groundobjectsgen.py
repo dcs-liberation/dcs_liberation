@@ -121,7 +121,7 @@ class GroundObjectsGenerator:
                             found_carrier_destination = False
                             attempt = 0
                             while not found_carrier_destination and attempt < 5:
-                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction, 100000-attempt*20000)
+                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction + 180, 100000-attempt*20000)
                                 if self.game.theater.is_in_sea(point):
                                     found_carrier_destination = True
                                     sg.add_waypoint(point)
