@@ -18,7 +18,6 @@ class Operation:
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
-    shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
@@ -65,7 +64,6 @@ class Operation:
         self.current_mission = mission
         self.conflict = conflict
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings, self.game)
-        self.shipgen = ShipGenerator(mission, conflict)
         self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
