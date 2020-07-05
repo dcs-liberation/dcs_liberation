@@ -4,11 +4,16 @@ from dcs.helicopters import *
 # Interceptor are the aircraft prioritized for interception tasks
 # If none is available, the AI will use regular CAP-capable aircraft instead
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.mb339.mb339 import MB_339PAN
 
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
     MiG_25PD,
     MiG_31,
+    MiG_29S,
+    MiG_29A,
+    MiG_29G,
+    MiG_29K,
 
     M_2000C,
     Mirage_2000_5,
@@ -93,6 +98,7 @@ CAS_CAPABLE = [
     FA_18C_hornet,
 
     C_101CC,
+    MB_339PAN,
     L_39ZA,
     AJS37,
 
@@ -149,6 +155,7 @@ STRIKE_CAPABLE = [
     MiG_29A,
     MiG_27K,
     MiG_29S,
+    MB_339PAN,
 
     Su_17M4,
     Su_24M,

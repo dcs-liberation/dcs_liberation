@@ -15,6 +15,7 @@ from dcs.unitgroup import *
 
 from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
 from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
+from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
@@ -24,6 +25,7 @@ from game.factions.insurgent import Insurgent
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
+from game.factions.italy_1990_mb339 import Italy_1990_MB339
 from game.factions.libya_2011 import Lybia_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
@@ -49,11 +51,11 @@ from game.factions.usa_1990 import USA_1990
 from game.factions.usa_2005 import USA_2005
 from game.factions.bluefor_modern import BLUEFOR_MODERN
 
-from pydcs_extensions.a4ec.a4ec import A_4E_C
-
-
 # PATCH pydcs data with MODS
+from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.mb339.mb339 import MB_339PAN
 plane_map["A-4E-C"] = A_4E_C
+plane_map["MB-339PAN"] = MB_339PAN
 
 
 """
@@ -112,6 +114,7 @@ PRICES = {
     AJS37: 12,
     C_101CC: 6,
     A_4E_C: 8,
+    MB_339PAN: 6,
 
     AV8BNA: 14,
     M_2000C: 16,
@@ -360,7 +363,8 @@ UNIT_BY_TASK = {
         A_20G,
         P_47D_30,
         Ju_88A4,
-        B_17G
+        B_17G,
+        MB_339PAN
     ],
     Transport: [
         IL_76MD,
@@ -627,7 +631,9 @@ FACTIONS = {
 
     "Bluefor Modern": BLUEFOR_MODERN,
     "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
-    "Bluefor Cold War (with A-4E-C)": BLUEFOR_COLDWAR_A4,
+    "Bluefor Cold War (with A-4)": BLUEFOR_COLDWAR_A4,
+    "Bluefor Cold War (with A-4 and MB339)": BLUEFOR_COLDWAR_MODS,
+
     "USA 2005": USA_2005,
     "USA 1990": USA_1990,
     "USA 1965": USA_1965,
@@ -642,6 +648,7 @@ FACTIONS = {
     "United Kingdown 1990": UnitedKingdom_1990,
     "Spain 1990": Spain_1990,
     "Italy 1990": Italy_1990,
+    "Italy 1990 (With MB339)": Italy_1990_MB339,
     "Sweden 1990": Sweden_1990,
     "Ukraine 2010": Ukraine_2010,
     "India 2010": India_2010,
