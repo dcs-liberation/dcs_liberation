@@ -5,6 +5,7 @@ from dcs.helicopters import *
 # If none is available, the AI will use regular CAP-capable aircraft instead
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
 
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
@@ -17,6 +18,7 @@ INTERCEPT_CAPABLE = [
 
     M_2000C,
     Mirage_2000_5,
+    Rafale_M,
 
     F_14B,
     F_15C,
@@ -64,7 +66,8 @@ CAP_CAPABLE = [
     FW_190D9,
     FW_190A8,
 
-    A_4E_C
+    A_4E_C,
+    Rafale_M,
 ]
 
 # USed for CAS (Close air support) and BAI (Battlefield Interdiction)
@@ -127,7 +130,8 @@ CAS_CAPABLE = [
     FW_190D9,
     FW_190A8,
 
-    A_4E_C
+    A_4E_C,
+    Rafale_A_S
 ]
 
 # Aircraft used for SEAD / DEAD tasks
@@ -146,7 +150,8 @@ SEAD_CAPABLE = [
     Su_34,
     MiG_27K,
 
-    A_4E_C
+    A_4E_C,
+    Rafale_A_S
 ]
 
 # Aircraft used for Strike mission
@@ -195,7 +200,8 @@ STRIKE_CAPABLE = [
     FW_190D9,
     FW_190A8,
 
-    A_4E_C
+    A_4E_C,
+    Rafale_A_S
 
 ]
 
@@ -210,4 +216,5 @@ ANTISHIP_CAPABLE = [
     A_10A,
 
     Ju_88A4,
+    Rafale_A_S
 ]

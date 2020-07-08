@@ -63,5 +63,8 @@ BLUEFOR_COLDWAR_MODS = {
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
     ], "boat": [
-    ]
+    ], "requirements": {
+        "MB-339A": "http://www.freccetricolorivirtuali.net/",
+        "Community A-4E": "https://heclak.github.io/community-a4e-c/",
+    }
 }

@@ -61,5 +61,7 @@ BLUEFOR_COLDWAR_A4 = {
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
     ], "boat": [
-    ]
+    ], "requirements": {
+        "Community A-4E": "https://heclak.github.io/community-a4e-c/",
+    }
 }

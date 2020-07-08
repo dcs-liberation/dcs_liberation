@@ -44,7 +44,9 @@ Italy_1990_MB339 = {
     ], "lha_names": [
         "Giuseppe Garibaldi",
         "Cavour",
-    ], "boat":[
+    ], "boat": [
         "OliverHazardPerryGroupGenerator"
-    ]
+    ], "requirements": {
+        "MB-339A": "http://www.freccetricolorivirtuali.net/",
+    }
 }

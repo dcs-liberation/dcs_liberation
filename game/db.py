@@ -19,9 +19,11 @@ from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
+from game.factions.france_modded import France_2005_Modded
 from game.factions.germany_1944_easy import Germany_1944_Easy
 from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
+from game.factions.insurgent_modded import Insurgent_modded
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
@@ -54,8 +56,48 @@ from game.factions.bluefor_modern import BLUEFOR_MODERN
 # PATCH pydcs data with MODS
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
+import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
+plane_map["Rafale_M"] = Rafale_M
+plane_map["Rafale_A_S"] = Rafale_A_S
+
+vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
+vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
+vehicle_map["SMOKESAM"] = frenchpack.SMOKE_SAM_IR
+vehicle_map["SmokeD1"] = frenchpack.SmokeD1
+vehicle_map["SmokeD3"] = frenchpack.SmokeD3
+vehicle_map["AMX10RCR"] = frenchpack.AMX_10RCR
+vehicle_map["SEPAR"] = frenchpack.AMX_10RCR_SEPAR
+vehicle_map["ERC"] = frenchpack.ERC_90
+vehicle_map["M120"] = frenchpack.MO_120_RT
+vehicle_map["AA20"] = frenchpack._53T2
+vehicle_map["TRM2000"] = frenchpack.TRM_2000
+vehicle_map["TRM2000_Citerne"] = frenchpack.TRM_2000_Fuel
+vehicle_map["TRM2000_AA20"] = frenchpack.TRM_2000_53T2
+vehicle_map["TRMMISTRAL"] = frenchpack.TRM_2000_PAMELA
+vehicle_map["VABH"] = frenchpack.VAB_MEDICAL
+vehicle_map["VAB_RADIO"] = frenchpack.VAB
+vehicle_map["VAB_50"] = frenchpack.VAB__50
+vehicle_map["VIB_VBR"] = frenchpack.VAB_T20_13
+vehicle_map["VAB_HOT"] = frenchpack.VAB_MEPHISTO
+vehicle_map["VAB_MORTIER"] = frenchpack.VAB_MORTIER
+vehicle_map["VBL50"] = frenchpack.VBL__50
+vehicle_map["VBLANF1"] = frenchpack.VBL_AANF1
+vehicle_map["VBL-radio"] = frenchpack.VBL
+vehicle_map["VBAE"] = frenchpack.VBAE_CRAB
+vehicle_map["VBAE_MMP"] = frenchpack.VBAE_CRAB_MMP
+vehicle_map["AMX-30B2"] = frenchpack.AMX_30B2
+vehicle_map["Tracma"] = frenchpack.Tracma_TD_1500
+vehicle_map["JTACFP"] = frenchpack.Infantry_Soldier_JTAC
+vehicle_map["SHERIDAN"] = frenchpack.Char_M551_Sheridan
+vehicle_map["Leclerc_XXI"] = frenchpack.Leclerc_Serie_XXI
+vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
+vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
+vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
+vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
 
 
 """
@@ -176,6 +218,10 @@ PRICES = {
     P_47D_30: 18,
     B_17G: 30,
 
+    # Modded
+    Rafale_M: 26,
+    Rafale_A_S: 26,
+
     # armor
     Armor.APC_MTLB: 4,
     Armor.FDDM_Grad: 5,
@@ -282,6 +328,38 @@ PRICES = {
     Armed_speedboat: 10,
     Dry_cargo_ship_Ivanov: 10,
     Tanker_Elnya_160: 10,
+
+
+    # FRENCH PACK MOD
+    frenchpack.AMX_10RCR: 10,
+    frenchpack.AMX_10RCR_SEPAR: 12,
+    frenchpack.ERC_90: 12,
+    frenchpack.MO_120_RT: 10,
+    frenchpack._53T2: 4,
+    frenchpack.TRM_2000: 4,
+    frenchpack.TRM_2000_Fuel: 4,
+    frenchpack.TRM_2000_53T2: 8,
+    frenchpack.TRM_2000_PAMELA: 14,
+    frenchpack.VAB_MEDICAL: 8,
+    frenchpack.VAB: 6,
+    frenchpack.VAB__50: 4,
+    frenchpack.VAB_T20_13: 6,
+    frenchpack.VAB_MEPHISTO: 8,
+    frenchpack.VAB_MORTIER: 10,
+    frenchpack.VBL__50: 4,
+    frenchpack.VBL_AANF1: 2,
+    frenchpack.VBL: 1,
+    frenchpack.VBAE_CRAB: 8,
+    frenchpack.VBAE_CRAB_MMP: 12,
+    frenchpack.AMX_30B2: 18,
+    frenchpack.Tracma_TD_1500: 2,
+    frenchpack.Infantry_Soldier_JTAC: 1,
+    frenchpack.Leclerc_Serie_XXI: 35,
+    frenchpack.DIM__TOYOTA_BLUE: 2,
+    frenchpack.DIM__TOYOTA_GREEN: 2,
+    frenchpack.DIM__TOYOTA_DESERT: 2,
+    frenchpack.DIM__KAMIKAZE: 6,
+
 }
 
 """
@@ -329,7 +407,8 @@ UNIT_BY_TASK = {
         FW_190A8,
         SpitfireLFMkIXCW,
         SpitfireLFMkIX,
-        A_4E_C
+        A_4E_C,
+        Rafale_M
     ],
     CAS: [
         F_86F_Sabre,
@@ -364,7 +443,8 @@ UNIT_BY_TASK = {
         P_47D_30,
         Ju_88A4,
         B_17G,
-        MB_339PAN
+        MB_339PAN,
+        Rafale_A_S
     ],
     Transport: [
         IL_76MD,
@@ -527,6 +607,29 @@ UNIT_BY_TASK = {
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
 
+        frenchpack.DIM__TOYOTA_BLUE,
+        frenchpack.DIM__TOYOTA_DESERT,
+        frenchpack.DIM__TOYOTA_GREEN,
+        frenchpack.DIM__KAMIKAZE,
+
+        frenchpack.AMX_10RCR,
+        frenchpack.AMX_10RCR_SEPAR,
+        frenchpack.ERC_90,
+        frenchpack.TRM_2000_PAMELA,
+        frenchpack.VAB__50,
+        frenchpack.VAB_MEPHISTO,
+        frenchpack.VAB_T20_13,
+        frenchpack.VBL__50,
+        frenchpack.VBL_AANF1,
+        frenchpack.VBAE_CRAB,
+        frenchpack.VBAE_CRAB_MMP,
+        frenchpack.AMX_30B2,
+        frenchpack.Leclerc_Serie_XXI,
+        frenchpack.DIM__TOYOTA_BLUE,
+        frenchpack.DIM__TOYOTA_GREEN,
+        frenchpack.DIM__TOYOTA_DESERT,
+        frenchpack.DIM__KAMIKAZE,
+
     ],
     AirDefence: [
 
@@ -626,6 +729,7 @@ FACTIONS = {
     "China 2000": China_2000,
     "North Korea 2000": NorthKorea_2000,
     "Insurgent": Insurgent,
+    "Insurgent (Modded)": Insurgent_modded,
     "Germany 1944 (WW2 Pack)": Germany_1944,
     "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
 
@@ -642,6 +746,7 @@ FACTIONS = {
     "Allies 1944 (WW2 Pack)": USA_1944,
 
     "France 2005": France_2005,
+    "France 2005 (Modded)": France_2005_Modded,
     "France 1995": France_1995,
     "Germany 1990": Germany_1990,
     "Netherlands 1990": Netherlands_1990,
@@ -769,6 +874,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     SpitfireLFMkIX: COMMON_OVERRIDE,
     A_4E_C: COMMON_OVERRIDE,
     MB_339PAN: COMMON_OVERRIDE,
+    Rafale_M: COMMON_OVERRIDE,
+    Rafale_A_S: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"

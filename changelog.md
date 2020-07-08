@@ -1,9 +1,15 @@
-# 2.0 RC 10
+# 2.0.10
 
 ## Features :
 * **[UI/UX]** DCS UI Theme by Deus
-* **[Units/Factions]** Added Community A-4E-C support for faction Bluefor Cold War 
+* **[Units/Factions]** Added Community A-4E-C support for faction Bluefor Cold War
+* **[Units/Factions]** Added MB-339PAN support for faction Bluefor Cold War  
+* **[Units/Factions]** Added Rafale AI mod support
+* **[Units/Factions]** Added faction "France Modded" with units from frenchpack v3.5 mod
+* **[Units/Factions]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod
 
+## Fixed issues :
+* **[Mission Generator]** Carrier will sail into the wind, not in the same direction
 
 # 2.0 RC 9
 

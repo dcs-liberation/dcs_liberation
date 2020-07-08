@@ -7,6 +7,8 @@ from gen import Conflict
 from gen.ground_forces.combat_stance import CombatStance
 from theater import ControlPoint
 
+import pydcs_extensions.frenchpack.frenchpack as frenchpack
+
 TYPE_TANKS = [
     Armor.MBT_T_55,
     Armor.MBT_T_72B,
@@ -32,6 +34,18 @@ TYPE_TANKS = [
     Armor.ST_Centaur_IV,
     Armor.CT_Cromwell_IV,
     Armor.HIT_Churchill_VII,
+
+    # Mods
+    frenchpack.DIM__TOYOTA_BLUE,
+    frenchpack.DIM__TOYOTA_GREEN,
+    frenchpack.DIM__TOYOTA_DESERT,
+    frenchpack.DIM__KAMIKAZE,
+
+    frenchpack.AMX_10RCR,
+    frenchpack.AMX_10RCR_SEPAR,
+    frenchpack.AMX_30B2,
+    frenchpack.Leclerc_Serie_XXI,
+
 ]
 
 TYPE_ATGM = [
@@ -44,6 +58,12 @@ TYPE_ATGM = [
     Armor.TD_Jagdpanzer_IV,
     Armor.TD_Jagdpanther_G1,
     Armor.TD_M10_GMC,
+
+    # Mods
+    frenchpack.VBAE_CRAB_MMP,
+    frenchpack.VAB_MEPHISTO,
+    frenchpack.TRM_2000_PAMELA,
+
 ]
 
 TYPE_IFV = [
@@ -61,6 +81,12 @@ TYPE_IFV = [
     # WW2
     Armor.IFV_Sd_Kfz_234_2_Puma,
     Armor.LAC_M8_Greyhound,
+
+    # Mods
+    frenchpack.ERC_90,
+    frenchpack.VBAE_CRAB,
+    frenchpack.VAB_T20_13
+
 ]
 
 TYPE_APC = [
@@ -81,6 +107,12 @@ TYPE_APC = [
     # WW2
     Armor.APC_M2A1,
     Armor.APC_Sd_Kfz_251,
+
+    # Mods
+    frenchpack.VAB__50,
+    frenchpack.VBL__50,
+    frenchpack.VBL_AANF1,
+
 ]
 
 TYPE_ARTILLERY = [
@@ -117,6 +149,11 @@ TYPE_LOGI = [
     Unarmed.Willys_MB,
     Unarmed.Land_Rover_109_S3,
     Unarmed.Land_Rover_101_FC,
+
+    # Mods
+    frenchpack.VBL,
+    frenchpack.VAB,
+
 ]
 
 TYPE_INFANTRY = [
