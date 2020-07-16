@@ -6,10 +6,11 @@
 * **[Units/Factions]** Added MB-339PAN support for faction Bluefor Cold War  
 * **[Units/Factions]** Added Rafale AI mod support
 * **[Units/Factions]** Added faction "France Modded" with units from frenchpack v3.5 mod
-* **[Units/Factions]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod
+* **[Units/Factions]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
 
 ## Fixed issues :
 * **[Mission Generator]** Carrier will sail into the wind, not in the same direction
+* **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
 
 # 2.0 RC 9
 

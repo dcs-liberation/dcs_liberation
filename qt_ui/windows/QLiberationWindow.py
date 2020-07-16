@@ -190,7 +190,7 @@ class QLiberationWindow(QMainWindow):
                "<h4>Repository</h4>" + \
                "<b>Source code :</b> https://github.com/shdwp/dcs_liberation<br/>" + \
                "<h4>Authors/Contributors</h4><br/>" + \
-               "<b>shdwp</b>, <b>Khopa</b>, <b>Wrycu</b>, <b>calvinmorrow</b>, <b>JohanAberg</b><br/>" + \
+               "<b>shdwp</b>, <b>Khopa</b>, <b>Wrycu</b>, <b>calvinmorrow</b>, <b>JohanAberg</b> <b>Deus</b><br/>" + \
                "<h4>Special Thanks  :</h4>" \
                "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
                "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"
