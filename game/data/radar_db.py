@@ -49,6 +49,5 @@ UNITS_WITH_RADAR = [
     LHA_1_Tarawa,
     Type_052B_Destroyer,
     Type_054A_Frigate,
-    Type_052C_Destroyer,
-    Type_093,
+    Type_052C_Destroyer
 ]

@@ -31,7 +31,7 @@ class ChineseNavyGroupGenerator(GroupGenerator):
             self.add_unit(dd_type, "FF2", self.position.x + 2400, self.position.y - 900, self.heading)
 
         if include_cc:
-            cc_type = random.choice([Type_093, CGN_1144_2_Pyotr_Velikiy])
+            cc_type = random.choice([CGN_1144_2_Pyotr_Velikiy])
             self.add_unit(cc_type, "CC1", self.position.x, self.position.y, self.heading)
 
         self.get_generated_group().points[0].speed = 20
