@@ -143,9 +143,12 @@ class AircraftConflictGenerator:
         group.points[0].alt_type = "RADIO"
         return group
 
-    def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup]) -> FlyingGroup:
+    def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup], start_type=None) -> FlyingGroup:
         assert count > 0
         assert unit is not None
+
+        if start_type is None:
+            start_type = self._start_type()
 
         logging.info("airgen: {} for {} at unit {}".format(unit_type, side.id, at))
         return self.m.flight_group_from_unit(
@@ -154,7 +157,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             pad_group=at,
             maintask=None,
-            start_type=self._start_type(),
+            start_type=start_type,
             group_size=count)
 
     def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
@@ -310,7 +313,8 @@ class AircraftConflictGenerator:
                         unit_type=flight.unit_type,
                         count=flight.count,
                         client_count=0,
-                        at=self.m.find_group(group_name),)
+                        at=self.m.find_group(group_name),
+                        start_type=st)
                 else:
                     group = self._generate_at_airport(
                         name=namegen.next_unit_name(country, cp.id, flight.unit_type),
