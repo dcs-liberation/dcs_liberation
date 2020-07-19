@@ -1,7 +1,8 @@
 # 2.0.10
 
 ## Features :
-* **[UI/UX]** DCS UI Theme by Deus
+* **[UI/UX]** New UI Theme by Deus
+* **[UI/UX]** New map backgrounds
 * **[Units/Factions]** Added Community A-4E-C support for faction Bluefor Cold War
 * **[Units/Factions]** Added MB-339PAN support for faction Bluefor Cold War  
 * **[Units/Factions]** Added Rafale AI mod support
@@ -11,6 +12,7 @@
 ## Fixed issues :
 * **[Mission Generator]** Carrier will sail into the wind, not in the same direction
 * **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
+* **[Units/Factions]** Remove JF-17 from USA 2005 faction
 
 # 2.0 RC 9
 
