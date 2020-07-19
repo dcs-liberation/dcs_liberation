@@ -355,6 +355,8 @@ class Game:
         # By default, use the existing frontline conflict position
         for conflict in self.theater.conflicts():
             points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
+            points.append(conflict[0].position)
+            points.append(conflict[1].position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:
@@ -366,6 +368,11 @@ class Game:
                     if d < min_distance:
                         min_distance = d
                         cpoint = Point((cp.position.x + cp2.position.x) / 2, (cp.position.y + cp2.position.y) / 2)
+                        points.append(cp.position)
+                        points.append(cp2.position)
+                        break
+                if cpoint is not None:
+                    break
             if cpoint is not None:
                 points.append(cpoint)
 
