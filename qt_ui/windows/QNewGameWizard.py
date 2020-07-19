@@ -147,31 +147,52 @@ class FactionSelection(QtWidgets.QWizardPage):
         blues = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "blue"]
         reds = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "red"]
 
-        # Create form
-        blueFaction = QtWidgets.QLabel("Blue Faction :")
+
+        # Factions selection
+        self.factionsGroup = QtWidgets.QGroupBox("Factions")
+        self.factionsGroupLayout = QtWidgets.QGridLayout()
+
+        blueFaction = QtWidgets.QLabel("<b>Blue Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
         for f in blues:
             self.blueFactionSelect.addItem(f)
         blueFaction.setBuddy(self.blueFactionSelect)
 
-        redFaction = QtWidgets.QLabel("Red Faction :")
+        redFaction = QtWidgets.QLabel("<b>Red Faction :</b>")
         self.redFactionSelect = QtWidgets.QComboBox()
         for r in reds:
             self.redFactionSelect.addItem(r)
         redFaction.setBuddy(self.redFactionSelect)
 
+        self.blueSideRecap = QtWidgets.QLabel("")
+        self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
+        self.blueSideRecap.setWordWrap(True)
+
+        self.blueGroup = QtWidgets.QGroupBox("Redfor")
+        self.redSideRecap = QtWidgets.QLabel("")
+        self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
+        self.redSideRecap.setWordWrap(True)
+
+        self.factionsGroupLayout.addWidget(blueFaction, 0, 0)
+        self.factionsGroupLayout.addWidget(self.blueFactionSelect, 0, 1)
+        self.factionsGroupLayout.addWidget(self.blueSideRecap, 1, 0, 1, 2)
+        self.factionsGroupLayout.addWidget(redFaction, 2, 0)
+        self.factionsGroupLayout.addWidget(self.redFactionSelect, 2, 1)
+        self.factionsGroupLayout.addWidget(self.redSideRecap, 3, 0, 1, 2)
+        self.factionsGroup.setLayout(self.factionsGroupLayout)
+
+        # Create required mod layout
+        self.requiredModsGroup = QtWidgets.QGroupBox("Required Mods")
+        self.requiredModsGroupLayout = QtWidgets.QHBoxLayout()
+        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")
+        self.requiredModsGroupLayout.addWidget(self.requiredMods)
+        self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
+
+        # Player faction selection
         sideGroup = QtWidgets.QGroupBox("Player Side")
         blueforRadioButton = QtWidgets.QRadioButton("BLUEFOR")
         redforRadioButton = QtWidgets.QRadioButton("REDFOR")
         blueforRadioButton.setChecked(True)
-
-        # Unit Preview
-        self.blueSideRecap = QtWidgets.QLabel("")
-        self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.blueSideRecap.setWordWrap(True)
-        self.redSideRecap = QtWidgets.QLabel("")
-        self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.redSideRecap.setWordWrap(True)
 
         # Link form fields
         self.registerField('blueFaction', self.blueFactionSelect)
@@ -185,14 +206,10 @@ class FactionSelection(QtWidgets.QWizardPage):
         sideGroupLayout.addWidget(redforRadioButton)
         sideGroup.setLayout(sideGroupLayout)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(blueFaction, 0, 0)
-        layout.addWidget(self.blueFactionSelect, 0, 1)
-        layout.addWidget(self.blueSideRecap, 1, 0, 1, 2)
-        layout.addWidget(redFaction, 2, 0)
-        layout.addWidget(self.redFactionSelect, 2, 1)
-        layout.addWidget(self.redSideRecap, 3, 0, 1, 2)
-        layout.addWidget(sideGroup, 4, 0, 1, 2)
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.factionsGroup)
+        layout.addWidget(self.requiredModsGroup)
+        layout.addWidget(sideGroup)
         self.setLayout(layout)
         self.updateUnitRecap()
 
@@ -200,8 +217,14 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
 
     def updateUnitRecap(self):
-        red_units = db.FACTIONS[self.redFactionSelect.currentText()]["units"]
-        blue_units = db.FACTIONS[self.blueFactionSelect.currentText()]["units"]
+
+        self.requiredMods.setText("<ul>")
+
+        red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
+        blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
+
+        red_units = red_faction["units"]
+        blue_units = blue_faction["units"]
 
         blue_txt = ""
         for u in blue_units:
@@ -216,6 +239,26 @@ class FactionSelection(QtWidgets.QWizardPage):
                 red_txt = red_txt + u.id + ", "
         red_txt = red_txt + "\n"
         self.redSideRecap.setText(red_txt)
+
+        has_mod = False
+        if "requirements" in red_faction.keys():
+            has_mod = True
+            for mod in red_faction["requirements"].keys():
+                self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+red_faction["requirements"][mod]+"\">" + red_faction["requirements"][mod] + "</a></li>")
+
+        if "requirements" in blue_faction.keys():
+            has_mod = True
+            for mod in blue_faction["requirements"].keys():
+                if not "requirements" in red_faction.keys() or mod not in red_faction["requirements"].keys():
+                    self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction["requirements"][mod]+"\">" + blue_faction["requirements"][mod] + "</a></li>")
+
+        if has_mod:
+            self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")
+        else:
+            self.requiredMods.setText(self.requiredMods.text() + "<li>None</li></ul>\n")
+
+
+
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):

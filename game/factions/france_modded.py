@@ -74,8 +74,6 @@ France_2005_Modded = {
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
     ], "requirements": {
         "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974",
-        "DCS MOD RAFALES 2.5.5 BETA (Cuesta brothers)": "https://www.digitalcombatsimulator.com/fr/files/3307478/",
-        "MIRAGE F1 and F1CT for 2.5.5 by Eric and Patrick": "https://www.digitalcombatsimulator.com/fr/files/3305837/",
-        "MOD EUROCOPTER EC665 TIGER by the Cuesta Brothers": "https://www.digitalcombatsimulator.com/en/files/3310596/"
+        "RAFALE 2.5.5": "https://www.digitalcombatsimulator.com/fr/files/3307478/",
     }
 }
