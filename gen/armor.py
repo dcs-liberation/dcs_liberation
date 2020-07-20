@@ -1,4 +1,7 @@
+from dcs.action import AITaskPush
+from dcs.condition import TimeAfter
 from dcs.task import *
+from dcs.triggers import TriggerOnce, Event
 
 from gen import namegen
 from gen.ground_forces.ai_ground_planner import CombatGroupRole, DISTANCE_FROM_FRONTLINE
@@ -17,10 +20,12 @@ AGGRESIVE_MOVE_DISTANCE = 16000
 
 FIGHT_DISTANCE = 3500
 
+RANDOM_OFFSET_ATTACK = 250
+
 class GroundConflictGenerator:
 
     def __init__(self, mission: Mission, conflict: Conflict, game, player_planned_combat_groups, enemy_planned_combat_groups, player_stance):
-        self.m = mission
+        self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
@@ -58,7 +63,7 @@ class GroundConflictGenerator:
 
             if final_position is not None:
                 g = self._generate_group(
-                    side=self.m.country(self.game.player_country),
+                    side=self.mission.country(self.game.player_country),
                     unit=group.units[0],
                     heading=self.conflict.heading+90,
                     count=len(group.units),
@@ -66,7 +71,7 @@ class GroundConflictGenerator:
                 g.set_skill(self.game.settings.player_skill)
                 player_groups.append((g,group))
 
-                self.gen_infantry_group_for_group(g, True, self.m.country(self.game.player_country), self.conflict.heading + 90)
+                self.gen_infantry_group_for_group(g, True, self.mission.country(self.game.player_country), self.conflict.heading + 90)
 
         # Create enemy groups at random position
         for group in self.enemy_planned_combat_groups:
@@ -78,7 +83,7 @@ class GroundConflictGenerator:
 
             if final_position is not None:
                 g = self._generate_group(
-                    side=self.m.country(self.game.enemy_country),
+                    side=self.mission.country(self.game.enemy_country),
                     unit=group.units[0],
                     heading=self.conflict.heading - 90,
                     count=len(group.units),
@@ -86,7 +91,7 @@ class GroundConflictGenerator:
                 g.set_skill(self.game.settings.enemy_vehicle_skill)
                 enemy_groups.append((g, group))
 
-                self.gen_infantry_group_for_group(g, False, self.m.country(self.game.enemy_country), self.conflict.heading - 90)
+                self.gen_infantry_group_for_group(g, False, self.mission.country(self.game.enemy_country), self.conflict.heading - 90)
 
 
         # Plan combat actions for groups
@@ -118,7 +123,7 @@ class GroundConflictGenerator:
             return
 
         u = random.choice(possible_infantry_units)
-        self.m.vehicle_group(
+        self.mission.vehicle_group(
                 side,
                 namegen.next_infantry_name(side, cp, u), u,
                 position=infantry_position,
@@ -129,7 +134,7 @@ class GroundConflictGenerator:
         for i in range(randint(3, 10)):
             u = random.choice(possible_infantry_units)
             position = infantry_position.random_point_within(55, 5)
-            self.m.vehicle_group(
+            self.mission.vehicle_group(
                 side,
                 namegen.next_infantry_name(side, cp, u), u,
                 position=position,
@@ -149,14 +154,22 @@ class GroundConflictGenerator:
                 if self.game.settings.perf_artillery:
                     target = self.get_artillery_target_in_range(dcs_group, group, enemy_groups)
                     if target is not None:
-                        dcs_group.points[0].tasks.append(FireAtPoint(target, len(group.units) * 10, 100))
+
+                        # Artillery strike random start
+                        artillery_trigger = TriggerOnce(Event.NoEvent,
+                                                         "ArtilleryFireTask #" + str(dcs_group.id))
+                        artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45)* 60))
+                        dcs_group.add_trigger_action(FireAtPoint(target, len(group.units) * 10, 100))
+                        artillery_trigger.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
+                        self.mission.triggerrules.triggers.append(artillery_trigger)
+
             elif group.role in [CombatGroupRole.TANK, CombatGroupRole.IFV]:
                 if stance == CombatStance.AGGRESIVE:
                     # Attack nearest enemy if any
                     # Then move forward OR Attack enemy base if it is not too far away
                     target = self.find_nearest_enemy_group(dcs_group, enemy_groups)
                     if target is not None:
-                        rand_offset = Point(random.randint(-50, 50), random.randint(-50, 50))
+                        rand_offset = Point(random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK), random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK))
                         dcs_group.add_waypoint(target.points[0].position + rand_offset, PointAction.OffRoad)
                         dcs_group.points[1].tasks.append(AttackGroup(target.id))
 
@@ -179,7 +192,7 @@ class GroundConflictGenerator:
                     targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
                     i = 1
                     for target in targets:
-                        rand_offset = Point(random.randint(-50, 50), random.randint(-50, 50))
+                        rand_offset = Point(random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK), random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK))
                         dcs_group.add_waypoint(target.points[0].position+rand_offset,PointAction.OffRoad)
                         dcs_group.points[i].tasks.append(AttackGroup(target.id))
                         i = i + 1
@@ -310,7 +323,7 @@ class GroundConflictGenerator:
             cp = self.conflict.to_cp
 
         logging.info("armorgen: {} for {}".format(unit, side.id))
-        group = self.m.vehicle_group(
+        group = self.mission.vehicle_group(
                 side,
                 namegen.next_unit_name(side, cp.id, unit), unit,
                 position=self._group_point(at),
