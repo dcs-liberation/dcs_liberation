@@ -71,7 +71,8 @@ class QMapControlPoint(QGraphicsRectItem):
         self.update()
 
     def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
-        self.contextMenuEvent(event)
+        self.openBaseMenu()
+        #self.contextMenuEvent(event)
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
 
