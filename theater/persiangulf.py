@@ -48,8 +48,8 @@ class PersianGulfTheater(ConflictTheater):
         self.liwa = ControlPoint.from_airport(persiangulf.Liwa_Airbase, LAND, SIZE_BIG, IMPORTANCE_HIGH)
         self.jiroft = ControlPoint.from_airport(persiangulf.Jiroft_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
         self.bandar_e_jask = ControlPoint.from_airport(persiangulf.Bandar_e_Jask_airfield, LAND, SIZE_TINY,IMPORTANCE_LOW)
-        self.west_carrier = ControlPoint.carrier("West carrier", Point(-69043.813952358, -159916.65947136))
-        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635))
+        self.west_carrier = ControlPoint.carrier("West carrier", Point(-69043.813952358, -159916.65947136), 1001)
+        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635), 1002)
 
         self.add_controlpoint(self.liwa, connected_to=[self.al_dhafra])
         self.add_controlpoint(self.al_dhafra, connected_to=[self.liwa, self.al_maktoum, self.al_ain])

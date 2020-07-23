@@ -12,7 +12,7 @@ from .theatergroundobject import TheaterGroundObject
 
 
 class ControlPointType(Enum):
-    AIRBASE = 0                # An airbase with slot for everything
+    AIRBASE = 0                # An airbase with slots for everything
     AIRCRAFT_CARRIER_GROUP = 1 # A group with a Stennis type carrier (F/A-18, F-14 compatible)
     LHA_GROUP = 2              # A group with a Tarawa carrier (Helicopters & Harrier)
     FARP = 4                   # A FARP, with slots for helicopters
@@ -75,7 +75,7 @@ class ControlPoint:
         return obj
 
     @classmethod
-    def carrier(cls, name: str, at: Point, id: int = 1001):
+    def carrier(cls, name: str, at: Point, id: int):
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
@@ -87,7 +87,7 @@ class ControlPoint:
         return cp
 
     @classmethod
-    def lha(cls, name: str, at: Point, id: int = 1002):
+    def lha(cls, name: str, at: Point, id: int):
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.LHA_GROUP)
