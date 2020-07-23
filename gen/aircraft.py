@@ -1,5 +1,5 @@
-from dcs.action import ActivateGroup, AITaskPush
-from dcs.condition import TimeAfter, CoalitionHasAirdrome
+from dcs.action import ActivateGroup, AITaskPush, MessageToCoalition, MessageToAll
+from dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
 from dcs.helicopters import UH_1H
 from dcs.terrain.terrain import NoParkingSlotError
 from dcs.triggers import TriggerOnce, Event
@@ -90,11 +90,14 @@ class AircraftConflictGenerator:
         if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
             group.set_frequency(127.5)
         else:
-            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4, P_47D_30]:
+            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, P_47D_30, I_16, FW_190A8, FW_190D9, Bf_109K_4]:
                 group.set_frequency(251.0)
             else:
                 # WW2
-                group.set_frequency(124.0)
+                if unit_type in [FW_190A8, FW_190D9, Bf_109K_4, Ju_88A4]:
+                    group.set_frequency(40)
+                else:
+                    group.set_frequency(124.0)
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
@@ -243,11 +246,7 @@ class AircraftConflictGenerator:
                 continue
 
             group = self.generate_planned_flight(cp, country, flight)
-            if flight.flight_type == FlightType.INTERCEPTION:
-                self.setup_group_as_intercept_flight(group, flight)
-                self._setup_custom_payload(flight, group)
-            else:
-                self.setup_flight_group(group, flight, flight.flight_type)
+            self.setup_flight_group(group, flight, flight.flight_type)
             self.setup_group_activation_trigger(flight, group)
 
 
@@ -258,7 +257,7 @@ class AircraftConflictGenerator:
                 group.late_activation = False
                 group.uncontrolled = True
 
-                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationControlTriggerForGroup" + str(group.id))
+                activation_trigger = TriggerOnce(Event.NoEvent, "FlightStartTrigger" + str(group.id))
                 activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in * 60))
                 if (flight.from_cp.cptype == ControlPointType.AIRBASE):
                     if flight.from_cp.captured:
@@ -268,12 +267,16 @@ class AircraftConflictGenerator:
                         activation_trigger.add_condition(
                             CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
+                if flight.flight_type == FlightType.INTERCEPTION:
+                    self.setup_interceptor_triggers(group, flight, activation_trigger)
+
                 group.add_trigger_action(StartCommand())
                 activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
+
                 self.m.triggerrules.triggers.append(activation_trigger)
             else:
                 group.late_activation = True
-                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
+                activation_trigger = TriggerOnce(Event.NoEvent, "FlightLateActivationTrigger" + str(group.id))
                 activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
 
                 if(flight.from_cp.cptype == ControlPointType.AIRBASE):
@@ -282,8 +285,21 @@ class AircraftConflictGenerator:
                     else:
                         activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
+                if flight.flight_type == FlightType.INTERCEPTION:
+                    self.setup_interceptor_triggers(group, flight, activation_trigger)
+
                 activation_trigger.add_action(ActivateGroup(group.id))
                 self.m.triggerrules.triggers.append(activation_trigger)
+
+    def setup_interceptor_triggers(self, group, flight, activation_trigger):
+
+        detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=200000, hidden=False, name="ITZ")
+        if flight.from_cp.captured:
+            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_enemy_color(), detection_zone.id)) # TODO : support unit type in part of coalition
+            activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircrafts have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))
+        else:
+            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_player_color(), detection_zone.id))
+            activation_trigger.add_action(MessageToAll(String("WARNING : We have detected that enemy aircrafts are scrambling for an interception on " + flight.from_cp.name + " airbase."), 20))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
@@ -348,14 +364,13 @@ class AircraftConflictGenerator:
 
     def setup_flight_group(self, group, flight, flight_type):
 
-        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP]:
+        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP, FlightType.INTERCEPTION]:
             group.task = CAP.name
             self._setup_group(group, CAP, flight.client_count)
             # group.points[0].tasks.clear()
             # group.tasks.clear()
             # group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
-            pass
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             group.task = CAS.name
             self._setup_group(group, CAS, flight.client_count)
