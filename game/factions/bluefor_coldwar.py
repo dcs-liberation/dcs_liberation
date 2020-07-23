@@ -43,7 +43,6 @@ BLUEFOR_COLDWAR = {
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
     ], "destroyer": [
-        Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [
