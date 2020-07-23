@@ -89,11 +89,12 @@ class BriefingGenerator:
             for name, freq in self.freqs:
                 self.description += "{}: {}\n".format(name, freq)
         self.description += ("-" * 50) + "\n"
+
         for cp in self.game.theater.controlpoints:
             if cp.captured and cp.cptype in [ControlPointType.LHA_GROUP, ControlPointType.AIRCRAFT_CARRIER_GROUP]:
                 self.description += cp.name + "\n"
+                self.description += "RADIO : 127.5 Mhz AM"
                 self.description += "TACAN : "
-
                 self.description += str(cp.tacanN)
                 if cp.tacanY:
                     self.description += "Y"
