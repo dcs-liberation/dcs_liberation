@@ -38,7 +38,9 @@ class QFlightWaypointList(QTableView):
         takeoff.description = "Take Off"
         takeoff.name = takeoff.pretty_name = "Take Off from " + self.flight.from_cp.name
         self.model.appendRow(QWaypointItem(takeoff, 0))
-        self.model.setItem(0, 1, QStandardItem("0 ft AGL"))
+        item = QStandardItem("0 feet AGL")
+        item.setEditable(False)
+        self.model.setItem(0, 1, item)
         for i, point in enumerate(self.flight.points):
             self.model.insertRow(self.model.rowCount())
             self.model.setItem(self.model.rowCount()-1, 0, QWaypointItem(point, i + 1))
