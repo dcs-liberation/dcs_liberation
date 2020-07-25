@@ -127,7 +127,7 @@ class Operation:
         for d in self.game.get_destroyed_units():
             utype = db.unit_type_from_name(d["type"])
             pos = Point(d["x"], d["z"])
-            if utype is not None and not self.game.position_culled(pos):
+            if utype is not None and not self.game.position_culled(pos) and self.game.settings.perf_destroyed_units:
                 self.current_mission.static_group(
                     country=self.current_mission.country(self.game.player_country),
                     name="",

@@ -24,6 +24,7 @@ class Settings:
     perf_moving_units = True
     perf_infantry = True
     perf_ai_parking_start = True
+    perf_destroyed_units = True
 
     # Performance culling
     perf_culling = False
