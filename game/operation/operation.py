@@ -123,6 +123,21 @@ class Operation:
         # Generate ground object first
         self.groundobjectgen.generate()
 
+        # Generate destroyed units
+        for d in self.game.get_destroyed_units():
+            utype = db.unit_type_from_name(d["type"])
+            pos = Point(d["x"], d["z"])
+            if utype is not None and not self.game.position_culled(pos):
+                self.current_mission.static_group(
+                    country=self.current_mission.country(self.game.player_country),
+                    name="",
+                    _type=utype,
+                    hidden=True,
+                    position=pos,
+                    heading=d["orientation"],
+                    dead=True,
+                )
+
         # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)
 

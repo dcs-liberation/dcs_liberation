@@ -1,18 +1,32 @@
 # 2.0.10
 
-## Features :
-* **[UI/UX]** New UI Theme by Deus
-* **[UI/UX]** New map backgrounds
-* **[Units/Factions]** Added Community A-4E-C support for faction Bluefor Cold War
-* **[Units/Factions]** Added MB-339PAN support for faction Bluefor Cold War  
-* **[Units/Factions]** Added Rafale AI mod support
-* **[Units/Factions]** Added faction "France Modded" with units from frenchpack v3.5 mod
-* **[Units/Factions]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
+## Features/Improvements :
+* **[UI/UX]** New dark UI Theme and default theme improvement by Deus
+* **[UI/UX]** New satellite map backgrounds
+* **[UX]** Base menu is opened with a single mouse click
+* **[Units/Factions/Mods]** Added Community A-4E-C support for faction Bluefor Cold War
+* **[Units/Factions/Mods]** Added MB-339PAN support for faction Bluefor Cold War  
+* **[Units/Factions/Mods]** Added Rafale AI mod support
+* **[Units/Factions/Mods]** Added faction "France Modded" with units from frenchpack v3.5 mod
+* **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
+* **[New Game Wizard]** Added the list of required mods for modded factions.
+* **[Mission Generator]** Artillery units will start firing mission after a random delay. It should reduces lag spikes induced by artillery strikes by spreading them out.
+* **[Mission Generator]** The briefing will now contain the carrier ATC frequency
+* **[Mission Generator]** The briefing contains a small section about the war on the ground.
+* **[Mission Generator]** DCS Liberation picture added to the in-game briefing
 
 ## Fixed issues :
 * **[Mission Generator]** Carrier will sail into the wind, not in the same direction
 * **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
+* **[Mission Generator]** Carrier group ships are more spread out
+
 * **[Units/Factions]** Remove JF-17 from USA 2005 faction
+* **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system)
+* **[Bug]** On the persian gulf full map campaign, the two carriers were sharing the same id, this was causing a lot of bugs
+* **[Performance]** Tuned the culling setting so that you cannot run into situation where no flights are generated  
+* **[Mission Generator]** Fixed radio frequency for german WW2 warbirds
+
+* **[Other]** Other minor fixes
 
 # 2.0 RC 9
 

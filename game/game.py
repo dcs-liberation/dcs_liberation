@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
-from game.game_stats import GameStats
+from game.models.game_stats import GameStats
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from .event import *
@@ -73,7 +73,8 @@ class Game:
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         self.__culling_points = self.compute_conflicts_position()
-
+        self.__frontlineData = []
+        self.__destroyed_units = []
 
     @property
     def player_faction(self):
@@ -174,33 +175,6 @@ class Game:
             return event.attacker_name == self.player_name
         else:
             return event.name == self.player_name
-
-    # 1 = red, 2 = blue
-    def get_player_coalition_id(self):
-        if self.player_country in db.BLUEFOR_FACTIONS:
-            return 2
-        else:
-            return 1
-
-    def get_enemy_coalition_id(self):
-        if self.get_player_coalition_id() == 1:
-            return 2
-        else:
-            return 1
-
-    def get_player_color(self):
-        if self.get_player_coalition_id() == 1:
-            return "red"
-        else:
-            return "blue"
-
-    def get_enemy_color(self):
-        if self.get_player_coalition_id() == 1:
-            return "blue"
-        else:
-            return "red"
-
-
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
 
@@ -383,6 +357,12 @@ class Game:
 
         return points
 
+    def add_destroyed_units(self, destroyed_unit_data):
+        self.__destroyed_units.append(destroyed_unit_data)
+
+    def get_destroyed_units(self):
+        return self.__destroyed_units
+
     def position_culled(self, pos):
         """
         Check if unit can be generated at given position depending on culling performance settings
@@ -397,3 +377,39 @@ class Game:
                     return False
             return True
 
+    # 1 = red, 2 = blue
+    def get_player_coalition_id(self):
+        if self.player_country in db.BLUEFOR_FACTIONS:
+            return 2
+        else:
+            return 1
+
+    def get_enemy_coalition_id(self):
+        if self.get_player_coalition_id() == 1:
+            return 2
+        else:
+            return 1
+
+    def get_player_coalition(self):
+        if self.player_country in db.BLUEFOR_FACTIONS:
+            return dcs.action.Coalition.Blue
+        else:
+            return dcs.action.Coalition.Red
+
+    def get_enemy_coalition(self):
+        if self.player_country == 1:
+            return dcs.action.Coalition.Blue
+        else:
+            return dcs.action.Coalition.Red
+
+    def get_player_color(self):
+        if self.get_player_coalition_id() == 1:
+            return "red"
+        else:
+            return "blue"
+
+    def get_enemy_color(self):
+        if self.get_player_coalition_id() == 1:
+            return "blue"
+        else:
+            return "red"

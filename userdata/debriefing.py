@@ -35,7 +35,9 @@ class Debriefing:
         self.killed_ground_units = state_data["killed_ground_units"]
         self.weapons_fired = state_data["weapons_fired"]
         self.mission_ended = state_data["mission_ended"]
+        self.destroyed_units = state_data["destroyed_objects_positions"]
 
+        self.__destroyed_units = []
         logging.info("--------------------------------")
         logging.info("Starting Debriefing preprocessing")
         logging.info("--------------------------------")
@@ -44,6 +46,7 @@ class Debriefing:
         logging.info(self.killed_ground_units)
         logging.info(self.weapons_fired)
         logging.info(self.mission_ended)
+        logging.info(self.destroyed_units)
         logging.info("--------------------------------")
 
         self.player_country_id = db.country_id_from_name(game.player_country)
@@ -154,6 +157,9 @@ class Debriefing:
                 self.enemy_dead_buildings_dict[a.type] = self.enemy_dead_buildings_dict[a.type] + 1
             else:
                 self.enemy_dead_buildings_dict[a.type] = 1
+
+        for destroyed_unit in self.destroyed_units:
+            game.add_destroyed_units(destroyed_unit)
 
         logging.info("--------------------------------")
         logging.info("Debriefing pre process results :")
