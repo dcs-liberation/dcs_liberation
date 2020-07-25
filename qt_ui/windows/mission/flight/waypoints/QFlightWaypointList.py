@@ -42,5 +42,7 @@ class QFlightWaypointList(QTableView):
         for i, point in enumerate(self.flight.points):
             self.model.insertRow(self.model.rowCount())
             self.model.setItem(self.model.rowCount()-1, 0, QWaypointItem(point, i + 1))
-            self.model.setItem(self.model.rowCount()-1, 1, QStandardItem(str(meter_to_feet(point.alt)) + " ft " + str(["AGL" if point.alt_type == "RADIO" else "MSL"][0])))
+            item = QStandardItem(str(meter_to_feet(point.alt)) + " ft " + str(["AGL" if point.alt_type == "RADIO" else "MSL"][0]))
+            item.setEditable(False)
+            self.model.setItem(self.model.rowCount()-1, 1, item)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
