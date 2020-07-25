@@ -25,10 +25,10 @@ class CarrierGroupGenerator(GroupGenerator):
         # Add destroyers escort
         if "destroyer" in self.faction.keys():
             dd_type = random.choice(self.faction["destroyer"])
-            self.add_unit(dd_type, "DD1", self.position.x + 250, self.position.y + 450, self.heading)
-            self.add_unit(dd_type, "DD2", self.position.x + 250, self.position.y - 450, self.heading)
+            self.add_unit(dd_type, "DD1", self.position.x + 2500, self.position.y + 4500, self.heading)
+            self.add_unit(dd_type, "DD2", self.position.x + 2500, self.position.y - 4500, self.heading)
 
-            self.add_unit(dd_type, "DD3", self.position.x + 450, self.position.y + 850, self.heading)
-            self.add_unit(dd_type, "DD4", self.position.x + 450, self.position.y - 850, self.heading)
+            self.add_unit(dd_type, "DD3", self.position.x + 4500, self.position.y + 8500, self.heading)
+            self.add_unit(dd_type, "DD4", self.position.x + 4500, self.position.y - 8500, self.heading)
 
         self.get_generated_group().points[0].speed = 20
