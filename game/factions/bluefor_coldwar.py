@@ -42,9 +42,6 @@ BLUEFOR_COLDWAR = {
         CVN_74_John_C__Stennis,
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
-    ], "destroyer": [
-    ], "cruiser": [
-        Ticonderoga_class,
     ], "carrier_names": [
         "CVN-71 Theodore Roosevelt",
         "CVN-72 Abraham Lincoln",

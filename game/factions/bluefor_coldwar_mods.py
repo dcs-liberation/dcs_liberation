@@ -47,7 +47,6 @@ BLUEFOR_COLDWAR_MODS = {
         CVN_74_John_C__Stennis,
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
-    ], "destroyer": [
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [
