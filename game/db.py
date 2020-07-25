@@ -28,6 +28,7 @@ from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
+from game.factions.japan_2005 import Japan_2005
 from game.factions.libya_2011 import Lybia_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
@@ -744,7 +745,6 @@ FACTIONS = {
     "USA 1960": USA_1960,
     "USA 1955 (WW2 Pack)": USA_1955,
     "Allies 1944 (WW2 Pack)": USA_1944,
-
     "France 2005": France_2005,
     "France 2005 (Modded)": France_2005_Modded,
     "France 1995": France_1995,
@@ -755,6 +755,7 @@ FACTIONS = {
     "Italy 1990": Italy_1990,
     "Italy 1990 (With MB339)": Italy_1990_MB339,
     "Sweden 1990": Sweden_1990,
+    "Japan 2005": Japan_2005,
     "Ukraine 2010": Ukraine_2010,
     "India 2010": India_2010,
     "Pakistan 2015": Pakistan_2015,
