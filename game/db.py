@@ -46,6 +46,7 @@ from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1990 import UnitedKingdom_1990
 from game.factions.ukraine_2010 import Ukraine_2010
+from game.factions.us_aggressors import US_Aggressors
 from game.factions.usa_1944 import USA_1944
 from game.factions.usa_1955 import USA_1955
 from game.factions.usa_1960 import USA_1960
@@ -720,6 +721,7 @@ Units separated by country.
 country : DCS Country name
 """
 FACTIONS = {
+    "USA Aggressors": US_Aggressors,
     "Russia 1955": Russia_1955,
     "Russia 1965": Russia_1965,
     "Russia 1975": Russia_1975,
