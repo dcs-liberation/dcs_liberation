@@ -1,5 +1,5 @@
-from dcs.action import AITaskPush
-from dcs.condition import TimeAfter
+from dcs.action import AITaskPush, AITaskSet
+from dcs.condition import TimeAfter, UnitDamaged, Or
 from dcs.task import *
 from dcs.triggers import TriggerOnce, Event
 
@@ -155,13 +155,52 @@ class GroundConflictGenerator:
                     target = self.get_artillery_target_in_range(dcs_group, group, enemy_groups)
                     if target is not None:
 
+                        if stance != CombatStance.RETREAT:
+                            hold_task = Hold()
+                            hold_task.number = 1
+                            dcs_group.add_trigger_action(hold_task)
+
                         # Artillery strike random start
                         artillery_trigger = TriggerOnce(Event.NoEvent,
                                                          "ArtilleryFireTask #" + str(dcs_group.id))
                         artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45)* 60))
-                        dcs_group.add_trigger_action(FireAtPoint(target, len(group.units) * 10, 100))
+
+                        fire_task = FireAtPoint(target, len(group.units) * 10, 100)
+                        if stance != CombatStance.RETREAT:
+                            fire_task.number = 2
+                        else:
+                            fire_task.number = 1
+                        dcs_group.add_trigger_action(fire_task)
                         artillery_trigger.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
                         self.mission.triggerrules.triggers.append(artillery_trigger)
+
+                        # Artillery will fall back when under attack
+                        if stance != CombatStance.RETREAT:
+
+                            # Hold position
+                            dcs_group.points[0].tasks.append(Hold())
+                            retreat = self.find_retreat_point(dcs_group, forward_heading)
+                            dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
+                            dcs_group.points[1].tasks.append(Hold())
+                            dcs_group.add_waypoint(retreat, PointAction.OffRoad)
+
+                            artillery_fallback = TriggerOnce(Event.NoEvent, "ArtilleryRetreat #" + str(dcs_group.id))
+                            for i, u in enumerate(dcs_group.units):
+                                artillery_fallback.add_condition(UnitDamaged(u.id))
+                                if i < len(dcs_group.units) - 1:
+                                    artillery_fallback.add_condition(Or())
+
+
+                            retreat_task = GoToWaypoint(toIndex=3)
+                            retreat_task.number = 3
+                            dcs_group.add_trigger_action(retreat_task)
+
+                            artillery_fallback.add_action(AITaskSet(dcs_group.id, len(dcs_group.tasks)))
+                            self.mission.triggerrules.triggers.append(artillery_fallback)
+
+                            for u in dcs_group.units:
+                                u.initial = True
+                                u.heading = forward_heading + random.randint(-5,5)
 
             elif group.role in [CombatGroupRole.TANK, CombatGroupRole.IFV]:
                 if stance == CombatStance.AGGRESIVE:

@@ -1,17 +1,11 @@
 import json
 import logging
 import os
-import re
 import threading
 import time
 import typing
 
-from dcs.lua import parse
-from dcs.mission import Mission
-from dcs.unit import UnitType
-
 from game import db
-from .persistency import base_path
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -158,9 +152,6 @@ class Debriefing:
             else:
                 self.enemy_dead_buildings_dict[a.type] = 1
 
-        for destroyed_unit in self.destroyed_units:
-            game.add_destroyed_units(destroyed_unit)
-
         logging.info("--------------------------------")
         logging.info("Debriefing pre process results :")
         logging.info("--------------------------------")
@@ -172,20 +163,39 @@ class Debriefing:
         logging.info(self.enemy_dead_buildings_dict)
 
 
-def _poll_new_debriefing_log(callback: typing.Callable, game):
-    if os.path.isfile("state.json"):
-        last_modified = os.path.getmtime("state.json")
-    else:
-        last_modified = 0
-    while True:
-        if os.path.isfile("state.json") and os.path.getmtime("state.json") > last_modified:
-            with open("state.json", "r") as json_file:
-                json_data = json.load(json_file) #Debriefing.parse(os.path.join(debriefing_directory_location(), file))
-                debriefing = Debriefing(json_data, game)
-                callback(debriefing)
-            break
-        time.sleep(5)
+class PollDebriefingFileThread(threading.Thread):
+    """Thread class with a stop() method. The thread itself has to check
+    regularly for the stopped() condition."""
 
-def wait_for_debriefing(callback: typing.Callable, game):
-    threading.Thread(target=_poll_new_debriefing_log, args=[callback, game]).start()
+    def __init__(self,  callback: typing.Callable, game):
+        super(PollDebriefingFileThread, self).__init__()
+        self._stop_event = threading.Event()
+        self.callback = callback
+        self.game = game
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+    def run(self):
+        if os.path.isfile("state.json"):
+            last_modified = os.path.getmtime("state.json")
+        else:
+            last_modified = 0
+        while not self.stopped():
+            if os.path.isfile("state.json") and os.path.getmtime("state.json") > last_modified:
+                with open("state.json", "r") as json_file:
+                    json_data = json.load(json_file)
+                    debriefing = Debriefing(json_data, self.game)
+                    self.callback(debriefing)
+                break
+            time.sleep(5)
+
+
+def wait_for_debriefing(callback: typing.Callable, game)->PollDebriefingFileThread:
+    thread = PollDebriefingFileThread(callback, game)
+    thread.start()
+    return thread
 

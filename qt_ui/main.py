@@ -83,6 +83,5 @@ if __name__ == "__main__":
     logging.info("Attempt to restore original mission scripting file")
     liberation_install.restore_original_mission_scripting()
     logging.info("QT process exited with code : " + str(qt_execution_code))
-    sys.exit(0)
 
 

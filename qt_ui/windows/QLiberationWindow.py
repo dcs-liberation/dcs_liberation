@@ -5,7 +5,7 @@ import webbrowser
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
-    QSplitter
+    QSplitter, QFileDialog
 
 import qt_ui.uiconstants as CONST
 from game import Game
@@ -73,9 +73,17 @@ class QLiberationWindow(QMainWindow):
         self.newGameAction.setIcon(QIcon(CONST.ICONS["New"]))
         self.newGameAction.triggered.connect(self.newGame)
 
+        self.openAction = QAction("Open", self)
+        self.openAction.setIcon(QIcon(CONST.ICONS["Open"]))
+        self.openAction.triggered.connect(self.openFile)
+
         self.saveGameAction = QAction("Save", self)
         self.saveGameAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveGameAction.triggered.connect(self.saveGame)
+
+        self.saveAsAction = QAction("Save As", self)
+        self.saveAsAction.setIcon(QIcon(CONST.ICONS["Save"]))
+        self.saveAsAction.triggered.connect(self.saveGameAs)
 
         self.showAboutDialogAction = QAction("About DCS Liberation", self)
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
@@ -88,7 +96,7 @@ class QLiberationWindow(QMainWindow):
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
-        #self.tool_bar.addAction(QIcon(CONST.ICONS["Open"]), "Open")
+        self.tool_bar.addAction(self.openAction)
         self.tool_bar.addAction(self.saveGameAction)
 
     def initMenuBar(self):
@@ -96,7 +104,7 @@ class QLiberationWindow(QMainWindow):
 
         file_menu = self.menu.addMenu("File")
         file_menu.addAction(self.newGameAction)
-        #file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open") # TODO : implement
+        file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open") # TODO : implement
         file_menu.addAction(self.saveGameAction)
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
@@ -163,10 +171,16 @@ class QLiberationWindow(QMainWindow):
         wizard.show()
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
+    def openFile(self):
+        file = str(QFileDialog.getOpenFileName(self, "Select game file to open"))
+
     def saveGame(self):
         logging.info("Saving game")
         persistency.save_game(self.game)
         GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def saveGameAs(self):
+        file = str(QFileDialog.getSaveFileName(self, "Save As", dir=persistency._dcs_saved_game_folder))
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")

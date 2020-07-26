@@ -56,7 +56,7 @@ class FlightPlanner:
         self.compute_strike_targets()
 
         # The priority is to assign air-superiority fighter or interceptor to interception roles, so they can scramble if there is an attacker
-        #self.commision_interceptors()
+        self.commision_interceptors()
 
         # Then some CAP patrol for the next 2 hours
         self.commision_cap()
@@ -106,6 +106,7 @@ class FlightPlanner:
                     break
                 inventory[unit] = inventory[unit] - 2
                 flight = Flight(unit, 2, self.from_cp, FlightType.INTERCEPTION)
+                flight.scheduled_in = 1
                 flight.points = []
 
                 self.interceptor_flights.append(flight)

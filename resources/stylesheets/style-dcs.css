@@ -44,6 +44,12 @@ QMenu::item:selected  {
     background: #435466;
 }
 
+QScrollBar:horizontal {
+    background: #435466;
+}
+QScrollBar:vertical {
+    background: #435466;
+}
 
 QLabel{
 font-weight:normal;
@@ -73,7 +79,6 @@ QTopPanel * {
     font-weight: bold;
 }
 
-
 /*QPushButton*/
 QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
@@ -94,7 +99,7 @@ QPushButton[style="btn-primary"]{
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #A4B3B9, stop:1 #85989D);
     border: 1px solid #97A9A9;
     color:#fff;
-    padding: 6px 20px;
+    padding: 6px;
     border-radius:2px;
     cursor: pointer;
     font-weight:bold;
@@ -110,7 +115,6 @@ QPushButton[style="btn-success"] , QPushButton[style="start-button"]{
     background-color:#82A466;
     color: white;
     cursor:pointer;
-    padding: 6px 20px;
     border-radius:2px;
     font-weight:bold;
     text-transform:uppercase;
@@ -123,6 +127,44 @@ QPushButton[style="start-button"]{
 QPushButton[style="btn-success"]:hover , QPushButton[style="start-button"]:hover{
     background:#5C863F;
 }
+
+
+
+/* Buy button */
+QPushButton[style="btn-buy"]{
+    background-color:#82A466;
+    color: white;
+    cursor:pointer;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-buy"]:hover{
+    cursor:pointer;
+    background:#5C863F;
+}
+
+/* Sell button */
+QPushButton[style="btn-sell"]{
+    background-color:#9E3232;
+    color: white;
+    cursor:pointer;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-sell"]:hover{
+    cursor:pointer;
+    background:#D84545;
+}
+
+
 
 QPushButton[style="btn-danger"]{
     background-color:#9E3232;
@@ -239,10 +281,15 @@ QGroupBox {
     margin:5px;
 }
 
+QGroupBox[style="buy-box"]{
+    padding: 0px;
+    margin: 0px;
+}
+
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left; /* position at the top left */
-    padding: 3px;
+    padding: 5px;
     color: #B7C0C6;
     font-weight: 800;
 }
@@ -275,18 +322,18 @@ QDialog{
 
 }
 
-
 QListView {
-border: none;
+    border: 1px solid #14202B;
+    background-color: #14202B;
 }
 
 /*QTabWidget*/
 QTabWidget::pane { /* The tab widget frame */
-    border-top: 2px solid #1D2731;
+    border: 1px solid #1D2731;
 }
 
 QTabWidget::tab-bar {
-
+    border: 1px solid #14202B;
 }
 
 QTabBar::tab {
@@ -294,6 +341,7 @@ QTabBar::tab {
     background: #202C3A;
     border-right: 1px solid #14202B;
     border-left: 1px solid #14202B;
+    border-top: 1px solid #14202B;
     min-width: 8ex;
     padding: 6px 10px;
 }
@@ -401,23 +449,26 @@ QHeaderView::section {
 
 QHeaderView::section:horizontal
 {
-    border: none;
+    /*border: none;*/
     text-align:left;
     background: #4B5B74;
-
 }
 
 QHeaderView::section:vertical
 {
-    border: none;
+    /*border: none;*/
     text-align:left;
     background: #4B5B74;
 }
+
 QTableWidget {
-    gridline-color: #1D2731;
+    gridline-color: red;
     background: #4B5B74;
 }
 
+QTableView QTableCornerButton::section {
+    background: #4B5B74;
+}
 
 /*helper modifiers*/
 *[style="no-border"] {

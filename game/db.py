@@ -1048,6 +1048,8 @@ def find_infantry(country_name: str) -> typing.List[UnitType]:
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
+def unit_type_name_2(unit_type) -> str:
+    return unit_type.name and unit_type.name or unit_type.id
 
 def unit_type_from_name(name: str) -> UnitType:
     if name in vehicle_map:

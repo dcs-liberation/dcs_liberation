@@ -1,4 +1,4 @@
-from PySide2.QtGui import QIcon
+from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtWidgets import QLabel, QDialog, QVBoxLayout, QGroupBox, QGridLayout, QPushButton
 
 from game.game import Event, db, Game
@@ -25,14 +25,21 @@ class QDebriefingWindow(QDialog):
 
         self.layout = QVBoxLayout()
 
-        # Result
+        header = QLabel(self)
+        header.setGeometry(0, 0, 655, 106)
+        pixmap = QPixmap("./resources/ui/debriefing.png")
+        header.setPixmap(pixmap)
+        self.layout.addWidget(header)
+        self.layout.addStretch()
 
-        if self.gameEvent.is_successfull(self.debriefing):
-            title = QLabel("<b>Operation Succesfull !</b>")
-            title.setProperty("style", "title-success")
-        else:
-            title = QLabel("<b>Operation failed !</b>")
-            title.setProperty("style", "title-danger")
+        # Result
+        #if self.gameEvent.is_successfull(self.debriefing):
+        #    title = QLabel("<b>Operation end !</b>")
+        #    title.setProperty("style", "title-success")
+        #else:
+        #    title = QLabel("<b>Operation end !</b>")
+        #    title.setProperty("style", "title-danger")
+        title = QLabel("<b>Casualty report</b>")
         self.layout.addWidget(title)
 
         # Player lost units

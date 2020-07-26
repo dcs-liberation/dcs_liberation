@@ -253,6 +253,12 @@ class Event:
             except Exception as e:
                 print(e)
 
+        # Destroyed units carcass
+        # -------------------------
+
+        for destroyed_unit in debriefing.destroyed_units:
+            self.game.add_destroyed_units(destroyed_unit)
+
         # -----------------------------------
         # Compute damage to bases
         for cp in self.game.theater.player_points():

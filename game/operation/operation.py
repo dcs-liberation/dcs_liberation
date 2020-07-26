@@ -125,7 +125,11 @@ class Operation:
 
         # Generate destroyed units
         for d in self.game.get_destroyed_units():
-            utype = db.unit_type_from_name(d["type"])
+            try:
+                utype = db.unit_type_from_name(d["type"])
+            except KeyError:
+                continue
+
             pos = Point(d["x"], d["z"])
             if utype is not None and not self.game.position_culled(pos) and self.game.settings.perf_destroyed_units:
                 self.current_mission.static_group(
@@ -137,6 +141,7 @@ class Operation:
                     heading=d["orientation"],
                     dead=True,
                 )
+
 
         # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)

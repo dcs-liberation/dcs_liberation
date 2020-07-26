@@ -5,7 +5,6 @@ from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGrap
 
 import qt_ui.uiconstants as CONST
 from game import Game
-from qt_ui.windows.basemenu.QBaseMenu import QBaseMenu
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from theater import ControlPoint, db
 

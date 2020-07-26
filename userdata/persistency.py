@@ -4,11 +4,12 @@ import pickle
 import shutil
 
 _dcs_saved_game_folder = None  # type: str
-
+_file_abs_path = None
 
 def setup(user_folder: str):
     global _dcs_saved_game_folder
     _dcs_saved_game_folder = user_folder
+    _file_abs_path = os.path.join(base_path(), "liberation_save")
 
 
 def base_path() -> str:
