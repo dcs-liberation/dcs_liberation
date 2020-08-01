@@ -42,12 +42,9 @@ class QMapGroundObject(QGraphicsRectItem):
 
     def paint(self, painter, option, widget=None):
         #super(QMapControlPoint, self).paint(painter, option, widget)
-        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            playerIcons = "_blue"
-            enemyIcons = ""
-        else:
-            playerIcons = ""
-            enemyIcons = "_blue"
+
+        playerIcons = "_blue"
+        enemyIcons = ""
 
         if self.parent.get_display_rule("go"):
             painter.save()

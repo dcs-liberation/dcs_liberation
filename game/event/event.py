@@ -206,10 +206,10 @@ class Event:
 
         # ------------------------------
         # Captured bases
-        if self.game.player_country in db.BLUEFOR_FACTIONS:
-            coalition = 2 # Value in DCS mission event for BLUE
-        else:
-            coalition = 1 # Value in DCS mission event for RED
+        #if self.game.player_country in db.BLUEFOR_FACTIONS:
+        coalition = 2 # Value in DCS mission event for BLUE
+        #else:
+        #    coalition = 1 # Value in DCS mission event for RED
 
         for captured in debriefing.base_capture_events:
             try:

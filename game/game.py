@@ -379,37 +379,19 @@ class Game:
 
     # 1 = red, 2 = blue
     def get_player_coalition_id(self):
-        if self.player_country in db.BLUEFOR_FACTIONS:
-            return 2
-        else:
-            return 1
+        return 2
 
     def get_enemy_coalition_id(self):
-        if self.get_player_coalition_id() == 1:
-            return 2
-        else:
-            return 1
+        return 1
 
     def get_player_coalition(self):
-        if self.player_country in db.BLUEFOR_FACTIONS:
-            return dcs.action.Coalition.Blue
-        else:
-            return dcs.action.Coalition.Red
+        return dcs.action.Coalition.Blue
 
     def get_enemy_coalition(self):
-        if self.player_country == 1:
-            return dcs.action.Coalition.Blue
-        else:
-            return dcs.action.Coalition.Red
+        return dcs.action.Coalition.Red
 
     def get_player_color(self):
-        if self.get_player_coalition_id() == 1:
-            return "red"
-        else:
-            return "blue"
+        return "blue"
 
     def get_enemy_color(self):
-        if self.get_player_coalition_id() == 1:
-            return "blue"
-        else:
-            return "red"
+        return "red"

@@ -89,10 +89,7 @@ class QMapControlPoint(QGraphicsRectItem):
 
     @property
     def brush_color(self)->QColor:
-        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
-        else:
-            return self.model.captured and CONST.COLORS["super_red"] or CONST.COLORS["blue"]
+        return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
 
     @property
     def pen_color(self) -> QColor:

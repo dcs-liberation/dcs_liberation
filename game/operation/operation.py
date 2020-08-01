@@ -88,12 +88,21 @@ class Operation:
         # Setup coalition :
         self.current_mission.coalition["blue"] = Coalition("blue")
         self.current_mission.coalition["red"] = Coalition("red")
-        if self.game.player_country and self.game.player_country in db.BLUEFOR_FACTIONS:
-            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
-            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
-        else:
-            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
-            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
+
+        p_country = self.game.player_country
+        e_country = self.game.enemy_country
+        if self.game.player_country == self.game.enemy_country:
+            if self.game.player_country != "USAF Aggresors":
+                e_country = "USAF Aggresors"
+            else:
+                if self.game.player_country != "Russia":
+                    e_country = "Russia"
+                else:
+                    e_country = "USA"
+
+        self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(p_country)]())
+        self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(e_country)]())
+
         print([c for c in self.current_mission.coalition["blue"].countries.keys()])
         print([c for c in self.current_mission.coalition["red"].countries.keys()])
 

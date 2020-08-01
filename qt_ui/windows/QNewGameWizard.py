@@ -30,9 +30,8 @@ class NewGameWizard(QtWidgets.QWizard):
 
     def accept(self):
 
-        blueFaction = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "blue"][self.field("blueFaction")]
-        redFaction = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "red"][self.field("redFaction")]
-        playerIsBlue = self.field("playerIsBlue")
+        blueFaction = [c for c in db.FACTIONS][self.field("blueFaction")]
+        redFaction = [c for c in db.FACTIONS][self.field("redFaction")]
         isTerrainPg = self.field("isTerrainPg")
         isTerrainNttr = self.field("isTerrainNttr")
         isTerrainCaucasusSmall = self.field("isTerrainCaucasusSmall")
@@ -48,8 +47,8 @@ class NewGameWizard(QtWidgets.QWizard):
         midGame = self.field("midGame")
         multiplier = self.field("multiplier")
 
-        player_name = playerIsBlue and blueFaction or redFaction
-        enemy_name = playerIsBlue and redFaction or blueFaction
+        player_name = blueFaction
+        enemy_name = redFaction
 
         if isTerrainPg:
             conflicttheater = persiangulf.PersianGulfTheater()
@@ -144,31 +143,28 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         self.setMinimumHeight(250)
 
-        blues = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "blue"]
-        reds = [c for c in db.FACTIONS if db.FACTIONS[c]["side"] == "red"]
-
-
         # Factions selection
         self.factionsGroup = QtWidgets.QGroupBox("Factions")
         self.factionsGroupLayout = QtWidgets.QGridLayout()
 
-        blueFaction = QtWidgets.QLabel("<b>Blue Faction :</b>")
+        blueFaction = QtWidgets.QLabel("<b>Player Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
-        for f in blues:
+        for f in db.FACTIONS:
             self.blueFactionSelect.addItem(f)
         blueFaction.setBuddy(self.blueFactionSelect)
 
-        redFaction = QtWidgets.QLabel("<b>Red Faction :</b>")
+        redFaction = QtWidgets.QLabel("<b>Enemy Faction :</b>")
         self.redFactionSelect = QtWidgets.QComboBox()
-        for r in reds:
+        for i, r in enumerate(db.FACTIONS):
             self.redFactionSelect.addItem(r)
+            if r == "Russia 1990": # Default ennemy
+                self.redFactionSelect.setCurrentIndex(i)
         redFaction.setBuddy(self.redFactionSelect)
 
         self.blueSideRecap = QtWidgets.QLabel("")
         self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
         self.blueSideRecap.setWordWrap(True)
 
-        self.blueGroup = QtWidgets.QGroupBox("Redfor")
         self.redSideRecap = QtWidgets.QLabel("")
         self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
         self.redSideRecap.setWordWrap(True)
@@ -188,28 +184,14 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.requiredModsGroupLayout.addWidget(self.requiredMods)
         self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
 
-        # Player faction selection
-        sideGroup = QtWidgets.QGroupBox("Player Side")
-        blueforRadioButton = QtWidgets.QRadioButton("BLUEFOR")
-        redforRadioButton = QtWidgets.QRadioButton("REDFOR")
-        blueforRadioButton.setChecked(True)
-
         # Link form fields
         self.registerField('blueFaction', self.blueFactionSelect)
         self.registerField('redFaction', self.redFactionSelect)
-        self.registerField('playerIsBlue', blueforRadioButton)
-        self.registerField('playerIsRed', redforRadioButton)
 
         # Build layout
-        sideGroupLayout = QtWidgets.QVBoxLayout()
-        sideGroupLayout.addWidget(blueforRadioButton)
-        sideGroupLayout.addWidget(redforRadioButton)
-        sideGroup.setLayout(sideGroupLayout)
-
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.factionsGroup)
         layout.addWidget(self.requiredModsGroup)
-        layout.addWidget(sideGroup)
         self.setLayout(layout)
         self.updateUnitRecap()
 

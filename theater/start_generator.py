@@ -64,6 +64,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
         tpls = pickle.load(f)
 
     group_id = 0
+    cp_to_remove = []
     for cp in theater.controlpoints:
         group_id = generate_cp_ground_points(cp, theater, game, group_id, tpls)
 
@@ -94,6 +95,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
             # Set new name :
             if "carrier_names" in db.FACTIONS[faction_name]:
                 cp.name = random.choice(db.FACTIONS[faction_name]["carrier_names"])
+            else:
+                cp_to_remove.append(cp)
         elif cp.cptype == ControlPointType.LHA_GROUP:
             # Create ground object group
             group_id = group_id + 1
@@ -115,6 +118,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
             # Set new name :
             if "lhanames" in db.FACTIONS[faction_name]:
                 cp.name = random.choice(db.FACTIONS[faction_name]["lhanames"])
+            else:
+                cp_to_remove.append(cp)
         else:
 
             for i in range(random.randint(3,6)):
@@ -181,6 +186,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     g.groups.append(group)
                     cp.ground_objects.append(g)
 
+
+
         if "missiles" in db.FACTIONS[faction_name].keys():
 
             missiles_count = 1
@@ -213,6 +220,9 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 if group is not None:
                     g.groups.append(group)
                     cp.ground_objects.append(g)
+
+    for cp in cp_to_remove:
+        theater.controlpoints.remove(cp)
 
 
 
