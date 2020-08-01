@@ -16,6 +16,8 @@ Insurgent_modded = {
         DIM__TOYOTA_DESERT,
         DIM__TOYOTA_GREEN,
         DIM__KAMIKAZE,
+        Armor.ARV_BRDM_2,
+        Armor.APC_Cobra,
 
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,

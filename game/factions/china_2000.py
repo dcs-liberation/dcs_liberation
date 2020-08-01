@@ -37,7 +37,8 @@ China_2000 = {
 
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
+        Infantry.Infantry_M4,
+        Infantry.Paratrooper_AKS,
         Infantry.Paratrooper_RPG_16,
 
         CV_1143_5_Admiral_Kuznetsov,

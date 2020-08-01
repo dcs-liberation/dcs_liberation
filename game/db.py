@@ -13,9 +13,11 @@ from dcs.unit import *
 from dcs.unittype import *
 from dcs.unitgroup import *
 
+from game.factions.australia_2005 import Australia_2005
 from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
 from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
 from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
+from game.factions.canada_2005 import Canada_2005
 from game.factions.china_2000 import China_2000
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
@@ -721,53 +723,77 @@ Units separated by country.
 country : DCS Country name
 """
 FACTIONS = {
-    "USA Aggressors": US_Aggressors,
-    "Russia 1955": Russia_1955,
-    "Russia 1965": Russia_1965,
-    "Russia 1975": Russia_1975,
-    "Russia 1990": Russia_1990,
-    "Russia 2010": Russia_2010,
-    "Iran 2015": Iran_2015,
-    "Lybia 2011": Lybia_2011,
-    "China 2000": China_2000,
-    "North Korea 2000": NorthKorea_2000,
-    "Insurgent": Insurgent,
-    "Insurgent (Modded)": Insurgent_modded,
-    "Germany 1944 (WW2 Pack)": Germany_1944,
-    "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
 
     "Bluefor Modern": BLUEFOR_MODERN,
     "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
     "Bluefor Cold War (with A-4)": BLUEFOR_COLDWAR_A4,
     "Bluefor Cold War (with A-4 and MB339)": BLUEFOR_COLDWAR_MODS,
 
-    "USA 2005": USA_2005,
-    "USA 1990": USA_1990,
-    "USA 1965": USA_1965,
-    "USA 1960": USA_1960,
     "USA 1955 (WW2 Pack)": USA_1955,
-    "Allies 1944 (WW2 Pack)": USA_1944,
+    "USA 1960": USA_1960,
+    "USA 1965": USA_1965,
+    "USA 1990": USA_1990,
+    "USA 2005": USA_2005,
+    "USA Aggressors 2005": US_Aggressors,
+
+    "Russia 1955": Russia_1955,
+    "Russia 1965": Russia_1965,
+    "Russia 1975": Russia_1975,
+    "Russia 1990": Russia_1990,
+    "Russia 2010": Russia_2010,
+
+    "France 1995": France_1995,
     "France 2005": France_2005,
     "France 2005 (Modded)": France_2005_Modded,
-    "France 1995": France_1995,
+
     "Germany 1990": Germany_1990,
+
     "Netherlands 1990": Netherlands_1990,
+
     "United Kingdown 1990": UnitedKingdom_1990,
+
     "Spain 1990": Spain_1990,
+
     "Italy 1990": Italy_1990,
     "Italy 1990 (With MB339)": Italy_1990_MB339,
-    "Sweden 1990": Sweden_1990,
-    "Japan 2005": Japan_2005,
-    "Ukraine 2010": Ukraine_2010,
-    "India 2010": India_2010,
-    "Pakistan 2015": Pakistan_2015,
+
     "Israel 2000": Israel_2000,
+
+    "China 2000": China_2000,
+
+    "Sweden 1990": Sweden_1990,
+
+    "Australia 2005": Australia_2005,
+
+    "Canada 2005": Canada_2005,
+
+    "Japan 2005": Japan_2005,
+
     "Turkey 2005": Turkey_2005,
+
     "United Arab Emirates 2005": UAE_2005,
 
+    "Ukraine 2010": Ukraine_2010,
+
+    "India 2010": India_2010,
+
+    "Lybia 2011": Lybia_2011,
+
+    "Pakistan 2015": Pakistan_2015,
+
+    "Iran 2015": Iran_2015,
+
+    "North Korea 2000": NorthKorea_2000,
+
+    "Insurgent": Insurgent,
+    "Insurgent (Modded)": Insurgent_modded,
+
+    "Allies 1944 (WW2 Pack)": USA_1944,
+
+    "Germany 1944 (WW2 Pack)": Germany_1944,
+    "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
+
 }
-BLUEFOR_FACTIONS = [FACTIONS[f]["country"] for f in FACTIONS if FACTIONS[f]["side"] == "blue"]
-print(BLUEFOR_FACTIONS)
 
 
 CARRIER_TYPE_BY_PLANE = {

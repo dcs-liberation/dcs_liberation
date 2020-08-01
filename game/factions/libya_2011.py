@@ -3,7 +3,7 @@ from dcs.planes import *
 from dcs.vehicles import *
 
 Lybia_2011 = {
-    "country": "Russia",
+    "country": "Lybia",
     "side": "red",
     "units": [
 

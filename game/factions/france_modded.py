@@ -65,7 +65,7 @@ France_2005_Modded = {
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [
-        "R91 Charles de Gaulle",
+        "PA Charles de Gaulle",
     ], "lhanames": [
         "L9013 Mistral",
         "L9014 Tonerre",

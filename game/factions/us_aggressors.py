@@ -4,7 +4,7 @@ from dcs.ships import *
 from dcs.vehicles import *
 
 US_Aggressors = {
-    "country": "USA",
+    "country": "USAF Aggresors",
     "side": "red",
     "units": [
 
@@ -13,7 +13,6 @@ US_Aggressors = {
         FA_18C_hornet,
         F_16C_50,
         Su_27,
-
 
         KC_135,
         KC130,
@@ -30,7 +29,6 @@ US_Aggressors = {
         Armor.MBT_Leopard_2,
         Armor.ATGM_M1134_Stryker,
         Armor.IFV_M2A2_Bradley,
-        Armor.IFV_Marder,
         Armor.APC_M1043_HMMWV_Armament,
 
         Artillery.MLRS_M270,

@@ -3,7 +3,7 @@ from dcs.planes import *
 from dcs.ships import *
 from dcs.vehicles import *
 
-AUSTRALIA_2005 = {
+Australia_2005 = {
     "country": "Australia",
     "side": "blue",
     "units": [
@@ -26,21 +26,22 @@ AUSTRALIA_2005 = {
         Infantry.Soldier_M249,
 
         AirDefence.SAM_Hawk_PCP,
+        AirDefence.Rapier_FSA_Launcher,
 
         CVN_74_John_C__Stennis,
         LHA_1_Tarawa,
         Armed_speedboat,
     ], "shorad": [
         AirDefence.Rapier_FSA_Launcher,
-    ], "aircraft_carrier": [
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
     ], "destroyer": [
         USS_Arleigh_Burke_IIa,
     ], "cruiser": [
         Ticonderoga_class,
-    ], "carrier_names": [
     ], "lhanames": [
+        "HMAS Canberra",
+        "HMAS Adelaide"
     ], "boat":[
         "ArleighBurkeGroupGenerator"
     ]
