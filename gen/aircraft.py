@@ -36,7 +36,7 @@ class AircraftConflictGenerator:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
 
 
-    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], client_count: int):
+    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], flight: Flight):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
@@ -70,8 +70,8 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
-        single_client = client_count == 1
-        for idx in range(0, min(len(group.units), client_count)):
+        single_client = flight.client_count == 1
+        for idx in range(0, min(len(group.units), flight.client_count)):
             if single_client:
                 group.units[idx].set_player()
             else:
@@ -84,6 +84,7 @@ class AircraftConflictGenerator:
             # Set up F-14 Client to have pre-stored alignement
             if unit_type is F_14B:
                 group.units[idx].set_property(F_14B.Properties.INSAlignmentStored.id, True)
+
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
@@ -98,6 +99,13 @@ class AircraftConflictGenerator:
                     group.set_frequency(40)
                 else:
                     group.set_frequency(124.0)
+
+        # Special case so Su 33 carrier take off
+        if unit_type is Su_33 and task is not CAP:
+            for unit in group.units:
+                unit.fuel = Su_33.fuel_max / 2.2
+
+
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
@@ -357,7 +365,7 @@ class AircraftConflictGenerator:
     def setup_group_as_intercept_flight(self, group, flight):
         group.points[0].ETA = 0
         group.late_activation = True
-        self._setup_group(group, Intercept, flight.client_count)
+        self._setup_group(group, Intercept, flight)
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
 
@@ -366,21 +374,21 @@ class AircraftConflictGenerator:
 
         if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP, FlightType.INTERCEPTION]:
             group.task = CAP.name
-            self._setup_group(group, CAP, flight.client_count)
+            self._setup_group(group, CAP, flight)
             # group.points[0].tasks.clear()
             # group.tasks.clear()
             # group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             group.task = CAS.name
-            self._setup_group(group, CAS, flight.client_count)
+            self._setup_group(group, CAS, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(CASTaskAction())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
-            self._setup_group(group, SEAD, flight.client_count)
+            self._setup_group(group, SEAD, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(NoTask())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
@@ -388,14 +396,14 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
-            self._setup_group(group, GroundAttack, flight.client_count)
+            self._setup_group(group, GroundAttack, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.ANTISHIP]:
             group.task = AntishipStrike.name
-            self._setup_group(group, AntishipStrike, flight.client_count)
+            self._setup_group(group, AntishipStrike, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
@@ -467,7 +475,7 @@ class AircraftConflictGenerator:
 
     def setup_group_as_antiship_flight(self, group, flight):
         group.task = AntishipStrike.name
-        self._setup_group(group, AntishipStrike, flight.client_count)
+        self._setup_group(group, AntishipStrike, flight)
 
         group.points[0].tasks.clear()
         group.points[0].tasks.append(AntishipStrikeTaskAction())
