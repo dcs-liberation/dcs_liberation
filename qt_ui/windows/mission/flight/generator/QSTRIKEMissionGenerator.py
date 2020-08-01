@@ -33,7 +33,7 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
         layout = QVBoxLayout()
 
         wpt_layout = QHBoxLayout()
-        wpt_layout.addWidget(QLabel("SEAD/DEAD target : "))
+        wpt_layout.addWidget(QLabel("Target : "))
         wpt_layout.addStretch()
         wpt_layout.addWidget(self.tgt_selection_box, alignment=Qt.AlignRight)
 
