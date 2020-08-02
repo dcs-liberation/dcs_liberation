@@ -9,6 +9,7 @@
 * **[Units/Factions/Mods]** Added Rafale AI mod support
 * **[Units/Factions/Mods]** Added faction "France Modded" with units from frenchpack v3.5 mod
 * **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
+* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors
 * **[New Game Wizard]** Added the list of required mods for modded factions.
 * **[Mission Generator]** Artillery units will start firing mission after a random delay. It should reduces lag spikes induced by artillery strikes by spreading them out.
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
@@ -20,7 +21,11 @@
 * **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
 * **[Mission Generator]** Carrier group ships are more spread out
 * **[Mission Generator]** Fixed radio frequency for german WW2 warbirds
-* **[Mission Generator]** BAse defense units were not controllable with Combined Arms
+* **[Mission Generator]** Fixed FW-190A8 spawning with bomb rack for CAP missions
+* **[Mission Generator]** Fixed A-20G spawning with no payload
+* **[Mission Generator]** Fixed Su-33 spawning too heavy to take off from carrier
+* **[Mission Generator]** Base defense units were not controllable with Combined Arms
+* **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers 
 
 * **[Units/Factions]** Remove JF-17 from USA 2005 faction
 * **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system)
