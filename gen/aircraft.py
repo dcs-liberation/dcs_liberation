@@ -4,6 +4,7 @@ from dcs.helicopters import UH_1H
 from dcs.terrain.terrain import NoParkingSlotError
 from dcs.triggers import TriggerOnce, Event
 
+from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType, FlightWaypointType
@@ -88,6 +89,8 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
+        # TODO : refactor this following bad specific special case code :(
+
         if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
             group.set_frequency(127.5)
         else:
@@ -104,7 +107,6 @@ class AircraftConflictGenerator:
         if unit_type is Su_33 and task is not CAP:
             for unit in group.units:
                 unit.fuel = Su_33.fuel_max / 2.2
-
 
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
@@ -379,6 +381,11 @@ class AircraftConflictGenerator:
             # group.tasks.clear()
             # group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
+            if flight.unit_type not in GUNFIGHTERS:
+                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.AAM))
+            else:
+                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Cannon))
+
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             group.task = CAS.name
             self._setup_group(group, CAS, flight)
@@ -394,6 +401,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ARM))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
             self._setup_group(group, GroundAttack, flight)
@@ -408,6 +416,8 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
+
+        group.points[0].tasks.append(OptRTBOnBingoFuel(True))
 
         for i, point in enumerate(flight.points):
             if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
