@@ -59,9 +59,9 @@ local function onEvent(event)
         destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
     end
 
-    if event.id == world.event.S_EVENT_SHOT and event.weapon then
-        weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
-    end
+    --if event.id == world.event.S_EVENT_SHOT and event.weapon then
+    --    weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
+    --end
 
     if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
         --messageAll("Base captured  :" .. event.place.getName(event.place))
