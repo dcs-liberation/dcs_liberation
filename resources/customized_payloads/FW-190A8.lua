@@ -34,10 +34,10 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "ANTISHIP",
+			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{SD_500_A}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 1,
 				},
 			},
@@ -46,8 +46,20 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "CAP",
+			["name"] = "ANTISHIP",
 			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{SD_500_A}",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "{WGr21}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{WGr21}",
+					["num"] = 3,
+				},
 			},
 			["tasks"] = {
 				[1] = 31,
