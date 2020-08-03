@@ -19,7 +19,7 @@ class CaucasusTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875), 1001)
+
 
     def __init__(self, load_ground_objects=True):
         super(CaucasusTheater, self).__init__()
@@ -41,6 +41,7 @@ class CaucasusTheater(ConflictTheater):
         self.nalchik = ControlPoint.from_airport(caucasus.Nalchik, LAND, SIZE_REGULAR, 1.1)
         self.mineralnye = ControlPoint.from_airport(caucasus.Mineralnye_Vody, LAND, SIZE_BIG, 1.3)
         self.mozdok = ControlPoint.from_airport(caucasus.Mozdok, LAND, SIZE_BIG, 1.1)
+        self.carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875), 1001)
 
         self.vaziani.frontline_offset = 0.5
         self.vaziani.base.strength = 1
@@ -121,12 +122,12 @@ class WesternGeorgia(ConflictTheater):
 Georgian Theather [inverted starting position]
 Ideal for smaller scale campaign
 """
-class WesternGeorgiaInverted(ConflictTheater):
-
+class RussiaSmall(ConflictTheater):
     terrain = caucasus.Caucasus()
     overview_image = "caumap.gif"
     reference_points = {(-317948.32727306, 635639.37385346): (278.5 * 4, 319 * 4),
                         (-355692.3067714, 617269.96285781): (263 * 4, 352 * 4), }
+
     landmap = load_landmap("resources\\caulandmap.p")
     daytime_map = {
         "dawn": (6, 9),
@@ -135,28 +136,19 @@ class WesternGeorgiaInverted(ConflictTheater):
         "night": (0, 5),
     }
 
-
     def __init__(self, load_ground_objects=True):
-        super(WesternGeorgiaInverted, self).__init__()
+        super(RussiaSmall, self).__init__()
 
-        self.kutaisi = ControlPoint.from_airport(caucasus.Kutaisi, LAND, SIZE_SMALL, IMPORTANCE_LOW)
-        self.senaki = ControlPoint.from_airport(caucasus.Senaki_Kolkhi, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
-        self.kobuleti = ControlPoint.from_airport(caucasus.Kobuleti, COAST_A_E, SIZE_SMALL, 1.1)
-        self.sukhumi = ControlPoint.from_airport(caucasus.Sukhumi_Babushara, COAST_DR_E, SIZE_REGULAR, 1.2)
-        self.gudauta = ControlPoint.from_airport(caucasus.Gudauta, COAST_DR_E, SIZE_REGULAR, 1.2)
-        self.sochi = ControlPoint.from_airport(caucasus.Sochi_Adler, COAST_DR_E, SIZE_BIG, IMPORTANCE_HIGH)
-        self.carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-285810.6875, 496399.1875), 1001)
+        self.maykop = ControlPoint.from_airport(caucasus.Maykop_Khanskaya, LAND, SIZE_LARGE, IMPORTANCE_HIGH)
+        self.mineralnye = ControlPoint.from_airport(caucasus.Mineralnye_Vody, LAND, SIZE_BIG, 1.3)
+        self.mozdok = ControlPoint.from_airport(caucasus.Mozdok, LAND, SIZE_BIG, 1.1)
 
-        self.add_controlpoint(self.kutaisi, connected_to=[self.senaki])
-        self.add_controlpoint(self.senaki, connected_to=[self.kobuleti, self.sukhumi, self.kutaisi])
-        self.add_controlpoint(self.kobuleti, connected_to=[self.senaki])
-        self.add_controlpoint(self.sukhumi, connected_to=[self.gudauta, self.senaki])
-        self.add_controlpoint(self.gudauta, connected_to=[self.sochi, self.sukhumi])
-        self.add_controlpoint(self.sochi, connected_to=[self.gudauta])
-        self.add_controlpoint(self.carrier_1)
+        self.add_controlpoint(self.mozdok, connected_to=[self.mineralnye])
+        self.add_controlpoint(self.mineralnye, connected_to=[self.mozdok, self.maykop])
+        self.add_controlpoint(self.maykop, connected_to=[self.mineralnye])
 
-        self.carrier_1.captured = True
-        self.sochi.captured = True
+        self.mozdok.captured = True
+        self.maykop.captured_invert = True
 
 
 class NorthCaucasus(ConflictTheater):
@@ -172,8 +164,6 @@ class NorthCaucasus(ConflictTheater):
         "dusk": (18, 20),
         "night": (0, 5),
     }
-
-    carrier_1 = ControlPoint.carrier("Carrier", mapping.Point(-305810.6875, 406399.1875), 1001)
 
     def __init__(self, load_ground_objects=True):
         super(NorthCaucasus, self).__init__()

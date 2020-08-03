@@ -37,7 +37,7 @@ class NewGameWizard(QtWidgets.QWizard):
         isTerrainPg = self.field("isTerrainPg")
         isTerrainNttr = self.field("isTerrainNttr")
         isTerrainCaucasusSmall = self.field("isTerrainCaucasusSmall")
-        isTerrainCaucasusSmallInverted = self.field("isTerrainCaucasusSmallInverted")
+        isTerrainRussia = self.field("isTerrainRussia")
         isTerrainCaucasusNorth= self.field("isTerrainCaucasusNorth")
         isIranianCampaignTheater = self.field("isIranianCampaignTheater")
         isTerrainNormandy = self.field("isTerrainNormandy")
@@ -64,8 +64,8 @@ class NewGameWizard(QtWidgets.QWizard):
             conflicttheater = nevada.NevadaTheater()
         elif isTerrainCaucasusSmall:
             conflicttheater = caucasus.WesternGeorgia()
-        elif isTerrainCaucasusSmallInverted:
-            conflicttheater = caucasus.WesternGeorgiaInverted()
+        elif isTerrainRussia:
+            conflicttheater = caucasus.RussiaSmall()
         elif isTerrainCaucasusNorth:
             conflicttheater = caucasus.NorthCaucasus()
         elif isIranianCampaignTheater:
@@ -267,8 +267,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainGroup = QtWidgets.QGroupBox("Terrain")
         terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia [RECOMMENDED - Early Cold War Era]")
         terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasusSmallInverted = QtWidgets.QRadioButton("Caucasus - Western Georgia Inverted [RECOMMENDED - Early Cold War Era]")
-        terrainCaucasusSmallInverted.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
+        terrainRussia = QtWidgets.QRadioButton("Caucasus - Russia Small")
+        terrainRussia.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
         terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map [NOT TESTED]")
         terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
         terrainCaucasusNorth = QtWidgets.QRadioButton("Caucasus - North - [RECOMMENDED - Modern Era]")
@@ -313,7 +313,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Register fields
         self.registerField('isTerrainCaucasus', terrainCaucasus)
         self.registerField('isTerrainCaucasusSmall', terrainCaucasusSmall)
-        self.registerField('isTerrainCaucasusSmallInverted', terrainCaucasusSmallInverted)
+        self.registerField('isTerrainRussia', terrainRussia)
         self.registerField('isTerrainCaucasusNorth', terrainCaucasusNorth)
         self.registerField('isTerrainPg', terrainPg)
         self.registerField('isIranianCampaignTheater', terrainIran)
@@ -328,7 +328,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Build layout
         terrainGroupLayout = QtWidgets.QVBoxLayout()
         terrainGroupLayout.addWidget(terrainCaucasusSmall)
-        terrainGroupLayout.addWidget(terrainCaucasusSmallInverted)
+        terrainGroupLayout.addWidget(terrainRussia)
         terrainGroupLayout.addWidget(terrainCaucasusNorth)
         terrainGroupLayout.addWidget(terrainCaucasus)
         terrainGroupLayout.addWidget(terrainIran)
