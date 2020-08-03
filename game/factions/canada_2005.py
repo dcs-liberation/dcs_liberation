@@ -18,6 +18,7 @@ Canada_2005 = {
         Armor.MBT_Leopard_2,
         Armor.IFV_LAV_25,
         Armor.APC_M113,
+        Armor.IFV_MCV_80,
 
         UH_1H,
 

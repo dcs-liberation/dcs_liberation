@@ -18,8 +18,10 @@ Australia_2005 = {
         Armor.MBT_Leopard_1A3,
         Armor.APC_M113,
         Armor.IFV_LAV_25,
+        Armor.IFV_MCV_80,
 
         UH_1H,
+        AH_1W, # Standing as EC Tiger
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,

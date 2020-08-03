@@ -4,7 +4,7 @@ from dcs.ships import *
 from dcs.vehicles import *
 
 US_Aggressors = {
-    "country": "USAF Aggresors",
+    "country": "USAF Aggressors",
     "side": "red",
     "units": [
 
