@@ -207,7 +207,7 @@ class Operation:
 
         # Briefing Generation
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
+            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(60+i, 130+i))
 
         if self.is_awacs_enabled:
             self.briefinggen.append_frequency("AWACS", "133 MHz AM")

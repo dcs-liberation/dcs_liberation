@@ -44,11 +44,11 @@ class AirSupportConflictGenerator:
                 plane_type=tanker_unit_type,
                 position=tanker_position,
                 altitude=TANKER_ALT,
-                race_distance=50000,
+                race_distance=58000,
                 frequency=130 + i,
                 start_type=StartType.Warm,
                 speed=574,
-                tacanchannel="{}X".format(97 + i),
+                tacanchannel="{}X".format(60 + i),
             )
 
             tanker_group.points[0].tasks.pop() # Override PyDCS tacan channel
