@@ -1,4 +1,5 @@
 from dcs.mapping import Point
+import uuid
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
@@ -70,6 +71,7 @@ class TheaterGroundObject:
     groups = []
     obj_name = ""
     sea_object = False
+    uuid = uuid.uuid1()
 
     def __init__(self, category: str):
         self.category = category

@@ -77,7 +77,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
         if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             # Create ground object group
-            group_id = group_id + 1
+            group_id = game.next_group_id()
             g = TheaterGroundObject("CARRIER")
             g.group_id = group_id
             g.object_id = 0
@@ -100,7 +100,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 cp_to_remove.append(cp)
         elif cp.cptype == ControlPointType.LHA_GROUP:
             # Create ground object group
-            group_id = group_id + 1
+            group_id = game.next_group_id()
             g = TheaterGroundObject("LHA")
             g.group_id = group_id
             g.object_id = 0
@@ -133,7 +133,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     logging.info("Couldn't find point for {} base defense".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -175,7 +175,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     logging.info("Couldn't find point for {} ships".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -210,7 +210,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     logging.info("Couldn't find point for {} missiles".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -359,7 +359,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
             continue
 
         object_id = 0
-        group_id = group_id + 1
+        group_id = game.next_group_id()
 
         logging.info("generated {} for {}".format(tpl_category, cp))
 
