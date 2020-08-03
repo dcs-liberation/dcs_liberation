@@ -56,8 +56,8 @@ class Game:
     current_unit_id = 0
     current_group_id = 0
 
-    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime):
-        self.settings = Settings()
+    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime, settings):
+        self.settings = settings
         self.events = []
         self.theater = theater
         self.player_name = player_name

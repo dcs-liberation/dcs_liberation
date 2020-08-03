@@ -44,6 +44,8 @@ class NormandyTheater(ConflictTheater):
         self.chailey.captured = True
         self.needOarPoint.captured = True
 
+        self.evreux.captured_invert = True
+
 
 class NormandySmall(ConflictTheater):
     terrain = dcs.terrain.Normandy()
@@ -77,3 +79,5 @@ class NormandySmall(ConflictTheater):
 
         self.deuxjumeaux.captured = True
         self.needOarPoint.captured = True
+
+        self.evreux.captured_invert = True

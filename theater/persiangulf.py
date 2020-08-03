@@ -84,6 +84,10 @@ class PersianGulfTheater(ConflictTheater):
         self.east_carrier.captured = True
         self.liwa.captured = True
 
+        self.west_carrier.captured_invert = True
+        self.east_carrier.captured_invert = True
+        self.shiraz.captured_invert = True
+
 
 class IranianCampaign(ConflictTheater):
 
@@ -154,6 +158,8 @@ class IranianCampaign(ConflictTheater):
         self.havadarya.captured = True
         self.bandar_abbas.captured = True
 
+        self.shiraz.captured_invert = True
+
 
 class Emirates(ConflictTheater):
     terrain = dcs.terrain.PersianGulf()
@@ -199,3 +205,7 @@ class Emirates(ConflictTheater):
         self.tarawa_carrier.captured = True
         self.east_carrier.captured = True
         self.fujairah.captured = True
+
+        self.tarawa_carrier.captured_invert = True
+        self.east_carrier.captured_invert = True
+        self.fujairah.captured_invert = True

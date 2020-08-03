@@ -303,7 +303,7 @@ class AircraftConflictGenerator:
 
     def setup_interceptor_triggers(self, group, flight, activation_trigger):
 
-        detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=200000, hidden=False, name="ITZ")
+        detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=25000, hidden=False, name="ITZ")
         if flight.from_cp.captured:
             activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_enemy_color(), detection_zone.id)) # TODO : support unit type in part of coalition
             activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircrafts have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))

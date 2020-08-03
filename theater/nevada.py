@@ -46,4 +46,5 @@ class NevadaTheater(ConflictTheater):
         self.add_controlpoint(self.mesquite, connected_to=[self.lincoln_conty, self.groom_lake, self.creech])
 
         self.tonopah.captured = True
+        self.mesquite.captured_invert = True
 

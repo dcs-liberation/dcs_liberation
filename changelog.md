@@ -20,7 +20,7 @@
 * **[Mission Generator]** Carrier will sail into the wind, not in the same direction
 * **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
 * **[Mission Generator]** Carrier group ships are more spread out
-* **[Mission Generator]** Fixed radio frequency for german WW2 warbirds
+* **[Mission Generator]** Fixed wrong radio frequency for german WW2 warbirds
 * **[Mission Generator]** Fixed FW-190A8 spawning with bomb rack for CAP missions
 * **[Mission Generator]** Fixed A-20G spawning with no payload
 * **[Mission Generator]** Fixed Su-33 spawning too heavy to take off from carrier

@@ -5,6 +5,7 @@ import typing
 import logging
 
 from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
+from game.settings import Settings
 from gen import namegen, TheaterGroundObject
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group, generate_ship_group
@@ -153,7 +154,14 @@ def generate_groundobjects(theater: ConflictTheater, game):
             for ground_object in cp.ground_objects:
                 logging.info(ground_object.groups)
 
+        # Generate navy groups
         if "boat" in db.FACTIONS[faction_name].keys():
+
+            if cp.captured and game.settings.do_not_generate_player_navy:
+                continue
+
+            if not cp.captured and game.settings.do_not_generate_enemy_navy:
+                continue
 
             boat_count = 1
             if "boat_count" in db.FACTIONS[faction_name].keys():
@@ -378,3 +386,37 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
 
             cp.ground_objects.append(g)
     return group_id
+
+
+def prepare_theater(theater: ConflictTheater, settings:Settings, midgame):
+
+    to_remove = []
+
+    # autocapture half the base if midgame
+    if midgame:
+        for i in range(0, int(len(theater.controlpoints) / 2)):
+            theater.controlpoints[i].captured = True
+
+    # Remove carrier and lha, invert situation if needed
+    for cp in theater.controlpoints:
+        if cp.cptype is ControlPointType.AIRCRAFT_CARRIER_GROUP and settings.do_not_generate_carrier:
+            to_remove.append(cp)
+        elif cp.cptype is ControlPointType.LHA_GROUP and settings.do_not_generate_lha:
+            to_remove.append(cp)
+
+        if settings.inverted:
+            cp.captured = cp.captured_invert
+
+    # do remove
+    for cp in to_remove:
+        theater.controlpoints.remove(cp)
+
+    # reapply midgame inverted if needed
+    if midgame and settings.inverted:
+        for i, cp in enumerate(reversed(theater.controlpoints)):
+            if i > len(theater.controlpoints):
+                break
+            else:
+                cp.captured = True
+
+

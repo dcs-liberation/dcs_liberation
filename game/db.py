@@ -18,7 +18,7 @@ from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
 from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
 from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
 from game.factions.canada_2005 import Canada_2005
-from game.factions.china_2000 import China_2000
+from game.factions.china_2010 import China_2010
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
 from game.factions.france_modded import France_2005_Modded
@@ -759,7 +759,7 @@ FACTIONS = {
 
     "Israel 2000": Israel_2000,
 
-    "China 2000": China_2000,
+    "China 2010": China_2010,
 
     "Sweden 1990": Sweden_1990,
 

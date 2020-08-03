@@ -3,10 +3,12 @@ from __future__ import unicode_literals
 import datetime
 
 from PySide2 import QtGui, QtWidgets
+from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout
 from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
 from game import db, Game
+from game.settings import Settings
 from gen import namegen
 from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
 
@@ -46,6 +48,12 @@ class NewGameWizard(QtWidgets.QWizard):
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
         multiplier = self.field("multiplier")
+        no_carrier = self.field("no_carrier")
+        no_lha = self.field("no_lha")
+        supercarrier = self.field("supercarrier")
+        no_player_navy = self.field("no_player_navy")
+        no_enemy_navy = self.field("no_enemy_navy")
+        invertMap = self.field("invertMap")
 
         player_name = blueFaction
         enemy_name = redFaction
@@ -75,20 +83,25 @@ class NewGameWizard(QtWidgets.QWizard):
         else:
             conflicttheater = caucasus.CaucasusTheater()
 
+        settings = Settings()
+        settings.inverted = invertMap
+        settings.supercarrier = supercarrier
+        settings.do_not_generate_carrier = no_carrier
+        settings.do_not_generate_lha = no_lha
+        settings.do_not_generate_player_navy = no_player_navy
+        settings.do_not_generate_enemy_navy = no_enemy_navy
+
         self.generatedGame = self.start_new_game(player_name, enemy_name, conflicttheater, midGame, multiplier,
-                                                 timePeriod)
+                                                 timePeriod, settings)
 
         super(NewGameWizard, self).accept()
 
     def start_new_game(self, player_name: str, enemy_name: str, conflicttheater: ConflictTheater,
-                       midgame: bool, multiplier: float, period: datetime):
-
-        if midgame:
-            for i in range(0, int(len(conflicttheater.controlpoints) / 2)):
-                conflicttheater.controlpoints[i].captured = True
+                       midgame: bool, multiplier: float, period: datetime, settings:Settings):
 
         # Reset name generator
         namegen.reset()
+        start_generator.prepare_theater(conflicttheater, settings, midgame)
 
         print("-- Starting New Game Generator")
         print("Enemy name : " + enemy_name)
@@ -100,7 +113,8 @@ class NewGameWizard(QtWidgets.QWizard):
         game = Game(player_name=player_name,
                     enemy_name=enemy_name,
                     theater=conflicttheater,
-                    start_date=period)
+                    start_date=period,
+                    settings=settings)
 
         print("-- Game Object generated")
         start_generator.generate_groundobjects(conflicttheater, game)
@@ -240,9 +254,6 @@ class FactionSelection(QtWidgets.QWizardPage):
             self.requiredMods.setText(self.requiredMods.text() + "<li>None</li></ul>\n")
 
 
-
-
-
 class TheaterConfiguration(QtWidgets.QWizardPage):
     def __init__(self, parent=None):
         super(TheaterConfiguration, self).__init__(parent)
@@ -280,6 +291,15 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         terrainChannelComplete = QtWidgets.QRadioButton("The Channel : Battle of Britain")
         terrainChannelComplete.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
         terrainCaucasusSmall.setChecked(True)
+
+        # Campaign settings
+        mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
+        invertMap = QtWidgets.QCheckBox()
+        self.registerField('invertMap', invertMap)
+        mapSettingsLayout = QtWidgets.QGridLayout()
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 1, 0)
+        mapSettingsLayout.addWidget(invertMap, 1, 1)
+        mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
         timeGroup = QtWidgets.QGroupBox("Time Period")
@@ -329,6 +349,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
         layout.addWidget(terrainGroup)
+        layout.addWidget(mapSettingsGroup)
         layout.addWidget(timeGroup)
         self.setLayout(layout)
 
@@ -348,15 +369,47 @@ class MiscOptions(QtWidgets.QWizardPage):
         multiplier.setMinimum(1)
         multiplier.setMaximum(5)
 
+        miscSettingsGroup = QtWidgets.QGroupBox("Misc Settings")
         self.registerField('midGame', midGame)
         self.registerField('multiplier', multiplier)
+
+        # Campaign settings
+        generatorSettingsGroup = QtWidgets.QGroupBox("Generator Settings")
+        no_carrier = QtWidgets.QCheckBox()
+        self.registerField('no_carrier', no_carrier)
+        no_lha = QtWidgets.QCheckBox()
+        self.registerField('no_lha', no_lha)
+        supercarrier = QtWidgets.QCheckBox()
+        self.registerField('supercarrier', supercarrier)
+        no_player_navy= QtWidgets.QCheckBox()
+        self.registerField('no_player_navy', no_player_navy)
+        no_enemy_navy = QtWidgets.QCheckBox()
+        self.registerField('no_enemy_navy', no_enemy_navy)
+
+        generatorLayout = QtWidgets.QGridLayout()
+        generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
+        generatorLayout.addWidget(no_carrier, 1, 1)
+        generatorLayout.addWidget(QtWidgets.QLabel("No LHA"), 2, 0)
+        generatorLayout.addWidget(no_lha, 2, 1)
+        generatorLayout.addWidget(QtWidgets.QLabel("Use Supercarrier module"), 3, 0)
+        generatorLayout.addWidget(supercarrier, 3, 1)
+        generatorLayout.addWidget(QtWidgets.QLabel("No Player Navy"), 4, 0)
+        generatorLayout.addWidget(no_player_navy, 4, 1)
+        generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
+        generatorLayout.addWidget(no_enemy_navy, 5, 1)
+        generatorSettingsGroup.setLayout(generatorLayout)
 
         layout = QtWidgets.QGridLayout()
         layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
         layout.addWidget(midGame, 1, 1)
         layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
         layout.addWidget(multiplier, 2, 1)
-        self.setLayout(layout)
+        miscSettingsGroup.setLayout(layout)
+
+        mlayout = QVBoxLayout()
+        mlayout.addWidget(miscSettingsGroup)
+        mlayout.addWidget(generatorSettingsGroup)
+        self.setLayout(mlayout)
 
 
 class ConclusionPage(QtWidgets.QWizardPage):

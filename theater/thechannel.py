@@ -50,6 +50,12 @@ class ChannelTheater(ConflictTheater):
         self.lympne.captured = True
         self.manston.captured = True
 
+        self.manston.captured_invert = True
+        self.dunkirk.captured_invert = True
+        self.stomer.captured_invert = True
+        self.merville.captured_invert = True
+        self.abeville.captured_invert = True
+
 
 class ChannelTheaterComplete(ConflictTheater):
     terrain = dcs.terrain.TheChannel()
@@ -96,3 +102,8 @@ class ChannelTheaterComplete(ConflictTheater):
         self.highhalden.captured = True
         self.lympne.captured = True
         self.manston.captured = True
+
+        self.dunkirk.captured_invert = True
+        self.stomer.captured_invert = True
+        self.merville.captured_invert = True
+        self.abeville.captured_invert = True

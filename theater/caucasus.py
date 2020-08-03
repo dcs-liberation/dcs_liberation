@@ -1,11 +1,8 @@
-import re
-
-from dcs.terrain import caucasus
 from dcs import mapping
+from dcs.terrain import caucasus
 
-from .landmap import *
 from .conflicttheater import *
-from .base import *
+from .landmap import *
 
 
 class CaucasusTheater(ConflictTheater):
@@ -63,15 +60,17 @@ class CaucasusTheater(ConflictTheater):
         self.add_controlpoint(self.gudauta, connected_to=[self.sochi, self.sukhumi])
         self.add_controlpoint(self.sochi, connected_to=[self.gudauta, self.gelendzhik])
 
-        self.add_controlpoint(self.gelendzhik, connected_to=[self.sochi, ])
-        self.add_controlpoint(self.krymsk, connected_to=[self.anapa, self.krasnodar])
+        self.add_controlpoint(self.gelendzhik, connected_to=[self.sochi, self.krymsk])
+        self.add_controlpoint(self.krymsk, connected_to=[self.anapa, self.krasnodar, self.gelendzhik])
         self.add_controlpoint(self.anapa, connected_to=[self.krymsk])
         self.add_controlpoint(self.krasnodar, connected_to=[self.krymsk, self.maykop])
 
         self.add_controlpoint(self.carrier_1)
 
         self.carrier_1.captured = True
+        self.carrier_1.captured_invert = True
         self.batumi.captured = True
+        self.anapa.captured_invert = True
 
 
 """
@@ -113,7 +112,9 @@ class WesternGeorgia(ConflictTheater):
         self.add_controlpoint(self.carrier_1)
 
         self.carrier_1.captured = True
+        self.carrier_1.captured_invert = True
         self.kobuleti.captured = True
+        self.sochi.captured_invert = True
 
 
 """
@@ -156,8 +157,6 @@ class WesternGeorgiaInverted(ConflictTheater):
 
         self.carrier_1.captured = True
         self.sochi.captured = True
-
-
 
 
 class NorthCaucasus(ConflictTheater):
@@ -203,3 +202,7 @@ class NorthCaucasus(ConflictTheater):
         self.carrier_1.captured = True
         self.vaziani.captured = True
         self.kutaisi.captured = True
+
+        self.carrier_1.captured_invert = True
+        self.maykop.captured_invert = True
+        self.mineralnye.captured_invert = True

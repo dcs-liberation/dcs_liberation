@@ -4,7 +4,7 @@ from enum import Enum
 
 from dcs.mapping import *
 from dcs.terrain import Airport
-from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov
+from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
@@ -55,6 +55,7 @@ class ControlPoint:
         self.size = size
         self.importance = importance
         self.captured = False
+        self.captured_invert = False
         self.has_frontline = has_frontline
         self.radials = radials
         self.connected_points = []
@@ -148,7 +149,7 @@ class ControlPoint:
                 if g.dcs_identifier in ["CARRIER", "LHA"]:
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov]:
+                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock]:
                                 return True
             return False
         elif self.cptype in [ControlPointType.AIRBASE, ControlPointType.FARP]:
