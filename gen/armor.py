@@ -1,5 +1,5 @@
 from dcs.action import AITaskPush, AITaskSet
-from dcs.condition import TimeAfter, UnitDamaged, Or
+from dcs.condition import TimeAfter, UnitDamaged, Or, GroupLifeLess
 from dcs.task import *
 from dcs.triggers import TriggerOnce, Event
 
@@ -93,11 +93,9 @@ class GroundConflictGenerator:
 
                 self.gen_infantry_group_for_group(g, False, self.mission.country(self.game.enemy_country), self.conflict.heading - 90)
 
-
         # Plan combat actions for groups
         self.plan_action_for_groups(self.player_stance, player_groups, enemy_groups, self.conflict.heading + 90, self.conflict.from_cp, self.conflict.to_cp)
         self.plan_action_for_groups(self.enemy_stance, enemy_groups, player_groups, self.conflict.heading - 90, self.conflict.to_cp, self.conflict.from_cp)
-
 
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
@@ -161,8 +159,7 @@ class GroundConflictGenerator:
                             dcs_group.add_trigger_action(hold_task)
 
                         # Artillery strike random start
-                        artillery_trigger = TriggerOnce(Event.NoEvent,
-                                                         "ArtilleryFireTask #" + str(dcs_group.id))
+                        artillery_trigger = TriggerOnce(Event.NoEvent, "ArtilleryFireTask #" + str(dcs_group.id))
                         artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45)* 60))
 
                         fire_task = FireAtPoint(target, len(group.units) * 10, 100)
@@ -179,7 +176,7 @@ class GroundConflictGenerator:
 
                             # Hold position
                             dcs_group.points[0].tasks.append(Hold())
-                            retreat = self.find_retreat_point(dcs_group, forward_heading)
+                            retreat = self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE/8))
                             dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
                             dcs_group.points[1].tasks.append(Hold())
                             dcs_group.add_waypoint(retreat, PointAction.OffRoad)
@@ -190,12 +187,15 @@ class GroundConflictGenerator:
                                 if i < len(dcs_group.units) - 1:
                                     artillery_fallback.add_condition(Or())
 
+                            hold_2 = Hold()
+                            hold_2.number = 3
+                            dcs_group.add_trigger_action(hold_2)
 
                             retreat_task = GoToWaypoint(toIndex=3)
-                            retreat_task.number = 3
+                            retreat_task.number = 4
                             dcs_group.add_trigger_action(retreat_task)
 
-                            artillery_fallback.add_action(AITaskSet(dcs_group.id, len(dcs_group.tasks)))
+                            artillery_fallback.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
                             self.mission.triggerrules.triggers.append(artillery_fallback)
 
                             for u in dcs_group.units:
@@ -232,12 +232,16 @@ class GroundConflictGenerator:
                     i = 1
                     for target in targets:
                         rand_offset = Point(random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK), random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK))
-                        dcs_group.add_waypoint(target.points[0].position+rand_offset,PointAction.OffRoad)
+                        dcs_group.add_waypoint(target.points[0].position+rand_offset, PointAction.OffRoad)
                         dcs_group.points[i].tasks.append(AttackGroup(target.id))
                         i = i + 1
                     if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
                         attack_point = to_cp.position.random_point_within(500, 0)
                         dcs_group.add_waypoint(attack_point)
+
+                if stance != CombatStance.RETREAT:
+                    self.add_morale_trigger(dcs_group, forward_heading)
+
             elif group.role in [CombatGroupRole.APC, CombatGroupRole.ATGM]:
 
                 if stance in [CombatStance.AGGRESIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
@@ -247,6 +251,9 @@ class GroundConflictGenerator:
                     else:
                         attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
                     dcs_group.add_waypoint(attack_point, PointAction.OnRoad)
+
+                if stance != CombatStance.RETREAT:
+                    self.add_morale_trigger(dcs_group, forward_heading)
 
             if stance == CombatStance.RETREAT:
                 # In retreat mode, the units will fall back
@@ -260,14 +267,51 @@ class GroundConflictGenerator:
                 dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
 
 
-    def find_retreat_point(self, dcs_group, frontline_heading):
+    def add_morale_trigger(self, dcs_group, forward_heading):
+        """
+        This add a trigger to manage units fleeing whenever their group is hit hard, or being engaged by CAS
+        """
+
+        if len(dcs_group.units) == 1:
+            return
+
+        # Units should hold position on last waypoint
+        dcs_group.points[len(dcs_group.points) - 1].tasks.append(Hold())
+
+        # Force unit heading
+        for unit in dcs_group.units:
+            unit.heading = forward_heading
+        dcs_group.manualHeading = True
+
+        # We add a new retreat waypoint
+        dcs_group.add_waypoint(self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)), PointAction.OffRoad)
+
+        # Fallback task
+        fallback = ControlledTask(GoToWaypoint(toIndex=len(dcs_group.points)))
+        fallback.enabled = False
+        dcs_group.add_trigger_action(Hold())
+        dcs_group.add_trigger_action(fallback)
+
+        # Create trigger
+        fallback = TriggerOnce(Event.NoEvent, "Morale manager #" + str(dcs_group.id))
+
+        # Usually more than 50% casualties = RETREAT
+        fallback.add_condition(GroupLifeLess(dcs_group.id, random.randint(51, 76)))
+
+        # Do retreat to the configured retreat waypoint
+        fallback.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
+
+        self.mission.triggerrules.triggers.append(fallback)
+
+
+    def find_retreat_point(self, dcs_group, frontline_heading, distance=RETREAT_DISTANCE):
         """
         Find a point to retreat to
         :param dcs_group: DCS mission group we are searching a retreat point for
         :param frontline_heading: Heading of the frontline
         :return: dcs.mapping.Point object with the desired position
         """
-        return dcs_group.points[0].position.point_from_heading(frontline_heading-180, RETREAT_DISTANCE)
+        return dcs_group.points[0].position.point_from_heading(frontline_heading-180, distance)
 
     def find_offensive_point(self, dcs_group, frontline_heading, distance):
         """

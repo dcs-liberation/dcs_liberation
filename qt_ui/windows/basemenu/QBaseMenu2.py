@@ -35,8 +35,8 @@ class QBaseMenu2(QDialog):
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setMinimumSize(300, 200)
-        self.setMinimumWidth(680)
-        self.setMaximumWidth(680)
+        self.setMinimumWidth(800)
+        self.setMaximumWidth(800)
         self.setModal(True)
         self.initUi()
 
@@ -50,7 +50,7 @@ class QBaseMenu2(QDialog):
 
         header = QLabel(self)
         header.setGeometry(0, 0, 655, 106)
-        pixmap = QPixmap("./resources/ui/airbase.png")
+        pixmap = QPixmap(self.get_base_image())
         header.setPixmap(pixmap)
 
         title = QLabel("<b>" + self.cp.name + "</b>")
@@ -74,7 +74,6 @@ class QBaseMenu2(QDialog):
 
     def closeEvent(self, closeEvent:QCloseEvent):
         GameUpdateSignal.get_instance().updateGame(self.game)
-
 
     def get_base_image(self):
         if self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:

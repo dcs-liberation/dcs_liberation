@@ -45,12 +45,6 @@ class GroundObjectsGenerator:
 
     def generate(self):
 
-        cp = None  # type: ControlPoint
-        if self.conflict.attackers_country.name == self.game.player_country:
-            cp = self.conflict.to_cp
-        else:
-            cp = self.conflict.from_cp
-
         for cp in self.game.theater.controlpoints:
 
             if cp.captured:

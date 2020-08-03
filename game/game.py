@@ -76,6 +76,22 @@ class Game:
         self.__frontlineData = []
         self.__destroyed_units = []
 
+        self.sanitize_sides()
+
+
+    def sanitize_sides(self):
+        """
+        Make sure the opposing factions are using different countries
+        :return:
+        """
+        if self.player_country == self.enemy_country:
+            if self.player_country == "USA":
+                self.enemy_country = "USAF Aggressors"
+            elif self.player_country == "Russia":
+                self.enemy_country = "USSR"
+            else:
+                self.enemy_country = "Russia"
+
     @property
     def player_faction(self):
         return db.FACTIONS[self.player_name]

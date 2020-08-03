@@ -91,15 +91,6 @@ class Operation:
 
         p_country = self.game.player_country
         e_country = self.game.enemy_country
-        if self.game.player_country == self.game.enemy_country:
-            if self.game.player_country != "USAF Aggresors":
-                e_country = "USAF Aggresors"
-            else:
-                if self.game.player_country != "Russia":
-                    e_country = "Russia"
-                else:
-                    e_country = "USA"
-
         self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(p_country)]())
         self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(e_country)]())
 

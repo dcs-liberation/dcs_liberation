@@ -33,10 +33,12 @@ class QMissionPlanning(QDialog):
         self.select_airbase = QChooseAirbase(self.game)
         self.select_airbase.selected_airbase_changed.connect(self.on_departure_cp_changed)
         self.planned_flight_view = QPlannedFlightsView(None)
+        self.available_aircraft_at_selected_location = {}
         if self.captured_cp[0].id in self.game.planners.keys():
             self.planner = self.game.planners[self.captured_cp[0].id]
             self.planned_flight_view.set_flight_planner(self.planner)
             self.selected_cp = self.captured_cp[0]
+            self.available_aircraft_at_selected_location = self.planner.get_available_aircraft()
 
         self.planned_flight_view.selectionModel().setCurrentIndex(self.planned_flight_view.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         self.planned_flight_view.selectionModel().selectionChanged.connect(self.on_flight_selection_change)
@@ -82,8 +84,10 @@ class QMissionPlanning(QDialog):
         if len(cps) == 1:
             self.selected_cp = cps[0]
             self.planner = self.game.planners[cps[0].id]
+            self.available_aircraft_at_selected_location = self.planner.get_available_aircraft()
             self.planned_flight_view.set_flight_planner(self.planner)
         else:
+            self.available_aircraft_at_selected_location = {}
             self.planned_flight_view.set_flight_planner(None)
 
     def on_flight_selection_change(self):

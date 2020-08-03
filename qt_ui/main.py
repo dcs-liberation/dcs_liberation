@@ -21,10 +21,11 @@ from userdata import liberation_install, persistency, liberation_theme
 
 if __name__ == "__main__":
 
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1" # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
     # init the theme and load the stylesheet based on the theme index
-    liberation_theme.init();
+    liberation_theme.init()
     css = ""
     with open("./resources/stylesheets/"+liberation_theme.get_theme_css_file()) as stylesheet:
         app.setStyleSheet(stylesheet.read())
