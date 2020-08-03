@@ -25,16 +25,18 @@
 * **[Mission Generator]** Fixed A-20G spawning with no payload
 * **[Mission Generator]** Fixed Su-33 spawning too heavy to take off from carrier
 * **[Mission Generator]** Base defense units were not controllable with Combined Arms
+* **[Mission Generator]** Tanker speed was too low
+* **[Mission Generator]** Tanker TACAN settings were wrong
 * **[Mission Script/Performance]** Mission lua script will not listen to weapons fired event anymore and register every fired weapons. This should improve performance especially in WW2 scenarios or when rocket artillery is firing. 
-* **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers 
-
+* **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers
+* **[Campaign Generator]** Fixed SA-10 did not have tracking radar
 * **[Units/Factions]** Remove JF-17 from USA 2005 faction
+* **[Units/Factions]** Remove AJS-37 from Russia 2010
 * **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system)
 * **[Bug]** On the persian gulf full map campaign, the two carriers were sharing the same id, this was causing a lot of bugs
 * **[Performance]** Tuned the culling setting so that you cannot run into situation where no friendly or enemy AI flights are generated
-
 * **[Other]** Application doesn't gracefully exit.
-* **[Other]** Other minor fixes
+* **[Other]** Other minor fixes, and multiples factions small changes
 
 # 2.0 RC 9
 

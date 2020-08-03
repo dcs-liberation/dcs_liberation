@@ -32,6 +32,7 @@ class AirSupportConflictGenerator:
     def generate(self, is_awacs_enabled):
         player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
 
+        CALLSIGNS = ["TKR", "TEX", "FUL", "FUE", ""]
         for i, tanker_unit_type in enumerate(db.find_unittype(Refueling, self.conflict.attackers_side)):
             self.generated_tankers.append(db.unit_type_name(tanker_unit_type))
             tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position) + TANKER_HEADING_OFFSET * i
@@ -43,12 +44,16 @@ class AirSupportConflictGenerator:
                 plane_type=tanker_unit_type,
                 position=tanker_position,
                 altitude=TANKER_ALT,
+                race_distance=50000,
                 frequency=130 + i,
                 start_type=StartType.Warm,
+                speed=574,
                 tacanchannel="{}X".format(97 + i),
             )
 
-            tanker_group.points[0].tasks.append(ActivateBeaconCommand(channel=97 + i, unit_id=tanker_group.id, aa=False))
+            tanker_group.points[0].tasks.pop() # Override PyDCS tacan channel
+            tanker_group.points[0].tasks.append(ActivateBeaconCommand(97+1, "X", CALLSIGNS[i], True, tanker_group.units[0].id, True))
+
             tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
