@@ -29,6 +29,7 @@
 * **[Mission Generator]** Base defense units were not controllable with Combined Arms
 * **[Mission Generator]** Tanker speed was too low
 * **[Mission Generator]** Tanker TACAN settings were wrong
+* **[Mission Generator]** AI aircraft should start datalink (EPLRS)
 * **[Mission Generator]** Fixed all flights starting "In flight" after playing a few missions (parking slot reset issue)
 * **[Mission Script/Performance]** Mission lua script will not listen to weapons fired event anymore and register every fired weapons. This should improve performance especially in WW2 scenarios or when rocket artillery is firing. 
 * **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers

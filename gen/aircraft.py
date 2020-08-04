@@ -429,6 +429,12 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
 
+        if hasattr(flight.unit_type, 'eplrs'):
+            if flight.unit_type.eplrs:
+                group.points[0].tasks.append(EPLRS(group.id))
+
+
+
         for i, point in enumerate(flight.points):
             if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
                 pt = group.add_waypoint(Point(point.x, point.y), point.alt)
