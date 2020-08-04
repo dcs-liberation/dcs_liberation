@@ -11,9 +11,11 @@
 * **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
 * **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors
 * **[New Game Wizard]** Added the list of required mods for modded factions.
+* **[New Game Wizard]** No more RED vs BLUE opposing faction restrictions.
+* **[New Game Wizard]** New campaign generation settings added : No aircraft carrier, no lha, no navy, invert map starting positions.
 * **[Mission Generator]** Artillery units will start firing mission after a random delay. It should reduces lag spikes induced by artillery strikes by spreading them out.
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
-* **[Mission Generator]** The briefing contains a small section about the war on the ground.
+* **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
 
 ## Fixed issues :
@@ -27,12 +29,13 @@
 * **[Mission Generator]** Base defense units were not controllable with Combined Arms
 * **[Mission Generator]** Tanker speed was too low
 * **[Mission Generator]** Tanker TACAN settings were wrong
+* **[Mission Generator]** Fixed all flights starting "In flight" after playing a few missions (parking slot reset issue)
 * **[Mission Script/Performance]** Mission lua script will not listen to weapons fired event anymore and register every fired weapons. This should improve performance especially in WW2 scenarios or when rocket artillery is firing. 
 * **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers
-* **[Campaign Generator]** Fixed SA-10 did not have tracking radar
+* **[Campaign Generator]** SA-10 sites will now have a tracking radar.
 * **[Units/Factions]** Remove JF-17 from USA 2005 faction
 * **[Units/Factions]** Remove AJS-37 from Russia 2010
-* **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system)
+* **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system for the era)
 * **[Bug]** On the persian gulf full map campaign, the two carriers were sharing the same id, this was causing a lot of bugs
 * **[Performance]** Tuned the culling setting so that you cannot run into situation where no friendly or enemy AI flights are generated
 * **[Other]** Application doesn't gracefully exit.

@@ -6,6 +6,7 @@ from dcs.triggers import TriggerOnce, Event
 
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
+from game.utils import nm_to_meter
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType, FlightWaypointType
 from .conflictgen import *
@@ -121,7 +122,7 @@ class AircraftConflictGenerator:
             country=side,
             name=name,
             aircraft_type=unit_type,
-            airport=self.m.terrain.airport_by_id(airport.id),
+            airport=airport,
             maintask=None,
             start_type=start_type,
             group_size=count,
@@ -249,6 +250,11 @@ class AircraftConflictGenerator:
 
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
 
+        # Clear pydcs parking slots
+        if cp.airport is not None:
+            for ps in cp.airport.parking_slots:
+                ps.unit_id = None
+
         for flight in flight_planner.flights:
 
             if flight.client_count == 0 and self.game.position_culled(flight.from_cp.position):
@@ -348,7 +354,7 @@ class AircraftConflictGenerator:
                         unit_type=flight.unit_type,
                         count=flight.count,
                         client_count=0,
-                        airport=self.m.terrain.airport_by_id(cp.at.id),
+                        airport=cp.airport,
                         start_type=st)
         except Exception:
             # Generated when there is no place on Runway or on Parking Slots
@@ -378,8 +384,8 @@ class AircraftConflictGenerator:
             group.task = CAP.name
             self._setup_group(group, CAP, flight)
             # group.points[0].tasks.clear()
-            # group.tasks.clear()
-            # group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
+            group.points[0].tasks.clear()
+            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50), targets=[Targets.All.Air]))
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
             if flight.unit_type not in GUNFIGHTERS:
                 group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.AAM))
@@ -390,9 +396,13 @@ class AircraftConflictGenerator:
             group.task = CAS.name
             self._setup_group(group, CAS, flight)
             group.points[0].tasks.clear()
-            group.points[0].tasks.append(CASTaskAction())
+            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(10), targets=[Targets.All.GroundUnits.GroundVehicles]))
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Rockets))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Bombs))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.GuidedBombs))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
             self._setup_group(group, SEAD, flight)
@@ -401,7 +411,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ARM))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
             self._setup_group(group, GroundAttack, flight)
