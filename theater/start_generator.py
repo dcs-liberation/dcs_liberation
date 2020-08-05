@@ -123,10 +123,10 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 cp_to_remove.append(cp)
         else:
 
-            for i in range(random.randint(3,6)):
+            for i in range(random.randint(3, 6)):
 
                 logging.info("GENERATE BASE DEFENSE")
-                point = find_location(True, cp.position, theater, 1000, 2800, [], True)
+                point = find_location(True, cp.position, theater, 800, 3200, [], True)
                 logging.info(point)
 
                 if point is None:
