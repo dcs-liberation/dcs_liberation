@@ -14,6 +14,7 @@
 * **[New Game Wizard]** No more RED vs BLUE opposing faction restrictions.
 * **[New Game Wizard]** New campaign generation settings added : No aircraft carrier, no lha, no navy, invert map starting positions.
 * **[Mission Generator]** Artillery units will start firing mission after a random delay. It should reduces lag spikes induced by artillery strikes by spreading them out.
+* **[Mission Generator]** Ground units will retreat after taking too much casualties. Artillery units will retreat if engaged.
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
@@ -29,7 +30,8 @@
 * **[Mission Generator]** Base defense units were not controllable with Combined Arms
 * **[Mission Generator]** Tanker speed was too low
 * **[Mission Generator]** Tanker TACAN settings were wrong
-* **[Mission Generator]** AI aircraft should start datalink (EPLRS)
+* **[Mission Generator]** AI aircraft should start datalink ON (EPLRS)
+* **[Mission Generator]** Base defense units should not spawn on runway and or taxyway. (The chance for this to happen should now be really really low)
 * **[Mission Generator]** Fixed all flights starting "In flight" after playing a few missions (parking slot reset issue)
 * **[Mission Script/Performance]** Mission lua script will not listen to weapons fired event anymore and register every fired weapons. This should improve performance especially in WW2 scenarios or when rocket artillery is firing. 
 * **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers

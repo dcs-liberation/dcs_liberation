@@ -157,9 +157,7 @@ SEAD_CAPABLE = [
 # Aircraft used for Strike mission
 STRIKE_CAPABLE = [
     MiG_15bis,
-    MiG_29A,
     MiG_27K,
-    MiG_29S,
     MB_339PAN,
 
     Su_17M4,
