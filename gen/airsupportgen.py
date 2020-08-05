@@ -67,7 +67,7 @@ class AirSupportConflictGenerator:
                     altitude=AWACS_ALT,
                     airport=None,
                     position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
-                    frequency=133,
+                    frequency=233,
                     start_type=StartType.Warm,
                 )
                 awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
