@@ -210,7 +210,7 @@ class Operation:
             self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(60+i, 130+i))
 
         if self.is_awacs_enabled:
-            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
+            self.briefinggen.append_frequency("AWACS", "233 MHz AM")
 
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
 
