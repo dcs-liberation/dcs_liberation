@@ -45,8 +45,13 @@ class BriefingGenerator:
         self.description += "#0 -- TAKEOFF : Take off from " + flight.from_cp.name + "\n"
         for i, wpt in enumerate(flight.points):
             self.description += "#" + str(1+i) + " -- " + wpt.name + " : " + wpt.description + "\n"
-        self.description += "#" + str(len(flight.points) + 1) + " -- RTB\n"
+        self.description += "#" + str(len(flight.points) + 1) + " -- RTB\n\n"
 
+        group = flight.group
+        if group is not None:
+            for i, nav_target in enumerate(group.nav_target_points):
+                self.description += nav_target.text_comment + "\n"
+        self.description += "\n"
         self.description += "-" * 50 + "\n"
 
     def add_ally_flight_description(self, flight):
@@ -106,7 +111,7 @@ class BriefingGenerator:
 
         self.m.set_description_text(self.description)
 
-        #self.m.add_picture_blue(os.path.abspath("./resources/ui/splash_screen.png")) NOT working
+        self.m.add_picture_blue(os.path.abspath("./resources/ui/splash_screen.png"))
 
 
     def generate_ongoing_war_text(self):
