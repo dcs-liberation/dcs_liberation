@@ -111,11 +111,11 @@ class QWaitingForMissionResultWindow(QDialog):
         updateLayout.addWidget(QLabel("<b>Ground units destroyed</b>"), 1, 0)
         updateLayout.addWidget(QLabel(str(len(debriefing.killed_ground_units))), 1, 1)
 
-        updateLayout.addWidget(QLabel("<b>Weapons fired</b>"), 2, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.weapons_fired))), 2, 1)
+        #updateLayout.addWidget(QLabel("<b>Weapons fired</b>"), 2, 0)
+        #updateLayout.addWidget(QLabel(str(len(debriefing.weapons_fired))), 2, 1)
 
-        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 3, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 3, 1)
+        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 2, 0)
+        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 2, 1)
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):
