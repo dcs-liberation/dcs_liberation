@@ -368,6 +368,7 @@ class AircraftConflictGenerator:
                 at=cp.position)
             group.points[0].alt = 1500
 
+        flight.group = group
         return group
 
     def setup_group_as_intercept_flight(self, group, flight):
@@ -399,10 +400,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(10), targets=[Targets.All.GroundUnits.GroundVehicles]))
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Rockets))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Bombs))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.GuidedBombs))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Unguided))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
             self._setup_group(group, SEAD, flight)
@@ -432,8 +430,6 @@ class AircraftConflictGenerator:
         if hasattr(flight.unit_type, 'eplrs'):
             if flight.unit_type.eplrs:
                 group.points[0].tasks.append(EPLRS(group.id))
-
-
 
         for i, point in enumerate(flight.points):
             if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
@@ -473,6 +469,8 @@ class AircraftConflictGenerator:
                                 group.add_nav_target_point(t.position, "PP" + str(j + 1))
                             if group.units[0].unit_type == F_14B and j == 0:
                                 group.add_nav_target_point(t.position, "ST")
+                            if group.units[0].unit_type == AJS37 and j < 9:
+                                group.add_nav_target_point(t.position, "M" + str(j + 1))
                 elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
 
                     tgroup = self.m.find_group(point.targetGroup.group_identifier)
