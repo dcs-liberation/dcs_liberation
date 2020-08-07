@@ -105,9 +105,13 @@ class AircraftConflictGenerator:
                     group.set_frequency(124.0)
 
         # Special case so Su 33 carrier take off
-        if unit_type is Su_33 and task is not CAP:
-            for unit in group.units:
-                unit.fuel = Su_33.fuel_max / 2.2
+        if unit_type is Su_33:
+            if task is not CAP:
+                for unit in group.units:
+                    unit.fuel = Su_33.fuel_max / 2.2
+            else:
+                for unit in group.units:
+                    unit.fuel = Su_33.fuel_max * 0.8
 
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
