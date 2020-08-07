@@ -51,8 +51,9 @@ class AirSupportConflictGenerator:
                 tacanchannel="{}X".format(60 + i),
             )
 
-            tanker_group.points[0].tasks.pop() # Override PyDCS tacan channel
-            tanker_group.points[0].tasks.append(ActivateBeaconCommand(97+1, "X", CALLSIGNS[i], True, tanker_group.units[0].id, True))
+            if tanker_unit_type != IL_78M:
+                tanker_group.points[0].tasks.pop() # Override PyDCS tacan channel
+                tanker_group.points[0].tasks.append(ActivateBeaconCommand(97+1, "X", CALLSIGNS[i], True, tanker_group.units[0].id, True))
 
             tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
