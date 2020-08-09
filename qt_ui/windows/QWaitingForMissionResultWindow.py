@@ -39,7 +39,6 @@ class QWaitingForMissionResultWindow(QDialog):
         self.gameEvent = gameEvent
         self.game = game
         self.setWindowTitle("Waiting for mission completion.")
-        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
 
@@ -73,7 +72,8 @@ class QWaitingForMissionResultWindow(QDialog):
                 "<p>Then host a server with the mission, and tell your friends to join !</p>" + \
                 "<i>(The step in the mission editor is important, and fix a game breaking bug.)</i>" + \
                 "<h2>Finishing</h2>" + \
-                "<p>Once you have played the mission, click on the \"Accept Results\" button.</p>"
+                "<p>Once you have played the mission, click on the \"Accept Results\" button.</p>" + \
+                "<p>If DCS Liberation does not detect mission end, use the manually submit button, and choose the state.json file.</p>"
 
         self.instructions_text = QTextEdit(TEXT)
         self.instructions_text.setReadOnly(True)
@@ -88,12 +88,12 @@ class QWaitingForMissionResultWindow(QDialog):
         self.actions_layout = QHBoxLayout()
         self.actions.setLayout(self.actions_layout)
 
-        manually_submit = QPushButton("Manually Submit [Advanced users]")
-        manually_submit.clicked.connect(self.submit_manually)
-        self.actions_layout.addWidget(manually_submit)
-        cancel = QPushButton("Abort mission")
-        cancel.clicked.connect(self.close)
-        self.actions_layout.addWidget(cancel)
+        self.manually_submit = QPushButton("Manually Submit [Advanced users]")
+        self.manually_submit.clicked.connect(self.submit_manually)
+        self.actions_layout.addWidget(self.manually_submit)
+        self.cancel = QPushButton("Abort mission")
+        self.cancel.clicked.connect(self.close)
+        self.actions_layout.addWidget(self.cancel)
         self.gridLayout.addWidget(self.actions, 2, 0)
 
         progress_bar.start()
@@ -128,11 +128,15 @@ class QWaitingForMissionResultWindow(QDialog):
             self.gridLayout.addWidget(QLabel("<b>Mission is being played</b>"), 1, 0)
             self.gridLayout.addWidget(self.actions, 2, 0)
         else:
+            bottom_layout = QHBoxLayout()
             #self.gridLayout.addWidget(QLabel("<b>Mission is over !</b>"), 1, 0)
             proceed = QPushButton("Accept results")
-            proceed.setProperty("style", "btn-primary")
+            proceed.setProperty("style", "btn-success")
             proceed.clicked.connect(lambda: self.process_debriefing(debriefing))
-            self.gridLayout.addWidget(proceed, 1, 0)
+            bottom_layout.addWidget(self.manually_submit)
+            bottom_layout.addWidget(self.cancel)
+            bottom_layout.addWidget(proceed)
+            self.gridLayout.addLayout(bottom_layout, 1, 0)
 
     def on_debriefing_udpate(self, debriefing):
         print("On Debriefing update")

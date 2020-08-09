@@ -263,6 +263,9 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
+        self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
+                       QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
+
         # Terrain selection
         terrainGroup = QtWidgets.QGroupBox("Terrain")
         terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia")
@@ -348,9 +351,9 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
-        layout.addWidget(terrainGroup)
-        layout.addWidget(mapSettingsGroup)
-        layout.addWidget(timeGroup)
+        layout.addWidget(terrainGroup, 0, 0, 3, 1)
+        layout.addWidget(mapSettingsGroup, 0, 1, 1, 1)
+        layout.addWidget(timeGroup, 1, 1, 1, 1)
         self.setLayout(layout)
 
 
