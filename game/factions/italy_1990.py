@@ -39,7 +39,7 @@ Italy_1990 = {
         Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
-    ], "lha_names": [
+    ], "lhanames": [
         "Giuseppe Garibaldi",
         "Cavour",
     ], "boat":[
