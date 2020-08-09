@@ -75,6 +75,7 @@ class Game:
         self.__culling_points = self.compute_conflicts_position()
         self.__frontlineData = []
         self.__destroyed_units = []
+        self.savepath = ""
 
         self.sanitize_sides()
 
@@ -241,6 +242,9 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
+
+        # Autosave progress
+        persistency.autosave(self)
 
     def _enemy_reinforcement(self):
         """

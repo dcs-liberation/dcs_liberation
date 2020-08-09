@@ -104,25 +104,23 @@ class QLiberationWindow(QMainWindow):
 
         file_menu = self.menu.addMenu("File")
         file_menu.addAction(self.newGameAction)
-        file_menu.addAction(QIcon(CONST.ICONS["Open"]), "Open") # TODO : implement
+        file_menu.addAction(self.openAction)
         file_menu.addAction(self.saveGameAction)
+        file_menu.addAction(self.saveAsAction)
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
-        #file_menu.addAction("Save As") # TODO : implement
         #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
         file_menu.addAction("Exit" , lambda: self.exit())
 
-
         help_menu = self.menu.addMenu("Help")
+        help_menu.addAction("Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
+        help_menu.addAction("Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+        help_menu.addAction("Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
         help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
-        help_menu.addAction("Discord", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
-        #help_menu.addAction("Troubleshooting Guide", lambda: webbrowser.open_new_tab(URLS["Troubleshooting"]))
-        #help_menu.addAction("Modding Guide", lambda: webbrowser.open_new_tab(URLS["Modding"]))
-        #help_menu.addSeparator() ----> Note from Khopa : I disable these links since it's not up to date for this branch
-        #help_menu.addAction("Contribute", lambda: webbrowser.open_new_tab(URLS["Repository"]))
-        help_menu.addAction("Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
+        help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
 
@@ -172,15 +170,28 @@ class QLiberationWindow(QMainWindow):
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
-        file = str(QFileDialog.getOpenFileName(self, "Select game file to open"))
+        file = QFileDialog.getOpenFileName(self, "Select game file to open",
+                                               dir=persistency._dcs_saved_game_folder,
+                                               filter="*.liberation")
+        if file is not None:
+            game = persistency.load_game(file[0])
+            self.setGame(game)
+            GameUpdateSignal.get_instance().updateGame(self.game)
 
     def saveGame(self):
         logging.info("Saving game")
-        persistency.save_game(self.game)
-        GameUpdateSignal.get_instance().updateGame(self.game)
+
+        if self.game.savepath:
+            persistency.save_game(self.game)
+            GameUpdateSignal.get_instance().updateGame(self.game)
+        else:
+            self.saveGameAs()
 
     def saveGameAs(self):
-        file = str(QFileDialog.getSaveFileName(self, "Save As", dir=persistency._dcs_saved_game_folder))
+        file = QFileDialog.getSaveFileName(self, "Save As", dir=persistency._dcs_saved_game_folder, filter="*.liberation")
+        if file is not None:
+            self.game.savepath = file[0]
+            persistency.save_game(self.game)
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")

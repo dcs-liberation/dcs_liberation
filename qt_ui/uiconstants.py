@@ -10,8 +10,6 @@ from userdata.liberation_theme import get_theme_icons
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
-    "Troubleshooting": "https://github.com/shdwp/dcs_liberation/wiki/Troubleshooting",
-    "Modding": "https://github.com/shdwp/dcs_liberation/wiki/Modding-tutorial",
     "Repository": "https://github.com/khopa/dcs_liberation",
     "ForumThread": "https://forums.eagle.ru/showthread.php?t=214834",
     "Issues": "https://github.com/khopa/dcs_liberation/issues"

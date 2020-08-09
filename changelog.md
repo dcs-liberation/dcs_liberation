@@ -1,6 +1,7 @@
 # 2.0.10
 
 ## Features/Improvements :
+* **[Misc]** Now possible to save game in a different file, and to open DCS Liberation savegame files. (You are not restricted to a single save file anymore)
 * **[UI/UX]** New dark UI Theme and default theme improvement by Deus
 * **[UI/UX]** New "satellite" map backgrounds
 * **[UX]** Base menu is opened with a single mouse click
@@ -27,6 +28,7 @@
 * **[Mission Generator]** Fixed FW-190A8 spawning with bomb rack for CAP missions
 * **[Mission Generator]** Fixed A-20G spawning with no payload
 * **[Mission Generator]** Fixed Su-33 spawning too heavy to take off from carrier
+* **[Mission Generator]** Fixed Harrier AV-8B spawning too heavy to take off from tarawa
 * **[Mission Generator]** Base defense units were not controllable with Combined Arms
 * **[Mission Generator]** Tanker speed was too low
 * **[Mission Generator]** Tanker TACAN settings were wrong
