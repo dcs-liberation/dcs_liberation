@@ -16,7 +16,7 @@ UnitedKingdom_1990 = {
         C_130,
         E_3A,
 
-        SA342L,
+        SA342M,
         AH_64A,
 
         Armor.MBT_Challenger_II,
