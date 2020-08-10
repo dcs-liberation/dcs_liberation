@@ -405,6 +405,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Unguided))
+            group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
             self._setup_group(group, SEAD, flight)
@@ -493,6 +494,8 @@ class AircraftConflictGenerator:
                             group.add_nav_target_point(t.position, "PP" + str(j + 1))
                         if group.units[0].unit_type == F_14B and j == 0:
                             group.add_nav_target_point(t.position, "ST")
+                        if group.units[0].unit_type == AJS37 and j < 9:
+                            group.add_nav_target_point(t.position, "M" + str(j + 1))
 
                 if pt is not None:
                     pt.alt_type = point.alt_type
