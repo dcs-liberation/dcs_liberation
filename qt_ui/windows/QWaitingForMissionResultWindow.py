@@ -119,7 +119,10 @@ class QWaitingForMissionResultWindow(QDialog):
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):
-            self.gridLayout.itemAt(i).widget().setParent(None)
+            try:
+                self.gridLayout.itemAt(i).widget().setParent(None)
+            except:
+                pass
 
         # Set new window content
         self.gridLayout.addWidget(updateBox, 0, 0)
