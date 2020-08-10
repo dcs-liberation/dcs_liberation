@@ -7,7 +7,7 @@ from PySide2.QtGui import QMovie, QIcon, QPixmap
 from PySide2.QtWidgets import QLabel, QDialog, QGroupBox, QGridLayout, QPushButton, QFileDialog, QMessageBox, QTextEdit, \
     QHBoxLayout
 
-from game.game import Event, Game
+from game.game import Event, Game, logging
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from userdata.debriefing import wait_for_debriefing, Debriefing
 from userdata.persistency import base_path
@@ -142,12 +142,14 @@ class QWaitingForMissionResultWindow(QDialog):
             self.gridLayout.addLayout(bottom_layout, 1, 0)
 
     def on_debriefing_udpate(self, debriefing):
-        print("On Debriefing update")
-        print(debriefing)
-        DebriefingFileWrittenSignal.get_instance().sendDebriefing(debriefing)
-
-        if not debriefing.mission_ended:
-            self.wait_thread = wait_for_debriefing(lambda debriefing: self.on_debriefing_udpate(debriefing), self.game)
+        try:
+            logging.info("On Debriefing update")
+            print(debriefing)
+            DebriefingFileWrittenSignal.get_instance().sendDebriefing(debriefing)
+        except Exception as e:
+            logging.error("Got an error while sending debriefing")
+            logging.error(e)
+        self.wait_thread = wait_for_debriefing(lambda debriefing: self.on_debriefing_udpate(debriefing), self.game)
 
     def process_debriefing(self, debriefing: Debriefing):
         self.game.finish_event(event=self.gameEvent, debriefing=debriefing)
@@ -165,18 +167,19 @@ class QWaitingForMissionResultWindow(QDialog):
             self.wait_thread.stop()
 
     def submit_manually(self):
-        file = str(QFileDialog.getOpenFileName(self, "Select game file to open", filter="json(*.json)"))
+        file = QFileDialog.getOpenFileName(self, "Select game file to open", filter="json(*.json)", dir=".")
         print(file)
         try:
-            with open("state.json", "r") as json_file:
+            with open(file[0], "r") as json_file:
                 json_data = json.load(json_file)
                 json_data["mission_ended"] = True
                 debriefing = Debriefing(json_data, self.game)
                 self.on_debriefing_udpate(debriefing)
-        except:
+        except Exception as e:
+            logging.error(e)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
-            msg.setText("Invalid file : " + file)
+            msg.setText("Invalid file : " + file[0])
             msg.setWindowTitle("Invalid file.")
             msg.setStandardButtons(QMessageBox.Ok)
             msg.setWindowFlags(Qt.WindowStaysOnTopHint)
