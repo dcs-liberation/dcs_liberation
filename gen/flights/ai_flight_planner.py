@@ -56,7 +56,7 @@ class FlightPlanner:
         self.compute_strike_targets()
 
         # The priority is to assign air-superiority fighter or interceptor to interception roles, so they can scramble if there is an attacker
-        self.commision_interceptors()
+        # self.commision_interceptors()
 
         # Then some CAP patrol for the next 2 hours
         self.commision_cap()
