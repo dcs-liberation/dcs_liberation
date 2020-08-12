@@ -12,7 +12,6 @@ PMC_WESTERN_A = {
          C_101CC,
 
          UH_1H,
-         UH_60A,
          Mi_8MT,
          OH_58D,
          SA342M,
@@ -40,7 +39,6 @@ PMC_WESTERN_B = {
          C_101CC,
 
          UH_1H,
-         UH_60A,
          Mi_8MT,
          OH_58D,
          SA342M,
@@ -57,7 +55,10 @@ PMC_WESTERN_B = {
          Armed_speedboat,
     ], "shorad":[
         AirDefence.SAM_Avenger_M1097,
-    ], "has_jtac": True
+    ], "has_jtac": True,
+    "requirements": {
+        "MB-339A": "http://www.freccetricolorivirtuali.net/",
+    }
 }
 
 PMC_RUSSIAN = {
