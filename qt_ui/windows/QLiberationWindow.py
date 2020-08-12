@@ -54,6 +54,7 @@ class QLiberationWindow(QMainWindow):
         hbox = QSplitter(Qt.Horizontal)
         hbox.addWidget(self.info_panel)
         hbox.addWidget(self.liberation_map)
+        hbox.setSizes([2, 8])
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
@@ -212,13 +213,15 @@ class QLiberationWindow(QMainWindow):
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation</h3>" + \
-               "<h4>Repository</h4>" + \
-               "<b>Source code :</b> https://github.com/shdwp/dcs_liberation<br/>" + \
-               "<h4>Authors/Contributors</h4><br/>" + \
-               "<b>shdwp</b>, <b>Khopa</b>, <b>Wrycu</b>, <b>calvinmorrow</b>, <b>JohanAberg</b> <b>Deus</b><br/>" + \
+               "<b>Source code :</b> https://github.com/khopa/dcs_liberation" + \
+               "<h4>Authors</h4>" + \
+               "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \
+               "<h4>Contributors</h4>" + \
+               "shdwp, Khopa, Wrycu, calvinmorrow, JohanAberg, Deus" + \
                "<h4>Special Thanks  :</h4>" \
                "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
-               "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"
+               "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"\
+               "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
 
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
