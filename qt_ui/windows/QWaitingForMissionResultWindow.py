@@ -96,6 +96,21 @@ class QWaitingForMissionResultWindow(QDialog):
         self.actions_layout.addWidget(self.cancel)
         self.gridLayout.addWidget(self.actions, 2, 0)
 
+
+        self.actions2 = QGroupBox("Actions :")
+        self.actions2_layout = QHBoxLayout()
+        self.actions2.setLayout(self.actions2_layout)
+        self.manually_submit2 = QPushButton("Manually Submit [Advanced users]")
+        self.manually_submit2.clicked.connect(self.submit_manually)
+        self.actions2_layout.addWidget(self.manually_submit2)
+        self.cancel2 = QPushButton("Abort mission")
+        self.cancel2.clicked.connect(self.close)
+        self.actions2_layout.addWidget(self.cancel2)
+        self.proceed = QPushButton("Accept results")
+        self.proceed.setProperty("style", "btn-success")
+        self.proceed.clicked.connect(self.process_debriefing)
+        self.actions2_layout.addWidget(self.proceed)
+
         progress_bar.start()
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
@@ -104,6 +119,7 @@ class QWaitingForMissionResultWindow(QDialog):
         updateBox = QGroupBox("Mission status")
         updateLayout = QGridLayout()
         updateBox.setLayout(updateLayout)
+        self.debriefing = debriefing
 
         updateLayout.addWidget(QLabel("<b>Aircrafts destroyed</b>"), 0, 0)
         updateLayout.addWidget(QLabel(str(len(debriefing.killed_aircrafts))), 0, 1)
@@ -131,15 +147,9 @@ class QWaitingForMissionResultWindow(QDialog):
             self.gridLayout.addWidget(QLabel("<b>Mission is being played</b>"), 1, 0)
             self.gridLayout.addWidget(self.actions, 2, 0)
         else:
-            bottom_layout = QHBoxLayout()
-            #self.gridLayout.addWidget(QLabel("<b>Mission is over !</b>"), 1, 0)
-            proceed = QPushButton("Accept results")
-            proceed.setProperty("style", "btn-success")
-            proceed.clicked.connect(lambda: self.process_debriefing(debriefing))
-            bottom_layout.addWidget(self.manually_submit)
-            bottom_layout.addWidget(self.cancel)
-            bottom_layout.addWidget(proceed)
-            self.gridLayout.addLayout(bottom_layout, 1, 0)
+            self.gridLayout.addWidget(QLabel("<b>Mission is over</b>"), 1, 0)
+            self.gridLayout.addWidget(self.actions2, 2, 0)
+
 
     def on_debriefing_udpate(self, debriefing):
         try:
@@ -151,11 +161,11 @@ class QWaitingForMissionResultWindow(QDialog):
             logging.error(e)
         self.wait_thread = wait_for_debriefing(lambda debriefing: self.on_debriefing_udpate(debriefing), self.game)
 
-    def process_debriefing(self, debriefing: Debriefing):
-        self.game.finish_event(event=self.gameEvent, debriefing=debriefing)
+    def process_debriefing(self):
+        self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
         self.game.pass_turn(ignored_cps=[self.gameEvent.to_cp, ])
 
-        GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, debriefing)
+        GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, self.debriefing)
         self.close()
 
     def debriefing_directory_location(self) -> str:
