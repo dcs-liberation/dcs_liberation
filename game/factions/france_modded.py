@@ -22,6 +22,7 @@ France_2005_Modded = {
 
         SA342M,
         SA342L,
+        SA342Mistral,
 
         Armor.MBT_Leclerc,
         Artillery.SPH_M109_Paladin,  # Standing as AMX30 AuF1

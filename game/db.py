@@ -35,6 +35,7 @@ from game.factions.libya_2011 import Lybia_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.pakistan_2015 import Pakistan_2015
+from game.factions.private_miltary_companies import PMC_WESTERN_B, PMC_RUSSIAN, PMC_WESTERN_A
 from game.factions.russia_1975 import Russia_1975
 from game.factions.germany_1944 import Germany_1944
 from game.factions.india_2010 import India_2010
@@ -190,6 +191,8 @@ PRICES = {
     Ka_50: 13,
     SA342M: 8,
     SA342L: 5,
+    SA342Minigun: 4,
+    SA342Mistral: 8,
     UH_1H: 4,
     Mi_8MT: 5,
     Mi_24V: 18,
@@ -413,7 +416,8 @@ UNIT_BY_TASK = {
         SpitfireLFMkIXCW,
         SpitfireLFMkIX,
         A_4E_C,
-        Rafale_M
+        Rafale_M,
+        SA342Mistral
     ],
     CAS: [
         F_86F_Sabre,
@@ -430,6 +434,7 @@ UNIT_BY_TASK = {
         Ka_50,
         SA342M,
         SA342L,
+        SA342Minigun,
         Su_24M,
         Su_24MR,
         AH_64A,
@@ -449,7 +454,8 @@ UNIT_BY_TASK = {
         Ju_88A4,
         B_17G,
         MB_339PAN,
-        Rafale_A_S
+        Rafale_A_S,
+        UH_60A
     ],
     Transport: [
         IL_76MD,
@@ -789,6 +795,10 @@ FACTIONS = {
     "Insurgent": Insurgent,
     "Insurgent (Modded)": Insurgent_modded,
 
+    "PMC (American)": PMC_WESTERN_A,
+    "PMC (American) - MB339": PMC_WESTERN_B,
+    "PMC (Russian)": PMC_RUSSIAN,
+
     "Allies 1944 (WW2 Pack)": USA_1944,
     "USA 1944 (WW2 Pack)": ALLIES_1944,
     "UK 1944 (WW2 Pack)": UK_1944,
@@ -909,6 +919,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     MB_339PAN: COMMON_OVERRIDE,
     Rafale_M: COMMON_OVERRIDE,
     Rafale_A_S: COMMON_OVERRIDE,
+    OH_58D: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -992,6 +1003,7 @@ CARRIER_CAPABLE = [
     Ka_50,
     AH_1W,
     OH_58D,
+    UH_60A,
 
     SA342L,
     SA342M,
@@ -1007,6 +1019,7 @@ LHA_CAPABLE = [
     Ka_50,
     AH_1W,
     OH_58D,
+    UH_60A,
 
     SA342L,
     SA342M,

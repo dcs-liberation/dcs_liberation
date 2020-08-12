@@ -185,14 +185,14 @@ class CombatGroupRole(Enum):
 
 
 DISTANCE_FROM_FRONTLINE = {
-    CombatGroupRole.TANK:2800,
-    CombatGroupRole.APC:7000,
-    CombatGroupRole.IFV:3000,
-    CombatGroupRole.ARTILLERY:14000,
-    CombatGroupRole.SHORAD:12000,
-    CombatGroupRole.LOGI:18000,
-    CombatGroupRole.INFANTRY:2800,
-    CombatGroupRole.ATGM:5500
+    CombatGroupRole.TANK:3200,
+    CombatGroupRole.APC:8000,
+    CombatGroupRole.IFV:3700,
+    CombatGroupRole.ARTILLERY:18000,
+    CombatGroupRole.SHORAD:13000,
+    CombatGroupRole.LOGI:20000,
+    CombatGroupRole.INFANTRY:3000,
+    CombatGroupRole.ATGM:6200
 }
 
 GROUP_SIZES_BY_COMBAT_STANCE = {

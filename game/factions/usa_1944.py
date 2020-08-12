@@ -16,7 +16,6 @@ USA_1944 = {
         B_17G,
 
         Armor.MT_M4_Sherman,
-        Armor.MT_M4A4_Sherman_Firefly,
         Armor.M30_Cargo_Carrier,
         Armor.APC_M2A1,
         Armor.LAC_M8_Greyhound,

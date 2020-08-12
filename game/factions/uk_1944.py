@@ -17,6 +17,7 @@ UK_1944 = {
         A_20G,
         B_17G,
 
+        Armor.MT_M4A4_Sherman_Firefly,
         Armor.MT_M4_Sherman,
         Armor.APC_M2A1,
         Armor.CT_Cromwell_IV,
