@@ -113,7 +113,7 @@ class BriefingGenerator:
 
 
         self.description += "JTACS [F-10 Menu] : \n"
-        self.description += "==================="
+        self.description += "===================\n\n"
         for jtac in self.game.jtacs:
             self.description += str(jtac[0]) + " -- Code : " + str(jtac[1]) + "\n"
 
