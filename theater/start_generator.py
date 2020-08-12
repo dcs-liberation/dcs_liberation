@@ -5,6 +5,7 @@ import typing
 import logging
 
 from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
+from game.settings import Settings
 from gen import namegen, TheaterGroundObject
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group, generate_ship_group
@@ -64,6 +65,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
         tpls = pickle.load(f)
 
     group_id = 0
+    cp_to_remove = []
     for cp in theater.controlpoints:
         group_id = generate_cp_ground_points(cp, theater, game, group_id, tpls)
 
@@ -75,7 +77,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
 
         if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             # Create ground object group
-            group_id = group_id + 1
+            group_id = game.next_group_id()
             g = TheaterGroundObject("CARRIER")
             g.group_id = group_id
             g.object_id = 0
@@ -94,9 +96,11 @@ def generate_groundobjects(theater: ConflictTheater, game):
             # Set new name :
             if "carrier_names" in db.FACTIONS[faction_name]:
                 cp.name = random.choice(db.FACTIONS[faction_name]["carrier_names"])
+            else:
+                cp_to_remove.append(cp)
         elif cp.cptype == ControlPointType.LHA_GROUP:
             # Create ground object group
-            group_id = group_id + 1
+            group_id = game.next_group_id()
             g = TheaterGroundObject("LHA")
             g.group_id = group_id
             g.object_id = 0
@@ -115,19 +119,21 @@ def generate_groundobjects(theater: ConflictTheater, game):
             # Set new name :
             if "lhanames" in db.FACTIONS[faction_name]:
                 cp.name = random.choice(db.FACTIONS[faction_name]["lhanames"])
+            else:
+                cp_to_remove.append(cp)
         else:
 
-            for i in range(random.randint(3,6)):
+            for i in range(random.randint(3, 6)):
 
                 logging.info("GENERATE BASE DEFENSE")
-                point = find_location(True, cp.position, theater, 1000, 2800, [], True)
+                point = find_location(True, cp.position, theater, 800, 3200, [], True)
                 logging.info(point)
 
                 if point is None:
                     logging.info("Couldn't find point for {} base defense".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -148,7 +154,14 @@ def generate_groundobjects(theater: ConflictTheater, game):
             for ground_object in cp.ground_objects:
                 logging.info(ground_object.groups)
 
+        # Generate navy groups
         if "boat" in db.FACTIONS[faction_name].keys():
+
+            if cp.captured and game.settings.do_not_generate_player_navy:
+                continue
+
+            if not cp.captured and game.settings.do_not_generate_enemy_navy:
+                continue
 
             boat_count = 1
             if "boat_count" in db.FACTIONS[faction_name].keys():
@@ -162,7 +175,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     logging.info("Couldn't find point for {} ships".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -181,6 +194,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     g.groups.append(group)
                     cp.ground_objects.append(g)
 
+
+
         if "missiles" in db.FACTIONS[faction_name].keys():
 
             missiles_count = 1
@@ -195,7 +210,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     logging.info("Couldn't find point for {} missiles".format(cp))
                     continue
 
-                group_id = group_id + 1
+                group_id = game.next_group_id()
 
                 g = TheaterGroundObject("aa")
                 g.group_id = group_id
@@ -213,6 +228,9 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 if group is not None:
                     g.groups.append(group)
                     cp.ground_objects.append(g)
+
+    for cp in cp_to_remove:
+        theater.controlpoints.remove(cp)
 
 
 
@@ -341,7 +359,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
             continue
 
         object_id = 0
-        group_id = group_id + 1
+        group_id = game.next_group_id()
 
         logging.info("generated {} for {}".format(tpl_category, cp))
 
@@ -368,3 +386,37 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
 
             cp.ground_objects.append(g)
     return group_id
+
+
+def prepare_theater(theater: ConflictTheater, settings:Settings, midgame):
+
+    to_remove = []
+
+    # autocapture half the base if midgame
+    if midgame:
+        for i in range(0, int(len(theater.controlpoints) / 2)):
+            theater.controlpoints[i].captured = True
+
+    # Remove carrier and lha, invert situation if needed
+    for cp in theater.controlpoints:
+        if cp.cptype is ControlPointType.AIRCRAFT_CARRIER_GROUP and settings.do_not_generate_carrier:
+            to_remove.append(cp)
+        elif cp.cptype is ControlPointType.LHA_GROUP and settings.do_not_generate_lha:
+            to_remove.append(cp)
+
+        if settings.inverted:
+            cp.captured = cp.captured_invert
+
+    # do remove
+    for cp in to_remove:
+        theater.controlpoints.remove(cp)
+
+    # reapply midgame inverted if needed
+    if midgame and settings.inverted:
+        for i, cp in enumerate(reversed(theater.controlpoints)):
+            if i > len(theater.controlpoints):
+                break
+            else:
+                cp.captured = True
+
+

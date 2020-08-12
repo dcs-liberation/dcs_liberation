@@ -5,7 +5,6 @@ from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGrap
 
 import qt_ui.uiconstants as CONST
 from game import Game
-from qt_ui.windows.basemenu.QBaseMenu import QBaseMenu
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from theater import ControlPoint, db
 
@@ -71,7 +70,8 @@ class QMapControlPoint(QGraphicsRectItem):
         self.update()
 
     def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
-        self.contextMenuEvent(event)
+        self.openBaseMenu()
+        #self.contextMenuEvent(event)
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
 
@@ -89,17 +89,11 @@ class QMapControlPoint(QGraphicsRectItem):
 
     @property
     def brush_color(self)->QColor:
-        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
-        else:
-            return self.model.captured and CONST.COLORS["super_red"] or CONST.COLORS["blue"]
+        return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
 
     @property
     def pen_color(self) -> QColor:
-        if self.parent.game.player_country in db.BLUEFOR_FACTIONS:
-            return self.model.captured and CONST.COLORS["dark_blue"] or CONST.COLORS["bright_red"]
-        else:
-            return self.model.captured and CONST.COLORS["bright_red"] or CONST.COLORS["dark_blue"]
+            return self.model.captured and CONST.COLORS["white"] or CONST.COLORS["white"]
 
     def openBaseMenu(self):
         self.baseMenu = QBaseMenu2(self.window(), self.model, self.game)

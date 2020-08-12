@@ -51,5 +51,5 @@ India_2010 = {
         "INS Vikramaditya"
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator", "MolniyaGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

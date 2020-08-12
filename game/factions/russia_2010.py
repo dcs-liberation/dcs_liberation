@@ -7,7 +7,6 @@ Russia_2010 = {
     "country": "Russia",
     "side": "red",
     "units": [
-        AJS37,
         MiG_23MLD,
         Su_25,
         Su_27,
@@ -37,6 +36,9 @@ Russia_2010 = {
         Armor.MBT_T_90,
         Armor.MBT_T_80U,
         Armor.MBT_T_72B,
+        Armor.IFV_BMP_1,
+        Armor.IFV_BMP_2,
+        Armor.IFV_BMP_3,
 
         Artillery.MLRS_9K57_Uragan_BM_27,
         Artillery.SPH_2S19_Msta,
@@ -59,6 +61,8 @@ Russia_2010 = {
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3
     ], "aircraft_carrier": [
         CV_1143_5_Admiral_Kuznetsov,
+    ], "carrier_names": [
+        "Admiral Kuznetov"
     ], "destroyer": [
         FF_1135M_Rezky,
     ], "cruiser": [

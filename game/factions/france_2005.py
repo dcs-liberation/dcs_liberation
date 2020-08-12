@@ -18,6 +18,7 @@ France_2005 = {
 
         SA342M,
         SA342L,
+        SA342Mistral,
 
         Armor.MBT_Leclerc,
         Armor.TPz_Fuchs, # Standing as VAB
@@ -50,12 +51,12 @@ France_2005 = {
     ], "cruiser": [
         Ticonderoga_class,
     ], "carrier_names": [
-        "R91 Charles de Gaulle",
+        "PA Charles de Gaulle",
     ], "lhanames": [
         "L9013 Mistral",
         "L9014 Tonerre",
         "L9015 Dixmude"
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

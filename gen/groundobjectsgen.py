@@ -45,12 +45,6 @@ class GroundObjectsGenerator:
 
     def generate(self):
 
-        cp = None  # type: ControlPoint
-        if self.conflict.attackers_country.name == self.game.player_country:
-            cp = self.conflict.to_cp
-        else:
-            cp = self.conflict.from_cp
-
         for cp in self.game.theater.controlpoints:
 
             if cp.captured:
@@ -78,6 +72,7 @@ class GroundObjectsGenerator:
                                         vehicle.position.x = u.position.x
                                         vehicle.position.y = u.position.y
                                         vehicle.heading = u.heading
+                                        vehicle.player_can_drive = True
                                         vg.add_unit(vehicle)
                             else:
                                 vg = self.m.ship_group(side, g.name, utype, position=g.position,
@@ -121,7 +116,7 @@ class GroundObjectsGenerator:
                             found_carrier_destination = False
                             attempt = 0
                             while not found_carrier_destination and attempt < 5:
-                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction, 100000-attempt*20000)
+                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction + 180, 100000-attempt*20000)
                                 if self.game.theater.is_in_sea(point):
                                     found_carrier_destination = True
                                     sg.add_waypoint(point)

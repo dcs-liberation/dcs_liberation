@@ -42,10 +42,6 @@ BLUEFOR_COLDWAR = {
         CVN_74_John_C__Stennis,
     ], "helicopter_carrier": [
         LHA_1_Tarawa,
-    ], "destroyer": [
-        Oliver_Hazzard_Perry_class,
-    ], "cruiser": [
-        Ticonderoga_class,
     ], "carrier_names": [
         "CVN-71 Theodore Roosevelt",
         "CVN-72 Abraham Lincoln",
@@ -57,7 +53,6 @@ BLUEFOR_COLDWAR = {
         "LHA-3 Belleau Wood",
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
-    ], "boat":[
-        "OliverHazardPerryGroupGenerator"
-    ]
+    ], "boat": [
+    ], "has_jtac": True
 }

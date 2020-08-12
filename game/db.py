@@ -13,20 +13,29 @@ from dcs.unit import *
 from dcs.unittype import *
 from dcs.unitgroup import *
 
+from game.factions.australia_2005 import Australia_2005
 from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
-from game.factions.china_2000 import China_2000
+from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
+from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
+from game.factions.canada_2005 import Canada_2005
+from game.factions.china_2010 import China_2010
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
+from game.factions.france_modded import France_2005_Modded
 from game.factions.germany_1944_easy import Germany_1944_Easy
 from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
+from game.factions.insurgent_modded import Insurgent_modded
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
+from game.factions.italy_1990_mb339 import Italy_1990_MB339
+from game.factions.japan_2005 import Japan_2005
 from game.factions.libya_2011 import Lybia_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.pakistan_2015 import Pakistan_2015
+from game.factions.private_miltary_companies import PMC_WESTERN_B, PMC_RUSSIAN, PMC_WESTERN_A
 from game.factions.russia_1975 import Russia_1975
 from game.factions.germany_1944 import Germany_1944
 from game.factions.india_2010 import India_2010
@@ -38,15 +47,64 @@ from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
+from game.factions.uk_1944 import UK_1944
 from game.factions.uk_1990 import UnitedKingdom_1990
 from game.factions.ukraine_2010 import Ukraine_2010
-from game.factions.usa_1944 import USA_1944
+from game.factions.us_aggressors import US_Aggressors
+from game.factions.usa_1944 import USA_1944, ALLIES_1944
 from game.factions.usa_1955 import USA_1955
 from game.factions.usa_1960 import USA_1960
 from game.factions.usa_1965 import USA_1965
 from game.factions.usa_1990 import USA_1990
 from game.factions.usa_2005 import USA_2005
 from game.factions.bluefor_modern import BLUEFOR_MODERN
+
+# PATCH pydcs data with MODS
+from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.mb339.mb339 import MB_339PAN
+import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+
+plane_map["A-4E-C"] = A_4E_C
+plane_map["MB-339PAN"] = MB_339PAN
+plane_map["Rafale_M"] = Rafale_M
+plane_map["Rafale_A_S"] = Rafale_A_S
+
+vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
+vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
+vehicle_map["SMOKESAM"] = frenchpack.SMOKE_SAM_IR
+vehicle_map["SmokeD1"] = frenchpack.SmokeD1
+vehicle_map["SmokeD3"] = frenchpack.SmokeD3
+vehicle_map["AMX10RCR"] = frenchpack.AMX_10RCR
+vehicle_map["SEPAR"] = frenchpack.AMX_10RCR_SEPAR
+vehicle_map["ERC"] = frenchpack.ERC_90
+vehicle_map["M120"] = frenchpack.MO_120_RT
+vehicle_map["AA20"] = frenchpack._53T2
+vehicle_map["TRM2000"] = frenchpack.TRM_2000
+vehicle_map["TRM2000_Citerne"] = frenchpack.TRM_2000_Fuel
+vehicle_map["TRM2000_AA20"] = frenchpack.TRM_2000_53T2
+vehicle_map["TRMMISTRAL"] = frenchpack.TRM_2000_PAMELA
+vehicle_map["VABH"] = frenchpack.VAB_MEDICAL
+vehicle_map["VAB_RADIO"] = frenchpack.VAB
+vehicle_map["VAB_50"] = frenchpack.VAB__50
+vehicle_map["VIB_VBR"] = frenchpack.VAB_T20_13
+vehicle_map["VAB_HOT"] = frenchpack.VAB_MEPHISTO
+vehicle_map["VAB_MORTIER"] = frenchpack.VAB_MORTIER
+vehicle_map["VBL50"] = frenchpack.VBL__50
+vehicle_map["VBLANF1"] = frenchpack.VBL_AANF1
+vehicle_map["VBL-radio"] = frenchpack.VBL
+vehicle_map["VBAE"] = frenchpack.VBAE_CRAB
+vehicle_map["VBAE_MMP"] = frenchpack.VBAE_CRAB_MMP
+vehicle_map["AMX-30B2"] = frenchpack.AMX_30B2
+vehicle_map["Tracma"] = frenchpack.Tracma_TD_1500
+vehicle_map["JTACFP"] = frenchpack.Infantry_Soldier_JTAC
+vehicle_map["SHERIDAN"] = frenchpack.Char_M551_Sheridan
+vehicle_map["Leclerc_XXI"] = frenchpack.Leclerc_Serie_XXI
+vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
+vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
+vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
+vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
+
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -103,6 +161,8 @@ PRICES = {
     F_4E: 10,
     AJS37: 12,
     C_101CC: 6,
+    A_4E_C: 8,
+    MB_339PAN: 6,
 
     AV8BNA: 14,
     M_2000C: 16,
@@ -131,13 +191,15 @@ PRICES = {
     Ka_50: 13,
     SA342M: 8,
     SA342L: 5,
+    SA342Minigun: 4,
+    SA342Mistral: 8,
     UH_1H: 4,
     Mi_8MT: 5,
-    Mi_24V: 12,
-    Mi_28N: 16,
-    AH_1W: 10,
-    AH_64A: 12,
-    AH_64D: 16,
+    Mi_24V: 18,
+    Mi_28N: 24,
+    AH_1W: 20,
+    AH_64A: 24,
+    AH_64D: 30,
     OH_58D: 6,
 
     # Bombers
@@ -164,6 +226,10 @@ PRICES = {
     P_47D_30: 18,
     B_17G: 30,
 
+    # Modded
+    Rafale_M: 26,
+    Rafale_A_S: 26,
+
     # armor
     Armor.APC_MTLB: 4,
     Armor.FDDM_Grad: 5,
@@ -171,15 +237,15 @@ PRICES = {
     Armor.ARV_BTR_RD: 8,
     Armor.APC_BTR_80: 8,
     Armor.MBT_T_55: 18,
-    Armor.MBT_T_72B: 25,
-    Armor.MBT_T_80U: 30,
-    Armor.MBT_T_90: 35,
+    Armor.MBT_T_72B: 22,
+    Armor.MBT_T_80U: 25,
+    Armor.MBT_T_90: 30,
     Armor.IFV_BMD_1: 8,
     Armor.IFV_BMP_1: 14,
     Armor.IFV_BMP_2: 16,
     Armor.IFV_BMP_3: 18,
     Armor.ZBD_04A: 12,
-    Armor.ZTZ_96B: 35,
+    Armor.ZTZ_96B: 30,
 
     Armor.APC_Cobra: 4,
     Armor.APC_M113: 6,
@@ -188,14 +254,14 @@ PRICES = {
     Armor.IFV_M2A2_Bradley: 12,
     Armor.APC_M1126_Stryker_ICV: 10,
     Armor.ATGM_M1134_Stryker: 12,
-    Armor.MBT_M60A3_Patton: 18,
-    Armor.MBT_M1A2_Abrams: 35,
-    Armor.MBT_Leclerc: 35,
-    Armor.MBT_Leopard_1A3: 24,
-    Armor.MBT_Leopard_2: 35,
-    Armor.MBT_Merkava_Mk__4: 35,
+    Armor.MBT_M60A3_Patton: 16,
+    Armor.MBT_M1A2_Abrams: 25,
+    Armor.MBT_Leclerc: 25,
+    Armor.MBT_Leopard_1A3: 20,
+    Armor.MBT_Leopard_2: 25,
+    Armor.MBT_Merkava_Mk__4: 25,
     Armor.TPz_Fuchs: 5,
-    Armor.MBT_Challenger_II: 30,
+    Armor.MBT_Challenger_II: 25,
     Armor.IFV_Marder: 10,
     Armor.IFV_MCV_80: 10,
     Armor.IFV_LAV_25: 7,
@@ -208,7 +274,7 @@ PRICES = {
     Artillery.SPH_2S3_Akatsia: 24,
     Artillery.SPH_2S19_Msta: 30,
     Artillery.MLRS_BM_21_Grad: 15,
-    Artillery.MLRS_9K57_Uragan_BM_27: 40,
+    Artillery.MLRS_9K57_Uragan_BM_27: 50,
     Artillery.MLRS_9A52_Smerch: 40,
 
     Unarmed.Transport_UAZ_469: 3,
@@ -270,6 +336,38 @@ PRICES = {
     Armed_speedboat: 10,
     Dry_cargo_ship_Ivanov: 10,
     Tanker_Elnya_160: 10,
+
+
+    # FRENCH PACK MOD
+    frenchpack.AMX_10RCR: 10,
+    frenchpack.AMX_10RCR_SEPAR: 12,
+    frenchpack.ERC_90: 12,
+    frenchpack.MO_120_RT: 10,
+    frenchpack._53T2: 4,
+    frenchpack.TRM_2000: 4,
+    frenchpack.TRM_2000_Fuel: 4,
+    frenchpack.TRM_2000_53T2: 8,
+    frenchpack.TRM_2000_PAMELA: 14,
+    frenchpack.VAB_MEDICAL: 8,
+    frenchpack.VAB: 6,
+    frenchpack.VAB__50: 4,
+    frenchpack.VAB_T20_13: 6,
+    frenchpack.VAB_MEPHISTO: 8,
+    frenchpack.VAB_MORTIER: 10,
+    frenchpack.VBL__50: 4,
+    frenchpack.VBL_AANF1: 2,
+    frenchpack.VBL: 1,
+    frenchpack.VBAE_CRAB: 8,
+    frenchpack.VBAE_CRAB_MMP: 12,
+    frenchpack.AMX_30B2: 18,
+    frenchpack.Tracma_TD_1500: 2,
+    frenchpack.Infantry_Soldier_JTAC: 1,
+    frenchpack.Leclerc_Serie_XXI: 35,
+    frenchpack.DIM__TOYOTA_BLUE: 2,
+    frenchpack.DIM__TOYOTA_GREEN: 2,
+    frenchpack.DIM__TOYOTA_DESERT: 2,
+    frenchpack.DIM__KAMIKAZE: 6,
+
 }
 
 """
@@ -317,6 +415,9 @@ UNIT_BY_TASK = {
         FW_190A8,
         SpitfireLFMkIXCW,
         SpitfireLFMkIX,
+        A_4E_C,
+        Rafale_M,
+        SA342Mistral
     ],
     CAS: [
         F_86F_Sabre,
@@ -333,6 +434,7 @@ UNIT_BY_TASK = {
         Ka_50,
         SA342M,
         SA342L,
+        SA342Minigun,
         Su_24M,
         Su_24MR,
         AH_64A,
@@ -350,7 +452,9 @@ UNIT_BY_TASK = {
         A_20G,
         P_47D_30,
         Ju_88A4,
-        B_17G
+        B_17G,
+        MB_339PAN,
+        Rafale_A_S
     ],
     Transport: [
         IL_76MD,
@@ -513,6 +617,29 @@ UNIT_BY_TASK = {
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
 
+        frenchpack.DIM__TOYOTA_BLUE,
+        frenchpack.DIM__TOYOTA_DESERT,
+        frenchpack.DIM__TOYOTA_GREEN,
+        frenchpack.DIM__KAMIKAZE,
+
+        frenchpack.AMX_10RCR,
+        frenchpack.AMX_10RCR_SEPAR,
+        frenchpack.ERC_90,
+        frenchpack.TRM_2000_PAMELA,
+        frenchpack.VAB__50,
+        frenchpack.VAB_MEPHISTO,
+        frenchpack.VAB_T20_13,
+        frenchpack.VBL__50,
+        frenchpack.VBL_AANF1,
+        frenchpack.VBAE_CRAB,
+        frenchpack.VBAE_CRAB_MMP,
+        frenchpack.AMX_30B2,
+        frenchpack.Leclerc_Serie_XXI,
+        frenchpack.DIM__TOYOTA_BLUE,
+        frenchpack.DIM__TOYOTA_GREEN,
+        frenchpack.DIM__TOYOTA_DESERT,
+        frenchpack.DIM__KAMIKAZE,
+
     ],
     AirDefence: [
 
@@ -602,46 +729,83 @@ Units separated by country.
 country : DCS Country name
 """
 FACTIONS = {
+
+    "Bluefor Modern": BLUEFOR_MODERN,
+    "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
+    "Bluefor Cold War (with A-4)": BLUEFOR_COLDWAR_A4,
+    "Bluefor Cold War (with A-4 and MB339)": BLUEFOR_COLDWAR_MODS,
+
+    "USA 1955 (WW2 Pack)": USA_1955,
+    "USA 1960": USA_1960,
+    "USA 1965": USA_1965,
+    "USA 1990": USA_1990,
+    "USA 2005": USA_2005,
+    "USA Aggressors 2005": US_Aggressors,
+
     "Russia 1955": Russia_1955,
     "Russia 1965": Russia_1965,
     "Russia 1975": Russia_1975,
     "Russia 1990": Russia_1990,
     "Russia 2010": Russia_2010,
-    "Iran 2015": Iran_2015,
+
+    "France 1995": France_1995,
+    "France 2005": France_2005,
+    "France 2005 (Modded)": France_2005_Modded,
+
+    "Germany 1990": Germany_1990,
+
+    "Netherlands 1990": Netherlands_1990,
+
+    "United Kingdown 1990": UnitedKingdom_1990,
+
+    "Spain 1990": Spain_1990,
+
+    "Italy 1990": Italy_1990,
+    "Italy 1990 (With MB339)": Italy_1990_MB339,
+
+    "Israel 2000": Israel_2000,
+
+    "China 2010": China_2010,
+
+    "Sweden 1990": Sweden_1990,
+
+    "Australia 2005": Australia_2005,
+
+    "Canada 2005": Canada_2005,
+
+    "Japan 2005": Japan_2005,
+
+    "Turkey 2005": Turkey_2005,
+
+    "United Arab Emirates 2005": UAE_2005,
+
+    "Ukraine 2010": Ukraine_2010,
+
+    "India 2010": India_2010,
+
     "Lybia 2011": Lybia_2011,
-    "China 2000": China_2000,
+
+    "Pakistan 2015": Pakistan_2015,
+
+    "Iran 2015": Iran_2015,
+
     "North Korea 2000": NorthKorea_2000,
+
     "Insurgent": Insurgent,
+    "Insurgent (Modded)": Insurgent_modded,
+
+    "PMC (American)": PMC_WESTERN_A,
+    "PMC (American) - MB339": PMC_WESTERN_B,
+    "PMC (Russian)": PMC_RUSSIAN,
+
+    "Allies 1944 (WW2 Pack)": USA_1944,
+    "USA 1944 (WW2 Pack)": ALLIES_1944,
+    "UK 1944 (WW2 Pack)": UK_1944,
+
     "Germany 1944 (WW2 Pack)": Germany_1944,
     "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
 
-    "Bluefor Modern": BLUEFOR_MODERN,
-    "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
-    "USA 2005": USA_2005,
-    "USA 1990": USA_1990,
-    "USA 1965": USA_1965,
-    "USA 1960": USA_1960,
-    "USA 1955 (WW2 Pack)": USA_1955,
-    "Allies 1944 (WW2 Pack)": USA_1944,
-
-    "France 2005": France_2005,
-    "France 1995": France_1995,
-    "Germany 1990": Germany_1990,
-    "Netherlands 1990": Netherlands_1990,
-    "United Kingdown 1990": UnitedKingdom_1990,
-    "Spain 1990": Spain_1990,
-    "Italy 1990": Italy_1990,
-    "Sweden 1990": Sweden_1990,
-    "Ukraine 2010": Ukraine_2010,
-    "India 2010": India_2010,
-    "Pakistan 2015": Pakistan_2015,
-    "Israel 2000": Israel_2000,
-    "Turkey 2005": Turkey_2005,
-    "United Arab Emirates 2005": UAE_2005,
-
 }
-BLUEFOR_FACTIONS = [FACTIONS[f]["country"] for f in FACTIONS if FACTIONS[f]["side"] == "blue"]
-print(BLUEFOR_FACTIONS)
 
 
 CARRIER_TYPE_BY_PLANE = {
@@ -749,6 +913,12 @@ PLANE_PAYLOAD_OVERRIDES = {
     Bf_109K_4: COMMON_OVERRIDE,
     SpitfireLFMkIXCW: COMMON_OVERRIDE,
     SpitfireLFMkIX: COMMON_OVERRIDE,
+    A_20G: COMMON_OVERRIDE,
+    A_4E_C: COMMON_OVERRIDE,
+    MB_339PAN: COMMON_OVERRIDE,
+    Rafale_M: COMMON_OVERRIDE,
+    Rafale_A_S: COMMON_OVERRIDE,
+    OH_58D: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -825,12 +995,14 @@ CARRIER_CAPABLE = [
     F_14B,
     AV8BNA,
     Su_33,
+    A_4E_C,
 
     UH_1H,
     Mi_8MT,
     Ka_50,
     AH_1W,
     OH_58D,
+    UH_60A,
 
     SA342L,
     SA342M,
@@ -846,6 +1018,7 @@ LHA_CAPABLE = [
     Ka_50,
     AH_1W,
     OH_58D,
+    UH_60A,
 
     SA342L,
     SA342M,
@@ -919,6 +1092,8 @@ def find_infantry(country_name: str) -> typing.List[UnitType]:
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
+def unit_type_name_2(unit_type) -> str:
+    return unit_type.name and unit_type.name or unit_type.id
 
 def unit_type_from_name(name: str) -> UnitType:
     if name in vehicle_map:

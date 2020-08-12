@@ -20,6 +20,12 @@ class SA10Generator(GroupGenerator):
         # Search radar for missiles (optionnal)
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_64H6E, "SR2", self.position.x - 40, self.position.y, self.heading)
 
+        # 2 Tracking radars
+        self.add_unit(AirDefence.SAM_SA_10_S_300PS_TR_30N6, "TR1", self.position.x - 40, self.position.y - 40, self.heading)
+
+        self.add_unit(AirDefence.SAM_SA_10_S_300PS_TR_30N6, "TR2", self.position.x + 40, self.position.y - 40,
+                      self.heading)
+
         # 2 different launcher type (C & D)
         num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=360)
@@ -40,4 +46,4 @@ class SA10Generator(GroupGenerator):
         num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(num_launchers, launcher_distance=350, coverage=360)
         for i, position in enumerate(positions):
-            self.add_unit(AirDefence.AAA_ZU_23_Emplacement, "AA#" + str(i), position[0], position[1], position[2])
+            self.add_unit(AirDefence.SPAAA_ZSU_23_4_Shilka, "AA#" + str(i), position[0], position[1], position[2])

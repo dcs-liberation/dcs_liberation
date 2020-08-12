@@ -34,5 +34,5 @@ Netherlands_1990 = {
         AirDefence.SAM_Avenger_M1097
     ], "boat": [
         "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

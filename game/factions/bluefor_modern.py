@@ -78,5 +78,5 @@ BLUEFOR_MODERN = {
         "LHA-5 Peleliu"
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

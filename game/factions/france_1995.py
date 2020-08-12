@@ -17,6 +17,7 @@ France_1995 = {
 
         SA342M,
         SA342L,
+        SA342Mistral,
 
         Armor.MBT_Leclerc,
         Armor.TPz_Fuchs,  # Standing as VAB
@@ -42,5 +43,5 @@ France_1995 = {
         AirDefence.SAM_Roland_ADS
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

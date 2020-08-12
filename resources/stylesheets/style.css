@@ -42,7 +42,7 @@ QPushButton[style="start-button"]{
     background-color:#699245;
     color: white;
     cursor:pointer;
-    padding: 15px 15px 15px 15px;
+    padding: 5px 5px 5px 5px;
     border-radius:5px;
 }
 
@@ -51,6 +51,40 @@ QPushButton[style="start-button"]:hover{
     padding: 15px 15px 15px 15px;
     border-radius:5px;
     cursor: pointer;
+}
+
+/* Buy button */
+QPushButton[style="btn-buy"]{
+    background-color:#82A466;
+    color: white;
+    cursor:pointer;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-buy"]:hover{
+    cursor:pointer;
+    background:#5C863F;
+}
+
+/* Sell button */
+QPushButton[style="btn-sell"]{
+    background-color:#9E3232;
+    color: white;
+    cursor:pointer;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-sell"]:hover{
+    cursor:pointer;
+    background:#D84545;
 }
 
 QPushButton[style="btn-danger"]{

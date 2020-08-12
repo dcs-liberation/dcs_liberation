@@ -11,7 +11,6 @@ USA_2005 = {
         F_14B,
         FA_18C_hornet,
         F_16C_50,
-        JF_17,
         A_10C,
         AV8BNA,
 
@@ -67,5 +66,5 @@ USA_2005 = {
         "LHA-5 Peleliu"
     ], "boat":[
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

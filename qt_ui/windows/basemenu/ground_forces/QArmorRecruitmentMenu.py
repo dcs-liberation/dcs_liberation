@@ -1,4 +1,5 @@
-from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox, QFrame, QWidget, QScrollArea
 
 from game import Game
 from game.event import UnitsDeliveryEvent
@@ -6,10 +7,10 @@ from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
 from theater import ControlPoint, PinpointStrike, db
 
 
-class QArmorRecruitmentMenu(QGroupBox, QRecruitBehaviour):
+class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def __init__(self, cp:ControlPoint, game:Game):
-        QGroupBox.__init__(self, "Recruitment")
+        QFrame.__init__(self)
         self.cp = cp
         self.game = game
 
@@ -25,13 +26,15 @@ class QArmorRecruitmentMenu(QGroupBox, QRecruitBehaviour):
         self.init_ui()
 
     def init_ui(self):
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
         units = {
             PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
         }
 
+        scroll_content = QWidget()
         task_box_layout = QGridLayout()
+        scroll_content.setLayout(task_box_layout)
         row = 0
 
         for task_type in units.keys():
@@ -44,6 +47,11 @@ class QArmorRecruitmentMenu(QGroupBox, QRecruitBehaviour):
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
 
-        layout.addLayout(task_box_layout)
-        layout.addStretch()
-        self.setLayout(layout)
+        scroll_content.setLayout(task_box_layout)
+        scroll = QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+        main_layout.addWidget(scroll)
+        self.setLayout(main_layout)

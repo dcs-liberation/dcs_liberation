@@ -1,11 +1,16 @@
 import os
 
 from PySide2 import QtWidgets
+from PySide2.QtCore import QFile
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QFrame, QLineEdit, QGridLayout, QVBoxLayout, QLabel, QPushButton, \
-    QFileDialog, QMessageBox, QDialog
+    QFileDialog, QMessageBox, QDialog, QComboBox, QApplication
+import qt_ui.uiconstants as CONST
+import sys
 
-from userdata import liberation_install
+import userdata
+from userdata import liberation_install, liberation_theme
+from userdata.liberation_theme import get_theme_index, set_theme_index
 
 
 class QLiberationPreferences(QFrame):
@@ -28,6 +33,8 @@ class QLiberationPreferences(QFrame):
         self.browse_saved_game.clicked.connect(self.on_browse_saved_games)
         self.browse_install_dir = QPushButton("Browse...")
         self.browse_install_dir.clicked.connect(self.on_browse_installation_dir)
+        self.themeSelect = QComboBox()
+        [self.themeSelect.addItem(y['themeName']) for x, y in CONST.THEMES.items()]
 
         self.initUi()
 
@@ -40,6 +47,9 @@ class QLiberationPreferences(QFrame):
         layout.addWidget(QLabel("<strong>DCS installation directory:</strong>"), 2, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.edit_dcs_install_dir, 3, 0, alignment=Qt.AlignRight)
         layout.addWidget(self.browse_install_dir, 3, 1, alignment=Qt.AlignRight)
+        layout.addWidget(QLabel("<strong>Theme (Requires Restart)</strong>"), 4, 0)
+        layout.addWidget(self.themeSelect, 4, 1, alignment=Qt.AlignRight)
+        self.themeSelect.setCurrentIndex(get_theme_index())
 
         main_layout.addLayout(layout)
         main_layout.addStretch()
@@ -63,6 +73,7 @@ class QLiberationPreferences(QFrame):
         print("Applying changes")
         self.saved_game_dir = self.edit_saved_game_dir.text()
         self.dcs_install_dir = self.edit_dcs_install_dir.text()
+        set_theme_index(self.themeSelect.currentIndex())
 
         if not os.path.isdir(self.saved_game_dir):
             error_dialog = QMessageBox.critical(self, "Wrong DCS Saved Games directory.",
@@ -78,7 +89,8 @@ class QLiberationPreferences(QFrame):
             error_dialog.exec_()
             return False
 
-        if not os.path.isdir(os.path.join(self.dcs_install_dir, "Scripts")) and os.path.isfile(os.path.join(self.dcs_install_dir, "bin", "DCS.exe")):
+        if not os.path.isdir(os.path.join(self.dcs_install_dir, "Scripts")) and os.path.isfile(
+                os.path.join(self.dcs_install_dir, "bin", "DCS.exe")):
             error_dialog = QMessageBox.critical(self, "Wrong DCS installation directory.",
                                                 self.dcs_install_dir + " is not a valid DCS installation directory",
                                                 QMessageBox.StandardButton.Ok)
@@ -87,7 +99,5 @@ class QLiberationPreferences(QFrame):
 
         liberation_install.setup(self.saved_game_dir, self.dcs_install_dir)
         liberation_install.save_config()
+        liberation_theme.save_theme_config()
         return True
-
-
-

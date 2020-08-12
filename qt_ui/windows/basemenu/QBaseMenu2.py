@@ -1,5 +1,5 @@
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QCloseEvent
+from PySide2.QtGui import QCloseEvent, QPixmap
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QGridLayout
 
 from game import Game
@@ -35,6 +35,8 @@ class QBaseMenu2(QDialog):
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setMinimumSize(300, 200)
+        self.setMinimumWidth(800)
+        self.setMaximumWidth(800)
         self.setModal(True)
         self.initUi()
 
@@ -45,6 +47,11 @@ class QBaseMenu2(QDialog):
 
         self.topLayoutWidget = QWidget()
         self.topLayout = QHBoxLayout()
+
+        header = QLabel(self)
+        header.setGeometry(0, 0, 655, 106)
+        pixmap = QPixmap(self.get_base_image())
+        header.setPixmap(pixmap)
 
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
@@ -59,10 +66,19 @@ class QBaseMenu2(QDialog):
         self.topLayoutWidget.setLayout(self.topLayout)
 
         self.mainLayout = QGridLayout()
-        self.mainLayout.addWidget(self.topLayoutWidget, 0, 0)
-        self.mainLayout.addWidget(self.qbase_menu_tab, 1, 0)
+        self.mainLayout.addWidget(header, 0, 0)
+        self.mainLayout.addWidget(self.topLayoutWidget, 1, 0)
+        self.mainLayout.addWidget(self.qbase_menu_tab, 2, 0)
 
         self.setLayout(self.mainLayout)
 
     def closeEvent(self, closeEvent:QCloseEvent):
         GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def get_base_image(self):
+        if self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
+            return "./resources/ui/carrier.png"
+        elif self.cp.cptype == ControlPointType.LHA_GROUP:
+            return "./resources/ui/lha.png"
+        else:
+            return "./resources/ui/airbase.png"

@@ -4,7 +4,7 @@ from enum import Enum
 
 from dcs.mapping import *
 from dcs.terrain import Airport
-from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov
+from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
@@ -12,7 +12,7 @@ from .theatergroundobject import TheaterGroundObject
 
 
 class ControlPointType(Enum):
-    AIRBASE = 0                # An airbase with slot for everything
+    AIRBASE = 0                # An airbase with slots for everything
     AIRCRAFT_CARRIER_GROUP = 1 # A group with a Stennis type carrier (F/A-18, F-14 compatible)
     LHA_GROUP = 2              # A group with a Tarawa carrier (Helicopters & Harrier)
     FARP = 4                   # A FARP, with slots for helicopters
@@ -55,6 +55,7 @@ class ControlPoint:
         self.size = size
         self.importance = importance
         self.captured = False
+        self.captured_invert = False
         self.has_frontline = has_frontline
         self.radials = radials
         self.connected_points = []
@@ -75,7 +76,7 @@ class ControlPoint:
         return obj
 
     @classmethod
-    def carrier(cls, name: str, at: Point, id: int = 1001):
+    def carrier(cls, name: str, at: Point, id: int):
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
@@ -87,7 +88,7 @@ class ControlPoint:
         return cp
 
     @classmethod
-    def lha(cls, name: str, at: Point, id: int = 1002):
+    def lha(cls, name: str, at: Point, id: int):
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.LHA_GROUP)
@@ -148,7 +149,7 @@ class ControlPoint:
                 if g.dcs_identifier in ["CARRIER", "LHA"]:
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov]:
+                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock]:
                                 return True
             return False
         elif self.cptype in [ControlPointType.AIRBASE, ControlPointType.FARP]:

@@ -16,7 +16,7 @@ UnitedKingdom_1990 = {
         C_130,
         E_3A,
 
-        SA342L,
+        SA342M,
         AH_64A,
 
         Armor.MBT_Challenger_II,
@@ -42,11 +42,11 @@ UnitedKingdom_1990 = {
         Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
-    ], "lha_names": [
+    ], "lhanames": [
         "HMS Invincible",
         "HMS Illustrious",
         "HMS Ark Royal",
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

@@ -95,8 +95,8 @@ class TriggersGenerator:
             self.mission.triggerrules.triggers.append(mark_trigger)
 
     def generate(self):
-        player_coalition = self.game.player_country in db.BLUEFOR_FACTIONS and "blue" or "red"
-        enemy_coalition = player_coalition == "blue" and "red" or "blue"
+        player_coalition = "blue"
+        enemy_coalition = "red"
 
         self.mission.coalition["blue"].bullseye = {"x": self.conflict.position.x,
                                                    "y": self.conflict.position.y}

@@ -9,6 +9,7 @@ killed_aircrafts = {}
 killed_ground_units = {}
 weapons_fired = {}
 base_capture_events = {}
+destroyed_objects_positions = {}
 mission_ended = false
 
 local function messageAll(message)
@@ -21,6 +22,7 @@ end
 
 write_state = function()
     --messageAll("Writing DCS Liberation State...")
+    --logger.info("Writing DCS LIBERATION state")
     local fp = io.open(debriefing_file_location, 'w')
     local game_state = {
         ["killed_aircrafts"] = killed_aircrafts,
@@ -28,9 +30,11 @@ write_state = function()
         ["weapons_fired"] = weapons_fired,
         ["base_capture_events"] = base_capture_events,
         ["mission_ended"] = mission_ended,
+        ["destroyed_objects_positions"] = destroyed_objects_positions,
     }
     fp:write(json:encode(game_state))
     fp:close()
+    --logger.info("Done writing DCS Liberation state")
     --messageAll("Done writing DCS Liberation state.")
 end
 
@@ -45,11 +49,19 @@ local function onEvent(event)
 
     if event.id == world.event.S_EVENT_DEAD and event.initiator then
         killed_ground_units[#killed_ground_units + 1] = event.initiator.getName(event.initiator)
+        local position = event.initiator.getPosition(event.initiator)
+        local destruction = {}
+        destruction.x = position.p.x
+        destruction.y = position.p.y
+        destruction.z = position.p.z
+        destruction.type = event.initiator:getTypeName()
+        destruction.orientation = mist.getHeading(event.initiator) * 57.3
+        destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
     end
 
-    if event.id == world.event.S_EVENT_SHOT and event.weapon then
-        weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
-    end
+    --if event.id == world.event.S_EVENT_SHOT and event.weapon then
+    --    weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
+    --end
 
     if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
         --messageAll("Base captured  :" .. event.place.getName(event.place))

@@ -38,5 +38,5 @@ Turkey_2005 = {
         AirDefence.SPAAA_ZSU_23_4_Shilka
     ], "boat":[
         "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

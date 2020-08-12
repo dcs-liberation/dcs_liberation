@@ -22,7 +22,7 @@ class QInfoPanel(QGroupBox):
         layout = QVBoxLayout()
         layout.addWidget(self.informations_list)
         layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 20, 0, 0)
         self.setLayout(layout)
 
 

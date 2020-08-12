@@ -1,3 +1,54 @@
+# 2.0.10
+
+## Features/Improvements :
+* **[Misc]** Now possible to save game in a different file, and to open DCS Liberation savegame files. (You are not restricted to a single save file anymore)
+* **[UI/UX]** New dark UI Theme and default theme improvement by Deus
+* **[UI/UX]** New "satellite" map backgrounds
+* **[UX]** Base menu is opened with a single mouse click
+* **[Units/Factions/Mods]** Added Community A-4E-C support for faction Bluefor Cold War
+* **[Units/Factions/Mods]** Added MB-339PAN support for faction Bluefor Cold War  
+* **[Units/Factions/Mods]** Added Rafale AI mod support
+* **[Units/Factions/Mods]** Added faction "France Modded" with units from frenchpack v3.5 mod
+* **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
+* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors
+* **[New Game Wizard]** Added the list of required mods for modded factions.
+* **[New Game Wizard]** No more RED vs BLUE opposing faction restrictions.
+* **[New Game Wizard]** New campaign generation settings added : No aircraft carrier, no lha, no navy, invert map starting positions.
+* **[Mission Generator]** Artillery units will start firing mission after a random delay. It should reduces lag spikes induced by artillery strikes by spreading them out.
+* **[Mission Generator]** Ground units will retreat after taking too much casualties. Artillery units will retreat if engaged.
+* **[Mission Generator]** The briefing will now contain the carrier ATC frequency
+* **[Mission Generator]** The briefing contains a small situation update.
+* **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
+* **[Campaign Generator]** Added Tarawa in caucasus campaigns
+* **[Campaign Generator]** Tuned the various existing campaign parameters
+* **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
+
+## Fixed issues :
+* **[Mission Generator]** Carrier will sail into the wind, not in the same direction
+* **[Mission Generator]** Carrier cold start was not working (flight was starting warm even when cold was selected)
+* **[Mission Generator]** Carrier group ships are more spread out
+* **[Mission Generator]** Fixed wrong radio frequency for german WW2 warbirds
+* **[Mission Generator]** Fixed FW-190A8 spawning with bomb rack for CAP missions
+* **[Mission Generator]** Fixed A-20G spawning with no payload
+* **[Mission Generator]** Fixed Su-33 spawning too heavy to take off from carrier
+* **[Mission Generator]** Fixed Harrier AV-8B spawning too heavy to take off from tarawa
+* **[Mission Generator]** Base defense units were not controllable with Combined Arms
+* **[Mission Generator]** Tanker speed was too low
+* **[Mission Generator]** Tanker TACAN settings were wrong
+* **[Mission Generator]** AI aircraft should start datalink ON (EPLRS)
+* **[Mission Generator]** Base defense units should not spawn on runway and or taxyway. (The chance for this to happen should now be really really low)
+* **[Mission Generator]** Fixed all flights starting "In flight" after playing a few missions (parking slot reset issue)
+* **[Mission Script/Performance]** Mission lua script will not listen to weapons fired event anymore and register every fired weapons. This should improve performance especially in WW2 scenarios or when rocket artillery is firing. 
+* **[Campaign Generator]** Carrier name will now not appear for faction who do not have carriers
+* **[Campaign Generator]** SA-10 sites will now have a tracking radar.
+* **[Units/Factions]** Remove JF-17 from USA 2005 faction
+* **[Units/Factions]** Remove AJS-37 from Russia 2010
+* **[Units/Factions]** Removed Oliver Hazard Perry from cold war factions (too powerful sam system for the era)
+* **[Bug]** On the persian gulf full map campaign, the two carriers were sharing the same id, this was causing a lot of bugs
+* **[Performance]** Tuned the culling setting so that you cannot run into situation where no friendly or enemy AI flights are generated
+* **[Other]** Application doesn't gracefully exit.
+* **[Other]** Other minor fixes, and multiples factions small changes
+
 # 2.0 RC 9
 
 ## Features/Improvements :

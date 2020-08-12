@@ -18,7 +18,6 @@ class Operation:
     conflict = None  # type: Conflict
     armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
-    shipgen = None  # type: ShipGenerator
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
@@ -65,7 +64,6 @@ class Operation:
         self.current_mission = mission
         self.conflict = conflict
         self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings, self.game)
-        self.shipgen = ShipGenerator(mission, conflict)
         self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
@@ -90,12 +88,12 @@ class Operation:
         # Setup coalition :
         self.current_mission.coalition["blue"] = Coalition("blue")
         self.current_mission.coalition["red"] = Coalition("red")
-        if self.game.player_country and self.game.player_country in db.BLUEFOR_FACTIONS:
-            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
-            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
-        else:
-            self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(self.game.enemy_country)]())
-            self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(self.game.player_country)]())
+
+        p_country = self.game.player_country
+        e_country = self.game.enemy_country
+        self.current_mission.coalition["blue"].add_country(country_dict[db.country_id_from_name(p_country)]())
+        self.current_mission.coalition["red"].add_country(country_dict[db.country_id_from_name(e_country)]())
+
         print([c for c in self.current_mission.coalition["blue"].countries.keys()])
         print([c for c in self.current_mission.coalition["red"].countries.keys()])
 
@@ -125,6 +123,26 @@ class Operation:
         # Generate ground object first
         self.groundobjectgen.generate()
 
+        # Generate destroyed units
+        for d in self.game.get_destroyed_units():
+            try:
+                utype = db.unit_type_from_name(d["type"])
+            except KeyError:
+                continue
+
+            pos = Point(d["x"], d["z"])
+            if utype is not None and not self.game.position_culled(pos) and self.game.settings.perf_destroyed_units:
+                self.current_mission.static_group(
+                    country=self.current_mission.country(self.game.player_country),
+                    name="",
+                    _type=utype,
+                    hidden=True,
+                    position=pos,
+                    heading=d["orientation"],
+                    dead=True,
+                )
+
+
         # Air Support (Tanker & Awacs)
         self.airsupportgen.generate(self.is_awacs_enabled)
 
@@ -139,6 +157,7 @@ class Operation:
                 self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
 
         # Generate ground units on frontline everywhere
+        self.game.jtacs = []
         for player_cp, enemy_cp in self.game.theater.conflicts(True):
             conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
                                                        self.current_mission.country(self.attacker_country),
@@ -157,14 +176,14 @@ class Operation:
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
-        # triggers
+        # Triggers
         if self.game.is_player_attack(self.conflict.attackers_country):
             cp = self.conflict.from_cp
         else:
             cp = self.conflict.to_cp
         self.triggersgen.generate()
 
-        # options
+        # Options
         self.forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
@@ -176,6 +195,18 @@ class Operation:
         with open("./resources/scripts/mist_4_3_74.lua") as f:
             load_mist.add_action(DoScript(String(f.read())))
         self.current_mission.triggerrules.triggers.append(load_mist)
+
+        # Load Ciribob's JTACAutoLase script
+        load_autolase = TriggerStart(comment="Load JTAC script")
+        with open("./resources/scripts/JTACAutoLase.lua") as f:
+
+            script = f.read()
+            script = script + "\n"
+            for jtac in self.game.jtacs:
+                script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", true, \"vehicle\")" + "\n"
+
+            load_autolase.add_action(DoScript(String(script)))
+        self.current_mission.triggerrules.triggers.append(load_autolase)
 
         load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
         with open("./resources/scripts/dcs_liberation.lua") as f:
@@ -189,10 +220,10 @@ class Operation:
 
         # Briefing Generation
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(97+i, 130+i))
+            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(60+i, 130+i))
 
         if self.is_awacs_enabled:
-            self.briefinggen.append_frequency("AWACS", "133 MHz AM")
+            self.briefinggen.append_frequency("AWACS", "233 MHz AM")
 
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
 

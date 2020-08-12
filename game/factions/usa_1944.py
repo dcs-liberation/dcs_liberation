@@ -12,6 +12,40 @@ USA_1944 = {
         P_51D,
         P_51D_30_NA,
         P_47D_30,
+        A_20G,
+        B_17G,
+
+        Armor.MT_M4_Sherman,
+        Armor.M30_Cargo_Carrier,
+        Armor.APC_M2A1,
+        Armor.LAC_M8_Greyhound,
+        Armor.TD_M10_GMC,
+        Artillery.M12_GMC,
+
+        Infantry.Infantry_M1_Garand,
+
+        LS_Samuel_Chase,
+        LST_Mk_II,
+        LCVP__Higgins_boat,
+
+        Unarmed.CCKW_353,
+        AirDefence.AAA_Bofors_40mm,
+    ], "shorad":[
+        AirDefence.AAA_Bofors_40mm,
+    ],
+    "objects": WW2_ALLIES_BUILDINGS,
+    "doctrine": WWII_DOCTRINE,
+    "boat": ["WW2LSTGroupGenerator"],
+    "boat_count": 2
+}
+
+ALLIES_1944 = {
+    "country": "USA",
+    "side": "blue",
+    "units": [
+        P_51D,
+        P_51D_30_NA,
+        P_47D_30,
         SpitfireLFMkIX,
         SpitfireLFMkIXCW,
         A_20G,

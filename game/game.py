@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
-from game.game_stats import GameStats
+from game.models.game_stats import GameStats
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from .event import *
@@ -56,8 +56,8 @@ class Game:
     current_unit_id = 0
     current_group_id = 0
 
-    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime):
-        self.settings = Settings()
+    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime, settings):
+        self.settings = settings
         self.events = []
         self.theater = theater
         self.player_name = player_name
@@ -73,7 +73,26 @@ class Game:
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         self.__culling_points = self.compute_conflicts_position()
+        self.__frontlineData = []
+        self.__destroyed_units = []
+        self.jtacs = []
+        self.savepath = ""
 
+        self.sanitize_sides()
+
+
+    def sanitize_sides(self):
+        """
+        Make sure the opposing factions are using different countries
+        :return:
+        """
+        if self.player_country == self.enemy_country:
+            if self.player_country == "USA":
+                self.enemy_country = "USAF Aggressors"
+            elif self.player_country == "Russia":
+                self.enemy_country = "USSR"
+            else:
+                self.enemy_country = "Russia"
 
     @property
     def player_faction(self):
@@ -175,18 +194,6 @@ class Game:
         else:
             return event.name == self.player_name
 
-    def get_player_coalition_id(self):
-        if self.player_country in db.BLUEFOR_FACTIONS:
-            return 2
-        else:
-            return 1
-
-    def get_enemy_coalition_id(self):
-        if self.get_player_coalition_id() == 1:
-            return 2
-        else:
-            return 1
-
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
 
         logging.info("Pass turn")
@@ -236,6 +243,9 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
+
+        # Autosave progress
+        persistency.autosave(self)
 
     def _enemy_reinforcement(self):
         """
@@ -340,6 +350,8 @@ class Game:
         # By default, use the existing frontline conflict position
         for conflict in self.theater.conflicts():
             points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
+            points.append(conflict[0].position)
+            points.append(conflict[1].position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:
@@ -351,6 +363,11 @@ class Game:
                     if d < min_distance:
                         min_distance = d
                         cpoint = Point((cp.position.x + cp2.position.x) / 2, (cp.position.y + cp2.position.y) / 2)
+                        points.append(cp.position)
+                        points.append(cp2.position)
+                        break
+                if cpoint is not None:
+                    break
             if cpoint is not None:
                 points.append(cpoint)
 
@@ -360,6 +377,12 @@ class Game:
             points.append(Point(0, 0))
 
         return points
+
+    def add_destroyed_units(self, destroyed_unit_data):
+        self.__destroyed_units.append(destroyed_unit_data)
+
+    def get_destroyed_units(self):
+        return self.__destroyed_units
 
     def position_culled(self, pos):
         """
@@ -375,3 +398,21 @@ class Game:
                     return False
             return True
 
+    # 1 = red, 2 = blue
+    def get_player_coalition_id(self):
+        return 2
+
+    def get_enemy_coalition_id(self):
+        return 1
+
+    def get_player_coalition(self):
+        return dcs.action.Coalition.Blue
+
+    def get_enemy_coalition(self):
+        return dcs.action.Coalition.Red
+
+    def get_player_color(self):
+        return "blue"
+
+    def get_enemy_color(self):
+        return "red"

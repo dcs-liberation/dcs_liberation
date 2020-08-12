@@ -3,7 +3,7 @@ from dcs.planes import *
 from dcs.ships import *
 from dcs.vehicles import *
 
-China_2000 = {
+China_2010 = {
     "country": "China",
     "side": "red",
     "units": [
@@ -37,7 +37,9 @@ China_2000 = {
 
         Unarmed.Transport_Ural_375,
         Unarmed.Transport_UAZ_469,
-        Infantry.Soldier_AK,
+
+        Infantry.Paratrooper_AKS,
+        Infantry.Infantry_Soldier_Rus,
         Infantry.Paratrooper_RPG_16,
 
         CV_1143_5_Admiral_Kuznetsov,
@@ -56,10 +58,20 @@ China_2000 = {
         Type_052C_Destroyer
     ], "cruiser": [
         Type_054A_Frigate,
+    ], "helicopter_carrier": [
+        Type_071_Amphibious_Transport_Dock,
+    ], "lhanames": [
+        "Kunlun Shan",
+        "Jinggang Shan",
+        "Changbai Shan",
+        "Yimeng Shan",
+        "Longhu Shan",
+        "Wuzhi Shan",
+        "Wudang Shan"
     ], "carrier_names": [
         "001 Liaoning",
         "002 Shandong",
     ], "boat":[
-        "ChineseNavyGroupGenerator", "Type54GroupGenerator"
-    ]
+        "Type54GroupGenerator"
+    ], "has_jtac": True
 }

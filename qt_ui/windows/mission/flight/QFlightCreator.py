@@ -40,7 +40,8 @@ class QFlightCreator(QDialog):
         for aircraft_type in self.planner.get_available_aircraft().keys():
             print(aircraft_type)
             print(aircraft_type.name)
-            self.select_type_aircraft.addItem(aircraft_type.id, userData=aircraft_type)
+            if self.available[aircraft_type] > 0:
+                self.select_type_aircraft.addItem(aircraft_type.id, userData=aircraft_type)
         self.select_type_aircraft.setCurrentIndex(0)
 
         self.select_flight_type = QComboBox()
@@ -60,6 +61,11 @@ class QFlightCreator(QDialog):
         self.select_count_of_aircraft.setMinimum(1)
         self.select_count_of_aircraft.setMaximum(4)
         self.select_count_of_aircraft.setValue(2)
+
+        aircraft_type = self.select_type_aircraft.currentData()
+        if aircraft_type is not None:
+            self.select_count_of_aircraft.setValue(min(self.available[aircraft_type], 2))
+            self.select_count_of_aircraft.setMaximum(min(self.available[aircraft_type], 4))
 
         self.add_button = QPushButton("Add")
         self.add_button.clicked.connect(self.create_flight)

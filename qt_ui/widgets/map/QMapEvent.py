@@ -17,17 +17,22 @@ class QMapEvent(QGraphicsRectItem):
         self.setToolTip(str(self.gameEvent))
         self.playable = not isinstance(self.gameEvent, UnitsDeliveryEvent)
 
+
+
     def paint(self, painter, option, widget=None):
+
+        playerColor = self.game.get_player_color()
+        enemyColor = self.game.get_enemy_color()
 
         if self.parent.get_display_rule("events"):
             painter.save()
 
             if self.gameEvent.is_player_attacking:
-                painter.setPen(QPen(brush=CONST.COLORS["blue"]))
-                painter.setBrush(CONST.COLORS["blue"])
+                painter.setPen(QPen(brush=CONST.COLORS[playerColor]))
+                painter.setBrush(CONST.COLORS[playerColor])
             else:
-                painter.setPen(QPen(brush=CONST.COLORS["red"]))
-                painter.setBrush(CONST.COLORS["red"])
+                painter.setPen(QPen(brush=CONST.COLORS[enemyColor]))
+                painter.setBrush(CONST.COLORS[enemyColor])
 
             if self.isUnderMouse() and self.playable:
                 painter.setBrush(CONST.COLORS["white"])

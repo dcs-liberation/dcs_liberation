@@ -46,5 +46,5 @@ Spain_1990 = {
         "Juan Carlos I",
     ], "boat":[
         "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

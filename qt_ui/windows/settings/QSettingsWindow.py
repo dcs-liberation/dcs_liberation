@@ -166,13 +166,23 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+
+        if not hasattr(self.game.settings, "include_jtac_if_available"):
+            self.game.settings.include_jtac_if_available = True
+
+        self.include_jtac_if_available = QCheckBox()
+        self.include_jtac_if_available.setChecked(self.game.settings.include_jtac_if_available)
+        self.include_jtac_if_available.toggled.connect(self.applySettings)
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(QLabel("Include JTAC (If available)"), 2, 0)
+        self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
-        self.performanceLayout = QGridLayout();
+        self.performanceLayout = QGridLayout()
         self.performanceLayout.setAlignment(Qt.AlignTop)
         self.performance.setLayout(self.performanceLayout)
 
@@ -200,6 +210,10 @@ class QSettingsWindow(QDialog):
         self.ai_parking_start.setChecked(self.game.settings.perf_ai_parking_start)
         self.ai_parking_start.toggled.connect(self.applySettings)
 
+        self.destroyed_units = QCheckBox()
+        self.destroyed_units.setChecked(self.game.settings.perf_destroyed_units)
+        self.destroyed_units.toggled.connect(self.applySettings)
+
         self.culling = QCheckBox()
         self.culling.setChecked(self.game.settings.perf_culling)
         self.culling.toggled.connect(self.applySettings)
@@ -222,12 +236,14 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("AI planes parking start (AI starts in flight if disabled)"), 5, 0)
         self.performanceLayout.addWidget(self.ai_parking_start, 5, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Include destroyed units carcass"), 6, 0)
+        self.performanceLayout.addWidget(self.destroyed_units, 6, 1, alignment=Qt.AlignRight)
 
-        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 6, 0, 1, 2)
-        self.performanceLayout.addWidget(QLabel("Culling of distant units enabled"), 7, 0)
-        self.performanceLayout.addWidget(self.culling, 7, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 8, 0)
-        self.performanceLayout.addWidget(self.culling_distance, 8, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 7, 0, 1, 2)
+        self.performanceLayout.addWidget(QLabel("Culling of distant units enabled"), 8, 0)
+        self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
+        self.performanceLayout.addWidget(self.culling_distance, 9, 1, alignment=Qt.AlignRight)
 
         self.generatorLayout.addWidget(self.gameplay)
         self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
@@ -282,6 +298,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
+        self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
 
         print(self.game.settings.map_coalition_visibility)
 
@@ -293,6 +310,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
         self.game.settings.perf_ai_parking_start = self.ai_parking_start.isChecked()
+        self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())

@@ -1,10 +1,12 @@
-from dcs.action import ActivateGroup, AITaskPush
-from dcs.condition import TimeAfter, CoalitionHasAirdrome
+from dcs.action import ActivateGroup, AITaskPush, MessageToCoalition, MessageToAll
+from dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
 from dcs.helicopters import UH_1H
 from dcs.terrain.terrain import NoParkingSlotError
 from dcs.triggers import TriggerOnce, Event
 
+from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
+from game.utils import nm_to_meter
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType, FlightWaypointType
 from .conflictgen import *
@@ -36,7 +38,7 @@ class AircraftConflictGenerator:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
 
 
-    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], client_count: int):
+    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], flight: Flight):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
@@ -70,8 +72,8 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
-        single_client = client_count == 1
-        for idx in range(0, min(len(group.units), client_count)):
+        single_client = flight.client_count == 1
+        for idx in range(0, min(len(group.units), flight.client_count)):
             if single_client:
                 group.units[idx].set_player()
             else:
@@ -85,16 +87,32 @@ class AircraftConflictGenerator:
             if unit_type is F_14B:
                 group.units[idx].set_property(F_14B.Properties.INSAlignmentStored.id, True)
 
+
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+
+        # TODO : refactor this following bad specific special case code :(
 
         if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
             group.set_frequency(127.5)
         else:
-            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, FW_190A8, FW_190D9, Bf_109K_4, P_47D_30]:
+            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, P_47D_30, I_16, FW_190A8, FW_190D9, Bf_109K_4]:
                 group.set_frequency(251.0)
             else:
                 # WW2
-                group.set_frequency(124.0)
+                if unit_type in [FW_190A8, FW_190D9, Bf_109K_4, Ju_88A4]:
+                    group.set_frequency(40)
+                else:
+                    group.set_frequency(124.0)
+
+        # Special case so Su 33 carrier take off
+        if unit_type is Su_33:
+            if task is not CAP:
+                for unit in group.units:
+                    unit.fuel = Su_33.fuel_max / 2.2
+            else:
+                for unit in group.units:
+                    unit.fuel = Su_33.fuel_max * 0.8
+
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
@@ -108,7 +126,7 @@ class AircraftConflictGenerator:
             country=side,
             name=name,
             aircraft_type=unit_type,
-            airport=self.m.terrain.airport_by_id(airport.id),
+            airport=airport,
             maintask=None,
             start_type=start_type,
             group_size=count,
@@ -143,9 +161,12 @@ class AircraftConflictGenerator:
         group.points[0].alt_type = "RADIO"
         return group
 
-    def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup]) -> FlyingGroup:
+    def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup], start_type=None) -> FlyingGroup:
         assert count > 0
         assert unit is not None
+
+        if start_type is None:
+            start_type = self._start_type()
 
         logging.info("airgen: {} for {} at unit {}".format(unit_type, side.id, at))
         return self.m.flight_group_from_unit(
@@ -154,7 +175,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             pad_group=at,
             maintask=None,
-            start_type=self._start_type(),
+            start_type=start_type,
             group_size=count)
 
     def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
@@ -233,6 +254,11 @@ class AircraftConflictGenerator:
 
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
 
+        # Clear pydcs parking slots
+        if cp.airport is not None:
+            for ps in cp.airport.parking_slots:
+                ps.unit_id = None
+
         for flight in flight_planner.flights:
 
             if flight.client_count == 0 and self.game.position_culled(flight.from_cp.position):
@@ -240,11 +266,7 @@ class AircraftConflictGenerator:
                 continue
 
             group = self.generate_planned_flight(cp, country, flight)
-            if flight.flight_type == FlightType.INTERCEPTION:
-                self.setup_group_as_intercept_flight(group, flight)
-                self._setup_custom_payload(flight, group)
-            else:
-                self.setup_flight_group(group, flight, flight.flight_type)
+            self.setup_flight_group(group, flight, flight.flight_type)
             self.setup_group_activation_trigger(flight, group)
 
 
@@ -255,7 +277,7 @@ class AircraftConflictGenerator:
                 group.late_activation = False
                 group.uncontrolled = True
 
-                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationControlTriggerForGroup" + str(group.id))
+                activation_trigger = TriggerOnce(Event.NoEvent, "FlightStartTrigger" + str(group.id))
                 activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in * 60))
                 if (flight.from_cp.cptype == ControlPointType.AIRBASE):
                     if flight.from_cp.captured:
@@ -265,12 +287,16 @@ class AircraftConflictGenerator:
                         activation_trigger.add_condition(
                             CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
+                if flight.flight_type == FlightType.INTERCEPTION:
+                    self.setup_interceptor_triggers(group, flight, activation_trigger)
+
                 group.add_trigger_action(StartCommand())
                 activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
+
                 self.m.triggerrules.triggers.append(activation_trigger)
             else:
                 group.late_activation = True
-                activation_trigger = TriggerOnce(Event.NoEvent, "LiberationActivationTriggerForGroup" + str(group.id))
+                activation_trigger = TriggerOnce(Event.NoEvent, "FlightLateActivationTrigger" + str(group.id))
                 activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
 
                 if(flight.from_cp.cptype == ControlPointType.AIRBASE):
@@ -279,8 +305,21 @@ class AircraftConflictGenerator:
                     else:
                         activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
 
+                if flight.flight_type == FlightType.INTERCEPTION:
+                    self.setup_interceptor_triggers(group, flight, activation_trigger)
+
                 activation_trigger.add_action(ActivateGroup(group.id))
                 self.m.triggerrules.triggers.append(activation_trigger)
+
+    def setup_interceptor_triggers(self, group, flight, activation_trigger):
+
+        detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=25000, hidden=False, name="ITZ")
+        if flight.from_cp.captured:
+            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_enemy_color(), detection_zone.id)) # TODO : support unit type in part of coalition
+            activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircrafts have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))
+        else:
+            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_player_color(), detection_zone.id))
+            activation_trigger.add_action(MessageToAll(String("WARNING : We have detected that enemy aircrafts are scrambling for an interception on " + flight.from_cp.name + " airbase."), 20))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
@@ -310,7 +349,8 @@ class AircraftConflictGenerator:
                         unit_type=flight.unit_type,
                         count=flight.count,
                         client_count=0,
-                        at=self.m.find_group(group_name),)
+                        at=self.m.find_group(group_name),
+                        start_type=st)
                 else:
                     group = self._generate_at_airport(
                         name=namegen.next_unit_name(country, cp.id, flight.unit_type),
@@ -318,7 +358,7 @@ class AircraftConflictGenerator:
                         unit_type=flight.unit_type,
                         count=flight.count,
                         client_count=0,
-                        airport=self.m.terrain.airport_by_id(cp.at.id),
+                        airport=cp.airport,
                         start_type=st)
         except Exception:
             # Generated when there is no place on Runway or on Parking Slots
@@ -332,55 +372,69 @@ class AircraftConflictGenerator:
                 at=cp.position)
             group.points[0].alt = 1500
 
+        flight.group = group
         return group
 
     def setup_group_as_intercept_flight(self, group, flight):
         group.points[0].ETA = 0
         group.late_activation = True
-        self._setup_group(group, Intercept, flight.client_count)
+        self._setup_group(group, Intercept, flight)
         for point in flight.points:
             group.add_waypoint(Point(point.x,point.y), point.alt)
 
 
     def setup_flight_group(self, group, flight, flight_type):
 
-        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP]:
+        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP, FlightType.INTERCEPTION]:
             group.task = CAP.name
-            self._setup_group(group, CAP, flight.client_count)
+            self._setup_group(group, CAP, flight)
             # group.points[0].tasks.clear()
-            # group.tasks.clear()
-            # group.tasks.append(EngageTargets(max_distance=40, targets=[Targets.All.Air]))
+            group.points[0].tasks.clear()
+            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50), targets=[Targets.All.Air]))
             # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
-            pass
+            if flight.unit_type not in GUNFIGHTERS:
+                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.AAM))
+            else:
+                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Cannon))
+
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             group.task = CAS.name
-            self._setup_group(group, CAS, flight.client_count)
+            self._setup_group(group, CAS, flight)
             group.points[0].tasks.clear()
-            group.points[0].tasks.append(CASTaskAction())
+            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(10), targets=[Targets.All.GroundUnits.GroundVehicles]))
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Unguided))
+            group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
-            self._setup_group(group, SEAD, flight.client_count)
+            self._setup_group(group, SEAD, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(NoTask())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
-            self._setup_group(group, GroundAttack, flight.client_count)
+            self._setup_group(group, GroundAttack, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.ANTISHIP]:
             group.task = AntishipStrike.name
-            self._setup_group(group, AntishipStrike, flight.client_count)
+            self._setup_group(group, AntishipStrike, flight)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
+
+        group.points[0].tasks.append(OptRTBOnBingoFuel(True))
+
+        if hasattr(flight.unit_type, 'eplrs'):
+            if flight.unit_type.eplrs:
+                group.points[0].tasks.append(EPLRS(group.id))
 
         for i, point in enumerate(flight.points):
             if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
@@ -420,6 +474,8 @@ class AircraftConflictGenerator:
                                 group.add_nav_target_point(t.position, "PP" + str(j + 1))
                             if group.units[0].unit_type == F_14B and j == 0:
                                 group.add_nav_target_point(t.position, "ST")
+                            if group.units[0].unit_type == AJS37 and j < 9:
+                                group.add_nav_target_point(t.position, "M" + str(j + 1))
                 elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
 
                     tgroup = self.m.find_group(point.targetGroup.group_identifier)
@@ -438,6 +494,8 @@ class AircraftConflictGenerator:
                             group.add_nav_target_point(t.position, "PP" + str(j + 1))
                         if group.units[0].unit_type == F_14B and j == 0:
                             group.add_nav_target_point(t.position, "ST")
+                        if group.units[0].unit_type == AJS37 and j < 9:
+                            group.add_nav_target_point(t.position, "M" + str(j + 1))
 
                 if pt is not None:
                     pt.alt_type = point.alt_type
@@ -448,7 +506,7 @@ class AircraftConflictGenerator:
 
     def setup_group_as_antiship_flight(self, group, flight):
         group.task = AntishipStrike.name
-        self._setup_group(group, AntishipStrike, flight.client_count)
+        self._setup_group(group, AntishipStrike, flight)
 
         group.points[0].tasks.clear()
         group.points[0].tasks.append(AntishipStrikeTaskAction())

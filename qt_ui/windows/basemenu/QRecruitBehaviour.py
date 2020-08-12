@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QLabel, QPushButton, \
-    QSizePolicy, QSpacerItem
+    QSizePolicy, QSpacerItem, QGroupBox, QHBoxLayout
 from dcs.unittype import UnitType
 
 from theater import db
@@ -19,54 +19,75 @@ class QRecruitBehaviour:
 
     def add_purchase_row(self, unit_type, layout, row):
 
+        exist = QGroupBox()
+        exist.setProperty("style", "buy-box")
+        exist.setMaximumHeight(36)
+        exist.setMinimumHeight(36)
+        existLayout = QHBoxLayout()
+        exist.setLayout(existLayout)
+
         existing_units = self.cp.base.total_units_of_type(unit_type)
         scheduled_units = self.deliveryEvent.units.get(unit_type, 0)
 
-        unitName = QLabel("<b>" + db.unit_type_name(unit_type) + "</b>")
+        unitName = QLabel("<b>" + db.unit_type_name_2(unit_type) + "</b>")
         unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
 
         existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        amount_bought = QLabel("[{}]".format(str(scheduled_units)))
+        amount_bought = QLabel("<b>{}</b>".format(str(scheduled_units)))
         amount_bought.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         self.existing_units_labels[unit_type] = existing_units
         self.bought_amount_labels[unit_type] = amount_bought
 
-        price = QLabel("{}m".format(db.PRICES[unit_type]))
+        price = QLabel("<b>$ {:02d}</b> m".format(db.PRICES[unit_type]))
         price.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
+        buysell = QGroupBox()
+        buysell.setProperty("style", "buy-box")
+        buysell.setMaximumHeight(36)
+        buysell.setMinimumHeight(36)
+        buysellayout = QHBoxLayout()
+        buysell.setLayout(buysellayout)
+
         buy = QPushButton("+")
-        buy.setProperty("style", "btn-success")
-        buy.setMinimumSize(24, 24)
+        buy.setProperty("style", "btn-buy")
+        buy.setMinimumSize(16, 16)
+        buy.setMaximumSize(16, 16)
         buy.clicked.connect(lambda: self.buy(unit_type))
         buy.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         sell = QPushButton("-")
-        sell.setProperty("style", "btn-danger")
-        sell.setMinimumSize(24, 24)
+        sell.setProperty("style", "btn-sell")
+        sell.setMinimumSize(16, 16)
+        sell.setMaximumSize(16, 16)
         sell.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         sell.clicked.connect(lambda: self.sell(unit_type))
 
-        layout.addWidget(unitName, row, 0)
-        layout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum), row, 1)
-        layout.addWidget(existing_units, row, 2)
-        layout.addWidget(amount_bought, row, 3)
-        layout.addWidget(price, row, 4)
-        layout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum), row, 5)
-        layout.addWidget(buy, row, 6)
-        layout.addWidget(sell, row, 7)
+
+        existLayout.addWidget(unitName)
+        existLayout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum))
+        existLayout.addWidget(existing_units)
+        existLayout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum))
+        existLayout.addWidget(price)
+
+        buysellayout.addWidget(sell)
+        buysellayout.addWidget(amount_bought)
+        buysellayout.addWidget(buy)
+
+        layout.addWidget(exist, row, 1)
+        layout.addWidget(buysell, row, 2)
 
         return row + 1
 
     def _update_count_label(self, unit_type: UnitType):
 
-        self.bought_amount_labels[unit_type].setText("[{}]".format(
+        self.bought_amount_labels[unit_type].setText("<b>{}</b>".format(
             unit_type in self.deliveryEvent.units and "{}".format(self.deliveryEvent.units[unit_type]) or "0"
         ))
 
-        self.existing_units_labels[unit_type].setText("{}".format(
+        self.existing_units_labels[unit_type].setText("<b>{}</b>".format(
             self.cp.base.total_units_of_type(unit_type)
         ))
 

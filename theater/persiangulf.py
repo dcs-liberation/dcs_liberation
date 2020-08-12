@@ -10,8 +10,8 @@ class PersianGulfTheater(ConflictTheater):
     terrain = dcs.terrain.PersianGulf()
     overview_image = "persiangulf.gif"
     reference_points = {
-        (persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (423 * 4, 150 * 4),
-        (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (447 * 4, 82 * 4), }
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
         "dawn": (6, 8),
@@ -48,8 +48,8 @@ class PersianGulfTheater(ConflictTheater):
         self.liwa = ControlPoint.from_airport(persiangulf.Liwa_Airbase, LAND, SIZE_BIG, IMPORTANCE_HIGH)
         self.jiroft = ControlPoint.from_airport(persiangulf.Jiroft_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
         self.bandar_e_jask = ControlPoint.from_airport(persiangulf.Bandar_e_Jask_airfield, LAND, SIZE_TINY,IMPORTANCE_LOW)
-        self.west_carrier = ControlPoint.carrier("West carrier", Point(-69043.813952358, -159916.65947136))
-        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635))
+        self.west_carrier = ControlPoint.carrier("West carrier", Point(-69043.813952358, -159916.65947136), 1001)
+        self.east_carrier = ControlPoint.carrier("East carrier", Point(59514.324335475, 28165.517980635), 1002)
 
         self.add_controlpoint(self.liwa, connected_to=[self.al_dhafra])
         self.add_controlpoint(self.al_dhafra, connected_to=[self.liwa, self.al_maktoum, self.al_ain])
@@ -84,13 +84,19 @@ class PersianGulfTheater(ConflictTheater):
         self.east_carrier.captured = True
         self.liwa.captured = True
 
+        self.west_carrier.captured_invert = True
+        self.east_carrier.captured_invert = True
+        self.shiraz.captured_invert = True
+
 
 class IranianCampaign(ConflictTheater):
 
     terrain = dcs.terrain.PersianGulf()
     overview_image = "persiangulf.gif"
-    reference_points = {(persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (423*4, 150*4),
-                        (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (447*4, 82*4), }
+    reference_points = {
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
+        772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
         "dawn": (6, 8),
@@ -152,13 +158,16 @@ class IranianCampaign(ConflictTheater):
         self.havadarya.captured = True
         self.bandar_abbas.captured = True
 
+        self.shiraz.captured_invert = True
+
 
 class Emirates(ConflictTheater):
     terrain = dcs.terrain.PersianGulf()
     overview_image = "persiangulf.gif"
     reference_points = {
-        (persiangulf.Sir_Abu_Nuayr.position.x, persiangulf.Sir_Abu_Nuayr.position.y): (423 * 4, 150 * 4),
-        (persiangulf.Sirri_Island.position.x, persiangulf.Sirri_Island.position.y): (447 * 4, 82 * 4), }
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
+        772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
         "dawn": (6, 8),
@@ -196,3 +205,7 @@ class Emirates(ConflictTheater):
         self.tarawa_carrier.captured = True
         self.east_carrier.captured = True
         self.fujairah.captured = True
+
+        self.tarawa_carrier.captured_invert = True
+        self.east_carrier.captured_invert = True
+        self.fujairah.captured_invert = True

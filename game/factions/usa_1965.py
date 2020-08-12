@@ -37,6 +37,5 @@ USA_1965 = {
         AirDefence.AAA_Vulcan_M163,
         AirDefence.SAM_Chaparral_M48
     ], "boat":[
-        "OliverHazardPerryGroupGenerator"
     ]
 }

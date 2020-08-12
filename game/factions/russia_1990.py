@@ -58,6 +58,9 @@ Russia_1990 = {
         AirDefence.SAM_SA_9_Strela_1_9P31,
         AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
         AirDefence.SPAAA_ZSU_23_4_Shilka
+    ], "carrier_names": [
+        "Admiral Kuznetov",
+        "Admiral Gorshkov"
     ], "aircraft_carrier": [
         CV_1143_5_Admiral_Kuznetsov,
     ], "destroyer": [

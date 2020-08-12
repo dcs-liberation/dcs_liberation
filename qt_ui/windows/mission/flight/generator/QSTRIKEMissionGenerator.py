@@ -12,7 +12,7 @@ from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAb
 class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
 
     def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QSTRIKEMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "SEAD/DEAD Generator")
+        super(QSTRIKEMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "Strike Generator")
 
         self.tgt_selection_box = QStrikeTargetSelectionComboBox(self.game)
         self.tgt_selection_box.setMinimumWidth(200)
@@ -33,7 +33,7 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
         layout = QVBoxLayout()
 
         wpt_layout = QHBoxLayout()
-        wpt_layout.addWidget(QLabel("SEAD/DEAD target : "))
+        wpt_layout.addWidget(QLabel("Target : "))
         wpt_layout.addStretch()
         wpt_layout.addWidget(self.tgt_selection_box, alignment=Qt.AlignRight)
 
