@@ -10,7 +10,7 @@
 * **[Units/Factions/Mods]** Added Rafale AI mod support
 * **[Units/Factions/Mods]** Added faction "France Modded" with units from frenchpack v3.5 mod
 * **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
-* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors
+* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors, PMC
 * **[New Game Wizard]** Added the list of required mods for modded factions.
 * **[New Game Wizard]** No more RED vs BLUE opposing faction restrictions.
 * **[New Game Wizard]** New campaign generation settings added : No aircraft carrier, no lha, no navy, invert map starting positions.
@@ -19,6 +19,7 @@
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
+* **[Mission Generator]** Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
 * **[Campaign Generator]** Tuned the various existing campaign parameters
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
