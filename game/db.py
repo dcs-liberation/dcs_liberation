@@ -46,10 +46,11 @@ from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
+from game.factions.uk_1944 import UK_1944
 from game.factions.uk_1990 import UnitedKingdom_1990
 from game.factions.ukraine_2010 import Ukraine_2010
 from game.factions.us_aggressors import US_Aggressors
-from game.factions.usa_1944 import USA_1944
+from game.factions.usa_1944 import USA_1944, ALLIES_1944
 from game.factions.usa_1955 import USA_1955
 from game.factions.usa_1960 import USA_1960
 from game.factions.usa_1965 import USA_1965
@@ -789,6 +790,8 @@ FACTIONS = {
     "Insurgent (Modded)": Insurgent_modded,
 
     "Allies 1944 (WW2 Pack)": USA_1944,
+    "USA 1944 (WW2 Pack)": ALLIES_1944,
+    "UK 1944 (WW2 Pack)": UK_1944,
 
     "Germany 1944 (WW2 Pack)": Germany_1944,
     "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,

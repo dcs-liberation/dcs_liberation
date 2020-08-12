@@ -39,7 +39,7 @@ Germany_1944 = {
     "objects": WW2_GERMANY_BUILDINGS,
     "doctrine": WWII_DOCTRINE,
     "boat": ["UBoatGroupGenerator", "SchnellbootGroupGenerator"],
-    "boat_count": 4,
+    "boat_count": 2,
     "missiles": ["V1GroupGenerator"],
     "missiles_count": 1
 }
