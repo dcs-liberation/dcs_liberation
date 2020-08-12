@@ -57,5 +57,5 @@ France_2005 = {
         "L9015 Dixmude"
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

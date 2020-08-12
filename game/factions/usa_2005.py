@@ -66,5 +66,5 @@ USA_2005 = {
         "LHA-5 Peleliu"
     ], "boat":[
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

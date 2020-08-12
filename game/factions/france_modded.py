@@ -75,5 +75,5 @@ France_2005_Modded = {
     ], "requirements": {
         "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974",
         "RAFALE 2.5.5": "https://www.digitalcombatsimulator.com/fr/files/3307478/",
-    }
+    }, "has_jtac": True
 }

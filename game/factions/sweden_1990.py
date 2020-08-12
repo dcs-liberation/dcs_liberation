@@ -27,5 +27,5 @@ Sweden_1990 = {
     ],
     "shorad": [
         AirDefence.SAM_Avenger_M1097
-    ]
+    ], "has_jtac": True
 }

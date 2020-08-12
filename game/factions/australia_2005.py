@@ -46,5 +46,5 @@ Australia_2005 = {
         "HMAS Adelaide"
     ], "boat":[
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

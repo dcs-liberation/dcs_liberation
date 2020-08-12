@@ -39,5 +39,5 @@ Canada_2005 = {
         Ticonderoga_class,
     ], "boat":[
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

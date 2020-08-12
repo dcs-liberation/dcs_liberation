@@ -48,5 +48,5 @@ UnitedKingdom_1990 = {
         "HMS Ark Royal",
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

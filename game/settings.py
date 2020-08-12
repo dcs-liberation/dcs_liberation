@@ -24,6 +24,7 @@ class Settings:
         self.sams = True # Legacy parameter do not use
         self.cold_start = False # Legacy parameter do not use
         self.version = None
+        self.include_jtac_if_available = True
 
         # Performance oriented
         self.perf_red_alert_state = True

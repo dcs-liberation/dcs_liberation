@@ -19,6 +19,9 @@
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
+* **[Campaign Generator]** Added Tarawa in caucasus campaigns
+* **[Campaign Generator]** Tuned the various existing campaign parameters
+* **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
 
 ## Fixed issues :
 * **[Mission Generator]** Carrier will sail into the wind, not in the same direction

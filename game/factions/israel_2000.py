@@ -35,5 +35,5 @@ Israel_2000 = {
         AirDefence.SAM_Avenger_M1097
     ], "boat": [
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

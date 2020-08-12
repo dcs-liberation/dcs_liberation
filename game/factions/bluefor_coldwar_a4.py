@@ -61,5 +61,5 @@ BLUEFOR_COLDWAR_A4 = {
     ], "boat": [
     ], "requirements": {
         "Community A-4E": "https://heclak.github.io/community-a4e-c/",
-    }
+    }, "has_jtac": True
 }

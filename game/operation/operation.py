@@ -157,6 +157,7 @@ class Operation:
                 self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
 
         # Generate ground units on frontline everywhere
+        self.game.jtacs = []
         for player_cp, enemy_cp in self.game.theater.conflicts(True):
             conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
                                                        self.current_mission.country(self.attacker_country),
@@ -175,14 +176,14 @@ class Operation:
         else:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
-        # triggers
+        # Triggers
         if self.game.is_player_attack(self.conflict.attackers_country):
             cp = self.conflict.from_cp
         else:
             cp = self.conflict.to_cp
         self.triggersgen.generate()
 
-        # options
+        # Options
         self.forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
@@ -194,6 +195,18 @@ class Operation:
         with open("./resources/scripts/mist_4_3_74.lua") as f:
             load_mist.add_action(DoScript(String(f.read())))
         self.current_mission.triggerrules.triggers.append(load_mist)
+
+        # Load Ciribob's JTACAutoLase script
+        load_autolase = TriggerStart(comment="Load JTAC script")
+        with open("./resources/scripts/JTACAutoLase.lua") as f:
+
+            script = f.read()
+            script = script + "\n"
+            for jtac in self.game.jtacs:
+                script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", true, \"vehicle\")" + "\n"
+
+            load_autolase.add_action(DoScript(String(script)))
+        self.current_mission.triggerrules.triggers.append(load_autolase)
 
         load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
         with open("./resources/scripts/dcs_liberation.lua") as f:

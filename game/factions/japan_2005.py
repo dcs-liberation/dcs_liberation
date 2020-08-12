@@ -50,5 +50,5 @@ Japan_2005 = {
         "Ise",
     ], "boat":[
         "ArleighBurkeGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

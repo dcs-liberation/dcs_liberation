@@ -166,13 +166,23 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+
+        if not hasattr(self.game.settings, "include_jtac_if_available"):
+            self.game.settings.include_jtac_if_available = True
+
+        self.include_jtac_if_available = QCheckBox()
+        self.include_jtac_if_available.setChecked(self.game.settings.include_jtac_if_available)
+        self.include_jtac_if_available.toggled.connect(self.applySettings)
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(QLabel("Include JTAC (If available)"), 2, 0)
+        self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
-        self.performanceLayout = QGridLayout();
+        self.performanceLayout = QGridLayout()
         self.performanceLayout.setAlignment(Qt.AlignTop)
         self.performance.setLayout(self.performanceLayout)
 
@@ -288,6 +298,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
+        self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
 
         print(self.game.settings.map_coalition_visibility)
 

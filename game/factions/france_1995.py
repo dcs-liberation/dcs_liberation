@@ -42,5 +42,5 @@ France_1995 = {
         AirDefence.SAM_Roland_ADS
     ], "boat":[
         "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

@@ -24,6 +24,8 @@ class BriefingGenerator:
         self.targets = []
         self.waypoints = []
 
+        self.jtacs = []
+
     def append_frequency(self, name: str, frequency: str):
         self.freqs.append((name, frequency))
 
@@ -108,6 +110,12 @@ class BriefingGenerator:
                 if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP and hasattr(cp, "icls"):
                     self.description += "ICLS Channel : " + str(cp.icls) + "\n"
                 self.description += "-" * 50 + "\n"
+
+
+        self.description += "JTACS [F-10 Menu] : \n"
+        self.description += "==================="
+        for jtac in self.game.jtacs:
+            self.description += str(jtac[0]) + " -- Code : " + str(jtac[1]) + "\n"
 
         self.m.set_description_text(self.description)
 

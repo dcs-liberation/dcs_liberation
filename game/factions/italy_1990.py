@@ -44,5 +44,5 @@ Italy_1990 = {
         "Cavour",
     ], "boat":[
         "OliverHazardPerryGroupGenerator"
-    ]
+    ], "has_jtac": True
 }

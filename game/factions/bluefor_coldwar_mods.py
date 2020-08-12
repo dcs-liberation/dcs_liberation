@@ -64,5 +64,5 @@ BLUEFOR_COLDWAR_MODS = {
     ], "requirements": {
         "MB-339A": "http://www.freccetricolorivirtuali.net/",
         "Community A-4E": "https://heclak.github.io/community-a4e-c/",
-    }
+    }, "has_jtac": True
 }

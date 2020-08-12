@@ -48,5 +48,5 @@ Italy_1990_MB339 = {
         "OliverHazardPerryGroupGenerator"
     ], "requirements": {
         "MB-339A": "http://www.freccetricolorivirtuali.net/",
-    }
+    }, "has_jtac": True
 }

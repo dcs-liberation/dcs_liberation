@@ -16,7 +16,7 @@ class QMissionPlanning(QDialog):
         super(QMissionPlanning, self).__init__()
         self.game = game
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setMinimumSize(1000, 420)
+        self.setMinimumSize(1000, 440)
         self.setModal(True)
         self.setWindowTitle("Mission Preparation")
         self.setWindowIcon(EVENT_ICONS["strike"])

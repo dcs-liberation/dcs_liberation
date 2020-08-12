@@ -75,6 +75,7 @@ class Game:
         self.__culling_points = self.compute_conflicts_position()
         self.__frontlineData = []
         self.__destroyed_units = []
+        self.jtacs = []
         self.savepath = ""
 
         self.sanitize_sides()

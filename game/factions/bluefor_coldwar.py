@@ -54,5 +54,5 @@ BLUEFOR_COLDWAR = {
         "LHA-4 Nassau",
         "LHA-5 Peleliu"
     ], "boat": [
-    ]
+    ], "has_jtac": True
 }

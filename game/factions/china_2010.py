@@ -73,5 +73,5 @@ China_2010 = {
         "002 Shandong",
     ], "boat":[
         "Type54GroupGenerator"
-    ]
+    ], "has_jtac": True
 }
