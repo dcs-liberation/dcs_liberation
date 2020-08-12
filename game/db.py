@@ -454,8 +454,7 @@ UNIT_BY_TASK = {
         Ju_88A4,
         B_17G,
         MB_339PAN,
-        Rafale_A_S,
-        UH_60A
+        Rafale_A_S
     ],
     Transport: [
         IL_76MD,
