@@ -396,6 +396,7 @@ UNIT_BY_TASK = {
         MiG_21Bis,
         MiG_29A,
         MiG_29S,
+        MiG_31,
         FA_18C_hornet,
         F_15C,
         F_14B,
@@ -899,6 +900,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     SA342L:COMMON_OVERRIDE,
     SA342Mistral:COMMON_OVERRIDE,
     Mi_8MT:COMMON_OVERRIDE,
+    Mi_24V:COMMON_OVERRIDE,
+    Mi_28N:COMMON_OVERRIDE,
     Ka_50:COMMON_OVERRIDE,
     L_39ZA:COMMON_OVERRIDE,
     L_39C:COMMON_OVERRIDE,
@@ -941,8 +944,6 @@ is livery name as found in mission editor.
 PLANE_LIVERY_OVERRIDES = {
     FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
 }
-
-
 
 """
 Possible time periods for new games
