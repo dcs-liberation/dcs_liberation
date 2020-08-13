@@ -34,6 +34,7 @@ CAP_CAPABLE = [
     MiG_29A,
     MiG_29G,
     MiG_29S,
+    MiG_31,
 
     Su_27,
     J_11A,
@@ -107,6 +108,7 @@ CAS_CAPABLE = [
 
     SA342M,
     SA342L,
+    OH_58D,
 
     AH_64A,
     AH_64D,
