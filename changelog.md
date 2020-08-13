@@ -5,6 +5,7 @@
 
 ## Fixed issues :
 **[Units/Factions]** Fixed OH-58D not being used by AI
+**[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
 
 # 2.0.10
 

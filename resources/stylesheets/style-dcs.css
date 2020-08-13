@@ -85,13 +85,11 @@ QPushButton {
     border: 1px solid #97A9A9;
     color:#fff;
     padding: 6px 10px;
-    cursor: pointer;
     border-radius:2px;
 }
 
 QPushButton:hover {
     background: #6c7b7f;
-    cursor:pointer;
 }
 
 /*btn-primary*/
@@ -101,7 +99,6 @@ QPushButton[style="btn-primary"]{
     color:#fff;
     padding: 6px;
     border-radius:2px;
-    cursor: pointer;
     font-weight:bold;
     text-transform:uppercase;
 }
@@ -114,7 +111,6 @@ QPushButton[style="btn-primary"]:hover{
 QPushButton[style="btn-success"] , QPushButton[style="start-button"]{
     background-color:#82A466;
     color: white;
-    cursor:pointer;
     border-radius:2px;
     font-weight:bold;
     text-transform:uppercase;
@@ -134,7 +130,6 @@ QPushButton[style="btn-success"]:hover , QPushButton[style="start-button"]:hover
 QPushButton[style="btn-buy"]{
     background-color:#82A466;
     color: white;
-    cursor:pointer;
     border-radius:2px;
     font-weight:bold;
     text-transform:uppercase;
@@ -143,7 +138,6 @@ QPushButton[style="btn-buy"]{
 }
 
 QPushButton[style="btn-buy"]:hover{
-    cursor:pointer;
     background:#5C863F;
 }
 
@@ -151,7 +145,6 @@ QPushButton[style="btn-buy"]:hover{
 QPushButton[style="btn-sell"]{
     background-color:#9E3232;
     color: white;
-    cursor:pointer;
     border-radius:2px;
     font-weight:bold;
     text-transform:uppercase;
@@ -160,7 +153,6 @@ QPushButton[style="btn-sell"]{
 }
 
 QPushButton[style="btn-sell"]:hover{
-    cursor:pointer;
     background:#D84545;
 }
 
@@ -169,7 +161,6 @@ QPushButton[style="btn-sell"]:hover{
 QPushButton[style="btn-danger"]{
     background-color:#9E3232;
     color: white;
-    cursor:pointer;
     padding: 6px;
     border-radius:2px;
     border: 1px solid #9E3232;
@@ -191,7 +182,6 @@ QLabel{
 
 QLabel[style="base-title"]{
     font-size: 24px;
-    font-color: #ccc;
 }
 
 QLabel[style="icon-plane"]{
