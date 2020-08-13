@@ -1,3 +1,11 @@
+# 2.0.11
+
+## Features/Improvements :
+**[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
+
+## Fixed issues :
+**[Units/Factions]** Fixed OH-58D not being used by AI
+
 # 2.0.10
 
 ## Features/Improvements :
@@ -21,7 +29,7 @@
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
 * **[Mission Generator]** Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
-* **[Campaign Generator]** Tuned the various existing campaign parameters
+* **[Campaign Generator]** Tuned the various existing campaign parametersj
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
 
 ## Fixed issues :
