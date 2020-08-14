@@ -3,7 +3,7 @@
 ## Features/Improvements :
 **[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
 
-## Fixed issues :
+## Fixed issues : 
 **[Units/Factions]** Fixed OH-58D not being used by AI
 **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
 
