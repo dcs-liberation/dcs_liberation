@@ -186,7 +186,7 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Include JTAC (If available)"), 2, 0)
         self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Enable JTAC smoke markers"), 2, 0)
+        self.gameplayLayout.addWidget(QLabel("Enable JTAC smoke markers"), 3, 0)
         self.gameplayLayout.addWidget(self.jtac_smoke_on, 3, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")

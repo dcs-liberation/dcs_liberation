@@ -201,12 +201,17 @@ class Operation:
             script = script + "\n"
 
             smoke = "true"
-            if hasattr(self.game, "jtac_smoke_on"):
+            print("JTAC")
+            print(self.game.settings.jtac_smoke_on)
+            print(hasattr(self.game, "jtac_smoke_on"))
+            if hasattr(self.game.settings, "jtac_smoke_on"):
                 if not self.game.settings.jtac_smoke_on:
                     smoke = "false"
 
             for jtac in self.game.jtacs:
                 script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", " + smoke + ", \"vehicle\")" + "\n"
+
+                print("\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", " + smoke + ", \"vehicle\")" + "\n")
 
             load_autolase.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_autolase)

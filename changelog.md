@@ -2,6 +2,7 @@
 
 ## Features/Improvements :
 **[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
+**[Mission Generator]** Added a parameter to choose whether the JTACs should use smoke markers or not
 
 ## Fixed issues : 
 **[Units/Factions]** Fixed OH-58D not being used by AI
