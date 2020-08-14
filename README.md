@@ -2,11 +2,11 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/KhopaDCSL)
 
-![GitHub All Releases](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Total%20downloads)
+[![Download](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Total%20downloads)](https://github.com/Khopa/dcs_liberation/releases)
 
-![GitHub issues](https://img.shields.io/github/issues/khopa/dcs_liberation)
+[![GitHub issues](https://img.shields.io/github/issues/khopa/dcs_liberation)](https://github.com/Khopa/dcs_liberation/issues)
 
-![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)
+[![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
 ## About DCS Liberation
 DCS Liberation is a [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) turn based single-player semi dynamic campaign. 
