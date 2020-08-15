@@ -5,8 +5,10 @@
 **[Mission Generator]** Added a parameter to choose whether the JTACs should use smoke markers or not
 
 ## Fixed issues : 
-**[Units/Factions]** Fixed OH-58D not being used by AI
 **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
+**[Units/Factions]** Fixed mission generation not working with Libya faction
+**[Units/Factions]** Fixed OH-58D not being used by AI
+**[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry) 
 
 # 2.0.10
 
