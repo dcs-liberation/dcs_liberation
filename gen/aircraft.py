@@ -431,6 +431,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(True))
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
+        group.points[0].tasks.append(OptRestrictAfterburner(True))
 
         if hasattr(flight.unit_type, 'eplrs'):
             if flight.unit_type.eplrs:
