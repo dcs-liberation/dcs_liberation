@@ -20,13 +20,7 @@ Latest release is available here : https://github.com/Khopa/dcs_liberation/relea
 
 ## Resources
 
-* [Getting Started](https://github.com/Khopa/dcs_liberation/wiki/Getting-started)
-
-* [Tutorials](https://github.com/Khopa/dcs_liberation/wiki/Tutorial-01-:-UI)
-
-* [Developer/Contributor Guide]()(TODO)
-
-* [Hosting DCS Liberation generated missions on a dedicated server]()(TODO)
+Tutorials, contributors and developer's guides are available in the project's [Wiki](https://github.com/Khopa/dcs_liberation/wiki/)
 
 ## Special Thanks
 
