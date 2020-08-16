@@ -4,16 +4,6 @@ from userdata.debriefing import Debriefing
 
 
 class FrontlineAttackEvent(Event):
-    TARGET_VARIETY = 2
-    TARGET_AMOUNT_FACTOR = 0.5
-    ATTACKER_AMOUNT_FACTOR = 0.4
-    ATTACKER_DEFENDER_FACTOR = 0.7
-    STRENGTH_INFLUENCE = 0.3
-    SUCCESS_FACTOR = 1.5
-
-    @property
-    def threat_description(self):
-        return "{} vehicles".format(self.to_cp.base.assemble_count())
 
     @property
     def tasks(self) -> typing.Collection[typing.Type[Task]]:
@@ -25,14 +15,6 @@ class FrontlineAttackEvent(Event):
     @property
     def global_cp_available(self) -> bool:
         return True
-
-    def flight_name(self, for_task: typing.Type[Task]) -> str:
-        if for_task == CAS:
-            return "CAS flight"
-        elif for_task == CAP:
-            return "CAP flight"
-        elif for_task == PinpointStrike:
-            return "Ground attack"
 
     def __str__(self):
         return "Frontline attack"
