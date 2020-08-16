@@ -17,6 +17,7 @@ Russia_1990 = {
 
         Su_24M,
         Su_25,
+        Ka_50,
 
         IL_76MD,
         IL_78M,
