@@ -46,6 +46,22 @@ class TriggersGenerator:
         """
         Set airbase initial coalition
         """
+
+        # Empty neutrals airports
+        cp_ids = [cp.id for cp in self.game.theater.controlpoints]
+        for airport in self.mission.terrain.airport_list():
+            if airport.id not in cp_ids:
+                airport.unlimited_fuel = False
+                airport.unlimited_munitions = False
+                airport.unlimited_aircrafts = False
+                airport.gasoline_init = 0
+                airport.methanol_mixture_init = 0
+                airport.diesel_init = 0
+                airport.jet_init = 0
+                airport.operating_level_air = 0
+                airport.operating_level_equipment = 0
+                airport.operating_level_fuel = 0
+
         for cp in self.game.theater.controlpoints:
             if cp.is_global:
                 continue

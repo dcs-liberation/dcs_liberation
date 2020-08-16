@@ -7,12 +7,14 @@ Russia_2010 = {
     "country": "Russia",
     "side": "red",
     "units": [
-        MiG_23MLD,
-        Su_25,
+
         Su_27,
+        Su_30,
         Su_33,
         MiG_29S,
+        MiG_31,
 
+        Su_25,
         Su_25T,
         Su_34,
         Su_24M,
@@ -27,6 +29,8 @@ Russia_2010 = {
 
         Ka_50,
         Mi_8MT,
+        Mi_24V,
+        Mi_28N,
 
         AirDefence.SAM_SA_19_Tunguska_2S6,
         AirDefence.SAM_SA_11_Buk_LN_9A310M1,

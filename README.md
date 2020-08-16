@@ -1,9 +1,22 @@
 ![Logo](https://i.imgur.com/c2k18E1.png)
 
-[DCS World](https://www.digitalcombatsimulator.com/en/products/world/) single-player semi dynamic campaign. 
+[![Download](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Download)](https://github.com/Khopa/dcs_liberation/releases)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/KhopaDCSL)
+[![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
-DCS Liberation uses [pydcs](http://github.com/pydcs/dcs) for mission generation
-and [Mist](https://github.com/mrSkortch/MissionScriptingTools) for mission scripting
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/khopa/dcs_liberation)](https://github.com/Khopa/dcs_liberation)
+[![GitHub issues](https://img.shields.io/github/issues/khopa/dcs_liberation)](https://github.com/Khopa/dcs_liberation/issues)
+![GitHub stars](https://img.shields.io/github/stars/khopa/dcs_liberation?style=social)
+
+## About DCS Liberation
+DCS Liberation is a [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) turn based single-player semi dynamic campaign. 
+It is an external program that generates full and complex DCS missions and manage a persistent combat environment.  
+
+![Logo](https://imgur.com/B6tvlBJ.png)
+
+## Downloads
+
+Latest release is available here : https://github.com/Khopa/dcs_liberation/releases
 
 ## Resources
 
@@ -11,15 +24,16 @@ and [Mist](https://github.com/mrSkortch/MissionScriptingTools) for mission scrip
 
 * [Tutorials](https://github.com/Khopa/dcs_liberation/wiki/Tutorial-01-:-UI)
 
-## Development Guide (WIP)
+* [Developer/Contributor Guide]()(TODO)
 
-Develop is the main development branch which is updated regularly.
-Master branch will be updated less regularly and on release on new version. 
+* [Hosting DCS Liberation generated missions on a dedicated server]()(TODO)
 
-Other branch might be used for feature development.
+## Special Thanks
 
-**Note :**
-If you have errors with pydcs object not being defined, please check that you have the latest version installed. Sometimes the dev branch will use an even more recent version of pydcs that has not been published yet, so you might want to download pydcs directly from the pydcs repository, and copy it in your Python (or virtual env) ./Libs/site-package directory.
+First, a big thanks to shdwp, for starting the original DCS Liberation project. 
 
+Then, DCS Liberation uses [pydcs](http://github.com/pydcs/dcs) for mission generation, and nothing would be possible without this.
+It also uses the popular [Mist](https://github.com/mrSkortch/MissionScriptingTools) lua framework for mission scripting.
+And for the JTAC feature, DCS Liberation embed Ciribob's JTAC Autolase [script](https://github.com/ciribob/DCS-JTACAutoLaze).
 
-
+Please also show some support to these projects ! 

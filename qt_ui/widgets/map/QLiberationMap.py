@@ -15,7 +15,6 @@ from game.event import UnitsDeliveryEvent, Event, ControlPointType
 from gen import Conflict
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
-from qt_ui.widgets.map.QMapEvent import QMapEvent
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint

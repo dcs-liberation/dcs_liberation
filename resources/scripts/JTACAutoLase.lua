@@ -554,7 +554,7 @@ function getJTACStatus()
         end
     end
 
-    notify(message, 10)
+    notify(message, 25)
 end
 
 

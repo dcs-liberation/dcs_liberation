@@ -8,6 +8,7 @@ USA_2005 = {
     "side": "blue",
     "units": [
         F_15C,
+        F_15E,
         F_14B,
         FA_18C_hornet,
         F_16C_50,
@@ -21,6 +22,7 @@ USA_2005 = {
 
         UH_1H,
         AH_64D,
+        OH_58D,
 
         Armor.MBT_M1A2_Abrams,
         Armor.ATGM_M1134_Stryker,

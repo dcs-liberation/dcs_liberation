@@ -1,3 +1,25 @@
+# 2.0.11
+
+## Features/Improvements :
+
+* **[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
+* **[Units/Factions]** Added F-15E to USA 2005 and USA 1990 factions.
+* **[Mission Generator]** Added a parameter to choose whether the JTACs should use smoke markers or not
+
+## Fixed issues : 
+
+* **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
+* **[Units/Factions]** Fixed mission generation not working with Libya faction
+* **[Units/Factions]** Fixed OH-58D not being used by AI
+* **[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
+* **[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
+* **[Mission Generator]** AI will be configured to limit afterburner usage
+* **[Mission Generator]** JTAC will not use laser codes above 1688 anymore
+* **[Mission Generator]** JTAC units were misconfigured and would not be invisible/immortal. 
+* **[Mission Generator]** Increased JTAC status message duration to 25s, so you have more time to enter coordinates;
+* **[Mission Generator]** Destroyed units carcass will not appear on airfields to avoid having a destroyed vehicle blocking a runway or taxiway.
+
+
 # 2.0.10
 
 ## Features/Improvements :
@@ -10,7 +32,7 @@
 * **[Units/Factions/Mods]** Added Rafale AI mod support
 * **[Units/Factions/Mods]** Added faction "France Modded" with units from frenchpack v3.5 mod
 * **[Units/Factions/Mods]** Added faction "Insurgent modded" with Insurgent units from frenchpack v3.5 mod (Toyota truck)
-* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors
+* **[Units/Factions/Mods]** Added factions Canada 2005, Australia 2005, Japan 2005, USA Aggressors, PMC
 * **[New Game Wizard]** Added the list of required mods for modded factions.
 * **[New Game Wizard]** No more RED vs BLUE opposing faction restrictions.
 * **[New Game Wizard]** New campaign generation settings added : No aircraft carrier, no lha, no navy, invert map starting positions.
@@ -19,6 +41,7 @@
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
+* **[Mission Generator]** Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
 * **[Campaign Generator]** Tuned the various existing campaign parameters
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 

@@ -100,16 +100,16 @@ class GroundConflictGenerator:
         # Add JTAC
         if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and self.game.settings.include_jtac_if_available:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
-            code = 1688 + len(self.game.jtacs)
+            code = 1688 - len(self.game.jtacs)
             jtac = self.mission.flight_group(country=self.mission.country(self.game.player_country),
                                              name=n,
                                              aircraft_type=MQ_9_Reaper,
                                              position=position[0],
                                              airport=None,
                                              altitude=5000)
-            jtac.points[0].tasks.append(OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle))
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
+            jtac.points[0].tasks.append(OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle))
             self.game.jtacs.append(("Frontline " + self.conflict.from_cp.name + "/" + self.conflict.to_cp.name, code, n))
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):

@@ -72,9 +72,6 @@ class Operation:
         self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
-        player_country = self.from_cp.captured and self.attacker_country or self.defender_country
-        enemy_country = self.from_cp.captured and self.defender_country or self.attacker_country
-
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
@@ -202,8 +199,14 @@ class Operation:
 
             script = f.read()
             script = script + "\n"
+
+            smoke = "true"
+            if hasattr(self.game.settings, "jtac_smoke_on"):
+                if not self.game.settings.jtac_smoke_on:
+                    smoke = "false"
+
             for jtac in self.game.jtacs:
-                script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", true, \"vehicle\")" + "\n"
+                script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", " + smoke + ", \"vehicle\")" + "\n"
 
             load_autolase.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_autolase)

@@ -34,6 +34,7 @@ CAP_CAPABLE = [
     MiG_29A,
     MiG_29G,
     MiG_29S,
+    MiG_31,
 
     Su_27,
     J_11A,
@@ -49,6 +50,7 @@ CAP_CAPABLE = [
     F_5E_3,
     F_14B,
     F_15C,
+    F_15E,
     F_16C_50,
     FA_18C_hornet,
 
@@ -97,6 +99,7 @@ CAS_CAPABLE = [
     F_86F_Sabre,
     F_5E_3,
     F_14B,
+    F_15E,
     F_16C_50,
     FA_18C_hornet,
 
@@ -107,6 +110,7 @@ CAS_CAPABLE = [
 
     SA342M,
     SA342L,
+    OH_58D,
 
     AH_64A,
     AH_64D,
@@ -138,6 +142,7 @@ CAS_CAPABLE = [
 SEAD_CAPABLE = [
     F_4E,
     FA_18C_hornet,
+    F_15E,
     # F_16C_50, Not yet
     AV8BNA,
     JF_17,
@@ -178,6 +183,7 @@ STRIKE_CAPABLE = [
     F_86F_Sabre,
     F_5E_3,
     F_14B,
+    F_15E,
     F_16C_50,
     FA_18C_hornet,
 
@@ -207,6 +213,7 @@ ANTISHIP_CAPABLE = [
     Su_24M,
     Su_17M4,
     F_A_18C,
+    F_15E,
     AV8BNA,
     JF_17,
     F_16C_50,

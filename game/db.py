@@ -31,7 +31,7 @@ from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
 from game.factions.japan_2005 import Japan_2005
-from game.factions.libya_2011 import Lybia_2011
+from game.factions.libya_2011 import Libya_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.pakistan_2015 import Pakistan_2015
@@ -166,13 +166,14 @@ PRICES = {
 
     AV8BNA: 14,
     M_2000C: 16,
-    Mirage_2000_5: 22,
-    FA_18C_hornet: 24,
-    F_15C: 26,
+    Mirage_2000_5: 20,
+    FA_18C_hornet: 22,
+    F_15C: 22,
+    F_15E: 24,
     F_16C_50: 20,
-    F_14B: 22,
-    Tornado_IDS: 24,
-    Tornado_GR4: 24,
+    F_14B: 24,
+    Tornado_IDS: 20,
+    Tornado_GR4: 20,
 
     # bomber
     Su_17M4: 10,
@@ -396,6 +397,7 @@ UNIT_BY_TASK = {
         MiG_21Bis,
         MiG_29A,
         MiG_29S,
+        MiG_31,
         FA_18C_hornet,
         F_15C,
         F_14B,
@@ -420,6 +422,7 @@ UNIT_BY_TASK = {
         SA342Mistral
     ],
     CAS: [
+        F_15E,
         F_86F_Sabre,
         MiG_15bis,
         L_39ZA,
@@ -756,7 +759,7 @@ FACTIONS = {
 
     "Netherlands 1990": Netherlands_1990,
 
-    "United Kingdown 1990": UnitedKingdom_1990,
+    "United Kingdom 1990": UnitedKingdom_1990,
 
     "Spain 1990": Spain_1990,
 
@@ -783,7 +786,7 @@ FACTIONS = {
 
     "India 2010": India_2010,
 
-    "Lybia 2011": Lybia_2011,
+    "Libya 2011": Libya_2011,
 
     "Pakistan 2015": Pakistan_2015,
 
@@ -872,6 +875,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     F_5E_3: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
+    F_15E: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
     M_2000C: COMMON_OVERRIDE,
@@ -899,6 +903,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     SA342L:COMMON_OVERRIDE,
     SA342Mistral:COMMON_OVERRIDE,
     Mi_8MT:COMMON_OVERRIDE,
+    Mi_24V:COMMON_OVERRIDE,
+    Mi_28N:COMMON_OVERRIDE,
     Ka_50:COMMON_OVERRIDE,
     L_39ZA:COMMON_OVERRIDE,
     L_39C:COMMON_OVERRIDE,
@@ -941,8 +947,6 @@ is livery name as found in mission editor.
 PLANE_LIVERY_OVERRIDES = {
     FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
 }
-
-
 
 """
 Possible time periods for new games

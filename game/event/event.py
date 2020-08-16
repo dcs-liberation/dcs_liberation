@@ -66,22 +66,7 @@ class Event:
             return self.departure_cp
 
     @property
-    def threat_description(self) -> str:
-        return ""
-
-    def flight_name(self, for_task: typing.Type[typing.Type[Task]]) -> str:
-        return "Flight"
-
-    @property
     def tasks(self) -> typing.Collection[typing.Type[Task]]:
-        return []
-
-    @property
-    def ai_banned_tasks(self) -> typing.Collection[typing.Type[Task]]:
-        return []
-
-    @property
-    def player_banned_tasks(self) -> typing.Collection[typing.Type[Task]]:
         return []
 
     @property
@@ -255,7 +240,6 @@ class Event:
 
         # Destroyed units carcass
         # -------------------------
-
         for destroyed_unit in debriefing.destroyed_units:
             self.game.add_destroyed_units(destroyed_unit)
 

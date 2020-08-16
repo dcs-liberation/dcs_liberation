@@ -378,8 +378,10 @@ class Game:
 
         return points
 
-    def add_destroyed_units(self, destroyed_unit_data):
-        self.__destroyed_units.append(destroyed_unit_data)
+    def add_destroyed_units(self, data):
+        pos = Point(data["x"], data["z"])
+        if self.theater.is_on_land(pos):
+            self.__destroyed_units.append(data)
 
     def get_destroyed_units(self):
         return self.__destroyed_units
