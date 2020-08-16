@@ -759,7 +759,7 @@ FACTIONS = {
 
     "Netherlands 1990": Netherlands_1990,
 
-    "United Kingdown 1990": UnitedKingdom_1990,
+    "United Kingdom 1990": UnitedKingdom_1990,
 
     "Spain 1990": Spain_1990,
 
