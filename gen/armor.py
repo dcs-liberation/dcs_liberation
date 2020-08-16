@@ -107,9 +107,9 @@ class GroundConflictGenerator:
                                              position=position[0],
                                              airport=None,
                                              altitude=5000)
-            jtac.points[0].tasks.append(OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle))
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
+            jtac.points[0].tasks.append(OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle))
             self.game.jtacs.append(("Frontline " + self.conflict.from_cp.name + "/" + self.conflict.to_cp.name, code, n))
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
