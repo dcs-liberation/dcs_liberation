@@ -11,6 +11,7 @@
 * **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
 * **[Units/Factions]** Fixed mission generation not working with Libya faction
 * **[Units/Factions]** Fixed OH-58D not being used by AI
+* **[Units/Factions]** Typo in UK 1990 name (fixed by bwRavencl)
 * **[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
 * **[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
 * **[Mission Generator]** AI will be configured to limit afterburner usage
