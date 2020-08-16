@@ -31,7 +31,7 @@ from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
 from game.factions.japan_2005 import Japan_2005
-from game.factions.libya_2011 import Lybia_2011
+from game.factions.libya_2011 import Libya_2011
 from game.factions.netherlands_1990 import Netherlands_1990
 from game.factions.north_korea_2000 import NorthKorea_2000
 from game.factions.pakistan_2015 import Pakistan_2015
@@ -784,7 +784,7 @@ FACTIONS = {
 
     "India 2010": India_2010,
 
-    "Lybia 2011": Lybia_2011,
+    "Libya 2011": Libya_2011,
 
     "Pakistan 2015": Pakistan_2015,
 
