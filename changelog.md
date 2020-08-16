@@ -1,16 +1,19 @@
 # 2.0.11
 
 ## Features/Improvements :
-**[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
-**[Mission Generator]** Added a parameter to choose whether the JTACs should use smoke markers or not
+
+* **[Units/Factions]** Added Mig-31, Su-30, Mi-24V, Mi-28N to Russia 2010 faction.
+* **[Units/Factions]** Added F-15E to USA 2005 and USA 1990 factions.
+* **[Mission Generator]** Added a parameter to choose whether the JTACs should use smoke markers or not
 
 ## Fixed issues : 
-**[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
-**[Units/Factions]** Fixed mission generation not working with Libya faction
-**[Units/Factions]** Fixed OH-58D not being used by AI
-**[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
-**[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
-**[Mission Generator]** Destroyed units carcass will not appear on airfields to avoid having a destroyed vehicle blocking a runway or taxiway.
+
+* **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
+* **[Units/Factions]** Fixed mission generation not working with Libya faction
+* **[Units/Factions]** Fixed OH-58D not being used by AI
+* **[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
+* **[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
+* **[Mission Generator]** Destroyed units carcass will not appear on airfields to avoid having a destroyed vehicle blocking a runway or taxiway.
 
 # 2.0.10
 

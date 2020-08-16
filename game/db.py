@@ -166,13 +166,14 @@ PRICES = {
 
     AV8BNA: 14,
     M_2000C: 16,
-    Mirage_2000_5: 22,
-    FA_18C_hornet: 24,
-    F_15C: 26,
+    Mirage_2000_5: 20,
+    FA_18C_hornet: 22,
+    F_15C: 22,
+    F_15E: 24,
     F_16C_50: 20,
-    F_14B: 22,
-    Tornado_IDS: 24,
-    Tornado_GR4: 24,
+    F_14B: 24,
+    Tornado_IDS: 20,
+    Tornado_GR4: 20,
 
     # bomber
     Su_17M4: 10,
@@ -421,6 +422,7 @@ UNIT_BY_TASK = {
         SA342Mistral
     ],
     CAS: [
+        F_15E,
         F_86F_Sabre,
         MiG_15bis,
         L_39ZA,
@@ -873,6 +875,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     F_5E_3: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
+    F_15E: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
     M_2000C: COMMON_OVERRIDE,

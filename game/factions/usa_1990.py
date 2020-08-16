@@ -8,6 +8,7 @@ USA_1990 = {
     "side": "blue",
     "units": [
         F_15C,
+        F_15E,
         F_14B,
         FA_18C_hornet,
 
@@ -23,6 +24,7 @@ USA_1990 = {
 
         UH_1H,
         AH_64A,
+        OH_58D,
 
         Armor.MBT_M1A2_Abrams,
         Armor.IFV_LAV_25,
