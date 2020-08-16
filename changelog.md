@@ -8,7 +8,9 @@
 **[Units/Factions]** Fixed big performance issue in new release UI that occurred only when running the .exe
 **[Units/Factions]** Fixed mission generation not working with Libya faction
 **[Units/Factions]** Fixed OH-58D not being used by AI
-**[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry) 
+**[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
+**[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
+**[Mission Generator]** Destroyed units carcass will not appear on airfields to avoid having a destroyed vehicle blocking a runway or taxiway.
 
 # 2.0.10
 
@@ -33,7 +35,7 @@
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
 * **[Mission Generator]** Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
-* **[Campaign Generator]** Tuned the various existing campaign parametersj
+* **[Campaign Generator]** Tuned the various existing campaign parameters
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
 
 ## Fixed issues :
