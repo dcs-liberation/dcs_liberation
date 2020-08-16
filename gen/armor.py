@@ -100,7 +100,7 @@ class GroundConflictGenerator:
         # Add JTAC
         if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and self.game.settings.include_jtac_if_available:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
-            code = 1688 + len(self.game.jtacs)
+            code = 1688 - len(self.game.jtacs)
             jtac = self.mission.flight_group(country=self.mission.country(self.game.player_country),
                                              name=n,
                                              aircraft_type=MQ_9_Reaper,
