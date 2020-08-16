@@ -13,7 +13,12 @@
 * **[Units/Factions]** Fixed OH-58D not being used by AI
 * **[Units/Factions]** Fixed Tanker Tacan channel not being the same as the briefing one. (Sorry)
 * **[Mission Generator]** Neutral airbases services will now be disabled. (Not possible to refuel or re-arm there)
+* **[Mission Generator]** AI will be configured to limit afterburner usage
+* **[Mission Generator]** JTAC will not use laser codes above 1688 anymore
+* **[Mission Generator]** JTAC units were misconfigured and would not be invisible/immortal to AI. 
+* **[Mission Generator]** Increased JTAC status message duration to 25s, so you have more time to enter coordinates;
 * **[Mission Generator]** Destroyed units carcass will not appear on airfields to avoid having a destroyed vehicle blocking a runway or taxiway.
+
 
 # 2.0.10
 
