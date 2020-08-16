@@ -14,19 +14,6 @@ class FrontlineAttackOperation(Operation):
     attackers = None  # type: db.ArmorDict
     defenders = None  # type: db.ArmorDict
 
-    def setup(self,
-              defenders: db.ArmorDict,
-              attackers: db.ArmorDict,
-              strikegroup: db.AssignedUnitsDict,
-              escort: db.AssignedUnitsDict,
-              interceptors: db.AssignedUnitsDict):
-        self.strikegroup = strikegroup
-        self.escort = escort
-        self.interceptors = interceptors
-
-        self.defenders = defenders
-        self.attackers = attackers
-
     def prepare(self, terrain: Terrain, is_quick: bool):
         super(FrontlineAttackOperation, self).prepare(terrain, is_quick)
         if self.defender_name == self.game.player_name:

@@ -38,20 +38,7 @@ class FrontlineAttackEvent(Event):
         return "Frontline attack"
 
     def is_successfull(self, debriefing: Debriefing):
-
-        if self.game.player_name == self.attacker_name:
-            attacker_country = self.game.player_country
-            defender_country = self.game.enemy_country
-        else:
-            attacker_country = self.game.enemy_country
-            defender_country = self.game.player_country
-
-        # TODO : Rework
-        #alive_attackers = sum([v for k, v in debriefing.alive_units.get(attacker_country, {}).items() if db.unit_task(k) == PinpointStrike])
-        #alive_defenders = sum([v for k, v in debriefing.alive_units.get(defender_country, {}).items() if db.unit_task(k) == PinpointStrike])
-        #attackers_success = (float(alive_attackers) / (alive_defenders + 0.01)) > self.SUCCESS_FACTOR
         attackers_success = True
-
         if self.from_cp.captured:
             return attackers_success
         else:
@@ -65,46 +52,20 @@ class FrontlineAttackEvent(Event):
             self.to_cp.base.affect_strength(-0.1)
 
     def player_attacking(self, flights: db.TaskForceDict):
-        # assert CAS in flights and CAP in flights and len(flights) == 2, "Invalid flights"
-
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       from_cp=self.from_cp,
                                       departure_cp=self.departure_cp,
                                       to_cp=self.to_cp)
-
-        defenders = self.to_cp.base.assemble_attack()
-        max_attackers = int(math.ceil(sum(defenders.values()) * self.ATTACKER_DEFENDER_FACTOR))
-        attackers = db.unitdict_restrict_count(self.from_cp.base.assemble_attack(), max_attackers)
-        op.setup(defenders=defenders,
-                 attackers=attackers,
-                 strikegroup=flights[CAS],
-                 escort=flights[CAP],
-                 interceptors=assigned_units_from(self.to_cp.base.scramble_interceptors(1)))
-
         self.operation = op
 
     def player_defending(self, flights: db.TaskForceDict):
-        # assert CAP in flights and len(flights) == 1, "Invalid flights"
-
         op = FrontlineAttackOperation(game=self.game,
                                       attacker_name=self.attacker_name,
                                       defender_name=self.defender_name,
                                       from_cp=self.from_cp,
                                       departure_cp=self.departure_cp,
                                       to_cp=self.to_cp)
-
-        defenders = self.to_cp.base.assemble_attack()
-
-        max_attackers = int(math.ceil(sum(defenders.values())))
-        attackers = db.unitdict_restrict_count(self.from_cp.base.assemble_attack(), max_attackers)
-
-        op.setup(defenders=defenders,
-                 attackers=attackers,
-                 strikegroup=assigned_units_from(self.from_cp.base.scramble_cas(1)),
-                 escort=assigned_units_from(self.from_cp.base.scramble_sweep(1)),
-                 interceptors=flights[CAP])
-
         self.operation = op
 
