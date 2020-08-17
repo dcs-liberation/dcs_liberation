@@ -7,6 +7,7 @@ from game.event import ControlPointType
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
+from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
 from theater import ControlPoint
 
 
@@ -19,6 +20,7 @@ class QBaseMenu2(QDialog):
         self.cp = cp
         self.game = game
         self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+        self.objectName = "menuDialogue"
 
         # Widgets
         self.qbase_menu_tab = QBaseMenuTabs(cp, game)
@@ -58,7 +60,6 @@ class QBaseMenu2(QDialog):
         title.setProperty("style", "base-title")
         unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_planes, self.cp.base.total_armor,
                                                             "Available" if self.cp.has_runway() else "Unavailable"))
-
         self.topLayout.addWidget(title)
         self.topLayout.addWidget(unitsPower)
         self.topLayout.setAlignment(Qt.AlignTop)
@@ -69,7 +70,11 @@ class QBaseMenu2(QDialog):
         self.mainLayout.addWidget(header, 0, 0)
         self.mainLayout.addWidget(self.topLayoutWidget, 1, 0)
         self.mainLayout.addWidget(self.qbase_menu_tab, 2, 0)
-
+        totalBudget = QLabel(QRecruitBehaviour.BUDGET_FORMAT.format(self.game.budget))
+        totalBudget.setObjectName("budgetField")
+        totalBudget.setAlignment(Qt.AlignRight | Qt.AlignBottom)
+        totalBudget.setProperty("style", "budget-label")
+        self.mainLayout.addWidget(totalBudget)
         self.setLayout(self.mainLayout)
 
     def closeEvent(self, closeEvent:QCloseEvent):
