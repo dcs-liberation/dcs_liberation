@@ -1,6 +1,6 @@
 ![Logo](https://i.imgur.com/c2k18E1.png)
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/KhopaDCSL)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal)](https://www.paypal.com/paypalme/KhopaDCSL)
 [![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
 
 [![Download](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Download)](https://github.com/Khopa/dcs_liberation/releases)
