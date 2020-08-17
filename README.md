@@ -4,6 +4,7 @@
 [![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange)](https://patreon.com/khopa)
 
 [![Download](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Download)](https://github.com/Khopa/dcs_liberation/releases)
+
 [![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/khopa/dcs_liberation)](https://github.com/Khopa/dcs_liberation)
