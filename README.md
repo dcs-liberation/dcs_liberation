@@ -1,7 +1,10 @@
 ![Logo](https://i.imgur.com/c2k18E1.png)
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?logo=paypal)](https://www.paypal.com/paypalme/KhopaDCSL)
+[![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
+
 [![Download](https://img.shields.io/github/downloads/khopa/dcs_liberation/total?label=Download)](https://github.com/Khopa/dcs_liberation/releases)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/KhopaDCSL)
+
 [![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/khopa/dcs_liberation)](https://github.com/Khopa/dcs_liberation)
@@ -20,13 +23,7 @@ Latest release is available here : https://github.com/Khopa/dcs_liberation/relea
 
 ## Resources
 
-* [Getting Started](https://github.com/Khopa/dcs_liberation/wiki/Getting-started)
-
-* [Tutorials](https://github.com/Khopa/dcs_liberation/wiki/Tutorial-01-:-UI)
-
-* [Developer/Contributor Guide]()(TODO)
-
-* [Hosting DCS Liberation generated missions on a dedicated server]()(TODO)
+Tutorials, contributors and developer's guides are available in the project's [Wiki](https://github.com/Khopa/dcs_liberation/wiki/)
 
 ## Special Thanks
 
