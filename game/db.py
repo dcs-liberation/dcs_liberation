@@ -27,6 +27,8 @@ from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
 from game.factions.insurgent_modded import Insurgent_modded
 from game.factions.iran_2015 import Iran_2015
+from game.factions.israel_1948 import Israel_1948
+from game.factions.israel_1973 import Israel_1973, Israel_1973_NO_WW2_UNITS
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
@@ -45,6 +47,7 @@ from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
 from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
+from game.factions.syria import Syria_2011, Syria_1967, Syria_1967_WW2_Weapons, Syria_1973, Arab_Armies_1948
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1944 import UK_1944
@@ -767,6 +770,14 @@ FACTIONS = {
     "Italy 1990 (With MB339)": Italy_1990_MB339,
 
     "Israel 2000": Israel_2000,
+    "Israel 1973 (WW2 Pack)": Israel_1973,
+    "Israel 1973": Israel_1973_NO_WW2_UNITS,
+    "Israel 1948": Israel_1948,
+
+    "Arab Armies 1973": Syria_1973,
+    "Arab Armies 1967 (WW2 Pack)": Syria_1967,
+    "Arab Armies 1967": Syria_1967_WW2_Weapons,
+    "Arab League 1948": Arab_Armies_1948,
 
     "China 2010": China_2010,
 
@@ -787,6 +798,9 @@ FACTIONS = {
     "India 2010": India_2010,
 
     "Libya 2011": Libya_2011,
+
+    "Syria 2011": Syria_2011,
+
 
     "Pakistan 2015": Pakistan_2015,
 

@@ -34,7 +34,9 @@ UK_1944 = {
         AirDefence.AAA_Bofors_40mm,
     ], "shorad":[
         AirDefence.AAA_Bofors_40mm,
-    ],
+    ],"requirements":{
+        "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/",
+    },
     "objects": WW2_ALLIES_BUILDINGS,
     "doctrine": WWII_DOCTRINE,
     "boat": ["WW2LSTGroupGenerator"],
