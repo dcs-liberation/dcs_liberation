@@ -12,10 +12,9 @@ from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.preferences import QLiberationPreferences
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
-from qt_ui.windows.QNewGameWizard import NewGameWizard
+from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import QLiberationPreferencesWindow
 from userdata import persistency

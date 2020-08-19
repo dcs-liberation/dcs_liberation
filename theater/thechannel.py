@@ -4,7 +4,7 @@ from .conflicttheater import *
 from .landmap import *
 
 
-class ChannelTheater(ConflictTheater):
+class Dunkirk(ConflictTheater):
     terrain = dcs.terrain.TheChannel()
     overview_image = "thechannel.gif"
     reference_points = {(thechannel.Abbeville_Drucat.position.x, thechannel.Abbeville_Drucat.position.y): (2400, 4100),
@@ -18,7 +18,7 @@ class ChannelTheater(ConflictTheater):
     }
 
     def __init__(self):
-        super(ChannelTheater, self).__init__()
+        super(Dunkirk, self).__init__()
 
         self.abeville = ControlPoint.from_airport(thechannel.Abbeville_Drucat, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         #self.detling = ControlPoint.from_airport(thechannel.Detling, LAND, SIZE_SMALL, IMPORTANCE_LOW)
@@ -57,7 +57,7 @@ class ChannelTheater(ConflictTheater):
         self.abeville.captured_invert = True
 
 
-class ChannelTheaterComplete(ConflictTheater):
+class BattleOfBritain(ConflictTheater):
     terrain = dcs.terrain.TheChannel()
     overview_image = "thechannel.gif"
     reference_points = {(thechannel.Abbeville_Drucat.position.x, thechannel.Abbeville_Drucat.position.y): (2400, 4100),
@@ -71,7 +71,7 @@ class ChannelTheaterComplete(ConflictTheater):
     }
 
     def __init__(self):
-        super(ChannelTheaterComplete, self).__init__()
+        super(BattleOfBritain, self).__init__()
 
         self.abeville = ControlPoint.from_airport(thechannel.Abbeville_Drucat, LAND, SIZE_SMALL, IMPORTANCE_LOW)
         #self.detling = ControlPoint.from_airport(thechannel.Detling, LAND, SIZE_SMALL, IMPORTANCE_LOW)
