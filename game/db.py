@@ -47,7 +47,7 @@ from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
 from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
-from game.factions.syria import Syria_2011, Syria_1967, Syria_1967_WW2_Weapons, Syria_1973, Arab_Armies_1948
+from game.factions.syria import Syria_2011, Syria_1967, Syria_1967_WW2_Weapons, Syria_1973, Arab_Armies_1948, Syria_1982
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1944 import UK_1944
@@ -143,6 +143,7 @@ PRICES = {
     MiG_29A: 18,
     MiG_29S: 20,
     MiG_29G: 18,
+    MiG_25PD: 20,
     MiG_31: 30,
     J_11A: 26,
     JF_17: 20,
@@ -394,11 +395,12 @@ Following tasks are present:
 UNIT_BY_TASK = {
     CAP: [
         F_5E_3,
-        MiG_23MLD,
         Su_27,
         Su_33,
         MiG_19P,
         MiG_21Bis,
+        MiG_23MLD,
+        MiG_25PD,
         MiG_29A,
         MiG_29S,
         MiG_31,
@@ -777,6 +779,7 @@ FACTIONS = {
     "Israel 1973": Israel_1973_NO_WW2_UNITS,
     "Israel 1948": Israel_1948,
 
+    "Arab Armies 1982": Syria_1982,
     "Arab Armies 1973": Syria_1973,
     "Arab Armies 1967 (WW2 Pack)": Syria_1967,
     "Arab Armies 1967": Syria_1967_WW2_Weapons,

@@ -31,6 +31,7 @@ CAP_CAPABLE = [
     MiG_19P,
     MiG_21Bis,
     MiG_23MLD,
+    MiG_25PD,
     MiG_29A,
     MiG_29G,
     MiG_29S,

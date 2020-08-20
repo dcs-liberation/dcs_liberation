@@ -102,6 +102,51 @@ Syria_1973 = {
     ]
 }
 
+
+Syria_1982 = {
+    "country": "Syria",
+    "side": "red",
+    "units": [
+
+        MiG_21Bis,
+        MiG_23MLD,
+        MiG_25PD,
+        MiG_19P,
+
+        Su_17M4,  # Standing as Su-7
+        Mi_8MT,
+
+        IL_76MD,
+        IL_78M,
+        An_26B,
+        An_30M,
+        Yak_40,
+
+        AirDefence.SAM_SA_6_Kub_LN_2P25,
+        AirDefence.SAM_SA_3_S_125_LN_5P73,
+        AirDefence.SAM_SA_2_LN_SM_90,
+
+        Armor.IFV_BMP_1,
+        Armor.APC_MTLB,
+        Armor.MBT_T_55,
+        Armor.MBT_T_72B,
+        Artillery.MLRS_BM_21_Grad,
+
+        Unarmed.Transport_Ural_375,
+        Unarmed.Transport_UAZ_469,
+
+        Infantry.Paratrooper_RPG_16,
+        Infantry.Soldier_AK
+
+    ],
+    "shorad": [
+        AirDefence.AAA_ZU_23_on_Ural_375,
+    ], "boat": [
+        "GrishaGroupGenerator"
+    ]
+}
+
+
 Syria_1967 = {
     "country": "Syria",
     "side": "red",
