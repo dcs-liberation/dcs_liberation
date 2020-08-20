@@ -18,11 +18,11 @@ CAMPAIGNS = [
     ("Persian Gulf - Desert War", persiangulf.DesertWar, "Terrain_Persian_Gulf"),
     ("Persian Gulf - Full Map", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
 
-    ("Syria - Golan heights battle", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
-    ("Syria - Invasion from Turkey", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
-    ("Syria - Syrian Civil War", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
-    ("Syria - War on Insurgents", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
-    ("Syria - Full Map", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
+    ("Syria - Golan heights battle", persiangulf.PersianGulfTheater, "Terrain_Syria"),
+    ("Syria - Invasion from Turkey", persiangulf.PersianGulfTheater, "Terrain_Syria"),
+    ("Syria - Syrian Civil War", persiangulf.PersianGulfTheater, "Terrain_Syria"),
+    ("Syria - War on Insurgents", persiangulf.PersianGulfTheater, "Terrain_Syria"),
+    ("Syria - Full Map", persiangulf.PersianGulfTheater, "Terrain_Syria"),
 
     ("Normandy - Normandy", normandy.NormandyTheater, "Terrain_Normandy"),
     ("Normandy - Normandy Small", normandy.NormandySmall, "Terrain_Normandy"),
