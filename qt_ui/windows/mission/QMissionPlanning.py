@@ -98,6 +98,7 @@ class QMissionPlanning(QDialog):
         self.planned_flight_view.repaint()
 
         if self.flight_planner is not None:
+            self.flight_planner.on_planned_flight_changed.disconnect()
             self.flight_planner.clearTabs()
 
         try:
