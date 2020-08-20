@@ -10,6 +10,7 @@
 * **[Misc]** Added error message in mission when the state file can not be written
 * **[Units/Factions]** China, Pakistan, UAE will now use the new WingLoong drone as JTAC instead of the MQ-9 Reaper
 * **[Units/Factions]** Minor changes to Syria 2011 and Turkey 2005 factions
+* **[UI]** Version number is shown in about dialog
 
 ## Fixed issues :
 
