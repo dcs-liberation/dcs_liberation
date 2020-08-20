@@ -9,6 +9,7 @@ Syria_2011 = {
 
         MiG_29S,
         MiG_25PD,
+        L_39ZA,
         Su_24M,
         Su_17M4,
         Mi_24V,

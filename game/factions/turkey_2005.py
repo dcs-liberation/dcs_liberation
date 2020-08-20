@@ -16,7 +16,6 @@ Turkey_2005 = {
         E_3A,
 
         UH_1H,
-        OH_58D,
         AH_1W,
 
         Armor.MBT_Leopard_2,

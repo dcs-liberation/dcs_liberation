@@ -71,7 +71,7 @@ COLORS: Dict[str, QColor] = {
 
 }
 
-CP_SIZE = 24
+CP_SIZE = 12
 
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}

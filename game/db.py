@@ -472,7 +472,8 @@ UNIT_BY_TASK = {
         Rafale_A_S,
         WingLoong_I,
         MQ_9_Reaper,
-        RQ_1A_Predator
+        RQ_1A_Predator,
+        AH_1W
     ],
     Transport: [
         IL_76MD,
@@ -789,8 +790,8 @@ FACTIONS = {
 
     "Arab Armies 1982": Syria_1982,
     "Arab Armies 1973": Syria_1973,
-    "Arab Armies 1967 (WW2 Pack)": Syria_1967,
-    "Arab Armies 1967": Syria_1967_WW2_Weapons,
+    "Arab Armies 1967 (WW2 Pack)": Syria_1967_WW2_Weapons,
+    "Arab Armies 1967": Syria_1967,
     "Arab League 1948": Arab_Armies_1948,
 
     "China 2010": China_2010,
@@ -957,6 +958,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     MQ_9_Reaper: COMMON_OVERRIDE,
     RQ_1A_Predator: COMMON_OVERRIDE,
     WingLoong_I: COMMON_OVERRIDE,
+    AH_1W: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -1065,6 +1067,7 @@ LHA_CAPABLE = [
     SA342Minigun,
     SA342Mistral
 ]
+
 
 """
 ---------- END OF CONFIGURATION SECTION
