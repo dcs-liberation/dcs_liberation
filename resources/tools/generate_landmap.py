@@ -3,7 +3,7 @@ import pickle
 from dcs.mission import Mission
 from dcs.planes import A_10C
 
-for terrain in ["nev"]:
+for terrain in ["cau"]:
     print("Terrain " + terrain)
     m = Mission()
     m.load_file("./{}_terrain.miz".format(terrain))

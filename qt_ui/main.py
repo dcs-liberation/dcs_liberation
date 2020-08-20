@@ -1,7 +1,7 @@
 from userdata import logging_config
 
 # Logging setup
-VERSION_STRING = "2.0.11"
+VERSION_STRING = "2.1.0"
 logging_config.init_logging(VERSION_STRING)
 
 import logging
