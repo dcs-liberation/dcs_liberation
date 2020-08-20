@@ -9,6 +9,7 @@ Israel_2000 = {
     "units":[
         F_16C_50,
         F_15C,
+        F_15E,
         F_4E,
 
         KC_135,
@@ -21,6 +22,10 @@ Israel_2000 = {
 
         Armor.MBT_Merkava_Mk__4,
         Armor.APC_M113,
+        Armor.APC_M1043_HMMWV_Armament,
+        Armor.ATGM_M1045_HMMWV_TOW,
+        Artillery.SPH_M109_Paladin,
+        Artillery.MLRS_M270,
 
         Unarmed.Transport_M818,
         Infantry.Infantry_M4,
