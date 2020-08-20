@@ -41,9 +41,9 @@ class GolanHeights(SyriaTheater):
         self.carrier = ControlPoint.carrier("Carrier", Point(-280000, -238000), 1001)
         self.lha = ControlPoint.lha("LHA Carrier", Point(-237000, -89800), 1002)
 
-        self.add_controlpoint(self.ramatDavid, connected_to=[self.kinghussein])
-        self.add_controlpoint(self.khalkhala, connected_to=[self.kinghussein, self.marjruhayyil])
-        self.add_controlpoint(self.kinghussein, connected_to=[self.khalkhala, self.ramatDavid])
+        self.add_controlpoint(self.ramatDavid, connected_to=[self.khalkhala])
+        self.add_controlpoint(self.khalkhala, connected_to=[self.ramatDavid, self.kinghussein, self.marjruhayyil])
+        self.add_controlpoint(self.kinghussein, connected_to=[self.khalkhala])
         self.add_controlpoint(self.marjruhayyil, connected_to=[self.khalkhala, self.mezzeh, self.aldumayr])
         self.add_controlpoint(self.mezzeh, connected_to=[self.marjruhayyil])
         self.add_controlpoint(self.aldumayr, connected_to=[self.marjruhayyil])
