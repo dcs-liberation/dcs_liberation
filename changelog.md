@@ -2,13 +2,12 @@
 
 ## Features/Improvements :
 
-* **[Campaign Generator]** Added Syria map support
-* **[Campaign Generator]** Added 4 campaigns for the Syria map
+* **[Campaign Generator]** Added Syria map support [TODO]
+* **[Campaign Generator]** Added 4 campaigns for the Syria map [TODO]
 * **[Campaign Generator]** Added 2 smaller scale campaign for Persian Gulf map
 * **[Units/Factions]** Added factions for Syria map : Syria 2011, Arab Armies 1973,1968,1948, Israel 1973, 1948
 * **[Base Menu]** Budget is visible in recruitment menu. (Thanks to Github contributor root0fall)
 * **[Misc]** Added error message in mission when state file can not be written.
-
 
 ## Fixed issues :
 
