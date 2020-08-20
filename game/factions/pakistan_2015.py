@@ -36,5 +36,7 @@ Pakistan_2015 = {
         AirDefence.AAA_ZU_23_Closed
     ], "boat": [
         "Type54GroupGenerator", "OliverHazardPerryGroupGenerator"
-    ], "has_jtac": True
+    ],
+    "has_jtac": True,
+    "jtac_unit": WingLoong_I
 }

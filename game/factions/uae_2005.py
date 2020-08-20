@@ -32,5 +32,7 @@ UAE_2005 = {
         Armed_speedboat,
     ], "boat":[
         "OliverHazardPerryGroupGenerator"
-    ], "has_jtac": True
+    ],
+    "has_jtac": True,
+    "jtac_unit": WingLoong_I
 }
