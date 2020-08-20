@@ -3,7 +3,7 @@ from PySide2.QtCore import QSize, QItemSelectionModel
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QListView, QAbstractItemView
 
-from theater import caucasus, nevada, persiangulf, normandy, thechannel
+from theater import caucasus, nevada, persiangulf, normandy, thechannel, syria
 import qt_ui.uiconstants as CONST
 
 CAMPAIGNS = [
@@ -18,7 +18,7 @@ CAMPAIGNS = [
     ("Persian Gulf - Desert War", persiangulf.DesertWar, "Terrain_Persian_Gulf"),
     ("Persian Gulf - Full Map", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
 
-    ("Syria - Golan heights battle", persiangulf.PersianGulfTheater, "Terrain_Syria"),
+    ("Syria - Golan heights battle", syria.GolanHeights, "Terrain_Syria"),
     ("Syria - Invasion from Turkey", persiangulf.PersianGulfTheater, "Terrain_Syria"),
     ("Syria - Syrian Civil War", persiangulf.PersianGulfTheater, "Terrain_Syria"),
     ("Syria - War on Insurgents", persiangulf.PersianGulfTheater, "Terrain_Syria"),

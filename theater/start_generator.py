@@ -155,7 +155,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 logging.info(ground_object.groups)
 
         # Generate navy groups
-        if "boat" in db.FACTIONS[faction_name].keys():
+        if "boat" in db.FACTIONS[faction_name].keys() and cp.allow_sea_units:
 
             if cp.captured and game.settings.do_not_generate_player_navy:
                 continue
