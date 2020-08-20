@@ -28,7 +28,7 @@ from game.factions.insurgent import Insurgent
 from game.factions.insurgent_modded import Insurgent_modded
 from game.factions.iran_2015 import Iran_2015
 from game.factions.israel_1948 import Israel_1948
-from game.factions.israel_1973 import Israel_1973, Israel_1973_NO_WW2_UNITS
+from game.factions.israel_1973 import Israel_1973, Israel_1973_NO_WW2_UNITS, Israel_1982
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
@@ -174,6 +174,7 @@ PRICES = {
     F_15C: 22,
     F_15E: 24,
     F_16C_50: 20,
+    F_16A: 14,
     F_14B: 24,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
@@ -404,6 +405,7 @@ UNIT_BY_TASK = {
         FA_18C_hornet,
         F_15C,
         F_14B,
+        F_16A,
         F_16C_50,
         M_2000C,
         Mirage_2000_5,
@@ -770,6 +772,7 @@ FACTIONS = {
     "Italy 1990 (With MB339)": Italy_1990_MB339,
 
     "Israel 2000": Israel_2000,
+    "Israel 1982": Israel_1982,
     "Israel 1973 (WW2 Pack)": Israel_1973,
     "Israel 1973": Israel_1973_NO_WW2_UNITS,
     "Israel 1948": Israel_1948,
@@ -939,6 +942,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     Rafale_M: COMMON_OVERRIDE,
     Rafale_A_S: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
+    F_16A: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -996,7 +1000,11 @@ TIME_PERIODS = {
     "Modern - Summer [2010]": datetime(2010, 6, 1),
     "Modern - Fall [2010]": datetime(2010, 10, 1),
     "Georgian War [2008]": datetime(2008, 8, 7),
-    "Syrian War [2011]": datetime(2011, 8, 7),
+    "Syrian War [2011]": datetime(2011, 3, 15),
+    "6 days war [1967]": datetime(1967, 6, 5),
+    "Yom Kippour War [1973]": datetime(1973, 10, 6),
+    "Lebanon War [1982]": datetime(1982, 6, 6),
+    "Arab-Israeli War [1948]": datetime(1948, 5, 15),
 }
 
 REWARDS = {

@@ -51,6 +51,7 @@ CAP_CAPABLE = [
     F_14B,
     F_15C,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -100,6 +101,7 @@ CAS_CAPABLE = [
     F_5E_3,
     F_14B,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -184,6 +186,7 @@ STRIKE_CAPABLE = [
     F_5E_3,
     F_14B,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -216,6 +219,7 @@ ANTISHIP_CAPABLE = [
     F_15E,
     AV8BNA,
     JF_17,
+    F_16A,
     F_16C_50,
     A_10C,
     A_10A,

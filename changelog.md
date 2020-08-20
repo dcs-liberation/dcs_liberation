@@ -1,3 +1,19 @@
+# 2.1.0
+
+## Features/Improvements :
+
+* **[Campaign Generator]** Added Syria map support
+* **[Campaign Generator]** Added 4 campaigns for the Syria map
+* **[Campaign Generator]** Added 2 smaller scale campaign for Persian Gulf map
+* **[Units/Factions]** Added factions for Syria map : Syria 2011, Arab Armies 1973,1968,1948, Israel 1973, 1948
+* **[Base Menu]** Budget is visible in recruitment menu. (Thanks to Github contributor root0fall)
+* **[Misc]** Added error message in mission when state file can not be written.
+
+
+## Fixed issues :
+
+* **[Mission Generator]** Caucasus terrain improvement on exclusions zone (added forests between Vaziani and Beslan to exlusion zones)
+
 # 2.0.11
 
 ## Features/Improvements :
@@ -42,7 +58,7 @@
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
-* **[Mission Generator]** Basic JTAC on Frontlines
+* **[Mission Generator]*c* Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
 * **[Campaign Generator]** Tuned the various existing campaign parameters
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 
