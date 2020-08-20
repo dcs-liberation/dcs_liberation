@@ -213,24 +213,29 @@ PRICES = {
     B_1B: 50,
 
     # special
-    IL_76MD: 13,
-    An_26B: 13,
-    An_30M: 13,
-    Yak_40: 13,
-    S_3B_Tanker: 13,
-    IL_78M: 13,
-    KC_135: 13,
-    KC130: 13,
+    IL_76MD: 30,
+    An_26B: 25,
+    An_30M: 25,
+    Yak_40: 25,
+    S_3B_Tanker: 20,
+    IL_78M: 25,
+    KC_135: 25,
+    KC130: 25,
 
-    A_50: 8,
-    E_3A: 8,
-    C_130: 8,
+    A_50: 50,
+    E_3A: 50,
+    C_130: 25,
 
     # WW2
     P_51D_30_NA: 18,
     P_51D: 16,
     P_47D_30: 18,
     B_17G: 30,
+
+    # Drones
+    MQ_9_Reaper: 12,
+    RQ_1A_Predator: 6,
+    WingLoong_I: 6,
 
     # Modded
     Rafale_M: 26,
@@ -464,7 +469,10 @@ UNIT_BY_TASK = {
         Ju_88A4,
         B_17G,
         MB_339PAN,
-        Rafale_A_S
+        Rafale_A_S,
+        WingLoong_I,
+        MQ_9_Reaper,
+        RQ_1A_Predator
     ],
     Transport: [
         IL_76MD,
@@ -946,6 +954,9 @@ PLANE_PAYLOAD_OVERRIDES = {
     Rafale_A_S: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
     F_16A: COMMON_OVERRIDE,
+    MQ_9_Reaper: COMMON_OVERRIDE,
+    RQ_1A_Predator: COMMON_OVERRIDE,
+    WingLoong_I: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"

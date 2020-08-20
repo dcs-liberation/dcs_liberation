@@ -101,9 +101,14 @@ class GroundConflictGenerator:
         if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and self.game.settings.include_jtac_if_available:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
             code = 1688 - len(self.game.jtacs)
+
+            utype = MQ_9_Reaper
+            if "jtac_unit" in self.game.player_faction:
+                utype = self.game.player_faction["jtac_unit"]
+
             jtac = self.mission.flight_group(country=self.mission.country(self.game.player_country),
                                              name=n,
-                                             aircraft_type=MQ_9_Reaper,
+                                             aircraft_type=utype,
                                              position=position[0],
                                              airport=None,
                                              altitude=5000)

@@ -138,7 +138,11 @@ CAS_CAPABLE = [
     FW_190A8,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+
+    WingLoong_I,
+    MQ_9_Reaper,
+    RQ_1A_Predator
 ]
 
 # Aircraft used for SEAD / DEAD tasks
@@ -227,4 +231,10 @@ ANTISHIP_CAPABLE = [
 
     Ju_88A4,
     Rafale_A_S
+]
+
+DRONES = [
+    MQ_9_Reaper,
+    RQ_1A_Predator,
+    WingLoong_I
 ]
