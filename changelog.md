@@ -13,6 +13,7 @@
 ## Fixed issues :
 
 * **[Mission Generator]** Caucasus terrain improvement on exclusions zone (added forests between Vaziani and Beslan to exlusion zones)
+* **[Mission Generator]** The first unit of every base defenses group could not be controlled by Combined Arms.
 
 # 2.0.11
 
