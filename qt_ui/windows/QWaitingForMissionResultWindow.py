@@ -121,7 +121,7 @@ class QWaitingForMissionResultWindow(QDialog):
         updateBox.setLayout(updateLayout)
         self.debriefing = debriefing
 
-        updateLayout.addWidget(QLabel("<b>Aircrafts destroyed</b>"), 0, 0)
+        updateLayout.addWidget(QLabel("<b>Aircraft destroyed</b>"), 0, 0)
         updateLayout.addWidget(QLabel(str(len(debriefing.killed_aircrafts))), 0, 1)
 
         updateLayout.addWidget(QLabel("<b>Ground units destroyed</b>"), 1, 0)
