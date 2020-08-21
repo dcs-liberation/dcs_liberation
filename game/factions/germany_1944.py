@@ -32,7 +32,9 @@ Germany_1944 = {
 
         Infantry.Infantry_Mauser_98,
         AirDefence.AAA_8_8cm_Flak_36,
-    ],
+    ],"requirements":{
+        "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/",
+    },
     "shorad": [
         AirDefence.AAA_8_8cm_Flak_36,
     ],

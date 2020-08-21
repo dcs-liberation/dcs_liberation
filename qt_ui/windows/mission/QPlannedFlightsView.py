@@ -23,6 +23,7 @@ class QPlannedFlightsView(QListView):
             self.flightitems[i].update(f)
 
     def setup_content(self, row=0):
+        self.flightitems = []
         for i, f in enumerate(self.flight_planner.flights):
             item = QFlightItem(f)
             self.model.appendRow(item)

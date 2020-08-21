@@ -1,3 +1,27 @@
+# 2.1.0
+
+## Features/Improvements :
+
+* **[Campaign Generator]** Added Syria map
+* **[Campaign Generator]** Added 5 campaigns for the Syria map
+* **[Campaign Generator]** Added 2 small scale campaign for Persian Gulf map
+* **[Units/Factions]** Added factions for Syria map : Syria 2011, Arab Armies 1982, 1973, 1968, 1948, Israel 1982, 1973, 1948
+* **[Base Menu]** Budget is visible in recruitment menu. (Thanks to Github contributor root0fall)
+* **[Misc]** Added error message in mission when the state file can not be written
+* **[Units/Factions]** China, Pakistan, UAE will now use the new WingLoong drone as JTAC instead of the MQ-9 Reaper
+* **[Units/Factions]** Minor changes to Syria 2011 and Turkey 2005 factions
+* **[UI]** Version number is shown in about dialog
+
+## Fixed issues :
+
+* **[Mission Generator]** Caucasus terrain improvement on exclusions zone (added forests between Vaziani and Beslan to exclusion zones)
+* **[Mission Generator]** The first unit of every base defenses group could not be controlled with Combined Arms.
+* **[Mission Generator]** Reduced generated helicopter altitude for CAS missions
+* **[Mission Generator]** F-16C default CAS payload was asymmetric, fixed.
+* **[Mission Generator]** AH-1W couldn't be bought, and added default payloads.
+* **[UI/UX]** Fixed Mi-28N missing thumbnail
+* **[UI/UX]** Fixed list of flights not refreshing when changing the mission departure (T+).
+
 # 2.0.11
 
 ## Features/Improvements :
@@ -42,7 +66,7 @@
 * **[Mission Generator]** The briefing will now contain the carrier ATC frequency
 * **[Mission Generator]** The briefing contains a small situation update.
 * **[Mission Generator]** Previously destroyed units are visible in the mission. (And added a performance settings to disable this behaviour)
-* **[Mission Generator]** Basic JTAC on Frontlines
+* **[Mission Generator]*c* Basic JTAC on Frontlines
 * **[Campaign Generator]** Added Tarawa in caucasus campaigns
 * **[Campaign Generator]** Tuned the various existing campaign parameters
 * **[Campaign Generator]** Added small campaign : "Russia" on Caucasus Theater 

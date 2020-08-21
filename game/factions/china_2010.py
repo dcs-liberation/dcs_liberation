@@ -23,6 +23,7 @@ China_2010 = {
         A_50,
 
         Mi_8MT,
+        Mi_28N,
 
         AirDefence.SAM_SA_10_S_300PS_LN_5P85C, # Standing as HQ-9+
         AirDefence.SAM_SA_6_Kub_LN_2P25,
@@ -73,5 +74,7 @@ China_2010 = {
         "002 Shandong",
     ], "boat":[
         "Type54GroupGenerator"
-    ], "has_jtac": True
+    ],
+    "has_jtac": True,
+    "jtac_unit": WingLoong_I
 }

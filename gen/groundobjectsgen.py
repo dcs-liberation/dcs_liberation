@@ -66,6 +66,7 @@ class GroundObjectsGenerator:
                             if not ground_object.sea_object:
                                 vg = self.m.vehicle_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
                                 vg.units[0].name = self.m.string(g.units[0].name)
+                                vg.units[0].player_can_drive = True
                                 for i, u in enumerate(g.units):
                                     if i > 0:
                                         vehicle = Vehicle(self.m.next_unit_id(), self.m.string(u.name), u.type)

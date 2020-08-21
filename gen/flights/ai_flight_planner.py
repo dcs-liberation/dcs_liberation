@@ -607,7 +607,8 @@ class FlightPlanner:
         :param flight: Flight to setup
         :param location: Location of the CAS targets
         """
-
+        is_helo = hasattr(flight.unit_type, "helicopter") and flight.unit_type.helicopter
+        cap_alt = 1000
         flight.points = []
         flight.flight_type = FlightType.CAS
 
@@ -616,9 +617,12 @@ class FlightPlanner:
         egress = ingress.point_from_heading(heading, distance)
 
         ascend = self.generate_ascend_point(flight.from_cp)
+        if is_helo:
+            cap_alt = 500
+            ascend.alt = 500
         flight.points.append(ascend)
 
-        ingress_point = FlightWaypoint(ingress.x, ingress.y, 1000)
+        ingress_point = FlightWaypoint(ingress.x, ingress.y, cap_alt)
         ingress_point.alt_type = "RADIO"
         ingress_point.name = "INGRESS"
         ingress_point.pretty_name = "INGRESS"
@@ -626,7 +630,7 @@ class FlightPlanner:
         ingress_point.waypoint_type = FlightWaypointType.INGRESS_CAS
         flight.points.append(ingress_point)
 
-        center_point = FlightWaypoint(center.x, center.y, 1000)
+        center_point = FlightWaypoint(center.x, center.y, cap_alt)
         center_point.alt_type = "RADIO"
         center_point.description = "Provide CAS"
         center_point.name = "CAS"
@@ -634,7 +638,7 @@ class FlightPlanner:
         center_point.waypoint_type = FlightWaypointType.CAS
         flight.points.append(center_point)
 
-        egress_point = FlightWaypoint(egress.x, egress.y, 1000)
+        egress_point = FlightWaypoint(egress.x, egress.y, cap_alt)
         egress_point.alt_type = "RADIO"
         egress_point.description = "Egress from CAS area"
         egress_point.name = "EGRESS"
@@ -643,6 +647,8 @@ class FlightPlanner:
         flight.points.append(egress_point)
 
         descend = self.generate_descend_point(flight.from_cp)
+        if is_helo:
+            descend.alt = 300
         flight.points.append(descend)
 
         rtb = self.generate_rtb_waypoint(flight.from_cp)

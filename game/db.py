@@ -27,6 +27,8 @@ from game.factions.germany_1990 import Germany_1990
 from game.factions.insurgent import Insurgent
 from game.factions.insurgent_modded import Insurgent_modded
 from game.factions.iran_2015 import Iran_2015
+from game.factions.israel_1948 import Israel_1948
+from game.factions.israel_1973 import Israel_1973, Israel_1973_NO_WW2_UNITS, Israel_1982
 from game.factions.israel_2000 import Israel_2000
 from game.factions.italy_1990 import Italy_1990
 from game.factions.italy_1990_mb339 import Italy_1990_MB339
@@ -45,6 +47,7 @@ from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
 from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
+from game.factions.syria import Syria_2011, Syria_1967, Syria_1967_WW2_Weapons, Syria_1973, Arab_Armies_1948, Syria_1982
 from game.factions.turkey_2005 import Turkey_2005
 from game.factions.uae_2005 import UAE_2005
 from game.factions.uk_1944 import UK_1944
@@ -140,6 +143,7 @@ PRICES = {
     MiG_29A: 18,
     MiG_29S: 20,
     MiG_29G: 18,
+    MiG_25PD: 20,
     MiG_31: 30,
     J_11A: 26,
     JF_17: 20,
@@ -171,6 +175,7 @@ PRICES = {
     F_15C: 22,
     F_15E: 24,
     F_16C_50: 20,
+    F_16A: 14,
     F_14B: 24,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
@@ -208,24 +213,29 @@ PRICES = {
     B_1B: 50,
 
     # special
-    IL_76MD: 13,
-    An_26B: 13,
-    An_30M: 13,
-    Yak_40: 13,
-    S_3B_Tanker: 13,
-    IL_78M: 13,
-    KC_135: 13,
-    KC130: 13,
+    IL_76MD: 30,
+    An_26B: 25,
+    An_30M: 25,
+    Yak_40: 25,
+    S_3B_Tanker: 20,
+    IL_78M: 25,
+    KC_135: 25,
+    KC130: 25,
 
-    A_50: 8,
-    E_3A: 8,
-    C_130: 8,
+    A_50: 50,
+    E_3A: 50,
+    C_130: 25,
 
     # WW2
     P_51D_30_NA: 18,
     P_51D: 16,
     P_47D_30: 18,
     B_17G: 30,
+
+    # Drones
+    MQ_9_Reaper: 12,
+    RQ_1A_Predator: 6,
+    WingLoong_I: 6,
 
     # Modded
     Rafale_M: 26,
@@ -390,17 +400,19 @@ Following tasks are present:
 UNIT_BY_TASK = {
     CAP: [
         F_5E_3,
-        MiG_23MLD,
         Su_27,
         Su_33,
         MiG_19P,
         MiG_21Bis,
+        MiG_23MLD,
+        MiG_25PD,
         MiG_29A,
         MiG_29S,
         MiG_31,
         FA_18C_hornet,
         F_15C,
         F_14B,
+        F_16A,
         F_16C_50,
         M_2000C,
         Mirage_2000_5,
@@ -457,7 +469,11 @@ UNIT_BY_TASK = {
         Ju_88A4,
         B_17G,
         MB_339PAN,
-        Rafale_A_S
+        Rafale_A_S,
+        WingLoong_I,
+        MQ_9_Reaper,
+        RQ_1A_Predator,
+        AH_1W
     ],
     Transport: [
         IL_76MD,
@@ -767,6 +783,16 @@ FACTIONS = {
     "Italy 1990 (With MB339)": Italy_1990_MB339,
 
     "Israel 2000": Israel_2000,
+    "Israel 1982": Israel_1982,
+    "Israel 1973 (WW2 Pack)": Israel_1973,
+    "Israel 1973": Israel_1973_NO_WW2_UNITS,
+    "Israel 1948": Israel_1948,
+
+    "Arab Armies 1982": Syria_1982,
+    "Arab Armies 1973": Syria_1973,
+    "Arab Armies 1967 (WW2 Pack)": Syria_1967_WW2_Weapons,
+    "Arab Armies 1967": Syria_1967,
+    "Arab League 1948": Arab_Armies_1948,
 
     "China 2010": China_2010,
 
@@ -787,6 +813,9 @@ FACTIONS = {
     "India 2010": India_2010,
 
     "Libya 2011": Libya_2011,
+
+    "Syria 2011": Syria_2011,
+
 
     "Pakistan 2015": Pakistan_2015,
 
@@ -925,6 +954,11 @@ PLANE_PAYLOAD_OVERRIDES = {
     Rafale_M: COMMON_OVERRIDE,
     Rafale_A_S: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
+    F_16A: COMMON_OVERRIDE,
+    MQ_9_Reaper: COMMON_OVERRIDE,
+    RQ_1A_Predator: COMMON_OVERRIDE,
+    WingLoong_I: COMMON_OVERRIDE,
+    AH_1W: COMMON_OVERRIDE,
 
     AH_64D:{
         CAS: "AGM-114K*16"
@@ -982,7 +1016,11 @@ TIME_PERIODS = {
     "Modern - Summer [2010]": datetime(2010, 6, 1),
     "Modern - Fall [2010]": datetime(2010, 10, 1),
     "Georgian War [2008]": datetime(2008, 8, 7),
-    "Syrian War [2011]": datetime(2011, 8, 7),
+    "Syrian War [2011]": datetime(2011, 3, 15),
+    "6 days war [1967]": datetime(1967, 6, 5),
+    "Yom Kippour War [1973]": datetime(1973, 10, 6),
+    "Lebanon War [1982]": datetime(1982, 6, 6),
+    "Arab-Israeli War [1948]": datetime(1948, 5, 15),
 }
 
 REWARDS = {
@@ -1029,6 +1067,7 @@ LHA_CAPABLE = [
     SA342Minigun,
     SA342Mistral
 ]
+
 
 """
 ---------- END OF CONFIGURATION SECTION

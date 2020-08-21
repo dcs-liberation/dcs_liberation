@@ -28,6 +28,7 @@ class ControlPoint:
     base = None  # type: theater.base.Base
     at = None  # type: db.StartPosition
     icls = 1
+    allow_sea_units = True
 
     connected_points = None  # type: typing.List[ControlPoint]
     ground_objects = None  # type: typing.List[TheaterGroundObject]

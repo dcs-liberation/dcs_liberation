@@ -209,3 +209,90 @@ class Emirates(ConflictTheater):
         self.tarawa_carrier.captured_invert = True
         self.east_carrier.captured_invert = True
         self.fujairah.captured_invert = True
+
+
+class DesertWar(ConflictTheater):
+    terrain = dcs.terrain.PersianGulf()
+    overview_image = "persiangulf.gif"
+    reference_points = {
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
+        772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
+    landmap = load_landmap("resources\\gulflandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
+        "night": (0, 5),
+    }
+
+
+    def __init__(self):
+        super(DesertWar, self).__init__()
+
+        self.liwa = ControlPoint.from_airport(persiangulf.Liwa_Airbase, LAND, SIZE_BIG, IMPORTANCE_MEDIUM)
+        self.al_maktoum = ControlPoint.from_airport(persiangulf.Al_Maktoum_Intl, LAND, SIZE_BIG, IMPORTANCE_LOW)
+        self.al_minhad = ControlPoint.from_airport(persiangulf.Al_Minhad_AB, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
+        self.al_ain = ControlPoint.from_airport(persiangulf.Al_Ain_International_Airport, LAND, SIZE_BIG,IMPORTANCE_LOW)
+
+        self.carrier = ControlPoint.carrier("Carrier", Point(-124000, -303000), 1001)
+        self.tarawa_carrier = ControlPoint.lha("LHA Carrier", Point(-164000, -257000), 1002)
+
+        self.add_controlpoint(self.liwa, connected_to=[self.al_ain])
+        self.add_controlpoint(self.al_ain, connected_to=[self.al_maktoum, self.liwa])
+        self.add_controlpoint(self.al_maktoum, connected_to=[self.al_minhad, self.al_ain])
+        self.add_controlpoint(self.al_minhad, connected_to=[self.al_maktoum])
+
+        self.add_controlpoint(self.tarawa_carrier)
+        self.add_controlpoint(self.carrier)
+
+        self.tarawa_carrier.captured = True
+        self.carrier.captured = True
+        self.liwa.captured = True
+
+        self.tarawa_carrier.captured_invert = True
+        self.carrier.captured_invert = True
+        self.al_ain.captured_invert = True
+
+
+class IranInvasionLite(ConflictTheater):
+    terrain = dcs.terrain.PersianGulf()
+    overview_image = "persiangulf.gif"
+    reference_points = {
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
+        772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
+    landmap = load_landmap("resources\\gulflandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
+        "night": (0, 5),
+    }
+
+    def __init__(self):
+        super(IranInvasionLite, self).__init__()
+
+        self.bandar_lengeh = ControlPoint.from_airport(persiangulf.Bandar_Lengeh, [270, 315, 0, 45], SIZE_SMALL, IMPORTANCE_HIGH)
+        self.lar = ControlPoint.from_airport(persiangulf.Lar_Airbase, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
+        self.shiraz = ControlPoint.from_airport(persiangulf.Shiraz_International_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
+        self.kerman = ControlPoint.from_airport(persiangulf.Kerman_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
+        self.jiroft = ControlPoint.from_airport(persiangulf.Jiroft_Airport, LAND, SIZE_BIG, IMPORTANCE_HIGH)
+        self.carrier = ControlPoint.carrier("Carrier", Point(72000.324335475, -376000), 1001)
+        self.lha = ControlPoint.lha("LHA", Point(-27500.813952358, -147000.65947136), 1002)
+
+        self.add_controlpoint(self.bandar_lengeh, connected_to=[self.lar])
+        self.add_controlpoint(self.shiraz, connected_to=[self.lar, self.kerman])
+        self.add_controlpoint(self.jiroft, connected_to=[self.kerman])
+        self.add_controlpoint(self.kerman, connected_to=[self.shiraz, self.jiroft])
+        self.add_controlpoint(self.lar, connected_to=[self.bandar_lengeh, self.shiraz])
+
+        self.add_controlpoint(self.carrier)
+        self.add_controlpoint(self.lha)
+
+        self.carrier.captured = True
+        self.lha.captured = True
+
+        self.shiraz.captured_invert = True
+        self.bandar_lengeh.captured = True
+

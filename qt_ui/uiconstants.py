@@ -8,6 +8,8 @@ from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
 from userdata.liberation_theme import get_theme_icons
 
+VERSION_STRING = "2.1.0"
+
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
     "Repository": "https://github.com/khopa/dcs_liberation",
@@ -69,7 +71,7 @@ COLORS: Dict[str, QColor] = {
 
 }
 
-CP_SIZE = 24
+CP_SIZE = 12
 
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}
@@ -86,6 +88,7 @@ def load_icons():
     ICONS["Terrain_Nevada"] = QPixmap("./resources/ui/terrain_nevada.gif")
     ICONS["Terrain_Normandy"] = QPixmap("./resources/ui/terrain_normandy.gif")
     ICONS["Terrain_Channel"] = QPixmap("./resources/ui/terrain_channel.gif")
+    ICONS["Terrain_Syria"] = QPixmap("./resources/ui/terrain_syria.gif")
 
     ICONS["Dawn"] = QPixmap("./resources/ui/daytime/dawn.png")
     ICONS["Day"] = QPixmap("./resources/ui/daytime/day.png")

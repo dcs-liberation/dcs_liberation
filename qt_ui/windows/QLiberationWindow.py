@@ -12,10 +12,9 @@ from game import Game
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.preferences import QLiberationPreferences
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
-from qt_ui.windows.QNewGameWizard import NewGameWizard
+from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import QLiberationPreferencesWindow
 from userdata import persistency
@@ -212,17 +211,16 @@ class QLiberationWindow(QMainWindow):
             self.info_panel.setGame(game)
 
     def showAboutDialog(self):
-        text = "<h3>DCS Liberation</h3>" + \
+        text = "<h3>DCS Liberation " + CONST.VERSION_STRING + "</h3>" + \
                "<b>Source code :</b> https://github.com/khopa/dcs_liberation" + \
                "<h4>Authors</h4>" + \
                "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \
                "<h4>Contributors</h4>" + \
-               "shdwp, Khopa, Wrycu, calvinmorrow, JohanAberg, Deus" + \
+               "shdwp, Khopa, Wrycu, calvinmorrow, JohanAberg, Deus, root0fall, Captain Cody" + \
                "<h4>Special Thanks  :</h4>" \
                "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
                "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"\
                "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
-
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
         about.setIcon(QMessageBox.Icon.Information)

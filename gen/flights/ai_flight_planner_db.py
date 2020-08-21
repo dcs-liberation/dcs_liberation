@@ -31,6 +31,7 @@ CAP_CAPABLE = [
     MiG_19P,
     MiG_21Bis,
     MiG_23MLD,
+    MiG_25PD,
     MiG_29A,
     MiG_29G,
     MiG_29S,
@@ -51,6 +52,7 @@ CAP_CAPABLE = [
     F_14B,
     F_15C,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -100,6 +102,7 @@ CAS_CAPABLE = [
     F_5E_3,
     F_14B,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -135,7 +138,11 @@ CAS_CAPABLE = [
     FW_190A8,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+
+    WingLoong_I,
+    MQ_9_Reaper,
+    RQ_1A_Predator
 ]
 
 # Aircraft used for SEAD / DEAD tasks
@@ -184,6 +191,7 @@ STRIKE_CAPABLE = [
     F_5E_3,
     F_14B,
     F_15E,
+    F_16A,
     F_16C_50,
     FA_18C_hornet,
 
@@ -216,10 +224,17 @@ ANTISHIP_CAPABLE = [
     F_15E,
     AV8BNA,
     JF_17,
+    F_16A,
     F_16C_50,
     A_10C,
     A_10A,
 
     Ju_88A4,
     Rafale_A_S
+]
+
+DRONES = [
+    MQ_9_Reaper,
+    RQ_1A_Predator,
+    WingLoong_I
 ]

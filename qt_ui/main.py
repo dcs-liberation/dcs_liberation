@@ -1,9 +1,5 @@
 from userdata import logging_config
 
-# Logging setup
-VERSION_STRING = "2.0.10"
-logging_config.init_logging(VERSION_STRING)
-
 import logging
 import os
 import sys
@@ -18,6 +14,9 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
 from userdata import liberation_install, persistency, liberation_theme
+
+# Logging setup
+logging_config.init_logging(uiconstants.VERSION_STRING)
 
 if __name__ == "__main__":
 

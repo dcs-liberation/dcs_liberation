@@ -34,11 +34,24 @@ write_state = function()
     }
     fp:write(json:encode(game_state))
     fp:close()
-    --logger.info("Done writing DCS Liberation state")
-    --messageAll("Done writing DCS Liberation state.")
+    -- logger.info("Done writing DCS Liberation state")
+    -- messageAll("Done writing DCS Liberation state.")
 end
 
-mist.scheduleFunction(write_state, {}, timer.getTime() + 10, 60, timer.getTime() + 3600)
+
+write_state_error_handling = function()
+    if pcall(write_state) then
+        -- messageAll("Written DCS Liberation state to "..debriefing_file_location)
+    else
+	    messageAll("Unable to write DCS Liberation state to "..debriefing_file_location..
+                "\nYou can abort the mission in DCS Liberation.\n"..
+                "\n\nPlease fix your setup in DCS Liberation, make sure you are pointing to the right installation directory from the File/Preferences menu. Then after fixing the path restart DCS Liberation, and then restart DCS."..
+                "\n\nYou can also try to fix the issue manually by replacing the file <dcs_installation_directory>/Scripts/MissionScripting.lua by the one provided there : <dcs_liberation_folder>/resources/scripts/MissionScripting.lua. And then restart DCS. (This will also have to be done again after each DCS update)"..
+                "\n\nIt's not worth playing, the state of the mission will not be recorded.")
+    end
+end
+
+mist.scheduleFunction(write_state_error_handling, {}, timer.getTime() + 10, 60, timer.getTime() + 3600)
 
 activeWeapons = {}
 local function onEvent(event)

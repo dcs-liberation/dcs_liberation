@@ -5,6 +5,7 @@ from dcs.unittype import UnitType
 from theater import db
 
 
+
 class QRecruitBehaviour:
 
     game = None
@@ -12,10 +13,12 @@ class QRecruitBehaviour:
     deliveryEvent = None
     existing_units_labels = None
     bought_amount_labels = None
+    BUDGET_FORMAT = "Available Budget: <b>${}M</b>"
 
     def __init__(self):
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
+        self.update_available_budget()
 
     def add_purchase_row(self, unit_type, layout, row):
 
@@ -91,12 +94,22 @@ class QRecruitBehaviour:
             self.cp.base.total_units_of_type(unit_type)
         ))
 
+    def update_available_budget(self):
+        parent = self.parent()
+        while parent.objectName != "menuDialogue":
+            parent = parent.parent()
+        for child in parent.children():
+            if child.objectName() == "budgetField":
+                child.setText(QRecruitBehaviour.BUDGET_FORMAT.format(self.game.budget))
+
     def buy(self, unit_type):
+
         price = db.PRICES[unit_type]
         if self.game.budget >= price:
             self.deliveryEvent.deliver({unit_type: 1})
             self.game.budget -= price
         self._update_count_label(unit_type)
+        self.update_available_budget()
 
     def sell(self, unit_type):
         if self.deliveryEvent.units.get(unit_type, 0) > 0:
@@ -111,3 +124,4 @@ class QRecruitBehaviour:
             self.cp.base.commit_losses({unit_type: 1})
 
         self._update_count_label(unit_type)
+        self.update_available_budget()
