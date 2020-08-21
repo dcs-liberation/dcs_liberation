@@ -214,7 +214,7 @@ class SyriaFullMap(SyriaTheater):
         self.carrier.captured = True
         self.lha.captured = True
 
-        self.hatay.captured_invert = True
+        self.incirlik.captured_invert = True
         self.carrier.captured_invert = True
         self.lha.captured_invert = True
 
