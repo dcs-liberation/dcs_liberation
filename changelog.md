@@ -1,3 +1,13 @@
+# 2.1.1
+
+
+## Fixed issues :
+* **[UI/UX]** Spelling issues
+* **[Campaign Generator]** Tarawa was placed on land in Syrian Civil War campaign
+* **[Campaign Generator]** Fixed inverted configuration for Syria full map
+* **[Units/Factions]** Minor changes to USA 1990
+* **[Units/Factions]** AH-64A now has default payloads. AH-64D has payloads for more mission types. 
+
 # 2.1.0
 
 ## Features/Improvements :
