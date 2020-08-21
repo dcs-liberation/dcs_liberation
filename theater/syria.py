@@ -110,7 +110,7 @@ class SyrianCivilWar(SyriaTheater):
         self.palmyra = ControlPoint.from_airport(syria.Palmyra, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
 
         self.carrier = ControlPoint.carrier("Carrier", Point(18537, -52000), 1001)
-        self.lha = ControlPoint.lha("LHA", Point(116000, 30000), 1002)
+        self.lha = ControlPoint.lha("LHA", Point(116000, -30000), 1002)
 
         self.add_controlpoint(self.basselAlAssad, connected_to=[self.hama])
         self.add_controlpoint(self.marjruhayyil, connected_to=[self.aldumayr])
