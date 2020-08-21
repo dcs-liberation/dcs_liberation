@@ -316,10 +316,10 @@ class AircraftConflictGenerator:
         detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=25000, hidden=False, name="ITZ")
         if flight.from_cp.captured:
             activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_enemy_color(), detection_zone.id)) # TODO : support unit type in part of coalition
-            activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircrafts have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))
+            activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircraft have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))
         else:
             activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_player_color(), detection_zone.id))
-            activation_trigger.add_action(MessageToAll(String("WARNING : We have detected that enemy aircrafts are scrambling for an interception on " + flight.from_cp.name + " airbase."), 20))
+            activation_trigger.add_action(MessageToAll(String("WARNING : We have detected that enemy aircraft are scrambling for an interception on " + flight.from_cp.name + " airbase."), 20))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
