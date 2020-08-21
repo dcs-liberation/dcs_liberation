@@ -11,11 +11,10 @@ USA_1990 = {
         F_15E,
         F_14B,
         FA_18C_hornet,
+        F_16C_50,
 
         A_10A,
         AV8BNA,
-
-        B_1B,
 
         KC_135,
         KC130,
@@ -24,7 +23,6 @@ USA_1990 = {
 
         UH_1H,
         AH_64A,
-        OH_58D,
 
         Armor.MBT_M1A2_Abrams,
         Armor.IFV_LAV_25,
