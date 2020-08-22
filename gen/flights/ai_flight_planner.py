@@ -7,7 +7,8 @@ from game.data.doctrine import MODERN_DOCTRINE
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet, nm_to_meter
 from gen import Conflict
-from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE, STRIKE_CAPABLE
+from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE, STRIKE_CAPABLE, \
+    DRONES
 from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 
 
@@ -245,8 +246,13 @@ class FlightPlanner:
                 except IndexError:
                     break
 
-                inventory[unit] = inventory[unit] - 2
-                flight = Flight(unit, 2, self.from_cp, FlightType.STRIKE)
+                if unit in DRONES:
+                    count = 1
+                else:
+                    count = 2
+
+                inventory[unit] = inventory[unit] - count
+                flight = Flight(unit, count, self.from_cp, FlightType.STRIKE)
 
                 flight.points = []
                 flight.scheduled_in = offset + i*random.randint(self.doctrine["STRIKE_EVERY_X_MINUTES"] - 5, self.doctrine["STRIKE_EVERY_X_MINUTES"] + 5)

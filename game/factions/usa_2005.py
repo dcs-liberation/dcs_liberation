@@ -14,6 +14,7 @@ USA_2005 = {
         F_16C_50,
         A_10C,
         AV8BNA,
+        MQ_9_Reaper,
 
         KC_135,
         KC130,
@@ -22,7 +23,6 @@ USA_2005 = {
 
         UH_1H,
         AH_64D,
-        OH_58D,
 
         Armor.MBT_M1A2_Abrams,
         Armor.ATGM_M1134_Stryker,
