@@ -1,5 +1,7 @@
 # 2.1.1
 
+## Features/Imrpovements :
+* **[Other]** Added an installer option
 
 ## Fixed issues :
 * **[UI/UX]** Spelling issues
