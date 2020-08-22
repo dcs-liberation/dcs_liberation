@@ -74,7 +74,7 @@ CAP_CAPABLE = [
     Rafale_M,
 ]
 
-# USed for CAS (Close air support) and BAI (Battlefield Interdiction)
+# Used for CAS (Close air support) and BAI (Battlefield Interdiction)
 CAS_CAPABLE = [
 
     MiG_15bis,
@@ -117,6 +117,8 @@ CAS_CAPABLE = [
 
     AH_64A,
     AH_64D,
+    AH_1W,
+
 
     UH_1H,
 
