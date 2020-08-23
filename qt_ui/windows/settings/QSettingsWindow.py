@@ -1,3 +1,5 @@
+import logging
+
 from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
@@ -269,32 +271,28 @@ class QSettingsWindow(QDialog):
         self.moneyCheatBoxLayout = QGridLayout()
         self.moneyCheatBox.setLayout(self.moneyCheatBoxLayout)
 
-        self.cheat25M = QPushButton("Cheat +25M")
-        self.cheat50M = QPushButton("Cheat +50M")
-        self.cheat100M = QPushButton("Cheat +100M")
-        self.cheat200M = QPushButton("Cheat +200M")
-        self.cheat500M = QPushButton("Cheat +500M")
-        self.cheat1000M = QPushButton("Cheat +1000M")
-
-        self.cheat25M.clicked.connect(lambda: self.cheatMoney(25))
-        self.cheat50M.clicked.connect(lambda: self.cheatMoney(50))
-        self.cheat100M.clicked.connect(lambda: self.cheatMoney(100))
-        self.cheat200M.clicked.connect(lambda: self.cheatMoney(200))
-        self.cheat500M.clicked.connect(lambda: self.cheatMoney(500))
-        self.cheat1000M.clicked.connect(lambda: self.cheatMoney(1000))
-
-        self.moneyCheatBoxLayout.addWidget(self.cheat25M, 0, 0)
-        self.moneyCheatBoxLayout.addWidget(self.cheat50M, 0, 1)
-        self.moneyCheatBoxLayout.addWidget(self.cheat100M, 1, 0)
-        self.moneyCheatBoxLayout.addWidget(self.cheat200M, 1, 1)
-        self.moneyCheatBoxLayout.addWidget(self.cheat500M, 2, 0)
-        self.moneyCheatBoxLayout.addWidget(self.cheat1000M, 2, 1)
-
+        cheats_amounts = [25, 50, 100, 200, 500, 1000, -25, -50, -100, -200]
+        for i, amount in enumerate(cheats_amounts):
+            if amount > 0:
+                btn = QPushButton("Cheat +" + str(amount) + "M")
+                btn.setProperty("style", "btn-success")
+            else:
+                btn = QPushButton("Cheat " + str(amount) + "M")
+                btn.setProperty("style", "btn-danger")
+            btn.clicked.connect(self.cheatLambda(amount))
+            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
         self.cheatLayout.addWidget(self.moneyCheatBox, 0, 0)
 
+    def cheatLambda(self, amount):
+        return lambda: self.cheatMoney(amount)
+
     def cheatMoney(self, amount):
+        logging.info("CHEATING FOR AMOUNT : " + str(amount) + "M")
         self.game.budget += amount
-        self.game.informations.append(Information("CHEATER", "You are a cheater and you should feel bad", self.game.turn))
+        if amount > 0:
+            self.game.informations.append(Information("CHEATER", "You are a cheater and you should feel bad", self.game.turn))
+        else:
+            self.game.informations.append(Information("CHEATER", "You are still a cheater !", self.game.turn))
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def applySettings(self):
