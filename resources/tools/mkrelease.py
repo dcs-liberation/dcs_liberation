@@ -45,7 +45,7 @@ def _mk_archieve():
         shutil.rmtree("./dist")
     except FileNotFoundError:
         pass
-    os.system("pyinstaller.exe pyinstaller.spec")
+    os.system("pyinstaller.exe --clean pyinstaller.spec")
     #archieve = ZipFile(path, "w")
     #archieve.writestr("dcs_liberation.bat", "cd dist\\dcs_liberation\r\nliberation_main \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
     #_zip_dir(archieve, "./dist/dcs_liberation")
