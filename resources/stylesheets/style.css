@@ -179,3 +179,7 @@ QWidget[style="baseMenuHeader"]{
     font-size: 24px;
     font-weight: bold;
 }*/
+
+QLabel[style="small"]{
+    font-size: 8px;
+}

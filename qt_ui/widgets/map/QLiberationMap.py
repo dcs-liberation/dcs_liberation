@@ -143,7 +143,7 @@ class QLiberationMap(QGraphicsView):
                 go_pos = self._transform_point(ground_object.position)
                 if not ground_object.airbase_group:
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
-                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 12, 12, cp, ground_object, self.game, buildings))
+                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
                     max_range = 0

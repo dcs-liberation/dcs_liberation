@@ -5,23 +5,30 @@ from PySide2.QtWidgets import QHBoxLayout, QWidget, QDialog, QGridLayout, QLabel
 from dcs import Point
 
 from game import Game
+from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import PRICES, unit_type_of
+from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
 from theater import ControlPoint, TheaterGroundObject
 
 
 class QGroundObjectMenu(QDialog):
 
-    def __init__(self, parent, ground_object: TheaterGroundObject, cp: ControlPoint, game: Game):
+    def __init__(self, parent, ground_object: TheaterGroundObject, buildings:[], cp: ControlPoint, game: Game):
         super(QGroundObjectMenu, self).__init__(parent)
         self.setMinimumWidth(350)
         self.ground_object = ground_object
+        self.buildings = buildings
         self.cp = cp
         self.game = game
         self.setWindowTitle("Location " + self.ground_object.obj_name)
+        self.setWindowIcon(EVENT_ICONS["capture"])
         self.intelBox = QGroupBox("Units :")
+        self.buildingBox = QGroupBox("Buildings :")
         self.intelLayout = QGridLayout()
+        self.buildingsLayout = QGridLayout()
         self.init_ui()
 
     def init_ui(self):
@@ -32,7 +39,10 @@ class QGroundObjectMenu(QDialog):
 
         self.doLayout()
 
-        self.mainLayout.addWidget(self.intelBox)
+        if len(self.ground_object.groups) > 0:
+            self.mainLayout.addWidget(self.intelBox)
+        else:
+            self.mainLayout.addWidget(self.buildingBox)
         self.setLayout(self.mainLayout)
 
     def doLayout(self):
@@ -55,28 +65,37 @@ class QGroundObjectMenu(QDialog):
                     price = 6
 
                 self.intelLayout.addWidget(QLabel("<b>Unit #" + str(u.id) + " - " + str(u.type) + "</b> [DEAD]"), i, 0)
-                repair = QPushButton("Repair [" + str(price) + "M]")
-                repair.setProperty("style", "btn-primary")
-                repair.clicked.connect(lambda u=u, g=g, p=price: self.repair_unit(g, u, p))
-                self.intelLayout.addWidget(repair, i, 1)
+                if self.cp.captured:
+                    repair = QPushButton("Repair [" + str(price) + "M]")
+                    repair.setProperty("style", "btn-success")
+                    repair.clicked.connect(lambda u=u, g=g, p=price: self.repair_unit(g, u, p))
+                    self.intelLayout.addWidget(repair, i, 1)
                 i = i + 1
+
+        self.buildingBox = QGroupBox("Buildings :")
+        self.buildingsLayout = QGridLayout()
+        j = 0
+        for i, building in enumerate(self.buildings):
+            if building.dcs_identifier not in FORTIFICATION_BUILDINGS:
+                self.buildingsLayout.addWidget(QBuildingInfo(building, self.ground_object), j/3, j%3)
+                j = j + 1
+
+        self.buildingBox.setLayout(self.buildingsLayout)
         self.intelBox.setLayout(self.intelLayout)
 
     def do_refresh_layout(self):
         try:
             for i in range(self.mainLayout.count()):
-                self.mainLayout.removeItem(self.mainLayout.itemAt(i));
+                self.mainLayout.removeItem(self.mainLayout.itemAt(i))
             self.doLayout()
-            self.mainLayout.addWidget(self.intelBox)
+            if len(self.ground_object.groups) > 0:
+                self.mainLayout.addWidget(self.intelBox)
+            else:
+                self.mainLayout.addWidget(self.buildingBox)
         except Exception as e:
             print(e)
 
     def repair_unit(self, group, unit, price):
-
-        print(group)
-        print(unit.type)
-        [print(u.id) for u in group.units]
-
         if self.game.budget > price:
             self.game.budget -= price
             group.units_losts = [u for u in group.units_losts if u.id != unit.id]

@@ -1,15 +1,21 @@
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox
+from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QPushButton
 
 from qt_ui.uiconstants import VEHICLES_ICONS
+from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from theater import ControlPoint, TheaterGroundObject
 
 
 class QBaseDefenseGroupInfo(QGroupBox):
 
-    def __init__(self, cp:ControlPoint, ground_object: TheaterGroundObject):
+    def __init__(self, cp:ControlPoint, ground_object: TheaterGroundObject, game):
         super(QBaseDefenseGroupInfo, self).__init__("Group : " + ground_object.obj_name)
         self.ground_object = ground_object
+        self.cp = cp
+        self.game = game
+        self.buildings = game.theater.find_ground_objects_by_obj_name(self.ground_object.obj_name)
         self.init_ui()
+
+
 
     def init_ui(self):
         unit_dict = {}
@@ -29,8 +35,18 @@ class QBaseDefenseGroupInfo(QGroupBox):
             #    icon.setText("<b>" + k[:6] + "</b>")
             #icon.setProperty("style", "icon-plane")
             #layout.addWidget(icon, i, 0)
-            layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
+            layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 0)
             i = i + 1
+
+        manage_button = QPushButton("Manage")
+        manage_button.setProperty("style", "btn-success")
+        manage_button.setMaximumWidth(180)
+        manage_button.clicked.connect(self.onManage)
+        layout.addWidget(manage_button, i+1, 0)
         self.setLayout(layout)
+
+    def onManage(self):
+        self.editionMenu = QGroundObjectMenu(self.window(), self.ground_object, self.buildings, self.cp, self.game)
+        self.editionMenu.show()
 
 
