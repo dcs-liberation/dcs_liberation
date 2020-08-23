@@ -1,11 +1,10 @@
 # 2.1.1
 
 ## Features/Improvements :
-
+* **[Other]** Added an installer option (thanks to contributor parithon)
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
 * **[Units/Factions]** Added Mig-21, Mig-23, SA-342L to Syria 2011
-
 
 ## Fixed issues :
 * **[UI/UX]** Spelling issues (Thanks to Github contributor steveveepee)
@@ -15,7 +14,6 @@
 * **[Mission Generator]** AH-1W was not used by AI to generate CAS mission by default
 * **[Mission Generator]** Fixed F-16C targeting pod not being added to payload
 * **[Mission Generator]** AH-64A and AH-64D payloads fix. 
-
 
 # 2.1.0
 

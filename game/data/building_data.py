@@ -1,5 +1,5 @@
 import inspect
-import dcs
+from pydcs import dcs
 
 DEFAULT_AVAILABLE_BUILDINGS = ['fuel', 'ammo', 'comms', 'oil', 'ware', 'farp', 'fob', 'power', 'factory', 'derrick', 'aa']
 

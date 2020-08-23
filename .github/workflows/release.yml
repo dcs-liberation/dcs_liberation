@@ -1,0 +1,107 @@
+name: Release Pipeline
+
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install environment
+      run: |
+        py -m venv ./venv
+
+    - name: Install dependencies
+      run: |
+        ./venv/scripts/activate
+        pip install -r requirements.txt
+        # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
+        Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
+
+    - name: Build binaries
+      run: |
+        ./venv/scripts/activate
+        $env:PYTHONPATH=".;./pydcs"
+        pyinstaller pyinstaller.spec
+
+    - name: Create Installer
+      env:
+        TAG_NAME: ${{ github.ref }}
+      run: |
+        $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
+        (Get-Content .\installer\dcs_liberation.iss) -replace "{{version}}",$version | Out-File .\build\installer.iss
+        cd .\installer
+        iscc.exe ..\build\installer.iss
+        cd ..
+        Copy-Item .\changelog.md .\dist
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dcs_liberation
+        path: dist/
+
+  release:
+    needs: [ build ]
+    runs-on: windows-latest
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: dcs_liberation
+
+    - name: "Get Version"
+      id: version        
+      env:
+        TAG_NAME: ${{ github.ref }}
+      run: |
+        Get-ChildItem -Recurse -Depth 1
+        $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
+        $prerelease = ("2.1.1-alpha3" -match '[^\.\d]').ToString().ToLower()
+        Write-Host $version
+        Write-Host $prerelease
+        Write-Output "::set-output name=number::$version"
+        Write-Output "::set-output name=prerelease::$prerelease"
+        $changelog = Get-Content .\changelog.md
+        $last_change = ($changelog | Select-String -Pattern "^#\s" | Select-Object -Skip 1 -First 1).LineNumber - 2
+        ($changelog | Select-Object -First $last_change) -join "`n" | Out-File .\releasenotes.md
+        Compress-Archive -Path .\dcs_liberation -DestinationPath "dcs_liberation.$version.zip" -Compression Optimal
+    
+    - uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body_path: releasenotes.md
+        draft: false
+        prerelease: ${{ steps.version.outputs.prerelease }}
+    
+    - uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dcs_liberation.exe
+        asset_name: dcs_liberation.${{ steps.version.outputs.number }}.exe
+        asset_content_type: application/exe
+
+    - uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dcs_liberation.${{ steps.version.outputs.number }}.zip
+        asset_name: dcs_liberation.${{ steps.version.outputs.number }}.zip
+        asset_content_type: application/zip
+      

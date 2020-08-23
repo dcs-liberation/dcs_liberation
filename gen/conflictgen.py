@@ -1,7 +1,7 @@
 import logging
 import typing
 import pdb
-import dcs
+from pydcs import dcs
 
 from random import randint
 from dcs import Mission
