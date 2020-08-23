@@ -10,12 +10,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-
-    # Only needed to work around missing libraries from current PyDCS module
-    - uses: actions/checkout@v2
       with:
-        repository: "${{github['repository_owner']}}/dcs"
-        path: '.\pydcs'
+        submodules: true
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -30,14 +26,13 @@ jobs:
       run: |
         ./venv/scripts/activate
         pip install -r requirements.txt
-        # Workaround for the missing libraries needed for Syria within the PyDCS module.
-        Copy-Item .\pydcs\dcs .\venv\Lib\site-packages\ -Container -Recurse -Force
+        # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
         Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
-        
+
     - name: Build binaries
       run: |
         ./venv/scripts/activate
-        $env:PYTHONPATH="."
+        $env:PYTHONPATH=".;./pydcs"
         pyinstaller pyinstaller.spec
 
     - name: Create Installer
@@ -45,8 +40,8 @@ jobs:
         TAG_NAME: ${{ github.ref }}
       run: |
         $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
-        (Get-Content .\msi_installer\dcs_liberation.iss) -replace "{{version}}",$version | Out-File .\build\installer.iss
-        cd .\msi_installer
+        (Get-Content .\installer\dcs_liberation.iss) -replace "{{version}}",$version | Out-File .\build\installer.iss
+        cd .\installer
         iscc.exe ..\build\installer.iss
         cd ..
         Copy-Item .\changelog.md .\dist
@@ -71,7 +66,7 @@ jobs:
       run: |
         Get-ChildItem -Recurse -Depth 1
         $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
-        $prerelease = $version -match '[^\.\d]'
+        $prerelease = ("2.1.1-alpha3" -match '[^\.\d]').ToString().ToLower()
         Write-Host $version
         Write-Host $prerelease
         Write-Output "::set-output name=number::$version"
