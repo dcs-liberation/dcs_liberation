@@ -486,3 +486,7 @@ QWidget[style="baseMenuHeader"]{
     font-weight: bold;
     color:white;
 }*/
+
+QLabel[style="small"]{
+    font-size: 8px;
+}

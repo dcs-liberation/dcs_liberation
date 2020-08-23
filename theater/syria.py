@@ -110,7 +110,7 @@ class SyrianCivilWar(SyriaTheater):
         self.palmyra = ControlPoint.from_airport(syria.Palmyra, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
 
         self.carrier = ControlPoint.carrier("Carrier", Point(18537, -52000), 1001)
-        self.lha = ControlPoint.lha("LHA", Point(116000, 30000), 1002)
+        self.lha = ControlPoint.lha("LHA", Point(116000, -30000), 1002)
 
         self.add_controlpoint(self.basselAlAssad, connected_to=[self.hama])
         self.add_controlpoint(self.marjruhayyil, connected_to=[self.aldumayr])
@@ -140,6 +140,7 @@ class InherentResolve(SyriaTheater):
         super(InherentResolve, self).__init__()
 
         self.kinghussein = ControlPoint.from_airport(syria.King_Hussein_Air_College, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
+        self.incirlik = ControlPoint.from_airport(syria.Incirlik, LAND, SIZE_REGULAR, IMPORTANCE_HIGH)
         self.khalkhala = ControlPoint.from_airport(syria.Khalkhalah, LAND, SIZE_REGULAR, IMPORTANCE_MEDIUM)
         self.palmyra = ControlPoint.from_airport(syria.Palmyra, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
         self.jirah = ControlPoint.from_airport(syria.Jirah, LAND, SIZE_REGULAR, IMPORTANCE_LOW)
@@ -149,6 +150,7 @@ class InherentResolve(SyriaTheater):
         self.lha = ControlPoint.lha("LHA", Point(-131000, -161000), 1002)
 
         self.add_controlpoint(self.kinghussein, connected_to=[self.khalkhala])
+        self.add_controlpoint(self.incirlik, connected_to=[self.incirlik])
         self.add_controlpoint(self.khalkhala, connected_to=[self.kinghussein, self.palmyra])
         self.add_controlpoint(self.palmyra, connected_to=[self.khalkhala, self.tabqa])
         self.add_controlpoint(self.tabqa, connected_to=[self.palmyra, self.jirah])
@@ -158,10 +160,12 @@ class InherentResolve(SyriaTheater):
         self.add_controlpoint(self.lha)
 
         self.kinghussein.captured = True
+        self.incirlik.captured = True
         self.carrier.captured = True
         self.lha.captured = True
 
         self.jirah.captured_invert = True
+        self.incirlik.captured_invert = True
         self.carrier.captured_invert = True
         self.lha.captured_invert = True
 
@@ -214,7 +218,7 @@ class SyriaFullMap(SyriaTheater):
         self.carrier.captured = True
         self.lha.captured = True
 
-        self.hatay.captured_invert = True
+        self.incirlik.captured_invert = True
         self.carrier.captured_invert = True
         self.lha.captured_invert = True
 

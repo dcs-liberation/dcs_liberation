@@ -24,7 +24,11 @@ class QLoadoutEditor(QGroupBox):
             label = QLabel("<b>{}</b>".format(pylon.__name__[len("Pylon"):]))
             label.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
             layout.addWidget(label, i, 0)
-            layout.addWidget(QPylonEditor(flight, pylon, i+1), i, 1)
+            try:
+                pylon_number = int(pylon.__name__.split("Pylon")[1])
+            except:
+                pylon_number = i+1
+            layout.addWidget(QPylonEditor(flight, pylon, pylon_number), i, 1)
 
         hboxLayout.addLayout(layout)
         hboxLayout.addStretch()

@@ -65,6 +65,40 @@ SAM_MAP = {
     AirDefence.HQ_7_Self_Propelled_LN: HQ7Generator
 }
 
+SAM_PRICES = {
+    AirDefence.SAM_Hawk_PCP: 35,
+    AirDefence.AAA_ZU_23_Emplacement: 10,
+    AirDefence.AAA_ZU_23_Closed: 10,
+    AirDefence.AAA_ZU_23_on_Ural_375: 10,
+    AirDefence.AAA_ZU_23_Insurgent_on_Ural_375: 10,
+    AirDefence.AAA_ZU_23_Insurgent_Closed: 10,
+    AirDefence.AAA_ZU_23_Insurgent: 10,
+    AirDefence.SPAAA_ZSU_23_4_Shilka: 10,
+    AirDefence.AAA_Vulcan_M163: 15,
+    AirDefence.SAM_Linebacker_M6: 20,
+    AirDefence.Rapier_FSA_Launcher: 20,
+    AirDefence.SAM_Avenger_M1097: 22,
+    AirDefence.SPAAA_Gepard: 24,
+    AirDefence.SAM_Roland_ADS: 40,
+    AirDefence.SAM_Patriot_LN_M901: 85,
+    AirDefence.SAM_Patriot_EPP_III: 85,
+    AirDefence.SAM_Chaparral_M48: 25,
+    AirDefence.AAA_Bofors_40mm: 15,
+    AirDefence.AAA_8_8cm_Flak_36: 15,
+    AirDefence.SAM_SA_2_LN_SM_90: 30,
+    AirDefence.SAM_SA_3_S_125_LN_5P73: 35,
+    AirDefence.SAM_SA_6_Kub_LN_2P25: 45,
+    AirDefence.SAM_SA_8_Osa_9A33: 30,
+    AirDefence.SAM_SA_9_Strela_1_9P31: 25,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 80,
+    AirDefence.SAM_SA_10_S_300PS_CP_54K6: 80,
+    AirDefence.SAM_SA_11_Buk_LN_9A310M1: 60,
+    AirDefence.SAM_SA_13_Strela_10M3_9A35M3: 30,
+    AirDefence.SAM_SA_15_Tor_9A331: 40,
+    AirDefence.SAM_SA_19_Tunguska_2S6: 35,
+    AirDefence.HQ_7_Self_Propelled_LN: 35
+}
+
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     """
     This generate a SAM group

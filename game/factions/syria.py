@@ -7,14 +7,20 @@ Syria_2011 = {
     "side": "red",
     "units": [
 
-        MiG_29S,
+        MiG_21Bis,
+        MiG_23MLD,
         MiG_25PD,
-        L_39ZA,
-        Su_24M,
+        MiG_29S,
+
         Su_17M4,
+        Su_24M,
+
+        L_39ZA,
+
         Mi_24V,
-        SA342M,
         Mi_8MT,
+        SA342M,
+        SA342L,
 
         IL_76MD,
         IL_78M,

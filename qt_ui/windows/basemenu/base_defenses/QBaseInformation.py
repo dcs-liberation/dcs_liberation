@@ -1,4 +1,5 @@
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout, QFrame
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout, QFrame, QWidget, QScrollArea
 
 from game import db
 from qt_ui.uiconstants import AIRCRAFT_ICONS, VEHICLES_ICONS
@@ -8,17 +9,34 @@ from theater import ControlPoint, Airport
 
 class QBaseInformation(QFrame):
 
-    def __init__(self, cp:ControlPoint, airport:Airport):
+    def __init__(self, cp:ControlPoint, airport:Airport, game):
         super(QBaseInformation, self).__init__()
         self.cp = cp
         self.airport = airport
+        self.game = game
         self.setMinimumWidth(500)
         self.init_ui()
 
     def init_ui(self):
-        self.layout = QVBoxLayout()
+        self.mainLayout = QVBoxLayout()
+
+        scroll_content = QWidget()
+        task_box_layout = QGridLayout()
+        scroll_content.setLayout(task_box_layout)
+        row = 0
+
         for g in self.cp.ground_objects:
             if g.airbase_group:
-                group_info = QBaseDefenseGroupInfo(self.cp, g)
-                self.layout.addWidget(group_info)
-        self.setLayout(self.layout)
+                group_info = QBaseDefenseGroupInfo(self.cp, g, self.game)
+                task_box_layout.addWidget(group_info)
+
+        scroll_content.setLayout(task_box_layout)
+        scroll = QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+
+        self.mainLayout.addWidget(scroll)
+
+        self.setLayout(self.mainLayout)

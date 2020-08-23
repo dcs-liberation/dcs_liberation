@@ -15,6 +15,6 @@ class QBaseDefensesHQ(QFrame):
     def init_ui(self):
         airport = self.game.theater.terrain.airport_by_id(self.cp.id)
         layout = QGridLayout()
-        layout.addWidget(QBaseInformation(self.cp, airport))
+        layout.addWidget(QBaseInformation(self.cp, airport, self.game))
         self.setLayout(layout)
 
