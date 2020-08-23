@@ -516,6 +516,10 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptRestrictJettison(True))
 
         for point in flight.points:
-            group.add_waypoint(Point(point.x,point.y), point.alt)
+            group.add_waypoint(Point(point.x, point.y), point.alt)
+
+
+    def setup_radio_preset(self, flight, group):
+        pass
 
 

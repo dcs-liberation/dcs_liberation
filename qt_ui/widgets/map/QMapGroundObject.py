@@ -3,17 +3,19 @@ from PySide2.QtGui import QPainter
 from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsItem, QGraphicsSceneHoverEvent, QGraphicsSceneMouseEvent
 
 import qt_ui.uiconstants as CONST
-from game import db
+from game import db, Game
+from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from theater import TheaterGroundObject, ControlPoint
 
 
 class QMapGroundObject(QGraphicsRectItem):
 
-    def __init__(self, parent, x: float, y: float, w: float, h: float, cp: ControlPoint, model: TheaterGroundObject, buildings=[]):
+    def __init__(self, parent, x: float, y: float, w: float, h: float, cp: ControlPoint, model: TheaterGroundObject, game:Game, buildings=[]):
         super(QMapGroundObject, self).__init__(x, y, w, h)
         self.model = model
         self.cp = cp
         self.parent = parent
+        self.game = game
         self.setAcceptHoverEvents(True)
         self.setZValue(2)
         self.buildings = buildings
@@ -39,6 +41,8 @@ class QMapGroundObject(QGraphicsRectItem):
                     tooltip = tooltip + str(building.dcs_identifier) + "\n"
             self.setToolTip(tooltip[:-1])
 
+    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
+        self.openEditionMenu()
 
     def paint(self, painter, option, widget=None):
         #super(QMapControlPoint, self).paint(painter, option, widget)
@@ -71,4 +75,8 @@ class QMapGroundObject(QGraphicsRectItem):
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
         self.update()
+
+    def openEditionMenu(self):
+        self.editionMenu = QGroundObjectMenu(self.window(), self.model, self.cp, self.game)
+        self.editionMenu.show()
 
