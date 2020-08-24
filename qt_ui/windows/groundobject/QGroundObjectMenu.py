@@ -39,7 +39,7 @@ class QGroundObjectMenu(QDialog):
 
         self.doLayout()
 
-        if len(self.ground_object.groups) > 0:
+        if self.ground_object.dcs_identifier == "AA":
             self.mainLayout.addWidget(self.intelBox)
         else:
             self.mainLayout.addWidget(self.buildingBox)

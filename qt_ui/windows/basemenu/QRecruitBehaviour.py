@@ -4,8 +4,6 @@ from dcs.unittype import UnitType
 
 from theater import db
 
-
-
 class QRecruitBehaviour:
 
     game = None

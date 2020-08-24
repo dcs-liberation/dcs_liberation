@@ -197,6 +197,7 @@ class AircraftConflictGenerator:
                 try:
                     return self._generate_at_airport(name, side, unit_type, count, client_count, at)
                 except NoParkingSlotError:
+                    logging.info("No parking slot found at " + at.name + ", switching to air start.")
                     pass
             return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
         else:
@@ -255,16 +256,21 @@ class AircraftConflictGenerator:
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
 
         # Clear pydcs parking slots
+        logging.info("CLEARING SLOTS @ " + cp.airport.name)
+        logging.info("===============")
         if cp.airport is not None:
             for ps in cp.airport.parking_slots:
+                logging.info("SLOT : " + str(ps.unit_id))
                 ps.unit_id = None
+            logging.info("----------------")
+        logging.info("===============")
 
         for flight in flight_planner.flights:
 
             if flight.client_count == 0 and self.game.position_culled(flight.from_cp.position):
                 logging.info("Flight not generated : culled")
                 continue
-
+            logging.info("Generating flight : " + str(flight.unit_type))
             group = self.generate_planned_flight(cp, country, flight)
             self.setup_flight_group(group, flight, flight.flight_type)
             self.setup_group_activation_trigger(flight, group)
@@ -324,7 +330,7 @@ class AircraftConflictGenerator:
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
             if flight.client_count == 0 and self.game.settings.perf_ai_parking_start:
-                flight.start_type = "Warm"
+                flight.start_type = "Cold"
 
             if flight.start_type == "In Flight":
                 group = self._generate_group(
@@ -360,8 +366,10 @@ class AircraftConflictGenerator:
                         client_count=0,
                         airport=cp.airport,
                         start_type=st)
-        except Exception:
+        except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
+            logging.error(e)
+            logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
             group = self._generate_group(
                 name=namegen.next_unit_name(country, cp.id, flight.unit_type),
