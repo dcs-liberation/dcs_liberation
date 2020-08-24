@@ -89,7 +89,7 @@ class QLiberationWindow(QMainWindow):
         self.saveAsAction.triggered.connect(self.saveGameAs)
         self.saveAsAction.setShortcut('CTRL+A')
 
-        self.showAboutDialogAction = QAction("About DCS Liberation", self)
+        self.showAboutDialogAction = QAction("&About DCS Liberation", self)
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
 
@@ -118,35 +118,35 @@ class QLiberationWindow(QMainWindow):
         #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
         file_menu.addAction("E&xit" , lambda: self.exit())
 
-        displayMenu = self.menu.addMenu("Display")
+        displayMenu = self.menu.addMenu("&Display")
 
-        tg_cp_visibility = QAction('Control Point', displayMenu)
+        tg_cp_visibility = QAction('&Control Point', displayMenu)
         tg_cp_visibility.setCheckable(True)
         tg_cp_visibility.setChecked(True)
         tg_cp_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("cp", tg_cp_visibility.isChecked()))
 
-        tg_go_visibility = QAction('Ground Objects', displayMenu)
+        tg_go_visibility = QAction('&Ground Objects', displayMenu)
         tg_go_visibility.setCheckable(True)
         tg_go_visibility.setChecked(True)
         tg_go_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("go", tg_go_visibility.isChecked()))
 
-        tg_line_visibility = QAction('Lines', displayMenu)
+        tg_line_visibility = QAction('&Lines', displayMenu)
         tg_line_visibility.setCheckable(True)
         tg_line_visibility.setChecked(True)
         tg_line_visibility.toggled.connect(
             lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
 
-        tg_event_visibility = QAction('Events', displayMenu)
+        tg_event_visibility = QAction('&Events', displayMenu)
         tg_event_visibility.setCheckable(True)
         tg_event_visibility.setChecked(True)
         tg_event_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
 
-        tg_sam_visibility = QAction('SAM Range', displayMenu)
+        tg_sam_visibility = QAction('&SAM Range', displayMenu)
         tg_sam_visibility.setCheckable(True)
         tg_sam_visibility.setChecked(True)
         tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
 
-        tg_flight_path_visibility = QAction('Flight Paths', displayMenu)
+        tg_flight_path_visibility = QAction('&Flight Paths', displayMenu)
         tg_flight_path_visibility.setCheckable(True)
         tg_flight_path_visibility.setChecked(False)
         tg_flight_path_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("flight_paths", tg_flight_path_visibility.isChecked()))
@@ -159,12 +159,12 @@ class QLiberationWindow(QMainWindow):
         displayMenu.addAction(tg_flight_path_visibility)
 
         help_menu = self.menu.addMenu("&Help")
-        help_menu.addAction("Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
-        help_menu.addAction("Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
-        help_menu.addAction("Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
-        help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
-        help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
-        help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+        help_menu.addAction("&Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
+        help_menu.addAction("&Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+        help_menu.addAction("&Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
+        help_menu.addAction("&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
+        help_menu.addAction("&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
+        help_menu.addAction("Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
