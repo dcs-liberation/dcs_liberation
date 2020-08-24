@@ -29,7 +29,7 @@ class QLiberationWindow(QMainWindow):
         self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
-        self.setWindowTitle("DCS Liberation")
+        self.setWindowTitle("DCS Liberation - v" + CONST.VERSION_STRING)
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
