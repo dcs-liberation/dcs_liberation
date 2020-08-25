@@ -6,6 +6,8 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
     QSplitter, QFileDialog
+from requests import get
+from packaging import version
 
 import qt_ui.uiconstants as CONST
 from game import Game
