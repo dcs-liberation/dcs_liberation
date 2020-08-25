@@ -123,7 +123,7 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
         help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
-        help_menu.addAction("Check new version", lambda: self._check_and_download_new_version)
+        help_menu.addAction("Check new version", lambda: self._check_and_download_new_version())
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
