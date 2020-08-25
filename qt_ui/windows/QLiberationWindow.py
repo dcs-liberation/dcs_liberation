@@ -242,14 +242,13 @@ class QLiberationWindow(QMainWindow):
         self.debriefing.show()
 
     def _check_and_download_new_version(self):
-        file_name, browser_download_url = '', ''
+        browser_download_url = ''
         try:
             response = get('https://api.github.com/repos/Khopa/dcs_liberation/releases/latest')
             if response.status_code == 200:
                 online_version = response.json()['tag_name']
                 if version.parse(online_version) > version.parse(CONST.VERSION_STRING):
                     print(f'There is new version of dcs_liberation: {online_version}')
-                    file_name = response.json()['assets'][0]['name']
                     browser_download_url = response.json()['assets'][0]['browser_download_url']
                 elif version.parse(online_version) == version.parse(CONST.VERSION_STRING):
                     print(f'This is up-to-date version: {CONST.VERSION_STRING}')
