@@ -1,6 +1,7 @@
 import logging
 import sys
 import webbrowser
+from os import environ
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
@@ -258,5 +259,8 @@ class QLiberationWindow(QMainWindow):
             print(f'Unable to check version online: {exc}')
 
         if browser_download_url:
-            with open(file_name, 'wb') as zip_file:
-                zip_file.write(get(browser_download_url).content)
+            full_zip_path = QFileDialog.getSaveFileName(self, caption='Save File', directory=environ['HOME'],
+                                                        filter='All Files [*.*](*.*)', options=QFileDialog.ReadOnly)
+            if full_zip_path:
+                with open(full_zip_path, 'wb') as zip_file:
+                    zip_file.write(get(browser_download_url).content)
