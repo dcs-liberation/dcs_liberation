@@ -123,7 +123,7 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
         help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
-        help_menu.addAction("Check new version", lambda: self._check_new_version)
+        help_menu.addAction("Check new version", lambda: self._check_and_download_new_version)
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
@@ -241,7 +241,7 @@ class QLiberationWindow(QMainWindow):
         self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
         self.debriefing.show()
 
-    def _check_new_version(self):
+    def _check_and_download_new_version(self):
         file_name, browser_download_url = '', ''
         try:
             response = get('https://api.github.com/repos/Khopa/dcs_liberation/releases/latest')
@@ -259,8 +259,8 @@ class QLiberationWindow(QMainWindow):
             print(f'Unable to check version online: {exc}')
 
         if browser_download_url:
-            full_zip_path = QFileDialog.getSaveFileName(self, caption='Save File', directory=environ['HOME'],
-                                                        filter='All Files [*.*](*.*)', options=QFileDialog.ReadOnly)
+            full_zip_path, _ = QFileDialog.getSaveFileName(self, caption='Save File', directory=environ['HOME'],
+                                                           filter='All Files [*.*](*.*)', options=QFileDialog.ReadOnly)
             if full_zip_path:
                 with open(full_zip_path, 'wb') as zip_file:
                     zip_file.write(get(browser_download_url).content)
