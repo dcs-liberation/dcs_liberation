@@ -120,6 +120,7 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
         help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
         help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+        help_menu.addAction("Check new version", lambda: self._check_new_version)
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
@@ -236,3 +237,24 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
         self.debriefing.show()
+
+    def _check_new_version(self):
+        file_name, browser_download_url = '', ''
+        try:
+            response = get('https://api.github.com/repos/Khopa/dcs_liberation/releases/latest')
+            if response.status_code == 200:
+                online_version = response.json()['tag_name']
+                if version.parse(online_version) > version.parse(CONST.VERSION_STRING):
+                    print(f'There is new version of dcs_liberation: {online_version}')
+                    file_name = response.json()['assets'][0]['name']
+                    browser_download_url = response.json()['assets'][0]['browser_download_url']
+                elif version.parse(online_version) == version.parse(CONST.VERSION_STRING):
+                    print(f'This is up-to-date version: {CONST.VERSION_STRING}')
+            else:
+                print(f'Unable to check version online. Try again later. Status={response.status_code}')
+        except Exception as exc:
+            print(f'Unable to check version online: {exc}')
+
+        if browser_download_url:
+            with open(file_name, 'wb') as zip_file:
+                zip_file.write(get(browser_download_url).content)
