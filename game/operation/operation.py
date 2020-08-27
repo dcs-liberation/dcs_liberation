@@ -221,17 +221,28 @@ class Operation:
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
 
+        kneeboard_generator = KneeboardGenerator(self.current_mission, self.game)
+
         # Briefing Generation
         for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            self.briefinggen.append_frequency("Tanker {} ({})".format(TANKER_CALLSIGNS[i], tanker_type), "{}X/{} MHz AM".format(60+i, 130+i))
+            callsign = TANKER_CALLSIGNS[i]
+            tacan = f"{60 + i}X"
+            freq = f"{130 + i} MHz AM"
+            self.briefinggen.append_frequency(f"Tanker {callsign} ({tanker_type})", f"{tacan}/{freq}")
+            kneeboard_generator.add_tanker(callsign, tanker_type, freq, tacan)
 
         if self.is_awacs_enabled:
-            self.briefinggen.append_frequency("AWACS", "233 MHz AM")
+            callsign = "AWACS"
+            freq = "233 MHz AM"
+            self.briefinggen.append_frequency(callsign, freq)
+            kneeboard_generator.add_awacs(callsign, freq)
 
         self.briefinggen.append_frequency("Flight", "251 MHz AM")
+        kneeboard_generator.add_comm("Flight", "251 MHz AM")
 
         # Generate the briefing
         self.briefinggen.generate()
 
-
-
+        for region, code, name in self.game.jtacs:
+            kneeboard_generator.add_jtac(name, region, code)
+        kneeboard_generator.generate()
