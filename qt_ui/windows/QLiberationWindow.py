@@ -32,7 +32,7 @@ class QLiberationWindow(QMainWindow):
         self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
-        self.setWindowTitle("DCS Liberation")
+        self.setWindowTitle("DCS Liberation - v" + CONST.VERSION_STRING)
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
@@ -72,27 +72,31 @@ class QLiberationWindow(QMainWindow):
         GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
 
     def initActions(self):
-        self.newGameAction = QAction("New Game", self)
+        self.newGameAction = QAction("&New Game", self)
         self.newGameAction.setIcon(QIcon(CONST.ICONS["New"]))
         self.newGameAction.triggered.connect(self.newGame)
+        self.newGameAction.setShortcut('CTRL+N')
 
-        self.openAction = QAction("Open", self)
+        self.openAction = QAction("&Open", self)
         self.openAction.setIcon(QIcon(CONST.ICONS["Open"]))
         self.openAction.triggered.connect(self.openFile)
+        self.openAction.setShortcut('CTRL+O')
 
-        self.saveGameAction = QAction("Save", self)
+        self.saveGameAction = QAction("&Save", self)
         self.saveGameAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveGameAction.triggered.connect(self.saveGame)
+        self.saveGameAction.setShortcut('CTRL+S')
 
-        self.saveAsAction = QAction("Save As", self)
+        self.saveAsAction = QAction("Save &As", self)
         self.saveAsAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveAsAction.triggered.connect(self.saveGameAs)
+        self.saveAsAction.setShortcut('CTRL+A')
 
-        self.showAboutDialogAction = QAction("About DCS Liberation", self)
+        self.showAboutDialogAction = QAction("&About DCS Liberation", self)
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
 
-        self.showLiberationPrefDialogAction = QAction("Preferences", self)
+        self.showLiberationPrefDialogAction = QAction("&Preferences", self)
         self.showLiberationPrefDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showLiberationPrefDialogAction.triggered.connect(self.showLiberationDialog)
 
@@ -105,9 +109,10 @@ class QLiberationWindow(QMainWindow):
     def initMenuBar(self):
         self.menu = self.menuBar()
 
-        file_menu = self.menu.addMenu("File")
+        file_menu = self.menu.addMenu("&File")
         file_menu.addAction(self.newGameAction)
         file_menu.addAction(self.openAction)
+        file_menu.addSeparator()
         file_menu.addAction(self.saveGameAction)
         file_menu.addAction(self.saveAsAction)
         file_menu.addSeparator()
@@ -115,48 +120,39 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
         file_menu.addAction("Exit" , lambda: self.exit())
-
+        
         help_menu = self.menu.addMenu("Help")
-        help_menu.addAction("Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
-        help_menu.addAction("Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
-        help_menu.addAction("Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
-        help_menu.addAction("Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
-        help_menu.addAction("ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
-        help_menu.addAction("Report an issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
         help_menu.addAction("Check new version", lambda: self._check_and_download_new_version())
 
-        help_menu.addSeparator()
-        help_menu.addAction(self.showAboutDialogAction)
+        displayMenu = self.menu.addMenu("&Display")
 
-        displayMenu = self.menu.addMenu("Display")
-
-        tg_cp_visibility = QAction('Control Point', displayMenu)
+        tg_cp_visibility = QAction('&Control Point', displayMenu)
         tg_cp_visibility.setCheckable(True)
         tg_cp_visibility.setChecked(True)
         tg_cp_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("cp", tg_cp_visibility.isChecked()))
 
-        tg_go_visibility = QAction('Ground Objects', displayMenu)
+        tg_go_visibility = QAction('&Ground Objects', displayMenu)
         tg_go_visibility.setCheckable(True)
         tg_go_visibility.setChecked(True)
         tg_go_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("go", tg_go_visibility.isChecked()))
 
-        tg_line_visibility = QAction('Lines', displayMenu)
+        tg_line_visibility = QAction('&Lines', displayMenu)
         tg_line_visibility.setCheckable(True)
         tg_line_visibility.setChecked(True)
         tg_line_visibility.toggled.connect(
             lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
 
-        tg_event_visibility = QAction('Events', displayMenu)
+        tg_event_visibility = QAction('&Events', displayMenu)
         tg_event_visibility.setCheckable(True)
         tg_event_visibility.setChecked(True)
         tg_event_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
 
-        tg_sam_visibility = QAction('SAM Range', displayMenu)
+        tg_sam_visibility = QAction('&SAM Range', displayMenu)
         tg_sam_visibility.setCheckable(True)
         tg_sam_visibility.setChecked(True)
         tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
 
-        tg_flight_path_visibility = QAction('Flight Paths', displayMenu)
+        tg_flight_path_visibility = QAction('&Flight Paths', displayMenu)
         tg_flight_path_visibility.setCheckable(True)
         tg_flight_path_visibility.setChecked(False)
         tg_flight_path_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("flight_paths", tg_flight_path_visibility.isChecked()))
@@ -167,6 +163,17 @@ class QLiberationWindow(QMainWindow):
         displayMenu.addAction(tg_event_visibility)
         displayMenu.addAction(tg_sam_visibility)
         displayMenu.addAction(tg_flight_path_visibility)
+
+        help_menu = self.menu.addMenu("&Help")
+        help_menu.addAction("&Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
+        help_menu.addAction("&Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+        help_menu.addAction("&Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
+        help_menu.addAction("&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
+        help_menu.addAction("&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
+        help_menu.addAction("Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+
+        help_menu.addSeparator()
+        help_menu.addAction(self.showAboutDialogAction)
 
     def newGame(self):
         wizard = NewGameWizard(self)

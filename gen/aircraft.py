@@ -256,14 +256,15 @@ class AircraftConflictGenerator:
     def generate_flights(self, cp, country, flight_planner:FlightPlanner):
 
         # Clear pydcs parking slots
-        logging.info("CLEARING SLOTS @ " + cp.airport.name)
-        logging.info("===============")
         if cp.airport is not None:
-            for ps in cp.airport.parking_slots:
-                logging.info("SLOT : " + str(ps.unit_id))
-                ps.unit_id = None
-            logging.info("----------------")
-        logging.info("===============")
+            logging.info("CLEARING SLOTS @ " + cp.airport.name)
+            logging.info("===============")
+            if cp.airport is not None:
+                for ps in cp.airport.parking_slots:
+                    logging.info("SLOT : " + str(ps.unit_id))
+                    ps.unit_id = None
+                logging.info("----------------")
+            logging.info("===============")
 
         for flight in flight_planner.flights:
 

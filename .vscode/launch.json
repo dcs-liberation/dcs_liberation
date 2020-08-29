@@ -1,0 +1,19 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Main",
+      "type": "python",
+      "request": "launch",
+      "program": "qt_ui\\main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "preLaunchTask": "Prepare Environment"
+    }
+  ]
+}
