@@ -12,7 +12,8 @@ tests/**
 # User-specific stuff
 .idea/
 
-liberation_preferences.json
+/liberation_preferences.json
+/state.json
 
 logs/liberation.log
 
