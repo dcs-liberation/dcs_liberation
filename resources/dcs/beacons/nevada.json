@@ -1,0 +1,317 @@
+[
+ {
+  "name": "",
+  "callsign": "ICRR",
+  "beacon_type": 15,
+  "hertz": 108700000,
+  "channel": 24
+ },
+ {
+  "name": "",
+  "callsign": "ICRR",
+  "beacon_type": 14,
+  "hertz": 108700000,
+  "channel": 24
+ },
+ {
+  "name": "",
+  "callsign": "ICRS",
+  "beacon_type": 14,
+  "hertz": 108500000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "ICRS",
+  "beacon_type": 15,
+  "hertz": 108500000,
+  "channel": 22
+ },
+ {
+  "name": "Indian Springs",
+  "callsign": "INS",
+  "beacon_type": 5,
+  "hertz": null,
+  "channel": 87
+ },
+ {
+  "name": "",
+  "callsign": "GLRI",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": 30
+ },
+ {
+  "name": "",
+  "callsign": "GLRI",
+  "beacon_type": 15,
+  "hertz": 109300000,
+  "channel": 30
+ },
+ {
+  "name": "Groom Lake",
+  "callsign": "GRL",
+  "beacon_type": 5,
+  "hertz": null,
+  "channel": 18
+ },
+ {
+  "name": "",
+  "callsign": "I-RLE",
+  "beacon_type": 15,
+  "hertz": 111750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-LAS",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": 40
+ },
+ {
+  "name": "",
+  "callsign": "I-RLE",
+  "beacon_type": 14,
+  "hertz": 111750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-LAS",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": 40
+ },
+ {
+  "name": "Las Vegas",
+  "callsign": "LAS",
+  "beacon_type": 6,
+  "hertz": 116900000,
+  "channel": 116
+ },
+ {
+  "name": "",
+  "callsign": "IDIQ",
+  "beacon_type": 15,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "Nellis",
+  "callsign": "LSV",
+  "beacon_type": 5,
+  "hertz": null,
+  "channel": 12
+ },
+ {
+  "name": "",
+  "callsign": "IDIQ",
+  "beacon_type": 14,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-HWG",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-HWG",
+  "beacon_type": 15,
+  "hertz": 110700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-RVP",
+  "beacon_type": 14,
+  "hertz": 108300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-UVV",
+  "beacon_type": 14,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-UVV",
+  "beacon_type": 15,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "I-RVP",
+  "beacon_type": 15,
+  "hertz": 108300000,
+  "channel": null
+ },
+ {
+  "name": "Silverbow",
+  "callsign": "TQQ",
+  "beacon_type": 6,
+  "hertz": 113000000,
+  "channel": 77
+ },
+ {
+  "name": "St George",
+  "callsign": "UTI",
+  "beacon_type": 4,
+  "hertz": 108600000,
+  "channel": 23
+ },
+ {
+  "name": "Grand Canyon",
+  "callsign": "GCN",
+  "beacon_type": 4,
+  "hertz": 113100000,
+  "channel": 78
+ },
+ {
+  "name": "Kingman",
+  "callsign": "IGM",
+  "beacon_type": 4,
+  "hertz": 108800000,
+  "channel": 25
+ },
+ {
+  "name": "Colorado City",
+  "callsign": "AZC",
+  "beacon_type": 10,
+  "hertz": 403000,
+  "channel": null
+ },
+ {
+  "name": "Meggi",
+  "callsign": "EC",
+  "beacon_type": 10,
+  "hertz": 217000,
+  "channel": null
+ },
+ {
+  "name": "Daggett",
+  "callsign": "DAG",
+  "beacon_type": 6,
+  "hertz": 113200000,
+  "channel": 79
+ },
+ {
+  "name": "Hector",
+  "callsign": "HEC",
+  "beacon_type": 6,
+  "hertz": 112700000,
+  "channel": 74
+ },
+ {
+  "name": "Needles",
+  "callsign": "EED",
+  "beacon_type": 6,
+  "hertz": 115200000,
+  "channel": 99
+ },
+ {
+  "name": "Milford",
+  "callsign": "MLF",
+  "beacon_type": 6,
+  "hertz": 112100000,
+  "channel": 58
+ },
+ {
+  "name": "GOFFS",
+  "callsign": "GFS",
+  "beacon_type": 6,
+  "hertz": 114400000,
+  "channel": 91
+ },
+ {
+  "name": "Tonopah",
+  "callsign": "TPH",
+  "beacon_type": 6,
+  "hertz": 117200000,
+  "channel": 119
+ },
+ {
+  "name": "Mina",
+  "callsign": "MVA",
+  "beacon_type": 6,
+  "hertz": 115100000,
+  "channel": 98
+ },
+ {
+  "name": "Wilson Creek",
+  "callsign": "ILC",
+  "beacon_type": 6,
+  "hertz": 116300000,
+  "channel": 110
+ },
+ {
+  "name": "Cedar City",
+  "callsign": "CDC",
+  "beacon_type": 6,
+  "hertz": 117300000,
+  "channel": 120
+ },
+ {
+  "name": "Bryce Canyon",
+  "callsign": "BCE",
+  "beacon_type": 6,
+  "hertz": 112800000,
+  "channel": 75
+ },
+ {
+  "name": "Mormon Mesa",
+  "callsign": "MMM",
+  "beacon_type": 6,
+  "hertz": 114300000,
+  "channel": 90
+ },
+ {
+  "name": "Beatty",
+  "callsign": "BTY",
+  "beacon_type": 6,
+  "hertz": 114700000,
+  "channel": 94
+ },
+ {
+  "name": "Bishop",
+  "callsign": "BIH",
+  "beacon_type": 6,
+  "hertz": 109600000,
+  "channel": 33
+ },
+ {
+  "name": "Coaldale",
+  "callsign": "OAL",
+  "beacon_type": 6,
+  "hertz": 117700000,
+  "channel": 124
+ },
+ {
+  "name": "Peach Springs",
+  "callsign": "PGS",
+  "beacon_type": 6,
+  "hertz": 112000000,
+  "channel": 57
+ },
+ {
+  "name": "Boulder City",
+  "callsign": "BLD",
+  "beacon_type": 6,
+  "hertz": 116700000,
+  "channel": 114
+ },
+ {
+  "name": "Mercury",
+  "callsign": "MCY",
+  "beacon_type": 10,
+  "hertz": 326000,
+  "channel": null
+ }
+]
