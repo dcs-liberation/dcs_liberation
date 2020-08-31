@@ -637,11 +637,3 @@ AIRFIELD_DATA = {
         atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
     ),
 }
-
-# TODO: Add list of all beacons on the map so we can reserve those frequencies.
-# This list could be generated from the beasons.lua file in the terrain mod
-# directory. As-is, we're allocating channels that might include VOR beacons,
-# and those will broadcast their callsign consistently (probably with a lot of
-# static, depending on how far away the beacon is. The F-16's VHF radio starts
-# at 116 MHz, which happens to be the Damascus VOR beacon, so this is more or
-# less guaranteed to happen.
