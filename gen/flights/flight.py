@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
-from dcs.mission import StartType
-from dcs.unittype import UnitType
+from pydcs.dcs.unittype import UnitType
 
 from game import db
+from gen.radios import RadioFrequency
 
 
 class FlightType(Enum):
@@ -96,6 +96,13 @@ class Flight:
     # How long before this flight should take off
     scheduled_in = 0
 
+    # Populated during mission generation time by AircraftConflictGenerator.
+    # TODO: Decouple radio planning from the Flight.
+    # Make AircraftConflictGenerator generate a FlightData object that is
+    # returned to the Operation rather than relying on the Flight object, which
+    # represents a game UI flight rather than a fully planned flight.
+    intra_flight_channel: Optional[RadioFrequency]
+
     def __init__(self, unit_type: UnitType, count: int, from_cp, flight_type: FlightType):
         self.unit_type = unit_type
         self.count = count
@@ -105,6 +112,7 @@ class Flight:
         self.targets = []
         self.loadout = {}
         self.start_type = "Runway"
+        self.intra_flight_channel = None
 
     def __repr__(self):
         return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
@@ -113,10 +121,10 @@ class Flight:
 
 # Test
 if __name__ == '__main__':
-    from dcs.planes import A_10C
+    from pydcs.dcs.planes import A_10C
     from theater import ControlPoint, Point, List
 
     from_cp = ControlPoint(0, "AA", Point(0, 0), None, [], 0, 0)
-    f = Flight(A_10C, 4, from_cp, FlightType.CAS)
+    f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
     f.scheduled_in = 50
     print(f)

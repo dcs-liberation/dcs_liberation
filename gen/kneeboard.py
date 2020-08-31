@@ -33,9 +33,11 @@ from tabulate import tabulate
 from pydcs.dcs.mission import Mission
 from pydcs.dcs.terrain.terrain import Airport
 from pydcs.dcs.unittype import FlyingType
-from .airfields import AIRFIELD_DATA
-from .flights.flight import Flight
 from . import units
+from .airfields import AIRFIELD_DATA
+from .airsupportgen import AwacsInfo, TankerInfo
+from .flights.flight import Flight
+from .radios import RadioFrequency
 
 
 class KneeboardPageWriter:
@@ -116,23 +118,7 @@ class AirfieldInfo:
 class CommInfo:
     """Communications information for the kneeboard."""
     name: str
-    freq: str
-
-
-@dataclass
-class AwacsInfo:
-    """AWACS information for the kneeboard."""
-    callsign: str
-    freq: str
-
-
-@dataclass
-class TankerInfo:
-    """Tanker information for the kneeboard."""
-    callsign: str
-    variant: str
-    freq: str
-    tacan: str
+    freq: RadioFrequency
 
 
 @dataclass
@@ -153,6 +139,10 @@ class BriefingPage(KneeboardPage):
         self.awacs = awacs
         self.tankers = tankers
         self.jtacs = jtacs
+        if self.flight.intra_flight_channel is not None:
+            self.comms.append(
+                CommInfo("Flight", self.flight.intra_flight_channel)
+            )
         self.departure = flight.from_cp.airport
         self.arrival = flight.from_cp.airport
         self.divert: Optional[Airport] = None
@@ -245,7 +235,7 @@ class KneeboardGenerator:
         self.tankers: List[TankerInfo] = []
         self.jtacs: List[JtacInfo] = []
 
-    def add_comm(self, name: str, freq: str) -> None:
+    def add_comm(self, name: str, freq: RadioFrequency) -> None:
         """Adds communications info to the kneeboard.
 
         Args:
@@ -254,26 +244,21 @@ class KneeboardGenerator:
         """
         self.comms.append(CommInfo(name, freq))
 
-    def add_awacs(self, callsign: str, freq: str) -> None:
+    def add_awacs(self, awacs: AwacsInfo) -> None:
         """Adds an AWACS/GCI to the kneeboard.
 
         Args:
-            callsign: Callsign of the AWACS/GCI.
-            freq: Radio frequency used by the AWACS/GCI.
+            awacs: AWACS information.
         """
-        self.awacs.append(AwacsInfo(callsign, freq))
+        self.awacs.append(awacs)
 
-    def add_tanker(self, callsign: str, variant: str, freq: str,
-                   tacan: str) -> None:
+    def add_tanker(self, tanker: TankerInfo) -> None:
         """Adds a tanker to the kneeboard.
 
         Args:
-            callsign: Callsign of the tanker.
-            variant: Aircraft type.
-            freq: Radio frequency used by the tanker.
-            tacan: TACAN channel of the tanker.
+            tanker: Tanker information.
         """
-        self.tankers.append(TankerInfo(callsign, variant, freq, tacan))
+        self.tankers.append(tanker)
 
     def add_jtac(self, callsign: str, region: str, code: str) -> None:
         """Adds a JTAC to the kneeboard.

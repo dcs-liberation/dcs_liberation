@@ -1,14 +1,32 @@
-from dcs.action import ActivateGroup, AITaskPush, MessageToCoalition, MessageToAll
-from dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
-from dcs.helicopters import UH_1H
-from dcs.terrain.terrain import NoParkingSlotError
-from dcs.triggers import TriggerOnce, Event
+from dataclasses import dataclass
+from typing import Dict
 
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import Flight, FlightType, FlightWaypointType
+from gen.radios import get_radio, MHz, Radio, RadioFrequency, RadioRegistry
+from pydcs.dcs import helicopters
+from pydcs.dcs.action import ActivateGroup, AITaskPush, MessageToAll
+from pydcs.dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
+from pydcs.dcs.helicopters import helicopter_map, UH_1H
+from pydcs.dcs.mission import Mission, StartType
+from pydcs.dcs.planes import (
+    Bf_109K_4,
+    FW_190A8,
+    FW_190D9,
+    I_16,
+    Ju_88A4,
+    P_47D_30,
+    P_51D,
+    P_51D_30_NA,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+)
+from pydcs.dcs.terrain.terrain import NoParkingSlotError
+from pydcs.dcs.triggers import TriggerOnce, Event
+from pydcs.dcs.unittype import UnitType
 from .conflictgen import *
 from .naming import *
 
@@ -23,16 +41,82 @@ RTB_ALTITUDE = 800
 RTB_DISTANCE = 5000
 HELI_ALT = 500
 
+# Note that fallback radio channels will *not* be reserved. It's possible that
+# flights using these will overlap with other channels. This is because we would
+# need to make sure we fell back to a frequency that is not used by any beacon
+# or ATC, which we don't have the information to predict. Deal with the minor
+# annoyance for now since we'll be fleshing out radio info soon enough.
+ALLIES_WW2_CHANNEL = MHz(124)
+GERMAN_WW2_CHANNEL = MHz(40)
+HELICOPTER_CHANNEL = MHz(127)
+UHF_FALLBACK_CHANNEL = MHz(251)
+
+
+@dataclass(frozen=True)
+class AircraftData:
+    """Additional aircraft data not exposed by pydcs."""
+
+    #: The type of radio used for intra-flight communications.
+    intra_flight_radio: Radio
+
+
+# Indexed by the id field of the pydcs PlaneType.
+AIRCRAFT_DATA: Dict[str, AircraftData] = {
+    "A-10C": AircraftData(get_radio("AN/ARC-186(V) AM")),
+    "F-16C_50": AircraftData(get_radio("AN/ARC-222")),
+    "F/A-18C": AircraftData(get_radio("AN/ARC-210")),
+}
+
+
+# TODO: Get radio information for all the special cases.
+def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
+    if unit_type in helicopter_map.values() and unit_type != UH_1H:
+        return HELICOPTER_CHANNEL
+
+    german_ww2_aircraft = [
+        Bf_109K_4,
+        FW_190A8,
+        FW_190D9,
+        Ju_88A4,
+    ]
+
+    if unit_type in german_ww2_aircraft:
+        return GERMAN_WW2_CHANNEL
+
+    allied_ww2_aircraft = [
+        I_16,
+        P_47D_30,
+        P_51D,
+        P_51D_30_NA,
+        SpitfireLFMkIX,
+        SpitfireLFMkIXCW,
+    ]
+
+    if unit_type in allied_ww2_aircraft:
+        return ALLIES_WW2_CHANNEL
+
+    return UHF_FALLBACK_CHANNEL
+
 
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
 
-    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings, game):
+    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
+                 game, radio_registry: RadioRegistry):
         self.m = mission
         self.game = game
         self.settings = settings
         self.conflict = conflict
+        self.radio_registry = radio_registry
         self.escort_targets = []
+
+    def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
+        try:
+            aircraft_data = AIRCRAFT_DATA[airframe.id]
+            return self.radio_registry.alloc_for_radio(
+                aircraft_data.intra_flight_radio)
+        except KeyError:
+            return get_fallback_channel(airframe)
 
     def _start_type(self) -> StartType:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
@@ -90,19 +174,9 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
-        # TODO : refactor this following bad specific special case code :(
-
-        if unit_type in helicopters.helicopter_map.values() and unit_type not in [UH_1H]:
-            group.set_frequency(127.5)
-        else:
-            if unit_type not in [P_51D_30_NA, P_51D, SpitfireLFMkIX, SpitfireLFMkIXCW, P_47D_30, I_16, FW_190A8, FW_190D9, Bf_109K_4]:
-                group.set_frequency(251.0)
-            else:
-                # WW2
-                if unit_type in [FW_190A8, FW_190D9, Bf_109K_4, Ju_88A4]:
-                    group.set_frequency(40)
-                else:
-                    group.set_frequency(124.0)
+        channel = self.get_intra_flight_channel(unit_type)
+        group.set_frequency(channel.mhz)
+        flight.intra_flight_channel = channel
 
         # Special case so Su 33 carrier take off
         if unit_type is Su_33:

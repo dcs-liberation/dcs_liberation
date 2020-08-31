@@ -4,8 +4,9 @@ from dcs.terrain import Terrain
 
 from gen import *
 from userdata.debriefing import *
-
-TANKER_CALLSIGNS = ["Texaco", "Arco", "Shell"]
+from gen.airfields import AIRFIELD_DATA
+from gen.radios import RadioRegistry
+from gen.tacan import TacanRegistry
 
 
 class Operation:
@@ -25,6 +26,8 @@ class Operation:
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
+    radio_registry: Optional[RadioRegistry] = None
+    tacan_registry: Optional[TacanRegistry] = None
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
@@ -63,8 +66,14 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
-        self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings, self.game)
-        self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
+        self.radio_registry = RadioRegistry()
+        self.tacan_registry = TacanRegistry()
+        self.airgen = AircraftConflictGenerator(
+            mission, conflict, self.game.settings, self.game,
+            self.radio_registry)
+        self.airsupportgen = AirSupportConflictGenerator(
+            mission, conflict, self.game, self.radio_registry,
+            self.tacan_registry)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
@@ -119,6 +128,17 @@ class Operation:
 
         # Generate ground object first
         self.groundobjectgen.generate()
+
+        for airfield, data in AIRFIELD_DATA.items():
+            if data.theater == self.game.theater.terrain.name:
+                self.radio_registry.reserve(data.atc.hf)
+                self.radio_registry.reserve(data.atc.vhf_fm)
+                self.radio_registry.reserve(data.atc.vhf_am)
+                self.radio_registry.reserve(data.atc.uhf)
+                for ils in data.ils.values():
+                    self.radio_registry.reserve(ils)
+                if data.tacan is not None:
+                    self.tacan_registry.reserve(data.tacan)
 
         # Generate destroyed units
         for d in self.game.get_destroyed_units():
@@ -224,21 +244,16 @@ class Operation:
         kneeboard_generator = KneeboardGenerator(self.current_mission, self.game)
 
         # Briefing Generation
-        for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            callsign = TANKER_CALLSIGNS[i]
-            tacan = f"{60 + i}X"
-            freq = f"{130 + i} MHz AM"
-            self.briefinggen.append_frequency(f"Tanker {callsign} ({tanker_type})", f"{tacan}/{freq}")
-            kneeboard_generator.add_tanker(callsign, tanker_type, freq, tacan)
+        for tanker in self.airsupportgen.air_support.tankers:
+            self.briefinggen.append_frequency(
+                f"Tanker {tanker.callsign} ({tanker.variant})",
+                f"{tanker.tacan}/{tanker.freq}")
+            kneeboard_generator.add_tanker(tanker)
 
         if self.is_awacs_enabled:
-            callsign = "AWACS"
-            freq = "233 MHz AM"
-            self.briefinggen.append_frequency(callsign, freq)
-            kneeboard_generator.add_awacs(callsign, freq)
-
-        self.briefinggen.append_frequency("Flight", "251 MHz AM")
-        kneeboard_generator.add_comm("Flight", "251 MHz AM")
+            for awacs in self.airsupportgen.air_support.awacs:
+                self.briefinggen.append_frequency(awacs.callsign, awacs.freq)
+                kneeboard_generator.add_awacs(awacs)
 
         # Generate the briefing
         self.briefinggen.generate()
