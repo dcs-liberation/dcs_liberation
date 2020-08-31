@@ -1,12 +1,14 @@
-from dcs.countries import country_dict
-from dcs.lua.parse import loads
-from dcs.terrain import Terrain
+from typing import Set
 
 from gen import *
-from userdata.debriefing import *
 from gen.airfields import AIRFIELD_DATA
+from gen.beacons import load_beacons_for_terrain
 from gen.radios import RadioRegistry
 from gen.tacan import TacanRegistry
+from pydcs.dcs.countries import country_dict
+from pydcs.dcs.lua.parse import loads
+from pydcs.dcs.terrain.terrain import Terrain
+from userdata.debriefing import *
 
 
 class Operation:
@@ -119,6 +121,20 @@ class Operation:
             self.defenders_starting_position = self.to_cp.at
 
     def generate(self):
+        # Dedup beacon frequencies, since some maps have more than one beacon
+        # per frequency.
+        beacons = load_beacons_for_terrain(self.game.theater.terrain.name)
+        unique_beacon_frequencies: Set[RadioFrequency] = set()
+        for beacon in beacons:
+            unique_beacon_frequencies.add(beacon.frequency)
+            if beacon.is_tacan:
+                if beacon.channel is None:
+                    logging.error(
+                        f"TACAN beacon has no channel: {beacon.callsign}")
+                else:
+                    self.tacan_registry.reserve(beacon.tacan_channel)
+        for frequency in unique_beacon_frequencies:
+            self.radio_registry.reserve(frequency)
 
         # Generate meteo
         if self.environment_settings is None:
@@ -135,10 +151,8 @@ class Operation:
                 self.radio_registry.reserve(data.atc.vhf_fm)
                 self.radio_registry.reserve(data.atc.vhf_am)
                 self.radio_registry.reserve(data.atc.uhf)
-                for ils in data.ils.values():
-                    self.radio_registry.reserve(ils)
-                if data.tacan is not None:
-                    self.tacan_registry.reserve(data.tacan)
+                # No need to reserve ILS or TACAN because those are in the
+                # beacon list.
 
         # Generate destroyed units
         for d in self.game.get_destroyed_units():
