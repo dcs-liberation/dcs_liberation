@@ -80,7 +80,13 @@ class Operation:
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
         self.forcedoptionsgen = ForcedOptionsGenerator(mission, conflict, self.game)
-        self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
+        self.groundobjectgen = GroundObjectsGenerator(
+            mission,
+            conflict,
+            self.game,
+            self.radio_registry,
+            self.tacan_registry
+        )
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
@@ -136,15 +142,6 @@ class Operation:
         for frequency in unique_beacon_frequencies:
             self.radio_registry.reserve(frequency)
 
-        # Generate meteo
-        if self.environment_settings is None:
-            self.environment_settings = self.envgen.generate()
-        else:
-            self.envgen.load(self.environment_settings)
-
-        # Generate ground object first
-        self.groundobjectgen.generate()
-
         for airfield, data in AIRFIELD_DATA.items():
             if data.theater == self.game.theater.terrain.name:
                 self.radio_registry.reserve(data.atc.hf)
@@ -153,6 +150,15 @@ class Operation:
                 self.radio_registry.reserve(data.atc.uhf)
                 # No need to reserve ILS or TACAN because those are in the
                 # beacon list.
+
+        # Generate meteo
+        if self.environment_settings is None:
+            self.environment_settings = self.envgen.generate()
+        else:
+            self.envgen.load(self.environment_settings)
+
+        # Generate ground object first
+        self.groundobjectgen.generate()
 
         # Generate destroyed units
         for d in self.game.get_destroyed_units():
@@ -185,7 +191,12 @@ class Operation:
             else:
                 country = self.current_mission.country(self.game.enemy_country)
             if cp.id in self.game.planners.keys():
-                self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
+                self.airgen.generate_flights(
+                    cp,
+                    country,
+                    self.game.planners[cp.id],
+                    self.groundobjectgen.runways
+                )
 
         # Generate ground units on frontline everywhere
         self.game.jtacs = []
@@ -309,27 +320,16 @@ class Operation:
         last_channel = flight.num_radio_channels(radio_id)
         channel_alloc = iter(range(first_channel, last_channel + 1))
 
-        # TODO: Fix departure/arrival to support carriers.
-        if flight.departure is not None:
-            try:
-                departure = AIRFIELD_DATA[flight.departure.name]
-                flight.assign_channel(
-                    radio_id, next(channel_alloc), departure.atc.uhf)
-            except KeyError:
-                pass
+        flight.assign_channel(radio_id, next(channel_alloc),flight.departure.atc)
 
         # TODO: If there ever are multiple AWACS, limit to mission relevant.
         for awacs in self.airsupportgen.air_support.awacs:
             flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
 
         # TODO: Fix departure/arrival to support carriers.
-        if flight.arrival is not None and flight.arrival != flight.departure:
-            try:
-                arrival = AIRFIELD_DATA[flight.arrival.name]
-                flight.assign_channel(
-                    radio_id, next(channel_alloc), arrival.atc.uhf)
-            except KeyError:
-                pass
+        if flight.arrival != flight.departure:
+            flight.assign_channel(radio_id, next(channel_alloc),
+                                  flight.arrival.atc)
 
         try:
             # TODO: Skip incompatible tankers.
@@ -338,12 +338,8 @@ class Operation:
                     radio_id, next(channel_alloc), tanker.freq)
 
             if flight.divert is not None:
-                try:
-                    divert = AIRFIELD_DATA[flight.divert.name]
-                    flight.assign_channel(
-                        radio_id, next(channel_alloc), divert.atc.uhf)
-                except KeyError:
-                    pass
+                flight.assign_channel(radio_id, next(channel_alloc),
+                                      flight.divert.atc)
         except StopIteration:
             # Any remaining channels are nice-to-haves, but not necessary for
             # the few aircraft with a small number of channels available.

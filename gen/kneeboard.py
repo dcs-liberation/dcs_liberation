@@ -31,11 +31,10 @@ from PIL import Image, ImageDraw, ImageFont
 from tabulate import tabulate
 
 from pydcs.dcs.mission import Mission
-from pydcs.dcs.terrain.terrain import Airport
 from pydcs.dcs.unittype import FlyingType
 from . import units
 from .aircraft import FlightData
-from .airfields import AIRFIELD_DATA
+from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .radios import RadioFrequency
 
@@ -135,7 +134,7 @@ class BriefingPage(KneeboardPage):
             self.airfield_info_row("Departure", self.flight.departure),
             self.airfield_info_row("Arrival", self.flight.arrival),
             self.airfield_info_row("Divert", self.flight.divert),
-        ], headers=["", "Airbase", "ATC", "TCN", "ILS", "RWY"])
+        ], headers=["", "Airbase", "ATC", "TCN", "I(C)LS", "RWY"])
 
         writer.heading("Flight Plan")
         flight_plan = []
@@ -176,41 +175,30 @@ class BriefingPage(KneeboardPage):
         writer.write(path)
 
     def airfield_info_row(self, row_title: str,
-                          airfield: Optional[Airport]) -> List[str]:
+                          runway: Optional[RunwayData]) -> List[str]:
         """Creates a table row for a given airfield.
 
         Args:
             row_title: Purpose of the airfield. e.g. "Departure", "Arrival" or
                 "Divert".
-            airfield: The airfield described by this row.
+            runway: The runway described by this row.
 
         Returns:
             A list of strings to be used as a row of the airfield table.
         """
-        if airfield is None:
+        if runway is None:
             return [row_title, "", "", "", "", ""]
 
-        # TODO: Implement logic for picking preferred runway.
-        runway = airfield.runways[0]
-        runway_side = ["", "L", "R"][runway.leftright]
-        runway_text = f"{runway.heading}{runway_side}"
-
-        try:
-            extra_data = AIRFIELD_DATA[airfield.name]
-            atc = self.format_frequency(extra_data.atc.uhf)
-            tacan = extra_data.tacan or ""
-            ils = extra_data.ils_freq(runway) or ""
-        except KeyError:
-            atc = ""
-            ils = ""
-            tacan = ""
+        atc = ""
+        if runway.atc is not None:
+            atc = self.format_frequency(runway.atc)
         return [
             row_title,
-            airfield.name,
+            runway.airfield_name,
             atc,
-            tacan,
-            ils,
-            runway_text,
+            runway.tacan or "",
+            runway.ils or runway.icls or "",
+            runway.runway_name,
         ]
 
     def format_frequency(self, frequency: RadioFrequency) -> str:

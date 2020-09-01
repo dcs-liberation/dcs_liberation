@@ -4,8 +4,10 @@ Remove once https://github.com/pydcs/dcs/issues/69 tracks getting the missing
 data added to pydcs. Until then, missing data can be manually filled in here.
 """
 from dataclasses import dataclass, field
+import logging
 from typing import Dict, Optional, Tuple
 
+from pydcs.dcs.terrain.terrain import Airport
 from .radios import MHz, RadioFrequency
 from .tacan import TacanBand, TacanChannel
 
@@ -637,3 +639,39 @@ AIRFIELD_DATA = {
         atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
     ),
 }
+
+
+@dataclass
+class RunwayData:
+    airfield_name: str
+    runway_name: str
+    atc: Optional[RadioFrequency] = None
+    tacan: Optional[TacanChannel] = None
+    ils: Optional[RadioFrequency] = None
+    icls: Optional[int] = None
+
+    @classmethod
+    def for_airfield(cls, airport: Airport, runway: str) -> "RunwayData":
+        """Creates RunwayData for the given runway of an airfield.
+
+        Args:
+            airport: The airfield the runway belongs to.
+            runway: Identifier of the runway to use. e.g. "030" or "200L".
+        """
+        atc: Optional[RadioFrequency] = None
+        tacan: Optional[TacanChannel] = None
+        ils: Optional[RadioFrequency] = None
+        try:
+            airfield = AIRFIELD_DATA[airport.name]
+            atc = airfield.atc.uhf
+            tacan = airfield.tacan
+            ils = airfield.ils_freq(runway)
+        except KeyError:
+            logging.warning(f"No airfield data for {airport.name}")
+        return cls(
+            airport.name,
+            runway,
+            atc,
+            tacan,
+            ils
+        )

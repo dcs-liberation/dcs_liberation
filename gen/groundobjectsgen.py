@@ -1,13 +1,19 @@
-import logging
-
-from game import db
 from game.data.building_data import FORTIFICATION_UNITS_ID, FORTIFICATION_UNITS
 from game.db import unit_type_from_name
+from pydcs.dcs.mission import *
+from pydcs.dcs.statics import *
+from pydcs.dcs.task import (
+    ActivateBeaconCommand,
+    ActivateICLSCommand,
+    OptAlarmState,
+)
+from pydcs.dcs.unit import Ship, Vehicle
+from pydcs.dcs.unitgroup import StaticGroup
+from .airfields import RunwayData
 from .conflictgen import *
 from .naming import *
-
-from dcs.mission import *
-from dcs.statics import *
+from .radios import RadioRegistry
+from .tacan import TacanBand, TacanRegistry
 
 FARP_FRONTLINE_DISTANCE = 10000
 AA_CP_MIN_DISTANCE = 40000
@@ -16,10 +22,15 @@ AA_CP_MIN_DISTANCE = 40000
 class GroundObjectsGenerator:
     FARP_CAPACITY = 4
 
-    def __init__(self, mission: Mission, conflict: Conflict, game):
+    def __init__(self, mission: Mission, conflict: Conflict, game,
+                 radio_registry: RadioRegistry, tacan_registry: TacanRegistry):
         self.m = mission
         self.conflict = conflict
         self.game = game
+        self.radio_registry = radio_registry
+        self.tacan_registry = tacan_registry
+        self.icls_alloc = iter(range(1, 21))
+        self.runways: Dict[str, RunwayData] = {}
 
     def generate_farps(self, number_of_units=1) -> typing.Collection[StaticGroup]:
         if self.conflict.is_vector:
@@ -103,6 +114,8 @@ class GroundObjectsGenerator:
                                 utype = db.upgrade_to_supercarrier(utype, cp.name)
 
                             sg = self.m.ship_group(side, g.name, utype, position=g.position, heading=g.units[0].heading)
+                            atc_channel = self.radio_registry.alloc_uhf()
+                            sg.set_frequency(atc_channel.hertz)
                             sg.units[0].name = self.m.string(g.units[0].name)
 
                             for i, u in enumerate(g.units):
@@ -111,6 +124,8 @@ class GroundObjectsGenerator:
                                     ship.position.x = u.position.x
                                     ship.position.y = u.position.y
                                     ship.heading = u.heading
+                                    # TODO: Verify.
+                                    ship.set_frequency(atc_channel.hertz)
                                     sg.add_unit(ship)
 
                             # Find carrier direction (In the wind)
@@ -125,10 +140,57 @@ class GroundObjectsGenerator:
                                     attempt = attempt + 1
 
                             # Set UP TACAN and ICLS
-                            modeChannel = "X" if not cp.tacanY else "Y"
-                            sg.points[0].tasks.append(ActivateBeaconCommand(channel=cp.tacanN, modechannel=modeChannel, callsign=cp.tacanI, unit_id=sg.units[0].id, aa=False))
-                            if ground_object.dcs_identifier == "CARRIER" and hasattr(cp, "icls"):
-                                sg.points[0].tasks.append(ActivateICLSCommand(cp.icls, unit_id=sg.units[0].id))
+                            tacan = self.tacan_registry.alloc_for_band(TacanBand.X)
+                            icls_channel = next(self.icls_alloc)
+                            # TODO: Assign these properly.
+                            if ground_object.dcs_identifier == "CARRIER":
+                                tacan_callsign = random.choice([
+                                    "STE",
+                                    "CVN",
+                                    "CVH",
+                                    "CCV",
+                                    "ACC",
+                                    "ARC",
+                                    "GER",
+                                    "ABR",
+                                    "LIN",
+                                    "TRU",
+                                ])
+                            else:
+                                tacan_callsign = random.choice([
+                                    "LHD",
+                                    "LHA",
+                                    "LHB",
+                                    "LHC",
+                                    "LHD",
+                                    "LDS",
+                                ])
+                            sg.points[0].tasks.append(ActivateBeaconCommand(
+                                channel=tacan.number,
+                                modechannel=tacan.band.value,
+                                callsign=tacan_callsign,
+                                unit_id=sg.units[0].id,
+                                aa=False
+                            ))
+                            sg.points[0].tasks.append(ActivateICLSCommand(
+                                icls_channel,
+                                unit_id=sg.units[0].id
+                            ))
+                            # TODO: Make unit name usable.
+                            # This relies on one control point mapping exactly
+                            # to one LHA, carrier, or other usable "runway".
+                            # This isn't wholly true, since the DD escorts of
+                            # the carrier group are valid for helicopters, but
+                            # they aren't exposed as such to the game. Should
+                            # clean this up so that's possible. We can't use the
+                            # unit name since it's an arbitrary ID.
+                            self.runways[cp.name] = RunwayData(
+                                cp.name,
+                                "N/A",
+                                atc=atc_channel,
+                                tacan=tacan,
+                                icls=icls_channel,
+                            )
 
                 else:
 

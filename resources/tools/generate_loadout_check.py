@@ -30,6 +30,6 @@ for t, uts in db.UNIT_BY_TASK.items():
                 altitude=10000
             )
             g.task = t.name
-            airgen._setup_group(g, t, 0)
+            airgen._setup_group(g, t, 0, {})
 
 mis.save("loadout_test.miz")

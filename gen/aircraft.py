@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
+from gen.airfields import RunwayData
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import (
     Flight,
@@ -150,15 +151,14 @@ class FlightData:
     #: List of playable units in the flight.
     client_units: List[FlyingUnit]
 
-    # TODO: Arrival and departure should not be optional, but carriers don't count.
     #: Arrival airport.
-    arrival: Optional[Airport]
+    arrival: RunwayData
 
     #: Departure airport.
-    departure: Optional[Airport]
+    departure: RunwayData
 
     #: Diver airport.
-    divert: Optional[Airport]
+    divert: Optional[RunwayData]
 
     #: Waypoints of the flight plan.
     waypoints: List[FlightWaypoint]
@@ -169,8 +169,8 @@ class FlightData:
     #: Map of radio frequencies to their assigned radio and channel, if any.
     frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
 
-    def __init__(self, client_units: List[FlyingUnit], arrival: Airport,
-                 departure: Airport, divert: Optional[Airport],
+    def __init__(self, client_units: List[FlyingUnit], arrival: RunwayData,
+                 departure: RunwayData, divert: Optional[RunwayData],
                  waypoints: List[FlightWaypoint],
                  intra_flight_channel: RadioFrequency) -> None:
         self.client_units = client_units
@@ -261,8 +261,8 @@ class AircraftConflictGenerator:
     def _start_type(self) -> StartType:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
 
-
-    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task], flight: Flight):
+    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task],
+                     flight: Flight, dynamic_runways: Dict[str, RunwayData]):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
@@ -319,10 +319,28 @@ class AircraftConflictGenerator:
 
         radio_id, channel = self.get_intra_flight_channel(unit_type)
         group.set_frequency(channel.mhz, radio_id)
+
+        # TODO: Support for different departure/arrival airfields.
+        cp = flight.from_cp
+        fallback_runway = RunwayData(cp.full_name, runway_name="")
+        if cp.cptype == ControlPointType.AIRBASE:
+            # TODO: Implement logic for picking preferred runway.
+            runway = flight.from_cp.airport.runways[0]
+            runway_side = ["", "L", "R"][runway.leftright]
+            runway_name = f"{runway.heading}{runway_side}"
+            departure_runway = RunwayData.for_airfield(
+                flight.from_cp.airport, runway_name)
+        elif cp.is_fleet:
+            departure_runway = dynamic_runways.get(cp.name, fallback_runway)
+        else:
+            logging.warning(f"Unhandled departure control point: {cp.cptype}")
+            departure_runway = fallback_runway
+
         self.flights.append(FlightData(
             client_units=clients,
-            departure=flight.from_cp.airport,
-            arrival=flight.from_cp.airport,
+            departure=departure_runway,
+            arrival=departure_runway,
+            # TODO: Support for divert airfields.
             divert=None,
             waypoints=flight.points,
             intra_flight_channel=channel
@@ -477,8 +495,8 @@ class AircraftConflictGenerator:
                     logging.warning("Pylon not found ! => Pylon" + key + " on " + str(flight.unit_type))
 
 
-    def generate_flights(self, cp, country, flight_planner:FlightPlanner):
-
+    def generate_flights(self, cp, country, flight_planner: FlightPlanner,
+                         dynamic_runways: Dict[str, RunwayData]):
         # Clear pydcs parking slots
         if cp.airport is not None:
             logging.info("CLEARING SLOTS @ " + cp.airport.name)
@@ -497,7 +515,8 @@ class AircraftConflictGenerator:
                 continue
             logging.info("Generating flight : " + str(flight.unit_type))
             group = self.generate_planned_flight(cp, country, flight)
-            self.setup_flight_group(group, flight, flight.flight_type)
+            self.setup_flight_group(group, flight, flight.flight_type,
+                                    dynamic_runways)
             self.setup_group_activation_trigger(flight, group)
 
 
@@ -608,19 +627,13 @@ class AircraftConflictGenerator:
         flight.group = group
         return group
 
-    def setup_group_as_intercept_flight(self, group, flight):
-        group.points[0].ETA = 0
-        group.late_activation = True
-        self._setup_group(group, Intercept, flight)
-        for point in flight.points:
-            group.add_waypoint(Point(point.x,point.y), point.alt)
 
-
-    def setup_flight_group(self, group, flight, flight_type):
+    def setup_flight_group(self, group, flight, flight_type,
+                           dynamic_runways: Dict[str, RunwayData]):
 
         if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP, FlightType.INTERCEPTION]:
             group.task = CAP.name
-            self._setup_group(group, CAP, flight)
+            self._setup_group(group, CAP, flight, dynamic_runways)
             # group.points[0].tasks.clear()
             group.points[0].tasks.clear()
             group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50), targets=[Targets.All.Air]))
@@ -632,7 +645,7 @@ class AircraftConflictGenerator:
 
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             group.task = CAS.name
-            self._setup_group(group, CAS, flight)
+            self._setup_group(group, CAS, flight, dynamic_runways)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(10), targets=[Targets.All.GroundUnits.GroundVehicles]))
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
@@ -641,7 +654,7 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
             group.task = SEAD.name
-            self._setup_group(group, SEAD, flight)
+            self._setup_group(group, SEAD, flight, dynamic_runways)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(NoTask())
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
@@ -650,14 +663,14 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
         elif flight_type in [FlightType.STRIKE]:
             group.task = PinpointStrike.name
-            self._setup_group(group, GroundAttack, flight)
+            self._setup_group(group, GroundAttack, flight, dynamic_runways)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
         elif flight_type in [FlightType.ANTISHIP]:
             group.task = AntishipStrike.name
-            self._setup_group(group, AntishipStrike, flight)
+            self._setup_group(group, AntishipStrike, flight, dynamic_runways)
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
@@ -736,23 +749,3 @@ class AircraftConflictGenerator:
                     pt.name = String(point.name)
 
         self._setup_custom_payload(flight, group)
-
-
-    def setup_group_as_antiship_flight(self, group, flight):
-        group.task = AntishipStrike.name
-        self._setup_group(group, AntishipStrike, flight)
-
-        group.points[0].tasks.clear()
-        group.points[0].tasks.append(AntishipStrikeTaskAction())
-        group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-        group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
-        group.points[0].tasks.append(OptRestrictJettison(True))
-
-        for point in flight.points:
-            group.add_waypoint(Point(point.x, point.y), point.alt)
-
-
-    def setup_radio_preset(self, flight, group):
-        pass
-
-
