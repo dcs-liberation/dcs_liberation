@@ -1,15 +1,21 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List, Optional, Tuple
 
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
 from gen.flights.ai_flight_planner import FlightPlanner
-from gen.flights.flight import Flight, FlightType, FlightWaypointType
+from gen.flights.flight import (
+    Flight,
+    FlightType,
+    FlightWaypoint,
+    FlightWaypointType,
+)
 from gen.radios import get_radio, MHz, Radio, RadioFrequency, RadioRegistry
 from pydcs.dcs import helicopters
 from pydcs.dcs.action import ActivateGroup, AITaskPush, MessageToAll
 from pydcs.dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
+from pydcs.dcs.flyingunit import FlyingUnit
 from pydcs.dcs.helicopters import helicopter_map, UH_1H
 from pydcs.dcs.mission import Mission, StartType
 from pydcs.dcs.planes import (
@@ -24,9 +30,9 @@ from pydcs.dcs.planes import (
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
 )
-from pydcs.dcs.terrain.terrain import NoParkingSlotError
+from pydcs.dcs.terrain.terrain import Airport, NoParkingSlotError
 from pydcs.dcs.triggers import TriggerOnce, Event
-from pydcs.dcs.unittype import UnitType
+from pydcs.dcs.unittype import FlyingType, UnitType
 from .conflictgen import *
 from .naming import *
 
@@ -59,12 +65,40 @@ class AircraftData:
     #: The type of radio used for intra-flight communications.
     intra_flight_radio: Radio
 
+    #: Index of the radio used for intra-flight communications. Matches the
+    #: index of the panel_radio field of the pydcs.dcs.planes object.
+    inter_flight_radio_index: Optional[int]
+
+    #: Index of the radio used for intra-flight communications. Matches the
+    #: index of the panel_radio field of the pydcs.dcs.planes object.
+    intra_flight_radio_index: Optional[int]
+
 
 # Indexed by the id field of the pydcs PlaneType.
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
-    "A-10C": AircraftData(get_radio("AN/ARC-186(V) AM")),
-    "F-16C_50": AircraftData(get_radio("AN/ARC-222")),
-    "F/A-18C": AircraftData(get_radio("AN/ARC-210")),
+    "A-10C": AircraftData(
+        get_radio("AN/ARC-186(V) AM"),
+        # The A-10's radio works differently than most aircraft. Doesn't seem to
+        # be a way to set these from the mission editor, let alone pydcs.
+        inter_flight_radio_index=None,
+        intra_flight_radio_index=None
+    ),
+    "F-16C_50": AircraftData(
+        get_radio("AN/ARC-222"),
+        # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
+        # intra-flight communication to leave COM1 open for UHF inter-flight.
+        inter_flight_radio_index=1,
+        intra_flight_radio_index=2
+    ),
+    "FA-18C_hornet": AircraftData(
+        get_radio("AN/ARC-210"),
+        # DCS will clobber channel 1 of the first radio compatible with the
+        # flight's assigned frequency. Since the F/A-18's two radios are both
+        # AN/ARC-210s, radio 1 will be compatible regardless of which frequency
+        # is assigned, so we must use radio 1 for the intra-flight radio.
+        inter_flight_radio_index=2,
+        intra_flight_radio_index=1
+    ),
 }
 
 
@@ -98,6 +132,100 @@ def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
     return UHF_FALLBACK_CHANNEL
 
 
+@dataclass(frozen=True)
+class ChannelAssignment:
+    radio_id: int
+    channel: int
+
+    @property
+    def radio_name(self) -> str:
+        """Returns the name of the radio, i.e. COM1."""
+        return f"COM{self.radio_id}"
+
+
+@dataclass
+class FlightData:
+    """Details of a planned flight."""
+
+    #: List of playable units in the flight.
+    client_units: List[FlyingUnit]
+
+    # TODO: Arrival and departure should not be optional, but carriers don't count.
+    #: Arrival airport.
+    arrival: Optional[Airport]
+
+    #: Departure airport.
+    departure: Optional[Airport]
+
+    #: Diver airport.
+    divert: Optional[Airport]
+
+    #: Waypoints of the flight plan.
+    waypoints: List[FlightWaypoint]
+
+    #: Radio frequency for intra-flight communications.
+    intra_flight_channel: RadioFrequency
+
+    #: Map of radio frequencies to their assigned radio and channel, if any.
+    frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
+
+    def __init__(self, client_units: List[FlyingUnit], arrival: Airport,
+                 departure: Airport, divert: Optional[Airport],
+                 waypoints: List[FlightWaypoint],
+                 intra_flight_channel: RadioFrequency) -> None:
+        self.client_units = client_units
+        self.arrival = arrival
+        self.departure = departure
+        self.divert = divert
+        self.waypoints = waypoints
+        self.intra_flight_channel = intra_flight_channel
+        self.frequency_to_channel_map = {}
+
+        self.assign_intra_flight_channel()
+
+    def assign_intra_flight_channel(self) -> None:
+        """Assigns a channel to the intra-flight frequency."""
+        if not self.client_units:
+            return
+
+        # pydcs will actually set up the channel for us, but we want to make
+        # sure that it ends up in frequency_to_channel_map.
+        try:
+            data = AIRCRAFT_DATA[self.aircraft_type.id]
+            self.assign_channel(
+                data.intra_flight_radio_index, 1, self.intra_flight_channel)
+        except KeyError:
+            logging.warning(f"No aircraft data for {self.aircraft_type.id}")
+
+    @property
+    def aircraft_type(self) -> FlyingType:
+        """Returns the type of aircraft in this flight."""
+        return self.client_units[0].unit_type
+
+    def num_radio_channels(self, radio_id: int) -> int:
+        """Returns the number of preset channels for the given radio."""
+        return self.client_units[0].num_radio_channels(radio_id)
+
+    def channel_for(
+            self, frequency: RadioFrequency) -> Optional[ChannelAssignment]:
+        """Returns the radio and channel number for the given frequency."""
+        return self.frequency_to_channel_map.get(frequency, None)
+
+    def assign_channel(self, radio_id: int, channel_id: int,
+                       frequency: RadioFrequency) -> None:
+        """Assigns a preset radio channel to the given frequency."""
+        for unit in self.client_units:
+            unit.set_radio_channel_preset(radio_id, channel_id, frequency.mhz)
+
+        # One frequency could be bound to multiple channels. Prefer the first,
+        # since with the current implementation it will be the lowest numbered
+        # channel.
+        if frequency not in self.frequency_to_channel_map:
+            self.frequency_to_channel_map[frequency] = ChannelAssignment(
+                radio_id, channel_id
+            )
+
+
 class AircraftConflictGenerator:
     escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
 
@@ -109,14 +237,26 @@ class AircraftConflictGenerator:
         self.conflict = conflict
         self.radio_registry = radio_registry
         self.escort_targets = []
+        self.flights: List[FlightData] = []
 
-    def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
+    def get_intra_flight_channel(
+            self, airframe: UnitType) -> Tuple[int, RadioFrequency]:
+        """Allocates an intra-flight channel to a group.
+
+        Args:
+            airframe: The type of aircraft a channel should be allocated for.
+
+        Returns:
+            A tuple of the radio index (for aircraft with multiple radios) and
+            the frequency of the intra-flight channel.
+        """
         try:
             aircraft_data = AIRCRAFT_DATA[airframe.id]
-            return self.radio_registry.alloc_for_radio(
+            channel = self.radio_registry.alloc_for_radio(
                 aircraft_data.intra_flight_radio)
+            return aircraft_data.intra_flight_radio_index, channel
         except KeyError:
-            return get_fallback_channel(airframe)
+            return 1, get_fallback_channel(airframe)
 
     def _start_type(self) -> StartType:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
@@ -156,12 +296,15 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
+        clients: List[FlyingUnit] = []
         single_client = flight.client_count == 1
         for idx in range(0, min(len(group.units), flight.client_count)):
+            unit = group.units[idx]
+            clients.append(unit)
             if single_client:
-                group.units[idx].set_player()
+                unit.set_player()
             else:
-                group.units[idx].set_client()
+                unit.set_client()
 
             # Do not generate player group with late activation.
             if group.late_activation:
@@ -169,14 +312,21 @@ class AircraftConflictGenerator:
 
             # Set up F-14 Client to have pre-stored alignement
             if unit_type is F_14B:
-                group.units[idx].set_property(F_14B.Properties.INSAlignmentStored.id, True)
+                unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
 
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
-        channel = self.get_intra_flight_channel(unit_type)
-        group.set_frequency(channel.mhz)
-        flight.intra_flight_channel = channel
+        radio_id, channel = self.get_intra_flight_channel(unit_type)
+        group.set_frequency(channel.mhz, radio_id)
+        self.flights.append(FlightData(
+            client_units=clients,
+            departure=flight.from_cp.airport,
+            arrival=flight.from_cp.airport,
+            divert=None,
+            waypoints=flight.points,
+            intra_flight_channel=channel
+        ))
 
         # Special case so Su 33 carrier take off
         if unit_type is Su_33:

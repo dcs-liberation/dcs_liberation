@@ -255,7 +255,7 @@ class Operation:
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
 
-        kneeboard_generator = KneeboardGenerator(self.current_mission, self.game)
+        kneeboard_generator = KneeboardGenerator(self.current_mission)
 
         # Briefing Generation
         for tanker in self.airsupportgen.air_support.tankers:
@@ -269,9 +269,82 @@ class Operation:
                 self.briefinggen.append_frequency(awacs.callsign, awacs.freq)
                 kneeboard_generator.add_awacs(awacs)
 
+        self.assign_channels_to_flights()
+
         # Generate the briefing
         self.briefinggen.generate()
 
         for region, code, name in self.game.jtacs:
             kneeboard_generator.add_jtac(name, region, code)
-        kneeboard_generator.generate()
+        kneeboard_generator.generate(self.airgen.flights)
+
+    def assign_channels_to_flights(self) -> None:
+        """Assigns preset radio channels for client flights."""
+        for flight in self.airgen.flights:
+            if not flight.client_units:
+                continue
+            self.assign_channels_to_flight(flight)
+
+    def assign_channels_to_flight(self, flight: FlightData) -> None:
+        """Assigns preset radio channels for a client flight."""
+        airframe = flight.aircraft_type
+
+        try:
+            aircraft_data = AIRCRAFT_DATA[airframe.id]
+        except KeyError:
+            logging.warning(f"No aircraft data for {airframe.id}")
+            return
+
+        # Intra-flight channel is set up when the flight is created, however we
+        # do need to make sure we don't overwrite it. For cases where the
+        # inter-flight and intra-flight radios share presets (the AV-8B only has
+        # one set of channels, even though it can use two channels
+        # simultaneously), start assigning channels at 2.
+        radio_id = aircraft_data.inter_flight_radio_index
+        if aircraft_data.intra_flight_radio_index == radio_id:
+            first_channel = 2
+        else:
+            first_channel = 1
+
+        last_channel = flight.num_radio_channels(radio_id)
+        channel_alloc = iter(range(first_channel, last_channel + 1))
+
+        # TODO: Fix departure/arrival to support carriers.
+        if flight.departure is not None:
+            try:
+                departure = AIRFIELD_DATA[flight.departure.name]
+                flight.assign_channel(
+                    radio_id, next(channel_alloc), departure.atc.uhf)
+            except KeyError:
+                pass
+
+        # TODO: If there ever are multiple AWACS, limit to mission relevant.
+        for awacs in self.airsupportgen.air_support.awacs:
+            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
+
+        # TODO: Fix departure/arrival to support carriers.
+        if flight.arrival is not None and flight.arrival != flight.departure:
+            try:
+                arrival = AIRFIELD_DATA[flight.arrival.name]
+                flight.assign_channel(
+                    radio_id, next(channel_alloc), arrival.atc.uhf)
+            except KeyError:
+                pass
+
+        try:
+            # TODO: Skip incompatible tankers.
+            for tanker in self.airsupportgen.air_support.tankers:
+                flight.assign_channel(
+                    radio_id, next(channel_alloc), tanker.freq)
+
+            if flight.divert is not None:
+                try:
+                    divert = AIRFIELD_DATA[flight.divert.name]
+                    flight.assign_channel(
+                        radio_id, next(channel_alloc), divert.atc.uhf)
+                except KeyError:
+                    pass
+        except StopIteration:
+            # Any remaining channels are nice-to-haves, but not necessary for
+            # the few aircraft with a small number of channels available.
+            pass

@@ -34,9 +34,9 @@ from pydcs.dcs.mission import Mission
 from pydcs.dcs.terrain.terrain import Airport
 from pydcs.dcs.unittype import FlyingType
 from . import units
+from .aircraft import FlightData
 from .airfields import AIRFIELD_DATA
 from .airsupportgen import AwacsInfo, TankerInfo
-from .flights.flight import Flight
 from .radios import RadioFrequency
 
 
@@ -96,24 +96,6 @@ class KneeboardPage:
         raise NotImplementedError
 
 
-class AirfieldInfo:
-    def __init__(self, airfield: Airport) -> None:
-        self.airport = airfield
-        # TODO: Implement logic for picking preferred runway.
-        runway = airfield.runways[0]
-        runway_side = ["", "L", "R"][runway.leftright]
-        self.runway = f"{runway.heading}{runway_side}"
-        try:
-            extra_data = AIRFIELD_DATA[airfield.name]
-            self.atc = extra_data.atc.uhf or ""
-            self.tacan = extra_data.tacan or ""
-            self.ils = extra_data.ils_freq(self.runway) or ""
-        except KeyError:
-            self.atc = ""
-            self.ils = ""
-            self.tacan = ""
-
-
 @dataclass
 class CommInfo:
     """Communications information for the kneeboard."""
@@ -131,21 +113,15 @@ class JtacInfo:
 
 class BriefingPage(KneeboardPage):
     """A kneeboard page containing briefing information."""
-    def __init__(self, flight: Flight, comms: List[CommInfo],
+    def __init__(self, flight: FlightData, comms: List[CommInfo],
                  awacs: List[AwacsInfo], tankers: List[TankerInfo],
                  jtacs: List[JtacInfo]) -> None:
         self.flight = flight
-        self.comms = comms
+        self.comms = list(comms)
         self.awacs = awacs
         self.tankers = tankers
         self.jtacs = jtacs
-        if self.flight.intra_flight_channel is not None:
-            self.comms.append(
-                CommInfo("Flight", self.flight.intra_flight_channel)
-            )
-        self.departure = flight.from_cp.airport
-        self.arrival = flight.from_cp.airport
-        self.divert: Optional[Airport] = None
+        self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter()
@@ -156,14 +132,14 @@ class BriefingPage(KneeboardPage):
         # TODO: Handle carriers.
         writer.heading("Airfield Info")
         writer.table([
-            self.airfield_info_row("Departure", self.departure),
-            self.airfield_info_row("Arrival", self.arrival),
-            self.airfield_info_row("Divert", self.divert),
+            self.airfield_info_row("Departure", self.flight.departure),
+            self.airfield_info_row("Arrival", self.flight.arrival),
+            self.airfield_info_row("Divert", self.flight.divert),
         ], headers=["", "Airbase", "ATC", "TCN", "ILS", "RWY"])
 
         writer.heading("Flight Plan")
         flight_plan = []
-        for num, waypoint in enumerate(self.flight.points):
+        for num, waypoint in enumerate(self.flight.waypoints):
             alt = int(units.meters_to_feet(waypoint.alt))
             flight_plan.append([num, waypoint.pretty_name, str(alt)])
         writer.table(flight_plan, headers=["STPT", "Action", "Alt"])
@@ -171,13 +147,13 @@ class BriefingPage(KneeboardPage):
         writer.heading("Comm Ladder")
         comms = []
         for comm in self.comms:
-            comms.append([comm.name, comm.freq])
+            comms.append([comm.name, self.format_frequency(comm.freq)])
         writer.table(comms, headers=["Name", "UHF"])
 
         writer.heading("AWACS")
         awacs = []
         for a in self.awacs:
-            awacs.append([a.callsign, a.freq])
+            awacs.append([a.callsign, self.format_frequency(a.freq)])
         writer.table(awacs, headers=["Callsign", "UHF"])
 
         writer.heading("Tankers")
@@ -187,7 +163,7 @@ class BriefingPage(KneeboardPage):
                 tanker.callsign,
                 tanker.variant,
                 tanker.tacan,
-                tanker.freq,
+                self.format_frequency(tanker.freq),
             ])
         writer.table(tankers, headers=["Callsign", "Type", "TACAN", "UHF"])
 
@@ -213,23 +189,42 @@ class BriefingPage(KneeboardPage):
         """
         if airfield is None:
             return [row_title, "", "", "", "", ""]
-        info = AirfieldInfo(airfield)
+
+        # TODO: Implement logic for picking preferred runway.
+        runway = airfield.runways[0]
+        runway_side = ["", "L", "R"][runway.leftright]
+        runway_text = f"{runway.heading}{runway_side}"
+
+        try:
+            extra_data = AIRFIELD_DATA[airfield.name]
+            atc = self.format_frequency(extra_data.atc.uhf)
+            tacan = extra_data.tacan or ""
+            ils = extra_data.ils_freq(runway) or ""
+        except KeyError:
+            atc = ""
+            ils = ""
+            tacan = ""
         return [
             row_title,
             airfield.name,
-            info.atc,
-            info.tacan,
-            info.ils,
-            info.runway,
+            atc,
+            tacan,
+            ils,
+            runway_text,
         ]
+
+    def format_frequency(self, frequency: RadioFrequency) -> str:
+        channel = self.flight.channel_for(frequency)
+        if channel is None:
+            return str(frequency)
+        return f"{channel.radio_name} Ch {channel.channel}"
 
 
 class KneeboardGenerator:
     """Creates kneeboard pages for each client flight in the mission."""
 
-    def __init__(self, mission: Mission, game) -> None:
+    def __init__(self, mission: Mission) -> None:
         self.mission = mission
-        self.game = game
         self.comms: List[CommInfo] = []
         self.awacs: List[AwacsInfo] = []
         self.tankers: List[TankerInfo] = []
@@ -271,11 +266,11 @@ class KneeboardGenerator:
         # TODO: Radio info? Type?
         self.jtacs.append(JtacInfo(callsign, region, code))
 
-    def generate(self) -> None:
+    def generate(self, flights: List[FlightData]) -> None:
         """Generates a kneeboard per client flight."""
         temp_dir = Path("kneeboards")
         temp_dir.mkdir(exist_ok=True)
-        for aircraft, pages in self.pages_by_airframe().items():
+        for aircraft, pages in self.pages_by_airframe(flights).items():
             aircraft_dir = temp_dir / aircraft.id
             aircraft_dir.mkdir(exist_ok=True)
             for idx, page in enumerate(pages):
@@ -283,7 +278,7 @@ class KneeboardGenerator:
                 page.write(page_path)
                 self.mission.add_aircraft_kneeboard(aircraft, page_path)
 
-    def pages_by_airframe(self) -> Dict[FlyingType, List[KneeboardPage]]:
+    def pages_by_airframe(self, flights: List[FlightData]) -> Dict[FlyingType, List[KneeboardPage]]:
         """Returns a list of kneeboard pages per airframe in the mission.
 
         Only client flights will be included, but because DCS does not support
@@ -295,15 +290,14 @@ class KneeboardGenerator:
             that aircraft.
         """
         all_flights: Dict[FlyingType, List[KneeboardPage]] = defaultdict(list)
-        for cp in self.game.theater.controlpoints:
-            if cp.id in self.game.planners.keys():
-                for flight in self.game.planners[cp.id].flights:
-                    if flight.client_count > 0:
-                        all_flights[flight.unit_type].extend(
-                            self.generate_flight_kneeboard(flight))
+        for flight in flights:
+            if not flight.client_units:
+                continue
+            all_flights[flight.aircraft_type].extend(
+                self.generate_flight_kneeboard(flight))
         return all_flights
 
-    def generate_flight_kneeboard(self, flight: Flight) -> List[KneeboardPage]:
+    def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
         return [
             BriefingPage(
