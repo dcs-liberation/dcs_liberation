@@ -96,13 +96,13 @@ AIRFIELD_DATA = {
         tacan_callsign="KBL",
         atc=AtcData(MHz(4, 350), MHz(133, 0), MHz(40, 800), MHz(262, 0)),
         ils={
-            "7": ("IKB", MHz(111, 50)),
+            "07": ("IKB", MHz(111, 50)),
         },
         outer_ndb={
-            "7": ("KT", MHz(870, 0)),
+            "07": ("KT", MHz(870, 0)),
         },
         inner_ndb={
-            "7": ("T", MHz(490, 0)),
+            "07": ("T", MHz(490, 0)),
         },
     ),
 
@@ -115,13 +115,13 @@ AIRFIELD_DATA = {
         tacan_callsign="TSK",
         atc=AtcData(MHz(4, 300), MHz(132, 0), MHz(40, 600), MHz(261, 0)),
         ils={
-            "9": ("ITS", MHz(108, 90)),
+            "09": ("ITS", MHz(108, 90)),
         },
         outer_ndb={
-            "9": ("BI", MHz(335, 0)),
+            "09": ("BI", MHz(335, 0)),
         },
         inner_ndb={
-            "9": ("I", MHz(688, 0)),
+            "09": ("I", MHz(688, 0)),
         },
     ),
 
@@ -134,7 +134,7 @@ AIRFIELD_DATA = {
         tacan_callsign="KTS",
         atc=AtcData(MHz(4, 400), MHz(134, 0), MHz(41, 0), MHz(263, 0)),
         ils={
-            "8": ("IKS", MHz(109, 75)),
+            "08": ("IKS", MHz(109, 75)),
         },
     ),
 
@@ -167,7 +167,7 @@ AIRFIELD_DATA = {
         runway_length=9686,
         atc=AtcData(MHz(4, 50), MHz(127, 0), MHz(39, 600), MHz(256, 0)),
         ils={
-            "6": ("ISO", MHz(111, 10)),
+            "06": ("ISO", MHz(111, 10)),
         },
     ),
 
@@ -210,15 +210,15 @@ AIRFIELD_DATA = {
         rsbn=("KW", 28),
         atc=AtcData(MHz(3, 900), MHz(124, 0), MHz(39, 0), MHz(253, 0)),
         prmg={
-            "4": ("OX", 26),
+            "04": ("OX", 26),
             "22": ("KW", 26),
         },
         outer_ndb={
-            "4": ("OX", MHz(408, 0)),
+            "04": ("OX", MHz(408, 0)),
             "22": ("KW", MHz(408, 0)),
         },
         inner_ndb={
-            "4": ("O", MHz(803, 0)),
+            "04": ("O", MHz(803, 0)),
             "22": ("K", MHz(803, 0)),
         },
     ),
@@ -231,14 +231,14 @@ AIRFIELD_DATA = {
         rsbn=("MB", 40),
         atc=AtcData(MHz(3, 800), MHz(122, 0), MHz(38, 600), MHz(251, 0)),
         prmg={
-            "9": ("MB", 38),
+            "09": ("MB", 38),
         },
         outer_ndb={
-            "9": ("MB", MHz(625, 0)),
+            "09": ("MB", MHz(625, 0)),
             "27": ("OC", MHz(625, 0)),
         },
         inner_ndb={
-            "9": ("M", MHz(303, 0)),
+            "09": ("M", MHz(303, 0)),
             "27": ("C", MHz(303, 0)),
         },
     ),
@@ -252,11 +252,11 @@ AIRFIELD_DATA = {
         atc=AtcData(MHz(4, 100), MHz(128, 0), MHz(39, 800), MHz(257, 0)),
         outer_ndb={
             "23": ("LD", MHz(493, 0)),
-            "5": ("KR", MHz(493, 0)),
+            "05": ("KR", MHz(493, 0)),
         },
         inner_ndb={
             "23": ("L", MHz(240, 0)),
-            "5": ("K", MHz(240, 0)),
+            "05": ("K", MHz(240, 0)),
         },
     ),
 
@@ -268,10 +268,10 @@ AIRFIELD_DATA = {
         rsbn=("DG", 34),
         atc=AtcData(MHz(3, 950), MHz(125, 0), MHz(39, 200), MHz(254, 0)),
         prmg={
-            "4": ("DG", 36),
+            "04": ("DG", 36),
         },
         outer_ndb={
-            "4": ("DG", MHz(289, 0)),
+            "04": ("DG", MHz(289, 0)),
             "22": ("RK", MHz(289, 0)),
         },
         inner_ndb={
@@ -415,8 +415,8 @@ AIRFIELD_DATA = {
         vor=("DAN", MHz(108, 400)),
         atc=AtcData(MHz(3, 850), MHz(38, 600), MHz(129, 400), MHz(360, 100)),
         ils={
-            "050": ("IDAN", MHz(109, 300)),
-            "230": ("DANM", MHz(111, 700)),
+            "50": ("IDAN", MHz(109, 300)),
+            "23": ("DANM", MHz(111, 700)),
         },
     ),
 
@@ -656,7 +656,7 @@ class RunwayData:
 
         Args:
             airport: The airfield the runway belongs to.
-            runway: Identifier of the runway to use. e.g. "030" or "200L".
+            runway: Identifier of the runway to use. e.g. "03" or "20L".
         """
         atc: Optional[RadioFrequency] = None
         tacan: Optional[TacanChannel] = None

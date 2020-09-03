@@ -326,8 +326,9 @@ class AircraftConflictGenerator:
         if cp.cptype == ControlPointType.AIRBASE:
             # TODO: Implement logic for picking preferred runway.
             runway = flight.from_cp.airport.runways[0]
+            runway_number = runway.heading // 10
             runway_side = ["", "L", "R"][runway.leftright]
-            runway_name = f"{runway.heading}{runway_side}"
+            runway_name = f"{runway_number:02}{runway_side}"
             departure_runway = RunwayData.for_airfield(
                 flight.from_cp.airport, runway_name)
         elif cp.is_fleet:
