@@ -344,13 +344,7 @@ class AircraftConflictGenerator:
         cp = flight.from_cp
         fallback_runway = RunwayData(cp.full_name, runway_name="")
         if cp.cptype == ControlPointType.AIRBASE:
-            # TODO: Implement logic for picking preferred runway.
-            runway = flight.from_cp.airport.runways[0]
-            runway_number = runway.heading // 10
-            runway_side = ["", "L", "R"][runway.leftright]
-            runway_name = f"{runway_number:02}{runway_side}"
-            departure_runway = RunwayData.for_airfield(
-                flight.from_cp.airport, runway_name)
+            departure_runway = self.get_preferred_runway(flight.from_cp.airport)
         elif cp.is_fleet:
             departure_runway = dynamic_runways.get(cp.name, fallback_runway)
         else:
@@ -380,6 +374,21 @@ class AircraftConflictGenerator:
                 for unit in group.units:
                     unit.fuel = Su_33.fuel_max * 0.8
 
+    def get_preferred_runway(self, airport: Airport) -> RunwayData:
+        """Returns the preferred runway for the given airport.
+
+        Right now we're only selecting runways based on whether or not they have
+        ILS, but we could also choose based on wind conditions, or which
+        direction flight plans should follow.
+        """
+        runways = list(RunwayData.for_pydcs_airport(airport))
+        for runway in runways:
+            # Prefer any runway with ILS.
+            if runway.ils is not None:
+                return runway
+        # Otherwise we lack the mission information to pick more usefully,
+        # so just use the first runway.
+        return runways[0]
 
     def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
         assert count > 0
