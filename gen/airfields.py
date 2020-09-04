@@ -4,10 +4,12 @@ Remove once https://github.com/pydcs/dcs/issues/69 tracks getting the missing
 data added to pydcs. Until then, missing data can be manually filled in here.
 """
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+import logging
+from typing import Dict, Optional, Tuple
 
-
-RadioFrequency = str
+from pydcs.dcs.terrain.terrain import Airport
+from .radios import MHz, RadioFrequency
+from .tacan import TacanBand, TacanChannel
 
 
 @dataclass
@@ -21,6 +23,8 @@ class AtcData:
 @dataclass
 class AirfieldData:
     """Additional airfield data not included in pydcs."""
+    #: Name of the theater the airport is in.
+    theater: str
 
     #: ICAO airport code
     icao: Optional[str] = None
@@ -31,614 +35,645 @@ class AirfieldData:
     #: Runway length (in ft).
     runway_length: int = 0
 
-    #: TACAN channel as a string, i.e. "74X".
-    tacan: Optional[str] = None
+    #: TACAN channel for the airfield.
+    tacan: Optional[TacanChannel] = None
 
     #: TACAN callsign
     tacan_callsign: Optional[str] = None
 
-    #: VOR channel as a string, i.e. "114.90 (MA)".
-    vor: Optional[str] = None
+    #: VOR as a tuple of (callsign, frequency).
+    vor: Optional[Tuple[str, RadioFrequency]] = None
 
-    #: RSBN channel as a string, i.e. "ch 28 (KW)".
-    rsbn: Optional[str] = None
+    #: RSBN channel as a tuple of (callsign, channel).
+    rsbn: Optional[Tuple[str, int]] = None
 
-    #: Radio channels used by the airfield's ATC.
-    atc: AtcData = AtcData("", "", "", "")
+    #: Radio channels used by the airfield's ATC. Note that not all airfields
+    #: have ATCs.
+    atc: Optional[AtcData] = None
 
-    #: Dict of runway heading -> ILS frequency.
-    ils: Dict[str, RadioFrequency] = field(default_factory=dict)
+    #: Dict of runway heading -> ILS tuple of (callsign, frequency).
+    ils: Dict[str, Tuple[str, RadioFrequency]] = field(default_factory=dict)
 
-    #: Dict of runway heading -> PRMG info, i.e "ch 26 (KW)"
-    prmg: Dict[str, str] = field(default_factory=dict)
+    #: Dict of runway heading -> PRMG tuple of (callsign, channel).
+    prmg: Dict[str, Tuple[str, int]] = field(default_factory=dict)
 
-    #: Dict of runway heading -> outer ndb, i.e "408.00 (KW)"
-    outer_ndb: Dict[str, str] = field(default_factory=dict)
+    #: Dict of runway heading -> outer NDB tuple of (callsign, frequency).
+    outer_ndb: Dict[str, Tuple[str, RadioFrequency]] = field(default_factory=dict)
 
-    #: Dict of runway heading -> inner ndb, i.e "803.00 (K)
-    inner_ndb: Dict[str, str] = field(default_factory=dict)
+    #: Dict of runway heading -> inner NDB tuple of (callsign, frequency).
+    inner_ndb: Dict[str, Tuple[str, RadioFrequency]] = field(default_factory=dict)
 
     def ils_freq(self, runway: str) -> Optional[RadioFrequency]:
-        return self.ils.get(runway)
+        ils = self.ils.get(runway)
+        if ils is not None:
+            return ils[1]
+        return None
 
 
 # TODO: Add more airfields.
 AIRFIELD_DATA = {
+    # Caucasus
 
-    # TODO : CAUCASUS MAP
     "Batumi": AirfieldData(
-        "UGSB",
-        32, 6792,
-        "16X", "BTM",
-        "", "",
-        AtcData("4.250", "131.000", "40.400", "260.000"),
-        {"13": "110.30 (ILU)"},
-        {},
-        {},
-        {}
+        theater="Caucasus",
+        icao="UGSB",
+        elevation=32,
+        runway_length=6792,
+        tacan=TacanChannel(16, TacanBand.X),
+        tacan_callsign="BTM",
+        atc=AtcData(MHz(4, 250), MHz(131, 0), MHz(40, 400), MHz(260, 0)),
+        ils={
+            "13": ("ILU", MHz(110, 30)),
+        },
     ),
 
     "Kobuleti": AirfieldData(
-        "UG5X",
-        59, 7406,
-        "67X", "KBL",
-        "", "",
-        AtcData("4.350", "133.000", "40.800", "262.000"),
-        {"7": "111.50 (IKB)"},
-        {},
-        {"7": "870.00 (KT)"},
-        {"7": "490.00 (T)"},
+        theater="Caucasus",
+        icao="UG5X",
+        elevation=59,
+        runway_length=7406,
+        tacan=TacanChannel(67, TacanBand.X),
+        tacan_callsign="KBL",
+        atc=AtcData(MHz(4, 350), MHz(133, 0), MHz(40, 800), MHz(262, 0)),
+        ils={
+            "07": ("IKB", MHz(111, 50)),
+        },
+        outer_ndb={
+            "07": ("KT", MHz(870, 0)),
+        },
+        inner_ndb={
+            "07": ("T", MHz(490, 0)),
+        },
     ),
 
     "Senaki-Kolkhi": AirfieldData(
-        "UGKS",
-        43, 7256,
-        "31X", "TSK",
-        "", "",
-        AtcData("4.300", "132.000", "40.600", "261.000"),
-        {"9": "108.90 (ITS)"},
-        {},
-        {"9": "335.00 (BI)"},
-        {"9": "688.00 (I)"},
+        theater="Caucasus",
+        icao="UGKS",
+        elevation=43,
+        runway_length=7256,
+        tacan=TacanChannel(31, TacanBand.X),
+        tacan_callsign="TSK",
+        atc=AtcData(MHz(4, 300), MHz(132, 0), MHz(40, 600), MHz(261, 0)),
+        ils={
+            "09": ("ITS", MHz(108, 90)),
+        },
+        outer_ndb={
+            "09": ("BI", MHz(335, 0)),
+        },
+        inner_ndb={
+            "09": ("I", MHz(688, 0)),
+        },
     ),
 
     "Kutaisi": AirfieldData(
-        "UGKO",
-        147, 7937,
-        "44X", "KTS",
-        "113.60 (KT)", "",
-        AtcData("4.400", "134.000", "41.000", "263.000"),
-        {"8": "109.75 (IKS)"},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="UGKO",
+        elevation=147,
+        runway_length=7937,
+        tacan=TacanChannel(44, TacanBand.X),
+        tacan_callsign="KTS",
+        atc=AtcData(MHz(4, 400), MHz(134, 0), MHz(41, 0), MHz(263, 0)),
+        ils={
+            "08": ("IKS", MHz(109, 75)),
+        },
     ),
 
     "Sukhumi-Babushara": AirfieldData(
-        "UGSS",
-        43, 11217,
-        "", "",
-        "", "",
-        AtcData("4.150", "129.000", "40.000", "258.000"),
-        {},
-        {},
-        {"30": "489.00 (AV)"},
-        {"30": "995.00 (A)"},
+        theater="Caucasus",
+        icao="UGSS",
+        elevation=43,
+        runway_length=11217,
+        atc=AtcData(MHz(4, 150), MHz(129, 0), MHz(40, 0), MHz(258, 0)),
+        outer_ndb={
+            "30": ("AV", MHz(489, 0)),
+        },
+        inner_ndb={
+            "30": ("A", MHz(995, 0)),
+        },
     ),
 
     "Gudauta": AirfieldData(
-        "UG23",
-        68, 7839,
-        "", "",
-        "", "",
-        AtcData("4.200", "120.000", "40.200", "259.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="UG23",
+        elevation=68,
+        runway_length=7839,
+        atc=AtcData(MHz(4, 200), MHz(120, 0), MHz(40, 200), MHz(259, 0)),
     ),
 
     "Sochi-Adler": AirfieldData(
-        "URSS",
-        98, 9686,
-        "", "",
-        "", "",
-        AtcData("4.050", "127.000", "39.600", "256.000"),
-        {"6": "111.10 (ISO)"},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="URSS",
+        elevation=98,
+        runway_length=9686,
+        atc=AtcData(MHz(4, 50), MHz(127, 0), MHz(39, 600), MHz(256, 0)),
+        ils={
+            "06": ("ISO", MHz(111, 10)),
+        },
     ),
 
     "Gelendzhik": AirfieldData(
-        "URKG",
-        72, 5452,
-        "", "",
-        "114.30 (GN)", "",
-        AtcData("4.000", "126.000", "39.400", "255.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="URKG",
+        elevation=72,
+        runway_length=5452,
+        vor=("GN", MHz(114, 30)),
+        atc=AtcData(MHz(4, 0), MHz(126, 0), MHz(39, 400), MHz(255, 0)),
     ),
 
     "Novorossiysk": AirfieldData(
-        "URKN",
-        131, 5639,
-        "", "",
-        "", "",
-        AtcData("3.850", "123.000", "38.800", "252.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="URKN",
+        elevation=131,
+        runway_length=5639,
+        atc=AtcData(MHz(3, 850), MHz(123, 0), MHz(38, 800), MHz(252, 0)),
     ),
 
     "Anapa-Vityazevo": AirfieldData(
-        "URKA",
-        141, 8623,
-        "", "",
-        "", "",
-        AtcData("3.750", "121.000", "38.400", "250.000"),
-        {},
-        {},
-        {"22": "443.00 (AP)", "4": "443.00 (AN)"},
-        {"22": "215.00 (P)", "4": "215.00 (N)"},
+        theater="Caucasus",
+        icao="URKA",
+        elevation=141,
+        runway_length=8623,
+        atc=AtcData(MHz(3, 750), MHz(121, 0), MHz(38, 400), MHz(250, 0)),
+        outer_ndb={
+            "22": ("AP", MHz(443, 0)), "4": "443.00 (AN)"
+        },
+        inner_ndb={
+            "22": ("P", MHz(215, 0)), "4": "215.00 (N)"
+        },
     ),
 
     "Krymsk": AirfieldData(
-        "URKW",
-        65, 6733,
-        "", "",
-        "", "ch 28 (KW)",
-        AtcData("3.900", "124.000", "39.000", "253.000"),
-        {},
-        {"4": "ch 26 (OX)", "22": "ch 26 (KW)"},
-        {"4": "408.00 (OX)", "22": "408.00 (KW)"},
-        {"4": "803.00 (O)", "22": "803.00 (K)"},
+        theater="Caucasus",
+        icao="URKW",
+        elevation=65,
+        runway_length=6733,
+        rsbn=("KW", 28),
+        atc=AtcData(MHz(3, 900), MHz(124, 0), MHz(39, 0), MHz(253, 0)),
+        prmg={
+            "04": ("OX", 26),
+            "22": ("KW", 26),
+        },
+        outer_ndb={
+            "04": ("OX", MHz(408, 0)),
+            "22": ("KW", MHz(408, 0)),
+        },
+        inner_ndb={
+            "04": ("O", MHz(803, 0)),
+            "22": ("K", MHz(803, 0)),
+        },
     ),
 
     "Krasnodar-Center": AirfieldData(
-        "URKL",
-        98, 7659,
-        "", "",
-        "", "ch 40 (MB)",
-        AtcData("3.800", "122.000", "38.600", "251.000"),
-        {},
-        {"9": "ch 38 (MB)"},
-        {"9": "625.00 (MB)", "27": "625.00 (OC)"},
-        {"9": "303.00 (M)", "27": "303.00 (C)"},
+        theater="Caucasus",
+        icao="URKL",
+        elevation=98,
+        runway_length=7659,
+        rsbn=("MB", 40),
+        atc=AtcData(MHz(3, 800), MHz(122, 0), MHz(38, 600), MHz(251, 0)),
+        prmg={
+            "09": ("MB", 38),
+        },
+        outer_ndb={
+            "09": ("MB", MHz(625, 0)),
+            "27": ("OC", MHz(625, 0)),
+        },
+        inner_ndb={
+            "09": ("M", MHz(303, 0)),
+            "27": ("C", MHz(303, 0)),
+        },
     ),
 
     "Krasnodar-Pashkovsky": AirfieldData(
-        "URKK",
-        111, 9738,
-        "", "",
-        "115.80 (KN)", "",
-        AtcData("4.100", "128.000", "39.800", "257.000"),
-        {},
-        {},
-        {"23": "493.00 (LD)", "5": "493.00 (KR)"},
-        {"23": "240.00 (L)", "5": "240.00 (K)"},
+        theater="Caucasus",
+        icao="URKK",
+        elevation=111,
+        runway_length=9738,
+        vor=("KN", MHz(115, 80)),
+        atc=AtcData(MHz(4, 100), MHz(128, 0), MHz(39, 800), MHz(257, 0)),
+        outer_ndb={
+            "23": ("LD", MHz(493, 0)),
+            "05": ("KR", MHz(493, 0)),
+        },
+        inner_ndb={
+            "23": ("L", MHz(240, 0)),
+            "05": ("K", MHz(240, 0)),
+        },
     ),
 
     "Maykop-Khanskaya": AirfieldData(
-        "URKH",
-        590, 10195,
-        "", "",
-        "", "ch 34 (DG)",
-        AtcData("3.950", "125.000", "39.200", "254.000"),
-        {},
-        {"4": "ch 36 (DG)"},
-        {"4": "289.00 (DG)", "22": "289.00 (RK)"},
-        {"4": "591.00 (D)", "22": "591.00 (R)"},
+        theater="Caucasus",
+        icao="URKH",
+        elevation=590,
+        runway_length=10195,
+        rsbn=("DG", 34),
+        atc=AtcData(MHz(3, 950), MHz(125, 0), MHz(39, 200), MHz(254, 0)),
+        prmg={
+            "04": ("DG", 36),
+        },
+        outer_ndb={
+            "04": ("DG", MHz(289, 0)),
+            "22": ("RK", MHz(289, 0)),
+        },
+        inner_ndb={
+            "4": ("D", MHz(591, 0)),
+            "22": ("R", MHz(591, 0)),
+        },
     ),
 
     "Mineralnye Vody": AirfieldData(
-        "URMM",
-        1049, 12316,
-        "", "",
-        "117.10 (MN)", "",
-        AtcData("4.450", "135.000", "41.200", "264.000"),
-        {"30": "109.30 (IMW)", "12": "111.70 (IMD)"},
-        {},
-        {"30": "583.00 (NR)", "12": "583.00 (MD)"},
-        {"30": "283.00 (N)", "12": "283.00 (D)"},
+        theater="Caucasus",
+        icao="URMM",
+        elevation=1049,
+        runway_length=12316,
+        vor=("MN", MHz(117, 10)),
+        atc=AtcData(MHz(4, 450), MHz(135, 0), MHz(41, 200), MHz(264, 0)),
+        ils={
+            "30": ("IMW", MHz(109, 30)),
+            "12": ("IMD", MHz(111, 70)),
+        },
+        outer_ndb={
+            "30": ("NR", MHz(583, 0)),
+            "12": ("MD", MHz(583, 0)),
+        },
+        inner_ndb={
+            "30": ("N", MHz(283, 0)),
+            "12": ("D", MHz(283, 0)),
+        },
     ),
 
     "Nalchik": AirfieldData(
-        "URMN",
-        1410, 7082,
-        "", "",
-        "", "",
-        AtcData("4.500", "136.000", "41.400", "265.000"),
-        {"24": "110.50 (INL)"},
-        {},
-        {"24": "718.00 (NL)"},
-        {"24": "350.00 (N)"},
+        theater="Caucasus",
+        icao="URMN",
+        elevation=1410,
+        runway_length=7082,
+        atc=AtcData(MHz(4, 500), MHz(136, 0), MHz(41, 400), MHz(265, 0)),
+        ils={
+            "24": ("INL", MHz(110, 50)),
+        },
+        outer_ndb={
+            "24": ("NL", MHz(718, 0)),
+        },
+        inner_ndb={
+            "24": ("N", MHz(350, 0)),
+        },
     ),
 
     "Mozdok": AirfieldData(
-        "XRMF",
-        507, 7734,
-        "", "",
-        "", "ch 20 (MZ)",
-        AtcData("4.550", "137.000", "41.600", "266.000"),
-        {},
-        {"26": "ch 22 (MZ)", "8": "ch 22 (MZ)"},
-        {"26": "525.00 (RM)", "8": "525.00 (DO)"},
-        {"26": "1.06 (R)", "8": "1.06 (D)"}
+        theater="Caucasus",
+        icao="XRMF",
+        elevation=507,
+        runway_length=7734,
+        rsbn=("MZ", 20),
+        atc=AtcData(MHz(4, 550), MHz(137, 0), MHz(41, 600), MHz(266, 0)),
+        prmg={
+            "26": ("MZ", 22),
+            "8": ("MZ", 22),
+        },
+        outer_ndb={
+            "26": ("RM", MHz(525, 0)),
+            "8": ("DO", MHz(525, 0)),
+        },
+        inner_ndb={
+            "26": ("R", MHz(1, 6)),
+            "8": ("D", MHz(1, 6)),
+        }
     ),
 
     "Beslan": AirfieldData(
-        "URMO",
-        1719, 9327,
-        "", "",
-        "", "",
-        AtcData("4.750", "141.000", "42.400", "270.000"),
-        {"10": "110.50 (ICH)"},
-        {},
-        {"10": "1.05 (CX)"},
-        {"10": "250.00 (C)"}
+        theater="Caucasus",
+        icao="URMO",
+        elevation=1719,
+        runway_length=9327,
+        atc=AtcData(MHz(4, 750), MHz(141, 0), MHz(42, 400), MHz(270, 0)),
+        ils={
+            "10": ("ICH", MHz(110, 50)),
+        },
+        outer_ndb={
+            "10": ("CX", MHz(1, 5)),
+        },
+        inner_ndb={
+            "10": ("C", MHz(250, 0)),
+        }
     ),
 
     "Tbilisi-Lochini": AirfieldData(
-        "UGTB",
-        1573, 7692,
-        "25X", "GTB",
-        "113.70 (INA)", "",
-        AtcData("4.600", "138.000", "41.800", "267.000"),
-        {"13": "110.30 (INA)", "30": "108.90 (INA)"},
-        {},
-        {"13": "342.00 (BP)", "30": "211.00 (NA)"},
-        {"13": "923.00 (B)", "30": "435.00 (N)"},
+        theater="Caucasus",
+        icao="UGTB",
+        elevation=1573,
+        runway_length=7692,
+        tacan=TacanChannel(25, TacanBand.X),
+        tacan_callsign="GTB",
+        atc=AtcData(MHz(4, 600), MHz(138, 0), MHz(41, 800), MHz(267, 0)),
+        ils={
+            "13": ("INA", MHz(110, 30)),
+            "30": ("INA", MHz(108, 90)),
+        },
+        outer_ndb={
+            "13": ("BP", MHz(342, 0)),
+            "30": ("NA", MHz(211, 0)),
+        },
+        inner_ndb={
+            "13": ("B", MHz(923, 0)),
+            "30": ("N", MHz(435, 0)),
+        },
     ),
 
     "Soganlung": AirfieldData(
-        "UG24",
-        1474, 7871,
-        "25X", "GTB",
-        "113.70 (INA)", "",
-        AtcData("4.650", "139.000", "42.000", "268.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="UG24",
+        elevation=1474,
+        runway_length=7871,
+        tacan=TacanChannel(25, TacanBand.X),
+        tacan_callsign="GTB",
+        atc=AtcData(MHz(4, 650), MHz(139, 0), MHz(42, 0), MHz(268, 0)),
     ),
 
     "Vaziani": AirfieldData(
-        "UG27",
-        1523, 7842,
-        "22X", "VAS",
-        "", "",
-        AtcData("4.700", "140.000", "42.200", "269.000"),
-        {"13": "108.75 (IVZ)", "31": "108.75 (IVZ)"},
-        {},
-        {},
-        {},
+        theater="Caucasus",
+        icao="UG27",
+        elevation=1523,
+        runway_length=7842,
+        tacan=TacanChannel(22, TacanBand.X),
+        tacan_callsign="VAS",
+        atc=AtcData(MHz(4, 700), MHz(140, 0), MHz(42, 200), MHz(269, 0)),
+        ils={
+            "13": ("IVZ", MHz(108, 75)),
+            "31": ("IVZ", MHz(108, 75)),
+        },
     ),
 
     # TODO : PERSIAN GULF MAP
     # TODO : SYRIA MAP
-    # "Incirlik": AirfieldData(
-    #     AtcData("3.85", "38.6", "129.4", "360.1"),
-    #     "21X",
-    #     {"050": "109.3", "230": "111.7"}
-    # ),
-    # TODO : NEVADA MAP
+
+    "Incirlik": AirfieldData(
+        theater="Syria",
+        icao="LTAG",
+        elevation=156,
+        runway_length=9662,
+        tacan=TacanChannel(21, TacanBand.X),
+        tacan_callsign="DAN",
+        vor=("DAN", MHz(108, 400)),
+        atc=AtcData(MHz(3, 850), MHz(38, 600), MHz(129, 400), MHz(360, 100)),
+        ils={
+            "50": ("IDAN", MHz(109, 300)),
+            "23": ("DANM", MHz(111, 700)),
+        },
+    ),
+
+    # NTTR
     "Mina Airport 3Q0": AirfieldData(
-        "",
-        4562, 4222,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        elevation=4562,
+        runway_length=4222,
     ),
 
     "Tonopah Airport": AirfieldData(
-        "KTPH",
-        5394, 6715,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KTPH",
+        elevation=5394,
+        runway_length=6715,
     ),
 
     "Tonopah Test Range Airfield": AirfieldData(
-        "KTNX",
-        5534, 11633,
-        "77X", "TQQ",
-        "113.00 (TQQ)", "",
-        AtcData("3.800", "124.750", "38.500", "257.950"),
-        {"32": "111.70 (I-UVV)", "14": "108.30 (I-RVP)"},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KTNX",
+        elevation=5534,
+        runway_length=11633,
+        tacan=TacanChannel(77, TacanBand.X),
+        tacan_callsign="TQQ",
+        atc=AtcData(MHz(3, 800), MHz(124, 750), MHz(38, 500), MHz(257, 950)),
+        ils={
+            "32": ("I-UVV", MHz(111, 70)),
+            "14": ("I-RVP", MHz(108, 30)),
+        },
     ),
 
     "Beatty Airport": AirfieldData(
-        "KBTY",
-        3173, 5380,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KBTY",
+        elevation=3173,
+        runway_length=5380,
     ),
 
     "Pahute Mesa Airstrip": AirfieldData(
-        "",
-        5056, 5420,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        elevation=5056,
+        runway_length=5420,
     ),
 
     "Groom Lake AFB": AirfieldData(
-        "KXTA",
-        4494, 11008,
-        "18X", "GRL",
-        "", "",
-        AtcData("3.850", "118.000", "38.600", "250.050"),
-        {"32": "109.30 (GLRI)"},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KXTA",
+        elevation=4494,
+        runway_length=11008,
+        tacan=TacanChannel(18, TacanBand.X),
+        tacan_callsign="GRL",
+        atc=AtcData(MHz(3, 850), MHz(118, 0), MHz(38, 600), MHz(250, 50)),
+        ils={
+            "32": ("GLRI", MHz(109, 30)),
+        },
     ),
 
     "Lincoln County": AirfieldData(
-        "",
-        4815, 4408,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        elevation=4815,
+        runway_length=4408,
     ),
 
     "Mesquite": AirfieldData(
-        "67L",
-        1858, 4937,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="67L",
+        elevation=1858,
+        runway_length=4937,
     ),
 
     "Creech AFB": AirfieldData(
-        "KINS",
-        3126, 6100,
-        "87X", "INS",
-        "", "",
-        AtcData("3.825", "118.300", "38.550", "360.600"),
-        {"8": "108.70 (ICRR)"},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KINS",
+        elevation=3126,
+        runway_length=6100,
+        tacan=TacanChannel(87, TacanBand.X),
+        tacan_callsign="INS",
+        atc=AtcData(MHz(3, 825), MHz(118, 300), MHz(38, 550), MHz(360, 600)),
+        ils={
+            "8": ("ICRR", MHz(108, 70)),
+        },
     ),
 
     "Echo Bay": AirfieldData(
-        "OL9",
-        3126, 6100,
-        "87X", "INS",
-        "", "",
-        AtcData("3.825", "118.300", "38.550", "360.600"),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="OL9",
+        elevation=3126,
+        runway_length=6100,
+        tacan=TacanChannel(87, TacanBand.X),
+        tacan_callsign="INS",
+        atc=AtcData(MHz(3, 825), MHz(118, 300), MHz(38, 550), MHz(360, 600)),
     ),
 
     "Nellis AFB": AirfieldData(
-        "KLSV",
-        1841, 9454,
-        "12X", "LSV",
-        "", "",
-        AtcData("3.900", "132.550", "38.700", "327.000"),
-        {"21": "109.10 (IDIQ)"},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KLSV",
+        elevation=1841,
+        runway_length=9454,
+        tacan=TacanChannel(12, TacanBand.X),
+        tacan_callsign="LSV",
+        atc=AtcData(MHz(3, 900), MHz(132, 550), MHz(38, 700), MHz(327, 0)),
+        ils={
+            "21": ("IDIQ", MHz(109, 10)),
+        },
     ),
 
     "North Las Vegas": AirfieldData(
-        "KVGT",
-        2228, 4734,
-        "", "",
-        "", "",
-        AtcData("3.775", "125.700", "38.450", "360.750"),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KVGT",
+        elevation=2228,
+        runway_length=4734,
+        atc=AtcData(MHz(3, 775), MHz(125, 700), MHz(38, 450), MHz(360, 750)),
     ),
 
     "McCarran International Airport": AirfieldData(
-        "KLAS",
-        2169, 10377,
-        "116X", "LAS",
-        "116.90 (LAS)", "",
-        AtcData("3.875", "119.900", "38.650", "257.800"),
-        {"25": "110.30 (I-LAS)"},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KLAS",
+        elevation=2169,
+        runway_length=10377,
+        tacan=TacanChannel(116, TacanBand.X),
+        tacan_callsign="LAS",
+        atc=AtcData(MHz(3, 875), MHz(119, 900), MHz(38, 650), MHz(257, 800)),
+        ils={
+            "25": ("I-LAS", MHz(110, 30)),
+        },
     ),
 
     "Henderson Executive Airport": AirfieldData(
-        "KHND",
-        2491, 5999,
-        "", "",
-        "", "",
-        AtcData("3.925", "125.100", "38.750", "250.100"),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KHND",
+        elevation=2491,
+        runway_length=5999,
+        atc=AtcData(MHz(3, 925), MHz(125, 100), MHz(38, 750), MHz(250, 100)),
     ),
 
     "Boulder City Airport": AirfieldData(
-        "KBVU",
-        2121, 4612,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KBVU",
+        elevation=2121,
+        runway_length=4612,
     ),
 
     "Jean Airport": AirfieldData(
-        "",
-        2824, 4053,
-        "", "",
-        "", "",
-        AtcData("", "", "", ""),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        elevation=2824,
+        runway_length=4053,
     ),
 
     "Laughlin Airport": AirfieldData(
-        "KIFP",
-        656, 7139,
-        "", "",
-        "", "",
-        AtcData("3.750", "123.900", "38.400", "250.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="NTTR",
+        icao="KIFP",
+        elevation=656,
+        runway_length=7139,
+        atc=AtcData(MHz(3, 750), MHz(123, 900), MHz(38, 400), MHz(250, 0)),
     ),
 
     # TODO : NORMANDY MAP
 
     # Channel Map
     "Detling": AirfieldData(
-        "",
-        623, 2557,
-        "", "",
-        "", "",
-        AtcData("3.950", "118.400", "38.800", "250.400"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=623,
+        runway_length=2557,
+        atc=AtcData(MHz(3, 950), MHz(118, 400), MHz(38, 800), MHz(250, 400)),
     ),
 
     "High Halden": AirfieldData(
-        "",
-        104, 3296,
-        "", "",
-        "", "",
-        AtcData("3.750", "118.800", "38.400", "250.000"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=104,
+        runway_length=3296,
+        atc=AtcData(MHz(3, 750), MHz(118, 800), MHz(38, 400), MHz(250, 0)),
     ),
 
     "Lympne": AirfieldData(
-        "",
-        351, 2548,
-        "", "",
-        "", "",
-        AtcData("3.925", "118.350", "38.750", "250.350"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=351,
+        runway_length=2548,
+        atc=AtcData(MHz(3, 925), MHz(118, 350), MHz(38, 750), MHz(250, 350)),
     ),
 
     "Hawkinge": AirfieldData(
-        "",
-        524, 3013,
-        "", "",
-        "", "",
-        AtcData("3.900", "118.300", "38.700", "250.300"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=524,
+        runway_length=3013,
+        atc=AtcData(MHz(3, 900), MHz(118, 300), MHz(38, 700), MHz(250, 300)),
     ),
 
     "Manston": AirfieldData(
-        "",
-        160, 8626,
-        "", "",
-        "", "",
-        AtcData("3.875", "118.250", "38.650", "250.250"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=160,
+        runway_length=8626,
+        atc=AtcData(MHz(3, 875), MHz(118, 250), MHz(38, 650), MHz(250, 250)),
     ),
 
     "Dunkirk Mardyck": AirfieldData(
-        "",
-        16, 1737,
-        "", "",
-        "", "",
-        AtcData("3.850", "118.200", "38.600", "250.200"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=16,
+        runway_length=1737,
+        atc=AtcData(MHz(3, 850), MHz(118, 200), MHz(38, 600), MHz(250, 200)),
     ),
 
     "Saint Omer Longuenesse": AirfieldData(
-        "",
-        219, 1929,
-        "", "",
-        "", "",
-        AtcData("3.825", "118.150", "38.550" "250.150"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=219,
+        runway_length=1929,
+        atc=AtcData(MHz(3, 825), MHz(118, 150), MHz(38, 550), MHz(250, 150)),
     ),
 
     "Merville Calonne": AirfieldData(
-        "",
-        52, 7580,
-        "", "",
-        "", "",
-        AtcData("3.800", "118.100", "38.500", "250.100"),
-        {},
-        {},
-        {},
-        {},
+        theater="Channel",
+        elevation=52,
+        runway_length=7580,
+        atc=AtcData(MHz(3, 800), MHz(118, 100), MHz(38, 500), MHz(250, 100)),
     ),
 
     "Abbeville Drucat": AirfieldData(
-        "",
-        183, 4726,
-        "", "",
-        "", "",
-        AtcData("3.775", "118.050", "38.450", "250.050"),
-        {},
-        {},
-        {},
-        {},
-    )
-
+        theater="Channel",
+        elevation=183,
+        runway_length=4726,
+        atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
+    ),
 }
+
+
+@dataclass(frozen=True)
+class RunwayData:
+    airfield_name: str
+    runway_name: str
+    atc: Optional[RadioFrequency] = None
+    tacan: Optional[TacanChannel] = None
+    tacan_callsign: Optional[str] = None
+    ils: Optional[RadioFrequency] = None
+    icls: Optional[int] = None
+
+    @classmethod
+    def for_airfield(cls, airport: Airport, runway: str) -> "RunwayData":
+        """Creates RunwayData for the given runway of an airfield.
+
+        Args:
+            airport: The airfield the runway belongs to.
+            runway: Identifier of the runway to use. e.g. "03" or "20L".
+        """
+        atc: Optional[RadioFrequency] = None
+        tacan: Optional[TacanChannel] = None
+        ils: Optional[RadioFrequency] = None
+        try:
+            airfield = AIRFIELD_DATA[airport.name]
+            atc = airfield.atc.uhf
+            tacan = airfield.tacan
+            tacan = airfield.tacan_callsign
+            ils = airfield.ils_freq(runway)
+        except KeyError:
+            logging.warning(f"No airfield data for {airport.name}")
+        return cls(
+            airport.name,
+            runway,
+            atc,
+            tacan,
+            ils
+        )

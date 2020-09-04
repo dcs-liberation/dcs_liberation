@@ -1,11 +1,14 @@
-from dcs.countries import country_dict
-from dcs.lua.parse import loads
-from dcs.terrain import Terrain
+from typing import Set
 
 from gen import *
+from gen.airfields import AIRFIELD_DATA
+from gen.beacons import load_beacons_for_terrain
+from gen.radios import RadioRegistry
+from gen.tacan import TacanRegistry
+from pydcs.dcs.countries import country_dict
+from pydcs.dcs.lua.parse import loads
+from pydcs.dcs.terrain.terrain import Terrain
 from userdata.debriefing import *
-
-TANKER_CALLSIGNS = ["Texaco", "Arco", "Shell"]
 
 
 class Operation:
@@ -25,6 +28,8 @@ class Operation:
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
+    radio_registry: Optional[RadioRegistry] = None
+    tacan_registry: Optional[TacanRegistry] = None
 
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
@@ -63,13 +68,25 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
-        self.airgen = AircraftConflictGenerator(mission, conflict, self.game.settings, self.game)
-        self.airsupportgen = AirSupportConflictGenerator(mission, conflict, self.game)
+        self.radio_registry = RadioRegistry()
+        self.tacan_registry = TacanRegistry()
+        self.airgen = AircraftConflictGenerator(
+            mission, conflict, self.game.settings, self.game,
+            self.radio_registry)
+        self.airsupportgen = AirSupportConflictGenerator(
+            mission, conflict, self.game, self.radio_registry,
+            self.tacan_registry)
         self.triggersgen = TriggersGenerator(mission, conflict, self.game)
         self.visualgen = VisualGenerator(mission, conflict, self.game)
         self.envgen = EnviromentGenerator(mission, conflict, self.game)
         self.forcedoptionsgen = ForcedOptionsGenerator(mission, conflict, self.game)
-        self.groundobjectgen = GroundObjectsGenerator(mission, conflict, self.game)
+        self.groundobjectgen = GroundObjectsGenerator(
+            mission,
+            conflict,
+            self.game,
+            self.radio_registry,
+            self.tacan_registry
+        )
         self.briefinggen = BriefingGenerator(mission, conflict, self.game)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
@@ -110,6 +127,29 @@ class Operation:
             self.defenders_starting_position = self.to_cp.at
 
     def generate(self):
+        # Dedup beacon frequencies, since some maps have more than one beacon
+        # per frequency.
+        beacons = load_beacons_for_terrain(self.game.theater.terrain.name)
+        unique_beacon_frequencies: Set[RadioFrequency] = set()
+        for beacon in beacons:
+            unique_beacon_frequencies.add(beacon.frequency)
+            if beacon.is_tacan:
+                if beacon.channel is None:
+                    logging.error(
+                        f"TACAN beacon has no channel: {beacon.callsign}")
+                else:
+                    self.tacan_registry.reserve(beacon.tacan_channel)
+        for frequency in unique_beacon_frequencies:
+            self.radio_registry.reserve(frequency)
+
+        for airfield, data in AIRFIELD_DATA.items():
+            if data.theater == self.game.theater.terrain.name:
+                self.radio_registry.reserve(data.atc.hf)
+                self.radio_registry.reserve(data.atc.vhf_fm)
+                self.radio_registry.reserve(data.atc.vhf_am)
+                self.radio_registry.reserve(data.atc.uhf)
+                # No need to reserve ILS or TACAN because those are in the
+                # beacon list.
 
         # Generate meteo
         if self.environment_settings is None:
@@ -151,7 +191,12 @@ class Operation:
             else:
                 country = self.current_mission.country(self.game.enemy_country)
             if cp.id in self.game.planners.keys():
-                self.airgen.generate_flights(cp, country, self.game.planners[cp.id])
+                self.airgen.generate_flights(
+                    cp,
+                    country,
+                    self.game.planners[cp.id],
+                    self.groundobjectgen.runways
+                )
 
         # Generate ground units on frontline everywhere
         self.game.jtacs = []
@@ -221,28 +266,87 @@ class Operation:
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
 
-        kneeboard_generator = KneeboardGenerator(self.current_mission, self.game)
+        self.assign_channels_to_flights()
 
-        # Briefing Generation
-        for i, tanker_type in enumerate(self.airsupportgen.generated_tankers):
-            callsign = TANKER_CALLSIGNS[i]
-            tacan = f"{60 + i}X"
-            freq = f"{130 + i} MHz AM"
-            self.briefinggen.append_frequency(f"Tanker {callsign} ({tanker_type})", f"{tacan}/{freq}")
-            kneeboard_generator.add_tanker(callsign, tanker_type, freq, tacan)
+        kneeboard_generator = KneeboardGenerator(self.current_mission)
+
+        for dynamic_runway in self.groundobjectgen.runways.values():
+            self.briefinggen.add_dynamic_runway(dynamic_runway)
+
+        for tanker in self.airsupportgen.air_support.tankers:
+            self.briefinggen.add_tanker(tanker)
+            kneeboard_generator.add_tanker(tanker)
 
         if self.is_awacs_enabled:
-            callsign = "AWACS"
-            freq = "233 MHz AM"
-            self.briefinggen.append_frequency(callsign, freq)
-            kneeboard_generator.add_awacs(callsign, freq)
-
-        self.briefinggen.append_frequency("Flight", "251 MHz AM")
-        kneeboard_generator.add_comm("Flight", "251 MHz AM")
-
-        # Generate the briefing
-        self.briefinggen.generate()
+            for awacs in self.airsupportgen.air_support.awacs:
+                self.briefinggen.add_awacs(awacs)
+                kneeboard_generator.add_awacs(awacs)
 
         for region, code, name in self.game.jtacs:
-            kneeboard_generator.add_jtac(name, region, code)
+            # TODO: Radio info? Type?
+            jtac = JtacInfo(name, region, code)
+            self.briefinggen.add_jtac(jtac)
+            kneeboard_generator.add_jtac(jtac)
+
+        for flight in self.airgen.flights:
+            self.briefinggen.add_flight(flight)
+            kneeboard_generator.add_flight(flight)
+
+        self.briefinggen.generate()
         kneeboard_generator.generate()
+
+    def assign_channels_to_flights(self) -> None:
+        """Assigns preset radio channels for client flights."""
+        for flight in self.airgen.flights:
+            if not flight.client_units:
+                continue
+            self.assign_channels_to_flight(flight)
+
+    def assign_channels_to_flight(self, flight: FlightData) -> None:
+        """Assigns preset radio channels for a client flight."""
+        airframe = flight.aircraft_type
+
+        try:
+            aircraft_data = AIRCRAFT_DATA[airframe.id]
+        except KeyError:
+            logging.warning(f"No aircraft data for {airframe.id}")
+            return
+
+        # Intra-flight channel is set up when the flight is created, however we
+        # do need to make sure we don't overwrite it. For cases where the
+        # inter-flight and intra-flight radios share presets (the AV-8B only has
+        # one set of channels, even though it can use two channels
+        # simultaneously), start assigning channels at 2.
+        radio_id = aircraft_data.inter_flight_radio_index
+        if aircraft_data.intra_flight_radio_index == radio_id:
+            first_channel = 2
+        else:
+            first_channel = 1
+
+        last_channel = flight.num_radio_channels(radio_id)
+        channel_alloc = iter(range(first_channel, last_channel + 1))
+
+        flight.assign_channel(radio_id, next(channel_alloc),flight.departure.atc)
+
+        # TODO: If there ever are multiple AWACS, limit to mission relevant.
+        for awacs in self.airsupportgen.air_support.awacs:
+            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
+
+        # TODO: Fix departure/arrival to support carriers.
+        if flight.arrival != flight.departure:
+            flight.assign_channel(radio_id, next(channel_alloc),
+                                  flight.arrival.atc)
+
+        try:
+            # TODO: Skip incompatible tankers.
+            for tanker in self.airsupportgen.air_support.tankers:
+                flight.assign_channel(
+                    radio_id, next(channel_alloc), tanker.freq)
+
+            if flight.divert is not None:
+                flight.assign_channel(radio_id, next(channel_alloc),
+                                      flight.divert.atc)
+        except StopIteration:
+            # Any remaining channels are nice-to-haves, but not necessary for
+            # the few aircraft with a small number of channels available.
+            pass

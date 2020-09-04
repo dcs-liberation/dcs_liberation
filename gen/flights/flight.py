@@ -1,10 +1,8 @@
 from enum import Enum
 from typing import List
 
-from dcs.mission import StartType
-from dcs.unittype import UnitType
-
 from game import db
+from pydcs.dcs.unittype import UnitType
 
 
 class FlightType(Enum):
@@ -113,10 +111,10 @@ class Flight:
 
 # Test
 if __name__ == '__main__':
-    from dcs.planes import A_10C
+    from pydcs.dcs.planes import A_10C
     from theater import ControlPoint, Point, List
 
     from_cp = ControlPoint(0, "AA", Point(0, 0), None, [], 0, 0)
-    f = Flight(A_10C, 4, from_cp, FlightType.CAS)
+    f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
     f.scheduled_in = 50
     print(f)
