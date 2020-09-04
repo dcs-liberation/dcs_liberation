@@ -266,28 +266,34 @@ class Operation:
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
 
+        self.assign_channels_to_flights()
+
         kneeboard_generator = KneeboardGenerator(self.current_mission)
 
-        # Briefing Generation
+        for dynamic_runway in self.groundobjectgen.runways.values():
+            self.briefinggen.add_dynamic_runway(dynamic_runway)
+
         for tanker in self.airsupportgen.air_support.tankers:
-            self.briefinggen.append_frequency(
-                f"Tanker {tanker.callsign} ({tanker.variant})",
-                f"{tanker.tacan}/{tanker.freq}")
+            self.briefinggen.add_tanker(tanker)
             kneeboard_generator.add_tanker(tanker)
 
         if self.is_awacs_enabled:
             for awacs in self.airsupportgen.air_support.awacs:
-                self.briefinggen.append_frequency(awacs.callsign, awacs.freq)
+                self.briefinggen.add_awacs(awacs)
                 kneeboard_generator.add_awacs(awacs)
 
-        self.assign_channels_to_flights()
-
-        # Generate the briefing
-        self.briefinggen.generate()
-
         for region, code, name in self.game.jtacs:
-            kneeboard_generator.add_jtac(name, region, code)
-        kneeboard_generator.generate(self.airgen.flights)
+            # TODO: Radio info? Type?
+            jtac = JtacInfo(name, region, code)
+            self.briefinggen.add_jtac(jtac)
+            kneeboard_generator.add_jtac(jtac)
+
+        for flight in self.airgen.flights:
+            self.briefinggen.add_flight(flight)
+            kneeboard_generator.add_flight(flight)
+
+        self.briefinggen.generate()
+        kneeboard_generator.generate()
 
     def assign_channels_to_flights(self) -> None:
         """Assigns preset radio channels for client flights."""

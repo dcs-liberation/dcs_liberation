@@ -148,8 +148,19 @@ class ChannelAssignment:
 class FlightData:
     """Details of a planned flight."""
 
-    #: List of playable units in the flight.
-    client_units: List[FlyingUnit]
+    flight_type: FlightType
+
+    #: All units in the flight.
+    units: List[FlyingUnit]
+
+    #: Total number of aircraft in the flight.
+    size: int
+
+    #: True if this flight belongs to the player's coalition.
+    friendly: bool
+
+    #: Number of minutes after mission start the flight is set to depart.
+    departure_delay: int
 
     #: Arrival airport.
     arrival: RunwayData
@@ -169,19 +180,29 @@ class FlightData:
     #: Map of radio frequencies to their assigned radio and channel, if any.
     frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
 
-    def __init__(self, client_units: List[FlyingUnit], arrival: RunwayData,
-                 departure: RunwayData, divert: Optional[RunwayData],
-                 waypoints: List[FlightWaypoint],
+    def __init__(self, flight_type: FlightType, units: List[FlyingUnit],
+                 size: int, friendly: bool, departure_delay: int,
+                 departure: RunwayData, arrival: RunwayData,
+                 divert: Optional[RunwayData], waypoints: List[FlightWaypoint],
                  intra_flight_channel: RadioFrequency) -> None:
-        self.client_units = client_units
-        self.arrival = arrival
+        self.flight_type = flight_type
+        self.units = units
+        self.size = size
+        self.friendly = friendly
+        self.departure_delay = departure_delay
         self.departure = departure
+        self.arrival = arrival
         self.divert = divert
         self.waypoints = waypoints
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
 
         self.assign_intra_flight_channel()
+
+    @property
+    def client_units(self) -> List[FlyingUnit]:
+        """List of playable units in the flight."""
+        return [u for u in self.units if u.is_human()]
 
     def assign_intra_flight_channel(self) -> None:
         """Assigns a channel to the intra-flight frequency."""
@@ -200,10 +221,11 @@ class FlightData:
     @property
     def aircraft_type(self) -> FlyingType:
         """Returns the type of aircraft in this flight."""
-        return self.client_units[0].unit_type
+        return self.units[0].unit_type
 
     def num_radio_channels(self, radio_id: int) -> int:
         """Returns the number of preset channels for the given radio."""
+        # Note: pydcs only initializes the radio presets for client slots.
         return self.client_units[0].num_radio_channels(radio_id)
 
     def channel_for(
@@ -296,11 +318,9 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
-        clients: List[FlyingUnit] = []
         single_client = flight.client_count == 1
         for idx in range(0, min(len(group.units), flight.client_count)):
             unit = group.units[idx]
-            clients.append(unit)
             if single_client:
                 unit.set_player()
             else:
@@ -338,7 +358,11 @@ class AircraftConflictGenerator:
             departure_runway = fallback_runway
 
         self.flights.append(FlightData(
-            client_units=clients,
+            flight_type=flight.flight_type,
+            units=group.units,
+            size=len(group.units),
+            friendly=flight.from_cp.captured,
+            departure_delay=flight.scheduled_in,
             departure=departure_runway,
             arrival=departure_runway,
             # TODO: Support for divert airfields.

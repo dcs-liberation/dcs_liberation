@@ -189,6 +189,7 @@ class GroundObjectsGenerator:
                                 "N/A",
                                 atc=atc_channel,
                                 tacan=tacan,
+                                tacan_callsign=tacan_callsign,
                                 icls=icls_channel,
                             )
 

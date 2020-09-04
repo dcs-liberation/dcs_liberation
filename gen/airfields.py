@@ -641,12 +641,13 @@ AIRFIELD_DATA = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class RunwayData:
     airfield_name: str
     runway_name: str
     atc: Optional[RadioFrequency] = None
     tacan: Optional[TacanChannel] = None
+    tacan_callsign: Optional[str] = None
     ils: Optional[RadioFrequency] = None
     icls: Optional[int] = None
 
@@ -665,6 +666,7 @@ class RunwayData:
             airfield = AIRFIELD_DATA[airport.name]
             atc = airfield.atc.uhf
             tacan = airfield.tacan
+            tacan = airfield.tacan_callsign
             ils = airfield.ils_freq(runway)
         except KeyError:
             logging.warning(f"No airfield data for {airport.name}")

@@ -23,7 +23,6 @@ only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -36,6 +35,7 @@ from . import units
 from .aircraft import FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
+from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .radios import RadioFrequency
 
 
@@ -93,21 +93,6 @@ class KneeboardPage:
     def write(self, path: Path) -> None:
         """Writes the kneeboard page to the given path."""
         raise NotImplementedError
-
-
-@dataclass
-class CommInfo:
-    """Communications information for the kneeboard."""
-    name: str
-    freq: RadioFrequency
-
-
-@dataclass
-class JtacInfo:
-    """JTAC information for the kneeboard."""
-    callsign: str
-    region: str
-    code: str
 
 
 class BriefingPage(KneeboardPage):
@@ -208,57 +193,17 @@ class BriefingPage(KneeboardPage):
         return f"{channel.radio_name} Ch {channel.channel}"
 
 
-class KneeboardGenerator:
+class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
     def __init__(self, mission: Mission) -> None:
-        self.mission = mission
-        self.comms: List[CommInfo] = []
-        self.awacs: List[AwacsInfo] = []
-        self.tankers: List[TankerInfo] = []
-        self.jtacs: List[JtacInfo] = []
+        super().__init__(mission)
 
-    def add_comm(self, name: str, freq: RadioFrequency) -> None:
-        """Adds communications info to the kneeboard.
-
-        Args:
-            name: Name of the radio channel.
-            freq: Frequency of the radio channel.
-        """
-        self.comms.append(CommInfo(name, freq))
-
-    def add_awacs(self, awacs: AwacsInfo) -> None:
-        """Adds an AWACS/GCI to the kneeboard.
-
-        Args:
-            awacs: AWACS information.
-        """
-        self.awacs.append(awacs)
-
-    def add_tanker(self, tanker: TankerInfo) -> None:
-        """Adds a tanker to the kneeboard.
-
-        Args:
-            tanker: Tanker information.
-        """
-        self.tankers.append(tanker)
-
-    def add_jtac(self, callsign: str, region: str, code: str) -> None:
-        """Adds a JTAC to the kneeboard.
-
-        Args:
-            callsign: Callsign of the JTAC.
-            region: JTAC's area of responsibility.
-            code: Laser code used by the JTAC.
-        """
-        # TODO: Radio info? Type?
-        self.jtacs.append(JtacInfo(callsign, region, code))
-
-    def generate(self, flights: List[FlightData]) -> None:
+    def generate(self) -> None:
         """Generates a kneeboard per client flight."""
         temp_dir = Path("kneeboards")
         temp_dir.mkdir(exist_ok=True)
-        for aircraft, pages in self.pages_by_airframe(flights).items():
+        for aircraft, pages in self.pages_by_airframe().items():
             aircraft_dir = temp_dir / aircraft.id
             aircraft_dir.mkdir(exist_ok=True)
             for idx, page in enumerate(pages):
@@ -266,7 +211,7 @@ class KneeboardGenerator:
                 page.write(page_path)
                 self.mission.add_aircraft_kneeboard(aircraft, page_path)
 
-    def pages_by_airframe(self, flights: List[FlightData]) -> Dict[FlyingType, List[KneeboardPage]]:
+    def pages_by_airframe(self) -> Dict[FlyingType, List[KneeboardPage]]:
         """Returns a list of kneeboard pages per airframe in the mission.
 
         Only client flights will be included, but because DCS does not support
@@ -278,7 +223,7 @@ class KneeboardGenerator:
             that aircraft.
         """
         all_flights: Dict[FlyingType, List[KneeboardPage]] = defaultdict(list)
-        for flight in flights:
+        for flight in self.flights:
             if not flight.client_units:
                 continue
             all_flights[flight.aircraft_type].extend(
