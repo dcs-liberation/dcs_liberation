@@ -5,7 +5,7 @@ data added to pydcs. Until then, missing data can be manually filled in here.
 """
 from dataclasses import dataclass, field
 import logging
-from typing import Dict, Optional, Tuple
+from typing import Dict, Iterator, Optional, Tuple
 
 from pydcs.dcs.terrain.terrain import Airport
 from .radios import MHz, RadioFrequency
@@ -677,3 +677,18 @@ class RunwayData:
             tacan,
             ils
         )
+
+    @classmethod
+    def for_pydcs_airport(cls, airport: Airport) -> Iterator["RunwayData"]:
+        for runway in airport.runways:
+            runway_number = runway.heading // 10
+            runway_side = ["", "L", "R"][runway.leftright]
+            runway_name = f"{runway_number:02}{runway_side}"
+            yield cls.for_airfield(airport, runway_name)
+
+            # pydcs only exposes one runway per physical runway, so to expose
+            # both sides of the runway we need to generate the other.
+            runway_number = ((runway.heading + 180) % 360) // 10
+            runway_side = ["", "R", "L"][runway.leftright]
+            runway_name = f"{runway_number:02}{runway_side}"
+            yield cls.for_airfield(airport, runway_name)
