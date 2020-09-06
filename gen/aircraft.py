@@ -1,5 +1,12 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+
+from dcs import helicopters
+from dcs.action import ActivateGroup, AITaskPush, MessageToAll
+from dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
+from dcs.flyingunit import FlyingUnit
+from dcs.helicopters import helicopter_map, UH_1H
+from dcs.terrain.terrain import Airport, NoParkingSlotError
+from dcs.triggers import TriggerOnce, Event
 
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
@@ -13,27 +20,6 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.radios import get_radio, MHz, Radio, RadioFrequency, RadioRegistry
-from pydcs.dcs import helicopters
-from pydcs.dcs.action import ActivateGroup, AITaskPush, MessageToAll
-from pydcs.dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
-from pydcs.dcs.flyingunit import FlyingUnit
-from pydcs.dcs.helicopters import helicopter_map, UH_1H
-from pydcs.dcs.mission import Mission, StartType
-from pydcs.dcs.planes import (
-    Bf_109K_4,
-    FW_190A8,
-    FW_190D9,
-    I_16,
-    Ju_88A4,
-    P_47D_30,
-    P_51D,
-    P_51D_30_NA,
-    SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
-)
-from pydcs.dcs.terrain.terrain import Airport, NoParkingSlotError
-from pydcs.dcs.triggers import TriggerOnce, Event
-from pydcs.dcs.unittype import FlyingType, UnitType
 from .conflictgen import *
 from .naming import *
 

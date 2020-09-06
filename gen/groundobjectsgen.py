@@ -1,14 +1,8 @@
+from dcs.statics import *
+from dcs.unit import Ship, Vehicle
+
 from game.data.building_data import FORTIFICATION_UNITS_ID, FORTIFICATION_UNITS
 from game.db import unit_type_from_name
-from pydcs.dcs.mission import *
-from pydcs.dcs.statics import *
-from pydcs.dcs.task import (
-    ActivateBeaconCommand,
-    ActivateICLSCommand,
-    OptAlarmState,
-)
-from pydcs.dcs.unit import Ship, Vehicle
-from pydcs.dcs.unitgroup import StaticGroup
 from .airfields import RunwayData
 from .conflictgen import *
 from .naming import *

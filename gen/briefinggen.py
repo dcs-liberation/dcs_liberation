@@ -5,7 +5,7 @@ import random
 from typing import List, Tuple
 
 from game import db
-from pydcs.dcs.mission import Mission
+from dcs.mission import Mission
 from .aircraft import FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo

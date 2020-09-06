@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List
 
 from game import db
-from pydcs.dcs.unittype import UnitType
+from dcs.unittype import UnitType
 
 
 class FlightType(Enum):

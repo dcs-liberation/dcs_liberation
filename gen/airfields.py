@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 import logging
 from typing import Dict, Iterator, Optional, Tuple
 
-from pydcs.dcs.terrain.terrain import Airport
+from dcs.terrain.terrain import Airport
 from .radios import MHz, RadioFrequency
 from .tacan import TacanBand, TacanChannel
 
