@@ -1,6 +1,6 @@
 import os
 import sys
-from pydcs import dcs
+import dcs
 
 from game import db
 from gen.aircraft import AircraftConflictGenerator
