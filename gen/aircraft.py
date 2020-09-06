@@ -357,6 +357,10 @@ class AircraftConflictGenerator:
             logging.warning(f"Unhandled departure control point: {cp.cptype}")
             departure_runway = fallback_runway
 
+        # The first waypoint is set automatically by pydcs, so it's not in our
+        # list. Convert the pydcs MovingPoint to a FlightWaypoint so it shows up
+        # in our FlightData.
+        first_point = FlightWaypoint.from_pydcs(group.points[0], flight.from_cp)
         self.flights.append(FlightData(
             flight_type=flight.flight_type,
             units=group.units,
@@ -367,7 +371,7 @@ class AircraftConflictGenerator:
             arrival=departure_runway,
             # TODO: Support for divert airfields.
             divert=None,
-            waypoints=flight.points,
+            waypoints=[first_point] + flight.points,
             intra_flight_channel=channel
         ))
 

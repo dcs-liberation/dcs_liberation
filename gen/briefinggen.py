@@ -115,8 +115,6 @@ class BriefingGenerator(MissionInfoGenerator):
         self.description += "-" * 50 + "\n"
         self.description += f"{flight_unit_name} x {flight.size + 2}\n\n"
 
-        departure = flight.departure.airfield_name
-        self.description += f"#0 -- TAKEOFF : Take off from {departure}\n"
         for i, wpt in enumerate(flight.waypoints):
             self.description += f"#{i + 1} -- {wpt.name} : {wpt.description}\n"
         self.description += f"#{len(flight.waypoints) + 1} -- RTB\n\n"
