@@ -29,8 +29,8 @@ from typing import Dict, List, Optional, Tuple
 from PIL import Image, ImageDraw, ImageFont
 from tabulate import tabulate
 
-from pydcs.dcs.mission import Mission
-from pydcs.dcs.unittype import FlyingType
+from dcs.mission import Mission
+from dcs.unittype import FlyingType
 from . import units
 from .aircraft import FlightData
 from .airfields import RunwayData

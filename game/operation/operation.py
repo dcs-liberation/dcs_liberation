@@ -5,9 +5,9 @@ from gen.airfields import AIRFIELD_DATA
 from gen.beacons import load_beacons_for_terrain
 from gen.radios import RadioRegistry
 from gen.tacan import TacanRegistry
-from pydcs.dcs.countries import country_dict
-from pydcs.dcs.lua.parse import loads
-from pydcs.dcs.terrain.terrain import Terrain
+from dcs.countries import country_dict
+from dcs.lua.parse import loads
+from dcs.terrain.terrain import Terrain
 from userdata.debriefing import *
 
 
