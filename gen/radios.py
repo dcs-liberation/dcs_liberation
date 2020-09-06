@@ -101,6 +101,10 @@ RADIOS: List[Radio] = [
     Radio("SCR-522", MHz(100), MHz(156), step=MHz(1)),
     Radio("A.R.I. 1063", MHz(100), MHz(156), step=MHz(1)),
     Radio("BC-1206", kHz(200), kHz(400), step=kHz(10)),
+
+    # Note : The M2000C V/UHF radio has a gap between 149.970 and 225.000Mhz
+    Radio("TRT ERA 7000 V/UHF", MHz(118), MHz(400), step=MHz(1)),
+    Radio("TRT ERA 7200 UHF", MHz(225), MHz(400), step=MHz(1))
 ]
 
 
