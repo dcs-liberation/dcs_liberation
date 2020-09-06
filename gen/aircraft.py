@@ -49,8 +49,11 @@ UHF_FALLBACK_CHANNEL = MHz(251)
 class AircraftData:
     """Additional aircraft data not exposed by pydcs."""
 
-    #: The type of radios used by this plane
-    radios: List[Radio]
+    #: The type of radio used for inter-flight communications.
+    inter_flight_radio: Radio
+
+    #: The type of radio used for intra-flight communications.
+    intra_flight_radio: Radio
 
     #: Index of the radio used for intra-flight communications. Matches the
     #: index of the panel_radio field of the pydcs.dcs.planes object.
@@ -60,33 +63,28 @@ class AircraftData:
     #: index of the panel_radio field of the pydcs.dcs.planes object.
     intra_flight_radio_index: Optional[int]
 
-    @property
-    def intra_flight_radio(self):
-        return self.radios[self.intra_flight_radio_index-1]
-
-    @property
-    def inter_flight_radio(self):
-        return self.radios[self.inter_flight_radio_index-1]
-
 
 # Indexed by the id field of the pydcs PlaneType.
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
     "A-10C": AircraftData(
-        [get_radio("AN/ARC-186(V) AM")],
+        inter_flight_radio=get_radio("AN/ARC-164"),
+        intra_flight_radio=get_radio("AN/ARC-186(V) AM"),
         # The A-10's radio works differently than most aircraft. Doesn't seem to
         # be a way to set these from the mission editor, let alone pydcs.
         inter_flight_radio_index=None,
         intra_flight_radio_index=None
     ),
     "F-16C_50": AircraftData(
-        [get_radio("AN/ARC-164"), get_radio("AN/ARC-222")],
+        inter_flight_radio=get_radio("AN/ARC-164"),
+        intra_flight_radio=get_radio("AN/ARC-222"),
         # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
         # intra-flight communication to leave COM1 open for UHF inter-flight.
         inter_flight_radio_index=1,
         intra_flight_radio_index=2
     ),
     "FA-18C_hornet": AircraftData(
-        [get_radio("AN/ARC-210"), get_radio("AN/ARC-210")],
+        inter_flight_radio=get_radio("AN/ARC-210"),
+        intra_flight_radio=get_radio("AN/ARC-210"),
         # DCS will clobber channel 1 of the first radio compatible with the
         # flight's assigned frequency. Since the F/A-18's two radios are both
         # AN/ARC-210s, radio 1 will be compatible regardless of which frequency
@@ -96,13 +94,15 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
     ),
 
     "M-2000C": AircraftData(
-        [get_radio("TRT ERA 7000 V/UHF"), get_radio("TRT ERA 7200 UHF")],
+        inter_flight_radio=get_radio("TRT ERA 7000 V/UHF"),
+        intra_flight_radio=get_radio("TRT ERA 7200 UHF"),
         inter_flight_radio_index=1,
         intra_flight_radio_index=2
     ),
 
     "F-14B": AircraftData(
-        [get_radio("AN/ARC-159"), get_radio("AN/ARC-182")],
+        inter_flight_radio=get_radio("AN/ARC-159"),
+        intra_flight_radio=get_radio("AN/ARC-182"),
         inter_flight_radio_index=1,
         intra_flight_radio_index=2
     )
