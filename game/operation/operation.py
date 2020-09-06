@@ -326,7 +326,7 @@ class Operation:
         last_channel = flight.num_radio_channels(radio_id)
         channel_alloc = iter(range(first_channel, last_channel + 1))
 
-        flight.assign_channel(radio_id, next(channel_alloc),flight.departure.atc)
+        flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
 
         # TODO: If there ever are multiple AWACS, limit to mission relevant.
         for awacs in self.airsupportgen.air_support.awacs:

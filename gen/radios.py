@@ -104,7 +104,14 @@ RADIOS: List[Radio] = [
 
     # Note : The M2000C V/UHF radio has a gap between 149.970 and 225.000Mhz
     Radio("TRT ERA 7000 V/UHF", MHz(118), MHz(400), step=MHz(1)),
-    Radio("TRT ERA 7200 UHF", MHz(225), MHz(400), step=MHz(1))
+    Radio("TRT ERA 7200 UHF", MHz(225), MHz(400), step=MHz(1)),
+
+    # Tomcat radios
+    # # https://www.heatblur.se/F-14Manual/general.html#an-arc-159-uhf-1-radio
+    Radio("AN/ARC-159", MHz(225), MHz(399, 975), step=MHz(1)),
+    # AN/ARC-182, can operate : 30 to 88, 108 to 156, 156 to 174, and 225 to 399.975 MHz
+    # https://www.heatblur.se/F-14Manual/general.html#an-arc-182-v-uhf-2-radio
+    Radio("AN/ARC-182", MHz(108), MHz(399, 975), step=MHz(1))
 ]
 
 
