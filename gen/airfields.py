@@ -403,6 +403,57 @@ AIRFIELD_DATA = {
     ),
 
     # TODO : PERSIAN GULF MAP
+    "Liwa Airbase": AirfieldData(
+        theater="Persian Gulf",
+        icao="OMLW",
+        elevation=400,
+        runway_length=10768,
+        atc=AtcData(MHz(4, 175), MHz(39, 250), MHz(119, 300), MHz(250, 850)),
+    ),
+
+    "Al Dhafra AB": AirfieldData(
+        theater="Persian Gulf",
+        icao="OMAM",
+        elevation=52,
+        runway_length=11530,
+        tacan=TacanChannel(96, TacanBand.X),
+        tacan_callsign="MA",
+        vor=("MA", MHz(114, 90)),
+        atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(126, 500), MHz(251, 000)),
+        ils={
+            "13": ("MMA", MHz(111, 10)),
+            "31": ("IMA", MHz(109, 10)),
+        },
+    ),
+
+    "Al-Bateen Airport": AirfieldData(
+        theater="Persian Gulf",
+        icao="OMAD",
+        elevation=11,
+        runway_length=6808,
+        vor=("ALB", MHz(114, 00)),
+        atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(119, 900), MHz(250, 550)),
+    ),
+
+    "Sas Al Nakheel Airport": AirfieldData(
+        theater="Persian Gulf",
+        icao="OMNK",
+        elevation=9,
+        runway_length=5387,
+        vor=("SAS", MHz(128, 93)),
+        atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(128, 900), MHz(250, 450)),
+    ),
+
+    "Abu Dhabi International Airport": AirfieldData(
+        theater="Persian Gulf",
+        icao="OMAA",
+        elevation=91,
+        runway_length=12817,
+        vor=("ADV", MHz(114, 25)),
+        atc=AtcData(MHz(4, 000), MHz(38, 900), MHz(119, 200), MHz(250, 500)),
+    ),
+    # TODO : finish persian gulf map
+
     # TODO : SYRIA MAP
 
     "Incirlik": AirfieldData(
