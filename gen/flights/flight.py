@@ -60,7 +60,9 @@ class PredefinedWaypointCategory(Enum):
 
 class FlightWaypoint:
 
-    def __init__(self, x: float, y: float, alt=0):
+    def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
+                 alt: int = 0) -> None:
+        self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
         self.alt = alt
@@ -71,8 +73,7 @@ class FlightWaypoint:
         self.targetGroup = None
         self.obj_name = ""
         self.pretty_name = ""
-        self.waypoint_type = FlightWaypointType.TAKEOFF  # type: FlightWaypointType
-        self.category = PredefinedWaypointCategory.NOT_PREDEFINED# type: PredefinedWaypointCategory
+        self.category: PredefinedWaypointCategory = PredefinedWaypointCategory.NOT_PREDEFINED
         self.only_for_player = False
         self.data = None
 
