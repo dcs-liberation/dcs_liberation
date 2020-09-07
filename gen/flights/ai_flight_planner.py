@@ -615,12 +615,12 @@ class FlightPlanner:
                 )
                 point.alt_type = "RADIO"
                 if flight.flight_type == FlightType.DEAD:
-                    point.description = "SEAD on " + target.type
-                    point.pretty_name = "SEAD on " + location.obj_name
+                    point.description = "DEAD on " + target.type
+                    point.pretty_name = "DEAD on " + location.obj_name
                     point.only_for_player = True
                 else:
-                    point.description = "DEAD on " + location.obj_name
-                    point.pretty_name = "DEAD on " + location.obj_name
+                    point.description = "SEAD on " + location.obj_name
+                    point.pretty_name = "SEAD on " + location.obj_name
                     point.only_for_player = True
                 flight.points.append(point)
             ingress_point.targets.append(location)
@@ -634,12 +634,12 @@ class FlightPlanner:
             )
             point.alt_type = "RADIO"
             if flight.flight_type == FlightType.DEAD:
-                point.description = "SEAD on " + location.obj_name
-                point.pretty_name = "SEAD on " + location.obj_name
-                point.only_for_player = True
-            else:
                 point.description = "DEAD on " + location.obj_name
                 point.pretty_name = "DEAD on " + location.obj_name
+                point.only_for_player = True
+            else:
+                point.description = "SEAD on " + location.obj_name
+                point.pretty_name = "SEAD on " + location.obj_name
                 point.only_for_player = True
             ingress_point.targets.append(location)
             ingress_point.targetGroup = location
