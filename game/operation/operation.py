@@ -127,29 +127,30 @@ class Operation:
             self.defenders_starting_position = self.to_cp.at
 
     def generate(self):
-        # Dedup beacon frequencies, since some maps have more than one beacon
-        # per frequency.
+        # Dedup beacon/radio frequencies, since some maps have some frequencies
+        # used multiple times.
         beacons = load_beacons_for_terrain(self.game.theater.terrain.name)
-        unique_beacon_frequencies: Set[RadioFrequency] = set()
+        unique_map_frequencies: Set[RadioFrequency] = set()
         for beacon in beacons:
-            unique_beacon_frequencies.add(beacon.frequency)
+            unique_map_frequencies.add(beacon.frequency)
             if beacon.is_tacan:
                 if beacon.channel is None:
                     logging.error(
                         f"TACAN beacon has no channel: {beacon.callsign}")
                 else:
                     self.tacan_registry.reserve(beacon.tacan_channel)
-        for frequency in unique_beacon_frequencies:
-            self.radio_registry.reserve(frequency)
 
         for airfield, data in AIRFIELD_DATA.items():
             if data.theater == self.game.theater.terrain.name:
-                self.radio_registry.reserve(data.atc.hf)
-                self.radio_registry.reserve(data.atc.vhf_fm)
-                self.radio_registry.reserve(data.atc.vhf_am)
-                self.radio_registry.reserve(data.atc.uhf)
+                unique_map_frequencies.add(data.atc.hf)
+                unique_map_frequencies.add(data.atc.vhf_fm)
+                unique_map_frequencies.add(data.atc.vhf_am)
+                unique_map_frequencies.add(data.atc.uhf)
                 # No need to reserve ILS or TACAN because those are in the
                 # beacon list.
+
+        for frequency in unique_map_frequencies:
+            self.radio_registry.reserve(frequency)
 
         # Generate meteo
         if self.environment_settings is None:
