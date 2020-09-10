@@ -199,7 +199,7 @@ class Operation:
                 )
 
         # Generate ground units on frontline everywhere
-        self.game.jtacs = []
+        jtacs: List[JtacInfo] = []
         for player_cp, enemy_cp in self.game.theater.conflicts(True):
             conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
                                                        self.current_mission.country(self.attacker_country),
@@ -210,6 +210,7 @@ class Operation:
             enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             groundConflictGen = GroundConflictGenerator(self.current_mission, conflict, self.game, player_gp, enemy_gp, player_cp.stances[enemy_cp.id])
             groundConflictGen.generate()
+            jtacs.extend(groundConflictGen.jtacs)
 
         # Setup combined arms parameters
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
@@ -250,8 +251,8 @@ class Operation:
                 if not self.game.settings.jtac_smoke_on:
                     smoke = "false"
 
-            for jtac in self.game.jtacs:
-                script = script + "\n" + "JTACAutoLase('" + str(jtac[2]) + "', " + str(jtac[1]) + ", " + smoke + ", \"vehicle\")" + "\n"
+            for jtac in jtacs:
+                script += f"\nJTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle')\n"
 
             load_autolase.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_autolase)
@@ -282,9 +283,7 @@ class Operation:
                 self.briefinggen.add_awacs(awacs)
                 kneeboard_generator.add_awacs(awacs)
 
-        for region, code, name in self.game.jtacs:
-            # TODO: Radio info? Type?
-            jtac = JtacInfo(name, region, code)
+        for jtac in jtacs:
             self.briefinggen.add_jtac(jtac)
             kneeboard_generator.add_jtac(jtac)
 

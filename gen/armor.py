@@ -1,10 +1,12 @@
-from dcs.action import AITaskPush, AITaskSet
+from dataclasses import dataclass
+
+from dcs.action import AITaskPush
 from dcs.condition import TimeAfter, UnitDamaged, Or, GroupLifeLess
-from dcs.task import *
 from dcs.triggers import TriggerOnce, Event
 
 from gen import namegen
 from gen.ground_forces.ai_ground_planner import CombatGroupRole, DISTANCE_FROM_FRONTLINE
+from .aircraft import callsign_for_support_unit
 from .conflictgen import *
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
@@ -22,6 +24,17 @@ FIGHT_DISTANCE = 3500
 
 RANDOM_OFFSET_ATTACK = 250
 
+
+@dataclass(frozen=True)
+class JtacInfo:
+    """JTAC information."""
+    unit_name: str
+    callsign: str
+    region: str
+    code: str
+    # TODO: Radio info? Type?
+
+
 class GroundConflictGenerator:
 
     def __init__(self, mission: Mission, conflict: Conflict, game, player_planned_combat_groups, enemy_planned_combat_groups, player_stance):
@@ -32,6 +45,7 @@ class GroundConflictGenerator:
         self.player_stance = CombatStance(player_stance)
         self.enemy_stance = random.choice([CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESIVE])
         self.game = game
+        self.jtacs: List[JtacInfo] = []
 
     def _group_point(self, point) -> Point:
         distance = randint(
@@ -100,7 +114,7 @@ class GroundConflictGenerator:
         # Add JTAC
         if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and self.game.settings.include_jtac_if_available:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
-            code = 1688 - len(self.game.jtacs)
+            code = 1688 - len(self.jtacs)
 
             utype = MQ_9_Reaper
             if "jtac_unit" in self.game.player_faction:
@@ -115,7 +129,10 @@ class GroundConflictGenerator:
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
             jtac.points[0].tasks.append(OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle))
-            self.game.jtacs.append(("Frontline " + self.conflict.from_cp.name + "/" + self.conflict.to_cp.name, code, n))
+            frontline = f"Frontline {self.conflict.from_cp.name}/{self.conflict.to_cp.name}"
+            # Note: Will need to change if we ever add ground based JTAC.
+            callsign = callsign_for_support_unit(jtac)
+            self.jtacs.append(JtacInfo(n, callsign, frontline, str(code)))
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
 
