@@ -23,19 +23,21 @@ only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
-from tabulate import tabulate
-
 from dcs.mission import Mission
 from dcs.unittype import FlyingType
+from tabulate import tabulate
+
 from . import units
 from .aircraft import FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
+from .flights.flight import FlightWaypoint, FlightWaypointType
 from .radios import RadioFrequency
 
 
@@ -95,6 +97,54 @@ class KneeboardPage:
         raise NotImplementedError
 
 
+@dataclass(frozen=True)
+class NumberedWaypoint:
+    number: int
+    waypoint: FlightWaypoint
+
+
+class FlightPlanBuilder:
+    def __init__(self) -> None:
+        self.rows: List[List[str]] = []
+        self.target_points: List[NumberedWaypoint] = []
+
+    def add_waypoint(self, waypoint_num: int, waypoint: FlightWaypoint) -> None:
+        if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
+            self.target_points.append(NumberedWaypoint(waypoint_num, waypoint))
+            return
+
+        if self.target_points:
+            self.coalesce_target_points()
+            self.target_points = []
+
+        self.add_waypoint_row(NumberedWaypoint(waypoint_num, waypoint))
+
+    def coalesce_target_points(self) -> None:
+        if len(self.target_points) <= 4:
+            for steerpoint in self.target_points:
+                self.add_waypoint_row(steerpoint)
+            return
+
+        first_waypoint_num = self.target_points[0].number
+        last_waypoint_num = self.target_points[-1].number
+
+        self.rows.append([
+            f"{first_waypoint_num}-{last_waypoint_num}",
+            "Target points",
+            "0"
+        ])
+
+    def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
+        self.rows.append([
+            waypoint.number,
+            waypoint.waypoint.pretty_name,
+            str(int(units.meters_to_feet(waypoint.waypoint.alt)))
+        ])
+
+    def build(self) -> List[List[str]]:
+        return self.rows
+
+
 class BriefingPage(KneeboardPage):
     """A kneeboard page containing briefing information."""
     def __init__(self, flight: FlightData, comms: List[CommInfo],
@@ -122,11 +172,11 @@ class BriefingPage(KneeboardPage):
         ], headers=["", "Airbase", "ATC", "TCN", "I(C)LS", "RWY"])
 
         writer.heading("Flight Plan")
-        flight_plan = []
+        flight_plan_builder = FlightPlanBuilder()
         for num, waypoint in enumerate(self.flight.waypoints):
-            alt = int(units.meters_to_feet(waypoint.alt))
-            flight_plan.append([num, waypoint.pretty_name, str(alt)])
-        writer.table(flight_plan, headers=["STPT", "Action", "Alt"])
+            flight_plan_builder.add_waypoint(num, waypoint)
+        writer.table(flight_plan_builder.build(),
+                     headers=["STPT", "Action", "Alt"])
 
         writer.heading("Comm Ladder")
         comms = []
