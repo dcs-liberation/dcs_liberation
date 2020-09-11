@@ -456,6 +456,18 @@ AIRFIELD_DATA = {
 
     # TODO : SYRIA MAP
 
+    "Adana Sakirpasa": AirfieldData(
+        theater="Syria",
+        icao="LTAF",
+        elevation=55,
+        runway_length=8115,
+        vor=("ADA", MHz(112, 700)),
+        atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(121, 100), MHz(250, 900)),
+        ils={
+            "05": ("IADA", MHz(108, 700)),
+        },
+    ),
+
     "Incirlik": AirfieldData(
         theater="Syria",
         icao="LTAG",
@@ -469,6 +481,273 @@ AIRFIELD_DATA = {
             "50": ("IDAN", MHz(109, 300)),
             "23": ("DANM", MHz(111, 700)),
         },
+    ),
+
+    "Minakh": AirfieldData(
+        theater="Syria",
+        icao="OS71",
+        elevation=1614,
+        runway_length=4648,
+        atc=AtcData(MHz(4, 125), MHz(39, 150), MHz(120, 600), MHz(250, 700)),
+    ),
+
+    "Hatay": AirfieldData(
+        theater="Syria",
+        icao="LTDA",
+        elevation=253,
+        runway_length=9052,
+        vor=("HTY", MHz(112, 500)),
+        atc=AtcData(MHz(3, 825), MHz(38, 550), MHz(128, 500), MHz(250, 150)),
+        ils={
+            "22": ("IHTY", MHz(108, 150)),
+            "04": ("IHAT", MHz(108, 900)),
+        },
+    ),
+
+    "Kuweires": AirfieldData(
+        theater="Syria",
+        icao="OS66",
+        elevation=1200,
+        runway_length=6662,
+        atc=AtcData(MHz(4, 275), MHz(39, 450), MHz(120, 500), MHz(251)),
+    ),
+
+    "Aleppo": AirfieldData(
+        theater="Syria",
+        icao="OSAP",
+        elevation=1253,
+        runway_length=8332,
+        atc=AtcData(MHz(4, 150), MHz(39, 200), MHz(119, 100), MHz(250, 750)),
+        ils={
+            "50": ("IDAN", MHz(109, 300)),
+            "23": ("DANM", MHz(111, 700)),
+        },
+    ),
+
+    "Jirah": AirfieldData(
+        theater="Syria",
+        icao="OS62",
+        elevation=1170,
+        runway_length=9090,
+        atc=AtcData(MHz(3, 875), MHz(38, 650), MHz(118, 100), MHz(250, 200)),
+    ),
+
+    "Taftanaz": AirfieldData(
+        theater="Syria",
+        elevation=1020,
+        runway_length=2705,
+        atc=AtcData(MHz(4, 375), MHz(39, 650), MHz(122, 800), MHz(251, 200)),
+    ),
+
+    "Tabqa": AirfieldData(
+        theater="Syria",
+        icao="OS59",
+        elevation=1083,
+        runway_length=9036,
+        atc=AtcData(MHz(4, 350), MHz(39, 600), MHz(118, 500), MHz(251, 150)),
+    ),
+
+    "Abu al-Dahur": AirfieldData(
+        theater="Syria",
+        icao="OS57",
+        elevation=820,
+        runway_length=8728,
+        atc=AtcData(MHz(3, 950), MHz(38, 800), MHz(122, 200), MHz(250, 350)),
+    ),
+
+    "Bassel Al-Assad": AirfieldData(
+        theater="Syria",
+        icao="OSLK",
+        elevation=93,
+        runway_length=7305,
+        vor=("LTK", MHz(114, 800)),
+        atc=AtcData(MHz(4), MHz(38, 900), MHz(118, 100), MHz(250, 450)),
+        ils={
+            "17": ("IBA", MHz(109, 100)),
+        },
+    ),
+
+    "Hama": AirfieldData(
+        theater="Syria",
+        icao="OS58",
+        elevation=983,
+        runway_length=7957,
+        atc=AtcData(MHz(3, 800), MHz(38, 500), MHz(118, 50), MHz(250, 100)),
+    ),
+
+    "Rene Mouawad": AirfieldData(
+        theater="Syria",
+        icao="OLKA",
+        elevation=14,
+        runway_length=8614,
+        atc=AtcData(MHz(4, 325), MHz(39, 550), MHz(129, 500), MHz(251, 100)),
+    ),
+
+    "Al Quasayr": AirfieldData(
+        theater="Syria",
+        icao="OS70",
+        elevation=1729,
+        runway_length=8585,
+        atc=AtcData(MHz(4, 400), MHz(39, 700), MHz(119, 200), MHz(251, 250)),
+    ),
+
+    "Palmyra": AirfieldData(
+        theater="Syria",
+        icao="OSPR",
+        elevation=1267,
+        runway_length=8704,
+        atc=AtcData(MHz(4, 175), MHz(39, 250), MHz(121, 900), MHz(250, 800)),
+    ),
+
+    "Wujah Al Hajar": AirfieldData(
+        theater="Syria",
+        icao="Z19O",
+        elevation=619,
+        runway_length=4717,
+        vor=("CAK", MHz(116, 200)),
+        atc=AtcData(MHz(4, 425), MHz(39, 750), MHz(121, 500), MHz(251, 300)),
+    ),
+
+    "An Nasiriyah": AirfieldData(
+        theater="Syria",
+        icao="OS64",
+        elevation=2746,
+        runway_length=8172,
+        atc=AtcData(MHz(4, 450), MHz(39, 800), MHz(122, 300), MHz(251, 350)),
+    ),
+
+    "Rayak": AirfieldData(
+        theater="Syria",
+        icao="OLRA",
+        elevation=2934,
+        runway_length=8699,
+        vor=("HTY", MHz(124, 400)),
+        atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(124, 400), MHz(251, 50)),
+    ),
+
+    "Beirut-Rafic Hariri": AirfieldData(
+        theater="Syria",
+        icao="OLBA",
+        elevation=39,
+        runway_length=9463,
+        vor=("KAD", MHz(112, 600)),
+        atc=AtcData(MHz(4, 475), MHz(39, 850), MHz(118, 900), MHz(251, 400)),
+        ils={
+            "17": ("BIL", MHz(109, 500)),
+        },
+    ),
+
+    "Al-Dumayr": AirfieldData(
+        theater="Syria",
+        icao="OS61",
+        elevation=2066,
+        runway_length=8902,
+        atc=AtcData(MHz(4, 550), MHz(40), MHz(120, 300), MHz(251, 550)),
+    ),
+
+    "Marj as Sultan North": AirfieldData(
+        theater="Syria",
+        elevation=2007,
+        runway_length=268,
+        atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(122, 700), MHz(250, 500)),
+    ),
+
+    "Marj as Sultan South": AirfieldData(
+        theater="Syria",
+        elevation=2007,
+        runway_length=166,
+        atc=AtcData(MHz(4, 525), MHz(39, 950), MHz(122, 900), MHz(251, 500)),
+    ),
+
+    "Mezzeh": AirfieldData(
+        theater="Syria",
+        icao="OS67",
+        elevation=2355,
+        runway_length=7522,
+        atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(120, 700), MHz(250, 650)),
+    ),
+
+    "Qabr as Sitt": AirfieldData(
+        theater="Syria",
+        elevation=2134,
+        runway_length=489,
+        atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(122, 600), MHz(250, 850)),
+    ),
+
+    "Damascus": AirfieldData(
+        theater="Syria",
+        icao="OSDI",
+        elevation=2007,
+        runway_length=11423,
+        vor=("DAM", MHz(116)),
+        atc=AtcData(MHz(4, 500), MHz(39, 900), MHz(118, 500), MHz(251, 450)),
+        ils={
+            "24": ("IDA", MHz(109, 900)),
+        },
+    ),
+
+    "Marj Ruhayyil": AirfieldData(
+        theater="Syria",
+        icao="OS63",
+        elevation=2160,
+        runway_length=7576,
+        atc=AtcData(MHz(4, 50), MHz(39), MHz(120, 800), MHz(250, 550)),
+    ),
+
+    "Kiryat Shmona": AirfieldData(
+        theater="Syria",
+        icao="LLKS",
+        elevation=328,
+        runway_length=3258,
+        atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(118, 400), MHz(250, 400)),
+    ),
+
+    "Khalkhalah": AirfieldData(
+        theater="Syria",
+        icao="OS69",
+        elevation=2337,
+        runway_length=8248,
+        atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(122, 500), MHz(250, 250)),
+    ),
+
+    "Haifa": AirfieldData(
+        theater="Syria",
+        icao="LLHA",
+        elevation=19,
+        runway_length=3253,
+        atc=AtcData(MHz(3, 775), MHz(38, 450), MHz(127, 800), MHz(250, 50)),
+    ),
+
+    "Ramat David": AirfieldData(
+        theater="Syria",
+        icao="LLRD",
+        elevation=105,
+        runway_length=7037,
+        atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(118, 600), MHz(250, 950)),
+    ),
+
+    "Megiddo": AirfieldData(
+        theater="Syria",
+        icao="LLMG",
+        elevation=180,
+        runway_length=6098,
+        atc=AtcData(MHz(4, 75), MHz(39, 50), MHz(119, 900), MHz(250, 600)),
+    ),
+
+    "Eyn Shemer": AirfieldData(
+        theater="Syria",
+        icao="LLES",
+        elevation=93,
+        runway_length=3562,
+        atc=AtcData(MHz(3, 750), MHz(38, 400), MHz(123, 400), MHz(250)),
+    ),
+
+    "King Hussein Air College": AirfieldData(
+        theater="Syria",
+        icao="OJMF",
+        elevation=2204,
+        runway_length=8595,
+        atc=AtcData(MHz(3, 925), MHz(38, 750), MHz(118, 300), MHz(250, 300)),
     ),
 
     # NTTR
