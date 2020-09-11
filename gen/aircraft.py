@@ -12,6 +12,8 @@ from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
 from gen.airfields import RunwayData
+from gen.airsupportgen import AirSupport
+from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import (
     Flight,
@@ -43,70 +45,6 @@ ALLIES_WW2_CHANNEL = MHz(124)
 GERMAN_WW2_CHANNEL = MHz(40)
 HELICOPTER_CHANNEL = MHz(127)
 UHF_FALLBACK_CHANNEL = MHz(251)
-
-
-@dataclass(frozen=True)
-class AircraftData:
-    """Additional aircraft data not exposed by pydcs."""
-
-    #: The type of radio used for inter-flight communications.
-    inter_flight_radio: Radio
-
-    #: The type of radio used for intra-flight communications.
-    intra_flight_radio: Radio
-
-    #: Index of the radio used for intra-flight communications. Matches the
-    #: index of the panel_radio field of the pydcs.dcs.planes object.
-    inter_flight_radio_index: Optional[int]
-
-    #: Index of the radio used for intra-flight communications. Matches the
-    #: index of the panel_radio field of the pydcs.dcs.planes object.
-    intra_flight_radio_index: Optional[int]
-
-
-# Indexed by the id field of the pydcs PlaneType.
-AIRCRAFT_DATA: Dict[str, AircraftData] = {
-    "A-10C": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-186(V) AM"),
-        # The A-10's radio works differently than most aircraft. Doesn't seem to
-        # be a way to set these from the mission editor, let alone pydcs.
-        inter_flight_radio_index=None,
-        intra_flight_radio_index=None
-    ),
-    "F-16C_50": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-222"),
-        # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
-        # intra-flight communication to leave COM1 open for UHF inter-flight.
-        inter_flight_radio_index=1,
-        intra_flight_radio_index=2
-    ),
-    "FA-18C_hornet": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-210"),
-        intra_flight_radio=get_radio("AN/ARC-210"),
-        # DCS will clobber channel 1 of the first radio compatible with the
-        # flight's assigned frequency. Since the F/A-18's two radios are both
-        # AN/ARC-210s, radio 1 will be compatible regardless of which frequency
-        # is assigned, so we must use radio 1 for the intra-flight radio.
-        inter_flight_radio_index=2,
-        intra_flight_radio_index=1
-    ),
-
-    "M-2000C": AircraftData(
-        inter_flight_radio=get_radio("TRT ERA 7000 V/UHF"),
-        intra_flight_radio=get_radio("TRT ERA 7200 UHF"),
-        inter_flight_radio_index=1,
-        intra_flight_radio_index=2
-    ),
-
-    "F-14B": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-159"),
-        intra_flight_radio=get_radio("AN/ARC-182"),
-        inter_flight_radio_index=1,
-        intra_flight_radio_index=2
-    )
-}
 
 
 # TODO: Get radio information for all the special cases.
@@ -202,45 +140,12 @@ class FlightData:
         self.waypoints = waypoints
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
-        self.callsign = self.create_group_callsign()
-
-        self.assign_intra_flight_channel()
-
-    def create_group_callsign(self) -> str:
-        lead = self.units[0]
-        raw_callsign = lead.callsign_as_str()
-        if not lead.callsign_is_western:
-            # Callsigns for non-Western countries are just a number per flight,
-            # similar to tail numbers.
-            return f"Flight {raw_callsign}"
-
-        # Callsign from pydcs is in the format `<name><group ID><unit ID>`,
-        # where unit ID is guaranteed to be a single digit but the group ID may
-        # be more.
-        match = re.search(r"^(\D+)(\d+)(\d)$", raw_callsign)
-        if match is None:
-            logging.error(f"Could not parse unit callsign: {raw_callsign}")
-            return f"Flight {raw_callsign}"
-        return f"{match.group(1)} {match.group(2)}"
+        self.callsign = create_group_callsign_from_unit(self.units[0])
 
     @property
     def client_units(self) -> List[FlyingUnit]:
         """List of playable units in the flight."""
         return [u for u in self.units if u.is_human()]
-
-    def assign_intra_flight_channel(self) -> None:
-        """Assigns a channel to the intra-flight frequency."""
-        if not self.client_units:
-            return
-
-        # pydcs will actually set up the channel for us, but we want to make
-        # sure that it ends up in frequency_to_channel_map.
-        try:
-            data = AIRCRAFT_DATA[self.aircraft_type.id]
-            self.assign_channel(
-                data.intra_flight_radio_index, 1, self.intra_flight_channel)
-        except KeyError:
-            logging.warning(f"No aircraft data for {self.aircraft_type.id}")
 
     @property
     def aircraft_type(self) -> FlyingType:
@@ -272,15 +177,202 @@ class FlightData:
             )
 
 
-def callsign_for_support_unit(group: FlyingGroup) -> str:
-    # Either something like Overlord11 for Western AWACS, or else just a number.
-    # Convert to either "Overlord" or "Flight 123".
-    lead = group.units[0]
-    raw_callsign = lead.callsign_as_str()
-    try:
-        return f"Flight {int(raw_callsign)}"
-    except ValueError:
-        return raw_callsign.rstrip("1234567890")
+class RadioChannelAllocator:
+    """Base class for radio channel allocators."""
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        """Assigns mission frequencies to preset channels for the flight."""
+        raise NotImplementedError
+
+
+@dataclass(frozen=True)
+class CommonRadioChannelAllocator(RadioChannelAllocator):
+    """Radio channel allocator suitable for most aircraft.
+
+    Most of the aircraft with preset channels available have one or more radios
+    with 20 or more channels available (typically per-radio, but this is not the
+    case for the JF-17).
+    """
+
+    #: Index of the radio used for intra-flight communications. Matches the
+    #: index of the panel_radio field of the pydcs.dcs.planes object.
+    inter_flight_radio_index: Optional[int]
+
+    #: Index of the radio used for intra-flight communications. Matches the
+    #: index of the panel_radio field of the pydcs.dcs.planes object.
+    intra_flight_radio_index: Optional[int]
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        flight.assign_channel(
+            self.intra_flight_radio_index, 1, flight.intra_flight_channel)
+
+        # For cases where the inter-flight and intra-flight radios share presets
+        # (the JF-17 only has one set of channels, even though it can use two
+        # channels simultaneously), start assigning inter-flight channels at 2.
+        radio_id = self.inter_flight_radio_index
+        if self.intra_flight_radio_index == radio_id:
+            first_channel = 2
+        else:
+            first_channel = 1
+
+        last_channel = flight.num_radio_channels(radio_id)
+        channel_alloc = iter(range(first_channel, last_channel + 1))
+
+        flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
+
+        # TODO: If there ever are multiple AWACS, limit to mission relevant.
+        for awacs in air_support.awacs:
+            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
+
+        if flight.arrival != flight.departure:
+            flight.assign_channel(radio_id, next(channel_alloc),
+                                  flight.arrival.atc)
+
+        try:
+            # TODO: Skip incompatible tankers.
+            for tanker in air_support.tankers:
+                flight.assign_channel(
+                    radio_id, next(channel_alloc), tanker.freq)
+
+            if flight.divert is not None:
+                flight.assign_channel(radio_id, next(channel_alloc),
+                                      flight.divert.atc)
+        except StopIteration:
+            # Any remaining channels are nice-to-haves, but not necessary for
+            # the few aircraft with a small number of channels available.
+            pass
+
+
+@dataclass(frozen=True)
+class WarthogRadioChannelAllocator(RadioChannelAllocator):
+    """Preset channel allocator for the A-10C."""
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        # The A-10's radio works differently than most aircraft. Doesn't seem to
+        # be a way to set these from the mission editor, let alone pydcs.
+        pass
+
+
+@dataclass(frozen=True)
+class ViggenRadioChannelAllocator(RadioChannelAllocator):
+    """Preset channel allocator for the AJS37."""
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        # The Viggen's preset channels are handled differently from other
+        # aircraft. The aircraft automatically configures channels for every
+        # allied flight in the game (including AWACS) and for every airfield. As
+        # such, we don't need to allocate any of those. There are seven presets
+        # we can modify, however: three channels for the main radio intended for
+        # communication with wingmen, and four emergency channels for the backup
+        # radio. We'll set the first channel of the main radio to the
+        # intra-flight channel, and the first three emergency channels to each
+        # of the flight plan's airfields. The fourth emergency channel is always
+        # the guard channel.
+        radio_id = 1
+        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
+        flight.assign_channel(radio_id, 4, flight.departure.atc)
+        flight.assign_channel(radio_id, 5, flight.arrival.atc)
+        # TODO: Assign divert to 6 when we support divert airfields.
+
+
+@dataclass(frozen=True)
+class AircraftData:
+    """Additional aircraft data not exposed by pydcs."""
+
+    #: The type of radio used for inter-flight communications.
+    inter_flight_radio: Radio
+
+    #: The type of radio used for intra-flight communications.
+    intra_flight_radio: Radio
+
+    #: The radio preset channel allocator, if the aircraft supports channel
+    #: presets. If the aircraft does not support preset channels, this will be
+    #: None.
+    channel_allocator: Optional[RadioChannelAllocator]
+
+
+# Indexed by the id field of the pydcs PlaneType.
+AIRCRAFT_DATA: Dict[str, AircraftData] = {
+    "A-10C": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-164"),
+        intra_flight_radio=get_radio("AN/ARC-186(V) AM"),
+        channel_allocator=WarthogRadioChannelAllocator()
+    ),
+
+    "AJS37": AircraftData(
+        # The AJS37 has somewhat unique radio configuration. Two backup radio
+        # (FR 24) can only operate simultaneously with the main radio in guard
+        # mode. As such, we only use the main radio for both inter- and intra-
+        # flight communication.
+        inter_flight_radio=get_radio("FR 22"),
+        intra_flight_radio=get_radio("FR 22"),
+        channel_allocator=ViggenRadioChannelAllocator()
+    ),
+
+    "AV8BNA": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-210"),
+        intra_flight_radio=get_radio("AN/ARC-210"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=2,
+            intra_flight_radio_index=1
+        )
+    ),
+
+    "F-14B": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-159"),
+        intra_flight_radio=get_radio("AN/ARC-182"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=2
+        )
+    ),
+
+    "F-16C_50": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-164"),
+        intra_flight_radio=get_radio("AN/ARC-222"),
+        # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
+        # intra-flight communication to leave COM1 open for UHF inter-flight.
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=2
+        )
+    ),
+
+    "FA-18C_hornet": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-210"),
+        intra_flight_radio=get_radio("AN/ARC-210"),
+        # DCS will clobber channel 1 of the first radio compatible with the
+        # flight's assigned frequency. Since the F/A-18's two radios are both
+        # AN/ARC-210s, radio 1 will be compatible regardless of which frequency
+        # is assigned, so we must use radio 1 for the intra-flight radio.
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=2,
+            intra_flight_radio_index=1
+        )
+    ),
+
+    "JF-17": AircraftData(
+        inter_flight_radio=get_radio("R&S M3AR UHF"),
+        intra_flight_radio=get_radio("R&S M3AR VHF"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=1
+        )
+    ),
+
+    "M-2000C": AircraftData(
+        inter_flight_radio=get_radio("TRT ERA 7000 V/UHF"),
+        intra_flight_radio=get_radio("TRT ERA 7200 UHF"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=2
+        )
+    ),
+}
 
 
 class AircraftConflictGenerator:
@@ -296,24 +388,21 @@ class AircraftConflictGenerator:
         self.escort_targets = []
         self.flights: List[FlightData] = []
 
-    def get_intra_flight_channel(
-            self, airframe: UnitType) -> Tuple[int, RadioFrequency]:
+    def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
         """Allocates an intra-flight channel to a group.
 
         Args:
             airframe: The type of aircraft a channel should be allocated for.
 
         Returns:
-            A tuple of the radio index (for aircraft with multiple radios) and
-            the frequency of the intra-flight channel.
+            The frequency of the intra-flight channel.
         """
         try:
             aircraft_data = AIRCRAFT_DATA[airframe.id]
-            channel = self.radio_registry.alloc_for_radio(
+            return self.radio_registry.alloc_for_radio(
                 aircraft_data.intra_flight_radio)
-            return aircraft_data.intra_flight_radio_index, channel
         except KeyError:
-            return 1, get_fallback_channel(airframe)
+            return get_fallback_channel(airframe)
 
     def _start_type(self) -> StartType:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
@@ -372,8 +461,8 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
-        radio_id, channel = self.get_intra_flight_channel(unit_type)
-        group.set_frequency(channel.mhz, radio_id)
+        channel = self.get_intra_flight_channel(unit_type)
+        group.set_frequency(channel.mhz)
 
         # TODO: Support for different departure/arrival airfields.
         cp = flight.from_cp

@@ -116,6 +116,12 @@ RADIOS: List[Radio] = [
     # to 400 MHz range, but we can't model gaps with the current implementation.
     # https://www.heatblur.se/F-14Manual/general.html#an-arc-182-v-uhf-2-radio
     Radio("AN/ARC-182", MHz(108), MHz(174), step=MHz(1)),
+
+    # Also capable of [103, 156) at 25 kHz intervals, but we can't do gaps.
+    Radio("FR 22", MHz(225), MHz(400), step=kHz(50)),
+
+    Radio("R&S M3AR VHF", MHz(108), MHz(174), step=MHz(1)),
+    Radio("R&S M3AR UHF", MHz(225), MHz(400), step=MHz(1)),
 ]
 
 
