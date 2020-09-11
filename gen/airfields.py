@@ -991,21 +991,23 @@ class RunwayData:
         """
         atc: Optional[RadioFrequency] = None
         tacan: Optional[TacanChannel] = None
+        tacan_callsign: Optional[str] = None
         ils: Optional[RadioFrequency] = None
         try:
             airfield = AIRFIELD_DATA[airport.name]
             atc = airfield.atc.uhf
             tacan = airfield.tacan
-            tacan = airfield.tacan_callsign
+            tacan_callsign = airfield.tacan_callsign
             ils = airfield.ils_freq(runway)
         except KeyError:
             logging.warning(f"No airfield data for {airport.name}")
         return cls(
-            airport.name,
-            runway,
-            atc,
-            tacan,
-            ils
+            airfield_name=airport.name,
+            runway_name=runway,
+            atc=atc,
+            tacan=tacan,
+            tacan_callsign=tacan_callsign,
+            ils=ils
         )
 
     @classmethod
