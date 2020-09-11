@@ -3,6 +3,8 @@ from typing import List
 
 from game import db
 from dcs.unittype import UnitType
+from dcs.point import MovingPoint, PointAction
+from theater.controlpoint import ControlPoint
 
 
 class FlightType(Enum):
@@ -75,6 +77,33 @@ class FlightWaypoint:
         self.category = PredefinedWaypointCategory.NOT_PREDEFINED# type: PredefinedWaypointCategory
         self.only_for_player = False
         self.data = None
+
+
+    @classmethod
+    def from_pydcs(cls, point: MovingPoint,
+                   from_cp: ControlPoint) -> "FlightWaypoint":
+        waypoint = FlightWaypoint(point.position.x, point.position.y,
+                                  point.alt)
+        waypoint.alt_type = point.alt_type
+        # Other actions exist... but none of them *should* be the first
+        # waypoint for a flight.
+        waypoint.waypoint_type = {
+            PointAction.TurningPoint: FlightWaypointType.NAV,
+            PointAction.FlyOverPoint: FlightWaypointType.NAV,
+            PointAction.FromParkingArea: FlightWaypointType.TAKEOFF,
+            PointAction.FromParkingAreaHot: FlightWaypointType.TAKEOFF,
+            PointAction.FromRunway: FlightWaypointType.TAKEOFF,
+        }[point.action]
+        if waypoint.waypoint_type == FlightWaypointType.NAV:
+            waypoint.name = "NAV"
+            waypoint.pretty_name = "Nav"
+            waypoint.description = "Nav"
+        else:
+            waypoint.name = "TAKEOFF"
+            waypoint.pretty_name = "Takeoff"
+            waypoint.description = "Takeoff"
+            waypoint.description = f"Takeoff from {from_cp.name}"
+        return waypoint
 
 
 class Flight:
