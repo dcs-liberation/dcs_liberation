@@ -159,9 +159,7 @@ class BriefingPage(KneeboardPage):
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter()
-        # TODO: Assign callsigns to flights and include that info.
-        # https://github.com/Khopa/dcs_liberation/issues/113
-        writer.title(f"Mission Info")
+        writer.title(f"{self.flight.callsign} Mission Info")
 
         # TODO: Handle carriers.
         writer.heading("Airfield Info")

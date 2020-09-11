@@ -2,13 +2,14 @@ import os
 from collections import defaultdict
 from dataclasses import dataclass
 import random
-from typing import List, Tuple
+from typing import List
 
 from game import db
 from dcs.mission import Mission
 from .aircraft import FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
+from .armor import JtacInfo
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
@@ -19,14 +20,6 @@ class CommInfo:
     """Communications information for the kneeboard."""
     name: str
     freq: RadioFrequency
-
-
-@dataclass
-class JtacInfo:
-    """JTAC information for the kneeboard."""
-    callsign: str
-    region: str
-    code: str
 
 
 class MissionInfoGenerator:

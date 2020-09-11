@@ -202,8 +202,26 @@ class FlightData:
         self.waypoints = waypoints
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
+        self.callsign = self.create_group_callsign()
 
         self.assign_intra_flight_channel()
+
+    def create_group_callsign(self) -> str:
+        lead = self.units[0]
+        raw_callsign = lead.callsign_as_str()
+        if not lead.callsign_is_western:
+            # Callsigns for non-Western countries are just a number per flight,
+            # similar to tail numbers.
+            return f"Flight {raw_callsign}"
+
+        # Callsign from pydcs is in the format `<name><group ID><unit ID>`,
+        # where unit ID is guaranteed to be a single digit but the group ID may
+        # be more.
+        match = re.search(r"^(\D+)(\d+)(\d)$", raw_callsign)
+        if match is None:
+            logging.error(f"Could not parse unit callsign: {raw_callsign}")
+            return f"Flight {raw_callsign}"
+        return f"{match.group(1)} {match.group(2)}"
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -252,6 +270,17 @@ class FlightData:
             self.frequency_to_channel_map[frequency] = ChannelAssignment(
                 radio_id, channel_id
             )
+
+
+def callsign_for_support_unit(group: FlyingGroup) -> str:
+    # Either something like Overlord11 for Western AWACS, or else just a number.
+    # Convert to either "Overlord" or "Flight 123".
+    lead = group.units[0]
+    raw_callsign = lead.callsign_as_str()
+    try:
+        return f"Flight {int(raw_callsign)}"
+    except ValueError:
+        return raw_callsign.rstrip("1234567890")
 
 
 class AircraftConflictGenerator:

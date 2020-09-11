@@ -1,15 +1,10 @@
-from typing import List
 from dataclasses import dataclass, field
 
+from .aircraft import callsign_for_support_unit
 from .conflictgen import *
 from .naming import *
 from .radios import RadioFrequency, RadioRegistry
 from .tacan import TacanBand, TacanChannel, TacanRegistry
-
-from dcs.mission import *
-from dcs.unitgroup import *
-from dcs.unittype import *
-from dcs.task import *
 
 TANKER_DISTANCE = 15000
 TANKER_ALT = 4572
@@ -17,27 +12,6 @@ TANKER_HEADING_OFFSET = 45
 
 AWACS_DISTANCE = 150000
 AWACS_ALT = 13000
-
-AWACS_CALLSIGNS = [
-    "Overlord",
-    "Magic",
-    "Wizard",
-    "Focus",
-    "Darkstar",
-]
-
-
-@dataclass
-class TankerCallsign:
-    full: str
-    short: str
-
-
-TANKER_CALLSIGNS = [
-    TankerCallsign("Texaco", "TEX"),
-    TankerCallsign("Arco", "ARC"),
-    TankerCallsign("Shell", "SHL"),
-]
 
 
 @dataclass
@@ -81,8 +55,9 @@ class AirSupportConflictGenerator:
     def generate(self, is_awacs_enabled):
         player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
 
+        fallback_tanker_number = 0
+
         for i, tanker_unit_type in enumerate(db.find_unittype(Refueling, self.conflict.attackers_side)):
-            callsign = TANKER_CALLSIGNS[i]
             variant = db.unit_type_name(tanker_unit_type)
             freq = self.radio_registry.alloc_uhf()
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
@@ -102,19 +77,35 @@ class AirSupportConflictGenerator:
                 tacanchannel=str(tacan),
             )
 
+            callsign = callsign_for_support_unit(tanker_group)
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(callsign)
+            if tacan_callsign is None:
+                # The dict above is all the callsigns currently in the game, but
+                # non-Western countries don't use the callsigns and instead just
+                # use numbers. It's possible that none of those nations have
+                # TACAN compatible refueling aircraft, but fallback just in
+                # case.
+                tacan_callsign = f"TK{fallback_tanker_number}"
+                fallback_tanker_number += 1
+
             if tanker_unit_type != IL_78M:
-                tanker_group.points[0].tasks.pop() # Override PyDCS tacan channel
+                # Override PyDCS tacan channel.
+                tanker_group.points[0].tasks.pop()
                 tanker_group.points[0].tasks.append(ActivateBeaconCommand(
-                    tacan.number, tacan.band.value, callsign.short, True, tanker_group.units[0].id, True))
+                    tacan.number, tacan.band.value, tacan_callsign, True,
+                    tanker_group.units[0].id, True))
 
             tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
-            self.air_support.tankers.append(TankerInfo(callsign.full, variant, freq, tacan))
+            self.air_support.tankers.append(TankerInfo(callsign, variant, freq, tacan))
 
         if is_awacs_enabled:
             try:
-                callsign = AWACS_CALLSIGNS[0]
                 freq = self.radio_registry.alloc_uhf()
                 awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
                 awacs_flight = self.mission.awacs_flight(
@@ -129,7 +120,8 @@ class AirSupportConflictGenerator:
                 )
                 awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
                 awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
-                self.air_support.awacs.append(AwacsInfo(callsign, freq))
+
+                self.air_support.awacs.append(AwacsInfo(
+                    callsign_for_support_unit(awacs_flight), freq))
             except:
                 print("No AWACS for faction")
-
