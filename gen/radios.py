@@ -183,6 +183,7 @@ class RadioRegistry:
         try:
             while (channel := next(allocator)) in self.allocated_channels:
                 pass
+            self.reserve(channel)
             return channel
         except StopIteration:
             raise OutOfChannelsError(radio)
