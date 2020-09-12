@@ -33,7 +33,7 @@ from dcs.unittype import FlyingType
 from tabulate import tabulate
 
 from . import units
-from .aircraft import FlightData
+from .aircraft import AIRCRAFT_DATA, FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
@@ -238,7 +238,10 @@ class BriefingPage(KneeboardPage):
         channel = self.flight.channel_for(frequency)
         if channel is None:
             return str(frequency)
-        return f"{channel.radio_name} Ch {channel.channel}"
+
+        namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
+        channel_name = namer.channel_name(channel.radio_id, channel.channel)
+        return f"{channel_name} {frequency}"
 
 
 class KneeboardGenerator(MissionInfoGenerator):
