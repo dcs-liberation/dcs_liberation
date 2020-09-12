@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from .aircraft import callsign_for_support_unit
+from .callsigns import callsign_for_support_unit
 from .conflictgen import *
 from .naming import *
 from .radios import RadioFrequency, RadioRegistry

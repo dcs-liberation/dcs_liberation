@@ -6,7 +6,7 @@ from dcs.triggers import TriggerOnce, Event
 
 from gen import namegen
 from gen.ground_forces.ai_ground_planner import CombatGroupRole, DISTANCE_FROM_FRONTLINE
-from .aircraft import callsign_for_support_unit
+from .callsigns import callsign_for_support_unit
 from .conflictgen import *
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3

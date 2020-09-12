@@ -312,41 +312,5 @@ class Operation:
             logging.warning(f"No aircraft data for {airframe.id}")
             return
 
-        # Intra-flight channel is set up when the flight is created, however we
-        # do need to make sure we don't overwrite it. For cases where the
-        # inter-flight and intra-flight radios share presets (the AV-8B only has
-        # one set of channels, even though it can use two channels
-        # simultaneously), start assigning channels at 2.
-        radio_id = aircraft_data.inter_flight_radio_index
-        if aircraft_data.intra_flight_radio_index == radio_id:
-            first_channel = 2
-        else:
-            first_channel = 1
-
-        last_channel = flight.num_radio_channels(radio_id)
-        channel_alloc = iter(range(first_channel, last_channel + 1))
-
-        flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
-
-        # TODO: If there ever are multiple AWACS, limit to mission relevant.
-        for awacs in self.airsupportgen.air_support.awacs:
-            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
-
-        # TODO: Fix departure/arrival to support carriers.
-        if flight.arrival != flight.departure:
-            flight.assign_channel(radio_id, next(channel_alloc),
-                                  flight.arrival.atc)
-
-        try:
-            # TODO: Skip incompatible tankers.
-            for tanker in self.airsupportgen.air_support.tankers:
-                flight.assign_channel(
-                    radio_id, next(channel_alloc), tanker.freq)
-
-            if flight.divert is not None:
-                flight.assign_channel(radio_id, next(channel_alloc),
-                                      flight.divert.atc)
-        except StopIteration:
-            # Any remaining channels are nice-to-haves, but not necessary for
-            # the few aircraft with a small number of channels available.
-            pass
+        aircraft_data.channel_allocator.assign_channels_for_flight(
+            flight, self.airsupportgen.air_support)
