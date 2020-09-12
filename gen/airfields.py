@@ -1144,7 +1144,298 @@ AIRFIELD_DATA = {
         atc=AtcData(MHz(3, 750), MHz(123, 900), MHz(38, 400), MHz(250, 0)),
     ),
 
-    # TODO : NORMANDY MAP
+    # Normandy
+
+    "Needs Oar Point": AirfieldData(
+        theater="Normandy",
+        elevation=30,
+        runway_length=5259,
+        atc=AtcData(MHz(4, 225), MHz(118, 950), MHz(39, 350), MHz(250, 950)),
+    ),
+
+    "Funtington": AirfieldData(
+        theater="Normandy",
+        elevation=164,
+        runway_length=5080,
+        atc=AtcData(MHz(4, 250), MHz(119, 000), MHz(39, 400), MHz(251, 000)),
+    ),
+
+    "Tangmere": AirfieldData(
+        theater="Normandy",
+        elevation=47,
+        runway_length=4296,
+        atc=AtcData(MHz(4, 300), MHz(119, 100), MHz(39, 500), MHz(251, 100)),
+    ),
+
+    "Ford_AF": AirfieldData(
+        theater="Normandy",
+        elevation=29,
+        runway_length=4296,
+        atc=AtcData(MHz(4, 325), MHz(119, 150), MHz(39, 550), MHz(251, 150)),
+    ),
+
+    "Chailey": AirfieldData(
+        theater="Normandy",
+        elevation=134,
+        runway_length=5080,
+        atc=AtcData(MHz(4, 200), MHz(118, 900), MHz(39, 300), MHz(250, 900)),
+    ),
+
+    "Maupertus": AirfieldData(
+        theater="Normandy",
+        icao="A-15",
+        elevation=441,
+        runway_length=4666,
+        atc=AtcData(MHz(4, 550), MHz(119, 600), MHz(40, 000), MHz(251, 600)),
+    ),
+
+    "Azeville": AirfieldData(
+        theater="Normandy",
+        icao="A-7",
+        elevation=74,
+        runway_length=3357,
+        atc=AtcData(MHz(3, 875), MHz(118, 250), MHz(38, 650), MHz(250, 250)),
+    ),
+
+    "Biniville": AirfieldData(
+        theater="Normandy",
+        icao="A-24",
+        elevation=106,
+        runway_length=3283,
+        atc=AtcData(MHz(3, 750), MHz(118, 000), MHz(38, 400), MHz(250, 000)),
+    ),
+
+    "Beuzeville": AirfieldData(
+        theater="Normandy",
+        icao="A-6",
+        elevation=114,
+        runway_length=3840,
+        atc=AtcData(MHz(3, 850), MHz(118, 200), MHz(38, 600), MHz(250, 200)),
+    ),
+
+    "Picauville": AirfieldData(
+        theater="Normandy",
+        icao="A-8",
+        elevation=72,
+        runway_length=3840,
+        atc=AtcData(MHz(3, 900), MHz(118, 300), MHz(38, 700), MHz(250, 300)),
+    ),
+
+    "Brucheville": AirfieldData(
+        theater="Normandy",
+        icao="A-16",
+        elevation=45,
+        runway_length=3413,
+        atc=AtcData(MHz(4, 575), MHz(119, 650), MHz(40, 50), MHz(251, 650)),
+    ),
+
+    "Cretteville": AirfieldData(
+        theater="Normandy",
+        icao="A-14",
+        elevation=95,
+        runway_length=4594,
+        atc=AtcData(MHz(4, 500), MHz(119, 500), MHz(39, 900), MHz(251, 500)),
+    ),
+
+    "Meautis": AirfieldData(
+        theater="Normandy",
+        icao="A-17",
+        elevation=83,
+        runway_length=3840,
+        atc=AtcData(MHz(4, 600), MHz(119, 700), MHz(40, 100), MHz(251, 700)),
+    ),
+
+    "Lessay": AirfieldData(
+        theater="Normandy",
+        icao="A-20",
+        elevation=65,
+        runway_length=5080,
+        atc=AtcData(MHz(4, 650), MHz(119, 800), MHz(40, 200), MHz(251, 800)),
+    ),
+
+    "Cardonville": AirfieldData(
+        theater="Normandy",
+        icao="A-3",
+        elevation=101,
+        runway_length=4541,
+        atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
+    ),
+
+    "Cricqueville-en-Bessin": AirfieldData(
+        theater="Normandy",
+        icao="A-2",
+        elevation=81,
+        runway_length=3459,
+        atc=AtcData(MHz(4, 625), MHz(119, 750), MHz(40, 150), MHz(251, 750)),
+    ),
+
+    "Deux Jumeaux": AirfieldData(
+        theater="Normandy",
+        icao="A-4",
+        elevation=123,
+        runway_length=4628,
+        atc=AtcData(MHz(3, 800), MHz(118, 100), MHz(38, 500), MHz(250, 100)),
+    ),
+
+    "Saint Pierre du Mont": AirfieldData(
+        theater="Normandy",
+        icao="A-1",
+        elevation=103,
+        runway_length=4737,
+        atc=AtcData(MHz(4, 000), MHz(118, 500), MHz(38, 900), MHz(250, 500)),
+    ),
+
+    "Sainte-Laurent-sur-Mer": AirfieldData(
+        theater="Normandy",
+        icao="A-21",
+        elevation=145,
+        runway_length=4561,
+        atc=AtcData(MHz(4, 675), MHz(119, 850), MHz(40, 250), MHz(251, 850)),
+    ),
+
+    "Longues-sur-Mer": AirfieldData(
+        theater="Normandy",
+        icao="B-11",
+        elevation=225,
+        runway_length=3155,
+        atc=AtcData(MHz(3, 950), MHz(118, 400), MHz(38, 800), MHz(250, 400)),
+    ),
+
+    "Chippelle": AirfieldData(
+        theater="Normandy",
+        icao="A-5",
+        elevation=124,
+        runway_length=4643,
+        atc=AtcData(MHz(3, 825), MHz(118, 150), MHz(38, 550), MHz(250, 150)),
+    ),
+
+    "Le Molay": AirfieldData(
+        theater="Normandy",
+        icao="A-9",
+        elevation=104,
+        runway_length=3840,
+        atc=AtcData(MHz(3, 925), MHz(118, 350), MHz(38, 750), MHz(250, 350)),
+    ),
+
+    "Lignerolles": AirfieldData(
+        theater="Normandy",
+        icao="A-12",
+        elevation=404,
+        runway_length=3436,
+        atc=AtcData(MHz(4, 275), MHz(119, 50), MHz(39, 450), MHz(251, 50)),
+    ),
+
+    "Sommervieu": AirfieldData(
+        theater="Normandy",
+        icao="B-8",
+        elevation=186,
+        runway_length=3840,
+        atc=AtcData(MHz(4, 125), MHz(118, 750), MHz(39, 150), MHz(250, 750)),
+    ),
+
+    "Bazenville": AirfieldData(
+        theater="Normandy",
+        icao="B-2",
+        elevation=199,
+        runway_length=3800,
+        atc=AtcData(MHz(4, 25), MHz(118, 550), MHz(38, 950), MHz(250, 550)),
+    ),
+
+    "Rucqueville": AirfieldData(
+        theater="Normandy",
+        icao="B-7",
+        elevation=192,
+        runway_length=4561,
+        atc=AtcData(MHz(4, 100), MHz(118, 700), MHz(39, 100), MHz(250, 700)),
+    ),
+
+    "Lantheuil": AirfieldData(
+        theater="Normandy",
+        icao="B-9",
+        elevation=174,
+        runway_length=3597,
+        atc=AtcData(MHz(4, 150), MHz(118, 800), MHz(39, 200), MHz(250, 800)),
+    ),
+
+    "Sainte-Croix-sur-Mer": AirfieldData(
+        theater="Normandy",
+        icao="B-3",
+        elevation=160,
+        runway_length=3840,
+        atc=AtcData(MHz(4, 50), MHz(118, 600), MHz(39, 000), MHz(250, 600)),
+    ),
+
+    "Beny-sur-Mer": AirfieldData(
+        theater="Normandy",
+        icao="B-4",
+        elevation=199,
+        runway_length=3155,
+        atc=AtcData(MHz(4, 75), MHz(118, 650), MHz(39, 50), MHz(250, 650)),
+    ),
+
+    "Carpiquet": AirfieldData(
+        theater="Normandy",
+        icao="B-17",
+        elevation=187,
+        runway_length=3799,
+        atc=AtcData(MHz(3, 975), MHz(118, 450), MHz(38, 850), MHz(250, 450)),
+    ),
+
+    "Goulet": AirfieldData(
+        theater="Normandy",
+        elevation=616,
+        runway_length=3283,
+        atc=AtcData(MHz(4, 375), MHz(119, 250), MHz(39, 650), MHz(251, 250)),
+    ),
+
+    "Argentan": AirfieldData(
+        theater="Normandy",
+        elevation=639,
+        runway_length=3283,
+        atc=AtcData(MHz(4, 350), MHz(119, 200), MHz(39, 600), MHz(251, 200)),
+    ),
+
+    "Vrigny": AirfieldData(
+        theater="Normandy",
+        elevation=590,
+        runway_length=3283,
+        atc=AtcData(MHz(4, 475), MHz(119, 450), MHz(39, 850), MHz(251, 450)),
+    ),
+
+    "Hauterive": AirfieldData(
+        theater="Normandy",
+        elevation=476,
+        runway_length=3283,
+        atc=AtcData(MHz(4, 450), MHz(119, 400), MHz(39, 800), MHz(251, 400)),
+    ),
+
+    "Essay": AirfieldData(
+        theater="Normandy",
+        elevation=507,
+        runway_length=3283,
+        atc=AtcData(MHz(4, 425), MHz(119, 350), MHz(39, 750), MHz(251, 350)),
+    ),
+
+    "Barville": AirfieldData(
+        theater="Normandy",
+        elevation=462,
+        runway_length=3493,
+        atc=AtcData(MHz(4, 400), MHz(119, 300), MHz(39, 700), MHz(251, 300)),
+    ),
+
+    "Conches": AirfieldData(
+        theater="Normandy",
+        elevation=541,
+        runway_length=4199,
+        atc=AtcData(MHz(4, 525), MHz(119, 550), MHz(39, 950), MHz(251, 550)),
+    ),
+
+    "Evreux": AirfieldData(
+        theater="Normandy",
+        elevation=423,
+        runway_length=4296,
+        atc=AtcData(MHz(4, 175), MHz(118, 850), MHz(39, 250), MHz(250, 850)),
+    ),
 
     # Channel Map
     "Detling": AirfieldData(
