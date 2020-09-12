@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Type
 
 from dcs import helicopters
 from dcs.action import ActivateGroup, AITaskPush, MessageToAll
@@ -77,15 +78,60 @@ def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
     return UHF_FALLBACK_CHANNEL
 
 
+class ChannelNamer:
+    """Base class allowing channel name customization per-aircraft.
+
+    Most aircraft will want to customize this behavior, but the default is
+    reasonable for any aircraft with numbered radios.
+    """
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        """Returns the name of the channel for the given radio and channel."""
+        return f"COMM{radio_id} Ch {channel_id}"
+
+
+class MirageChannelNamer(ChannelNamer):
+    """Channel namer for the M-2000."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = ["V/UHF", "UHF"][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+
+class TomcatChannelNamer(ChannelNamer):
+    """Channel namer for the F-14."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = ["UHF", "VHF/UHF"][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+
+class ViggenChannelNamer(ChannelNamer):
+    """Channel namer for the AJS37."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        if channel_id >= 4:
+            channel_letter = "EFGH"[channel_id - 4]
+            return f"FR 24 {channel_letter}"
+        return f"FR 22 Special {channel_id}"
+
+
+class ViperChannelNamer(ChannelNamer):
+    """Channel namer for the F-16."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        return f"COM{radio_id} Ch {channel_id}"
+
+
 @dataclass(frozen=True)
 class ChannelAssignment:
     radio_id: int
     channel: int
-
-    @property
-    def radio_name(self) -> str:
-        """Returns the name of the radio, i.e. COM1."""
-        return f"COM{self.radio_id}"
 
 
 @dataclass
@@ -294,6 +340,9 @@ class AircraftData:
     #: None.
     channel_allocator: Optional[RadioChannelAllocator]
 
+    #: Defines how channels should be named when printed in the kneeboard.
+    channel_namer: Type[ChannelNamer] = ChannelNamer
+
 
 # Indexed by the id field of the pydcs PlaneType.
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
@@ -310,7 +359,8 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         # flight communication.
         inter_flight_radio=get_radio("FR 22"),
         intra_flight_radio=get_radio("FR 22"),
-        channel_allocator=ViggenRadioChannelAllocator()
+        channel_allocator=ViggenRadioChannelAllocator(),
+        channel_namer=ViggenChannelNamer
     ),
 
     "AV8BNA": AircraftData(
@@ -328,7 +378,8 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_allocator=CommonRadioChannelAllocator(
             inter_flight_radio_index=1,
             intra_flight_radio_index=2
-        )
+        ),
+        channel_namer=TomcatChannelNamer
     ),
 
     "F-16C_50": AircraftData(
@@ -339,7 +390,8 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_allocator=CommonRadioChannelAllocator(
             inter_flight_radio_index=1,
             intra_flight_radio_index=2
-        )
+        ),
+        channel_namer=ViperChannelNamer
     ),
 
     "FA-18C_hornet": AircraftData(
@@ -361,7 +413,9 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_allocator=CommonRadioChannelAllocator(
             inter_flight_radio_index=1,
             intra_flight_radio_index=1
-        )
+        ),
+        # Same naming pattern as the Viper, so just reuse that.
+        channel_namer=ViperChannelNamer
     ),
 
     "M-2000C": AircraftData(
@@ -370,7 +424,8 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_allocator=CommonRadioChannelAllocator(
             inter_flight_radio_index=1,
             intra_flight_radio_index=2
-        )
+        ),
+        channel_namer=MirageChannelNamer
     ),
 }
 
