@@ -1,5 +1,10 @@
-from dcs.mapping import Point
+from typing import List
 import uuid
+
+from dcs.mapping import Point
+
+from .missiontarget import MissionTarget
+
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
@@ -59,7 +64,7 @@ CATEGORY_MAP = {
 }
 
 
-class TheaterGroundObject:
+class TheaterGroundObject(MissionTarget):
     cp_id = 0
     group_id = 0
     object_id = 0
@@ -93,3 +98,7 @@ class TheaterGroundObject:
 
     def matches_string_identifier(self, id):
         return self.string_identifier == id
+
+    @property
+    def name(self) -> str:
+        return self.obj_name

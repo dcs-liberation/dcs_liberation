@@ -1,27 +1,30 @@
-from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QHBoxLayout, QGroupBox, QVBoxLayout
-from game import Game
-from qt_ui.widgets.base.QAirportInformation import QAirportInformation
-from qt_ui.windows.basemenu.airfield.QAircraftRecruitmentMenu import QAircraftRecruitmentMenu
+from PySide2.QtWidgets import QFrame, QGridLayout, QGroupBox, QVBoxLayout
+
+from qt_ui.models import GameModel
+from qt_ui.windows.basemenu.airfield.QAircraftRecruitmentMenu import \
+    QAircraftRecruitmentMenu
 from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
 from theater import ControlPoint
 
 
 class QAirfieldCommand(QFrame):
 
-    def __init__(self, cp:ControlPoint, game:Game):
+    def __init__(self, cp:ControlPoint, game_model: GameModel):
         super(QAirfieldCommand, self).__init__()
         self.cp = cp
-        self.game = game
+        self.game_model = game_model
         self.init_ui()
 
     def init_ui(self):
         layout = QGridLayout()
-        layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game), 0, 0)
+        layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game_model), 0, 0)
 
         try:
             planned = QGroupBox("Planned Flights")
             planned_layout = QVBoxLayout()
-            planned_layout.addWidget(QPlannedFlightsView(self.game.planners[self.cp.id]))
+            planned_layout.addWidget(
+                QPlannedFlightsView(self.game_model, self.cp)
+            )
             planned.setLayout(planned_layout)
             layout.addWidget(planned, 0, 1)
         except:

@@ -17,6 +17,7 @@ from game import Game, db
 from game.data.radar_db import UNITS_WITH_RADAR
 from gen import Conflict
 from gen.flights.flight import Flight
+from qt_ui.models import GameModel
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
@@ -37,9 +38,10 @@ class QLiberationMap(QGraphicsView):
         "flight_paths": False
     }
 
-    def __init__(self, game: Game):
+    def __init__(self, game_model: GameModel):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
+        self.game_model = game_model
 
         self.frontline_vector_cache = {}
 
@@ -50,7 +52,7 @@ class QLiberationMap(QGraphicsView):
         self.factorized = 1
         self.init_scene()
         self.connectSignals()
-        self.setGame(game)
+        self.setGame(game_model.game)
 
     def init_scene(self):
         scene = QLiberationScene(self)
@@ -129,8 +131,10 @@ class QLiberationMap(QGraphicsView):
         
             pos = self._transform_point(cp.position)
 
-            scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2, pos[1] - CONST.CP_SIZE / 2, CONST.CP_SIZE,
-                                           CONST.CP_SIZE, cp, self.game))
+            scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2,
+                                           pos[1] - CONST.CP_SIZE / 2,
+                                           CONST.CP_SIZE,
+                                           CONST.CP_SIZE, cp, self.game_model))
 
             if cp.captured:
                 pen = QPen(brush=CONST.COLORS[playerColor])
@@ -185,11 +189,9 @@ class QLiberationMap(QGraphicsView):
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
     def draw_flight_plans(self, scene) -> None:
-        for cp in self.game.theater.controlpoints:
-            if cp.id in self.game.planners:
-                planner = self.game.planners[cp.id]
-                for flight in planner.flights:
-                    self.draw_flight_plan(scene, flight)
+        for package in self.game_model.ato_model.packages:
+            for flight in package.flights:
+                self.draw_flight_plan(scene, flight)
 
     def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight) -> None:
         is_player = flight.from_cp.captured

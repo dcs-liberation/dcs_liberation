@@ -1132,7 +1132,7 @@ ShipDict = typing.Dict[ShipType, int]
 AirDefenseDict = typing.Dict[AirDefence, int]
 
 AssignedUnitsDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
-TaskForceDict = typing.Dict[typing.Type[Task], AssignedUnitsDict]
+TaskForceDict = typing.Dict[typing.Type[MainTask], AssignedUnitsDict]
 
 StartingPosition = typing.Optional[typing.Union[ShipGroup, StaticGroup, Airport, Point]]
 
