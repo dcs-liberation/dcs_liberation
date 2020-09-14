@@ -1,29 +1,32 @@
-from PySide2.QtCore import QRect, Qt
-from PySide2.QtGui import QColor, QPainter
-from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsSceneHoverEvent, QGraphicsSceneContextMenuEvent, QMenu, \
-    QAction, QGraphicsSceneMouseEvent
+from typing import Optional
 
-import qt_ui.uiconstants as CONST
+from PySide2.QtGui import QColor, QPainter
+from PySide2.QtWidgets import (
+    QAction,
+    QGraphicsSceneContextMenuEvent,
+    QMenu,
+)
+
+import qt_ui.uiconstants as const
 from game import Game
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
-from theater import ControlPoint, db
+from theater import ControlPoint
+from .QMapObject import QMapObject
 
 
-class QMapControlPoint(QGraphicsRectItem):
+class QMapControlPoint(QMapObject):
 
-    def __init__(self, parent, x: float, y: float, w: float, h: float, model: ControlPoint, game: Game):
-        super(QMapControlPoint, self).__init__(x, y, w, h)
+    def __init__(self, parent, x: float, y: float, w: float, h: float,
+                 model: ControlPoint, game: Game) -> None:
+        super().__init__(x, y, w, h)
         self.model = model
         self.game = game
         self.parent = parent
-        self.setAcceptHoverEvents(True)
         self.setZValue(1)
         self.setToolTip(self.model.name)
+        self.base_details_dialog: Optional[QBaseMenu2] = None
 
-
-    def paint(self, painter, option, widget=None):
-        #super(QMapControlPoint, self).paint(painter, option, widget)
-
+    def paint(self, painter, option, widget=None) -> None:
         if self.parent.get_display_rule("cp"):
             painter.save()
             painter.setRenderHint(QPainter.Antialiasing)
@@ -32,69 +35,43 @@ class QMapControlPoint(QGraphicsRectItem):
 
             if self.model.has_runway():
                 if self.isUnderMouse():
-                    painter.setBrush(CONST.COLORS["white"])
+                    painter.setBrush(const.COLORS["white"])
                     painter.setPen(self.pen_color)
 
                 r = option.rect
                 painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
-
-                #gauge = QRect(r.x(),
-                #              r.y()+CONST.CP_SIZE/2 + 2,
-                #              r.width(),
-                #              CONST.CP_SIZE / 4)
-
-                #painter.setBrush(CONST.COLORS["bright_red"])
-                #painter.setPen(CONST.COLORS["black"])
-                #painter.drawRect(gauge)
-
-                #gauge2 = QRect(r.x(),
-                #               r.y() + CONST.CP_SIZE / 2 + 2,
-                #               r.width()*self.model.base.strength,
-                #               CONST.CP_SIZE / 4)
-
-                #painter.setBrush(CONST.COLORS["green"])
-                #painter.drawRect(gauge2)
-            else:
-                # TODO : not drawing sunk carriers. Can be improved to display sunk carrier.
-                pass
+            # TODO: Draw sunk carriers differently.
+            # Either don't draw them at all, or perhaps use a sunk ship icon.
             painter.restore()
 
-    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
-        self.update()
-        self.setCursor(Qt.PointingHandCursor)
-
-    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent):
-        self.update()
-
-    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
-        self.update()
-
-    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
-        self.openBaseMenu()
-        #self.contextMenuEvent(event)
-
-    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
-
+    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
         if self.model.captured:
-            openBaseMenu = QAction("Open base menu")
+            text = "Open base menu"
         else:
-            openBaseMenu = QAction("Open intel menu")
+            text = "Open intel menu"
 
-        openBaseMenu.triggered.connect(self.openBaseMenu)
+        open_menu = QAction(text)
+        open_menu.triggered.connect(self.on_click)
 
         menu = QMenu("Menu", self.parent)
-        menu.addAction(openBaseMenu)
+        menu.addAction(open_menu)
         menu.exec_(event.screenPos())
 
-
     @property
-    def brush_color(self)->QColor:
-        return self.model.captured and CONST.COLORS["blue"] or CONST.COLORS["super_red"]
+    def brush_color(self) -> QColor:
+        if self.model.captured:
+            return const.COLORS["blue"]
+        else:
+            return const.COLORS["super_red"]
 
     @property
     def pen_color(self) -> QColor:
-            return self.model.captured and CONST.COLORS["white"] or CONST.COLORS["white"]
+        return const.COLORS["white"]
 
-    def openBaseMenu(self):
-        self.baseMenu = QBaseMenu2(self.window(), self.model, self.game)
-        self.baseMenu.show()
+    def on_click(self) -> None:
+        self.base_details_dialog = QBaseMenu2(
+            self.window(),
+            self.model,
+            self.game
+        )
+        self.base_details_dialog.show()
