@@ -10,6 +10,8 @@ class ChaparralGenerator(GroupGenerator):
     This generate a Chaparral group
     """
 
+    name = "Chaparral Group"
+
     def generate(self):
         num_launchers = random.randint(2, 4)
 

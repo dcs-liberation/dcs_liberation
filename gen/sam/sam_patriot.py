@@ -10,6 +10,8 @@ class PatriotGenerator(GroupGenerator):
     This generate a Patriot group
     """
 
+    name = "Patriot Battery"
+
     def generate(self):
         # Command Post
         self.add_unit(AirDefence.SAM_Patriot_AMG_AN_MRC_137, "MRC", self.position.x, self.position.y, self.heading)

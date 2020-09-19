@@ -10,6 +10,8 @@ class SA6Generator(GroupGenerator):
     This generate a SA-6 group
     """
 
+    name = "SA-6 Kub Site"
+
     def generate(self):
         self.add_unit(AirDefence.SAM_SA_6_Kub_STR_9S91, "STR", self.position.x, self.position.y, self.heading)
 

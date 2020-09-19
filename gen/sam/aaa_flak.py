@@ -11,6 +11,8 @@ class FlakGenerator(GroupGenerator):
     This generate a German flak artillery group
     """
 
+    name = "Flak Site"
+
     def generate(self):
         grid_x = random.randint(2, 4)
         grid_y = random.randint(2, 4)

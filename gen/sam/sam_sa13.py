@@ -10,6 +10,8 @@ class SA13Generator(GroupGenerator):
     This generate a SA-13 group
     """
 
+    name = "SA-13 Strela Group"
+
     def generate(self):
         self.add_unit(Unarmed.Transport_UAZ_469, "UAZ", self.position.x, self.position.y, self.heading)
         self.add_unit(Unarmed.Transport_KAMAZ_43101, "TRUCK", self.position.x+40, self.position.y, self.heading)

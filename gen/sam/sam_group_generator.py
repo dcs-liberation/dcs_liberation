@@ -1,5 +1,7 @@
 import random
+from typing import List
 
+from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
 
 from game import db
@@ -99,6 +101,17 @@ SAM_PRICES = {
     AirDefence.HQ_7_Self_Propelled_LN: 35
 }
 
+def get_faction_possible_sams_units(faction: str) -> List[UnitType]:
+    """
+    Return the list
+    :param faction: Faction to search units for
+    :return:
+    """
+    return [u for u in db.FACTIONS[faction]["units"] if u in AirDefence.__dict__.values()]
+
+def get_sam_names():
+    pass
+
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     """
     This generate a SAM group
@@ -107,7 +120,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     :param country: Owner country
     :return: Nothing, but put the group reference inside the ground object
     """
-    possible_sams = [u for u in db.FACTIONS[faction]["units"] if u in AirDefence.__dict__.values()]
+    possible_sams = get_faction_possible_sams_units(faction)
     if len(possible_sams) > 0:
         sam = random.choice(possible_sams)
         generator = SAM_MAP[sam](game, ground_object)

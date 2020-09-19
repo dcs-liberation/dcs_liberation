@@ -10,6 +10,8 @@ class ZSU23Generator(GroupGenerator):
     This generate a ZSU 23 group
     """
 
+    name = "ZSU-23 Group"
+
     def generate(self):
         num_launchers = random.randint(2, 5)
 

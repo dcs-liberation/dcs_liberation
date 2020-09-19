@@ -10,6 +10,8 @@ class ZU23InsurgentGenerator(GroupGenerator):
     This generate a ZU23 insurgent flak artillery group
     """
 
+    name = "Zu-23 Site"
+
     def generate(self):
         grid_x = random.randint(2, 4)
         grid_y = random.randint(2, 4)

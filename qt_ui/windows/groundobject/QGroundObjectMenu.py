@@ -29,6 +29,7 @@ class QGroundObjectMenu(QDialog):
         self.buildingBox = QGroupBox("Buildings :")
         self.intelLayout = QGridLayout()
         self.buildingsLayout = QGridLayout()
+        self.total_value = 0
         self.init_ui()
 
     def init_ui(self):
@@ -43,9 +44,19 @@ class QGroundObjectMenu(QDialog):
             self.mainLayout.addWidget(self.intelBox)
         else:
             self.mainLayout.addWidget(self.buildingBox)
+
+        self.actionLayout = QHBoxLayout()
+        sell_all_button = QPushButton("Disband (+" + str(self.total_value) + "M)")
+        sell_all_button.clicked.connect(self.sell_all)
+        self.actionLayout.addWidget(sell_all_button)
+
+        if self.total_value > 0:
+            self.mainLayout.addLayout(self.actionLayout)
         self.setLayout(self.mainLayout)
 
     def doLayout(self):
+
+        self.update_total_value()
         self.intelBox = QGroupBox("Units :")
         self.intelLayout = QGridLayout()
         i = 0
@@ -94,6 +105,18 @@ class QGroundObjectMenu(QDialog):
                 self.mainLayout.addWidget(self.buildingBox)
         except Exception as e:
             print(e)
+        self.update_total_value()
+
+    def update_total_value(self):
+        total_value = 0
+        for group in self.ground_object.groups:
+            for u in group.units:
+                utype = unit_type_of(u)
+                if utype in PRICES:
+                    total_value = total_value + PRICES[utype]
+                else:
+                    total_value = total_value + 1
+        self.total_value = total_value
 
     def repair_unit(self, group, unit, price):
         if self.game.budget > price:
@@ -113,5 +136,14 @@ class QGroundObjectMenu(QDialog):
 
         self.do_refresh_layout()
 
-    def closeEvent(self, closeEvent: QCloseEvent):
+    def sell_all(self):
+        self.update_total_value()
+        self.game.budget = self.game.budget + self.total_value
+        self.ground_object.groups = []
         GameUpdateSignal.get_instance().updateGame(self.game)
+
+    def buy_group(self):
+        pass
+
+    def closeEvent(self, closeEvent: QCloseEvent):
+        pass

@@ -10,6 +10,8 @@ class ZU23UralInsurgentGenerator(GroupGenerator):
     This generate a Zu23 Ural group
     """
 
+    name = "ZU-23 Ural Insurgent Group"
+
     def generate(self):
         num_launchers = random.randint(2, 8)
 

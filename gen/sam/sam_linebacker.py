@@ -10,6 +10,8 @@ class LinebackerGenerator(GroupGenerator):
     This generate an m6 linebacker group
     """
 
+    name = "Linebacker Group"
+
     def generate(self):
         num_launchers = random.randint(2, 4)
 

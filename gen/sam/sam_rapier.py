@@ -10,6 +10,8 @@ class RapierGenerator(GroupGenerator):
     This generate a Rapier Group
     """
 
+    name = "Rapier AA Site"
+
     def generate(self):
         self.add_unit(AirDefence.Rapier_FSA_Blindfire_Tracker, "BT", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.Rapier_FSA_Optical_Tracker, "OT", self.position.x + 20, self.position.y, self.heading)

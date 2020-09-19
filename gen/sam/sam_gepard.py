@@ -10,6 +10,8 @@ class GepardGenerator(GroupGenerator):
     This generate a Gepard group
     """
 
+    name = "Gepard Group"
+
     def generate(self):
         self.add_unit(AirDefence.SPAAA_Gepard, "SPAAA", self.position.x, self.position.y, self.heading)
         if random.randint(0, 1) == 1:
