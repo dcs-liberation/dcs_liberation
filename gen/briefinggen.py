@@ -237,7 +237,7 @@ class BriefingGenerator(MissionInfoGenerator):
     def __random_frontline_sentence(self, player_base_name, enemy_base_name):
         templates = [
             "There are combats between {} and {}. ",
-            "The war on the ground is still going on between {} an {}. ",
+            "The war on the ground is still going on between {} and {}. ",
             "Our ground forces in {} are opposed to enemy forces based in {}. ",
             "Our forces from {} are fighting enemies based in {}. ",
             "There is an active frontline between {} and {}. ",
