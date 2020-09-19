@@ -11,6 +11,7 @@ class HQ7Generator(GroupGenerator):
     """
 
     name = "HQ-7 Site"
+    price = 120
 
     def generate(self):
         self.add_unit(AirDefence.HQ_7_Self_Propelled_STR, "STR", self.position.x, self.position.y, self.heading)

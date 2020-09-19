@@ -11,6 +11,7 @@ class ZU23UralInsurgentGenerator(GroupGenerator):
     """
 
     name = "ZU-23 Ural Insurgent Group"
+    price = 64
 
     def generate(self):
         num_launchers = random.randint(2, 8)

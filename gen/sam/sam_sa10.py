@@ -11,6 +11,7 @@ class SA10Generator(GroupGenerator):
     """
 
     name = "SA-10/S-300PS Battery"
+    price = 450
 
     def generate(self):
         # Command Post

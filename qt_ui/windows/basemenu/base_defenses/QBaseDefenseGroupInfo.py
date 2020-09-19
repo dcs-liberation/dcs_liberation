@@ -1,3 +1,4 @@
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QPushButton
 
 from qt_ui.uiconstants import VEHICLES_ICONS
@@ -28,21 +29,21 @@ class QBaseDefenseGroupInfo(QGroupBox):
                     unit_dict[u.type] = 1
         i = 0
         for k, v in unit_dict.items():
-            #icon = QLabel()
-            #if k in VEHICLES_ICONS.keys():
-            #    icon.setPixmap(VEHICLES_ICONS[k])
-            #else:
-            #    icon.setText("<b>" + k[:6] + "</b>")
-            #icon.setProperty("style", "icon-plane")
-            #layout.addWidget(icon, i, 0)
-            layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 0)
+            icon = QLabel()
+            if k in VEHICLES_ICONS.keys():
+                icon.setPixmap(VEHICLES_ICONS[k])
+            else:
+                icon.setText("<b>" + k[:6] + "</b>")
+            icon.setProperty("style", "icon-plane")
+            layout.addWidget(icon, i, 0)
+            layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
             i = i + 1
 
         manage_button = QPushButton("Manage")
         manage_button.setProperty("style", "btn-success")
         manage_button.setMaximumWidth(180)
         manage_button.clicked.connect(self.onManage)
-        layout.addWidget(manage_button, i+1, 0)
+        layout.addWidget(manage_button, i, 0, Qt.AlignLeft)
         self.setLayout(layout)
 
     def onManage(self):

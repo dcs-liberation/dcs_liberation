@@ -11,6 +11,7 @@ class AvengerGenerator(GroupGenerator):
     """
 
     name = "Avenger Group"
+    price = 62
 
     def generate(self):
         num_launchers = random.randint(2, 3)

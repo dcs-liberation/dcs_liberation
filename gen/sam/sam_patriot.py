@@ -11,6 +11,7 @@ class PatriotGenerator(GroupGenerator):
     """
 
     name = "Patriot Battery"
+    price = 240
 
     def generate(self):
         # Command Post
@@ -20,13 +21,13 @@ class PatriotGenerator(GroupGenerator):
         self.add_unit(AirDefence.SAM_Patriot_EPP_III, "EPP", self.position.x, self.position.y + 30, self.heading)
         self.add_unit(AirDefence.SAM_Patriot_STR_AN_MPQ_53, "ICC", self.position.x + 30, self.position.y + 30, self.heading)
 
-        num_launchers = random.randint(2, 4)
+        num_launchers = random.randint(3, 4)
         positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.SAM_Patriot_LN_M901, "LN#" + str(i), position[0], position[1], position[2])
 
         # Short range protection for high value site
-        num_launchers = random.randint(2, 4)
+        num_launchers = random.randint(3, 4)
         positions = self.get_circular_position(num_launchers, launcher_distance=300, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.AAA_Vulcan_M163, "SPAAA#" + str(i), position[0], position[1], position[2])

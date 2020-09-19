@@ -21,6 +21,7 @@ class QTopPanel(QFrame):
         self.setMaximumHeight(70)
         self.init_ui()
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
+        GameUpdateSignal.get_instance().budgetupdated.connect(self.budget_update)
 
     def init_ui(self):
 
@@ -102,3 +103,6 @@ class QTopPanel(QFrame):
     def proceed(self):
         self.subwindow = QMissionPlanning(self.game)
         self.subwindow.show()
+
+    def budget_update(self, game:Game):
+        self.budgetBox.setGame(game)

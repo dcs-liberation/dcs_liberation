@@ -11,6 +11,7 @@ class GepardGenerator(GroupGenerator):
     """
 
     name = "Gepard Group"
+    price = 50
 
     def generate(self):
         self.add_unit(AirDefence.SPAAA_Gepard, "SPAAA", self.position.x, self.position.y, self.heading)

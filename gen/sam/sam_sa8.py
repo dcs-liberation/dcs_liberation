@@ -11,6 +11,7 @@ class SA8Generator(GroupGenerator):
     """
 
     name = "SA-8 OSA Site"
+    price = 55
 
     def generate(self):
         self.add_unit(AirDefence.SAM_SA_8_Osa_9A33, "OSA", self.position.x, self.position.y, self.heading)

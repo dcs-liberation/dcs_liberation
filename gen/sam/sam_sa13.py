@@ -11,6 +11,7 @@ class SA13Generator(GroupGenerator):
     """
 
     name = "SA-13 Strela Group"
+    price = 50
 
     def generate(self):
         self.add_unit(Unarmed.Transport_UAZ_469, "UAZ", self.position.x, self.position.y, self.heading)

@@ -9,6 +9,7 @@ class SA15Generator(GroupGenerator):
     """
 
     name = "SA-15 Tor Group"
+    price = 55
 
     def generate(self):
         self.add_unit(AirDefence.SAM_SA_15_Tor_9A331, "ADS", self.position.x, self.position.y, self.heading)

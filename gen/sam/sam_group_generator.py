@@ -101,16 +101,22 @@ SAM_PRICES = {
     AirDefence.HQ_7_Self_Propelled_LN: 35
 }
 
+
 def get_faction_possible_sams_units(faction: str) -> List[UnitType]:
     """
     Return the list
     :param faction: Faction to search units for
-    :return:
     """
     return [u for u in db.FACTIONS[faction]["units"] if u in AirDefence.__dict__.values()]
 
-def get_sam_names():
-    pass
+
+def get_faction_possible_sams_generator(faction: str) -> List[UnitType]:
+    """
+    Return the list of possible SAM generator for the given faction
+    :param faction: Faction to search units for
+    """
+    return [SAM_MAP[u] for u in get_faction_possible_sams_units(faction)]
+
 
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     """

@@ -11,6 +11,7 @@ class LinebackerGenerator(GroupGenerator):
     """
 
     name = "Linebacker Group"
+    price = 75
 
     def generate(self):
         num_launchers = random.randint(2, 4)

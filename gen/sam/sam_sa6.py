@@ -11,6 +11,7 @@ class SA6Generator(GroupGenerator):
     """
 
     name = "SA-6 Kub Site"
+    price = 102
 
     def generate(self):
         self.add_unit(AirDefence.SAM_SA_6_Kub_STR_9S91, "STR", self.position.x, self.position.y, self.heading)

@@ -11,6 +11,7 @@ class VulcanGenerator(GroupGenerator):
     """
 
     name = "Vulcan Group"
+    price = 25
 
     def generate(self):
         self.add_unit(AirDefence.AAA_Vulcan_M163, "SPAAA", self.position.x, self.position.y, self.heading)

@@ -11,6 +11,7 @@ class SA11Generator(GroupGenerator):
     """
 
     name = "SA-11 Buk Battery"
+    price = 180
 
     def generate(self):
         self.add_unit(AirDefence.SAM_SA_11_Buk_CC_9S470M1, "CC", self.position.x, self.position.y, self.heading)

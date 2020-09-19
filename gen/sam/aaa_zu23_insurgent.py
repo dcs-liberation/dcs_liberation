@@ -11,10 +11,11 @@ class ZU23InsurgentGenerator(GroupGenerator):
     """
 
     name = "Zu-23 Site"
+    price = 56
 
     def generate(self):
-        grid_x = random.randint(2, 4)
-        grid_y = random.randint(2, 4)
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
 
         spacing = random.randint(10,40)
 

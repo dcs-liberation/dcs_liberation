@@ -11,6 +11,7 @@ class ChaparralGenerator(GroupGenerator):
     """
 
     name = "Chaparral Group"
+    price = 66
 
     def generate(self):
         num_launchers = random.randint(2, 4)

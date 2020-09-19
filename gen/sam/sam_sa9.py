@@ -11,6 +11,7 @@ class SA9Generator(GroupGenerator):
     """
 
     name = "SA-9 Group"
+    price = 40
 
     def generate(self):
         self.add_unit(Unarmed.Transport_UAZ_469, "UAZ", self.position.x, self.position.y, self.heading)
