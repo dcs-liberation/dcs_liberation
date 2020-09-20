@@ -17,7 +17,6 @@ class QBaseDefenseGroupInfo(QGroupBox):
         self.init_ui()
 
 
-
     def init_ui(self):
         unit_dict = {}
         layout = QGridLayout()
@@ -33,8 +32,8 @@ class QBaseDefenseGroupInfo(QGroupBox):
             if k in VEHICLES_ICONS.keys():
                 icon.setPixmap(VEHICLES_ICONS[k])
             else:
-                icon.setText("<b>" + k[:6] + "</b>")
-            icon.setProperty("style", "icon-plane")
+                icon.setText("<b>" + k[:9] + "</b>")
+            icon.setProperty("style", "icon-armor")
             layout.addWidget(icon, i, 0)
             layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
             i = i + 1
