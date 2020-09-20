@@ -128,6 +128,19 @@ class ViperChannelNamer(ChannelNamer):
         return f"COM{radio_id} Ch {channel_id}"
 
 
+class SCR522ChannelNamer(ChannelNamer):
+    """
+    Channel namer for P-51 & P-47D
+    """
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        if channel_id > 3:
+            return "?"
+        else:
+            return f"Button " + "ABCD"[channel_id - 1]
+
+
 @dataclass(frozen=True)
 class ChannelAssignment:
     radio_id: int
@@ -326,6 +339,19 @@ class ViggenRadioChannelAllocator(RadioChannelAllocator):
 
 
 @dataclass(frozen=True)
+class SCR522RadioChannelAllocator(RadioChannelAllocator):
+    """Preset channel allocator for the SCR522 WW2 radios. (4 channels)"""
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        radio_id = 1
+        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
+        flight.assign_channel(radio_id, 2, flight.departure.atc)
+        flight.assign_channel(radio_id, 3, flight.arrival.atc)
+
+        # TODO : Some GCI on Channel 4 ?
+
+@dataclass(frozen=True)
 class AircraftData:
     """Additional aircraft data not exposed by pydcs."""
 
@@ -427,7 +453,19 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         ),
         channel_namer=MirageChannelNamer
     ),
+
+    "P-51D": AircraftData(
+        inter_flight_radio=get_radio("SCR522"),
+        intra_flight_radio=get_radio("SCR522"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=1
+        ),
+        channel_namer=SCR522ChannelNamer
+    ),
 }
+AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
+AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
 class AircraftConflictGenerator:
