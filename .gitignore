@@ -19,3 +19,6 @@ logs/liberation.log
 qt_ui/logs/liberation.log
 
 *.psd
+.env
+.vscode/launch.json
+.vscode/settings.json
