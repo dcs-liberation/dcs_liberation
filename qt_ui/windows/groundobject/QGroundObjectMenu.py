@@ -20,6 +20,8 @@ from theater import ControlPoint, TheaterGroundObject
 
 class QGroundObjectMenu(QDialog):
 
+    changed = QtCore.Signal()
+
     def __init__(self, parent, ground_object: TheaterGroundObject, buildings:[], cp: ControlPoint, game: Game):
         super(QGroundObjectMenu, self).__init__(parent)
         self.setMinimumWidth(350)
@@ -64,7 +66,7 @@ class QGroundObjectMenu(QDialog):
             self.actionLayout.addWidget(self.sell_all_button)
         self.actionLayout.addWidget(self.buy_replace)
 
-        if self.cp.captured:
+        if self.cp.captured and self.ground_object.dcs_identifier == "AA":
             self.mainLayout.addLayout(self.actionLayout)
         self.setLayout(self.mainLayout)
 
@@ -132,12 +134,13 @@ class QGroundObjectMenu(QDialog):
                 self.actionLayout.addWidget(self.sell_all_button)
             self.actionLayout.addWidget(self.buy_replace)
 
-            if self.cp.captured:
+            if self.cp.captured and self.ground_object.dcs_identifier == "AA":
                 self.mainLayout.addLayout(self.actionLayout)
 
         except Exception as e:
             print(e)
         self.update_total_value()
+        self.changed.emit()
 
     def update_total_value(self):
         total_value = 0
@@ -169,6 +172,7 @@ class QGroundObjectMenu(QDialog):
             logging.info("Repaired unit : " + str(unit.id) + " " + str(unit.type))
 
         self.do_refresh_layout()
+        self.changed.emit()
 
     def sell_all(self):
         self.update_total_value()
@@ -182,9 +186,6 @@ class QGroundObjectMenu(QDialog):
         self.subwindow.changed.connect(self.do_refresh_layout)
         self.subwindow.show()
 
-
-    def closeEvent(self, closeEvent: QCloseEvent):
-        pass
 
 
 class QBuyGroupForGroundObjectDialog(QDialog):
