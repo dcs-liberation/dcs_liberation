@@ -555,6 +555,10 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
         channel = self.get_intra_flight_channel(unit_type)
+        if group.units[0].skill == Skill.Client:
+            aircraft_data = AIRCRAFT_DATA[unit_type.id]
+            channel = self.radio_registry.alloc_for_radio(aircraft_data.inter_flight_radio)
+            
         group.set_frequency(channel.mhz)
 
         # TODO: Support for different departure/arrival airfields.
