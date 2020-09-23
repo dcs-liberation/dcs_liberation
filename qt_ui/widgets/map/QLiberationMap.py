@@ -1,18 +1,22 @@
 import typing
-from typing import Dict
+from typing import Dict, Tuple
 
-from PySide2 import QtCore
-from PySide2.QtCore import Qt, QRect, QPointF
-from PySide2.QtGui import QPixmap, QBrush, QColor, QWheelEvent, QPen, QFont
-from PySide2.QtWidgets import QGraphicsView, QFrame, QGraphicsOpacityEffect
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
+from PySide2.QtWidgets import (
+    QFrame,
+    QGraphicsOpacityEffect,
+    QGraphicsScene,
+    QGraphicsView,
+)
 from dcs import Point
 from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
 from game.data.radar_db import UNITS_WITH_RADAR
-from game.event import UnitsDeliveryEvent, Event, ControlPointType
 from gen import Conflict
+from gen.flights.flight import Flight
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
@@ -21,6 +25,7 @@ from theater import ControlPoint
 
 
 class QLiberationMap(QGraphicsView):
+    WAYPOINT_SIZE = 4
 
     instance = None
     display_rules: Dict[str, bool] = {
@@ -168,38 +173,8 @@ class QLiberationMap(QGraphicsView):
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
-        for cp in self.game.theater.controlpoints:
-
-            if cp.captured:
-                pen = QPen(brush=CONST.COLORS[playerColor])
-                brush = CONST.COLORS[playerColor+"_transparent"]
-
-                flight_path_pen = QPen(brush=CONST.COLORS[playerColor])
-                flight_path_pen.setColor(CONST.COLORS[playerColor])
-
-            else:
-                pen = QPen(brush=CONST.COLORS[enemyColor])
-                brush = CONST.COLORS[enemyColor+"_transparent"]
-
-                flight_path_pen = QPen(brush=CONST.COLORS[enemyColor])
-                flight_path_pen.setColor(CONST.COLORS[enemyColor])
-
-            flight_path_pen.setWidth(1)
-            flight_path_pen.setStyle(Qt.DashDotLine)
-
-            pos = self._transform_point(cp.position)
-            if self.get_display_rule("flight_paths"):
-                if cp.id in self.game.planners.keys():
-                    planner = self.game.planners[cp.id]
-                    for flight in planner.flights:
-                        scene.addEllipse(pos[0], pos[1], 4, 4)
-                        prev_pos = list(pos)
-                        for point in flight.points:
-                            new_pos = self._transform_point(Point(point.x, point.y))
-                            scene.addLine(prev_pos[0]+2, prev_pos[1]+2, new_pos[0]+2, new_pos[1]+2, flight_path_pen)
-                            scene.addEllipse(new_pos[0], new_pos[1], 4, 4, pen, brush)
-                            prev_pos = list(new_pos)
-                        scene.addLine(prev_pos[0] + 2, prev_pos[1] + 2, pos[0] + 2, pos[1] + 2, flight_path_pen)
+        if self.get_display_rule("flight_paths"):
+            self.draw_flight_plans(scene)
 
         for cp in self.game.theater.controlpoints:
             pos = self._transform_point(cp.position)
@@ -208,6 +183,42 @@ class QLiberationMap(QGraphicsView):
             text = scene.addText(cp.name, font=CONST.FONT_MAP)
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
+
+    def draw_flight_plans(self, scene) -> None:
+        for cp in self.game.theater.controlpoints:
+            if cp.id in self.game.planners:
+                planner = self.game.planners[cp.id]
+                for flight in planner.flights:
+                    self.draw_flight_plan(scene, flight)
+
+    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight) -> None:
+        is_player = flight.from_cp.captured
+        pos = self._transform_point(flight.from_cp.position)
+
+        self.draw_waypoint(scene, pos, is_player)
+        prev_pos = tuple(pos)
+        for point in flight.points:
+            new_pos = self._transform_point(Point(point.x, point.y))
+            self.draw_flight_path(scene, prev_pos, new_pos, is_player)
+            self.draw_waypoint(scene, new_pos, is_player)
+            prev_pos = tuple(new_pos)
+        self.draw_flight_path(scene, prev_pos, pos, is_player)
+
+    def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
+                      player: bool) -> None:
+        waypoint_pen = self.waypoint_pen(player)
+        waypoint_brush = self.waypoint_brush(player)
+        scene.addEllipse(position[0], position[1], self.WAYPOINT_SIZE,
+                         self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush)
+
+    def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
+                         pos1: Tuple[int, int], player: bool):
+        flight_path_pen = self.flight_path_pen(player)
+        # Draw the line to the *middle* of the waypoint.
+        offset = self.WAYPOINT_SIZE // 2
+        scene.addLine(pos0[0] + offset, pos0[1] + offset,
+                      pos1[0] + offset, pos1[1] + offset,
+                      flight_path_pen)
 
     def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
         scene = self.scene()
@@ -307,6 +318,29 @@ class QLiberationMap(QGraphicsView):
         #Y += 5
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
+
+    def base_faction_color_name(self, player: bool) -> str:
+        if player:
+            return self.game.get_player_color()
+        else:
+            return self.game.get_enemy_color()
+
+    def waypoint_pen(self, player: bool) -> QPen:
+        name = self.base_faction_color_name(player)
+        return QPen(brush=CONST.COLORS[name])
+
+    def waypoint_brush(self, player: bool) -> QColor:
+        name = self.base_faction_color_name(player)
+        return CONST.COLORS[f"{name}_transparent"]
+
+    def flight_path_pen(self, player: bool) -> QPen:
+        name = self.base_faction_color_name(player)
+        color = CONST.COLORS[name]
+        pen = QPen(brush=color)
+        pen.setColor(color)
+        pen.setWidth(1)
+        pen.setStyle(Qt.DashDotLine)
+        return pen
 
     def addBackground(self):
         scene = self.scene()
