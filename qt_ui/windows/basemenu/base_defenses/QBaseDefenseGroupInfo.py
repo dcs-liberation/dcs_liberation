@@ -39,8 +39,6 @@ class QBaseDefenseGroupInfo(QGroupBox):
             item = self.unit_layout.itemAt(i)
             if item is not None and item.widget() is not None:
                 self.unit_layout.removeItem(item)
-                item.widget().setParent(None)
-                item.widget().deleteLater()
 
         for g in self.ground_object.groups:
             for u in g.units:
