@@ -223,13 +223,16 @@ PRICES = {
     KC130: 25,
 
     A_50: 50,
+    KJ_2000: 50,
     E_3A: 50,
     C_130: 25,
 
     # WW2
     P_51D_30_NA: 18,
     P_51D: 16,
-    P_47D_30: 18,
+    P_47D_30: 17,
+    P_47D_30bl1: 16,
+    P_47D_40: 18,
     B_17G: 30,
 
     # Drones
@@ -519,6 +522,8 @@ UNIT_BY_TASK = {
         MiG_27K,
         A_20G,
         P_47D_30,
+        P_47D_30bl1,
+        P_47D_40,
         Ju_88A4,
         B_17G,
         MB_339PAN,
@@ -542,7 +547,7 @@ UNIT_BY_TASK = {
         KC130,
         S_3B_Tanker,
     ],
-    AWACS: [E_3A, A_50, ],
+    AWACS: [E_3A, A_50, KJ_2000],
     PinpointStrike: [
         Armor.APC_MTLB,
         Armor.APC_MTLB,
@@ -993,6 +998,8 @@ PLANE_PAYLOAD_OVERRIDES = {
     Su_17M4: COMMON_OVERRIDE,
     F_4E: COMMON_OVERRIDE,
     P_47D_30:COMMON_OVERRIDE,
+    P_47D_30bl1:COMMON_OVERRIDE,
+    P_47D_40:COMMON_OVERRIDE,
     B_17G: COMMON_OVERRIDE,
     P_51D: COMMON_OVERRIDE,
     P_51D_30_NA: COMMON_OVERRIDE,

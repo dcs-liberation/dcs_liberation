@@ -2,7 +2,10 @@
 
 ## Features/Improvements :
 * **[Other]** Added an installer option (thanks to contributor parithon)
-* **[Cheat Menu]** Added possibility to replace destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
+* **[Kneeboards]** Added custom kneeboards (thanks to contributor danalbert)
+* **[Kneeboards]** Custom kneeboards contains ATC/ILS informations (thanks to contributor danalbert)
+* **[Comms/Radio]** Relevant frequencies are assigned to comms channel (thanks to contributor danalbert)
+* **[Base Menu]** Added possibility to replace destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
 * **[Cheat Menu]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
