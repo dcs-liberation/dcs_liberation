@@ -2,8 +2,23 @@
 
 ## Features/Improvements :
 * **[Other]** Added an installer option (thanks to contributor parithon)
-* **[Cheat Menu]** Added possibility to replace destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
-* **[Cheat Menu]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
+* **[Kneeboards]** Generate mission kneeboards for player flights. Kneeboards include
+  airfield/carrier information (ATC frequencies, ILS, TACAN, and runway
+  assignments), assigned radio channels, waypoint lists, and AWACS/JTAC/tanker
+  information.
+* **[Radios]** Allocate separate intra-flight channels for most aircraft to reduce global
+  chatter.
+* **[Radios]** Configure radio channel presets for most aircraft. Currently supported are:
+  * AJS37
+  * AV-8B
+  * F-14B
+  * F-16C
+  * F/A-18C
+  * JF-17
+  * M-2000C
+* **[Base Menu]** Added possibility to repair destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
+* **[Base Menu]** Added possibility to buy/sell/replace SAM units
+* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
 * **[Units/Factions]** Added Mig-21, Mig-23, SA-342L to Syria 2011
@@ -17,6 +32,7 @@
 * **[Mission Generator]** AH-1W was not used by AI to generate CAS mission by default
 * **[Mission Generator]** Fixed F-16C targeting pod not being added to payload
 * **[Mission Generator]** AH-64A and AH-64D payloads fix. 
+* **[Units/Factions]** China will use KJ-2000 as awacs instead of A-50
 
 # 2.1.0
 

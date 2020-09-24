@@ -2,41 +2,84 @@ local unitPayloads = {
 	["name"] = "F-16C_50",
 	["payloads"] = {
 		[1] = {
-			["name"] = "ANTISHIP",
+			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "LAU3_HE5",
-					["num"] = 6,
+					["CLSID"] = "{8A0BE8AE-58D4-4572-9263-3144C0D06364}",
+					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "LAU3_HE5",
+					["CLSID"] = "{DAC53A2F-79CA-42FF-A77A-F5649B601308}",
 					["num"] = 7,
 				},
 				[3] = {
-					["CLSID"] = "LAU3_HE5",
-					["num"] = 4,
-				},
-				[4] = {
-					["CLSID"] = "LAU3_HE5",
+					["CLSID"] = "{DAC53A2F-79CA-42FF-A77A-F5649B601308}",
 					["num"] = 3,
 				},
-				[5] = {
+				[4] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 2,
 				},
-				[6] = {
+				[5] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 1,
 				},
-				[7] = {
+				[6] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 8,
 				},
-				[8] = {
+				[7] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 9,
 				},
+				[8] = {
+					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["num"] = 4,
+				},
 				[9] = {
+					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["num"] = 6,
+				},
+				[10] = {
+					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
+					["num"] = 11,
+				},
+			},
+			["tasks"] = {
+			},
+		},
+		[2] = {
+			["name"] = "ANTISHIP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{DAC53A2F-79CA-42FF-A77A-F5649B601308}",
+					["num"] = 7,
+				},
+				[2] = {
+					["CLSID"] = "{DAC53A2F-79CA-42FF-A77A-F5649B601308}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 1,
+				},
+				[5] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 8,
+				},
+				[6] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 9,
+				},
+				[7] = {
+					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
+					["num"] = 11,
+				},
+				[8] = {
 					["CLSID"] = "{8A0BE8AE-58D4-4572-9263-3144C0D06364}",
 					["num"] = 5,
 				},
@@ -44,7 +87,7 @@ local unitPayloads = {
 			["tasks"] = {
 			},
 		},
-		[2] = {
+		[3] = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
@@ -87,53 +130,6 @@ local unitPayloads = {
 			["tasks"] = {
 			},
 		},
-		[3] = {
-			["name"] = "CAS",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{8A0BE8AE-58D4-4572-9263-3144C0D06364}",
-					["num"] = 5,
-				},
-				[2] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 7,
-				},
-				[3] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 3,
-				},
-				[4] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 2,
-				},
-				[5] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 1,
-				},
-				[6] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 8,
-				},
-				[7] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 9,
-				},
-				[8] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
-					["num"] = 6,
-				},
-				[11] = {
-					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
-					["num"] = 11,
-				},
-			},
-			["tasks"] = {
-			},
-		},
 		[4] = {
 			["name"] = "STRIKE",
 			["pylons"] = {
@@ -142,11 +138,11 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[2] = {
-					["CLSID"] = "{TER_9A_2L*MK-82}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 4,
 				},
 				[3] = {
-					["CLSID"] = "{TER_9A_2R*MK-82}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 6,
 				},
 				[4] = {
@@ -173,7 +169,7 @@ local unitPayloads = {
 					["CLSID"] = "{8A0BE8AE-58D4-4572-9263-3144C0D06364}",
 					["num"] = 5,
 				},
-				[11] = {
+				[10] = {
 					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
 					["num"] = 11,
 				},
@@ -185,19 +181,19 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
 					["num"] = 6,
 				},
 				[2] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
 					["num"] = 7,
 				},
 				[3] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
 					["num"] = 4,
 				},
 				[4] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
 					["num"] = 3,
 				},
 				[5] = {

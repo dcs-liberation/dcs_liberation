@@ -25,3 +25,20 @@ class ArmoredGroupGenerator(GroupGenerator):
                               self.position.y + spacing * j, self.heading)
 
 
+class FixedSizeArmorGroupGenerator(GroupGenerator):
+
+    def __init__(self, game, ground_object, unit_type, size):
+        super(FixedSizeArmorGroupGenerator, self).__init__(game, ground_object)
+        self.unit_type = unit_type
+        self.size = size
+
+    def generate(self):
+        spacing = random.randint(20, 70)
+
+        index = 0
+        for i in range(self.size):
+            index = index + 1
+            self.add_unit(self.unit_type, "Armor#" + str(index),
+                            self.position.x + spacing * i,
+                            self.position.y, self.heading)
+

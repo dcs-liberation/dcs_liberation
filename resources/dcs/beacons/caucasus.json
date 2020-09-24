@@ -1,0 +1,1157 @@
+[
+ {
+  "name": "",
+  "callsign": "AP",
+  "beacon_type": 12,
+  "hertz": 443000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "P",
+  "beacon_type": 13,
+  "hertz": 215000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AN",
+  "beacon_type": 12,
+  "hertz": 443000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "N",
+  "beacon_type": 13,
+  "hertz": 215000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ILU",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BTM",
+  "beacon_type": 5,
+  "hertz": 977000000,
+  "channel": 16
+ },
+ {
+  "name": "",
+  "callsign": "LU",
+  "beacon_type": 10,
+  "hertz": 430000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "CX",
+  "beacon_type": 12,
+  "hertz": 1050000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "C",
+  "beacon_type": 13,
+  "hertz": 250000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ICH",
+  "beacon_type": 14,
+  "hertz": 110500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 110500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "GN",
+  "beacon_type": 10,
+  "hertz": 1000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "GN",
+  "beacon_type": 2,
+  "hertz": 114300000,
+  "channel": 90
+ },
+ {
+  "name": "",
+  "callsign": "XC",
+  "beacon_type": 11,
+  "hertz": 395000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KT",
+  "beacon_type": 12,
+  "hertz": 870000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "T",
+  "beacon_type": 13,
+  "hertz": 490000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IKB",
+  "beacon_type": 14,
+  "hertz": 111500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 111500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KBL",
+  "beacon_type": 5,
+  "hertz": 1154000000,
+  "channel": 67
+ },
+ {
+  "name": "",
+  "callsign": "OC",
+  "beacon_type": 12,
+  "hertz": 625000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "O",
+  "beacon_type": 13,
+  "hertz": 303000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MB",
+  "beacon_type": 12,
+  "hertz": 625000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "M",
+  "beacon_type": 13,
+  "hertz": 303000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MB",
+  "beacon_type": 16,
+  "hertz": 838000000,
+  "channel": 38
+ },
+ {
+  "name": "",
+  "callsign": "MB",
+  "beacon_type": 17,
+  "hertz": 838000000,
+  "channel": 38
+ },
+ {
+  "name": "",
+  "callsign": "MB",
+  "beacon_type": 7,
+  "hertz": 840000000,
+  "channel": 40
+ },
+ {
+  "name": "",
+  "callsign": "KR",
+  "beacon_type": 12,
+  "hertz": 493000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "K",
+  "beacon_type": 13,
+  "hertz": 240000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "LD",
+  "beacon_type": 12,
+  "hertz": 493000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "L",
+  "beacon_type": 13,
+  "hertz": 240000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KN",
+  "beacon_type": 2,
+  "hertz": 115800000,
+  "channel": 105
+ },
+ {
+  "name": "",
+  "callsign": "KW",
+  "beacon_type": 12,
+  "hertz": 408000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "K",
+  "beacon_type": 13,
+  "hertz": 803000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "OX",
+  "beacon_type": 12,
+  "hertz": 408000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "O",
+  "beacon_type": 13,
+  "hertz": 803000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 17,
+  "hertz": 826000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 17,
+  "hertz": 826000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KW",
+  "beacon_type": 16,
+  "hertz": 826000000,
+  "channel": 26
+ },
+ {
+  "name": "",
+  "callsign": "OX",
+  "beacon_type": 16,
+  "hertz": 826000000,
+  "channel": 26
+ },
+ {
+  "name": "",
+  "callsign": "KW",
+  "beacon_type": 7,
+  "hertz": 828000000,
+  "channel": 28
+ },
+ {
+  "name": "",
+  "callsign": "IKS",
+  "beacon_type": 14,
+  "hertz": 109750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 109750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TI",
+  "beacon_type": 11,
+  "hertz": 477000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KTS",
+  "beacon_type": 5,
+  "hertz": 1005000000,
+  "channel": 44
+ },
+ {
+  "name": "KUTAISI",
+  "callsign": "KT",
+  "beacon_type": 2,
+  "hertz": 113600000,
+  "channel": 83
+ },
+ {
+  "name": "",
+  "callsign": "BP",
+  "beacon_type": 12,
+  "hertz": 342000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "B",
+  "beacon_type": 13,
+  "hertz": 923000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "INA",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "NA",
+  "beacon_type": 12,
+  "hertz": 211000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "N",
+  "beacon_type": 13,
+  "hertz": 435000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "INA",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TB",
+  "beacon_type": 2,
+  "hertz": 113700000,
+  "channel": 84
+ },
+ {
+  "name": "",
+  "callsign": "GTB",
+  "beacon_type": 5,
+  "hertz": 986000000,
+  "channel": 25
+ },
+ {
+  "name": "",
+  "callsign": "RK",
+  "beacon_type": 12,
+  "hertz": 289000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "R",
+  "beacon_type": 13,
+  "hertz": 591000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DG",
+  "beacon_type": 12,
+  "hertz": 289000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "D",
+  "beacon_type": 13,
+  "hertz": 591000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DG",
+  "beacon_type": 16,
+  "hertz": 836000000,
+  "channel": 36
+ },
+ {
+  "name": "",
+  "callsign": "DG",
+  "beacon_type": 17,
+  "hertz": 836000000,
+  "channel": 36
+ },
+ {
+  "name": "",
+  "callsign": "DG",
+  "beacon_type": 7,
+  "hertz": 834000000,
+  "channel": 34
+ },
+ {
+  "name": "",
+  "callsign": "NR",
+  "beacon_type": 12,
+  "hertz": 583000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "N",
+  "beacon_type": 13,
+  "hertz": 283000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IMW",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MD",
+  "beacon_type": 12,
+  "hertz": 583000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "D",
+  "beacon_type": 13,
+  "hertz": 283000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IMD",
+  "beacon_type": 14,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MN",
+  "beacon_type": 2,
+  "hertz": 117100000,
+  "channel": 118
+ },
+ {
+  "name": "",
+  "callsign": "DO",
+  "beacon_type": 12,
+  "hertz": 525000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "D",
+  "beacon_type": 13,
+  "hertz": 1065000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "RM",
+  "beacon_type": 12,
+  "hertz": 525000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "R",
+  "beacon_type": 13,
+  "hertz": 1065000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MZ",
+  "beacon_type": 16,
+  "hertz": 822000000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 17,
+  "hertz": 822000000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "MZ",
+  "beacon_type": 16,
+  "hertz": 822000000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 17,
+  "hertz": 822000000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "MZ",
+  "beacon_type": 7,
+  "hertz": 820000000,
+  "channel": 20
+ },
+ {
+  "name": "",
+  "callsign": "NL",
+  "beacon_type": 12,
+  "hertz": 718000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "N",
+  "beacon_type": 13,
+  "hertz": 350000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "INL",
+  "beacon_type": 14,
+  "hertz": 110500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 110500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BI",
+  "beacon_type": 12,
+  "hertz": 335000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "B",
+  "beacon_type": 13,
+  "hertz": 688000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ITS",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TSK",
+  "beacon_type": 5,
+  "hertz": 992000000,
+  "channel": 31
+ },
+ {
+  "name": "",
+  "callsign": "CO",
+  "beacon_type": 11,
+  "hertz": 761000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ISO",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AV",
+  "beacon_type": 12,
+  "hertz": 489000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "A",
+  "beacon_type": 13,
+  "hertz": 995000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IVZ",
+  "beacon_type": 14,
+  "hertz": 108750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 108750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IVZ",
+  "beacon_type": 14,
+  "hertz": 108750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "",
+  "beacon_type": 15,
+  "hertz": 108750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "VAS",
+  "beacon_type": 5,
+  "hertz": 983000000,
+  "channel": 22
+ },
+ {
+  "name": "",
+  "callsign": "NZ",
+  "beacon_type": 9,
+  "hertz": 330000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AR",
+  "beacon_type": 9,
+  "hertz": 440000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DM",
+  "beacon_type": 9,
+  "hertz": 690000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AG",
+  "beacon_type": 9,
+  "hertz": 381000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MA",
+  "beacon_type": 9,
+  "hertz": 682000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "HS",
+  "beacon_type": 9,
+  "hertz": 1065000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SM",
+  "beacon_type": 9,
+  "hertz": 662000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KW",
+  "beacon_type": 9,
+  "hertz": 995000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TC",
+  "beacon_type": 9,
+  "hertz": 470000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IL",
+  "beacon_type": 9,
+  "hertz": 300500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SH",
+  "beacon_type": 9,
+  "hertz": 389000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "OD",
+  "beacon_type": 9,
+  "hertz": 348000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BS",
+  "beacon_type": 9,
+  "hertz": 300500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KT",
+  "beacon_type": 9,
+  "hertz": 730000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ER",
+  "beacon_type": 9,
+  "hertz": 435000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KM",
+  "beacon_type": 9,
+  "hertz": 950000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SK",
+  "beacon_type": 9,
+  "hertz": 680000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DA",
+  "beacon_type": 9,
+  "hertz": 525000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DF",
+  "beacon_type": 9,
+  "hertz": 520000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "RF",
+  "beacon_type": 9,
+  "hertz": 324000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TP",
+  "beacon_type": 9,
+  "hertz": 1182000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BJ",
+  "beacon_type": 9,
+  "hertz": 735000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "NK",
+  "beacon_type": 9,
+  "hertz": 1030000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MN",
+  "beacon_type": 9,
+  "hertz": 705000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KC",
+  "beacon_type": 9,
+  "hertz": 1050000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TY",
+  "beacon_type": 9,
+  "hertz": 720000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AL",
+  "beacon_type": 9,
+  "hertz": 353000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "CA",
+  "beacon_type": 9,
+  "hertz": 311000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "XT",
+  "beacon_type": 9,
+  "hertz": 312000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KH",
+  "beacon_type": 9,
+  "hertz": 485000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "WS",
+  "beacon_type": 9,
+  "hertz": 641000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "WR",
+  "beacon_type": 9,
+  "hertz": 309500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "VM",
+  "beacon_type": 9,
+  "hertz": 740000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "WK",
+  "beacon_type": 9,
+  "hertz": 830000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TH",
+  "beacon_type": 9,
+  "hertz": 515000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KC",
+  "beacon_type": 9,
+  "hertz": 580000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SN",
+  "beacon_type": 9,
+  "hertz": 866000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DW",
+  "beacon_type": 9,
+  "hertz": 625000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SR",
+  "beacon_type": 9,
+  "hertz": 907000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "TD",
+  "beacon_type": 9,
+  "hertz": 309500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SH",
+  "beacon_type": 9,
+  "hertz": 862000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "SH",
+  "beacon_type": 9,
+  "hertz": 396000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DV",
+  "beacon_type": 9,
+  "hertz": 420000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "GE",
+  "beacon_type": 9,
+  "hertz": 300500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "GW",
+  "beacon_type": 9,
+  "hertz": 920000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "QG",
+  "beacon_type": 9,
+  "hertz": 435000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AL",
+  "beacon_type": 9,
+  "hertz": 384000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DO",
+  "beacon_type": 9,
+  "hertz": 1175000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ND",
+  "beacon_type": 9,
+  "hertz": 507000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "PR",
+  "beacon_type": 9,
+  "hertz": 1210000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "PA",
+  "beacon_type": 9,
+  "hertz": 905000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "OE",
+  "beacon_type": 9,
+  "hertz": 462000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "LY",
+  "beacon_type": 9,
+  "hertz": 670000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "MA",
+  "beacon_type": 9,
+  "hertz": 770000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "AH",
+  "beacon_type": 9,
+  "hertz": 300500,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "NK",
+  "beacon_type": 9,
+  "hertz": 1030000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "NE",
+  "beacon_type": 9,
+  "hertz": 740000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "LE",
+  "beacon_type": 9,
+  "hertz": 395000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "UH",
+  "beacon_type": 9,
+  "hertz": 528000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "RE",
+  "beacon_type": 9,
+  "hertz": 320000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "LA",
+  "beacon_type": 9,
+  "hertz": 307000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BD",
+  "beacon_type": 9,
+  "hertz": 342000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KP",
+  "beacon_type": 9,
+  "hertz": 214000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "LA",
+  "beacon_type": 9,
+  "hertz": 750000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "KS",
+  "beacon_type": 9,
+  "hertz": 1025000,
+  "channel": null
+ }
+]

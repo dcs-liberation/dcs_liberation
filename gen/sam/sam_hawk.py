@@ -10,6 +10,9 @@ class HawkGenerator(GroupGenerator):
     This generate an HAWK group
     """
 
+    name = "Hawk Site"
+    price = 115
+
     def generate(self):
         self.add_unit(AirDefence.SAM_Hawk_PCP, "PCP", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_Hawk_SR_AN_MPQ_50, "SR", self.position.x + 20, self.position.y, self.heading)

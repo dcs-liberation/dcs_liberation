@@ -10,6 +10,9 @@ class ZU23UralGenerator(GroupGenerator):
     This generate a Zu23 Ural group
     """
 
+    name = "ZU-23 Ural Group"
+    price = 64
+
     def generate(self):
         num_launchers = random.randint(2, 8)
 

@@ -16,6 +16,7 @@ class GameUpdateSignal(QObject):
 
     instance = None
     gameupdated = Signal(Game)
+    budgetupdated = Signal(Game)
     debriefingReceived = Signal(DebriefingSignal)
 
     def __init__(self):
@@ -24,6 +25,9 @@ class GameUpdateSignal(QObject):
 
     def updateGame(self, game: Game):
         self.gameupdated.emit(game)
+
+    def updateBudget(self, game: Game):
+        self.budgetupdated.emit(game)
 
     def sendDebriefing(self, game: Game, gameEvent: Event, debriefing: Debriefing):
         sig = DebriefingSignal(game, gameEvent, debriefing)

@@ -11,7 +11,7 @@ Sweden_1990 = {
 
         UH_1H,
 
-        AirDefence.SAM_Hawk_LN_M192,
+        AirDefence.SAM_Hawk_PCP,
 
         Armor.IFV_MCV_80, # Standing  as Strf 90
         Armor.MBT_Leopard_2,
