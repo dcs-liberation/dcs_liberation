@@ -124,7 +124,7 @@ RADIOS: List[Radio] = [
     # 4 preset channels (A/B/C/D)
     Radio("SCR522", MHz(100), MHz(156), step=kHz(25)),
 
-    Radio("R&S M3AR VHF", MHz(108), MHz(174), step=MHz(1)),
+    Radio("R&S M3AR VHF", MHz(120), MHz(174), step=MHz(1)),
     Radio("R&S M3AR UHF", MHz(225), MHz(400), step=MHz(1)),
 ]
 
