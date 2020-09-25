@@ -43,8 +43,6 @@ class QLiberationMap(QGraphicsView):
         QLiberationMap.instance = self
         self.game_model = game_model
 
-        self.frontline_vector_cache = {}
-
         self.setMinimumSize(800,600)
         self.setMaximumHeight(2160)
         self._zoom = 0
@@ -254,23 +252,6 @@ class QLiberationMap(QGraphicsView):
 
             else:
                 scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
-
-    def _frontline_vector(self, from_cp: ControlPoint, to_cp: ControlPoint):
-        # Cache mechanism to avoid performing frontline vector computation on every frame
-        key = str(from_cp.id) + "_" + str(to_cp.id)
-        if key in self.frontline_vector_cache:
-            return self.frontline_vector_cache[key]
-        else:
-            frontline = Conflict.frontline_vector(from_cp, to_cp, self.game.theater)
-            self.frontline_vector_cache[key] = frontline
-            return frontline
-
-    def _frontline_center(self, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[Point]:
-        frontline_vector = self._frontline_vector(from_cp, to_cp)
-        if frontline_vector:
-            return frontline_vector[0].point_from_heading(frontline_vector[1], frontline_vector[2]/2)
-        else:
-            return None
 
     def wheelEvent(self, event: QWheelEvent):
 
