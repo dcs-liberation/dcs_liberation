@@ -374,7 +374,7 @@ class AircraftData:
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
     "A-10C": AircraftData(
         inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-164"),
+        intra_flight_radio=get_radio("AN/ARC-164"), # VHF for intraflight is not accepted anymore by DCS (see https://forums.eagle.ru/showthread.php?p=4499738)
         channel_allocator=WarthogRadioChannelAllocator()
     ),
 
