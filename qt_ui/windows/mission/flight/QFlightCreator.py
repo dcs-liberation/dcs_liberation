@@ -36,8 +36,9 @@ class QFlightCreator(QDialog):
 
         layout = QVBoxLayout()
 
-        # TODO: Limit task selection to those valid for the target type.
-        self.task_selector = QFlightTypeComboBox()
+        self.task_selector = QFlightTypeComboBox(
+            self.game.theater, self.package.target
+        )
         self.task_selector.setCurrentIndex(0)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
