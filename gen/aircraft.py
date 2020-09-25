@@ -374,7 +374,7 @@ class AircraftData:
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
     "A-10C": AircraftData(
         inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-186(V) AM"),
+        intra_flight_radio=get_radio("AN/ARC-164"),
         channel_allocator=WarthogRadioChannelAllocator()
     ),
 
