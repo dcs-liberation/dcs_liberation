@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from pydcs import dcs
+import dcs
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen

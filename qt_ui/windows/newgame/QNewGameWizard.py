@@ -12,7 +12,7 @@ import qt_ui.uiconstants as CONST
 from game import db, Game
 from game.settings import Settings
 from gen import namegen
-from qt_ui.windows.newgame.QCampaignList import QCampaignList
+from qt_ui.windows.newgame.QCampaignList import QCampaignList, CAMPAIGNS
 from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
 
 
@@ -42,6 +42,8 @@ class NewGameWizard(QtWidgets.QWizard):
         redFaction = [c for c in db.FACTIONS][self.field("redFaction")]
 
         selectedCampaign = self.field("selectedCampaign")
+        if selectedCampaign is None:
+            selectedCampaign = CAMPAIGNS[0]
         conflictTheater = selectedCampaign[1]()
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]

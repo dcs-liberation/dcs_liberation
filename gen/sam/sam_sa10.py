@@ -10,6 +10,9 @@ class SA10Generator(GroupGenerator):
     This generate a SA-10 group
     """
 
+    name = "SA-10/S-300PS Battery"
+    price = 450
+
     def generate(self):
         # Command Post
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_CP_54K6, "CP", self.position.x, self.position.y, self.heading)

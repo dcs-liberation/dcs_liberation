@@ -198,6 +198,15 @@ QLabel[style="icon-plane"]{
     color:white;
 }
 
+QLabel[style="icon-armor"]{
+    background-color:#48719D;
+    min-height:24px;
+    max-width: 64px;
+    border: 1px solid black;
+    text-align:center;
+    color:white;
+}
+
 QLabel[style="BARCAP"]{
     border: 1px solid black;
     background-color: #445299;

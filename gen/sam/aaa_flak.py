@@ -11,11 +11,14 @@ class FlakGenerator(GroupGenerator):
     This generate a German flak artillery group
     """
 
-    def generate(self):
-        grid_x = random.randint(2, 4)
-        grid_y = random.randint(2, 4)
+    name = "Flak Site"
+    price = 135
 
-        spacing = random.randint(30,60)
+    def generate(self):
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
+
+        spacing = random.randint(30, 60)
 
         index = 0
         mixed = random.choice([True, False])
@@ -32,7 +35,7 @@ class FlakGenerator(GroupGenerator):
                     unit_type = random.choice(GFLAK)
 
         # Search lights
-        search_pos = self.get_circular_position(random.randint(2,5), 90)
+        search_pos = self.get_circular_position(random.randint(2,3), 90)
         for index, pos in enumerate(search_pos):
             self.add_unit(AirDefence.Flak_Searchlight_37, "SearchLight#" + str(index), pos[0], pos[1], self.heading)
 
