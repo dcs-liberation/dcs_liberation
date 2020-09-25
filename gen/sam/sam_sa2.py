@@ -10,6 +10,9 @@ class SA2Generator(GroupGenerator):
     This generate a SA-2 group
     """
 
+    name = "SA-2/S-75 Site"
+    price = 74
+
     def generate(self):
         self.add_unit(AirDefence.SAM_SR_P_19, "SR", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_SA_2_TR_SNR_75_Fan_Song, "TR", self.position.x + 20, self.position.y, self.heading)

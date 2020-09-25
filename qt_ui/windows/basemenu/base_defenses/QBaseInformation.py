@@ -23,7 +23,6 @@ class QBaseInformation(QFrame):
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
-        row = 0
 
         for g in self.cp.ground_objects:
             if g.airbase_group:

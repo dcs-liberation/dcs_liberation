@@ -10,9 +10,12 @@ class ZU23Generator(GroupGenerator):
     This generate a ZU23 flak artillery group
     """
 
+    name = "ZU-23 Group"
+    price = 54
+
     def generate(self):
-        grid_x = random.randint(2, 4)
-        grid_y = random.randint(2, 4)
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
 
         spacing = random.randint(10,40)
 

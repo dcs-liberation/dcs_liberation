@@ -10,8 +10,11 @@ class ZSU23Generator(GroupGenerator):
     This generate a ZSU 23 group
     """
 
+    name = "ZSU-23 Group"
+    price = 50
+
     def generate(self):
-        num_launchers = random.randint(2, 5)
+        num_launchers = random.randint(4, 5)
 
         positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=180)
         for i, position in enumerate(positions):

@@ -10,9 +10,12 @@ class BoforsGenerator(GroupGenerator):
     This generate a Bofors flak artillery group
     """
 
+    name = "Bofors AAA"
+    price = 75
+
     def generate(self):
-        grid_x = random.randint(2, 4)
-        grid_y = random.randint(2, 4)
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
 
         spacing = random.randint(10,40)
 

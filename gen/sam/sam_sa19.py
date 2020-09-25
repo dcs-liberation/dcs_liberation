@@ -10,6 +10,9 @@ class SA19Generator(GroupGenerator):
     This generate a SA-19 group
     """
 
+    name = "SA-19 Tunguska Group"
+    price = 90
+
     def generate(self):
         num_launchers = random.randint(1, 3)
 

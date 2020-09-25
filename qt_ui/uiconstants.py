@@ -8,7 +8,7 @@ from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
 from userdata.liberation_theme import get_theme_icons
 
-VERSION_STRING = "2.1.0"
+VERSION_STRING = "2.1.1"
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",

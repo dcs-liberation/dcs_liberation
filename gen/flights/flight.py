@@ -1,10 +1,10 @@
 from enum import Enum
 from typing import List
 
-from dcs.mission import StartType
-from dcs.unittype import UnitType
-
 from game import db
+from dcs.unittype import UnitType
+from dcs.point import MovingPoint, PointAction
+from theater.controlpoint import ControlPoint
 
 
 class FlightType(Enum):
@@ -62,7 +62,9 @@ class PredefinedWaypointCategory(Enum):
 
 class FlightWaypoint:
 
-    def __init__(self, x: float, y: float, alt=0):
+    def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
+                 alt: int = 0) -> None:
+        self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
         self.alt = alt
@@ -73,10 +75,36 @@ class FlightWaypoint:
         self.targetGroup = None
         self.obj_name = ""
         self.pretty_name = ""
-        self.waypoint_type = FlightWaypointType.TAKEOFF  # type: FlightWaypointType
-        self.category = PredefinedWaypointCategory.NOT_PREDEFINED# type: PredefinedWaypointCategory
+        self.category: PredefinedWaypointCategory = PredefinedWaypointCategory.NOT_PREDEFINED
         self.only_for_player = False
         self.data = None
+
+
+    @classmethod
+    def from_pydcs(cls, point: MovingPoint,
+                   from_cp: ControlPoint) -> "FlightWaypoint":
+        waypoint = FlightWaypoint(point.position.x, point.position.y,
+                                  point.alt)
+        waypoint.alt_type = point.alt_type
+        # Other actions exist... but none of them *should* be the first
+        # waypoint for a flight.
+        waypoint.waypoint_type = {
+            PointAction.TurningPoint: FlightWaypointType.NAV,
+            PointAction.FlyOverPoint: FlightWaypointType.NAV,
+            PointAction.FromParkingArea: FlightWaypointType.TAKEOFF,
+            PointAction.FromParkingAreaHot: FlightWaypointType.TAKEOFF,
+            PointAction.FromRunway: FlightWaypointType.TAKEOFF,
+        }[point.action]
+        if waypoint.waypoint_type == FlightWaypointType.NAV:
+            waypoint.name = "NAV"
+            waypoint.pretty_name = "Nav"
+            waypoint.description = "Nav"
+        else:
+            waypoint.name = "TAKEOFF"
+            waypoint.pretty_name = "Takeoff"
+            waypoint.description = "Takeoff"
+            waypoint.description = f"Takeoff from {from_cp.name}"
+        return waypoint
 
 
 class Flight:
@@ -113,10 +141,10 @@ class Flight:
 
 # Test
 if __name__ == '__main__':
-    from dcs.planes import A_10C
+    from pydcs.dcs.planes import A_10C
     from theater import ControlPoint, Point, List
 
     from_cp = ControlPoint(0, "AA", Point(0, 0), None, [], 0, 0)
-    f = Flight(A_10C, 4, from_cp, FlightType.CAS)
+    f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
     f.scheduled_in = 50
     print(f)

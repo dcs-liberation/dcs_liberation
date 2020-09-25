@@ -1,0 +1,408 @@
+[
+ {
+  "name": "Deir ez-Zor",
+  "callsign": "DRZ",
+  "beacon_type": 10,
+  "hertz": 295000,
+  "channel": null
+ },
+ {
+  "name": "GAZIANTEP",
+  "callsign": "GAZ",
+  "beacon_type": 10,
+  "hertz": 432000,
+  "channel": null
+ },
+ {
+  "name": "BANIAS",
+  "callsign": "BAN",
+  "beacon_type": 10,
+  "hertz": 304000,
+  "channel": null
+ },
+ {
+  "name": "ALEPPO",
+  "callsign": "ALE",
+  "beacon_type": 10,
+  "hertz": 396000,
+  "channel": null
+ },
+ {
+  "name": "KAHRAMANMARAS",
+  "callsign": "KHM",
+  "beacon_type": 10,
+  "hertz": 374000,
+  "channel": null
+ },
+ {
+  "name": "MEZZEH",
+  "callsign": "MEZ",
+  "beacon_type": 10,
+  "hertz": 358000,
+  "channel": null
+ },
+ {
+  "name": "KLEYATE",
+  "callsign": "RA",
+  "beacon_type": 10,
+  "hertz": 450000,
+  "channel": null
+ },
+ {
+  "name": "KARIATAIN",
+  "callsign": "KTN",
+  "beacon_type": 10,
+  "hertz": 372500,
+  "channel": null
+ },
+ {
+  "name": "ALEPPO",
+  "callsign": "MER",
+  "beacon_type": 10,
+  "hertz": 365000,
+  "channel": null
+ },
+ {
+  "name": "TURAIF",
+  "callsign": "TRF",
+  "beacon_type": 4,
+  "hertz": 116100000,
+  "channel": null
+ },
+ {
+  "name": "Deir ez-Zor",
+  "callsign": "DRZ",
+  "beacon_type": 4,
+  "hertz": 117000000,
+  "channel": null
+ },
+ {
+  "name": "BAYSUR",
+  "callsign": "BAR",
+  "beacon_type": 4,
+  "hertz": 113900000,
+  "channel": null
+ },
+ {
+  "name": "ALEPPO",
+  "callsign": "ALE",
+  "beacon_type": 4,
+  "hertz": 114500000,
+  "channel": null
+ },
+ {
+  "name": "MARKA",
+  "callsign": "AMN",
+  "beacon_type": 4,
+  "hertz": 116300000,
+  "channel": null
+ },
+ {
+  "name": "GAZIANTEP",
+  "callsign": "GAZ",
+  "beacon_type": 4,
+  "hertz": 116700000,
+  "channel": null
+ },
+ {
+  "name": "ROSH-PINA",
+  "callsign": "ROP",
+  "beacon_type": 4,
+  "hertz": 115300000,
+  "channel": null
+ },
+ {
+  "name": "TANF",
+  "callsign": "TAN",
+  "beacon_type": 4,
+  "hertz": 114000000,
+  "channel": null
+ },
+ {
+  "name": "NATANIA",
+  "callsign": "NAT",
+  "beacon_type": 4,
+  "hertz": 112400000,
+  "channel": null
+ },
+ {
+  "name": "KAHRAMANMARAS",
+  "callsign": "KHM",
+  "beacon_type": 4,
+  "hertz": 113900000,
+  "channel": null
+ },
+ {
+  "name": "KARIATAIN",
+  "callsign": "KTN",
+  "beacon_type": 4,
+  "hertz": 117700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IADA",
+  "beacon_type": 14,
+  "hertz": 108700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IADA",
+  "beacon_type": 15,
+  "hertz": 108700000,
+  "channel": null
+ },
+ {
+  "name": "ADANA",
+  "callsign": "ADN",
+  "beacon_type": 11,
+  "hertz": 395000000,
+  "channel": null
+ },
+ {
+  "name": "ADANA",
+  "callsign": "ADA",
+  "beacon_type": 4,
+  "hertz": 112700000,
+  "channel": null
+ },
+ {
+  "name": "KALDE",
+  "callsign": "KAD",
+  "beacon_type": 4,
+  "hertz": 112600000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IBB",
+  "beacon_type": 15,
+  "hertz": 110100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IKK",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BIL",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IBB",
+  "beacon_type": 14,
+  "hertz": 110100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "BIL",
+  "beacon_type": 15,
+  "hertz": 109500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IKK",
+  "beacon_type": 15,
+  "hertz": 110700000,
+  "channel": null
+ },
+ {
+  "name": "BEIRUT",
+  "callsign": "BOD",
+  "beacon_type": 11,
+  "hertz": 351000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IDA",
+  "beacon_type": 15,
+  "hertz": 109900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IDA",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ {
+  "name": "Damascus",
+  "callsign": "DAM",
+  "beacon_type": 4,
+  "hertz": 116000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DAML",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "DAMASCUS",
+  "callsign": "DAL",
+  "beacon_type": 11,
+  "hertz": 342000000,
+  "channel": null
+ },
+ {
+  "name": "ABYAD",
+  "callsign": "ABD",
+  "beacon_type": 10,
+  "hertz": 264000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DAML",
+  "beacon_type": 15,
+  "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "HATAY",
+  "callsign": "HTY",
+  "beacon_type": 4,
+  "hertz": 112050000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IHAT",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IHAT",
+  "beacon_type": 15,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "HATAY",
+  "callsign": "HTY",
+  "beacon_type": 10,
+  "hertz": 336000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IHTY",
+  "beacon_type": 15,
+  "hertz": 108150000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IHTY",
+  "beacon_type": 14,
+  "hertz": 108150000,
+  "channel": null
+ },
+ {
+  "name": "INCIRLIC",
+  "callsign": "DAN",
+  "beacon_type": 6,
+  "hertz": 108400000,
+  "channel": 21
+ },
+ {
+  "name": "",
+  "callsign": "IDAN",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IDAN",
+  "beacon_type": 15,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DANM",
+  "beacon_type": 15,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "DANM",
+  "beacon_type": 14,
+  "hertz": 111700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IBA",
+  "beacon_type": 15,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IBA",
+  "beacon_type": 14,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "LATAKIA",
+  "callsign": "LTK",
+  "beacon_type": 4,
+  "hertz": 114800000,
+  "channel": null
+ },
+ {
+  "name": "LATAKIA",
+  "callsign": "LTK",
+  "beacon_type": 11,
+  "hertz": 414000000,
+  "channel": null
+ },
+ {
+  "name": "PALMYRA",
+  "callsign": "PLR",
+  "beacon_type": 10,
+  "hertz": 363000,
+  "channel": null
+ },
+ {
+  "name": "PALMYRA",
+  "callsign": "PAL",
+  "beacon_type": 10,
+  "hertz": 337000,
+  "channel": null
+ },
+ {
+  "name": "RAMATDAVID",
+  "callsign": "RMD",
+  "beacon_type": 10,
+  "hertz": 368000,
+  "channel": null
+ },
+ {
+  "name": "Cheka",
+  "callsign": "CAK",
+  "beacon_type": 4,
+  "hertz": 116200000,
+  "channel": null
+ }
+]

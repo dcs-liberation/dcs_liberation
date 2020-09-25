@@ -1,68 +1,127 @@
-import logging
+import os
+from collections import defaultdict
+from dataclasses import dataclass
+import random
+from typing import List
 
 from game import db
-from .conflictgen import *
-from .naming import *
+from dcs.mission import Mission
+from .aircraft import FlightData
+from .airfields import RunwayData
+from .airsupportgen import AwacsInfo, TankerInfo
+from .armor import JtacInfo
+from .conflictgen import Conflict
+from .ground_forces.combat_stance import CombatStance
+from .radios import RadioFrequency
 
-from dcs.mission import *
+
+@dataclass
+class CommInfo:
+    """Communications information for the kneeboard."""
+    name: str
+    freq: RadioFrequency
 
 
-class BriefingGenerator:
-    freqs = None  # type: typing.List[typing.Tuple[str, str]]
-    title = ""  # type: str
-    description = ""  # type: str
-    targets = None  # type: typing.List[typing.Tuple[str, str]]
-    waypoints = None  # type: typing.List[str]
+class MissionInfoGenerator:
+    """Base type for generators of mission information for the player.
+
+    Examples of subtypes include briefing generators, kneeboard generators, etc.
+    """
+
+    def __init__(self, mission: Mission) -> None:
+        self.mission = mission
+        self.awacs: List[AwacsInfo] = []
+        self.comms: List[CommInfo] = []
+        self.flights: List[FlightData] = []
+        self.jtacs: List[JtacInfo] = []
+        self.tankers: List[TankerInfo] = []
+
+    def add_awacs(self, awacs: AwacsInfo) -> None:
+        """Adds an AWACS/GCI to the mission.
+
+        Args:
+            awacs: AWACS information.
+        """
+        self.awacs.append(awacs)
+
+    def add_comm(self, name: str, freq: RadioFrequency) -> None:
+        """Adds communications info to the mission.
+
+        Args:
+            name: Name of the radio channel.
+            freq: Frequency of the radio channel.
+        """
+        self.comms.append(CommInfo(name, freq))
+
+    def add_flight(self, flight: FlightData) -> None:
+        """Adds flight info to the mission.
+
+        Args:
+            flight: Flight information.
+        """
+        self.flights.append(flight)
+
+    def add_jtac(self, jtac: JtacInfo) -> None:
+        """Adds a JTAC to the mission.
+
+        Args:
+            jtac: JTAC information.
+        """
+        self.jtacs.append(jtac)
+
+    def add_tanker(self, tanker: TankerInfo) -> None:
+        """Adds a tanker to the mission.
+
+        Args:
+            tanker: Tanker information.
+        """
+        self.tankers.append(tanker)
+
+    def generate(self) -> None:
+        """Generates the mission information."""
+        raise NotImplementedError
+
+
+class BriefingGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, conflict: Conflict, game):
-        self.m = mission
+        super().__init__(mission)
         self.conflict = conflict
         self.game = game
+        self.title = ""
         self.description = ""
+        self.dynamic_runways: List[RunwayData] = []
 
-        self.freqs = []
-        self.targets = []
-        self.waypoints = []
+    def add_dynamic_runway(self, runway: RunwayData) -> None:
+        """Adds a dynamically generated runway to the briefing.
 
-        self.jtacs = []
+        Dynamic runways are any valid landing point that is a unit rather than a
+        map feature. These include carriers, ships with a helipad, and FARPs.
+        """
+        self.dynamic_runways.append(runway)
 
-    def append_frequency(self, name: str, frequency: str):
-        self.freqs.append((name, frequency))
+    def add_flight_description(self, flight: FlightData):
+        assert flight.client_units
 
-    def append_target(self, description: str, markpoint: str = None):
-        self.targets.append((description, markpoint))
-
-    def append_waypoint(self, description: str):
-        self.waypoints.append(description)
-
-    def add_flight_description(self, flight):
-
-        if flight.client_count <= 0:
-            return
-
-        flight_unit_name = db.unit_type_name(flight.unit_type)
+        aircraft = flight.aircraft_type
+        flight_unit_name = db.unit_type_name(aircraft)
         self.description += "-" * 50 + "\n"
-        self.description += flight_unit_name + " x " + str(flight.count) + 2 * "\n"
+        self.description += f"{flight_unit_name} x {flight.size + 2}\n\n"
 
-        self.description += "#0 -- TAKEOFF : Take off from " + flight.from_cp.name + "\n"
-        for i, wpt in enumerate(flight.points):
-            self.description += "#" + str(1+i) + " -- " + wpt.name + " : " + wpt.description + "\n"
-        self.description += "#" + str(len(flight.points) + 1) + " -- RTB\n\n"
+        for i, wpt in enumerate(flight.waypoints):
+            self.description += f"#{i + 1} -- {wpt.name} : {wpt.description}\n"
+        self.description += f"#{len(flight.waypoints) + 1} -- RTB\n\n"
 
-        group = flight.group
-        if group is not None:
-            for i, nav_target in enumerate(group.nav_target_points):
-                self.description += nav_target.text_comment + "\n"
-        self.description += "\n"
-        self.description += "-" * 50 + "\n"
-
-    def add_ally_flight_description(self, flight):
-        if flight.client_count == 0:
-            flight_unit_name = db.unit_type_name(flight.unit_type)
-            self.description += flight.flight_type.name + " " + flight_unit_name + " x " + str(flight.count) + ", departing in " + str(flight.scheduled_in) + " minutes \n"
+    def add_ally_flight_description(self, flight: FlightData):
+        assert not flight.client_units
+        aircraft = flight.aircraft_type
+        flight_unit_name = db.unit_type_name(aircraft)
+        self.description += (
+            f"{flight.flight_type.name} {flight_unit_name} x {flight.size}, "
+            f"departing in {flight.departure_delay} minutes\n"
+        )
 
     def generate(self):
-
         self.description = ""
 
         self.description += "DCS Liberation turn #" + str(self.game.turn) + "\n"
@@ -74,52 +133,50 @@ class BriefingGenerator:
         self.description += "Your flights:" + "\n"
         self.description += "=" * 15 + "\n\n"
 
-        for planner in self.game.planners.values():
-            for flight in planner.flights:
+        for flight in self.flights:
+            if flight.client_units:
                 self.add_flight_description(flight)
 
         self.description += "\n"*2
         self.description += "Planned ally flights:" + "\n"
         self.description += "=" * 15 + "\n"
-        for planner in self.game.planners.values():
-            if planner.from_cp.captured and len(planner.flights) > 0:
-                self.description += "\nFrom " + planner.from_cp.full_name + " \n"
-                self.description += "-" * 50 + "\n\n"
-                for flight in planner.flights:
-                    self.add_ally_flight_description(flight)
+        allied_flights_by_departure = defaultdict(list)
+        for flight in self.flights:
+            if not flight.client_units and flight.friendly:
+                name = flight.departure.airfield_name
+                allied_flights_by_departure[name].append(flight)
+        for departure, flights in allied_flights_by_departure.items():
+            self.description += f"\nFrom {departure}\n"
+            self.description += "-" * 50 + "\n\n"
+            for flight in flights:
+                self.add_ally_flight_description(flight)
 
-        if self.freqs:
+        if self.comms:
             self.description += "\n\nComms Frequencies:\n"
             self.description += "=" * 15 + "\n"
-            for name, freq in self.freqs:
-                self.description += "{}: {}\n".format(name, freq)
+            for comm_info in self.comms:
+                self.description += f"{comm_info.name}: {comm_info.freq}\n"
         self.description += ("-" * 50) + "\n"
 
-        for cp in self.game.theater.controlpoints:
-            if cp.captured and cp.cptype in [ControlPointType.LHA_GROUP, ControlPointType.AIRCRAFT_CARRIER_GROUP]:
-                self.description += cp.name + "\n"
-                self.description += "RADIO : 127.5 Mhz AM\n"
-                self.description += "TACAN : "
-                self.description += str(cp.tacanN)
-                if cp.tacanY:
-                    self.description += "Y"
-                else:
-                    self.description += "X"
-                self.description += " " + str(cp.tacanI) + "\n"
-
-                if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP and hasattr(cp, "icls"):
-                    self.description += "ICLS Channel : " + str(cp.icls) + "\n"
-                self.description += "-" * 50 + "\n"
+        for runway in self.dynamic_runways:
+            self.description += f"{runway.airfield_name}\n"
+            self.description += f"RADIO : {runway.atc}\n"
+            if runway.tacan is not None:
+                self.description += f"TACAN : {runway.tacan} {runway.tacan_callsign}\n"
+            if runway.icls is not None:
+                self.description += f"ICLS Channel : {runway.icls}\n"
+            self.description += "-" * 50 + "\n"
 
 
         self.description += "JTACS [F-10 Menu] : \n"
         self.description += "===================\n\n"
-        for jtac in self.game.jtacs:
-            self.description += str(jtac[0]) + " -- Code : " + str(jtac[1]) + "\n"
+        for jtac in self.jtacs:
+            self.description += f"{jtac.region} -- Code : {jtac.code}\n"
 
-        self.m.set_description_text(self.description)
+        self.mission.set_description_text(self.description)
 
-        self.m.add_picture_blue(os.path.abspath("./resources/ui/splash_screen.png"))
+        self.mission.add_picture_blue(os.path.abspath(
+            "./resources/ui/splash_screen.png"))
 
 
     def generate_ongoing_war_text(self):
@@ -180,7 +237,7 @@ class BriefingGenerator:
     def __random_frontline_sentence(self, player_base_name, enemy_base_name):
         templates = [
             "There are combats between {} and {}. ",
-            "The war on the ground is still going on between {} an {}. ",
+            "The war on the ground is still going on between {} and {}. ",
             "Our ground forces in {} are opposed to enemy forces based in {}. ",
             "Our forces from {} are fighting enemies based in {}. ",
             "There is an active frontline between {} and {}. ",

@@ -2,7 +2,7 @@ import json
 import os
 from shutil import copyfile
 
-from pydcs import dcs
+import dcs
 
 from userdata import persistency
 

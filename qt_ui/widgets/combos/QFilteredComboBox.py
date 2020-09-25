@@ -35,6 +35,7 @@ class QFilteredComboBox(QComboBox):
         super(QFilteredComboBox, self).setModel(model)
         self.pFilterModel.setSourceModel(model)
         self.completer.setModel(self.pFilterModel)
+        self.model().sort(0)
 
     def setModelColumn(self, column):
         self.completer.setCompletionColumn(column)

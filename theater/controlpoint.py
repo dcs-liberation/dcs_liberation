@@ -27,7 +27,6 @@ class ControlPoint:
     full_name = None  # type: str
     base = None  # type: theater.base.Base
     at = None  # type: db.StartPosition
-    icls = 1
     allow_sea_units = True
 
     connected_points = None  # type: typing.List[ControlPoint]
@@ -38,7 +37,6 @@ class ControlPoint:
     frontline_offset = 0.0
     cptype: ControlPointType = None
 
-    ICLS_counter = 1
     alt = 0
 
     def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: float,
@@ -63,10 +61,6 @@ class ControlPoint:
         self.base = theater.base.Base()
         self.cptype = cptype
         self.stances = {}
-        self.tacanY = False
-        self.tacanN = None
-        self.tacanI = "TAC"
-        self.icls = 0
         self.airport = None
 
     @classmethod
@@ -81,11 +75,6 @@ class ControlPoint:
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
-        cp.tacanY = False
-        cp.tacanN = random.randint(26, 49)
-        cp.tacanI = random.choice(["STE", "CVN", "CVH", "CCV", "ACC", "ARC", "GER", "ABR", "LIN", "TRU"])
-        ControlPoint.ICLS_counter = ControlPoint.ICLS_counter + 1
-        cp.icls = ControlPoint.ICLS_counter
         return cp
 
     @classmethod
@@ -93,9 +82,6 @@ class ControlPoint:
         import theater.conflicttheater
         cp = cls(id, name, at, at, theater.conflicttheater.LAND, theater.conflicttheater.SIZE_SMALL, 1,
                    has_frontline=False, cptype=ControlPointType.LHA_GROUP)
-        cp.tacanY = False
-        cp.tacanN = random.randint(1,25)
-        cp.tacanI = random.choice(["LHD", "LHA", "LHB", "LHC", "LHD", "LDS"])
         return cp
 
     @property

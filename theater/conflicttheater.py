@@ -1,6 +1,6 @@
 import typing
 
-from pydcs import dcs
+import dcs
 from dcs.mapping import Point
 
 from .controlpoint import ControlPoint

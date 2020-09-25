@@ -12,7 +12,9 @@ tests/**
 # User-specific stuff
 .idea/
 
-liberation_preferences.json
+/kneeboards
+/liberation_preferences.json
+/state.json
 
 logs/liberation.log
 
