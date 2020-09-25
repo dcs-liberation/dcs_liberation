@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from dcs.mapping import Point
-
 
 class MissionTarget(ABC):
     # TODO: These should just be required objects to the constructor
@@ -11,8 +9,3 @@ class MissionTarget(ABC):
     @abstractmethod
     def name(self) -> str:
         """The name of the mission target."""
-
-    @property
-    @abstractmethod
-    def position(self) -> Point:
-        """The position of the mission target."""

@@ -21,8 +21,9 @@ from qt_ui.models import GameModel
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
+from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint
+from theater import ControlPoint, FrontLine
 
 
 class QLiberationMap(QGraphicsView):
@@ -245,10 +246,8 @@ class QLiberationMap(QGraphicsView):
 
                     p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
                     p2 = point_from_heading(pos2[0], pos2[1], h, 25)
-                    frontline_pen = QPen(brush=CONST.COLORS["bright_red"])
-                    frontline_pen.setColor(CONST.COLORS["orange"])
-                    frontline_pen.setWidth(8)
-                    scene.addLine(p1[0], p1[1], p2[0], p2[1], pen=frontline_pen)
+                    scene.addItem(QFrontLine(p1[0], p1[1], p2[0], p2[1],
+                                             FrontLine(cp, connected_cp)))
 
             else:
                 scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)

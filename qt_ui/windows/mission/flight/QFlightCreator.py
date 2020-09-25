@@ -4,7 +4,6 @@ from typing import Optional
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
     QDialog,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
 )
@@ -20,7 +19,7 @@ from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
-from theater import ControlPoint, TheaterGroundObject
+from theater import ControlPoint, FrontLine, TheaterGroundObject
 
 
 class QFlightCreator(QDialog):
@@ -109,9 +108,6 @@ class QFlightCreator(QDialog):
 
     def populate_flight_plan(self, flight: Flight, task: FlightType) -> None:
         # TODO: Flesh out mission types.
-        # Probably most important to add, since it's a regression, is CAS. Right
-        # now it's not possible to frag a package on a front line though, and
-        # that's the only location where CAS missions are valid.
         if task == FlightType.ANTISHIP:
             logging.error("Anti-ship flight plan generation not implemented")
         elif task == FlightType.BAI:
@@ -121,7 +117,7 @@ class QFlightCreator(QDialog):
         elif task == FlightType.CAP:
             self.generate_cap(flight)
         elif task == FlightType.CAS:
-            logging.error("CAS flight plan generation not implemented")
+            self.generate_cas(flight)
         elif task == FlightType.DEAD:
             self.generate_sead(flight)
         elif task == FlightType.ELINT:
@@ -147,14 +143,26 @@ class QFlightCreator(QDialog):
                 "Troop transport flight plan generation not implemented"
             )
 
+    def generate_cas(self, flight: Flight) -> None:
+        if not isinstance(self.package.target, FrontLine):
+            logging.error(
+                "Could not create flight plan: CAS missions only valid for "
+                "front lines"
+            )
+            return
+        self.planner.generate_cas(flight, self.package.target)
+
     def generate_cap(self, flight: Flight) -> None:
-        if not isinstance(self.package.target, ControlPoint):
+        if isinstance(self.package.target, TheaterGroundObject):
             logging.error(
                 "Could not create flight plan: CAP missions for strike targets "
                 "not implemented"
             )
             return
-        self.planner.generate_barcap(flight, self.package.target)
+        if isinstance(self.package.target, FrontLine):
+            self.planner.generate_frontline_cap(flight, self.package.target)
+        else:
+            self.planner.generate_barcap(flight, self.package.target)
 
     def generate_sead(self, flight: Flight) -> None:
         self.planner.generate_sead(flight, self.package.target)

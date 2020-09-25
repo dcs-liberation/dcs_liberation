@@ -24,9 +24,7 @@ from gen.flights.flight import (
     FlightWaypoint,
     FlightWaypointType,
 )
-from theater.controlpoint import ControlPoint
-from theater.missiontarget import MissionTarget
-from theater.theatergroundobject import TheaterGroundObject
+from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
 
 MISSION_DURATION = 80
 
@@ -119,9 +117,8 @@ class FlightPlanner:
             )
 
             if len(self._get_cas_locations()) > 0:
-                enemy_cp = random.choice(self._get_cas_locations())
-                location = enemy_cp
-                self.generate_frontline_cap(flight, flight.from_cp, enemy_cp)
+                location = random.choice(self._get_cas_locations())
+                self.generate_frontline_cap(flight, location)
             else:
                 location = flight.from_cp
                 self.generate_barcap(flight, flight.from_cp)
@@ -143,7 +140,7 @@ class FlightPlanner:
                 self.doctrine["CAS_EVERY_X_MINUTES"] + 5)
             location = random.choice(cas_locations)
 
-            self.generate_cas(flight, flight.from_cp, location)
+            self.generate_cas(flight, location)
             self.plan_legacy_mission(flight, location)
 
     def commission_sead(self) -> None:
@@ -196,14 +193,15 @@ class FlightPlanner:
             self.generate_strike(flight, location)
             self.plan_legacy_mission(flight, location)
 
-    def _get_cas_locations(self):
+    def _get_cas_locations(self) -> List[FrontLine]:
         return self._get_cas_locations_for_cp(self.from_cp)
 
-    def _get_cas_locations_for_cp(self, for_cp):
+    @staticmethod
+    def _get_cas_locations_for_cp(for_cp: ControlPoint) -> List[FrontLine]:
         cas_locations = []
         for cp in for_cp.connected_points:
             if cp.captured != for_cp.captured:
-                cas_locations.append(cp)
+                cas_locations.append(FrontLine(for_cp, cp))
         return cas_locations
 
     def compute_strike_targets(self):
@@ -428,17 +426,17 @@ class FlightPlanner:
         rtb = self.generate_rtb_waypoint(flight.from_cp)
         flight.points.append(rtb)
 
+    def generate_frontline_cap(self, flight: Flight,
+                               front_line: FrontLine) -> None:
+        """Generate a CAP flight plan for the given front line.
 
-    def generate_frontline_cap(self, flight, ally_cp, enemy_cp):
-        """
-        Generate a cap flight for the frontline between ally_cp and enemy cp in order to ensure air superiority and
-        protect friendly CAP airbase
         :param flight: Flight to setup
-        :param ally_cp: CP to protect
-        :param enemy_cp: Enemy connected cp
+        :param front_line: Front line to protect.
         """
+        ally_cp, enemy_cp = front_line.control_points
         flight.flight_type = FlightType.CAP
-        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0], self.doctrine["PATROL_ALT_RANGE"][1])
+        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0],
+                                    self.doctrine["PATROL_ALT_RANGE"][1])
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(ally_cp, enemy_cp, self.game.theater)
@@ -579,19 +577,21 @@ class FlightPlanner:
         rtb = self.generate_rtb_waypoint(flight.from_cp)
         flight.points.append(rtb)
 
+    def generate_cas(self, flight: Flight, front_line: FrontLine) -> None:
+        """Generate a CAS flight plan for the given target.
 
-    def generate_cas(self, flight, from_cp, location):
-        """
-        Generate a CAS flight at a given location
         :param flight: Flight to setup
-        :param location: Location of the CAS targets
+        :param front_line: Front line containing CAS targets.
         """
+        from_cp, location = front_line.control_points
         is_helo = hasattr(flight.unit_type, "helicopter") and flight.unit_type.helicopter
         cap_alt = 1000
         flight.points = []
         flight.flight_type = FlightType.CAS
 
-        ingress, heading, distance = Conflict.frontline_vector(from_cp, location, self.game.theater)
+        ingress, heading, distance = Conflict.frontline_vector(
+            from_cp, location, self.game.theater
+        )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
