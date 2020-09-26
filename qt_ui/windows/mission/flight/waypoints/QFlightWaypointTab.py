@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QVBoxLay
 
 from game import Game
 from gen.flights.flight import Flight
+from gen.flights.flightplan import FlightPlanBuilder
 from qt_ui.windows.mission.flight.generator.QCAPMissionGenerator import QCAPMissionGenerator
 from qt_ui.windows.mission.flight.generator.QCASMissionGenerator import QCASMissionGenerator
 from qt_ui.windows.mission.flight.generator.QSEADMissionGenerator import QSEADMissionGenerator
@@ -19,7 +20,7 @@ class QFlightWaypointTab(QFrame):
         super(QFlightWaypointTab, self).__init__()
         self.flight = flight
         self.game = game
-        self.planner = self.game.planners[self.flight.from_cp.id]
+        self.planner = FlightPlanBuilder(self.game, is_player=True)
         self.init_ui()
 
     def init_ui(self):

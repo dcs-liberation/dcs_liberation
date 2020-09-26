@@ -1,705 +1,455 @@
-import math
-import operator
-import random
-from typing import Iterable, Iterator, List, Tuple
+from __future__ import annotations
 
-from dcs.unittype import FlyingType
+import logging
+import operator
+from dataclasses import dataclass
+from typing import Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
+
+from dcs.unittype import UnitType
 
 from game import db
-from game.data.doctrine import MODERN_DOCTRINE
 from game.data.radar_db import UNITS_WITH_RADAR
+from game.infos.information import Information
 from game.utils import nm_to_meter
 from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
     CAP_CAPABLE,
     CAS_CAPABLE,
-    DRONES,
     SEAD_CAPABLE,
     STRIKE_CAPABLE,
 )
 from gen.flights.flight import (
     Flight,
     FlightType,
-    FlightWaypoint,
-    FlightWaypointType,
 )
-from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
+from gen.flights.flightplan import FlightPlanBuilder
+from theater import (
+    ControlPoint,
+    FrontLine,
+    MissionTarget,
+    TheaterGroundObject,
+)
 
-MISSION_DURATION = 80
+# Avoid importing some types that cause circular imports unless type checking.
+if TYPE_CHECKING:
+    from game import Game
+    from game.inventory import GlobalAircraftInventory
 
 
-# TODO: Should not be per-control point.
-# Packages can frag flights from individual airfields, so we should be planning
-# coalition wide rather than per airfield.
-class FlightPlanner:
+class ClosestAirfields:
+    """Precalculates which control points are closes to the given target."""
 
-    def __init__(self, from_cp: ControlPoint, game: "Game") -> None:
-        # TODO : have the flight planner depend on a 'stance' setting : [Defensive, Aggresive... etc] and faction doctrine
-        # TODO : the flight planner should plan package and operations
-        self.from_cp = from_cp
-        self.game = game
-        self.flights: List[Flight] = []
-        self.potential_sead_targets: List[Tuple[TheaterGroundObject, int]] = []
-        self.potential_strike_targets: List[Tuple[TheaterGroundObject, int]] = []
-
-        if from_cp.captured:
-            self.faction = self.game.player_faction
-        else:
-            self.faction = self.game.enemy_faction
-
-        if "doctrine" in self.faction.keys():
-            self.doctrine = self.faction["doctrine"]
-        else:
-            self.doctrine = MODERN_DOCTRINE
-
-    @property
-    def aircraft_inventory(self) -> "GlobalAircraftInventory":
-        return self.game.aircraft_inventory
-
-    def reset(self) -> None:
-        """Reset the planned flights and available units."""
-        self.flights = []
-        self.potential_sead_targets = []
-        self.potential_strike_targets = []
-
-    def plan_flights(self) -> None:
-        self.reset()
-        self.compute_sead_targets()
-        self.compute_strike_targets()
-
-        self.commission_cap()
-        self.commission_cas()
-        self.commission_sead()
-        self.commission_strike()
-        # TODO: Commission anti-ship and intercept.
-
-    def plan_legacy_mission(self, flight: Flight,
-                            location: MissionTarget) -> None:
-        package = Package(location)
-        package.add_flight(flight)
-        if flight.from_cp.captured:
-            self.game.blue_ato.add_package(package)
-        else:
-            self.game.red_ato.add_package(package)
-        self.flights.append(flight)
-        self.aircraft_inventory.claim_for_flight(flight)
-
-    def get_compatible_aircraft(self, candidates: Iterable[FlyingType],
-                                minimum: int) -> List[FlyingType]:
-        inventory = self.aircraft_inventory.for_control_point(self.from_cp)
-        return [k for k, v in inventory.all_aircraft if
-                k in candidates and v >= minimum]
-
-    def alloc_aircraft(
-            self, num_flights: int, flight_size: int,
-            allowed_types: Iterable[FlyingType]) -> Iterator[FlyingType]:
-        aircraft = self.get_compatible_aircraft(allowed_types, flight_size)
-        if not aircraft:
-            return
-
-        for _ in range(num_flights):
-            yield random.choice(aircraft)
-            aircraft = self.get_compatible_aircraft(allowed_types, flight_size)
-            if not aircraft:
-                return
-
-    def commission_cap(self) -> None:
-        """Pick some aircraft to assign them to defensive CAP roles (BARCAP)."""
-        offset = random.randint(0, 5)
-        num_caps = MISSION_DURATION // self.doctrine["CAP_EVERY_X_MINUTES"]
-        for i, aircraft in enumerate(self.alloc_aircraft(num_caps, 2, CAP_CAPABLE)):
-            flight = Flight(aircraft, 2, self.from_cp, FlightType.CAP)
-
-            flight.scheduled_in = offset + i * random.randint(
-                self.doctrine["CAP_EVERY_X_MINUTES"] - 5,
-                self.doctrine["CAP_EVERY_X_MINUTES"] + 5
-            )
-
-            if len(self._get_cas_locations()) > 0:
-                location = random.choice(self._get_cas_locations())
-                self.generate_frontline_cap(flight, location)
-            else:
-                location = flight.from_cp
-                self.generate_barcap(flight, flight.from_cp)
-
-            self.plan_legacy_mission(flight, location)
-
-    def commission_cas(self) -> None:
-        """Pick some aircraft to assign them to CAS."""
-        cas_locations = self._get_cas_locations()
-        if not cas_locations:
-            return
-
-        offset = random.randint(0,5)
-        num_cas = MISSION_DURATION // self.doctrine["CAS_EVERY_X_MINUTES"]
-        for i, aircraft in enumerate(self.alloc_aircraft(num_cas, 2, CAS_CAPABLE)):
-            flight = Flight(aircraft, 2, self.from_cp, FlightType.CAS)
-            flight.scheduled_in = offset + i * random.randint(
-                self.doctrine["CAS_EVERY_X_MINUTES"] - 5,
-                self.doctrine["CAS_EVERY_X_MINUTES"] + 5)
-            location = random.choice(cas_locations)
-
-            self.generate_cas(flight, location)
-            self.plan_legacy_mission(flight, location)
-
-    def commission_sead(self) -> None:
-        """Pick some aircraft to assign them to SEAD tasks."""
-
-        if not self.potential_sead_targets:
-            return
-
-        offset = random.randint(0, 5)
-        num_sead = max(
-            MISSION_DURATION // self.doctrine["SEAD_EVERY_X_MINUTES"],
-            len(self.potential_sead_targets))
-        for i, aircraft in enumerate(self.alloc_aircraft(num_sead, 2, SEAD_CAPABLE)):
-            flight = Flight(aircraft, 2, self.from_cp,
-                            random.choice([FlightType.SEAD, FlightType.DEAD]))
-            flight.scheduled_in = offset + i * random.randint(
-                self.doctrine["SEAD_EVERY_X_MINUTES"] - 5,
-                self.doctrine["SEAD_EVERY_X_MINUTES"] + 5)
-
-            location = self.potential_sead_targets[0][0]
-            self.potential_sead_targets.pop()
-
-            self.generate_sead(flight, location, [])
-            self.plan_legacy_mission(flight, location)
-
-    def commission_strike(self) -> None:
-        """Pick some aircraft to assign them to STRIKE tasks."""
-        if not self.potential_strike_targets:
-            return
-
-        offset = random.randint(0,5)
-        num_strike = max(
-            MISSION_DURATION / self.doctrine["STRIKE_EVERY_X_MINUTES"],
-            len(self.potential_strike_targets)
+    def __init__(self, target: MissionTarget,
+                 all_control_points: List[ControlPoint]) -> None:
+        self.target = target
+        self.closest_airfields: List[ControlPoint] = sorted(
+            all_control_points, key=lambda c: self.target.distance_to(c)
         )
-        for i, aircraft in enumerate(self.alloc_aircraft(num_strike, 2, STRIKE_CAPABLE)):
-            if aircraft in DRONES:
-                count = 1
+
+    def airfields_within(self, meters: int) -> Iterator[ControlPoint]:
+        """Iterates over all airfields within the given range of the target.
+
+        Note that this iterates over *all* airfields, not just friendly
+        airfields.
+        """
+        for cp in self.closest_airfields:
+            if cp.distance_to(self.target) < meters:
+                yield cp
             else:
-                count = 2
+                break
 
-            flight = Flight(aircraft, count, self.from_cp, FlightType.STRIKE)
-            flight.scheduled_in = offset + i * random.randint(
-                self.doctrine["STRIKE_EVERY_X_MINUTES"] - 5,
-                self.doctrine["STRIKE_EVERY_X_MINUTES"] + 5)
 
-            location = self.potential_strike_targets[0][0]
-            self.potential_strike_targets.pop(0)
+@dataclass(frozen=True)
+class ProposedFlight:
+    """A flight outline proposed by the mission planner.
 
-            self.generate_strike(flight, location)
-            self.plan_legacy_mission(flight, location)
+    Proposed flights haven't been assigned specific aircraft yet. They have only
+    a task, a required number of aircraft, and a maximum distance allowed
+    between the objective and the departure airfield.
+    """
 
-    def _get_cas_locations(self) -> List[FrontLine]:
-        return self._get_cas_locations_for_cp(self.from_cp)
+    #: The flight's role.
+    task: FlightType
+
+    #: The number of aircraft required.
+    num_aircraft: int
+
+    #: The maximum distance between the objective and the departure airfield.
+    max_distance: int
+
+    def __str__(self) -> str:
+        return f"{self.task.name} {self.num_aircraft} ship"
+
+
+@dataclass(frozen=True)
+class ProposedMission:
+    """A mission outline proposed by the mission planner.
+
+    Proposed missions haven't been assigned aircraft yet. They have only an
+    objective location and a list of proposed flights that are required for the
+    mission.
+    """
+
+    #: The mission objective.
+    location: MissionTarget
+
+    #: The proposed flights that are required for the mission.
+    flights: List[ProposedFlight]
+
+    def __str__(self) -> str:
+        flights = ', '.join([str(f) for f in self.flights])
+        return f"{self.location.name}: {flights}"
+
+
+class AircraftAllocator:
+    """Finds suitable aircraft for proposed missions."""
+
+    def __init__(self, closest_airfields: ClosestAirfields,
+                 global_inventory: GlobalAircraftInventory,
+                 is_player: bool) -> None:
+        self.closest_airfields = closest_airfields
+        self.global_inventory = global_inventory
+        self.is_player = is_player
+
+    def find_aircraft_for_flight(
+            self, flight: ProposedFlight
+    ) -> Optional[Tuple[ControlPoint, UnitType]]:
+        """Finds aircraft suitable for the given mission.
+
+        Searches for aircraft capable of performing the given mission within the
+        maximum allowed range. If insufficient aircraft are available for the
+        mission, None is returned.
+
+        Note that aircraft *will* be removed from the global inventory on
+        success. This is to ensure that the same aircraft are not matched twice
+        on subsequent calls. If the found aircraft are not used, the caller is
+        responsible for returning them to the inventory.
+        """
+        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        if flight.task in cap_missions:
+            types = CAP_CAPABLE
+        elif flight.task == FlightType.CAS:
+            types = CAS_CAPABLE
+        elif flight.task in (FlightType.DEAD, FlightType.SEAD):
+            types = SEAD_CAPABLE
+        elif flight.task == FlightType.STRIKE:
+            types = STRIKE_CAPABLE
+        else:
+            logging.error(f"Unplannable flight type: {flight.task}")
+            return None
+
+        # TODO: Implement mission type weighting for aircraft.
+        # We should avoid assigning F/A-18s to CAP missions when there are F-15s
+        # available, since the F/A-18 is capable of performing other tasks that
+        # the F-15 is not capable of.
+        airfields_in_range = self.closest_airfields.airfields_within(
+            flight.max_distance
+        )
+        for airfield in airfields_in_range:
+            if not airfield.is_friendly(self.is_player):
+                continue
+            inventory = self.global_inventory.for_control_point(airfield)
+            for aircraft, available in inventory.all_aircraft:
+                if aircraft in types and available >= flight.num_aircraft:
+                    inventory.remove_aircraft(aircraft, flight.num_aircraft)
+                    return airfield, aircraft
+
+        return None
+
+
+class PackageBuilder:
+    """Builds a Package for the flights it receives."""
+
+    def __init__(self, location: MissionTarget,
+                 closest_airfields: ClosestAirfields,
+                 global_inventory: GlobalAircraftInventory,
+                 is_player: bool) -> None:
+        self.package = Package(location)
+        self.allocator = AircraftAllocator(closest_airfields, global_inventory,
+                                           is_player)
+        self.global_inventory = global_inventory
+
+    def plan_flight(self, plan: ProposedFlight) -> bool:
+        """Allocates aircraft for the given flight and adds them to the package.
+
+        If no suitable aircraft are available, False is returned. If the failed
+        flight was critical and the rest of the mission will be scrubbed, the
+        caller should return any previously planned flights to the inventory
+        using release_planned_aircraft.
+        """
+        assignment = self.allocator.find_aircraft_for_flight(plan)
+        if assignment is None:
+            return False
+        airfield, aircraft = assignment
+        flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task)
+        self.package.add_flight(flight)
+        return True
+
+    def build(self) -> Package:
+        """Returns the built package."""
+        return self.package
+
+    def release_planned_aircraft(self) -> None:
+        """Returns any planned flights to the inventory."""
+        flights = list(self.package.flights)
+        for flight in flights:
+            self.global_inventory.return_from_flight(flight)
+            self.package.remove_flight(flight)
+
+
+class ObjectiveFinder:
+    """Identifies potential objectives for the mission planner."""
+
+    # TODO: Merge into doctrine.
+    AIRFIELD_THREAT_RANGE = nm_to_meter(150)
+    SAM_THREAT_RANGE = nm_to_meter(100)
+
+    def __init__(self, game: Game, is_player: bool) -> None:
+        self.game = game
+        self.is_player = is_player
+        # TODO: Cache globally at startup to avoid generating twice per turn?
+        self.closest_airfields: Dict[str, ClosestAirfields] = {
+            t.name: ClosestAirfields(t, self.game.theater.controlpoints)
+            for t in self.all_possible_targets()
+        }
+
+    def enemy_sams(self) -> Iterator[TheaterGroundObject]:
+        """Iterates over all enemy SAM sites."""
+        # Control points might have the same ground object several times, for
+        # some reason.
+        found_targets: Set[str] = set()
+        for cp in self.enemy_control_points():
+            for ground_object in cp.ground_objects:
+                if ground_object.name in found_targets:
+                    continue
+
+                if ground_object.dcs_identifier != "AA":
+                    continue
+
+                if not self.object_has_radar(ground_object):
+                    continue
+
+                # TODO: Yield in order of most threatening.
+                # Need to sort in order of how close their defensive range comes
+                # to friendly assets. To do that we need to add effective range
+                # information to the database.
+                yield ground_object
+                found_targets.add(ground_object.name)
+
+    def threatening_sams(self) -> Iterator[TheaterGroundObject]:
+        """Iterates over enemy SAMs in threat range of friendly control points.
+
+        SAM sites are sorted by their closest proximity to any friendly control
+        point (airfield or fleet).
+        """
+        sams: List[Tuple[TheaterGroundObject, int]] = []
+        for sam in self.enemy_sams():
+            ranges: List[int] = []
+            for cp in self.friendly_control_points():
+                ranges.append(sam.distance_to(cp))
+            sams.append((sam, min(ranges)))
+
+        sams = sorted(sams, key=operator.itemgetter(1))
+        for sam, _range in sams:
+            yield sam
+
+    def strike_targets(self) -> Iterator[TheaterGroundObject]:
+        """Iterates over enemy strike targets.
+
+        Targets are sorted by their closest proximity to any friendly control
+        point (airfield or fleet).
+        """
+        targets: List[Tuple[TheaterGroundObject, int]] = []
+        # Control points might have the same ground object several times, for
+        # some reason.
+        found_targets: Set[str] = set()
+        for enemy_cp in self.enemy_control_points():
+            for ground_object in enemy_cp.ground_objects:
+                if ground_object.name in found_targets:
+                    continue
+                ranges: List[int] = []
+                for friendly_cp in self.friendly_control_points():
+                    ranges.append(ground_object.distance_to(friendly_cp))
+                targets.append((ground_object, min(ranges)))
+                found_targets.add(ground_object.name)
+        targets = sorted(targets, key=operator.itemgetter(1))
+        for target, _range in targets:
+            yield target
 
     @staticmethod
-    def _get_cas_locations_for_cp(for_cp: ControlPoint) -> List[FrontLine]:
-        cas_locations = []
-        for cp in for_cp.connected_points:
-            if cp.captured != for_cp.captured:
-                cas_locations.append(FrontLine(for_cp, cp))
-        return cas_locations
+    def object_has_radar(ground_object: TheaterGroundObject) -> bool:
+        """Returns True if the ground object contains a unit with radar."""
+        for group in ground_object.groups:
+            for unit in group.units:
+                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
+                    return True
+        return False
 
-    def compute_strike_targets(self):
+    def front_lines(self) -> Iterator[FrontLine]:
+        """Iterates over all active front lines in the theater."""
+        for cp in self.friendly_control_points():
+            for connected in cp.connected_points:
+                if connected.is_friendly(self.is_player):
+                    continue
+
+                if Conflict.has_frontline_between(cp, connected):
+                    yield FrontLine(cp, connected)
+
+    def vulnerable_control_points(self) -> Iterator[ControlPoint]:
+        """Iterates over friendly CPs that are vulnerable to enemy CPs.
+
+        Vulnerability is defined as any enemy CP within threat range of of the
+        CP.
         """
-        @return a list of potential strike targets in range
-        """
-
-        # target, distance
-        self.potential_strike_targets = []
-
-        for cp in [c for c in self.game.theater.controlpoints if c.captured != self.from_cp.captured]:
-
-            # Compute distance to current cp
-            distance = math.hypot(cp.position.x - self.from_cp.position.x,
-                                  cp.position.y - self.from_cp.position.y)
-
-            if distance > 2*self.doctrine["STRIKE_MAX_RANGE"]:
-                # Then it's unlikely any child ground object is in range
-                return
-
-            added_group = []
-            for g in cp.ground_objects:
-                if g.group_id in added_group or g.is_dead: continue
-
-                # Compute distance to current cp
-                distance = math.hypot(cp.position.x - self.from_cp.position.x,
-                                      cp.position.y - self.from_cp.position.y)
-
-                if distance < self.doctrine["SEAD_MAX_RANGE"]:
-                    self.potential_strike_targets.append((g, distance))
-                    added_group.append(g)
-
-        self.potential_strike_targets.sort(key=operator.itemgetter(1))
-
-    def compute_sead_targets(self):
-        """
-        @return a list of potential sead targets in range
-        """
-
-        # target, distance
-        self.potential_sead_targets = []
-
-        for cp in [c for c in self.game.theater.controlpoints if c.captured != self.from_cp.captured]:
-
-            # Compute distance to current cp
-            distance = math.hypot(cp.position.x - self.from_cp.position.x,
-                                  cp.position.y - self.from_cp.position.y)
-
-            # Then it's unlikely any ground object is range
-            if distance > 2*self.doctrine["SEAD_MAX_RANGE"]:
-                return
-
-            for g in cp.ground_objects:
-
-                if g.dcs_identifier == "AA":
-
-                    # Check that there is at least one unit with a radar in the ground objects unit groups
-                    number_of_units = sum([len([r for r in group.units if db.unit_type_from_name(r.type) in UNITS_WITH_RADAR]) for group in g.groups])
-                    if number_of_units <= 0:
-                        continue
-
-                    # Compute distance to current cp
-                    distance = math.hypot(cp.position.x - self.from_cp.position.x,
-                                          cp.position.y - self.from_cp.position.y)
-
-                    if distance < self.doctrine["SEAD_MAX_RANGE"]:
-                        self.potential_sead_targets.append((g, distance))
-
-        self.potential_sead_targets.sort(key=operator.itemgetter(1))
-
-    def __repr__(self):
-        return "-"*40 + "\n" + self.from_cp.name + " planned flights :\n"\
-               + "-"*40 + "\n" + "\n".join([repr(f) for f in self.flights]) + "\n" + "-"*40
-
-    def generate_strike(self, flight: Flight, location: TheaterGroundObject):
-        flight.flight_type = FlightType.STRIKE
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        heading = flight.from_cp.position.heading_between_point(location.position)
-        ingress_heading = heading - 180 + 25
-        egress_heading = heading - 180 - 25
-
-        ingress_pos = location.position.point_from_heading(ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_STRIKE,
-            ingress_pos.x,
-            ingress_pos.y,
-            self.doctrine["INGRESS_ALT"]
-        )
-        ingress_point.pretty_name = "INGRESS on " + location.obj_name
-        ingress_point.description = "INGRESS on " + location.obj_name
-        ingress_point.name = "INGRESS"
-        flight.points.append(ingress_point)
-
-        if len(location.groups) > 0 and location.dcs_identifier == "AA":
-            for g in location.groups:
-                for j, u in enumerate(g.units):
-                    point = FlightWaypoint(
-                        FlightWaypointType.TARGET_POINT,
-                        u.position.x,
-                        u.position.y,
-                        0
-                    )
-                    point.description = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
-                    point.pretty_name = "STRIKE " + "[" + str(location.obj_name) + "] : " + u.type + " #" + str(j)
-                    point.name = location.obj_name + "#" + str(j)
-                    point.only_for_player = True
-                    ingress_point.targets.append(location)
-                    flight.points.append(point)
-        else:
-            if hasattr(location, "obj_name"):
-                buildings = self.game.theater.find_ground_objects_by_obj_name(location.obj_name)
-                print(buildings)
-                for building in buildings:
-                    print("BUILDING " + str(building.is_dead) + " " + str(building.dcs_identifier))
-                    if building.is_dead:
-                        continue
-
-                    point = FlightWaypoint(
-                        FlightWaypointType.TARGET_POINT,
-                        building.position.x,
-                        building.position.y,
-                        0
-                    )
-                    point.description = "STRIKE on " + building.obj_name + " " + building.category + " [" + str(building.dcs_identifier) + " ]"
-                    point.pretty_name = "STRIKE on " + building.obj_name + " " + building.category + " [" + str(building.dcs_identifier) + " ]"
-                    point.name = building.obj_name
-                    point.only_for_player = True
-                    ingress_point.targets.append(building)
-                    flight.points.append(point)
-            else:
-                point = FlightWaypoint(
-                    FlightWaypointType.TARGET_GROUP_LOC,
-                    location.position.x,
-                    location.position.y,
-                    0
-                )
-                point.description = "STRIKE on " + location.obj_name
-                point.pretty_name = "STRIKE on " + location.obj_name
-                point.name = location.obj_name
-                point.only_for_player = True
-                ingress_point.targets.append(location)
-                flight.points.append(point)
-
-        egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress_pos.x,
-            egress_pos.y,
-            self.doctrine["EGRESS_ALT"]
-        )
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS from " + location.obj_name
-        egress_point.description = "EGRESS from " + location.obj_name
-        flight.points.append(egress_point)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
-
-    def generate_barcap(self, flight, for_cp):
-        """
-        Generate a barcap flight at a given location
-        :param flight: Flight to setup
-        :param for_cp: CP to protect
-        """
-        flight.flight_type = FlightType.BARCAP if for_cp.is_carrier else FlightType.CAP
-        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0], self.doctrine["PATROL_ALT_RANGE"][1])
-
-        if len(for_cp.ground_objects) > 0:
-            loc = random.choice(for_cp.ground_objects)
-            hdg = for_cp.position.heading_between_point(loc.position)
-            radius = random.randint(self.doctrine["CAP_PATTERN_LENGTH"][0], self.doctrine["CAP_PATTERN_LENGTH"][1])
-            orbit0p = loc.position.point_from_heading(hdg - 90, radius)
-            orbit1p = loc.position.point_from_heading(hdg + 90, radius)
-        else:
-            loc = for_cp.position.point_from_heading(random.randint(0, 360), random.randint(self.doctrine["CAP_DISTANCE_FROM_CP"][0], self.doctrine["CAP_DISTANCE_FROM_CP"][1]))
-            hdg = for_cp.position.heading_between_point(loc)
-            radius = random.randint(self.doctrine["CAP_PATTERN_LENGTH"][0], self.doctrine["CAP_PATTERN_LENGTH"][1])
-            orbit0p = loc.point_from_heading(hdg - 90, radius)
-            orbit1p = loc.point_from_heading(hdg + 90, radius)
-
-        # Create points
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        orbit0 = FlightWaypoint(
-            FlightWaypointType.PATROL_TRACK,
-            orbit0p.x,
-            orbit0p.y,
-            patrol_alt
-        )
-        orbit0.name = "ORBIT 0"
-        orbit0.description = "Standby between this point and the next one"
-        orbit0.pretty_name = "Race-track start"
-        flight.points.append(orbit0)
-
-        orbit1 = FlightWaypoint(
-            FlightWaypointType.PATROL,
-            orbit1p.x,
-            orbit1p.y,
-            patrol_alt
-        )
-        orbit1.name = "ORBIT 1"
-        orbit1.description = "Standby between this point and the previous one"
-        orbit1.pretty_name = "Race-track end"
-        flight.points.append(orbit1)
-
-        orbit0.targets.append(for_cp)
-        obj_added = []
-        for ground_object in for_cp.ground_objects:
-            if ground_object.obj_name not in obj_added and not ground_object.airbase_group:
-                orbit0.targets.append(ground_object)
-                obj_added.append(ground_object.obj_name)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
-
-    def generate_frontline_cap(self, flight: Flight,
-                               front_line: FrontLine) -> None:
-        """Generate a CAP flight plan for the given front line.
-
-        :param flight: Flight to setup
-        :param front_line: Front line to protect.
-        """
-        ally_cp, enemy_cp = front_line.control_points
-        flight.flight_type = FlightType.CAP
-        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0],
-                                    self.doctrine["PATROL_ALT_RANGE"][1])
-
-        # Find targets waypoints
-        ingress, heading, distance = Conflict.frontline_vector(ally_cp, enemy_cp, self.game.theater)
-        center = ingress.point_from_heading(heading, distance / 2)
-        orbit_center = center.point_from_heading(heading - 90, random.randint(nm_to_meter(6), nm_to_meter(15)))
-
-        combat_width = distance / 2
-        if combat_width > 500000:
-            combat_width = 500000
-        if combat_width < 35000:
-            combat_width = 35000
-
-        radius = combat_width*1.25
-        orbit0p = orbit_center.point_from_heading(heading, radius)
-        orbit1p = orbit_center.point_from_heading(heading + 180, radius)
-
-        # Create points
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        orbit0 = FlightWaypoint(
-            FlightWaypointType.PATROL_TRACK,
-            orbit0p.x,
-            orbit0p.y,
-            patrol_alt
-        )
-        orbit0.name = "ORBIT 0"
-        orbit0.description = "Standby between this point and the next one"
-        orbit0.pretty_name = "Race-track start"
-        flight.points.append(orbit0)
-
-        orbit1 = FlightWaypoint(
-            FlightWaypointType.PATROL,
-            orbit1p.x,
-            orbit1p.y,
-            patrol_alt
-        )
-        orbit1.name = "ORBIT 1"
-        orbit1.description = "Standby between this point and the previous one"
-        orbit1.pretty_name = "Race-track end"
-        flight.points.append(orbit1)
-
-        # Note : Targets of a PATROL TRACK waypoints are the points to be defended
-        orbit0.targets.append(flight.from_cp)
-        orbit0.targets.append(center)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
-
-
-    def generate_sead(self, flight, location, custom_targets = []):
-        """
-        Generate a sead flight at a given location
-        :param flight: Flight to setup
-        :param location: Location of the SEAD target
-        :param custom_targets: Custom targets if any
-        """
-        flight.points = []
-        flight.flight_type = random.choice([FlightType.SEAD, FlightType.DEAD])
-
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        heading = flight.from_cp.position.heading_between_point(location.position)
-        ingress_heading = heading - 180 + 25
-        egress_heading = heading - 180 - 25
-
-        ingress_pos = location.position.point_from_heading(ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_SEAD,
-            ingress_pos.x,
-            ingress_pos.y,
-            self.doctrine["INGRESS_ALT"]
-        )
-        ingress_point.name = "INGRESS"
-        ingress_point.pretty_name = "INGRESS on " + location.obj_name
-        ingress_point.description = "INGRESS on " + location.obj_name
-        flight.points.append(ingress_point)
-
-        if len(custom_targets) > 0:
-            for target in custom_targets:
-                point = FlightWaypoint(
-                    FlightWaypointType.TARGET_POINT,
-                    target.position.x,
-                    target.position.y,
-                    0
-                )
-                point.alt_type = "RADIO"
-                if flight.flight_type == FlightType.DEAD:
-                    point.description = "DEAD on " + target.type
-                    point.pretty_name = "DEAD on " + location.obj_name
-                    point.only_for_player = True
-                else:
-                    point.description = "SEAD on " + location.obj_name
-                    point.pretty_name = "SEAD on " + location.obj_name
-                    point.only_for_player = True
-                flight.points.append(point)
-            ingress_point.targets.append(location)
-            ingress_point.targetGroup = location
-        else:
-            point = FlightWaypoint(
-                FlightWaypointType.TARGET_GROUP_LOC,
-                location.position.x,
-                location.position.y,
-                0
+        for cp in self.friendly_control_points():
+            airfields_in_proximity = self.closest_airfields[cp.name]
+            airfields_in_threat_range = airfields_in_proximity.airfields_within(
+                self.AIRFIELD_THREAT_RANGE
             )
-            point.alt_type = "RADIO"
-            if flight.flight_type == FlightType.DEAD:
-                point.description = "DEAD on " + location.obj_name
-                point.pretty_name = "DEAD on " + location.obj_name
-                point.only_for_player = True
-            else:
-                point.description = "SEAD on " + location.obj_name
-                point.pretty_name = "SEAD on " + location.obj_name
-                point.only_for_player = True
-            ingress_point.targets.append(location)
-            ingress_point.targetGroup = location
-            flight.points.append(point)
+            for airfield in airfields_in_threat_range:
+                if not airfield.is_friendly(self.is_player):
+                    yield cp
+                    break
 
-        egress_pos = location.position.point_from_heading(egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"])
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress_pos.x,
-            egress_pos.y,
-            self.doctrine["EGRESS_ALT"]
-        )
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS from " + location.obj_name
-        egress_point.description = "EGRESS from " + location.obj_name
-        flight.points.append(egress_point)
+    def friendly_control_points(self) -> Iterator[ControlPoint]:
+        """Iterates over all friendly control points."""
+        return (c for c in self.game.theater.controlpoints if
+                c.is_friendly(self.is_player))
 
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
+    def enemy_control_points(self) -> Iterator[ControlPoint]:
+        """Iterates over all enemy control points."""
+        return (c for c in self.game.theater.controlpoints if
+                not c.is_friendly(self.is_player))
 
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
+    def all_possible_targets(self) -> Iterator[MissionTarget]:
+        """Iterates over all possible mission targets in the theater.
 
-    def generate_cas(self, flight: Flight, front_line: FrontLine) -> None:
-        """Generate a CAS flight plan for the given target.
-
-        :param flight: Flight to setup
-        :param front_line: Front line containing CAS targets.
+        Valid mission targets are control points (airfields and carriers), front
+        lines, and ground objects (SAM sites, factories, resource extraction
+        sites, etc).
         """
-        from_cp, location = front_line.control_points
-        is_helo = hasattr(flight.unit_type, "helicopter") and flight.unit_type.helicopter
-        cap_alt = 1000
-        flight.points = []
-        flight.flight_type = FlightType.CAS
+        for cp in self.game.theater.controlpoints:
+            yield cp
+            yield from cp.ground_objects
+        yield from self.front_lines()
 
-        ingress, heading, distance = Conflict.frontline_vector(
-            from_cp, location, self.game.theater
+    def closest_airfields_to(self, location: MissionTarget) -> ClosestAirfields:
+        """Returns the closest airfields to the given location."""
+        return self.closest_airfields[location.name]
+
+
+class CoalitionMissionPlanner:
+    """Coalition flight planning AI.
+
+    This class is responsible for automatically planning missions for the
+    coalition at the start of the turn.
+
+    The primary goal of the mission planner is to protect existing friendly
+    assets. Missions will be planned with the following priorities:
+
+    1. CAP for airfields/fleets in close proximity to the enemy to prevent heavy
+       losses of friendly aircraft.
+    2. CAP for front line areas to protect ground and CAS units.
+    3. DEAD to reduce necessity of SEAD for future missions.
+    4. CAS to protect friendly ground units.
+    5. Strike missions to reduce the enemy's resources.
+
+    TODO: Anti-ship and airfield strikes to reduce enemy sortie rates.
+    TODO: BAI to prevent enemy forces from reaching the front line.
+    TODO: Should fleets always have a CAP?
+
+    TODO: Stance and doctrine-specific planning behavior.
+    """
+
+    # TODO: Merge into doctrine, also limit by aircraft.
+    MAX_CAP_RANGE = nm_to_meter(100)
+    MAX_CAS_RANGE = nm_to_meter(50)
+    MAX_SEAD_RANGE = nm_to_meter(150)
+    MAX_STRIKE_RANGE = nm_to_meter(150)
+
+    def __init__(self, game: Game, is_player: bool) -> None:
+        self.game = game
+        self.is_player = is_player
+        self.objective_finder = ObjectiveFinder(self.game, self.is_player)
+        self.ato = self.game.blue_ato if is_player else self.game.red_ato
+
+    def propose_missions(self) -> Iterator[ProposedMission]:
+        """Identifies and iterates over potential mission in priority order."""
+        # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
+        for cp in self.objective_finder.vulnerable_control_points():
+            yield ProposedMission(cp, [
+                ProposedFlight(FlightType.CAP, 2, self.MAX_CAP_RANGE),
+            ])
+
+        # Find front lines, plan CAP.
+        for front_line in self.objective_finder.front_lines():
+            yield ProposedMission(front_line, [
+                ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
+                ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
+            ])
+
+        # Find enemy SAM sites with ranges that cover friendly CPs, front lines,
+        # or objects, plan DEAD.
+        # Find enemy SAM sites with ranges that extend to within 50 nmi of
+        # friendly CPs, front, lines, or objects, plan DEAD.
+        for sam in self.objective_finder.threatening_sams():
+            yield ProposedMission(sam, [
+                ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
+                # TODO: Max escort range.
+                ProposedFlight(FlightType.CAP, 2, self.MAX_SEAD_RANGE),
+            ])
+
+        # Plan strike missions.
+        for target in self.objective_finder.strike_targets():
+            yield ProposedMission(target, [
+                ProposedFlight(FlightType.STRIKE, 2, self.MAX_STRIKE_RANGE),
+                # TODO: Max escort range.
+                ProposedFlight(FlightType.SEAD, 2, self.MAX_STRIKE_RANGE),
+                ProposedFlight(FlightType.CAP, 2, self.MAX_STRIKE_RANGE),
+            ])
+
+    def plan_missions(self) -> None:
+        """Identifies and plans mission for the turn."""
+        for proposed_mission in self.propose_missions():
+            self.plan_mission(proposed_mission)
+
+        for cp in self.objective_finder.friendly_control_points():
+            inventory = self.game.aircraft_inventory.for_control_point(cp)
+            for aircraft, available in inventory.all_aircraft:
+                self.message("Unused aircraft",
+                             f"{available} {aircraft.id} from {cp}")
+
+    def plan_mission(self, mission: ProposedMission) -> None:
+        """Allocates aircraft for a proposed mission and adds it to the ATO."""
+        builder = PackageBuilder(
+            mission.location,
+            self.objective_finder.closest_airfields_to(mission.location),
+            self.game.aircraft_inventory,
+            self.is_player
         )
-        center = ingress.point_from_heading(heading, distance / 2)
-        egress = ingress.point_from_heading(heading, distance)
+        for flight in mission.flights:
+            if not builder.plan_flight(flight):
+                builder.release_planned_aircraft()
+                self.message("Insufficient aircraft",
+                             f"Not enough aircraft in range for {mission}")
+                return
 
-        ascend = self.generate_ascend_point(flight.from_cp)
-        if is_helo:
-            cap_alt = 500
-            ascend.alt = 500
-        flight.points.append(ascend)
+        package = builder.build()
+        for flight in package.flights:
+            builder = FlightPlanBuilder(self.game, self.is_player)
+            builder.populate_flight_plan(flight, package.target)
+        self.ato.add_package(package)
 
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_CAS,
-            ingress.x,
-            ingress.y,
-            cap_alt
-        )
-        ingress_point.alt_type = "RADIO"
-        ingress_point.name = "INGRESS"
-        ingress_point.pretty_name = "INGRESS"
-        ingress_point.description = "Ingress into CAS area"
-        flight.points.append(ingress_point)
+    def message(self, title, text) -> None:
+        """Emits a planning message to the player.
 
-        center_point = FlightWaypoint(
-            FlightWaypointType.CAS,
-            center.x,
-            center.y,
-            cap_alt
-        )
-        center_point.alt_type = "RADIO"
-        center_point.description = "Provide CAS"
-        center_point.name = "CAS"
-        center_point.pretty_name = "CAS"
-        flight.points.append(center_point)
-
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress.x,
-            egress.y,
-            cap_alt
-        )
-        egress_point.alt_type = "RADIO"
-        egress_point.description = "Egress from CAS area"
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS"
-        flight.points.append(egress_point)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        if is_helo:
-            descend.alt = 300
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
-
-    def generate_ascend_point(self, from_cp):
+        If the mission planner belongs to the players coalition, this emits a
+        message to the info panel.
         """
-        Generate ascend point
-        :param from_cp: Airport you're taking off from
-        :return:
-        """
-        ascend_heading = from_cp.heading
-        pos_ascend = from_cp.position.point_from_heading(ascend_heading, 10000)
-        ascend = FlightWaypoint(
-            FlightWaypointType.ASCEND_POINT,
-            pos_ascend.x,
-            pos_ascend.y,
-            self.doctrine["PATTERN_ALTITUDE"]
-        )
-        ascend.name = "ASCEND"
-        ascend.alt_type = "RADIO"
-        ascend.description = "Ascend"
-        ascend.pretty_name = "Ascend"
-        return ascend
-
-    def generate_descend_point(self, from_cp):
-        """
-        Generate approach/descend point
-        :param from_cp: Airport you're landing at
-        :return:
-        """
-        ascend_heading = from_cp.heading
-        descend = from_cp.position.point_from_heading(ascend_heading - 180, 10000)
-        descend = FlightWaypoint(
-            FlightWaypointType.DESCENT_POINT,
-            descend.x,
-            descend.y,
-            self.doctrine["PATTERN_ALTITUDE"]
-        )
-        descend.name = "DESCEND"
-        descend.alt_type = "RADIO"
-        descend.description = "Descend to pattern alt"
-        descend.pretty_name = "Descend to pattern alt"
-        return descend
-
-    def generate_rtb_waypoint(self, from_cp):
-        """
-        Generate RTB landing point
-        :param from_cp: Airport you're landing at
-        :return:
-        """
-        rtb = from_cp.position
-        rtb = FlightWaypoint(
-            FlightWaypointType.LANDING_POINT,
-            rtb.x,
-            rtb.y,
-            0
-        )
-        rtb.name = "LANDING"
-        rtb.alt_type = "RADIO"
-        rtb.description = "RTB"
-        rtb.pretty_name = "RTB"
-        return rtb
+        if self.is_player:
+            self.game.informations.append(
+                Information(title, text, self.game.turn)
+            )
+        else:
+            logging.info(f"{title}: {text}")

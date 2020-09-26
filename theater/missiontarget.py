@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from dcs.mapping import Point
 
 
 class MissionTarget(ABC):
@@ -9,3 +12,12 @@ class MissionTarget(ABC):
     @abstractmethod
     def name(self) -> str:
         """The name of the mission target."""
+
+    @property
+    @abstractmethod
+    def position(self) -> Point:
+        """The location of the mission target."""
+
+    def distance_to(self, other: MissionTarget) -> int:
+        """Computes the distance to the given mission target."""
+        return self.position.distance_to_point(other.position)

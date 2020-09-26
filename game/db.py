@@ -807,7 +807,7 @@ CARRIER_TAKEOFF_BAN = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS = {
+FACTIONS: typing.Dict[str, typing.Dict[str, typing.Any]] = {
 
     "Bluefor Modern": BLUEFOR_MODERN,
     "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,

@@ -189,15 +189,16 @@ class Operation:
             side = cp.captured
             if side:
                 country = self.current_mission.country(self.game.player_country)
+                ato = self.game.blue_ato
             else:
                 country = self.current_mission.country(self.game.enemy_country)
-            if cp.id in self.game.planners.keys():
-                self.airgen.generate_flights(
-                    cp,
-                    country,
-                    self.game.planners[cp.id],
-                    self.groundobjectgen.runways
-                )
+                ato = self.game.red_ato
+            self.airgen.generate_flights(
+                cp,
+                country,
+                ato,
+                self.groundobjectgen.runways
+            )
 
         # Generate ground units on frontline everywhere
         jtacs: List[JtacInfo] = []

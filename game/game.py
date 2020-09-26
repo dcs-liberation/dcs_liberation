@@ -4,10 +4,11 @@ from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from gen.ato import AirTaskingOrder
-from gen.flights.ai_flight_planner import FlightPlanner
+from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from .event import *
 from .settings import Settings
+
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -70,7 +71,6 @@ class Game:
         self.date = datetime(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.planners = {}
         self.ground_planners = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
@@ -104,11 +104,11 @@ class Game:
                 self.enemy_country = "Russia"
 
     @property
-    def player_faction(self):
+    def player_faction(self) -> Dict[str, Any]:
         return db.FACTIONS[self.player_name]
 
     @property
-    def enemy_faction(self):
+    def enemy_faction(self) -> Dict[str, Any]:
         return db.FACTIONS[self.enemy_name]
 
     def _roll(self, prob, mult):
@@ -244,16 +244,12 @@ class Game:
 
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
-        self.planners = {}
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
+        CoalitionMissionPlanner(self, is_player=True).plan_missions()
+        CoalitionMissionPlanner(self, is_player=False).plan_missions()
         for cp in self.theater.controlpoints:
-            if cp.has_runway():
-                planner = FlightPlanner(cp, self)
-                planner.plan_flights()
-                self.planners[cp.id] = planner
-
             if cp.has_frontline:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
