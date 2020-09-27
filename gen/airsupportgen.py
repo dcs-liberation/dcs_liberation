@@ -65,7 +65,7 @@ class AirSupportConflictGenerator:
             tanker_position = player_cp.position.point_from_heading(tanker_heading, TANKER_DISTANCE)
             tanker_group = self.mission.refuel_flight(
                 country=self.mission.country(self.game.player_country),
-                name=namegen.next_tanker_name(self.mission.country(self.game.player_country)),
+                name=namegen.next_tanker_name(self.mission.country(self.game.player_country), tanker_unit_type),
                 airport=None,
                 plane_type=tanker_unit_type,
                 position=tanker_position,
