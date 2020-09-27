@@ -267,7 +267,7 @@ class Event:
 
                 ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
 
-                player_aggresive = cp.stances[enemy_cp.id] in [CombatStance.AGGRESIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]
+                player_aggresive = cp.stances[enemy_cp.id] in [CombatStance.AGGRESSIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]
 
                 if ally_units_alive == 0:
                     player_won = False
