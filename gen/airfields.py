@@ -1527,7 +1527,10 @@ class RunwayData:
         ils: Optional[RadioFrequency] = None
         try:
             airfield = AIRFIELD_DATA[airport.name]
-            atc = airfield.atc.uhf
+            if airfield.atc is not None:
+                atc = airfield.atc.uhf
+            else:
+                atc = None
             tacan = airfield.tacan
             tacan_callsign = airfield.tacan_callsign
             ils = airfield.ils_freq(runway)
