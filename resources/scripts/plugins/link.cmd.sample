@@ -1,0 +1,29 @@
+rem this can be used to easily create hardlinks from your plugin development folder
+
+mklink mist.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\community\mist.lua
+mklink Moose.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\community\Moose.lua
+mklink CTLD.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\community\CTLD.lua
+mklink NIOD.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\community\NIOD.lua
+mklink WeatherMark.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\community\WeatherMark.lua
+mklink veaf.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veaf.lua
+mklink dcsUnits.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\dcsUnits.lua
+mklink JTACAutoLase.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\JTACAutoLase.lua
+mklink veafAssets.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafAssets.lua
+mklink veafCarrierOperations.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafCarrierOperations.lua
+mklink veafCarrierOperations2.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafCarrierOperations2.lua
+mklink veafCasMission.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafCasMission.lua
+mklink veafCombatMission.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafCombatMission.lua
+mklink veafCombatZone.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafCombatZone.lua
+mklink veafGrass.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafGrass.lua
+mklink veafInterpreter.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafInterpreter.lua
+mklink veafMarkers.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafMarkers.lua
+mklink veafMove.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafMove.lua
+mklink veafNamedPoints.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafNamedPoints.lua
+mklink veafRadio.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafRadio.lua
+mklink veafRemote.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafRemote.lua
+mklink veafSecurity.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafSecurity.lua
+mklink veafShortcuts.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafShortcuts.lua
+mklink veafSpawn.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafSpawn.lua
+mklink veafTransportMission.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafTransportMission.lua
+mklink veafUnits.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\veafUnits.lua
+mklink missionConfig.lua d:\dev\_VEAF\VEAF-Mission-Creation-Tools\src\scripts\veaf\missionConfig.lua
