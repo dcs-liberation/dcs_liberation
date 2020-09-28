@@ -11,7 +11,7 @@ import logging
 import random
 from typing import List, Optional, TYPE_CHECKING
 
-from game.data.doctrine import MODERN_DOCTRINE
+from game.data.doctrine import Doctrine, MODERN_DOCTRINE
 from .flight import Flight, FlightType, FlightWaypointType, FlightWaypoint
 from ..conflictgen import Conflict
 from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
@@ -39,7 +39,7 @@ class FlightPlanBuilder:
             faction = self.game.player_faction
         else:
             faction = self.game.enemy_faction
-        self.doctrine = faction.get("doctrine", MODERN_DOCTRINE)
+        self.doctrine: Doctrine = faction.get("doctrine", MODERN_DOCTRINE)
 
     def populate_flight_plan(self, flight: Flight,
                              objective_location: MissionTarget) -> None:
@@ -113,13 +113,13 @@ class FlightPlanBuilder:
         egress_heading = heading - 180 - 25
 
         ingress_pos = location.position.point_from_heading(
-            ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"]
+            ingress_heading, self.doctrine.ingress_egress_distance
         )
         ingress_point = FlightWaypoint(
             FlightWaypointType.INGRESS_STRIKE,
             ingress_pos.x,
             ingress_pos.y,
-            self.doctrine["INGRESS_ALT"]
+            self.doctrine.ingress_altitude
         )
         ingress_point.pretty_name = "INGRESS on " + location.name
         ingress_point.description = "INGRESS on " + location.name
@@ -187,13 +187,13 @@ class FlightPlanBuilder:
                 flight.points.append(point)
 
         egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"]
+            egress_heading, self.doctrine.ingress_egress_distance
         )
         egress_point = FlightWaypoint(
             FlightWaypointType.EGRESS,
             egress_pos.x,
             egress_pos.y,
-            self.doctrine["EGRESS_ALT"]
+            self.doctrine.egress_altitude
         )
         egress_point.name = "EGRESS"
         egress_point.pretty_name = "EGRESS from " + location.name
@@ -222,19 +222,19 @@ class FlightPlanBuilder:
             flight.flight_type = FlightType.CAP
 
         patrol_alt = random.randint(
-            self.doctrine["PATROL_ALT_RANGE"][0],
-            self.doctrine["PATROL_ALT_RANGE"][1]
+            self.doctrine.min_patrol_altitude,
+            self.doctrine.max_patrol_altitude
         )
 
         loc = location.position.point_from_heading(
             random.randint(0, 360),
-            random.randint(self.doctrine["CAP_DISTANCE_FROM_CP"][0],
-                           self.doctrine["CAP_DISTANCE_FROM_CP"][1])
+            random.randint(self.doctrine.cap_min_distance_from_cp,
+                           self.doctrine.cap_max_distance_from_cp)
         )
         hdg = location.position.heading_between_point(loc)
         radius = random.randint(
-            self.doctrine["CAP_PATTERN_LENGTH"][0],
-            self.doctrine["CAP_PATTERN_LENGTH"][1]
+            self.doctrine.cap_min_track_length,
+            self.doctrine.cap_max_track_length
         )
         orbit0p = loc.point_from_heading(hdg - 90, radius)
         orbit1p = loc.point_from_heading(hdg + 90, radius)
@@ -286,8 +286,8 @@ class FlightPlanBuilder:
 
         ally_cp, enemy_cp = location.control_points
         flight.flight_type = FlightType.CAP
-        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0],
-                                    self.doctrine["PATROL_ALT_RANGE"][1])
+        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
+                                    self.doctrine.max_patrol_altitude)
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(
@@ -372,13 +372,13 @@ class FlightPlanBuilder:
         egress_heading = heading - 180 - 25
 
         ingress_pos = location.position.point_from_heading(
-            ingress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"]
+            ingress_heading, self.doctrine.ingress_egress_distance
         )
         ingress_point = FlightWaypoint(
             FlightWaypointType.INGRESS_SEAD,
             ingress_pos.x,
             ingress_pos.y,
-            self.doctrine["INGRESS_ALT"]
+            self.doctrine.ingress_altitude
         )
         ingress_point.name = "INGRESS"
         ingress_point.pretty_name = "INGRESS on " + location.name
@@ -426,13 +426,13 @@ class FlightPlanBuilder:
             flight.points.append(point)
 
         egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine["INGRESS_EGRESS_DISTANCE"]
+            egress_heading, self.doctrine.ingress_egress_distance
         )
         egress_point = FlightWaypoint(
             FlightWaypointType.EGRESS,
             egress_pos.x,
             egress_pos.y,
-            self.doctrine["EGRESS_ALT"]
+            self.doctrine.egress_altitude
         )
         egress_point.name = "EGRESS"
         egress_point.pretty_name = "EGRESS from " + location.name
@@ -531,7 +531,7 @@ class FlightPlanBuilder:
             FlightWaypointType.ASCEND_POINT,
             pos_ascend.x,
             pos_ascend.y,
-            self.doctrine["PATTERN_ALTITUDE"]
+            self.doctrine.pattern_altitude
         )
         ascend.name = "ASCEND"
         ascend.alt_type = "RADIO"
@@ -553,7 +553,7 @@ class FlightPlanBuilder:
             FlightWaypointType.DESCENT_POINT,
             descend.x,
             descend.y,
-            self.doctrine["PATTERN_ALTITUDE"]
+            self.doctrine.pattern_altitude
         )
         descend.name = "DESCEND"
         descend.alt_type = "RADIO"
