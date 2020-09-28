@@ -17,6 +17,7 @@ from gen.flights.flight import Flight
 from qt_ui.models import AtoModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.flight.QFlightCreator import QFlightCreator
 from theater.missiontarget import MissionTarget
 
@@ -85,6 +86,12 @@ class QPackageDialog(QDialog):
         self.button_layout.addStretch()
 
         self.setLayout(self.layout)
+
+        self.finished.connect(self.on_close)
+
+    @staticmethod
+    def on_close(_result) -> None:
+        GameUpdateSignal.get_instance().redraw_flight_paths()
 
     def on_selection_changed(self, selected: QItemSelection,
                              _deselected: QItemSelection) -> None:
