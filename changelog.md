@@ -1,3 +1,6 @@
+# 2.x.x
+* **[Mission Generator]** Use inline loading of the JSON.lua library, and save to either %LIBERATION_EXPORT_DIR%, to %TEMP%, or to DCS working directory
+
 # 2.1.2
 
 ## Fixes :
