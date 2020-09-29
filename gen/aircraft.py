@@ -757,7 +757,7 @@ class AircraftConflictGenerator:
                 for parking_slot in cp.airport.parking_slots:
                     parking_slot.unit_id = None
 
-    def generate_flights(self, cp, country, ato: AirTaskingOrder,
+    def generate_flights(self, country, ato: AirTaskingOrder,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
         self.clear_parking_slots()
 
@@ -768,7 +768,8 @@ class AircraftConflictGenerator:
                     logging.info("Flight not generated: culled")
                     continue
                 logging.info(f"Generating flight: {flight.unit_type}")
-                group = self.generate_planned_flight(cp, country, flight)
+                group = self.generate_planned_flight(flight.from_cp, country,
+                                                     flight)
                 self.setup_flight_group(group, flight, flight.flight_type,
                                         dynamic_runways)
                 self.setup_group_activation_trigger(flight, group)

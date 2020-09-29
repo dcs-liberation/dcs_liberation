@@ -185,20 +185,16 @@ class Operation:
         self.airsupportgen.generate(self.is_awacs_enabled)
 
         # Generate Activity on the map
-        for cp in self.game.theater.controlpoints:
-            side = cp.captured
-            if side:
-                country = self.current_mission.country(self.game.player_country)
-                ato = self.game.blue_ato
-            else:
-                country = self.current_mission.country(self.game.enemy_country)
-                ato = self.game.red_ato
-            self.airgen.generate_flights(
-                cp,
-                country,
-                ato,
-                self.groundobjectgen.runways
-            )
+        self.airgen.generate_flights(
+            self.current_mission.country(self.game.player_country),
+            self.game.blue_ato,
+            self.groundobjectgen.runways
+        )
+        self.airgen.generate_flights(
+            self.current_mission.country(self.game.enemy_country),
+            self.game.red_ato,
+            self.groundobjectgen.runways
+        )
 
         # Generate ground units on frontline everywhere
         jtacs: List[JtacInfo] = []

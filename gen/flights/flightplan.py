@@ -11,12 +11,14 @@ import logging
 import random
 from typing import List, Optional, TYPE_CHECKING
 
-from game.data.doctrine import Doctrine, MODERN_DOCTRINE
-from .flight import Flight, FlightType, FlightWaypointType, FlightWaypoint
-from ..conflictgen import Conflict
-from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
-from game.utils import nm_to_meter
 from dcs.unit import Unit
+
+from game.data.doctrine import Doctrine, MODERN_DOCTRINE
+from game.utils import nm_to_meter
+from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
+from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
+from .waypointbuilder import WaypointBuilder
+from ..conflictgen import Conflict
 
 if TYPE_CHECKING:
     from game import Game
@@ -103,108 +105,54 @@ class FlightPlanBuilder:
 
         # TODO: Stop clobbering flight type.
         flight.flight_type = FlightType.STRIKE
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
 
         heading = flight.from_cp.position.heading_between_point(
             location.position
         )
         ingress_heading = heading - 180 + 25
-        egress_heading = heading - 180 - 25
 
         ingress_pos = location.position.point_from_heading(
             ingress_heading, self.doctrine.ingress_egress_distance
         )
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_STRIKE,
-            ingress_pos.x,
-            ingress_pos.y,
-            self.doctrine.ingress_altitude
-        )
-        ingress_point.pretty_name = "INGRESS on " + location.name
-        ingress_point.description = "INGRESS on " + location.name
-        ingress_point.name = "INGRESS"
-        flight.points.append(ingress_point)
 
-        if len(location.groups) > 0 and location.dcs_identifier == "AA":
-            for g in location.groups:
-                for j, u in enumerate(g.units):
-                    point = FlightWaypoint(
-                        FlightWaypointType.TARGET_POINT,
-                        u.position.x,
-                        u.position.y,
-                        0
-                    )
-                    point.description = (
-                        f"STRIKE [{location.name}] : {u.type} #{j}"
-                    )
-                    point.pretty_name = (
-                        f"STRIKE [{location.name}] : {u.type} #{j}"
-                    )
-                    point.name = f"{location.name} #{j}"
-                    point.only_for_player = True
-                    ingress_point.targets.append(location)
-                    flight.points.append(point)
-        else:
-            if hasattr(location, "obj_name"):
-                buildings = self.game.theater.find_ground_objects_by_obj_name(
-                    location.obj_name
-                )
-                for building in buildings:
-                    if building.is_dead:
-                        continue
-
-                    point = FlightWaypoint(
-                        FlightWaypointType.TARGET_POINT,
-                        building.position.x,
-                        building.position.y,
-                        0
-                    )
-                    point.description = (
-                        f"STRIKE on {building.obj_name} {building.category} "
-                        f"[{building.dcs_identifier}]"
-                    )
-                    point.pretty_name = (
-                        f"STRIKE on {building.obj_name} {building.category} "
-                        f"[{building.dcs_identifier}]"
-                    )
-                    point.name = building.obj_name
-                    point.only_for_player = True
-                    ingress_point.targets.append(building)
-                    flight.points.append(point)
-            else:
-                point = FlightWaypoint(
-                    FlightWaypointType.TARGET_GROUP_LOC,
-                    location.position.x,
-                    location.position.y,
-                    0
-                )
-                point.description = "STRIKE on " + location.name
-                point.pretty_name = "STRIKE on " + location.name
-                point.name = location.name
-                point.only_for_player = True
-                ingress_point.targets.append(location)
-                flight.points.append(point)
-
+        egress_heading = heading - 180 - 25
         egress_pos = location.position.point_from_heading(
             egress_heading, self.doctrine.ingress_egress_distance
         )
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress_pos.x,
-            egress_pos.y,
-            self.doctrine.egress_altitude
-        )
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS from " + location.name
-        egress_point.description = "EGRESS from " + location.name
-        flight.points.append(egress_point)
 
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp)
+        builder.ingress_strike(ingress_pos, location)
 
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
+        if len(location.groups) > 0 and location.dcs_identifier == "AA":
+            # TODO: Replace with DEAD?
+            # Strike missions on SEAD targets target units.
+            for g in location.groups:
+                for j, u in enumerate(g.units):
+                    builder.strike_point(u, f"{u.type} #{j}", location)
+        else:
+            # TODO: Does this actually happen?
+            # ConflictTheater is built with the belief that multiple ground
+            # objects have the same name. If that's the case,
+            # TheaterGroundObject needs some refactoring because it behaves very
+            # differently for SAM sites than it does for strike targets.
+            buildings = self.game.theater.find_ground_objects_by_obj_name(
+                location.obj_name
+            )
+            for building in buildings:
+                if building.is_dead:
+                    continue
+
+                builder.strike_point(
+                    building,
+                    f"{building.obj_name} {building.category}",
+                    location
+                )
+
+        builder.egress(egress_pos, location)
+        builder.rtb(flight.from_cp)
+
+        flight.points = builder.build()
 
     def generate_barcap(self, flight: Flight, location: MissionTarget) -> None:
         """Generate a BARCAP flight at a given location.
@@ -239,39 +187,11 @@ class FlightPlanBuilder:
         orbit0p = loc.point_from_heading(hdg - 90, radius)
         orbit1p = loc.point_from_heading(hdg + 90, radius)
 
-        # Create points
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        orbit0 = FlightWaypoint(
-            FlightWaypointType.PATROL_TRACK,
-            orbit0p.x,
-            orbit0p.y,
-            patrol_alt
-        )
-        orbit0.name = "ORBIT 0"
-        orbit0.description = "Standby between this point and the next one"
-        orbit0.pretty_name = "Race-track start"
-        flight.points.append(orbit0)
-
-        orbit1 = FlightWaypoint(
-            FlightWaypointType.PATROL,
-            orbit1p.x,
-            orbit1p.y,
-            patrol_alt
-        )
-        orbit1.name = "ORBIT 1"
-        orbit1.description = "Standby between this point and the previous one"
-        orbit1.pretty_name = "Race-track end"
-        flight.points.append(orbit1)
-
-        orbit0.targets.append(location)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp)
+        builder.race_track(orbit0p, orbit1p, patrol_alt)
+        builder.rtb(flight.from_cp)
+        flight.points = builder.build()
 
     def generate_frontline_cap(self, flight: Flight,
                                location: MissionTarget) -> None:
@@ -309,40 +229,11 @@ class FlightPlanBuilder:
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
         # Create points
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
-
-        orbit0 = FlightWaypoint(
-            FlightWaypointType.PATROL_TRACK,
-            orbit0p.x,
-            orbit0p.y,
-            patrol_alt
-        )
-        orbit0.name = "ORBIT 0"
-        orbit0.description = "Standby between this point and the next one"
-        orbit0.pretty_name = "Race-track start"
-        flight.points.append(orbit0)
-
-        orbit1 = FlightWaypoint(
-            FlightWaypointType.PATROL,
-            orbit1p.x,
-            orbit1p.y,
-            patrol_alt
-        )
-        orbit1.name = "ORBIT 1"
-        orbit1.description = "Standby between this point and the previous one"
-        orbit1.pretty_name = "Race-track end"
-        flight.points.append(orbit1)
-
-        # Note: Targets of PATROL TRACK waypoints are the points to be defended.
-        orbit0.targets.append(flight.from_cp)
-        orbit0.targets.append(center)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp)
+        builder.race_track(orbit0p, orbit1p, patrol_alt)
+        builder.rtb(flight.from_cp)
+        flight.points = builder.build()
 
     def generate_sead(self, flight: Flight, location: MissionTarget,
                       custom_targets: Optional[List[Unit]] = None) -> None:
@@ -359,33 +250,30 @@ class FlightPlanBuilder:
         if custom_targets is None:
             custom_targets = []
 
-        flight.points = []
         flight.flight_type = random.choice([FlightType.SEAD, FlightType.DEAD])
-
-        ascend = self.generate_ascend_point(flight.from_cp)
-        flight.points.append(ascend)
 
         heading = flight.from_cp.position.heading_between_point(
             location.position
         )
         ingress_heading = heading - 180 + 25
-        egress_heading = heading - 180 - 25
 
         ingress_pos = location.position.point_from_heading(
             ingress_heading, self.doctrine.ingress_egress_distance
         )
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_SEAD,
-            ingress_pos.x,
-            ingress_pos.y,
-            self.doctrine.ingress_altitude
-        )
-        ingress_point.name = "INGRESS"
-        ingress_point.pretty_name = "INGRESS on " + location.name
-        ingress_point.description = "INGRESS on " + location.name
-        flight.points.append(ingress_point)
 
-        if len(custom_targets) > 0:
+        egress_heading = heading - 180 - 25
+        egress_pos = location.position.point_from_heading(
+            egress_heading, self.doctrine.ingress_egress_distance
+        )
+
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp)
+        builder.ingress_sead(ingress_pos, location)
+
+        # TODO: Unify these.
+        # There doesn't seem to be any reason to treat the UI fragged missions
+        # different from the automatic missions.
+        if custom_targets:
             for target in custom_targets:
                 point = FlightWaypoint(
                     FlightWaypointType.TARGET_POINT,
@@ -395,55 +283,19 @@ class FlightPlanBuilder:
                 )
                 point.alt_type = "RADIO"
                 if flight.flight_type == FlightType.DEAD:
-                    point.description = "DEAD on " + target.type
-                    point.pretty_name = "DEAD on " + location.name
-                    point.only_for_player = True
+                    builder.dead_point(target, location.name, location)
                 else:
-                    point.description = "SEAD on " + location.name
-                    point.pretty_name = "SEAD on " + location.name
-                    point.only_for_player = True
-                flight.points.append(point)
-            ingress_point.targets.append(location)
-            ingress_point.targetGroup = location
+                    builder.sead_point(target, location.name, location)
         else:
-            point = FlightWaypoint(
-                FlightWaypointType.TARGET_GROUP_LOC,
-                location.position.x,
-                location.position.y,
-                0
-            )
-            point.alt_type = "RADIO"
             if flight.flight_type == FlightType.DEAD:
-                point.description = "DEAD on " + location.name
-                point.pretty_name = "DEAD on " + location.name
-                point.only_for_player = True
+                builder.dead_area(location)
             else:
-                point.description = "SEAD on " + location.name
-                point.pretty_name = "SEAD on " + location.name
-                point.only_for_player = True
-            ingress_point.targets.append(location)
-            ingress_point.targetGroup = location
-            flight.points.append(point)
+                builder.sead_area(location)
 
-        egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine.ingress_egress_distance
-        )
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress_pos.x,
-            egress_pos.y,
-            self.doctrine.egress_altitude
-        )
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS from " + location.name
-        egress_point.description = "EGRESS from " + location.name
-        flight.points.append(egress_point)
+        builder.egress(egress_pos, location)
+        builder.rtb(flight.from_cp)
 
-        descend = self.generate_descend_point(flight.from_cp)
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
+        flight.points = builder.build()
 
     def generate_cas(self, flight: Flight, location: MissionTarget) -> None:
         """Generate a CAS flight plan for the given target.
@@ -455,89 +307,36 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        from_cp, location = location.control_points
         is_helo = getattr(flight.unit_type, "helicopter", False)
-        cap_alt = 1000
-        flight.points = []
+        cap_alt = 500 if is_helo else 1000
         flight.flight_type = FlightType.CAS
 
         ingress, heading, distance = Conflict.frontline_vector(
-            from_cp, location, self.game.theater
+            location.control_points[0], location.control_points[1],
+            self.game.theater
         )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
-        ascend = self.generate_ascend_point(flight.from_cp)
-        if is_helo:
-            cap_alt = 500
-            ascend.alt = 500
-        flight.points.append(ascend)
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp, is_helo)
+        builder.ingress_cas(ingress, location)
+        builder.cas(center, cap_alt)
+        builder.egress(egress, location)
+        builder.rtb(flight.from_cp, is_helo)
 
-        ingress_point = FlightWaypoint(
-            FlightWaypointType.INGRESS_CAS,
-            ingress.x,
-            ingress.y,
-            cap_alt
-        )
-        ingress_point.alt_type = "RADIO"
-        ingress_point.name = "INGRESS"
-        ingress_point.pretty_name = "INGRESS"
-        ingress_point.description = "Ingress into CAS area"
-        flight.points.append(ingress_point)
+        flight.points = builder.build()
 
-        center_point = FlightWaypoint(
-            FlightWaypointType.CAS,
-            center.x,
-            center.y,
-            cap_alt
-        )
-        center_point.alt_type = "RADIO"
-        center_point.description = "Provide CAS"
-        center_point.name = "CAS"
-        center_point.pretty_name = "CAS"
-        flight.points.append(center_point)
-
-        egress_point = FlightWaypoint(
-            FlightWaypointType.EGRESS,
-            egress.x,
-            egress.y,
-            cap_alt
-        )
-        egress_point.alt_type = "RADIO"
-        egress_point.description = "Egress from CAS area"
-        egress_point.name = "EGRESS"
-        egress_point.pretty_name = "EGRESS"
-        flight.points.append(egress_point)
-
-        descend = self.generate_descend_point(flight.from_cp)
-        if is_helo:
-            descend.alt = 300
-        flight.points.append(descend)
-
-        rtb = self.generate_rtb_waypoint(flight.from_cp)
-        flight.points.append(rtb)
-
+    # TODO: Make a model for the waypoint builder and use that in the UI.
     def generate_ascend_point(self, departure: ControlPoint) -> FlightWaypoint:
         """Generate ascend point.
 
         Args:
             departure: Departure airfield or carrier.
         """
-        ascend_heading = departure.heading
-        pos_ascend = departure.position.point_from_heading(
-            ascend_heading, 10000
-        )
-        ascend = FlightWaypoint(
-            FlightWaypointType.ASCEND_POINT,
-            pos_ascend.x,
-            pos_ascend.y,
-            self.doctrine.pattern_altitude
-        )
-        ascend.name = "ASCEND"
-        ascend.alt_type = "RADIO"
-        ascend.description = "Ascend"
-        ascend.pretty_name = "Ascend"
-        return ascend
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(departure)
+        return builder.build()[0]
 
     def generate_descend_point(self, arrival: ControlPoint) -> FlightWaypoint:
         """Generate approach/descend point.
@@ -545,21 +344,9 @@ class FlightPlanBuilder:
         Args:
             arrival: Arrival airfield or carrier.
         """
-        ascend_heading = arrival.heading
-        descend = arrival.position.point_from_heading(
-            ascend_heading - 180, 10000
-        )
-        descend = FlightWaypoint(
-            FlightWaypointType.DESCENT_POINT,
-            descend.x,
-            descend.y,
-            self.doctrine.pattern_altitude
-        )
-        descend.name = "DESCEND"
-        descend.alt_type = "RADIO"
-        descend.description = "Descend to pattern alt"
-        descend.pretty_name = "Descend to pattern alt"
-        return descend
+        builder = WaypointBuilder(self.doctrine)
+        builder.descent(arrival)
+        return builder.build()[0]
 
     @staticmethod
     def generate_rtb_waypoint(arrival: ControlPoint) -> FlightWaypoint:
@@ -568,15 +355,6 @@ class FlightPlanBuilder:
         Args:
             arrival: Arrival airfield or carrier.
         """
-        rtb = arrival.position
-        rtb = FlightWaypoint(
-            FlightWaypointType.LANDING_POINT,
-            rtb.x,
-            rtb.y,
-            0
-        )
-        rtb.name = "LANDING"
-        rtb.alt_type = "RADIO"
-        rtb.description = "RTB"
-        rtb.pretty_name = "RTB"
-        return rtb
+        builder = WaypointBuilder(self.doctrine)
+        builder.land(arrival)
+        return builder.build()[0]

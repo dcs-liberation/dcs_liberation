@@ -19,6 +19,10 @@ from gen.flights.ai_flight_planner_db import (
     SEAD_CAPABLE,
     STRIKE_CAPABLE,
 )
+from gen.flights.closestairfields import (
+    ClosestAirfields,
+    ObjectiveDistanceCache,
+)
 from gen.flights.flight import (
     Flight,
     FlightType,
@@ -35,29 +39,6 @@ from theater import (
 if TYPE_CHECKING:
     from game import Game
     from game.inventory import GlobalAircraftInventory
-
-
-class ClosestAirfields:
-    """Precalculates which control points are closes to the given target."""
-
-    def __init__(self, target: MissionTarget,
-                 all_control_points: List[ControlPoint]) -> None:
-        self.target = target
-        self.closest_airfields: List[ControlPoint] = sorted(
-            all_control_points, key=lambda c: self.target.distance_to(c)
-        )
-
-    def airfields_within(self, meters: int) -> Iterator[ControlPoint]:
-        """Iterates over all airfields within the given range of the target.
-
-        Note that this iterates over *all* airfields, not just friendly
-        airfields.
-        """
-        for cp in self.closest_airfields:
-            if cp.distance_to(self.target) < meters:
-                yield cp
-            else:
-                break
 
 
 @dataclass(frozen=True)
@@ -208,11 +189,6 @@ class ObjectiveFinder:
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
         self.is_player = is_player
-        # TODO: Cache globally at startup to avoid generating twice per turn?
-        self.closest_airfields: Dict[str, ClosestAirfields] = {
-            t.name: ClosestAirfields(t, self.game.theater.controlpoints)
-            for t in self.all_possible_targets()
-        }
 
     def enemy_sams(self) -> Iterator[TheaterGroundObject]:
         """Iterates over all enemy SAM sites."""
@@ -303,7 +279,7 @@ class ObjectiveFinder:
         CP.
         """
         for cp in self.friendly_control_points():
-            airfields_in_proximity = self.closest_airfields[cp.name]
+            airfields_in_proximity = self.closest_airfields_to(cp)
             airfields_in_threat_range = airfields_in_proximity.airfields_within(
                 self.AIRFIELD_THREAT_RANGE
             )
@@ -336,7 +312,7 @@ class ObjectiveFinder:
 
     def closest_airfields_to(self, location: MissionTarget) -> ClosestAirfields:
         """Returns the closest airfields to the given location."""
-        return self.closest_airfields[location.name]
+        return ObjectiveDistanceCache.get_closest_airfields(location)
 
 
 class CoalitionMissionPlanner:

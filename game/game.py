@@ -5,6 +5,7 @@ from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from gen.ato import AirTaskingOrder
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from .event import *
 from .settings import Settings
@@ -204,6 +205,7 @@ class Game:
             return event and event.name and event.name == self.player_name
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
+        ObjectiveDistanceCache.set_theater(self.theater)
 
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
