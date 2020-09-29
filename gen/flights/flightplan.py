@@ -16,6 +16,7 @@ from dcs.unit import Unit
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE
 from game.utils import nm_to_meter
 from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
+from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .waypointbuilder import WaypointBuilder
 from ..conflictgen import Conflict
@@ -37,6 +38,7 @@ class FlightPlanBuilder:
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
+        self.is_player = is_player
         if is_player:
             faction = self.game.player_faction
         else:
@@ -174,18 +176,30 @@ class FlightPlanBuilder:
             self.doctrine.max_patrol_altitude
         )
 
+        closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
+        for airfield in closest_cache.closest_airfields:
+            if airfield.captured != self.is_player:
+                closest_airfield = airfield
+                break
+        else:
+            logging.error("Could not find any enemy airfields")
+            return
+
+        heading = location.position.heading_between_point(
+            closest_airfield.position
+        )
+
         loc = location.position.point_from_heading(
-            random.randint(0, 360),
+            heading,
             random.randint(self.doctrine.cap_min_distance_from_cp,
                            self.doctrine.cap_max_distance_from_cp)
         )
-        hdg = location.position.heading_between_point(loc)
         radius = random.randint(
             self.doctrine.cap_min_track_length,
             self.doctrine.cap_max_track_length
         )
-        orbit0p = loc.point_from_heading(hdg - 90, radius)
-        orbit1p = loc.point_from_heading(hdg + 90, radius)
+        orbit0p = loc.point_from_heading(heading - 90, radius)
+        orbit1p = loc.point_from_heading(heading + 90, radius)
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
