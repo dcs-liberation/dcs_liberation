@@ -39,30 +39,45 @@ write_state = function()
     -- messageAll("Done writing DCS Liberation state.")
 end
 
-
 debriefing_file_location = nil
-if not debriefing_file_location then
+if dcsLiberation then 
+    debriefing_file_location = dcsLiberation.installPath
+end
+if debriefing_file_location then
+    logger:info("Using DCS Liberation install folder for state.json")
+else
     if os then
         debriefing_file_location = os.getenv("LIBERATION_EXPORT_DIR")
         if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
     end
-end
-if not debriefing_file_location then
-    if os then
-        debriefing_file_location = os.getenv("TEMP")
-        if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
-    end
-end
-if not debriefing_file_location then
-    if lfs then
-        debriefing_file_location = lfs.writedir()
+    if debriefing_file_location then
+        logger:info("Using LIBERATION_EXPORT_DIR environment variable for state.json")
+    else
+        if os then
+            debriefing_file_location = os.getenv("TEMP")
+            if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
+        end
+        if debriefing_file_location then
+            logger:info("Using TEMP environment variable for state.json")
+        else
+            if lfs then
+                debriefing_file_location = lfs.writedir()
+            end
+            if debriefing_file_location then
+                logger:info("Using DCS working directory for state.json")
+            end
+        end
     end
 end
 if debriefing_file_location then
-    debriefing_file_location = debriefing_file_location .. "state.json"
+    local filename = "state.json"
+    if not debriefing_file_location:sub(-#filename) == filename then
+        debriefing_file_location = debriefing_file_location .. filename
+    end
+    logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
+else
+    logger:error("No usable storage path for state.json")
 end
-
-logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
 
 write_state_error_handling = function()
     if pcall(write_state) then
