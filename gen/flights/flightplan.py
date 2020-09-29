@@ -67,6 +67,8 @@ class FlightPlanBuilder:
                 self.generate_sead(flight, objective_location)
             elif task == FlightType.ELINT:
                 logging.error("ELINT flight plan generation not implemented")
+            elif task == FlightType.ESCORT:
+                self.generate_escort(flight, objective_location)
             elif task == FlightType.EVAC:
                 logging.error("Evac flight plan generation not implemented")
             elif task == FlightType.EWAR:
@@ -306,6 +308,39 @@ class FlightPlanBuilder:
                 builder.sead_area(location)
 
         builder.egress(egress_pos, location)
+        builder.rtb(flight.from_cp)
+
+        flight.points = builder.build()
+
+    def generate_escort(self, flight: Flight, location: MissionTarget) -> None:
+        flight.flight_type = FlightType.ESCORT
+
+        # TODO: Decide common waypoints for the package ahead of time.
+        # Packages should determine some common points like push, ingress,
+        # egress, and split points ahead of time so they can be shared by all
+        # flights.
+        heading = flight.from_cp.position.heading_between_point(
+            location.position
+        )
+        ingress_heading = heading - 180 + 25
+
+        ingress_pos = location.position.point_from_heading(
+            ingress_heading, self.doctrine.ingress_egress_distance
+        )
+
+        egress_heading = heading - 180 - 25
+        egress_pos = location.position.point_from_heading(
+            egress_heading, self.doctrine.ingress_egress_distance
+        )
+
+        patrol_alt = random.randint(
+            self.doctrine.min_patrol_altitude,
+            self.doctrine.max_patrol_altitude
+        )
+
+        builder = WaypointBuilder(self.doctrine)
+        builder.ascent(flight.from_cp)
+        builder.race_track(ingress_pos, egress_pos, patrol_alt)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()

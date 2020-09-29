@@ -929,6 +929,14 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
             group.points[0].tasks.append(OptRestrictJettison(True))
+        elif flight_type == FlightType.ESCORT:
+            group.task = Escort.name
+            self._setup_group(group, Escort, flight, dynamic_runways)
+            # TODO: Cleanup duplication...
+            group.points[0].tasks.clear()
+            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
+            group.points[0].tasks.append(OptRestrictJettison(True))
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         group.points[0].tasks.append(OptRestrictAfterburner(True))

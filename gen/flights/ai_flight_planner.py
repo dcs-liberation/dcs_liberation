@@ -116,6 +116,8 @@ class AircraftAllocator:
             types = SEAD_CAPABLE
         elif flight.task == FlightType.STRIKE:
             types = STRIKE_CAPABLE
+        elif flight.task == FlightType.ESCORT:
+            types = CAP_CAPABLE
         else:
             logging.error(f"Unplannable flight type: {flight.task}")
             return None
@@ -373,7 +375,7 @@ class CoalitionMissionPlanner:
             yield ProposedMission(sam, [
                 ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
                 # TODO: Max escort range.
-                ProposedFlight(FlightType.CAP, 2, self.MAX_SEAD_RANGE),
+                ProposedFlight(FlightType.ESCORT, 2, self.MAX_SEAD_RANGE),
             ])
 
         # Plan strike missions.
@@ -382,7 +384,7 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.STRIKE, 2, self.MAX_STRIKE_RANGE),
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.SEAD, 2, self.MAX_STRIKE_RANGE),
-                ProposedFlight(FlightType.CAP, 2, self.MAX_STRIKE_RANGE),
+                ProposedFlight(FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE),
             ])
 
     def plan_missions(self) -> None:
