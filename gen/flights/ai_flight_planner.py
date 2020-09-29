@@ -414,8 +414,8 @@ class CoalitionMissionPlanner:
                 return
 
         package = builder.build()
+        builder = FlightPlanBuilder(self.game, self.is_player, package)
         for flight in package.flights:
-            builder = FlightPlanBuilder(self.game, self.is_player)
             builder.populate_flight_plan(flight, package.target)
         self.ato.add_package(package)
 

@@ -11,10 +11,12 @@ import logging
 import random
 from typing import List, Optional, TYPE_CHECKING
 
+from dcs.mapping import Point
 from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE
 from game.utils import nm_to_meter
+from gen.ato import Package
 from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
@@ -36,8 +38,10 @@ class InvalidObjectiveLocation(RuntimeError):
 class FlightPlanBuilder:
     """Generates flight plans for flights."""
 
-    def __init__(self, game: Game, is_player: bool) -> None:
+    def __init__(self, game: Game, is_player: bool,
+                 package: Optional[Package] = None) -> None:
         self.game = game
+        self.package = package
         self.is_player = is_player
         if is_player:
             faction = self.game.player_faction
@@ -110,23 +114,9 @@ class FlightPlanBuilder:
         # TODO: Stop clobbering flight type.
         flight.flight_type = FlightType.STRIKE
 
-        heading = flight.from_cp.position.heading_between_point(
-            location.position
-        )
-        ingress_heading = heading - 180 + 25
-
-        ingress_pos = location.position.point_from_heading(
-            ingress_heading, self.doctrine.ingress_egress_distance
-        )
-
-        egress_heading = heading - 180 - 25
-        egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine.ingress_egress_distance
-        )
-
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.ingress_strike(ingress_pos, location)
+        builder.ingress_strike(self.ingress_point(flight, location), location)
 
         if len(location.groups) > 0 and location.dcs_identifier == "AA":
             # TODO: Replace with DEAD?
@@ -153,7 +143,7 @@ class FlightPlanBuilder:
                     location
                 )
 
-        builder.egress(egress_pos, location)
+        builder.egress(self.egress_point(flight, location), location)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
@@ -267,23 +257,9 @@ class FlightPlanBuilder:
 
         flight.flight_type = random.choice([FlightType.SEAD, FlightType.DEAD])
 
-        heading = flight.from_cp.position.heading_between_point(
-            location.position
-        )
-        ingress_heading = heading - 180 + 25
-
-        ingress_pos = location.position.point_from_heading(
-            ingress_heading, self.doctrine.ingress_egress_distance
-        )
-
-        egress_heading = heading - 180 - 25
-        egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine.ingress_egress_distance
-        )
-
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.ingress_sead(ingress_pos, location)
+        builder.ingress_sead(self.ingress_point(flight, location), location)
 
         # TODO: Unify these.
         # There doesn't seem to be any reason to treat the UI fragged missions
@@ -307,7 +283,7 @@ class FlightPlanBuilder:
             else:
                 builder.sead_area(location)
 
-        builder.egress(egress_pos, location)
+        builder.egress(self.egress_point(flight, location), location)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
@@ -319,19 +295,6 @@ class FlightPlanBuilder:
         # Packages should determine some common points like push, ingress,
         # egress, and split points ahead of time so they can be shared by all
         # flights.
-        heading = flight.from_cp.position.heading_between_point(
-            location.position
-        )
-        ingress_heading = heading - 180 + 25
-
-        ingress_pos = location.position.point_from_heading(
-            ingress_heading, self.doctrine.ingress_egress_distance
-        )
-
-        egress_heading = heading - 180 - 25
-        egress_pos = location.position.point_from_heading(
-            egress_heading, self.doctrine.ingress_egress_distance
-        )
 
         patrol_alt = random.randint(
             self.doctrine.min_patrol_altitude,
@@ -340,7 +303,8 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.race_track(ingress_pos, egress_pos, patrol_alt)
+        builder.race_track(self.ingress_point(flight, location),
+                           self.egress_point(flight, location), patrol_alt)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
@@ -396,8 +360,7 @@ class FlightPlanBuilder:
         builder.descent(arrival)
         return builder.build()[0]
 
-    @staticmethod
-    def generate_rtb_waypoint(arrival: ControlPoint) -> FlightWaypoint:
+    def generate_rtb_waypoint(self, arrival: ControlPoint) -> FlightWaypoint:
         """Generate RTB landing point.
 
         Args:
@@ -406,3 +369,38 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(self.doctrine)
         builder.land(arrival)
         return builder.build()[0]
+
+    def ingress_point(self, flight: Flight, target: MissionTarget) -> Point:
+        heading = self._heading_to_package_airfield(flight, target)
+        return target.position.point_from_heading(
+            heading - 180 + 25, self.doctrine.ingress_egress_distance
+        )
+
+    def egress_point(self, flight: Flight, target: MissionTarget) -> Point:
+        heading = self._heading_to_package_airfield(flight, target)
+        return target.position.point_from_heading(
+            heading - 180 - 25, self.doctrine.ingress_egress_distance
+        )
+
+    def _heading_to_package_airfield(self, flight: Flight,
+                                     target: MissionTarget) -> int:
+        airfield = self.package_airfield(flight, target)
+        return airfield.position.heading_between_point(target.position)
+
+    # TODO: Set ingress/egress/join/split points in the Package.
+    def package_airfield(self, flight: Flight,
+                         target: MissionTarget) -> ControlPoint:
+        # The package airfield is either the flight's airfield (when there is no
+        # package) or the closest airfield to the objective that is the
+        # departure airfield for some flight in the package.
+        if self.package is None:
+            return flight.from_cp
+
+        cache = ObjectiveDistanceCache.get_closest_airfields(target)
+        for airfield in cache.closest_airfields:
+            for flight in self.package.flights:
+                if flight.from_cp == airfield:
+                    return airfield
+        raise RuntimeError(
+            "Could not find any airfield assigned to this package"
+        )

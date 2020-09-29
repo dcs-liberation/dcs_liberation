@@ -11,7 +11,7 @@ the single CAP flight.
 from collections import defaultdict
 from dataclasses import dataclass, field
 import logging
-from typing import Dict, List
+from typing import Dict, Iterator, List, Optional
 
 from .flights.flight import Flight, FlightType
 from theater.missiontarget import MissionTarget
@@ -48,10 +48,9 @@ class Package:
         self.flights.remove(flight)
 
     @property
-    def package_description(self) -> str:
-        """Generates a package description based on flight composition."""
+    def primary_task(self) -> Optional[FlightType]:
         if not self.flights:
-            return "No mission"
+            return None
 
         flight_counts: Dict[FlightType, int] = defaultdict(lambda: 0)
         for flight in self.flights:
@@ -84,13 +83,21 @@ class Package:
         ]
         for task in task_priorities:
             if flight_counts[task]:
-                return task.name
+                return task
 
         # If we get here, our task_priorities list above is incomplete. Log the
         # issue and return the type of *any* flight in the package.
         some_mission = next(iter(self.flights)).flight_type
         logging.warning(f"Unhandled mission type: {some_mission}")
-        return some_mission.name
+        return some_mission
+
+    @property
+    def package_description(self) -> str:
+        """Generates a package description based on flight composition."""
+        task = self.primary_task
+        if task is None:
+            return "No mission"
+        return task.name
 
     def __hash__(self) -> int:
         # TODO: Far from perfect. Number packages?
