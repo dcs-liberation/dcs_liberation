@@ -189,21 +189,20 @@ class FlightPlanBuilder:
             closest_airfield.position
         )
 
-        loc = location.position.point_from_heading(
+        end = location.position.point_from_heading(
             heading,
             random.randint(self.doctrine.cap_min_distance_from_cp,
                            self.doctrine.cap_max_distance_from_cp)
         )
-        radius = random.randint(
+        diameter = random.randint(
             self.doctrine.cap_min_track_length,
             self.doctrine.cap_max_track_length
         )
-        orbit0p = loc.point_from_heading(heading - 90, radius)
-        orbit1p = loc.point_from_heading(heading + 90, radius)
+        start = end.point_from_heading(heading - 180, diameter)
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.race_track(orbit0p, orbit1p, patrol_alt)
+        builder.race_track(start, end, patrol_alt)
         builder.rtb(flight.from_cp)
         flight.points = builder.build()
 
