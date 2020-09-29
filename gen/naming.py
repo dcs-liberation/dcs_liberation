@@ -61,9 +61,9 @@ class NameGenerator:
         self.number += 1
         return "awacs|{}|{}|0|".format(country.id, self.number)
 
-    def next_tanker_name(self, country):
+    def next_tanker_name(self, country, unit_type):
         self.number += 1
-        return "tanker|{}|{}|0|".format(country.id, self.number)
+        return "tanker|{}|{}|0|{}".format(country.id, self.number, db.unit_type_name(unit_type))
 
     def next_carrier_name(self, country):
         self.number += 1

@@ -27,6 +27,7 @@ INTERCEPT_CAPABLE = [
 
 # Used for CAP, Escort, and intercept if there is not a specialised aircraft available
 CAP_CAPABLE = [
+
     MiG_15bis,
     MiG_19P,
     MiG_21Bis,
@@ -108,6 +109,9 @@ CAS_CAPABLE = [
     F_16C_50,
     FA_18C_hornet,
 
+    Tornado_IDS,
+    Tornado_GR4,
+
     C_101CC,
     MB_339PAN,
     L_39ZA,
@@ -120,7 +124,6 @@ CAS_CAPABLE = [
     AH_64A,
     AH_64D,
     AH_1W,
-
 
     UH_1H,
 
@@ -168,6 +171,9 @@ SEAD_CAPABLE = [
     Su_34,
     MiG_27K,
 
+    Tornado_IDS,
+    Tornado_GR4,
+
     A_4E_C,
     Rafale_A_S
 ]
@@ -200,6 +206,9 @@ STRIKE_CAPABLE = [
     F_16A,
     F_16C_50,
     FA_18C_hornet,
+
+    Tornado_IDS,
+    Tornado_GR4,
 
     C_101CC,
     L_39ZA,
@@ -236,6 +245,9 @@ ANTISHIP_CAPABLE = [
     F_16C_50,
     A_10C,
     A_10A,
+
+    Tornado_IDS,
+    Tornado_GR4,
 
     Ju_88A4,
     Rafale_A_S

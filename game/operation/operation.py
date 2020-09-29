@@ -234,30 +234,29 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             self.visualgen.generate()
 
-        # Inject Lua Scripts
-        load_mist = TriggerStart(comment="Load Mist Lua Framework")
-        with open("./resources/scripts/mist_4_3_74.lua") as f:
-            load_mist.add_action(DoScript(String(f.read())))
-        self.current_mission.triggerrules.triggers.append(load_mist)
+        # Inject Plugins Lua Scripts
+        listOfPluginsScripts = []
+        try:
+            with open("./resources/scripts/plugins/__plugins.lst", "r") as a_file:
+                for line in a_file:
+                    name = line.strip()
+                    if not name.startswith( '#' ):
+                        trigger = TriggerStart(comment="Load " + name)
+                        listOfPluginsScripts.append(name)
+                        fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
+                        trigger.add_action(DoScriptFile(fileref))
+                        self.current_mission.triggerrules.triggers.append(trigger)
+        except Exception as e:
+            print(e)
 
-        # Load Ciribob's JTACAutoLase script
-        load_autolase = TriggerStart(comment="Load JTAC script")
-        with open("./resources/scripts/JTACAutoLase.lua") as f:
+        # Inject Mist Script if not done already in the plugins
+        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load mist twice
+            trigger = TriggerStart(comment="Load Mist Lua Framework")
+            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/mist_4_3_74.lua")
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
 
-            script = f.read()
-            script = script + "\n"
-
-            smoke = "true"
-            if hasattr(self.game.settings, "jtac_smoke_on"):
-                if not self.game.settings.jtac_smoke_on:
-                    smoke = "false"
-
-            for jtac in jtacs:
-                script += f"\nJTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle')\n"
-
-            load_autolase.add_action(DoScript(String(script)))
-        self.current_mission.triggerrules.triggers.append(load_autolase)
-
+        # Inject Liberation script
         load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
         with open("./resources/scripts/dcs_liberation.lua") as f:
             script = f.read()
@@ -267,6 +266,25 @@ class Operation:
             script = script.replace("{{debriefing_file_location}}", state_location)
             load_dcs_libe.add_action(DoScript(String(script)))
         self.current_mission.triggerrules.triggers.append(load_dcs_libe)
+
+        # Load Ciribob's JTACAutoLase script if not done already in the plugins
+        if not "JTACAutoLase.lua" in listOfPluginsScripts: # don't load JTACAutoLase twice
+            load_autolase = TriggerStart(comment="Load JTAC script")
+            with open("./resources/scripts/JTACAutoLase.lua") as f:
+
+                script = f.read()
+                script = script + "\n"
+
+                smoke = "true"
+                if hasattr(self.game.settings, "jtac_smoke_on"):
+                    if not self.game.settings.jtac_smoke_on:
+                        smoke = "false"
+
+                for jtac in jtacs:
+                    script += f"\nJTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle')\n"
+
+                load_autolase.add_action(DoScript(String(script)))
+            self.current_mission.triggerrules.triggers.append(load_autolase)
 
         self.assign_channels_to_flights()
 

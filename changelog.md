@@ -1,3 +1,9 @@
+# 2.1.2
+
+## Fixes :
+* **[Mission Generator]** Fix mission generation issues with radio frequencies (Thanks to contributors davidp57 and danalbert)
+* **[Mission Generator]** AI should now properly plan flights for Tornados
+
 # 2.1.1
 
 ## Features/Improvements :
@@ -5,9 +11,9 @@
 * **[Kneeboards]** Generate mission kneeboards for player flights. Kneeboards include
   airfield/carrier information (ATC frequencies, ILS, TACAN, and runway
   assignments), assigned radio channels, waypoint lists, and AWACS/JTAC/tanker
-  information.
+  information. (Thanks to contributor danalbert)
 * **[Radios]** Allocate separate intra-flight channels for most aircraft to reduce global
-  chatter.
+  chatter. (Thanks to contributor danalbert)
 * **[Radios]** Configure radio channel presets for most aircraft. Currently supported are:
   * AJS37
   * AV-8B
@@ -15,7 +21,7 @@
   * F-16C
   * F/A-18C
   * JF-17
-  * M-2000C
+  * M-2000C (Thanks to contributor danalbert)
 * **[Base Menu]** Added possibility to repair destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
 * **[Base Menu]** Added possibility to buy/sell/replace SAM units
 * **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
@@ -25,7 +31,7 @@
 * **[Cheat Menu]** Added buttons to remove money
 
 ## Fixed issues :
-* **[UI/UX]** Spelling issues (Thanks to Github contributor steveveepee)
+* **[UI/UX]** Spelling issues (Thanks to contributor steveveepee)
 * **[Campaign Generator]** LHA was placed on land in Syrian Civil War campaign
 * **[Campaign Generator]** Fixed inverted configuration for Syria full map
 * **[Campaign Generator]** Syria "Inherent Resolve" campaign, added Incirlik Air Base
