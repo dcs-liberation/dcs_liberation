@@ -1,9 +1,5 @@
-local jsonlib = {{json_file_abs_location}}
-json = loadfile(jsonlib)()
-
 logger = mist.Logger:new("DCSLiberation", "info")
-
-debriefing_file_location = {{debriefing_file_location}}
+logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
 killed_aircrafts = {}
 killed_ground_units = {}
@@ -32,12 +28,41 @@ write_state = function()
         ["mission_ended"] = mission_ended,
         ["destroyed_objects_positions"] = destroyed_objects_positions,
     }
+    if not json then
+        local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !",debriefing_file_location)
+        logger:error(message)
+        messageAll(message)
+    end
     fp:write(json:encode(game_state))
     fp:close()
     -- logger.info("Done writing DCS Liberation state")
     -- messageAll("Done writing DCS Liberation state.")
 end
 
+
+debriefing_file_location = nil
+if not debriefing_file_location then
+    if os then
+        debriefing_file_location = os.getenv("LIBERATION_EXPORT_DIR")
+        if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
+    end
+end
+if not debriefing_file_location then
+    if os then
+        debriefing_file_location = os.getenv("TEMP")
+        if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
+    end
+end
+if not debriefing_file_location then
+    if lfs then
+        debriefing_file_location = lfs.writedir()
+    end
+end
+if debriefing_file_location then
+    debriefing_file_location = debriefing_file_location .. "state.json"
+end
+
+logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
 
 write_state_error_handling = function()
     if pcall(write_state) then

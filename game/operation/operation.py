@@ -250,22 +250,25 @@ class Operation:
             print(e)
 
         # Inject Mist Script if not done already in the plugins
-        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load mist twice
-            trigger = TriggerStart(comment="Load Mist Lua Framework")
+        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
+            trigger = TriggerStart(comment="Load Mist Lua framework")
             fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/mist_4_3_74.lua")
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
-        # Inject Liberation script
-        load_dcs_libe = TriggerStart(comment="Load DCS Liberation Script")
-        with open("./resources/scripts/dcs_liberation.lua") as f:
-            script = f.read()
-            json_location = "[["+os.path.abspath("resources\\scripts\\json.lua")+"]]"
-            state_location = "[[" + os.path.abspath("state.json") + "]]"
-            script = script.replace("{{json_file_abs_location}}", json_location)
-            script = script.replace("{{debriefing_file_location}}", state_location)
-            load_dcs_libe.add_action(DoScript(String(script)))
-        self.current_mission.triggerrules.triggers.append(load_dcs_libe)
+        # Inject JSON library if not done already in the plugins
+        if not "json.lua" in listOfPluginsScripts : # don't load the script twice
+            trigger = TriggerStart(comment="Load JSON Lua library")
+            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/json.lua")
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
+
+        # Inject DCS-Liberation script if not done already in the plugins
+        if not "json.lua" in listOfPluginsScripts : # don't load the script twice
+            trigger = TriggerStart(comment="Load DCS Liberation script")
+            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/dcs_liberation.lua")
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
 
         # Load Ciribob's JTACAutoLase script if not done already in the plugins
         if not "JTACAutoLase.lua" in listOfPluginsScripts: # don't load JTACAutoLase twice
