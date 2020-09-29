@@ -82,6 +82,7 @@ def load_icons():
     ICONS["New"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/new.png")
     ICONS["Open"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/open.png")
     ICONS["Save"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/save.png")
+    ICONS["Hangar"] = QPixmap("./resources/ui/misc/hangar.png")
 
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
     ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
