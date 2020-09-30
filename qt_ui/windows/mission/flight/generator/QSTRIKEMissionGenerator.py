@@ -3,7 +3,8 @@ from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 
 from game import Game
 from game.utils import meter_to_nm
-from gen.flights.flight import Flight
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightType
 from qt_ui.widgets.combos.QStrikeTargetSelectionComboBox import QStrikeTargetSelectionComboBox
 from qt_ui.widgets.views.QStrikeTargetInfoView import QStrikeTargetInfoView
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
@@ -11,8 +12,15 @@ from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAb
 
 class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QSTRIKEMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "Strike Generator")
+    def __init__(self, game: Game, package: Package, flight: Flight,
+                 flight_waypoint_list) -> None:
+        super(QSTRIKEMissionGenerator, self).__init__(
+            game,
+            package,
+            flight,
+            flight_waypoint_list,
+            "Strike Generator"
+        )
 
         self.tgt_selection_box = QStrikeTargetSelectionComboBox(self.game)
         self.tgt_selection_box.setMinimumWidth(200)
@@ -53,9 +61,9 @@ class QSTRIKEMissionGenerator(QAbstractMissionGenerator):
         self.setLayout(layout)
 
     def apply(self):
-        self.flight.points = []
         target = self.tgt_selection_box.get_selected_target()
-        self.planner.generate_strike(self.flight, target.location)
+        self.flight.flight_type = FlightType.STRIKE
+        self.planner.populate_flight_plan(self.flight, target.location)
         self.flight_waypoint_list.update_list()
         self.close()
 

@@ -4,15 +4,23 @@ from dcs import Point
 
 from game import Game
 from game.utils import meter_to_nm
-from gen.flights.flight import Flight
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightType
 from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
 
 
 class QCASMissionGenerator(QAbstractMissionGenerator):
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QCASMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "CAS Generator")
+    def __init__(self, game: Game, package: Package, flight: Flight,
+                 flight_waypoint_list) -> None:
+        super(QCASMissionGenerator, self).__init__(
+            game,
+            package,
+            flight,
+            flight_waypoint_list,
+            "CAS Generator"
+        )
 
         self.wpt_selection_box = QPredefinedWaypointSelectionComboBox(self.game, self, False, False, True, False, False)
         self.wpt_selection_box.setMinimumWidth(200)
@@ -55,8 +63,8 @@ class QCASMissionGenerator(QAbstractMissionGenerator):
         self.setLayout(layout)
 
     def apply(self):
-        self.flight.points = []
-        self.planner.generate_cas(self.flight, self.selected_waypoints[0].data[0], self.selected_waypoints[0].data[1])
+        self.flight.flight_type = FlightType.CAS
+        self.planner.populate_flight_plan(self.flight)
         self.flight_waypoint_list.update_list()
         self.close()
 

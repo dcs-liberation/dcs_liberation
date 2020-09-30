@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from PySide2.QtCore import QObject, Signal
 
 from game import Game
@@ -31,7 +33,7 @@ class GameUpdateSignal(QObject):
         # noinspection PyUnresolvedReferences
         self.flight_paths_changed.emit()
 
-    def updateGame(self, game: Game):
+    def updateGame(self, game: Optional[Game]):
         # noinspection PyUnresolvedReferences
         self.gameupdated.emit(game)
 

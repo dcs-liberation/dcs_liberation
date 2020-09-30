@@ -2,6 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QVBoxLayout
 
 from game import Game
+from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from qt_ui.windows.mission.flight.generator.QCAPMissionGenerator import QCAPMissionGenerator
@@ -16,11 +17,12 @@ class QFlightWaypointTab(QFrame):
 
     on_flight_changed = Signal()
 
-    def __init__(self, game: Game, flight: Flight):
+    def __init__(self, game: Game, package: Package, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
-        self.flight = flight
         self.game = game
-        self.planner = FlightPlanBuilder(self.game, is_player=True)
+        self.package = package
+        self.flight = flight
+        self.planner = FlightPlanBuilder(self.game, package, is_player=True)
         self.init_ui()
 
     def init_ui(self):
@@ -104,22 +106,42 @@ class QFlightWaypointTab(QFrame):
         self.on_change()
 
     def on_cas_generator(self):
-        self.subwindow = QCASMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QCASMissionGenerator(
+            self.game,
+            self.package,
+            self.flight,
+            self.flight_waypoint_list
+        )
         self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_cap_generator(self):
-        self.subwindow = QCAPMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QCAPMissionGenerator(
+            self.game,
+            self.package,
+            self.flight,
+            self.flight_waypoint_list
+        )
         self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_sead_generator(self):
-        self.subwindow = QSEADMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QSEADMissionGenerator(
+            self.game,
+            self.package,
+            self.flight,
+            self.flight_waypoint_list
+        )
         self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 
     def on_strike_generator(self):
-        self.subwindow = QSTRIKEMissionGenerator(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QSTRIKEMissionGenerator(
+            self.game,
+            self.package,
+            self.flight,
+            self.flight_waypoint_list
+        )
         self.subwindow.finished.connect(self.on_change)
         self.subwindow.show()
 

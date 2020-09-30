@@ -14,9 +14,13 @@ class Doctrine:
     strike_max_range: int
     sead_max_range: int
 
+    rendezvous_altitude: int
+    join_distance: int
+    split_distance: int
     ingress_egress_distance: int
     ingress_altitude: int
     egress_altitude: int
+
     min_patrol_altitude: int
     max_patrol_altitude: int
     pattern_altitude: int
@@ -35,6 +39,9 @@ MODERN_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
+    rendezvous_altitude=feet_to_meter(25000),
+    join_distance=nm_to_meter(20),
+    split_distance=nm_to_meter(20),
     ingress_egress_distance=nm_to_meter(45),
     ingress_altitude=feet_to_meter(20000),
     egress_altitude=feet_to_meter(20000),
@@ -55,6 +62,9 @@ COLDWAR_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
+    rendezvous_altitude=feet_to_meter(22000),
+    join_distance=nm_to_meter(10),
+    split_distance=nm_to_meter(10),
     ingress_egress_distance=nm_to_meter(30),
     ingress_altitude=feet_to_meter(18000),
     egress_altitude=feet_to_meter(18000),
@@ -75,6 +85,9 @@ WWII_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
+    join_distance=nm_to_meter(5),
+    split_distance=nm_to_meter(5),
+    rendezvous_altitude=feet_to_meter(10000),
     ingress_egress_distance=nm_to_meter(7),
     ingress_altitude=feet_to_meter(8000),
     egress_altitude=feet_to_meter(8000),

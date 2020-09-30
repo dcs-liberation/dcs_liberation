@@ -1,3 +1,5 @@
+from typing import Optional
+
 from PySide2.QtWidgets import QFrame, QGroupBox, QHBoxLayout, QPushButton
 
 import qt_ui.uiconstants as CONST
@@ -74,7 +76,7 @@ class QTopPanel(QFrame):
         self.layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.layout)
 
-    def setGame(self, game:Game):
+    def setGame(self, game: Optional[Game]):
         self.game = game
         if game is not None:
             self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)

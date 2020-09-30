@@ -1,15 +1,26 @@
+import logging
+
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
 
 from game import Game
-from gen.flights.flight import Flight, PredefinedWaypointCategory
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightType
 from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
+from theater import ControlPoint, FrontLine
 
 
 class QCAPMissionGenerator(QAbstractMissionGenerator):
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QCAPMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "CAP Generator")
+    def __init__(self, game: Game, package: Package, flight: Flight,
+                 flight_waypoint_list) -> None:
+        super(QCAPMissionGenerator, self).__init__(
+            game,
+            package,
+            flight,
+            flight_waypoint_list,
+            "CAP Generator"
+        )
 
         self.wpt_selection_box = QPredefinedWaypointSelectionComboBox(self.game, self, False, True, True, False, False, True)
         self.wpt_selection_box.setMinimumWidth(200)
@@ -34,15 +45,21 @@ class QCAPMissionGenerator(QAbstractMissionGenerator):
         self.setLayout(layout)
 
     def apply(self):
-        self.flight.points = []
-
-        wpt = self.selected_waypoints[0]
-        if wpt.category == PredefinedWaypointCategory.FRONTLINE:
-            self.planner.generate_frontline_cap(self.flight, wpt.data[0], wpt.data[1])
-        elif wpt.category == PredefinedWaypointCategory.ALLY_CP:
-            self.planner.generate_barcap(self.flight, wpt.data)
+        location = self.package.target
+        if isinstance(location, FrontLine):
+            self.flight.flight_type = FlightType.TARCAP
+            self.planner.populate_flight_plan(self.flight)
+        elif isinstance(location, ControlPoint):
+            if location.is_fleet:
+                self.flight.flight_type = FlightType.BARCAP
+            else:
+                self.flight.flight_type = FlightType.CAP
         else:
+            name = location.__class__.__name__
+            logging.error(f"Unexpected objective type for CAP: {name}")
             return
+
+        self.planner.generate_barcap(self.flight)
 
         self.flight_waypoint_list.update_list()
         self.close()

@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
@@ -43,6 +43,7 @@ class QLiberationMap(QGraphicsView):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
         self.game_model = game_model
+        self.game: Optional[Game] = game_model.game
 
         self.flight_path_items: List[QGraphicsItem] = []
 
@@ -71,7 +72,7 @@ class QLiberationMap(QGraphicsView):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
-    def setGame(self, game: Game):
+    def setGame(self, game: Optional[Game]):
         self.game = game
         print("Reloading Map Canvas")
         if self.game is not None:

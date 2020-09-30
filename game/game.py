@@ -89,6 +89,7 @@ class Game:
         )
 
         self.sanitize_sides()
+        self.on_load()
 
 
     def sanitize_sides(self):
@@ -204,9 +205,10 @@ class Game:
         else:
             return event and event.name and event.name == self.player_name
 
-    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
+    def on_load(self) -> None:
         ObjectiveDistanceCache.set_theater(self.theater)
 
+    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn = self.turn + 1

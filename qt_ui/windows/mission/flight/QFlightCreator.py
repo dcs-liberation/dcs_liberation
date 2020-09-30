@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from PySide2.QtCore import Qt, Signal
@@ -11,15 +10,14 @@ from dcs.planes import PlaneType
 
 from game import Game
 from gen.ato import Package
-from gen.flights.flightplan import FlightPlanBuilder
-from gen.flights.flight import Flight, FlightType
+from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
-from theater import ControlPoint, FrontLine, TheaterGroundObject
+from theater import ControlPoint
 
 
 class QFlightCreator(QDialog):
@@ -29,9 +27,6 @@ class QFlightCreator(QDialog):
         super().__init__()
 
         self.game = game
-        self.package = package
-
-        self.planner = FlightPlanBuilder(self.game, is_player=True)
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -39,7 +34,7 @@ class QFlightCreator(QDialog):
         layout = QVBoxLayout()
 
         self.task_selector = QFlightTypeComboBox(
-            self.game.theater, self.package.target
+            self.game.theater, package.target
         )
         self.task_selector.setCurrentIndex(0)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
@@ -95,7 +90,6 @@ class QFlightCreator(QDialog):
         size = self.flight_size_spinner.value()
 
         flight = Flight(aircraft, size, origin, task)
-        self.planner.populate_flight_plan(flight, self.package.target)
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)

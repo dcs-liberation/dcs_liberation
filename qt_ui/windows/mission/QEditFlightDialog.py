@@ -5,6 +5,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
+from gen.ato import Package
 from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -14,7 +15,7 @@ from qt_ui.windows.mission.flight.QFlightPlanner import QFlightPlanner
 class QEditFlightDialog(QDialog):
     """Dialog window for editing flight plans and loadouts."""
 
-    def __init__(self, game: Game, flight: Flight) -> None:
+    def __init__(self, game: Game, package: Package, flight: Flight) -> None:
         super().__init__()
 
         self.game = game
@@ -24,7 +25,7 @@ class QEditFlightDialog(QDialog):
 
         layout = QVBoxLayout()
 
-        self.flight_planner = QFlightPlanner(flight, game)
+        self.flight_planner = QFlightPlanner(package, flight, game)
         layout.addWidget(self.flight_planner)
 
         self.setLayout(layout)

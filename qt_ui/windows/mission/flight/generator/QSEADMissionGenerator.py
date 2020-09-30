@@ -3,7 +3,8 @@ from PySide2.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGroupBox
 
 from game import Game
 from game.utils import meter_to_nm
-from gen.flights.flight import Flight
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightType
 from qt_ui.widgets.combos.QSEADTargetSelectionComboBox import QSEADTargetSelectionComboBox
 from qt_ui.widgets.views.QSeadTargetInfoView import QSeadTargetInfoView
 from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAbstractMissionGenerator
@@ -11,8 +12,15 @@ from qt_ui.windows.mission.flight.generator.QAbstractMissionGenerator import QAb
 
 class QSEADMissionGenerator(QAbstractMissionGenerator):
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
-        super(QSEADMissionGenerator, self).__init__(game, flight, flight_waypoint_list, "SEAD/DEAD Generator")
+    def __init__(self, game: Game, package: Package, flight: Flight,
+                 flight_waypoint_list) -> None:
+        super(QSEADMissionGenerator, self).__init__(
+            game,
+            package,
+            flight,
+            flight_waypoint_list,
+            "SEAD/DEAD Generator"
+        )
 
         self.tgt_selection_box = QSEADTargetSelectionComboBox(self.game)
         self.tgt_selection_box.setMinimumWidth(200)
@@ -73,9 +81,9 @@ class QSEADMissionGenerator(QAbstractMissionGenerator):
         self.setLayout(layout)
 
     def apply(self):
-        self.flight.points = []
         target = self.tgt_selection_box.get_selected_target()
-        self.planner.generate_sead(self.flight, target.location, target.radars)
+        self.flight.flight_type = FlightType.SEAD
+        self.planner.populate_flight_plan(self.flight, target.radars)
         self.flight_waypoint_list.update_list()
         self.close()
 

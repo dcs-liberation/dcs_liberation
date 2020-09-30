@@ -2,6 +2,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QDialog, QPushButton
 
 from game import Game
+from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from qt_ui.uiconstants import EVENT_ICONS
@@ -10,9 +11,11 @@ from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import QFligh
 
 class QAbstractMissionGenerator(QDialog):
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list, title):
+    def __init__(self, game: Game, package: Package, flight: Flight,
+                 flight_waypoint_list, title) -> None:
         super(QAbstractMissionGenerator, self).__init__()
         self.game = game
+        self.package = package
         self.flight = flight
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setMinimumSize(400, 250)
@@ -20,7 +23,7 @@ class QAbstractMissionGenerator(QDialog):
         self.setWindowTitle(title)
         self.setWindowIcon(EVENT_ICONS["strike"])
         self.flight_waypoint_list = flight_waypoint_list
-        self.planner = FlightPlanBuilder(self.game, is_player=True)
+        self.planner = FlightPlanBuilder(self.game, package, is_player=True)
 
         self.selected_waypoints = []
         self.wpt_info = QFlightWaypointInfoBox()

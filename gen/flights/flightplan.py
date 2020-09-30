@@ -38,8 +38,7 @@ class InvalidObjectiveLocation(RuntimeError):
 class FlightPlanBuilder:
     """Generates flight plans for flights."""
 
-    def __init__(self, game: Game, is_player: bool,
-                 package: Optional[Package] = None) -> None:
+    def __init__(self, game: Game, package: Package, is_player: bool) -> None:
         self.game = game
         self.package = package
         self.is_player = is_player
@@ -49,9 +48,15 @@ class FlightPlanBuilder:
             faction = self.game.enemy_faction
         self.doctrine: Doctrine = faction.get("doctrine", MODERN_DOCTRINE)
 
-    def populate_flight_plan(self, flight: Flight,
-                             objective_location: MissionTarget) -> None:
+    def populate_flight_plan(
+            self, flight: Flight,
+            # TODO: Custom targets should be an attribute of the flight.
+            custom_targets: Optional[List[Unit]] = None) -> None:
         """Creates a default flight plan for the given mission."""
+        if flight not in self.package.flights:
+            raise RuntimeError("Flight must be a part of the package")
+        self.generate_missing_package_waypoints()
+
         # TODO: Flesh out mission types.
         try:
             task = flight.flight_type
@@ -62,17 +67,17 @@ class FlightPlanBuilder:
             elif task == FlightType.BAI:
                 logging.error("BAI flight plan generation not implemented")
             elif task == FlightType.BARCAP:
-                self.generate_barcap(flight, objective_location)
+                self.generate_barcap(flight)
             elif task == FlightType.CAP:
-                self.generate_barcap(flight, objective_location)
+                self.generate_barcap(flight)
             elif task == FlightType.CAS:
-                self.generate_cas(flight, objective_location)
+                self.generate_cas(flight)
             elif task == FlightType.DEAD:
-                self.generate_sead(flight, objective_location)
+                self.generate_sead(flight, custom_targets)
             elif task == FlightType.ELINT:
                 logging.error("ELINT flight plan generation not implemented")
             elif task == FlightType.ESCORT:
-                self.generate_escort(flight, objective_location)
+                self.generate_escort(flight)
             elif task == FlightType.EVAC:
                 logging.error("Evac flight plan generation not implemented")
             elif task == FlightType.EWAR:
@@ -88,11 +93,11 @@ class FlightPlanBuilder:
             elif task == FlightType.RECON:
                 logging.error("Recon flight plan generation not implemented")
             elif task == FlightType.SEAD:
-                self.generate_sead(flight, objective_location)
+                self.generate_sead(flight, custom_targets)
             elif task == FlightType.STRIKE:
-                self.generate_strike(flight, objective_location)
+                self.generate_strike(flight)
             elif task == FlightType.TARCAP:
-                self.generate_frontline_cap(flight, objective_location)
+                self.generate_frontline_cap(flight)
             elif task == FlightType.TROOP_TRANSPORT:
                 logging.error(
                     "Troop transport flight plan generation not implemented"
@@ -100,23 +105,32 @@ class FlightPlanBuilder:
         except InvalidObjectiveLocation as ex:
             logging.error(f"Could not create flight plan: {ex}")
 
-    def generate_strike(self, flight: Flight, location: MissionTarget) -> None:
+    def generate_missing_package_waypoints(self) -> None:
+        if self.package.ingress_point is None:
+            self.package.ingress_point = self._ingress_point()
+        if self.package.egress_point is None:
+            self.package.egress_point = self._egress_point()
+        if self.package.join_point is None:
+            self.package.join_point = self._join_point()
+        if self.package.split_point is None:
+            self.package.split_point = self._split_point()
+
+    def generate_strike(self, flight: Flight) -> None:
         """Generates a strike flight plan.
 
         Args:
             flight: The flight to generate the flight plan for.
-            location: The strike target location.
         """
+        location = self.package.target
+
         # TODO: Support airfield strikes.
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        # TODO: Stop clobbering flight type.
-        flight.flight_type = FlightType.STRIKE
-
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.ingress_strike(self.ingress_point(flight, location), location)
+        builder.join(self.package.join_point)
+        builder.ingress_strike(self.package.ingress_point, location)
 
         if len(location.groups) > 0 and location.dcs_identifier == "AA":
             # TODO: Replace with DEAD?
@@ -143,25 +157,22 @@ class FlightPlanBuilder:
                     location
                 )
 
-        builder.egress(self.egress_point(flight, location), location)
+        builder.egress(self.package.egress_point, location)
+        builder.split(self.package.split_point)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
-    def generate_barcap(self, flight: Flight, location: MissionTarget) -> None:
+    def generate_barcap(self, flight: Flight) -> None:
         """Generate a BARCAP flight at a given location.
 
         Args:
             flight: The flight to generate the flight plan for.
-            location: The control point to protect.
         """
+        location = self.package.target
+
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        if isinstance(location, ControlPoint) and location.is_carrier:
-            flight.flight_type = FlightType.BARCAP
-        else:
-            flight.flight_type = FlightType.CAP
 
         patrol_alt = random.randint(
             self.doctrine.min_patrol_altitude,
@@ -198,19 +209,18 @@ class FlightPlanBuilder:
         builder.rtb(flight.from_cp)
         flight.points = builder.build()
 
-    def generate_frontline_cap(self, flight: Flight,
-                               location: MissionTarget) -> None:
+    def generate_frontline_cap(self, flight: Flight) -> None:
         """Generate a CAP flight plan for the given front line.
 
         Args:
             flight: The flight to generate the flight plan for.
-            location: Front line to protect.
         """
+        location = self.package.target
+
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         ally_cp, enemy_cp = location.control_points
-        flight.flight_type = FlightType.CAP
         patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
                                     self.doctrine.max_patrol_altitude)
 
@@ -240,26 +250,26 @@ class FlightPlanBuilder:
         builder.rtb(flight.from_cp)
         flight.points = builder.build()
 
-    def generate_sead(self, flight: Flight, location: MissionTarget,
-                      custom_targets: Optional[List[Unit]] = None) -> None:
+    def generate_sead(self, flight: Flight,
+                      custom_targets: Optional[List[Unit]]) -> None:
         """Generate a SEAD/DEAD flight at a given location.
 
         Args:
             flight: The flight to generate the flight plan for.
-            location: Location of the SAM site.
             custom_targets: Specific radar equipped units selected by the user.
         """
+        location = self.package.target
+
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         if custom_targets is None:
             custom_targets = []
 
-        flight.flight_type = random.choice([FlightType.SEAD, FlightType.DEAD])
-
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.ingress_sead(self.ingress_point(flight, location), location)
+        builder.join(self.package.join_point)
+        builder.ingress_sead(self.package.ingress_point, location)
 
         # TODO: Unify these.
         # There doesn't seem to be any reason to treat the UI fragged missions
@@ -283,14 +293,13 @@ class FlightPlanBuilder:
             else:
                 builder.sead_area(location)
 
-        builder.egress(self.egress_point(flight, location), location)
+        builder.egress(self.package.egress_point, location)
+        builder.split(self.package.split_point)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
-    def generate_escort(self, flight: Flight, location: MissionTarget) -> None:
-        flight.flight_type = FlightType.ESCORT
-
+    def generate_escort(self, flight: Flight) -> None:
         # TODO: Decide common waypoints for the package ahead of time.
         # Packages should determine some common points like push, ingress,
         # egress, and split points ahead of time so they can be shared by all
@@ -303,25 +312,30 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.race_track(self.ingress_point(flight, location),
-                           self.egress_point(flight, location), patrol_alt)
+        builder.join(self.package.join_point)
+        builder.race_track(
+            self.package.ingress_point,
+            self.package.egress_point,
+            patrol_alt
+        )
+        builder.split(self.package.split_point)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
-    def generate_cas(self, flight: Flight, location: MissionTarget) -> None:
+    def generate_cas(self, flight: Flight) -> None:
         """Generate a CAS flight plan for the given target.
 
         Args:
             flight: The flight to generate the flight plan for.
-            location: Front line with CAS targets.
         """
+        location = self.package.target
+
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         is_helo = getattr(flight.unit_type, "helicopter", False)
         cap_alt = 500 if is_helo else 1000
-        flight.flight_type = FlightType.CAS
 
         ingress, heading, distance = Conflict.frontline_vector(
             location.control_points[0], location.control_points[1],
@@ -332,9 +346,11 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp, is_helo)
+        builder.join(self.package.join_point)
         builder.ingress_cas(ingress, location)
         builder.cas(center, cap_alt)
         builder.egress(egress, location)
+        builder.split(self.package.split_point)
         builder.rtb(flight.from_cp, is_helo)
 
         flight.points = builder.build()
@@ -370,33 +386,51 @@ class FlightPlanBuilder:
         builder.land(arrival)
         return builder.build()[0]
 
-    def ingress_point(self, flight: Flight, target: MissionTarget) -> Point:
-        heading = self._heading_to_package_airfield(flight, target)
-        return target.position.point_from_heading(
+    def _join_point(self) -> Point:
+        ingress_point = self.package.ingress_point
+        heading = self._heading_to_package_airfield(ingress_point)
+        return ingress_point.point_from_heading(heading,
+                                                -self.doctrine.join_distance)
+
+    def _split_point(self) -> Point:
+        egress_point = self.package.egress_point
+        heading = self._heading_to_package_airfield(egress_point)
+        return egress_point.point_from_heading(heading,
+                                               -self.doctrine.split_distance)
+
+    def _ingress_point(self) -> Point:
+        heading = self._target_heading_to_package_airfield()
+        return self.package.target.position.point_from_heading(
             heading - 180 + 25, self.doctrine.ingress_egress_distance
         )
 
-    def egress_point(self, flight: Flight, target: MissionTarget) -> Point:
-        heading = self._heading_to_package_airfield(flight, target)
-        return target.position.point_from_heading(
+    def _egress_point(self) -> Point:
+        heading = self._target_heading_to_package_airfield()
+        return self.package.target.position.point_from_heading(
             heading - 180 - 25, self.doctrine.ingress_egress_distance
         )
 
-    def _heading_to_package_airfield(self, flight: Flight,
-                                     target: MissionTarget) -> int:
-        airfield = self.package_airfield(flight, target)
-        return airfield.position.heading_between_point(target.position)
+    def _target_heading_to_package_airfield(self) -> int:
+        return self._heading_to_package_airfield(self.package.target.position)
+
+    def _heading_to_package_airfield(self, point: Point) -> int:
+        return self.package_airfield().position.heading_between_point(point)
 
     # TODO: Set ingress/egress/join/split points in the Package.
-    def package_airfield(self, flight: Flight,
-                         target: MissionTarget) -> ControlPoint:
+    def package_airfield(self) -> ControlPoint:
+        # We'll always have a package, but if this is being planned via the UI
+        # it could be the first flight in the package.
+        if not self.package.flights:
+            raise RuntimeError(
+                "Cannot determine source airfield for package with no flights"
+            )
+
         # The package airfield is either the flight's airfield (when there is no
         # package) or the closest airfield to the objective that is the
         # departure airfield for some flight in the package.
-        if self.package is None:
-            return flight.from_cp
-
-        cache = ObjectiveDistanceCache.get_closest_airfields(target)
+        cache = ObjectiveDistanceCache.get_closest_airfields(
+            self.package.target
+        )
         for airfield in cache.closest_airfields:
             for flight in self.package.flights:
                 if flight.from_cp == airfield:

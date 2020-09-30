@@ -123,7 +123,7 @@ class QFlightPanel(QGroupBox):
             return
         from qt_ui.dialogs import Dialog
         Dialog.open_edit_flight_dialog(
-            self.package_model.flight_at_index(index)
+            self.package_model, self.package_model.flight_at_index(index)
         )
 
     def on_delete(self) -> None:

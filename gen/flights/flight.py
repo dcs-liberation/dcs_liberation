@@ -47,6 +47,8 @@ class FlightWaypointType(Enum):
     TARGET_GROUP_LOC = 13   # A target group approximate location
     TARGET_SHIP = 14        # A target ship known location
     CUSTOM = 15             # User waypoint (no specific behaviour)
+    JOIN = 16
+    SPLIT = 17
 
 
 class PredefinedWaypointCategory(Enum):

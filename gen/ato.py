@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 import logging
 from typing import Dict, Iterator, List, Optional
 
+from dcs.mapping import Point
 from .flights.flight import Flight, FlightType
 from theater.missiontarget import MissionTarget
 
@@ -39,6 +40,11 @@ class Package:
     #: The set of flights in the package.
     flights: List[Flight] = field(default_factory=list)
 
+    join_point: Optional[Point] = field(default=None, init=False, hash=False)
+    split_point: Optional[Point] = field(default=None, init=False, hash=False)
+    ingress_point: Optional[Point] = field(default=None, init=False, hash=False)
+    egress_point: Optional[Point] = field(default=None, init=False, hash=False)
+
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""
         self.flights.append(flight)
@@ -46,6 +52,9 @@ class Package:
     def remove_flight(self, flight: Flight) -> None:
         """Removes a flight from the package."""
         self.flights.remove(flight)
+        if not self.flights:
+            self.ingress_point = None
+            self.egress_point = None
 
     @property
     def primary_task(self) -> Optional[FlightType]:

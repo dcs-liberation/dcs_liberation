@@ -86,6 +86,30 @@ class WaypointBuilder:
         waypoint.pretty_name = "Land"
         self.waypoints.append(waypoint)
 
+    def join(self, position: Point) -> None:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.JOIN,
+            position.x,
+            position.y,
+            self.doctrine.ingress_altitude
+        )
+        waypoint.pretty_name = "Join"
+        waypoint.description = "Rendezvous with package"
+        waypoint.name = "JOIN"
+        self.waypoints.append(waypoint)
+
+    def split(self, position: Point) -> None:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.SPLIT,
+            position.x,
+            position.y,
+            self.doctrine.ingress_altitude
+        )
+        waypoint.pretty_name = "Split"
+        waypoint.description = "Depart from package"
+        waypoint.name = "SPLIT"
+        self.waypoints.append(waypoint)
+
     def ingress_cas(self, position: Point, objective: MissionTarget) -> None:
         self._ingress(FlightWaypointType.INGRESS_CAS, position, objective)
 
