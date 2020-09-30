@@ -1,16 +1,24 @@
+from typing import List, Optional
+
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QVBoxLayout
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from game import Game
 from gen.ato import Package
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
-from qt_ui.windows.mission.flight.generator.QCAPMissionGenerator import QCAPMissionGenerator
-from qt_ui.windows.mission.flight.generator.QCASMissionGenerator import QCASMissionGenerator
-from qt_ui.windows.mission.flight.generator.QSEADMissionGenerator import QSEADMissionGenerator
-from qt_ui.windows.mission.flight.generator.QSTRIKEMissionGenerator import QSTRIKEMissionGenerator
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import QPredefinedWaypointSelectionWindow
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
+    QFlightWaypointList
+from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import \
+    QPredefinedWaypointSelectionWindow
+from theater import ControlPoint, FrontLine
 
 
 class QFlightWaypointTab(QFrame):
@@ -23,56 +31,68 @@ class QFlightWaypointTab(QFrame):
         self.package = package
         self.flight = flight
         self.planner = FlightPlanBuilder(self.game, package, is_player=True)
+
+        self.flight_waypoint_list: Optional[QFlightWaypointList] = None
+        self.ascend_waypoint: Optional[QPushButton] = None
+        self.descend_waypoint: Optional[QPushButton] = None
+        self.rtb_waypoint: Optional[QPushButton] = None
+        self.delete_selected: Optional[QPushButton] = None
+        self.open_fast_waypoint_button: Optional[QPushButton] = None
+        self.recreate_buttons: List[QPushButton] = []
         self.init_ui()
 
     def init_ui(self):
         layout = QGridLayout()
-        rlayout = QVBoxLayout()
+
         self.flight_waypoint_list = QFlightWaypointList(self.flight)
-        self.open_fast_waypoint_button = QPushButton("Add Waypoint")
-        self.open_fast_waypoint_button.clicked.connect(self.on_fast_waypoint)
-
-        self.cas_generator = QPushButton("Gen. CAS")
-        self.cas_generator.clicked.connect(self.on_cas_generator)
-
-        self.cap_generator = QPushButton("Gen. CAP")
-        self.cap_generator.clicked.connect(self.on_cap_generator)
-
-        self.sead_generator = QPushButton("Gen. SEAD/DEAD")
-        self.sead_generator.clicked.connect(self.on_sead_generator)
-
-        self.strike_generator = QPushButton("Gen. STRIKE")
-        self.strike_generator.clicked.connect(self.on_strike_generator)
-
-        self.rtb_waypoint = QPushButton("Add RTB Waypoint")
-        self.rtb_waypoint.clicked.connect(self.on_rtb_waypoint)
-
-        self.ascend_waypoint = QPushButton("Add Ascend Waypoint")
-        self.ascend_waypoint.clicked.connect(self.on_ascend_waypoint)
-
-        self.descend_waypoint = QPushButton("Add Descend Waypoint")
-        self.descend_waypoint.clicked.connect(self.on_descend_waypoint)
-
-        self.delete_selected = QPushButton("Delete Selected")
-        self.delete_selected.clicked.connect(self.on_delete_waypoint)
-
         layout.addWidget(self.flight_waypoint_list, 0, 0)
+
+        rlayout = QVBoxLayout()
+        layout.addLayout(rlayout, 0, 1)
 
         rlayout.addWidget(QLabel("<strong>Generator :</strong>"))
         rlayout.addWidget(QLabel("<small>AI compatible</small>"))
-        rlayout.addWidget(self.cas_generator)
-        rlayout.addWidget(self.cap_generator)
-        rlayout.addWidget(self.sead_generator)
-        rlayout.addWidget(self.strike_generator)
+
+        self.recreate_buttons.clear()
+        recreate_types = [
+            FlightType.CAS,
+            FlightType.CAP,
+            FlightType.SEAD,
+            FlightType.STRIKE
+        ]
+        for task in recreate_types:
+            def make_closure(arg):
+                def closure():
+                    return self.confirm_recreate(arg)
+                return closure
+            button = QPushButton(f"Recreate as {task.name}")
+            button.clicked.connect(make_closure(task))
+            rlayout.addWidget(button)
+            self.recreate_buttons.append(button)
+
         rlayout.addWidget(QLabel("<strong>Advanced : </strong>"))
         rlayout.addWidget(QLabel("<small>Do not use for AI flights</small>"))
+
+        self.ascend_waypoint = QPushButton("Add Ascend Waypoint")
+        self.ascend_waypoint.clicked.connect(self.on_ascend_waypoint)
         rlayout.addWidget(self.ascend_waypoint)
+
+        self.descend_waypoint = QPushButton("Add Descend Waypoint")
+        self.descend_waypoint.clicked.connect(self.on_descend_waypoint)
         rlayout.addWidget(self.descend_waypoint)
+
+        self.rtb_waypoint = QPushButton("Add RTB Waypoint")
+        self.rtb_waypoint.clicked.connect(self.on_rtb_waypoint)
         rlayout.addWidget(self.rtb_waypoint)
-        rlayout.addWidget(self.open_fast_waypoint_button)
+
+        self.delete_selected = QPushButton("Delete Selected")
+        self.delete_selected.clicked.connect(self.on_delete_waypoint)
         rlayout.addWidget(self.delete_selected)
+
+        self.open_fast_waypoint_button = QPushButton("Add Waypoint")
+        self.open_fast_waypoint_button.clicked.connect(self.on_fast_waypoint)
+        rlayout.addWidget(self.open_fast_waypoint_button)
         rlayout.addStretch()
-        layout.addLayout(rlayout, 0, 1)
         self.setLayout(layout)
 
     def on_delete_waypoint(self):
@@ -105,45 +125,27 @@ class QFlightWaypointTab(QFrame):
         self.flight_waypoint_list.update_list()
         self.on_change()
 
-    def on_cas_generator(self):
-        self.subwindow = QCASMissionGenerator(
-            self.game,
-            self.package,
-            self.flight,
-            self.flight_waypoint_list
+    def confirm_recreate(self, task: FlightType) -> None:
+        result = QMessageBox.question(
+            self,
+            "Regenerate flight?",
+            ("Changing the flight type will reset its flight plan. Do you want "
+             "to continue?"),
+            QMessageBox.No,
+            QMessageBox.Yes
         )
-        self.subwindow.finished.connect(self.on_change)
-        self.subwindow.show()
-
-    def on_cap_generator(self):
-        self.subwindow = QCAPMissionGenerator(
-            self.game,
-            self.package,
-            self.flight,
-            self.flight_waypoint_list
-        )
-        self.subwindow.finished.connect(self.on_change)
-        self.subwindow.show()
-
-    def on_sead_generator(self):
-        self.subwindow = QSEADMissionGenerator(
-            self.game,
-            self.package,
-            self.flight,
-            self.flight_waypoint_list
-        )
-        self.subwindow.finished.connect(self.on_change)
-        self.subwindow.show()
-
-    def on_strike_generator(self):
-        self.subwindow = QSTRIKEMissionGenerator(
-            self.game,
-            self.package,
-            self.flight,
-            self.flight_waypoint_list
-        )
-        self.subwindow.finished.connect(self.on_change)
-        self.subwindow.show()
+        if result == QMessageBox.Yes:
+            # TODO: These should all be just CAP.
+            if task == FlightType.CAP:
+                if isinstance(self.package.target, FrontLine):
+                    task = FlightType.TARCAP
+                elif isinstance(self.package.target, ControlPoint):
+                    if self.package.target.is_fleet:
+                        task = FlightType.BARCAP
+            self.flight.flight_type = task
+            self.planner.populate_flight_plan(self.flight)
+            self.flight_waypoint_list.update_list()
+            self.on_change()
 
     def on_change(self):
         self.flight_waypoint_list.update_list()
