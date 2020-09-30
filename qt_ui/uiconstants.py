@@ -14,7 +14,9 @@ URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
     "Repository": "https://github.com/khopa/dcs_liberation",
     "ForumThread": "https://forums.eagle.ru/showthread.php?t=214834",
-    "Issues": "https://github.com/khopa/dcs_liberation/issues"
+    "Issues": "https://github.com/khopa/dcs_liberation/issues",
+    "VEAFForum": "https://community.veaf.org/",
+    "VEAFScriptsDoc": "https://tinyurl.com/veaf-ot"
 }
 
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
