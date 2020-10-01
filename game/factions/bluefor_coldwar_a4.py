@@ -6,7 +6,7 @@ from dcs.vehicles import *
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 
 BLUEFOR_COLDWAR_A4 = {
-    "country": "USA",
+    "country": "Combined Joint Task Forces Blue",
     "side": "blue",
     "units": [
 
