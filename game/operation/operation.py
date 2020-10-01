@@ -263,31 +263,38 @@ class Operation:
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
+        # Inject Ciribob's JTACAutoLase if not done already in the plugins
+        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
+            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
+            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
+
         # set a LUA table with data from Liberation that we want to set
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath("state.json") + "]]"
         lua = """
--- setting configuration table
-env.info("DCSLiberation|: setting configuration table")
-
--- all data in this table is overridable.
-dcsLiberation = {}
-
--- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-dcsLiberation.installPath=""" + state_location + """
-
--- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
-if ctld then
-    dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
-elseif JTACAutoLase then
-    dcsLiberation.JTACAutoLase=JTACAutoLase
-end
-
--- later, we'll add more data to the table
---dcsLiberation.POIs = {}
---dcsLiberation.BASEs = {}
---dcsLiberation.JTACs = {}
+        -- setting configuration table
+        env.info("DCSLiberation|: setting configuration table")
+        
+        -- all data in this table is overridable.
+        dcsLiberation = {}
+        
+        -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
+        dcsLiberation.installPath=""" + state_location + """
+        
+        -- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
+        if ctld then
+            dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
+        elseif JTACAutoLase then
+            dcsLiberation.JTACAutoLase=JTACAutoLase
+        end
+        
+        -- later, we'll add more data to the table
+        --dcsLiberation.POIs = {}
+        --dcsLiberation.BASEs = {}
+        --dcsLiberation.JTACs = {}
         """
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
@@ -301,13 +308,6 @@ end
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
-        # Inject Ciribob's JTACAutoLase if not done already in the plugins
-        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
         # add a configuration for JTACAutoLase and start lasing for all JTACs
         smoke = "true"
         if hasattr(self.game.settings, "jtac_smoke_on"):
@@ -315,9 +315,10 @@ end
                 smoke = "false"
 
         lua = """
--- setting and starting JTACs
-env.info("DCSLiberation|: setting and starting JTACs")
-"""
+        -- setting and starting JTACs
+        env.info("DCSLiberation|: setting and starting JTACs")
+        """
+
         for jtac in jtacs:
             lua += f"if dcsLiberation.JTACAutoLase then dcsLiberation.JTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle') end\n"
 
