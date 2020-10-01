@@ -4,7 +4,7 @@ from dcs.ships import *
 from dcs.vehicles import *
 
 BLUEFOR_COLDWAR = {
-    "country": "USA",
+    "country": "Combined Joint Task Forces Blue",
     "side": "blue",
     "units": [
 

@@ -192,6 +192,7 @@ PRICES = {
 
     A_10A: 16,
     A_10C: 22,
+    A_10C_2: 24,
 
     # heli
     Ka_50: 13,
@@ -498,6 +499,7 @@ UNIT_BY_TASK = {
         AJS37,
         A_10A,
         A_10C,
+        A_10C_2,
         Su_17M4,
         Su_25,
         Su_25T,
@@ -957,6 +959,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     },
     A_10A: COMMON_OVERRIDE,
     A_10C: COMMON_OVERRIDE,
+    A_10C_2: COMMON_OVERRIDE,
     AV8BNA: COMMON_OVERRIDE,
     C_101CC: COMMON_OVERRIDE,
     F_5E_3: COMMON_OVERRIDE,

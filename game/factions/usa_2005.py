@@ -13,6 +13,7 @@ USA_2005 = {
         FA_18C_hornet,
         F_16C_50,
         A_10C,
+        A_10C_2,
         AV8BNA,
         MQ_9_Reaper,
 
