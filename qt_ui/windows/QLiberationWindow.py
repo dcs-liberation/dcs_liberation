@@ -164,8 +164,6 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction("&Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
         help_menu.addAction("&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
         help_menu.addAction("&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
-        help_menu.addAction("&VEAF Scripts Manual", lambda: webbrowser.open_new_tab(URLS["VEAFScriptsDoc"]))
-        help_menu.addAction("&VEAF Forum", lambda: webbrowser.open_new_tab(URLS["VEAFForum"]))
         help_menu.addAction("Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
 
         help_menu.addSeparator()
