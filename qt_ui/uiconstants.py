@@ -8,7 +8,7 @@ from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
 from userdata.liberation_theme import get_theme_icons
 
-VERSION_STRING = "2.1.2"
+VERSION_STRING = "2.1.3"
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
@@ -141,6 +141,7 @@ def load_aircraft_icons():
             AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/", aircraft))
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
     AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
+    AIRCRAFT_ICONS["A-10C_2"] = AIRCRAFT_ICONS["A-10C"]
 
 
 def load_vehicle_icons():

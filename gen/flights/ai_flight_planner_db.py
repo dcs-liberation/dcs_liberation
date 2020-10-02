@@ -99,6 +99,7 @@ CAS_CAPABLE = [
 
     A_10A,
     A_10C,
+    A_10C_2,
     AV8BNA,
 
     F_86F_Sabre,
@@ -197,6 +198,7 @@ STRIKE_CAPABLE = [
 
     A_10A,
     A_10C,
+    A_10C_2,
     AV8BNA,
 
     F_86F_Sabre,
@@ -244,6 +246,7 @@ ANTISHIP_CAPABLE = [
     F_16A,
     F_16C_50,
     A_10C,
+    A_10C_2,
     A_10A,
 
     Tornado_IDS,
