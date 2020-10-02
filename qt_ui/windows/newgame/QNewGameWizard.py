@@ -83,7 +83,7 @@ class NewGameWizard(QtWidgets.QWizard):
         print("Enemy name : " + enemy_name)
         print("Player name : " + player_name)
         print("Midgame : " + str(midgame))
-        start_generator.generate_inital_units(conflictTheater, enemy_name, True, multiplier)
+        start_generator.generate_initial_units(conflictTheater, enemy_name, True, multiplier)
 
         print("-- Initial units generated")
         game = Game(player_name=player_name,
