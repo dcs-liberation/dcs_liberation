@@ -197,7 +197,7 @@ DISTANCE_FROM_FRONTLINE = {
 
 GROUP_SIZES_BY_COMBAT_STANCE = {
     CombatStance.DEFENSIVE: [2, 4, 6],
-    CombatStance.AGGRESIVE: [2, 4, 6],
+    CombatStance.AGGRESSIVE: [2, 4, 6],
     CombatStance.RETREAT: [2, 4, 6, 8],
     CombatStance.BREAKTHROUGH: [4, 6, 6, 8],
     CombatStance.ELIMINATION: [2, 4, 4, 4, 6],

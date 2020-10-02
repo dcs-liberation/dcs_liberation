@@ -4,7 +4,7 @@ from dcs.ships import *
 from dcs.vehicles import *
 
 BLUEFOR_MODERN = {
-    "country": "USA",
+    "country": "Combined Joint Task Forces Blue",
     "side": "blue",
     "units": [
 
@@ -20,6 +20,7 @@ BLUEFOR_MODERN = {
         Su_25T,
         A_10A,
         A_10C,
+        A_10C_2,
         AV8BNA,
         AJS37,
 

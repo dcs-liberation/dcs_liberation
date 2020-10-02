@@ -1,0 +1,29 @@
+# this is a list of lua scripts that will be injected in the mission, in the same order
+mist.lua
+Moose.lua
+CTLD.lua
+NIOD.lua
+WeatherMark.lua
+veaf.lua
+dcsUnits.lua
+# JTACAutoLase is an empty file, only there to disable loading the official script (already included in CTLD)
+JTACAutoLase.lua
+veafAssets.lua
+veafCarrierOperations.lua
+veafCarrierOperations2.lua
+veafCasMission.lua
+veafCombatMission.lua
+veafCombatZone.lua
+veafGrass.lua
+veafInterpreter.lua
+veafMarkers.lua
+veafMove.lua
+veafNamedPoints.lua
+veafRadio.lua
+veafRemote.lua
+veafSecurity.lua
+veafShortcuts.lua
+veafSpawn.lua
+veafTransportMission.lua
+veafUnits.lua
+missionConfig.lua

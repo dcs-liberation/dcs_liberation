@@ -108,14 +108,23 @@ class ControlPoint(MissionTarget):
 
     @property
     def is_carrier(self):
+        """
+        :return: Whether this control point is an aircraft carrier
+        """
         return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
 
     @property
     def is_fleet(self):
+        """
+        :return: Whether this control point is a boat (mobile)
+        """
         return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
 
     @property
     def is_lha(self):
+        """
+        :return: Whether this control point is an LHA
+        """
         return self.cptype in [ControlPointType.LHA_GROUP]
 
     @property
@@ -127,6 +136,20 @@ class ControlPoint(MissionTarget):
             if r not in self.radials:
                 result.append(r)
         return result
+
+    @property
+    def available_aircraft_slots(self):
+        """
+        :return: The maximum number of aircraft that can be stored in this control point
+        """
+        if self.cptype == ControlPointType.AIRBASE:
+            return len(self.airport.parking_slots)
+        elif self.is_lha:
+            return 20
+        elif self.is_carrier:
+            return 90
+        else:
+            return 0
 
     def connect(self, to):
         self.connected_points.append(to)

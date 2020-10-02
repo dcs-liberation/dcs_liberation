@@ -35,12 +35,12 @@ class QBaseDefenseGroupInfo(QGroupBox):
 
     def buildLayout(self):
         unit_dict = {}
-        for i in range(self.unit_layout.count()):
-            item = self.unit_layout.itemAt(i)
-            if item is not None and item.widget() is not None:
-                self.unit_layout.removeItem(item)
-                item.widget().setParent(None)
-                item.widget().deleteLater()
+        for i in range(self.unit_layout.rowCount()):
+            for j in range(self.unit_layout.columnCount()):
+                item = self.unit_layout.itemAtPosition(i, j)
+                if item is not None and item.widget() is not None:
+                    item.widget().setParent(None)
+                    print("Remove " + str(i) + ", " + str(j))
 
         for g in self.ground_object.groups:
             for u in g.units:
@@ -59,6 +59,11 @@ class QBaseDefenseGroupInfo(QGroupBox):
             self.unit_layout.addWidget(icon, i, 0)
             self.unit_layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
             i = i + 1
+
+        if len(unit_dict.items()) == 0:
+            self.unit_layout.addWidget(QLabel("/"), 0, 0)
+
+
 
         self.setLayout(self.main_layout)
 

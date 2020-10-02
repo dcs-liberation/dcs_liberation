@@ -31,6 +31,15 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         if not self.deliveryEvent:
             self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
+        # Determine maximum number of aircrafts that can be bought
+        self.set_maximum_units(self.cp.available_aircraft_slots)
+        self.set_recruitable_types([CAP, CAS])
+
+        self.bought_amount_labels = {}
+        self.existing_units_labels = {}
+
+        self.hangar_status = QHangarStatus(self.total_units, self.cp.available_aircraft_slots)
+
         self.init_ui()
 
     def init_ui(self):
@@ -66,5 +75,32 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         scroll.setWidgetResizable(True)
         scroll.setWidget(scroll_content)
+        main_layout.addLayout(self.hangar_status)
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
+
+    def buy(self, unit_type):
+        super().buy(unit_type)
+        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+
+    def sell(self, unit_type):
+        super().sell(unit_type)
+        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+
+
+class QHangarStatus(QHBoxLayout):
+
+    def __init__(self, current_amount: int, max_amount: int):
+        super(QHangarStatus, self).__init__()
+        self.icon = QLabel()
+        self.icon.setPixmap(ICONS["Hangar"])
+        self.text = QLabel("")
+
+        self.update_label(current_amount, max_amount)
+        self.addWidget(self.icon, Qt.AlignLeft)
+        self.addWidget(self.text, Qt.AlignLeft)
+        self.addStretch(50)
+        self.setAlignment(Qt.AlignLeft)
+
+    def update_label(self, current_amount: int, max_amount: int):
+        self.text.setText("<strong>{}/{}</strong>".format(current_amount, max_amount))

@@ -1,22 +1,60 @@
+# 2.1.3
+
+## Features/Improvements :
+* **[Units/Factions]** Added A-10C_2 to USA 2005 and Bluefor modern factions
+* **[UI]** Limit number of aircraft that can be bought to the number of available parking slots.
+* **[Mission Generator]** Use inline loading of the JSON.lua library, and save to either %LIBERATION_EXPORT_DIR%, or to DCS working directory
+
+## Changes :
+* **[Units/Factions]** Bluefor generic factions will now use the new "Combined Joint Task Forces Blue" country in the generated mission instead of "USA"
+
+## Fixes :
+* **[UI]** Fixed icon for Viggen
+* **[UI]** Added icons for some ground units
+* **[Misc]** Fixed issue with Chinese characters in pydcs preventing generating the mission. (Take Off button not working) (thanks to spark135246)
+* **[Misc]** Fixed an error causing with ATC frequency preventing generating the mission. (Take Off button not working) (thanks to danalbert)
+
+# 2.1.2
+
+## Fixes :
+* **[Mission Generator]** Fix mission generation issues with radio frequencies (Thanks to contributors davidp57 and danalbert)
+* **[Mission Generator]** AI should now properly plan flights for Tornados
+
 # 2.1.1
 
 ## Features/Improvements :
 * **[Other]** Added an installer option (thanks to contributor parithon)
-* **[Cheat Menu]** Added possibility to replace destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
-* **[Cheat Menu]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
+* **[Kneeboards]** Generate mission kneeboards for player flights. Kneeboards include
+  airfield/carrier information (ATC frequencies, ILS, TACAN, and runway
+  assignments), assigned radio channels, waypoint lists, and AWACS/JTAC/tanker
+  information. (Thanks to contributor danalbert)
+* **[Radios]** Allocate separate intra-flight channels for most aircraft to reduce global
+  chatter. (Thanks to contributor danalbert)
+* **[Radios]** Configure radio channel presets for most aircraft. Currently supported are:
+  * AJS37
+  * AV-8B
+  * F-14B
+  * F-16C
+  * F/A-18C
+  * JF-17
+  * M-2000C (Thanks to contributor danalbert)
+* **[Base Menu]** Added possibility to repair destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
+* **[Base Menu]** Added possibility to buy/sell/replace SAM units
+* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
 * **[Units/Factions]** Added Mig-21, Mig-23, SA-342L to Syria 2011
 * **[Cheat Menu]** Added buttons to remove money
 
 ## Fixed issues :
-* **[UI/UX]** Spelling issues (Thanks to Github contributor steveveepee)
+* **[UI/UX]** Spelling issues (Thanks to contributor steveveepee)
 * **[Campaign Generator]** LHA was placed on land in Syrian Civil War campaign
 * **[Campaign Generator]** Fixed inverted configuration for Syria full map
 * **[Campaign Generator]** Syria "Inherent Resolve" campaign, added Incirlik Air Base
 * **[Mission Generator]** AH-1W was not used by AI to generate CAS mission by default
 * **[Mission Generator]** Fixed F-16C targeting pod not being added to payload
 * **[Mission Generator]** AH-64A and AH-64D payloads fix. 
+* **[Units/Factions]** China will use KJ-2000 as awacs instead of A-50
 
 # 2.1.0
 

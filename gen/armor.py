@@ -43,7 +43,7 @@ class GroundConflictGenerator:
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
         self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = random.choice([CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.AGGRESIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESIVE])
+        self.enemy_stance = random.choice([CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESSIVE])
         self.game = game
         self.jtacs: List[JtacInfo] = []
 
@@ -239,7 +239,7 @@ class GroundConflictGenerator:
                                 u.heading = forward_heading + random.randint(-5,5)
 
             elif group.role in [CombatGroupRole.TANK, CombatGroupRole.IFV]:
-                if stance == CombatStance.AGGRESIVE:
+                if stance == CombatStance.AGGRESSIVE:
                     # Attack nearest enemy if any
                     # Then move forward OR Attack enemy base if it is not too far away
                     target = self.find_nearest_enemy_group(dcs_group, enemy_groups)
@@ -280,7 +280,7 @@ class GroundConflictGenerator:
 
             elif group.role in [CombatGroupRole.APC, CombatGroupRole.ATGM]:
 
-                if stance in [CombatStance.AGGRESIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
+                if stance in [CombatStance.AGGRESSIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
                     # APC & ATGM will never move too much forward, but will follow along any offensive
                     if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
                         attack_point = to_cp.position.random_point_within(500, 0)

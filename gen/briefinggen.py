@@ -205,7 +205,7 @@ class BriefingGenerator(MissionInfoGenerator):
                     self.description += "We do not have a single vehicle available to hold our position, the situation is critical, and we will lose ground inevitably.\n"
                 elif enemy_base.base.total_armor == 0:
                     self.description += "The enemy forces have been crushed, we will be able to make significant progress toward " + enemy_base.name + ". \n"
-                if stance == CombatStance.AGGRESIVE:
+                if stance == CombatStance.AGGRESSIVE:
                     if has_numerical_superiority:
                         self.description += "On this location, our ground forces will try to make progress against the enemy"
                         self.description += ". As the enemy is outnumbered, our forces should have no issue making progress.\n"
