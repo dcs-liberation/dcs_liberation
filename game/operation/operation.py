@@ -236,18 +236,19 @@ class Operation:
 
         # Inject Plugins Lua Scripts
         listOfPluginsScripts = []
-        try:
-            with open("./resources/scripts/plugins/__plugins.lst", "r") as a_file:
-                for line in a_file:
-                    name = line.strip()
-                    if not name.startswith( '#' ):
-                        trigger = TriggerStart(comment="Load " + name)
-                        listOfPluginsScripts.append(name)
-                        fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
-                        trigger.add_action(DoScriptFile(fileref))
-                        self.current_mission.triggerrules.triggers.append(trigger)
-        except Exception as e:
-            print(e)
+        plugin_file_path = Path("./resources/scripts/plugins/__plugins.lst")
+        if plugin_file_path.exists():
+            for line in plugin_file_path.read_text().splitlines():
+                name = line.strip()
+                if not name.startswith( '#' ):
+                    trigger = TriggerStart(comment="Load " + name)
+                    listOfPluginsScripts.append(name)
+                    fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
+                    trigger.add_action(DoScriptFile(fileref))
+                    self.current_mission.triggerrules.triggers.append(trigger)
+        else:
+            logging.info(
+                f"Not loading plugins, {plugin_file_path} does not exist")
 
         # Inject Mist Script if not done already in the plugins
         if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
@@ -263,31 +264,38 @@ class Operation:
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
+        # Inject Ciribob's JTACAutoLase if not done already in the plugins
+        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
+            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
+            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
+
         # set a LUA table with data from Liberation that we want to set
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath("state.json") + "]]"
         lua = """
--- setting configuration table
-env.info("DCSLiberation|: setting configuration table")
-
--- all data in this table is overridable.
-dcsLiberation = {}
-
--- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-dcsLiberation.installPath=""" + state_location + """
-
--- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
-if ctld then
-    dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
-elseif JTACAutoLase then
-    dcsLiberation.JTACAutoLase=JTACAutoLase
-end
-
--- later, we'll add more data to the table
---dcsLiberation.POIs = {}
---dcsLiberation.BASEs = {}
---dcsLiberation.JTACs = {}
+        -- setting configuration table
+        env.info("DCSLiberation|: setting configuration table")
+        
+        -- all data in this table is overridable.
+        dcsLiberation = {}
+        
+        -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
+        dcsLiberation.installPath=""" + state_location + """
+        
+        -- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
+        if ctld then
+            dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
+        elseif JTACAutoLase then
+            dcsLiberation.JTACAutoLase=JTACAutoLase
+        end
+        
+        -- later, we'll add more data to the table
+        --dcsLiberation.POIs = {}
+        --dcsLiberation.BASEs = {}
+        --dcsLiberation.JTACs = {}
         """
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
@@ -301,13 +309,6 @@ end
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
-        # Inject Ciribob's JTACAutoLase if not done already in the plugins
-        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
         # add a configuration for JTACAutoLase and start lasing for all JTACs
         smoke = "true"
         if hasattr(self.game.settings, "jtac_smoke_on"):
@@ -315,9 +316,10 @@ end
                 smoke = "false"
 
         lua = """
--- setting and starting JTACs
-env.info("DCSLiberation|: setting and starting JTACs")
-"""
+        -- setting and starting JTACs
+        env.info("DCSLiberation|: setting and starting JTACs")
+        """
+
         for jtac in jtacs:
             lua += f"if dcsLiberation.JTACAutoLase then dcsLiberation.JTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle') end\n"
 

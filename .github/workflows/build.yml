@@ -1,0 +1,39 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install environment
+      run: |
+        py -m venv ./venv
+
+    - name: Install dependencies
+      run: |
+        ./venv/scripts/activate
+        pip install -r requirements.txt
+        # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
+        Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
+
+    - name: Build binaries
+      run: |
+        ./venv/scripts/activate
+        $env:PYTHONPATH=".;./pydcs"
+        pyinstaller pyinstaller.spec
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dcs_liberation
+        path: dist/

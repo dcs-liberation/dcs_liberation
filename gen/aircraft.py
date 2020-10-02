@@ -279,13 +279,15 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
         last_channel = flight.num_radio_channels(radio_id)
         channel_alloc = iter(range(first_channel, last_channel + 1))
 
-        flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
+        if flight.departure.atc is not None:
+            flight.assign_channel(radio_id, next(channel_alloc),
+                                  flight.departure.atc)
 
         # TODO: If there ever are multiple AWACS, limit to mission relevant.
         for awacs in air_support.awacs:
             flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
 
-        if flight.arrival != flight.departure:
+        if flight.arrival != flight.departure and flight.arrival.atc is not None:
             flight.assign_channel(radio_id, next(channel_alloc),
                                   flight.arrival.atc)
 
@@ -295,7 +297,7 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
                 flight.assign_channel(
                     radio_id, next(channel_alloc), tanker.freq)
 
-            if flight.divert is not None:
+            if flight.divert is not None and flight.divert.atc is not None:
                 flight.assign_channel(radio_id, next(channel_alloc),
                                       flight.divert.atc)
         except StopIteration:
