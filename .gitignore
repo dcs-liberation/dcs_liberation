@@ -21,4 +21,6 @@ logs/liberation.log
 qt_ui/logs/liberation.log
 
 *.psd
-resources/scripts/plugins/*
+resources/scripts/plugins/*.lua
+resources/scripts/plugins/*.lst
+resources/scripts/MissionScripting.original.lua

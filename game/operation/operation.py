@@ -54,6 +54,7 @@ class Operation:
         self.departure_cp = departure_cp
         self.to_cp = to_cp
         self.is_quick = False
+        self.listOfPluginsScripts = []
 
     def units_of(self, country_name: str) -> typing.Collection[UnitType]:
         return []
@@ -125,6 +126,26 @@ class Operation:
         else:
             self.attackers_starting_position = self.departure_cp.at
             self.defenders_starting_position = self.to_cp.at
+
+    def injectPlugin(self, pluginName):
+        if pluginName == None:
+            plugin_path = Path("./resources/scripts/plugins")
+        else:
+            plugin_path = Path("./resources/scripts/plugins",pluginName)
+        plugin_file_path = Path(plugin_path, "__plugins.lst")
+        if plugin_file_path.exists():
+            for line in plugin_file_path.read_text().splitlines():
+                name = line.strip()
+                if name and not name.startswith( '#' ):
+                    trigger = TriggerStart(comment="Load " + name)
+                    self.listOfPluginsScripts.append(name)
+                    filename = Path(plugin_path, name).resolve()
+                    fileref = self.current_mission.map_resource.add_resource_file(filename)
+                    trigger.add_action(DoScriptFile(fileref))
+                    self.current_mission.triggerrules.triggers.append(trigger)
+        else:
+            logging.info(
+                f"Not loading plugins, {plugin_file_path} does not exist")
 
     def generate(self):
         # Dedup beacon/radio frequencies, since some maps have some frequencies
@@ -235,37 +256,32 @@ class Operation:
             self.visualgen.generate()
 
         # Inject Plugins Lua Scripts
-        listOfPluginsScripts = []
-        plugin_file_path = Path("./resources/scripts/plugins/__plugins.lst")
-        if plugin_file_path.exists():
-            for line in plugin_file_path.read_text().splitlines():
-                name = line.strip()
-                if not name.startswith( '#' ):
-                    trigger = TriggerStart(comment="Load " + name)
-                    listOfPluginsScripts.append(name)
-                    fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
-                    trigger.add_action(DoScriptFile(fileref))
-                    self.current_mission.triggerrules.triggers.append(trigger)
+        self.listOfPluginsScripts = []
+
+        # If selected, inject the VEAF plugin
+        if self.game.settings.plugin_used != 'None':
+            # load the requested plugin
+            self.injectPlugin(self.game.settings.plugin_used)
         else:
-            logging.info(
-                f"Not loading plugins, {plugin_file_path} does not exist")
+            # try and load a custom plugin
+            self.injectPlugin(None)
 
         # Inject Mist Script if not done already in the plugins
-        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
+        if not "mist.lua" in self.listOfPluginsScripts and not "mist_4_3_74.lua" in self.listOfPluginsScripts: # don't load the script twice
             trigger = TriggerStart(comment="Load Mist Lua framework")
             fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/mist_4_3_74.lua")
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
         # Inject JSON library if not done already in the plugins
-        if not "json.lua" in listOfPluginsScripts : # don't load the script twice
+        if not "json.lua" in self.listOfPluginsScripts : # don't load the script twice
             trigger = TriggerStart(comment="Load JSON Lua library")
             fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/json.lua")
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
         # Inject Ciribob's JTACAutoLase if not done already in the plugins
-        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
+        if not "JTACAutoLase.lua" in self.listOfPluginsScripts : # don't load the script twice
             trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
             fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
             trigger.add_action(DoScriptFile(fileref))
@@ -303,7 +319,7 @@ class Operation:
         self.current_mission.triggerrules.triggers.append(trigger)
 
         # Inject DCS-Liberation script if not done already in the plugins
-        if not "dcs_liberation.lua" in listOfPluginsScripts : # don't load the script twice
+        if not "dcs_liberation.lua" in self.listOfPluginsScripts : # don't load the script twice
             trigger = TriggerStart(comment="Load DCS Liberation script")
             fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/dcs_liberation.lua")
             trigger.add_action(DoScriptFile(fileref))

@@ -21,6 +21,7 @@ URLS : Dict[str, str] = {
 
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
+PLUGINS_OPTIONS = ["None", "VEAF"]
 
 FONT_SIZE = 8
 FONT_NAME = "Arial"

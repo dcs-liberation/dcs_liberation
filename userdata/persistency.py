@@ -50,8 +50,8 @@ def load_game(path):
             save = pickle.load(f)
             save.savepath = path
             return save
-        except:
-            logging.error("Invalid Save game")
+        except Exception as e:
+            logging.error("Invalid Save game : "+e)
             return None
 
 def save_game(game) -> bool:

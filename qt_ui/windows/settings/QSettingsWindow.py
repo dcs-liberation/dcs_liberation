@@ -182,6 +182,12 @@ class QSettingsWindow(QDialog):
         self.jtac_smoke_on.setChecked(self.game.settings.jtac_smoke_on)
         self.jtac_smoke_on.toggled.connect(self.applySettings)
 
+        self.pluginUsed = QComboBox()
+        for plugin in CONST.PLUGINS_OPTIONS:
+            self.pluginUsed.addItem(plugin)
+        self.pluginUsed.setCurrentIndex(CONST.PLUGINS_OPTIONS.index(self.game.settings.plugin_used))
+        self.pluginUsed.currentIndexChanged.connect(self.applySettings)
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
@@ -190,6 +196,8 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Enable JTAC smoke markers"), 3, 0)
         self.gameplayLayout.addWidget(self.jtac_smoke_on, 3, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(QLabel("Use LUA plugin"), 4, 0)
+        self.gameplayLayout.addWidget(self.pluginUsed, 4, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -306,6 +314,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.generate_marks = self.generate_marks.isChecked()
         self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
         self.game.settings.jtac_smoke_on = self.jtac_smoke_on.isChecked()
+        self.game.settings.plugin_used = CONST.PLUGINS_OPTIONS[self.pluginUsed.currentIndex()]
 
         print(self.game.settings.map_coalition_visibility)
 

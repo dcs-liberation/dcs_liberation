@@ -1,5 +1,6 @@
 
 class Settings:
+    plugin_used = "None"
 
     def __init__(self):
         # Generator settings
@@ -8,6 +9,7 @@ class Settings:
         self.do_not_generate_lha = False     # TODO : implement
         self.do_not_generate_player_navy = True          # TODO : implement
         self.do_not_generate_enemy_navy = True           # TODO : implement
+        self.plugin_used = "None"
 
         # Difficulty settings
         self.player_skill = "Good"
