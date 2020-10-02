@@ -27,7 +27,7 @@ COUNT_BY_TASK = {
 }
 
 
-def generate_inital_units(theater: ConflictTheater, enemy_country: str, sams: bool, multiplier: float):
+def generate_initial_units(theater: ConflictTheater, enemy_country: str, sams: bool, multiplier: float):
     for cp in theater.enemy_points():
         if cp.captured:
             continue
