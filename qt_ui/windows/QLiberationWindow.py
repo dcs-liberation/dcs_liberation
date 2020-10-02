@@ -1,22 +1,36 @@
 import logging
 import sys
 import webbrowser
+from typing import Optional
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
-    QSplitter, QFileDialog
+from PySide2.QtWidgets import (
+    QAction,
+    QDesktopWidget,
+    QFileDialog,
+    QMainWindow,
+    QMessageBox,
+    QSplitter,
+    QVBoxLayout,
+    QWidget,
+)
 
 import qt_ui.uiconstants as CONST
 from game import Game
+from game.inventory import GlobalAircraftInventory
+from qt_ui.dialogs import Dialog
+from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
+from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
+from qt_ui.windows.GameUpdateSignal import DebriefingSignal, GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
-from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
-from qt_ui.windows.preferences.QLiberationPreferencesWindow import QLiberationPreferencesWindow
+from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
+from qt_ui.windows.preferences.QLiberationPreferencesWindow import \
+    QLiberationPreferencesWindow
 from userdata import persistency
 
 
@@ -25,6 +39,10 @@ class QLiberationWindow(QMainWindow):
     def __init__(self):
         super(QLiberationWindow, self).__init__()
 
+        self.game: Optional[Game] = None
+        self.game_model = GameModel()
+        Dialog.set_game(self.game_model)
+        self.ato_panel = None
         self.info_panel = None
         self.setGame(persistency.restore_game())
 
@@ -44,16 +62,19 @@ class QLiberationWindow(QMainWindow):
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
 
-
     def initUi(self):
-
-        self.liberation_map = QLiberationMap(self.game)
+        self.ato_panel = QAirTaskingOrderPanel(self.game_model)
+        self.liberation_map = QLiberationMap(self.game_model)
         self.info_panel = QInfoPanel(self.game)
 
         hbox = QSplitter(Qt.Horizontal)
-        hbox.addWidget(self.info_panel)
-        hbox.addWidget(self.liberation_map)
-        hbox.setSizes([2, 8])
+        vbox = QSplitter(Qt.Vertical)
+        hbox.addWidget(self.ato_panel)
+        hbox.addWidget(vbox)
+        vbox.addWidget(self.liberation_map)
+        vbox.addWidget(self.info_panel)
+        hbox.setSizes([100, 600])
+        vbox.setSizes([600, 100])
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
@@ -210,10 +231,11 @@ class QLiberationWindow(QMainWindow):
     def exit(self):
         sys.exit(0)
 
-    def setGame(self, game: Game):
+    def setGame(self, game: Optional[Game]):
         self.game = game
         if self.info_panel:
             self.info_panel.setGame(game)
+        self.game_model.set(self.game)
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation " + CONST.VERSION_STRING + "</h3>" + \

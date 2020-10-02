@@ -1,25 +1,35 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox, QScrollArea, QFrame, QWidget, QHBoxLayout, QLabel
+from typing import Optional
 
-from game.event import UnitsDeliveryEvent
-from qt_ui.uiconstants import ICONS
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
+
+from game.event.event import UnitsDeliveryEvent
+from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, CAP, CAS, db, ControlPointType
-from game import Game
+from theater import CAP, CAS, ControlPoint, db
 
 
 class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
-
-    def __init__(self, cp: ControlPoint, game: Game):
+    def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
         QFrame.__init__(self)
         self.cp = cp
-        self.game = game
+        self.game_model = game_model
+        self.deliveryEvent: Optional[UnitsDeliveryEvent] = None
 
-        for event in self.game.events:
+        self.bought_amount_labels = {}
+        self.existing_units_labels = {}
+
+        for event in self.game_model.game.events:
             if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
                 self.deliveryEvent = event
         if not self.deliveryEvent:
-            self.deliveryEvent = self.game.units_delivery_event(self.cp)
+            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
         # Determine maximum number of aircrafts that can be bought
         self.set_maximum_units(self.cp.available_aircraft_slots)
@@ -36,8 +46,8 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout = QVBoxLayout()
 
         units = {
-            CAP: db.find_unittype(CAP, self.game.player_name),
-            CAS: db.find_unittype(CAS, self.game.player_name),
+            CAP: db.find_unittype(CAP, self.game_model.game.player_name),
+            CAS: db.find_unittype(CAS, self.game_model.game.player_name),
         }
 
         scroll_content = QWidget()
@@ -46,7 +56,8 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         for task_type in units.keys():
             units_column = list(set(units[task_type]))
-            if len(units_column) == 0: continue
+            if len(units_column) == 0:
+                continue
             units_column.sort(key=lambda x: db.PRICES[x])
             for unit_type in units_column:
                 if self.cp.is_carrier and not unit_type in db.CARRIER_CAPABLE:

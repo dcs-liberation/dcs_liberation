@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
 from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
+from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
+from gen.ato import AirTaskingOrder
 from gen.flights.ai_flight_planner import FlightPlanner
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from .event import *
@@ -77,6 +79,13 @@ class Game:
         self.__destroyed_units = []
         self.jtacs = []
         self.savepath = ""
+
+        self.blue_ato = AirTaskingOrder()
+        self.red_ato = AirTaskingOrder()
+
+        self.aircraft_inventory = GlobalAircraftInventory(
+            self.theater.controlpoints
+        )
 
         self.sanitize_sides()
 
@@ -229,10 +238,16 @@ class Game:
         # Update statistics
         self.game_stats.update(self)
 
+        self.aircraft_inventory.reset()
+        for cp in self.theater.controlpoints:
+            self.aircraft_inventory.set_from_control_point(cp)
+
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
         self.planners = {}
         self.ground_planners = {}
+        self.blue_ato.clear()
+        self.red_ato.clear()
         for cp in self.theater.controlpoints:
             if cp.has_runway():
                 planner = FlightPlanner(cp, self)

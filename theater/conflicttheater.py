@@ -46,7 +46,7 @@ COAST_DR_W = [135, 180, 225, 315]
 
 class ConflictTheater:
     terrain = None  # type: dcs.terrain.Terrain
-    controlpoints = None  # type: typing.Collection[ControlPoint]
+    controlpoints = None  # type: typing.List[ControlPoint]
 
     reference_points = None  # type: typing.Dict
     overview_image = None  # type: str

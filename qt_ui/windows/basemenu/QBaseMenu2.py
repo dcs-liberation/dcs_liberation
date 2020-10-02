@@ -1,9 +1,9 @@
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QPixmap
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget, QDialog, QGridLayout
+from PySide2.QtWidgets import QDialog, QGridLayout, QHBoxLayout, QLabel, QWidget
 
-from game import Game
 from game.event import ControlPointType
+from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
@@ -13,19 +13,20 @@ from theater import ControlPoint
 
 class QBaseMenu2(QDialog):
 
-    def __init__(self, parent, cp: ControlPoint, game: Game):
+    def __init__(self, parent, cp: ControlPoint, game_model: GameModel):
         super(QBaseMenu2, self).__init__(parent)
 
         # Attrs
         self.cp = cp
-        self.game = game
+        self.game_model = game_model
         self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
         self.objectName = "menuDialogue"
 
         # Widgets
-        self.qbase_menu_tab = QBaseMenuTabs(cp, game)
+        self.qbase_menu_tab = QBaseMenuTabs(cp, self.game_model)
 
         try:
+            game = self.game_model.game
             self.airport = game.theater.terrain.airport_by_id(self.cp.id)
         except:
             self.airport = None
@@ -70,7 +71,9 @@ class QBaseMenu2(QDialog):
         self.mainLayout.addWidget(header, 0, 0)
         self.mainLayout.addWidget(self.topLayoutWidget, 1, 0)
         self.mainLayout.addWidget(self.qbase_menu_tab, 2, 0)
-        totalBudget = QLabel(QRecruitBehaviour.BUDGET_FORMAT.format(self.game.budget))
+        totalBudget = QLabel(
+            QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
+        )
         totalBudget.setObjectName("budgetField")
         totalBudget.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         totalBudget.setProperty("style", "budget-label")
@@ -78,7 +81,7 @@ class QBaseMenu2(QDialog):
         self.setLayout(self.mainLayout)
 
     def closeEvent(self, closeEvent:QCloseEvent):
-        GameUpdateSignal.get_instance().updateGame(self.game)
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):
         if self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
