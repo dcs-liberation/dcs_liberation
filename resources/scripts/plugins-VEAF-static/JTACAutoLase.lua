@@ -1,1 +1,0 @@
--- empty script to disable the actual JTACAutoLase (already defined in CTLD)

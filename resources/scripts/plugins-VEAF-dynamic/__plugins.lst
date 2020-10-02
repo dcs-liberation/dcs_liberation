@@ -1,9 +1,0 @@
-# this is a list of lua scripts that will be injected in the mission, in the same order
-#
-# This list will dynamically load the VEAF framework
-#
-# JTACAutoLase.lua is an empty file, only there to disable loading the official script (already included in CTLD)
-JTACAutoLase.lua
-# mist.lua is an empty file, only there to disable the loading actual script because it is already loaded dynamically
-mist.lua
-dynamically-load-framework.lua
