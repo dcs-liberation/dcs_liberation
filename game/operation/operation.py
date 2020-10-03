@@ -236,18 +236,19 @@ class Operation:
 
         # Inject Plugins Lua Scripts
         listOfPluginsScripts = []
-        try:
-            with open("./resources/scripts/plugins/__plugins.lst", "r") as a_file:
-                for line in a_file:
-                    name = line.strip()
-                    if not name.startswith( '#' ):
-                        trigger = TriggerStart(comment="Load " + name)
-                        listOfPluginsScripts.append(name)
-                        fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
-                        trigger.add_action(DoScriptFile(fileref))
-                        self.current_mission.triggerrules.triggers.append(trigger)
-        except Exception as e:
-            print(e)
+        plugin_file_path = Path("./resources/scripts/plugins/__plugins.lst")
+        if plugin_file_path.exists():
+            for line in plugin_file_path.read_text().splitlines():
+                name = line.strip()
+                if not name.startswith( '#' ):
+                    trigger = TriggerStart(comment="Load " + name)
+                    listOfPluginsScripts.append(name)
+                    fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
+                    trigger.add_action(DoScriptFile(fileref))
+                    self.current_mission.triggerrules.triggers.append(trigger)
+        else:
+            logging.info(
+                f"Not loading plugins, {plugin_file_path} does not exist")
 
         # Inject Mist Script if not done already in the plugins
         if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
