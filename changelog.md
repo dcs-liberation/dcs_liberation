@@ -3,7 +3,7 @@
 ## Features/Improvements :
 * **[Units/Factions]** Added A-10C_2 to USA 2005 and Bluefor modern factions
 * **[UI]** Limit number of aircraft that can be bought to the number of available parking slots.
-* **[Mission Generator]** Use inline loading of the JSON.lua library, and save to either %LIBERATION_EXPORT_DIR%, or to DCS working directory
+* **[Mission Generator]** Use inline loading of the JSON.lua library, and save to either %LIBERATION_EXPORT_DIR%, %TEMP%, or to the DCS working directory
 
 ## Changes :
 * **[Units/Factions]** Bluefor generic factions will now use the new "Combined Joint Task Forces Blue" country in the generated mission instead of "USA"

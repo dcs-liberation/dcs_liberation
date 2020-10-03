@@ -120,6 +120,7 @@ class Flight:
     preset_loadout_name = ""
     start_type = "Runway"
     group = False # Contains DCS Mission group data after mission has been generated
+    targetPoint = None # Contains either None or a Strike/SEAD target point location 
 
     # How long before this flight should take off
     scheduled_in = 0
