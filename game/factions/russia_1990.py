@@ -1,7 +1,39 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Ka_50,
+    Mi_24V,
+    Mi_8MT,
+)
+from dcs.planes import (
+    A_50,
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    MiG_23MLD,
+    MiG_25PD,
+    MiG_29A,
+    MiG_29S,
+    MiG_31,
+    Su_24M,
+    Su_25,
+    Su_27,
+    Yak_40,
+)
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    CV_1143_5_Admiral_Kuznetsov,
+    Dry_cargo_ship_Ivanov,
+    FF_1135M_Rezky,
+    FSG_1241_1MP_Molniya,
+    Tanker_Elnya_160,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 Russia_1990 = {
     "country": "Russia",

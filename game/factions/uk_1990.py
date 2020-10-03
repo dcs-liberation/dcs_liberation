@@ -1,7 +1,29 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_64A,
+    SA342M,
+)
+from dcs.planes import (
+    AV8BNA,
+    C_130,
+    E_3A,
+    F_4E,
+    KC130,
+    KC_135,
+    Tornado_GR4,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    Ticonderoga_class,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 UnitedKingdom_1990 = {
     "country": "UK",

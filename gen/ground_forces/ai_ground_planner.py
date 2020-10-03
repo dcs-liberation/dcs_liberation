@@ -1,13 +1,13 @@
 import random
 from enum import Enum
+from typing import Dict, List
 
-from dcs.vehicles import *
-
-from gen import Conflict
-from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
+from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
+from dcs.unittype import VehicleType
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from gen.ground_forces.combat_stance import CombatStance
+from theater import ControlPoint
 
 TYPE_TANKS = [
     Armor.MBT_T_55,
@@ -207,8 +207,8 @@ GROUP_SIZES_BY_COMBAT_STANCE = {
 
 class CombatGroup:
 
-    def __init__(self, role:CombatGroupRole):
-        self.units = []
+    def __init__(self, role: CombatGroupRole):
+        self.units: List[VehicleType] = []
         self.role = role
         self.assigned_enemy_cp = None
         self.start_position = None
@@ -222,33 +222,22 @@ class CombatGroup:
 
 class GroundPlanner:
 
-    cp = None
-    combat_groups_dict = {}
-    connected_enemy_cp = []
-
-    tank_groups = []
-    apc_group = []
-    ifv_group = []
-    art_group = []
-    shorad_groups = []
-    logi_groups = []
-
     def __init__(self, cp:ControlPoint, game):
         self.cp = cp
         self.game = game
         self.connected_enemy_cp = [cp for cp in self.cp.connected_points if cp.captured != self.cp.captured]
-        self.tank_groups = []
-        self.apc_group = []
-        self.ifv_group = []
-        self.art_group = []
-        self.atgm_group = []
-        self.logi_groups = []
-        self.shorad_groups = []
+        self.tank_groups: List[CombatGroup] = []
+        self.apc_group: List[CombatGroup] = []
+        self.ifv_group: List[CombatGroup] = []
+        self.art_group: List[CombatGroup] = []
+        self.atgm_group: List[CombatGroup] = []
+        self.logi_groups: List[CombatGroup] = []
+        self.shorad_groups: List[CombatGroup] = []
 
-        self.units_per_cp = {}
+        self.units_per_cp: Dict[int, List[CombatGroup]] = {}
         for cp in self.connected_enemy_cp:
             self.units_per_cp[cp.id] = []
-        self.reserve = []
+        self.reserve: List[CombatGroup] = []
 
 
     def plan_groundwar(self):

@@ -1,6 +1,18 @@
+import logging
+import math
+import random
+import sys
 from datetime import datetime, timedelta
+from typing import Any, Dict, List
 
-from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
+from dcs.action import Coalition
+from dcs.mapping import Point
+from dcs.task import CAP, CAS, PinpointStrike, Task
+from dcs.unittype import UnitType
+from dcs.vehicles import AirDefence
+
+from game import db
+from game.db import PLAYER_BUDGET_BASE, REWARDS
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from gen.ato import AirTaskingOrder
@@ -8,9 +20,14 @@ from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
-from .event import *
+from theater import ConflictTheater, ControlPoint
+from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
+from . import persistency
+from .debriefing import Debriefing
+from .event.event import Event, UnitsDeliveryEvent
+from .event.frontlineattack import FrontlineAttackEvent
+from .infos.information import Information
 from .settings import Settings
-
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -50,20 +67,11 @@ PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
 class Game:
-    settings = None  # type: Settings
-    budget = PLAYER_BUDGET_INITIAL
-    events = None  # type: typing.List[Event]
-    pending_transfers = None  # type: typing.Dict[]
-    ignored_cps = None  # type: typing.Collection[ControlPoint]
-    turn = 0
-    game_stats: GameStats = None
-
-    current_unit_id = 0
-    current_group_id = 0
-
-    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime, settings):
+    def __init__(self, player_name: str, enemy_name: str,
+                 theater: ConflictTheater, start_date: datetime,
+                 settings: Settings):
         self.settings = settings
-        self.events = []
+        self.events: List[Event] = []
         self.theater = theater
         self.player_name = player_name
         self.player_country = db.FACTIONS[player_name]["country"]
@@ -73,14 +81,15 @@ class Game:
         self.date = datetime(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.ground_planners = {}
+        self.ground_planners: Dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         self.__culling_points = self.compute_conflicts_position()
-        self.__frontlineData = []
-        self.__destroyed_units = []
-        self.jtacs = []
+        self.__destroyed_units: List[str] = []
         self.savepath = ""
+        self.budget = PLAYER_BUDGET_INITIAL
+        self.current_unit_id = 0
+        self.current_group_id = 0
 
         self.blue_ato = AirTaskingOrder()
         self.red_ato = AirTaskingOrder()
@@ -128,7 +137,7 @@ class Game:
         for player_cp, enemy_cp in self.theater.conflicts(True):
             self._generate_player_event(FrontlineAttackEvent, player_cp, enemy_cp)
 
-    def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
+    def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> List[UnitType]:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
 
         if for_task == AirDefence and not self.settings.sams:
@@ -209,7 +218,7 @@ class Game:
     def on_load(self) -> None:
         ObjectiveDistanceCache.set_theater(self.theater)
 
-    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
+    def pass_turn(self, no_action=False):
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn = self.turn + 1
@@ -233,11 +242,7 @@ class Game:
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
-        self.ignored_cps = []
-        if ignored_cps:
-            self.ignored_cps = ignored_cps
-
-        self.events = []  # type: typing.List[Event]
+        self.events = []
         self._generate_events()
 
         # Update statistics
@@ -424,10 +429,10 @@ class Game:
         return 1
 
     def get_player_coalition(self):
-        return dcs.action.Coalition.Blue
+        return Coalition.Blue
 
     def get_enemy_coalition(self):
-        return dcs.action.Coalition.Red
+        return Coalition.Red
 
     def get_player_color(self):
         return "blue"

@@ -1,7 +1,21 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
-from dcs.helicopters import *
+from dcs.helicopters import (
+    UH_1H,
+)
+from dcs.planes import (
+    AJS37,
+)
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    CV_1143_5_Admiral_Kuznetsov,
+    Dry_cargo_ship_Ivanov,
+    Tanker_Elnya_160,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Sweden_1990 = {
     "country": "Sweden",

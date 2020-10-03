@@ -1,8 +1,21 @@
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    Dry_cargo_ship_Ivanov,
+    Tanker_Elnya_160,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
-from pydcs_extensions.frenchpack.frenchpack import DIM__TOYOTA_BLUE, DIM__TOYOTA_DESERT, DIM__TOYOTA_GREEN, \
-    DIM__KAMIKAZE
+from pydcs_extensions.frenchpack.frenchpack import (
+    DIM__KAMIKAZE,
+    DIM__TOYOTA_BLUE,
+    DIM__TOYOTA_DESERT,
+    DIM__TOYOTA_GREEN,
+)
 
 Insurgent_modded = {
     "country": "Insurgents",

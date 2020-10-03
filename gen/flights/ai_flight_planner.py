@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import operator
 from dataclasses import dataclass
-from typing import Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
+from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.unittype import UnitType
 
@@ -406,17 +406,18 @@ class CoalitionMissionPlanner:
             self.game.aircraft_inventory,
             self.is_player
         )
-        for flight in mission.flights:
-            if not builder.plan_flight(flight):
+        for proposed_flight in mission.flights:
+            if not builder.plan_flight(proposed_flight):
                 builder.release_planned_aircraft()
                 self.message("Insufficient aircraft",
                              f"Not enough aircraft in range for {mission}")
                 return
 
         package = builder.build()
-        builder = FlightPlanBuilder(self.game, package, self.is_player)
+        flight_plan_builder = FlightPlanBuilder(self.game, package,
+                                                self.is_player)
         for flight in package.flights:
-            builder.populate_flight_plan(flight)
+            flight_plan_builder.populate_flight_plan(flight)
         self.ato.add_package(package)
 
     def message(self, title, text) -> None:

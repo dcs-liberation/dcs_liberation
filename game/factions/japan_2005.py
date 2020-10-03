@@ -1,7 +1,24 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_1W,
+    AH_64D,
+)
+from dcs.planes import (
+    C_130,
+    E_3A,
+    F_15C,
+    F_16C_50,
+    F_4E,
+    KC130,
+    KC_135,
+)
+from dcs.ships import LHA_1_Tarawa, Ticonderoga_class, USS_Arleigh_Burke_IIa
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 Japan_2005 = {
     "country": "Japan",

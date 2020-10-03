@@ -1,13 +1,35 @@
-from typing import Set
+import logging
+import os
+from pathlib import Path
+from typing import List, Optional, Set
 
-from gen import *
-from gen.airfields import AIRFIELD_DATA
-from gen.beacons import load_beacons_for_terrain
-from gen.radios import RadioRegistry
-from gen.tacan import TacanRegistry
+from dcs import Mission
+from dcs.action import DoScript, DoScriptFile
+from dcs.coalition import Coalition
 from dcs.countries import country_dict
 from dcs.lua.parse import loads
+from dcs.mapping import Point
 from dcs.terrain.terrain import Terrain
+from dcs.translation import String
+from dcs.triggers import TriggerStart
+from dcs.unittype import UnitType
+
+from gen import Conflict, VisualGenerator
+from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
+from gen.airfields import AIRFIELD_DATA
+from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
+from gen.armor import GroundConflictGenerator, JtacInfo
+from gen.beacons import load_beacons_for_terrain
+from gen.briefinggen import BriefingGenerator
+from gen.environmentgen import EnviromentGenerator
+from gen.forcedoptionsgen import ForcedOptionsGenerator
+from gen.groundobjectsgen import GroundObjectsGenerator
+from gen.kneeboard import KneeboardGenerator
+from gen.radios import RadioFrequency, RadioRegistry
+from gen.tacan import TacanRegistry
+from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
+from theater import ControlPoint
+from .. import db
 from ..debriefing import Debriefing
 
 
@@ -15,16 +37,15 @@ class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
     defenders_starting_position = None  # type: db.StartingPosition
 
-    current_mission = None  # type: dcs.Mission
-    regular_mission = None  # type: dcs.Mission
-    quick_mission = None  # type: dcs.Mission
+    current_mission = None  # type: Mission
+    regular_mission = None  # type: Mission
+    quick_mission = None  # type: Mission
     conflict = None  # type: Conflict
-    armorgen = None  # type: ArmorConflictGenerator
     airgen = None  # type: AircraftConflictGenerator
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
-    envgen = None  # type: EnvironmentGenerator
+    envgen = None  # type: EnviromentGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
@@ -43,7 +64,7 @@ class Operation:
                  defender_name: str,
                  from_cp: ControlPoint,
                  departure_cp: ControlPoint,
-                 to_cp: ControlPoint = None):
+                 to_cp: ControlPoint):
         self.game = game
         self.attacker_name = attacker_name
         self.attacker_country = db.FACTIONS[attacker_name]["country"]
@@ -55,7 +76,7 @@ class Operation:
         self.to_cp = to_cp
         self.is_quick = False
 
-    def units_of(self, country_name: str) -> typing.Collection[UnitType]:
+    def units_of(self, country_name: str) -> List[UnitType]:
         return []
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
@@ -75,7 +96,7 @@ class Operation:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
 
-        self.current_mission = dcs.Mission(terrain)
+        self.current_mission = Mission(terrain)
 
         print(self.game.player_country)
         print(country_dict[db.country_id_from_name(self.game.player_country)])
@@ -106,7 +127,11 @@ class Operation:
             self.defenders_starting_position = None
         else:
             self.attackers_starting_position = self.departure_cp.at
-            self.defenders_starting_position = self.to_cp.at
+            # TODO: Is this possible?
+            if self.to_cp is not None:
+                self.defenders_starting_position = self.to_cp.at
+            else:
+                self.defenders_starting_position = None
 
     def generate(self):
         radio_registry = RadioRegistry()
@@ -374,6 +399,7 @@ class Operation:
             logging.warning(f"No aircraft data for {airframe.id}")
             return
 
-        aircraft_data.channel_allocator.assign_channels_for_flight(
-            flight, air_support
-        )
+        if aircraft_data.channel_allocator is not None:
+            aircraft_data.channel_allocator.assign_channels_for_flight(
+                flight, air_support
+            )

@@ -1,8 +1,8 @@
 import re
-import typing
+from typing import Dict, List
 from enum import Enum
 
-from dcs.mapping import *
+from dcs.mapping import Point
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     CV_1143_5_Admiral_Kuznetsov,
@@ -13,6 +13,7 @@ from dcs.terrain.terrain import Airport
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
+from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import TheaterGroundObject
 
@@ -27,35 +28,26 @@ class ControlPointType(Enum):
 
 class ControlPoint(MissionTarget):
 
-    id = 0
     position = None  # type: Point
     name = None  # type: str
-    full_name = None  # type: str
-    base = None  # type: theater.base.Base
-    at = None  # type: db.StartPosition
     allow_sea_units = True
-
-    connected_points = None  # type: typing.List[ControlPoint]
-    ground_objects = None  # type: typing.List[TheaterGroundObject]
 
     captured = False
     has_frontline = True
     frontline_offset = 0.0
-    cptype: ControlPointType = None
 
     alt = 0
 
-    def __init__(self, id: int, name: str, position: Point, at, radials: typing.Collection[int], size: int, importance: float,
-                 has_frontline=True, cptype=ControlPointType.AIRBASE):
-        import theater.base
-
+    def __init__(self, id: int, name: str, position: Point,
+                 at: db.StartingPosition, radials: List[int], size: int,
+                 importance: float, has_frontline=True,
+                 cptype=ControlPointType.AIRBASE):
         self.id = id
         self.name = " ".join(re.split(r" |-", name)[:2])
         self.full_name = name
         self.position: Point = position
         self.at = at
-        self.ground_objects = []
-        self.ships = []
+        self.ground_objects: List[TheaterGroundObject] = []
 
         self.size = size
         self.importance = importance
@@ -63,14 +55,14 @@ class ControlPoint(MissionTarget):
         self.captured_invert = False
         self.has_frontline = has_frontline
         self.radials = radials
-        self.connected_points = []
-        self.base = theater.base.Base()
+        self.connected_points: List[ControlPoint] = []
+        self.base: Base = Base()
         self.cptype = cptype
-        self.stances = {}
+        self.stances: Dict[int, CombatStance] = {}
         self.airport = None
 
     @classmethod
-    def from_airport(cls, airport: Airport, radials: typing.Collection[int], size: int, importance: float, has_frontline=True):
+    def from_airport(cls, airport: Airport, radials: List[int], size: int, importance: float, has_frontline=True):
         assert airport
         obj = cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
         obj.airport = airport()
@@ -128,7 +120,7 @@ class ControlPoint(MissionTarget):
         return self.cptype in [ControlPointType.LHA_GROUP]
 
     @property
-    def sea_radials(self) -> typing.Collection[int]:
+    def sea_radials(self) -> List[int]:
         # TODO: fix imports
         all_radials = [0, 45, 90, 135, 180, 225, 270, 315, ]
         result = []
@@ -195,11 +187,11 @@ class ControlPoint(MissionTarget):
     def is_connected(self, to) -> bool:
         return to in self.connected_points
 
-    def find_radial(self, heading: int, ignored_radial: int = None):
+    def find_radial(self, heading: int, ignored_radial: int = None) -> int:
         closest_radial = 0
         closest_radial_delta = 360
         for radial in [x for x in self.radials if x != ignored_radial]:
-            delta = math.fabs(radial - heading)
+            delta = abs(radial - heading)
             if delta < closest_radial_delta:
                 closest_radial = radial
                 closest_radial_delta = delta

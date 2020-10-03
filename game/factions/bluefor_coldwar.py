@@ -1,7 +1,30 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    SA342L,
+    SA342M,
+    UH_1H,
+)
+from dcs.planes import (
+    AJS37,
+    A_10A,
+    C_130,
+    E_3A,
+    F_14B,
+    F_4E,
+    F_5E_3,
+    KC130,
+    KC_135,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 BLUEFOR_COLDWAR = {
     "country": "Combined Joint Task Forces Blue",

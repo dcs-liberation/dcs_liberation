@@ -172,7 +172,7 @@ class QWaitingForMissionResultWindow(QDialog):
 
     def process_debriefing(self):
         self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
-        self.game.pass_turn(ignored_cps=[self.gameEvent.to_cp, ])
+        self.game.pass_turn()
 
         GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, self.debriefing)
         self.close()

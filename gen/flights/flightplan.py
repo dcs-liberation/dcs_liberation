@@ -388,12 +388,14 @@ class FlightPlanBuilder:
 
     def _join_point(self) -> Point:
         ingress_point = self.package.ingress_point
+        assert ingress_point is not None
         heading = self._heading_to_package_airfield(ingress_point)
         return ingress_point.point_from_heading(heading,
                                                 -self.doctrine.join_distance)
 
     def _split_point(self) -> Point:
         egress_point = self.package.egress_point
+        assert egress_point is not None
         heading = self._heading_to_package_airfield(egress_point)
         return egress_point.point_from_heading(heading,
                                                -self.doctrine.split_distance)

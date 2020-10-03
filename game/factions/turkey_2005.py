@@ -1,7 +1,26 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_1W,
+    UH_1H,
+)
+from dcs.planes import (
+    C_130,
+    E_3A,
+    F_16C_50,
+    F_4E,
+    KC130,
+    KC_135,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Turkey_2005 = {
     "country": "Turkey",

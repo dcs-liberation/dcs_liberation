@@ -1,4 +1,3 @@
-from .aaa import *
 from .aircraft import *
 from .armor import *
 from .airsupportgen import *
@@ -12,4 +11,3 @@ from .forcedoptionsgen import *
 from .kneeboard import *
 
 from . import naming
-

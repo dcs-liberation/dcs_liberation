@@ -1,12 +1,19 @@
 import json
-import typing
+from typing import Dict, Iterator, List, Optional, Tuple
 
-import dcs
 from dcs.mapping import Point
-from dcs.terrain import caucasus, persiangulf, nevada, normandy, thechannel, syria
+from dcs.terrain import (
+    caucasus,
+    nevada,
+    normandy,
+    persiangulf,
+    syria,
+    thechannel,
+)
+from dcs.terrain.terrain import Terrain
 
 from .controlpoint import ControlPoint
-from .landmap import poly_contains, load_landmap
+from .landmap import Landmap, load_landmap, poly_contains
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -47,26 +54,28 @@ COAST_DR_W = [135, 180, 225, 315]
 
 
 class ConflictTheater:
-    terrain = None  # type: dcs.terrain.Terrain
-    controlpoints = None  # type: typing.List[ControlPoint]
+    terrain: Terrain
 
-    reference_points = None  # type: typing.Dict
-    overview_image = None  # type: str
-    landmap = None  # type: landmap.Landmap
+    reference_points: Dict[Tuple[float, float], Tuple[float, float]]
+    overview_image: str
+    landmap: Optional[Landmap]
     """
     land_poly = None  # type: Polygon
     """
-    daytime_map = None  # type: typing.Dict[str, typing.Tuple[int, int]]
+    daytime_map: Dict[str, Tuple[int, int]]
 
     def __init__(self):
-        self.controlpoints = []
+        self.controlpoints: List[ControlPoint] = []
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
 
-    def add_controlpoint(self, point: ControlPoint, connected_to: [ControlPoint] = []):
+    def add_controlpoint(self, point: ControlPoint,
+                         connected_to: Optional[List[ControlPoint]] = None):
+        if connected_to is None:
+            connected_to = []
         for connected_point in connected_to:
             point.connect(to=connected_point)
 
@@ -108,15 +117,15 @@ class ConflictTheater:
 
         return True
 
-    def player_points(self) -> typing.Collection[ControlPoint]:
+    def player_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if point.captured]
 
-    def conflicts(self, from_player=True) -> typing.Collection[typing.Tuple[ControlPoint, ControlPoint]]:
+    def conflicts(self, from_player=True) -> Iterator[Tuple[ControlPoint, ControlPoint]]:
         for cp in [x for x in self.controlpoints if x.captured == from_player]:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
-                yield (cp, connected_point)
+                yield cp, connected_point
 
-    def enemy_points(self) -> typing.Collection[ControlPoint]:
+    def enemy_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
@@ -205,7 +214,7 @@ class CaucasusTheater(ConflictTheater):
 
 
 class PersianGulfTheater(ConflictTheater):
-    terrain = dcs.terrain.PersianGulf()
+    terrain = persiangulf.PersianGulf()
     overview_image = "persiangulf.gif"
     reference_points = {
         (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
@@ -221,7 +230,7 @@ class PersianGulfTheater(ConflictTheater):
 
 
 class NevadaTheater(ConflictTheater):
-    terrain = dcs.terrain.Nevada()
+    terrain = nevada.Nevada()
     overview_image = "nevada.gif"
     reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45 * 2, -360 * 2),
                         (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440 * 2, 80 * 2), }
@@ -235,7 +244,7 @@ class NevadaTheater(ConflictTheater):
 
 
 class NormandyTheater(ConflictTheater):
-    terrain = dcs.terrain.Normandy()
+    terrain = normandy.Normandy()
     overview_image = "normandy.gif"
     reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-170, -1000),
                         (normandy.Evreux.position.x, normandy.Evreux.position.y): (2020, 500)}
@@ -249,7 +258,7 @@ class NormandyTheater(ConflictTheater):
 
 
 class TheChannelTheater(ConflictTheater):
-    terrain = dcs.terrain.TheChannel()
+    terrain = thechannel.TheChannel()
     overview_image = "thechannel.gif"
     reference_points = {(thechannel.Abbeville_Drucat.position.x, thechannel.Abbeville_Drucat.position.y): (2400, 4100),
                         (thechannel.Detling.position.x, thechannel.Detling.position.y): (1100, 2000)}
@@ -263,7 +272,7 @@ class TheChannelTheater(ConflictTheater):
 
 
 class SyriaTheater(ConflictTheater):
-    terrain = dcs.terrain.Syria()
+    terrain = syria.Syria()
     overview_image = "syria.gif"
     reference_points = {(syria.Eyn_Shemer.position.x, syria.Eyn_Shemer.position.y): (1300, 1380),
                         (syria.Tabqa.position.x, syria.Tabqa.position.y): (2060, 570)}

@@ -1,14 +1,67 @@
+import logging
+import random
 from dataclasses import dataclass
-from typing import Type
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from dcs import helicopters
-from dcs.action import ActivateGroup, AITaskPush, MessageToAll
-from dcs.condition import TimeAfter, CoalitionHasAirdrome, PartOfCoalitionInZone
+from dcs.action import AITaskPush, ActivateGroup, MessageToAll
+from dcs.condition import CoalitionHasAirdrome, PartOfCoalitionInZone, TimeAfter
+from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
-from dcs.helicopters import helicopter_map, UH_1H
+from dcs.helicopters import UH_1H, helicopter_map
+from dcs.mapping import Point
+from dcs.mission import Mission, StartType
+from dcs.planes import (
+    AJS37,
+    B_17G,
+    Bf_109K_4,
+    FW_190A8,
+    FW_190D9,
+    F_14B,
+    I_16,
+    JF_17,
+    Ju_88A4,
+    P_47D_30,
+    P_51D,
+    P_51D_30_NA,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+    Su_33,
+)
+from dcs.point import PointAction
+from dcs.task import (
+    AntishipStrike,
+    AttackGroup,
+    Bombing,
+    CAP,
+    CAS,
+    ControlledTask,
+    EPLRS,
+    EngageTargets,
+    Escort,
+    GroundAttack,
+    MainTask,
+    NoTask,
+    OptROE,
+    OptRTBOnBingoFuel,
+    OptRTBOnOutOfAmmo,
+    OptReactOnThreat,
+    OptRestrictAfterburner,
+    OptRestrictJettison,
+    OrbitAction,
+    PinpointStrike,
+    SEAD,
+    StartCommand,
+    Targets,
+    Task,
+)
 from dcs.terrain.terrain import Airport, NoParkingSlotError
-from dcs.triggers import TriggerOnce, Event
+from dcs.translation import String
+from dcs.triggers import Event, TriggerOnce
+from dcs.unitgroup import FlyingGroup, Group, ShipGroup, StaticGroup
+from dcs.unittype import FlyingType, UnitType
 
+from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
@@ -22,9 +75,10 @@ from gen.flights.flight import (
     FlightWaypoint,
     FlightWaypointType,
 )
-from gen.radios import get_radio, MHz, Radio, RadioFrequency, RadioRegistry
-from .conflictgen import *
-from .naming import *
+from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
+from theater.controlpoint import ControlPoint, ControlPointType
+from .naming import namegen
+from .conflictgen import Conflict
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
@@ -264,8 +318,12 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
 
     def assign_channels_for_flight(self, flight: FlightData,
                                    air_support: AirSupport) -> None:
-        flight.assign_channel(
-            self.intra_flight_radio_index, 1, flight.intra_flight_channel)
+        if self.intra_flight_radio_index is not None:
+            flight.assign_channel(
+                self.intra_flight_radio_index, 1, flight.intra_flight_channel)
+
+        if self.inter_flight_radio_index is None:
+            return
 
         # For cases where the inter-flight and intra-flight radios share presets
         # (the JF-17 only has one set of channels, even though it can use two
@@ -335,8 +393,10 @@ class ViggenRadioChannelAllocator(RadioChannelAllocator):
         # the guard channel.
         radio_id = 1
         flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
-        flight.assign_channel(radio_id, 4, flight.departure.atc)
-        flight.assign_channel(radio_id, 5, flight.arrival.atc)
+        if flight.departure.atc is not None:
+            flight.assign_channel(radio_id, 4, flight.departure.atc)
+        if flight.arrival.atc is not None:
+            flight.assign_channel(radio_id, 5, flight.arrival.atc)
         # TODO: Assign divert to 6 when we support divert airfields.
 
 
@@ -348,8 +408,10 @@ class SCR522RadioChannelAllocator(RadioChannelAllocator):
                                    air_support: AirSupport) -> None:
         radio_id = 1
         flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
-        flight.assign_channel(radio_id, 2, flight.departure.atc)
-        flight.assign_channel(radio_id, 3, flight.arrival.atc)
+        if flight.departure.atc is not None:
+            flight.assign_channel(radio_id, 2, flight.departure.atc)
+        if flight.arrival.atc is not None:
+            flight.assign_channel(radio_id, 3, flight.arrival.atc)
 
         # TODO : Some GCI on Channel 4 ?
 
@@ -471,8 +533,6 @@ AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
 class AircraftConflictGenerator:
-    escort_targets = [] # type: typing.List[typing.Tuple[FlyingGroup, int]]
-
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
                  game, radio_registry: RadioRegistry):
         self.m = mission
@@ -480,7 +540,7 @@ class AircraftConflictGenerator:
         self.settings = settings
         self.conflict = conflict
         self.radio_registry = radio_registry
-        self.escort_targets = []
+        self.escort_targets: List[Tuple[FlyingGroup, int]] = []
         self.flights: List[FlightData] = []
 
     def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
@@ -502,33 +562,23 @@ class AircraftConflictGenerator:
     def _start_type(self) -> StartType:
         return self.settings.cold_start and StartType.Cold or StartType.Warm
 
-    def _setup_group(self, group: FlyingGroup, for_task: typing.Type[Task],
+    def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
                      flight: Flight, dynamic_runways: Dict[str, RunwayData]):
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
             override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
-            if type(override_loadout) == dict:
+            # Clear pylons
+            for p in group.units:
+                p.pylons.clear()
 
-                # Clear pylons
-                for p in group.units:
-                    p.pylons.clear()
-
-                # Now load loadout
-                if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                    payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
-                    group.load_loadout(payload_name)
-                    did_load_loadout = True
-                    logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
-                elif "*" in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                    payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type]["*"]
-                    group.load_loadout(payload_name)
-                    did_load_loadout = True
-                    logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
-            elif issubclass(override_loadout, MainTask):
-                group.load_task_default_loadout(override_loadout)
+            # Now load loadout
+            if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
+                group.load_loadout(payload_name)
                 did_load_loadout = True
+                logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
 
         if not did_load_loadout:
             group.load_task_default_loadout(for_task)
@@ -590,7 +640,7 @@ class AircraftConflictGenerator:
 
         # Special case so Su 33 carrier take off
         if unit_type is Su_33:
-            if task is not CAP:
+            if flight.flight_type is not CAP:
                 for unit in group.units:
                     unit.fuel = Su_33.fuel_max / 2.2
             else:
@@ -613,9 +663,12 @@ class AircraftConflictGenerator:
         # so just use the first runway.
         return runways[0]
 
-    def _generate_at_airport(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, airport: Airport = None, start_type = None) -> FlyingGroup:
+    def _generate_at_airport(self, name: str, side: Country,
+                             unit_type: FlyingType, count: int,
+                             client_count: int,
+                             airport: Optional[Airport] = None,
+                             start_type=None) -> FlyingGroup:
         assert count > 0
-        assert unit is not None
 
         if start_type is None:
             start_type = self._start_type()
@@ -633,7 +686,6 @@ class AircraftConflictGenerator:
 
     def _generate_inflight(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: Point) -> FlyingGroup:
         assert count > 0
-        assert unit is not None
 
         if unit_type in helicopters.helicopter_map.values():
             alt = WARM_START_HELI_ALT
@@ -660,9 +712,11 @@ class AircraftConflictGenerator:
         group.points[0].alt_type = "RADIO"
         return group
 
-    def _generate_at_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: typing.Union[ShipGroup, StaticGroup], start_type=None) -> FlyingGroup:
+    def _generate_at_group(self, name: str, side: Country,
+                           unit_type: FlyingType, count: int, client_count: int,
+                           at: Union[ShipGroup, StaticGroup],
+                           start_type=None) -> FlyingGroup:
         assert count > 0
-        assert unit is not None
 
         if start_type is None:
             start_type = self._start_type()
@@ -688,7 +742,7 @@ class AircraftConflictGenerator:
                 return self._generate_at_group(name, side, unit_type, count, client_count, at)
             else:
                 return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
-        elif issubclass(at, Airport):
+        elif isinstance(at, Airport):
             takeoff_ban = unit_type in db.TAKEOFF_BAN
             ai_ban = client_count == 0 and self.settings.only_player_takeoff
 
@@ -707,8 +761,9 @@ class AircraftConflictGenerator:
         point.alt_type = "RADIO"
         return point
 
-    def _rtb_for(self, group: FlyingGroup, cp: ControlPoint, at: db.StartingPosition = None):
-        if not at:
+    def _rtb_for(self, group: FlyingGroup, cp: ControlPoint,
+                 at: Optional[db.StartingPosition] = None):
+        if at is None:
             at = cp.at
         position = at if isinstance(at, Point) else at.position
 

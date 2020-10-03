@@ -1,19 +1,35 @@
+import logging
 import math
 import pickle
 import random
 import typing
-import logging
 
+from dcs.mapping import Point
+from dcs.task import CAP, CAS, PinpointStrike
+from dcs.vehicles import AirDefence
+
+from game import db
 from game.data.building_data import DEFAULT_AVAILABLE_BUILDINGS
 from game.settings import Settings
-from gen import namegen, TheaterGroundObject
+from gen import namegen
 from gen.defenses.armor_group_generator import generate_armor_group
-from gen.fleet.ship_group_generator import generate_carrier_group, generate_lha_group, generate_ship_group
+from gen.fleet.ship_group_generator import (
+    generate_carrier_group,
+    generate_lha_group,
+    generate_ship_group,
+)
 from gen.missiles.missiles_group_generator import generate_missile_group
-from gen.sam.sam_group_generator import generate_anti_air_group, generate_shorad_group
-from theater import ControlPointType
-from theater.base import *
-from theater.conflicttheater import *
+from gen.sam.sam_group_generator import (
+    generate_anti_air_group,
+    generate_shorad_group,
+)
+from theater import (
+    ConflictTheater,
+    ControlPoint,
+    ControlPointType,
+    TheaterGroundObject,
+)
+from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 
 UNIT_VARIETY = 3
 UNIT_AMOUNT_FACTOR = 16

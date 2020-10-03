@@ -28,13 +28,13 @@ SHIP_MAP = {
 }
 
 
-def generate_ship_group(game, ground_object, faction:str):
+def generate_ship_group(game, ground_object, faction_name: str):
     """
     This generate a ship group
     :return: Nothing, but put the group reference inside the ground object
     """
-    faction = db.FACTIONS[faction]
-    if "boat" in faction.keys():
+    faction = db.FACTIONS[faction_name]
+    if "boat" in faction:
         generators = faction["boat"]
         if len(generators) > 0:
             gen = random.choice(generators)

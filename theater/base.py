@@ -1,14 +1,15 @@
-import logging
-import typing
-import math
 import itertools
+import logging
+import math
+import typing
+from typing import Dict, Type
 
-from dcs.planes import *
-from dcs.vehicles import *
-from dcs.task import *
+from dcs.planes import PlaneType
+from dcs.task import CAP, CAS, Embarking, PinpointStrike, Task
+from dcs.unittype import UnitType, VehicleType
+from dcs.vehicles import AirDefence, Armor
 
 from game import db
-from gen import aaa
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 2
@@ -21,16 +22,15 @@ BASE_MIN_STRENGTH = 0
 
 class Base:
     aircraft = {}  # type: typing.Dict[PlaneType, int]
-    armor = {}  # type: typing.Dict[Armor, int]
+    armor = {}  # type: typing.Dict[VehicleType, int]
     aa = {}  # type: typing.Dict[AirDefence, int]
     strength = 1  # type: float
-    commision_points = {}
 
     def __init__(self):
         self.aircraft = {}
         self.armor = {}
         self.aa = {}
-        self.commision_points = {}
+        self.commision_points: Dict[Type, float] = {}
         self.strength = 1
 
     @property
@@ -55,17 +55,19 @@ class Base:
     def all_units(self):
         return itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items())
 
-    def _find_best_unit(self, dict, for_type: Task, count: int) -> typing.Dict:
+    def _find_best_unit(self, available_units: Dict[UnitType, int],
+                        for_type: Task, count: int) -> Dict[UnitType, int]:
         if count <= 0:
             logging.warning("{}: no units for {}".format(self, for_type))
             return {}
 
-        sorted_units = [key for key in dict.keys() if key in db.UNIT_BY_TASK[for_type]]
+        sorted_units = [key for key in available_units if
+                        key in db.UNIT_BY_TASK[for_type]]
         sorted_units.sort(key=lambda x: db.PRICES[x], reverse=True)
 
-        result = {}
+        result: Dict[UnitType, int] = {}
         for unit_type in sorted_units:
-            existing_count = dict[unit_type]  # type: int
+            existing_count = available_units[unit_type]  # type: int
             if not existing_count:
                 continue
 

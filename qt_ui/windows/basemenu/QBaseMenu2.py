@@ -2,13 +2,12 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QPixmap
 from PySide2.QtWidgets import QDialog, QGridLayout, QHBoxLayout, QLabel, QWidget
 
-from game.event import ControlPointType
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint
+from theater import ControlPoint, ControlPointType
 
 
 class QBaseMenu2(QDialog):

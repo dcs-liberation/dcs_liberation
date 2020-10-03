@@ -1,7 +1,12 @@
 import uuid
+from typing import List, TYPE_CHECKING
 
 from dcs.mapping import Point
+from dcs.unitgroup import Group
 
+if TYPE_CHECKING:
+    from .conflicttheater import ConflictTheater
+    from .controlpoint import ControlPoint
 from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
@@ -71,7 +76,7 @@ class TheaterGroundObject(MissionTarget):
     airbase_group = False
     heading = 0
     position = None  # type: Point
-    groups = []
+    groups: List[Group] = []
     obj_name = ""
     sea_object = False
     uuid = uuid.uuid1()

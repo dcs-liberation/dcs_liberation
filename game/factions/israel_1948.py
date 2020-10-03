@@ -1,6 +1,20 @@
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.planes import (
+    B_17G,
+    Bf_109K_4,
+    P_51D,
+    P_51D_30_NA,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+)
+from dcs.ships import (
+    Armed_speedboat,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Israel_1948 = {
     "country": "Israel",

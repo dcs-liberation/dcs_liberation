@@ -5,12 +5,13 @@ from typing import Dict, Iterable, Iterator, Set, Tuple
 from dcs.unittype import UnitType
 
 from gen.flights.flight import Flight
+from theater import ControlPoint
 
 
 class ControlPointAircraftInventory:
     """Aircraft inventory for a single control point."""
 
-    def __init__(self, control_point: "ControlPoint") -> None:
+    def __init__(self, control_point: ControlPoint) -> None:
         self.control_point = control_point
         self.inventory: Dict[UnitType, int] = defaultdict(int)
 
@@ -81,8 +82,8 @@ class ControlPointAircraftInventory:
 
 class GlobalAircraftInventory:
     """Game-wide aircraft inventory."""
-    def __init__(self, control_points: Iterable["ControlPoint"]) -> None:
-        self.inventories: Dict["ControlPoint", ControlPointAircraftInventory] = {
+    def __init__(self, control_points: Iterable[ControlPoint]) -> None:
+        self.inventories: Dict[ControlPoint, ControlPointAircraftInventory] = {
             cp: ControlPointAircraftInventory(cp) for cp in control_points
         }
 
@@ -91,7 +92,7 @@ class GlobalAircraftInventory:
         for inventory in self.inventories.values():
             inventory.clear()
 
-    def set_from_control_point(self, control_point: "ControlPoint") -> None:
+    def set_from_control_point(self, control_point: ControlPoint) -> None:
         """Set the control point's aircraft inventory.
 
         If the inventory for the given control point has already been set for
@@ -103,7 +104,7 @@ class GlobalAircraftInventory:
 
     def for_control_point(
             self,
-            control_point: "ControlPoint") -> ControlPointAircraftInventory:
+            control_point: ControlPoint) -> ControlPointAircraftInventory:
         """Returns the inventory specific to the given control point."""
         return self.inventories[control_point]
 

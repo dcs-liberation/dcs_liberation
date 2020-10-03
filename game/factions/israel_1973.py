@@ -1,7 +1,26 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_1W,
+    UH_1H,
+)
+from dcs.planes import (
+    C_130,
+    E_3A,
+    F_15C,
+    F_16A,
+    F_16C_50,
+    F_4E,
+    KC130,
+    KC_135,
+)
+from dcs.ships import (
+    Armed_speedboat,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 

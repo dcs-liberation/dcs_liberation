@@ -2,8 +2,9 @@ import logging
 import os
 import pickle
 import shutil
+from typing import Optional
 
-_dcs_saved_game_folder = None  # type: str
+_dcs_saved_game_folder: Optional[str] = None
 _file_abs_path = None
 
 def setup(user_folder: str):

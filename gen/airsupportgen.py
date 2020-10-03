@@ -1,8 +1,21 @@
 from dataclasses import dataclass, field
+from typing import List, Type
 
+from dcs.mission import Mission, StartType
+from dcs.planes import IL_78M
+from dcs.task import (
+    AWACS,
+    ActivateBeaconCommand,
+    MainTask,
+    Refueling,
+    SetImmortalCommand,
+    SetInvisibleCommand,
+)
+
+from game import db
+from .naming import namegen
 from .callsigns import callsign_for_support_unit
-from .conflictgen import *
-from .naming import *
+from .conflictgen import Conflict
 from .radios import RadioFrequency, RadioRegistry
 from .tacan import TacanBand, TacanChannel, TacanRegistry
 
@@ -49,7 +62,7 @@ class AirSupportConflictGenerator:
         self.tacan_registry = tacan_registry
 
     @classmethod
-    def support_tasks(cls) -> typing.Collection[typing.Type[MainTask]]:
+    def support_tasks(cls) -> List[Type[MainTask]]:
         return [Refueling, AWACS]
 
     def generate(self, is_awacs_enabled):
