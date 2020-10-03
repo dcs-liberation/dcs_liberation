@@ -6,11 +6,14 @@ from PySide2.QtWidgets import (
     QGridLayout,
     QScrollArea,
     QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
     QWidget,
 )
 
 from game.event.event import UnitsDeliveryEvent
 from qt_ui.models import GameModel
+from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
 from theater import CAP, CAS, ControlPoint, db
 
