@@ -80,6 +80,11 @@ class GroundObjectsGenerator:
                                         vehicle.heading = u.heading
                                         vehicle.player_can_drive = True
                                         vg.add_unit(vehicle)
+
+                                #TODO : REPLACE EPRLS BY EPLRS once fix implemented in pydcs
+                                if hasattr(utype, 'eprls'):
+                                    if utype.eprls:
+                                        vg.points[0].tasks.append(EPLRS(vg.id))
                             else:
                                 vg = self.m.ship_group(side, g.name, utype, position=g.position,
                                                           heading=g.units[0].heading)
