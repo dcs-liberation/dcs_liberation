@@ -4,6 +4,7 @@ from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from gen.ato import AirTaskingOrder
+from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner

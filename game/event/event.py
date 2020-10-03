@@ -1,24 +1,12 @@
-import typing
-import logging
-
-from dcs.action import Coalition
-from dcs.unittype import UnitType
-from dcs.task import *
-from dcs.vehicles import AirDefence
 from dcs.unittype import UnitType
 
 from game import *
+from game import persistency
+from game.debriefing import Debriefing
 from game.infos.information import Information
-from theater import *
 from gen.environmentgen import EnvironmentSettings
-from gen.conflictgen import Conflict
-from game.db import assigned_units_from, unitdict_from
+from theater import *
 from theater.start_generator import generate_airbase_defense_group
-
-from userdata.debriefing import Debriefing
-from userdata import persistency
-
-import game.db as db
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -27,6 +15,7 @@ EVENT_DEPARTURE_MAX_DISTANCE = 340000
 MINOR_DEFEAT_INFLUENCE = 0.1
 DEFEAT_INFLUENCE = 0.3
 STRONG_DEFEAT_INFLUENCE = 0.5
+
 
 class Event:
     silent = False

@@ -17,8 +17,7 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game
-from game.inventory import GlobalAircraftInventory
+from game import Game, persistency
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
@@ -31,7 +30,6 @@ from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import \
     QLiberationPreferencesWindow
-from userdata import persistency
 
 
 class QLiberationWindow(QMainWindow):

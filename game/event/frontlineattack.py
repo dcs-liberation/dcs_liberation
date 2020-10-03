@@ -1,6 +1,6 @@
 from game.event import *
 from game.operation.frontlineattack import FrontlineAttackOperation
-from userdata.debriefing import Debriefing
+from ..debriefing import Debriefing
 
 
 class FrontlineAttackEvent(Event):

@@ -8,7 +8,7 @@ from gen.tacan import TacanRegistry
 from dcs.countries import country_dict
 from dcs.lua.parse import loads
 from dcs.terrain.terrain import Terrain
-from userdata.debriefing import *
+from ..debriefing import Debriefing
 
 
 class Operation:

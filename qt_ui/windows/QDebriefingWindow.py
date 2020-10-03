@@ -1,8 +1,15 @@
 from PySide2.QtGui import QIcon, QPixmap
-from PySide2.QtWidgets import QLabel, QDialog, QVBoxLayout, QGroupBox, QGridLayout, QPushButton
+from PySide2.QtWidgets import (
+    QDialog,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+)
 
-from game.game import Event, db, Game
-from userdata.debriefing import Debriefing
+from game.debriefing import Debriefing
+from game.game import Event, Game, db
 
 
 class QDebriefingWindow(QDialog):

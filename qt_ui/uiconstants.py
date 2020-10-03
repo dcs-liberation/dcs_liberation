@@ -1,12 +1,10 @@
-# URL for UI links
 import os
 from typing import Dict
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
-from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
-from userdata.liberation_theme import get_theme_icons
+from .liberation_theme import get_theme_icons
 
 VERSION_STRING = "2.1.4"
 
@@ -27,20 +25,6 @@ FONT_PRIMARY = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=False)
 FONT_PRIMARY_I = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=True)
 FONT_PRIMARY_B = QFont(FONT_NAME, FONT_SIZE, weight=75, italic=False)
 FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
-
-# new themes can be added here
-THEMES: Dict[int, Dict[str, str]] = {
-    0: {'themeName': 'Vanilla',
-        'themeFile': 'windows-style.css',
-        'themeIcons': 'medium',
-        },
-
-    1: {'themeName': 'DCS World',
-        'themeFile': 'style-dcs.css',
-        'themeIcons': 'light',
-        },
-
-}
 
 COLORS: Dict[str, QColor] = {
     "white": QColor(255, 255, 255),

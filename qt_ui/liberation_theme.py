@@ -1,13 +1,27 @@
 import json
 import os
-
-import qt_ui.uiconstants as CONST
+from typing import Dict
 
 global __theme_index
 
 THEME_PREFERENCES_FILE_PATH = "liberation_theme.json"
 
 DEFAULT_THEME_INDEX = 1
+
+
+# new themes can be added here
+THEMES: Dict[int, Dict[str, str]] = {
+    0: {'themeName': 'Vanilla',
+        'themeFile': 'windows-style.css',
+        'themeIcons': 'medium',
+        },
+
+    1: {'themeName': 'DCS World',
+        'themeFile': 'style-dcs.css',
+        'themeIcons': 'light',
+        },
+
+}
 
 
 def init():
@@ -49,19 +63,19 @@ def get_theme_index():
 
 # get theme name based on current index
 def get_theme_name():
-    theme_name = CONST.THEMES[get_theme_index()]['themeName']
+    theme_name = THEMES[get_theme_index()]['themeName']
     return theme_name
 
 
 # get theme icon sub-folder name based on current index
 def get_theme_icons():
-    theme_icons = CONST.THEMES[get_theme_index()]['themeIcons']
+    theme_icons = THEMES[get_theme_index()]['themeIcons']
     return str(theme_icons)
 
 
 # get theme stylesheet css based on current index
 def get_theme_css_file():
-    theme_file = CONST.THEMES[get_theme_index()]['themeFile']
+    theme_file = THEMES[get_theme_index()]['themeFile']
     return str(theme_file)
 
 
