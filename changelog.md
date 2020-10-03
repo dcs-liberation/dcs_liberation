@@ -1,3 +1,8 @@
+# 2.1.4
+
+## Fixes :
+* **[UI]** Fixed an issue that prevent generating the mission (take off button no working) on old savegames.
+
 # 2.1.3
 
 ## Features/Improvements :
