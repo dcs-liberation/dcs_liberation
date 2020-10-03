@@ -190,9 +190,9 @@ class Game:
 
     def is_player_attack(self, event):
         if isinstance(event, Event):
-            return event.attacker_name == self.player_name
+            return event and event.attacker_name and event.attacker_name == self.player_name
         else:
-            return event.name == self.player_name
+            return event and event.name and event.name == self.player_name
 
     def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
 

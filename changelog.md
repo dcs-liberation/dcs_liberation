@@ -1,4 +1,7 @@
-# Next
+# 2.1.4
+
+## Fixes :
+* **[UI]** Fixed an issue that prevent generating the mission (take off button no working) on old savegames.
 * **[Mission Generator]** The data about generated units is injected in the mission where plugins can make good use of it. The VEAF plugin is offered as a working example
 
 # 2.1.3
