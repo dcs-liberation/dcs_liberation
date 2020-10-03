@@ -6,6 +6,8 @@
 -- see https://github.com/Khopa/dcs_liberation
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+veaf.logTrace(string.format("dcsLiberation=%s",veaf.p(dcsLiberation)))
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- initialize all the scripts
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -106,6 +108,29 @@ if veafAssets then
     veafAssets.Assets = {
         -- no static assets here, in the future we may peek into the generated mission but not right now
         }
+    if dcsLiberation.Tankers then
+        for _, data in pairs(dcsLiberation.Tankers) do
+            veafAssets.logDebug("adding asset "..data.callsign)
+            local asset = { name=data.dcsGroupName, description=data.callsign.." ("..data.variant..")", information="Tacan:"..data.tacan.." Radio:"..data.radio }
+            table.insert(veafAssets.Assets, asset)
+            table.insert(veafMove.Tankers, data.dcsGroupName)
+        end
+    end
+    if dcsLiberation.AWACs then
+        for _, data in pairs(dcsLiberation.AWACs) do
+            veafAssets.logDebug("adding asset "..data.callsign)
+            local asset = { name=data.dcsGroupName, description=data.callsign.." (AWACS)", information="Radio:"..data.radio }
+            table.insert(veafAssets.Assets, asset)
+        end
+    end
+    if dcsLiberation.JTACs then
+        for _, data in pairs(dcsLiberation.JTACs) do
+            veafAssets.logDebug("adding asset "..data.callsign)
+            local radio = veafSpawn.convertLaserToFreq(data.laserCode)
+            local asset = { name=data.dcsGroupName, description=data.callsign.." (JTAC)", information="Laser: "..data.laserCode.." Radio:"..radio, jtac=data.laserCode, freq=radio, mod="am", callsign=data.callsign }
+            table.insert(veafAssets.Assets, asset)
+        end
+    end
     veaf.logInfo("init - veafAssets")
     veafAssets.initialize()
 end
@@ -148,7 +173,7 @@ end
 -- configure WW2 settings based on loaded theatre
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 local theatre = string.lower(env.mission.theatre)
-veafNamedPoints.logInfo(string.format("theatre is %s", theatre))
+veaf.logInfo(string.format("theatre is %s", theatre))
 veaf.config.ww2 = false
 if theatre == "thechannel" then
     veaf.config.ww2 = true
@@ -161,8 +186,18 @@ end
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 if veafNamedPoints then
 
+    veafNamedPoints.LowerRadioMenuSize = false
+    
     veafNamedPoints.Points = {
     }
+
+    if dcsLiberation.TargetPoints then
+        for _, data in pairs(dcsLiberation.TargetPoints) do
+            veafNamedPoints.logDebug("adding named point "..data.name)           
+            local point = { name=data.pointType.." "..data.name, point={x=data.positionX, z=data.positionY}}
+            table.insert(veafNamedPoints.Points, point)
+        end
+    end
 
     veafNamedPoints.logInfo("Loading configuration")
 
@@ -185,7 +220,12 @@ end
 -- configure SECURITY
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 if veafSecurity then
-    veafSecurity.password_L9["6ade6629f9219d87a011e7b8fbf8ef9584f2786d"] = true
+    -- veafSecurity.password_L9["6ade6629f9219d87a011e7b8fbf8ef9584f2786d"] = true
+    -- disable security
+    veafSecurity.password_L0 = {}
+    veafSecurity.password_L1 = {}
+    veafSecurity.password_L9 = {}
+    veafSecurity.authenticated = true
     veafSecurity.logInfo("Loading configuration")
     veaf.logInfo("init - veafSecurity")
     veafSecurity.initialize()

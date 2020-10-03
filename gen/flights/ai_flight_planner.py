@@ -364,6 +364,7 @@ class FlightPlanner:
     def generate_strike(self, flight, location):
 
         flight.flight_type = FlightType.STRIKE
+        flight.targetPoint = location
         ascend = self.generate_ascend_point(flight.from_cp)
         flight.points.append(ascend)
 
@@ -585,6 +586,7 @@ class FlightPlanner:
         """
         flight.points = []
         flight.flight_type = random.choice([FlightType.SEAD, FlightType.DEAD])
+        flight.targetPoint = location
 
         ascend = self.generate_ascend_point(flight.from_cp)
         flight.points.append(ascend)
@@ -674,6 +676,7 @@ class FlightPlanner:
         cap_alt = 1000
         flight.points = []
         flight.flight_type = FlightType.CAS
+        flight.targetPoint = location
 
         ingress, heading, distance = Conflict.frontline_vector(from_cp, location, self.game.theater)
         center = ingress.point_from_heading(heading, distance / 2)
