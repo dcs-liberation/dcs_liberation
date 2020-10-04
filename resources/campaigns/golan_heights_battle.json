@@ -1,0 +1,78 @@
+{
+    "name": "Syria - Golan heights battle",
+    "theater": "Syria",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "Ramat David",
+            "size": 1000,
+            "importance": 1.4
+        },
+        {
+            "type": "carrier",
+            "id": 1001,
+            "x": -280000,
+            "y": -238000
+        },
+        {
+            "type": "lha",
+            "id": 1002,
+            "x": -237000,
+            "y": -89800
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Khalkhalah",
+            "size": 1000,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "King Hussein Air College",
+            "size": 1000,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Marj Ruhayyil",
+            "size": 1000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Mezzeh",
+            "size": 1000,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "Al-Dumayr",
+            "size": 1000,
+            "importance": 1.2
+        }
+    ],
+    "links": [
+        [
+            "Khalkhalah",
+            "Ramat David"
+        ],
+        [
+            "Khalkhalah",
+            "King Hussein Air College"
+        ],
+        [
+            "Khalkhalah",
+            "Marj Ruhayyil"
+        ],
+        [
+            "Marj Ruhayyil",
+            "Mezzeh"
+        ],
+        [
+            "Al-Dumayr",
+            "Marj Ruhayyil"
+        ]
+    ]
+}

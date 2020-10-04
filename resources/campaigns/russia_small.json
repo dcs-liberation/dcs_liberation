@@ -1,0 +1,36 @@
+{
+    "name": "Caucasus - Russia Small",
+    "theater": "Caucasus",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "Mozdok",
+            "size": 2000,
+            "importance": 1.1
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Mineralnye Vody",
+            "size": 2000,
+            "importance": 1.3
+        },
+        {
+            "type": "airbase",
+            "id": "Maykop-Khanskaya",
+            "size": 3000,
+            "importance": 1.4
+        }
+    ],
+    "links": [
+        [
+            "Mineralnye Vody",
+            "Mozdok"
+        ],
+        [
+            "Maykop-Khanskaya",
+            "Mineralnye Vody"
+        ]
+    ]
+}
