@@ -80,6 +80,10 @@ from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
 
+# TODO: These lists really ought to be era (faction) dependent.
+# Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
+# factions that also have F-4s should not.
+
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
     MiG_25PD,
@@ -147,6 +151,42 @@ CAP_CAPABLE = [
     FW_190A8,
 
     A_4E_C,
+    Rafale_M,
+]
+
+CAP_PREFERRED = [
+    MiG_15bis,
+    MiG_19P,
+    MiG_21Bis,
+    MiG_23MLD,
+    MiG_25PD,
+    MiG_29A,
+    MiG_29G,
+    MiG_29S,
+    MiG_31,
+
+    Su_27,
+    J_11A,
+    Su_30,
+    Su_33,
+
+    M_2000C,
+    Mirage_2000_5,
+
+    F_86F_Sabre,
+    F_14B,
+    F_15C,
+
+    P_51D_30_NA,
+    P_51D,
+
+    SpitfireLFMkIXCW,
+    SpitfireLFMkIX,
+
+    Bf_109K_4,
+    FW_190D9,
+    FW_190A8,
+
     Rafale_M,
 ]
 
@@ -228,6 +268,59 @@ CAS_CAPABLE = [
     RQ_1A_Predator
 ]
 
+CAS_PREFERRED = [
+    Su_17M4,
+    Su_24M,
+    Su_24MR,
+    Su_25,
+    Su_25T,
+    Su_25TM,
+    Su_34,
+
+    JF_17,
+
+    A_10A,
+    A_10C,
+    A_10C_2,
+    AV8BNA,
+
+    F_15E,
+
+    Tornado_GR4,
+
+    C_101CC,
+    MB_339PAN,
+    L_39ZA,
+    AJS37,
+
+    SA342M,
+    SA342L,
+    OH_58D,
+
+    AH_64A,
+    AH_64D,
+    AH_1W,
+
+    UH_1H,
+
+    Mi_8MT,
+    Mi_28N,
+    Mi_24V,
+    Ka_50,
+
+    P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
+    A_20G,
+
+    A_4E_C,
+    Rafale_A_S,
+
+    WingLoong_I,
+    MQ_9_Reaper,
+    RQ_1A_Predator
+]
+
 # Aircraft used for SEAD / DEAD tasks
 SEAD_CAPABLE = [
     F_4E,
@@ -250,6 +343,12 @@ SEAD_CAPABLE = [
 
     A_4E_C,
     Rafale_A_S
+]
+
+SEAD_PREFERRED = [
+    F_4E,
+    Su_25T,
+    Tornado_IDS,
 ]
 
 # Aircraft used for Strike mission
@@ -307,6 +406,15 @@ STRIKE_CAPABLE = [
     A_4E_C,
     Rafale_A_S
 
+]
+
+STRIKE_PREFERRED = [
+    AJS37,
+    F_15E,
+    Tornado_GR4,
+
+    A_20G,
+    B_17G,
 ]
 
 ANTISHIP_CAPABLE = [

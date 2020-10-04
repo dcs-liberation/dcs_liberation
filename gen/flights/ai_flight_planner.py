@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 import operator
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
+from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple, Type
 
-from dcs.unittype import UnitType
+from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
@@ -15,9 +15,13 @@ from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
     CAP_CAPABLE,
+    CAP_PREFERRED,
     CAS_CAPABLE,
+    CAS_PREFERRED,
     SEAD_CAPABLE,
+    SEAD_PREFERRED,
     STRIKE_CAPABLE,
+    STRIKE_PREFERRED,
 )
 from gen.flights.closestairfields import (
     ClosestAirfields,
@@ -102,30 +106,63 @@ class AircraftAllocator:
         maximum allowed range. If insufficient aircraft are available for the
         mission, None is returned.
 
+        Airfields are searched ordered nearest to farthest from the target and
+        searched twice. The first search looks for aircraft which prefer the
+        mission type, and the second search looks for any aircraft which are
+        capable of the mission type. For example, an F-14 from a nearby carrier
+        will be preferred for the CAP of an airfield that has only F-16s, but if
+        the carrier has only F/A-18s the F-16s will be used for CAP instead.
+
         Note that aircraft *will* be removed from the global inventory on
         success. This is to ensure that the same aircraft are not matched twice
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
-        if flight.task in cap_missions:
-            types = CAP_CAPABLE
-        elif flight.task == FlightType.CAS:
-            types = CAS_CAPABLE
-        elif flight.task in (FlightType.DEAD, FlightType.SEAD):
-            types = SEAD_CAPABLE
-        elif flight.task == FlightType.STRIKE:
-            types = STRIKE_CAPABLE
-        elif flight.task == FlightType.ESCORT:
-            types = CAP_CAPABLE
-        else:
-            logging.error(f"Unplannable flight type: {flight.task}")
-            return None
+        result = self.find_aircraft_of_type(
+            flight, self.preferred_aircraft_for_task(flight.task)
+        )
+        if result is not None:
+            return result
+        return self.find_aircraft_of_type(
+            flight, self.capable_aircraft_for_task(flight.task)
+        )
 
-        # TODO: Implement mission type weighting for aircraft.
-        # We should avoid assigning F/A-18s to CAP missions when there are F-15s
-        # available, since the F/A-18 is capable of performing other tasks that
-        # the F-15 is not capable of.
+    @staticmethod
+    def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        if task in cap_missions:
+            return CAP_PREFERRED
+        elif task == FlightType.CAS:
+            return CAS_PREFERRED
+        elif task in (FlightType.DEAD, FlightType.SEAD):
+            return SEAD_PREFERRED
+        elif task == FlightType.STRIKE:
+            return STRIKE_PREFERRED
+        elif task == FlightType.ESCORT:
+            return CAP_PREFERRED
+        else:
+            return []
+
+    @staticmethod
+    def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        if task in cap_missions:
+            return CAP_CAPABLE
+        elif task == FlightType.CAS:
+            return CAS_CAPABLE
+        elif task in (FlightType.DEAD, FlightType.SEAD):
+            return SEAD_CAPABLE
+        elif task == FlightType.STRIKE:
+            return STRIKE_CAPABLE
+        elif task == FlightType.ESCORT:
+            return CAP_CAPABLE
+        else:
+            logging.error(f"Unplannable flight type: {task}")
+            return []
+
+    def find_aircraft_of_type(
+            self, flight: ProposedFlight, types: List[Type[FlyingType]],
+    ) -> Optional[Tuple[ControlPoint, UnitType]]:
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
@@ -312,7 +349,8 @@ class ObjectiveFinder:
             yield from cp.ground_objects
         yield from self.front_lines()
 
-    def closest_airfields_to(self, location: MissionTarget) -> ClosestAirfields:
+    @staticmethod
+    def closest_airfields_to(location: MissionTarget) -> ClosestAirfields:
         """Returns the closest airfields to the given location."""
         return ObjectiveDistanceCache.get_closest_airfields(location)
 
