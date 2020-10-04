@@ -406,12 +406,21 @@ class CoalitionMissionPlanner:
             self.game.aircraft_inventory,
             self.is_player
         )
+
+        missing_types: Set[FlightType] = set()
         for proposed_flight in mission.flights:
             if not builder.plan_flight(proposed_flight):
-                builder.release_planned_aircraft()
-                self.message("Insufficient aircraft",
-                             f"Not enough aircraft in range for {mission}")
-                return
+                missing_types.add(proposed_flight.task)
+
+        if missing_types:
+            missing_types_str = ", ".join(
+                sorted([t.name for t in missing_types]))
+            builder.release_planned_aircraft()
+            self.message(
+                "Insufficient aircraft",
+                f"Not enough aircraft in range for {mission.location.name} "
+                f"capable of: {missing_types_str}")
+            return
 
         package = builder.build()
         flight_plan_builder = FlightPlanBuilder(self.game, package,
