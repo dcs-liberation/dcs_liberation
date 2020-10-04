@@ -57,6 +57,7 @@ class QFlightWaypointTab(QFrame):
         recreate_types = [
             FlightType.CAS,
             FlightType.CAP,
+            FlightType.ESCORT,
             FlightType.SEAD,
             FlightType.STRIKE
         ]

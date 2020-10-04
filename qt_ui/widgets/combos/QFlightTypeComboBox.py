@@ -18,11 +18,11 @@ class QFlightTypeComboBox(QComboBox):
     """Combo box for selecting a flight task type."""
 
     COMMON_ENEMY_MISSIONS = [
+        FlightType.ESCORT,
         FlightType.TARCAP,
         FlightType.SEAD,
         FlightType.DEAD,
         # TODO: FlightType.ELINT,
-        # TODO: FlightType.ESCORT,
         # TODO: FlightType.EWAR,
         # TODO: FlightType.RECON,
     ]
@@ -42,9 +42,9 @@ class QFlightTypeComboBox(QComboBox):
     ]
 
     ENEMY_CARRIER_MISSIONS = [
+        FlightType.ESCORT,
         FlightType.TARCAP,
         # TODO: FlightType.ANTISHIP
-        # TODO: FlightType.ESCORT,
     ]
 
     ENEMY_AIRBASE_MISSIONS = [

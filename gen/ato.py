@@ -89,6 +89,7 @@ class Package:
             FlightType.CAP,
             FlightType.BARCAP,
             FlightType.EWAR,
+            FlightType.ESCORT,
         ]
         for task in task_priorities:
             if flight_counts[task]:
