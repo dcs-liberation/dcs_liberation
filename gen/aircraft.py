@@ -952,6 +952,7 @@ class AircraftConflictGenerator:
                     #        pt.tasks.append(engagetgt)
                 elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
                     pt.type = "Land"
+                    pt.action = PointAction.Landing
                 elif point.waypoint_type == FlightWaypointType.INGRESS_STRIKE:
 
                     if group.units[0].unit_type == B_17G:
