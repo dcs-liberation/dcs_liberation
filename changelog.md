@@ -1,3 +1,8 @@
+# 2.1.5
+
+## Fixes :
+* **[UI]** Fixed an issue that prevent saving after aborting a mission
+
 # 2.1.4
 
 ## Fixes :
