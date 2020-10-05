@@ -1,10 +1,10 @@
 # 2.1.4
-
-## Fixes :
-* **[UI]** Fixed an issue that prevent generating the mission (take off button no working) on old savegames.
+## Features/Improvements :
 * **[Mission Generator]** The data about generated units is injected in the mission where plugins can make good use of it. The VEAF plugin is offered as a working example
 
 # 2.1.3
+## Fixes :
+* **[UI]** Fixed an issue that prevented generating the mission (take off button no working) on old savegames.
 
 ## Features/Improvements :
 * **[Units/Factions]** Added A-10C_2 to USA 2005 and Bluefor modern factions

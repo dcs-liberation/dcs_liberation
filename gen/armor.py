@@ -184,6 +184,11 @@ class GroundConflictGenerator:
             return
 
         for dcs_group, group in ally_groups:
+
+            if hasattr(group.units[0], 'eplrs'):
+                if group.units[0].eplrs:
+                    dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
+
             if group.role == CombatGroupRole.ARTILLERY:
                 # Fire on any ennemy in range
                 if self.game.settings.perf_artillery:

@@ -1,28 +1,47 @@
 import math
 import operator
 import random
+from typing import Iterable, Iterator, List, Tuple
+
+from dcs.unittype import FlyingType
 
 from game import db
 from game.data.doctrine import MODERN_DOCTRINE
 from game.data.radar_db import UNITS_WITH_RADAR
-from game.utils import meter_to_feet, nm_to_meter
+from game.utils import nm_to_meter
 from gen import Conflict
-from gen.flights.ai_flight_planner_db import INTERCEPT_CAPABLE, CAP_CAPABLE, CAS_CAPABLE, SEAD_CAPABLE, STRIKE_CAPABLE, \
-    DRONES
-from gen.flights.flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
-
+from gen.ato import Package
+from gen.flights.ai_flight_planner_db import (
+    CAP_CAPABLE,
+    CAS_CAPABLE,
+    DRONES,
+    SEAD_CAPABLE,
+    STRIKE_CAPABLE,
+)
+from gen.flights.flight import (
+    Flight,
+    FlightType,
+    FlightWaypoint,
+    FlightWaypointType,
+)
+from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
 
 MISSION_DURATION = 80
 
 
+# TODO: Should not be per-control point.
+# Packages can frag flights from individual airfields, so we should be planning
+# coalition wide rather than per airfield.
 class FlightPlanner:
 
-    def __init__(self, from_cp, game):
+    def __init__(self, from_cp: ControlPoint, game: "Game") -> None:
         # TODO : have the flight planner depend on a 'stance' setting : [Defensive, Aggresive... etc] and faction doctrine
         # TODO : the flight planner should plan package and operations
         self.from_cp = from_cp
         self.game = game
-        self.aircraft_inventory = {} # local copy of the airbase inventory
+        self.flights: List[Flight] = []
+        self.potential_sead_targets: List[Tuple[TheaterGroundObject, int]] = []
+        self.potential_strike_targets: List[Tuple[TheaterGroundObject, int]] = []
 
         if from_cp.captured:
             self.faction = self.game.player_faction
@@ -34,249 +53,155 @@ class FlightPlanner:
         else:
             self.doctrine = MODERN_DOCTRINE
 
+    @property
+    def aircraft_inventory(self) -> "GlobalAircraftInventory":
+        return self.game.aircraft_inventory
 
-    def reset(self):
-        """
-        Reset the planned flights and available units
-        """
-        self.aircraft_inventory = dict({k: v for k, v in self.from_cp.base.aircraft.items()})
-        self.interceptor_flights = []
-        self.cap_flights = []
-        self.cas_flights = []
-        self.strike_flights = []
-        self.sead_flights = []
-        self.custom_flights = []
+    def reset(self) -> None:
+        """Reset the planned flights and available units."""
         self.flights = []
         self.potential_sead_targets = []
         self.potential_strike_targets = []
 
-    def plan_flights(self):
-
+    def plan_flights(self) -> None:
         self.reset()
         self.compute_sead_targets()
         self.compute_strike_targets()
 
-        # The priority is to assign air-superiority fighter or interceptor to interception roles, so they can scramble if there is an attacker
-        # self.commision_interceptors()
+        self.commission_cap()
+        self.commission_cas()
+        self.commission_sead()
+        self.commission_strike()
+        # TODO: Commission anti-ship and intercept.
 
-        # Then some CAP patrol for the next 2 hours
-        self.commision_cap()
+    def plan_legacy_mission(self, flight: Flight,
+                            location: MissionTarget) -> None:
+        package = Package(location)
+        package.add_flight(flight)
+        if flight.from_cp.captured:
+            self.game.blue_ato.add_package(package)
+        else:
+            self.game.red_ato.add_package(package)
+        self.flights.append(flight)
+        self.aircraft_inventory.claim_for_flight(flight)
 
-        # Then setup cas
-        self.commision_cas()
+    def get_compatible_aircraft(self, candidates: Iterable[FlyingType],
+                                minimum: int) -> List[FlyingType]:
+        inventory = self.aircraft_inventory.for_control_point(self.from_cp)
+        return [k for k, v in inventory.all_aircraft if
+                k in candidates and v >= minimum]
 
-        # Then prepare some sead flights if required
-        self.commision_sead()
-
-        self.commision_strike()
-
-        # TODO : commision ANTISHIP
-
-    def remove_flight(self, index):
-        try:
-            flight = self.flights[index]
-            if flight in self.interceptor_flights: self.interceptor_flights.remove(flight)
-            if flight in self.cap_flights: self.cap_flights.remove(flight)
-            if flight in self.cas_flights: self.cas_flights.remove(flight)
-            if flight in self.strike_flights: self.strike_flights.remove(flight)
-            if flight in self.sead_flights: self.sead_flights.remove(flight)
-            if flight in self.custom_flights: self.custom_flights.remove(flight)
-            self.flights.remove(flight)
-        except IndexError:
+    def alloc_aircraft(
+            self, num_flights: int, flight_size: int,
+            allowed_types: Iterable[FlyingType]) -> Iterator[FlyingType]:
+        aircraft = self.get_compatible_aircraft(allowed_types, flight_size)
+        if not aircraft:
             return
 
+        for _ in range(num_flights):
+            yield random.choice(aircraft)
+            aircraft = self.get_compatible_aircraft(allowed_types, flight_size)
+            if not aircraft:
+                return
 
-    def commision_interceptors(self):
-        """
-        Pick some aircraft to assign them to interception roles
-        """
+    def commission_cap(self) -> None:
+        """Pick some aircraft to assign them to defensive CAP roles (BARCAP)."""
+        offset = random.randint(0, 5)
+        num_caps = MISSION_DURATION // self.doctrine["CAP_EVERY_X_MINUTES"]
+        for i, aircraft in enumerate(self.alloc_aircraft(num_caps, 2, CAP_CAPABLE)):
+            flight = Flight(aircraft, 2, self.from_cp, FlightType.CAP)
 
-        # At least try to generate one interceptor group
-        number_of_interceptor_groups = min(max(sum([v for k, v in self.aircraft_inventory.items()]) / 4, self.doctrine["MAX_NUMBER_OF_INTERCEPTION_GROUP"]), 1)
-        possible_interceptors = [k for k in self.aircraft_inventory.keys() if k in INTERCEPT_CAPABLE]
-
-        if len(possible_interceptors) <= 0:
-            possible_interceptors = [k for k,v in self.aircraft_inventory.items() if k in CAP_CAPABLE and v >= 2]
-
-        if number_of_interceptor_groups > 0:
-            inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_interceptors})
-            for i in range(number_of_interceptor_groups):
-                try:
-                    unit = random.choice([k for k,v in inventory.items() if v >= 2])
-                except IndexError:
-                    break
-                inventory[unit] = inventory[unit] - 2
-                flight = Flight(unit, 2, self.from_cp, FlightType.INTERCEPTION)
-                flight.scheduled_in = 1
-                flight.points = []
-
-                self.interceptor_flights.append(flight)
-                self.flights.append(flight)
-
-            # Update inventory
-            for k, v in inventory.items():
-                self.aircraft_inventory[k] = v
-
-    def commision_cap(self):
-        """
-        Pick some aircraft to assign them to defensive CAP roles (BARCAP)
-        """
-
-        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in CAP_CAPABLE and v >= 2]
-        inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
-
-        offset = random.randint(0,5)
-        for i in range(int(MISSION_DURATION/self.doctrine["CAP_EVERY_X_MINUTES"])):
-
-            try:
-                unit = random.choice([k for k, v in inventory.items() if v >= 2])
-            except IndexError:
-                break
-
-            inventory[unit] = inventory[unit] - 2
-            flight = Flight(unit, 2, self.from_cp, FlightType.CAP)
-
-            flight.points = []
-            flight.scheduled_in = offset + i*random.randint(self.doctrine["CAP_EVERY_X_MINUTES"] - 5, self.doctrine["CAP_EVERY_X_MINUTES"] + 5)
+            flight.scheduled_in = offset + i * random.randint(
+                self.doctrine["CAP_EVERY_X_MINUTES"] - 5,
+                self.doctrine["CAP_EVERY_X_MINUTES"] + 5
+            )
 
             if len(self._get_cas_locations()) > 0:
-                enemy_cp = random.choice(self._get_cas_locations())
-                self.generate_frontline_cap(flight, flight.from_cp, enemy_cp)
+                location = random.choice(self._get_cas_locations())
+                self.generate_frontline_cap(flight, location)
             else:
+                location = flight.from_cp
                 self.generate_barcap(flight, flight.from_cp)
 
-            self.cap_flights.append(flight)
-            self.flights.append(flight)
+            self.plan_legacy_mission(flight, location)
 
-        # Update inventory
-        for k, v in inventory.items():
-            self.aircraft_inventory[k] = v
+    def commission_cas(self) -> None:
+        """Pick some aircraft to assign them to CAS."""
+        cas_locations = self._get_cas_locations()
+        if not cas_locations:
+            return
 
-    def commision_cas(self):
-        """
-        Pick some aircraft to assign them to CAS
-        """
+        offset = random.randint(0,5)
+        num_cas = MISSION_DURATION // self.doctrine["CAS_EVERY_X_MINUTES"]
+        for i, aircraft in enumerate(self.alloc_aircraft(num_cas, 2, CAS_CAPABLE)):
+            flight = Flight(aircraft, 2, self.from_cp, FlightType.CAS)
+            flight.scheduled_in = offset + i * random.randint(
+                self.doctrine["CAS_EVERY_X_MINUTES"] - 5,
+                self.doctrine["CAS_EVERY_X_MINUTES"] + 5)
+            location = random.choice(cas_locations)
 
-        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in CAS_CAPABLE and v >= 2]
-        inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
-        cas_location = self._get_cas_locations()
+            self.generate_cas(flight, location)
+            self.plan_legacy_mission(flight, location)
 
-        if len(cas_location) > 0:
+    def commission_sead(self) -> None:
+        """Pick some aircraft to assign them to SEAD tasks."""
 
-            offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/self.doctrine["CAS_EVERY_X_MINUTES"])):
+        if not self.potential_sead_targets:
+            return
 
-                try:
-                    unit = random.choice([k for k, v in inventory.items() if v >= 2])
-                except IndexError:
-                    break
+        offset = random.randint(0, 5)
+        num_sead = max(
+            MISSION_DURATION // self.doctrine["SEAD_EVERY_X_MINUTES"],
+            len(self.potential_sead_targets))
+        for i, aircraft in enumerate(self.alloc_aircraft(num_sead, 2, SEAD_CAPABLE)):
+            flight = Flight(aircraft, 2, self.from_cp,
+                            random.choice([FlightType.SEAD, FlightType.DEAD]))
+            flight.scheduled_in = offset + i * random.randint(
+                self.doctrine["SEAD_EVERY_X_MINUTES"] - 5,
+                self.doctrine["SEAD_EVERY_X_MINUTES"] + 5)
 
-                inventory[unit] = inventory[unit] - 2
-                flight = Flight(unit, 2, self.from_cp, FlightType.CAS)
-                flight.points = []
-                flight.scheduled_in = offset + i * random.randint(self.doctrine["CAS_EVERY_X_MINUTES"] - 5, self.doctrine["CAS_EVERY_X_MINUTES"] + 5)
-                location = random.choice(cas_location)
+            location = self.potential_sead_targets[0][0]
+            self.potential_sead_targets.pop()
 
-                self.generate_cas(flight, flight.from_cp, location)
+            self.generate_sead(flight, location, [])
+            self.plan_legacy_mission(flight, location)
 
-                self.cas_flights.append(flight)
-                self.flights.append(flight)
+    def commission_strike(self) -> None:
+        """Pick some aircraft to assign them to STRIKE tasks."""
+        if not self.potential_strike_targets:
+            return
 
-            # Update inventory
-            for k, v in inventory.items():
-                self.aircraft_inventory[k] = v
+        offset = random.randint(0,5)
+        num_strike = max(
+            MISSION_DURATION / self.doctrine["STRIKE_EVERY_X_MINUTES"],
+            len(self.potential_strike_targets)
+        )
+        for i, aircraft in enumerate(self.alloc_aircraft(num_strike, 2, STRIKE_CAPABLE)):
+            if aircraft in DRONES:
+                count = 1
+            else:
+                count = 2
 
-    def commision_sead(self):
-        """
-        Pick some aircraft to assign them to SEAD tasks
-        """
+            flight = Flight(aircraft, count, self.from_cp, FlightType.STRIKE)
+            flight.scheduled_in = offset + i * random.randint(
+                self.doctrine["STRIKE_EVERY_X_MINUTES"] - 5,
+                self.doctrine["STRIKE_EVERY_X_MINUTES"] + 5)
 
-        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in SEAD_CAPABLE and v >= 2]
-        inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
+            location = self.potential_strike_targets[0][0]
+            self.potential_strike_targets.pop(0)
 
-        if len(self.potential_sead_targets) > 0:
+            self.generate_strike(flight, location)
+            self.plan_legacy_mission(flight, location)
 
-            offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/self.doctrine["SEAD_EVERY_X_MINUTES"])):
-
-                if len(self.potential_sead_targets) <= 0:
-                    break
-
-                try:
-                    unit = random.choice([k for k, v in inventory.items() if v >= 2])
-                except IndexError:
-                    break
-
-                inventory[unit] = inventory[unit] - 2
-                flight = Flight(unit, 2, self.from_cp, random.choice([FlightType.SEAD, FlightType.DEAD]))
-
-                flight.points = []
-                flight.scheduled_in = offset + i*random.randint(self.doctrine["SEAD_EVERY_X_MINUTES"] - 5, self.doctrine["SEAD_EVERY_X_MINUTES"] + 5)
-
-                location = self.potential_sead_targets[0][0]
-                self.potential_sead_targets.pop(0)
-
-                self.generate_sead(flight, location, [])
-
-                self.sead_flights.append(flight)
-                self.flights.append(flight)
-
-            # Update inventory
-            for k, v in inventory.items():
-                self.aircraft_inventory[k] = v
-
-
-    def commision_strike(self):
-        """
-        Pick some aircraft to assign them to STRIKE tasks
-        """
-        possible_aircraft = [k for k, v in self.aircraft_inventory.items() if k in STRIKE_CAPABLE and v >= 2]
-        inventory = dict({k: v for k, v in self.aircraft_inventory.items() if k in possible_aircraft})
-
-        if len(self.potential_strike_targets) > 0:
-
-            offset = random.randint(0,5)
-            for i in range(int(MISSION_DURATION/self.doctrine["STRIKE_EVERY_X_MINUTES"])):
-
-                if len(self.potential_strike_targets) <= 0:
-                    break
-
-                try:
-                    unit = random.choice([k for k, v in inventory.items() if v >= 2])
-                except IndexError:
-                    break
-
-                if unit in DRONES:
-                    count = 1
-                else:
-                    count = 2
-
-                inventory[unit] = inventory[unit] - count
-                flight = Flight(unit, count, self.from_cp, FlightType.STRIKE)
-
-                flight.points = []
-                flight.scheduled_in = offset + i*random.randint(self.doctrine["STRIKE_EVERY_X_MINUTES"] - 5, self.doctrine["STRIKE_EVERY_X_MINUTES"] + 5)
-
-                location = self.potential_strike_targets[0][0]
-                self.potential_strike_targets.pop(0)
-
-                self.generate_strike(flight, location)
-
-                self.strike_flights.append(flight)
-                self.flights.append(flight)
-
-            # Update inventory
-            for k, v in inventory.items():
-                self.aircraft_inventory[k] = v
-
-    def _get_cas_locations(self):
+    def _get_cas_locations(self) -> List[FrontLine]:
         return self._get_cas_locations_for_cp(self.from_cp)
 
-    def _get_cas_locations_for_cp(self, for_cp):
+    @staticmethod
+    def _get_cas_locations_for_cp(for_cp: ControlPoint) -> List[FrontLine]:
         cas_locations = []
         for cp in for_cp.connected_points:
             if cp.captured != for_cp.captured:
-                cas_locations.append(cp)
+                cas_locations.append(FrontLine(for_cp, cp))
         return cas_locations
 
     def compute_strike_targets(self):
@@ -351,18 +276,7 @@ class FlightPlanner:
         return "-"*40 + "\n" + self.from_cp.name + " planned flights :\n"\
                + "-"*40 + "\n" + "\n".join([repr(f) for f in self.flights]) + "\n" + "-"*40
 
-    def get_available_aircraft(self):
-        base_aircraft_inventory = dict({k: v for k, v in self.from_cp.base.aircraft.items()})
-        for f in self.flights:
-            if f.unit_type in base_aircraft_inventory.keys():
-                base_aircraft_inventory[f.unit_type] = base_aircraft_inventory[f.unit_type] - f.count
-                if base_aircraft_inventory[f.unit_type] <= 0:
-                    del base_aircraft_inventory[f.unit_type]
-        return base_aircraft_inventory
-
-
-    def generate_strike(self, flight, location):
-
+    def generate_strike(self, flight: Flight, location: TheaterGroundObject):
         flight.flight_type = FlightType.STRIKE
         flight.targetPoint = location
         ascend = self.generate_ascend_point(flight.from_cp)
@@ -513,17 +427,17 @@ class FlightPlanner:
         rtb = self.generate_rtb_waypoint(flight.from_cp)
         flight.points.append(rtb)
 
+    def generate_frontline_cap(self, flight: Flight,
+                               front_line: FrontLine) -> None:
+        """Generate a CAP flight plan for the given front line.
 
-    def generate_frontline_cap(self, flight, ally_cp, enemy_cp):
-        """
-        Generate a cap flight for the frontline between ally_cp and enemy cp in order to ensure air superiority and
-        protect friendly CAP airbase
         :param flight: Flight to setup
-        :param ally_cp: CP to protect
-        :param enemy_cp: Enemy connected cp
+        :param front_line: Front line to protect.
         """
+        ally_cp, enemy_cp = front_line.control_points
         flight.flight_type = FlightType.CAP
-        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0], self.doctrine["PATROL_ALT_RANGE"][1])
+        patrol_alt = random.randint(self.doctrine["PATROL_ALT_RANGE"][0],
+                                    self.doctrine["PATROL_ALT_RANGE"][1])
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(ally_cp, enemy_cp, self.game.theater)
@@ -665,20 +579,22 @@ class FlightPlanner:
         rtb = self.generate_rtb_waypoint(flight.from_cp)
         flight.points.append(rtb)
 
+    def generate_cas(self, flight: Flight, front_line: FrontLine) -> None:
+        """Generate a CAS flight plan for the given target.
 
-    def generate_cas(self, flight, from_cp, location):
-        """
-        Generate a CAS flight at a given location
         :param flight: Flight to setup
-        :param location: Location of the CAS targets
+        :param front_line: Front line containing CAS targets.
         """
+        from_cp, location = front_line.control_points
         is_helo = hasattr(flight.unit_type, "helicopter") and flight.unit_type.helicopter
         cap_alt = 1000
         flight.points = []
         flight.flight_type = FlightType.CAS
         flight.targetPoint = location
 
-        ingress, heading, distance = Conflict.frontline_vector(from_cp, location, self.game.theater)
+        ingress, heading, distance = Conflict.frontline_vector(
+            from_cp, location, self.game.theater
+        )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 

@@ -3,11 +3,17 @@ import typing
 from enum import Enum
 
 from dcs.mapping import *
-from dcs.terrain import Airport
-from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock
+from dcs.ships import (
+    CVN_74_John_C__Stennis,
+    CV_1143_5_Admiral_Kuznetsov,
+    LHA_1_Tarawa,
+    Type_071_Amphibious_Transport_Dock,
+)
+from dcs.terrain.terrain import Airport
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
+from .missiontarget import MissionTarget
 from .theatergroundobject import TheaterGroundObject
 
 
@@ -19,7 +25,7 @@ class ControlPointType(Enum):
     FOB = 5                    # A FOB (ground units only)
 
 
-class ControlPoint:
+class ControlPoint(MissionTarget):
 
     id = 0
     position = None  # type: Point
@@ -206,4 +212,3 @@ class ControlPoint:
             if g.obj_name == obj_name:
                 found.append(g)
         return found
-

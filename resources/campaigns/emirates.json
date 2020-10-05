@@ -1,0 +1,103 @@
+{
+    "name": "Persian Gulf - Emirates",
+    "theater": "Persian Gulf",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "Fujairah Intl",
+            "radials": [
+                180,
+                225,
+                270,
+                315,
+                0
+            ],
+            "size": 1000,
+            "importance": 1
+        },
+        {
+            "type": "lha",
+            "id": 1002,
+            "x": -79770,
+            "y": 49430
+        },
+        {
+            "type": "carrier",
+            "id": 1001,
+            "x": -61770,
+            "y": 69039
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Al Dhafra AB",
+            "size": 2000,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "Al Ain International Airport",
+            "size": 2000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Al Maktoum Intl",
+            "size": 2000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Al Minhad AB",
+            "size": 1000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Sharjah Intl",
+            "size": 2000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Ras Al Khaimah",
+            "size": 1000,
+            "importance": 1
+        }
+    ],
+    "links": [
+        [
+            "Al Ain International Airport",
+            "Al Dhafra AB"
+        ],
+        [
+            "Al Dhafra AB",
+            "Al Maktoum Intl"
+        ],
+        [
+            "Al Ain International Airport",
+            "Fujairah Intl"
+        ],
+        [
+            "Al Ain International Airport",
+            "Al Maktoum Intl"
+        ],
+        [
+            "Al Maktoum Intl",
+            "Al Minhad AB"
+        ],
+        [
+            "Al Minhad AB",
+            "Sharjah Intl"
+        ],
+        [
+            "Ras Al Khaimah",
+            "Sharjah Intl"
+        ],
+        [
+            "Fujairah Intl",
+            "Sharjah Intl"
+        ]
+    ]
+}

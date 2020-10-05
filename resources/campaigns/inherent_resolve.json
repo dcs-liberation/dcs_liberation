@@ -1,0 +1,78 @@
+{
+    "name": "Syria - Inherent Resolve",
+    "theater": "Syria",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "King Hussein Air College",
+            "size": 1000,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Incirlik",
+            "size": 1000,
+            "importance": 1.4
+        },
+        {
+            "type": "carrier",
+            "id": 1001,
+            "x": -210000,
+            "y": -200000
+        },
+        {
+            "type": "lha",
+            "id": 1002,
+            "x": -131000,
+            "y": -161000
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Khalkhalah",
+            "size": 1000,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "Palmyra",
+            "size": 1000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Tabqa",
+            "size": 1000,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Jirah",
+            "size": 1000,
+            "importance": 1
+        }
+    ],
+    "links": [
+        [
+            "Khalkhalah",
+            "King Hussein Air College"
+        ],
+        [
+            "Incirlik",
+            "Incirlik"
+        ],
+        [
+            "Khalkhalah",
+            "Palmyra"
+        ],
+        [
+            "Palmyra",
+            "Tabqa"
+        ],
+        [
+            "Jirah",
+            "Tabqa"
+        ]
+    ]
+}

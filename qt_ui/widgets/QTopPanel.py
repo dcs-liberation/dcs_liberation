@@ -1,16 +1,15 @@
-from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QGroupBox
-
-from game import Game
-from qt_ui.widgets.QBudgetBox import QBudgetBox
-from qt_ui.widgets.QFactionsInfos import QFactionsInfos
-from qt_ui.windows.finances.QFinancesMenu import QFinancesMenu
-from qt_ui.windows.stats.QStatsWindow import QStatsWindow
-from qt_ui.widgets.QTurnCounter import QTurnCounter
+from PySide2.QtWidgets import QFrame, QGroupBox, QHBoxLayout, QPushButton
 
 import qt_ui.uiconstants as CONST
+from game import Game
+from game.event import CAP, CAS, FrontlineAttackEvent
+from qt_ui.widgets.QBudgetBox import QBudgetBox
+from qt_ui.widgets.QFactionsInfos import QFactionsInfos
+from qt_ui.widgets.QTurnCounter import QTurnCounter
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from qt_ui.windows.mission.QMissionPlanning import QMissionPlanning
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
+from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 
 
 class QTopPanel(QFrame):
@@ -33,10 +32,10 @@ class QTopPanel(QFrame):
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
 
-        self.proceedButton = QPushButton("Mission Planning")
+        self.proceedButton = QPushButton("Take off")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
-        self.proceedButton.setProperty("style", "btn-success")
-        self.proceedButton.clicked.connect(self.proceed)
+        self.proceedButton.setProperty("style", "start-button")
+        self.proceedButton.clicked.connect(self.launch_mission)
         if self.game and self.game.turn == 0:
             self.proceedButton.setEnabled(False)
 
@@ -100,9 +99,31 @@ class QTopPanel(QFrame):
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
 
-    def proceed(self):
-        self.subwindow = QMissionPlanning(self.game)
-        self.subwindow.show()
+    def launch_mission(self):
+        """Finishes planning and waits for mission completion."""
+        # TODO: Refactor this nonsense.
+        game_event = None
+        for event in self.game.events:
+            if isinstance(event,
+                          FrontlineAttackEvent) and event.is_player_attacking:
+                game_event = event
+        if game_event is None:
+            game_event = FrontlineAttackEvent(
+                self.game,
+                self.game.theater.controlpoints[0],
+                self.game.theater.controlpoints[0],
+                self.game.theater.controlpoints[0].position,
+                self.game.player_name,
+                self.game.enemy_name)
+        game_event.is_awacs_enabled = True
+        game_event.ca_slots = 1
+        game_event.departure_cp = self.game.theater.controlpoints[0]
+        game_event.player_attacking({CAS: {}, CAP: {}})
+        game_event.depart_from = self.game.theater.controlpoints[0]
+
+        self.game.initiate_event(game_event)
+        waiting = QWaitingForMissionResultWindow(game_event, self.game)
+        waiting.show()
 
     def budget_update(self, game:Game):
         self.budgetBox.setGame(game)

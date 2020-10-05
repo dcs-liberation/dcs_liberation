@@ -1,5 +1,8 @@
-from dcs.mapping import Point
 import uuid
+
+from dcs.mapping import Point
+
+from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
@@ -59,7 +62,7 @@ CATEGORY_MAP = {
 }
 
 
-class TheaterGroundObject:
+class TheaterGroundObject(MissionTarget):
     cp_id = 0
     group_id = 0
     object_id = 0
@@ -93,3 +96,15 @@ class TheaterGroundObject:
 
     def matches_string_identifier(self, id):
         return self.string_identifier == id
+
+    @property
+    def name(self) -> str:
+        return self.obj_name
+
+    def parent_control_point(
+            self, theater: "ConflictTheater") -> "ControlPoint":
+        """Searches the theater for the parent control point."""
+        for cp in theater.controlpoints:
+            if cp.id == self.cp_id:
+                return cp
+        raise RuntimeError("Could not find matching control point in theater")
