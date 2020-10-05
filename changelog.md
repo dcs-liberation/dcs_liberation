@@ -2,6 +2,7 @@
 
 ## Fixes :
 * **[UI]** Fixed an issue that prevent saving after aborting a mission
+* **[Mission Generator]** Fixed aircraft landing point type being wrong
 
 # 2.1.4
 
