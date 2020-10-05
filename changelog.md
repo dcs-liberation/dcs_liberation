@@ -1,5 +1,8 @@
 # 2.1.5
 
+## Features/Improvements :
+* **[Units/Factions]** Enabled EPLRS for ground units that supports it (so they appear on A-10C II TAD and Helmet)
+
 ## Fixes :
 * **[UI]** Fixed an issue that prevent saving after aborting a mission
 * **[Mission Generator]** Fixed aircraft landing point type being wrong
