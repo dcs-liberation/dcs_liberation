@@ -27,6 +27,7 @@ for f in campaign_files:
             logging.info("Loaded campaign :" + ff)
     except Exception as e:
         logging.info("Unable to load campaign :" + f)
+CAMPAIGNS = sorted(CAMPAIGNS, key=lambda x: x[0])
 
 class QCampaignItem(QStandardItem):
 
