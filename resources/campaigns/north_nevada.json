@@ -14,7 +14,8 @@
             "type": "airbase",
             "id": "Tonopah Test Range Airfield",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "airbase",

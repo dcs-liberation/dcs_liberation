@@ -56,7 +56,8 @@
             "type": "airbase",
             "id": "Tabqa",
             "size": 1000,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         }
     ],
     "links": [

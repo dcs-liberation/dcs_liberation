@@ -50,7 +50,8 @@
             "type": "airbase",
             "id": "Evreux",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         }
     ],
     "links": [

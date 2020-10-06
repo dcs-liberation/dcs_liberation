@@ -12,13 +12,15 @@
             "type": "carrier",
             "id": 1001,
             "x": -151000,
-            "y": -106000
+            "y": -106000,
+            "captured_invert": true
         },
         {
             "type": "lha",
             "id": 1002,
             "x": -131000,
-            "y": -161000
+            "y": -161000,
+            "captured_invert": true
         }
     ],
     "enemy_points": [
@@ -104,7 +106,8 @@
             "type": "airbase",
             "id": "Incirlik",
             "size": 1000,
-            "importance": 1.4
+            "importance": 1.4,
+            "captured_invert": true
         }
     ],
     "links": [

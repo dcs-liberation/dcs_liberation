@@ -32,25 +32,29 @@
             "type": "airbase",
             "id": "Dunkirk Mardyck",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "airbase",
             "id": "Saint Omer Longuenesse",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "airbase",
             "id": "Merville Calonne",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "airbase",
             "id": "Abbeville Drucat",
             "size": 600,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         }
     ],
     "links": [

@@ -13,19 +13,22 @@
                 0
             ],
             "size": 1000,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "lha",
             "id": 1002,
             "x": -79770,
-            "y": 49430
+            "y": 49430,
+            "captured_invert": true
         },
         {
             "type": "carrier",
             "id": 1001,
             "x": -61770,
-            "y": 69039
+            "y": 69039,
+            "captured_invert": true
         }
     ],
     "enemy_points": [

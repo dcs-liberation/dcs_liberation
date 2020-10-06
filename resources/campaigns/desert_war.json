@@ -12,13 +12,15 @@
             "type": "lha",
             "id": 1002,
             "x": -164000,
-            "y": -257000
+            "y": -257000,
+            "captured_invert": true
         },
         {
             "type": "carrier",
             "id": 1001,
             "x": -124000,
-            "y": -303000
+            "y": -303000,
+            "captured_invert": true
         }
     ],
     "enemy_points": [
@@ -26,7 +28,8 @@
             "type": "airbase",
             "id": "Al Ain International Airport",
             "size": 2000,
-            "importance": 1
+            "importance": 1,
+            "captured_invert": true
         },
         {
             "type": "airbase",

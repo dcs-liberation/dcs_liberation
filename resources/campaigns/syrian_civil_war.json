@@ -18,13 +18,15 @@
             "type": "carrier",
             "id": 1001,
             "x": 18537,
-            "y": -52000
+            "y": -52000,
+            "captured_invert": true
         },
         {
             "type": "lha",
             "id": 1002,
             "x": 116000,
-            "y": -30000
+            "y": -30000,
+            "captured_invert": true
         }
     ],
     "enemy_points": [
@@ -38,7 +40,8 @@
             "type": "airbase",
             "id": "Aleppo",
             "size": 1000,
-            "importance": 1.2
+            "importance": 1.2,
+            "captured_invert": true
         },
         {
             "type": "airbase",

@@ -12,13 +12,15 @@
             "type": "carrier",
             "id": 1001,
             "x": -280000,
-            "y": -238000
+            "y": -238000,
+            "captured_invert": true
         },
         {
             "type": "lha",
             "id": 1002,
             "x": -237000,
-            "y": -89800
+            "y": -89800,
+            "captured_invert": true
         }
     ],
     "enemy_points": [
@@ -50,7 +52,8 @@
             "type": "airbase",
             "id": "Al-Dumayr",
             "size": 1000,
-            "importance": 1.2
+            "importance": 1.2,
+            "captured_invert": true
         }
     ],
     "links": [

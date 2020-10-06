@@ -20,7 +20,8 @@
             "type": "airbase",
             "id": "Maykop-Khanskaya",
             "size": 3000,
-            "importance": 1.4
+            "importance": 1.4,
+            "captured_invert": true
         }
     ],
     "links": [
