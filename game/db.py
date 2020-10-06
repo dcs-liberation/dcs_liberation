@@ -122,6 +122,7 @@ from dcs.task import (
     CAS,
     CargoTransportation,
     Embarking,
+    Escort,
     GroundAttack,
     Intercept,
     MainTask,
@@ -1082,7 +1083,8 @@ COMMON_OVERRIDE = {
     PinpointStrike: "STRIKE",
     SEAD: "SEAD",
     AntishipStrike: "ANTISHIP",
-    GroundAttack: "STRIKE"
+    GroundAttack: "STRIKE",
+    Escort: "CAP",
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
@@ -1094,7 +1096,8 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         PinpointStrike: "STRIKE",
         SEAD: "SEAD",
         AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE"
+        GroundAttack: "STRIKE",
+        Escort: "CAP HEAVY",
     },
     F_A_18C: {
         CAP: "CAP HEAVY",
@@ -1103,7 +1106,8 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         PinpointStrike: "STRIKE",
         SEAD: "SEAD",
         AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE"
+        GroundAttack: "STRIKE",
+        Escort: "CAP HEAVY",
     },
     A_10A: COMMON_OVERRIDE,
     A_10C: COMMON_OVERRIDE,
