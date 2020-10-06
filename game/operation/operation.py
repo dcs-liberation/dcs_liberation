@@ -182,17 +182,20 @@ class Operation:
         airsupportgen.generate(self.is_awacs_enabled)
 
         # Generate Activity on the map
-        self.airgen.generate_flights(
+        airgen = AircraftConflictGenerator(
+            self.current_mission, self.conflict, self.game.settings, self.game,
+            radio_registry)
+
+        airgen.generate_flights(
             self.current_mission.country(self.game.player_country),
             self.game.blue_ato,
-            self.groundobjectgen.runways
+            groundobjectgen.runways
         )
-        self.airgen.generate_flights(
+        airgen.generate_flights(
             self.current_mission.country(self.game.enemy_country),
             self.game.red_ato,
-            self.groundobjectgen.runways
+            groundobjectgen.runways
         )
-
 
         # Generate ground units on frontline everywhere
         jtacs: List[JtacInfo] = []
