@@ -1,8 +1,16 @@
 """Widgets for displaying air tasking orders."""
+import datetime
 import logging
-from typing import Optional
+from contextlib import contextmanager
+from typing import ContextManager, Optional
 
-from PySide2.QtCore import QItemSelectionModel, QModelIndex, QSize, Qt
+from PySide2.QtCore import (
+    QItemSelectionModel,
+    QModelIndex,
+    QSize,
+    Qt,
+)
+from PySide2.QtGui import QFont, QFontMetrics, QPainter
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
@@ -10,13 +18,13 @@ from PySide2.QtWidgets import (
     QListView,
     QPushButton,
     QSplitter,
-    QVBoxLayout,
+    QStyleOptionViewItem, QStyledItemDelegate, QVBoxLayout,
 )
 
 from gen.ato import Package
 from gen.flights.flight import Flight
-from ..models import AtoModel, GameModel, NullListModel, PackageModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
 
 class QFlightList(QListView):
@@ -138,6 +146,65 @@ class QFlightPanel(QGroupBox):
         GameUpdateSignal.get_instance().redraw_flight_paths()
 
 
+@contextmanager
+def painter_context(painter: QPainter) -> ContextManager[None]:
+    try:
+        painter.save()
+        yield
+    finally:
+        painter.restore()
+
+
+class PackageDelegate(QStyledItemDelegate):
+    FONT_SIZE = 12
+    HMARGIN = 4
+    VMARGIN = 4
+
+    def get_font(self, option: QStyleOptionViewItem) -> QFont:
+        font = QFont(option.font)
+        font.setPointSize(self.FONT_SIZE)
+        return font
+
+    @staticmethod
+    def package(index: QModelIndex) -> Package:
+        return index.data(AtoModel.PackageRole)
+
+    def left_text(self, index: QModelIndex) -> str:
+        package = self.package(index)
+        return f"{package.package_description} {package.target.name}"
+
+    def right_text(self, index: QModelIndex) -> str:
+        package = self.package(index)
+        if package.time_over_target is None:
+            return ""
+        tot = datetime.timedelta(seconds=package.time_over_target)
+        return f"TOT T+{tot}"
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem,
+              index: QModelIndex) -> None:
+        # Draw the list item with all the default selection styling, but with an
+        # invalid index so text formatting is left to us.
+        super().paint(painter, option, QModelIndex())
+
+        rect = option.rect.adjusted(self.HMARGIN, self.VMARGIN, -self.HMARGIN,
+                                    -self.VMARGIN)
+
+        with painter_context(painter):
+            painter.setFont(self.get_font(option))
+
+            painter.drawText(rect, Qt.AlignLeft, self.left_text(index))
+            line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
+            painter.drawText(line2, Qt.AlignLeft, self.right_text(index))
+
+    def sizeHint(self, option: QStyleOptionViewItem,
+                 index: QModelIndex) -> QSize:
+        metrics = QFontMetrics(self.get_font(option))
+        left = metrics.size(0, self.left_text(index))
+        right = metrics.size(0, self.right_text(index))
+        return QSize(max(left.width(), right.width()) + 2 * self.HMARGIN,
+                     left.height() + right.height() + 2 * self.VMARGIN)
+
+
 class QPackageList(QListView):
     """List view for displaying the packages of an ATO."""
 
@@ -145,6 +212,7 @@ class QPackageList(QListView):
         super().__init__()
         self.ato_model = model
         self.setModel(model)
+        self.setItemDelegate(PackageDelegate())
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
 

@@ -24,6 +24,7 @@ aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 from collections import defaultdict
 from dataclasses import dataclass
+import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -106,7 +107,8 @@ class NumberedWaypoint:
 
 
 class FlightPlanBuilder:
-    def __init__(self) -> None:
+    def __init__(self, start_time: datetime.datetime) -> None:
+        self.start_time = start_time
         self.rows: List[List[str]] = []
         self.target_points: List[NumberedWaypoint] = []
 
@@ -133,15 +135,23 @@ class FlightPlanBuilder:
         self.rows.append([
             f"{first_waypoint_num}-{last_waypoint_num}",
             "Target points",
-            "0"
+            "0",
+            self._format_time(self.target_points[0].waypoint.tot),
         ])
 
     def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
         self.rows.append([
             str(waypoint.number),
             waypoint.waypoint.pretty_name,
-            str(int(units.meters_to_feet(waypoint.waypoint.alt)))
+            str(int(units.meters_to_feet(waypoint.waypoint.alt))),
+            self._format_time(waypoint.waypoint.tot),
         ])
+
+    def _format_time(self, time: Optional[int]) -> str:
+        if time is None:
+            return ""
+        local_time = self.start_time + datetime.timedelta(seconds=time)
+        return local_time.strftime(f"%H:%M:%S LOCAL")
 
     def build(self) -> List[List[str]]:
         return self.rows
@@ -151,12 +161,13 @@ class BriefingPage(KneeboardPage):
     """A kneeboard page containing briefing information."""
     def __init__(self, flight: FlightData, comms: List[CommInfo],
                  awacs: List[AwacsInfo], tankers: List[TankerInfo],
-                 jtacs: List[JtacInfo]) -> None:
+                 jtacs: List[JtacInfo], start_time: datetime.datetime) -> None:
         self.flight = flight
         self.comms = list(comms)
         self.awacs = awacs
         self.tankers = tankers
         self.jtacs = jtacs
+        self.start_time = start_time
         self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
@@ -172,11 +183,11 @@ class BriefingPage(KneeboardPage):
         ], headers=["", "Airbase", "ATC", "TCN", "I(C)LS", "RWY"])
 
         writer.heading("Flight Plan")
-        flight_plan_builder = FlightPlanBuilder()
+        flight_plan_builder = FlightPlanBuilder(self.start_time)
         for num, waypoint in enumerate(self.flight.waypoints):
             flight_plan_builder.add_waypoint(num, waypoint)
         writer.table(flight_plan_builder.build(),
-                     headers=["STPT", "Action", "Alt"])
+                     headers=["STPT", "Action", "Alt", "TOT"])
 
         writer.heading("Comm Ladder")
         comms = []
@@ -297,6 +308,11 @@ class KneeboardGenerator(MissionInfoGenerator):
         """Returns a list of kneeboard pages for the given flight."""
         return [
             BriefingPage(
-                flight, self.comms, self.awacs, self.tankers, self.jtacs
+                flight,
+                self.comms,
+                self.awacs,
+                self.tankers,
+                self.jtacs,
+                self.mission.start_time
             ),
         ]

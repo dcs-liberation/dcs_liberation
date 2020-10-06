@@ -8,14 +8,15 @@ example, the package to strike an enemy airfield may contain an escort flight,
 a SEAD flight, and the strike aircraft themselves. CAP packages may contain only
 the single CAP flight.
 """
+import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-import logging
-from typing import Dict, Iterator, List, Optional
+from typing import Dict, List, Optional
 
 from dcs.mapping import Point
-from .flights.flight import Flight, FlightType
+
 from theater.missiontarget import MissionTarget
+from .flights.flight import Flight, FlightType
 
 
 @dataclass(frozen=True)
@@ -27,6 +28,14 @@ class Task:
 
     #: The location of the objective.
     location: str
+
+
+@dataclass(frozen=True)
+class PackageWaypoints:
+    join: Point
+    ingress: Point
+    egress: Point
+    split: Point
 
 
 @dataclass
@@ -42,10 +51,10 @@ class Package:
 
     delay: int = field(default=0)
 
-    join_point: Optional[Point] = field(default=None, init=False, hash=False)
-    split_point: Optional[Point] = field(default=None, init=False, hash=False)
-    ingress_point: Optional[Point] = field(default=None, init=False, hash=False)
-    egress_point: Optional[Point] = field(default=None, init=False, hash=False)
+    #: Desired TOT measured in seconds from mission start.
+    time_over_target: Optional[int] = field(default=None)
+
+    waypoints: Optional[PackageWaypoints] = field(default=None)
 
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""
@@ -55,8 +64,7 @@ class Package:
         """Removes a flight from the package."""
         self.flights.remove(flight)
         if not self.flights:
-            self.ingress_point = None
-            self.egress_point = None
+            self.waypoints = None
 
     @property
     def primary_task(self) -> Optional[FlightType]:
