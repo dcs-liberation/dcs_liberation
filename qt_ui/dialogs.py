@@ -54,7 +54,12 @@ class Dialog:
         cls.edit_package_dialog.show()
 
     @classmethod
-    def open_edit_flight_dialog(cls, flight: Flight):
+    def open_edit_flight_dialog(cls, package_model: PackageModel,
+                                flight: Flight) -> None:
         """Opens the dialog to edit the given flight."""
-        cls.edit_flight_dialog = QEditFlightDialog(cls.game_model.game, flight)
+        cls.edit_flight_dialog = QEditFlightDialog(
+            cls.game_model.game,
+            package_model.package,
+            flight
+        )
         cls.edit_flight_dialog.show()

@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from PySide2.QtCore import Qt, Signal
@@ -11,15 +10,14 @@ from dcs.planes import PlaneType
 
 from game import Game
 from gen.ato import Package
-from gen.flights.ai_flight_planner import FlightPlanner
-from gen.flights.flight import Flight, FlightType
+from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
-from theater import ControlPoint, FrontLine, TheaterGroundObject
+from theater import ControlPoint
 
 
 class QFlightCreator(QDialog):
@@ -29,7 +27,6 @@ class QFlightCreator(QDialog):
         super().__init__()
 
         self.game = game
-        self.package = package
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -37,7 +34,7 @@ class QFlightCreator(QDialog):
         layout = QVBoxLayout()
 
         self.task_selector = QFlightTypeComboBox(
-            self.game.theater, self.package.target
+            self.game.theater, package.target
         )
         self.task_selector.setCurrentIndex(0)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
@@ -93,7 +90,6 @@ class QFlightCreator(QDialog):
         size = self.flight_size_spinner.value()
 
         flight = Flight(aircraft, size, origin, task)
-        self.populate_flight_plan(flight, task)
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
@@ -102,77 +98,3 @@ class QFlightCreator(QDialog):
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
         self.airfield_selector.change_aircraft(new_aircraft)
-
-    @property
-    def planner(self) -> FlightPlanner:
-        return self.game.planners[self.airfield_selector.currentData().id]
-
-    def populate_flight_plan(self, flight: Flight, task: FlightType) -> None:
-        # TODO: Flesh out mission types.
-        if task == FlightType.ANTISHIP:
-            logging.error("Anti-ship flight plan generation not implemented")
-        elif task == FlightType.BAI:
-            logging.error("BAI flight plan generation not implemented")
-        elif task == FlightType.BARCAP:
-            self.generate_cap(flight)
-        elif task == FlightType.CAP:
-            self.generate_cap(flight)
-        elif task == FlightType.CAS:
-            self.generate_cas(flight)
-        elif task == FlightType.DEAD:
-            self.generate_sead(flight)
-        elif task == FlightType.ELINT:
-            logging.error("ELINT flight plan generation not implemented")
-        elif task == FlightType.EVAC:
-            logging.error("Evac flight plan generation not implemented")
-        elif task == FlightType.EWAR:
-            logging.error("EWar flight plan generation not implemented")
-        elif task == FlightType.INTERCEPTION:
-            logging.error("Intercept flight plan generation not implemented")
-        elif task == FlightType.LOGISTICS:
-            logging.error("Logistics flight plan generation not implemented")
-        elif task == FlightType.RECON:
-            logging.error("Recon flight plan generation not implemented")
-        elif task == FlightType.SEAD:
-            self.generate_sead(flight)
-        elif task == FlightType.STRIKE:
-            self.generate_strike(flight)
-        elif task == FlightType.TARCAP:
-            self.generate_cap(flight)
-        elif task == FlightType.TROOP_TRANSPORT:
-            logging.error(
-                "Troop transport flight plan generation not implemented"
-            )
-
-    def generate_cas(self, flight: Flight) -> None:
-        if not isinstance(self.package.target, FrontLine):
-            logging.error(
-                "Could not create flight plan: CAS missions only valid for "
-                "front lines"
-            )
-            return
-        self.planner.generate_cas(flight, self.package.target)
-
-    def generate_cap(self, flight: Flight) -> None:
-        if isinstance(self.package.target, TheaterGroundObject):
-            logging.error(
-                "Could not create flight plan: CAP missions for strike targets "
-                "not implemented"
-            )
-            return
-        if isinstance(self.package.target, FrontLine):
-            self.planner.generate_frontline_cap(flight, self.package.target)
-        else:
-            self.planner.generate_barcap(flight, self.package.target)
-
-    def generate_sead(self, flight: Flight) -> None:
-        self.planner.generate_sead(flight, self.package.target)
-
-    def generate_strike(self, flight: Flight) -> None:
-        if not isinstance(self.package.target, TheaterGroundObject):
-            logging.error(
-                "Could not create flight plan: strike missions for capture "
-                "points not implemented"
-            )
-            return
-        self.planner.generate_strike(flight, self.package.target)

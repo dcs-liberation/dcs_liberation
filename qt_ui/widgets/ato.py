@@ -16,6 +16,7 @@ from PySide2.QtWidgets import (
 from gen.ato import Package
 from gen.flights.flight import Flight
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 class QFlightList(QListView):
@@ -122,7 +123,7 @@ class QFlightPanel(QGroupBox):
             return
         from qt_ui.dialogs import Dialog
         Dialog.open_edit_flight_dialog(
-            self.package_model.flight_at_index(index)
+            self.package_model, self.package_model.flight_at_index(index)
         )
 
     def on_delete(self) -> None:
@@ -134,6 +135,7 @@ class QFlightPanel(QGroupBox):
         self.game_model.game.aircraft_inventory.return_from_flight(
             self.flight_list.selected_item)
         self.package_model.delete_flight_at_index(index)
+        GameUpdateSignal.get_instance().redraw_flight_paths()
 
 
 class QPackageList(QListView):
@@ -217,6 +219,7 @@ class QPackagePanel(QGroupBox):
             logging.error(f"Cannot delete package when no package is selected.")
             return
         self.ato_model.delete_package_at_index(index)
+        GameUpdateSignal.get_instance().redraw_flight_paths()
 
 
 class QAirTaskingOrderPanel(QSplitter):

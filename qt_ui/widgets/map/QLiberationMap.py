@@ -1,10 +1,10 @@
-import typing
-from typing import Dict, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
 from PySide2.QtWidgets import (
     QFrame,
+    QGraphicsItem,
     QGraphicsOpacityEffect,
     QGraphicsScene,
     QGraphicsView,
@@ -43,6 +43,9 @@ class QLiberationMap(QGraphicsView):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
         self.game_model = game_model
+        self.game: Optional[Game] = game_model.game
+
+        self.flight_path_items: List[QGraphicsItem] = []
 
         self.setMinimumSize(800,600)
         self.setMaximumHeight(2160)
@@ -52,6 +55,10 @@ class QLiberationMap(QGraphicsView):
         self.init_scene()
         self.connectSignals()
         self.setGame(game_model.game)
+
+        GameUpdateSignal.get_instance().flight_paths_changed.connect(
+            lambda: self.draw_flight_plans(self.scene())
+        )
 
     def init_scene(self):
         scene = QLiberationScene(self)
@@ -65,7 +72,7 @@ class QLiberationMap(QGraphicsView):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
-    def setGame(self, game: Game):
+    def setGame(self, game: Optional[Game]):
         self.game = game
         print("Reloading Map Canvas")
         if self.game is not None:
@@ -176,8 +183,7 @@ class QLiberationMap(QGraphicsView):
             if self.get_display_rule("lines"):
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
-        if self.get_display_rule("flight_paths"):
-            self.draw_flight_plans(scene)
+        self.draw_flight_plans(scene)
 
         for cp in self.game.theater.controlpoints:
             pos = self._transform_point(cp.position)
@@ -188,6 +194,15 @@ class QLiberationMap(QGraphicsView):
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
     def draw_flight_plans(self, scene) -> None:
+        for item in self.flight_path_items:
+            try:
+                scene.removeItem(item)
+            except RuntimeError:
+                # Something may have caused those items to already be removed.
+                pass
+        self.flight_path_items.clear()
+        if not self.get_display_rule("flight_paths"):
+            return
         for package in self.game_model.ato_model.packages:
             for flight in package.flights:
                 self.draw_flight_plan(scene, flight)
@@ -209,17 +224,21 @@ class QLiberationMap(QGraphicsView):
                       player: bool) -> None:
         waypoint_pen = self.waypoint_pen(player)
         waypoint_brush = self.waypoint_brush(player)
-        scene.addEllipse(position[0], position[1], self.WAYPOINT_SIZE,
-                         self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush)
+        self.flight_path_items.append(scene.addEllipse(
+            position[0], position[1], self.WAYPOINT_SIZE,
+            self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush
+        ))
 
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
                          pos1: Tuple[int, int], player: bool):
         flight_path_pen = self.flight_path_pen(player)
         # Draw the line to the *middle* of the waypoint.
         offset = self.WAYPOINT_SIZE // 2
-        scene.addLine(pos0[0] + offset, pos0[1] + offset,
-                      pos1[0] + offset, pos1[1] + offset,
-                      flight_path_pen)
+        self.flight_path_items.append(scene.addLine(
+            pos0[0] + offset, pos0[1] + offset,
+            pos1[0] + offset, pos1[1] + offset,
+            flight_path_pen
+        ))
 
     def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
         scene = self.scene()

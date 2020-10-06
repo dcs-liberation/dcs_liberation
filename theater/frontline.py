@@ -1,7 +1,12 @@
 """Battlefield front lines."""
 from typing import Tuple
 
+from dcs.mapping import Point
 from . import ControlPoint, MissionTarget
+
+
+# TODO: Dedup by moving everything to using this class.
+FRONTLINE_MIN_CP_DISTANCE = 5000
 
 
 class FrontLine(MissionTarget):
@@ -25,3 +30,16 @@ class FrontLine(MissionTarget):
         a = self.control_point_a.name
         b = self.control_point_b.name
         return f"Front line {a}/{b}"
+
+    @property
+    def position(self) -> Point:
+        a = self.control_point_a.position
+        b = self.control_point_b.position
+        attack_heading = a.heading_between_point(b)
+        attack_distance = a.distance_to_point(b)
+        middle_point = a.point_from_heading(attack_heading, attack_distance / 2)
+
+        strength_delta = (self.control_point_a.base.strength - self.control_point_b.base.strength) / 1.0
+        position = middle_point.point_from_heading(attack_heading,
+                                                   strength_delta * attack_distance / 2 - FRONTLINE_MIN_CP_DISTANCE)
+        return position

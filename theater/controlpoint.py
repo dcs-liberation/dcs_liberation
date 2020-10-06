@@ -52,7 +52,7 @@ class ControlPoint(MissionTarget):
         self.id = id
         self.name = " ".join(re.split(r" |-", name)[:2])
         self.full_name = name
-        self.position = position
+        self.position: Point = position
         self.at = at
         self.ground_objects = []
         self.ships = []
@@ -212,3 +212,6 @@ class ControlPoint(MissionTarget):
             if g.obj_name == obj_name:
                 found.append(g)
         return found
+
+    def is_friendly(self, to_player: bool) -> bool:
+        return self.captured == to_player

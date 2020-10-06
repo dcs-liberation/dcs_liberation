@@ -14,8 +14,8 @@ from game.settings import Settings
 from game.utils import nm_to_meter
 from gen.airfields import RunwayData
 from gen.airsupportgen import AirSupport
+from gen.ato import AirTaskingOrder
 from gen.callsigns import create_group_callsign_from_unit
-from gen.flights.ai_flight_planner import FlightPlanner
 from gen.flights.flight import (
     Flight,
     FlightType,
@@ -751,31 +751,28 @@ class AircraftConflictGenerator:
                 else:
                     logging.warning("Pylon not found ! => Pylon" + key + " on " + str(flight.unit_type))
 
-
-    def generate_flights(self, cp, country, flight_planner: FlightPlanner,
-                         dynamic_runways: Dict[str, RunwayData]):
-        # Clear pydcs parking slots
-        if cp.airport is not None:
-            logging.info("CLEARING SLOTS @ " + cp.airport.name)
-            logging.info("===============")
+    def clear_parking_slots(self) -> None:
+        for cp in self.game.theater.controlpoints:
             if cp.airport is not None:
-                for ps in cp.airport.parking_slots:
-                    logging.info("SLOT : " + str(ps.unit_id))
-                    ps.unit_id = None
-                logging.info("----------------")
-            logging.info("===============")
+                for parking_slot in cp.airport.parking_slots:
+                    parking_slot.unit_id = None
 
-        for flight in flight_planner.flights:
+    def generate_flights(self, country, ato: AirTaskingOrder,
+                         dynamic_runways: Dict[str, RunwayData]) -> None:
+        self.clear_parking_slots()
 
-            if flight.client_count == 0 and self.game.position_culled(flight.from_cp.position):
-                logging.info("Flight not generated : culled")
-                continue
-            logging.info("Generating flight : " + str(flight.unit_type))
-            group = self.generate_planned_flight(cp, country, flight)
-            self.setup_flight_group(group, flight, flight.flight_type,
-                                    dynamic_runways)
-            self.setup_group_activation_trigger(flight, group)
-
+        for package in ato.packages:
+            for flight in package.flights:
+                culled = self.game.position_culled(flight.from_cp.position)
+                if flight.client_count == 0 and culled:
+                    logging.info("Flight not generated: culled")
+                    continue
+                logging.info(f"Generating flight: {flight.unit_type}")
+                group = self.generate_planned_flight(flight.from_cp, country,
+                                                     flight)
+                self.setup_flight_group(group, flight, flight.flight_type,
+                                        dynamic_runways)
+                self.setup_group_activation_trigger(flight, group)
 
     def setup_group_activation_trigger(self, flight, group):
         if flight.scheduled_in > 0 and flight.client_count == 0:
@@ -928,6 +925,14 @@ class AircraftConflictGenerator:
         elif flight_type in [FlightType.ANTISHIP]:
             group.task = AntishipStrike.name
             self._setup_group(group, AntishipStrike, flight, dynamic_runways)
+            group.points[0].tasks.clear()
+            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
+            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
+            group.points[0].tasks.append(OptRestrictJettison(True))
+        elif flight_type == FlightType.ESCORT:
+            group.task = Escort.name
+            self._setup_group(group, Escort, flight, dynamic_runways)
+            # TODO: Cleanup duplication...
             group.points[0].tasks.clear()
             group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
             group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
