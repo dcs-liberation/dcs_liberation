@@ -44,7 +44,8 @@ class NewGameWizard(QtWidgets.QWizard):
         selectedCampaign = self.field("selectedCampaign")
         if selectedCampaign is None:
             selectedCampaign = CAMPAIGNS[0]
-        conflictTheater = selectedCampaign[1]()
+
+        conflictTheater = ConflictTheater.from_file(selectedCampaign[1])
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -242,35 +243,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
 
-        # Terrain selection
-        terrainGroup = QtWidgets.QGroupBox("Terrain")
-        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia")
-        terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainRussia = QtWidgets.QRadioButton("Caucasus - Russia Small")
-        terrainRussia.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map [NOT RECOMMENDED]")
-        terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasusNorth = QtWidgets.QRadioButton("Caucasus - North")
-        terrainCaucasusNorth.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-
-        terrainPg = QtWidgets.QRadioButton("Persian Gulf - Full Map [NOT RECOMMENDED]")
-        terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Invasion of Iran")
-        terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainEmirates = QtWidgets.QRadioButton("Persian Gulf - Emirates")
-        terrainEmirates.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainNttr = QtWidgets.QRadioButton("Nevada - North Nevada")
-        terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
-        terrainNormandy = QtWidgets.QRadioButton("Normandy")
-        terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainNormandySmall = QtWidgets.QRadioButton("Normandy Small")
-        terrainNormandySmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainChannel = QtWidgets.QRadioButton("The Channel : Start in Dunkirk")
-        terrainChannel.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainChannelComplete = QtWidgets.QRadioButton("The Channel : Battle of Britain")
-        terrainChannelComplete.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainCaucasusSmall.setChecked(True)
-
         # List of campaigns
         campaignList = QCampaignList()
         self.registerField("selectedCampaign", campaignList)
@@ -283,8 +255,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
-
-
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")

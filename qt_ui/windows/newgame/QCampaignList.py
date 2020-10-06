@@ -1,41 +1,38 @@
+import json
+import logging
+import os
+
 from PySide2 import QtGui
 from PySide2.QtCore import QSize, QItemSelectionModel
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2.QtWidgets import QListView, QAbstractItemView
 
-from theater import caucasus, nevada, persiangulf, normandy, thechannel, syria
+from theater import caucasus, nevada, persiangulf, normandy, thechannel, syria, ConflictTheater
 import qt_ui.uiconstants as CONST
 
-CAMPAIGNS = [
-    ("Caucasus - Western Georgia", caucasus.WesternGeorgia, "Terrain_Caucasus"),
-    ("Caucasus - Russia Small", caucasus.RussiaSmall, "Terrain_Caucasus"),
-    ("Caucasus - North Caucasus", caucasus.NorthCaucasus, "Terrain_Caucasus"),
-    ("Caucasus - Full Map", caucasus.CaucasusTheater, "Terrain_Caucasus"),
-    ("Nevada - North Nevada", nevada.NevadaTheater, "Terrain_Nevada"),
-    ("Persian Gulf - Invasion of Iran", persiangulf.IranianCampaign, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Invasion of Iran [Lite]", persiangulf.IranInvasionLite, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Emirates", persiangulf.Emirates, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Desert War", persiangulf.DesertWar, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Full Map", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
+CAMPAIGN_DIR = ".\\resources\\campaigns"
+CAMPAIGNS = []
 
-    ("Syria - Golan heights battle", syria.GolanHeights, "Terrain_Syria"),
-    ("Syria - Invasion from Turkey", syria.TurkishInvasion, "Terrain_Syria"),
-    ("Syria - Syrian Civil War", syria.SyrianCivilWar, "Terrain_Syria"),
-    ("Syria - Inherent Resolve", syria.InherentResolve, "Terrain_Syria"),
-    ("Syria - Full Map", syria.SyriaFullMap, "Terrain_Syria"),
-
-    ("Normandy - Normandy", normandy.NormandyTheater, "Terrain_Normandy"),
-    ("Normandy - Normandy Small", normandy.NormandySmall, "Terrain_Normandy"),
-    ("The Channel - Battle of Britain", thechannel.BattleOfBritain, "Terrain_Channel"),
-    ("The Channel - Dunkirk", thechannel.Dunkirk, "Terrain_Channel"),
-]
-
+# Load the campaigns files from the directory
+campaign_files = os.listdir(CAMPAIGN_DIR)
+for f in campaign_files:
+    try:
+        ff = os.path.join(CAMPAIGN_DIR, f)
+        with open(ff, "r") as campaign_data:
+            data = json.load(campaign_data)
+            choice = (data["name"], ff, "Terrain_" + data["theater"].replace(" ", ""))
+            logging.info("Loaded campaign : " + data["name"])
+            CAMPAIGNS.append(choice)
+            ConflictTheater.from_file(choice[1])
+            logging.info("Loaded campaign :" + ff)
+    except Exception as e:
+        logging.info("Unable to load campaign :" + f)
 
 class QCampaignItem(QStandardItem):
 
-    def __init__(self, text, theater, icon):
+    def __init__(self, text, filename, icon):
         super(QCampaignItem, self).__init__()
-        self.theater = theater
+        self.filename = filename
         self.setIcon(QtGui.QIcon(CONST.ICONS[icon]))
         self.setEditable(False)
         self.setText(text)

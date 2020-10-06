@@ -1,10 +1,12 @@
+import json
 import typing
 
 import dcs
 from dcs.mapping import Point
+from dcs.terrain import caucasus, persiangulf, nevada, normandy, thechannel, syria
 
 from .controlpoint import ControlPoint
-from .landmap import poly_contains
+from .landmap import poly_contains, load_landmap
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -32,7 +34,7 @@ LAND = [0, 45, 90, 135, 180, 225, 270, 315, ]
 COAST_V_E = [0, 45, 90, 135, 180]
 COAST_V_W = [180, 225, 270, 315, 0]
 
-COAST_A_W = [315, 0, 45,  135, 180, 225, 270]
+COAST_A_W = [315, 0, 45, 135, 180, 225, 270]
 COAST_A_E = [0, 45, 90, 135, 180, 225, 315]
 
 COAST_H_N = [270, 315, 0, 45, 90]
@@ -117,4 +119,158 @@ class ConflictTheater:
     def enemy_points(self) -> typing.Collection[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]
 
+    def add_json_cp(self, theater, p: dict) -> ControlPoint:
 
+        if p["type"] == "airbase":
+
+            airbase = theater.terrain.airports[p["id"]].__class__
+
+            if "radials" in p.keys():
+                radials = p["radials"]
+            else:
+                radials = LAND
+
+            if "size" in p.keys():
+                size = p["size"]
+            else:
+                size = SIZE_REGULAR
+
+            if "importance" in p.keys():
+                importance = p["importance"]
+            else:
+                importance = IMPORTANCE_MEDIUM
+
+            cp = ControlPoint.from_airport(airbase, radials, size, importance)
+        elif p["type"] == "carrier":
+            cp = ControlPoint.carrier("carrier", Point(p["x"], p["y"]), p["id"])
+        else:
+            cp = ControlPoint.lha("lha", Point(p["x"], p["y"]), p["id"])
+
+        if "captured_invert" in p.keys():
+            cp.captured_invert = p["captured_invert"]
+        else:
+            cp.captured_invert = False
+
+        return cp
+
+    @staticmethod
+    def from_file(filename):
+        with open(filename, "r") as content:
+            json_data = json.loads(content.read())
+
+
+            theaters = {
+                "Caucasus": CaucasusTheater,
+                "Nevada": NevadaTheater,
+                "Persian Gulf": PersianGulfTheater,
+                "Normandy": NormandyTheater,
+                "The Channel": TheChannelTheater,
+                "Syria": SyriaTheater,
+            }
+            theater = theaters[json_data["theater"]]
+            t = theater()
+            cps = {}
+
+            for p in json_data["player_points"]:
+                cp = t.add_json_cp(theater, p)
+                cp.captured = True
+                cps[p["id"]] = cp
+                t.add_controlpoint(cp)
+
+            for p in json_data["enemy_points"]:
+                cp = t.add_json_cp(theater, p)
+                cps[p["id"]] = cp
+                t.add_controlpoint(cp)
+
+            for l in json_data["links"]:
+                cps[l[0]].connect(cps[l[1]])
+                cps[l[1]].connect(cps[l[0]])
+
+            return t
+
+
+class CaucasusTheater(ConflictTheater):
+    terrain = caucasus.Caucasus()
+    overview_image = "caumap.gif"
+    reference_points = {(-317948.32727306, 635639.37385346): (278.5 * 4, 319 * 4),
+                        (-355692.3067714, 617269.96285781): (263 * 4, 352 * 4), }
+
+    landmap = load_landmap("resources\\caulandmap.p")
+    daytime_map = {
+        "dawn": (6, 9),
+        "day": (9, 18),
+        "dusk": (18, 20),
+        "night": (0, 5),
+    }
+
+
+class PersianGulfTheater(ConflictTheater):
+    terrain = dcs.terrain.PersianGulf()
+    overview_image = "persiangulf.gif"
+    reference_points = {
+        (persiangulf.Shiraz_International_Airport.position.x, persiangulf.Shiraz_International_Airport.position.y): (
+        772, -1970),
+        (persiangulf.Liwa_Airbase.position.x, persiangulf.Liwa_Airbase.position.y): (1188, 78), }
+    landmap = load_landmap("resources\\gulflandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
+        "night": (0, 5),
+    }
+
+
+class NevadaTheater(ConflictTheater):
+    terrain = dcs.terrain.Nevada()
+    overview_image = "nevada.gif"
+    reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45 * 2, -360 * 2),
+                        (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440 * 2, 80 * 2), }
+    landmap = load_landmap("resources\\nev_landmap.p")
+    daytime_map = {
+        "dawn": (4, 6),
+        "day": (6, 17),
+        "dusk": (17, 18),
+        "night": (0, 5),
+    }
+
+
+class NormandyTheater(ConflictTheater):
+    terrain = dcs.terrain.Normandy()
+    overview_image = "normandy.gif"
+    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-170, -1000),
+                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (2020, 500)}
+    landmap = load_landmap("resources\\normandylandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (10, 17),
+        "dusk": (17, 18),
+        "night": (0, 5),
+    }
+
+
+class TheChannelTheater(ConflictTheater):
+    terrain = dcs.terrain.TheChannel()
+    overview_image = "thechannel.gif"
+    reference_points = {(thechannel.Abbeville_Drucat.position.x, thechannel.Abbeville_Drucat.position.y): (2400, 4100),
+                        (thechannel.Detling.position.x, thechannel.Detling.position.y): (1100, 2000)}
+    landmap = load_landmap("resources\\channellandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (10, 17),
+        "dusk": (17, 18),
+        "night": (0, 5),
+    }
+
+
+class SyriaTheater(ConflictTheater):
+    terrain = dcs.terrain.Syria()
+    overview_image = "syria.gif"
+    reference_points = {(syria.Eyn_Shemer.position.x, syria.Eyn_Shemer.position.y): (1300, 1380),
+                        (syria.Tabqa.position.x, syria.Tabqa.position.y): (2060, 570)}
+    landmap = load_landmap("resources\\syrialandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
+        "night": (0, 5),
+    }
