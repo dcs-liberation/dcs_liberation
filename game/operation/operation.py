@@ -512,6 +512,34 @@ dcsLiberation.TargetPoints = {
         trigger.add_action(DoScript(String(lua)))
         self.current_mission.triggerrules.triggers.append(trigger)
 
+        self.assign_channels_to_flights(airgen.flights,
+                                        airsupportgen.air_support)
+
+        kneeboard_generator = KneeboardGenerator(self.current_mission)
+
+        for dynamic_runway in groundobjectgen.runways.values():
+            self.briefinggen.add_dynamic_runway(dynamic_runway)
+
+        for tanker in airsupportgen.air_support.tankers:
+            self.briefinggen.add_tanker(tanker)
+            kneeboard_generator.add_tanker(tanker)
+
+        if self.is_awacs_enabled:
+            for awacs in airsupportgen.air_support.awacs:
+                self.briefinggen.add_awacs(awacs)
+                kneeboard_generator.add_awacs(awacs)
+
+        for jtac in jtacs:
+            self.briefinggen.add_jtac(jtac)
+            kneeboard_generator.add_jtac(jtac)
+
+        for flight in airgen.flights:
+            self.briefinggen.add_flight(flight)
+            kneeboard_generator.add_flight(flight)
+
+        self.briefinggen.generate()
+        kneeboard_generator.generate()
+
     def assign_channels_to_flights(self, flights: List[FlightData],
                                    air_support: AirSupport) -> None:
         """Assigns preset radio channels for client flights."""
