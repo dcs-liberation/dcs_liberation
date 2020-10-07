@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List, Optional, Tuple
 
 from PySide2.QtCore import Qt
@@ -74,7 +75,7 @@ class QLiberationMap(QGraphicsView):
 
     def setGame(self, game: Optional[Game]):
         self.game = game
-        print("Reloading Map Canvas")
+        logging.debug("Reloading Map Canvas")
         if self.game is not None:
             self.reload_scene()
 

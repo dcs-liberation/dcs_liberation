@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Dict
 
@@ -28,25 +29,25 @@ def init():
     global __theme_index
 
     __theme_index = DEFAULT_THEME_INDEX
-    print("init setting theme index to " + str(__theme_index))
 
     if os.path.isfile(THEME_PREFERENCES_FILE_PATH):
         try:
             with(open(THEME_PREFERENCES_FILE_PATH)) as prefs:
                 pref_data = json.loads(prefs.read())
                 __theme_index = pref_data["theme_index"]
-                print(__theme_index)
                 set_theme_index(__theme_index)
                 save_theme_config()
-                print("file setting theme index to " + str(__theme_index))
         except:
             # is this necessary?
             set_theme_index(DEFAULT_THEME_INDEX)
-            print("except setting theme index to " + str(__theme_index))
+            logging.exception("Unable to change theme")
     else:
         # is this necessary?
         set_theme_index(DEFAULT_THEME_INDEX)
-        print("else setting theme index to " + str(__theme_index))
+        logging.error(
+            f"Using default theme because {THEME_PREFERENCES_FILE_PATH} "
+            "does not exist"
+        )
 
 
 # set theme index then use save_theme_config to save to file

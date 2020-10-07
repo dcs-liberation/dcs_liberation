@@ -111,15 +111,12 @@ EVENT_ICONS: Dict[str, QPixmap] = {}
 
 def load_event_icons():
     for image in os.listdir("./resources/ui/events/"):
-        print(image)
         if image.endswith(".PNG"):
             EVENT_ICONS[image[:-4]] = QPixmap(os.path.join("./resources/ui/events/", image))
 
 def load_aircraft_icons():
     for aircraft in os.listdir("./resources/ui/units/aircrafts/"):
-        print(aircraft)
         if aircraft.endswith(".jpg"):
-            print(aircraft[:-7] + " : " + os.path.join("./resources/ui/units/aircrafts/", aircraft) + " ")
             AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/", aircraft))
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
     AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
@@ -128,7 +125,5 @@ def load_aircraft_icons():
 
 def load_vehicle_icons():
     for vehicle in os.listdir("./resources/ui/units/vehicles/"):
-        print(vehicle)
         if vehicle.endswith(".jpg"):
-            print(vehicle[:-7] + " : " + os.path.join("./resources/ui/units/vehicles/", vehicle) + " ")
             VEHICLES_ICONS[vehicle[:-7]] = QPixmap(os.path.join("./resources/ui/units/vehicles/", vehicle))
