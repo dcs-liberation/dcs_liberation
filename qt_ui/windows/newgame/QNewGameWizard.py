@@ -2,27 +2,34 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
+from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QPoint, QItemSelectionModel
-from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout
+from PySide2.QtCore import QItemSelectionModel, QPoint
+from PySide2.QtWidgets import QVBoxLayout
 from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
-from game import db, Game
+from game import Game, db
 from game.settings import Settings
 from gen import namegen
-from qt_ui.windows.newgame.QCampaignList import QCampaignList, CAMPAIGNS
-from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
+from qt_ui.windows.newgame.QCampaignList import (
+    Campaign,
+    QCampaignList,
+    load_campaigns,
+)
+from theater import ConflictTheater, start_generator
 
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
+        self.campaigns = load_campaigns()
+
         self.addPage(IntroPage())
         self.addPage(FactionSelection())
-        self.addPage(TheaterConfiguration())
+        self.addPage(TheaterConfiguration(self.campaigns))
         self.addPage(MiscOptions())
         self.addPage(ConclusionPage())
 
@@ -43,9 +50,9 @@ class NewGameWizard(QtWidgets.QWizard):
 
         selectedCampaign = self.field("selectedCampaign")
         if selectedCampaign is None:
-            selectedCampaign = CAMPAIGNS[0]
+            selectedCampaign = self.campaigns[0]
 
-        conflictTheater = ConflictTheater.from_file(selectedCampaign[1])
+        conflictTheater = selectedCampaign.theater
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -232,8 +239,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(TheaterConfiguration, self).__init__(parent)
+    def __init__(self, campaigns: List[Campaign], parent=None) -> None:
+        super().__init__(parent)
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
@@ -244,7 +251,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                        QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
 
         # List of campaigns
-        campaignList = QCampaignList()
+        campaignList = QCampaignList(campaigns)
         self.registerField("selectedCampaign", campaignList)
 
         def on_campaign_selected():

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Dict, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from dcs.mapping import Point
 from dcs.terrain import (
@@ -163,39 +165,35 @@ class ConflictTheater:
         return cp
 
     @staticmethod
-    def from_file(filename):
-        with open(filename, "r") as content:
-            json_data = json.loads(content.read())
+    def from_json(data: Dict[str, Any]) -> ConflictTheater:
+        theaters = {
+            "Caucasus": CaucasusTheater,
+            "Nevada": NevadaTheater,
+            "Persian Gulf": PersianGulfTheater,
+            "Normandy": NormandyTheater,
+            "The Channel": TheChannelTheater,
+            "Syria": SyriaTheater,
+        }
+        theater = theaters[data["theater"]]
+        t = theater()
+        cps = {}
 
+        for p in data["player_points"]:
+            cp = t.add_json_cp(theater, p)
+            cp.captured = True
+            cps[p["id"]] = cp
+            t.add_controlpoint(cp)
 
-            theaters = {
-                "Caucasus": CaucasusTheater,
-                "Nevada": NevadaTheater,
-                "Persian Gulf": PersianGulfTheater,
-                "Normandy": NormandyTheater,
-                "The Channel": TheChannelTheater,
-                "Syria": SyriaTheater,
-            }
-            theater = theaters[json_data["theater"]]
-            t = theater()
-            cps = {}
+        for p in data["enemy_points"]:
+            cp = t.add_json_cp(theater, p)
+            cps[p["id"]] = cp
+            t.add_controlpoint(cp)
 
-            for p in json_data["player_points"]:
-                cp = t.add_json_cp(theater, p)
-                cp.captured = True
-                cps[p["id"]] = cp
-                t.add_controlpoint(cp)
+        for l in data["links"]:
+            cps[l[0]].connect(cps[l[1]])
+            cps[l[1]].connect(cps[l[0]])
 
-            for p in json_data["enemy_points"]:
-                cp = t.add_json_cp(theater, p)
-                cps[p["id"]] = cp
-                t.add_controlpoint(cp)
-
-            for l in json_data["links"]:
-                cps[l[0]].connect(cps[l[1]])
-                cps[l[1]].connect(cps[l[0]])
-
-            return t
+        return t
 
 
 class CaucasusTheater(ConflictTheater):
