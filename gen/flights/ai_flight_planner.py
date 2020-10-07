@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import random
 import operator
 from dataclasses import dataclass
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple, Type
@@ -384,6 +385,9 @@ class CoalitionMissionPlanner:
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
 
+    NON_CAP_MIN_DELAY = 1
+    NON_CAP_MAX_DELAY = 5
+
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
         self.is_player = is_player
@@ -430,6 +434,8 @@ class CoalitionMissionPlanner:
         for proposed_mission in self.propose_missions():
             self.plan_mission(proposed_mission)
 
+        self.stagger_missions()
+
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
@@ -466,6 +472,34 @@ class CoalitionMissionPlanner:
         for flight in package.flights:
             flight_plan_builder.populate_flight_plan(flight)
         self.ato.add_package(package)
+
+    def stagger_missions(self) -> None:
+        def start_time_generator(count: int, earliest: int, latest: int,
+                                 margin: int) -> Iterator[int]:
+            interval = latest // count
+            for time in range(earliest, latest, interval):
+                error = random.randint(-margin, margin)
+                yield max(0, time + error)
+
+        dca_types = (
+            FlightType.BARCAP,
+            FlightType.CAP,
+            FlightType.INTERCEPTION,
+        )
+
+        non_dca_packages = [p for p in self.ato.packages if
+                            p.primary_task not in dca_types]
+
+        start_time = start_time_generator(
+            count=len(non_dca_packages),
+            earliest=5,
+            latest=90,
+            margin=5
+        )
+        for package in non_dca_packages:
+            package.delay = next(start_time)
+            for flight in package.flights:
+                flight.scheduled_in = package.delay
 
     def message(self, title, text) -> None:
         """Emits a planning message to the player.

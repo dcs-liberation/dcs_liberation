@@ -27,6 +27,7 @@ class QFlightCreator(QDialog):
         super().__init__()
 
         self.game = game
+        self.package = package
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -90,6 +91,7 @@ class QFlightCreator(QDialog):
         size = self.flight_size_spinner.value()
 
         flight = Flight(aircraft, size, origin, task)
+        flight.scheduled_in = self.package.delay
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)

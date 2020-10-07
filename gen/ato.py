@@ -40,6 +40,8 @@ class Package:
     #: The set of flights in the package.
     flights: List[Flight] = field(default_factory=list)
 
+    delay: int = field(default=0)
+
     join_point: Optional[Point] = field(default=None, init=False, hash=False)
     split_point: Optional[Point] = field(default=None, init=False, hash=False)
     ingress_point: Optional[Point] = field(default=None, init=False, hash=False)
