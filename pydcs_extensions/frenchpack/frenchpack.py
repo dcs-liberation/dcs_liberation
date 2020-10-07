@@ -25,7 +25,7 @@ class ERC_90(unittype.VehicleType):
     detection_range = 0
     threat_range = 4000
     air_weapon_dist = 4000
-    eprls = True
+    eplrs = True
 
 
 class VAB__50(unittype.VehicleType):
@@ -34,7 +34,7 @@ class VAB__50(unittype.VehicleType):
     detection_range = 0
     threat_range = 1200
     air_weapon_dist = 1200
-    eprls = True
+    eplrs = True
 
 
 class VAB_T20_13(unittype.VehicleType):
@@ -43,7 +43,7 @@ class VAB_T20_13(unittype.VehicleType):
     detection_range = 0
     threat_range = 2000
     air_weapon_dist = 2000
-    eprls = True
+    eplrs = True
 
 
 class VAB_MEPHISTO(unittype.VehicleType):
@@ -52,7 +52,7 @@ class VAB_MEPHISTO(unittype.VehicleType):
     detection_range = 0
     threat_range = 4000
     air_weapon_dist = 4000
-    eprls = True
+    eplrs = True
 
 
 class VBL__50(unittype.VehicleType):
@@ -61,7 +61,7 @@ class VBL__50(unittype.VehicleType):
     detection_range = 0
     threat_range = 1200
     air_weapon_dist = 1200
-    eprls = True
+    eplrs = True
 
 
 class VBL_AANF1(unittype.VehicleType):
@@ -70,7 +70,7 @@ class VBL_AANF1(unittype.VehicleType):
     detection_range = 0
     threat_range = 1000
     air_weapon_dist = 1000
-    eprls = True
+    eplrs = True
 
 
 class VBAE_CRAB(unittype.VehicleType):
@@ -79,7 +79,7 @@ class VBAE_CRAB(unittype.VehicleType):
     detection_range = 0
     threat_range = 3500
     air_weapon_dist = 3500
-    eprls = True
+    eplrs = True
 
 
 class VBAE_CRAB_MMP(unittype.VehicleType):
@@ -88,7 +88,7 @@ class VBAE_CRAB_MMP(unittype.VehicleType):
     detection_range = 0
     threat_range = 3500
     air_weapon_dist = 3500
-    eprls = True
+    eplrs = True
 
 
 class AMX_30B2(unittype.VehicleType):
@@ -121,7 +121,7 @@ class DIM__TOYOTA_BLUE(unittype.VehicleType):
     detection_range = 0
     threat_range = 1200
     air_weapon_dist = 1200
-    eprls = True
+    eplrs = True
 
 
 class DIM__TOYOTA_GREEN(unittype.VehicleType):
@@ -130,7 +130,7 @@ class DIM__TOYOTA_GREEN(unittype.VehicleType):
     detection_range = 0
     threat_range = 1200
     air_weapon_dist = 1200
-    eprls = True
+    eplrs = True
 
 
 class DIM__TOYOTA_DESERT(unittype.VehicleType):
@@ -139,7 +139,7 @@ class DIM__TOYOTA_DESERT(unittype.VehicleType):
     detection_range = 0
     threat_range = 1200
     air_weapon_dist = 1200
-    eprls = True
+    eplrs = True
 
 
 class DIM__KAMIKAZE(unittype.VehicleType):
@@ -148,7 +148,7 @@ class DIM__KAMIKAZE(unittype.VehicleType):
     detection_range = 0
     threat_range = 50
     air_weapon_dist = 50
-    eprls = True
+    eplrs = True
 
 ## FORTIFICATION
 
@@ -187,7 +187,7 @@ class TRM_2000(unittype.VehicleType):
     detection_range = 3500
     threat_range = 0
     air_weapon_dist = 0
-    eprls = True
+    eplrs = True
 
 class TRM_2000_Fuel(unittype.VehicleType):
     id = "TRM2000_Citerne"
@@ -195,7 +195,7 @@ class TRM_2000_Fuel(unittype.VehicleType):
     detection_range = 3500
     threat_range = 0
     air_weapon_dist = 0
-    eprls = True
+    eplrs = True
 
 class VAB_MEDICAL(unittype.VehicleType):
     id = "VABH"
@@ -203,7 +203,7 @@ class VAB_MEDICAL(unittype.VehicleType):
     detection_range = 0
     threat_range = 0
     air_weapon_dist = 0
-    eprls = True
+    eplrs = True
 
 class VAB(unittype.VehicleType):
     id = "VAB_RADIO"
@@ -211,7 +211,7 @@ class VAB(unittype.VehicleType):
     detection_range = 0
     threat_range = 0
     air_weapon_dist = 0
-    eprls = True
+    eplrs = True
 
 class VBL(unittype.VehicleType):
     id = "VBL-Radio"
@@ -219,7 +219,7 @@ class VBL(unittype.VehicleType):
     detection_range = 0
     threat_range = 0
     air_weapon_dist = 0
-    eprls = True
+    eplrs = True
 
 class Tracma_TD_1500(unittype.VehicleType):
     id = "Tracma"
@@ -236,7 +236,7 @@ class SMOKE_SAM_IR(unittype.VehicleType):
     detection_range = 20000
     threat_range = 20000
     air_weapon_dist = 20000
-    eprls = True
+    eplrs = True
 
 class _53T2(unittype.VehicleType):
     id = "AA20"
@@ -251,7 +251,7 @@ class TRM_2000_53T2(unittype.VehicleType):
     detection_range = 6000
     threat_range = 2000
     air_weapon_dist = 2000
-    eprls = True
+    eplrs = True
 
 class TRM_2000_PAMELA(unittype.VehicleType):
     id = "TRMMISTRAL"
@@ -259,7 +259,7 @@ class TRM_2000_PAMELA(unittype.VehicleType):
     detection_range = 8000
     threat_range = 10000
     air_weapon_dist = 10000
-    eprls = True
+    eplrs = True
 
 ## INFANTRY
 
@@ -285,4 +285,4 @@ class VAB_MORTIER(unittype.VehicleType):
     detection_range = 0
     threat_range = 15000
     air_weapon_dist = 15000
-    eprls = True
+    eplrs = True

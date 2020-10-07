@@ -6,12 +6,14 @@ class QFlightSlotEditor(QGroupBox):
 
     changed = Signal()
 
-    def __init__(self, flight, game, planner):
+    def __init__(self, flight, game):
         super(QFlightSlotEditor, self).__init__("Slots")
         self.flight = flight
         self.game = game
-        self.planner = planner
-        self.available = self.planner.get_available_aircraft()
+        inventory = self.game.aircraft_inventory.for_control_point(
+            flight.from_cp
+        )
+        self.available = inventory.all_aircraft
         if self.flight.unit_type not in self.available:
             max = self.flight.count
         else:

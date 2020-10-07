@@ -1,11 +1,11 @@
 import pickle
-import typing
+from typing import Collection, Optional, Tuple
 
-Zone = typing.Collection[typing.Tuple[float, float]]
-Landmap = typing.Tuple[typing.Collection[Zone], typing.Collection[Zone]]
+Zone = Collection[Tuple[float, float]]
+Landmap = Tuple[Collection[Zone], Collection[Zone]]
 
 
-def load_landmap(filename: str) -> Landmap:
+def load_landmap(filename: str) -> Optional[Landmap]:
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
@@ -30,7 +30,7 @@ def poly_contains(x, y, poly):
         p1x, p1y = p2x, p2y
     return inside
 
-def poly_centroid(poly) -> typing.Tuple[float, float]:
+def poly_centroid(poly) -> Tuple[float, float]:
     x_list = [vertex[0] for vertex in poly]
     y_list = [vertex[1] for vertex in poly]
     x = sum(x_list) / len(poly)

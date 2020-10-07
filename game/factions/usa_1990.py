@@ -1,7 +1,34 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_64A,
+    UH_1H,
+)
+from dcs.planes import (
+    AV8BNA,
+    A_10A,
+    C_130,
+    E_3A,
+    FA_18C_hornet,
+    F_14B,
+    F_15C,
+    F_15E,
+    F_16C_50,
+    KC130,
+    KC_135,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    Ticonderoga_class,
+    USS_Arleigh_Burke_IIa,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 USA_1990 = {
     "country": "USA",

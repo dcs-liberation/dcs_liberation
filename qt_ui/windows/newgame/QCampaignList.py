@@ -1,48 +1,62 @@
+from __future__ import annotations
+
+import json
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List
+
 from PySide2 import QtGui
-from PySide2.QtCore import QSize, QItemSelectionModel
-from PySide2.QtGui import QStandardItemModel, QStandardItem
-from PySide2.QtWidgets import QListView, QAbstractItemView
+from PySide2.QtCore import QItemSelectionModel
+from PySide2.QtGui import QStandardItem, QStandardItemModel
+from PySide2.QtWidgets import QAbstractItemView, QListView
 
-from theater import caucasus, nevada, persiangulf, normandy, thechannel, syria
 import qt_ui.uiconstants as CONST
+from theater import ConflictTheater
 
-CAMPAIGNS = [
-    ("Caucasus - Western Georgia", caucasus.WesternGeorgia, "Terrain_Caucasus"),
-    ("Caucasus - Russia Small", caucasus.RussiaSmall, "Terrain_Caucasus"),
-    ("Caucasus - North Caucasus", caucasus.NorthCaucasus, "Terrain_Caucasus"),
-    ("Caucasus - Full Map", caucasus.CaucasusTheater, "Terrain_Caucasus"),
-    ("Nevada - North Nevada", nevada.NevadaTheater, "Terrain_Nevada"),
-    ("Persian Gulf - Invasion of Iran", persiangulf.IranianCampaign, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Invasion of Iran [Lite]", persiangulf.IranInvasionLite, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Emirates", persiangulf.Emirates, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Desert War", persiangulf.DesertWar, "Terrain_Persian_Gulf"),
-    ("Persian Gulf - Full Map", persiangulf.PersianGulfTheater, "Terrain_Persian_Gulf"),
 
-    ("Syria - Golan heights battle", syria.GolanHeights, "Terrain_Syria"),
-    ("Syria - Invasion from Turkey", syria.TurkishInvasion, "Terrain_Syria"),
-    ("Syria - Syrian Civil War", syria.SyrianCivilWar, "Terrain_Syria"),
-    ("Syria - Inherent Resolve", syria.InherentResolve, "Terrain_Syria"),
-    ("Syria - Full Map", syria.SyriaFullMap, "Terrain_Syria"),
+@dataclass(frozen=True)
+class Campaign:
+    name: str
+    icon_name: str
+    theater: ConflictTheater
 
-    ("Normandy - Normandy", normandy.NormandyTheater, "Terrain_Normandy"),
-    ("Normandy - Normandy Small", normandy.NormandySmall, "Terrain_Normandy"),
-    ("The Channel - Battle of Britain", thechannel.BattleOfBritain, "Terrain_Channel"),
-    ("The Channel - Dunkirk", thechannel.Dunkirk, "Terrain_Channel"),
-]
+    @classmethod
+    def from_json(cls, path: Path) -> Campaign:
+        with path.open() as campaign_file:
+            data = json.load(campaign_file)
+
+        sanitized_theater = data["theater"].replace(" ", "")
+        return cls(data["name"], f"Terrain_{sanitized_theater}",
+                   ConflictTheater.from_json(data))
+
+
+def load_campaigns() -> List[Campaign]:
+    campaign_dir = Path("resources\\campaigns")
+    campaigns = []
+    for path in campaign_dir.iterdir():
+        try:
+            logging.debug(f"Loading campaign from {path}...")
+            campaign = Campaign.from_json(path)
+            campaigns.append(campaign)
+        except RuntimeError:
+            logging.exception(f"Unable to load campaign from {path}")
+
+    return sorted(campaigns, key=lambda x: x.name)
 
 
 class QCampaignItem(QStandardItem):
 
-    def __init__(self, text, theater, icon):
+    def __init__(self, campaign: Campaign) -> None:
         super(QCampaignItem, self).__init__()
-        self.theater = theater
-        self.setIcon(QtGui.QIcon(CONST.ICONS[icon]))
+        self.setIcon(QtGui.QIcon(CONST.ICONS[campaign.icon_name]))
         self.setEditable(False)
-        self.setText(text)
+        self.setText(campaign.name)
+
 
 class QCampaignList(QListView):
 
-    def __init__(self):
+    def __init__(self, campaigns: List[Campaign]) -> None:
         super(QCampaignList, self).__init__()
         self.model = QStandardItemModel(self)
         self.setModel(self.model)
@@ -50,12 +64,12 @@ class QCampaignList(QListView):
         self.setMinimumHeight(350)
         self.campaigns = []
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.setup_content()
+        self.setup_content(campaigns)
 
-    def setup_content(self):
-        for i, campaign in enumerate(CAMPAIGNS):
+    def setup_content(self, campaigns: List[Campaign]) -> None:
+        for campaign in campaigns:
             self.campaigns.append(campaign)
-            item = QCampaignItem(*campaign)
+            item = QCampaignItem(campaign)
             self.model.appendRow(item)
         self.setSelectedCampaign(0)
         self.repaint()

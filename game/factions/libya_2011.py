@@ -1,6 +1,25 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Mi_24V,
+)
+from dcs.planes import (
+    A_50,
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    MiG_21Bis,
+    MiG_23MLD,
+    Su_17M4,
+    Su_24M,
+    Yak_40,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 Libya_2011 = {
     "country": "Libya",

@@ -1,0 +1,53 @@
+{
+    "name": "Normandy - Normandy Small",
+    "theater": "Normandy",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "Needs Oar Point",
+            "size": 600,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Deux Jumeaux",
+            "size": 600,
+            "importance": 1
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Lignerolles",
+            "size": 600,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Carpiquet",
+            "size": 600,
+            "importance": 1
+        },
+        {
+            "type": "airbase",
+            "id": "Evreux",
+            "size": 600,
+            "importance": 1,
+            "captured_invert": true
+        }
+    ],
+    "links": [
+        [
+            "Deux Jumeaux",
+            "Lignerolles"
+        ],
+        [
+            "Carpiquet",
+            "Lignerolles"
+        ],
+        [
+            "Carpiquet",
+            "Evreux"
+        ]
+    ]
+}

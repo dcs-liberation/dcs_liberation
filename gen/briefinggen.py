@@ -106,7 +106,7 @@ class BriefingGenerator(MissionInfoGenerator):
         aircraft = flight.aircraft_type
         flight_unit_name = db.unit_type_name(aircraft)
         self.description += "-" * 50 + "\n"
-        self.description += f"{flight_unit_name} x {flight.size + 2}\n\n"
+        self.description += f"{flight_unit_name} x {flight.size}\n\n"
 
         for i, wpt in enumerate(flight.waypoints):
             self.description += f"#{i + 1} -- {wpt.name} : {wpt.description}\n"

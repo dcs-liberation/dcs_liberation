@@ -1,7 +1,31 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    SA342L,
+    SA342M,
+    SA342Mistral,
+)
+from dcs.planes import (
+    C_130,
+    E_3A,
+    FA_18C_hornet,
+    KC130,
+    KC_135,
+    M_2000C,
+    Mirage_2000_5,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    Ticonderoga_class,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 France_2005 = {
     "country": "France",

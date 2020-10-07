@@ -1,11 +1,23 @@
-from dcs.statics import *
-from dcs.unit import Ship, Vehicle
+import logging
+import random
+from typing import Dict, Iterator
 
-from game.data.building_data import FORTIFICATION_UNITS_ID, FORTIFICATION_UNITS
+from dcs import Mission
+from dcs.statics import fortification_map, warehouse_map
+from dcs.task import (
+    ActivateBeaconCommand,
+    ActivateICLSCommand,
+    EPLRS,
+    OptAlarmState,
+)
+from dcs.unit import Ship, Vehicle
+from dcs.unitgroup import StaticGroup
+
+from game import db
+from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.db import unit_type_from_name
 from .airfields import RunwayData
-from .conflictgen import *
-from .naming import *
+from .conflictgen import Conflict
 from .radios import RadioRegistry
 from .tacan import TacanBand, TacanRegistry
 
@@ -26,7 +38,7 @@ class GroundObjectsGenerator:
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
 
-    def generate_farps(self, number_of_units=1) -> typing.Collection[StaticGroup]:
+    def generate_farps(self, number_of_units=1) -> Iterator[StaticGroup]:
         if self.conflict.is_vector:
             center = self.conflict.center
             heading = self.conflict.heading - 90
@@ -80,6 +92,10 @@ class GroundObjectsGenerator:
                                         vehicle.heading = u.heading
                                         vehicle.player_can_drive = True
                                         vg.add_unit(vehicle)
+
+                                if hasattr(utype, 'eplrs'):
+                                    if utype.eplrs:
+                                        vg.points[0].tasks.append(EPLRS(vg.id))
                             else:
                                 vg = self.m.ship_group(side, g.name, utype, position=g.position,
                                                           heading=g.units[0].heading)

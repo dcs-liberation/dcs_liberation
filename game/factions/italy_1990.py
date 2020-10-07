@@ -1,7 +1,28 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_1W,
+    UH_1H,
+)
+from dcs.planes import (
+    AV8BNA,
+    C_130,
+    E_3A,
+    KC_135,
+    S_3B_Tanker,
+    Tornado_IDS,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    Ticonderoga_class,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Italy_1990 = {
      "country": "Italy",

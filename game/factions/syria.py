@@ -1,6 +1,35 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Mi_24V,
+    Mi_8MT,
+    SA342L,
+    SA342M,
+)
+from dcs.planes import (
+    A_50,
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    L_39ZA,
+    MiG_15bis,
+    MiG_19P,
+    MiG_21Bis,
+    MiG_23MLD,
+    MiG_25PD,
+    MiG_29S,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+    Su_17M4,
+    Su_24M,
+    Yak_40,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 Syria_2011 = {
     "country": "Syria",

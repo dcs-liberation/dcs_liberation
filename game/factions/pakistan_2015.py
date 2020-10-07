@@ -1,7 +1,25 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_1W,
+    UH_1H,
+)
+from dcs.planes import (
+    E_3A,
+    F_16C_50,
+    IL_78M,
+    JF_17,
+    MiG_19P,
+    MiG_21Bis,
+    WingLoong_I,
+)
+from dcs.ships import (
+    Armed_speedboat,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Pakistan_2015 = {
     "country": "Pakistan",

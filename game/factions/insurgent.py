@@ -1,7 +1,14 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
-from dcs.helicopters import *
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    Dry_cargo_ship_Ivanov,
+    Tanker_Elnya_160,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Insurgent = {
     "country": "Insurgents",

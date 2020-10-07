@@ -1,4 +1,7 @@
-# 2.1.3
+# 2.1.4
+
+## Fixes :
+* **[UI]** Fixed an issue that prevented generating the mission (take off button no working) on old savegames.
 
 ## Features/Improvements :
 * **[Units/Factions]** Added A-10C_2 to USA 2005 and Bluefor modern factions

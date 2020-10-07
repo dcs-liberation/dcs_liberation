@@ -1,7 +1,32 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    AH_64A,
+    Mi_8MT,
+)
+from dcs.planes import (
+    C_130,
+    E_3A,
+    KC130,
+    KC_135,
+    M_2000C,
+    MiG_21Bis,
+    MiG_27K,
+    MiG_29S,
+    Mirage_2000_5,
+    Su_30,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    CV_1143_5_Admiral_Kuznetsov,
+    FSG_1241_1MP_Molniya,
+    LHA_1_Tarawa,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 India_2010 = {
     "country": "India",

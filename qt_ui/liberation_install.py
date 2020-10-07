@@ -4,12 +4,13 @@ from shutil import copyfile
 
 import dcs
 
-from userdata import persistency
+from game import persistency
 
 global __dcs_saved_game_directory
 global __dcs_installation_directory
 
 PREFERENCES_FILE_PATH = "liberation_preferences.json"
+
 
 def init():
     global __dcs_saved_game_directory
