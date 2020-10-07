@@ -1,26 +1,22 @@
+"""Logging APIs."""
 import logging
 import os
 from logging.handlers import RotatingFileHandler
 
 
-def init_logging(version_string):
+def init_logging(version: str) -> None:
+    """Initializes the logging configuration."""
     if not os.path.isdir("./logs"):
         os.mkdir("logs")
 
-    logging.basicConfig(level="DEBUG")
+    fmt = "%(asctime)s :: %(levelname)s :: %(message)s"
+    logging.basicConfig(level=logging.DEBUG, format=fmt)
     logger = logging.getLogger()
-
-    formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 
     handler = RotatingFileHandler('./logs/liberation.log', 'a', 5000000, 1)
     handler.setLevel(logging.INFO)
-    handler.setFormatter(formatter)
+    handler.setFormatter(logging.Formatter(fmt))
 
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.DEBUG)
-    stream_handler.setFormatter(formatter)
-
-    logger.addHandler(stream_handler)
     logger.addHandler(handler)
 
-    logger.info("DCS Liberation {}".format(version_string))
+    logger.info(f"DCS Liberation {version}")
