@@ -76,6 +76,7 @@ class AirSupportConflictGenerator:
                 speed=574,
                 tacanchannel=str(tacan),
             )
+            tanker_group.set_frequency(freq.mhz)
 
             callsign = callsign_for_support_unit(tanker_group)
             tacan_callsign = {
@@ -118,6 +119,8 @@ class AirSupportConflictGenerator:
                     frequency=freq.mhz,
                     start_type=StartType.Warm,
                 )
+                awacs_flight.set_frequency(freq.mhz)
+
                 awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
                 awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
 
