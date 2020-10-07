@@ -2,15 +2,24 @@ import json
 import os
 
 from PySide2 import QtCore
-from PySide2.QtCore import QObject, Signal, Qt
-from PySide2.QtGui import QMovie, QIcon, QPixmap
-from PySide2.QtWidgets import QLabel, QDialog, QGroupBox, QGridLayout, QPushButton, QFileDialog, QMessageBox, QTextEdit, \
-    QHBoxLayout
+from PySide2.QtCore import QObject, Qt, Signal
+from PySide2.QtGui import QIcon, QMovie, QPixmap
+from PySide2.QtWidgets import (
+    QDialog,
+    QFileDialog,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QTextEdit,
+)
 
+from game.debriefing import Debriefing, wait_for_debriefing
 from game.game import Event, Game, logging
+from game.persistency import base_path
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from userdata.debriefing import wait_for_debriefing, Debriefing
-from userdata.persistency import base_path
 
 
 class DebriefingFileWrittenSignal(QObject):
@@ -163,7 +172,7 @@ class QWaitingForMissionResultWindow(QDialog):
 
     def process_debriefing(self):
         self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
-        self.game.pass_turn(ignored_cps=[self.gameEvent.to_cp, ])
+        self.game.pass_turn()
 
         GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, self.debriefing)
         self.close()

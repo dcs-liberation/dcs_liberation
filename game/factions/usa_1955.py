@@ -1,7 +1,22 @@
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
-from dcs.helicopters import *
+from dcs.planes import (
+    C_130,
+    E_3A,
+    F_86F_Sabre,
+    KC130,
+    KC_135,
+    P_51D,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 USA_1955 = {
     "country": "USA",

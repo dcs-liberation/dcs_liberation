@@ -1,122 +1,102 @@
-from typing import List
+from typing import Optional
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QGridLayout, QLabel, QComboBox, QHBoxLayout, QVBoxLayout, QPushButton, QSpinBox, \
-    QMessageBox
-from dcs import Point
-from dcs.unittype import UnitType
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtWidgets import (
+    QDialog,
+    QPushButton,
+    QVBoxLayout,
+)
+from dcs.planes import PlaneType
 
 from game import Game
-from gen.flights.ai_flight_planner import FlightPlanner
-from gen.flights.flight import Flight, FlightWaypoint, FlightType
+from gen.ato import Package
+from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import QFlightWaypointInfoBox
+from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
+from qt_ui.widgets.QLabeledWidget import QLabeledWidget
+from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
+from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
+from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
 from theater import ControlPoint
-
-PREDEFINED_WAYPOINT_CATEGORIES = [
-    "Frontline (CAS AREA)",
-    "Building",
-    "Units",
-    "Airbase"
-]
 
 
 class QFlightCreator(QDialog):
+    created = Signal(Flight)
 
-    def __init__(self, game: Game, from_cp:ControlPoint, possible_aircraft_type:List[UnitType], flight_view=None):
-        super(QFlightCreator, self).__init__()
+    def __init__(self, game: Game, package: Package) -> None:
+        super().__init__()
+
         self.game = game
-        self.from_cp = from_cp
-        self.flight_view = flight_view
-        self.planner = self.game.planners[from_cp.id]
-        self.available = self.planner.get_available_aircraft()
+        self.package = package
 
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setModal(True)
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
 
-        self.select_type_aircraft = QComboBox()
-        for aircraft_type in self.planner.get_available_aircraft().keys():
-            print(aircraft_type)
-            print(aircraft_type.name)
-            if self.available[aircraft_type] > 0:
-                self.select_type_aircraft.addItem(aircraft_type.id, userData=aircraft_type)
-        self.select_type_aircraft.setCurrentIndex(0)
-
-        self.select_flight_type = QComboBox()
-        self.select_flight_type.addItem("CAP [Combat Air Patrol]", userData=FlightType.CAP)
-        self.select_flight_type.addItem("BARCAP [Barrier Combat Air Patrol]", userData=FlightType.BARCAP)
-        self.select_flight_type.addItem("TARCAP [Target Combat Air Patrol]", userData=FlightType.TARCAP)
-        self.select_flight_type.addItem("INTERCEPT [Interception]", userData=FlightType.INTERCEPTION)
-        self.select_flight_type.addItem("CAS [Close Air Support]", userData=FlightType.CAS)
-        self.select_flight_type.addItem("BAI [Battlefield Interdiction]", userData=FlightType.BAI)
-        self.select_flight_type.addItem("SEAD [Suppression of Enemy Air Defenses]", userData=FlightType.SEAD)
-        self.select_flight_type.addItem("DEAD [Destruction of Enemy Air Defenses]", userData=FlightType.DEAD)
-        self.select_flight_type.addItem("STRIKE [Strike]", userData=FlightType.STRIKE)
-        self.select_flight_type.addItem("ANTISHIP [Antiship Attack]", userData=FlightType.ANTISHIP)
-        self.select_flight_type.setCurrentIndex(0)
-
-        self.select_count_of_aircraft = QSpinBox()
-        self.select_count_of_aircraft.setMinimum(1)
-        self.select_count_of_aircraft.setMaximum(4)
-        self.select_count_of_aircraft.setValue(2)
-
-        aircraft_type = self.select_type_aircraft.currentData()
-        if aircraft_type is not None:
-            self.select_count_of_aircraft.setValue(min(self.available[aircraft_type], 2))
-            self.select_count_of_aircraft.setMaximum(min(self.available[aircraft_type], 4))
-
-        self.add_button = QPushButton("Add")
-        self.add_button.clicked.connect(self.create_flight)
-
-        self.init_ui()
-
-
-    def init_ui(self):
         layout = QVBoxLayout()
 
-        type_layout = QHBoxLayout()
-        type_layout.addWidget(QLabel("Type of Aircraft : "))
-        type_layout.addStretch()
-        type_layout.addWidget(self.select_type_aircraft, alignment=Qt.AlignRight)
+        self.task_selector = QFlightTypeComboBox(
+            self.game.theater, package.target
+        )
+        self.task_selector.setCurrentIndex(0)
+        layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
-        count_layout = QHBoxLayout()
-        count_layout.addWidget(QLabel("Count : "))
-        count_layout.addStretch()
-        count_layout.addWidget(self.select_count_of_aircraft, alignment=Qt.AlignRight)
+        self.aircraft_selector = QAircraftTypeSelector(
+            self.game.aircraft_inventory.available_types_for_player
+        )
+        self.aircraft_selector.setCurrentIndex(0)
+        self.aircraft_selector.currentIndexChanged.connect(
+            self.on_aircraft_changed)
+        layout.addLayout(QLabeledWidget("Aircraft:", self.aircraft_selector))
 
-        flight_type_layout = QHBoxLayout()
-        flight_type_layout.addWidget(QLabel("Task : "))
-        flight_type_layout.addStretch()
-        flight_type_layout.addWidget(self.select_flight_type, alignment=Qt.AlignRight)
+        self.airfield_selector = QOriginAirfieldSelector(
+            self.game.aircraft_inventory,
+            [cp for cp in game.theater.controlpoints if cp.captured],
+            self.aircraft_selector.currentData()
+        )
+        layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
 
-        layout.addLayout(type_layout)
-        layout.addLayout(count_layout)
-        layout.addLayout(flight_type_layout)
+        self.flight_size_spinner = QFlightSizeSpinner()
+        layout.addLayout(QLabeledWidget("Count:", self.flight_size_spinner))
+
         layout.addStretch()
-        layout.addWidget(self.add_button, alignment=Qt.AlignRight)
+
+        self.create_button = QPushButton("Create")
+        self.create_button.clicked.connect(self.create_flight)
+        layout.addWidget(self.create_button, alignment=Qt.AlignRight)
 
         self.setLayout(layout)
 
-    def create_flight(self):
-        aircraft_type = self.select_type_aircraft.currentData()
-        count = self.select_count_of_aircraft.value()
+    def verify_form(self) -> Optional[str]:
+        aircraft: PlaneType = self.aircraft_selector.currentData()
+        origin: ControlPoint = self.airfield_selector.currentData()
+        size: int = self.flight_size_spinner.value()
+        if not origin.captured:
+            return f"{origin.name} is not owned by your coalition."
+        available = origin.base.aircraft.get(aircraft, 0)
+        if not available:
+            return f"{origin.name} has no {aircraft.id} available."
+        if size > available:
+            return f"{origin.name} has only {available} {aircraft.id} available."
+        return None
 
-        if self.available[aircraft_type] < count:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("Not enough aircraft of this type are available. Only " + str(self.available[aircraft_type]) + " available.")
-            msg.setWindowTitle("Not enough aircraft")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.setWindowFlags(Qt.WindowStaysOnTopHint)
-            msg.exec_()
+    def create_flight(self) -> None:
+        error = self.verify_form()
+        if error is not None:
+            self.error_box("Could not create flight", error)
             return
-        else:
-            flight = Flight(aircraft_type, count, self.from_cp, self.select_flight_type.currentData())
-            self.planner.flights.append(flight)
-            self.planner.custom_flights.append(flight)
-            if self.flight_view is not None:
-                self.flight_view.set_flight_planner(self.planner, len(self.planner.flights)-1)
-            self.close()
 
+        task = self.task_selector.currentData()
+        aircraft = self.aircraft_selector.currentData()
+        origin = self.airfield_selector.currentData()
+        size = self.flight_size_spinner.value()
+
+        flight = Flight(aircraft, size, origin, task)
+        flight.scheduled_in = self.package.delay
+
+        # noinspection PyUnresolvedReferences
+        self.created.emit(flight)
+        self.close()
+
+    def on_aircraft_changed(self, index: int) -> None:
+        new_aircraft = self.aircraft_selector.itemData(index)
+        self.airfield_selector.change_aircraft(new_aircraft)

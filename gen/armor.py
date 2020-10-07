@@ -1,13 +1,39 @@
+import logging
+import random
 from dataclasses import dataclass
+from typing import List
 
+from dcs import Mission
 from dcs.action import AITaskPush
-from dcs.condition import TimeAfter, UnitDamaged, Or, GroupLifeLess
-from dcs.triggers import TriggerOnce, Event
+from dcs.condition import GroupLifeLess, Or, TimeAfter, UnitDamaged
+from dcs.country import Country
+from dcs.mapping import Point
+from dcs.planes import MQ_9_Reaper
+from dcs.point import PointAction
+from dcs.task import (
+    AttackGroup,
+    ControlledTask,
+    EPLRS,
+    FireAtPoint,
+    GoToWaypoint,
+    Hold,
+    OrbitAction,
+    SetImmortalCommand,
+    SetInvisibleCommand,
+)
+from dcs.triggers import Event, TriggerOnce
+from dcs.unit import Vehicle
+from dcs.unittype import VehicleType
 
-from gen import namegen
-from gen.ground_forces.ai_ground_planner import CombatGroupRole, DISTANCE_FROM_FRONTLINE
+from game import db
+from .naming import namegen
+from gen.ground_forces.ai_ground_planner import (
+    CombatGroupRole,
+    DISTANCE_FROM_FRONTLINE,
+)
 from .callsigns import callsign_for_support_unit
-from .conflictgen import *
+from .conflictgen import Conflict
+from .ground_forces.combat_stance import CombatStance
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
@@ -48,7 +74,7 @@ class GroundConflictGenerator:
         self.jtacs: List[JtacInfo] = []
 
     def _group_point(self, point) -> Point:
-        distance = randint(
+        distance = random.randint(
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[0]),
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[1]),
                 )
@@ -165,7 +191,7 @@ class GroundConflictGenerator:
                 heading=forward_heading,
                 move_formation=PointAction.OffRoad)
 
-        for i in range(randint(3, 10)):
+        for i in range(random.randint(3, 10)):
             u = random.choice(possible_infantry_units)
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
@@ -183,6 +209,11 @@ class GroundConflictGenerator:
             return
 
         for dcs_group, group in ally_groups:
+
+            if hasattr(group.units[0], 'eplrs'):
+                if group.units[0].eplrs:
+                    dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
+
             if group.role == CombatGroupRole.ARTILLERY:
                 # Fire on any ennemy in range
                 if self.game.settings.perf_artillery:

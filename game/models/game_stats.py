@@ -1,3 +1,5 @@
+from typing import List
+
 class FactionTurnMetadata:
     """
     Store metadata about a faction
@@ -31,10 +33,8 @@ class GameStats:
     Store statistics for the current game
     """
 
-    data_per_turn: [GameTurnMetadata] = []
-
     def __init__(self):
-        self.data_per_turn = []
+        self.data_per_turn: List[GameTurnMetadata] = []
 
     def update(self, game):
         """

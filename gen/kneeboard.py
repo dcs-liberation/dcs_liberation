@@ -82,6 +82,8 @@ class KneeboardPageWriter:
 
     def table(self, cells: List[List[str]],
               headers: Optional[List[str]] = None) -> None:
+        if headers is None:
+            headers = []
         table = tabulate(cells, headers=headers, numalign="right")
         self.text(table, font=self.table_font)
 
@@ -136,7 +138,7 @@ class FlightPlanBuilder:
 
     def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
         self.rows.append([
-            waypoint.number,
+            str(waypoint.number),
             waypoint.waypoint.pretty_name,
             str(int(units.meters_to_feet(waypoint.waypoint.alt)))
         ])
@@ -194,7 +196,7 @@ class BriefingPage(KneeboardPage):
             tankers.append([
                 tanker.callsign,
                 tanker.variant,
-                tanker.tacan,
+                str(tanker.tacan),
                 self.format_frequency(tanker.freq),
             ])
         writer.table(tankers, headers=["Callsign", "Type", "TACAN", "UHF"])
@@ -225,12 +227,22 @@ class BriefingPage(KneeboardPage):
         atc = ""
         if runway.atc is not None:
             atc = self.format_frequency(runway.atc)
+        if runway.tacan is None:
+            tacan = ""
+        else:
+            tacan = str(runway.tacan)
+        if runway.ils is not None:
+            ils = str(runway.ils)
+        elif runway.icls is not None:
+            ils = str(runway.icls)
+        else:
+            ils = ""
         return [
             row_title,
             runway.airfield_name,
             atc,
-            runway.tacan or "",
-            runway.ils or runway.icls or "",
+            tacan,
+            ils,
             runway.runway_name,
         ]
 

@@ -1,0 +1,141 @@
+{
+    "name": "Persian Gulf - Invasion of Iran",
+    "theater": "Persian Gulf",
+    "player_points": [
+        {
+            "type": "airbase",
+            "id": "Ras Al Khaimah",
+            "size": 1000,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "Khasab",
+            "size": 600,
+            "importance": 1.2
+        },
+        {
+            "type": "airbase",
+            "id": "Qeshm Island",
+            "radials": [
+                270,
+                315,
+                0,
+                45,
+                90,
+                135,
+                180
+            ],
+            "size": 600,
+            "importance": 1.1
+        },
+        {
+            "type": "airbase",
+            "id": "Havadarya",
+            "radials": [
+                225,
+                270,
+                315,
+                0,
+                45
+            ],
+            "size": 1000,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Bandar Abbas Intl",
+            "size": 2000,
+            "importance": 1.4
+        },
+        {
+            "type": "carrier",
+            "id": 1001,
+            "x": 59514.324335475,
+            "y": 28165.517980635
+        },
+        {
+            "type": "lha",
+            "id": 1002,
+            "x": -27500.813952358,
+            "y": -147000.65947136
+        }
+    ],
+    "enemy_points": [
+        {
+            "type": "airbase",
+            "id": "Bandar Lengeh",
+            "radials": [
+                270,
+                315,
+                0,
+                45
+            ],
+            "size": 600,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Shiraz International Airport",
+            "size": 2000,
+            "importance": 1.4,
+            "captured_invert": true
+        },
+        {
+            "type": "airbase",
+            "id": "Jiroft Airport",
+            "size": 2000,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Kerman Airport",
+            "size": 2000,
+            "importance": 1.4
+        },
+        {
+            "type": "airbase",
+            "id": "Lar Airbase",
+            "size": 1000,
+            "importance": 1.4
+        }
+    ],
+    "links": [
+        [
+            "Khasab",
+            "Ras Al Khaimah"
+        ],
+        [
+            "Bandar Lengeh",
+            "Lar Airbase"
+        ],
+        [
+            "Havadarya",
+            "Lar Airbase"
+        ],
+        [
+            "Bandar Abbas Intl",
+            "Havadarya"
+        ],
+        [
+            "Bandar Abbas Intl",
+            "Jiroft Airport"
+        ],
+        [
+            "Lar Airbase",
+            "Shiraz International Airport"
+        ],
+        [
+            "Kerman Airport",
+            "Shiraz International Airport"
+        ],
+        [
+            "Jiroft Airport",
+            "Kerman Airport"
+        ],
+        [
+            "Kerman Airport",
+            "Lar Airbase"
+        ]
+    ]
+}

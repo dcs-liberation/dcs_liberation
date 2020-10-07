@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import List
+from typing import Dict, Optional
 
 from game import db
 from dcs.unittype import UnitType
 from dcs.point import MovingPoint, PointAction
-from theater.controlpoint import ControlPoint
+from theater.controlpoint import ControlPoint, MissionTarget
 
 
 class FlightType(Enum):
@@ -47,6 +47,8 @@ class FlightWaypointType(Enum):
     TARGET_GROUP_LOC = 13   # A target group approximate location
     TARGET_SHIP = 14        # A target ship known location
     CUSTOM = 15             # User waypoint (no specific behaviour)
+    JOIN = 16
+    SPLIT = 17
 
 
 class PredefinedWaypointCategory(Enum):
@@ -71,8 +73,8 @@ class FlightWaypoint:
         self.alt_type = "BARO"
         self.name = ""
         self.description = ""
-        self.targets = []
-        self.targetGroup = None
+        self.targets: List[MissionTarget] = []
+        self.targetGroup: Optional[MissionTarget] = None
         self.obj_name = ""
         self.pretty_name = ""
         self.category: PredefinedWaypointCategory = PredefinedWaypointCategory.NOT_PREDEFINED
@@ -108,15 +110,9 @@ class FlightWaypoint:
 
 
 class Flight:
-    unit_type: UnitType = None
-    from_cp = None
-    points: List[FlightWaypoint] = []
-    flight_type: FlightType = None
     count: int = 0
     client_count: int = 0
-    targets = []
     use_custom_loadout = False
-    loadout = {}
     preset_loadout_name = ""
     start_type = "Runway"
     group = False # Contains DCS Mission group data after mission has been generated
@@ -124,14 +120,14 @@ class Flight:
     # How long before this flight should take off
     scheduled_in = 0
 
-    def __init__(self, unit_type: UnitType, count: int, from_cp, flight_type: FlightType):
+    def __init__(self, unit_type: UnitType, count: int, from_cp: ControlPoint, flight_type: FlightType):
         self.unit_type = unit_type
         self.count = count
         self.from_cp = from_cp
         self.flight_type = flight_type
-        self.points = []
-        self.targets = []
-        self.loadout = {}
+        self.points: List[FlightWaypoint] = []
+        self.targets: List[MissionTarget] = []
+        self.loadout: Dict[str, str] = {}
         self.start_type = "Runway"
 
     def __repr__(self):
@@ -141,10 +137,10 @@ class Flight:
 
 # Test
 if __name__ == '__main__':
-    from pydcs.dcs.planes import A_10C
+    from dcs.planes import A_10C
     from theater import ControlPoint, Point, List
 
-    from_cp = ControlPoint(0, "AA", Point(0, 0), None, [], 0, 0)
+    from_cp = ControlPoint(0, "AA", Point(0, 0), Point(0, 0), [], 0, 0)
     f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
     f.scheduled_in = 50
     print(f)

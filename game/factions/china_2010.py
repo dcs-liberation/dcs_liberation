@@ -1,7 +1,38 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Mi_28N,
+    Mi_8MT,
+)
+from dcs.planes import (
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    JF_17,
+    J_11A,
+    KJ_2000,
+    MiG_21Bis,
+    Su_30,
+    Su_33,
+    WingLoong_I,
+    Yak_40,
+)
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    CV_1143_5_Admiral_Kuznetsov,
+    Dry_cargo_ship_Ivanov,
+    Tanker_Elnya_160,
+    Type_052B_Destroyer,
+    Type_052C_Destroyer,
+    Type_054A_Frigate,
+    Type_071_Amphibious_Transport_Dock,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 China_2010 = {
     "country": "China",

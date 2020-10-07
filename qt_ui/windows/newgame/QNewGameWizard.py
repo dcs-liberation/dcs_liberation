@@ -2,27 +2,34 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
+from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QPoint, QItemSelectionModel
-from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout
+from PySide2.QtCore import QItemSelectionModel, QPoint
+from PySide2.QtWidgets import QVBoxLayout
 from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
-from game import db, Game
+from game import Game, db
 from game.settings import Settings
 from gen import namegen
-from qt_ui.windows.newgame.QCampaignList import QCampaignList, CAMPAIGNS
-from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
+from qt_ui.windows.newgame.QCampaignList import (
+    Campaign,
+    QCampaignList,
+    load_campaigns,
+)
+from theater import ConflictTheater, start_generator
 
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
+        self.campaigns = load_campaigns()
+
         self.addPage(IntroPage())
         self.addPage(FactionSelection())
-        self.addPage(TheaterConfiguration())
+        self.addPage(TheaterConfiguration(self.campaigns))
         self.addPage(MiscOptions())
         self.addPage(ConclusionPage())
 
@@ -43,8 +50,9 @@ class NewGameWizard(QtWidgets.QWizard):
 
         selectedCampaign = self.field("selectedCampaign")
         if selectedCampaign is None:
-            selectedCampaign = CAMPAIGNS[0]
-        conflictTheater = selectedCampaign[1]()
+            selectedCampaign = self.campaigns[0]
+
+        conflictTheater = selectedCampaign.theater
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -83,7 +91,7 @@ class NewGameWizard(QtWidgets.QWizard):
         print("Enemy name : " + enemy_name)
         print("Player name : " + player_name)
         print("Midgame : " + str(midgame))
-        start_generator.generate_inital_units(conflictTheater, enemy_name, True, multiplier)
+        start_generator.generate_initial_units(conflictTheater, enemy_name, True, multiplier)
 
         print("-- Initial units generated")
         game = Game(player_name=player_name,
@@ -231,8 +239,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(TheaterConfiguration, self).__init__(parent)
+    def __init__(self, campaigns: List[Campaign], parent=None) -> None:
+        super().__init__(parent)
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
@@ -242,37 +250,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
 
-        # Terrain selection
-        terrainGroup = QtWidgets.QGroupBox("Terrain")
-        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia")
-        terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainRussia = QtWidgets.QRadioButton("Caucasus - Russia Small")
-        terrainRussia.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map [NOT RECOMMENDED]")
-        terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasusNorth = QtWidgets.QRadioButton("Caucasus - North")
-        terrainCaucasusNorth.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-
-        terrainPg = QtWidgets.QRadioButton("Persian Gulf - Full Map [NOT RECOMMENDED]")
-        terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Invasion of Iran")
-        terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainEmirates = QtWidgets.QRadioButton("Persian Gulf - Emirates")
-        terrainEmirates.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainNttr = QtWidgets.QRadioButton("Nevada - North Nevada")
-        terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
-        terrainNormandy = QtWidgets.QRadioButton("Normandy")
-        terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainNormandySmall = QtWidgets.QRadioButton("Normandy Small")
-        terrainNormandySmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainChannel = QtWidgets.QRadioButton("The Channel : Start in Dunkirk")
-        terrainChannel.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainChannelComplete = QtWidgets.QRadioButton("The Channel : Battle of Britain")
-        terrainChannelComplete.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainCaucasusSmall.setChecked(True)
-
         # List of campaigns
-        campaignList = QCampaignList()
+        campaignList = QCampaignList(campaigns)
         self.registerField("selectedCampaign", campaignList)
 
         def on_campaign_selected():
@@ -283,8 +262,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
-
-
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")

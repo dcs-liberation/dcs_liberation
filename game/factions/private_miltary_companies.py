@@ -1,7 +1,25 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Ka_50,
+    Mi_24V,
+    Mi_8MT,
+    OH_58D,
+    SA342M,
+    UH_1H,
+)
+from dcs.planes import (
+    C_101CC,
+    L_39C,
+    L_39ZA,
+)
+from dcs.ships import (
+    Armed_speedboat,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 

@@ -1,24 +1,24 @@
-import typing
+from __future__ import annotations
+
 import logging
+import math
+from typing import Dict, List, Optional, Type, TYPE_CHECKING
 
-from dcs.action import Coalition
-from dcs.unittype import UnitType
-from dcs.task import *
-from dcs.vehicles import AirDefence
+from dcs.mapping import Point
+from dcs.task import Task
 from dcs.unittype import UnitType
 
-from game import *
+from game import db, persistency
+from game.debriefing import Debriefing
 from game.infos.information import Information
-from theater import *
+from game.operation.operation import Operation
 from gen.environmentgen import EnvironmentSettings
-from gen.conflictgen import Conflict
-from game.db import assigned_units_from, unitdict_from
+from gen.ground_forces.combat_stance import CombatStance
+from theater import ControlPoint
 from theater.start_generator import generate_airbase_defense_group
 
-from userdata.debriefing import Debriefing
-from userdata import persistency
-
-import game.db as db
+if TYPE_CHECKING:
+    from ..game import Game
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -27,6 +27,7 @@ EVENT_DEPARTURE_MAX_DISTANCE = 340000
 MINOR_DEFEAT_INFLUENCE = 0.1
 DEFEAT_INFLUENCE = 0.3
 STRONG_DEFEAT_INFLUENCE = 0.5
+
 
 class Event:
     silent = False
@@ -37,7 +38,6 @@ class Event:
     game = None  # type: Game
     location = None  # type: Point
     from_cp = None  # type: ControlPoint
-    departure_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
 
     operation = None  # type: Operation
@@ -47,7 +47,7 @@ class Event:
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
         self.game = game
-        self.departure_cp = None
+        self.departure_cp: Optional[ControlPoint] = None
         self.from_cp = from_cp
         self.to_cp = target_cp
         self.location = location
@@ -59,14 +59,14 @@ class Event:
         return self.attacker_name == self.game.player_name
 
     @property
-    def enemy_cp(self) -> ControlPoint:
+    def enemy_cp(self) -> Optional[ControlPoint]:
         if self.attacker_name == self.game.player_name:
             return self.to_cp
         else:
             return self.departure_cp
 
     @property
-    def tasks(self) -> typing.Collection[typing.Type[Task]]:
+    def tasks(self) -> List[Type[Task]]:
         return []
 
     @property
@@ -90,18 +90,6 @@ class Event:
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)
-
-    def player_attacking(self, cp: ControlPoint, flights: db.TaskForceDict):
-        if self.is_player_attacking:
-            self.departure_cp = cp
-        else:
-            self.to_cp = cp
-
-    def player_defending(self, cp: ControlPoint, flights: db.TaskForceDict):
-        if self.is_player_attacking:
-            self.departure_cp = cp
-        else:
-            self.to_cp = cp
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
@@ -253,7 +241,7 @@ class Event:
             for enemy_cp in enemy_cps:
                 print("Compute frontline progression for : " + cp.name + " to " + enemy_cp.name)
 
-                delta = 0
+                delta = 0.0
                 player_won = True
                 ally_casualties = killed_unit_count_by_cp[cp.id]
                 enemy_casualties = killed_unit_count_by_cp[enemy_cp.id]
@@ -376,7 +364,6 @@ class Event:
 
 class UnitsDeliveryEvent(Event):
     informational = True
-    units = None  # type: typing.Dict[UnitType, int]
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         super(UnitsDeliveryEvent, self).__init__(game=game,
@@ -386,12 +373,12 @@ class UnitsDeliveryEvent(Event):
                                                  attacker_name=attacker_name,
                                                  defender_name=defender_name)
 
-        self.units = {}
+        self.units: Dict[UnitType, int] = {}
 
     def __str__(self):
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: typing.Dict[UnitType, int]):
+    def deliver(self, units: Dict[UnitType, int]):
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 

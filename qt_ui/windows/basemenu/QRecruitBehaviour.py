@@ -1,13 +1,19 @@
+from PySide2.QtWidgets import (
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+)
 import logging
-
-from PySide2.QtWidgets import QLabel, QPushButton, \
-    QSizePolicy, QSpacerItem, QGroupBox, QHBoxLayout
 from dcs.unittype import UnitType
 
 from theater import db
 
-class QRecruitBehaviour:
 
+
+class QRecruitBehaviour:
     game = None
     cp = None
     deliveryEvent = None
@@ -17,14 +23,22 @@ class QRecruitBehaviour:
     recruitable_types = []
     BUDGET_FORMAT = "Available Budget: <b>${}M</b>"
 
-    def __init__(self):
+    def __init__(self) -> None:
+        self.deliveryEvent = None
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
         self.recruitable_types = []
         self.update_available_budget()
 
-    def add_purchase_row(self, unit_type, layout, row):
+    @property
+    def budget(self) -> int:
+        return self.game_model.game.budget
 
+    @budget.setter
+    def budget(self, value: int) -> None:
+        self.game_model.game.budget = value
+
+    def add_purchase_row(self, unit_type, layout, row):
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
         exist.setMaximumHeight(36)
@@ -102,7 +116,8 @@ class QRecruitBehaviour:
             parent = parent.parent()
         for child in parent.children():
             if child.objectName() == "budgetField":
-                child.setText(QRecruitBehaviour.BUDGET_FORMAT.format(self.game.budget))
+                child.setText(
+                    QRecruitBehaviour.BUDGET_FORMAT.format(self.budget))
 
     def buy(self, unit_type):
 
@@ -113,9 +128,9 @@ class QRecruitBehaviour:
                 return
 
         price = db.PRICES[unit_type]
-        if self.game.budget >= price:
+        if self.budget >= price:
             self.deliveryEvent.deliver({unit_type: 1})
-            self.game.budget -= price
+            self.budget -= price
         else:
             # TODO : display modal warning
             logging.info("Not enough money !")
@@ -125,13 +140,13 @@ class QRecruitBehaviour:
     def sell(self, unit_type):
         if self.deliveryEvent.units.get(unit_type, 0) > 0:
             price = db.PRICES[unit_type]
-            self.game.budget += price
+            self.budget += price
             self.deliveryEvent.units[unit_type] = self.deliveryEvent.units[unit_type] - 1
             if self.deliveryEvent.units[unit_type] == 0:
                 del self.deliveryEvent.units[unit_type]
         elif self.cp.base.total_units_of_type(unit_type) > 0:
             price = db.PRICES[unit_type]
-            self.game.budget += price
+            self.budget += price
             self.cp.base.commit_losses({unit_type: 1})
 
         self._update_count_label(unit_type)

@@ -1,16 +1,21 @@
 import os
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import QFile
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QFrame, QLineEdit, QGridLayout, QVBoxLayout, QLabel, QPushButton, \
-    QFileDialog, QMessageBox, QDialog, QComboBox, QApplication
-import qt_ui.uiconstants as CONST
-import sys
+from PySide2.QtWidgets import (
+    QComboBox,
+    QFileDialog,
+    QFrame,
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
-import userdata
-from userdata import liberation_install, liberation_theme
-from userdata.liberation_theme import get_theme_index, set_theme_index
+import qt_ui.uiconstants as CONST
+from qt_ui import liberation_install, liberation_theme
+from qt_ui.liberation_theme import get_theme_index, set_theme_index
 
 
 class QLiberationPreferences(QFrame):

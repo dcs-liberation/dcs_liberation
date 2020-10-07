@@ -1,27 +1,33 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox, QFrame, QWidget, QScrollArea
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
-from game import Game
 from game.event import UnitsDeliveryEvent
+from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
 from theater import ControlPoint, PinpointStrike, db
 
 
 class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
 
-    def __init__(self, cp:ControlPoint, game:Game):
+    def __init__(self, cp: ControlPoint, game_model: GameModel):
         QFrame.__init__(self)
         self.cp = cp
-        self.game = game
+        self.game_model = game_model
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        for event in self.game.events:
+        for event in self.game_model.game.events:
             if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
                 self.deliveryEvent = event
         if not self.deliveryEvent:
-            self.deliveryEvent = self.game.units_delivery_event(self.cp)
+            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
         self.init_ui()
 
@@ -29,7 +35,8 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout = QVBoxLayout()
 
         units = {
-            PinpointStrike: db.find_unittype(PinpointStrike, self.game.player_name),
+            PinpointStrike: db.find_unittype(PinpointStrike,
+                                             self.game_model.game.player_name),
         }
 
         scroll_content = QWidget()

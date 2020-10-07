@@ -2,8 +2,9 @@ import logging
 import os
 import pickle
 import shutil
+from typing import Optional
 
-_dcs_saved_game_folder = None  # type: str
+_dcs_saved_game_folder: Optional[str] = None
 _file_abs_path = None
 
 def setup(user_folder: str):
@@ -40,9 +41,10 @@ def restore_game():
         try:
             save = pickle.load(f)
             return save
-        except:
-            logging.error("Invalid Save game")
+        except Exception:
+            logging.exception("Invalid Save game")
             return None
+
 
 def load_game(path):
     with open(path, "rb") as f:
@@ -50,9 +52,10 @@ def load_game(path):
             save = pickle.load(f)
             save.savepath = path
             return save
-        except:
-            logging.error("Invalid Save game")
+        except Exception:
+            logging.exception("Invalid Save game")
             return None
+
 
 def save_game(game) -> bool:
     try:
@@ -60,9 +63,10 @@ def save_game(game) -> bool:
             pickle.dump(game, f)
         shutil.copy(_temporary_save_file(), game.savepath)
         return True
-    except Exception as e:
-        logging.error(e)
+    except Exception:
+        logging.exception("Could not save game")
         return False
+
 
 def autosave(game) -> bool:
     """
@@ -74,7 +78,7 @@ def autosave(game) -> bool:
         with open(_autosave_path(), "wb") as f:
             pickle.dump(game, f)
         return True
-    except Exception as e:
-        logging.error(e)
+    except Exception:
+        logging.exception("Could not save game")
         return False
 

@@ -1,19 +1,12 @@
-import typing
-import random
-from datetime import datetime, timedelta, time
-
+from dcs.action import MarkToAll
+from dcs.condition import TimeAfter
 from dcs.mission import Mission
-from dcs.triggers import *
-from dcs.condition import *
-from dcs.action import *
+from dcs.task import Option
+from dcs.translation import String
+from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Skill
-from dcs.point import MovingPoint, PointProperties
-from dcs.action import *
 
-from game import db
-from theater import *
-from gen.airsupportgen import AirSupportConflictGenerator
-from gen import *
+from .conflictgen import Conflict
 
 PUSH_TRIGGER_SIZE = 3000
 PUSH_TRIGGER_ACTIVATION_AGL = 25

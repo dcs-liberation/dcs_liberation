@@ -1,7 +1,33 @@
-from dcs.helicopters import *
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.helicopters import (
+    Mi_24V,
+    Mi_8MT,
+)
+from dcs.planes import (
+    A_50,
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    L_39ZA,
+    MiG_29S,
+    Su_24M,
+    Su_25,
+    Su_25T,
+    Su_27,
+    Yak_40,
+)
+from dcs.ships import (
+    Bulk_cargo_ship_Yakushev,
+    CV_1143_5_Admiral_Kuznetsov,
+    Dry_cargo_ship_Ivanov,
+    Tanker_Elnya_160,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Infantry,
+    Unarmed,
+)
 
 Ukraine_2010 = {
     "country": "Ukraine",

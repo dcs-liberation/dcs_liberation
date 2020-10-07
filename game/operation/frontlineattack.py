@@ -1,7 +1,8 @@
-from game.db import assigned_units_split
+from dcs.terrain.terrain import Terrain
 
-from .operation import *
-
+from gen.conflictgen import Conflict
+from .operation import Operation
+from .. import db
 
 MAX_DISTANCE_BETWEEN_GROUPS = 12000
 

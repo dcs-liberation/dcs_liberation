@@ -1,5 +1,16 @@
-from dcs.planes import *
-from dcs.vehicles import *
+from dcs.planes import (
+    Bf_109K_4,
+    FW_190A8,
+    FW_190D9,
+    Ju_88A4,
+)
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 from game.data.building_data import WW2_GERMANY_BUILDINGS
 from game.data.doctrine import WWII_DOCTRINE

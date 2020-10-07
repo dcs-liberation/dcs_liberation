@@ -1,20 +1,11 @@
 import logging
-import typing
 import random
-from datetime import datetime, timedelta, time
+from datetime import timedelta
 
 from dcs.mission import Mission
-from dcs.triggers import *
-from dcs.condition import *
-from dcs.action import *
-from dcs.unit import Skill
-from dcs.point import MovingPoint, PointProperties
-from dcs.action import *
-from dcs.weather import *
+from dcs.weather import Weather, Wind
 
-from game import db
-from theater import *
-from gen import *
+from .conflictgen import Conflict
 
 WEATHER_CLOUD_BASE = 2000, 3000
 WEATHER_CLOUD_DENSITY = 1, 8

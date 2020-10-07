@@ -1,6 +1,20 @@
-from dcs.planes import *
-from dcs.ships import *
-from dcs.vehicles import *
+from dcs.planes import (
+    A_20G,
+    B_17G,
+    P_47D_30,
+    P_51D,
+    P_51D_30_NA,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+)
+from dcs.ships import LCVP__Higgins_boat, LST_Mk_II, LS_Samuel_Chase
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Infantry,
+    Unarmed,
+)
 
 from game.data.building_data import WW2_ALLIES_BUILDINGS
 from game.data.doctrine import WWII_DOCTRINE
