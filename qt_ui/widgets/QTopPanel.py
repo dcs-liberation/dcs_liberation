@@ -1,6 +1,12 @@
 from typing import Optional
 
-from PySide2.QtWidgets import QFrame, QGroupBox, QHBoxLayout, QPushButton
+from PySide2.QtWidgets import (
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QMessageBox,
+    QPushButton,
+)
 
 import qt_ui.uiconstants as CONST
 from game import Game
@@ -9,9 +15,10 @@ from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QTurnCounter import QTurnCounter
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.QWaitingForMissionResultWindow import \
+    QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
-from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 
 
 class QTopPanel(QFrame):
@@ -101,8 +108,36 @@ class QTopPanel(QFrame):
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
 
+    def ato_has_clients(self) -> bool:
+        for package in self.game.blue_ato.packages:
+            for flight in package.flights:
+                if flight.client_count > 0:
+                    return True
+        return False
+
+    def confirm_no_client_launch(self) -> bool:
+        result = QMessageBox.question(
+            self,
+            "Continue without client slots?",
+            ("No client slots have been created for players. Continuing will "
+             "allow the AI to perform the mission, but players will be unable "
+             "to participate.<br />"
+             "<br />"
+             "To add client slots for players, select a package from the "
+             "Packages panel on the left of the main window, and then a flight "
+             "from the Flights panel below the Packages panel. The edit button "
+             "below the Flights panel will allow you to edit the number of "
+             "client slots in the flight. Each client slot allows one player."),
+            QMessageBox.No,
+            QMessageBox.Yes
+        )
+        return result == QMessageBox.Yes
+
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
+        if not self.ato_has_clients() and not self.confirm_no_client_launch():
+            return
+
         # TODO: Refactor this nonsense.
         game_event = None
         for event in self.game.events:
