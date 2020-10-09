@@ -49,6 +49,7 @@ class FlightWaypointType(Enum):
     CUSTOM = 15             # User waypoint (no specific behaviour)
     JOIN = 16
     SPLIT = 17
+    LOITER = 18
 
 
 class PredefinedWaypointCategory(Enum):
@@ -66,6 +67,15 @@ class FlightWaypoint:
 
     def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
                  alt: int = 0) -> None:
+        """Creates a flight waypoint.
+
+        Args:
+            waypoint_type: The waypoint type.
+            x: X cooidinate of the waypoint.
+            y: Y coordinate of the waypoint.
+            alt: Altitude of the waypoint. By default this is AGL, but it can be
+            changed to MSL by setting alt_type to "RADIO".
+        """
         self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
@@ -80,6 +90,12 @@ class FlightWaypoint:
         self.category: PredefinedWaypointCategory = PredefinedWaypointCategory.NOT_PREDEFINED
         self.only_for_player = False
         self.data = None
+
+        # This is set very late by the air conflict generator (part of mission
+        # generation). We do it late so that we don't need to propagate changes
+        # to waypoint times whenever the player alters the package TOT or the
+        # flight's offset in the UI.
+        self.tot: Optional[int] = None
 
 
     @classmethod

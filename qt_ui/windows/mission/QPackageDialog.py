@@ -2,12 +2,13 @@
 import logging
 from typing import Optional
 
-from PySide2.QtCore import QItemSelection, Signal
+from PySide2.QtCore import QItemSelection, QTime, Signal
 from PySide2.QtWidgets import (
     QDialog,
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QTimeEdit,
     QVBoxLayout,
 )
 
@@ -56,14 +57,39 @@ class QPackageDialog(QDialog):
         self.summary_row = QHBoxLayout()
         self.layout.addLayout(self.summary_row)
 
+        self.package_type_column = QHBoxLayout()
+        self.summary_row.addLayout(self.package_type_column)
+
         self.package_type_label = QLabel("Package Type:")
         self.package_type_text = QLabel(self.package_model.description)
         # noinspection PyUnresolvedReferences
         self.package_changed.connect(lambda: self.package_type_text.setText(
             self.package_model.description
         ))
-        self.summary_row.addWidget(self.package_type_label)
-        self.summary_row.addWidget(self.package_type_text)
+        self.package_type_column.addWidget(self.package_type_label)
+        self.package_type_column.addWidget(self.package_type_text)
+
+        self.summary_row.addStretch(1)
+
+        self.tot_column = QHBoxLayout()
+        self.summary_row.addLayout(self.tot_column)
+
+        self.tot_label = QLabel("Time Over Target:")
+        self.tot_column.addWidget(self.tot_label)
+
+        if self.package_model.package.time_over_target is None:
+            time = None
+        else:
+            delay = self.package_model.package.time_over_target
+            hours = delay // 3600
+            minutes = delay // 60 % 60
+            seconds = delay % 60
+            time = QTime(hours, minutes, seconds)
+
+        self.tot_spinner = QTimeEdit(time)
+        self.tot_spinner.setMinimumTime(QTime(0, 0))
+        self.tot_spinner.setDisplayFormat("T+hh:mm:ss")
+        self.tot_column.addWidget(self.tot_spinner)
 
         self.package_view = QFlightList(self.package_model)
         self.package_view.selectionModel().selectionChanged.connect(
@@ -90,8 +116,10 @@ class QPackageDialog(QDialog):
 
         self.finished.connect(self.on_close)
 
-    @staticmethod
-    def on_close(_result) -> None:
+    def on_close(self, _result) -> None:
+        time = self.tot_spinner.time()
+        seconds = time.hour() * 3600 + time.minute() * 60 + time.second()
+        self.package_model.update_tot(seconds)
         GameUpdateSignal.get_instance().redraw_flight_paths()
 
     def on_selection_changed(self, selected: QItemSelection,

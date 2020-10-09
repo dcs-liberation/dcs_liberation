@@ -16,7 +16,7 @@ tests/**
 /liberation_preferences.json
 /state.json
 
-logs/liberation.log
+logs/
 
 qt_ui/logs/liberation.log
 

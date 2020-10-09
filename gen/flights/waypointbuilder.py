@@ -25,6 +25,7 @@ class WaypointBuilder:
 
         Args:
             departure: Departure airfield or carrier.
+            is_helo: True if the flight is a helicopter.
         """
         # TODO: Pick runway based on wind direction.
         heading = departure.heading
@@ -48,6 +49,7 @@ class WaypointBuilder:
 
         Args:
             arrival: Arrival airfield or carrier.
+            is_helo: True if the flight is a helicopter.
         """
         # TODO: Pick runway based on wind direction.
         # ControlPoint.heading is the departure heading.
@@ -64,7 +66,7 @@ class WaypointBuilder:
         waypoint.name = "DESCEND"
         waypoint.alt_type = "RADIO"
         waypoint.description = "Descend to pattern altitude"
-        waypoint.pretty_name = "Ascend"
+        waypoint.pretty_name = "Descend"
         self.waypoints.append(waypoint)
 
     def land(self, arrival: ControlPoint) -> None:
@@ -84,6 +86,18 @@ class WaypointBuilder:
         waypoint.alt_type = "RADIO"
         waypoint.description = "Land"
         waypoint.pretty_name = "Land"
+        self.waypoints.append(waypoint)
+
+    def hold(self, position: Point) -> None:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.LOITER,
+            position.x,
+            position.y,
+            self.doctrine.rendezvous_altitude
+        )
+        waypoint.pretty_name = "Hold"
+        waypoint.description = "Wait until push time"
+        waypoint.name = "HOLD"
         self.waypoints.append(waypoint)
 
     def join(self, position: Point) -> None:
@@ -170,7 +184,7 @@ class WaypointBuilder:
                            location)
 
     def _target_point(self, target: Union[TheaterGroundObject, Unit], name: str,
-                     description: str, location: MissionTarget) -> None:
+                      description: str, location: MissionTarget) -> None:
         if self.ingress_point is None:
             raise RuntimeError(
                 "An ingress point must be added before target points."
@@ -293,6 +307,7 @@ class WaypointBuilder:
 
         Args:
             arrival: Arrival airfield or carrier.
+            is_helo: True if the flight is a helicopter.
         """
         self.descent(arrival, is_helo)
         self.land(arrival)

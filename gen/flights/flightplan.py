@@ -16,10 +16,10 @@ from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE
 from game.utils import nm_to_meter
-from gen.ato import Package
+from gen.ato import Package, PackageWaypoints
 from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
 from .closestairfields import ObjectiveDistanceCache
-from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
+from .flight import Flight, FlightType, FlightWaypoint
 from .waypointbuilder import WaypointBuilder
 from ..conflictgen import Conflict
 
@@ -55,7 +55,8 @@ class FlightPlanBuilder:
         """Creates a default flight plan for the given mission."""
         if flight not in self.package.flights:
             raise RuntimeError("Flight must be a part of the package")
-        self.generate_missing_package_waypoints()
+        if self.package.waypoints is None:
+            self.regenerate_package_waypoints()
 
         # TODO: Flesh out mission types.
         try:
@@ -105,15 +106,18 @@ class FlightPlanBuilder:
         except InvalidObjectiveLocation as ex:
             logging.error(f"Could not create flight plan: {ex}")
 
-    def generate_missing_package_waypoints(self) -> None:
-        if self.package.ingress_point is None:
-            self.package.ingress_point = self._ingress_point()
-        if self.package.egress_point is None:
-            self.package.egress_point = self._egress_point()
-        if self.package.join_point is None:
-            self.package.join_point = self._join_point()
-        if self.package.split_point is None:
-            self.package.split_point = self._split_point()
+    def regenerate_package_waypoints(self) -> None:
+        ingress_point = self._ingress_point()
+        egress_point = self._egress_point()
+        join_point = self._join_point(ingress_point)
+        split_point = self._split_point(egress_point)
+
+        self.package.waypoints = PackageWaypoints(
+            join_point,
+            ingress_point,
+            egress_point,
+            split_point,
+        )
 
     def generate_strike(self, flight: Flight) -> None:
         """Generates a strike flight plan.
@@ -121,6 +125,7 @@ class FlightPlanBuilder:
         Args:
             flight: The flight to generate the flight plan for.
         """
+        assert self.package.waypoints is not None
         location = self.package.target
 
         # TODO: Support airfield strikes.
@@ -129,8 +134,9 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.join(self.package.join_point)
-        builder.ingress_strike(self.package.ingress_point, location)
+        builder.hold(self._hold_point(flight))
+        builder.join(self.package.waypoints.join)
+        builder.ingress_strike(self.package.waypoints.ingress, location)
 
         if len(location.groups) > 0 and location.dcs_identifier == "AA":
             # TODO: Replace with DEAD?
@@ -157,8 +163,8 @@ class FlightPlanBuilder:
                     location
                 )
 
-        builder.egress(self.package.egress_point, location)
-        builder.split(self.package.split_point)
+        builder.egress(self.package.waypoints.egress, location)
+        builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
@@ -215,6 +221,7 @@ class FlightPlanBuilder:
         Args:
             flight: The flight to generate the flight plan for.
         """
+        assert self.package.waypoints is not None
         location = self.package.target
 
         if not isinstance(location, FrontLine):
@@ -246,7 +253,10 @@ class FlightPlanBuilder:
         # Create points
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
+        builder.hold(self._hold_point(flight))
+        builder.join(self.package.waypoints.join)
         builder.race_track(orbit0p, orbit1p, patrol_alt)
+        builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp)
         flight.points = builder.build()
 
@@ -258,6 +268,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the flight plan for.
             custom_targets: Specific radar equipped units selected by the user.
         """
+        assert self.package.waypoints is not None
         location = self.package.target
 
         if not isinstance(location, TheaterGroundObject):
@@ -268,21 +279,15 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.join(self.package.join_point)
-        builder.ingress_sead(self.package.ingress_point, location)
+        builder.hold(self._hold_point(flight))
+        builder.join(self.package.waypoints.join)
+        builder.ingress_sead(self.package.waypoints.ingress, location)
 
         # TODO: Unify these.
         # There doesn't seem to be any reason to treat the UI fragged missions
         # different from the automatic missions.
         if custom_targets:
             for target in custom_targets:
-                point = FlightWaypoint(
-                    FlightWaypointType.TARGET_POINT,
-                    target.position.x,
-                    target.position.y,
-                    0
-                )
-                point.alt_type = "RADIO"
                 if flight.flight_type == FlightType.DEAD:
                     builder.dead_point(target, location.name, location)
                 else:
@@ -293,17 +298,22 @@ class FlightPlanBuilder:
             else:
                 builder.sead_area(location)
 
-        builder.egress(self.package.egress_point, location)
-        builder.split(self.package.split_point)
+        builder.egress(self.package.waypoints.egress, location)
+        builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
+    def _hold_point(self, flight: Flight) -> Point:
+        heading = flight.from_cp.position.heading_between_point(
+            self.package.target.position
+        )
+        return flight.from_cp.position.point_from_heading(
+            heading, nm_to_meter(15)
+        )
+
     def generate_escort(self, flight: Flight) -> None:
-        # TODO: Decide common waypoints for the package ahead of time.
-        # Packages should determine some common points like push, ingress,
-        # egress, and split points ahead of time so they can be shared by all
-        # flights.
+        assert self.package.waypoints is not None
 
         patrol_alt = random.randint(
             self.doctrine.min_patrol_altitude,
@@ -312,13 +322,11 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp)
-        builder.join(self.package.join_point)
-        builder.race_track(
-            self.package.ingress_point,
-            self.package.egress_point,
-            patrol_alt
-        )
-        builder.split(self.package.split_point)
+        builder.hold(self._hold_point(flight))
+        builder.join(self.package.waypoints.join)
+        builder.race_track(self.package.waypoints.ingress,
+                           self.package.waypoints.egress, patrol_alt)
+        builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
@@ -329,6 +337,7 @@ class FlightPlanBuilder:
         Args:
             flight: The flight to generate the flight plan for.
         """
+        assert self.package.waypoints is not None
         location = self.package.target
 
         if not isinstance(location, FrontLine):
@@ -346,11 +355,12 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.doctrine)
         builder.ascent(flight.from_cp, is_helo)
-        builder.join(self.package.join_point)
+        builder.hold(self._hold_point(flight))
+        builder.join(self.package.waypoints.join)
         builder.ingress_cas(ingress, location)
         builder.cas(center, cap_alt)
         builder.egress(egress, location)
-        builder.split(self.package.split_point)
+        builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp, is_helo)
 
         flight.points = builder.build()
@@ -386,16 +396,12 @@ class FlightPlanBuilder:
         builder.land(arrival)
         return builder.build()[0]
 
-    def _join_point(self) -> Point:
-        ingress_point = self.package.ingress_point
-        assert ingress_point is not None
+    def _join_point(self, ingress_point: Point) -> Point:
         heading = self._heading_to_package_airfield(ingress_point)
         return ingress_point.point_from_heading(heading,
                                                 -self.doctrine.join_distance)
 
-    def _split_point(self) -> Point:
-        egress_point = self.package.egress_point
-        assert egress_point is not None
+    def _split_point(self, egress_point: Point) -> Point:
         heading = self._heading_to_package_airfield(egress_point)
         return egress_point.point_from_heading(heading,
                                                -self.doctrine.split_distance)
