@@ -1,4 +1,6 @@
 """Qt data models for game objects."""
+import datetime
+from enum import auto, IntEnum
 from typing import Any, Callable, Dict, Iterator, TypeVar, Optional
 
 from PySide2.QtCore import (
@@ -156,6 +158,9 @@ class PackageModel(QAbstractListModel):
         """Returns the flight located at the given index."""
         return self.package.flights[index.row()]
 
+    def update_tot(self, tot: int) -> None:
+        self.package.time_over_target = tot
+
     @property
     def mission_target(self) -> MissionTarget:
         """Returns the mission target of the package."""
@@ -178,6 +183,8 @@ class PackageModel(QAbstractListModel):
 class AtoModel(QAbstractListModel):
     """The model for an AirTaskingOrder."""
 
+    PackageRole = Qt.UserRole
+
     def __init__(self, game: Optional[Game], ato: AirTaskingOrder) -> None:
         super().__init__()
         self.game = game
@@ -190,9 +197,11 @@ class AtoModel(QAbstractListModel):
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():
             return None
+        package = self.ato.packages[index.row()]
         if role == Qt.DisplayRole:
-            package = self.ato.packages[index.row()]
             return f"{package.package_description} {package.target.name}"
+        elif role == AtoModel.PackageRole:
+            return package
         return None
 
     def add_package(self, package: Package) -> None:

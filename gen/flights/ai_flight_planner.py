@@ -12,7 +12,7 @@ from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
 from game.utils import nm_to_meter
-from gen import Conflict
+from gen import Conflict, PackageWaypointTiming
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
     CAP_CAPABLE,
@@ -497,10 +497,17 @@ class CoalitionMissionPlanner:
             latest=90,
             margin=5
         )
-        for package in non_dca_packages:
-            package.delay = next(start_time)
-            for flight in package.flights:
-                flight.scheduled_in = package.delay
+        for package in self.ato.packages:
+            if package.primary_task in dca_types:
+                # All CAP missions should be on station in 15-25 minutes.
+                package.time_over_target = (20 + random.randint(-5, 5)) * 60
+            else:
+                # But other packages should be spread out a bit.
+                package.delay = next(start_time)
+                # TODO: Compute TOT based on package.
+                package.time_over_target = (package.delay + 40) * 60
+                for flight in package.flights:
+                    flight.scheduled_in = package.delay
 
     def message(self, title, text) -> None:
         """Emits a planning message to the player.

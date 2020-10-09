@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import random
 from dataclasses import dataclass
@@ -28,7 +30,7 @@ from dcs.planes import (
     SpitfireLFMkIXCW,
     Su_33,
 )
-from dcs.point import PointAction
+from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AntishipStrike,
     AttackGroup,
@@ -40,8 +42,6 @@ from dcs.task import (
     EngageTargets,
     Escort,
     GroundAttack,
-    MainTask,
-    NoTask,
     OptROE,
     OptRTBOnBingoFuel,
     OptRTBOnOutOfAmmo,
@@ -64,10 +64,10 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
-from game.utils import nm_to_meter
+from game.utils import meter_to_nm, nm_to_meter
 from gen.airfields import RunwayData
 from gen.airsupportgen import AirSupport
-from gen.ato import AirTaskingOrder
+from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
     Flight,
@@ -76,9 +76,10 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
+from theater import MissionTarget, TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
-from .naming import namegen
 from .conflictgen import Conflict
+from .naming import namegen
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
@@ -536,6 +537,148 @@ AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
 AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
+@dataclass(frozen=True)
+class PackageWaypointTiming:
+    #: The package being scheduled.
+    package: Package
+
+    #: The package join time.
+    join: int
+
+    #: The ingress waypoint TOT.
+    ingress: int
+
+    #: The egress waypoint TOT.
+    egress: int
+
+    #: The package split time.
+    split: int
+
+    @property
+    def target(self) -> int:
+        """The package time over target."""
+        assert self.package.time_over_target is not None
+        return self.package.time_over_target
+
+    @property
+    def race_track_start(self) -> Optional[int]:
+        cap_types = (FlightType.BARCAP, FlightType.CAP)
+        if self.package.primary_task in cap_types:
+            # CAP flights don't have hold points, and we don't calculate takeoff
+            # times yet or adjust the TOT based on when the flight can arrive,
+            # so if we set a TOT that gives the flight a lot of extra time it
+            # will just fly to the start point slowly, possibly slowly enough to
+            # stall and crash. Just don't set a TOT for these points and let the
+            # CAP get on station ASAP.
+            return None
+        else:
+            return self.ingress
+
+    @property
+    def race_track_end(self) -> int:
+        cap_types = (FlightType.BARCAP, FlightType.CAP)
+        if self.package.primary_task in cap_types:
+            return self.target + CAP_DURATION * 60
+        else:
+            return self.egress
+
+    def push_time(self, flight: Flight, hold_point: Point) -> int:
+        assert self.package.waypoints is not None
+        return self.join - self.travel_time(
+            hold_point,
+            self.package.waypoints.join,
+            self.flight_ground_speed(flight)
+        )
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[int]:
+        target_types = (
+            FlightWaypointType.TARGET_GROUP_LOC,
+            FlightWaypointType.TARGET_POINT,
+            FlightWaypointType.TARGET_SHIP,
+        )
+
+        ingress_types = (
+            FlightWaypointType.INGRESS_CAS,
+            FlightWaypointType.INGRESS_SEAD,
+            FlightWaypointType.INGRESS_STRIKE,
+        )
+
+        if waypoint.waypoint_type == FlightWaypointType.JOIN:
+            return self.join
+        elif waypoint.waypoint_type in ingress_types:
+            return self.ingress
+        elif waypoint.waypoint_type in target_types:
+            return self.target
+        elif waypoint.waypoint_type == FlightWaypointType.EGRESS:
+            return self.egress
+        elif waypoint.waypoint_type == FlightWaypointType.SPLIT:
+            return self.split
+        elif waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK:
+            return self.race_track_start
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint,
+                                 flight: Flight) -> Optional[int]:
+        if waypoint.waypoint_type == FlightWaypointType.LOITER:
+            return self.push_time(flight, Point(waypoint.x, waypoint.y))
+        elif waypoint.waypoint_type == FlightWaypointType.PATROL:
+            return self.race_track_end
+        return None
+
+    @classmethod
+    def for_package(cls, package: Package) -> PackageWaypointTiming:
+        assert package.time_over_target is not None
+        assert package.waypoints is not None
+
+        group_ground_speed = cls.package_ground_speed(package)
+
+        ingress = package.time_over_target - cls.travel_time(
+            package.waypoints.ingress,
+            package.target.position,
+            group_ground_speed
+        )
+
+        join = ingress - cls.travel_time(
+            package.waypoints.join,
+            package.waypoints.ingress,
+            group_ground_speed
+        )
+
+        egress = package.time_over_target + cls.travel_time(
+            package.target.position,
+            package.waypoints.egress,
+            group_ground_speed
+        )
+
+        split = egress + cls.travel_time(
+            package.waypoints.egress,
+            package.waypoints.split,
+            group_ground_speed
+        )
+
+        return cls(package, join, ingress, egress, split)
+
+    @classmethod
+    def package_ground_speed(cls, package: Package) -> int:
+        speeds = []
+        for flight in package.flights:
+            speeds.append(cls.flight_ground_speed(flight))
+        return min(speeds)  # knots
+
+    @staticmethod
+    def flight_ground_speed(_flight: Flight) -> int:
+        # TODO: Gather data so this is useful.
+        return 400  # knots
+
+    @staticmethod
+    def travel_time(a: Point, b: Point, speed: float) -> int:
+        error_factor = 1.1
+        distance = meter_to_nm(a.distance_to_point(b))
+        hours = distance / speed
+        seconds = hours * 3600
+        return int(seconds * error_factor)
+
+
 class AircraftConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
                  game, radio_registry: RadioRegistry):
@@ -638,8 +781,9 @@ class AircraftConflictGenerator:
             arrival=departure_runway,
             # TODO: Support for divert airfields.
             divert=None,
-            waypoints=[first_point] + flight.points,
-            intra_flight_channel=channel,
+            # Waypoints are added later, after they've had their TOTs set.
+            waypoints=[],
+            intra_flight_channel=channel
             targetPoint=flight.targetPoint,
         ))
 
@@ -822,6 +966,7 @@ class AircraftConflictGenerator:
         self.clear_parking_slots()
 
         for package in ato.packages:
+            timing = PackageWaypointTiming.for_package(package)
             for flight in package.flights:
                 culled = self.game.position_culled(flight.from_cp.position)
                 if flight.client_count == 0 and culled:
@@ -830,8 +975,7 @@ class AircraftConflictGenerator:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
-                self.setup_flight_group(group, flight, flight.flight_type,
-                                        dynamic_runways)
+                self.setup_flight_group(group, flight, timing, dynamic_runways)
                 self.setup_group_activation_trigger(flight, group)
 
     def setup_group_activation_trigger(self, flight, group):
@@ -941,134 +1085,334 @@ class AircraftConflictGenerator:
         flight.group = group
         return group
 
-
-    def setup_flight_group(self, group, flight, flight_type,
-                           dynamic_runways: Dict[str, RunwayData]):
-
-        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP, FlightType.INTERCEPTION]:
-            group.task = CAP.name
-            self._setup_group(group, CAP, flight, dynamic_runways)
-            # group.points[0].tasks.clear()
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50), targets=[Targets.All.Air]))
-            # group.tasks.append(EngageTargets(max_distance=nm_to_meter(120), targets=[Targets.All.Air]))
-            if flight.unit_type not in GUNFIGHTERS:
-                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.AAM))
-            else:
-                group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Cannon))
-
-        elif flight_type in [FlightType.CAS, FlightType.BAI]:
-            group.task = CAS.name
-            self._setup_group(group, CAS, flight, dynamic_runways)
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(10), targets=[Targets.All.GroundUnits.GroundVehicles]))
-            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFireWeaponFree))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.Unguided))
-            group.points[0].tasks.append(OptRestrictJettison(True))
-        elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
-            group.task = SEAD.name
-            self._setup_group(group, SEAD, flight, dynamic_runways)
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(NoTask())
-            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
-            group.points[0].tasks.append(OptRestrictJettison(True))
-            group.points[0].tasks.append(OptRTBOnOutOfAmmo(OptRTBOnOutOfAmmo.Values.ASM))
-        elif flight_type in [FlightType.STRIKE]:
-            group.task = PinpointStrike.name
-            self._setup_group(group, GroundAttack, flight, dynamic_runways)
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
-            group.points[0].tasks.append(OptRestrictJettison(True))
-        elif flight_type in [FlightType.ANTISHIP]:
-            group.task = AntishipStrike.name
-            self._setup_group(group, AntishipStrike, flight, dynamic_runways)
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
-            group.points[0].tasks.append(OptRestrictJettison(True))
-        elif flight_type == FlightType.ESCORT:
-            group.task = Escort.name
-            self._setup_group(group, Escort, flight, dynamic_runways)
-            # TODO: Cleanup duplication...
-            group.points[0].tasks.clear()
-            group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
-            group.points[0].tasks.append(OptROE(OptROE.Values.OpenFire))
-            group.points[0].tasks.append(OptRestrictJettison(True))
+    @staticmethod
+    def configure_behavior(
+            group: FlyingGroup,
+            react_on_threat: Optional[OptReactOnThreat.Values] = None,
+            roe: Optional[OptROE.Values] = None,
+            rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
+            restrict_jettison: Optional[bool] = None) -> None:
+        group.points[0].tasks.clear()
+        if react_on_threat is not None:
+            group.points[0].tasks.append(OptReactOnThreat(react_on_threat))
+        if roe is not None:
+            group.points[0].tasks.append(OptROE(roe))
+        if restrict_jettison is not None:
+            group.points[0].tasks.append(OptRestrictJettison(restrict_jettison))
+        if rtb_winchester is not None:
+            group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         group.points[0].tasks.append(OptRestrictAfterburner(True))
 
+    @staticmethod
+    def configure_eplrs(group: FlyingGroup, flight: Flight) -> None:
         if hasattr(flight.unit_type, 'eplrs'):
             if flight.unit_type.eplrs:
                 group.points[0].tasks.append(EPLRS(group.id))
 
-        for i, point in enumerate(flight.points):
-            if not point.only_for_player or (point.only_for_player and flight.client_count > 0):
-                pt = group.add_waypoint(Point(point.x, point.y), point.alt)
-                if point.waypoint_type == FlightWaypointType.PATROL_TRACK:
-                    action = ControlledTask(OrbitAction(altitude=pt.alt, pattern=OrbitAction.OrbitPattern.RaceTrack))
-                    action.stop_after_duration(CAP_DURATION * 60)
-                    #for tgt in point.targets:
-                    #    if hasattr(tgt, "position"):
-                    #        engagetgt = EngageTargetsInZone(tgt.position, radius=CAP_DEFAULT_ENGAGE_DISTANCE, targets=[Targets.All.Air])
-                    #        pt.tasks.append(engagetgt)
-                elif point.waypoint_type == FlightWaypointType.LANDING_POINT:
-                    pt.type = "Land"
-                    pt.action = PointAction.Landing
-                elif point.waypoint_type == FlightWaypointType.INGRESS_STRIKE:
+    def configure_cap(self, group: FlyingGroup, flight: Flight,
+                      dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = CAP.name
+        self._setup_group(group, CAP, flight, dynamic_runways)
 
-                    if group.units[0].unit_type == B_17G:
-                        if len(point.targets) > 0:
-                            bcenter = Point(0,0)
-                            for j, t in enumerate(point.targets):
-                                bcenter.x += t.position.x
-                                bcenter.y += t.position.y
-                            bcenter.x = bcenter.x / len(point.targets)
-                            bcenter.y = bcenter.y / len(point.targets)
-                            bombing = Bombing(bcenter)
-                            bombing.params["expend"] = "All"
-                            bombing.params["attackQtyLimit"] = False
-                            bombing.params["directionEnabled"] = False
-                            bombing.params["altitudeEnabled"] = False
-                            bombing.params["weaponType"] = 2032
-                            bombing.params["groupAttack"] = True
-                            pt.tasks.append(bombing)
-                    else:
-                        for j, t in enumerate(point.targets):
-                            print(t.position)
-                            pt.tasks.append(Bombing(t.position))
-                            if group.units[0].unit_type == JF_17 and j < 4:
-                                group.add_nav_target_point(t.position, "PP" + str(j + 1))
-                            if group.units[0].unit_type == F_14B and j == 0:
-                                group.add_nav_target_point(t.position, "ST")
-                            if group.units[0].unit_type == AJS37 and j < 9:
-                                group.add_nav_target_point(t.position, "M" + str(j + 1))
-                elif point.waypoint_type == FlightWaypointType.INGRESS_SEAD:
+        if flight.unit_type not in GUNFIGHTERS:
+            ammo_type = OptRTBOnOutOfAmmo.Values.AAM
+        else:
+            ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
 
-                    tgroup = self.m.find_group(point.targetGroup.group_identifier)
-                    if tgroup is not None:
-                        task = AttackGroup(tgroup.id)
-                        task.params["expend"] = "All"
-                        task.params["attackQtyLimit"] = False
-                        task.params["directionEnabled"] = False
-                        task.params["altitudeEnabled"] = False
-                        task.params["weaponType"] = 268402702 # Guided Weapons
-                        task.params["groupAttack"] = True
-                        pt.tasks.append(task)
+        self.configure_behavior(group, rtb_winchester=ammo_type)
 
-                    for j, t in enumerate(point.targets):
-                        if group.units[0].unit_type == JF_17 and j < 4:
-                            group.add_nav_target_point(t.position, "PP" + str(j + 1))
-                        if group.units[0].unit_type == F_14B and j == 0:
-                            group.add_nav_target_point(t.position, "ST")
-                        if group.units[0].unit_type == AJS37 and j < 9:
-                            group.add_nav_target_point(t.position, "M" + str(j + 1))
+        group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50),
+                                                   targets=[Targets.All.Air]))
 
-                if pt is not None:
-                    pt.alt_type = point.alt_type
-                    pt.name = String(point.name)
+    def configure_cas(self, group: FlyingGroup, flight: Flight,
+                      dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = CAS.name
+        self._setup_group(group, CAS, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFireWeaponFree,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.Unguided,
+            restrict_jettison=True)
+        group.points[0].tasks.append(
+            EngageTargets(max_distance=nm_to_meter(10),
+                          targets=[Targets.All.GroundUnits.GroundVehicles])
+        )
 
+    def configure_sead(self, group: FlyingGroup, flight: Flight,
+                       dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = SEAD.name
+        self._setup_group(group, SEAD, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
+            restrict_jettison=True)
+
+    def configure_strike(self, group: FlyingGroup, flight: Flight,
+                         dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = PinpointStrike.name
+        self._setup_group(group, GroundAttack, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            restrict_jettison=True)
+
+    def configure_anti_ship(self, group: FlyingGroup, flight: Flight,
+                            dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = AntishipStrike.name
+        self._setup_group(group, AntishipStrike, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            restrict_jettison=True)
+
+    def configure_escort(self, group: FlyingGroup, flight: Flight,
+                         dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = Escort.name
+        self._setup_group(group, Escort, flight, dynamic_runways)
+        self.configure_behavior(group, roe=OptROE.Values.OpenFire,
+                                restrict_jettison=True)
+
+    def configure_unknown_task(self, group: FlyingGroup,
+                               flight: Flight) -> None:
+        logging.error(f"Unhandled flight type: {flight.flight_type.name}")
+        self.configure_behavior(group)
+
+    def setup_flight_group(self, group: FlyingGroup, flight: Flight,
+                           timing: PackageWaypointTiming,
+                           dynamic_runways: Dict[str, RunwayData]) -> None:
+        flight_type = flight.flight_type
+        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP,
+                           FlightType.INTERCEPTION]:
+            self.configure_cap(group, flight, dynamic_runways)
+        elif flight_type in [FlightType.CAS, FlightType.BAI]:
+            self.configure_cas(group, flight, dynamic_runways)
+        elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
+            self.configure_sead(group, flight, dynamic_runways)
+        elif flight_type in [FlightType.STRIKE]:
+            self.configure_strike(group, flight, dynamic_runways)
+        elif flight_type in [FlightType.ANTISHIP]:
+            self.configure_anti_ship(group, flight, dynamic_runways)
+        elif flight_type == FlightType.ESCORT:
+            self.configure_escort(group, flight, dynamic_runways)
+        else:
+            self.configure_unknown_task(group, flight)
+
+        self.configure_eplrs(group, flight)
+
+        for waypoint in flight.points:
+            waypoint.tot = None
+
+        for point in flight.points:
+            if point.only_for_player and not flight.client_count:
+                continue
+
+            PydcsWaypointBuilder.for_waypoint(
+                point, group, flight, timing, self.m
+            ).build()
+
+        # Set here rather than when the FlightData is created so they waypoints
+        # have their TOTs set.
+        self.flights[-1].waypoints = flight.points
         self._setup_custom_payload(flight, group)
+
+
+class PydcsWaypointBuilder:
+    def __init__(self, waypoint: FlightWaypoint, group: FlyingGroup,
+                 flight: Flight, timing: PackageWaypointTiming,
+                 mission: Mission) -> None:
+        self.waypoint = waypoint
+        self.group = group
+        self.flight = flight
+        self.timing = timing
+        self.mission = mission
+
+    def build(self) -> MovingPoint:
+        waypoint = self.group.add_waypoint(
+            Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt)
+
+        waypoint.alt_type = self.waypoint.alt_type
+        waypoint.name = String(self.waypoint.name)
+        return waypoint
+
+    def set_waypoint_tot(self, waypoint: MovingPoint, tot: int) -> None:
+        self.waypoint.tot = tot
+        waypoint.ETA = tot
+        waypoint.ETA_locked = True
+        waypoint.speed_locked = False
+
+    @classmethod
+    def for_waypoint(cls, waypoint: FlightWaypoint,
+                     group: FlyingGroup,
+                     flight: Flight,
+                     timing: PackageWaypointTiming,
+                     mission: Mission) -> PydcsWaypointBuilder:
+        builders = {
+            FlightWaypointType.EGRESS: EgressPointBuilder,
+            FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
+            FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
+            FlightWaypointType.JOIN: JoinPointBuilder,
+            FlightWaypointType.LANDING_POINT: LandingPointBuilder,
+            FlightWaypointType.LOITER: HoldPointBuilder,
+            FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
+            FlightWaypointType.SPLIT: SplitPointBuilder,
+            FlightWaypointType.TARGET_GROUP_LOC: TargetPointBuilder,
+            FlightWaypointType.TARGET_POINT: TargetPointBuilder,
+            FlightWaypointType.TARGET_SHIP: TargetPointBuilder,
+        }
+        builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
+        return builder(waypoint, group, flight, timing, mission)
+
+
+class DefaultWaypointBuilder(PydcsWaypointBuilder):
+    pass
+
+
+class HoldPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        loiter = ControlledTask(OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.Circle
+        ))
+        loiter.stop_after_time(
+            self.timing.push_time(self.flight, waypoint.position))
+        waypoint.add_task(loiter)
+        return waypoint
+
+
+class EgressPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.egress)
+        return waypoint
+
+
+class IngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.ingress)
+        return waypoint
+
+
+class SeadIngressBuilder(IngressBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        target_group = self.waypoint.targetGroup
+        if isinstance(target_group, TheaterGroundObject):
+            tgroup = self.mission.find_group(target_group.group_identifier)
+            if tgroup is not None:
+                task = AttackGroup(tgroup.id)
+                task.params["expend"] = "All"
+                task.params["attackQtyLimit"] = False
+                task.params["directionEnabled"] = False
+                task.params["altitudeEnabled"] = False
+                task.params["weaponType"] = 268402702  # Guided Weapons
+                task.params["groupAttack"] = True
+                waypoint.tasks.append(task)
+
+        for i, t in enumerate(self.waypoint.targets):
+            if self.group.units[0].unit_type == JF_17 and i < 4:
+                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
+            if self.group.units[0].unit_type == F_14B and i == 0:
+                self.group.add_nav_target_point(t.position, "ST")
+            if self.group.units[0].unit_type == AJS37 and i < 9:
+                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        return waypoint
+
+
+class StrikeIngressBuilder(IngressBuilder):
+    def build(self) -> MovingPoint:
+        if self.group.units[0].unit_type == B_17G:
+            return self.build_bombing()
+        else:
+            return self.build_strike()
+
+    def build_bombing(self) -> MovingPoint:
+        waypoint = super().build()
+
+        targets = self.waypoint.targets
+        if not targets:
+            return waypoint
+
+        center = Point(0, 0)
+        for target in targets:
+            center.x += target.position.x
+            center.y += target.position.y
+        center.x /= len(targets)
+        center.y /= len(targets)
+        bombing = Bombing(center)
+        bombing.params["expend"] = "All"
+        bombing.params["attackQtyLimit"] = False
+        bombing.params["directionEnabled"] = False
+        bombing.params["altitudeEnabled"] = False
+        bombing.params["weaponType"] = 2032
+        bombing.params["groupAttack"] = True
+        waypoint.tasks.append(bombing)
+        return waypoint
+
+    def build_strike(self) -> MovingPoint:
+        waypoint = super().build()
+
+        for i, t in enumerate(self.waypoint.targets):
+            waypoint.tasks.append(Bombing(t.position))
+            if self.group.units[0].unit_type == JF_17 and i < 4:
+                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
+            if self.group.units[0].unit_type == F_14B and i == 0:
+                self.group.add_nav_target_point(t.position, "ST")
+            if self.group.units[0].unit_type == AJS37 and i < 9:
+                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        return waypoint
+
+
+class JoinPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.join)
+        return waypoint
+
+
+class LandingPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        waypoint.type = "Land"
+        waypoint.action = PointAction.Landing
+        return waypoint
+
+
+class RaceTrackBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        racetrack = ControlledTask(OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.RaceTrack
+        ))
+
+        start = self.timing.race_track_start
+        if start is not None:
+            self.set_waypoint_tot(waypoint, start)
+        racetrack.stop_after_time(self.timing.race_track_end)
+        waypoint.add_task(racetrack)
+        return waypoint
+
+
+class SplitPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.split)
+        return waypoint
+
+
+class TargetPointBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.target)
+        return waypoint
