@@ -44,7 +44,8 @@ class QFlightWaypointTab(QFrame):
     def init_ui(self):
         layout = QGridLayout()
 
-        self.flight_waypoint_list = QFlightWaypointList(self.flight)
+        self.flight_waypoint_list = QFlightWaypointList(self.package,
+                                                        self.flight)
         layout.addWidget(self.flight_waypoint_list, 0, 0)
 
         rlayout = QVBoxLayout()
