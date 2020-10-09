@@ -54,6 +54,7 @@ RANDOM_OFFSET_ATTACK = 250
 @dataclass(frozen=True)
 class JtacInfo:
     """JTAC information."""
+    dcsGroupName: str
     unit_name: str
     callsign: str
     region: str
@@ -158,7 +159,7 @@ class GroundConflictGenerator:
             frontline = f"Frontline {self.conflict.from_cp.name}/{self.conflict.to_cp.name}"
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
-            self.jtacs.append(JtacInfo(n, callsign, frontline, str(code)))
+            self.jtacs.append(JtacInfo(str(jtac.name), n, callsign, frontline, str(code)))
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
 
