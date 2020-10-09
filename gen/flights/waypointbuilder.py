@@ -64,7 +64,7 @@ class WaypointBuilder:
         waypoint.name = "DESCEND"
         waypoint.alt_type = "RADIO"
         waypoint.description = "Descend to pattern altitude"
-        waypoint.pretty_name = "Ascend"
+        waypoint.pretty_name = "Descend"
         self.waypoints.append(waypoint)
 
     def land(self, arrival: ControlPoint) -> None:
