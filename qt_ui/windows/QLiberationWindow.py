@@ -19,6 +19,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, persistency
 from qt_ui.dialogs import Dialog
+from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
@@ -134,48 +135,21 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
-        #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
         file_menu.addAction("E&xit" , lambda: self.exit())
 
         displayMenu = self.menu.addMenu("&Display")
 
-        tg_cp_visibility = QAction('&Control Point', displayMenu)
-        tg_cp_visibility.setCheckable(True)
-        tg_cp_visibility.setChecked(True)
-        tg_cp_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("cp", tg_cp_visibility.isChecked()))
+        for display_rule in DisplayOptions.menu_items():
+            def make_check_closure():
+                def closure():
+                    display_rule.value = action.isChecked()
+                return closure
 
-        tg_go_visibility = QAction('&Ground Objects', displayMenu)
-        tg_go_visibility.setCheckable(True)
-        tg_go_visibility.setChecked(True)
-        tg_go_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("go", tg_go_visibility.isChecked()))
-
-        tg_line_visibility = QAction('&Lines', displayMenu)
-        tg_line_visibility.setCheckable(True)
-        tg_line_visibility.setChecked(True)
-        tg_line_visibility.toggled.connect(
-            lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
-
-        tg_event_visibility = QAction('&Events', displayMenu)
-        tg_event_visibility.setCheckable(True)
-        tg_event_visibility.setChecked(True)
-        tg_event_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
-
-        tg_sam_visibility = QAction('&SAM Range', displayMenu)
-        tg_sam_visibility.setCheckable(True)
-        tg_sam_visibility.setChecked(True)
-        tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
-
-        tg_flight_path_visibility = QAction('&Flight Paths', displayMenu)
-        tg_flight_path_visibility.setCheckable(True)
-        tg_flight_path_visibility.setChecked(False)
-        tg_flight_path_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("flight_paths", tg_flight_path_visibility.isChecked()))
-
-        displayMenu.addAction(tg_go_visibility)
-        displayMenu.addAction(tg_cp_visibility)
-        displayMenu.addAction(tg_line_visibility)
-        displayMenu.addAction(tg_event_visibility)
-        displayMenu.addAction(tg_sam_visibility)
-        displayMenu.addAction(tg_flight_path_visibility)
+            action = QAction(f"&{display_rule.menu_text}", displayMenu)
+            action.setCheckable(True)
+            action.setChecked(display_rule.value)
+            action.toggled.connect(make_check_closure())
+            displayMenu.addAction(action)
 
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction("&Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
@@ -18,11 +20,12 @@ from game import Game, db
 from game.data.radar_db import UNITS_WITH_RADAR
 from gen import Conflict
 from gen.flights.flight import Flight
+from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel
+from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
-from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, FrontLine
 
@@ -30,15 +33,7 @@ from theater import ControlPoint, FrontLine
 class QLiberationMap(QGraphicsView):
     WAYPOINT_SIZE = 4
 
-    instance = None
-    display_rules: Dict[str, bool] = {
-        "cp": True,
-        "go": True,
-        "lines": True,
-        "events": True,
-        "sam": True,
-        "flight_paths": False
-    }
+    instance: Optional[QLiberationMap] = None
 
     def __init__(self, game_model: GameModel):
         super(QLiberationMap, self).__init__()
@@ -161,7 +156,8 @@ class QLiberationMap(QGraphicsView):
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
-                if ground_object.category == "aa" and self.get_display_rule("sam"):
+                is_aa = ground_object.category == "aa"
+                if is_aa and DisplayOptions.sam_ranges:
                     max_range = 0
                     has_radar = False
                     if ground_object.groups:
@@ -177,11 +173,11 @@ class QLiberationMap(QGraphicsView):
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
-            if self.get_display_rule("lines"):
+            if DisplayOptions.lines:
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         for cp in self.game.theater.player_points():
-            if self.get_display_rule("lines"):
+            if DisplayOptions.lines:
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         self.draw_flight_plans(scene)
@@ -202,7 +198,7 @@ class QLiberationMap(QGraphicsView):
                 # Something may have caused those items to already be removed.
                 pass
         self.flight_path_items.clear()
-        if not self.get_display_rule("flight_paths"):
+        if not DisplayOptions.flight_paths:
             return
         for package in self.game_model.ato_model.packages:
             for flight in package.flights:
@@ -367,18 +363,3 @@ class QLiberationMap(QGraphicsView):
             effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.3)
             overlay.setGraphicsEffect(effect)
-
-
-    @staticmethod
-    def set_display_rule(rule: str, value: bool):
-        QLiberationMap.display_rules[rule] = value
-        QLiberationMap.instance.reload_scene()
-        QLiberationMap.instance.update()
-
-    @staticmethod
-    def get_display_rules() -> Dict[str, bool]:
-        return QLiberationMap.display_rules
-
-    @staticmethod
-    def get_display_rule(rule) -> bool:
-        return QLiberationMap.display_rules[rule]

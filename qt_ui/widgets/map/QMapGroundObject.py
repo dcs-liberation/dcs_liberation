@@ -8,8 +8,9 @@ import qt_ui.uiconstants as const
 from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
-from theater import TheaterGroundObject, ControlPoint
+from theater import ControlPoint, TheaterGroundObject
 from .QMapObject import QMapObject
+from ...displayoptions import DisplayOptions
 
 
 class QMapGroundObject(QMapObject):
@@ -50,7 +51,7 @@ class QMapGroundObject(QMapObject):
         player_icons = "_blue"
         enemy_icons = ""
 
-        if self.parent.get_display_rule("go"):
+        if DisplayOptions.ground_objects:
             painter.save()
 
             cat = self.ground_object.category
