@@ -109,6 +109,7 @@ class QFlightPanel(QGroupBox):
         """Sets the package model to display."""
         self.package_model = model
         self.flight_list.set_package(model)
+        self.selection_changed.connect(self.on_selection_changed)
         self.on_selection_changed()
 
     @property
@@ -122,6 +123,15 @@ class QFlightPanel(QGroupBox):
         enabled = index.isValid()
         self.edit_button.setEnabled(enabled)
         self.delete_button.setEnabled(enabled)
+        self.change_map_flight_selection(index)
+
+    @staticmethod
+    def change_map_flight_selection(index: QModelIndex) -> None:
+        if not index.isValid():
+            GameUpdateSignal.get_instance().select_flight(None)
+            return
+
+        GameUpdateSignal.get_instance().select_flight(index.row())
 
     def on_edit(self) -> None:
         """Opens the flight edit dialog."""
@@ -270,6 +280,18 @@ class QPackagePanel(QGroupBox):
         enabled = index.isValid()
         self.edit_button.setEnabled(enabled)
         self.delete_button.setEnabled(enabled)
+        self.change_map_package_selection(index)
+
+    def change_map_package_selection(self, index: QModelIndex) -> None:
+        if not index.isValid():
+            GameUpdateSignal.get_instance().select_package(None)
+            return
+
+        package = self.ato_model.get_package_model(index)
+        if package.rowCount() == 0:
+            GameUpdateSignal.get_instance().select_package(None)
+        else:
+            GameUpdateSignal.get_instance().select_package(index.row())
 
     def on_edit(self) -> None:
         """Opens the package edit dialog."""

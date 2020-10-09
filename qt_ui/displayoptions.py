@@ -1,6 +1,6 @@
 """Visibility options for the game map."""
 from dataclasses import dataclass
-from typing import Iterator
+from typing import Iterator, Optional, Union
 
 
 @dataclass
@@ -27,17 +27,38 @@ class DisplayRule:
         return self.value
 
 
+class DisplayGroup:
+    def __init__(self, name: Optional[str]) -> None:
+        self.name = name
+
+    def __iter__(self) -> Iterator[DisplayRule]:
+        # Python 3.6 enforces that __dict__ is order preserving by default.
+        for value in self.__dict__.values():
+            if isinstance(value, DisplayRule):
+                yield value
+
+
+class FlightPathOptions(DisplayGroup):
+    def __init__(self) -> None:
+        super().__init__("Flight Paths")
+        self.hide = DisplayRule("Hide Flight Paths", True)
+        self.only_selected = DisplayRule("Show Selected Flight Path", False)
+        self.all = DisplayRule("Show All Flight Paths", False)
+
+
 class DisplayOptions:
     ground_objects = DisplayRule("Ground Objects", True)
     control_points = DisplayRule("Control Points", True)
     lines = DisplayRule("Lines", True)
     events = DisplayRule("Events", True)
     sam_ranges = DisplayRule("SAM Ranges", True)
-    flight_paths = DisplayRule("Flight Paths", False)
+    flight_paths = FlightPathOptions()
 
     @classmethod
-    def menu_items(cls) -> Iterator[DisplayRule]:
+    def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:
         # Python 3.6 enforces that __dict__ is order preserving by default.
         for value in cls.__dict__.values():
             if isinstance(value, DisplayRule):
+                yield value
+            elif isinstance(value, DisplayGroup):
                 yield value

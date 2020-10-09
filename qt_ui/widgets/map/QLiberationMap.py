@@ -42,6 +42,8 @@ class QLiberationMap(QGraphicsView):
         self.game: Optional[Game] = game_model.game
 
         self.flight_path_items: List[QGraphicsItem] = []
+        # A tuple of (package index, flight index), or none.
+        self.selected_flight: Optional[Tuple[int, int]] = None
 
         self.setMinimumSize(800,600)
         self.setMaximumHeight(2160)
@@ -54,6 +56,25 @@ class QLiberationMap(QGraphicsView):
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
             lambda: self.draw_flight_plans(self.scene())
+        )
+
+        def update_package_selection(index: Optional[int]) -> None:
+            self.selected_flight = index, 0
+            self.draw_flight_plans(self.scene())
+
+        GameUpdateSignal.get_instance().package_selection_changed.connect(
+            update_package_selection
+        )
+
+        def update_flight_selection(index: Optional[int]) -> None:
+            if self.selected_flight is None:
+                logging.error("Flight was selected with no package selected")
+                return
+            self.selected_flight = self.selected_flight[0], index
+            self.draw_flight_plans(self.scene())
+
+        GameUpdateSignal.get_instance().flight_selection_changed.connect(
+            update_flight_selection
         )
 
     def init_scene(self):
@@ -198,37 +219,44 @@ class QLiberationMap(QGraphicsView):
                 # Something may have caused those items to already be removed.
                 pass
         self.flight_path_items.clear()
-        if not DisplayOptions.flight_paths:
+        if DisplayOptions.flight_paths.hide:
             return
-        for package in self.game_model.ato_model.packages:
-            for flight in package.flights:
-                self.draw_flight_plan(scene, flight)
+        for p_idx, package in enumerate(self.game_model.ato_model.packages):
+            for f_idx, flight in enumerate(package.flights):
+                selected = (p_idx, f_idx) == self.selected_flight
+                if DisplayOptions.flight_paths.only_selected and not selected:
+                    continue
+                highlight = selected and DisplayOptions.flight_paths.all
+                self.draw_flight_plan(scene, flight, highlight)
 
-    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight) -> None:
+    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight,
+                         highlight: bool) -> None:
         is_player = flight.from_cp.captured
         pos = self._transform_point(flight.from_cp.position)
 
-        self.draw_waypoint(scene, pos, is_player)
+        self.draw_waypoint(scene, pos, is_player, highlight)
         prev_pos = tuple(pos)
         for point in flight.points:
             new_pos = self._transform_point(Point(point.x, point.y))
-            self.draw_flight_path(scene, prev_pos, new_pos, is_player)
-            self.draw_waypoint(scene, new_pos, is_player)
+            self.draw_flight_path(scene, prev_pos, new_pos, is_player,
+                                  highlight)
+            self.draw_waypoint(scene, new_pos, is_player, highlight)
             prev_pos = tuple(new_pos)
-        self.draw_flight_path(scene, prev_pos, pos, is_player)
+        self.draw_flight_path(scene, prev_pos, pos, is_player, highlight)
 
     def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
-                      player: bool) -> None:
-        waypoint_pen = self.waypoint_pen(player)
-        waypoint_brush = self.waypoint_brush(player)
+                      player: bool, highlight: bool) -> None:
+        waypoint_pen = self.waypoint_pen(player, highlight)
+        waypoint_brush = self.waypoint_brush(player, highlight)
         self.flight_path_items.append(scene.addEllipse(
             position[0], position[1], self.WAYPOINT_SIZE,
             self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush
         ))
 
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
-                         pos1: Tuple[int, int], player: bool):
-        flight_path_pen = self.flight_path_pen(player)
+                         pos1: Tuple[int, int], player: bool,
+                         highlight: bool) -> None:
+        flight_path_pen = self.flight_path_pen(player, highlight)
         # Draw the line to the *middle* of the waypoint.
         offset = self.WAYPOINT_SIZE // 2
         self.flight_path_items.append(scene.addLine(
@@ -317,21 +345,31 @@ class QLiberationMap(QGraphicsView):
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 
+    def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
+        return QColor(255, 255, 0, 20 if transparent else 255)
+
     def base_faction_color_name(self, player: bool) -> str:
         if player:
             return self.game.get_player_color()
         else:
             return self.game.get_enemy_color()
 
-    def waypoint_pen(self, player: bool) -> QPen:
+    def waypoint_pen(self, player: bool, highlight: bool) -> QColor:
+        if highlight:
+            return self.highlight_color()
         name = self.base_faction_color_name(player)
-        return QPen(brush=CONST.COLORS[name])
+        return CONST.COLORS[name]
 
-    def waypoint_brush(self, player: bool) -> QColor:
+    def waypoint_brush(self, player: bool, highlight: bool) -> QColor:
+        if highlight:
+            return self.highlight_color(transparent=True)
         name = self.base_faction_color_name(player)
         return CONST.COLORS[f"{name}_transparent"]
 
-    def flight_path_pen(self, player: bool) -> QPen:
+    def flight_path_pen(self, player: bool, highlight: bool) -> QPen:
+        if highlight:
+            return self.highlight_color()
+
         name = self.base_faction_color_name(player)
         color = CONST.COLORS[name]
         pen = QPen(brush=color)
