@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import logging
 from typing import List, Optional, Tuple
 
@@ -19,8 +20,9 @@ import qt_ui.uiconstants as CONST
 from game import Game, db
 from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
-from gen import Conflict
-from gen.flights.flight import Flight
+from game.utils import meter_to_feet
+from gen import Conflict, Package, PackageWaypointTiming
+from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
@@ -238,42 +240,90 @@ class QLiberationMap(QGraphicsView):
         self.flight_path_items.clear()
         if DisplayOptions.flight_paths.hide:
             return
-        for p_idx, package in enumerate(self.game_model.ato_model.packages):
-            for f_idx, flight in enumerate(package.flights):
+        packages = list(self.game_model.ato_model.packages)
+        for p_idx, package_model in enumerate(packages):
+            for f_idx, flight in enumerate(package_model.flights):
                 selected = (p_idx, f_idx) == self.selected_flight
                 if DisplayOptions.flight_paths.only_selected and not selected:
                     continue
-                highlight = selected and DisplayOptions.flight_paths.all
-                self.draw_flight_plan(scene, flight, highlight)
+                self.draw_flight_plan(scene, package_model.package, flight,
+                                      selected)
 
-    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight,
-                         highlight: bool) -> None:
+    def draw_flight_plan(self, scene: QGraphicsScene, package: Package,
+                         flight: Flight, selected: bool) -> None:
         is_player = flight.from_cp.captured
         pos = self._transform_point(flight.from_cp.position)
 
-        self.draw_waypoint(scene, pos, is_player, highlight)
+        self.draw_waypoint(scene, pos, is_player, selected)
         prev_pos = tuple(pos)
-        for point in flight.points:
+        drew_target = False
+        target_types = (
+            FlightWaypointType.TARGET_GROUP_LOC,
+            FlightWaypointType.TARGET_POINT,
+            FlightWaypointType.TARGET_SHIP,
+        )
+        for idx, point in enumerate(flight.points):
             new_pos = self._transform_point(Point(point.x, point.y))
             self.draw_flight_path(scene, prev_pos, new_pos, is_player,
-                                  highlight)
-            self.draw_waypoint(scene, new_pos, is_player, highlight)
+                                  selected)
+            self.draw_waypoint(scene, new_pos, is_player, selected)
+            if selected and DisplayOptions.waypoint_info:
+                if point.waypoint_type in target_types:
+                    if drew_target:
+                        # Don't draw dozens of targets over each other.
+                        continue
+                    drew_target = True
+                self.draw_waypoint_info(scene, idx + 1, point, new_pos, package,
+                                        flight)
             prev_pos = tuple(new_pos)
-        self.draw_flight_path(scene, prev_pos, pos, is_player, highlight)
+        self.draw_flight_path(scene, prev_pos, pos, is_player, selected)
 
     def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
-                      player: bool, highlight: bool) -> None:
-        waypoint_pen = self.waypoint_pen(player, highlight)
-        waypoint_brush = self.waypoint_brush(player, highlight)
+                      player: bool, selected: bool) -> None:
+        waypoint_pen = self.waypoint_pen(player, selected)
+        waypoint_brush = self.waypoint_brush(player, selected)
         self.flight_path_items.append(scene.addEllipse(
             position[0], position[1], self.WAYPOINT_SIZE,
             self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush
         ))
 
+    def draw_waypoint_info(self, scene: QGraphicsScene, number: int,
+                           waypoint: FlightWaypoint, position: Tuple[int, int],
+                           package: Package, flight: Flight) -> None:
+        timing = PackageWaypointTiming.for_package(package)
+
+        altitude = meter_to_feet(waypoint.alt)
+        altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
+
+        prefix = "TOT"
+        time = timing.tot_for_waypoint(waypoint)
+        if time is None:
+            prefix = "Depart"
+            time = timing.depart_time_for_waypoint(waypoint, flight)
+        if time is None:
+            tot = ""
+        else:
+            tot = f"{prefix} T+{datetime.timedelta(seconds=time)}"
+
+        line0 = scene.addSimpleText(f"{number} {waypoint.name}")
+        line0.moveBy(position[0] + 8, position[1] - 15)
+        line0.setZValue(2)
+        self.flight_path_items.append(line0)
+
+        line1 = scene.addSimpleText(f"{altitude} ft {altitude_type}")
+        line1.moveBy(position[0] + 8, position[1] - 5)
+        line1.setZValue(2)
+        self.flight_path_items.append(line1)
+
+        line2 = scene.addSimpleText(tot)
+        line2.moveBy(position[0] + 8, position[1] + 5)
+        line2.setZValue(2)
+        self.flight_path_items.append(line2)
+
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
                          pos1: Tuple[int, int], player: bool,
-                         highlight: bool) -> None:
-        flight_path_pen = self.flight_path_pen(player, highlight)
+                         selected: bool) -> None:
+        flight_path_pen = self.flight_path_pen(player, selected)
         # Draw the line to the *middle* of the waypoint.
         offset = self.WAYPOINT_SIZE // 2
         self.flight_path_items.append(scene.addLine(
@@ -371,14 +421,14 @@ class QLiberationMap(QGraphicsView):
         else:
             return self.game.get_enemy_color()
 
-    def waypoint_pen(self, player: bool, highlight: bool) -> QColor:
-        if highlight:
+    def waypoint_pen(self, player: bool, selected: bool) -> QColor:
+        if selected and DisplayOptions.flight_paths.all:
             return self.highlight_color()
         name = self.base_faction_color_name(player)
         return CONST.COLORS[name]
 
-    def waypoint_brush(self, player: bool, highlight: bool) -> QColor:
-        if highlight:
+    def waypoint_brush(self, player: bool, selected: bool) -> QColor:
+        if selected and DisplayOptions.flight_paths.all:
             return self.highlight_color(transparent=True)
         name = self.base_faction_color_name(player)
         return CONST.COLORS[f"{name}_transparent"]
@@ -400,8 +450,8 @@ class QLiberationMap(QGraphicsView):
         qpen.setStyle(Qt.DotLine)
         return qpen
 
-    def flight_path_pen(self, player: bool, highlight: bool) -> QPen:
-        if highlight:
+    def flight_path_pen(self, player: bool, selected: bool) -> QPen:
+        if selected and DisplayOptions.flight_paths.all:
             return self.highlight_color()
 
         name = self.base_faction_color_name(player)

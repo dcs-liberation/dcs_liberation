@@ -52,6 +52,7 @@ class DisplayOptions:
     lines = DisplayRule("Lines", True)
     events = DisplayRule("Events", True)
     sam_ranges = DisplayRule("SAM Ranges", True)
+    waypoint_info = DisplayRule("Waypoint Information", True)
     flight_paths = FlightPathOptions()
 
     @classmethod
