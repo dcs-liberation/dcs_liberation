@@ -41,9 +41,9 @@ class DisplayGroup:
 class FlightPathOptions(DisplayGroup):
     def __init__(self) -> None:
         super().__init__("Flight Paths")
-        self.hide = DisplayRule("Hide Flight Paths", True)
+        self.hide = DisplayRule("Hide Flight Paths", False)
         self.only_selected = DisplayRule("Show Selected Flight Path", False)
-        self.all = DisplayRule("Show All Flight Paths", False)
+        self.all = DisplayRule("Show All Flight Paths", True)
 
 
 class DisplayOptions:
