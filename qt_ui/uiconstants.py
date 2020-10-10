@@ -31,13 +31,19 @@ COLORS: Dict[str, QColor] = {
     "white_transparent": QColor(255, 255, 255, 35),
     "grey_transparent": QColor(150, 150, 150, 30),
 
+    "light_red": QColor(231, 92, 83, 90),
     "red": QColor(200, 80, 80),
     "dark_red": QColor(140, 20, 20),
     "red_transparent": QColor(227, 32, 0, 20),
+    "transparent": QColor(255, 255, 255, 0),
 
+    "light_blue": QColor(105, 182, 240, 90),
     "blue": QColor(0, 132, 255),
     "dark_blue": QColor(45, 62, 80),
     "blue_transparent": QColor(0, 132, 255, 20),
+
+    "purple": QColor(187, 137, 255),
+    "yellow": QColor(238, 225, 123),
 
     "bright_red": QColor(150, 80, 80),
     "super_red": QColor(227, 32, 0),

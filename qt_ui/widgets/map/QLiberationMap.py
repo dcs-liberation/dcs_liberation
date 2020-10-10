@@ -15,6 +15,7 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
 from gen import Conflict
 from gen.flights.flight import Flight
@@ -162,18 +163,34 @@ class QLiberationMap(QGraphicsView):
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
                 if ground_object.category == "aa" and self.get_display_rule("sam"):
-                    max_range = 0
-                    has_radar = False
+                    threat_range = 0
+                    detection_range = 0
+                    can_fire = False
                     if ground_object.groups:
                         for g in ground_object.groups:
                             for u in g.units:
                                 unit = db.unit_type_from_name(u.type)
-                                if unit in UNITS_WITH_RADAR:
-                                    has_radar = True
-                                if unit.threat_range > max_range:
-                                    max_range = unit.threat_range
-                    if has_radar:
-                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, CONST.COLORS["white_transparent"], CONST.COLORS["grey_transparent"])
+                                if unit in UNITS_WITH_RADAR or unit in AAA_UNITS:
+                                    can_fire = True
+                                if unit.detection_range > detection_range:
+                                    detection_range = unit.detection_range
+                                if unit.threat_range > threat_range:
+                                    threat_range = unit.threat_range
+                    if can_fire:
+                        threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
+                                                                 ground_object.position.y+threat_range))
+                        detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
+                                                                    ground_object.position.y+detection_range))
+                        threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
+                        detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
+
+                        # Add detection range circle
+                        scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                         detection_radius, detection_radius, self.detection_pen(cp.captured))
+
+                        # Add threat range circle
+                        scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
+                                         threat_radius, threat_radius, self.threat_pen(cp.captured))
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
@@ -334,6 +351,23 @@ class QLiberationMap(QGraphicsView):
     def waypoint_brush(self, player: bool) -> QColor:
         name = self.base_faction_color_name(player)
         return CONST.COLORS[f"{name}_transparent"]
+
+    def threat_pen(self, player: bool) -> QPen:
+        if player:
+            color = "blue"
+        else:
+            color = "red"
+        qpen = QPen(CONST.COLORS[color])
+        return qpen
+
+    def detection_pen(self, player: bool) -> QPen:
+        if player:
+            color = "purple"
+        else:
+            color = "yellow"
+        qpen = QPen(CONST.COLORS[color])
+        qpen.setStyle(Qt.DotLine)
+        return qpen
 
     def flight_path_pen(self, player: bool) -> QPen:
         name = self.base_faction_color_name(player)
