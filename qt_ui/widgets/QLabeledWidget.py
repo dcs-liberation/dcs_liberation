@@ -13,7 +13,7 @@ class QLabeledWidget(QHBoxLayout):
     """
 
     def __init__(self, text: str, widget: QWidget,
-                 tooltip: Optional[str]) -> None:
+                 tooltip: Optional[str] = None) -> None:
         super().__init__()
         label = QLabel(text)
         self.addWidget(label)
