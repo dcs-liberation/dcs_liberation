@@ -305,20 +305,22 @@ class QLiberationMap(QGraphicsView):
         else:
             tot = f"{prefix} T+{datetime.timedelta(seconds=time)}"
 
-        line0 = scene.addSimpleText(f"{number} {waypoint.name}")
-        line0.moveBy(position[0] + 8, position[1] - 15)
-        line0.setZValue(2)
-        self.flight_path_items.append(line0)
+        pen = QPen(QColor("black"), 0.3)
+        brush = QColor("white")
 
-        line1 = scene.addSimpleText(f"{altitude} ft {altitude_type}")
-        line1.moveBy(position[0] + 8, position[1] - 5)
-        line1.setZValue(2)
-        self.flight_path_items.append(line1)
+        def draw_text(text: str, x: int, y: int) -> None:
+            item = scene.addSimpleText(text)
+            item.setBrush(brush)
+            item.setPen(pen)
+            item.moveBy(x, y)
+            item.setZValue(2)
+            self.flight_path_items.append(item)
 
-        line2 = scene.addSimpleText(tot)
-        line2.moveBy(position[0] + 8, position[1] + 5)
-        line2.setZValue(2)
-        self.flight_path_items.append(line2)
+        draw_text(f"{number} {waypoint.name}", position[0] + 8,
+                  position[1] - 15)
+        draw_text(f"{altitude} ft {altitude_type}", position[0] + 8,
+                  position[1] - 5)
+        draw_text(tot, position[0] + 8, position[1] + 5)
 
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
                          pos1: Tuple[int, int], player: bool,
