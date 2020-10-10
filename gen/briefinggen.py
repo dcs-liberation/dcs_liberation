@@ -1,3 +1,4 @@
+import datetime
 import os
 from collections import defaultdict
 from dataclasses import dataclass
@@ -116,9 +117,10 @@ class BriefingGenerator(MissionInfoGenerator):
         assert not flight.client_units
         aircraft = flight.aircraft_type
         flight_unit_name = db.unit_type_name(aircraft)
+        delay = datetime.timedelta(seconds=flight.departure_delay)
         self.description += (
             f"{flight.flight_type.name} {flight_unit_name} x {flight.size}, "
-            f"departing in {flight.departure_delay} minutes\n"
+            f"departing in {delay}\n"
         )
 
     def generate(self):

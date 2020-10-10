@@ -24,6 +24,7 @@ from PySide2.QtWidgets import (
 from game import db
 from gen.ato import Package
 from gen.flights.flight import Flight
+from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
@@ -32,6 +33,10 @@ class FlightDelegate(QStyledItemDelegate):
     FONT_SIZE = 10
     HMARGIN = 4
     VMARGIN = 4
+
+    def __init__(self, package: Package) -> None:
+        super().__init__()
+        self.package = package
 
     def get_font(self, option: QStyleOptionViewItem) -> QFont:
         font = QFont(option.font)
@@ -47,8 +52,9 @@ class FlightDelegate(QStyledItemDelegate):
         task = flight.flight_type.name
         count = flight.count
         name = db.unit_type_name(flight.unit_type)
-        delay = flight.scheduled_in
-        return f"[{task}] {count} x {name} in {delay} minutes"
+        estimator = TotEstimator(self.package)
+        delay = datetime.timedelta(seconds=estimator.mission_start_time(flight))
+        return f"[{task}] {count} x {name} in {delay}"
 
     def second_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)
@@ -128,7 +134,8 @@ class QFlightList(QListView):
         super().__init__()
         self.package_model = model
         self.set_package(model)
-        self.setItemDelegate(FlightDelegate())
+        if model is not None:
+            self.setItemDelegate(FlightDelegate(model.package))
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
 
@@ -138,6 +145,7 @@ class QFlightList(QListView):
             self.disconnect_model()
         else:
             self.package_model = model
+            self.setItemDelegate(FlightDelegate(model.package))
             self.setModel(model)
             # noinspection PyUnresolvedReferences
             model.deleted.connect(self.disconnect_model)

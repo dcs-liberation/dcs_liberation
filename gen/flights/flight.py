@@ -97,7 +97,6 @@ class FlightWaypoint:
         # flight's offset in the UI.
         self.tot: Optional[int] = None
 
-
     @classmethod
     def from_pydcs(cls, point: MovingPoint,
                    from_cp: ControlPoint) -> "FlightWaypoint":
@@ -130,13 +129,10 @@ class Flight:
     client_count: int = 0
     use_custom_loadout = False
     preset_loadout_name = ""
-    start_type = "Runway"
     group = False # Contains DCS Mission group data after mission has been generated
 
-    # How long before this flight should take off
-    scheduled_in = 0
-
-    def __init__(self, unit_type: UnitType, count: int, from_cp: ControlPoint, flight_type: FlightType):
+    def __init__(self, unit_type: UnitType, count: int, from_cp: ControlPoint,
+                 flight_type: FlightType, start_type: str) -> None:
         self.unit_type = unit_type
         self.count = count
         self.from_cp = from_cp
@@ -144,11 +140,16 @@ class Flight:
         self.points: List[FlightWaypoint] = []
         self.targets: List[MissionTarget] = []
         self.loadout: Dict[str, str] = {}
-        self.start_type = "Runway"
+        self.start_type = start_type
+        # Late activation delay in seconds from mission start. This is not
+        # the same as the flight's takeoff time. Takeoff time depends on the
+        # mission's TOT and the other flights in the package. Takeoff time is
+        # determined by AirConflictGenerator.
+        self.scheduled_in = 0
 
     def __repr__(self):
         return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
-               + " in " + str(self.scheduled_in) + " minutes (" + str(len(self.points)) + " wpt)"
+               + " (" + str(len(self.points)) + " wpt)"
 
 
 # Test
@@ -157,6 +158,6 @@ if __name__ == '__main__':
     from theater import ControlPoint, Point, List
 
     from_cp = ControlPoint(0, "AA", Point(0, 0), Point(0, 0), [], 0, 0)
-    f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
+    f = Flight(A_10C(), 4, from_cp, FlightType.CAS, "Cold")
     f.scheduled_in = 50
     print(f)

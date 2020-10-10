@@ -116,11 +116,14 @@ class QPackageDialog(QDialog):
 
         self.finished.connect(self.on_close)
 
-    def on_close(self, _result) -> None:
+    @staticmethod
+    def on_close(_result) -> None:
+        GameUpdateSignal.get_instance().redraw_flight_paths()
+
+    def save_tot(self) -> None:
         time = self.tot_spinner.time()
         seconds = time.hour() * 3600 + time.minute() * 60 + time.second()
         self.package_model.update_tot(seconds)
-        GameUpdateSignal.get_instance().redraw_flight_paths()
 
     def on_selection_changed(self, selected: QItemSelection,
                              _deselected: QItemSelection) -> None:
@@ -182,6 +185,7 @@ class QNewPackageDialog(QPackageDialog):
         Empty packages may be created. They can be modified later, and will have
         no effect if empty when the mission is generated.
         """
+        self.save_tot()
         self.ato_model.add_package(self.package_model.package)
         for flight in self.package_model.package.flights:
             self.game.aircraft_inventory.claim_for_flight(flight)
@@ -227,6 +231,7 @@ class QEditPackageDialog(QPackageDialog):
 
     def on_done(self) -> None:
         """Closes the window."""
+        self.save_tot()
         self.close()
 
     def on_delete(self) -> None:

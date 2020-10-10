@@ -147,6 +147,8 @@ class QTopPanel(QFrame):
         if not self.ato_has_clients() and not self.confirm_no_client_launch():
             return
 
+        # TODO: Verify no negative start times.
+
         # TODO: Refactor this nonsense.
         game_event = None
         for event in self.game.events:

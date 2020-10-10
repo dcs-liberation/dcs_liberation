@@ -21,7 +21,8 @@ from game import Game, db
 from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet
-from gen import Conflict, Package, PackageWaypointTiming
+from gen import Conflict, PackageWaypointTiming
+from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel

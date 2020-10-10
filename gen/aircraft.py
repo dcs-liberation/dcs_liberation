@@ -57,14 +57,14 @@ from dcs.task import (
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.translation import String
-from dcs.triggers import Event, TriggerOnce
+from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unitgroup import FlyingGroup, Group, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
-from game.utils import meter_to_nm, nm_to_meter
+from game.utils import nm_to_meter
 from gen.airfields import RunwayData
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
@@ -76,17 +76,16 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
-from theater import MissionTarget, TheaterGroundObject
+from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
+from .flights.traveltime import PackageWaypointTiming, TotEstimator
 from .naming import namegen
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
 WARM_START_ALTITUDE = 3000
 WARM_START_AIRSPEED = 550
-
-CAP_DURATION = 30 # minutes
 
 RTB_ALTITUDE = 800
 RTB_DISTANCE = 5000
@@ -217,7 +216,7 @@ class FlightData:
     #: True if this flight belongs to the player's coalition.
     friendly: bool
 
-    #: Number of minutes after mission start the flight is set to depart.
+    #: Number of seconds after mission start the flight is set to depart.
     departure_delay: int
 
     #: Arrival airport.
@@ -533,148 +532,6 @@ AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
 AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
-@dataclass(frozen=True)
-class PackageWaypointTiming:
-    #: The package being scheduled.
-    package: Package
-
-    #: The package join time.
-    join: int
-
-    #: The ingress waypoint TOT.
-    ingress: int
-
-    #: The egress waypoint TOT.
-    egress: int
-
-    #: The package split time.
-    split: int
-
-    @property
-    def target(self) -> int:
-        """The package time over target."""
-        assert self.package.time_over_target is not None
-        return self.package.time_over_target
-
-    @property
-    def race_track_start(self) -> Optional[int]:
-        cap_types = (FlightType.BARCAP, FlightType.CAP)
-        if self.package.primary_task in cap_types:
-            # CAP flights don't have hold points, and we don't calculate takeoff
-            # times yet or adjust the TOT based on when the flight can arrive,
-            # so if we set a TOT that gives the flight a lot of extra time it
-            # will just fly to the start point slowly, possibly slowly enough to
-            # stall and crash. Just don't set a TOT for these points and let the
-            # CAP get on station ASAP.
-            return None
-        else:
-            return self.ingress
-
-    @property
-    def race_track_end(self) -> int:
-        cap_types = (FlightType.BARCAP, FlightType.CAP)
-        if self.package.primary_task in cap_types:
-            return self.target + CAP_DURATION * 60
-        else:
-            return self.egress
-
-    def push_time(self, flight: Flight, hold_point: Point) -> int:
-        assert self.package.waypoints is not None
-        return self.join - self.travel_time(
-            hold_point,
-            self.package.waypoints.join,
-            self.flight_ground_speed(flight)
-        )
-
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[int]:
-        target_types = (
-            FlightWaypointType.TARGET_GROUP_LOC,
-            FlightWaypointType.TARGET_POINT,
-            FlightWaypointType.TARGET_SHIP,
-        )
-
-        ingress_types = (
-            FlightWaypointType.INGRESS_CAS,
-            FlightWaypointType.INGRESS_SEAD,
-            FlightWaypointType.INGRESS_STRIKE,
-        )
-
-        if waypoint.waypoint_type == FlightWaypointType.JOIN:
-            return self.join
-        elif waypoint.waypoint_type in ingress_types:
-            return self.ingress
-        elif waypoint.waypoint_type in target_types:
-            return self.target
-        elif waypoint.waypoint_type == FlightWaypointType.EGRESS:
-            return self.egress
-        elif waypoint.waypoint_type == FlightWaypointType.SPLIT:
-            return self.split
-        elif waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK:
-            return self.race_track_start
-        return None
-
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint,
-                                 flight: Flight) -> Optional[int]:
-        if waypoint.waypoint_type == FlightWaypointType.LOITER:
-            return self.push_time(flight, Point(waypoint.x, waypoint.y))
-        elif waypoint.waypoint_type == FlightWaypointType.PATROL:
-            return self.race_track_end
-        return None
-
-    @classmethod
-    def for_package(cls, package: Package) -> PackageWaypointTiming:
-        assert package.time_over_target is not None
-        assert package.waypoints is not None
-
-        group_ground_speed = cls.package_ground_speed(package)
-
-        ingress = package.time_over_target - cls.travel_time(
-            package.waypoints.ingress,
-            package.target.position,
-            group_ground_speed
-        )
-
-        join = ingress - cls.travel_time(
-            package.waypoints.join,
-            package.waypoints.ingress,
-            group_ground_speed
-        )
-
-        egress = package.time_over_target + cls.travel_time(
-            package.target.position,
-            package.waypoints.egress,
-            group_ground_speed
-        )
-
-        split = egress + cls.travel_time(
-            package.waypoints.egress,
-            package.waypoints.split,
-            group_ground_speed
-        )
-
-        return cls(package, join, ingress, egress, split)
-
-    @classmethod
-    def package_ground_speed(cls, package: Package) -> int:
-        speeds = []
-        for flight in package.flights:
-            speeds.append(cls.flight_ground_speed(flight))
-        return min(speeds)  # knots
-
-    @staticmethod
-    def flight_ground_speed(_flight: Flight) -> int:
-        # TODO: Gather data so this is useful.
-        return 400  # knots
-
-    @staticmethod
-    def travel_time(a: Point, b: Point, speed: float) -> int:
-        error_factor = 1.1
-        distance = meter_to_nm(a.distance_to_point(b))
-        hours = distance / speed
-        seconds = hours * 3600
-        return int(seconds * error_factor)
-
-
 class AircraftConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
                  game, radio_registry: RadioRegistry):
@@ -702,8 +559,13 @@ class AircraftConflictGenerator:
         except KeyError:
             return get_fallback_channel(airframe)
 
-    def _start_type(self) -> StartType:
-        return self.settings.cold_start and StartType.Cold or StartType.Warm
+    @staticmethod
+    def _start_type(start_type: str) -> StartType:
+        if start_type == "Runway":
+            return StartType.Runway
+        elif start_type == "Cold":
+            return StartType.Cold
+        return StartType.Warm
 
     def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
                      flight: Flight, dynamic_runways: Dict[str, RunwayData]):
@@ -808,14 +670,9 @@ class AircraftConflictGenerator:
         return runways[0]
 
     def _generate_at_airport(self, name: str, side: Country,
-                             unit_type: FlyingType, count: int,
-                             client_count: int,
-                             airport: Optional[Airport] = None,
-                             start_type=None) -> FlyingGroup:
+                             unit_type: FlyingType, count: int, start_type: str,
+                             airport: Optional[Airport] = None) -> FlyingGroup:
         assert count > 0
-
-        if start_type is None:
-            start_type = self._start_type()
 
         logging.info("airgen: {} for {} at {}".format(unit_type, side.id, airport))
         return self.m.flight_group_from_airport(
@@ -824,11 +681,11 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             airport=airport,
             maintask=None,
-            start_type=start_type,
+            start_type=self._start_type(start_type),
             group_size=count,
             parking_slots=None)
 
-    def _generate_inflight(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: Point) -> FlyingGroup:
+    def _generate_inflight(self, name: str, side: Country, unit_type: FlyingType, count: int, at: Point) -> FlyingGroup:
         assert count > 0
 
         if unit_type in helicopters.helicopter_map.values():
@@ -850,20 +707,15 @@ class AircraftConflictGenerator:
             altitude=alt,
             speed=speed,
             maintask=None,
-            start_type=self._start_type(),
             group_size=count)
 
         group.points[0].alt_type = "RADIO"
         return group
 
     def _generate_at_group(self, name: str, side: Country,
-                           unit_type: FlyingType, count: int, client_count: int,
-                           at: Union[ShipGroup, StaticGroup],
-                           start_type=None) -> FlyingGroup:
+                           unit_type: FlyingType, count: int, start_type: str,
+                           at: Union[ShipGroup, StaticGroup]) -> FlyingGroup:
         assert count > 0
-
-        if start_type is None:
-            start_type = self._start_type()
 
         logging.info("airgen: {} for {} at unit {}".format(unit_type, side.id, at))
         return self.m.flight_group_from_unit(
@@ -872,33 +724,8 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             pad_group=at,
             maintask=None,
-            start_type=start_type,
+            start_type=self._start_type(start_type),
             group_size=count)
-
-    def _generate_group(self, name: str, side: Country, unit_type: FlyingType, count: int, client_count: int, at: db.StartingPosition):
-        if isinstance(at, Point):
-            return self._generate_inflight(name, side, unit_type, count, client_count, at)
-        elif isinstance(at, Group):
-            takeoff_ban = unit_type in db.CARRIER_TAKEOFF_BAN
-            ai_ban = client_count == 0 and self.settings.only_player_takeoff
-
-            if not takeoff_ban and not ai_ban:
-                return self._generate_at_group(name, side, unit_type, count, client_count, at)
-            else:
-                return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
-        elif isinstance(at, Airport):
-            takeoff_ban = unit_type in db.TAKEOFF_BAN
-            ai_ban = client_count == 0 and self.settings.only_player_takeoff
-
-            if not takeoff_ban and not ai_ban:
-                try:
-                    return self._generate_at_airport(name, side, unit_type, count, client_count, at)
-                except NoParkingSlotError:
-                    logging.info("No parking slot found at " + at.name + ", switching to air start.")
-                    pass
-            return self._generate_inflight(name, side, unit_type, count, client_count, at.position)
-        else:
-            assert False
 
     def _add_radio_waypoint(self, group: FlyingGroup, position, altitude: int, airspeed: int = 600):
         point = group.add_waypoint(position, altitude, airspeed)
@@ -970,110 +797,91 @@ class AircraftConflictGenerator:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
-                self.setup_flight_group(group, flight, timing, dynamic_runways)
-                self.setup_group_activation_trigger(flight, group)
+                self.setup_flight_group(group, package, flight, timing,
+                                        dynamic_runways)
 
-    def setup_group_activation_trigger(self, flight, group):
-        if flight.scheduled_in > 0 and flight.client_count == 0:
+    def set_activation_time(self, flight: Flight, group: FlyingGroup,
+                            delay: int) -> None:
+        # Note: Late activation causes the waypoint TOTs to look *weird* in the
+        # mission editor. Waypoint times will be relative to the group
+        # activation time rather than in absolute local time. A flight delayed
+        # until 09:10 when the overall mission start time is 09:00, with a join
+        # time of 09:30 will show the join time as 00:30, not 09:30.
+        group.late_activation = True
 
-            if flight.start_type != "In Flight" and flight.from_cp.cptype not in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
-                group.late_activation = False
-                group.uncontrolled = True
+        activation_trigger = TriggerOnce(
+            Event.NoEvent, f"FlightLateActivationTrigger{group.id}")
+        activation_trigger.add_condition(TimeAfter(seconds=delay))
 
-                activation_trigger = TriggerOnce(Event.NoEvent, "FlightStartTrigger" + str(group.id))
-                activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in * 60))
-                if (flight.from_cp.cptype == ControlPointType.AIRBASE):
-                    if flight.from_cp.captured:
-                        activation_trigger.add_condition(
-                            CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
-                    else:
-                        activation_trigger.add_condition(
-                            CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
+        self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
+        activation_trigger.add_action(ActivateGroup(group.id))
+        self.m.triggerrules.triggers.append(activation_trigger)
 
-                if flight.flight_type == FlightType.INTERCEPTION:
-                    self.setup_interceptor_triggers(group, flight, activation_trigger)
+    def set_startup_time(self, flight: Flight, group: FlyingGroup,
+                         delay: int) -> None:
+        # Uncontrolled causes the AI unit to spawn, but not begin startup.
+        group.uncontrolled = True
 
-                group.add_trigger_action(StartCommand())
-                activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
+        activation_trigger = TriggerOnce(Event.NoEvent,
+                                         f"FlightStartTrigger{group.id}")
+        activation_trigger.add_condition(TimeAfter(seconds=delay))
 
-                self.m.triggerrules.triggers.append(activation_trigger)
-            else:
-                group.late_activation = True
-                activation_trigger = TriggerOnce(Event.NoEvent, "FlightLateActivationTrigger" + str(group.id))
-                activation_trigger.add_condition(TimeAfter(seconds=flight.scheduled_in*60))
+        self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
+        group.add_trigger_action(StartCommand())
+        activation_trigger.add_action(AITaskPush(group.id, len(group.tasks)))
+        self.m.triggerrules.triggers.append(activation_trigger)
 
-                if(flight.from_cp.cptype == ControlPointType.AIRBASE):
-                    if flight.from_cp.captured:
-                        activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_player_coalition_id(), flight.from_cp.id))
-                    else:
-                        activation_trigger.add_condition(CoalitionHasAirdrome(self.game.get_enemy_coalition_id(), flight.from_cp.id))
+    def prevent_spawn_at_hostile_airbase(self, flight: Flight,
+                                         trigger: TriggerRule) -> None:
+        # Prevent delayed flights from spawning at airbases if they were
+        # captured before they've spawned.
+        if flight.from_cp.cptype != ControlPointType.AIRBASE:
+            return
 
-                if flight.flight_type == FlightType.INTERCEPTION:
-                    self.setup_interceptor_triggers(group, flight, activation_trigger)
-
-                activation_trigger.add_action(ActivateGroup(group.id))
-                self.m.triggerrules.triggers.append(activation_trigger)
-
-    def setup_interceptor_triggers(self, group, flight, activation_trigger):
-
-        detection_zone = self.m.triggers.add_triggerzone(flight.from_cp.position, radius=25000, hidden=False, name="ITZ")
         if flight.from_cp.captured:
-            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_enemy_color(), detection_zone.id)) # TODO : support unit type in part of coalition
-            activation_trigger.add_action(MessageToAll(String("WARNING : Enemy aircraft have been detected in the vicinity of " + flight.from_cp.name + ". Interceptors are taking off."), 20))
+            coalition = self.game.get_player_coalition_id()
         else:
-            activation_trigger.add_condition(PartOfCoalitionInZone(self.game.get_player_color(), detection_zone.id))
-            activation_trigger.add_action(MessageToAll(String("WARNING : We have detected that enemy aircraft are scrambling for an interception on " + flight.from_cp.name + " airbase."), 20))
+            coalition = self.game.get_enemy_coalition_id()
+
+        trigger.add_condition(
+            CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
         try:
-            if flight.client_count == 0 and self.game.settings.perf_ai_parking_start:
-                flight.start_type = "Cold"
-
             if flight.start_type == "In Flight":
-                group = self._generate_group(
+                group = self._generate_inflight(
                     name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
-                    client_count=0,
                     at=cp.position)
+            elif cp.is_fleet:
+                group_name = cp.get_carrier_group_name()
+                group = self._generate_at_group(
+                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    side=country,
+                    unit_type=flight.unit_type,
+                    count=flight.count,
+                    start_type=flight.start_type,
+                    at=self.m.find_group(group_name))
             else:
-                st = StartType.Runway
-                if flight.start_type == "Cold":
-                    st = StartType.Cold
-                elif flight.start_type == "Warm":
-                    st = StartType.Warm
-
-                if cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
-                    group_name = cp.get_carrier_group_name()
-                    group = self._generate_at_group(
-                        name=namegen.next_unit_name(country, cp.id, flight.unit_type),
-                        side=country,
-                        unit_type=flight.unit_type,
-                        count=flight.count,
-                        client_count=0,
-                        at=self.m.find_group(group_name),
-                        start_type=st)
-                else:
-                    group = self._generate_at_airport(
-                        name=namegen.next_unit_name(country, cp.id, flight.unit_type),
-                        side=country,
-                        unit_type=flight.unit_type,
-                        count=flight.count,
-                        client_count=0,
-                        airport=cp.airport,
-                        start_type=st)
+                group = self._generate_at_airport(
+                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    side=country,
+                    unit_type=flight.unit_type,
+                    count=flight.count,
+                    start_type=flight.start_type,
+                    airport=cp.airport)
         except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
             logging.error(e)
             logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
-            group = self._generate_group(
+            group = self._generate_inflight(
                 name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                 side=country,
                 unit_type=flight.unit_type,
                 count=flight.count,
-                client_count=0,
                 at=cp.position)
             group.points[0].alt = 1500
 
@@ -1179,8 +987,8 @@ class AircraftConflictGenerator:
         logging.error(f"Unhandled flight type: {flight.flight_type.name}")
         self.configure_behavior(group)
 
-    def setup_flight_group(self, group: FlyingGroup, flight: Flight,
-                           timing: PackageWaypointTiming,
+    def setup_flight_group(self, group: FlyingGroup, package: Package,
+                           flight: Flight, timing: PackageWaypointTiming,
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
         if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP,
@@ -1204,6 +1012,9 @@ class AircraftConflictGenerator:
         for waypoint in flight.points:
             waypoint.tot = None
 
+        takeoff_point = FlightWaypoint.from_pydcs(group.points[0],
+                                                  flight.from_cp)
+        self.set_takeoff_time(takeoff_point, package, flight, group)
         for point in flight.points:
             if point.only_for_player and not flight.client_count:
                 continue
@@ -1214,8 +1025,52 @@ class AircraftConflictGenerator:
 
         # Set here rather than when the FlightData is created so they waypoints
         # have their TOTs set.
-        self.flights[-1].waypoints = flight.points
+        self.flights[-1].waypoints = [takeoff_point] + flight.points
         self._setup_custom_payload(flight, group)
+
+    def set_takeoff_time(self, waypoint: FlightWaypoint, package: Package,
+                         flight: Flight, group: FlyingGroup) -> None:
+        estimator = TotEstimator(package)
+        start_time = estimator.mission_start_time(flight)
+
+        if start_time > 0:
+            if self.should_activate_late(flight):
+                # Late activation causes the aircraft to not be spawned until
+                # triggered.
+                self.set_activation_time(flight, group, start_time)
+            elif flight.start_type == "Cold":
+                # Setting the start time causes the AI to wait until the
+                # specified time to begin their startup sequence.
+                self.set_startup_time(flight, group, start_time)
+
+        # And setting *our* waypoint TOT causes the takeoff time to show up in
+        # the player's kneeboard.
+        waypoint.tot = estimator.takeoff_time_for_flight(flight)
+
+    @staticmethod
+    def should_activate_late(flight: Flight) -> bool:
+        if flight.client_count:
+            # Never delay players. Note that cold start player flights with
+            # AI members will still be marked as uncontrolled until the start
+            # trigger fires to postpone engine start.
+            #
+            # Player flights that start on the runway or in the air will start
+            # immediately, and AI flight members will not be delayed.
+            return False
+
+        if flight.start_type != "Cold":
+            # Avoid spawning aircraft in the air or on the runway until it's
+            # time for their mission. Also avoid burning through gas spawning
+            # hot aircraft hours before their takeoff time.
+            return True
+
+        if flight.from_cp.is_fleet:
+            # Carrier spawns will crowd the carrier deck, especially without
+            # super carrier.
+            # TODO: Is there enough parking on the supercarrier?
+            return True
+
+        return False
 
 
 class PydcsWaypointBuilder:
@@ -1243,10 +1098,8 @@ class PydcsWaypointBuilder:
         waypoint.speed_locked = False
 
     @classmethod
-    def for_waypoint(cls, waypoint: FlightWaypoint,
-                     group: FlyingGroup,
-                     flight: Flight,
-                     timing: PackageWaypointTiming,
+    def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
+                     flight: Flight, timing: PackageWaypointTiming,
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.EGRESS: EgressPointBuilder,
@@ -1391,9 +1244,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
 
-        start = self.timing.race_track_start
-        if start is not None:
-            self.set_waypoint_tot(waypoint, start)
+        self.set_waypoint_tot(waypoint, self.timing.race_track_start)
         racetrack.stop_after_time(self.timing.race_track_end)
         waypoint.add_task(racetrack)
         return waypoint

@@ -1,7 +1,6 @@
 """Qt data models for game objects."""
 import datetime
-from enum import auto, IntEnum
-from typing import Any, Callable, Dict, Iterator, TypeVar, Optional
+from typing import Any, Callable, Dict, Iterator, Optional, TypeVar
 
 from PySide2.QtCore import (
     QAbstractListModel,
@@ -15,6 +14,7 @@ from game import db
 from game.game import Game
 from gen.ato import AirTaskingOrder, Package
 from gen.flights.flight import Flight
+from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 from theater.missiontarget import MissionTarget
 
@@ -119,15 +119,15 @@ class PackageModel(QAbstractListModel):
             return flight
         return None
 
-    @staticmethod
-    def text_for_flight(flight: Flight) -> str:
+    def text_for_flight(self, flight: Flight) -> str:
         """Returns the text that should be displayed for the flight."""
         task = flight.flight_type.name
         count = flight.count
         name = db.unit_type_name(flight.unit_type)
-        delay = flight.scheduled_in
+        estimator = TotEstimator(self.package)
+        delay = datetime.timedelta(seconds=estimator.mission_start_time(flight))
         origin = flight.from_cp.name
-        return f"[{task}] {count} x {name} from {origin} in {delay} minutes"
+        return f"[{task}] {count} x {name} from {origin} in {delay}"
 
     @staticmethod
     def icon_for_flight(flight: Flight) -> Optional[QIcon]:

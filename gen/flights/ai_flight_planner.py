@@ -33,6 +33,7 @@ from gen.flights.flight import (
     FlightType,
 )
 from gen.flights.flightplan import FlightPlanBuilder
+from gen.flights.traveltime import TotEstimator
 from theater import (
     ControlPoint,
     FrontLine,
@@ -185,11 +186,13 @@ class PackageBuilder:
     def __init__(self, location: MissionTarget,
                  closest_airfields: ClosestAirfields,
                  global_inventory: GlobalAircraftInventory,
-                 is_player: bool) -> None:
+                 is_player: bool,
+                 start_type: str) -> None:
         self.package = Package(location)
         self.allocator = AircraftAllocator(closest_airfields, global_inventory,
                                            is_player)
         self.global_inventory = global_inventory
+        self.start_type = start_type
 
     def plan_flight(self, plan: ProposedFlight) -> bool:
         """Allocates aircraft for the given flight and adds them to the package.
@@ -203,7 +206,8 @@ class PackageBuilder:
         if assignment is None:
             return False
         airfield, aircraft = assignment
-        flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task)
+        flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task,
+                        self.start_type)
         self.package.add_flight(flight)
         return True
 
@@ -444,11 +448,18 @@ class CoalitionMissionPlanner:
 
     def plan_mission(self, mission: ProposedMission) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
+
+        if self.game.settings.perf_ai_parking_start:
+            start_type = "Cold"
+        else:
+            start_type = "Warm"
+
         builder = PackageBuilder(
             mission.location,
             self.objective_finder.closest_airfields_to(mission.location),
             self.game.aircraft_inventory,
-            self.is_player
+            self.is_player,
+            start_type
         )
 
         missing_types: Set[FlightType] = set()
@@ -497,16 +508,18 @@ class CoalitionMissionPlanner:
             margin=5
         )
         for package in self.ato.packages:
+            tot = TotEstimator(package).earliest_tot()
             if package.primary_task in dca_types:
-                # All CAP missions should be on station in 15-25 minutes.
-                package.time_over_target = (20 + random.randint(-5, 5)) * 60
+                # All CAP missions should be on station ASAP.
+                package.time_over_target = tot
             else:
-                # But other packages should be spread out a bit.
-                package.delay = next(start_time)
-                # TODO: Compute TOT based on package.
-                package.time_over_target = (package.delay + 40) * 60
-                for flight in package.flights:
-                    flight.scheduled_in = package.delay
+                # But other packages should be spread out a bit. Note that take
+                # times are delayed, but all aircraft will become active at
+                # mission start. This makes it more worthwhile to attack enemy
+                # airfields to hit grounded aircraft, since they're more likely
+                # to be present. Runway and air started aircraft will be
+                # delayed until their takeoff time by AirConflictGenerator.
+                package.time_over_target = next(start_time) * 60 + tot
 
     def message(self, title, text) -> None:
         """Emits a planning message to the player.

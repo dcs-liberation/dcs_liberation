@@ -90,7 +90,11 @@ class QFlightCreator(QDialog):
         origin = self.airfield_selector.currentData()
         size = self.flight_size_spinner.value()
 
-        flight = Flight(aircraft, size, origin, task)
+        if self.game.settings.perf_ai_parking_start:
+            start_type = "Cold"
+        else:
+            start_type = "Warm"
+        flight = Flight(aircraft, size, origin, task, start_type)
         flight.scheduled_in = self.package.delay
 
         # noinspection PyUnresolvedReferences
