@@ -95,6 +95,8 @@ class NullListModel(QAbstractListModel):
 class PackageModel(QAbstractListModel):
     """The model for an ATO package."""
 
+    FlightRole = Qt.UserRole
+
     #: Emitted when this package is being deleted from the ATO.
     deleted = Signal()
 
@@ -113,6 +115,8 @@ class PackageModel(QAbstractListModel):
             return self.text_for_flight(flight)
         if role == Qt.DecorationRole:
             return self.icon_for_flight(flight)
+        elif role == PackageModel.FlightRole:
+            return flight
         return None
 
     @staticmethod
@@ -184,6 +188,8 @@ class AtoModel(QAbstractListModel):
     """The model for an AirTaskingOrder."""
 
     PackageRole = Qt.UserRole
+
+    client_slots_changed = Signal()
 
     def __init__(self, game: Optional[Game], ato: AirTaskingOrder) -> None:
         super().__init__()

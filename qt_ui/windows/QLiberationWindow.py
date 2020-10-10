@@ -77,7 +77,7 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        vbox.addWidget(QTopPanel(self.game))
+        vbox.addWidget(QTopPanel(self.game_model))
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
