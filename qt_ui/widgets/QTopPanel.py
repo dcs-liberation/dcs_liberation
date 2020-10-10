@@ -95,11 +95,11 @@ class QTopPanel(QFrame):
         if game is None:
             return
 
-        self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
-        self.budgetBox.setGame(self.game)
-        self.factionsInfos.setGame(self.game)
+        self.turnCounter.setCurrentTurn(game.turn, game.current_day)
+        self.budgetBox.setGame(game)
+        self.factionsInfos.setGame(game)
 
-        if self.game and self.game.turn == 0:
+        if game and game.turn == 0:
             self.proceedButton.setEnabled(False)
         else:
             self.proceedButton.setEnabled(True)

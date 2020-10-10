@@ -5,7 +5,7 @@ import logging
 from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QItemSelectionModel, QPoint
+from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
 from PySide2.QtWidgets import QVBoxLayout
 from dcs.task import CAP, CAS
 
@@ -63,6 +63,7 @@ class NewGameWizard(QtWidgets.QWizard):
         no_player_navy = self.field("no_player_navy")
         no_enemy_navy = self.field("no_enemy_navy")
         invertMap = self.field("invertMap")
+        starting_money = int(self.field("starting_money"))
 
         player_name = blueFaction
         enemy_name = redFaction
@@ -76,12 +77,12 @@ class NewGameWizard(QtWidgets.QWizard):
         settings.do_not_generate_enemy_navy = no_enemy_navy
 
         self.generatedGame = self.start_new_game(player_name, enemy_name, conflictTheater, midGame, multiplier,
-                                                 timePeriod, settings)
+                                                 timePeriod, settings, starting_money)
 
         super(NewGameWizard, self).accept()
 
     def start_new_game(self, player_name: str, enemy_name: str, conflictTheater: ConflictTheater,
-                       midgame: bool, multiplier: float, period: datetime, settings:Settings):
+                       midgame: bool, multiplier: float, period: datetime, settings:Settings, starting_money: int):
 
         # Reset name generator
         namegen.reset()
@@ -102,14 +103,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         print("-- Game Object generated")
         start_generator.generate_groundobjects(conflictTheater, game)
-        game.budget = int(game.budget * multiplier)
+        game.budget = starting_money
         game.settings.multiplier = multiplier
         game.settings.sams = True
         game.settings.version = CONST.VERSION_STRING
-
-        if midgame:
-            game.budget = game.budget * 4 * len(list(conflictTheater.conflicts()))
-
         return game
 
 
@@ -330,6 +327,23 @@ class MiscOptions(QtWidgets.QWizardPage):
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField('no_enemy_navy', no_enemy_navy)
 
+        # Economy settings
+        economySettingsGroup = QtWidgets.QGroupBox("Economy")
+        starting_money_slider = QtWidgets.QSlider(Qt.Horizontal)
+        starting_money_slider.setMinimum(0)
+        starting_money_slider.setMaximum(5000)
+        starting_money_slider.setValue(650)
+        starting_money_label = QtWidgets.QLabel("$650M")
+        starting_money_slider.valueChanged.connect(lambda x: starting_money_label.setText("${}M".format(x)))
+        self.registerField('starting_money', starting_money_slider)
+
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
+        layout.addWidget(midGame, 1, 1)
+        layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
+        layout.addWidget(multiplier, 2, 1)
+        miscSettingsGroup.setLayout(layout)
+
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
         generatorLayout.addWidget(no_carrier, 1, 1)
@@ -343,16 +357,16 @@ class MiscOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorSettingsGroup.setLayout(generatorLayout)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        layout.addWidget(midGame, 1, 1)
-        layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
-        layout.addWidget(multiplier, 2, 1)
-        miscSettingsGroup.setLayout(layout)
+        economyLayout = QtWidgets.QGridLayout()
+        economyLayout.addWidget(QtWidgets.QLabel("Starting money"), 0, 0)
+        economyLayout.addWidget(starting_money_slider, 1, 0)
+        economyLayout.addWidget(starting_money_label, 1, 1)
+        economySettingsGroup.setLayout(economyLayout)
 
         mlayout = QVBoxLayout()
         mlayout.addWidget(miscSettingsGroup)
         mlayout.addWidget(generatorSettingsGroup)
+        mlayout.addWidget(economySettingsGroup)
         self.setLayout(mlayout)
 
 
