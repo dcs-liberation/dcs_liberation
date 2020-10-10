@@ -11,9 +11,11 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game
 from game.event import CAP, CAS, FrontlineAttackEvent
+from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QTurnCounter import QTurnCounter
+from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QWaitingForMissionResultWindow import \
     QWaitingForMissionResultWindow
@@ -23,13 +25,17 @@ from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 class QTopPanel(QFrame):
 
-    def __init__(self, game: Game):
+    def __init__(self, game_model: GameModel):
         super(QTopPanel, self).__init__()
-        self.game = game
+        self.game_model = game_model
         self.setMaximumHeight(70)
         self.init_ui()
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().budgetupdated.connect(self.budget_update)
+
+    @property
+    def game(self) -> Optional[Game]:
+        return self.game_model.game
 
     def init_ui(self):
 
@@ -68,6 +74,8 @@ class QTopPanel(QFrame):
 
         self.proceedBox = QGroupBox("Proceed")
         self.proceedBoxLayout = QHBoxLayout()
+        self.proceedBoxLayout.addLayout(
+            MaxPlayerCount(self.game_model.ato_model))
         self.proceedBoxLayout.addWidget(self.passTurnButton)
         self.proceedBoxLayout.addWidget(self.proceedButton)
         self.proceedBox.setLayout(self.proceedBoxLayout)
@@ -84,16 +92,17 @@ class QTopPanel(QFrame):
         self.setLayout(self.layout)
 
     def setGame(self, game: Optional[Game]):
-        self.game = game
-        if game is not None:
-            self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
-            self.budgetBox.setGame(self.game)
-            self.factionsInfos.setGame(self.game)
+        if game is None:
+            return
 
-            if self.game and self.game.turn == 0:
-                self.proceedButton.setEnabled(False)
-            else:
-                self.proceedButton.setEnabled(True)
+        self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
+        self.budgetBox.setGame(self.game)
+        self.factionsInfos.setGame(self.game)
+
+        if self.game and self.game.turn == 0:
+            self.proceedButton.setEnabled(False)
+        else:
+            self.proceedButton.setEnabled(True)
 
     def openSettings(self):
         self.subwindow = QSettingsWindow(self.game)

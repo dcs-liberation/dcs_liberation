@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Tuple
 
 from PySide2.QtCore import QObject, Signal
 
@@ -24,10 +24,20 @@ class GameUpdateSignal(QObject):
     debriefingReceived = Signal(DebriefingSignal)
 
     flight_paths_changed = Signal()
+    package_selection_changed = Signal(int)  # Optional[int]
+    flight_selection_changed = Signal(int)  # Optional[int]
 
     def __init__(self):
         super(GameUpdateSignal, self).__init__()
         GameUpdateSignal.instance = self
+
+    def select_package(self, index: Optional[int]) -> None:
+        # noinspection PyUnresolvedReferences
+        self.package_selection_changed.emit(index)
+
+    def select_flight(self, index: Optional[int]) -> None:
+        # noinspection PyUnresolvedReferences
+        self.flight_selection_changed.emit(index)
 
     def redraw_flight_paths(self) -> None:
         # noinspection PyUnresolvedReferences
