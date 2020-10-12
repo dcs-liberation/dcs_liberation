@@ -52,7 +52,7 @@ class Package:
     delay: int = field(default=0)
 
     #: Desired TOT measured in seconds from mission start.
-    time_over_target: Optional[int] = field(default=None)
+    time_over_target: int = field(default=0)
 
     waypoints: Optional[PackageWaypoints] = field(default=None)
 

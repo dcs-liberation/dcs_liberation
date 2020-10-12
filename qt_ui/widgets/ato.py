@@ -10,7 +10,7 @@ from PySide2.QtCore import (
     QSize,
     Qt,
 )
-from PySide2.QtGui import QFont, QFontMetrics, QPainter
+from PySide2.QtGui import QFont, QFontMetrics, QIcon, QPainter
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
@@ -18,13 +18,113 @@ from PySide2.QtWidgets import (
     QListView,
     QPushButton,
     QSplitter,
-    QStyleOptionViewItem, QStyledItemDelegate, QVBoxLayout,
+    QStyle, QStyleOptionViewItem, QStyledItemDelegate, QVBoxLayout,
 )
 
+from game import db
 from gen.ato import Package
 from gen.flights.flight import Flight
+from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
+
+
+class FlightDelegate(QStyledItemDelegate):
+    FONT_SIZE = 10
+    HMARGIN = 4
+    VMARGIN = 4
+
+    def __init__(self, package: Package) -> None:
+        super().__init__()
+        self.package = package
+
+    def get_font(self, option: QStyleOptionViewItem) -> QFont:
+        font = QFont(option.font)
+        font.setPointSize(self.FONT_SIZE)
+        return font
+
+    @staticmethod
+    def flight(index: QModelIndex) -> Flight:
+        return index.data(PackageModel.FlightRole)
+
+    def first_row_text(self, index: QModelIndex) -> str:
+        flight = self.flight(index)
+        task = flight.flight_type.name
+        count = flight.count
+        name = db.unit_type_name(flight.unit_type)
+        estimator = TotEstimator(self.package)
+        delay = datetime.timedelta(seconds=estimator.mission_start_time(flight))
+        return f"[{task}] {count} x {name} in {delay}"
+
+    def second_row_text(self, index: QModelIndex) -> str:
+        flight = self.flight(index)
+        origin = flight.from_cp.name
+        return f"From {origin}"
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem,
+              index: QModelIndex) -> None:
+        # Draw the list item with all the default selection styling, but with an
+        # invalid index so text formatting is left to us.
+        super().paint(painter, option, QModelIndex())
+
+        rect = option.rect.adjusted(self.HMARGIN, self.VMARGIN, -self.HMARGIN,
+                                    -self.VMARGIN)
+
+        with painter_context(painter):
+            painter.setFont(self.get_font(option))
+
+            icon: Optional[QIcon] = index.data(Qt.DecorationRole)
+            if icon is not None:
+                icon.paint(painter, rect, Qt.AlignLeft | Qt.AlignVCenter,
+                           self.icon_mode(option),
+                           self.icon_state(option))
+
+            rect = rect.adjusted(self.icon_size(option).width() + self.HMARGIN,
+                                 0, 0, 0)
+            painter.drawText(rect, Qt.AlignLeft, self.first_row_text(index))
+            line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
+            painter.drawText(line2, Qt.AlignLeft, self.second_row_text(index))
+
+            clients = self.num_clients(index)
+            if clients:
+                painter.drawText(rect, Qt.AlignRight,
+                                 f"Player Slots: {clients}")
+
+    def num_clients(self, index: QModelIndex) -> int:
+        flight = self.flight(index)
+        return flight.client_count
+
+    @staticmethod
+    def icon_mode(option: QStyleOptionViewItem) -> QIcon.Mode:
+        if not (option.state & QStyle.State_Enabled):
+            return QIcon.Disabled
+        elif option.state & QStyle.State_Selected:
+            return QIcon.Selected
+        elif option.state & QStyle.State_Active:
+            return QIcon.Active
+        return QIcon.Normal
+
+    @staticmethod
+    def icon_state(option: QStyleOptionViewItem) -> QIcon.State:
+        return QIcon.On if option.state & QStyle.State_Open else QIcon.Off
+
+    @staticmethod
+    def icon_size(option: QStyleOptionViewItem) -> QSize:
+        icon_size: Optional[QSize] = option.decorationSize
+        if icon_size is None:
+            return QSize(0, 0)
+        else:
+            return icon_size
+
+    def sizeHint(self, option: QStyleOptionViewItem,
+                 index: QModelIndex) -> QSize:
+        left = self.icon_size(option).width() + self.HMARGIN
+        metrics = QFontMetrics(self.get_font(option))
+        first = metrics.size(0, self.first_row_text(index))
+        second = metrics.size(0, self.second_row_text(index))
+        text_width = max(first.width(), second.width())
+        return QSize(left + text_width + 2 * self.HMARGIN,
+                     first.height() + second.height() + 2 * self.VMARGIN)
 
 
 class QFlightList(QListView):
@@ -34,6 +134,8 @@ class QFlightList(QListView):
         super().__init__()
         self.package_model = model
         self.set_package(model)
+        if model is not None:
+            self.setItemDelegate(FlightDelegate(model.package))
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
 
@@ -43,6 +145,7 @@ class QFlightList(QListView):
             self.disconnect_model()
         else:
             self.package_model = model
+            self.setItemDelegate(FlightDelegate(model.package))
             self.setModel(model)
             # noinspection PyUnresolvedReferences
             model.deleted.connect(self.disconnect_model)
@@ -109,6 +212,7 @@ class QFlightPanel(QGroupBox):
         """Sets the package model to display."""
         self.package_model = model
         self.flight_list.set_package(model)
+        self.selection_changed.connect(self.on_selection_changed)
         self.on_selection_changed()
 
     @property
@@ -122,6 +226,15 @@ class QFlightPanel(QGroupBox):
         enabled = index.isValid()
         self.edit_button.setEnabled(enabled)
         self.delete_button.setEnabled(enabled)
+        self.change_map_flight_selection(index)
+
+    @staticmethod
+    def change_map_flight_selection(index: QModelIndex) -> None:
+        if not index.isValid():
+            GameUpdateSignal.get_instance().select_flight(None)
+            return
+
+        GameUpdateSignal.get_instance().select_flight(index.row())
 
     def on_edit(self) -> None:
         """Opens the flight edit dialog."""
@@ -195,6 +308,15 @@ class PackageDelegate(QStyledItemDelegate):
             painter.drawText(rect, Qt.AlignLeft, self.left_text(index))
             line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
             painter.drawText(line2, Qt.AlignLeft, self.right_text(index))
+
+            clients = self.num_clients(index)
+            if clients:
+                painter.drawText(rect, Qt.AlignRight,
+                                 f"Player Slots: {clients}")
+
+    def num_clients(self, index: QModelIndex) -> int:
+        package = self.package(index)
+        return sum(f.client_count for f in package.flights)
 
     def sizeHint(self, option: QStyleOptionViewItem,
                  index: QModelIndex) -> QSize:
@@ -270,6 +392,18 @@ class QPackagePanel(QGroupBox):
         enabled = index.isValid()
         self.edit_button.setEnabled(enabled)
         self.delete_button.setEnabled(enabled)
+        self.change_map_package_selection(index)
+
+    def change_map_package_selection(self, index: QModelIndex) -> None:
+        if not index.isValid():
+            GameUpdateSignal.get_instance().select_package(None)
+            return
+
+        package = self.ato_model.get_package_model(index)
+        if package.rowCount() == 0:
+            GameUpdateSignal.get_instance().select_package(None)
+        else:
+            GameUpdateSignal.get_instance().select_package(index.row())
 
     def on_edit(self) -> None:
         """Opens the package edit dialog."""

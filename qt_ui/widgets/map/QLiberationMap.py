@@ -1,5 +1,8 @@
+from __future__ import annotations
+
+import datetime
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
@@ -15,14 +18,18 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
-from gen import Conflict
-from gen.flights.flight import Flight
+from game.utils import meter_to_feet
+from gen import Conflict, PackageWaypointTiming
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel
+from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
-from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, FrontLine
 
@@ -30,15 +37,7 @@ from theater import ControlPoint, FrontLine
 class QLiberationMap(QGraphicsView):
     WAYPOINT_SIZE = 4
 
-    instance = None
-    display_rules: Dict[str, bool] = {
-        "cp": True,
-        "go": True,
-        "lines": True,
-        "events": True,
-        "sam": True,
-        "flight_paths": False
-    }
+    instance: Optional[QLiberationMap] = None
 
     def __init__(self, game_model: GameModel):
         super(QLiberationMap, self).__init__()
@@ -47,6 +46,8 @@ class QLiberationMap(QGraphicsView):
         self.game: Optional[Game] = game_model.game
 
         self.flight_path_items: List[QGraphicsItem] = []
+        # A tuple of (package index, flight index), or none.
+        self.selected_flight: Optional[Tuple[int, int]] = None
 
         self.setMinimumSize(800,600)
         self.setMaximumHeight(2160)
@@ -59,6 +60,25 @@ class QLiberationMap(QGraphicsView):
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
             lambda: self.draw_flight_plans(self.scene())
+        )
+
+        def update_package_selection(index: Optional[int]) -> None:
+            self.selected_flight = index, 0
+            self.draw_flight_plans(self.scene())
+
+        GameUpdateSignal.get_instance().package_selection_changed.connect(
+            update_package_selection
+        )
+
+        def update_flight_selection(index: Optional[int]) -> None:
+            if self.selected_flight is None:
+                logging.error("Flight was selected with no package selected")
+                return
+            self.selected_flight = self.selected_flight[0], index
+            self.draw_flight_plans(self.scene())
+
+        GameUpdateSignal.get_instance().flight_selection_changed.connect(
+            update_flight_selection
         )
 
     def init_scene(self):
@@ -161,27 +181,44 @@ class QLiberationMap(QGraphicsView):
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
-                if ground_object.category == "aa" and self.get_display_rule("sam"):
-                    max_range = 0
-                    has_radar = False
+                is_aa = ground_object.category == "aa"
+                if is_aa and DisplayOptions.sam_ranges:
+                    threat_range = 0
+                    detection_range = 0
+                    can_fire = False
                     if ground_object.groups:
                         for g in ground_object.groups:
                             for u in g.units:
                                 unit = db.unit_type_from_name(u.type)
-                                if unit in UNITS_WITH_RADAR:
-                                    has_radar = True
-                                if unit.threat_range > max_range:
-                                    max_range = unit.threat_range
-                    if has_radar:
-                        scene.addEllipse(go_pos[0] - max_range/300.0 + 8, go_pos[1] - max_range/300.0 + 8, max_range/150.0, max_range/150.0, CONST.COLORS["white_transparent"], CONST.COLORS["grey_transparent"])
+                                if unit in UNITS_WITH_RADAR or unit in AAA_UNITS:
+                                    can_fire = True
+                                if unit.detection_range > detection_range:
+                                    detection_range = unit.detection_range
+                                if unit.threat_range > threat_range:
+                                    threat_range = unit.threat_range
+                    if can_fire:
+                        threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
+                                                                 ground_object.position.y+threat_range))
+                        detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
+                                                                    ground_object.position.y+detection_range))
+                        threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
+                        detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
+
+                        # Add detection range circle
+                        scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                         detection_radius, detection_radius, self.detection_pen(cp.captured))
+
+                        # Add threat range circle
+                        scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
+                                         threat_radius, threat_radius, self.threat_pen(cp.captured))
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
-            if self.get_display_rule("lines"):
+            if DisplayOptions.lines:
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         for cp in self.game.theater.player_points():
-            if self.get_display_rule("lines"):
+            if DisplayOptions.lines:
                 self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
 
         self.draw_flight_plans(scene)
@@ -202,37 +239,94 @@ class QLiberationMap(QGraphicsView):
                 # Something may have caused those items to already be removed.
                 pass
         self.flight_path_items.clear()
-        if not self.get_display_rule("flight_paths"):
+        if DisplayOptions.flight_paths.hide:
             return
-        for package in self.game_model.ato_model.packages:
-            for flight in package.flights:
-                self.draw_flight_plan(scene, flight)
+        packages = list(self.game_model.ato_model.packages)
+        for p_idx, package_model in enumerate(packages):
+            for f_idx, flight in enumerate(package_model.flights):
+                selected = (p_idx, f_idx) == self.selected_flight
+                if DisplayOptions.flight_paths.only_selected and not selected:
+                    continue
+                self.draw_flight_plan(scene, package_model.package, flight,
+                                      selected)
 
-    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight) -> None:
+    def draw_flight_plan(self, scene: QGraphicsScene, package: Package,
+                         flight: Flight, selected: bool) -> None:
         is_player = flight.from_cp.captured
         pos = self._transform_point(flight.from_cp.position)
 
-        self.draw_waypoint(scene, pos, is_player)
+        self.draw_waypoint(scene, pos, is_player, selected)
         prev_pos = tuple(pos)
-        for point in flight.points:
+        drew_target = False
+        target_types = (
+            FlightWaypointType.TARGET_GROUP_LOC,
+            FlightWaypointType.TARGET_POINT,
+            FlightWaypointType.TARGET_SHIP,
+        )
+        for idx, point in enumerate(flight.points):
             new_pos = self._transform_point(Point(point.x, point.y))
-            self.draw_flight_path(scene, prev_pos, new_pos, is_player)
-            self.draw_waypoint(scene, new_pos, is_player)
+            self.draw_flight_path(scene, prev_pos, new_pos, is_player,
+                                  selected)
+            self.draw_waypoint(scene, new_pos, is_player, selected)
+            if selected and DisplayOptions.waypoint_info:
+                if point.waypoint_type in target_types:
+                    if drew_target:
+                        # Don't draw dozens of targets over each other.
+                        continue
+                    drew_target = True
+                self.draw_waypoint_info(scene, idx + 1, point, new_pos, package,
+                                        flight)
             prev_pos = tuple(new_pos)
-        self.draw_flight_path(scene, prev_pos, pos, is_player)
+        self.draw_flight_path(scene, prev_pos, pos, is_player, selected)
 
     def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
-                      player: bool) -> None:
-        waypoint_pen = self.waypoint_pen(player)
-        waypoint_brush = self.waypoint_brush(player)
+                      player: bool, selected: bool) -> None:
+        waypoint_pen = self.waypoint_pen(player, selected)
+        waypoint_brush = self.waypoint_brush(player, selected)
         self.flight_path_items.append(scene.addEllipse(
             position[0], position[1], self.WAYPOINT_SIZE,
             self.WAYPOINT_SIZE, waypoint_pen, waypoint_brush
         ))
 
+    def draw_waypoint_info(self, scene: QGraphicsScene, number: int,
+                           waypoint: FlightWaypoint, position: Tuple[int, int],
+                           package: Package, flight: Flight) -> None:
+        timing = PackageWaypointTiming.for_package(package)
+
+        altitude = meter_to_feet(waypoint.alt)
+        altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
+
+        prefix = "TOT"
+        time = timing.tot_for_waypoint(waypoint)
+        if time is None:
+            prefix = "Depart"
+            time = timing.depart_time_for_waypoint(waypoint, flight)
+        if time is None:
+            tot = ""
+        else:
+            tot = f"{prefix} T+{datetime.timedelta(seconds=time)}"
+
+        pen = QPen(QColor("black"), 0.3)
+        brush = QColor("white")
+
+        def draw_text(text: str, x: int, y: int) -> None:
+            item = scene.addSimpleText(text)
+            item.setBrush(brush)
+            item.setPen(pen)
+            item.moveBy(x, y)
+            item.setZValue(2)
+            self.flight_path_items.append(item)
+
+        draw_text(f"{number} {waypoint.name}", position[0] + 8,
+                  position[1] - 15)
+        draw_text(f"{altitude} ft {altitude_type}", position[0] + 8,
+                  position[1] - 5)
+        draw_text(tot, position[0] + 8, position[1] + 5)
+
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
-                         pos1: Tuple[int, int], player: bool):
-        flight_path_pen = self.flight_path_pen(player)
+                         pos1: Tuple[int, int], player: bool,
+                         selected: bool) -> None:
+        flight_path_pen = self.flight_path_pen(player, selected)
         # Draw the line to the *middle* of the waypoint.
         offset = self.WAYPOINT_SIZE // 2
         self.flight_path_items.append(scene.addLine(
@@ -321,21 +415,48 @@ class QLiberationMap(QGraphicsView):
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 
+    def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
+        return QColor(255, 255, 0, 20 if transparent else 255)
+
     def base_faction_color_name(self, player: bool) -> str:
         if player:
             return self.game.get_player_color()
         else:
             return self.game.get_enemy_color()
 
-    def waypoint_pen(self, player: bool) -> QPen:
+    def waypoint_pen(self, player: bool, selected: bool) -> QColor:
+        if selected and DisplayOptions.flight_paths.all:
+            return self.highlight_color()
         name = self.base_faction_color_name(player)
-        return QPen(brush=CONST.COLORS[name])
+        return CONST.COLORS[name]
 
-    def waypoint_brush(self, player: bool) -> QColor:
+    def waypoint_brush(self, player: bool, selected: bool) -> QColor:
+        if selected and DisplayOptions.flight_paths.all:
+            return self.highlight_color(transparent=True)
         name = self.base_faction_color_name(player)
         return CONST.COLORS[f"{name}_transparent"]
 
-    def flight_path_pen(self, player: bool) -> QPen:
+    def threat_pen(self, player: bool) -> QPen:
+        if player:
+            color = "blue"
+        else:
+            color = "red"
+        qpen = QPen(CONST.COLORS[color])
+        return qpen
+
+    def detection_pen(self, player: bool) -> QPen:
+        if player:
+            color = "purple"
+        else:
+            color = "yellow"
+        qpen = QPen(CONST.COLORS[color])
+        qpen.setStyle(Qt.DotLine)
+        return qpen
+
+    def flight_path_pen(self, player: bool, selected: bool) -> QPen:
+        if selected and DisplayOptions.flight_paths.all:
+            return self.highlight_color()
+
         name = self.base_faction_color_name(player)
         color = CONST.COLORS[name]
         pen = QPen(brush=color)
@@ -367,18 +488,3 @@ class QLiberationMap(QGraphicsView):
             effect = QGraphicsOpacityEffect()
             effect.setOpacity(0.3)
             overlay.setGraphicsEffect(effect)
-
-
-    @staticmethod
-    def set_display_rule(rule: str, value: bool):
-        QLiberationMap.display_rules[rule] = value
-        QLiberationMap.instance.reload_scene()
-        QLiberationMap.instance.update()
-
-    @staticmethod
-    def get_display_rules() -> Dict[str, bool]:
-        return QLiberationMap.display_rules
-
-    @staticmethod
-    def get_display_rule(rule) -> bool:
-        return QLiberationMap.display_rules[rule]

@@ -13,9 +13,8 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-import qt_ui.uiconstants as CONST
 from qt_ui import liberation_install, liberation_theme
-from qt_ui.liberation_theme import get_theme_index, set_theme_index
+from qt_ui.liberation_theme import THEMES, get_theme_index, set_theme_index
 
 
 class QLiberationPreferences(QFrame):
@@ -39,7 +38,7 @@ class QLiberationPreferences(QFrame):
         self.browse_install_dir = QPushButton("Browse...")
         self.browse_install_dir.clicked.connect(self.on_browse_installation_dir)
         self.themeSelect = QComboBox()
-        [self.themeSelect.addItem(y['themeName']) for x, y in CONST.THEMES.items()]
+        [self.themeSelect.addItem(y['themeName']) for x, y in THEMES.items()]
 
         self.initUi()
 

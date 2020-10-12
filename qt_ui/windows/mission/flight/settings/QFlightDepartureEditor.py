@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QSpinBox
 
 
+# TODO: Remove?
 class QFlightDepartureEditor(QGroupBox):
 
     def __init__(self, flight):
@@ -15,7 +16,7 @@ class QFlightDepartureEditor(QGroupBox):
         self.departure_delta = QSpinBox(self)
         self.departure_delta.setMinimum(0)
         self.departure_delta.setMaximum(120)
-        self.departure_delta.setValue(self.flight.scheduled_in)
+        self.departure_delta.setValue(self.flight.scheduled_in // 60)
         self.departure_delta.valueChanged.connect(self.change_scheduled)
 
         layout.addWidget(self.depart_from)
@@ -27,4 +28,4 @@ class QFlightDepartureEditor(QGroupBox):
         self.changed = self.departure_delta.valueChanged
 
     def change_scheduled(self):
-        self.flight.scheduled_in = int(self.departure_delta.value())
+        self.flight.scheduled_in = int(self.departure_delta.value() * 60)

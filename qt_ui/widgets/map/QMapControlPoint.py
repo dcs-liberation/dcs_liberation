@@ -7,6 +7,7 @@ from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from theater import ControlPoint
 from .QMapObject import QMapObject
+from ...displayoptions import DisplayOptions
 
 
 class QMapControlPoint(QMapObject):
@@ -21,7 +22,7 @@ class QMapControlPoint(QMapObject):
         self.base_details_dialog: Optional[QBaseMenu2] = None
 
     def paint(self, painter, option, widget=None) -> None:
-        if self.parent.get_display_rule("cp"):
+        if DisplayOptions.control_points:
             painter.save()
             painter.setRenderHint(QPainter.Antialiasing)
             painter.setBrush(self.brush_color)
