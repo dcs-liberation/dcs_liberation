@@ -56,6 +56,7 @@ class DisplayOptions:
     detection_range = DisplayRule("SAM Detection Range", False)
     map_poly = DisplayRule("Map Polygon Debug Mode", False)
     waypoint_info = DisplayRule("Waypoint Information", True)
+    culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
 
     @classmethod

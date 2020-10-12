@@ -421,6 +421,13 @@ class Game:
                     return False
             return True
 
+    def get_culling_points(self):
+        """
+        Check culling points
+        :return: List of culling points
+        """
+        return self.__culling_points
+
     # 1 = red, 2 = blue
     def get_player_coalition_id(self):
         return 2

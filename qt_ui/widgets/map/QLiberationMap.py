@@ -152,6 +152,17 @@ class QLiberationMap(QGraphicsView):
         #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
         #    text.setPos(0, i * 24)
 
+        # Display Culling
+        if DisplayOptions.culling and self.game.settings.perf_culling:
+            culling_points = self.game_model.game.get_culling_points()
+            culling_distance = self.game_model.game.settings.perf_culling_distance
+            for point in culling_points:
+                culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
+                distance_point = self._transform_point(culling_distance_point)
+                transformed = self._transform_point(point)
+                diameter = distance_point[0] - transformed[0]
+                scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+
         for cp in self.game.theater.controlpoints:
         
             pos = self._transform_point(cp.position)
