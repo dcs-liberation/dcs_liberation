@@ -51,7 +51,9 @@ class DisplayOptions:
     control_points = DisplayRule("Control Points", True)
     lines = DisplayRule("Lines", True)
     events = DisplayRule("Events", True)
-    sam_ranges = DisplayRule("SAM Ranges", True)
+    sam_ranges = DisplayRule("Ally SAM Threat Range", False)
+    enemy_sam_ranges = DisplayRule("Enemy SAM Threat Range", True)
+    detection_range = DisplayRule("SAM Detection Range", False)
     waypoint_info = DisplayRule("Waypoint Information", True)
     flight_paths = FlightPathOptions()
 

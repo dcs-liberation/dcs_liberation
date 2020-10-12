@@ -49,7 +49,7 @@ class QLiberationMap(QGraphicsView):
         # A tuple of (package index, flight index), or none.
         self.selected_flight: Optional[Tuple[int, int]] = None
 
-        self.setMinimumSize(800,600)
+        self.setMinimumSize(800, 600)
         self.setMaximumHeight(2160)
         self._zoom = 0
         self.factor = 1
@@ -98,8 +98,6 @@ class QLiberationMap(QGraphicsView):
         logging.debug("Reloading Map Canvas")
         if self.game is not None:
             self.reload_scene()
-
-
 
     """
     
@@ -175,14 +173,17 @@ class QLiberationMap(QGraphicsView):
                 if ground_object.obj_name in added_objects:
                     continue
 
-
                 go_pos = self._transform_point(ground_object.position)
                 if not ground_object.airbase_group:
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
                 is_aa = ground_object.category == "aa"
-                if is_aa and DisplayOptions.sam_ranges:
+                should_display = ((DisplayOptions.sam_ranges and cp.captured)
+                                  or
+                                  (DisplayOptions.enemy_sam_ranges and not cp.captured))
+
+                if is_aa and should_display:
                     threat_range = 0
                     detection_range = 0
                     can_fire = False
@@ -205,8 +206,9 @@ class QLiberationMap(QGraphicsView):
                         detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
 
                         # Add detection range circle
-                        scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
-                                         detection_radius, detection_radius, self.detection_pen(cp.captured))
+                        if DisplayOptions.detection_range:
+                            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                             detection_radius, detection_radius, self.detection_pen(cp.captured))
 
                         # Add threat range circle
                         scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
