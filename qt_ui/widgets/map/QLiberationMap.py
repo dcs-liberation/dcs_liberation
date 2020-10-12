@@ -494,12 +494,14 @@ class QLiberationMap(QGraphicsView):
 
         else:
             # Polygon display mode
-            for inclusion_zone in self.game.theater.landmap[0]:
-                poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
-                scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
+            if self.game.theater.landmap is not None:
 
-            for exclusion_zone in self.game.theater.landmap[1]:
-                poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
-                scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
+                for inclusion_zone in self.game.theater.landmap[0]:
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
+                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
+
+                for exclusion_zone in self.game.theater.landmap[1]:
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
+                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
 
