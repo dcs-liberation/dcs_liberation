@@ -4,8 +4,8 @@ import datetime
 import logging
 from typing import List, Optional, Tuple
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
+from PySide2.QtCore import Qt, QPointF
+from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent, QPolygonF
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
@@ -470,23 +470,36 @@ class QLiberationMap(QGraphicsView):
     def addBackground(self):
         scene = self.scene()
 
-        bg = QPixmap("./resources/" + self.game.theater.overview_image)
-        scene.addPixmap(bg)
+        if not DisplayOptions.map_poly:
+            bg = QPixmap("./resources/" + self.game.theater.overview_image)
+            scene.addPixmap(bg)
 
-        # Apply graphical effects to simulate current daytime
-        if self.game.current_turn_daytime == "day":
-            pass
-        elif self.game.current_turn_daytime == "night":
-            ov = QPixmap(bg.width(), bg.height())
-            ov.fill(CONST.COLORS["night_overlay"])
-            overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect()
-            effect.setOpacity(0.7)
-            overlay.setGraphicsEffect(effect)
+            # Apply graphical effects to simulate current daytime
+            if self.game.current_turn_daytime == "day":
+                pass
+            elif self.game.current_turn_daytime == "night":
+                ov = QPixmap(bg.width(), bg.height())
+                ov.fill(CONST.COLORS["night_overlay"])
+                overlay = scene.addPixmap(ov)
+                effect = QGraphicsOpacityEffect()
+                effect.setOpacity(0.7)
+                overlay.setGraphicsEffect(effect)
+            else:
+                ov = QPixmap(bg.width(), bg.height())
+                ov.fill(CONST.COLORS["dawn_dust_overlay"])
+                overlay = scene.addPixmap(ov)
+                effect = QGraphicsOpacityEffect()
+                effect.setOpacity(0.3)
+                overlay.setGraphicsEffect(effect)
+
         else:
-            ov = QPixmap(bg.width(), bg.height())
-            ov.fill(CONST.COLORS["dawn_dust_overlay"])
-            overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect()
-            effect.setOpacity(0.3)
-            overlay.setGraphicsEffect(effect)
+            # Polygon display mode
+            for inclusion_zone in self.game.theater.landmap[0]:
+                poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
+                scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
+
+            for exclusion_zone in self.game.theater.landmap[1]:
+                poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
+                scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
+
+

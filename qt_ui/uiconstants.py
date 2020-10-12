@@ -49,6 +49,7 @@ COLORS: Dict[str, QColor] = {
     "super_red": QColor(227, 32, 0),
 
     "green": QColor(128, 186, 128),
+    "light_green": QColor(223, 255, 173),
     "bright_green": QColor(64, 200, 64),
 
     "black": QColor(0, 0, 0),
@@ -58,6 +59,10 @@ COLORS: Dict[str, QColor] = {
 
     "night_overlay": QColor(12, 20, 69),
     "dawn_dust_overlay": QColor(46, 38, 85),
+
+    "grey": QColor(150, 150, 150),
+    "dark_grey": QColor(75, 75, 75),
+    "dark_dark_grey": QColor(48, 48, 48),
 
 }
 
