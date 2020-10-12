@@ -61,7 +61,7 @@ class VeafPlugin(BasePlugin):
             operation.injectPluginScript("veaf", "src\\scripts\\mist.lua", "mist")
             operation.injectPluginScript("veaf", "src\\scripts\\Moose.lua", "moose")
             operation.injectPluginScript("veaf", "src\\scripts\\CTLD.lua", "ctld")
-            operation.injectPluginScript("veaf", "src\\scripts\\NIOD.lua", "niod")
+            #operation.injectPluginScript("veaf", "src\\scripts\\NIOD.lua", "niod")
             operation.injectPluginScript("veaf", "src\\scripts\\WeatherMark.lua", "weathermark")
             operation.injectPluginScript("veaf", "src\\scripts\\veaf.lua", "veaf")
             operation.injectPluginScript("veaf", "src\\scripts\\dcsUnits.lua", "dcsunits")

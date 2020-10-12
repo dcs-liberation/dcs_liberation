@@ -1,3 +1,4 @@
+from plugin import INSTALLED_PLUGINS
 
 class Settings:
 
@@ -24,8 +25,6 @@ class Settings:
         self.sams = True # Legacy parameter do not use
         self.cold_start = False # Legacy parameter do not use
         self.version = None
-        self.include_jtac_if_available = True
-        self.jtac_smoke_on = True
 
         # Performance oriented
         self.perf_red_alert_state = True
@@ -42,5 +41,9 @@ class Settings:
 
         # LUA Plugins system
         self.plugins = {}
+        for pluginName in INSTALLED_PLUGINS:
+            plugin = INSTALLED_PLUGINS[pluginName]
+            plugin.setSettings(self)
+
 
 

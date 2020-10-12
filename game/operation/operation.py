@@ -148,7 +148,8 @@ class Operation:
 
             if pluginName == None:
                 pluginName = "custom"
-            plugin_path = Path("./plugin",pluginName)
+            plugin_path = Path("./resources/plugins",pluginName)
+            logging.debug(f"plugin_path = {plugin_path}")
 
             if scriptFile != None:
                 scriptFile_path = Path(plugin_path, scriptFile)
@@ -468,7 +469,8 @@ dcsLiberation.TargetPoints = {
         # Inject Plugins Lua Scripts and data
         self.listOfPluginsScripts = []
 
-        for plugin in INSTALLED_PLUGINS:
+        for pluginName in INSTALLED_PLUGINS:
+            plugin = INSTALLED_PLUGINS[pluginName]
             plugin.injectScripts(self)
             plugin.injectConfiguration(self)
 

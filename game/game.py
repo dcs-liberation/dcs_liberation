@@ -28,6 +28,7 @@ from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .infos.information import Information
 from .settings import Settings
+from plugin import INSTALLED_PLUGINS
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -217,6 +218,11 @@ class Game:
 
     def on_load(self) -> None:
         ObjectiveDistanceCache.set_theater(self.theater)
+        
+        # set the settings in all plugins
+        for pluginName in INSTALLED_PLUGINS:
+            plugin = INSTALLED_PLUGINS[pluginName]
+            plugin.setSettings(self.settings)
 
     def pass_turn(self, no_action=False):
         logging.info("Pass turn")

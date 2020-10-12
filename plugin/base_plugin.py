@@ -15,15 +15,17 @@ class BasePlugin():
     def setupUI(self, settingsWindow, row:int):
         self.settings = settingsWindow.game.settings
 
-        if not self.nameInSettings in self.settings.plugins:
-            self.settings.plugins[self.nameInSettings] = self.enabledDefaultValue
-
         self.uiWidget = QCheckBox()
-        self.uiWidget.setChecked(self.settings.plugins[self.nameInSettings])
+        self.uiWidget.setChecked(self.isEnabled())
         self.uiWidget.toggled.connect(lambda: self.applySetting(settingsWindow))
 
         settingsWindow.pluginsGroupLayout.addWidget(QLabel(self.nameInUI), row, 0)
         settingsWindow.pluginsGroupLayout.addWidget(self.uiWidget, row, 1, Qt.AlignRight)
+
+    def setSettings(self, settings):
+        self.settings = settings
+        if not self.nameInSettings in self.settings.plugins:
+            self.settings.plugins[self.nameInSettings] = self.enabledDefaultValue
 
     def applySetting(self, settingsWindow):
         self.settings.plugins[self.nameInSettings] = self.uiWidget.isChecked()
@@ -38,4 +40,9 @@ class BasePlugin():
         return self.isEnabled()
 
     def isEnabled(self) -> bool:
+        if not self.settings:
+            return False
+
+        self.setSettings(self.settings) # create the necessary settings keys if needed
+
         return self.settings != None and self.settings.plugins[self.nameInSettings]

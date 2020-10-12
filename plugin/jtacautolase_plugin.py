@@ -12,6 +12,7 @@ class JtacAutolasePlugin(BasePlugin):
     #Allow spawn option
     nameInUI_useSmoke:str = "JTACs use smoke"
     nameInSettings_useSmoke:str = "plugin.jtacAutolase.useSmoke"
+    enabledDefaultValue_useSmoke:bool = True
 
     def setupUI(self, settingsWindow, row:int):
         # call the base method to add the plugin selection checkbox
@@ -42,6 +43,12 @@ class JtacAutolasePlugin(BasePlugin):
         pluginEnabled = self.uiWidget.isChecked()
         self.optionsGroup.setEnabled(pluginEnabled)
 
+    def setSettings(self, settings):
+        # call the base method
+        super().setSettings(settings)
+        if not self.nameInSettings_useSmoke in self.settings.plugins:
+            self.settings.plugins[self.nameInSettings_useSmoke] = self.enabledDefaultValue_useSmoke
+
     def applySetting(self, settingsWindow):
         # call the base method to apply the plugin selection checkbox value
         super().applySetting(settingsWindow)
@@ -61,7 +68,7 @@ class JtacAutolasePlugin(BasePlugin):
 
             # add a configuration for JTACAutoLase and start lasing for all JTACs
             smoke = "local smoke = false"
-            if self.settings.plugins[self.nameInSettings_useSmoke]:
+            if self.isUseSmoke():
                 smoke = "local smoke = true"
 
             lua = smoke + """
@@ -77,4 +84,12 @@ class JtacAutolasePlugin(BasePlugin):
             """
 
             operation.injectLuaTrigger(lua, "Setting and starting JTACs")
+
+    def isUseSmoke(self) -> bool:
+        if not self.settings:
+            return False
+
+        self.setSettings(self.settings) # create the necessary settings keys if needed
+
+        return self.settings.plugins[self.nameInSettings_useSmoke]
 

@@ -183,28 +183,10 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
-
-        if not hasattr(self.game.settings, "include_jtac_if_available"):
-            self.game.settings.include_jtac_if_available = True
-        if not hasattr(self.game.settings, "jtac_smoke_on"):
-            self.game.settings.jtac_smoke_on= True
-
-        self.include_jtac_if_available = QCheckBox()
-        self.include_jtac_if_available.setChecked(self.game.settings.include_jtac_if_available)
-        self.include_jtac_if_available.toggled.connect(self.applySettings)
-
-        self.jtac_smoke_on = QCheckBox()
-        self.jtac_smoke_on.setChecked(self.game.settings.jtac_smoke_on)
-        self.jtac_smoke_on.toggled.connect(self.applySettings)
-
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Include JTAC (If available)"), 2, 0)
-        self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Enable JTAC smoke markers"), 3, 0)
-        self.gameplayLayout.addWidget(self.jtac_smoke_on, 3, 1, Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -315,7 +297,8 @@ class QSettingsWindow(QDialog):
         self.pluginsGroup.setLayout(self.pluginsGroupLayout)
 
         row:int = 0
-        for plugin in INSTALLED_PLUGINS:
+        for pluginName in INSTALLED_PLUGINS:
+            plugin = INSTALLED_PLUGINS[pluginName]
             plugin.setupUI(self, row)
             row = row + 1
 
@@ -342,8 +325,6 @@ class QSettingsWindow(QDialog):
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
-        self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
-        self.game.settings.jtac_smoke_on = self.jtac_smoke_on.isChecked()
 
         print(self.game.settings.map_coalition_visibility)
 

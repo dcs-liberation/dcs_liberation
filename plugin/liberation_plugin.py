@@ -18,3 +18,6 @@ class LiberationPlugin(BasePlugin):
     def injectConfiguration(self, operation):
         if super().injectConfiguration(operation):
             pass
+
+    def isEnabled(self) -> bool:
+        return True # mandatory plugin
