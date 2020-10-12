@@ -40,4 +40,7 @@ class Settings:
         self.perf_culling = False
         self.perf_culling_distance = 100
 
+        # LUA Plugins system
+        self.plugins = {}
+
 

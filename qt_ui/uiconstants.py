@@ -99,6 +99,8 @@ def load_icons():
     ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
     ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
     ICONS["Cheat"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/cheat.png")
+    ICONS["Plugins"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/plugins.png")
+    ICONS["PluginsOptions"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/pluginsoptions.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")

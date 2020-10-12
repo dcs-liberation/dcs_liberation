@@ -31,7 +31,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from theater import ControlPoint
 from .. import db
 from ..debriefing import Debriefing
-
+from plugin import BasePlugin, INSTALLED_PLUGINS
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
@@ -75,6 +75,7 @@ class Operation:
         self.departure_cp = departure_cp
         self.to_cp = to_cp
         self.is_quick = False
+        self.listOfPluginsScripts = []
 
     def units_of(self, country_name: str) -> List[UnitType]:
         return []
@@ -132,6 +133,36 @@ class Operation:
                 self.defenders_starting_position = self.to_cp.at
             else:
                 self.defenders_starting_position = None
+
+    def injectLuaTrigger(self, luascript, comment = "LUA script"):
+        trigger = TriggerStart(comment=comment)
+        trigger.add_action(DoScript(String(luascript)))
+        self.current_mission.triggerrules.triggers.append(trigger)
+
+    def bypassPluginScript(self, pluginName, scriptFileMnemonic):
+            self.listOfPluginsScripts.append(scriptFileMnemonic)
+
+    def injectPluginScript(self, pluginName, scriptFile, scriptFileMnemonic):
+        if not scriptFileMnemonic in self.listOfPluginsScripts:
+            self.listOfPluginsScripts.append(scriptFileMnemonic)
+
+            if pluginName == None:
+                pluginName = "custom"
+            plugin_path = Path("./plugin",pluginName)
+
+            if scriptFile != None:
+                scriptFile_path = Path(plugin_path, scriptFile)
+                if scriptFile_path.exists():
+                    trigger = TriggerStart(comment="Load " + scriptFileMnemonic)
+                    filename = scriptFile_path.resolve()
+                    fileref = self.current_mission.map_resource.add_resource_file(filename)
+                    trigger.add_action(DoScriptFile(fileref))
+                    self.current_mission.triggerrules.triggers.append(trigger)
+                else:
+                    logging.error(f"Cannot find script file {scriptFile} for plugin {pluginName}")
+
+        else:
+            logging.debug(f"Skipping script file {scriptFile} for plugin {pluginName}")
 
     def generate(self):
         radio_registry = RadioRegistry()
@@ -434,67 +465,12 @@ dcsLiberation.TargetPoints = {
         trigger.add_action(DoScript(String(lua)))
         self.current_mission.triggerrules.triggers.append(trigger)
 
-        # Inject Plugins Lua Scripts
-        listOfPluginsScripts = []
-        plugin_file_path = Path("./resources/scripts/plugins/__plugins.lst")
-        if plugin_file_path.exists():
-            for line in plugin_file_path.read_text().splitlines():
-                name = line.strip()
-                if not name.startswith( '#' ):
-                    trigger = TriggerStart(comment="Load " + name)
-                    listOfPluginsScripts.append(name)
-                    fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
-                    trigger.add_action(DoScriptFile(fileref))
-                    self.current_mission.triggerrules.triggers.append(trigger)
-        else:
-            logging.info(
-                f"Not loading plugins, {plugin_file_path} does not exist")
+        # Inject Plugins Lua Scripts and data
+        self.listOfPluginsScripts = []
 
-        # Inject Mist Script if not done already in the plugins
-        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
-            trigger = TriggerStart(comment="Load Mist Lua framework")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/mist_4_3_74.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
-        # Inject JSON library if not done already in the plugins
-        if not "json.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JSON Lua library")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/json.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
-        # Inject Ciribob's JTACAutoLase if not done already in the plugins
-        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
-        # Inject DCS-Liberation script if not done already in the plugins
-        if not "dcs_liberation.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load DCS Liberation script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/dcs_liberation.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
-
-        # add a configuration for JTACAutoLase and start lasing for all JTACs
-        smoke = "true"
-        if hasattr(self.game.settings, "jtac_smoke_on"):
-            if not self.game.settings.jtac_smoke_on:
-                smoke = "false"
-
-        lua = """
-        -- setting and starting JTACs
-        env.info("DCSLiberation|: setting and starting JTACs")
-        """
-
-        for jtac in jtacs:
-            lua += f"if dcsLiberation.JTACAutoLase then dcsLiberation.JTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle') end\n"
-
-        trigger = TriggerStart(comment="Start JTACs")
-        trigger.add_action(DoScript(String(lua)))
-        self.current_mission.triggerrules.triggers.append(trigger)
+        for plugin in INSTALLED_PLUGINS:
+            plugin.injectScripts(self)
+            plugin.injectConfiguration(self)
 
         self.assign_channels_to_flights(airgen.flights,
                                         airsupportgen.air_support)

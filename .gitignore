@@ -21,4 +21,5 @@ logs/
 qt_ui/logs/liberation.log
 
 *.psd
-resources/scripts/plugins/*
+plugin/custom/__plugins.lst
+plugin/custom/*.lua
