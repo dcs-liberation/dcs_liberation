@@ -579,7 +579,6 @@ class AircraftConflictGenerator:
         unit_type = group.units[0].unit_type
 
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
-            override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
             # Clear pylons
             for p in group.units:
                 p.pylons.clear()

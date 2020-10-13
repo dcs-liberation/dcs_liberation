@@ -11,11 +11,14 @@ from dcs.planes import (
     A_10A,
     A_10C,
     A_10C_2,
+    B_1B,
+    B_52H,
     C_130,
     E_3A,
     FA_18C_hornet,
     F_14B,
     F_15C,
+    F_15E,
     F_16C_50,
     F_5E_3,
     JF_17,
@@ -47,6 +50,7 @@ BLUEFOR_MODERN = {
     "units": [
 
         F_15C,
+        F_15E,
         F_14B,
         FA_18C_hornet,
         F_16C_50,
@@ -61,6 +65,9 @@ BLUEFOR_MODERN = {
         A_10C_2,
         AV8BNA,
         AJS37,
+
+        B_1B,
+        B_52H,
 
         KC_135,
         KC130,

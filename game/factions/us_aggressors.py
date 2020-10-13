@@ -6,10 +6,13 @@ from dcs.helicopters import (
     UH_1H,
 )
 from dcs.planes import (
+    B_1B,
+    B_52H,
     C_130,
     E_3A,
     FA_18C_hornet,
     F_15C,
+    F_15E,
     F_16C_50,
     F_5E_3,
     KC130,
@@ -38,10 +41,14 @@ US_Aggressors = {
     "units": [
 
         F_15C,
+        F_15E,
         F_5E_3,
         FA_18C_hornet,
         F_16C_50,
         Su_27,
+
+        B_1B,
+        B_52H,
 
         KC_135,
         KC130,
