@@ -1,15 +1,16 @@
-from typing import Optional
+from typing import Optional, Set
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
     QGridLayout,
-    QScrollArea,
-    QVBoxLayout,
     QHBoxLayout,
     QLabel,
+    QScrollArea,
+    QVBoxLayout,
     QWidget,
 )
+from dcs.unittype import UnitType
 
 from game.event.event import UnitsDeliveryEvent
 from qt_ui.models import GameModel
@@ -48,26 +49,27 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        units = {
-            CAP: db.find_unittype(CAP, self.game_model.game.player_name),
-            CAS: db.find_unittype(CAS, self.game_model.game.player_name),
-        }
+        tasks = [CAP, CAS]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         row = 0
 
-        for task_type in units.keys():
-            units_column = list(set(units[task_type]))
-            if len(units_column) == 0:
+        unit_types: Set[UnitType] = set()
+        for task in tasks:
+            units = db.find_unittype(task, self.game_model.game.player_name)
+            if not units:
                 continue
-            units_column.sort(key=lambda x: db.PRICES[x])
-            for unit_type in units_column:
-                if self.cp.is_carrier and not unit_type in db.CARRIER_CAPABLE:
+            for unit in units:
+                if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
                     continue
-                if self.cp.is_lha and not unit_type in db.LHA_CAPABLE:
+                if self.cp.is_lha and unit not in db.LHA_CAPABLE:
                     continue
-                row = self.add_purchase_row(unit_type, task_box_layout, row)
+                unit_types.add(unit)
+
+        sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
+        for unit_type in sorted_units:
+            row = self.add_purchase_row(unit_type, task_box_layout, row)
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
