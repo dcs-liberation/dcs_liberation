@@ -1,3 +1,18 @@
+# 2.2.X
+
+## Features/Improvements :
+* **[Flight Planner]** Flight planner overhaul, with package and TOT system
+* **[Map]** Highlight the selected flight path on the map
+* **[Map]** Improved flight plan display settings 
+* **[Map]** Improved SAM display settings
+* **[Map]** Added polygon debug mode display
+* **[New Game]** Starting budget can be freely selected 
+* **[Moddability]** Custom campaigns can be designed through json files 
+
+## Fixes :
+* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore 
+
+
 # 2.1.5
 
 ## Features/Improvements :
