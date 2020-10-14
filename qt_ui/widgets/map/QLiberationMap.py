@@ -4,8 +4,8 @@ import datetime
 import logging
 from typing import List, Optional, Tuple
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent
+from PySide2.QtCore import Qt, QPointF
+from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent, QPolygonF
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
@@ -49,7 +49,7 @@ class QLiberationMap(QGraphicsView):
         # A tuple of (package index, flight index), or none.
         self.selected_flight: Optional[Tuple[int, int]] = None
 
-        self.setMinimumSize(800,600)
+        self.setMinimumSize(800, 600)
         self.setMaximumHeight(2160)
         self._zoom = 0
         self.factor = 1
@@ -98,8 +98,6 @@ class QLiberationMap(QGraphicsView):
         logging.debug("Reloading Map Canvas")
         if self.game is not None:
             self.reload_scene()
-
-
 
     """
     
@@ -154,6 +152,17 @@ class QLiberationMap(QGraphicsView):
         #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
         #    text.setPos(0, i * 24)
 
+        # Display Culling
+        if DisplayOptions.culling and self.game.settings.perf_culling:
+            culling_points = self.game_model.game.get_culling_points()
+            culling_distance = self.game_model.game.settings.perf_culling_distance
+            for point in culling_points:
+                culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
+                distance_point = self._transform_point(culling_distance_point)
+                transformed = self._transform_point(point)
+                diameter = distance_point[0] - transformed[0]
+                scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+
         for cp in self.game.theater.controlpoints:
         
             pos = self._transform_point(cp.position)
@@ -175,14 +184,17 @@ class QLiberationMap(QGraphicsView):
                 if ground_object.obj_name in added_objects:
                     continue
 
-
                 go_pos = self._transform_point(ground_object.position)
                 if not ground_object.airbase_group:
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
                 is_aa = ground_object.category == "aa"
-                if is_aa and DisplayOptions.sam_ranges:
+                should_display = ((DisplayOptions.sam_ranges and cp.captured)
+                                  or
+                                  (DisplayOptions.enemy_sam_ranges and not cp.captured))
+
+                if is_aa and should_display:
                     threat_range = 0
                     detection_range = 0
                     can_fire = False
@@ -205,8 +217,9 @@ class QLiberationMap(QGraphicsView):
                         detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
 
                         # Add detection range circle
-                        scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
-                                         detection_radius, detection_radius, self.detection_pen(cp.captured))
+                        if DisplayOptions.detection_range:
+                            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                             detection_radius, detection_radius, self.detection_pen(cp.captured))
 
                         # Add threat range circle
                         scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
@@ -468,23 +481,38 @@ class QLiberationMap(QGraphicsView):
     def addBackground(self):
         scene = self.scene()
 
-        bg = QPixmap("./resources/" + self.game.theater.overview_image)
-        scene.addPixmap(bg)
+        if not DisplayOptions.map_poly:
+            bg = QPixmap("./resources/" + self.game.theater.overview_image)
+            scene.addPixmap(bg)
 
-        # Apply graphical effects to simulate current daytime
-        if self.game.current_turn_daytime == "day":
-            pass
-        elif self.game.current_turn_daytime == "night":
-            ov = QPixmap(bg.width(), bg.height())
-            ov.fill(CONST.COLORS["night_overlay"])
-            overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect()
-            effect.setOpacity(0.7)
-            overlay.setGraphicsEffect(effect)
+            # Apply graphical effects to simulate current daytime
+            if self.game.current_turn_daytime == "day":
+                pass
+            elif self.game.current_turn_daytime == "night":
+                ov = QPixmap(bg.width(), bg.height())
+                ov.fill(CONST.COLORS["night_overlay"])
+                overlay = scene.addPixmap(ov)
+                effect = QGraphicsOpacityEffect()
+                effect.setOpacity(0.7)
+                overlay.setGraphicsEffect(effect)
+            else:
+                ov = QPixmap(bg.width(), bg.height())
+                ov.fill(CONST.COLORS["dawn_dust_overlay"])
+                overlay = scene.addPixmap(ov)
+                effect = QGraphicsOpacityEffect()
+                effect.setOpacity(0.3)
+                overlay.setGraphicsEffect(effect)
+
         else:
-            ov = QPixmap(bg.width(), bg.height())
-            ov.fill(CONST.COLORS["dawn_dust_overlay"])
-            overlay = scene.addPixmap(ov)
-            effect = QGraphicsOpacityEffect()
-            effect.setOpacity(0.3)
-            overlay.setGraphicsEffect(effect)
+            # Polygon display mode
+            if self.game.theater.landmap is not None:
+
+                for inclusion_zone in self.game.theater.landmap[0]:
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
+                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
+
+                for exclusion_zone in self.game.theater.landmap[1]:
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
+                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
+
+
