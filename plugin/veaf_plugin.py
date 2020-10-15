@@ -86,5 +86,5 @@ class VeafPlugin(BasePlugin):
 
     def injectConfiguration(self, operation):
         if super().injectConfiguration(operation):
-            operation.injectPluginScript("veaf", "src\\config\\missionConfig.lua", "missionconfig")
+            operation.injectPluginScript("veaf", "src\\config\\missionConfig.lua", "veaf-config")
 
