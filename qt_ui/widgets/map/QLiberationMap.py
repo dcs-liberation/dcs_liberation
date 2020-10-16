@@ -255,6 +255,8 @@ class QLiberationMap(QGraphicsView):
         if DisplayOptions.flight_paths.hide:
             return
         packages = list(self.game_model.ato_model.packages)
+        if self.game.settings.show_red_ato:
+            packages.extend(self.game_model.red_ato_model.packages)
         for p_idx, package_model in enumerate(packages):
             for f_idx, flight in enumerate(package_model.flights):
                 selected = (p_idx, f_idx) == self.selected_flight

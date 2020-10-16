@@ -1,16 +1,48 @@
 import logging
+from typing import Callable
 
 from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
-from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
-    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout, QSpinBox
+from PySide2.QtWidgets import (
+    QLabel,
+    QDialog,
+    QGridLayout,
+    QListView,
+    QStackedLayout,
+    QComboBox,
+    QWidget,
+    QAbstractItemView,
+    QPushButton,
+    QGroupBox,
+    QCheckBox,
+    QVBoxLayout,
+    QSpinBox,
+)
 from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
+from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
+
+
+class CheatSettingsBox(QGroupBox):
+    def __init__(self, game: Game, apply_settings: Callable[[], None]) -> None:
+        super().__init__("Cheat Settings")
+        self.main_layout = QVBoxLayout()
+        self.setLayout(self.main_layout)
+
+        self.red_ato_checkbox = QCheckBox()
+        self.red_ato_checkbox.setChecked(game.settings.show_red_ato)
+        self.red_ato_checkbox.toggled.connect(apply_settings)
+        self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
+        self.main_layout.addLayout(self.red_ato)
+
+    @property
+    def show_red_ato(self) -> bool:
+        return self.red_ato_checkbox.isChecked()
 
 
 class QSettingsWindow(QDialog):
@@ -263,8 +295,11 @@ class QSettingsWindow(QDialog):
     def initCheatLayout(self):
 
         self.cheatPage = QWidget()
-        self.cheatLayout = QGridLayout()
+        self.cheatLayout = QVBoxLayout()
         self.cheatPage.setLayout(self.cheatLayout)
+
+        self.cheat_options = CheatSettingsBox(self.game, self.applySettings)
+        self.cheatLayout.addWidget(self.cheat_options)
 
         self.moneyCheatBox = QGroupBox("Money Cheat")
         self.moneyCheatBox.setAlignment(Qt.AlignTop)
@@ -281,7 +316,7 @@ class QSettingsWindow(QDialog):
                 btn.setProperty("style", "btn-danger")
             btn.clicked.connect(self.cheatLambda(amount))
             self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
-        self.cheatLayout.addWidget(self.moneyCheatBox, 0, 0)
+        self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
 
     def cheatLambda(self, amount):
         return lambda: self.cheatMoney(amount)
@@ -307,8 +342,6 @@ class QSettingsWindow(QDialog):
         self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
         self.game.settings.jtac_smoke_on = self.jtac_smoke_on.isChecked()
 
-        print(self.game.settings.map_coalition_visibility)
-
         self.game.settings.supercarrier = self.supercarrier.isChecked()
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
@@ -321,6 +354,8 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
+
+        self.game.settings.show_red_ato = self.cheat_options.show_red_ato
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

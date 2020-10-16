@@ -40,4 +40,15 @@ class Settings:
         self.perf_culling = False
         self.perf_culling_distance = 100
 
+        # Cheating
+        self.show_red_ato = False
 
+    def __setstate__(self, state) -> None:
+        # __setstate__ is called with the dict of the object being unpickled. We
+        # can provide save compatibility for new settings options (which
+        # normally would not be present in the unpickled object) by creating a
+        # new settings object, updating it with the unpickled state, and
+        # updating our dict with that.
+        new_state = Settings().__dict__
+        new_state.update(state)
+        self.__dict__.update(new_state)
