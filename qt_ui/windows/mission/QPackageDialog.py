@@ -35,12 +35,6 @@ class QPackageDialog(QDialog):
     #: Emitted when a change is made to the package.
     package_changed = Signal()
 
-    #: Emitted when a flight is added to the package.
-    flight_added = Signal(Flight)
-
-    #: Emitted when a flight is removed from the package.
-    flight_removed = Signal(Flight)
-
     def __init__(self, game: Game, model: PackageModel) -> None:
         super().__init__()
         self.game = game
@@ -115,7 +109,9 @@ class QPackageDialog(QDialog):
 
         self.setLayout(self.layout)
 
+        self.accepted.connect(self.on_save)
         self.finished.connect(self.on_close)
+        self.rejected.connect(self.on_cancel)
 
     def tot_qtime(self) -> QTime:
         delay = self.package_model.package.time_over_target
@@ -124,9 +120,15 @@ class QPackageDialog(QDialog):
         seconds = delay % 60
         return QTime(hours, minutes, seconds)
 
+    def on_cancel(self) -> None:
+        pass
+
     @staticmethod
     def on_close(_result) -> None:
         GameUpdateSignal.get_instance().redraw_flight_paths()
+
+    def on_save(self) -> None:
+        self.save_tot()
 
     def save_tot(self) -> None:
         time = self.tot_spinner.time()
@@ -152,14 +154,13 @@ class QPackageDialog(QDialog):
 
     def add_flight(self, flight: Flight) -> None:
         """Adds the new flight to the package."""
+        self.game.aircraft_inventory.claim_for_flight(flight)
         self.package_model.add_flight(flight)
         planner = FlightPlanBuilder(self.game, self.package_model.package,
                                     is_player=True)
         planner.populate_flight_plan(flight)
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
-        # noinspection PyUnresolvedReferences
-        self.flight_added.emit(flight)
 
     def on_delete_flight(self) -> None:
         """Removes the selected flight from the package."""
@@ -167,11 +168,10 @@ class QPackageDialog(QDialog):
         if flight is None:
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
+        self.game.aircraft_inventory.return_from_flight(flight)
         self.package_model.delete_flight(flight)
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
-        # noinspection PyUnresolvedReferences
-        self.flight_removed.emit(flight)
 
 
 class QNewPackageDialog(QPackageDialog):
@@ -187,7 +187,7 @@ class QNewPackageDialog(QPackageDialog):
 
         self.save_button = QPushButton("Save")
         self.save_button.setProperty("style", "start-button")
-        self.save_button.clicked.connect(self.on_save)
+        self.save_button.clicked.connect(self.accept)
         self.button_layout.addWidget(self.save_button)
 
         self.delete_flight_button.clicked.connect(self.on_delete_flight)
@@ -198,11 +198,13 @@ class QNewPackageDialog(QPackageDialog):
         Empty packages may be created. They can be modified later, and will have
         no effect if empty when the mission is generated.
         """
-        self.save_tot()
+        super().on_save()
         self.ato_model.add_package(self.package_model.package)
+
+    def on_cancel(self) -> None:
+        super().on_cancel()
         for flight in self.package_model.package.flights:
-            self.game.aircraft_inventory.claim_for_flight(flight)
-        self.close()
+            self.game_model.game.aircraft_inventory.return_from_flight(flight)
 
 
 class QEditPackageDialog(QPackageDialog):
@@ -223,29 +225,8 @@ class QEditPackageDialog(QPackageDialog):
 
         self.done_button = QPushButton("Done")
         self.done_button.setProperty("style", "start-button")
-        self.done_button.clicked.connect(self.on_done)
+        self.done_button.clicked.connect(self.accept)
         self.button_layout.addWidget(self.done_button)
-
-        # noinspection PyUnresolvedReferences
-        self.flight_added.connect(self.on_flight_added)
-        # noinspection PyUnresolvedReferences
-        self.flight_removed.connect(self.on_flight_removed)
-
-    # TODO: Make the new package dialog do this too, return on cancel.
-    # Not claiming the aircraft when they are added to the planner means that
-    # inventory counts are not updated until after the new package is updated,
-    # so you can add an infinite number of aircraft to a new package in the UI,
-    # which will crash when the flight package is saved.
-    def on_flight_added(self, flight: Flight) -> None:
-        self.game.aircraft_inventory.claim_for_flight(flight)
-
-    def on_flight_removed(self, flight: Flight) -> None:
-        self.game.aircraft_inventory.return_from_flight(flight)
-
-    def on_done(self) -> None:
-        """Closes the window."""
-        self.save_tot()
-        self.close()
 
     def on_delete(self) -> None:
         """Removes the viewed package from the ATO."""
