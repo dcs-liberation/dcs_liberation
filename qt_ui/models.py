@@ -164,6 +164,7 @@ class PackageModel(QAbstractListModel):
 
     def update_tot(self, tot: int) -> None:
         self.package.time_over_target = tot
+        self.layoutChanged.emit()
 
     @property
     def mission_target(self) -> MissionTarget:

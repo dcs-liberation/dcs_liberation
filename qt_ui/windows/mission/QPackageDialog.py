@@ -89,6 +89,7 @@ class QPackageDialog(QDialog):
         self.tot_spinner = QTimeEdit(time)
         self.tot_spinner.setMinimumTime(QTime(0, 0))
         self.tot_spinner.setDisplayFormat("T+hh:mm:ss")
+        self.tot_spinner.timeChanged.connect(self.save_tot)
         self.tot_column.addWidget(self.tot_spinner)
 
         self.package_view = QFlightList(self.package_model)
