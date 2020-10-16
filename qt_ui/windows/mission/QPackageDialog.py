@@ -16,6 +16,7 @@ from game.game import Game
 from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
+from gen.flights.traveltime import TotEstimator
 from qt_ui.models import AtoModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
@@ -77,20 +78,19 @@ class QPackageDialog(QDialog):
         self.tot_label = QLabel("Time Over Target:")
         self.tot_column.addWidget(self.tot_label)
 
-        if self.package_model.package.time_over_target is None:
-            time = None
-        else:
-            delay = self.package_model.package.time_over_target
-            hours = delay // 3600
-            minutes = delay // 60 % 60
-            seconds = delay % 60
-            time = QTime(hours, minutes, seconds)
-
-        self.tot_spinner = QTimeEdit(time)
+        self.tot_spinner = QTimeEdit(self.tot_qtime())
         self.tot_spinner.setMinimumTime(QTime(0, 0))
         self.tot_spinner.setDisplayFormat("T+hh:mm:ss")
         self.tot_spinner.timeChanged.connect(self.save_tot)
         self.tot_column.addWidget(self.tot_spinner)
+
+        self.reset_tot_button = QPushButton("Reset TOT")
+        self.reset_tot_button.setToolTip(
+            "Sets the package TOT to the earliest time that all flights can "
+            "arrive at the target."
+        )
+        self.reset_tot_button.clicked.connect(self.reset_tot)
+        self.tot_column.addWidget(self.reset_tot_button)
 
         self.package_view = QFlightList(self.package_model)
         self.package_view.selectionModel().selectionChanged.connect(
@@ -117,6 +117,13 @@ class QPackageDialog(QDialog):
 
         self.finished.connect(self.on_close)
 
+    def tot_qtime(self) -> QTime:
+        delay = self.package_model.package.time_over_target
+        hours = delay // 3600
+        minutes = delay // 60 % 60
+        seconds = delay % 60
+        return QTime(hours, minutes, seconds)
+
     @staticmethod
     def on_close(_result) -> None:
         GameUpdateSignal.get_instance().redraw_flight_paths()
@@ -125,6 +132,11 @@ class QPackageDialog(QDialog):
         time = self.tot_spinner.time()
         seconds = time.hour() * 3600 + time.minute() * 60 + time.second()
         self.package_model.update_tot(seconds)
+
+    def reset_tot(self) -> None:
+        self.package_model.update_tot(
+            TotEstimator(self.package_model.package).earliest_tot())
+        self.tot_spinner.setTime(self.tot_qtime())
 
     def on_selection_changed(self, selected: QItemSelection,
                              _deselected: QItemSelection) -> None:
