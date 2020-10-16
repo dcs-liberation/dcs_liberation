@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from PySide2.QtWidgets import (
     QFrame,
@@ -11,6 +11,8 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game
 from game.event import CAP, CAS, FrontlineAttackEvent
+from gen.ato import Package
+from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
@@ -117,6 +119,22 @@ class QTopPanel(QFrame):
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
 
+    def negative_start_packages(self) -> List[Package]:
+        packages = []
+        for package in self.game_model.ato_model.ato.packages:
+            estimator = TotEstimator(package)
+            for flight in package.flights:
+                if estimator.mission_start_time(flight) < 0:
+                    packages.append(package)
+                    break
+        return packages
+
+    @staticmethod
+    def fix_tots(packages: List[Package]) -> None:
+        for package in packages:
+            estimator = TotEstimator(package)
+            package.time_over_target = estimator.earliest_tot()
+
     def ato_has_clients(self) -> bool:
         for package in self.game.blue_ato.packages:
             for flight in package.flights:
@@ -142,12 +160,52 @@ class QTopPanel(QFrame):
         )
         return result == QMessageBox.Yes
 
+    def confirm_negative_start_time(self,
+                                    negative_starts: List[Package]) -> bool:
+        formatted = '<br />'.join(
+            [f"{p.primary_task.name} {p.target.name}" for p in negative_starts]
+        )
+        mbox = QMessageBox(
+            QMessageBox.Question,
+            "Continue with past start times?",
+            ("Some flights in the following packages have start times set "
+             "earlier than mission start time:<br />"
+             "<br />"
+             f"{formatted}<br />"
+             "<br />"
+             "Flight start times are estimated based on the package TOT, so it "
+             "is possible that not all flights will be able to reach the "
+             "target area at their assigned times.<br />"
+             "<br />"
+             "You can either continue with the mission as planned, with the "
+             "misplanned flights potentially flying too fast and/or missing "
+             "their rendezvous; automatically fix negative TOTs; or cancel "
+             "mission start and fix the packages manually."),
+            parent=self
+        )
+        auto = mbox.addButton("Fix TOTs automatically", QMessageBox.ActionRole)
+        ignore = mbox.addButton("Continue without fixing",
+                                QMessageBox.DestructiveRole)
+        cancel = mbox.addButton(QMessageBox.Cancel)
+        mbox.setEscapeButton(cancel)
+        mbox.exec_()
+        clicked = mbox.clickedButton()
+        if clicked == auto:
+            self.fix_tots(negative_starts)
+            return True
+        elif clicked == ignore:
+            return True
+        return False
+
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
         if not self.ato_has_clients() and not self.confirm_no_client_launch():
             return
 
-        # TODO: Verify no negative start times.
+        negative_starts = self.negative_start_packages()
+        if negative_starts:
+            if not self.confirm_negative_start_time(negative_starts):
+                return
 
         # TODO: Refactor this nonsense.
         game_event = None
