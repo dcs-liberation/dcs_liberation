@@ -136,8 +136,11 @@ class QPackageDialog(QDialog):
         self.package_model.update_tot(seconds)
 
     def reset_tot(self) -> None:
-        self.package_model.update_tot(
-            TotEstimator(self.package_model.package).earliest_tot())
+        if not list(self.package_model.flights):
+            self.package_model.update_tot(0)
+        else:
+            self.package_model.update_tot(
+                TotEstimator(self.package_model.package).earliest_tot())
         self.tot_spinner.setTime(self.tot_qtime())
 
     def on_selection_changed(self, selected: QItemSelection,

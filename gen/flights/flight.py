@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Iterable, Optional
 
 from game import db
 from dcs.unittype import UnitType
@@ -150,6 +150,14 @@ class Flight:
     def __repr__(self):
         return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
                + " (" + str(len(self.points)) + " wpt)"
+
+    def waypoint_with_type(
+            self,
+            types: Iterable[FlightWaypointType]) -> Optional[FlightWaypoint]:
+        for waypoint in self.points:
+            if waypoint.waypoint_type in types:
+                return waypoint
+        return None
 
 
 # Test

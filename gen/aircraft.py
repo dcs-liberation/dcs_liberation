@@ -788,6 +788,8 @@ class AircraftConflictGenerator:
         self.clear_parking_slots()
 
         for package in ato.packages:
+            if not package.flights:
+                continue
             timing = PackageWaypointTiming.for_package(package)
             for flight in package.flights:
                 culled = self.game.position_culled(flight.from_cp.position)
@@ -1130,7 +1132,7 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             pattern=OrbitAction.OrbitPattern.Circle
         ))
         loiter.stop_after_time(
-            self.timing.push_time(self.flight, waypoint.position))
+            self.timing.push_time(self.flight, self.waypoint))
         waypoint.add_task(loiter)
         return waypoint
 

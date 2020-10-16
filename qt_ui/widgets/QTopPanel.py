@@ -122,6 +122,8 @@ class QTopPanel(QFrame):
     def negative_start_packages(self) -> List[Package]:
         packages = []
         for package in self.game_model.ato_model.ato.packages:
+            if not package.flights:
+                continue
             estimator = TotEstimator(package)
             for flight in package.flights:
                 if estimator.mission_start_time(flight) < 0:

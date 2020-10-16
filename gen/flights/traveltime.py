@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass
 from typing import Iterable, Optional
 
@@ -19,23 +20,73 @@ from gen.flights.flight import (
 CAP_DURATION = 30  # Minutes
 CAP_TYPES = (FlightType.BARCAP, FlightType.CAP)
 
+INGRESS_TYPES = {
+    FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_SEAD,
+    FlightWaypointType.INGRESS_STRIKE,
+}
+
+IP_TYPES = {
+    FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_SEAD,
+    FlightWaypointType.INGRESS_STRIKE,
+    FlightWaypointType.PATROL_TRACK,
+}
+
 
 class GroundSpeed:
-    @classmethod
-    def for_package(cls, package: Package) -> int:
-        speeds = []
-        for flight in package.flights:
-            speeds.append(cls.for_flight(flight))
-        return min(speeds)  # knots
-
     @staticmethod
-    def for_flight(_flight: Flight) -> int:
+    def mission_speed(package: Package) -> int:
+        speeds = set()
+        for flight in package.flights:
+            waypoint = flight.waypoint_with_type(IP_TYPES)
+            if waypoint is None:
+                logging.error(f"Could not find ingress point for {flight}")
+                continue
+            speeds.add(GroundSpeed.for_flight(flight, waypoint.alt))
+        return min(speeds)
+
+    @classmethod
+    def for_flight(cls, _flight: Flight, altitude: int) -> int:
         # TODO: Gather data so this is useful.
         # TODO: Expose both a cruise speed and target speed.
         # The cruise speed can be used for ascent, hold, join, and RTB to save
         # on fuel, but mission speed will be fast enough to keep the flight
         # safer.
-        return 400  # knots
+        return int(cls.from_mach(0.8, altitude))  # knots
+
+    @staticmethod
+    def from_mach(mach: float, altitude: int) -> float:
+        """Returns the ground speed in knots for the given mach and altitude.
+
+        Args:
+            mach: The mach number to convert to ground speed.
+            altitude: The altitude in feet.
+
+        Returns:
+            The ground speed corresponding to the given altitude and mach number
+            in knots.
+        """
+        # https://www.grc.nasa.gov/WWW/K-12/airplane/atmos.html
+        if altitude <= 36152:
+            temperature_f = 59 - 0.00356 * altitude
+        else:
+            # There's another formula for altitudes over 82k feet, but we better
+            # not be planning waypoints that high...
+            temperature_f = -70
+
+        temperature_k = (temperature_f + 459.67) * (5 / 9)
+
+        # https://www.engineeringtoolbox.com/specific-heat-ratio-d_602.html
+        # Dependent on temperature, but varies very little (+/-0.001)
+        # between -40F and 180F.
+        heat_capacity_ratio = 1.4
+
+        # https://www.grc.nasa.gov/WWW/K-12/airplane/sound.html
+        gas_constant = 286  # m^2/s^2/K
+        c_sound = math.sqrt(heat_capacity_ratio * gas_constant * temperature_k)
+        # c_sound is in m/s, convert to knots.
+        return (c_sound * 1.944) * mach
 
 
 class TravelTime:
@@ -97,13 +148,7 @@ class TotEstimator:
             The earliest possible TOT for the given flight in seconds. Returns 0
             if an ingress point cannot be found.
         """
-        stop_types = {
-            FlightWaypointType.PATROL_TRACK,
-            FlightWaypointType.INGRESS_CAS,
-            FlightWaypointType.INGRESS_SEAD,
-            FlightWaypointType.INGRESS_STRIKE,
-        }
-        time_to_ingress = self.estimate_waypoints_to_target(flight, stop_types)
+        time_to_ingress = self.estimate_waypoints_to_target(flight, IP_TYPES)
         if time_to_ingress is None:
             logging.warning(
                 f"Found no ingress types. Cannot estimate TOT for {flight}")
@@ -119,7 +164,7 @@ class TotEstimator:
             assert self.package.waypoints is not None
             time_to_target = TravelTime.between_points(
                 self.package.waypoints.ingress, self.package.target.position,
-                GroundSpeed.for_package(self.package))
+                GroundSpeed.mission_speed(self.package))
         return sum([
             self.estimate_startup(flight),
             self.estimate_ground_ops(flight),
@@ -146,30 +191,38 @@ class TotEstimator:
             self, flight: Flight,
             stop_types: Iterable[FlightWaypointType]) -> Optional[int]:
         total = 0
+        # TODO: This is AGL. We want MSL.
+        previous_altitude = 0
         previous_position = flight.from_cp.position
         for waypoint in flight.points:
             position = Point(waypoint.x, waypoint.y)
             total += TravelTime.between_points(
                 previous_position, position,
-                self.speed_to_waypoint(flight, waypoint)
+                self.speed_to_waypoint(flight, waypoint, previous_altitude)
             )
             previous_position = position
+            previous_altitude = waypoint.alt
             if waypoint.waypoint_type in stop_types:
                 return total
 
         return None
 
-    def speed_to_waypoint(self, flight: Flight,
-                          waypoint: FlightWaypoint) -> int:
+    def speed_to_waypoint(self, flight: Flight, waypoint: FlightWaypoint,
+                          from_altitude: int) -> int:
+        # TODO: Adjust if AGL.
+        # We don't have an exact heightmap, but we should probably be performing
+        # *some* adjustment for NTTR since the minimum altitude of the map is
+        # near 2000 ft MSL.
+        alt_for_speed = min(from_altitude, waypoint.alt)
         pre_join = (FlightWaypointType.LOITER, FlightWaypointType.JOIN)
         if waypoint.waypoint_type == FlightWaypointType.ASCEND_POINT:
             # Flights that start airborne already have some altitude and a good
             # amount of speed.
             factor = 1.0 if flight.start_type == "In Flight" else 0.5
-            return int(GroundSpeed.for_flight(flight) * factor)
+            return int(GroundSpeed.for_flight(flight, alt_for_speed) * factor)
         elif waypoint.waypoint_type in pre_join:
-            return GroundSpeed.for_flight(flight)
-        return GroundSpeed.for_package(self.package)
+            return GroundSpeed.for_flight(flight, alt_for_speed)
+        return GroundSpeed.mission_speed(self.package)
 
 
 @dataclass(frozen=True)
@@ -209,12 +262,12 @@ class PackageWaypointTiming:
         else:
             return self.egress
 
-    def push_time(self, flight: Flight, hold_point: Point) -> int:
+    def push_time(self, flight: Flight, hold_point: FlightWaypoint) -> int:
         assert self.package.waypoints is not None
         return self.join - TravelTime.between_points(
-            hold_point,
+            Point(hold_point.x, hold_point.y),
             self.package.waypoints.join,
-            GroundSpeed.for_flight(flight)
+            GroundSpeed.for_flight(flight, hold_point.alt)
         )
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[int]:
@@ -224,15 +277,9 @@ class PackageWaypointTiming:
             FlightWaypointType.TARGET_SHIP,
         )
 
-        ingress_types = (
-            FlightWaypointType.INGRESS_CAS,
-            FlightWaypointType.INGRESS_SEAD,
-            FlightWaypointType.INGRESS_STRIKE,
-        )
-
         if waypoint.waypoint_type == FlightWaypointType.JOIN:
             return self.join
-        elif waypoint.waypoint_type in ingress_types:
+        elif waypoint.waypoint_type in INGRESS_TYPES:
             return self.ingress
         elif waypoint.waypoint_type in target_types:
             return self.target
@@ -247,7 +294,7 @@ class PackageWaypointTiming:
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint,
                                  flight: Flight) -> Optional[int]:
         if waypoint.waypoint_type == FlightWaypointType.LOITER:
-            return self.push_time(flight, Point(waypoint.x, waypoint.y))
+            return self.push_time(flight, waypoint)
         elif waypoint.waypoint_type == FlightWaypointType.PATROL:
             return self.race_track_end
         return None
@@ -256,7 +303,17 @@ class PackageWaypointTiming:
     def for_package(cls, package: Package) -> PackageWaypointTiming:
         assert package.waypoints is not None
 
-        group_ground_speed = GroundSpeed.for_package(package)
+        # TODO: Plan similar altitudes for the in-country leg of the mission.
+        # Waypoint altitudes for a given flight *shouldn't* differ too much
+        # between the join and split points, so we don't need speeds for each
+        # leg individually since they should all be fairly similar. This doesn't
+        # hold too well right now since nothing is stopping each waypoint from
+        # jumping 20k feet each time, but that's a huge waste of energy we
+        # should be avoiding anyway.
+        if not package.flights:
+            raise ValueError("Cannot plan TOT for package with no flights")
+
+        group_ground_speed = GroundSpeed.mission_speed(package)
 
         ingress = package.time_over_target - TravelTime.between_points(
             package.waypoints.ingress,
