@@ -424,7 +424,6 @@ class FlightPlanBuilder:
     def _heading_to_package_airfield(self, point: Point) -> int:
         return self.package_airfield().position.heading_between_point(point)
 
-    # TODO: Set ingress/egress/join/split points in the Package.
     def package_airfield(self) -> ControlPoint:
         # We'll always have a package, but if this is being planned via the UI
         # it could be the first flight in the package.

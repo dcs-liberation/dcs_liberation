@@ -267,12 +267,6 @@ class WaypointBuilder:
         waypoint.pretty_name = "Race-track start"
         self.waypoints.append(waypoint)
 
-        # TODO: Does this actually do anything?
-        # orbit0.targets.append(location)
-        # Note: Targets of PATROL TRACK waypoints are the points to be defended.
-        # orbit0.targets.append(flight.from_cp)
-        # orbit0.targets.append(center)
-
     def race_track_end(self, position: Point, altitude: int) -> None:
         """Creates a racetrack end waypoint.
 
