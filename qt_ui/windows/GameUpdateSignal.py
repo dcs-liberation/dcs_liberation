@@ -24,8 +24,8 @@ class GameUpdateSignal(QObject):
     debriefingReceived = Signal(DebriefingSignal)
 
     flight_paths_changed = Signal()
-    package_selection_changed = Signal(int)  # Optional[int]
-    flight_selection_changed = Signal(int)  # Optional[int]
+    package_selection_changed = Signal(int)  # -1 indicates no selection.
+    flight_selection_changed = Signal(int)  # -1 indicates no selection.
 
     def __init__(self):
         super(GameUpdateSignal, self).__init__()
@@ -33,11 +33,11 @@ class GameUpdateSignal(QObject):
 
     def select_package(self, index: Optional[int]) -> None:
         # noinspection PyUnresolvedReferences
-        self.package_selection_changed.emit(index)
+        self.package_selection_changed.emit(-1 if index is None else index)
 
     def select_flight(self, index: Optional[int]) -> None:
         # noinspection PyUnresolvedReferences
-        self.flight_selection_changed.emit(index)
+        self.flight_selection_changed.emit(-1 if index is None else index)
 
     def redraw_flight_paths(self) -> None:
         # noinspection PyUnresolvedReferences

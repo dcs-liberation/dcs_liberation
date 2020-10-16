@@ -62,18 +62,36 @@ class QLiberationMap(QGraphicsView):
             lambda: self.draw_flight_plans(self.scene())
         )
 
-        def update_package_selection(index: Optional[int]) -> None:
-            self.selected_flight = index, 0
+        def update_package_selection(index: int) -> None:
+            # Optional[int] isn't a valid type for a Qt signal. None will be
+            # converted to zero automatically. We use -1 to indicate no
+            # selection.
+            if index == -1:
+                self.selected_flight = None
+            else:
+                self.selected_flight = index, 0
             self.draw_flight_plans(self.scene())
 
         GameUpdateSignal.get_instance().package_selection_changed.connect(
             update_package_selection
         )
 
-        def update_flight_selection(index: Optional[int]) -> None:
+        def update_flight_selection(index: int) -> None:
             if self.selected_flight is None:
-                logging.error("Flight was selected with no package selected")
+                if index != -1:
+                    # We don't know what order update_package_selection and
+                    # update_flight_selection will be called in when the last
+                    # package is removed. If no flight is selected, it's not a
+                    # problem to also have no package selected.
+                    logging.error(
+                        "Flight was selected with no package selected")
                 return
+
+            # Optional[int] isn't a valid type for a Qt signal. None will be
+            # converted to zero automatically. We use -1 to indicate no
+            # selection.
+            if index == -1:
+                self.selected_flight = self.selected_flight[0], None
             self.selected_flight = self.selected_flight[0], index
             self.draw_flight_plans(self.scene())
 
@@ -259,7 +277,10 @@ class QLiberationMap(QGraphicsView):
             packages.extend(self.game_model.red_ato_model.packages)
         for p_idx, package_model in enumerate(packages):
             for f_idx, flight in enumerate(package_model.flights):
-                selected = (p_idx, f_idx) == self.selected_flight
+                if self.selected_flight is None:
+                    selected = False
+                else:
+                    selected = (p_idx, f_idx) == self.selected_flight
                 if DisplayOptions.flight_paths.only_selected and not selected:
                     continue
                 self.draw_flight_plan(scene, package_model.package, flight,
