@@ -193,8 +193,6 @@ class QNewPackageDialog(QPackageDialog):
         self.save_button.clicked.connect(self.accept)
         self.button_layout.addWidget(self.save_button)
 
-        self.delete_flight_button.clicked.connect(self.on_delete_flight)
-
     def on_save(self) -> None:
         """Saves the created package.
 
