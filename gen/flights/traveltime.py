@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Iterable, Optional
 
 from dcs.mapping import Point
+from dcs.unittype import FlyingType
 
 from game.utils import meter_to_nm
 from gen.ato import Package
@@ -47,13 +48,31 @@ class GroundSpeed:
         return min(speeds)
 
     @classmethod
-    def for_flight(cls, _flight: Flight, altitude: int) -> int:
-        # TODO: Gather data so this is useful.
+    def for_flight(cls, flight: Flight, altitude: int) -> int:
+        if not issubclass(flight.unit_type, FlyingType):
+            raise TypeError("Flight has non-flying unit")
+
         # TODO: Expose both a cruise speed and target speed.
         # The cruise speed can be used for ascent, hold, join, and RTB to save
         # on fuel, but mission speed will be fast enough to keep the flight
         # safer.
-        return int(cls.from_mach(0.8, altitude))  # knots
+
+        c_sound_sea_level = 661.5
+
+        # DCS's max speed is in kph at 0 MSL. Convert to knots.
+        max_speed = flight.unit_type.max_speed * 0.539957
+        if max_speed > c_sound_sea_level:
+            # Aircraft is supersonic. Limit to mach 0.8 to conserve fuel and
+            # account for heavily loaded jets.
+            return int(cls.from_mach(0.8, altitude))
+
+        # For subsonic aircraft, assume the aircraft can reasonably perform at
+        # 80% of its maximum, and that it can maintain the same mach at altitude
+        # as it can at sea level. This probably isn't great assumption, but
+        # might. be sufficient given the wiggle room. We can come up with
+        # another heuristic if needed.
+        mach = max_speed * 0.8 / c_sound_sea_level
+        return int(cls.from_mach(mach, altitude))  # knots
 
     @staticmethod
     def from_mach(mach: float, altitude: int) -> float:
