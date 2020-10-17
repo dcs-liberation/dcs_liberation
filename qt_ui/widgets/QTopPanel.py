@@ -97,7 +97,7 @@ class QTopPanel(QFrame):
         if game is None:
             return
 
-        self.turnCounter.setCurrentTurn(game.turn, game.current_day)
+        self.turnCounter.setCurrentTurn(game.turn, game.conditions)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
 

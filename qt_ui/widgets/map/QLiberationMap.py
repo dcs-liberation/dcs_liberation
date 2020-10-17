@@ -21,6 +21,7 @@ from game import Game, db
 from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet
+from game.weather import TimeOfDay
 from gen import Conflict, PackageWaypointTiming
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
@@ -509,9 +510,9 @@ class QLiberationMap(QGraphicsView):
             scene.addPixmap(bg)
 
             # Apply graphical effects to simulate current daytime
-            if self.game.current_turn_daytime == "day":
+            if self.game.current_turn_time_of_day == TimeOfDay.Day:
                 pass
-            elif self.game.current_turn_daytime == "night":
+            elif self.game.current_turn_time_of_day == TimeOfDay.Night:
                 ov = QPixmap(bg.width(), bg.height())
                 ov.fill(CONST.COLORS["night_overlay"])
                 overlay = scene.addPixmap(ov)
