@@ -56,7 +56,6 @@ class QLiberationMap(QGraphicsView):
         self.factor = 1
         self.factorized = 1
         self.init_scene()
-        self.connectSignals()
         self.setGame(game_model.game)
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
@@ -108,9 +107,6 @@ class QLiberationMap(QGraphicsView):
         self.setBackgroundBrush(QBrush(QColor(30, 30, 30)))
         self.setFrameShape(QFrame.NoFrame)
         self.setDragMode(QGraphicsView.ScrollHandDrag)
-
-    def connectSignals(self):
-        GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
     def setGame(self, game: Optional[Game]):
         self.game = game
@@ -263,7 +259,7 @@ class QLiberationMap(QGraphicsView):
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
-    def draw_flight_plans(self, scene) -> None:
+    def clear_flight_paths(self, scene: QGraphicsScene) -> None:
         for item in self.flight_path_items:
             try:
                 scene.removeItem(item)
@@ -271,6 +267,9 @@ class QLiberationMap(QGraphicsView):
                 # Something may have caused those items to already be removed.
                 pass
         self.flight_path_items.clear()
+
+    def draw_flight_plans(self, scene: QGraphicsScene) -> None:
+        self.clear_flight_paths(scene)
         if DisplayOptions.flight_paths.hide:
             return
         packages = list(self.game_model.ato_model.packages)
