@@ -7,6 +7,7 @@ from PySide2.QtWidgets import QGraphicsItem
 import qt_ui.uiconstants as const
 from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
+from game.db import REWARDS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from theater import ControlPoint, TheaterGroundObject
 from .QMapObject import QMapObject
@@ -27,7 +28,14 @@ class QMapGroundObject(QMapObject):
         self.buildings = buildings if buildings is not None else []
         self.setFlag(QGraphicsItem.ItemIgnoresTransformations, False)
         self.ground_object_dialog: Optional[QGroundObjectMenu] = None
+        self.setToolTip(self.tooltip)
 
+    @property
+    def tooltip(self) -> str:
+        lines = [
+            f"[{self.ground_object.obj_name}]",
+            f"${self.production_per_turn} per turn",
+        ]
         if self.ground_object.groups:
             units = {}
             for g in self.ground_object.groups:
@@ -36,16 +44,23 @@ class QMapGroundObject(QMapObject):
                         units[u.type] = units[u.type]+1
                     else:
                         units[u.type] = 1
-            tooltip = "[" + self.ground_object.obj_name + "]" + "\n"
+
             for unit in units.keys():
-                tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
-            self.setToolTip(tooltip[:-1])
+                lines.append(f"{unit} x {units[unit]}")
         else:
-            tooltip = "[" + self.ground_object.obj_name + "]" + "\n"
-            for building in buildings:
+            for building in self.buildings:
                 if not building.is_dead:
-                    tooltip = tooltip + str(building.dcs_identifier) + "\n"
-            self.setToolTip(tooltip[:-1])
+                    lines.append(f"{building.dcs_identifier}")
+
+        return "\n".join(lines)
+
+    @property
+    def production_per_turn(self) -> int:
+        production = 0
+        for g in self.control_point.ground_objects:
+            if g.category in REWARDS.keys():
+                production += REWARDS[g.category]
+        return production
 
     def paint(self, painter, option, widget=None) -> None:
         player_icons = "_blue"
