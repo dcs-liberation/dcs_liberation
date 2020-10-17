@@ -997,7 +997,7 @@ class AircraftConflictGenerator:
                            flight: Flight, timing: PackageWaypointTiming,
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
-        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP,
+        if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
                            FlightType.INTERCEPTION]:
             self.configure_cap(group, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:

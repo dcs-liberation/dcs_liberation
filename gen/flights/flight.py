@@ -8,7 +8,7 @@ from theater.controlpoint import ControlPoint, MissionTarget
 
 
 class FlightType(Enum):
-    CAP = 0
+    CAP = 0  # Do not use. Use BARCAP or TARCAP.
     TARCAP = 1
     BARCAP = 2
     CAS = 3

@@ -131,7 +131,7 @@ class AircraftAllocator:
 
     @staticmethod
     def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_PREFERRED
         elif task == FlightType.CAS:
@@ -147,7 +147,7 @@ class AircraftAllocator:
 
     @staticmethod
     def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_CAPABLE
         elif task == FlightType.CAS:
@@ -403,7 +403,7 @@ class CoalitionMissionPlanner:
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
             yield ProposedMission(cp, [
-                ProposedFlight(FlightType.CAP, 2, self.MAX_CAP_RANGE),
+                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
             ])
 
         # Find front lines, plan CAP.
@@ -492,11 +492,7 @@ class CoalitionMissionPlanner:
                 error = random.randint(-margin, margin)
                 yield max(0, time + error)
 
-        dca_types = (
-            FlightType.BARCAP,
-            FlightType.CAP,
-            FlightType.INTERCEPTION,
-        )
+        dca_types = (FlightType.BARCAP, FlightType.INTERCEPTION)
 
         non_dca_packages = [p for p in self.ato.packages if
                             p.primary_task not in dca_types]

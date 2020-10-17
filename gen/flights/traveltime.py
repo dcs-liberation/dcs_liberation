@@ -19,7 +19,6 @@ from gen.flights.flight import (
 
 
 CAP_DURATION = 30  # Minutes
-CAP_TYPES = (FlightType.BARCAP, FlightType.CAP)
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
@@ -151,7 +150,7 @@ class TotEstimator:
             # Takeoff immediately.
             return 0
 
-        if self.package.primary_task in CAP_TYPES:
+        if self.package.primary_task == FlightType.BARCAP:
             start_time = self.timing.race_track_start
         else:
             start_time = self.timing.join
@@ -184,7 +183,7 @@ class TotEstimator:
             # the package.
             return 0
 
-        if self.package.primary_task in CAP_TYPES:
+        if self.package.primary_task == FlightType.BARCAP:
             # The racetrack start *is* the target. The package target is the
             # protected objective.
             time_to_target = 0
@@ -278,14 +277,14 @@ class PackageWaypointTiming:
 
     @property
     def race_track_start(self) -> int:
-        if self.package.primary_task in CAP_TYPES:
+        if self.package.primary_task == FlightType.BARCAP:
             return self.package.time_over_target
         else:
             return self.ingress
 
     @property
     def race_track_end(self) -> int:
-        if self.package.primary_task in CAP_TYPES:
+        if self.package.primary_task == FlightType.BARCAP:
             return self.target + CAP_DURATION * 60
         else:
             return self.egress

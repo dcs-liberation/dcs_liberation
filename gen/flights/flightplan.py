@@ -69,8 +69,6 @@ class FlightPlanBuilder:
                 logging.error("BAI flight plan generation not implemented")
             elif task == FlightType.BARCAP:
                 self.generate_barcap(flight)
-            elif task == FlightType.CAP:
-                self.generate_barcap(flight)
             elif task == FlightType.CAS:
                 self.generate_cas(flight)
             elif task == FlightType.DEAD:
@@ -103,6 +101,8 @@ class FlightPlanBuilder:
                 logging.error(
                     "Troop transport flight plan generation not implemented"
                 )
+            else:
+                logging.error(f"Unsupported task type: {task.name}")
         except InvalidObjectiveLocation:
             logging.exception(f"Could not create flight plan")
 

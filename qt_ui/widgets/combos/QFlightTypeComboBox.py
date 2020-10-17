@@ -19,7 +19,6 @@ class QFlightTypeComboBox(QComboBox):
 
     COMMON_ENEMY_MISSIONS = [
         FlightType.ESCORT,
-        FlightType.TARCAP,
         FlightType.SEAD,
         FlightType.DEAD,
         # TODO: FlightType.ELINT,
@@ -27,42 +26,46 @@ class QFlightTypeComboBox(QComboBox):
         # TODO: FlightType.RECON,
     ]
 
-    FRIENDLY_AIRBASE_MISSIONS = [
-        FlightType.CAP,
-        # TODO: FlightType.INTERCEPTION
-        # TODO: FlightType.LOGISTICS
+    COMMON_FRIENDLY_MISSIONS = [
+        FlightType.BARCAP,
     ]
 
+    FRIENDLY_AIRBASE_MISSIONS = [
+        # TODO: FlightType.INTERCEPTION
+        # TODO: FlightType.LOGISTICS
+    ] + COMMON_FRIENDLY_MISSIONS
+
     FRIENDLY_CARRIER_MISSIONS = [
-        FlightType.BARCAP,
         # TODO: FlightType.INTERCEPTION
         # TODO: Buddy tanking for the A-4?
         # TODO: Rescue chopper?
         # TODO: Inter-ship logistics?
-    ]
+    ] + COMMON_FRIENDLY_MISSIONS
 
     ENEMY_CARRIER_MISSIONS = [
         FlightType.ESCORT,
-        FlightType.TARCAP,
+        FlightType.BARCAP,
         # TODO: FlightType.ANTISHIP
     ]
 
     ENEMY_AIRBASE_MISSIONS = [
+        FlightType.BARCAP,
         # TODO: FlightType.STRIKE
     ] + COMMON_ENEMY_MISSIONS
 
     FRIENDLY_GROUND_OBJECT_MISSIONS = [
-        FlightType.CAP,
         # TODO: FlightType.LOGISTICS
         # TODO: FlightType.TROOP_TRANSPORT
-    ]
+    ] + COMMON_FRIENDLY_MISSIONS
 
     ENEMY_GROUND_OBJECT_MISSIONS = [
+        FlightType.BARCAP,
         FlightType.STRIKE,
     ] + COMMON_ENEMY_MISSIONS
 
     FRONT_LINE_MISSIONS = [
         FlightType.CAS,
+        FlightType.TARCAP,
         # TODO: FlightType.TROOP_TRANSPORT
         # TODO: FlightType.EVAC
     ] + COMMON_ENEMY_MISSIONS
