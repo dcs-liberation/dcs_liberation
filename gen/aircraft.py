@@ -64,7 +64,6 @@ from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
-from gen.airfields import RunwayData
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -75,11 +74,13 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
+from gen.runways import RunwayData
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
 from .flights.traveltime import PackageWaypointTiming, TotEstimator
 from .naming import namegen
+from .runways import RunwayAssigner
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
@@ -621,9 +622,12 @@ class AircraftConflictGenerator:
 
         # TODO: Support for different departure/arrival airfields.
         cp = flight.from_cp
-        fallback_runway = RunwayData(cp.full_name, runway_name="")
+        fallback_runway = RunwayData(cp.full_name, runway_heading=0,
+                                     runway_name="")
         if cp.cptype == ControlPointType.AIRBASE:
-            departure_runway = self.get_preferred_runway(flight.from_cp.airport)
+            assigner = RunwayAssigner(self.game.conditions)
+            departure_runway = assigner.get_preferred_runway(
+                flight.from_cp.airport)
         elif cp.is_fleet:
             departure_runway = dynamic_runways.get(cp.name, fallback_runway)
         else:
@@ -654,22 +658,6 @@ class AircraftConflictGenerator:
             else:
                 for unit in group.units:
                     unit.fuel = Su_33.fuel_max * 0.8
-
-    def get_preferred_runway(self, airport: Airport) -> RunwayData:
-        """Returns the preferred runway for the given airport.
-
-        Right now we're only selecting runways based on whether or not they have
-        ILS, but we could also choose based on wind conditions, or which
-        direction flight plans should follow.
-        """
-        runways = list(RunwayData.for_pydcs_airport(airport))
-        for runway in runways:
-            # Prefer any runway with ILS.
-            if runway.ils is not None:
-                return runway
-        # Otherwise we lack the mission information to pick more usefully,
-        # so just use the first runway.
-        return runways[0]
 
     def _generate_at_airport(self, name: str, side: Country,
                              unit_type: FlyingType, count: int, start_type: str,

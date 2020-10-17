@@ -22,14 +22,13 @@ https://forums.eagle.ru/showthread.php?t=206360 claims that kneeboard pages can
 only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
+import datetime
 from collections import defaultdict
 from dataclasses import dataclass
-import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
-from dcs.mapping import Point
 from dcs.mission import Mission
 from dcs.unittype import FlyingType
 from tabulate import tabulate
@@ -37,12 +36,11 @@ from tabulate import tabulate
 from game.utils import meter_to_nm
 from . import units
 from .aircraft import AIRCRAFT_DATA, FlightData
-from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType
-from .flights.traveltime import TravelTime
 from .radios import RadioFrequency
+from .runways import RunwayData
 
 
 class KneeboardPageWriter:

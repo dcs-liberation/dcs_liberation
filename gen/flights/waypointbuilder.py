@@ -7,12 +7,16 @@ from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
 from game.utils import nm_to_meter
+from game.weather import Conditions
 from theater import ControlPoint, MissionTarget, TheaterGroundObject
 from .flight import Flight, FlightWaypoint, FlightWaypointType
+from ..runways import RunwayAssigner
 
 
 class WaypointBuilder:
-    def __init__(self, flight: Flight, doctrine: Doctrine) -> None:
+    def __init__(self, conditions: Conditions, flight: Flight,
+                 doctrine: Doctrine) -> None:
+        self.conditions = conditions
         self.flight = flight
         self.doctrine = doctrine
         self.waypoints: List[FlightWaypoint] = []
@@ -28,8 +32,7 @@ class WaypointBuilder:
             departure: Departure airfield or carrier.
             is_helo: True if the flight is a helicopter.
         """
-        # TODO: Pick runway based on wind direction.
-        heading = departure.heading
+        heading = RunwayAssigner(self.conditions).takeoff_heading(departure)
         position = departure.position.point_from_heading(
             heading, nm_to_meter(5)
         )
@@ -52,9 +55,8 @@ class WaypointBuilder:
             arrival: Arrival airfield or carrier.
             is_helo: True if the flight is a helicopter.
         """
-        # TODO: Pick runway based on wind direction.
-        # ControlPoint.heading is the departure heading.
-        heading = (arrival.heading + 180) % 360
+        landing_heading = RunwayAssigner(self.conditions).landing_heading(arrival)
+        heading = (landing_heading + 180) % 360
         position = arrival.position.point_from_heading(
             heading, nm_to_meter(5)
         )

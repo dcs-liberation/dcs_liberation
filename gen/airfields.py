@@ -3,11 +3,11 @@
 Remove once https://github.com/pydcs/dcs/issues/69 tracks getting the missing
 data added to pydcs. Until then, missing data can be manually filled in here.
 """
-from dataclasses import dataclass, field
-import logging
-from typing import Dict, Iterator, Optional, Tuple
+from __future__ import annotations
 
-from dcs.terrain.terrain import Airport
+from dataclasses import dataclass, field
+from typing import Dict, Optional, Tuple
+
 from .radios import MHz, RadioFrequency
 from .tacan import TacanBand, TacanChannel
 
@@ -1503,61 +1503,3 @@ AIRFIELD_DATA = {
         atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
     ),
 }
-
-
-@dataclass(frozen=True)
-class RunwayData:
-    airfield_name: str
-    runway_name: str
-    atc: Optional[RadioFrequency] = None
-    tacan: Optional[TacanChannel] = None
-    tacan_callsign: Optional[str] = None
-    ils: Optional[RadioFrequency] = None
-    icls: Optional[int] = None
-
-    @classmethod
-    def for_airfield(cls, airport: Airport, runway: str) -> "RunwayData":
-        """Creates RunwayData for the given runway of an airfield.
-
-        Args:
-            airport: The airfield the runway belongs to.
-            runway: Identifier of the runway to use. e.g. "03" or "20L".
-        """
-        atc: Optional[RadioFrequency] = None
-        tacan: Optional[TacanChannel] = None
-        tacan_callsign: Optional[str] = None
-        ils: Optional[RadioFrequency] = None
-        try:
-            airfield = AIRFIELD_DATA[airport.name]
-            if airfield.atc is not None:
-                atc = airfield.atc.uhf
-            else:
-                atc = None
-            tacan = airfield.tacan
-            tacan_callsign = airfield.tacan_callsign
-            ils = airfield.ils_freq(runway)
-        except KeyError:
-            logging.warning(f"No airfield data for {airport.name}")
-        return cls(
-            airfield_name=airport.name,
-            runway_name=runway,
-            atc=atc,
-            tacan=tacan,
-            tacan_callsign=tacan_callsign,
-            ils=ils
-        )
-
-    @classmethod
-    def for_pydcs_airport(cls, airport: Airport) -> Iterator["RunwayData"]:
-        for runway in airport.runways:
-            runway_number = runway.heading // 10
-            runway_side = ["", "L", "R"][runway.leftright]
-            runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(airport, runway_name)
-
-            # pydcs only exposes one runway per physical runway, so to expose
-            # both sides of the runway we need to generate the other.
-            runway_number = ((runway.heading + 180) % 360) // 10
-            runway_side = ["", "R", "L"][runway.leftright]
-            runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(airport, runway_name)
