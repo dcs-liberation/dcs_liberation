@@ -42,8 +42,17 @@ class GroundSpeed:
         for flight in package.flights:
             waypoint = flight.waypoint_with_type(IP_TYPES)
             if waypoint is None:
-                logging.error(f"Could not find ingress point for {flight}")
-                continue
+                logging.error(f"Could not find ingress point for {flight}.")
+                if flight.points:
+                    logging.warning(
+                        "Using first waypoint for mission altitude.")
+                    waypoint = flight.points[0]
+                else:
+                    logging.warning(
+                        "Flight has no waypoints. Assuming mission altitude "
+                        "of 25000 feet.")
+                    waypoint = FlightWaypoint(FlightWaypointType.NAV, 0, 0,
+                                              25000)
             speeds.add(GroundSpeed.for_flight(flight, waypoint.alt))
         return min(speeds)
 

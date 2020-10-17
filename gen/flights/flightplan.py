@@ -103,8 +103,8 @@ class FlightPlanBuilder:
                 logging.error(
                     "Troop transport flight plan generation not implemented"
                 )
-        except InvalidObjectiveLocation as ex:
-            logging.error(f"Could not create flight plan: {ex}")
+        except InvalidObjectiveLocation:
+            logging.exception(f"Could not create flight plan")
 
     def regenerate_package_waypoints(self) -> None:
         ingress_point = self._ingress_point()
