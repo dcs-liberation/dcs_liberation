@@ -31,7 +31,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from theater import ControlPoint
 from .. import db
 from ..debriefing import Debriefing
-from plugin import BasePlugin, INSTALLED_PLUGINS
+from plugin import LuaPluginManager
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
@@ -146,10 +146,7 @@ class Operation:
         if not scriptFileMnemonic in self.listOfPluginsScripts:
             self.listOfPluginsScripts.append(scriptFileMnemonic)
 
-            if pluginName == None:
-                pluginName = "custom"
             plugin_path = Path("./resources/plugins",pluginName)
-            logging.debug(f"plugin_path = {plugin_path}")
 
             if scriptFile != None:
                 scriptFile_path = Path(plugin_path, scriptFile)
@@ -469,8 +466,7 @@ dcsLiberation.TargetPoints = {
         # Inject Plugins Lua Scripts and data
         self.listOfPluginsScripts = []
 
-        for pluginName in INSTALLED_PLUGINS:
-            plugin = INSTALLED_PLUGINS[pluginName]
+        for plugin in LuaPluginManager().getPlugins():
             plugin.injectScripts(self)
             plugin.injectConfiguration(self)
 

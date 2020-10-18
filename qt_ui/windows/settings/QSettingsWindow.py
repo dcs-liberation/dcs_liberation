@@ -11,7 +11,7 @@ from game.game import Game
 from game.infos.information import Information
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
-from plugin import BasePlugin, INSTALLED_PLUGINS
+from plugin import LuaPluginManager
 
 class QSettingsWindow(QDialog):
 
@@ -19,6 +19,8 @@ class QSettingsWindow(QDialog):
         super(QSettingsWindow, self).__init__()
 
         self.game = game
+        self.pluginsPage = None
+        self.pluginsOptionsPage = None
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -37,53 +39,53 @@ class QSettingsWindow(QDialog):
 
         self.categoryModel = QStandardItemModel(self.categoryList)
 
+        self.categoryList.setIconSize(QSize(32, 32))
+
+        self.initDifficultyLayout()
         difficulty = QStandardItem("Difficulty")
         difficulty.setIcon(CONST.ICONS["Missile"])
         difficulty.setEditable(False)
         difficulty.setSelectable(True)
+        self.categoryModel.appendRow(difficulty)
+        self.right_layout.addWidget(self.difficultyPage)
 
+        self.initGeneratorLayout()
         generator = QStandardItem("Mission Generator")
         generator.setIcon(CONST.ICONS["Generator"])
         generator.setEditable(False)
         generator.setSelectable(True)
+        self.categoryModel.appendRow(generator)
+        self.right_layout.addWidget(self.generatorPage)
 
+        self.initCheatLayout()
         cheat = QStandardItem("Cheat Menu")
         cheat.setIcon(CONST.ICONS["Cheat"])
         cheat.setEditable(False)
         cheat.setSelectable(True)
-
-        plugins = QStandardItem("LUA Plugins")
-        plugins.setIcon(CONST.ICONS["Plugins"])
-        plugins.setEditable(False)
-        plugins.setSelectable(True)
-
-        pluginsOptions = QStandardItem("LUA Plugins Options")
-        pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
-        pluginsOptions.setEditable(False)
-        pluginsOptions.setSelectable(True)
-
-        self.categoryList.setIconSize(QSize(32, 32))
-        self.categoryModel.appendRow(difficulty)
-        self.categoryModel.appendRow(generator)
         self.categoryModel.appendRow(cheat)
-        self.categoryModel.appendRow(plugins)
-        self.categoryModel.appendRow(pluginsOptions)
+        self.right_layout.addWidget(self.cheatPage)
+
+        self.initPluginsLayout()
+        if self.pluginsPage:
+            plugins = QStandardItem("LUA Plugins")
+            plugins.setIcon(CONST.ICONS["Plugins"])
+            plugins.setEditable(False)
+            plugins.setSelectable(True)
+            self.categoryModel.appendRow(plugins)       
+            self.right_layout.addWidget(self.pluginsPage)
+        if self.pluginsOptionsPage:
+            pluginsOptions = QStandardItem("LUA Plugins Options")
+            pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
+            pluginsOptions.setEditable(False)
+            pluginsOptions.setSelectable(True)
+            self.categoryModel.appendRow(pluginsOptions)
+            self.right_layout.addWidget(self.pluginsOptionsPage)
 
         self.categoryList.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.categoryList.setModel(self.categoryModel)
         self.categoryList.selectionModel().setCurrentIndex(self.categoryList.indexAt(QPoint(1,1)), QItemSelectionModel.Select)
         self.categoryList.selectionModel().selectionChanged.connect(self.onSelectionChanged)
 
-        self.initDifficultyLayout()
-        self.initGeneratorLayout()
-        self.initCheatLayout()
-        self.initPluginsLayout()
-
-        self.right_layout.addWidget(self.difficultyPage)
-        self.right_layout.addWidget(self.generatorPage)
-        self.right_layout.addWidget(self.cheatPage)
-        self.right_layout.addWidget(self.pluginsPage)
-        self.right_layout.addWidget(self.pluginsOptionsPage)
 
         self.layout.addWidget(self.categoryList, 0, 0, 1, 1)
         self.layout.addLayout(self.right_layout, 0, 1, 5, 1)
@@ -281,28 +283,32 @@ class QSettingsWindow(QDialog):
         self.cheatLayout.addWidget(self.moneyCheatBox, 0, 0)
 
     def initPluginsLayout(self):
-        self.pluginsOptionsPage = QWidget()
-        self.pluginsOptionsPageLayout = QVBoxLayout()
-        self.pluginsOptionsPageLayout.setAlignment(Qt.AlignTop)
-        self.pluginsOptionsPage.setLayout(self.pluginsOptionsPageLayout)
-
-        self.pluginsPage = QWidget()
-        self.pluginsPageLayout = QVBoxLayout()
-        self.pluginsPageLayout.setAlignment(Qt.AlignTop)
-        self.pluginsPage.setLayout(self.pluginsPageLayout)
-
-        self.pluginsGroup = QGroupBox("Plugins")
-        self.pluginsGroupLayout = QGridLayout();
-        self.pluginsGroupLayout.setAlignment(Qt.AlignTop)
-        self.pluginsGroup.setLayout(self.pluginsGroupLayout)
-
+        uiPrepared = False
         row:int = 0
-        for pluginName in INSTALLED_PLUGINS:
-            plugin = INSTALLED_PLUGINS[pluginName]
-            plugin.setupUI(self, row)
-            row = row + 1
+        for plugin in LuaPluginManager().getPlugins():
+            if plugin.hasUI():
+                if not uiPrepared:
+                    uiPrepared = True
 
-        self.pluginsPageLayout.addWidget(self.pluginsGroup)
+                    self.pluginsOptionsPage = QWidget()
+                    self.pluginsOptionsPageLayout = QVBoxLayout()
+                    self.pluginsOptionsPageLayout.setAlignment(Qt.AlignTop)
+                    self.pluginsOptionsPage.setLayout(self.pluginsOptionsPageLayout)
+
+                    self.pluginsPage = QWidget()
+                    self.pluginsPageLayout = QVBoxLayout()
+                    self.pluginsPageLayout.setAlignment(Qt.AlignTop)
+                    self.pluginsPage.setLayout(self.pluginsPageLayout)
+
+                    self.pluginsGroup = QGroupBox("Plugins")
+                    self.pluginsGroupLayout = QGridLayout();
+                    self.pluginsGroupLayout.setAlignment(Qt.AlignTop)
+                    self.pluginsGroup.setLayout(self.pluginsGroupLayout)
+
+                    self.pluginsPageLayout.addWidget(self.pluginsGroup)
+
+                plugin.setupUI(self, row)
+                row = row + 1
 
     def cheatLambda(self, amount):
         return lambda: self.cheatMoney(amount)

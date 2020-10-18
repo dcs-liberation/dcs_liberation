@@ -1,4 +1,4 @@
-from plugin import INSTALLED_PLUGINS
+from plugin import LuaPluginManager
 
 class Settings:
 
@@ -41,8 +41,7 @@ class Settings:
 
         # LUA Plugins system
         self.plugins = {}
-        for pluginName in INSTALLED_PLUGINS:
-            plugin = INSTALLED_PLUGINS[pluginName]
+        for plugin in LuaPluginManager().getPlugins():
             plugin.setSettings(self)
 
 

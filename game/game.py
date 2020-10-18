@@ -28,7 +28,7 @@ from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .infos.information import Information
 from .settings import Settings
-from plugin import INSTALLED_PLUGINS
+from plugin import LuaPluginManager
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -220,8 +220,7 @@ class Game:
         ObjectiveDistanceCache.set_theater(self.theater)
         
         # set the settings in all plugins
-        for pluginName in INSTALLED_PLUGINS:
-            plugin = INSTALLED_PLUGINS[pluginName]
+        for plugin in LuaPluginManager().getPlugins():
             plugin.setSettings(self.settings)
 
     def pass_turn(self, no_action=False):
