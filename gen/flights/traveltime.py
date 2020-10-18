@@ -22,12 +22,14 @@ CAP_DURATION = 30  # Minutes
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_ESCORT,
     FlightWaypointType.INGRESS_SEAD,
     FlightWaypointType.INGRESS_STRIKE,
 }
 
 IP_TYPES = {
     FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_ESCORT,
     FlightWaypointType.INGRESS_SEAD,
     FlightWaypointType.INGRESS_STRIKE,
     FlightWaypointType.PATROL_TRACK,

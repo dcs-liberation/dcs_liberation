@@ -8,11 +8,12 @@ from dcs.unit import Unit
 from game.data.doctrine import Doctrine
 from game.utils import nm_to_meter
 from theater import ControlPoint, MissionTarget, TheaterGroundObject
-from .flight import FlightWaypoint, FlightWaypointType
+from .flight import Flight, FlightWaypoint, FlightWaypointType
 
 
 class WaypointBuilder:
-    def __init__(self, doctrine: Doctrine) -> None:
+    def __init__(self, flight: Flight, doctrine: Doctrine) -> None:
+        self.flight = flight
         self.doctrine = doctrine
         self.waypoints: List[FlightWaypoint] = []
         self.ingress_point: Optional[FlightWaypoint] = None
@@ -127,6 +128,9 @@ class WaypointBuilder:
     def ingress_cas(self, position: Point, objective: MissionTarget) -> None:
         self._ingress(FlightWaypointType.INGRESS_CAS, position, objective)
 
+    def ingress_escort(self, position: Point, objective: MissionTarget) -> None:
+        self._ingress(FlightWaypointType.INGRESS_ESCORT, position, objective)
+
     def ingress_sead(self, position: Point, objective: MissionTarget) -> None:
         self._ingress(FlightWaypointType.INGRESS_SEAD, position, objective)
 
@@ -199,6 +203,9 @@ class WaypointBuilder:
         waypoint.description = description
         waypoint.pretty_name = description
         waypoint.name = name
+        # The target waypoints are only for the player's benefit. AI tasks for
+        # the target are set on the ingress point so they begin their attack
+        # *before* reaching the target.
         waypoint.only_for_player = True
         self.waypoints.append(waypoint)
         # TODO: This seems wrong, but it's what was there before.
@@ -231,6 +238,9 @@ class WaypointBuilder:
         waypoint.description = name
         waypoint.pretty_name = name
         waypoint.name = name
+        # The target waypoints are only for the player's benefit. AI tasks for
+        # the target are set on the ingress point so they begin their attack
+        # *before* reaching the target.
         waypoint.only_for_player = True
         self.waypoints.append(waypoint)
         # TODO: This seems wrong, but it's what was there before.
@@ -305,3 +315,33 @@ class WaypointBuilder:
         """
         self.descent(arrival, is_helo)
         self.land(arrival)
+
+    def escort(self, ingress: Point, target: MissionTarget,
+               egress: Point) -> None:
+        """Creates the waypoints needed to escort the package.
+
+        Args:
+            ingress: The package ingress point.
+            target: The mission target.
+            egress: The package egress point.
+        """
+        # This would preferably be no points at all, and instead the Escort task
+        # would begin on the join point and end on the split point, however the
+        # escort task does not appear to work properly (see the longer
+        # description in gen.aircraft.JoinPointBuilder), so instead we give
+        # the escort flights a flight plan including the ingress point, target
+        # area, and egress point.
+        self._ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
+
+        waypoint = FlightWaypoint(
+            FlightWaypointType.TARGET_GROUP_LOC,
+            target.position.x,
+            target.position.y,
+            self.doctrine.ingress_altitude
+        )
+        waypoint.name = "TARGET"
+        waypoint.description = "Escort the package"
+        waypoint.pretty_name = "Target area"
+        self.waypoints.append(waypoint)
+
+        self.egress(egress, target)

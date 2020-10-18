@@ -132,7 +132,7 @@ class FlightPlanBuilder:
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -222,7 +222,7 @@ class FlightPlanBuilder:
         )
         start = end.point_from_heading(heading - 180, diameter)
 
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.race_track(start, end, patrol_alt)
         builder.rtb(flight.from_cp)
@@ -264,7 +264,7 @@ class FlightPlanBuilder:
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
         # Create points
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -290,7 +290,7 @@ class FlightPlanBuilder:
         if custom_targets is None:
             custom_targets = []
 
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -328,17 +328,12 @@ class FlightPlanBuilder:
     def generate_escort(self, flight: Flight) -> None:
         assert self.package.waypoints is not None
 
-        patrol_alt = random.randint(
-            self.doctrine.min_patrol_altitude,
-            self.doctrine.max_patrol_altitude
-        )
-
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
-        builder.race_track(self.package.waypoints.ingress,
-                           self.package.waypoints.egress, patrol_alt)
+        builder.escort(self.package.waypoints.ingress,
+                       self.package.target, self.package.waypoints.egress)
         builder.split(self.package.waypoints.split)
         builder.rtb(flight.from_cp)
 
@@ -366,7 +361,7 @@ class FlightPlanBuilder:
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(flight.from_cp, is_helo)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -379,33 +374,39 @@ class FlightPlanBuilder:
         flight.points = builder.build()
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
-    def generate_ascend_point(self, departure: ControlPoint) -> FlightWaypoint:
+    def generate_ascend_point(self, flight: Flight,
+                              departure: ControlPoint) -> FlightWaypoint:
         """Generate ascend point.
 
         Args:
+            flight: The flight to generate the descend point for.
             departure: Departure airfield or carrier.
         """
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.ascent(departure)
         return builder.build()[0]
 
-    def generate_descend_point(self, arrival: ControlPoint) -> FlightWaypoint:
+    def generate_descend_point(self, flight: Flight,
+                               arrival: ControlPoint) -> FlightWaypoint:
         """Generate approach/descend point.
 
         Args:
+            flight: The flight to generate the descend point for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.descent(arrival)
         return builder.build()[0]
 
-    def generate_rtb_waypoint(self, arrival: ControlPoint) -> FlightWaypoint:
+    def generate_rtb_waypoint(self, flight: Flight,
+                              arrival: ControlPoint) -> FlightWaypoint:
         """Generate RTB landing point.
 
         Args:
+            flight: The flight to generate the landing waypoint for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(self.doctrine)
+        builder = WaypointBuilder(flight, self.doctrine)
         builder.land(arrival)
         return builder.build()[0]
 
