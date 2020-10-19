@@ -187,6 +187,10 @@ class FlightPlanBuilder:
 
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
         for airfield in closest_cache.closest_airfields:
+            # If the mission is a BARCAP of an enemy airfield, find the *next*
+            # closest enemy airfield.
+            if airfield == self.package.target:
+                continue
             if airfield.captured != self.is_player:
                 closest_airfield = airfield
                 break
@@ -198,10 +202,19 @@ class FlightPlanBuilder:
             closest_airfield.position
         )
 
+        min_distance_from_enemy = nm_to_meter(20)
+        distance_to_airfield = int(closest_airfield.position.distance_to_point(
+            self.package.target.position
+        ))
+        distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
+        min_cap_distance = min(self.doctrine.cap_min_distance_from_cp,
+                               distance_to_no_fly)
+        max_cap_distance = min(self.doctrine.cap_max_distance_from_cp,
+                               distance_to_no_fly)
+
         end = location.position.point_from_heading(
             heading,
-            random.randint(self.doctrine.cap_min_distance_from_cp,
-                           self.doctrine.cap_max_distance_from_cp)
+            random.randint(min_cap_distance, max_cap_distance)
         )
         diameter = random.randint(
             self.doctrine.cap_min_track_length,
