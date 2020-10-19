@@ -205,7 +205,7 @@ class QNewPackageDialog(QPackageDialog):
     def on_cancel(self) -> None:
         super().on_cancel()
         for flight in self.package_model.package.flights:
-            self.game_model.game.aircraft_inventory.return_from_flight(flight)
+            self.game.aircraft_inventory.return_from_flight(flight)
 
 
 class QEditPackageDialog(QPackageDialog):
