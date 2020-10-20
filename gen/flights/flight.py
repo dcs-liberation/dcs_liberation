@@ -137,6 +137,7 @@ class Flight:
     use_custom_loadout = False
     preset_loadout_name = ""
     group = False # Contains DCS Mission group data after mission has been generated
+    targetPoint = None # Contains either None or a Strike/SEAD target point location 
 
     def __init__(self, unit_type: UnitType, count: int, from_cp: ControlPoint,
                  flight_type: FlightType, start_type: str) -> None:

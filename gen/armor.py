@@ -34,6 +34,7 @@ from gen.ground_forces.ai_ground_planner import (
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
+from plugin import LuaPluginManager
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
@@ -54,6 +55,7 @@ RANDOM_OFFSET_ATTACK = 250
 @dataclass(frozen=True)
 class JtacInfo:
     """JTAC information."""
+    dcsGroupName: str
     unit_name: str
     callsign: str
     region: str
@@ -138,7 +140,9 @@ class GroundConflictGenerator:
         self.plan_action_for_groups(self.enemy_stance, enemy_groups, player_groups, self.conflict.heading - 90, self.conflict.to_cp, self.conflict.from_cp)
 
         # Add JTAC
-        if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and self.game.settings.include_jtac_if_available:
+        jtacPlugin = LuaPluginManager().getPlugin("jtacautolase")
+        useJTAC = jtacPlugin and jtacPlugin.isEnabled()
+        if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and useJTAC:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
             code = 1688 - len(self.jtacs)
 
@@ -158,7 +162,7 @@ class GroundConflictGenerator:
             frontline = f"Frontline {self.conflict.from_cp.name}/{self.conflict.to_cp.name}"
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
-            self.jtacs.append(JtacInfo(n, callsign, frontline, str(code)))
+            self.jtacs.append(JtacInfo(str(jtac.name), n, callsign, frontline, str(code)))
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
 

@@ -209,6 +209,7 @@ class PackageBuilder:
         flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task,
                         self.start_type)
         self.package.add_flight(flight)
+        flight.targetPoint = self.package.target
         return True
 
     def build(self) -> Package:
@@ -221,7 +222,7 @@ class PackageBuilder:
         for flight in flights:
             self.global_inventory.return_from_flight(flight)
             self.package.remove_flight(flight)
-
+            flight.targetPoint = None
 
 class ObjectiveFinder:
     """Identifies potential objectives for the mission planner."""

@@ -237,11 +237,14 @@ class FlightData:
     #: Map of radio frequencies to their assigned radio and channel, if any.
     frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
 
+    #: Data concerning the target of a CAS/Strike/SEAD flight, or None else
+    targetPoint = None
+
     def __init__(self, flight_type: FlightType, units: List[FlyingUnit],
                  size: int, friendly: bool, departure_delay: int,
                  departure: RunwayData, arrival: RunwayData,
                  divert: Optional[RunwayData], waypoints: List[FlightWaypoint],
-                 intra_flight_channel: RadioFrequency) -> None:
+                 intra_flight_channel: RadioFrequency, targetPoint: Optional) -> None:
         self.flight_type = flight_type
         self.units = units
         self.size = size
@@ -254,6 +257,7 @@ class FlightData:
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
         self.callsign = create_group_callsign_from_unit(self.units[0])
+        self.targetPoint = targetPoint
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -645,7 +649,8 @@ class AircraftConflictGenerator:
             divert=None,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
-            intra_flight_channel=channel
+            intra_flight_channel=channel,
+            targetPoint=flight.targetPoint,
         ))
 
         # Special case so Su 33 carrier take off

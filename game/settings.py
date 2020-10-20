@@ -1,3 +1,4 @@
+from plugin import LuaPluginManager
 
 class Settings:
 
@@ -24,8 +25,6 @@ class Settings:
         self.sams = True # Legacy parameter do not use
         self.cold_start = False # Legacy parameter do not use
         self.version = None
-        self.include_jtac_if_available = True
-        self.jtac_smoke_on = True
 
         # Performance oriented
         self.perf_red_alert_state = True
@@ -39,6 +38,12 @@ class Settings:
         # Performance culling
         self.perf_culling = False
         self.perf_culling_distance = 100
+
+        # LUA Plugins system
+        self.plugins = {}
+        for plugin in LuaPluginManager().getPlugins():
+            plugin.setSettings(self)
+
 
         # Cheating
         self.show_red_ato = False
