@@ -21,7 +21,7 @@
     ],
     "configurationWorkOrders": [
         {
-            "file": "configuration.lua",
+            "file": "jtacautolase-config.lua",
             "mnemonic": "jtacautolase-config"
         }
     ]

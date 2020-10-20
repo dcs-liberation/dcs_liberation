@@ -9,29 +9,28 @@
 env.info("DCSLiberation|JTACAutolase plugin - configuration")
 
 if dcsLiberation then
-    veaf.logTrace("dcsLiberation")
+    env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation"))
 
     -- specific options
     local smoke = false
 
     -- retrieve specific options values
     if dcsLiberation.plugins then
-        veaf.logTrace("dcsLiberation.plugins")
+        env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins"))
     
         if dcsLiberation.plugins.jtacautolase then
-            veaf.logTrace("dcsLiberation.plugins.jtacautolase")
-            veaf.logTrace(string.format("dcsLiberation.plugins.jtacautolase.smoke=%s",veaf.p(dcsLiberation.plugins.jtacautolase.smoke)))
-    
+            env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins.jtacautolase"))
             smoke = dcsLiberation.plugins.jtacautolase.smoke
+            env.info(string.format("DCSLiberation|JTACAutolase plugin - smoke = %s",tostring(smoke)))
         end
     end
     
-    veaf.logTrace(string.format("smoke=%s",veaf.p(smoke)))
-
     -- actual configuration code    
     for _, jtac in pairs(dcsLiberation.JTACs) do
-        if dcsLiberation.JTACAutoLase then 
-            dcsLiberation.JTACAutoLase(jtac.dcsUnit, jtac.code, smoke, 'vehicle') 
+        env.info(string.format("DCSLiberation|JTACAutolase plugin - setting up %s",jtac.dcsUnit))
+        if JTACAutoLase then 
+            env.info(string.format("DCSLiberation|JTACAutolase plugin - calling dcsLiberation.JTACAutoLase"))
+            JTACAutoLase(jtac.dcsUnit, jtac.laserCode, smoke, 'vehicle') 
         end
     end
     

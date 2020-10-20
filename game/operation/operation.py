@@ -369,12 +369,6 @@ dcsLiberation = {}
 -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
 dcsLiberation.installPath=""" + state_location + """
 
--- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
-if ctld then
-    dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
-elseif JTACAutoLase then
-    dcsLiberation.JTACAutoLase=JTACAutoLase
-end
 """
         # Process the tankers
         lua += """
