@@ -390,9 +390,6 @@ class CoalitionMissionPlanner:
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
 
-    NON_CAP_MIN_DELAY = 1
-    NON_CAP_MAX_DELAY = 5
-
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
         self.is_player = is_player

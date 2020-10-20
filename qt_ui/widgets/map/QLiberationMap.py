@@ -4,8 +4,16 @@ import datetime
 import logging
 from typing import List, Optional, Tuple
 
-from PySide2.QtCore import Qt, QPointF
-from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent, QPolygonF
+from PySide2.QtCore import QPointF, Qt
+from PySide2.QtGui import (
+    QBrush,
+    QColor,
+    QFont,
+    QPen,
+    QPixmap,
+    QPolygonF,
+    QWheelEvent,
+)
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
@@ -45,6 +53,9 @@ class QLiberationMap(QGraphicsView):
         QLiberationMap.instance = self
         self.game_model = game_model
         self.game: Optional[Game] = game_model.game
+
+        self.waypoint_info_font = QFont()
+        self.waypoint_info_font.setPointSize(12)
 
         self.flight_path_items: List[QGraphicsItem] = []
         # A tuple of (package index, flight index), or none.
@@ -345,19 +356,19 @@ class QLiberationMap(QGraphicsView):
         pen = QPen(QColor("black"), 0.3)
         brush = QColor("white")
 
-        def draw_text(text: str, x: int, y: int) -> None:
-            item = scene.addSimpleText(text)
-            item.setBrush(brush)
-            item.setPen(pen)
-            item.moveBy(x, y)
-            item.setZValue(2)
-            self.flight_path_items.append(item)
+        text = "\n".join([
+            f"{number} {waypoint.name}",
+            f"{altitude} ft {altitude_type}",
+            tot,
+        ])
 
-        draw_text(f"{number} {waypoint.name}", position[0] + 8,
-                  position[1] - 15)
-        draw_text(f"{altitude} ft {altitude_type}", position[0] + 8,
-                  position[1] - 5)
-        draw_text(tot, position[0] + 8, position[1] + 5)
+        item = scene.addSimpleText(text, self.waypoint_info_font)
+        item.setFlag(QGraphicsItem.ItemIgnoresTransformations)
+        item.setBrush(brush)
+        item.setPen(pen)
+        item.moveBy(position[0] + 8, position[1])
+        item.setZValue(2)
+        self.flight_path_items.append(item)
 
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
                          pos1: Tuple[int, int], player: bool,

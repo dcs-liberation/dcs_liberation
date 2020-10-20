@@ -1,9 +1,11 @@
 from enum import Enum
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, List, Optional
+
+from dcs.mapping import Point
+from dcs.point import MovingPoint, PointAction
+from dcs.unittype import UnitType
 
 from game import db
-from dcs.unittype import UnitType
-from dcs.point import MovingPoint, PointAction
 from theater.controlpoint import ControlPoint, MissionTarget
 
 
@@ -91,17 +93,22 @@ class FlightWaypoint:
         self.only_for_player = False
         self.data = None
 
-        # This is set very late by the air conflict generator (part of mission
+        # These are set very late by the air conflict generator (part of mission
         # generation). We do it late so that we don't need to propagate changes
         # to waypoint times whenever the player alters the package TOT or the
         # flight's offset in the UI.
         self.tot: Optional[int] = None
+        self.departure_time: Optional[int] = None
+
+    @property
+    def position(self) -> Point:
+        return Point(self.x, self.y)
 
     @classmethod
     def from_pydcs(cls, point: MovingPoint,
                    from_cp: ControlPoint) -> "FlightWaypoint":
-        waypoint = FlightWaypoint(point.position.x, point.position.y,
-                                  point.alt)
+        waypoint = FlightWaypoint(FlightWaypointType.NAV, point.position.x,
+                                  point.position.y, point.alt)
         waypoint.alt_type = point.alt_type
         # Other actions exist... but none of them *should* be the first
         # waypoint for a flight.
@@ -159,14 +166,3 @@ class Flight:
             if waypoint.waypoint_type in types:
                 return waypoint
         return None
-
-
-# Test
-if __name__ == '__main__':
-    from dcs.planes import A_10C
-    from theater import ControlPoint, Point, List
-
-    from_cp = ControlPoint(0, "AA", Point(0, 0), Point(0, 0), [], 0, 0)
-    f = Flight(A_10C(), 4, from_cp, FlightType.CAS, "Cold")
-    f.scheduled_in = 50
-    print(f)
