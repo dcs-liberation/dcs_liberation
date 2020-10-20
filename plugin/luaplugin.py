@@ -73,7 +73,7 @@ class LuaPlugin():
 
     def setupUI(self, settingsWindow, row:int):
         # set the game settings 
-        self.settings = settingsWindow.game.settings
+        self.setSettings(settingsWindow.game.settings)
 
         if not self.skipUI:
             # create the plugin choice checkbox interface
@@ -95,7 +95,7 @@ class LuaPlugin():
                 # browse each option in the specific options list
                 row = 0
                 for specificOption in self.specificOptions:
-                    nameInSettings = self.nameInSettings + specificOption.mnemonic
+                    nameInSettings = self.nameInSettings + "." + specificOption.mnemonic
                     if not nameInSettings in self.settings.plugins:
                         self.settings.plugins[nameInSettings] = specificOption.defaultValue
 
@@ -136,7 +136,7 @@ class LuaPlugin():
    
         # do the same for each option in the specific options list
         for specificOption in self.specificOptions:
-            nameInSettings = self.nameInSettings + specificOption.mnemonic              
+            nameInSettings = self.nameInSettings + "." + specificOption.mnemonic              
             self.settings.plugins[nameInSettings] = specificOption.uiWidget.isChecked()
         
         # disable or enable the UI in the plugins special page
@@ -144,7 +144,7 @@ class LuaPlugin():
 
     def injectScripts(self, operation):
         # set the game settings 
-        self.settings = operation.game.settings
+        self.setSettings(operation.game.settings)
 
         # execute the work order
         if self.scriptsWorkOrders != None:
@@ -156,13 +156,13 @@ class LuaPlugin():
 
     def injectConfiguration(self, operation):
         # set the game settings 
-        self.settings = operation.game.settings
+        self.setSettings(operation.game.settings)
 
         # inject the plugin options
         if len(self.specificOptions) > 0:
             defineAllOptions = ""
             for specificOption in self.specificOptions:
-                nameInSettings = self.nameInSettings + specificOption.mnemonic
+                nameInSettings = self.nameInSettings + "." + specificOption.mnemonic
                 value = "true" if self.settings.plugins[nameInSettings] else "false"
                 defineAllOptions += f"    dcsLiberation.plugins.{self.mnemonic}.{specificOption.mnemonic} = {value} \n"
             
