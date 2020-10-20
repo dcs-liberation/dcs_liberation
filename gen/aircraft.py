@@ -1135,8 +1135,9 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.Circle
         ))
-        loiter.stop_after_time(
-            self.timing.push_time(self.flight, self.waypoint))
+        push_time = self.timing.push_time(self.flight, self.waypoint)
+        self.waypoint.departure_time = push_time
+        loiter.stop_after_time(push_time)
         waypoint.add_task(loiter)
         return waypoint
 

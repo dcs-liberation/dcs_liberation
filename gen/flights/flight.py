@@ -91,11 +91,12 @@ class FlightWaypoint:
         self.only_for_player = False
         self.data = None
 
-        # This is set very late by the air conflict generator (part of mission
+        # These are set very late by the air conflict generator (part of mission
         # generation). We do it late so that we don't need to propagate changes
         # to waypoint times whenever the player alters the package TOT or the
         # flight's offset in the UI.
         self.tot: Optional[int] = None
+        self.departure_time: Optional[int] = None
 
     @classmethod
     def from_pydcs(cls, point: MovingPoint,

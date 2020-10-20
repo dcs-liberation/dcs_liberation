@@ -145,6 +145,7 @@ class FlightPlanBuilder:
             waypoint.waypoint.pretty_name,
             str(int(units.meters_to_feet(waypoint.waypoint.alt))),
             self._format_time(waypoint.waypoint.tot),
+            self._format_time(waypoint.waypoint.departure_time),
         ])
 
     def _format_time(self, time: Optional[int]) -> str:
@@ -187,7 +188,7 @@ class BriefingPage(KneeboardPage):
         for num, waypoint in enumerate(self.flight.waypoints):
             flight_plan_builder.add_waypoint(num, waypoint)
         writer.table(flight_plan_builder.build(),
-                     headers=["STPT", "Action", "Alt", "TOT"])
+                     headers=["#", "Action", "Alt", "Time", "Departure"])
 
         writer.heading("Comm Ladder")
         comms = []
