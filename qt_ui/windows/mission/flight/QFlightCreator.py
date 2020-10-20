@@ -53,9 +53,11 @@ class QFlightCreator(QDialog):
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData()
         )
+        self.aircraft_selector.currentIndexChanged.connect(self.update_max_size)
         layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
 
         self.flight_size_spinner = QFlightSizeSpinner()
+        self.update_max_size()
         layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
 
         self.client_slots_spinner = QFlightSizeSpinner(
@@ -116,3 +118,8 @@ class QFlightCreator(QDialog):
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
         self.airfield_selector.change_aircraft(new_aircraft)
+
+    def update_max_size(self) -> None:
+        self.flight_size_spinner.setMaximum(
+            min(self.airfield_selector.available, 4)
+        )

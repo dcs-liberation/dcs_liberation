@@ -39,3 +39,9 @@ class QOriginAirfieldSelector(QComboBox):
                 self.addItem(f"{origin.name} ({available} available)", origin)
         self.model().sort(0)
         self.update()
+
+    @property
+    def available(self) -> int:
+        origin = self.currentData()
+        inventory = self.global_inventory.for_control_point(origin)
+        return inventory.available(self.aircraft)
