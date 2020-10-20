@@ -56,7 +56,18 @@ class QFlightCreator(QDialog):
         layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
 
         self.flight_size_spinner = QFlightSizeSpinner()
-        layout.addLayout(QLabeledWidget("Count:", self.flight_size_spinner))
+        layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
+
+        self.client_slots_spinner = QFlightSizeSpinner(
+            min_size=0,
+            max_size=self.flight_size_spinner.value(),
+            default_size=0
+        )
+        self.flight_size_spinner.valueChanged.connect(
+            lambda v: self.client_slots_spinner.setMaximum(v)
+        )
+        layout.addLayout(
+            QLabeledWidget("Client Slots:", self.client_slots_spinner))
 
         layout.addStretch()
 
@@ -96,6 +107,7 @@ class QFlightCreator(QDialog):
             start_type = "Warm"
         flight = Flight(aircraft, size, origin, task, start_type)
         flight.scheduled_in = self.package.delay
+        flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
