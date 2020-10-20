@@ -337,6 +337,7 @@ class QPackageList(QListView):
         self.setItemDelegate(PackageDelegate())
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.model().rowsInserted.connect(self.on_new_packages)
 
     @property
     def selected_item(self) -> Optional[Package]:
@@ -345,6 +346,14 @@ class QPackageList(QListView):
         if not index.isValid():
             return None
         return self.ato_model.package_at_index(index)
+
+    def on_new_packages(self, _parent: QModelIndex, first: int,
+                        _last: int) -> None:
+        # Select the newly created pacakges. This should only ever happen due to
+        # the player saving a new package, so selecting it helps them view/edit
+        # it faster.
+        self.selectionModel().setCurrentIndex(self.model().index(first, 0),
+                                              QItemSelectionModel.Select)
 
 
 class QPackagePanel(QGroupBox):
@@ -357,7 +366,7 @@ class QPackagePanel(QGroupBox):
     def __init__(self, model: AtoModel) -> None:
         super().__init__("Packages")
         self.ato_model = model
-        self.ato_model.layoutChanged.connect(self.on_selection_changed)
+        self.ato_model.layoutChanged.connect(self.on_current_changed)
 
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
@@ -378,15 +387,15 @@ class QPackagePanel(QGroupBox):
         self.delete_button.clicked.connect(self.on_delete)
         self.button_row.addWidget(self.delete_button)
 
-        self.selection_changed.connect(self.on_selection_changed)
-        self.on_selection_changed()
+        self.current_changed.connect(self.on_current_changed)
+        self.on_current_changed()
 
     @property
-    def selection_changed(self):
+    def current_changed(self):
         """Returns the signal emitted when the flight selection changes."""
-        return self.package_list.selectionModel().selectionChanged
+        return self.package_list.selectionModel().currentChanged
 
-    def on_selection_changed(self) -> None:
+    def on_current_changed(self) -> None:
         """Updates the status of the edit and delete buttons."""
         index = self.package_list.currentIndex()
         enabled = index.isValid()
@@ -436,8 +445,7 @@ class QAirTaskingOrderPanel(QSplitter):
         self.ato_model = game_model.ato_model
 
         self.package_panel = QPackagePanel(self.ato_model)
-        self.package_panel.selection_changed.connect(self.on_package_change)
-        self.ato_model.rowsInserted.connect(self.on_package_change)
+        self.package_panel.current_changed.connect(self.on_package_change)
         self.addWidget(self.package_panel)
 
         self.flight_panel = QFlightPanel(game_model)
