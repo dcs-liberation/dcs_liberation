@@ -102,7 +102,7 @@ class QPackageDialog(QDialog):
         self.delete_flight_button = QPushButton("Delete Selected")
         self.delete_flight_button.setProperty("style", "btn-danger")
         self.delete_flight_button.clicked.connect(self.on_delete_flight)
-        self.delete_flight_button.setEnabled(False)
+        self.delete_flight_button.setEnabled(model.rowCount() > 0)
         self.button_layout.addWidget(self.delete_flight_button)
 
         self.button_layout.addStretch()
