@@ -71,7 +71,7 @@ class Weather:
 
         return WindConditions(
             # Always some wind to make the smoke move a bit.
-            at_0m=Wind(wind_direction, min(1, base_wind * at_0m_factor)),
+            at_0m=Wind(wind_direction, max(1, base_wind * at_0m_factor)),
             at_2000m=Wind(wind_direction, base_wind * at_2000m_factor),
             at_8000m=Wind(wind_direction, base_wind * at_8000m_factor)
         )
