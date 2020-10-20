@@ -419,6 +419,7 @@ class SCR522RadioChannelAllocator(RadioChannelAllocator):
 
         # TODO : Some GCI on Channel 4 ?
 
+
 @dataclass(frozen=True)
 class AircraftData:
     """Additional aircraft data not exposed by pydcs."""
@@ -442,7 +443,9 @@ class AircraftData:
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
     "A-10C": AircraftData(
         inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-164"), # VHF for intraflight is not accepted anymore by DCS (see https://forums.eagle.ru/showthread.php?p=4499738)
+        # VHF for intraflight is not accepted anymore by DCS
+        # (see https://forums.eagle.ru/showthread.php?p=4499738).
+        intra_flight_radio=get_radio("AN/ARC-164"),
         channel_allocator=WarthogRadioChannelAllocator()
     ),
 
@@ -532,6 +535,7 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_namer=SCR522ChannelNamer
     ),
 }
+AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
 AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
 AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
@@ -793,6 +797,8 @@ class AircraftConflictGenerator:
         self.clear_parking_slots()
 
         for package in ato.packages:
+            if not package.flights:
+                continue
             timing = PackageWaypointTiming.for_package(package)
             for flight in package.flights:
                 culled = self.game.position_culled(flight.from_cp.position)
@@ -996,7 +1002,7 @@ class AircraftConflictGenerator:
                            flight: Flight, timing: PackageWaypointTiming,
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
-        if flight_type in [FlightType.CAP, FlightType.BARCAP, FlightType.TARCAP,
+        if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
                            FlightType.INTERCEPTION]:
             self.configure_cap(group, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
@@ -1135,7 +1141,7 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             pattern=OrbitAction.OrbitPattern.Circle
         ))
         loiter.stop_after_time(
-            self.timing.push_time(self.flight, waypoint.position))
+            self.timing.push_time(self.flight, self.waypoint))
         waypoint.add_task(loiter)
         return waypoint
 

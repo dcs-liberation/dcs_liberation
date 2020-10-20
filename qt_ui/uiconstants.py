@@ -6,7 +6,7 @@ from PySide2.QtGui import QColor, QFont, QPixmap
 from theater.theatergroundobject import CATEGORY_MAP
 from .liberation_theme import get_theme_icons
 
-VERSION_STRING = "2.1.4"
+VERSION_STRING = "2.2.0-preview"
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
@@ -40,6 +40,7 @@ COLORS: Dict[str, QColor] = {
     "light_blue": QColor(105, 182, 240, 90),
     "blue": QColor(0, 132, 255),
     "dark_blue": QColor(45, 62, 80),
+    "sea_blue": QColor(52, 68, 85),
     "blue_transparent": QColor(0, 132, 255, 20),
 
     "purple": QColor(187, 137, 255),

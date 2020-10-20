@@ -21,7 +21,7 @@ from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator
-from gen.environmentgen import EnviromentGenerator
+from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
@@ -45,7 +45,6 @@ class Operation:
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
-    envgen = None  # type: EnviromentGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
@@ -191,13 +190,9 @@ class Operation:
         for frequency in unique_map_frequencies:
             radio_registry.reserve(frequency)
 
-        # Generate meteo
-        envgen = EnviromentGenerator(self.current_mission, self.conflict,
-                                     self.game)
-        if self.environment_settings is None:
-            self.environment_settings = envgen.generate()
-        else:
-            envgen.load(self.environment_settings)
+        # Set mission time and weather conditions.
+        EnvironmentGenerator(self.current_mission,
+                             self.game.conditions).generate()
 
         # Generate ground object first
 

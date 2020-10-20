@@ -12,7 +12,6 @@ from game import db, persistency
 from game.debriefing import Debriefing
 from game.infos.information import Information
 from game.operation.operation import Operation
-from gen.environmentgen import EnvironmentSettings
 from gen.ground_forces.combat_stance import CombatStance
 from theater import ControlPoint
 from theater.start_generator import generate_airbase_defense_group
@@ -42,7 +41,6 @@ class Event:
 
     operation = None  # type: Operation
     difficulty = 1  # type: int
-    environment_settings = None  # type: EnvironmentSettings
     BONUS_BASE = 5
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):

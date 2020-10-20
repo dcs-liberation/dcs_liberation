@@ -129,6 +129,11 @@ class BriefingGenerator(MissionInfoGenerator):
         self.description += "DCS Liberation turn #" + str(self.game.turn) + "\n"
         self.description += "=" * 15 + "\n\n"
 
+        self.description += (
+            "Most briefing information, including communications and flight "
+            "plan information, can be found on your kneeboard.\n\n"
+        )
+
         self.generate_ongoing_war_text()
 
         self.description += "\n"*2

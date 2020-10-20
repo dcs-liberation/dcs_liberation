@@ -326,7 +326,7 @@ SEAD_CAPABLE = [
     F_4E,
     FA_18C_hornet,
     F_15E,
-    # F_16C_50, Not yet
+    F_16C_50,
     AV8BNA,
     JF_17,
 

@@ -54,6 +54,7 @@ class QFlightWaypointTab(QFrame):
         rlayout.addWidget(QLabel("<strong>Generator :</strong>"))
         rlayout.addWidget(QLabel("<small>AI compatible</small>"))
 
+        # TODO: Filter by objective type.
         self.recreate_buttons.clear()
         recreate_types = [
             FlightType.CAS,
@@ -137,13 +138,16 @@ class QFlightWaypointTab(QFrame):
             QMessageBox.Yes
         )
         if result == QMessageBox.Yes:
-            # TODO: These should all be just CAP.
+            # TODO: Should be buttons for both BARCAP and TARCAP.
+            # BARCAP and TARCAP behave differently. TARCAP arrives a few minutes
+            # ahead of the rest of the package and stays until the package
+            # departs, whereas BARCAP usually isn't part of a strike package and
+            # has a fixed mission time.
             if task == FlightType.CAP:
                 if isinstance(self.package.target, FrontLine):
                     task = FlightType.TARCAP
                 elif isinstance(self.package.target, ControlPoint):
-                    if self.package.target.is_fleet:
-                        task = FlightType.BARCAP
+                    task = FlightType.BARCAP
             self.flight.flight_type = task
             self.planner.populate_flight_plan(self.flight)
             self.flight_waypoint_list.update_list()

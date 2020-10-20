@@ -43,6 +43,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = None
         self.info_panel = None
+        self.liberation_map = None
         self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
@@ -224,9 +225,11 @@ class QLiberationWindow(QMainWindow):
         if game is not None:
             game.on_load()
         self.game = game
-        if self.info_panel:
+        if self.info_panel is not None:
             self.info_panel.setGame(game)
         self.game_model.set(self.game)
+        if self.liberation_map is not None:
+            self.liberation_map.setGame(game)
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation " + CONST.VERSION_STRING + "</h3>" + \
