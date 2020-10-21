@@ -2,9 +2,3 @@
 	path = pydcs
 	url = https://github.com/pydcs/dcs
 	branch = master
-[submodule "plugin/veaf"]
-	path = plugin/veaf
-	url = https://github.com/VEAF/dcs-liberation-veaf-framework
-[submodule "resources/plugins/veaf"]
-	path = resources/plugins/veaf
-	url = https://github.com/VEAF/dcs-liberation-veaf-framework
