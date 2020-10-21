@@ -4,8 +4,16 @@ import datetime
 import logging
 from typing import List, Optional, Tuple
 
-from PySide2.QtCore import Qt, QPointF
-from PySide2.QtGui import QBrush, QColor, QPen, QPixmap, QWheelEvent, QPolygonF
+from PySide2.QtCore import QPointF, Qt
+from PySide2.QtGui import (
+    QBrush,
+    QColor,
+    QFont,
+    QPen,
+    QPixmap,
+    QPolygonF,
+    QWheelEvent,
+)
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
@@ -21,6 +29,7 @@ from game import Game, db
 from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet
+from game.weather import TimeOfDay
 from gen import Conflict, PackageWaypointTiming
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
@@ -45,6 +54,9 @@ class QLiberationMap(QGraphicsView):
         self.game_model = game_model
         self.game: Optional[Game] = game_model.game
 
+        self.waypoint_info_font = QFont()
+        self.waypoint_info_font.setPointSize(12)
+
         self.flight_path_items: List[QGraphicsItem] = []
         # A tuple of (package index, flight index), or none.
         self.selected_flight: Optional[Tuple[int, int]] = None
@@ -55,25 +67,42 @@ class QLiberationMap(QGraphicsView):
         self.factor = 1
         self.factorized = 1
         self.init_scene()
-        self.connectSignals()
         self.setGame(game_model.game)
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
             lambda: self.draw_flight_plans(self.scene())
         )
 
-        def update_package_selection(index: Optional[int]) -> None:
-            self.selected_flight = index, 0
+        def update_package_selection(index: int) -> None:
+            # Optional[int] isn't a valid type for a Qt signal. None will be
+            # converted to zero automatically. We use -1 to indicate no
+            # selection.
+            if index == -1:
+                self.selected_flight = None
+            else:
+                self.selected_flight = index, 0
             self.draw_flight_plans(self.scene())
 
         GameUpdateSignal.get_instance().package_selection_changed.connect(
             update_package_selection
         )
 
-        def update_flight_selection(index: Optional[int]) -> None:
+        def update_flight_selection(index: int) -> None:
             if self.selected_flight is None:
-                logging.error("Flight was selected with no package selected")
+                if index != -1:
+                    # We don't know what order update_package_selection and
+                    # update_flight_selection will be called in when the last
+                    # package is removed. If no flight is selected, it's not a
+                    # problem to also have no package selected.
+                    logging.error(
+                        "Flight was selected with no package selected")
                 return
+
+            # Optional[int] isn't a valid type for a Qt signal. None will be
+            # converted to zero automatically. We use -1 to indicate no
+            # selection.
+            if index == -1:
+                self.selected_flight = self.selected_flight[0], None
             self.selected_flight = self.selected_flight[0], index
             self.draw_flight_plans(self.scene())
 
@@ -89,9 +118,6 @@ class QLiberationMap(QGraphicsView):
         self.setBackgroundBrush(QBrush(QColor(30, 30, 30)))
         self.setFrameShape(QFrame.NoFrame)
         self.setDragMode(QGraphicsView.ScrollHandDrag)
-
-    def connectSignals(self):
-        GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
 
     def setGame(self, game: Optional[Game]):
         self.game = game
@@ -244,7 +270,7 @@ class QLiberationMap(QGraphicsView):
             text.setDefaultTextColor(Qt.white)
             text.setPos(pos[0] + CONST.CP_SIZE + 1, pos[1] - CONST.CP_SIZE / 2 + 1)
 
-    def draw_flight_plans(self, scene) -> None:
+    def clear_flight_paths(self, scene: QGraphicsScene) -> None:
         for item in self.flight_path_items:
             try:
                 scene.removeItem(item)
@@ -252,12 +278,20 @@ class QLiberationMap(QGraphicsView):
                 # Something may have caused those items to already be removed.
                 pass
         self.flight_path_items.clear()
+
+    def draw_flight_plans(self, scene: QGraphicsScene) -> None:
+        self.clear_flight_paths(scene)
         if DisplayOptions.flight_paths.hide:
             return
         packages = list(self.game_model.ato_model.packages)
+        if self.game.settings.show_red_ato:
+            packages.extend(self.game_model.red_ato_model.packages)
         for p_idx, package_model in enumerate(packages):
             for f_idx, flight in enumerate(package_model.flights):
-                selected = (p_idx, f_idx) == self.selected_flight
+                if self.selected_flight is None:
+                    selected = False
+                else:
+                    selected = (p_idx, f_idx) == self.selected_flight
                 if DisplayOptions.flight_paths.only_selected and not selected:
                     continue
                 self.draw_flight_plan(scene, package_model.package, flight,
@@ -322,19 +356,19 @@ class QLiberationMap(QGraphicsView):
         pen = QPen(QColor("black"), 0.3)
         brush = QColor("white")
 
-        def draw_text(text: str, x: int, y: int) -> None:
-            item = scene.addSimpleText(text)
-            item.setBrush(brush)
-            item.setPen(pen)
-            item.moveBy(x, y)
-            item.setZValue(2)
-            self.flight_path_items.append(item)
+        text = "\n".join([
+            f"{number} {waypoint.name}",
+            f"{altitude} ft {altitude_type}",
+            tot,
+        ])
 
-        draw_text(f"{number} {waypoint.name}", position[0] + 8,
-                  position[1] - 15)
-        draw_text(f"{altitude} ft {altitude_type}", position[0] + 8,
-                  position[1] - 5)
-        draw_text(tot, position[0] + 8, position[1] + 5)
+        item = scene.addSimpleText(text, self.waypoint_info_font)
+        item.setFlag(QGraphicsItem.ItemIgnoresTransformations)
+        item.setBrush(brush)
+        item.setPen(pen)
+        item.moveBy(position[0] + 8, position[1])
+        item.setZValue(2)
+        self.flight_path_items.append(item)
 
     def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
                          pos1: Tuple[int, int], player: bool,
@@ -486,9 +520,9 @@ class QLiberationMap(QGraphicsView):
             scene.addPixmap(bg)
 
             # Apply graphical effects to simulate current daytime
-            if self.game.current_turn_daytime == "day":
+            if self.game.current_turn_time_of_day == TimeOfDay.Day:
                 pass
-            elif self.game.current_turn_daytime == "night":
+            elif self.game.current_turn_time_of_day == TimeOfDay.Night:
                 ov = QPixmap(bg.width(), bg.height())
                 ov.fill(CONST.COLORS["night_overlay"])
                 overlay = scene.addPixmap(ov)

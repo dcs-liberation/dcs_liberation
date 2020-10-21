@@ -2,7 +2,7 @@ import logging
 import math
 import random
 import sys
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any, Dict, List
 
 from dcs.action import Coalition
@@ -28,6 +28,8 @@ from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .infos.information import Information
 from .settings import Settings
+from plugin import LuaPluginManager
+from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -78,7 +80,7 @@ class Game:
         self.enemy_name = enemy_name
         self.enemy_country = db.FACTIONS[enemy_name]["country"]
         self.turn = 0
-        self.date = datetime(start_date.year, start_date.month, start_date.day)
+        self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
         self.ground_planners: Dict[int, GroundPlanner] = {}
@@ -91,6 +93,8 @@ class Game:
         self.current_unit_id = 0
         self.current_group_id = 0
 
+        self.conditions = self.generate_conditions()
+
         self.blue_ato = AirTaskingOrder()
         self.red_ato = AirTaskingOrder()
 
@@ -101,6 +105,9 @@ class Game:
         self.sanitize_sides()
         self.on_load()
 
+    def generate_conditions(self) -> Conditions:
+        return Conditions.generate(self.theater, self.date,
+                                   self.current_turn_time_of_day, self.settings)
 
     def sanitize_sides(self):
         """
@@ -217,6 +224,16 @@ class Game:
 
     def on_load(self) -> None:
         ObjectiveDistanceCache.set_theater(self.theater)
+        
+        # set the settings in all plugins
+        for plugin in LuaPluginManager().getPlugins():
+            plugin.setSettings(self.settings)
+
+        # Save game compatibility.
+
+        # TODO: Remove in 2.3.
+        if not hasattr(self, "conditions"):
+            self.conditions = self.generate_conditions()
 
     def pass_turn(self, no_action=False):
         logging.info("Pass turn")
@@ -251,6 +268,8 @@ class Game:
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
             self.aircraft_inventory.set_from_control_point(cp)
+
+        self.conditions = self.generate_conditions()
 
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
@@ -340,11 +359,11 @@ class Game:
                 self.informations.append(info)
 
     @property
-    def current_turn_daytime(self):
-        return ["dawn", "day", "dusk", "night"][self.turn % 4]
+    def current_turn_time_of_day(self) -> TimeOfDay:
+        return list(TimeOfDay)[self.turn % 4]
 
     @property
-    def current_day(self):
+    def current_day(self) -> date:
         return self.date + timedelta(days=self.turn // 4)
 
     def next_unit_id(self):

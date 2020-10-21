@@ -30,6 +30,7 @@ AWACS_ALT = 13000
 @dataclass
 class AwacsInfo:
     """AWACS information for the kneeboard."""
+    dcsGroupName: str
     callsign: str
     freq: RadioFrequency
 
@@ -37,6 +38,7 @@ class AwacsInfo:
 @dataclass
 class TankerInfo:
     """Tanker information for the kneeboard."""
+    dcsGroupName: str
     callsign: str
     variant: str
     freq: RadioFrequency
@@ -116,7 +118,7 @@ class AirSupportConflictGenerator:
             tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
-            self.air_support.tankers.append(TankerInfo(callsign, variant, freq, tacan))
+            self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
         if is_awacs_enabled:
             try:
@@ -138,6 +140,6 @@ class AirSupportConflictGenerator:
                 awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
 
                 self.air_support.awacs.append(AwacsInfo(
-                    callsign_for_support_unit(awacs_flight), freq))
+                    str(awacs_flight.name), callsign_for_support_unit(awacs_flight), freq))
             except:
                 print("No AWACS for faction")

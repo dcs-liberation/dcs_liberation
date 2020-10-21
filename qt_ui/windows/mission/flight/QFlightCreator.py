@@ -53,10 +53,23 @@ class QFlightCreator(QDialog):
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData()
         )
+        self.aircraft_selector.currentIndexChanged.connect(self.update_max_size)
         layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
 
         self.flight_size_spinner = QFlightSizeSpinner()
-        layout.addLayout(QLabeledWidget("Count:", self.flight_size_spinner))
+        self.update_max_size()
+        layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
+
+        self.client_slots_spinner = QFlightSizeSpinner(
+            min_size=0,
+            max_size=self.flight_size_spinner.value(),
+            default_size=0
+        )
+        self.flight_size_spinner.valueChanged.connect(
+            lambda v: self.client_slots_spinner.setMaximum(v)
+        )
+        layout.addLayout(
+            QLabeledWidget("Client Slots:", self.client_slots_spinner))
 
         layout.addStretch()
 
@@ -96,6 +109,7 @@ class QFlightCreator(QDialog):
             start_type = "Warm"
         flight = Flight(aircraft, size, origin, task, start_type)
         flight.scheduled_in = self.package.delay
+        flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
@@ -104,3 +118,8 @@ class QFlightCreator(QDialog):
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
         self.airfield_selector.change_aircraft(new_aircraft)
+
+    def update_max_size(self) -> None:
+        self.flight_size_spinner.setMaximum(
+            min(self.airfield_selector.available, 4)
+        )

@@ -164,6 +164,7 @@ class PackageModel(QAbstractListModel):
 
     def update_tot(self, tot: int) -> None:
         self.package.time_over_target = tot
+        self.layoutChanged.emit()
 
     @property
     def mission_target(self) -> MissionTarget:
@@ -234,7 +235,7 @@ class AtoModel(QAbstractListModel):
         """Returns the package at the given index."""
         return self.ato.packages[index.row()]
 
-    def replace_from_game(self, game: Optional[Game]) -> None:
+    def replace_from_game(self, game: Optional[Game], player: bool) -> None:
         """Updates the ATO object to match the updated game object.
 
         If the game is None (as is the case when no game has been loaded), an
@@ -244,7 +245,10 @@ class AtoModel(QAbstractListModel):
         self.game = game
         self.package_models.clear()
         if self.game is not None:
-            self.ato = game.blue_ato
+            if player:
+                self.ato = game.blue_ato
+            else:
+                self.ato = game.red_ato
         else:
             self.ato = AirTaskingOrder()
         self.endResetModel()
@@ -268,8 +272,8 @@ class GameModel:
     """
     def __init__(self) -> None:
         self.game: Optional[Game] = None
-        # TODO: Add red ATO model, add cheat option to show red flight plan.
         self.ato_model = AtoModel(self.game, AirTaskingOrder())
+        self.red_ato_model = AtoModel(self.game, AirTaskingOrder())
 
     def set(self, game: Optional[Game]) -> None:
         """Updates the managed Game object.
@@ -280,4 +284,5 @@ class GameModel:
         loaded.
         """
         self.game = game
-        self.ato_model.replace_from_game(self.game)
+        self.ato_model.replace_from_game(self.game, player=True)
+        self.red_ato_model.replace_from_game(self.game, player=False)

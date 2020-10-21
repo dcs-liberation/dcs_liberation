@@ -65,16 +65,6 @@ class ControlPointAircraftInventory:
             if count > 0:
                 yield aircraft, count
 
-    @property
-    def total_available(self) -> int:
-        """Returns the total number of aircraft available."""
-        # TODO: Remove?
-        # This probably isn't actually useful. It's used by the AI flight
-        # planner to determine how many flights of a given type it should
-        # allocate, but it should probably be making that decision based on the
-        # number of aircraft available to perform a particular role.
-        return sum(self.inventory.values())
-
     def clear(self) -> None:
         """Clears all aircraft from the inventory."""
         self.inventory.clear()

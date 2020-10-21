@@ -39,45 +39,53 @@ write_state = function()
     -- messageAll("Done writing DCS Liberation state.")
 end
 
-debriefing_file_location = nil
-if dcsLiberation then 
-    debriefing_file_location = dcsLiberation.installPath
-end
-if debriefing_file_location then
-    logger:info("Using DCS Liberation install folder for state.json")
-else
+
+local function discoverDebriefingFilePath()
+    local function insertFileName(directoryOrFilePath, overrideFileName)
+        if overrideFileName then
+            logger:info("Using LIBERATION_EXPORT_STAMPED_STATE to locate the state.json")
+            return directoryOrFilePath .. os.time() .. "-state.json"
+        end
+
+        local filename = "state.json"
+        if not (directoryOrFilePath:sub(-#filename) == filename) then
+            return directoryOrFilePath .. filename
+        end
+
+        return directoryOrFilePath
+    end
+
+    -- establish a search pattern into the following modes
+    -- 1. Environment variable mode, to support dedicated server hosting
+    -- 2. Embedded DCS Liberation Generation, to support locally hosted single player
+    -- 3. Retain the classic TEMP directory logic
+
     if os then
-        debriefing_file_location = os.getenv("LIBERATION_EXPORT_DIR")
-        if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
-    end
-    if debriefing_file_location then
-        logger:info("Using LIBERATION_EXPORT_DIR environment variable for state.json")
-    else
-        if os then
-            debriefing_file_location = os.getenv("TEMP")
-            if debriefing_file_location then debriefing_file_location = debriefing_file_location .. "\\" end
-        end
-        if debriefing_file_location then
-            logger:info("Using TEMP environment variable for state.json")
-        else
-            if lfs then
-                debriefing_file_location = lfs.writedir()
-            end
-            if debriefing_file_location then
-                logger:info("Using DCS working directory for state.json")
-            end
+        local exportDirectory = os.getenv("LIBERATION_EXPORT_DIR")
+
+        if exportDirectory then
+            logger:info("Using LIBERATION_EXPORT_DIR to locate the state.json")
+            local useCurrentStamping = os.getenv("LIBERATION_EXPORT_STAMPED_STATE")
+            exportDirectory = exportDirectory .. "\\"
+            return insertFileName(exportDirectory, useCurrentStamping)
         end
     end
-end
-if debriefing_file_location then
-    local filename = "state.json"
-    if not debriefing_file_location:sub(-#filename) == filename then
-        debriefing_file_location = debriefing_file_location .. filename
+
+    if dcsLiberation then
+        logger:info("Using DCS Liberation install folder for state.json")
+        return insertFileName(dcsLiberation.installPath)
     end
-    logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
-else
-    logger:error("No usable storage path for state.json")
+
+    if lfs then
+        logger:info("Using DCS working directory for state.json")
+        return insertFileName(lfs.writedir())
+    end
 end
+
+
+debriefing_file_location = discoverDebriefingFilePath()
+logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
+
 
 write_state_error_handling = function()
     if pcall(write_state) then

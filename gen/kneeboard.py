@@ -29,16 +29,19 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
+from dcs.mapping import Point
 from dcs.mission import Mission
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
+from game.utils import meter_to_nm
 from . import units
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType
+from .flights.traveltime import TravelTime
 from .radios import RadioFrequency
 
 
@@ -111,6 +114,7 @@ class FlightPlanBuilder:
         self.start_time = start_time
         self.rows: List[List[str]] = []
         self.target_points: List[NumberedWaypoint] = []
+        self.last_waypoint: Optional[FlightWaypoint] = None
 
     def add_waypoint(self, waypoint_num: int, waypoint: FlightWaypoint) -> None:
         if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
@@ -136,22 +140,59 @@ class FlightPlanBuilder:
             f"{first_waypoint_num}-{last_waypoint_num}",
             "Target points",
             "0",
+            self._waypoint_distance(self.target_points[0].waypoint),
+            self._ground_speed(self.target_points[0].waypoint),
             self._format_time(self.target_points[0].waypoint.tot),
+            self._format_time(self.target_points[0].waypoint.departure_time),
         ])
+        self.last_waypoint = self.target_points[-1].waypoint
 
     def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
         self.rows.append([
             str(waypoint.number),
             waypoint.waypoint.pretty_name,
             str(int(units.meters_to_feet(waypoint.waypoint.alt))),
+            self._waypoint_distance(waypoint.waypoint),
+            self._ground_speed(waypoint.waypoint),
             self._format_time(waypoint.waypoint.tot),
+            self._format_time(waypoint.waypoint.departure_time),
         ])
+        self.last_waypoint = waypoint.waypoint
 
     def _format_time(self, time: Optional[int]) -> str:
         if time is None:
             return ""
         local_time = self.start_time + datetime.timedelta(seconds=time)
-        return local_time.strftime(f"%H:%M:%S LOCAL")
+        return local_time.strftime(f"%H:%M:%S")
+
+    def _waypoint_distance(self, waypoint: FlightWaypoint) -> str:
+        if self.last_waypoint is None:
+            return "-"
+
+        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+            waypoint.position
+        ))
+        return f"{distance} NM"
+
+    def _ground_speed(self, waypoint: FlightWaypoint) -> str:
+        if self.last_waypoint is None:
+            return "-"
+
+        if waypoint.tot is None:
+            return "-"
+
+        if self.last_waypoint.departure_time is not None:
+            last_time = self.last_waypoint.departure_time
+        elif self.last_waypoint.tot is not None:
+            last_time = self.last_waypoint.tot
+        else:
+            return "-"
+
+        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+            waypoint.position
+        ))
+        duration = (waypoint.tot - last_time) / 3600
+        return f"{int(distance / duration)} kt"
 
     def build(self) -> List[List[str]]:
         return self.rows
@@ -186,8 +227,9 @@ class BriefingPage(KneeboardPage):
         flight_plan_builder = FlightPlanBuilder(self.start_time)
         for num, waypoint in enumerate(self.flight.waypoints):
             flight_plan_builder.add_waypoint(num, waypoint)
-        writer.table(flight_plan_builder.build(),
-                     headers=["STPT", "Action", "Alt", "TOT"])
+        writer.table(flight_plan_builder.build(), headers=[
+            "#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"
+        ])
 
         writer.heading("Comm Ladder")
         comms = []

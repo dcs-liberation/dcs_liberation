@@ -14,14 +14,14 @@ from dcs.translation import String
 from dcs.triggers import TriggerStart
 from dcs.unittype import UnitType
 
-from gen import Conflict, VisualGenerator
+from gen import Conflict, VisualGenerator, FlightType
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
 from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator
-from gen.environmentgen import EnviromentGenerator
+from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
@@ -31,7 +31,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from theater import ControlPoint
 from .. import db
 from ..debriefing import Debriefing
-
+from plugin import LuaPluginManager
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
@@ -45,7 +45,6 @@ class Operation:
     triggersgen = None  # type: TriggersGenerator
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
-    envgen = None  # type: EnviromentGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
     briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
@@ -75,6 +74,7 @@ class Operation:
         self.departure_cp = departure_cp
         self.to_cp = to_cp
         self.is_quick = False
+        self.listOfPluginsScripts = []
 
     def units_of(self, country_name: str) -> List[UnitType]:
         return []
@@ -133,6 +133,34 @@ class Operation:
             else:
                 self.defenders_starting_position = None
 
+    def injectLuaTrigger(self, luascript, comment = "LUA script"):
+        trigger = TriggerStart(comment=comment)
+        trigger.add_action(DoScript(String(luascript)))
+        self.current_mission.triggerrules.triggers.append(trigger)
+
+    def bypassPluginScript(self, pluginName, scriptFileMnemonic):
+            self.listOfPluginsScripts.append(scriptFileMnemonic)
+
+    def injectPluginScript(self, pluginName, scriptFile, scriptFileMnemonic):
+        if not scriptFileMnemonic in self.listOfPluginsScripts:
+            self.listOfPluginsScripts.append(scriptFileMnemonic)
+
+            plugin_path = Path("./resources/plugins",pluginName)
+
+            if scriptFile != None:
+                scriptFile_path = Path(plugin_path, scriptFile)
+                if scriptFile_path.exists():
+                    trigger = TriggerStart(comment="Load " + scriptFileMnemonic)
+                    filename = scriptFile_path.resolve()
+                    fileref = self.current_mission.map_resource.add_resource_file(filename)
+                    trigger.add_action(DoScriptFile(fileref))
+                    self.current_mission.triggerrules.triggers.append(trigger)
+                else:
+                    logging.error(f"Cannot find script file {scriptFile} for plugin {pluginName}")
+
+        else:
+            logging.debug(f"Skipping script file {scriptFile} for plugin {pluginName}")
+
     def generate(self):
         radio_registry = RadioRegistry()
         tacan_registry = TacanRegistry()
@@ -162,13 +190,9 @@ class Operation:
         for frequency in unique_map_frequencies:
             radio_registry.reserve(frequency)
 
-        # Generate meteo
-        envgen = EnviromentGenerator(self.current_mission, self.conflict,
-                                     self.game)
-        if self.environment_settings is None:
-            self.environment_settings = envgen.generate()
-        else:
-            envgen.load(self.environment_settings)
+        # Set mission time and weather conditions.
+        EnvironmentGenerator(self.current_mission,
+                             self.game.conditions).generate()
 
         # Generate ground object first
 
@@ -259,98 +283,181 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        # Inject Plugins Lua Scripts
-        listOfPluginsScripts = []
-        plugin_file_path = Path("./resources/scripts/plugins/__plugins.lst")
-        if plugin_file_path.exists():
-            for line in plugin_file_path.read_text().splitlines():
-                name = line.strip()
-                if not name.startswith( '#' ):
-                    trigger = TriggerStart(comment="Load " + name)
-                    listOfPluginsScripts.append(name)
-                    fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/plugins/" + name)
-                    trigger.add_action(DoScriptFile(fileref))
-                    self.current_mission.triggerrules.triggers.append(trigger)
-        else:
-            logging.info(
-                f"Not loading plugins, {plugin_file_path} does not exist")
+        luaData = {}
+        luaData["AircraftCarriers"] = {}
+        luaData["Tankers"] = {}
+        luaData["AWACs"] = {}
+        luaData["JTACs"] = {}
+        luaData["TargetPoints"] = {}
 
-        # Inject Mist Script if not done already in the plugins
-        if not "mist.lua" in listOfPluginsScripts and not "mist_4_3_74.lua" in listOfPluginsScripts: # don't load the script twice
-            trigger = TriggerStart(comment="Load Mist Lua framework")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/mist_4_3_74.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
+        self.assign_channels_to_flights(airgen.flights,
+                                        airsupportgen.air_support)
 
-        # Inject JSON library if not done already in the plugins
-        if not "json.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JSON Lua library")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/json.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
+        kneeboard_generator = KneeboardGenerator(self.current_mission)
+        for dynamic_runway in groundobjectgen.runways.values():
+            self.briefinggen.add_dynamic_runway(dynamic_runway)
 
-        # Inject Ciribob's JTACAutoLase if not done already in the plugins
-        if not "JTACAutoLase.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load JTACAutoLase.lua script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/JTACAutoLase.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
+        for tanker in airsupportgen.air_support.tankers:
+            self.briefinggen.add_tanker(tanker)
+            kneeboard_generator.add_tanker(tanker)
+            luaData["Tankers"][tanker.callsign] = { 
+                "dcsGroupName": tanker.dcsGroupName,
+                "callsign": tanker.callsign,
+                "variant": tanker.variant,
+                "radio": tanker.freq.mhz,
+                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name
+            }
+
+        if self.is_awacs_enabled:
+            for awacs in airsupportgen.air_support.awacs:
+                self.briefinggen.add_awacs(awacs)
+                kneeboard_generator.add_awacs(awacs)
+                luaData["AWACs"][awacs.callsign] = { 
+                    "dcsGroupName": awacs.dcsGroupName,
+                    "callsign": awacs.callsign,
+                    "radio": awacs.freq.mhz
+                }
+
+        for jtac in jtacs:
+            self.briefinggen.add_jtac(jtac)
+            kneeboard_generator.add_jtac(jtac)
+            luaData["JTACs"][jtac.callsign] = { 
+                "dcsGroupName": jtac.dcsGroupName,
+                "callsign": jtac.callsign,
+                "zone": jtac.region,
+                "dcsUnit": jtac.unit_name,
+                "laserCode": jtac.code
+            }
+
+        for flight in airgen.flights:
+            self.briefinggen.add_flight(flight)
+            kneeboard_generator.add_flight(flight)
+            if flight.friendly and flight.flight_type in [FlightType.ANTISHIP, FlightType.DEAD, FlightType.SEAD, FlightType.STRIKE]:
+                flightType = flight.flight_type.name
+                flightTarget = flight.targetPoint
+                if flightTarget:
+                    flightTargetName = None
+                    flightTargetType = None
+                    if hasattr(flightTarget, 'obj_name'):
+                        flightTargetName = flightTarget.obj_name
+                        flightTargetType = flightType + f" TGT ({flightTarget.category})"
+                    elif hasattr(flightTarget, 'name'):
+                        flightTargetName = flightTarget.name
+                        flightTargetType = flightType + " TGT (Airbase)"
+                    luaData["TargetPoints"][flightTargetName] = { 
+                        "name": flightTargetName,
+                        "type": flightTargetType,
+                        "position": { "x": flightTarget.position.x, "y": flightTarget.position.y}
+                    }
+                
+
+        self.briefinggen.generate()
+        kneeboard_generator.generate()
+
 
         # set a LUA table with data from Liberation that we want to set
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath("state.json") + "]]"
         lua = """
-        -- setting configuration table
-        env.info("DCSLiberation|: setting configuration table")
-        
-        -- all data in this table is overridable.
-        dcsLiberation = {}
-        
-        -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-        dcsLiberation.installPath=""" + state_location + """
-        
-        -- you can override dcsLiberation.JTACAutoLase to make it use your own function ; it will be called with these parameters : ({jtac.unit_name}, {jtac.code}, {smoke}, 'vehicle') for all JTACs
-        if ctld then
-            dcsLiberation.JTACAutoLase=ctld.JTACAutoLase
-        elseif JTACAutoLase then
-            dcsLiberation.JTACAutoLase=JTACAutoLase
-        end
-        
-        -- later, we'll add more data to the table
-        --dcsLiberation.POIs = {}
-        --dcsLiberation.BASEs = {}
-        --dcsLiberation.JTACs = {}
-        """
+-- setting configuration table
+env.info("DCSLiberation|: setting configuration table")
+
+-- all data in this table is overridable.
+dcsLiberation = {}
+
+-- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
+dcsLiberation.installPath=""" + state_location + """
+
+"""
+        # Process the tankers
+        lua += """
+
+-- list the tankers generated by Liberation
+dcsLiberation.Tankers = {
+"""
+        for key in luaData["Tankers"]:
+            data = luaData["Tankers"][key]
+            dcsGroupName= data["dcsGroupName"]
+            callsign = data["callsign"]
+            variant = data["variant"]
+            tacan = data["tacan"]
+            radio = data["radio"]
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', variant='{variant}', tacan='{tacan}', radio='{radio}' }}, \n"
+            #lua += f"    {{name='{dcsGroupName}', description='{callsign} ({variant})', information='Tacan:{tacan} Radio:{radio}' }}, \n"
+        lua += "}"
+
+        # Process the AWACSes
+        lua += """
+
+-- list the AWACs generated by Liberation
+dcsLiberation.AWACs = {
+"""
+        for key in luaData["AWACs"]:
+            data = luaData["AWACs"][key]
+            dcsGroupName= data["dcsGroupName"]
+            callsign = data["callsign"]
+            radio = data["radio"]
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', radio='{radio}' }}, \n"
+            #lua += f"    {{name='{dcsGroupName}', description='{callsign} (AWACS)', information='Radio:{radio}' }}, \n"
+        lua += "}"
+
+        # Process the JTACs
+        lua += """
+
+-- list the JTACs generated by Liberation
+dcsLiberation.JTACs = {
+"""
+        for key in luaData["JTACs"]:
+            data = luaData["JTACs"][key]
+            dcsGroupName= data["dcsGroupName"]
+            callsign = data["callsign"]
+            zone = data["zone"]
+            laserCode = data["laserCode"]
+            dcsUnit = data["dcsUnit"]
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone='{zone}', laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
+            #lua += f"    {{name='{dcsGroupName}', description='JTAC {callsign} ', information='Laser:{laserCode}', jtac={laserCode} }}, \n"
+        lua += "}"
+
+        # Process the Target Points
+        lua += """
+
+-- list the target points generated by Liberation
+dcsLiberation.TargetPoints = {
+"""
+        for key in luaData["TargetPoints"]:
+            data = luaData["TargetPoints"][key]
+            name = data["name"]
+            pointType = data["type"]
+            positionX = data["position"]["x"]
+            positionY = data["position"]["y"]
+            lua += f"    {{name='{name}', pointType='{pointType}', positionX='{positionX}', positionY='{positionY}' }}, \n"
+            #lua += f"    {{name='{pointType} {name}', point{{x={positionX}, z={positionY} }} }}, \n"
+        lua += "}"
+
+        lua += """
+
+-- list the airbases generated by Liberation
+-- dcsLiberation.Airbases = {}
+
+-- list the aircraft carriers generated by Liberation
+-- dcsLiberation.Carriers = {}
+
+-- later, we'll add more data to the table
+
+"""
+
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
         trigger.add_action(DoScript(String(lua)))
         self.current_mission.triggerrules.triggers.append(trigger)
 
-        # Inject DCS-Liberation script if not done already in the plugins
-        if not "dcs_liberation.lua" in listOfPluginsScripts : # don't load the script twice
-            trigger = TriggerStart(comment="Load DCS Liberation script")
-            fileref = self.current_mission.map_resource.add_resource_file("./resources/scripts/dcs_liberation.lua")
-            trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
+        # Inject Plugins Lua Scripts and data
+        self.listOfPluginsScripts = []
 
-        # add a configuration for JTACAutoLase and start lasing for all JTACs
-        smoke = "true"
-        if hasattr(self.game.settings, "jtac_smoke_on"):
-            if not self.game.settings.jtac_smoke_on:
-                smoke = "false"
-
-        lua = """
-        -- setting and starting JTACs
-        env.info("DCSLiberation|: setting and starting JTACs")
-        """
-
-        for jtac in jtacs:
-            lua += f"if dcsLiberation.JTACAutoLase then dcsLiberation.JTACAutoLase('{jtac.unit_name}', {jtac.code}, {smoke}, 'vehicle') end\n"
-
-        trigger = TriggerStart(comment="Start JTACs")
-        trigger.add_action(DoScript(String(lua)))
-        self.current_mission.triggerrules.triggers.append(trigger)
+        for plugin in LuaPluginManager().getPlugins():
+            plugin.injectScripts(self)
+            plugin.injectConfiguration(self)
 
         self.assign_channels_to_flights(airgen.flights,
                                         airsupportgen.air_support)

@@ -131,7 +131,7 @@ class AircraftAllocator:
 
     @staticmethod
     def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_PREFERRED
         elif task == FlightType.CAS:
@@ -147,7 +147,7 @@ class AircraftAllocator:
 
     @staticmethod
     def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.CAP, FlightType.TARCAP)
+        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_CAPABLE
         elif task == FlightType.CAS:
@@ -209,6 +209,7 @@ class PackageBuilder:
         flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task,
                         self.start_type)
         self.package.add_flight(flight)
+        flight.targetPoint = self.package.target
         return True
 
     def build(self) -> Package:
@@ -221,7 +222,7 @@ class PackageBuilder:
         for flight in flights:
             self.global_inventory.return_from_flight(flight)
             self.package.remove_flight(flight)
-
+            flight.targetPoint = None
 
 class ObjectiveFinder:
     """Identifies potential objectives for the mission planner."""
@@ -389,9 +390,6 @@ class CoalitionMissionPlanner:
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
 
-    NON_CAP_MIN_DELAY = 1
-    NON_CAP_MAX_DELAY = 5
-
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
         self.is_player = is_player
@@ -403,7 +401,7 @@ class CoalitionMissionPlanner:
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
             yield ProposedMission(cp, [
-                ProposedFlight(FlightType.CAP, 2, self.MAX_CAP_RANGE),
+                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
             ])
 
         # Find front lines, plan CAP.
@@ -492,11 +490,7 @@ class CoalitionMissionPlanner:
                 error = random.randint(-margin, margin)
                 yield max(0, time + error)
 
-        dca_types = (
-            FlightType.BARCAP,
-            FlightType.CAP,
-            FlightType.INTERCEPTION,
-        )
+        dca_types = (FlightType.BARCAP, FlightType.INTERCEPTION)
 
         non_dca_packages = [p for p in self.ato.packages if
                             p.primary_task not in dca_types]

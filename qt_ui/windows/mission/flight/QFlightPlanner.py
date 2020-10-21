@@ -19,11 +19,15 @@ class QFlightPlanner(QTabWidget):
     def __init__(self, package: Package, flight: Flight, game: Game):
         super().__init__()
 
-        self.general_settings_tab = QGeneralFlightSettingsTab(game, flight)
+        self.general_settings_tab = QGeneralFlightSettingsTab(
+            game, package, flight
+        )
+        # noinspection PyUnresolvedReferences
         self.general_settings_tab.on_flight_settings_changed.connect(
             lambda: self.on_planned_flight_changed.emit())
         self.payload_tab = QFlightPayloadTab(flight, game)
         self.waypoint_tab = QFlightWaypointTab(game, package, flight)
+        # noinspection PyUnresolvedReferences
         self.waypoint_tab.on_flight_changed.connect(
             lambda: self.on_planned_flight_changed.emit())
         self.addTab(self.general_settings_tab, "General Flight settings")
