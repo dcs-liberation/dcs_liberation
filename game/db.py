@@ -190,6 +190,7 @@ from game.factions.russia_1965 import Russia_1965
 from game.factions.russia_1975 import Russia_1975
 from game.factions.russia_1990 import Russia_1990
 from game.factions.russia_2010 import Russia_2010
+from game.factions.russia_2020 import Russia_2020
 from game.factions.spain_1990 import Spain_1990
 from game.factions.sweden_1990 import Sweden_1990
 from game.factions.syria import (
@@ -216,11 +217,13 @@ from game.factions.usa_2005 import USA_2005
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
+plane_map["Su-57"] = Su_57
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -297,6 +300,7 @@ PRICES = {
     J_11A: 26,
     JF_17: 20,
     Su_30: 24,
+    Su_57: 40,
 
     SpitfireLFMkIX: 14,
     SpitfireLFMkIXCW: 14,
@@ -608,6 +612,7 @@ UNIT_BY_TASK = {
         F_5E_3,
         Su_27,
         Su_33,
+        Su_57,
         MiG_19P,
         MiG_21Bis,
         MiG_23MLD,
@@ -975,6 +980,7 @@ FACTIONS: Dict[str, Dict[str, Any]] = {
     "Russia 1975": Russia_1975,
     "Russia 1990": Russia_1990,
     "Russia 2010": Russia_2010,
+    "Russia 2020 (Modded)": Russia_2020,
 
     "France 1995": France_1995,
     "France 2005": France_2005,
@@ -1135,6 +1141,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     Su_24M:COMMON_OVERRIDE,
     Su_30: COMMON_OVERRIDE,
     Su_34: COMMON_OVERRIDE,
+    Su_57: COMMON_OVERRIDE,
     MiG_23MLD: COMMON_OVERRIDE,
     MiG_27K: COMMON_OVERRIDE,
     Tornado_GR4: COMMON_OVERRIDE,

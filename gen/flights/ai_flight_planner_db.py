@@ -83,6 +83,7 @@ from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
 # TODO: These lists really ought to be era (faction) dependent.
 # Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
 # factions that also have F-4s should not.
+from pydcs_extensions.su57.su57 import Su_57
 
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
@@ -120,6 +121,7 @@ CAP_CAPABLE = [
     JF_17,
     Su_30,
     Su_33,
+    Su_57,
 
     M_2000C,
     Mirage_2000_5,
@@ -169,6 +171,7 @@ CAP_PREFERRED = [
     J_11A,
     Su_30,
     Su_33,
+    Su_57,
 
     M_2000C,
     Mirage_2000_5,
