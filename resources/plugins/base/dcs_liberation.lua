@@ -58,14 +58,15 @@ local function discoverDebriefingFilePath()
     -- establish a search pattern into the following modes
     -- 1. Environment variable mode, to support dedicated server hosting
     -- 2. Embedded DCS Liberation Generation, to support locally hosted single player
-    -- 3. Retain the classic TEMP directory logic
+    -- 3. Retain the classic TEMP directory logic; falling back to the WORKDIR of DCS.
+
+    local useCurrentStamping = os.getenv("LIBERATION_EXPORT_STAMPED_STATE")
 
     if os then
         local exportDirectory = os.getenv("LIBERATION_EXPORT_DIR")
 
         if exportDirectory then
             logger:info("Using LIBERATION_EXPORT_DIR to locate the state.json")
-            local useCurrentStamping = os.getenv("LIBERATION_EXPORT_STAMPED_STATE")
             exportDirectory = exportDirectory .. "\\"
             return insertFileName(exportDirectory, useCurrentStamping)
         end
@@ -74,6 +75,14 @@ local function discoverDebriefingFilePath()
     if dcsLiberation then
         logger:info("Using DCS Liberation install folder for state.json")
         return insertFileName(dcsLiberation.installPath)
+    end
+
+    if os then
+        local temporaryDirectory = os.getenv("TEMP")
+        if temporaryDirectory then
+            temporaryDirectory = temporaryDirectory .. "\\"
+            return insertFileName(temporaryDirectory, useCurrentStamping)
+        end
     end
 
     if lfs then
