@@ -2,6 +2,8 @@ import json
 import os
 import logging
 
+from game.factions.faction import Faction
+
 FACTION_DIRECTORY = "./resources/factions/"
 
 def load_factions() -> {}:
@@ -11,16 +13,19 @@ def load_factions() -> {}:
     factions = {}
 
     for f in files:
+        print(f)
         path = os.path.join(FACTION_DIRECTORY, f)
         logging.info("Loading faction" + path)
-        try:
-            with open(path, "r") as fdata:
-                data = json.load(fdata)
-                factions[data["name"]] = data
-                logging.info("Loaded faction : " + path)
-        except:
-            logging.error("Unable to load faction : " + path)
+        #try:
+        with open(path, "r") as fdata:
+            data = json.load(fdata)
+            factions[data["name"]] = Faction.from_json(data)
+            logging.info("Loaded faction : " + path)
+        #except Exception as e:
+        #    print(e)
+        #    logging.error("Unable to load faction : " + path)
 
+    print(factions)
     return factions
 
 

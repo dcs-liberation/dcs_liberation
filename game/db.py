@@ -149,6 +149,7 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from game.factions import faction_loader
 from game.factions.australia_2005 import Australia_2005
 from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
 from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
@@ -156,6 +157,7 @@ from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
 from game.factions.bluefor_modern import BLUEFOR_MODERN
 from game.factions.canada_2005 import Canada_2005
 from game.factions.china_2010 import China_2010
+from game.factions.faction import Faction
 from game.factions.france_1995 import France_1995
 from game.factions.france_2005 import France_2005
 from game.factions.france_modded import France_2005_Modded
@@ -961,7 +963,9 @@ CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS: Dict[str, Dict[str, Any]] = {
+FACTIONS : [Faction] = faction_loader.load_factions()
+
+FACTIONS3: Dict[str, Dict[str, Any]] = {
 
     "Bluefor Modern": BLUEFOR_MODERN,
     "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
