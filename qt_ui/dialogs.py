@@ -37,7 +37,7 @@ class Dialog:
     def open_new_package_dialog(cls, mission_target: MissionTarget):
         """Opens the dialog to create a new package with the given target."""
         cls.new_package_dialog = QNewPackageDialog(
-            cls.game_model.game,
+            cls.game_model,
             cls.game_model.ato_model,
             mission_target
         )
@@ -47,7 +47,7 @@ class Dialog:
     def open_edit_package_dialog(cls, package_model: PackageModel):
         """Opens the dialog to edit the given package."""
         cls.edit_package_dialog = QEditPackageDialog(
-            cls.game_model.game,
+            cls.game_model,
             cls.game_model.ato_model,
             package_model
         )
