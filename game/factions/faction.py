@@ -7,6 +7,7 @@ from dcs.planes import PlaneType, plane_map
 from dcs.unittype import VehicleType, UnitType
 from dcs.vehicles import vehicle_map, Armor, Unarmed, Infantry, Fortification, Artillery, AirDefence
 
+from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE, COLDWAR_DOCTRINE, WWII_DOCTRINE
 
 
@@ -41,13 +42,22 @@ class Faction:
     logistics_units: [VehicleType]
 
     # List of units that can be deployed as SHORAD
-    shorad_units: [VehicleType]
+    shorads: [str]
 
     # Possible SAMS site generators for this faction
     sams: [str]
 
+    # Possible Missile site generators for this faction
+    missiles: [str]
+
     # Required mods or asset packs
     requirements: {str: str}
+
+    # possible aircraft carrier units
+    aircraft_carrier: [UnitType]
+
+    # possible helicopter carrier units
+    helicopter_carrier: [UnitType]
 
     # Possible carrier names
     carrier_names: [str]
@@ -64,14 +74,23 @@ class Faction:
     # Available cruisers
     cruisers: [str]
 
-    # JTAC
+    # How many navy group should we try to generate per CP on startup for this faction
+    navy_group_count: int
+
+    # How many missiles group should we try to generate per CP on startup for this faction
+    missiles_group_count: int
+
+    # Whether this faction has JTAC access
     has_jtac: bool
 
-    # Unit to use as JTAC
+    # Unit to use as JTAC for this faction
     jtac_unit: str
 
     # doctrine
     doctrine: Doctrine
+
+    # List of available buildings for this faction
+    building_set: [str]
 
     def __init__(self):
         self.country = ""
@@ -83,14 +102,19 @@ class Faction:
         self.artillery_units = []
         self.infantry_units = []
         self.logistics_units = []
-        self.shorad_units = []
+        self.shorads = []
         self.sams = []
+        self.missiles = []
         self.requirements = {}
+        self.aircraft_carrier = []
+        self.helicopter_carrier = []
         self.carrier_names = []
         self.lha_names = []
         self.navy_generators = []
         self.destroyers = []
         self.cruisers = []
+        self.navy_group_count = 0
+        self.missiles_group_count = 0
         self.has_jtac = False
         self.jtac_unit = ""
         self.doctrine = None
@@ -111,18 +135,23 @@ class Faction:
         faction.artillery_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("artillery_units", [])] if f is not None]
         faction.infantry_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("infantry_units", [])] if f is not None]
         faction.logistics_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("logistics_units", [])] if f is not None]
-        faction.shorad_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("shorad_units", [])] if f is not None]
+        faction.shorads = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("shorads", [])] if f is not None]
 
         faction.sams = json.get("sams", [])
+        faction.missiles = json.get("missiles", [])
         faction.name = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
         faction.lha_names = json.get("lha_names", [])
         faction.navy_generators = json.get("navy_generators", [])
+        faction.aircraft_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("aircraft_carrier", [])] if f is not None]
+        faction.helicopter_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("helicopter_carrier", [])] if f is not None]
         faction.destroyers = [f for f in [ship_loader(vehicle) for vehicle in json.get("destroyers", [])] if f is not None]
         faction.cruisers = [f for f in [ship_loader(vehicle) for vehicle in json.get("cruisers", [])] if f is not None]
         faction.has_jtac = json.get("has_jtac", False)
-        faction.jtac_unit = json.get("jtac_unit", "")
+        faction.jtac_unit = aircraft_loader(json.get("jtac_unit", None))
+        faction.navy_group_count = int(json.get("navy_group_count", 1))
+        faction.missiles_group_count = int(json.get("missiles_group_count", 0))
 
         # Load doctrine
         doctrine = json.get("doctrine", "modern")
@@ -132,6 +161,15 @@ class Faction:
             faction.doctrine = COLDWAR_DOCTRINE
         else:
             faction.doctrine = WWII_DOCTRINE
+
+        # Load the building set
+        building_set = json.get("building_set", "default")
+        if building_set == "default":
+            faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
+        elif building_set == "ww2ally":
+            faction.building_set = WW2_ALLIES_BUILDINGS
+        else:
+            faction.building_set = WW2_GERMANY_BUILDINGS
 
         return faction
 
@@ -146,7 +184,9 @@ def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
     :param unit: Unit name as string
     :return: The unit as a PyDCS type
     """
-    if unit in plane_map.keys():
+    if unit is None:
+        return None
+    elif unit in plane_map.keys():
         return plane_map[unit]
     else:
         for mother_class in class_repository:

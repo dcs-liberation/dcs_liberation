@@ -1325,6 +1325,7 @@ def upgrade_to_supercarrier(unit, name: str):
     else:
         return unit
 
+
 def unit_task(unit: UnitType) -> Optional[Task]:
     for task, units in UNIT_BY_TASK.items():
         if unit in units:
@@ -1336,8 +1337,10 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     print(unit.name + " cause issue")
     return None
 
+
 def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name]["units"]]
+    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
+
 
 def find_infantry(country_name: str) -> List[UnitType]:
     inf = [
@@ -1354,13 +1357,16 @@ def find_infantry(country_name: str) -> List[UnitType]:
         Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
         Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
     ]
-    return [x for x in inf if x in FACTIONS[country_name]["units"]]
+    return [x for x in inf if x in FACTIONS[country_name].infantry_units]
+
 
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
+
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
+
 
 def unit_type_from_name(name: str) -> Optional[UnitType]:
     if name in vehicle_map:

@@ -40,8 +40,8 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorad_units": [
-    "SAM_Avenger_M1097"
+  "shorads": [
+    "AvengerGenerator"
   ],
   "sams": [
     "HawkGenerator",
@@ -53,10 +53,10 @@
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
-  "destroyer": [
+  "destroyers": [
     "USS_Arleigh_Burke_IIa"
   ],
-  "cruiser": [
+  "cruisers": [
     "Ticonderoga_class"
   ],
   "requirements": {},

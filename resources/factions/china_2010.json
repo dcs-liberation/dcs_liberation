@@ -35,11 +35,11 @@
     "Infantry_Soldier_Rus",
     "Paratrooper_RPG_16"
   ],
-  "shorad_units": [
-    "SAM_SA_9_Strela_1_9P31",
-    "SAM_SA_13_Strela_10M3_9A35M3",
-    "SPAAA_ZSU_23_4_Shilka",
-    "AAA_ZU_23_Closed"
+  "shorads": [
+    "SA9Generator",
+    "SA13Generator",
+    "ZSU23Generator",
+    "ZU23Generator"
   ],
   "sams": [
     "HQ7Generator",
@@ -65,7 +65,7 @@
     "Wuzhi Shan",
     "Wudang Shan"
   ],
-  "destroyer": [
+  "destroyers": [
     "Type_052B_Destroyer",
     "Type_052C_Destroyer"
   ],

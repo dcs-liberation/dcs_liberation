@@ -142,13 +142,13 @@ class GroundConflictGenerator:
         # Add JTAC
         jtacPlugin = LuaPluginManager().getPlugin("jtacautolase")
         useJTAC = jtacPlugin and jtacPlugin.isEnabled()
-        if "has_jtac" in self.game.player_faction and self.game.player_faction["has_jtac"] and useJTAC:
+        if self.game.player_faction.has_jtac and useJTAC:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
             code = 1688 - len(self.jtacs)
 
             utype = MQ_9_Reaper
-            if "jtac_unit" in self.game.player_faction:
-                utype = self.game.player_faction["jtac_unit"]
+            if self.game.player_faction.jtac_unit is not None:
+                utype = self.game.player_faction.jtac_unit
 
             jtac = self.mission.flight_group(country=self.mission.country(self.game.player_country),
                                              name=n,

@@ -11,8 +11,7 @@ def generate_armor_group(faction:str, game, ground_object):
     This generate a group of ground units
     :return: Generated group
     """
-
-    possible_unit = [u for u in db.FACTIONS[faction]["units"] if u in Armor.__dict__.values()]
+    possible_unit = [u for u in db.FACTIONS[faction].frontline_units if u in Armor.__dict__.values()]
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
         return generate_armor_group_of_type(game, ground_object, unit_type)
