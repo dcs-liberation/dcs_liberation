@@ -10,15 +10,26 @@ from PySide2.QtCore import (
     QSize,
     Qt,
 )
-from PySide2.QtGui import QFont, QFontMetrics, QIcon, QPainter
+from PySide2.QtGui import (
+    QContextMenuEvent,
+    QFont,
+    QFontMetrics,
+    QIcon,
+    QPainter,
+)
 from PySide2.QtWidgets import (
     QAbstractItemView,
+    QAction,
     QGroupBox,
     QHBoxLayout,
     QListView,
+    QMenu,
     QPushButton,
     QSplitter,
-    QStyle, QStyleOptionViewItem, QStyledItemDelegate, QVBoxLayout,
+    QStyle,
+    QStyleOptionViewItem,
+    QStyledItemDelegate,
+    QVBoxLayout,
 )
 
 from game import db
@@ -130,14 +141,17 @@ class FlightDelegate(QStyledItemDelegate):
 class QFlightList(QListView):
     """List view for displaying the flights of a package."""
 
-    def __init__(self, model: Optional[PackageModel]) -> None:
+    def __init__(self, game_model: GameModel,
+                 package_model: Optional[PackageModel]) -> None:
         super().__init__()
-        self.package_model = model
-        self.set_package(model)
-        if model is not None:
-            self.setItemDelegate(FlightDelegate(model.package))
+        self.game_model = game_model
+        self.package_model = package_model
+        self.set_package(package_model)
+        if package_model is not None:
+            self.setItemDelegate(FlightDelegate(package_model.package))
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.doubleClicked.connect(self.on_double_click)
 
     def set_package(self, model: Optional[PackageModel]) -> None:
         """Sets the package model to display."""
@@ -172,6 +186,38 @@ class QFlightList(QListView):
             return None
         return self.package_model.flight_at_index(index)
 
+    def on_double_click(self, index: QModelIndex) -> None:
+        if not index.isValid():
+            return
+        self.edit_flight(index)
+
+    def edit_flight(self, index: QModelIndex) -> None:
+        from qt_ui.dialogs import Dialog
+        Dialog.open_edit_flight_dialog(
+            self.package_model, self.package_model.flight_at_index(index)
+        )
+
+    def delete_flight(self, index: QModelIndex) -> None:
+        self.game_model.game.aircraft_inventory.return_from_flight(
+            self.selected_item)
+        self.package_model.delete_flight_at_index(index)
+        GameUpdateSignal.get_instance().redraw_flight_paths()
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        index = self.indexAt(event.pos())
+
+        menu = QMenu("Menu")
+
+        edit_action = QAction("Edit")
+        edit_action.triggered.connect(lambda: self.edit_flight(index))
+        menu.addAction(edit_action)
+
+        delete_action = QAction(f"Delete")
+        delete_action.triggered.connect(lambda: self.delete_flight(index))
+        menu.addAction(delete_action)
+
+        menu.exec_(event.globalPos())
+
 
 class QFlightPanel(QGroupBox):
     """The flight display portion of the ATO panel.
@@ -189,7 +235,7 @@ class QFlightPanel(QGroupBox):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
-        self.flight_list = QFlightList(package_model)
+        self.flight_list = QFlightList(game_model, package_model)
         self.vbox.addWidget(self.flight_list)
 
         self.button_row = QHBoxLayout()
@@ -242,10 +288,7 @@ class QFlightPanel(QGroupBox):
         if not index.isValid():
             logging.error(f"Cannot edit flight when no flight is selected.")
             return
-        from qt_ui.dialogs import Dialog
-        Dialog.open_edit_flight_dialog(
-            self.package_model, self.package_model.flight_at_index(index)
-        )
+        self.flight_list.edit_flight(index)
 
     def on_delete(self) -> None:
         """Removes the selected flight from the package."""
@@ -253,10 +296,7 @@ class QFlightPanel(QGroupBox):
         if not index.isValid():
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
-        self.game_model.game.aircraft_inventory.return_from_flight(
-            self.flight_list.selected_item)
-        self.package_model.delete_flight_at_index(index)
-        GameUpdateSignal.get_instance().redraw_flight_paths()
+        self.flight_list.delete_flight(index)
 
 
 @contextmanager
@@ -338,6 +378,7 @@ class QPackageList(QListView):
         self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.model().rowsInserted.connect(self.on_new_packages)
+        self.doubleClicked.connect(self.on_double_click)
 
     @property
     def selected_item(self) -> Optional[Package]:
@@ -347,6 +388,14 @@ class QPackageList(QListView):
             return None
         return self.ato_model.package_at_index(index)
 
+    def edit_package(self, index: QModelIndex) -> None:
+        from qt_ui.dialogs import Dialog
+        Dialog.open_edit_package_dialog(self.ato_model.get_package_model(index))
+
+    def delete_package(self, index: QModelIndex) -> None:
+        self.ato_model.delete_package_at_index(index)
+        GameUpdateSignal.get_instance().redraw_flight_paths()
+
     def on_new_packages(self, _parent: QModelIndex, first: int,
                         _last: int) -> None:
         # Select the newly created pacakges. This should only ever happen due to
@@ -354,6 +403,26 @@ class QPackageList(QListView):
         # it faster.
         self.selectionModel().setCurrentIndex(self.model().index(first, 0),
                                               QItemSelectionModel.Select)
+
+    def on_double_click(self, index: QModelIndex) -> None:
+        if not index.isValid():
+            return
+        self.edit_package(index)
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        index = self.indexAt(event.pos())
+
+        menu = QMenu("Menu")
+
+        edit_action = QAction("Edit")
+        edit_action.triggered.connect(lambda: self.edit_package(index))
+        menu.addAction(edit_action)
+
+        delete_action = QAction(f"Delete")
+        delete_action.triggered.connect(lambda: self.delete_package(index))
+        menu.addAction(delete_action)
+
+        menu.exec_(event.globalPos())
 
 
 class QPackagePanel(QGroupBox):
@@ -420,8 +489,7 @@ class QPackagePanel(QGroupBox):
         if not index.isValid():
             logging.error(f"Cannot edit package when no package is selected.")
             return
-        from qt_ui.dialogs import Dialog
-        Dialog.open_edit_package_dialog(self.ato_model.get_package_model(index))
+        self.package_list.edit_package(index)
 
     def on_delete(self) -> None:
         """Removes the package from the ATO."""
@@ -429,8 +497,7 @@ class QPackagePanel(QGroupBox):
         if not index.isValid():
             logging.error(f"Cannot delete package when no package is selected.")
             return
-        self.ato_model.delete_package_at_index(index)
-        GameUpdateSignal.get_instance().redraw_flight_paths()
+        self.package_list.delete_package(index)
 
 
 class QAirTaskingOrderPanel(QSplitter):
@@ -440,6 +507,7 @@ class QAirTaskingOrderPanel(QSplitter):
     packages of the player's ATO, and the bottom half displays the flights of
     the selected package.
     """
+
     def __init__(self, game_model: GameModel) -> None:
         super().__init__(Qt.Vertical)
         self.ato_model = game_model.ato_model
