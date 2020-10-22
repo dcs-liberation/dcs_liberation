@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
 
 
-class SA10Generator(GroupGenerator):
+class SA10Generator(GenericSamGroupGenerator):
     """
     This generate a SA-10 group
     """
@@ -14,14 +14,14 @@ class SA10Generator(GroupGenerator):
     price = 450
 
     def generate(self):
-        # Command Post
-        self.add_unit(AirDefence.SAM_SA_10_S_300PS_CP_54K6, "CP", self.position.x, self.position.y, self.heading)
-
         # Search Radar
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_5N66M, "SR1", self.position.x, self.position.y + 40, self.heading)
 
         # Search radar for missiles (optionnal)
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_SR_64H6E, "SR2", self.position.x - 40, self.position.y, self.heading)
+
+        # Command Post
+        self.add_unit(AirDefence.SAM_SA_10_S_300PS_CP_54K6, "CP", self.position.x, self.position.y, self.heading)
 
         # 2 Tracking radars
         self.add_unit(AirDefence.SAM_SA_10_S_300PS_TR_30N6, "TR1", self.position.x - 40, self.position.y - 40, self.heading)

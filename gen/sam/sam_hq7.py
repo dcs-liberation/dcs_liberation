@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
 
 
-class HQ7Generator(GroupGenerator):
+class HQ7Generator(GenericSamGroupGenerator):
     """
     This generate an HQ7 group
     """

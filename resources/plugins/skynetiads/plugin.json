@@ -1,0 +1,63 @@
+{
+    "mnemonic": "skynetiads",
+    "nameInUI": "Skynet IADS",
+    "defaultValue": false,
+    "specificOptions": [
+        {
+            "nameInUI": "create IADS for RED coalition",
+            "mnemonic": "createRedIADS",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "create IADS for BLUE coalition",
+            "mnemonic": "createBlueIADS",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Long-range SAM act as EWR for RED coalition",
+            "mnemonic": "actAsEwrRED",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Long-range SAM act as EWR for BLUE coalition",
+            "mnemonic": "actAsEwrBLUE",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Include RED IADS in radio menu",
+            "mnemonic": "includeRedInRadio",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Include BLUE IADS in radio menu",
+            "mnemonic": "includeBlueInRadio",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Generate debug information for RED IADS",
+            "mnemonic": "debugRED",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "Generate debug information for BLUE IADS",
+            "mnemonic": "debugBLUE",
+            "defaultValue": false
+        }
+    ],
+    "scriptsWorkOrders": [
+        {
+            "file": "mist_4_3_74.lua",
+            "mnemonic": "mist"
+        },
+        {
+            "file": "skynet-iads-compiled.lua",
+            "mnemonic": "skynetiads-script"
+        }
+    ],
+    "configurationWorkOrders": [
+        {
+            "file": "skynetiads-config.lua",
+            "mnemonic": "skynetiads-config"
+        }
+    ]
+}

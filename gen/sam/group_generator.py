@@ -8,15 +8,22 @@ from dcs.unit import Vehicle
 
 class GroupGenerator():
 
-    def __init__(self, game, ground_object):
+    def __init__(self, game, ground_object, faction = None):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_identifier)
+        groupNamePrefix = self.getGroupNamePrefix(faction)
+        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), groupNamePrefix + self.go.group_identifier)
 
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
+
+    def getGroupNamePrefix(self, faction):
+        if not faction:
+            return ""
+
+        return ""
 
     def generate(self):
         raise NotImplementedError
