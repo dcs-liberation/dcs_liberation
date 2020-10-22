@@ -252,6 +252,8 @@ class AtoModel(QAbstractListModel):
         else:
             self.ato = AirTaskingOrder()
         self.endResetModel()
+        # noinspection PyUnresolvedReferences
+        self.client_slots_changed.emit()
 
     def get_package_model(self, index: QModelIndex) -> PackageModel:
         """Returns a model for the package at the given index."""
