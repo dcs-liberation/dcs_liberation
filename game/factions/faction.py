@@ -193,6 +193,10 @@ def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
         for mother_class in class_repository:
             if getattr(mother_class, unit, None) is not None:
                 return getattr(mother_class, unit)
+            if type(mother_class) is list:
+                for m in mother_class:
+                    if m.__name__ == unit:
+                        return m
         logging.info("FACTION ERROR : Unable to find " + unit + " in pydcs")
         print("FACTION ERROR : Unable to find " + unit + " in pydcs")
         return None
