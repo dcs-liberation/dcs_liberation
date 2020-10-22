@@ -52,6 +52,7 @@ class FlightWaypointType(Enum):
     JOIN = 16
     SPLIT = 17
     LOITER = 18
+    INGRESS_ESCORT = 19
 
 
 class PredefinedWaypointCategory(Enum):

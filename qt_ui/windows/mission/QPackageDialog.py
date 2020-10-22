@@ -17,7 +17,7 @@ from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.flights.traveltime import TotEstimator
-from qt_ui.models import AtoModel, PackageModel
+from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -35,9 +35,9 @@ class QPackageDialog(QDialog):
     #: Emitted when a change is made to the package.
     package_changed = Signal()
 
-    def __init__(self, game: Game, model: PackageModel) -> None:
+    def __init__(self, game_model: GameModel, model: PackageModel) -> None:
         super().__init__()
-        self.game = game
+        self.game_model = game_model
         self.package_model = model
         self.add_flight_dialog: Optional[QFlightCreator] = None
 
@@ -86,7 +86,7 @@ class QPackageDialog(QDialog):
         self.reset_tot_button.clicked.connect(self.reset_tot)
         self.tot_column.addWidget(self.reset_tot_button)
 
-        self.package_view = QFlightList(self.package_model)
+        self.package_view = QFlightList(self.game_model, self.package_model)
         self.package_view.selectionModel().selectionChanged.connect(
             self.on_selection_changed
         )
@@ -112,6 +112,10 @@ class QPackageDialog(QDialog):
         self.accepted.connect(self.on_save)
         self.finished.connect(self.on_close)
         self.rejected.connect(self.on_cancel)
+
+    @property
+    def game(self) -> Game:
+        return self.game_model.game
 
     def tot_qtime(self) -> QTime:
         delay = self.package_model.package.time_over_target

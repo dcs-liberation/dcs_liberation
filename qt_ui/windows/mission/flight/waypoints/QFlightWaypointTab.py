@@ -111,19 +111,22 @@ class QFlightWaypointTab(QFrame):
         self.subwindow.show()
 
     def on_ascend_waypoint(self):
-        ascend = self.planner.generate_ascend_point(self.flight.from_cp)
+        ascend = self.planner.generate_ascend_point(self.flight,
+                                                    self.flight.from_cp)
         self.flight.points.append(ascend)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
     def on_rtb_waypoint(self):
-        rtb = self.planner.generate_rtb_waypoint(self.flight.from_cp)
+        rtb = self.planner.generate_rtb_waypoint(self.flight,
+                                                 self.flight.from_cp)
         self.flight.points.append(rtb)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
     def on_descend_waypoint(self):
-        descend = self.planner.generate_descend_point(self.flight.from_cp)
+        descend = self.planner.generate_descend_point(self.flight,
+                                                      self.flight.from_cp)
         self.flight.points.append(descend)
         self.flight_waypoint_list.update_list()
         self.on_change()

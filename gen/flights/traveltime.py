@@ -22,12 +22,14 @@ CAP_DURATION = 30  # Minutes
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_ESCORT,
     FlightWaypointType.INGRESS_SEAD,
     FlightWaypointType.INGRESS_STRIKE,
 }
 
 IP_TYPES = {
     FlightWaypointType.INGRESS_CAS,
+    FlightWaypointType.INGRESS_ESCORT,
     FlightWaypointType.INGRESS_SEAD,
     FlightWaypointType.INGRESS_STRIKE,
     FlightWaypointType.PATROL_TRACK,
@@ -202,7 +204,11 @@ class TotEstimator:
     @staticmethod
     def estimate_startup(flight: Flight) -> int:
         if flight.start_type == "Cold":
-            return 10 * 60
+            if flight.client_count:
+                return 10 * 60
+            else:
+                # The AI doesn't seem to have a real startup procedure.
+                return 2 * 60
         return 0
 
     @staticmethod

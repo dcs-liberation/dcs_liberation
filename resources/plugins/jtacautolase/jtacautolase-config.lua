@@ -9,17 +9,17 @@
 env.info("DCSLiberation|JTACAutolase plugin - configuration")
 
 if dcsLiberation then
-    env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation"))
+    env.info("DCSLiberation|JTACAutolase plugin - dcsLiberation")
 
     -- specific options
     local smoke = false
 
     -- retrieve specific options values
     if dcsLiberation.plugins then
-        env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins"))
+        env.info("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins")
     
         if dcsLiberation.plugins.jtacautolase then
-            env.info(string.format("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins.jtacautolase"))
+            env.info("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins.jtacautolase")
             smoke = dcsLiberation.plugins.jtacautolase.smoke
             env.info(string.format("DCSLiberation|JTACAutolase plugin - smoke = %s",tostring(smoke)))
         end
@@ -29,7 +29,7 @@ if dcsLiberation then
     for _, jtac in pairs(dcsLiberation.JTACs) do
         env.info(string.format("DCSLiberation|JTACAutolase plugin - setting up %s",jtac.dcsUnit))
         if JTACAutoLase then 
-            env.info(string.format("DCSLiberation|JTACAutolase plugin - calling dcsLiberation.JTACAutoLase"))
+            env.info("DCSLiberation|JTACAutolase plugin - calling JTACAutoLase")
             JTACAutoLase(jtac.dcsUnit, jtac.laserCode, smoke, 'vehicle') 
         end
     end

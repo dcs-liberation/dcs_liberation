@@ -3,11 +3,11 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from dcs import helicopters
-from dcs.action import AITaskPush, ActivateGroup, MessageToAll
-from dcs.condition import CoalitionHasAirdrome, PartOfCoalitionInZone, TimeAfter
+from dcs.action import AITaskPush, ActivateGroup
+from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
 from dcs.helicopters import UH_1H, helicopter_map
@@ -40,7 +40,6 @@ from dcs.task import (
     ControlledTask,
     EPLRS,
     EngageTargets,
-    Escort,
     GroundAttack,
     OptROE,
     OptRTBOnBingoFuel,
@@ -55,10 +54,10 @@ from dcs.task import (
     Targets,
     Task,
 )
-from dcs.terrain.terrain import Airport, NoParkingSlotError
+from dcs.terrain.terrain import Airport
 from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unitgroup import FlyingGroup, Group, ShipGroup, StaticGroup
+from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -548,7 +547,6 @@ class AircraftConflictGenerator:
         self.settings = settings
         self.conflict = conflict
         self.radio_registry = radio_registry
-        self.escort_targets: List[Tuple[FlyingGroup, int]] = []
         self.flights: List[FlightData] = []
 
     def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
@@ -633,10 +631,6 @@ class AircraftConflictGenerator:
             logging.warning(f"Unhandled departure control point: {cp.cptype}")
             departure_runway = fallback_runway
 
-        # The first waypoint is set automatically by pydcs, so it's not in our
-        # list. Convert the pydcs MovingPoint to a FlightWaypoint so it shows up
-        # in our FlightData.
-        first_point = FlightWaypoint.from_pydcs(group.points[0], flight.from_cp)
         self.flights.append(FlightData(
             flight_type=flight.flight_type,
             units=group.units,
@@ -808,8 +802,8 @@ class AircraftConflictGenerator:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
-                self.setup_flight_group(group, package, flight, timing,
-                                        dynamic_runways)
+                self.setup_flight_group(group, flight, dynamic_runways)
+                self.create_waypoints(group, package, flight, timing)
 
     def set_activation_time(self, flight: Flight, group: FlyingGroup,
                             delay: int) -> None:
@@ -988,8 +982,11 @@ class AircraftConflictGenerator:
 
     def configure_escort(self, group: FlyingGroup, flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
-        group.task = Escort.name
-        self._setup_group(group, Escort, flight, dynamic_runways)
+        # Escort groups are actually given the CAP task so they can perform the
+        # Search Then Engage task, which we have to use instead of the Escort
+        # task for the reasons explained in JoinPointBuilder.
+        group.task = CAP.name
+        self._setup_group(group, CAP, flight, dynamic_runways)
         self.configure_behavior(group, roe=OptROE.Values.OpenFire,
                                 restrict_jettison=True)
 
@@ -998,8 +995,7 @@ class AircraftConflictGenerator:
         logging.error(f"Unhandled flight type: {flight.flight_type.name}")
         self.configure_behavior(group)
 
-    def setup_flight_group(self, group: FlyingGroup, package: Package,
-                           flight: Flight, timing: PackageWaypointTiming,
+    def setup_flight_group(self, group: FlyingGroup, flight: Flight,
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
         if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
@@ -1020,16 +1016,23 @@ class AircraftConflictGenerator:
 
         self.configure_eplrs(group, flight)
 
+    def create_waypoints(self, group: FlyingGroup, package: Package,
+                         flight: Flight, timing: PackageWaypointTiming) -> None:
+
         for waypoint in flight.points:
             waypoint.tot = None
 
         takeoff_point = FlightWaypoint.from_pydcs(group.points[0],
                                                   flight.from_cp)
         self.set_takeoff_time(takeoff_point, package, flight, group)
+
+        filtered_points = []
         for point in flight.points:
             if point.only_for_player and not flight.client_count:
                 continue
+            filtered_points.append(point)
 
+        for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
                 point, group, flight, timing, self.m
             ).build()
@@ -1114,6 +1117,8 @@ class PydcsWaypointBuilder:
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.EGRESS: EgressPointBuilder,
+            FlightWaypointType.INGRESS_CAS: IngressBuilder,
+            FlightWaypointType.INGRESS_ESCORT: IngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
@@ -1236,7 +1241,47 @@ class JoinPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
         self.set_waypoint_tot(waypoint, self.timing.join)
+        if self.flight.flight_type == FlightType.ESCORT:
+            self.configure_escort_tasks(waypoint)
         return waypoint
+
+    @staticmethod
+    def configure_escort_tasks(waypoint: MovingPoint) -> None:
+        # Ideally we would use the escort mission type and escort task to have
+        # the AI automatically but the AI only escorts AI flights while they are
+        # traveling between waypoints. When an AI flight performs an attack
+        # (such as attacking the mission target), AI escorts wander aimlessly
+        # until the escorted group resumes its flight plan.
+        #
+        # As such, we instead use the Search Then Engage task, which is an
+        # enroute task that causes the AI to follow their flight plan and engage
+        # enemies of the set type within a certain distance. The downside to
+        # this approach is that AI escorts are no longer related to the group
+        # they are escorting, aside from the fact that they fly a similar flight
+        # plan at the same time. With Escort, the escorts will follow the
+        # escorted group out of the area. The strike element may or may not fly
+        # directly over the target, and they may or may not require multiple
+        # attack runs. For the escort flight we must just assume a flight plan
+        # for the escort to fly. If the strike flight doesn't need to overfly
+        # the target, the escorts are needlessly going in harms way. If the
+        # strike flight needs multiple passes, the escorts may leave before the
+        # escorted aircraft do.
+        #
+        # Another possible option would be to use Search Then Engage for join ->
+        # ingress and egress -> split, but use a Search Then Engage in Zone task
+        # for the target area that is set to end on a flag flip that occurs when
+        # the strike aircraft finish their attack task.
+        #
+        # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/250183-task-follow-and-escort-temporarily-aborted
+        waypoint.add_task(ControlledTask(EngageTargets(
+            # TODO: From doctrine.
+            max_distance=nm_to_meter(30),
+            targets=[Targets.All.Air.Planes.Fighters]
+        )))
+
+        # We could set this task to end at the split point. pydcs doesn't
+        # currently support that task end condition though, and we don't really
+        # need it.
 
 
 class LandingPointBuilder(PydcsWaypointBuilder):

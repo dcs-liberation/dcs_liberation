@@ -4,7 +4,7 @@ import webbrowser
 from typing import Optional, Union
 
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon
+from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
     QActionGroup, QDesktopWidget,
@@ -136,7 +136,7 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
-        file_menu.addAction("E&xit" , lambda: self.exit())
+        file_menu.addAction("E&xit", self.close)
 
         displayMenu = self.menu.addMenu("&Display")
 
@@ -214,13 +214,6 @@ class QLiberationWindow(QMainWindow):
         self.game = game
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-    def closeGame(self):
-        self.game = None
-        GameUpdateSignal.get_instance().updateGame(self.game)
-
-    def exit(self):
-        sys.exit(0)
-
     def setGame(self, game: Optional[Game]):
         if game is not None:
             game.on_load()
@@ -257,3 +250,14 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
         self.debriefing.show()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        result = QMessageBox.question(
+            self, "Quit Liberation?",
+            "Are you sure you want to quit? All unsaved progress will be lost.",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if result == QMessageBox.Yes:
+            super().closeEvent(event)
+        else:
+            event.ignore()
