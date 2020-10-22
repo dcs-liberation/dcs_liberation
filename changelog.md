@@ -11,7 +11,7 @@
 
 ## Fixes :
 * **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore 
-
+* **[UI]** Missing TER weapons in custom payload now selectable.
 
 # 2.1.5
 
