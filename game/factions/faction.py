@@ -9,6 +9,7 @@ from dcs.vehicles import vehicle_map, Armor, Unarmed, Infantry, Fortification, A
 
 from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE, COLDWAR_DOCTRINE, WWII_DOCTRINE
+from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 
 
 @dataclass
@@ -135,9 +136,9 @@ class Faction:
         faction.artillery_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("artillery_units", [])] if f is not None]
         faction.infantry_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("infantry_units", [])] if f is not None]
         faction.logistics_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("logistics_units", [])] if f is not None]
-        faction.shorads = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("shorads", [])] if f is not None]
 
         faction.sams = json.get("sams", [])
+        faction.shorads = json.get("shorads", [])
         faction.missiles = json.get("missiles", [])
         faction.name = json.get("requirements", {})
 
@@ -197,8 +198,8 @@ def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
         return None
 
 
-aircraft_loader = lambda x: unit_loader(x, [dcs.planes, dcs.helicopters])
-vehicle_loader = lambda x: unit_loader(x, [Infantry, Unarmed, Armor, AirDefence, Artillery])
+aircraft_loader = lambda x: unit_loader(x, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES])
+vehicle_loader = lambda x: unit_loader(x, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES])
 ship_loader = lambda x: unit_loader(x, [dcs.ships])
 
 
