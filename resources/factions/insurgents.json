@@ -1,0 +1,33 @@
+{
+  "country": "Insurgents",
+  "name": "Insurgents",
+  "aircrafts": [
+  ],
+  "frontline_units": [
+    "APC_Cobra",
+    "APC_MTLB",
+    "ARV_BRDM_2",
+    "AAA_ZU_23_Insurgent_on_Ural_375"
+  ],
+  "artillery_units": [
+    "MLRS_9K57_Uragan_BM_27",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Insurgents",
+    "Soldier_RPG"
+  ],
+  "shorads": [
+    "SA9Generator",
+    "ZU23Generator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "ZU23Generator",
+    "ZSU23Generator"
+  ]
+}

@@ -15,8 +15,6 @@ class LHAGroupGenerator(GroupGenerator):
         if len(self.faction.helicopter_carrier) > 0:
             carrier_type = random.choice(self.faction.helicopter_carrier)
             self.add_unit(carrier_type, "LHA", self.position.x, self.position.y, self.heading)
-        else:
-            return
 
         # Add destroyers escort
         if len(self.faction.destroyers) > 0:

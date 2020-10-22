@@ -62,7 +62,7 @@ Japan_2005 = {
         USS_Arleigh_Burke_IIa,
     ], "cruiser": [
         Ticonderoga_class,
-    ], "lhanames": [
+    ], "helicopter_carrier_names": [
         "Hyuga",
         "Ise",
     ], "boat":[

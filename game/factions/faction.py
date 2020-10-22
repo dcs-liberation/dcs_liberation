@@ -64,7 +64,7 @@ class Faction:
     carrier_names: [str]
 
     # Possible helicopter carrier names
-    lha_names: [str]
+    helicopter_carrier_names: [str]
 
     # Navy group generators
     navy_generators: [str]
@@ -110,7 +110,7 @@ class Faction:
         self.aircraft_carrier = []
         self.helicopter_carrier = []
         self.carrier_names = []
-        self.lha_names = []
+        self.helicopter_carrier_names = []
         self.navy_generators = []
         self.destroyers = []
         self.cruisers = []
@@ -143,7 +143,7 @@ class Faction:
         faction.name = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
-        faction.lha_names = json.get("lha_names", [])
+        faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
         faction.navy_generators = json.get("navy_generators", [])
         faction.aircraft_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("aircraft_carrier", [])] if f is not None]
         faction.helicopter_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("helicopter_carrier", [])] if f is not None]
@@ -158,10 +158,12 @@ class Faction:
         doctrine = json.get("doctrine", "modern")
         if doctrine == "modern":
             faction.doctrine = MODERN_DOCTRINE
-        if doctrine == "coldwar":
+        elif doctrine == "coldwar":
             faction.doctrine = COLDWAR_DOCTRINE
-        else:
+        elif doctrine == "ww2":
             faction.doctrine = WWII_DOCTRINE
+        else:
+            faction.doctrine = MODERN_DOCTRINE
 
         # Load the building set
         building_set = json.get("building_set", "default")
@@ -169,8 +171,10 @@ class Faction:
             faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
         elif building_set == "ww2ally":
             faction.building_set = WW2_ALLIES_BUILDINGS
-        else:
+        elif building_set == "ww2germany":
             faction.building_set = WW2_GERMANY_BUILDINGS
+        else:
+            faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
 
         return faction
 
@@ -200,7 +204,6 @@ def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
         logging.info("FACTION ERROR : Unable to find " + unit + " in pydcs")
         print("FACTION ERROR : Unable to find " + unit + " in pydcs")
         return None
-
 
 aircraft_loader = lambda x: unit_loader(x, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES])
 vehicle_loader = lambda x: unit_loader(x, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES])

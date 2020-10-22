@@ -134,8 +134,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.groups.append(group)
             cp.ground_objects.append(g)
             # Set new name :
-            if len(faction.lha_names) > 0:
-                cp.name = random.choice(faction.lha_names)
+            if len(faction.helicopter_carrier_names) > 0:
+                cp.name = random.choice(faction.helicopter_carrier_names)
             else:
                 cp_to_remove.append(cp)
         else:

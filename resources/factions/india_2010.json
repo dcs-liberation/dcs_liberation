@@ -1,22 +1,15 @@
 {
-  "country": "Russia",
-  "name": "Russia 2020 (Modded)",
+  "country": "India",
+  "name": "India 2010",
   "aircrafts": [
+    "Mirage_2000_5",
+    "M_2000C",
+    "MiG_27K",
+    "MiG_21Bis",
     "MiG_29S",
-    "MiG_31",
-    "Su_24M",
-    "Su_25",
-    "Su_25T",
-    "Su_27",
     "Su_30",
-    "Su_33",
-    "Su_34",
-    "Su_57",
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V",
-    "Mi_28N",
-    "Ka_50"
+    "AH_64A",
+    "Mi_8MT"
   ],
   "awacs": [
     "A_50"
@@ -25,11 +18,9 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BMP_2",
-    "IFV_BMP_3",
     "MBT_T_90",
-    "MBT_T_80U",
-    "MBT_T_72B"
+    "MBT_T_72B",
+    "IFV_BMP_2"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",
@@ -40,17 +31,18 @@
     "Transport_UAZ_469"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_Soldier_Rus",
+    "Infantry_M4",
     "Paratrooper_RPG_16"
   ],
   "shorads": [
-    "SA19Generator"
+    "SA8Generator",
+    "SA13Generator",
+    "SA19Generator",
+    "ZSU23Generator"
   ],
   "sams": [
-    "SA11Generator",
-    "SA10Generator",
-    "SA19Generator"
+    "SA6Generator",
+    "SA3Generator"
   ],
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
@@ -63,15 +55,13 @@
     "FF_1135M_Rezky"
   ],
   "cruisers": [
-    "FSG_1241_1MP_Molniya"
   ],
   "requirements": {},
   "carrier_names": [
-    "Admiral Kuznetov"
+    "INS Vikramaditya"
   ],
   "navy_generators": [
-    "RussianNavyGroupGenerator",
-    "KiloSubGroupGenerator"
+    "OliverHazardPerryGroupGenerator", "MolniyaGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

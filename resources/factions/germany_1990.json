@@ -1,0 +1,61 @@
+{
+  "country": "Germany",
+  "name": "Germany 1990",
+  "aircrafts": [
+    "MiG_29G",
+    "Tornado_IDS",
+    "F_4E",
+    "UH_1H",
+    "SA342M",
+    "SA342L"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "TPz_Fuchs",
+    "MBT_Leopard_1A3",
+    "MBT_Leopard_2",
+    "IFV_Marder"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "RolandGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "RolandGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+    "Oliver_Hazzard_Perry_class"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

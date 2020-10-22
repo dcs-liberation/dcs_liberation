@@ -1,16 +1,13 @@
 {
-  "country": "USA",
-  "name": "USA 2005",
+  "country": "Israel",
+  "name": "Israel 2000",
   "aircrafts": [
+    "F_4E",
     "F_15C",
     "F_15E",
-    "F_14B",
-    "FA_18C_hornet",
     "F_16C_50",
-    "A_10C",
-    "A_10C_2",
-    "AV8BNA",
     "UH_1H",
+    "AH_1W",
     "AH_64D"
   ],
   "awacs": [
@@ -21,17 +18,14 @@
     "KC130"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
-    "IFV_M2A2_Bradley",
-    "IFV_LAV_25",
+    "APC_M113",
     "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW"
+    "ATGM_M1045_HMMWV_TOW",
+    "MBT_Merkava_Mk__4"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "SPH_M109_Paladin",
+    "MLRS_M270"
   ],
   "logistics_units": [
     "Transport_M818"
@@ -41,37 +35,25 @@
     "Soldier_M249"
   ],
   "shorads": [
-    "AvengerGenerator"
+    "ChaparralGenerator"
   ],
   "sams": [
     "HawkGenerator",
-    "PatriotGenerator"
+    "ChaparralGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
   ],
-  "requirements": {},
+  "requirements": {
+  },
   "carrier_names": [
-    "CVN-71 Theodore Roosevelt",
-    "CVN-72 Abraham Lincoln",
-    "CVN-73 George Washington",
-    "CVN-74 John C. Stennis"
   ],
   "helicopter_carrier_names": [
-    "LHA-1 Tarawa",
-    "LHA-2 Saipan",
-    "LHA-3 Belleau Wood",
-    "LHA-4 Nassau",
-    "LHA-5 Peleliu"
   ],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"

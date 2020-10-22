@@ -6,7 +6,8 @@ from game.factions.faction import Faction
 
 FACTION_DIRECTORY = "./resources/factions/"
 
-def load_factions() -> {}:
+
+def load_factions() -> {str, Faction}:
     files = os.listdir(FACTION_DIRECTORY)
     files = [f for f in files if f.endswith(".json")]
 
@@ -17,8 +18,8 @@ def load_factions() -> {}:
         path = os.path.join(FACTION_DIRECTORY, f)
         logging.info("Loading faction" + path)
         #try:
-        with open(path, "r") as fdata:
-            data = json.load(fdata)
+        with open(path, "r", encoding="utf-8") as fdata:
+            data = json.load(fdata, encoding="utf-8")
             factions[data["name"]] = Faction.from_json(data)
             logging.info("Loaded faction : " + path)
         #except Exception as e:
@@ -27,7 +28,3 @@ def load_factions() -> {}:
 
     print(factions)
     return factions
-
-
-if __name__ == "__main__":
-    load_factions()

@@ -62,7 +62,7 @@ Spain_1990 = {
         Ticonderoga_class,
     ], "carrier_names": [
         "Principe de Asturias",
-    ], "lhanames": [
+    ], "helicopter_carrier_names": [
         "Juan Carlos I",
     ], "boat":[
         "OliverHazardPerryGroupGenerator"

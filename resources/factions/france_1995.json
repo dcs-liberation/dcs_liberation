@@ -1,17 +1,12 @@
 {
-  "country": "USA",
-  "name": "USA 2005",
+  "country": "France",
+  "name": "France 1995",
   "aircrafts": [
-    "F_15C",
-    "F_15E",
-    "F_14B",
-    "FA_18C_hornet",
-    "F_16C_50",
-    "A_10C",
-    "A_10C_2",
-    "AV8BNA",
-    "UH_1H",
-    "AH_64D"
+    "M_2000C",
+    "Mirage_2000_5",
+    "SA342M",
+    "SA342L",
+    "SA342Mistral"
   ],
   "awacs": [
     "E_3A"
@@ -21,10 +16,10 @@
     "KC130"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
+    "MBT_Leclerc",
+    "TPz_Fuchs",
+    "APC_Cobra",
     "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
-    "IFV_M2A2_Bradley",
     "IFV_LAV_25",
     "APC_M1043_HMMWV_Armament",
     "ATGM_M1045_HMMWV_TOW"
@@ -41,40 +36,33 @@
     "Soldier_M249"
   ],
   "shorads": [
-    "AvengerGenerator"
+    "HQ7Generator",
+    "RolandGenerator"
   ],
   "sams": [
-    "HawkGenerator",
-    "PatriotGenerator"
+    "RolandGenerator",
+    "HawkGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
   ],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa",
+    "Oliver_Hazzard_Perry_class"
   ],
   "cruisers": [
     "Ticonderoga_class"
   ],
   "requirements": {},
   "carrier_names": [
-    "CVN-71 Theodore Roosevelt",
-    "CVN-72 Abraham Lincoln",
-    "CVN-73 George Washington",
-    "CVN-74 John C. Stennis"
   ],
   "helicopter_carrier_names": [
-    "LHA-1 Tarawa",
-    "LHA-2 Saipan",
-    "LHA-3 Belleau Wood",
-    "LHA-4 Nassau",
-    "LHA-5 Peleliu"
+    "Jeanne d'Arc"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator"
+    "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

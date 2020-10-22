@@ -1,17 +1,10 @@
 {
-  "country": "USA",
-  "name": "USA 2005",
+  "country": "Australia",
+  "name": "Australia 2005",
   "aircrafts": [
-    "F_15C",
-    "F_15E",
-    "F_14B",
     "FA_18C_hornet",
-    "F_16C_50",
-    "A_10C",
-    "A_10C_2",
-    "AV8BNA",
     "UH_1H",
-    "AH_64D"
+    "AH_1W"
   ],
   "awacs": [
     "E_3A"
@@ -22,16 +15,12 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
-    "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
-    "IFV_M2A2_Bradley",
+    "MBT_Leopard_1A3",
+    "APC_M113",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW"
+    "IFV_MCV_80"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
   ],
   "logistics_units": [
     "Transport_M818"
@@ -41,14 +30,13 @@
     "Soldier_M249"
   ],
   "shorads": [
-    "AvengerGenerator"
+    "RapierGenerator"
   ],
   "sams": [
     "HawkGenerator",
-    "PatriotGenerator"
+    "RapierGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
   ],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
@@ -57,21 +45,13 @@
     "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
   ],
   "requirements": {},
   "carrier_names": [
-    "CVN-71 Theodore Roosevelt",
-    "CVN-72 Abraham Lincoln",
-    "CVN-73 George Washington",
-    "CVN-74 John C. Stennis"
   ],
   "helicopter_carrier_names": [
-    "LHA-1 Tarawa",
-    "LHA-2 Saipan",
-    "LHA-3 Belleau Wood",
-    "LHA-4 Nassau",
-    "LHA-5 Peleliu"
+    "HMAS Canberra",
+    "HMAS Adelaide"
   ],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"

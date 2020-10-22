@@ -1,22 +1,18 @@
 {
-  "country": "Russia",
-  "name": "Russia 2020 (Modded)",
+  "country": "Iran",
+  "name": "Iran 2015",
   "aircrafts": [
-    "MiG_29S",
-    "MiG_31",
+    "MiG_21Bis",
+    "MiG_29A",
+    "F_4E",
+    "F_5E_3",
+    "F_14B",
+    "Su_17M4",
     "Su_24M",
     "Su_25",
     "Su_25T",
-    "Su_27",
-    "Su_30",
-    "Su_33",
-    "Su_34",
-    "Su_57",
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V",
     "Mi_28N",
-    "Ka_50"
+    "Mi_24V"
   ],
   "awacs": [
     "A_50"
@@ -25,14 +21,14 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BMP_2",
-    "IFV_BMP_3",
-    "MBT_T_90",
-    "MBT_T_80U",
+    "APC_M113",
+    "APC_BTR_80",
+    "MBT_M60A3_Patton",
+    "IFV_BMP_1",
     "MBT_T_72B"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27",
+    "MLRS_BM_21_Grad",
     "SPH_2S19_Msta"
   ],
   "logistics_units": [
@@ -41,19 +37,21 @@
   ],
   "infantry_units": [
     "Paratrooper_AKS",
-    "Infantry_Soldier_Rus",
+    "Infantry_Soldier_Insurgents",
     "Paratrooper_RPG_16"
   ],
   "shorads": [
-    "SA19Generator"
+    "HQ7Generator",
+    "ZSU23Generator"
   ],
   "sams": [
+    "SA2Generator",
+    "SA6Generator",
     "SA11Generator",
-    "SA10Generator",
-    "SA19Generator"
+    "HawkGenerator",
+    "HQ7Generator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
   ],
   "helicopter_carrier": [
   ],
@@ -67,11 +65,9 @@
   ],
   "requirements": {},
   "carrier_names": [
-    "Admiral Kuznetov"
   ],
   "navy_generators": [
-    "RussianNavyGroupGenerator",
-    "KiloSubGroupGenerator"
+    "GrishaGroupGenerator", "MolniyaGroupGenerator", "KiloSubGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

@@ -90,7 +90,7 @@ USA_2005 = {
         "CVN-72 Abraham Lincoln",
         "CVN-73 George Washington",
         "CVN-74 John C. Stennis",
-    ], "lhanames": [
+    ], "helicopter_carrier_names": [
         "LHA-1 Tarawa",
         "LHA-2 Saipan",
         "LHA-3 Belleau Wood",

@@ -1,17 +1,26 @@
 {
-  "country": "USA",
-  "name": "USA 2005",
+  "country": "Combined Joint Task Forces Blue",
+  "name": "Bluefor Modern",
   "aircrafts": [
-    "F_15C",
-    "F_15E",
     "F_14B",
-    "FA_18C_hornet",
+    "F_15C",
     "F_16C_50",
+    "FA_18C_hornet",
+    "JF_17",
+    "M_2000C",
+    "F_5E_3",
+    "Su_27",
+    "Su_25T",
+    "A_10A",
     "A_10C",
     "A_10C_2",
     "AV8BNA",
+    "AJS37",
     "UH_1H",
-    "AH_64D"
+    "AH_64D",
+    "Ka_50",
+    "SA342M",
+    "SA342L"
   ],
   "awacs": [
     "E_3A"
@@ -22,9 +31,11 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
+    "MBT_Leopard_2",
+    "MBT_Merkava_Mk__4",
     "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
     "IFV_M2A2_Bradley",
+    "IFV_Marder",
     "IFV_LAV_25",
     "APC_M1043_HMMWV_Armament",
     "ATGM_M1045_HMMWV_TOW"

@@ -64,7 +64,7 @@ UnitedKingdom_1990 = {
         Oliver_Hazzard_Perry_class,
     ], "cruiser": [
         Ticonderoga_class,
-    ], "lhanames": [
+    ], "helicopter_carrier_names": [
         "HMS Invincible",
         "HMS Illustrious",
         "HMS Ark Royal",
