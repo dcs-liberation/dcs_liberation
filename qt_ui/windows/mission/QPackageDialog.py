@@ -187,9 +187,9 @@ class QNewPackageDialog(QPackageDialog):
     New packages do not affect the ATO model until they are saved.
     """
 
-    def __init__(self, game: Game, model: AtoModel,
+    def __init__(self, game_model: GameModel, model: AtoModel,
                  target: MissionTarget) -> None:
-        super().__init__(game, PackageModel(Package(target)))
+        super().__init__(game_model, PackageModel(Package(target)))
         self.ato_model = model
 
         self.save_button = QPushButton("Save")
@@ -218,9 +218,9 @@ class QEditPackageDialog(QPackageDialog):
     Changes to existing packages occur immediately.
     """
 
-    def __init__(self, game: Game, model: AtoModel,
+    def __init__(self, game_model: GameModel, model: AtoModel,
                  package: PackageModel) -> None:
-        super().__init__(game, package)
+        super().__init__(game_model, package)
         self.ato_model = model
 
         self.delete_button = QPushButton("Delete package")
