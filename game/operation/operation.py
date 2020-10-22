@@ -358,7 +358,7 @@ class Operation:
         # set a LUA table with data from Liberation that we want to set
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
-        state_location = "[[" + os.path.abspath("state.json") + "]]"
+        state_location = "[[" + os.path.abspath(".") + "]]"
         lua = """
 -- setting configuration table
 env.info("DCSLiberation|: setting configuration table")

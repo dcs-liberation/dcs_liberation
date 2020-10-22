@@ -1,3 +1,6 @@
+-- the state.json file will be updated according to this schedule, and also on each destruction or capture event
+local WRITESTATE_SCHEDULE_IN_SECONDS = 60
+
 logger = mist.Logger:new("DCSLiberation", "info")
 logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
@@ -8,6 +11,10 @@ base_capture_events = {}
 destroyed_objects_positions = {}
 mission_ended = false
 
+local function ends_with(str, ending)
+   return ending == "" or str:sub(-#ending) == ending
+end
+
 local function messageAll(message)
     local msg = {}
     msg.text = message
@@ -16,10 +23,13 @@ local function messageAll(message)
     mist.message.add(msg)
 end
 
-write_state = function()
-    --messageAll("Writing DCS Liberation State...")
-    --logger.info("Writing DCS LIBERATION state")
-    local fp = io.open(debriefing_file_location, 'w')
+function write_state()
+    local _debriefing_file_location = debriefing_file_location
+    if not debriefing_file_location then 
+        _debriefing_file_location = "[nil]"
+    end
+
+    local fp = io.open(_debriefing_file_location, 'w')
     local game_state = {
         ["killed_aircrafts"] = killed_aircrafts,
         ["killed_ground_units"] = killed_ground_units,
@@ -29,83 +39,114 @@ write_state = function()
         ["destroyed_objects_positions"] = destroyed_objects_positions,
     }
     if not json then
-        local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !",debriefing_file_location)
+        local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !", _debriefing_file_location)
         logger:error(message)
         messageAll(message)
     end
     fp:write(json:encode(game_state))
     fp:close()
-    -- logger.info("Done writing DCS Liberation state")
-    -- messageAll("Done writing DCS Liberation state.")
 end
 
-
-local function discoverDebriefingFilePath()
-    local function insertFileName(directoryOrFilePath, overrideFileName)
-        if overrideFileName then
-            logger:info("Using LIBERATION_EXPORT_STAMPED_STATE to locate the state.json")
-            return directoryOrFilePath .. os.time() .. "-state.json"
-        end
-
-        local filename = "state.json"
-        if not (directoryOrFilePath:sub(-#filename) == filename) then
-            return directoryOrFilePath .. filename
-        end
-
-        return directoryOrFilePath
+local function canWrite(name)
+    local f = io.open(name, "w")
+    if f then
+        f:close()
+        return true
     end
+    return false
+end
 
+local function testDebriefingFilePath(folderPath, folderName, useCurrentStamping)
+    if folderPath then
+        local filePath = nil
+        if not ends_with(folderPath, "\\") then
+            folderPath = folderPath .. "\\"
+        end
+        if useCurrentStamping then
+            filePath = string.format("%sstate-%s.json",folderPath, tostring(os.time()))
+        else 
+            filePath = string.format("%sstate.json",folderPath)
+        end
+        local isOk = canWrite(filePath)
+        if isOk then 
+            logger:info(string.format("The state.json file will be created in %s : (%s)",folderName, filePath))
+            return filePath
+        end
+    end
+    return nil
+end
+
+local function discoverDebriefingFilePath()   
     -- establish a search pattern into the following modes
-    -- 1. Environment variable mode, to support dedicated server hosting
-    -- 2. Embedded DCS Liberation Generation, to support locally hosted single player
-    -- 3. Retain the classic TEMP directory logic
+    -- 1. Environment variable LIBERATION_EXPORT_DIR, to support dedicated server hosting
+    -- 2. Embedded DCS Liberation dcsLiberation.installPath (set by the app to its install path), to support locally hosted single player
+    -- 3. System temporary folder, as set in the TEMP environment variable
+    -- 4. Working directory.
+    
+    local useCurrentStamping = nil
+    if os then  
+        useCurrentStamping = os.getenv("LIBERATION_EXPORT_STAMPED_STATE")
+    end
 
+    local installPath = nil
+    if dcsLiberation then 
+        installPath = dcsLiberation.installPath 
+    end
+    
     if os then
-        local exportDirectory = os.getenv("LIBERATION_EXPORT_DIR")
-
-        if exportDirectory then
-            logger:info("Using LIBERATION_EXPORT_DIR to locate the state.json")
-            local useCurrentStamping = os.getenv("LIBERATION_EXPORT_STAMPED_STATE")
-            exportDirectory = exportDirectory .. "\\"
-            return insertFileName(exportDirectory, useCurrentStamping)
+        local result = nil
+        -- try using the LIBERATION_EXPORT_DIR environment variable
+        result = testDebriefingFilePath(os.getenv("LIBERATION_EXPORT_DIR"), "LIBERATION_EXPORT_DIR", useCurrentStamping)
+        if result then
+            return result
+        end
+        -- no joy ? maybe there is a valid path in the mission ?
+        result = testDebriefingFilePath(installPath, "the DCS Liberation install folder", useCurrentStamping)
+        if result then
+            return result
+        end
+        -- there's always the possibility of using the system temporary folder
+        result = testDebriefingFilePath(os.getenv("TEMP"), "TEMP", useCurrentStamping)
+        if result then
+            return result
         end
     end
 
-    if dcsLiberation then
-        logger:info("Using DCS Liberation install folder for state.json")
-        return insertFileName(dcsLiberation.installPath)
-    end
-
+    -- nothing worked, let's try the last resort folder : current directory.
     if lfs then
-        logger:info("Using DCS working directory for state.json")
-        return insertFileName(lfs.writedir())
+        return testDebriefingFilePath(lfs.writedir(), "the working directory", useCurrentStamping)
     end
+    
+    return nil
 end
-
 
 debriefing_file_location = discoverDebriefingFilePath()
-logger:info(string.format("DCS Liberation state will be written as json to [[%s]]",debriefing_file_location))
-
 
 write_state_error_handling = function()
+    local _debriefing_file_location = debriefing_file_location
+    if not debriefing_file_location then 
+        _debriefing_file_location = "[nil]"
+        logger:error("Unable to find where to write DCS Liberation state")
+    end
+
     if pcall(write_state) then
-        -- messageAll("Written DCS Liberation state to "..debriefing_file_location)
     else
-	    messageAll("Unable to write DCS Liberation state to "..debriefing_file_location..
+	    messageAll("Unable to write DCS Liberation state to ".._debriefing_file_location..
                 "\nYou can abort the mission in DCS Liberation.\n"..
                 "\n\nPlease fix your setup in DCS Liberation, make sure you are pointing to the right installation directory from the File/Preferences menu. Then after fixing the path restart DCS Liberation, and then restart DCS."..
                 "\n\nYou can also try to fix the issue manually by replacing the file <dcs_installation_directory>/Scripts/MissionScripting.lua by the one provided there : <dcs_liberation_folder>/resources/scripts/MissionScripting.lua. And then restart DCS. (This will also have to be done again after each DCS update)"..
                 "\n\nIt's not worth playing, the state of the mission will not be recorded.")
     end
-end
 
-mist.scheduleFunction(write_state_error_handling, {}, timer.getTime() + 10, 60, timer.getTime() + 3600)
+    -- reschedule
+    mist.scheduleFunction(write_state_error_handling, {}, timer.getTime() + WRITESTATE_SCHEDULE_IN_SECONDS)
+end
 
 activeWeapons = {}
 local function onEvent(event)
    if event.id == world.event.S_EVENT_CRASH and event.initiator then
-       --messageAll("Destroyed  :" .. event.initiator.getName(event.initiator))
        killed_aircrafts[#killed_aircrafts + 1] = event.initiator.getName(event.initiator)
+       write_state()
    end
 
     if event.id == world.event.S_EVENT_DEAD and event.initiator then
@@ -118,15 +159,12 @@ local function onEvent(event)
         destruction.type = event.initiator:getTypeName()
         destruction.orientation = mist.getHeading(event.initiator) * 57.3
         destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
+        write_state()
     end
 
-    --if event.id == world.event.S_EVENT_SHOT and event.weapon then
-    --    weapons_fired[#weapons_fired + 1] = event.weapon.getTypeName(event.weapon)
-    --end
-
     if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
-        --messageAll("Base captured  :" .. event.place.getName(event.place))
         base_capture_events[#base_capture_events + 1] = event.place.getID(event.place) .. "||" .. event.place.getCoalition(event.place) .. "||" .. event.place.getName(event.place)
+        write_state()
     end
 
     if event.id == world.event.S_EVENT_MISSION_END then
@@ -137,3 +175,6 @@ local function onEvent(event)
 end
 
 mist.addEventHandler(onEvent)
+
+-- create the state.json file and start the scheduling
+write_state_error_handling()
