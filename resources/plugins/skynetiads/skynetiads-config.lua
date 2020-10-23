@@ -109,7 +109,7 @@ if dcsLiberation and SkynetIADS then
 		end
 
 		--activate the IADS
-		iads:activate()
+		iads:setupSAMSitesAndThenActivate()
 	end
 
 	------------------------------------------------------------------------------------------------------------------------------------------------------------
