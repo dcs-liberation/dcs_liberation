@@ -351,9 +351,6 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        is_helo = getattr(flight.unit_type, "helicopter", False)
-        cap_alt = 500 if is_helo else 1000
-
         ingress, heading, distance = Conflict.frontline_vector(
             location.control_points[0], location.control_points[1],
             self.game.theater
@@ -362,14 +359,14 @@ class FlightPlanBuilder:
         egress = ingress.point_from_heading(heading, distance)
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        builder.ascent(flight.from_cp, is_helo)
+        builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
         builder.ingress_cas(ingress, location)
-        builder.cas(center, cap_alt)
+        builder.cas(center)
         builder.egress(egress, location)
         builder.split(self.package.waypoints.split)
-        builder.rtb(flight.from_cp, is_helo)
+        builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
