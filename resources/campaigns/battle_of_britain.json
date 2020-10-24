@@ -1,6 +1,7 @@
 {
     "name": "The Channel - Battle of Britain",
     "theater": "The Channel",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",

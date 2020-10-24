@@ -1,6 +1,7 @@
 {
     "name": "Syria - Syrian Civil War",
     "theater": "Syria",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",

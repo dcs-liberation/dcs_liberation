@@ -1,6 +1,7 @@
 {
     "name": "Normandy - Normandy",
     "theater": "Normandy",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",

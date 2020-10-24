@@ -1,6 +1,7 @@
 {
     "name": "The Channel - Dunkirk",
     "theater": "The Channel",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",

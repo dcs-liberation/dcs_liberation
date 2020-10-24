@@ -1,6 +1,7 @@
 {
     "name": "Caucasus - Russia Small",
     "theater": "Caucasus",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",

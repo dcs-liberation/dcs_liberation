@@ -1,6 +1,7 @@
 {
     "name": "Persian Gulf - Desert War",
     "theater": "Persian Gulf",
+    "authors": "Khopa",
     "player_points": [
         {
             "type": "airbase",
