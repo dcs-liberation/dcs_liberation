@@ -1,7 +1,6 @@
 import logging
-import sys
 import webbrowser
-from typing import Optional, Union
+from typing import Optional
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QIcon
@@ -10,14 +9,14 @@ from PySide2.QtWidgets import (
     QActionGroup, QDesktopWidget,
     QFileDialog,
     QMainWindow,
-    QMenu, QMessageBox,
+    QMessageBox,
     QSplitter,
     QVBoxLayout,
     QWidget,
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, persistency
+from game import Game, persistency, VERSION
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
@@ -47,7 +46,7 @@ class QLiberationWindow(QMainWindow):
         self.setGame(persistency.restore_game())
 
         self.setGeometry(300, 100, 270, 100)
-        self.setWindowTitle("DCS Liberation - v" + CONST.VERSION_STRING)
+        self.setWindowTitle(f"DCS Liberation - v{VERSION}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
@@ -225,7 +224,7 @@ class QLiberationWindow(QMainWindow):
             self.liberation_map.setGame(game)
 
     def showAboutDialog(self):
-        text = "<h3>DCS Liberation " + CONST.VERSION_STRING + "</h3>" + \
+        text = "<h3>DCS Liberation " + VERSION + "</h3>" + \
                "<b>Source code :</b> https://github.com/khopa/dcs_liberation" + \
                "<h4>Authors</h4>" + \
                "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \

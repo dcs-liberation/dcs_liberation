@@ -1,10 +1,10 @@
 import random
-from typing import List, Type
+from typing import List, Optional, Type
 
-from dcs.unittype import UnitType
+from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import AirDefence
 
-from game import db
+from game import Game, db
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
@@ -33,6 +33,7 @@ from gen.sam.sam_zsu23 import ZSU23Generator
 from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
+from theater import TheaterGroundObject
 
 SAM_MAP = {
     "HawkGenerator": HawkGenerator,
@@ -106,13 +107,14 @@ def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerato
     """
     return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP.keys()]
 
-def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
+def generate_anti_air_group(game: Game, ground_object: TheaterGroundObject,
+                            faction: str) -> Optional[VehicleGroup]:
     """
     This generate a SAM group
-    :param parentCp: The parent control point
-    :param ground_object: The ground object which will own the sam group
-    :param country: Owner country
-    :return: Nothing, but put the group reference inside the ground object
+    :param game: The Game.
+    :param ground_object: The ground object which will own the sam group.
+    :param faction: Owner faction.
+    :return: The generated group, or None if one could not be generated.
     """
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
@@ -123,7 +125,8 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     return None
 
 
-def generate_shorad_group(game, parent_cp, ground_object, faction_name: str):
+def generate_shorad_group(game: Game, ground_object: TheaterGroundObject,
+                          faction_name: str) -> Optional[VehicleGroup]:
     faction = db.FACTIONS[faction_name]
 
     if len(faction.shorads) > 0:
@@ -132,9 +135,4 @@ def generate_shorad_group(game, parent_cp, ground_object, faction_name: str):
         generator.generate()
         return generator.get_generated_group()
     else:
-        return generate_anti_air_group(game, parent_cp, ground_object, faction_name)
-
-
-
-
-
+        return generate_anti_air_group(game, ground_object, faction_name)

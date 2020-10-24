@@ -1,4 +1,5 @@
-import uuid
+from __future__ import annotations
+
 from typing import List, TYPE_CHECKING
 
 from dcs.mapping import Point
@@ -68,21 +69,21 @@ CATEGORY_MAP = {
 
 
 class TheaterGroundObject(MissionTarget):
-    cp_id = 0
-    group_id = 0
-    object_id = 0
-    dcs_identifier = None  # type: str
-    is_dead = False
-    airbase_group = False
-    heading = 0
-    position = None  # type: Point
-    groups: List[Group] = []
-    obj_name = ""
-    sea_object = False
-    uuid = uuid.uuid1()
 
-    def __init__(self, category: str):
+    def __init__(self, name: str, category: str, group_id: int, object_id: int,
+                 position: Point, heading: int, cp_id: int, dcs_identifier: str,
+                 airbase_group: bool, sea_object: bool) -> None:
+        super().__init__(name, position)
         self.category = category
+        self.group_id = group_id
+        self.object_id = object_id
+        self.heading = heading
+        self.cp_id = cp_id
+        self.dcs_identifier = dcs_identifier
+        self.airbase_group = airbase_group
+        self.sea_object = sea_object
+        self.is_dead = False
+        self.groups: List[Group] = []
 
     @property
     def string_identifier(self):
@@ -96,20 +97,124 @@ class TheaterGroundObject(MissionTarget):
     def name_abbrev(self) -> str:
         return ABBREV_NAME[self.category]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return NAME_BY_CATEGORY[self.category]
 
-    def matches_string_identifier(self, id):
-        return self.string_identifier == id
+    def matches_string_identifier(self, identifier):
+        return self.string_identifier == identifier
 
     @property
-    def name(self) -> str:
-        return self.obj_name
+    def obj_name(self) -> str:
+        return self.name
 
-    def parent_control_point(
-            self, theater: "ConflictTheater") -> "ControlPoint":
+    def parent_control_point(self, theater: ConflictTheater) -> ControlPoint:
         """Searches the theater for the parent control point."""
         for cp in theater.controlpoints:
             if cp.id == self.cp_id:
                 return cp
         raise RuntimeError("Could not find matching control point in theater")
+
+
+class BuildingGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, category: str, group_id: int, object_id: int,
+                 position: Point, heading: int, control_point: ControlPoint,
+                 dcs_identifier: str) -> None:
+        super().__init__(
+            name=name,
+            category=category,
+            group_id=group_id,
+            object_id=object_id,
+            position=position,
+            heading=heading,
+            cp_id=control_point.id,
+            dcs_identifier=dcs_identifier,
+            airbase_group=False,
+            sea_object=False
+        )
+
+
+# TODO: Why is this both a CP and a TGO?
+class CarrierGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="CARRIER",
+            group_id=group_id,
+            object_id=0,
+            position=control_point.position,
+            heading=0,
+            cp_id=control_point.id,
+            dcs_identifier="CARRIER",
+            airbase_group=True,
+            sea_object=True
+        )
+
+
+# TODO: Why is this both a CP and a TGO?
+class LhaGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="LHA",
+            group_id=group_id,
+            object_id=0,
+            position=control_point.position,
+            heading=0,
+            cp_id=control_point.id,
+            dcs_identifier="LHA",
+            airbase_group=True,
+            sea_object=True
+        )
+
+
+class MissileSiteGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            object_id=0,
+            position=position,
+            heading=0,
+            cp_id=control_point.id,
+            dcs_identifier="AA",
+            airbase_group=False,
+            sea_object=False
+        )
+
+
+class SamGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint, for_airbase: bool) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            object_id=0,
+            position=position,
+            heading=0,
+            cp_id=control_point.id,
+            dcs_identifier="AA",
+            airbase_group=for_airbase,
+            sea_object=False
+        )
+
+
+class ShipGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            object_id=0,
+            position=position,
+            heading=0,
+            cp_id=control_point.id,
+            dcs_identifier="AA",
+            airbase_group=False,
+            sea_object=True
+        )

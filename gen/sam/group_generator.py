@@ -25,7 +25,7 @@ class GroupGenerator():
     def generate(self):
         raise NotImplementedError
 
-    def get_generated_group(self):
+    def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
     def add_unit(self, unit_type, name, pos_x, pos_y, heading):
