@@ -237,10 +237,10 @@ class Game:
         if not hasattr(self, "conditions"):
             self.conditions = self.generate_conditions()
 
-    def pass_turn(self, no_action=False):
+    def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
-        self.turn = self.turn + 1
+        self.turn += 1
 
         for event in self.events:
             if self.settings.version == "dev":
@@ -261,6 +261,14 @@ class Game:
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
+        self.conditions = self.generate_conditions()
+
+        self.initialize_turn()
+
+        # Autosave progress
+        persistency.autosave(self)
+
+    def initialize_turn(self) -> None:
         self.events = []
         self._generate_events()
 
@@ -270,8 +278,6 @@ class Game:
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
             self.aircraft_inventory.set_from_control_point(cp)
-
-        self.conditions = self.generate_conditions()
 
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
@@ -285,9 +291,6 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
-
-        # Autosave progress
-        persistency.autosave(self)
 
     def _enemy_reinforcement(self):
         """

@@ -37,6 +37,9 @@ class QMapObject(QGraphicsRectItem):
         if event.button() == Qt.LeftButton:
             self.on_click()
 
+    def add_context_menu_actions(self, menu: QMenu) -> None:
+        pass
+
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
         menu = QMenu("Menu", self.parent)
 
@@ -47,6 +50,8 @@ class QMapObject(QGraphicsRectItem):
         new_package_action = QAction(f"New package")
         new_package_action.triggered.connect(self.open_new_package_dialog)
         menu.addAction(new_package_action)
+
+        self.add_context_menu_actions(menu)
 
         menu.exec_(event.screenPos())
 

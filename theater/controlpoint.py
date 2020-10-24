@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import re
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 from enum import Enum
 
 from dcs.mapping import Point
@@ -16,6 +18,9 @@ from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import TheaterGroundObject
+
+if TYPE_CHECKING:
+    from game import Game
 
 
 class ControlPointType(Enum):
@@ -207,3 +212,26 @@ class ControlPoint(MissionTarget):
 
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
+
+    def capture(self, game: Game, for_player: bool) -> None:
+        if for_player:
+            self.captured = True
+            faction_name = game.player_name
+        else:
+            self.captured = False
+            faction_name = game.enemy_name
+
+        self.base.set_strength_to_minimum()
+
+        self.base.aircraft = {}
+        self.base.armor = {}
+
+        # Handle cyclic dependency.
+        from .start_generator import generate_airbase_defense_group
+        airbase_def_id = 0
+        for ground_object in self.ground_objects:
+            ground_object.groups = []
+            if ground_object.airbase_group and faction_name != "":
+                generate_airbase_defense_group(airbase_def_id, ground_object,
+                                               faction_name, game, self)
+                airbase_def_id = airbase_def_id + 1
