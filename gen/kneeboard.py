@@ -124,6 +124,7 @@ class FlightPlanBuilder:
             self.target_points = []
 
         self.add_waypoint_row(NumberedWaypoint(waypoint_num, waypoint))
+        self.last_waypoint = waypoint
 
     def coalesce_target_points(self) -> None:
         if len(self.target_points) <= 4:
@@ -155,7 +156,6 @@ class FlightPlanBuilder:
             self._format_time(waypoint.waypoint.tot),
             self._format_time(waypoint.waypoint.departure_time),
         ])
-        self.last_waypoint = waypoint.waypoint
 
     def _format_time(self, time: Optional[int]) -> str:
         if time is None:
