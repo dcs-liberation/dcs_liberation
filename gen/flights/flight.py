@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from enum import Enum
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
@@ -7,6 +9,9 @@ from dcs.unittype import UnitType
 
 from game import db
 from theater.controlpoint import ControlPoint, MissionTarget
+
+if TYPE_CHECKING:
+    from gen.ato import Package
 
 
 class FlightType(Enum):
@@ -138,10 +143,11 @@ class Flight:
     use_custom_loadout = False
     preset_loadout_name = ""
     group = False # Contains DCS Mission group data after mission has been generated
-    targetPoint = None # Contains either None or a Strike/SEAD target point location 
 
-    def __init__(self, unit_type: UnitType, count: int, from_cp: ControlPoint,
-                 flight_type: FlightType, start_type: str) -> None:
+    def __init__(self, package: Package, unit_type: UnitType, count: int,
+                 from_cp: ControlPoint, flight_type: FlightType,
+                 start_type: str) -> None:
+        self.package = package
         self.unit_type = unit_type
         self.count = count
         self.from_cp = from_cp

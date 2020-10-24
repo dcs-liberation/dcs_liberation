@@ -20,6 +20,9 @@ from dcs.planes import (
     Su_30,
     Su_33,
     Su_34,
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
     Yak_40,
 )
 from dcs.ships import (
@@ -57,6 +60,10 @@ Russia_2020 = {
         Su_34,
         Su_24M,
         L_39ZA,
+
+        Tu_160,
+        Tu_22M3,
+        Tu_95MS,
 
         IL_76MD,
         IL_78M,

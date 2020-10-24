@@ -7,29 +7,35 @@ from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
 from game.utils import nm_to_meter
+from game.weather import Conditions
 from theater import ControlPoint, MissionTarget, TheaterGroundObject
 from .flight import Flight, FlightWaypoint, FlightWaypointType
+from ..runways import RunwayAssigner
 
 
 class WaypointBuilder:
-    def __init__(self, flight: Flight, doctrine: Doctrine) -> None:
+    def __init__(self, conditions: Conditions, flight: Flight,
+                 doctrine: Doctrine) -> None:
+        self.conditions = conditions
         self.flight = flight
         self.doctrine = doctrine
         self.waypoints: List[FlightWaypoint] = []
         self.ingress_point: Optional[FlightWaypoint] = None
 
+    @property
+    def is_helo(self) -> bool:
+        return getattr(self.flight.unit_type, "helicopter", False)
+
     def build(self) -> List[FlightWaypoint]:
         return self.waypoints
 
-    def ascent(self, departure: ControlPoint, is_helo: bool = False) -> None:
+    def ascent(self, departure: ControlPoint) -> None:
         """Create ascent waypoint for the given departure airfield or carrier.
 
         Args:
             departure: Departure airfield or carrier.
-            is_helo: True if the flight is a helicopter.
         """
-        # TODO: Pick runway based on wind direction.
-        heading = departure.heading
+        heading = RunwayAssigner(self.conditions).takeoff_heading(departure)
         position = departure.position.point_from_heading(
             heading, nm_to_meter(5)
         )
@@ -37,7 +43,7 @@ class WaypointBuilder:
             FlightWaypointType.ASCEND_POINT,
             position.x,
             position.y,
-            500 if is_helo else self.doctrine.pattern_altitude
+            500 if self.is_helo else self.doctrine.pattern_altitude
         )
         waypoint.name = "ASCEND"
         waypoint.alt_type = "RADIO"
@@ -45,16 +51,15 @@ class WaypointBuilder:
         waypoint.pretty_name = "Ascend"
         self.waypoints.append(waypoint)
 
-    def descent(self, arrival: ControlPoint, is_helo: bool = False) -> None:
+    def descent(self, arrival: ControlPoint) -> None:
         """Create descent waypoint for the given arrival airfield or carrier.
 
         Args:
             arrival: Arrival airfield or carrier.
-            is_helo: True if the flight is a helicopter.
         """
-        # TODO: Pick runway based on wind direction.
-        # ControlPoint.heading is the departure heading.
-        heading = (arrival.heading + 180) % 360
+        landing_heading = RunwayAssigner(self.conditions).landing_heading(
+            arrival)
+        heading = (landing_heading + 180) % 360
         position = arrival.position.point_from_heading(
             heading, nm_to_meter(5)
         )
@@ -62,7 +67,7 @@ class WaypointBuilder:
             FlightWaypointType.DESCENT_POINT,
             position.x,
             position.y,
-            300 if is_helo else self.doctrine.pattern_altitude
+            300 if self.is_helo else self.doctrine.pattern_altitude
         )
         waypoint.name = "DESCEND"
         waypoint.alt_type = "RADIO"
@@ -94,7 +99,7 @@ class WaypointBuilder:
             FlightWaypointType.LOITER,
             position.x,
             position.y,
-            self.doctrine.rendezvous_altitude
+            500 if self.is_helo else self.doctrine.rendezvous_altitude
         )
         waypoint.pretty_name = "Hold"
         waypoint.description = "Wait until push time"
@@ -106,7 +111,7 @@ class WaypointBuilder:
             FlightWaypointType.JOIN,
             position.x,
             position.y,
-            self.doctrine.ingress_altitude
+            500 if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "Join"
         waypoint.description = "Rendezvous with package"
@@ -118,7 +123,7 @@ class WaypointBuilder:
             FlightWaypointType.SPLIT,
             position.x,
             position.y,
-            self.doctrine.ingress_altitude
+            500 if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "Split"
         waypoint.description = "Depart from package"
@@ -146,7 +151,7 @@ class WaypointBuilder:
             ingress_type,
             position.x,
             position.y,
-            self.doctrine.ingress_altitude
+            500 if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
@@ -159,7 +164,7 @@ class WaypointBuilder:
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
-            self.doctrine.ingress_altitude
+            500 if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "EGRESS from " + target.name
         waypoint.description = "EGRESS from " + target.name
@@ -168,24 +173,21 @@ class WaypointBuilder:
 
     def dead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                    location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
         # TODO: Seems fishy.
         if self.ingress_point is not None:
             self.ingress_point.targetGroup = location
 
     def sead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                    location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
         # TODO: Seems fishy.
         if self.ingress_point is not None:
             self.ingress_point.targetGroup = location
 
     def strike_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                      location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
 
     def _target_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                       description: str, location: MissionTarget) -> None:
@@ -246,12 +248,12 @@ class WaypointBuilder:
         # TODO: This seems wrong, but it's what was there before.
         self.ingress_point.targets.append(location)
 
-    def cas(self, position: Point, altitude: int) -> None:
+    def cas(self, position: Point) -> None:
         waypoint = FlightWaypoint(
             FlightWaypointType.CAS,
             position.x,
             position.y,
-            altitude
+            500 if self.is_helo else 1000
         )
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
@@ -306,14 +308,13 @@ class WaypointBuilder:
         self.race_track_start(start, altitude)
         self.race_track_end(end, altitude)
 
-    def rtb(self, arrival: ControlPoint, is_helo: bool = False) -> None:
+    def rtb(self, arrival: ControlPoint) -> None:
         """Creates descent ant landing waypoints for the given control point.
 
         Args:
             arrival: Arrival airfield or carrier.
-            is_helo: True if the flight is a helicopter.
         """
-        self.descent(arrival, is_helo)
+        self.descent(arrival)
         self.land(arrival)
 
     def escort(self, ingress: Point, target: MissionTarget,
@@ -337,7 +338,7 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
-            self.doctrine.ingress_altitude
+            500 if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"

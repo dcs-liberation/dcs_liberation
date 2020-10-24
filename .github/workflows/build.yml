@@ -30,6 +30,9 @@ jobs:
     - name: Build binaries
       run: |
         ./venv/scripts/activate
+        mypy game
+        mypy gen
+        mypy theater
         $env:PYTHONPATH=".;./pydcs"
         pyinstaller pyinstaller.spec
 

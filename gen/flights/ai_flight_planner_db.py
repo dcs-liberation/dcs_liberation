@@ -19,11 +19,14 @@ from dcs.planes import (
     A_10C_2,
     A_20G,
     B_17G,
+    B_1B,
+    B_52H,
     Bf_109K_4,
     C_101CC,
     FA_18C_hornet,
     FW_190A8,
     FW_190D9,
+    F_117A,
     F_14B,
     F_15C,
     F_15E,
@@ -71,6 +74,9 @@ from dcs.planes import (
     Su_34,
     Tornado_GR4,
     Tornado_IDS,
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
     WingLoong_I,
 )
 
@@ -226,6 +232,8 @@ CAS_CAPABLE = [
     F_16C_50,
     FA_18C_hornet,
 
+    B_1B,
+
     Tornado_IDS,
     Tornado_GR4,
 
@@ -367,6 +375,10 @@ STRIKE_CAPABLE = [
     Su_25T,
     Su_34,
 
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
+
     JF_17,
 
     M_2000C,
@@ -383,6 +395,10 @@ STRIKE_CAPABLE = [
     F_16A,
     F_16C_50,
     FA_18C_hornet,
+
+    B_1B,
+    B_52H,
+    F_117A,
 
     Tornado_IDS,
     Tornado_GR4,
@@ -413,11 +429,16 @@ STRIKE_CAPABLE = [
 
 STRIKE_PREFERRED = [
     AJS37,
-    F_15E,
-    Tornado_GR4,
-
     A_20G,
     B_17G,
+    B_1B,
+    B_52H,
+    F_117A,
+    F_15E,
+    Tornado_GR4,
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
 ]
 
 ANTISHIP_CAPABLE = [
