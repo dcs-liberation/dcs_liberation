@@ -1,7 +1,9 @@
-#pydcs>=0.9.10
 Pyside2>=5.13.0
 pyinstaller==3.6
 pyproj==2.6.1.post1
 
 Pillow~=7.2.0
 tabulate~=0.8.7
+
+mypy==0.782
+mypy-extensions==0.4.3
