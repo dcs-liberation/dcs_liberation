@@ -157,11 +157,7 @@ class FlightPlanBuilder:
                 if building.is_dead:
                     continue
 
-                builder.strike_point(
-                    building,
-                    f"{building.obj_name} {building.category}",
-                    location
-                )
+                builder.strike_point(building, building.category, location)
 
         builder.egress(self.package.waypoints.egress, location)
         builder.split(self.package.waypoints.split)

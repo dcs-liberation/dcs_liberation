@@ -173,24 +173,21 @@ class WaypointBuilder:
 
     def dead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                    location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
         # TODO: Seems fishy.
         if self.ingress_point is not None:
             self.ingress_point.targetGroup = location
 
     def sead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                    location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
         # TODO: Seems fishy.
         if self.ingress_point is not None:
             self.ingress_point.targetGroup = location
 
     def strike_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                      location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE [{location.name}]: {name}",
-                           location)
+        self._target_point(target, name, f"STRIKE {name}", location)
 
     def _target_point(self, target: Union[TheaterGroundObject, Unit], name: str,
                       description: str, location: MissionTarget) -> None:
