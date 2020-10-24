@@ -1,0 +1,49 @@
+{
+  "country": "Syria",
+  "name": "Syria 1948",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "SpitfireLFMkIX",
+    "SpitfireLFMkIXCW"
+  ],
+  "frontline_units": [
+    "IFV_Sd_Kfz_234_2_Puma",
+    "APC_Sd_Kfz_251",
+    "MT_Pz_Kpfw_IV_Ausf_H",
+    "MT_M4_Sherman"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_SMLE_No_4_Mk_1"
+  ],
+  "shorads": [
+    "FlakGenerator"
+  ],
+  "sams": [
+    "FlakGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "carrier_names": [
+  ],
+  "navy_generators": [
+    "SchnellbootGroupGenerator"
+  ], "requirements": {
+      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/",
+  },
+  "doctrine": "ww2"
+}
