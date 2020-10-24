@@ -1,17 +1,18 @@
+
 {
+
   "country": "USA",
-  "name": "USA 1990",
+  "name": "USA 2005",
   "aircrafts": [
     "F_15C",
     "F_15E",
     "F_14B",
     "FA_18C_hornet",
     "F_16C_50",
-    "A_10C",
-    "A_10C_2",
+    "A_10A",
     "AV8BNA",
     "UH_1H",
-    "AH_64D",
+    "AH_64A",
     "B_52H",
     "B_1B",
     "F_117A"
@@ -47,8 +48,7 @@
     "AvengerGenerator"
   ],
   "sams": [
-    "HawkGenerator",
-    "PatriotGenerator"
+    "HawkGenerator"
   ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"
@@ -57,6 +57,7 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
+    "Oliver_Hazzard_Perry_class",
     "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
@@ -77,8 +78,8 @@
     "LHA-5 Peleliu"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator",
-    "OliverHazardPerryGroupGenerator"
+    "OliverHazardPerryGroupGenerator",
+    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"
