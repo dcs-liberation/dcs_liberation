@@ -46,10 +46,6 @@
     ],
     "scriptsWorkOrders": [
         {
-            "file": "mist_4_3_74.lua",
-            "mnemonic": "mist"
-        },
-        {
             "file": "skynet-iads-compiled.lua",
             "mnemonic": "skynetiads-script"
         }
