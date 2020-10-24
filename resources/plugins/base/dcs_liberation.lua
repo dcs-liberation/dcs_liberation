@@ -15,6 +15,18 @@ local function ends_with(str, ending)
    return ending == "" or str:sub(-#ending) == ending
 end
 
+local function isSinglePlayerOrServer()
+    if not net then
+        return true
+    end
+
+    if net.get_my_player_id() == 1 then
+        return true
+    else
+        return false
+    end
+end
+
 local function messageAll(message)
     local msg = {}
     msg.text = message
@@ -24,6 +36,14 @@ local function messageAll(message)
 end
 
 function write_state()
+
+    if not isSinglePlayerOrServer() then
+        -- the server will be keeping track of state
+        -- purpose here is to put in an extra guard!
+        return
+    end
+
+
     local _debriefing_file_location = debriefing_file_location
     if not debriefing_file_location then 
         _debriefing_file_location = "[nil]"
@@ -92,7 +112,7 @@ local function discoverDebriefingFilePath()
     if dcsLiberation then 
         installPath = dcsLiberation.installPath 
     end
-    
+
     if os then
         local result = nil
         -- try using the LIBERATION_EXPORT_DIR environment variable
@@ -122,7 +142,7 @@ end
 
 debriefing_file_location = discoverDebriefingFilePath()
 
-write_state_error_handling = function()
+function write_state_error_handling()
     local _debriefing_file_location = debriefing_file_location
     if not debriefing_file_location then 
         _debriefing_file_location = "[nil]"
@@ -174,7 +194,11 @@ local function onEvent(event)
 
 end
 
-mist.addEventHandler(onEvent)
+if isSinglePlayerOrServer() then
+    -- start tracking state if playing single player
+    -- or is on the server
+    mist.addEventHandler(onEvent)
 
--- create the state.json file and start the scheduling
-write_state_error_handling()
+    -- create the state.json file and start the scheduling
+    write_state_error_handling()
+end
