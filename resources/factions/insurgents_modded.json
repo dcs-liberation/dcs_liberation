@@ -1,6 +1,8 @@
 {
   "country": "Insurgents",
   "name": "Insurgents (Modded)",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
   ],
   "frontline_units": [
@@ -30,7 +32,8 @@
   "sams": [
     "ZU23Generator",
     "ZSU23Generator"
-  ],"requirements": {
-      "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  ],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
   }
 }

@@ -1,6 +1,8 @@
 {
   "country": "Iran",
   "name": "Iran 2015",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "MiG_21Bis",
     "MiG_29A",
@@ -67,7 +69,9 @@
   "carrier_names": [
   ],
   "navy_generators": [
-    "GrishaGroupGenerator", "MolniyaGroupGenerator", "KiloSubGroupGenerator"
+    "GrishaGroupGenerator",
+    "MolniyaGroupGenerator",
+    "KiloSubGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

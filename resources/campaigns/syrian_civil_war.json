@@ -1,92 +1,93 @@
 {
-    "name": "Syria - Syrian Civil War",
-    "theater": "Syria",
-    "authors": "Khopa",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Bassel Al-Assad",
-            "size": 1000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Marj Ruhayyil",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "carrier",
-            "id": 1001,
-            "x": 18537,
-            "y": -52000,
-            "captured_invert": true
-        },
-        {
-            "type": "lha",
-            "id": 1002,
-            "x": 116000,
-            "y": -30000,
-            "captured_invert": true
-        }
+  "name": "Syria - Syrian Civil War",
+  "theater": "Syria",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Bassel Al-Assad",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Marj Ruhayyil",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": 18537,
+      "y": -52000,
+      "captured_invert": true
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": 116000,
+      "y": -30000,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Hama",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Aleppo",
+      "size": 1000,
+      "importance": 1.2,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Al Qusayr",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Palmyra",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Al-Dumayr",
+      "size": 1000,
+      "importance": 1.2
+    }
+  ],
+  "links": [
+    [
+      "Bassel Al-Assad",
+      "Hama"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Hama",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Aleppo",
-            "size": 1000,
-            "importance": 1.2,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Al Qusayr",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Palmyra",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Al-Dumayr",
-            "size": 1000,
-            "importance": 1.2
-        }
+    [
+      "Al-Dumayr",
+      "Marj Ruhayyil"
     ],
-    "links": [
-        [
-            "Bassel Al-Assad",
-            "Hama"
-        ],
-        [
-            "Al-Dumayr",
-            "Marj Ruhayyil"
-        ],
-        [
-            "Aleppo",
-            "Hama"
-        ],
-        [
-            "Al Qusayr",
-            "Hama"
-        ],
-        [
-            "Al Qusayr",
-            "Al-Dumayr"
-        ],
-        [
-            "Al Qusayr",
-            "Palmyra"
-        ]
+    [
+      "Aleppo",
+      "Hama"
+    ],
+    [
+      "Al Qusayr",
+      "Hama"
+    ],
+    [
+      "Al Qusayr",
+      "Al-Dumayr"
+    ],
+    [
+      "Al Qusayr",
+      "Palmyra"
     ]
+  ]
 }

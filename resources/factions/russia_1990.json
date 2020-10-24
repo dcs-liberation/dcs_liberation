@@ -1,6 +1,8 @@
 {
   "country": "Russia",
   "name": "Russia 1990",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "MiG_23MLD",
     "MiG_25PD",

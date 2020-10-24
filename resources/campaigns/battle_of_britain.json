@@ -1,87 +1,88 @@
 {
-    "name": "The Channel - Battle of Britain",
-    "theater": "The Channel",
-    "authors": "Khopa",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Hawkinge",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Lympne",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Manston",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "High Halden",
-            "size": 600,
-            "importance": 1
-        }
+  "name": "The Channel - Battle of Britain",
+  "theater": "The Channel",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Hawkinge",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Lympne",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Manston",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "High Halden",
+      "size": 600,
+      "importance": 1
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Dunkirk Mardyck",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Saint Omer Longuenesse",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Merville Calonne",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Abbeville Drucat",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    }
+  ],
+  "links": [
+    [
+      "Hawkinge",
+      "Lympne"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Dunkirk Mardyck",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Saint Omer Longuenesse",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Merville Calonne",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Abbeville Drucat",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        }
+    [
+      "Hawkinge",
+      "Manston"
     ],
-    "links": [
-        [
-            "Hawkinge",
-            "Lympne"
-        ],
-        [
-            "Hawkinge",
-            "Manston"
-        ],
-        [
-            "High Halden",
-            "Lympne"
-        ],
-        [
-            "Dunkirk Mardyck",
-            "Saint Omer Longuenesse"
-        ],
-        [
-            "Merville Calonne",
-            "Saint Omer Longuenesse"
-        ],
-        [
-            "Abbeville Drucat",
-            "Saint Omer Longuenesse"
-        ]
+    [
+      "High Halden",
+      "Lympne"
+    ],
+    [
+      "Dunkirk Mardyck",
+      "Saint Omer Longuenesse"
+    ],
+    [
+      "Merville Calonne",
+      "Saint Omer Longuenesse"
+    ],
+    [
+      "Abbeville Drucat",
+      "Saint Omer Longuenesse"
     ]
+  ]
 }

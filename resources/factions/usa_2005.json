@@ -1,6 +1,8 @@
 {
   "country": "USA",
   "name": "USA 1990",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_15C",
     "F_15E",

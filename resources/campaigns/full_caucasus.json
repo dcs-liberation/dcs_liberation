@@ -2,6 +2,7 @@
   "name": "Caucasus - Full Map",
   "theater": "Caucasus",
   "authors": "george",
+  "description": "Full Caucasus Map",
   "player_points": [
     {
       "type": "airbase",

@@ -1,6 +1,8 @@
 {
   "country": "Canada",
   "name": "Canada 2005",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "FA_18C_hornet",
     "UH_1H",

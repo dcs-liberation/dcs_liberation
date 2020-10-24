@@ -1,6 +1,8 @@
 {
   "country": "Third Reich",
   "name": "Germany 1944",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "FW_190A8",
     "FW_190D9",
@@ -47,7 +49,8 @@
   "helicopter_carrier_names": [
   ],
   "navy_generators": [
-    "UBoatGroupGenerator", "SchnellbootGroupGenerator"
+    "UBoatGroupGenerator",
+    "SchnellbootGroupGenerator"
   ],
   "navy_group_count": 2,
   "has_jtac": false,

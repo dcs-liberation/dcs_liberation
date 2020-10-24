@@ -1,6 +1,8 @@
 {
   "country": "Germany",
   "name": "Germany 1990",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "MiG_29G",
     "Tornado_IDS",

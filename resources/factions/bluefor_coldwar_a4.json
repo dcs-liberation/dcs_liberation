@@ -1,6 +1,8 @@
 {
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Coldwar (With A4)",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_14B",
     "F_4E",
@@ -55,8 +57,8 @@
     "Ticonderoga_class"
   ],
   "requirements": {
-        "Community A-4E": "https://heclak.github.io/community-a4e-c/"
-    },
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
+  },
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",

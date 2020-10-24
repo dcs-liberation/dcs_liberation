@@ -1,6 +1,8 @@
 {
   "country": "Russia",
   "name": "Russia 2020 (Modded)",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "MiG_29S",
     "MiG_31",

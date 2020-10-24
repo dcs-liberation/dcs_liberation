@@ -1,6 +1,8 @@
 {
   "country": "Japan",
   "name": "Japan 2005",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_15C",
     "F_16C_50",

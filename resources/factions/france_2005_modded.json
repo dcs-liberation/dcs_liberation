@@ -1,6 +1,8 @@
 {
   "country": "France",
   "name": "France 2005 (Modded)",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "M_2000C",
     "Mirage_2000_5",

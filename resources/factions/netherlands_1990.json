@@ -1,12 +1,12 @@
 {
-  "country": "Israel",
-  "name": "Israel 1973",
+  "country": "Netherlands",
+  "name": "Netherlands 1990",
   "authors": "Khopa",
   "description": "",
   "aircrafts": [
-    "F_4E",
-    "A_4E_C",
-    "UH_1H"
+    "F_16C_50",
+    "F_5E_3",
+    "AH_64A"
   ],
   "awacs": [
     "E_3A"
@@ -16,10 +16,8 @@
     "KC130"
   ],
   "frontline_units": [
-    "MT_M4A4_Sherman_Firefly",
-    "APC_M2A1",
-    "MBT_M60A3_Patton",
-    "APC_M113"
+    "APC_M113",
+    "MBT_Leopard_1A3"
   ],
   "artillery_units": [
   ],
@@ -31,11 +29,10 @@
     "Soldier_M249"
   ],
   "shorads": [
-    "BoforsGenerator"
+    "AvengerGenerator"
   ],
   "sams": [
-    "HawkGenerator",
-    "ChaparralGenerator"
+    "HawkGenerator"
   ],
   "aircraft_carrier": [
   ],
@@ -45,16 +42,14 @@
   ],
   "cruisers": [
   ],
-  "requirements": {
-    "Community A-4E": "https://heclak.github.io/community-a4e-c/",
-    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
-  },
+  "requirements": {},
   "carrier_names": [
   ],
   "helicopter_carrier_names": [
   ],
   "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
   ],
-  "has_jtac": false,
-  "doctrine": "coldwar"
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
 }

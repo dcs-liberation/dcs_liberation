@@ -1,32 +1,35 @@
 {
-  "country": "China",
-  "name": "China 2010",
+  "country": "North Korea",
+  "name": "North Korea 2000",
   "authors": "Khopa",
   "description": "",
   "aircrafts": [
+    "MiG_15bis",
+    "MiG_19P",
     "MiG_21Bis",
-    "Su_30",
-    "Su_33",
-    "J_11A",
-    "JF_17",
+    "MiG_23MLD",
+    "MiG_29A",
     "Mi_8MT",
-    "Mi_28N"
+    "Mi_24V"
   ],
   "awacs": [
-    "KJ_2000"
+    "A_50"
   ],
   "tankers": [
     "IL_78M"
   ],
   "frontline_units": [
-    "ZTZ_96B",
+    "ARV_BRDM_2",
+    "APC_BTR_80",
+    "IFV_BMP_1",
     "MBT_T_55",
-    "ZBD_04A",
-    "IFV_BMP_1"
+    "MBT_T_72B",
+    "MBT_T_80U"
   ],
   "artillery_units": [
-    "MLRS_9A52_Smerch",
-    "SPH_2S9_Nona"
+    "MLRS_BM_21_Grad",
+    "MLRS_9K57_Uragan_BM_27",
+    "SPH_2S19_Msta"
   ],
   "logistics_units": [
     "Transport_Ural_375",
@@ -44,40 +47,26 @@
     "ZU23Generator"
   ],
   "sams": [
-    "HQ7Generator",
-    "SA10Generator",
+    "SA2Generator",
+    "SA3Generator",
     "SA6Generator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
-  ],
-  "carrier_names": [
-    "001 Liaoning",
-    "002 Shandong"
   ],
   "helicopter_carrier": [
-    "Type_071_Amphibious_Transport_Dock"
   ],
   "helicopter_carrier_names": [
-    "Kunlun Shan",
-    "Jinggang Shan",
-    "Changbai Shan",
-    "Yimeng Shan",
-    "Longhu Shan",
-    "Wuzhi Shan",
-    "Wudang Shan"
   ],
   "destroyers": [
-    "Type_052B_Destroyer",
-    "Type_052C_Destroyer"
   ],
-  "cruiser": [
-    "Type_054A_Frigate"
+  "cruisers": [
   ],
   "requirements": {},
-  "navy_generators": [
-    "Type54GroupGenerator"
+  "carrier_names": [
   ],
-  "has_jtac": true,
-  "jtac_unit": "WingLoong_I"
+  "navy_generators": [
+    "GrishaGroupGenerator",
+    "MolniyaGroupGenerator"
+  ],
+  "has_jtac": false
 }

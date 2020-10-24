@@ -1,6 +1,8 @@
 {
   "country": "Israel",
   "name": "Israel 1982",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_4E",
     "A_4E_C",
@@ -47,7 +49,7 @@
   "cruisers": [
   ],
   "requirements": {
-      "Community A-4E": "https://heclak.github.io/community-a4e-c/"
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
   },
   "carrier_names": [
   ],

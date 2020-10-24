@@ -1,6 +1,8 @@
 {
   "country": "India",
   "name": "India 2010",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "Mirage_2000_5",
     "M_2000C",
@@ -61,7 +63,8 @@
     "INS Vikramaditya"
   ],
   "navy_generators": [
-    "OliverHazardPerryGroupGenerator", "MolniyaGroupGenerator"
+    "OliverHazardPerryGroupGenerator",
+    "MolniyaGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

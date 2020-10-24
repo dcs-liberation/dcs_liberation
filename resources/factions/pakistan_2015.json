@@ -1,16 +1,16 @@
 {
-  "country": "China",
-  "name": "China 2010",
+  "country": "Pakistan",
+  "name": "Pakistan 2015",
   "authors": "Khopa",
   "description": "",
   "aircrafts": [
-    "MiG_21Bis",
-    "Su_30",
-    "Su_33",
-    "J_11A",
     "JF_17",
+    "F_16C_50",
+    "MiG_21Bis",
+    "MiG_19P",
     "Mi_8MT",
-    "Mi_28N"
+    "UH_1H",
+    "AH_1W"
   ],
   "awacs": [
     "KJ_2000"
@@ -19,10 +19,11 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "ZTZ_96B",
+    "MBT_T_80U",
     "MBT_T_55",
     "ZBD_04A",
-    "IFV_BMP_1"
+    "APC_BTR_80",
+    "APC_M113"
   ],
   "artillery_units": [
     "MLRS_9A52_Smerch",
@@ -38,45 +39,30 @@
     "Paratrooper_RPG_16"
   ],
   "shorads": [
-    "SA9Generator",
-    "SA13Generator",
-    "ZSU23Generator",
+    "HQ7Generator",
+    "ZU23UralGenerator",
     "ZU23Generator"
   ],
   "sams": [
-    "HQ7Generator",
     "SA10Generator",
-    "SA6Generator"
+    "SA2Generator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
   ],
   "carrier_names": [
-    "001 Liaoning",
-    "002 Shandong"
   ],
   "helicopter_carrier": [
-    "Type_071_Amphibious_Transport_Dock"
   ],
   "helicopter_carrier_names": [
-    "Kunlun Shan",
-    "Jinggang Shan",
-    "Changbai Shan",
-    "Yimeng Shan",
-    "Longhu Shan",
-    "Wuzhi Shan",
-    "Wudang Shan"
   ],
   "destroyers": [
-    "Type_052B_Destroyer",
-    "Type_052C_Destroyer"
   ],
   "cruiser": [
-    "Type_054A_Frigate"
   ],
   "requirements": {},
   "navy_generators": [
-    "Type54GroupGenerator"
+    "Type54GroupGenerator",
+    "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "WingLoong_I"

@@ -1,6 +1,8 @@
 {
   "country": "Italy",
   "name": "Italy 1990 (With MB339)",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "Tornado_IDS",
     "AV8BNA",

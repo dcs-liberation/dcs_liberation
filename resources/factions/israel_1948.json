@@ -1,6 +1,8 @@
 {
   "country": "Israel",
   "name": "Israel 1948",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "SpitfireLFMkIXCW",
     "SpitfireLFMkIX",

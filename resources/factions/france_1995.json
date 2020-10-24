@@ -1,6 +1,8 @@
 {
   "country": "France",
   "name": "France 1995",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "M_2000C",
     "Mirage_2000_5",
@@ -62,7 +64,8 @@
     "Jeanne d'Arc"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator", "OliverHazardPerryGroupGenerator"
+    "ArleighBurkeGroupGenerator",
+    "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

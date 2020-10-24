@@ -1,6 +1,8 @@
 {
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Modern",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_14B",
     "F_15C",

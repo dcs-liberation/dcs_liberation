@@ -1,6 +1,8 @@
 {
   "country": "Israel",
   "name": "Israel 2000",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
     "F_4E",
     "F_15C",

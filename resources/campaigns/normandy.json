@@ -1,84 +1,85 @@
 {
-    "name": "Normandy - Normandy",
-    "theater": "Normandy",
-    "authors": "Khopa",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Chailey",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Needs Oar Point",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Deux Jumeaux",
-            "size": 600,
-            "importance": 1
-        }
+  "name": "Normandy - Normandy",
+  "theater": "Normandy",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Chailey",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Needs Oar Point",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Deux Jumeaux",
+      "size": 600,
+      "importance": 1
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Lignerolles",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Lessay",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Carpiquet",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Maupertus",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Evreux",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    }
+  ],
+  "links": [
+    [
+      "Chailey",
+      "Needs Oar Point"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Lignerolles",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Lessay",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Carpiquet",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Maupertus",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Evreux",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        }
+    [
+      "Deux Jumeaux",
+      "Lignerolles"
     ],
-    "links": [
-        [
-            "Chailey",
-            "Needs Oar Point"
-        ],
-        [
-            "Deux Jumeaux",
-            "Lignerolles"
-        ],
-        [
-            "Lessay",
-            "Lignerolles"
-        ],
-        [
-            "Carpiquet",
-            "Lignerolles"
-        ],
-        [
-            "Lessay",
-            "Maupertus"
-        ],
-        [
-            "Carpiquet",
-            "Evreux"
-        ]
+    [
+      "Lessay",
+      "Lignerolles"
+    ],
+    [
+      "Carpiquet",
+      "Lignerolles"
+    ],
+    [
+      "Lessay",
+      "Maupertus"
+    ],
+    [
+      "Carpiquet",
+      "Evreux"
     ]
+  ]
 }

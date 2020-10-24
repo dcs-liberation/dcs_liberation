@@ -1,6 +1,8 @@
 {
   "country": "Insurgents",
   "name": "Insurgents",
+  "authors": "Khopa",
+  "description": "",
   "aircrafts": [
   ],
   "frontline_units": [
