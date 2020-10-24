@@ -156,7 +156,9 @@ class QTopPanel(QFrame):
              "Packages panel on the left of the main window, and then a flight "
              "from the Flights panel below the Packages panel. The edit button "
              "below the Flights panel will allow you to edit the number of "
-             "client slots in the flight. Each client slot allows one player."),
+             "client slots in the flight. Each client slot allows one player.<br />"
+             "<br />Click 'Yes' to continue with an AI only mission"
+             "<br />Click 'No' if you'd like to make more changes."),
             QMessageBox.No,
             QMessageBox.Yes
         )
