@@ -186,6 +186,12 @@ class TotEstimator:
             time_to_target = self.estimate_waypoints_to_target(flight, {
                 FlightWaypointType.PATROL_TRACK
             })
+            if time_to_target is None:
+                logging.warning(
+                    f"Found no race track. Cannot estimate TOT for {flight}")
+                # Return 0 so this flight's travel time does not affect the rest
+                # of the package.
+                return 0
         else:
             time_to_ingress = self.estimate_waypoints_to_target(
                 flight, INGRESS_TYPES
