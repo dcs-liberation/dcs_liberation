@@ -19,6 +19,7 @@ from theater import ConflictTheater
 class Campaign:
     name: str
     icon_name: str
+    authors: str
     theater: ConflictTheater
 
     @classmethod
@@ -27,7 +28,7 @@ class Campaign:
             data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
-        return cls(data["name"], f"Terrain_{sanitized_theater}",
+        return cls(data["name"], f"Terrain_{sanitized_theater}", data.get("authors", "???"),
                    ConflictTheater.from_json(data))
 
 
