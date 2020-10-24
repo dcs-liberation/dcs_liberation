@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import json
-from typing import Any, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.terrain import (
@@ -16,6 +15,9 @@ from dcs.terrain.terrain import Terrain
 
 from .controlpoint import ControlPoint
 from .landmap import Landmap, load_landmap, poly_contains
+
+if TYPE_CHECKING:
+    from . import FrontLine
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -125,10 +127,11 @@ class ConflictTheater:
     def player_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if point.captured]
 
-    def conflicts(self, from_player=True) -> Iterator[Tuple[ControlPoint, ControlPoint]]:
+    def conflicts(self, from_player=True) -> Iterator[FrontLine]:
+        from . import FrontLine  # Circular import that needs to be resolved.
         for cp in [x for x in self.controlpoints if x.captured == from_player]:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
-                yield cp, connected_point
+                yield FrontLine(cp, connected_point)
 
     def enemy_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]

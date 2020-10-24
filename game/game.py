@@ -141,8 +141,10 @@ class Game:
         self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
 
     def _generate_events(self):
-        for player_cp, enemy_cp in self.theater.conflicts(True):
-            self._generate_player_event(FrontlineAttackEvent, player_cp, enemy_cp)
+        for front_line in self.theater.conflicts(True):
+            self._generate_player_event(FrontlineAttackEvent,
+                                        front_line.control_point_a,
+                                        front_line.control_point_b)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> List[UnitType]:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
@@ -388,10 +390,13 @@ class Game:
         points = []
 
         # By default, use the existing frontline conflict position
-        for conflict in self.theater.conflicts():
-            points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
-            points.append(conflict[0].position)
-            points.append(conflict[1].position)
+        for front_line in self.theater.conflicts():
+            position = Conflict.frontline_position(self.theater,
+                                                   front_line.control_point_a,
+                                                   front_line.control_point_b)
+            points.append(position[0])
+            points.append(front_line.control_point_a.position)
+            points.append(front_line.control_point_b.position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:

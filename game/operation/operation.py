@@ -253,7 +253,9 @@ class Operation:
 
         # Generate ground units on frontline everywhere
         jtacs: List[JtacInfo] = []
-        for player_cp, enemy_cp in self.game.theater.conflicts(True):
+        for front_line in self.game.theater.conflicts(True):
+            player_cp = front_line.control_point_a
+            enemy_cp = front_line.control_point_b
             conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
                                                        self.current_mission.country(self.attacker_country),
                                                        self.current_mission.country(self.defender_country),
