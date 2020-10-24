@@ -1288,8 +1288,9 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
 
-        self.set_waypoint_tot(waypoint, self.timing.race_track_start)
-        racetrack.stop_after_time(self.timing.race_track_end)
+        self.set_waypoint_tot(waypoint,
+                              self.timing.race_track_start(self.flight))
+        racetrack.stop_after_time(self.timing.race_track_end(self.flight))
         waypoint.add_task(racetrack)
         return waypoint
 
