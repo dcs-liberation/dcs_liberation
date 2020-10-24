@@ -6,6 +6,7 @@ from dcs.helicopters import (
 from dcs.planes import (
     AJS37,
     A_10A,
+    B_52H,
     C_130,
     E_3A,
     F_14B,
@@ -40,6 +41,8 @@ BLUEFOR_COLDWAR_A4 = {
         A_10A,
         AJS37,
         A_4E_C,
+
+        B_52H,
 
         KC_135,
         KC130,

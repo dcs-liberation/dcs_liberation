@@ -17,6 +17,9 @@ from dcs.planes import (
     Su_24M,
     Su_25,
     Su_27,
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
     Yak_40,
 )
 from dcs.ships import (
@@ -50,6 +53,10 @@ Russia_1990 = {
         Su_24M,
         Su_25,
         Ka_50,
+
+        Tu_160,
+        Tu_22M3,
+        Tu_95MS,
 
         IL_76MD,
         IL_78M,

@@ -11,7 +11,7 @@ class QPylonEditor(QComboBox):
         self.pylon_number = pylon_number
         self.flight = flight
 
-        self.possible_loadout = [i for i in self.pylon.__dict__.keys() if i[:1] != '_']
+        self.possible_loadout = [i for i in self.pylon.__dict__.keys() if i[:2] != '__']
 
         if not str(self.pylon_number) in self.flight.loadout.keys():
             self.flight.loadout[str(self.pylon_number)] = ""

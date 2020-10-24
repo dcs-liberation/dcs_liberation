@@ -1,4 +1,5 @@
 from dcs.planes import (
+    B_52H,
     C_130,
     E_3A,
     F_86F_Sabre,
@@ -24,6 +25,8 @@ USA_1955 = {
     "units": [
         F_86F_Sabre,
         P_51D,
+
+        B_52H,
 
         KC_135,
         KC130,

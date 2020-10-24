@@ -344,7 +344,7 @@ class QLiberationMap(QGraphicsView):
         altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
 
         prefix = "TOT"
-        time = timing.tot_for_waypoint(waypoint)
+        time = timing.tot_for_waypoint(flight, waypoint)
         if time is None:
             prefix = "Depart"
             time = timing.depart_time_for_waypoint(waypoint, flight)

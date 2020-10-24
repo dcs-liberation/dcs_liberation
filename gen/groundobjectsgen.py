@@ -16,9 +16,9 @@ from dcs.unitgroup import StaticGroup
 from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.db import unit_type_from_name
-from .airfields import RunwayData
 from .conflictgen import Conflict
 from .radios import RadioRegistry
+from .runways import RunwayData
 from .tacan import TacanBand, TacanRegistry
 
 FARP_FRONTLINE_DISTANCE = 10000
@@ -141,8 +141,9 @@ class GroundObjectsGenerator:
                             # Find carrier direction (In the wind)
                             found_carrier_destination = False
                             attempt = 0
+                            brc = self.m.weather.wind_at_ground.direction + 180
                             while not found_carrier_destination and attempt < 5:
-                                point = sg.points[0].position.point_from_heading(self.m.weather.wind_at_ground.direction + 180, 100000-attempt*20000)
+                                point = sg.points[0].position.point_from_heading(brc, 100000-attempt*20000)
                                 if self.game.theater.is_in_sea(point):
                                     found_carrier_destination = True
                                     sg.add_waypoint(point)
@@ -196,6 +197,7 @@ class GroundObjectsGenerator:
                             # unit name since it's an arbitrary ID.
                             self.runways[cp.name] = RunwayData(
                                 cp.name,
+                                brc,
                                 "N/A",
                                 atc=atc_channel,
                                 tacan=tacan,
