@@ -15,8 +15,7 @@ This file is the description of the plugin.
 The *base* and *jtacautolase* plugins both are included in the standard dcs-liberation distribution.
 You can check their respective `plugin.json` files to understand how they work.
 Here's a quick rundown of the file's components :
-
-- `mnemonic` : the short, technical name of the plugin. It's the name of the folder, and the name of the plugin in the application's settings 
+ 
 - `skipUI` : if *true*, this plugin will not appear in the plugins selection user interface. Useful to force a plugin ON or OFF (see the *base* plugin)
 - `nameInUI` : the title of the plugin as it will appear in the plugins selection user interface.
 - `defaultValue` : the selection value of the plugin, when first installed ; if true, plugin is selected.
@@ -41,29 +40,14 @@ It is mandatory.
 
 This plugin replaces the vanilla JTAC functionality in dcs-liberation.
 
-### The *VEAF framework* plugin
+### Known third-party plugins
 
-When enabled, this plugin will inject and configure the VEAF Framework scripts in the mission.
+Plugins not included with Liberation can be installed by adding them to the
+`resources/plugins` directory and listing them in
+`resources/plugins/plugins.json`. Below is a list of other plugins that can be
+installed:
 
-These scripts add a lot of runtime functionalities :
-
-- spawning of units and groups (and portable TACANs)
-- air-to-ground missions 
-- air-to-air missions
-- transport missions
-- carrier operations (not Moose)
-- tanker move
-- weather and ATC
-- shelling a zone, lighting it up
-- managing assets (tankers, awacs, aircraft carriers) : getting info, state, respawning them if needed
-- managing named points (position, info, ATC)
-- managing a dynamic radio menu
-- managing remote calls to the mission through NIOD (RPC) and SLMOD (LUA sockets)
-- managing security (not allowing everyone to do every action)
-- define groups templates
-
-You can find the *VEAF Framework* plugin [on GitHub](https://github.com/VEAF/dcs-liberation-veaf-framework/releases)
-For more information, please visit the [VEAF Framework documentation site](https://veaf.github.io/VEAF-Mission-Creation-Tools/) (work in progress)
+* [VEAF](https://github.com/VEAF/dcs-liberation-veaf-framework)
 
 ## Custom plugins
 

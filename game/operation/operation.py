@@ -14,6 +14,7 @@ from dcs.translation import String
 from dcs.triggers import TriggerStart
 from dcs.unittype import UnitType
 
+from game.plugins import LuaPluginManager
 from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
@@ -28,7 +29,6 @@ from gen.kneeboard import KneeboardGenerator
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
-from plugin import LuaPluginManager
 from theater import ControlPoint
 from .. import db
 from ..debriefing import Debriefing
@@ -473,9 +473,10 @@ dcsLiberation.TargetPoints = {
         self.current_mission.triggerrules.triggers.append(trigger)
 
         # Inject Plugins Lua Scripts and data
-        for plugin in LuaPluginManager().getPlugins():
-            plugin.injectScripts(self)
-            plugin.injectConfiguration(self)
+        for plugin in LuaPluginManager.plugins():
+            if plugin.enabled:
+                plugin.inject_scripts(self)
+                plugin.inject_configuration(self)
 
         self.assign_channels_to_flights(airgen.flights,
                                         airsupportgen.air_support)

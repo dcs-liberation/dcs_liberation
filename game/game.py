@@ -3,7 +3,7 @@ import math
 import random
 import sys
 from datetime import date, datetime, timedelta
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -15,6 +15,7 @@ from game import db
 from game.db import PLAYER_BUDGET_BASE, REWARDS
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
+from game.plugins import LuaPluginManager
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -29,7 +30,6 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
-from plugin import LuaPluginManager
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
@@ -226,11 +226,8 @@ class Game:
             return event and event.name and event.name == self.player_name
 
     def on_load(self) -> None:
+        LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-        
-        # set the settings in all plugins
-        for plugin in LuaPluginManager().getPlugins():
-            plugin.setSettings(self.settings)
 
         # Save game compatibility.
 

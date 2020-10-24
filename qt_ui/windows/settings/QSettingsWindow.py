@@ -26,7 +26,8 @@ from game.infos.information import Information
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
-from plugin import LuaPluginManager
+from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
+
 
 class CheatSettingsBox(QGroupBox):
     def __init__(self, game: Game, apply_settings: Callable[[], None]) -> None:
@@ -97,21 +98,21 @@ class QSettingsWindow(QDialog):
         self.categoryModel.appendRow(cheat)
         self.right_layout.addWidget(self.cheatPage)
 
-        self.initPluginsLayout()
-        if self.pluginsPage:
-            plugins = QStandardItem("LUA Plugins")
-            plugins.setIcon(CONST.ICONS["Plugins"])
-            plugins.setEditable(False)
-            plugins.setSelectable(True)
-            self.categoryModel.appendRow(plugins)       
-            self.right_layout.addWidget(self.pluginsPage)
-        if self.pluginsOptionsPage:
-            pluginsOptions = QStandardItem("LUA Plugins Options")
-            pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
-            pluginsOptions.setEditable(False)
-            pluginsOptions.setSelectable(True)
-            self.categoryModel.appendRow(pluginsOptions)
-            self.right_layout.addWidget(self.pluginsOptionsPage)
+        self.pluginsPage = PluginsPage()
+        plugins = QStandardItem("LUA Plugins")
+        plugins.setIcon(CONST.ICONS["Plugins"])
+        plugins.setEditable(False)
+        plugins.setSelectable(True)
+        self.categoryModel.appendRow(plugins)
+        self.right_layout.addWidget(self.pluginsPage)
+
+        self.pluginsOptionsPage = PluginOptionsPage()
+        pluginsOptions = QStandardItem("LUA Plugins Options")
+        pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
+        pluginsOptions.setEditable(False)
+        pluginsOptions.setSelectable(True)
+        self.categoryModel.appendRow(pluginsOptions)
+        self.right_layout.addWidget(self.pluginsOptionsPage)
 
         self.categoryList.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.categoryList.setModel(self.categoryModel)
@@ -329,34 +330,6 @@ class QSettingsWindow(QDialog):
             btn.clicked.connect(self.cheatLambda(amount))
             self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
         self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
-
-    def initPluginsLayout(self):
-        uiPrepared = False
-        row:int = 0
-        for plugin in LuaPluginManager().getPlugins():
-            if plugin.hasUI():
-                if not uiPrepared:
-                    uiPrepared = True
-
-                    self.pluginsOptionsPage = QWidget()
-                    self.pluginsOptionsPageLayout = QVBoxLayout()
-                    self.pluginsOptionsPageLayout.setAlignment(Qt.AlignTop)
-                    self.pluginsOptionsPage.setLayout(self.pluginsOptionsPageLayout)
-
-                    self.pluginsPage = QWidget()
-                    self.pluginsPageLayout = QVBoxLayout()
-                    self.pluginsPageLayout.setAlignment(Qt.AlignTop)
-                    self.pluginsPage.setLayout(self.pluginsPageLayout)
-
-                    self.pluginsGroup = QGroupBox("Plugins")
-                    self.pluginsGroupLayout = QGridLayout();
-                    self.pluginsGroupLayout.setAlignment(Qt.AlignTop)
-                    self.pluginsGroup.setLayout(self.pluginsGroupLayout)
-
-                    self.pluginsPageLayout.addWidget(self.pluginsGroup)
-
-                plugin.setupUI(self, row)
-                row = row + 1
 
     def cheatLambda(self, amount):
         return lambda: self.cheatMoney(amount)

@@ -34,7 +34,7 @@ from gen.ground_forces.ai_ground_planner import (
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
-from plugin import LuaPluginManager
+from game.plugins import LuaPluginManager
 
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
@@ -140,9 +140,7 @@ class GroundConflictGenerator:
         self.plan_action_for_groups(self.enemy_stance, enemy_groups, player_groups, self.conflict.heading - 90, self.conflict.to_cp, self.conflict.from_cp)
 
         # Add JTAC
-        jtacPlugin = LuaPluginManager().getPlugin("jtacautolase")
-        useJTAC = jtacPlugin and jtacPlugin.isEnabled()
-        if self.game.player_faction.has_jtac and useJTAC:
+        if self.game.player_faction.has_jtac:
             n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
             code = 1688 - len(self.jtacs)
 

@@ -1,4 +1,5 @@
-from plugin import LuaPluginManager
+from typing import Dict
+
 
 class Settings:
 
@@ -40,14 +41,29 @@ class Settings:
         self.perf_culling_distance = 100
 
         # LUA Plugins system
-        self.plugins = {}
-        for plugin in LuaPluginManager().getPlugins():
-            plugin.setSettings(self)
+        self.plugins: Dict[str, bool] = {}
 
         # Cheating
         self.show_red_ato = False
 
         self.never_delay_player_flights = False
+
+    @staticmethod
+    def plugin_settings_key(identifier: str) -> str:
+        return f"plugins.{identifier}"
+
+    def initialize_plugin_option(self, identifier: str,
+                                 default_value: bool) -> None:
+        try:
+            self.plugin_option(identifier)
+        except KeyError:
+            self.set_plugin_option(identifier, default_value)
+
+    def plugin_option(self, identifier: str) -> bool:
+        return self.plugins[self.plugin_settings_key(identifier)]
+
+    def set_plugin_option(self, identifier: str, enabled: bool) -> None:
+        self.plugins[self.plugin_settings_key(identifier)] = enabled
 
     def __setstate__(self, state) -> None:
         # __setstate__ is called with the dict of the object being unpickled. We
