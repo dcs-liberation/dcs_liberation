@@ -55,11 +55,12 @@ class QFlightWaypointList(QTableView):
 
         waypoints = itertools.chain([takeoff], self.flight.points)
         for row, waypoint in enumerate(waypoints):
-            self.add_waypoint_row(row, waypoint, timing)
+            self.add_waypoint_row(row, self.flight, waypoint, timing)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
                                               QItemSelectionModel.Select)
 
-    def add_waypoint_row(self, row: int, waypoint: FlightWaypoint,
+    def add_waypoint_row(self, row: int, flight: Flight,
+                         waypoint: FlightWaypoint,
                          timing: PackageWaypointTiming) -> None:
         self.model.insertRow(self.model.rowCount())
 
@@ -71,15 +72,15 @@ class QFlightWaypointList(QTableView):
         altitude_item.setEditable(False)
         self.model.setItem(row, 1, altitude_item)
 
-        tot = self.tot_text(waypoint, timing)
+        tot = self.tot_text(flight, waypoint, timing)
         tot_item = QStandardItem(tot)
         tot_item.setEditable(False)
         self.model.setItem(row, 2, tot_item)
 
-    def tot_text(self, waypoint: FlightWaypoint,
+    def tot_text(self, flight: Flight, waypoint: FlightWaypoint,
                  timing: PackageWaypointTiming) -> str:
         prefix = ""
-        time = timing.tot_for_waypoint(waypoint)
+        time = timing.tot_for_waypoint(flight, waypoint)
         if time is None:
             prefix = "Depart "
             time = timing.depart_time_for_waypoint(waypoint, self.flight)

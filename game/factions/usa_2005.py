@@ -6,9 +6,12 @@ from dcs.planes import (
     AV8BNA,
     A_10C,
     A_10C_2,
+    B_1B,
+    B_52H,
     C_130,
     E_3A,
     FA_18C_hornet,
+    F_117A,
     F_14B,
     F_15C,
     F_15E,
@@ -45,6 +48,10 @@ USA_2005 = {
         A_10C_2,
         AV8BNA,
         MQ_9_Reaper,
+
+        B_1B,
+        B_52H,
+        F_117A,
 
         KC_135,
         KC130,

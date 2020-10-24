@@ -27,21 +27,22 @@ INGRESS_TYPES = {
     FlightWaypointType.INGRESS_STRIKE,
 }
 
-IP_TYPES = {
-    FlightWaypointType.INGRESS_CAS,
-    FlightWaypointType.INGRESS_ESCORT,
-    FlightWaypointType.INGRESS_SEAD,
-    FlightWaypointType.INGRESS_STRIKE,
-    FlightWaypointType.PATROL_TRACK,
-}
-
 
 class GroundSpeed:
     @staticmethod
     def mission_speed(package: Package) -> int:
         speeds = set()
         for flight in package.flights:
-            waypoint = flight.waypoint_with_type(IP_TYPES)
+            # Find a waypoint that matches the mission start waypoint and use
+            # that for the altitude of the mission. That may not be true for the
+            # whole mission, but it's probably good enough for now.
+            waypoint = flight.waypoint_with_type({
+                FlightWaypointType.INGRESS_CAS,
+                FlightWaypointType.INGRESS_ESCORT,
+                FlightWaypointType.INGRESS_SEAD,
+                FlightWaypointType.INGRESS_STRIKE,
+                FlightWaypointType.PATROL_TRACK,
+            })
             if waypoint is None:
                 logging.error(f"Could not find ingress point for {flight}.")
                 if flight.points:
@@ -152,8 +153,10 @@ class TotEstimator:
             # Takeoff immediately.
             return 0
 
-        if self.package.primary_task == FlightType.BARCAP:
-            start_time = self.timing.race_track_start
+        # BARCAP flights do not coordinate with the rest of the package on join
+        # or ingress points.
+        if flight.flight_type == FlightType.BARCAP:
+            start_time = self.timing.race_track_start(flight)
         else:
             start_time = self.timing.join
         return start_time - travel_time - self.HOLD_TIME
@@ -166,7 +169,9 @@ class TotEstimator:
     def earliest_tot_for_flight(self, flight: Flight) -> int:
         """Estimate fastest time from mission start to the target position.
 
-        For CAP missions, this is time to race track start.
+        For BARCAP flights, this is time to race track start. This ensures that
+        they are on station at the same time any other package members reach
+        their ingress point.
 
         For other mission types this is the time to the mission target.
 
@@ -177,27 +182,34 @@ class TotEstimator:
             The earliest possible TOT for the given flight in seconds. Returns 0
             if an ingress point cannot be found.
         """
-        time_to_ingress = self.estimate_waypoints_to_target(flight, IP_TYPES)
-        if time_to_ingress is None:
-            logging.warning(
-                f"Found no ingress types. Cannot estimate TOT for {flight}")
-            # Return 0 so this flight's travel time does not affect the rest of
-            # the package.
-            return 0
-
-        if self.package.primary_task == FlightType.BARCAP:
-            # The racetrack start *is* the target. The package target is the
-            # protected objective.
-            time_to_target = 0
+        if flight.flight_type == FlightType.BARCAP:
+            time_to_target = self.estimate_waypoints_to_target(flight, {
+                FlightWaypointType.PATROL_TRACK
+            })
+            if time_to_target is None:
+                logging.warning(
+                    f"Found no race track. Cannot estimate TOT for {flight}")
+                # Return 0 so this flight's travel time does not affect the rest
+                # of the package.
+                return 0
         else:
+            time_to_ingress = self.estimate_waypoints_to_target(
+                flight, INGRESS_TYPES
+            )
+            if time_to_ingress is None:
+                logging.warning(
+                    f"Found no ingress types. Cannot estimate TOT for {flight}")
+                # Return 0 so this flight's travel time does not affect the rest
+                # of the package.
+                return 0
+
             assert self.package.waypoints is not None
-            time_to_target = TravelTime.between_points(
+            time_to_target = time_to_ingress + TravelTime.between_points(
                 self.package.waypoints.ingress, self.package.target.position,
                 GroundSpeed.mission_speed(self.package))
         return sum([
             self.estimate_startup(flight),
             self.estimate_ground_ops(flight),
-            time_to_ingress,
             time_to_target,
         ])
 
@@ -281,18 +293,22 @@ class PackageWaypointTiming:
         assert self.package.time_over_target is not None
         return self.package.time_over_target
 
-    @property
-    def race_track_start(self) -> int:
-        if self.package.primary_task == FlightType.BARCAP:
-            return self.package.time_over_target
+    def race_track_start(self, flight: Flight) -> int:
+        if flight.flight_type == FlightType.BARCAP:
+            return self.target
         else:
+            # The only other type that (currently) uses race tracks is TARCAP,
+            # which is sort of in need of cleanup. TARCAP is only valid on front
+            # lines and they participate in join points and patrol between the
+            # ingress and egress points rather than on a race track actually
+            # pointed at the enemy.
             return self.ingress
 
-    @property
-    def race_track_end(self) -> int:
-        if self.package.primary_task == FlightType.BARCAP:
+    def race_track_end(self, flight: Flight) -> int:
+        if flight.flight_type == FlightType.BARCAP:
             return self.target + CAP_DURATION * 60
         else:
+            # For TARCAP. See the explanation in race_track_start.
             return self.egress
 
     def push_time(self, flight: Flight, hold_point: FlightWaypoint) -> int:
@@ -303,7 +319,8 @@ class PackageWaypointTiming:
             GroundSpeed.for_flight(flight, hold_point.alt)
         )
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[int]:
+    def tot_for_waypoint(self, flight: Flight,
+                         waypoint: FlightWaypoint) -> Optional[int]:
         target_types = (
             FlightWaypointType.TARGET_GROUP_LOC,
             FlightWaypointType.TARGET_POINT,
@@ -321,7 +338,7 @@ class PackageWaypointTiming:
         elif waypoint.waypoint_type == FlightWaypointType.SPLIT:
             return self.split
         elif waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK:
-            return self.race_track_start
+            return self.race_track_start(flight)
         return None
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint,
@@ -329,7 +346,7 @@ class PackageWaypointTiming:
         if waypoint.waypoint_type == FlightWaypointType.LOITER:
             return self.push_time(flight, waypoint)
         elif waypoint.waypoint_type == FlightWaypointType.PATROL:
-            return self.race_track_end
+            return self.race_track_end(flight)
         return None
 
     @classmethod

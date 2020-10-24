@@ -1,4 +1,12 @@
-from dcs.planes import An_26B, An_30M, IL_76MD, IL_78M, MiG_15bis, Yak_40
+from dcs.planes import (
+    An_26B,
+    An_30M,
+    IL_76MD,
+    IL_78M,
+    MiG_15bis,
+    Tu_95MS,
+    Yak_40,
+)
 from dcs.ships import (
     Bulk_cargo_ship_Yakushev,
     CV_1143_5_Admiral_Kuznetsov,
@@ -18,6 +26,8 @@ Russia_1955 = {
         An_26B,
         An_30M,
         Yak_40,
+
+        Tu_95MS,
 
         AirDefence.AAA_ZU_23_Closed,
         AirDefence.AAA_ZU_23_on_Ural_375,

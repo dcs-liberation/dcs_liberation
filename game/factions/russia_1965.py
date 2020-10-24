@@ -8,6 +8,7 @@ from dcs.planes import (
     MiG_15bis,
     MiG_19P,
     MiG_21Bis,
+    Tu_95MS,
     Yak_40,
 )
 from dcs.ships import (
@@ -31,6 +32,8 @@ Russia_1965 = {
         An_26B,
         An_30M,
         Yak_40,
+
+        Tu_95MS,
 
         A_50,
 

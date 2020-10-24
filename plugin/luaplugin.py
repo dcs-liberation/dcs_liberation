@@ -1,44 +1,48 @@
-from typing import List
-from pathlib import Path
-from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
-from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
-    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout, QSpinBox
 import json
+from pathlib import Path
+from typing import List, Optional
 
-class LuaPluginWorkOrder():
-    
-    def __init__(self, parent, filename:str, mnemonic:str, disable:bool):
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QCheckBox, QGridLayout, QGroupBox, QLabel
+
+
+class LuaPluginWorkOrder:
+
+    def __init__(self, parent, filename: str, mnemonic: str,
+                 disable: bool) -> None:
         self.filename = filename
         self.mnemonic = mnemonic
         self.disable = disable
         self.parent = parent
     
-    def work(self, mnemonic:str, operation):
+    def work(self, operation):
         if self.disable:
-            operation.bypassPluginScript(self.parent.mnemonic, self.mnemonic)
+            operation.bypass_plugin_script(self.mnemonic)
         else:
-            operation.injectPluginScript(self.parent.mnemonic, self.filename, self.mnemonic)
+            operation.inject_plugin_script(self.parent.mnemonic, self.filename,
+                                           self.mnemonic)
 
-class LuaPluginSpecificOption():
-    
-    def __init__(self, parent, mnemonic:str, nameInUI:str, defaultValue:bool):
+class LuaPluginSpecificOption:
+
+    def __init__(self, parent, mnemonic: str, nameInUI: str,
+                 defaultValue: bool) -> None:
         self.mnemonic = mnemonic
         self.nameInUI = nameInUI
         self.defaultValue = defaultValue
         self.parent = parent
 
-class LuaPlugin():
+class LuaPlugin:
     NAME_IN_SETTINGS_BASE:str = "plugins."
 
-    def __init__(self, jsonFilename:str):
-        self.mnemonic:str = None
-        self.skipUI:bool = False
-        self.nameInUI:str = None
-        self.nameInSettings:str = None
-        self.defaultValue:bool = False
-        self.specificOptions = []
-        self.scriptsWorkOrders: List[LuaPluginWorkOrder] = None
-        self.configurationWorkOrders: List[LuaPluginWorkOrder] = None
+    def __init__(self, jsonFilename: str) -> None:
+        self.mnemonic: Optional[str] = None
+        self.skipUI: bool = False
+        self.nameInUI: Optional[str] = None
+        self.nameInSettings: Optional[str] = None
+        self.defaultValue: bool = False
+        self.specificOptions: List[LuaPluginSpecificOption] = []
+        self.scriptsWorkOrders: List[LuaPluginWorkOrder] = []
+        self.configurationWorkOrders: List[LuaPluginWorkOrder] = []
         self.initFromJson(jsonFilename)
         self.enabled = self.defaultValue
         self.settings = None
@@ -50,6 +54,7 @@ class LuaPlugin():
             self.mnemonic = jsonData.get("mnemonic") 
             self.skipUI = jsonData.get("skipUI", False)
             self.nameInUI = jsonData.get("nameInUI")
+            assert self.mnemonic is not None
             self.nameInSettings = LuaPlugin.NAME_IN_SETTINGS_BASE + self.mnemonic
             self.defaultValue = jsonData.get("defaultValue", False)
             self.specificOptions = []
@@ -76,6 +81,9 @@ class LuaPlugin():
         self.setSettings(settingsWindow.game.settings)
 
         if not self.skipUI:
+            assert self.nameInSettings is not None
+            assert self.settings is not None
+
             # create the plugin choice checkbox interface
             self.uiWidget: QCheckBox = QCheckBox()
             self.uiWidget.setChecked(self.isEnabled())
@@ -95,6 +103,7 @@ class LuaPlugin():
                 # browse each option in the specific options list
                 row = 0
                 for specificOption in self.specificOptions:
+                    assert specificOption.mnemonic is not None
                     nameInSettings = self.nameInSettings + "." + specificOption.mnemonic
                     if not nameInSettings in self.settings.plugins:
                         self.settings.plugins[nameInSettings] = specificOption.defaultValue
@@ -149,7 +158,7 @@ class LuaPlugin():
         # execute the work order
         if self.scriptsWorkOrders != None:
             for workOrder in self.scriptsWorkOrders:
-                workOrder.work(self.mnemonic, operation)
+                workOrder.work(operation)
 
         # serves for subclasses
         return self.isEnabled()
@@ -177,12 +186,12 @@ class LuaPlugin():
             lua += defineAllOptions
             lua += "end"
         
-            operation.injectLuaTrigger(lua, f"{self.mnemonic} plugin configuration")
+            operation.inject_lua_trigger(lua, f"{self.mnemonic} plugin configuration")
 
         # execute the work order
         if self.configurationWorkOrders != None:
             for workOrder in self.configurationWorkOrders:
-                workOrder.work(self.mnemonic, operation)
+                workOrder.work(operation)
 
         # serves for subclasses
         return self.isEnabled()

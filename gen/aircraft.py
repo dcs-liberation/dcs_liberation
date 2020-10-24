@@ -64,7 +64,6 @@ from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.utils import nm_to_meter
-from gen.airfields import RunwayData
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -75,11 +74,13 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
+from gen.runways import RunwayData
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
 from .flights.traveltime import PackageWaypointTiming, TotEstimator
 from .naming import namegen
+from .runways import RunwayAssigner
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
@@ -204,6 +205,9 @@ class ChannelAssignment:
 class FlightData:
     """Details of a planned flight."""
 
+    #: The package that the flight belongs to.
+    package: Package
+
     flight_type: FlightType
 
     #: All units in the flight.
@@ -236,14 +240,13 @@ class FlightData:
     #: Map of radio frequencies to their assigned radio and channel, if any.
     frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
 
-    #: Data concerning the target of a CAS/Strike/SEAD flight, or None else
-    targetPoint = None
-
-    def __init__(self, flight_type: FlightType, units: List[FlyingUnit],
-                 size: int, friendly: bool, departure_delay: int,
-                 departure: RunwayData, arrival: RunwayData,
-                 divert: Optional[RunwayData], waypoints: List[FlightWaypoint],
-                 intra_flight_channel: RadioFrequency, targetPoint: Optional) -> None:
+    def __init__(self, package: Package, flight_type: FlightType,
+                 units: List[FlyingUnit], size: int, friendly: bool,
+                 departure_delay: int, departure: RunwayData,
+                 arrival: RunwayData, divert: Optional[RunwayData],
+                 waypoints: List[FlightWaypoint],
+                 intra_flight_channel: RadioFrequency) -> None:
+        self.package = package
         self.flight_type = flight_type
         self.units = units
         self.size = size
@@ -256,7 +259,6 @@ class FlightData:
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
         self.callsign = create_group_callsign_from_unit(self.units[0])
-        self.targetPoint = targetPoint
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -574,12 +576,12 @@ class AircraftConflictGenerator:
         return StartType.Warm
 
     def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
-                     flight: Flight, dynamic_runways: Dict[str, RunwayData]):
+                     package: Package, flight: Flight,
+                     dynamic_runways: Dict[str, RunwayData]) -> None:
         did_load_loadout = False
         unit_type = group.units[0].unit_type
 
         if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
-            override_loadout = db.PLANE_PAYLOAD_OVERRIDES[unit_type]
             # Clear pylons
             for p in group.units:
                 p.pylons.clear()
@@ -622,9 +624,12 @@ class AircraftConflictGenerator:
 
         # TODO: Support for different departure/arrival airfields.
         cp = flight.from_cp
-        fallback_runway = RunwayData(cp.full_name, runway_name="")
+        fallback_runway = RunwayData(cp.full_name, runway_heading=0,
+                                     runway_name="")
         if cp.cptype == ControlPointType.AIRBASE:
-            departure_runway = self.get_preferred_runway(flight.from_cp.airport)
+            assigner = RunwayAssigner(self.game.conditions)
+            departure_runway = assigner.get_preferred_runway(
+                flight.from_cp.airport)
         elif cp.is_fleet:
             departure_runway = dynamic_runways.get(cp.name, fallback_runway)
         else:
@@ -632,6 +637,7 @@ class AircraftConflictGenerator:
             departure_runway = fallback_runway
 
         self.flights.append(FlightData(
+            package=package,
             flight_type=flight.flight_type,
             units=group.units,
             size=len(group.units),
@@ -643,8 +649,7 @@ class AircraftConflictGenerator:
             divert=None,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
-            intra_flight_channel=channel,
-            targetPoint=flight.targetPoint,
+            intra_flight_channel=channel
         ))
 
         # Special case so Su 33 carrier take off
@@ -655,22 +660,6 @@ class AircraftConflictGenerator:
             else:
                 for unit in group.units:
                     unit.fuel = Su_33.fuel_max * 0.8
-
-    def get_preferred_runway(self, airport: Airport) -> RunwayData:
-        """Returns the preferred runway for the given airport.
-
-        Right now we're only selecting runways based on whether or not they have
-        ILS, but we could also choose based on wind conditions, or which
-        direction flight plans should follow.
-        """
-        runways = list(RunwayData.for_pydcs_airport(airport))
-        for runway in runways:
-            # Prefer any runway with ILS.
-            if runway.ils is not None:
-                return runway
-        # Otherwise we lack the mission information to pick more usefully,
-        # so just use the first runway.
-        return runways[0]
 
     def _generate_at_airport(self, name: str, side: Country,
                              unit_type: FlyingType, count: int, start_type: str,
@@ -802,7 +791,7 @@ class AircraftConflictGenerator:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
-                self.setup_flight_group(group, flight, dynamic_runways)
+                self.setup_flight_group(group, package, flight, dynamic_runways)
                 self.create_waypoints(group, package, flight, timing)
 
     def set_activation_time(self, flight: Flight, group: FlyingGroup,
@@ -919,10 +908,11 @@ class AircraftConflictGenerator:
             if flight.unit_type.eplrs:
                 group.points[0].tasks.append(EPLRS(group.id))
 
-    def configure_cap(self, group: FlyingGroup, flight: Flight,
+    def configure_cap(self, group: FlyingGroup, package: Package,
+                      flight: Flight,
                       dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = CAP.name
-        self._setup_group(group, CAP, flight, dynamic_runways)
+        self._setup_group(group, CAP, package, flight, dynamic_runways)
 
         if flight.unit_type not in GUNFIGHTERS:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
@@ -934,10 +924,11 @@ class AircraftConflictGenerator:
         group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50),
                                                    targets=[Targets.All.Air]))
 
-    def configure_cas(self, group: FlyingGroup, flight: Flight,
+    def configure_cas(self, group: FlyingGroup, package: Package,
+                      flight: Flight,
                       dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = CAS.name
-        self._setup_group(group, CAS, flight, dynamic_runways)
+        self._setup_group(group, CAS, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -949,10 +940,11 @@ class AircraftConflictGenerator:
                           targets=[Targets.All.GroundUnits.GroundVehicles])
         )
 
-    def configure_sead(self, group: FlyingGroup, flight: Flight,
-                       dynamic_runways: Dict[str, RunwayData]) -> None:
+    def configure_sead(self, group: FlyingGroup, package: Package,
+                      flight: Flight,
+                      dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = SEAD.name
-        self._setup_group(group, SEAD, flight, dynamic_runways)
+        self._setup_group(group, SEAD, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -960,33 +952,37 @@ class AircraftConflictGenerator:
             rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True)
 
-    def configure_strike(self, group: FlyingGroup, flight: Flight,
+    def configure_strike(self, group: FlyingGroup, package: Package,
+                         flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = PinpointStrike.name
-        self._setup_group(group, GroundAttack, flight, dynamic_runways)
+        self._setup_group(group, GroundAttack, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True)
 
-    def configure_anti_ship(self, group: FlyingGroup, flight: Flight,
+    def configure_anti_ship(self, group: FlyingGroup, package: Package,
+                            flight: Flight,
                             dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = AntishipStrike.name
-        self._setup_group(group, AntishipStrike, flight, dynamic_runways)
+        self._setup_group(group, AntishipStrike, package, flight,
+                          dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True)
 
-    def configure_escort(self, group: FlyingGroup, flight: Flight,
+    def configure_escort(self, group: FlyingGroup, package: Package,
+                         flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
         # Escort groups are actually given the CAP task so they can perform the
         # Search Then Engage task, which we have to use instead of the Escort
         # task for the reasons explained in JoinPointBuilder.
         group.task = CAP.name
-        self._setup_group(group, CAP, flight, dynamic_runways)
+        self._setup_group(group, CAP, package, flight, dynamic_runways)
         self.configure_behavior(group, roe=OptROE.Values.OpenFire,
                                 restrict_jettison=True)
 
@@ -995,22 +991,23 @@ class AircraftConflictGenerator:
         logging.error(f"Unhandled flight type: {flight.flight_type.name}")
         self.configure_behavior(group)
 
-    def setup_flight_group(self, group: FlyingGroup, flight: Flight,
+    def setup_flight_group(self, group: FlyingGroup, package: Package,
+                           flight: Flight,
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
         if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
                            FlightType.INTERCEPTION]:
-            self.configure_cap(group, flight, dynamic_runways)
+            self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
-            self.configure_cas(group, flight, dynamic_runways)
+            self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
-            self.configure_sead(group, flight, dynamic_runways)
+            self.configure_sead(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.STRIKE]:
-            self.configure_strike(group, flight, dynamic_runways)
+            self.configure_strike(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.ANTISHIP]:
-            self.configure_anti_ship(group, flight, dynamic_runways)
+            self.configure_anti_ship(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ESCORT:
-            self.configure_escort(group, flight, dynamic_runways)
+            self.configure_escort(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 
@@ -1301,8 +1298,9 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
 
-        self.set_waypoint_tot(waypoint, self.timing.race_track_start)
-        racetrack.stop_after_time(self.timing.race_track_end)
+        self.set_waypoint_tot(waypoint,
+                              self.timing.race_track_start(self.flight))
+        racetrack.stop_after_time(self.timing.race_track_end(self.flight))
         waypoint.add_task(racetrack)
         return waypoint
 

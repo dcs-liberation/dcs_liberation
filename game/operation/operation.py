@@ -14,7 +14,7 @@ from dcs.translation import String
 from dcs.triggers import TriggerStart
 from dcs.unittype import UnitType
 
-from gen import Conflict, VisualGenerator, FlightType
+from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
 from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
@@ -28,10 +28,11 @@ from gen.kneeboard import KneeboardGenerator
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
+from plugin import LuaPluginManager
 from theater import ControlPoint
 from .. import db
 from ..debriefing import Debriefing
-from plugin import LuaPluginManager
+
 
 class Operation:
     attackers_starting_position = None  # type: db.StartingPosition
@@ -74,7 +75,7 @@ class Operation:
         self.departure_cp = departure_cp
         self.to_cp = to_cp
         self.is_quick = False
-        self.listOfPluginsScripts = []
+        self.plugin_scripts: List[str] = []
 
     def units_of(self, country_name: str) -> List[UnitType]:
         return []
@@ -133,33 +134,37 @@ class Operation:
             else:
                 self.defenders_starting_position = None
 
-    def injectLuaTrigger(self, luascript, comment = "LUA script"):
+    def inject_lua_trigger(self, contents: str, comment: str) -> None:
         trigger = TriggerStart(comment=comment)
-        trigger.add_action(DoScript(String(luascript)))
+        trigger.add_action(DoScript(String(contents)))
         self.current_mission.triggerrules.triggers.append(trigger)
 
-    def bypassPluginScript(self, pluginName, scriptFileMnemonic):
-            self.listOfPluginsScripts.append(scriptFileMnemonic)
+    def bypass_plugin_script(self, mnemonic: str) -> None:
+        self.plugin_scripts.append(mnemonic)
 
-    def injectPluginScript(self, pluginName, scriptFile, scriptFileMnemonic):
-        if not scriptFileMnemonic in self.listOfPluginsScripts:
-            self.listOfPluginsScripts.append(scriptFileMnemonic)
+    def inject_plugin_script(self, plugin_mnemonic: str, script: str,
+                             script_mnemonic: str) -> None:
+        if script_mnemonic in self.plugin_scripts:
+            logging.debug(
+                f"Skipping already loaded {script} for {plugin_mnemonic}"
+            )
 
-            plugin_path = Path("./resources/plugins",pluginName)
+        self.plugin_scripts.append(script_mnemonic)
 
-            if scriptFile != None:
-                scriptFile_path = Path(plugin_path, scriptFile)
-                if scriptFile_path.exists():
-                    trigger = TriggerStart(comment="Load " + scriptFileMnemonic)
-                    filename = scriptFile_path.resolve()
-                    fileref = self.current_mission.map_resource.add_resource_file(filename)
-                    trigger.add_action(DoScriptFile(fileref))
-                    self.current_mission.triggerrules.triggers.append(trigger)
-                else:
-                    logging.error(f"Cannot find script file {scriptFile} for plugin {pluginName}")
+        plugin_path = Path("./resources/plugins", plugin_mnemonic)
 
-        else:
-            logging.debug(f"Skipping script file {scriptFile} for plugin {pluginName}")
+        script_path = Path(plugin_path, script)
+        if not script_path.exists():
+            logging.error(
+                f"Cannot find {script_path} for plugin {plugin_mnemonic}"
+            )
+            return
+
+        trigger = TriggerStart(comment=f"Load {script_mnemonic}")
+        filename = script_path.resolve()
+        fileref = self.current_mission.map_resource.add_resource_file(filename)
+        trigger.add_action(DoScriptFile(fileref))
+        self.current_mission.triggerrules.triggers.append(trigger)
 
     def generate(self):
         radio_registry = RadioRegistry()
@@ -334,7 +339,7 @@ class Operation:
             kneeboard_generator.add_flight(flight)
             if flight.friendly and flight.flight_type in [FlightType.ANTISHIP, FlightType.DEAD, FlightType.SEAD, FlightType.STRIKE]:
                 flightType = flight.flight_type.name
-                flightTarget = flight.targetPoint
+                flightTarget = flight.package.target
                 if flightTarget:
                     flightTargetName = None
                     flightTargetType = None
@@ -453,8 +458,6 @@ dcsLiberation.TargetPoints = {
         self.current_mission.triggerrules.triggers.append(trigger)
 
         # Inject Plugins Lua Scripts and data
-        self.listOfPluginsScripts = []
-
         for plugin in LuaPluginManager().getPlugins():
             plugin.injectScripts(self)
             plugin.injectConfiguration(self)

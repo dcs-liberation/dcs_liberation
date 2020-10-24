@@ -107,7 +107,7 @@ class QFlightCreator(QDialog):
             start_type = "Cold"
         else:
             start_type = "Warm"
-        flight = Flight(aircraft, size, origin, task, start_type)
+        flight = Flight(self.package, aircraft, size, origin, task, start_type)
         flight.scheduled_in = self.package.delay
         flight.client_count = self.client_slots_spinner.value()
 

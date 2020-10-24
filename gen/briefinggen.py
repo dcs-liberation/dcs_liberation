@@ -1,19 +1,20 @@
 import datetime
 import os
+import random
 from collections import defaultdict
 from dataclasses import dataclass
-import random
 from typing import List
 
-from game import db
 from dcs.mission import Mission
+
+from game import db
 from .aircraft import FlightData
-from .airfields import RunwayData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
+from .runways import RunwayData
 
 
 @dataclass

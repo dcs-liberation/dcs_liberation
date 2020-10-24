@@ -132,7 +132,7 @@ class FlightPlanBuilder:
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -157,11 +157,7 @@ class FlightPlanBuilder:
                 if building.is_dead:
                     continue
 
-                builder.strike_point(
-                    building,
-                    f"{building.obj_name} {building.category}",
-                    location
-                )
+                builder.strike_point(building, building.category, location)
 
         builder.egress(self.package.waypoints.egress, location)
         builder.split(self.package.waypoints.split)
@@ -222,7 +218,7 @@ class FlightPlanBuilder:
         )
         start = end.point_from_heading(heading - 180, diameter)
 
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.race_track(start, end, patrol_alt)
         builder.rtb(flight.from_cp)
@@ -264,7 +260,7 @@ class FlightPlanBuilder:
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
         # Create points
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -290,7 +286,7 @@ class FlightPlanBuilder:
         if custom_targets is None:
             custom_targets = []
 
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -328,7 +324,7 @@ class FlightPlanBuilder:
     def generate_escort(self, flight: Flight) -> None:
         assert self.package.waypoints is not None
 
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
@@ -351,9 +347,6 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        is_helo = getattr(flight.unit_type, "helicopter", False)
-        cap_alt = 500 if is_helo else 1000
-
         ingress, heading, distance = Conflict.frontline_vector(
             location.control_points[0], location.control_points[1],
             self.game.theater
@@ -361,15 +354,15 @@ class FlightPlanBuilder:
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
-        builder = WaypointBuilder(flight, self.doctrine)
-        builder.ascent(flight.from_cp, is_helo)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder.ascent(flight.from_cp)
         builder.hold(self._hold_point(flight))
         builder.join(self.package.waypoints.join)
         builder.ingress_cas(ingress, location)
-        builder.cas(center, cap_alt)
+        builder.cas(center)
         builder.egress(egress, location)
         builder.split(self.package.waypoints.split)
-        builder.rtb(flight.from_cp, is_helo)
+        builder.rtb(flight.from_cp)
 
         flight.points = builder.build()
 
@@ -382,7 +375,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the descend point for.
             departure: Departure airfield or carrier.
         """
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.ascent(departure)
         return builder.build()[0]
 
@@ -394,7 +387,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the descend point for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.descent(arrival)
         return builder.build()[0]
 
@@ -406,7 +399,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the landing waypoint for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(flight, self.doctrine)
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         builder.land(arrival)
         return builder.build()[0]
 

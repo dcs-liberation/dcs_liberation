@@ -19,16 +19,12 @@ class QAirfieldCommand(QFrame):
         layout = QGridLayout()
         layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game_model), 0, 0)
 
-        try:
-            planned = QGroupBox("Planned Flights")
-            planned_layout = QVBoxLayout()
-            planned_layout.addWidget(
-                QPlannedFlightsView(self.game_model, self.cp)
-            )
-            planned.setLayout(planned_layout)
-            layout.addWidget(planned, 0, 1)
-        except:
-            pass
+        planned = QGroupBox("Planned Flights")
+        planned_layout = QVBoxLayout()
+        planned_layout.addWidget(
+            QPlannedFlightsView(self.game_model, self.cp)
+        )
+        planned.setLayout(planned_layout)
+        layout.addWidget(planned, 0, 1)
 
-        #layout.addWidget(QAirportInformation(self.cp, self.game.theater.terrain.airport_by_id(self.cp.id)), 0, 2)
         self.setLayout(layout)
