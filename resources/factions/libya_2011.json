@@ -1,67 +1,64 @@
-"authors": "Khopa",
-"description": "", "Libya",
-"name": "Libya 2011",
-"authors": "Khopa",
-"description": "",
-"aircrafts": [
-"MiG_21Bis",
-"MiG_23MLD",
-"Su_17M4",
-"Su_24M",
-"Mi_24V"
-],
-"awacs": [
-"A_50"
-],
-"tankers": [
-"IL_78M"
-],
-"frontline_units": [
-"IFV_BMP_1",
-"ARV_BRDM_2",
-"MBT_T_72B",
-"MBT_T_55"
-],
-"artillery_units": [
-"MLRS_BM_21_Grad"
-],
-"logistics_units": [
-"Transport_Ural_375",
-"Transport_UAZ_469"
-],
-"infantry_units": [
-"Infantry_Soldier_Insurgents",
-"Paratrooper_RPG_16"
-],
-"shorads": [
-"HQ7Generator",
-"SA8Generator",
-"ZSU23Generator"
-],
-"sams": [
-"SA2Generator",
-"SA3Generator",
-"SA6Generator"
-],
-"aircraft_carrier": [
-],
-"helicopter_carrier": [
-],
-"helicopter_carrier_names": [
-],
-"destroyers": [
-"FF_1135M_Rezky"
-],
-"cruisers": [
-"FSG_1241_1MP_Molniya"
-],
-"requirements": {
-},
-"carrier_names": [
-],
-"navy_generators": [
-"GrishaGroupGenerator", "MolniyaGroupGenerator"
-],
-"has_jtac": true,
-"jtac_unit": "MQ_9_Reaper"
+{
+  "country": "Libya",
+  "name": "Libya 2011",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "MiG_21Bis",
+    "MiG_23MLD",
+    "Su_17M4",
+    "Su_24M",
+    "Mi_24V"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "IFV_BMP_1",
+    "ARV_BRDM_2",
+    "MBT_T_72B",
+    "MBT_T_55"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Insurgents",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "HQ7Generator",
+    "SA8Generator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "SA2Generator",
+    "SA3Generator",
+    "SA6Generator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "FF_1135M_Rezky"
+  ],
+  "cruisers": [
+    "FSG_1241_1MP_Molniya"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "navy_generators": [
+     "GrishaGroupGenerator", "MolniyaGroupGenerator"
+  ]
 }

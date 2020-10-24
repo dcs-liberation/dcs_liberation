@@ -58,7 +58,7 @@
   "navy_generators": [
     "GrishaGroupGenerator"
   ], "requirements": {
-      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/",
+      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },
   "doctrine": "coldwar"
 }
