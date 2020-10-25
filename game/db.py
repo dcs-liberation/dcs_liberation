@@ -911,7 +911,7 @@ CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS: [Faction] = FactionLoader.load_factions()
+FACTIONS: Dict[str, Faction] = FactionLoader.load_factions()
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
