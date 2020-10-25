@@ -24,6 +24,12 @@ class Faction:
     # Nice name of the faction
     name: str = field(default="")
 
+    # List of faction file authors
+    authors: str = field(default="")
+
+    # A description of the faction
+    description: str = field(default="")
+
     # Available aircraft
     aircrafts: List[UnitType] = field(default_factory=list)
 
@@ -110,6 +116,9 @@ class Faction:
         if not faction.name:
             raise AssertionError("Faction has no valid name")
 
+        faction.authors = json.get("authors", "")
+        faction.description = json.get("description", "")
+
         faction.aircrafts = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("aircrafts", [])] if f is not None]
         faction.awacs = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("awacs", [])] if f is not None]
         faction.tankers = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("tankers", [])] if f is not None]
@@ -122,7 +131,7 @@ class Faction:
         faction.sams = json.get("sams", [])
         faction.shorads = json.get("shorads", [])
         faction.missiles = json.get("missiles", [])
-        faction.name = json.get("requirements", {})
+        faction.requirements = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
         faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
