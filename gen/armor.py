@@ -479,7 +479,7 @@ class GroundConflictGenerator:
         logging.info("armorgen: {} for {}".format(unit, side.id))
         group = self.mission.vehicle_group(
                 side,
-                namegen.next_unit_name(side, cp.id, unit), unit,
+                namegen.next_unit_name("dusty", side, cp.id, unit), unit,
                 position=self._group_point(at),
                 group_size=count,
                 heading=heading,

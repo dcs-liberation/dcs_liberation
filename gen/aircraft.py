@@ -786,7 +786,7 @@ class AircraftConflictGenerator:
                 if flight.client_count == 0 and culled:
                     logging.info("Flight not generated: culled")
                     continue
-                logging.info(f"Generating flight: {flight.unit_type}")
+                logging.info(f"Generating flight: {flight.name} of {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
                 self.setup_flight_group(group, flight, dynamic_runways)
@@ -842,7 +842,7 @@ class AircraftConflictGenerator:
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_unit_name(flight.name, country, cp.id, flight.unit_type),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -850,7 +850,7 @@ class AircraftConflictGenerator:
             elif cp.is_fleet:
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_unit_name(flight.name, country, cp.id, flight.unit_type),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -858,7 +858,7 @@ class AircraftConflictGenerator:
                     at=self.m.find_group(group_name))
             else:
                 group = self._generate_at_airport(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_unit_name(flight.name, country, cp.id, flight.unit_type),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -870,7 +870,7 @@ class AircraftConflictGenerator:
             logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
             group = self._generate_inflight(
-                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                name=namegen.next_unit_name(flight.name, country, cp.id, flight.unit_type),
                 side=country,
                 unit_type=flight.unit_type,
                 count=flight.count,

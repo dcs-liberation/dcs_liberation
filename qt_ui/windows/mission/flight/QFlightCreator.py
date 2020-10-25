@@ -5,6 +5,7 @@ from PySide2.QtWidgets import (
     QDialog,
     QPushButton,
     QVBoxLayout,
+    QLineEdit
 )
 from dcs.planes import PlaneType
 
@@ -33,6 +34,13 @@ class QFlightCreator(QDialog):
         self.setWindowIcon(EVENT_ICONS["strike"])
 
         layout = QVBoxLayout()
+
+        self.flight_name = QLineEdit()
+        # todo: auto generate a friendly flight name
+        # option 1: auto-increment name
+        # option 2: auto-increment by global flight number
+        layout.addLayout(QLabeledWidget("Name:", self.flight_name))
+        # todo: also on the edit screen
 
         self.task_selector = QFlightTypeComboBox(
             self.game.theater, package.target
@@ -98,6 +106,7 @@ class QFlightCreator(QDialog):
             self.error_box("Could not create flight", error)
             return
 
+        name = self.flight_name.text()
         task = self.task_selector.currentData()
         aircraft = self.aircraft_selector.currentData()
         origin = self.airfield_selector.currentData()
@@ -107,7 +116,7 @@ class QFlightCreator(QDialog):
             start_type = "Cold"
         else:
             start_type = "Warm"
-        flight = Flight(aircraft, size, origin, task, start_type)
+        flight = Flight(name, aircraft, size, origin, task, start_type)
         flight.scheduled_in = self.package.delay
         flight.client_count = self.client_slots_spinner.value()
 

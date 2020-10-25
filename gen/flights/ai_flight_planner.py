@@ -206,7 +206,7 @@ class PackageBuilder:
         if assignment is None:
             return False
         airfield, aircraft = assignment
-        flight = Flight(aircraft, plan.num_aircraft, airfield, plan.task,
+        flight = Flight("ai", aircraft, plan.num_aircraft, airfield, plan.task,
                         self.start_type)
         self.package.add_flight(flight)
         flight.targetPoint = self.package.target

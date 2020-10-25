@@ -53,8 +53,8 @@ class Debriefing:
 
         for aircraft in self.killed_aircrafts:
             try:
-                country = int(aircraft.split("|")[1])
-                type = db.unit_type_from_name(aircraft.split("|")[4])
+                country = int(aircraft.split("|")[2])
+                type = db.unit_type_from_name(aircraft.split("|")[5])
                 player_unit = (country == self.player_country_id)
                 aircraft = DebriefingDeadUnitInfo(country, player_unit, type)
                 if type is not None:

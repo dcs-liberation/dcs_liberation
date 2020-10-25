@@ -107,8 +107,8 @@ class Event:
         cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
         for destroyed_aircraft in debriefing.killed_aircrafts:
             try:
-                cpid = int(destroyed_aircraft.split("|")[3])
-                type = db.unit_type_from_name(destroyed_aircraft.split("|")[4])
+                cpid = int(destroyed_aircraft.split("|")[4])
+                type = db.unit_type_from_name(destroyed_aircraft.split("|")[5])
                 if cpid in cp_map.keys():
                     cp = cp_map[cpid]
                     if type in cp.base.aircraft.keys():

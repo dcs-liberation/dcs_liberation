@@ -60,12 +60,13 @@ class FlightDelegate(QStyledItemDelegate):
 
     def first_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)
+        flight_name = flight.name
         task = flight.flight_type.name
         count = flight.count
         name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)
         delay = datetime.timedelta(seconds=estimator.mission_start_time(flight))
-        return f"[{task}] {count} x {name} in {delay}"
+        return f"{flight_name} - [{task}] {count} x {name} in {delay}"
 
     def second_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)

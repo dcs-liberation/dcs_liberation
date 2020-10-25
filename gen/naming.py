@@ -46,9 +46,9 @@ class NameGenerator:
         self.number = 0
         self.ANIMALS = NameGenerator.ANIMALS.copy()
 
-    def next_unit_name(self, country, parent_base_id, unit_type):
+    def next_unit_name(self, flight_name, country, parent_base_id, unit_type):
         self.number += 1
-        return "unit|{}|{}|{}|{}|".format(country.id, self.number, parent_base_id, db.unit_type_name(unit_type))
+        return "unit|{}|{}|{}|{}|{}|".format(country.id, flight_name, self.number, parent_base_id, db.unit_type_name(unit_type))
 
     def next_infantry_name(self, country, parent_base_id, unit_type):
         self.number += 1
@@ -76,7 +76,6 @@ class NameGenerator:
             animal = random.choice(self.ANIMALS)
             self.ANIMALS.remove(animal)
             return animal
-
 
 namegen = NameGenerator()
 
