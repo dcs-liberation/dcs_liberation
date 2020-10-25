@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Type
 
 from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
@@ -8,6 +8,7 @@ from game import db
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
+from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
@@ -98,12 +99,12 @@ SAM_PRICES = {
 }
 
 
-def get_faction_possible_sams_generator(faction: str) -> List[UnitType]:
+def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerator]]:
     """
     Return the list of possible SAM generator for the given faction
     :param faction: Faction name to search units for
     """
-    return db.FACTIONS[faction].sams
+    return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP.keys()]
 
 
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
@@ -116,8 +117,8 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     """
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
-        sam = random.choice(possible_sams_generators)
-        generator = SAM_MAP[sam](game, ground_object)
+        sam_generator_class = random.choice(possible_sams_generators)
+        generator = sam_generator_class(game, ground_object)
         generator.generate()
         return generator.get_generated_group()
     return None
