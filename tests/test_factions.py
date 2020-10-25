@@ -3,10 +3,10 @@ import unittest
 
 from dcs.helicopters import UH_1H, AH_64A
 from dcs.planes import F_15C, F_15E, F_14B, FA_18C_hornet, F_16C_50, A_10A, AV8BNA, B_52H, B_1B, F_117A, MQ_9_Reaper, \
-    E_3A, KC130, KC_135
+    E_3A, KC130, KC_135, A_10C, A_10C_2
 from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, Oliver_Hazzard_Perry_class, USS_Arleigh_Burke_IIa, \
     Ticonderoga_class
-from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
+from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
 
 from game.factions.faction import Faction
 
@@ -37,6 +37,8 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn(B_52H, faction.aircrafts)
             self.assertIn(B_1B, faction.aircrafts)
             self.assertIn(F_117A, faction.aircrafts)
+            self.assertIn(A_10C, faction.aircrafts)
+            self.assertIn(A_10C_2, faction.aircrafts)
 
             self.assertEqual(len(faction.awacs), 1)
             self.assertIn(E_3A, faction.awacs)
