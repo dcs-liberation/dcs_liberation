@@ -150,11 +150,15 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         redFaction = QtWidgets.QLabel("<b>Enemy Faction :</b>")
         self.redFactionSelect = QtWidgets.QComboBox()
+        redFaction.setBuddy(self.redFactionSelect)
+
+        # Setup default selected factions
         for i, r in enumerate(db.FACTIONS):
             self.redFactionSelect.addItem(r)
-            if r == "Russia 1990": # Default ennemy
+            if r == "Russia 1990":
                 self.redFactionSelect.setCurrentIndex(i)
-        redFaction.setBuddy(self.redFactionSelect)
+            if r == "USA 2005":
+                self.blueFactionSelect.setCurrentIndex(i)
 
         self.blueSideRecap = QtWidgets.QLabel("")
         self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
