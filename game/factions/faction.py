@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import logging
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Optional, Dict, Type, List, Any
 
 import dcs
+from dcs.countries import country_dict
 from dcs.planes import PlaneType, plane_map
 from dcs.unittype import VehicleType, UnitType
-from dcs.vehicles import vehicle_map, Armor, Unarmed, Infantry, Fortification, Artillery, AirDefence
+from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
 
 from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE, COLDWAR_DOCTRINE, WWII_DOCTRINE
@@ -16,117 +19,96 @@ from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 class Faction:
 
     # Country used by this faction
-    country: str
+    country: str = field(default="")
 
     # Nice name of the faction
-    name: str
+    name: str = field(default="")
 
     # Available aircraft
-    aircrafts: [UnitType]
+    aircrafts: List[UnitType] = field(default_factory=list)
 
     # Available awacs aircraft
-    awacs: [UnitType]
+    awacs: List[UnitType] = field(default_factory=list)
 
     # Available tanker aircraft
-    tankers: [UnitType]
+    tankers: List[UnitType] = field(default_factory=list)
 
     # Available frontline units
-    frontline_units: [VehicleType]
+    frontline_units: List[VehicleType] = field(default_factory=list)
 
     # Available artillery units
-    artillery_units: [VehicleType]
+    artillery_units: List[VehicleType] = field(default_factory=list)
 
     # Infantry units used
-    infantry_units: [VehicleType]
+    infantry_units: List[VehicleType] = field(default_factory=list)
 
     # Logistics units used
-    logistics_units: [VehicleType]
+    logistics_units: List[VehicleType] = field(default_factory=list)
 
     # List of units that can be deployed as SHORAD
-    shorads: [str]
+    shorads: List[str] = field(default_factory=list)
 
     # Possible SAMS site generators for this faction
-    sams: [str]
+    sams: List[str] = field(default_factory=list)
 
     # Possible Missile site generators for this faction
-    missiles: [str]
+    missiles: List[str] = field(default_factory=list)
 
     # Required mods or asset packs
-    requirements: {str: str}
+    requirements: {str: str} = field(default_factory=dict)
 
     # possible aircraft carrier units
-    aircraft_carrier: [UnitType]
+    aircraft_carrier: List[UnitType] = field(default_factory=list)
 
     # possible helicopter carrier units
-    helicopter_carrier: [UnitType]
+    helicopter_carrier: List[UnitType] = field(default_factory=list)
 
     # Possible carrier names
-    carrier_names: [str]
+    carrier_names: List[str] = field(default_factory=list)
 
     # Possible helicopter carrier names
-    helicopter_carrier_names: [str]
+    helicopter_carrier_names: List[str] = field(default_factory=list)
 
     # Navy group generators
-    navy_generators: [str]
+    navy_generators: List[str] = field(default_factory=list)
 
     # Available destroyers
-    destroyers: [str]
+    destroyers: List[str] = field(default_factory=list)
 
     # Available cruisers
-    cruisers: [str]
+    cruisers: List[str] = field(default_factory=list)
 
     # How many navy group should we try to generate per CP on startup for this faction
-    navy_group_count: int
+    navy_group_count: int = field(default=1)
 
     # How many missiles group should we try to generate per CP on startup for this faction
-    missiles_group_count: int
+    missiles_group_count: int = field(default=1)
 
     # Whether this faction has JTAC access
-    has_jtac: bool
+    has_jtac: bool = field(default=False)
 
     # Unit to use as JTAC for this faction
-    jtac_unit: str
+    jtac_unit: str = field(default="")
 
     # doctrine
-    doctrine: Doctrine
+    doctrine: Doctrine = field(default=MODERN_DOCTRINE)
 
     # List of available buildings for this faction
-    building_set: [str]
+    building_set: List[str] = field(default_factory=list)
 
-    def __init__(self):
-        self.country = ""
-        self.name = ""
-        self.aircrafts = []
-        self.awacs = []
-        self.tankers = []
-        self.frontline_units = []
-        self.artillery_units = []
-        self.infantry_units = []
-        self.logistics_units = []
-        self.shorads = []
-        self.sams = []
-        self.missiles = []
-        self.requirements = {}
-        self.aircraft_carrier = []
-        self.helicopter_carrier = []
-        self.carrier_names = []
-        self.helicopter_carrier_names = []
-        self.navy_generators = []
-        self.destroyers = []
-        self.cruisers = []
-        self.navy_group_count = 0
-        self.missiles_group_count = 0
-        self.has_jtac = False
-        self.jtac_unit = ""
-        self.doctrine = None
 
     @classmethod
-    def from_json(cls, json):
+    def from_json(cls: Type[Faction], json: Dict[str, any]) -> Faction:
 
         faction = Faction()
 
-        faction.country = json.get("country", "USA")
-        faction.name = json.get("name", "???")
+        faction.country = json.get("country", "/")
+        if faction.country not in [c.name for c in country_dict.values()]:
+            raise AssertionError("Faction's country (\"{}\") is not a valid DCS country ID".format(faction.country))
+
+        faction.name = json.get("name", "")
+        if not faction.name:
+            raise AssertionError("Faction has no valid name")
 
         faction.aircrafts = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("aircrafts", [])] if f is not None]
         faction.awacs = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("awacs", [])] if f is not None]
@@ -179,14 +161,15 @@ class Faction:
         return faction
 
     @property
-    def units(self):
+    def units(self) -> List[UnitType]:
         return self.infantry_units + self.aircrafts + self.awacs + self.artillery_units + self.frontline_units + self.tankers + self.logistics_units
 
 
-def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
+def unit_loader(unit: str, class_repository: List[Any]) -> Optional[PlaneType]:
     """
     Find unit by name
     :param unit: Unit name as string
+    :param class_repository: Repository of classes (Either a module, a class, or a list of classes)
     :return: The unit as a PyDCS type
     """
     if unit is None:
@@ -202,8 +185,8 @@ def unit_loader(unit: str, class_repository:[]) -> Optional[PlaneType]:
                     if m.__name__ == unit:
                         return m
         logging.info("FACTION ERROR : Unable to find " + unit + " in pydcs")
-        print("FACTION ERROR : Unable to find " + unit + " in pydcs")
         return None
+
 
 aircraft_loader = lambda x: unit_loader(x, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES])
 vehicle_loader = lambda x: unit_loader(x, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES])

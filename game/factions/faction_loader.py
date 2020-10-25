@@ -1,30 +1,31 @@
+from __future__ import annotations
 import json
-import os
 import logging
+from pathlib import Path
+from typing import Type
 
 from game.factions.faction import Faction
 
 FACTION_DIRECTORY = "./resources/factions/"
 
 
-def load_factions() -> {str, Faction}:
-    files = os.listdir(FACTION_DIRECTORY)
-    files = [f for f in files if f.endswith(".json")]
+class FactionLoader:
 
-    factions = {}
+    @classmethod
+    def load_factions(cls: Type[FactionLoader]) -> {str, Faction}:
 
-    for f in files:
-        print(f)
-        path = os.path.join(FACTION_DIRECTORY, f)
-        logging.info("Loading faction" + path)
-        #try:
-        with open(path, "r", encoding="utf-8") as fdata:
-            data = json.load(fdata, encoding="utf-8")
-            factions[data["name"]] = Faction.from_json(data)
-            logging.info("Loaded faction : " + path)
-        #except Exception as e:
-        #    print(e)
-        #    logging.error("Unable to load faction : " + path)
+        path = Path(FACTION_DIRECTORY)
+        files = [f for f in path.glob("*.json") if f.is_file()]
+        factions = {}
 
-    print(factions)
-    return factions
+        for f in files:
+            logging.info("Loading faction" + str(f))
+            try:
+                with open(f, "r", encoding="utf-8") as fdata:
+                    data = json.load(fdata, encoding="utf-8")
+                    factions[data["name"]] = Faction.from_json(data)
+                    logging.info("Loaded faction : " + str(f))
+            except Exception as e:
+                logging.error("Unable to load faction : " + path, e)
+
+        return factions

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -153,10 +153,9 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
-from game.factions import faction_loader
 from game.factions.faction import Faction
-
 # PATCH pydcs data with MODS
+from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
@@ -912,7 +911,7 @@ CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS: [Faction] = faction_loader.load_factions()
+FACTIONS: [Faction] = FactionLoader.load_factions()
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
