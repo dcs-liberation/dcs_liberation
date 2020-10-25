@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Type, List, Any
+from typing import Optional, Dict, Type, List, Any, cast
 
 import dcs
 from dcs.countries import country_dict
-from dcs.planes import PlaneType, plane_map
-from dcs.unittype import VehicleType, UnitType
+from dcs.planes import plane_map
+from dcs.unittype import FlyingType, ShipType, VehicleType, UnitType
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
 
 from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS
@@ -61,7 +61,7 @@ class Faction:
     missiles: List[str] = field(default_factory=list)
 
     # Required mods or asset packs
-    requirements: {str: str} = field(default_factory=dict)
+    requirements: Dict[str, str] = field(default_factory=dict)
 
     # possible aircraft carrier units
     aircraft_carrier: List[UnitType] = field(default_factory=list)
@@ -94,7 +94,7 @@ class Faction:
     has_jtac: bool = field(default=False)
 
     # Unit to use as JTAC for this faction
-    jtac_unit: str = field(default="")
+    jtac_unit: Optional[FlyingType] = field(default=None)
 
     # doctrine
     doctrine: Doctrine = field(default=MODERN_DOCTRINE)
@@ -102,9 +102,8 @@ class Faction:
     # List of available buildings for this faction
     building_set: List[str] = field(default_factory=list)
 
-
     @classmethod
-    def from_json(cls: Type[Faction], json: Dict[str, any]) -> Faction:
+    def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
 
         faction = Faction()
 
@@ -119,14 +118,18 @@ class Faction:
         faction.authors = json.get("authors", "")
         faction.description = json.get("description", "")
 
-        faction.aircrafts = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("aircrafts", [])] if f is not None]
-        faction.awacs = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("awacs", [])] if f is not None]
-        faction.tankers = [f for f in [aircraft_loader(aircraft) for aircraft in json.get("tankers", [])] if f is not None]
+        faction.aircrafts = load_all_aircraft(json.get("aircrafts", []))
+        faction.awacs = load_all_aircraft(json.get("awacs", []))
+        faction.tankers = load_all_aircraft(json.get("tankers", []))
 
-        faction.frontline_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("frontline_units", [])] if f is not None]
-        faction.artillery_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("artillery_units", [])] if f is not None]
-        faction.infantry_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("infantry_units", [])] if f is not None]
-        faction.logistics_units = [f for f in [vehicle_loader(vehicle) for vehicle in json.get("logistics_units", [])] if f is not None]
+        faction.frontline_units = load_all_vehicles(
+            json.get("frontline_units", []))
+        faction.artillery_units = load_all_vehicles(
+            json.get("artillery_units", []))
+        faction.infantry_units = load_all_vehicles(
+            json.get("infantry_units", []))
+        faction.logistics_units = load_all_vehicles(
+            json.get("logistics_units", []))
 
         faction.sams = json.get("sams", [])
         faction.shorads = json.get("shorads", [])
@@ -134,14 +137,21 @@ class Faction:
         faction.requirements = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
-        faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
+        faction.helicopter_carrier_names = json.get(
+            "helicopter_carrier_names", [])
         faction.navy_generators = json.get("navy_generators", [])
-        faction.aircraft_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("aircraft_carrier", [])] if f is not None]
-        faction.helicopter_carrier = [f for f in [ship_loader(vehicle) for vehicle in json.get("helicopter_carrier", [])] if f is not None]
-        faction.destroyers = [f for f in [ship_loader(vehicle) for vehicle in json.get("destroyers", [])] if f is not None]
-        faction.cruisers = [f for f in [ship_loader(vehicle) for vehicle in json.get("cruisers", [])] if f is not None]
+        faction.aircraft_carrier = load_all_ships(
+            json.get("aircraft_carrier", []))
+        faction.helicopter_carrier = load_all_ships(
+            json.get("helicopter_carrier", []))
+        faction.destroyers = load_all_ships(json.get("destroyers", []))
+        faction.cruisers = load_all_ships(json.get("cruisers", []))
         faction.has_jtac = json.get("has_jtac", False)
-        faction.jtac_unit = aircraft_loader(json.get("jtac_unit", None))
+        jtac_name = json.get("jtac_unit", None)
+        if jtac_name is not None:
+            faction.jtac_unit = load_aircraft(jtac_name)
+        else:
+            faction.jtac_unit = None
         faction.navy_group_count = int(json.get("navy_group_count", 1))
         faction.missiles_group_count = int(json.get("missiles_group_count", 0))
 
@@ -171,10 +181,12 @@ class Faction:
 
     @property
     def units(self) -> List[UnitType]:
-        return self.infantry_units + self.aircrafts + self.awacs + self.artillery_units + self.frontline_units + self.tankers + self.logistics_units
+        return (self.infantry_units + self.aircrafts + self.awacs +
+                self.artillery_units + self.frontline_units +
+                self.tankers + self.logistics_units)
 
 
-def unit_loader(unit: str, class_repository: List[Any]) -> Optional[PlaneType]:
+def unit_loader(unit: str, class_repository: List[Any]) -> Optional[UnitType]:
     """
     Find unit by name
     :param unit: Unit name as string
@@ -193,16 +205,48 @@ def unit_loader(unit: str, class_repository: List[Any]) -> Optional[PlaneType]:
                 for m in mother_class:
                     if m.__name__ == unit:
                         return m
-        logging.info("FACTION ERROR : Unable to find " + unit + " in pydcs")
+        logging.error(f"FACTION ERROR : Unable to find {unit} in pydcs")
         return None
 
 
-aircraft_loader = lambda x: unit_loader(x, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES])
-vehicle_loader = lambda x: unit_loader(x, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES])
-ship_loader = lambda x: unit_loader(x, [dcs.ships])
+def load_aircraft(name: str) -> Optional[FlyingType]:
+    return cast(Optional[FlyingType], unit_loader(
+        name, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES]
+    ))
 
 
+def load_all_aircraft(data) -> List[FlyingType]:
+    items = []
+    for name in data:
+        item = load_aircraft(name)
+        if item is not None:
+            items.append(item)
+    return items
 
 
+def load_vehicle(name: str) -> Optional[VehicleType]:
+    return cast(Optional[FlyingType], unit_loader(
+        name, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES]
+    ))
 
 
+def load_all_vehicles(data) -> List[VehicleType]:
+    items = []
+    for name in data:
+        item = load_vehicle(name)
+        if item is not None:
+            items.append(item)
+    return items
+
+
+def load_ship(name: str) -> Optional[ShipType]:
+    return cast(Optional[FlyingType], unit_loader(name, [dcs.ships]))
+
+
+def load_all_ships(data) -> List[ShipType]:
+    items = []
+    for name in data:
+        item = load_ship(name)
+        if item is not None:
+            items.append(item)
+    return items
