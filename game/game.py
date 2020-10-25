@@ -26,6 +26,7 @@ from . import persistency
 from .debriefing import Debriefing
 from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
+from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
 from plugin import LuaPluginManager
@@ -76,9 +77,9 @@ class Game:
         self.events: List[Event] = []
         self.theater = theater
         self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name]["country"]
+        self.player_country = db.FACTIONS[player_name].country
         self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name]["country"]
+        self.enemy_country = db.FACTIONS[enemy_name].country
         self.turn = 0
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
@@ -123,11 +124,11 @@ class Game:
                 self.enemy_country = "Russia"
 
     @property
-    def player_faction(self) -> Dict[str, Any]:
+    def player_faction(self) -> Faction:
         return db.FACTIONS[self.player_name]
 
     @property
-    def enemy_faction(self) -> Dict[str, Any]:
+    def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
 
     def _roll(self, prob, mult):
@@ -319,7 +320,7 @@ class Game:
             potential_cp_armor = self.theater.enemy_points()
 
         i = 0
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[PinpointStrike]]
+        potential_units = db.FACTIONS[self.enemy_name].frontline_units
 
         print("Enemy Recruiting")
         print(potential_cp_armor)
@@ -345,8 +346,9 @@ class Game:
         if budget_for_armored_units > 0:
             budget_for_aircraft += budget_for_armored_units
 
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if
-                           u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+        potential_units = [u for u in db.FACTIONS[self.enemy_name].aircrafts
+                           if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+
         if len(potential_units) > 0 and len(potential_cp_armor) > 0:
             while budget_for_aircraft > 0:
                 i = i + 1

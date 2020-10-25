@@ -1,71 +1,73 @@
 {
-    "name": "Nevada - North Nevada",
-    "theater": "Nevada",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Nellis AFB",
-            "size": 2000,
-            "importance": 1.4
-        }
+  "name": "Nevada - North Nevada",
+  "theater": "Nevada",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Nellis AFB",
+      "size": 2000,
+      "importance": 1.4
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Tonopah Test Range Airfield",
+      "size": 600,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Lincoln County",
+      "size": 600,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Groom Lake AFB",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Creech AFB",
+      "size": 2000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Mesquite",
+      "size": 1000,
+      "importance": 1.3
+    }
+  ],
+  "links": [
+    [
+      "Lincoln County",
+      "Tonopah Test Range Airfield"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Tonopah Test Range Airfield",
-            "size": 600,
-            "importance": 1,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Lincoln County",
-            "size": 600,
-            "importance": 1.2
-        },
-        {
-            "type": "airbase",
-            "id": "Groom Lake AFB",
-            "size": 1000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Creech AFB",
-            "size": 2000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Mesquite",
-            "size": 1000,
-            "importance": 1.3
-        }
+    [
+      "Groom Lake AFB",
+      "Tonopah Test Range Airfield"
     ],
-    "links": [
-        [
-            "Lincoln County",
-            "Tonopah Test Range Airfield"
-        ],
-        [
-            "Groom Lake AFB",
-            "Tonopah Test Range Airfield"
-        ],
-        [
-            "Lincoln County",
-            "Mesquite"
-        ],
-        [
-            "Groom Lake AFB",
-            "Mesquite"
-        ],
-        [
-            "Creech AFB",
-            "Groom Lake AFB"
-        ],
-        [
-            "Creech AFB",
-            "Nellis AFB"
-        ]
+    [
+      "Lincoln County",
+      "Mesquite"
+    ],
+    [
+      "Groom Lake AFB",
+      "Mesquite"
+    ],
+    [
+      "Creech AFB",
+      "Groom Lake AFB"
+    ],
+    [
+      "Creech AFB",
+      "Nellis AFB"
     ]
+  ]
 }

@@ -67,9 +67,9 @@ class Operation:
                  to_cp: ControlPoint):
         self.game = game
         self.attacker_name = attacker_name
-        self.attacker_country = db.FACTIONS[attacker_name]["country"]
+        self.attacker_country = db.FACTIONS[attacker_name].country
         self.defender_name = defender_name
-        self.defender_country = db.FACTIONS[defender_name]["country"]
+        self.defender_country = db.FACTIONS[defender_name].country
         print(self.defender_country, self.attacker_country)
         self.from_cp = from_cp
         self.departure_cp = departure_cp

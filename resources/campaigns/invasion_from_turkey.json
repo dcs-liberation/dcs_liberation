@@ -1,85 +1,87 @@
 {
-    "name": "Syria - Invasion from Turkey",
-    "theater": "Syria",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Incirlik",
-            "size": 1000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Hatay",
-            "size": 1000,
-            "importance": 1.4
-        },
-        {
-            "type": "carrier",
-            "id": 1001,
-            "x": 133000,
-            "y": -54000
-        },
-        {
-            "type": "lha",
-            "id": 1002,
-            "x": 155000,
-            "y": -19000
-        }
+  "name": "Syria - Invasion from Turkey",
+  "theater": "Syria",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Incirlik",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Hatay",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": 133000,
+      "y": -54000
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": 155000,
+      "y": -19000
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Minakh",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Aleppo",
+      "size": 1000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Kuweires",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Jirah",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Tabqa",
+      "size": 1000,
+      "importance": 1,
+      "captured_invert": true
+    }
+  ],
+  "links": [
+    [
+      "Hatay",
+      "Minakh"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Minakh",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Aleppo",
-            "size": 1000,
-            "importance": 1.2
-        },
-        {
-            "type": "airbase",
-            "id": "Kuweires",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Jirah",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Tabqa",
-            "size": 1000,
-            "importance": 1,
-            "captured_invert": true
-        }
+    [
+      "Aleppo",
+      "Minakh"
     ],
-    "links": [
-        [
-            "Hatay",
-            "Minakh"
-        ],
-        [
-            "Aleppo",
-            "Minakh"
-        ],
-        [
-            "Aleppo",
-            "Kuweires"
-        ],
-        [
-            "Jirah",
-            "Kuweires"
-        ],
-        [
-            "Jirah",
-            "Tabqa"
-        ]
+    [
+      "Aleppo",
+      "Kuweires"
+    ],
+    [
+      "Jirah",
+      "Kuweires"
+    ],
+    [
+      "Jirah",
+      "Tabqa"
     ]
+  ]
 }

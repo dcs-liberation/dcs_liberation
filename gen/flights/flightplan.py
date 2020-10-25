@@ -46,7 +46,7 @@ class FlightPlanBuilder:
             faction = self.game.player_faction
         else:
             faction = self.game.enemy_faction
-        self.doctrine: Doctrine = faction.get("doctrine", MODERN_DOCTRINE)
+        self.doctrine: Doctrine = faction.doctrine
 
     def populate_flight_plan(
             self, flight: Flight,

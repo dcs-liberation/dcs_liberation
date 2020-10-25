@@ -1,0 +1,69 @@
+{
+  "country": "Pakistan",
+  "name": "Pakistan 2015",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "JF_17",
+    "F_16C_50",
+    "MiG_21Bis",
+    "MiG_19P",
+    "Mi_8MT",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "KJ_2000"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "MBT_T_80U",
+    "MBT_T_55",
+    "ZBD_04A",
+    "APC_BTR_80",
+    "APC_M113"
+  ],
+  "artillery_units": [
+    "MLRS_9A52_Smerch",
+    "SPH_2S9_Nona"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Rus",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "HQ7Generator",
+    "ZU23UralGenerator",
+    "ZU23Generator"
+  ],
+  "sams": [
+    "SA10Generator",
+    "SA2Generator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "carrier_names": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+  ],
+  "cruiser": [
+  ],
+  "requirements": {},
+  "navy_generators": [
+    "Type54GroupGenerator",
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "WingLoong_I"
+}

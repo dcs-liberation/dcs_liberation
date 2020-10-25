@@ -153,70 +153,9 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
-from game.factions.australia_2005 import Australia_2005
-from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
-from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
-from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
-from game.factions.bluefor_modern import BLUEFOR_MODERN
-from game.factions.canada_2005 import Canada_2005
-from game.factions.china_2010 import China_2010
-from game.factions.france_1995 import France_1995
-from game.factions.france_2005 import France_2005
-from game.factions.france_modded import France_2005_Modded
-from game.factions.germany_1944 import Germany_1944
-from game.factions.germany_1944_easy import Germany_1944_Easy
-from game.factions.germany_1990 import Germany_1990
-from game.factions.india_2010 import India_2010
-from game.factions.insurgent import Insurgent
-from game.factions.insurgent_modded import Insurgent_modded
-from game.factions.iran_2015 import Iran_2015
-from game.factions.israel_1948 import Israel_1948
-from game.factions.israel_1973 import (
-    Israel_1973,
-    Israel_1973_NO_WW2_UNITS,
-    Israel_1982,
-)
-from game.factions.israel_2000 import Israel_2000
-from game.factions.italy_1990 import Italy_1990
-from game.factions.italy_1990_mb339 import Italy_1990_MB339
-from game.factions.japan_2005 import Japan_2005
-from game.factions.libya_2011 import Libya_2011
-from game.factions.netherlands_1990 import Netherlands_1990
-from game.factions.north_korea_2000 import NorthKorea_2000
-from game.factions.pakistan_2015 import Pakistan_2015
-from game.factions.private_miltary_companies import (
-    PMC_RUSSIAN,
-    PMC_WESTERN_A,
-    PMC_WESTERN_B,
-)
-from game.factions.russia_1955 import Russia_1955
-from game.factions.russia_1965 import Russia_1965
-from game.factions.russia_1975 import Russia_1975
-from game.factions.russia_1990 import Russia_1990
-from game.factions.russia_2010 import Russia_2010
-from game.factions.russia_2020 import Russia_2020
-from game.factions.spain_1990 import Spain_1990
-from game.factions.sweden_1990 import Sweden_1990
-from game.factions.syria import (
-    Arab_Armies_1948,
-    Syria_1967,
-    Syria_1967_WW2_Weapons,
-    Syria_1973,
-    Syria_1982,
-    Syria_2011,
-)
-from game.factions.turkey_2005 import Turkey_2005
-from game.factions.uae_2005 import UAE_2005
-from game.factions.uk_1944 import UK_1944
-from game.factions.uk_1990 import UnitedKingdom_1990
-from game.factions.ukraine_2010 import Ukraine_2010
-from game.factions.us_aggressors import US_Aggressors
-from game.factions.usa_1944 import ALLIES_1944, USA_1944
-from game.factions.usa_1955 import USA_1955
-from game.factions.usa_1960 import USA_1960
-from game.factions.usa_1965 import USA_1965
-from game.factions.usa_1990 import USA_1990
-from game.factions.usa_2005 import USA_2005
+from game.factions import faction_loader
+from game.factions.faction import Faction
+
 # PATCH pydcs data with MODS
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
@@ -973,99 +912,7 @@ CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS: Dict[str, Dict[str, Any]] = {
-
-    "Bluefor Modern": BLUEFOR_MODERN,
-    "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
-    "Bluefor Cold War (with A-4)": BLUEFOR_COLDWAR_A4,
-    "Bluefor Cold War (with A-4 and MB339)": BLUEFOR_COLDWAR_MODS,
-
-    "USA 1955 (WW2 Pack)": USA_1955,
-    "USA 1960": USA_1960,
-    "USA 1965": USA_1965,
-    "USA 1990": USA_1990,
-    "USA 2005": USA_2005,
-    "USA Aggressors 2005": US_Aggressors,
-
-    "Russia 1955": Russia_1955,
-    "Russia 1965": Russia_1965,
-    "Russia 1975": Russia_1975,
-    "Russia 1990": Russia_1990,
-    "Russia 2010": Russia_2010,
-    "Russia 2020 (Modded)": Russia_2020,
-
-    "France 1995": France_1995,
-    "France 2005": France_2005,
-    "France 2005 (Modded)": France_2005_Modded,
-
-    "Germany 1990": Germany_1990,
-
-    "Netherlands 1990": Netherlands_1990,
-
-    "United Kingdom 1990": UnitedKingdom_1990,
-
-    "Spain 1990": Spain_1990,
-
-    "Italy 1990": Italy_1990,
-    "Italy 1990 (With MB339)": Italy_1990_MB339,
-
-    "Israel 2000": Israel_2000,
-    "Israel 1982": Israel_1982,
-    "Israel 1973 (WW2 Pack)": Israel_1973,
-    "Israel 1973": Israel_1973_NO_WW2_UNITS,
-    "Israel 1948": Israel_1948,
-
-    "Arab Armies 1982": Syria_1982,
-    "Arab Armies 1973": Syria_1973,
-    "Arab Armies 1967 (WW2 Pack)": Syria_1967_WW2_Weapons,
-    "Arab Armies 1967": Syria_1967,
-    "Arab League 1948": Arab_Armies_1948,
-
-    "China 2010": China_2010,
-
-    "Sweden 1990": Sweden_1990,
-
-    "Australia 2005": Australia_2005,
-
-    "Canada 2005": Canada_2005,
-
-    "Japan 2005": Japan_2005,
-
-    "Turkey 2005": Turkey_2005,
-
-    "United Arab Emirates 2005": UAE_2005,
-
-    "Ukraine 2010": Ukraine_2010,
-
-    "India 2010": India_2010,
-
-    "Libya 2011": Libya_2011,
-
-    "Syria 2011": Syria_2011,
-
-
-    "Pakistan 2015": Pakistan_2015,
-
-    "Iran 2015": Iran_2015,
-
-    "North Korea 2000": NorthKorea_2000,
-
-    "Insurgent": Insurgent,
-    "Insurgent (Modded)": Insurgent_modded,
-
-    "PMC (American)": PMC_WESTERN_A,
-    "PMC (American) - MB339": PMC_WESTERN_B,
-    "PMC (Russian)": PMC_RUSSIAN,
-
-    "Allies 1944 (WW2 Pack)": USA_1944,
-    "USA 1944 (WW2 Pack)": ALLIES_1944,
-    "UK 1944 (WW2 Pack)": UK_1944,
-
-    "Germany 1944 (WW2 Pack)": Germany_1944,
-    "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
-
-}
-
+FACTIONS: [Faction] = faction_loader.load_factions()
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
@@ -1295,6 +1142,7 @@ CARRIER_CAPABLE = [
     AV8BNA,
     Su_33,
     A_4E_C,
+    Rafale_M,
 
     UH_1H,
     Mi_8MT,
@@ -1358,6 +1206,7 @@ def upgrade_to_supercarrier(unit, name: str):
     else:
         return unit
 
+
 def unit_task(unit: UnitType) -> Optional[Task]:
     for task, units in UNIT_BY_TASK.items():
         if unit in units:
@@ -1369,8 +1218,10 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     print(unit.name + " cause issue")
     return None
 
+
 def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name]["units"]]
+    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
+
 
 def find_infantry(country_name: str) -> List[UnitType]:
     inf = [
@@ -1387,13 +1238,16 @@ def find_infantry(country_name: str) -> List[UnitType]:
         Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
         Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
     ]
-    return [x for x in inf if x in FACTIONS[country_name]["units"]]
+    return [x for x in inf if x in FACTIONS[country_name].infantry_units]
+
 
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
+
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
+
 
 def unit_type_from_name(name: str) -> Optional[UnitType]:
     if name in vehicle_map:

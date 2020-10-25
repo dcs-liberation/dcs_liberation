@@ -1,0 +1,168 @@
+{
+  "name": "Caucasus - Full Map",
+  "theater": "Caucasus",
+  "authors": "george",
+  "description": "Full Caucasus Map",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Kobuleti",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Senaki-Kolkhi",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Kutaisi",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -304708,
+      "y": 552839,
+      "captured_invert": true
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -326050.6875,
+      "y": 519452.1875,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Beslan",
+      "size": 1000,
+      "importance": 1.3
+    },
+    {
+      "type": "airbase",
+      "id": "Nalchik",
+      "size": 1000,
+      "importance": 1.1
+    },
+    {
+      "type": "airbase",
+      "id": "Mozdok",
+      "size": 2000,
+      "importance": 1.1
+    },
+    {
+      "type": "airbase",
+      "id": "Mineralnye Vody",
+      "size": 2000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Maykop-Khanskaya",
+      "size": 3000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Sukhumi-Babushara",
+      "size": 2000,
+      "importance": 1.3
+    },
+    {
+      "type": "airbase",
+      "id": "Gudauta",
+      "size": 2000,
+      "importance": 1.3
+    },
+    {
+      "type": "airbase",
+      "id": "Sochi-Adler",
+      "size": 2000,
+      "importance": 1.1
+    },
+    {
+      "type": "airbase",
+      "id": "Gelendzhik",
+      "size": 2000,
+      "importance": 1.3
+    },
+    {
+      "type": "airbase",
+      "id": "Vaziani",
+      "size": 2000,
+      "importance": 1.3
+    }
+  ],
+  "links": [
+    [
+      "Kutaisi",
+      "Vaziani"
+    ],
+    [
+      "Beslan",
+      "Vaziani"
+    ],
+    [
+      "Beslan",
+      "Mozdok"
+    ],
+    [
+      "Beslan",
+      "Nalchik"
+    ],
+    [
+      "Mozdok",
+      "Nalchik"
+    ],
+    [
+      "Mineralnye Vody",
+      "Nalchik"
+    ],
+    [
+      "Mineralnye Vody",
+      "Mozdok"
+    ],
+    [
+      "Maykop-Khanskaya",
+      "Mineralnye Vody"
+    ],
+    [
+      "Maykop-Khanskaya",
+      "Gelendzhik"
+    ],
+    [
+      "Gelendzhik",
+      "Sochi-Adler"
+    ],
+    [
+      "Gudauta",
+      "Sochi-Adler"
+    ],
+    [
+      "Gudauta",
+      "Sukhumi-Babushara"
+    ],
+    [
+      "Senaki-Kolkhi",
+      "Sukhumi-Babushara"
+    ],
+    [
+      "Kutaisi",
+      "Senaki-Kolkhi"
+    ],
+    [
+      "Senaki-Kolkhi",
+      "Kobuleti"
+    ],
+    [
+      "Kobuleti",
+      "Kutaisi"
+    ]
+  ]
+}

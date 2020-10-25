@@ -200,8 +200,8 @@ class FactionSelection(QtWidgets.QWizardPage):
         red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
         blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
 
-        red_units = red_faction["units"]
-        blue_units = blue_faction["units"]
+        red_units = red_faction.aircrafts
+        blue_units = blue_faction.aircrafts
 
         blue_txt = ""
         for u in blue_units:
@@ -218,16 +218,16 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redSideRecap.setText(red_txt)
 
         has_mod = False
-        if "requirements" in red_faction.keys():
+        if len(red_faction.requirements.keys()) > 0:
             has_mod = True
-            for mod in red_faction["requirements"].keys():
-                self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+red_faction["requirements"][mod]+"\">" + red_faction["requirements"][mod] + "</a></li>")
+            for mod in red_faction.requirements.keys():
+                self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+red_faction.requirements[mod]+"\">" + red_faction.requirements[mod] + "</a></li>")
 
-        if "requirements" in blue_faction.keys():
+        if len(blue_faction.requirements.keys()) > 0:
             has_mod = True
-            for mod in blue_faction["requirements"].keys():
-                if not "requirements" in red_faction.keys() or mod not in red_faction["requirements"].keys():
-                    self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction["requirements"][mod]+"\">" + blue_faction["requirements"][mod] + "</a></li>")
+            for mod in blue_faction.requirements.keys():
+                if not "requirements" in red_faction.keys() or mod not in red_faction.requirements.keys():
+                    self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction.requirements[mod]+"\">" + blue_faction.requirements[mod] + "</a></li>")
 
         if has_mod:
             self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")

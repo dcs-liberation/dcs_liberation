@@ -34,16 +34,14 @@ def generate_ship_group(game, ground_object, faction_name: str):
     :return: Nothing, but put the group reference inside the ground object
     """
     faction = db.FACTIONS[faction_name]
-    if "boat" in faction:
-        generators = faction["boat"]
-        if len(generators) > 0:
-            gen = random.choice(generators)
-            if gen in SHIP_MAP.keys():
-                generator = SHIP_MAP[gen](game, ground_object, faction)
-                generator.generate()
-                return generator.get_generated_group()
-            else:
-                logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
+    if len(faction.navy_generators) > 0:
+        gen = random.choice(faction.navy_generators)
+        if gen in SHIP_MAP.keys():
+            generator = SHIP_MAP[gen](game, ground_object, faction)
+            generator.generate()
+            return generator.get_generated_group()
+        else:
+            logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
     return None
 
 

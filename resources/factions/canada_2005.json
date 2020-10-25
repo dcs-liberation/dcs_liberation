@@ -1,0 +1,61 @@
+{
+  "country": "Canada",
+  "name": "Canada 2005",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "FA_18C_hornet",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leopard_1A3",
+    "MBT_Leopard_2",
+    "IFV_LAV_25",
+    "APC_M113",
+    "IFV_MCV_80"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "AvengerGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

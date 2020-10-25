@@ -1,0 +1,96 @@
+{
+  "country": "Combined Joint Task Forces Blue",
+  "name": "Bluefor Modern",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "F_14B",
+    "F_15C",
+    "F_16C_50",
+    "FA_18C_hornet",
+    "JF_17",
+    "M_2000C",
+    "F_5E_3",
+    "Su_27",
+    "Su_25T",
+    "A_10A",
+    "A_10C",
+    "A_10C_2",
+    "AV8BNA",
+    "AJS37",
+    "UH_1H",
+    "AH_64D",
+    "Ka_50",
+    "SA342M",
+    "SA342L",
+    "B_52H",
+    "B_1B"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_M1A2_Abrams",
+    "MBT_Leopard_2",
+    "MBT_Merkava_Mk__4",
+    "ATGM_M1134_Stryker",
+    "IFV_M2A2_Bradley",
+    "IFV_Marder",
+    "IFV_LAV_25",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "PatriotGenerator"
+  ],
+  "aircraft_carrier": [
+    "CVN_74_John_C__Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+    "CVN-71 Theodore Roosevelt",
+    "CVN-72 Abraham Lincoln",
+    "CVN-73 George Washington",
+    "CVN-74 John C. Stennis"
+  ],
+  "helicopter_carrier_names": [
+    "LHA-1 Tarawa",
+    "LHA-2 Saipan",
+    "LHA-3 Belleau Wood",
+    "LHA-4 Nassau",
+    "LHA-5 Peleliu"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

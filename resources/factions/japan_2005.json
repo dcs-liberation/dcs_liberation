@@ -1,0 +1,70 @@
+{
+  "country": "Japan",
+  "name": "Japan 2005",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "F_15C",
+    "F_16C_50",
+    "F_4E",
+    "AH_1W",
+    "AH_64D"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Merkava_Mk__4",
+    "MBT_M1A2_Abrams",
+    "IFV_Marder",
+    "TPz_Fuchs",
+    "IFV_LAV_25",
+    "APC_M1043_HMMWV_Armament"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin",
+    "MLRS_M270"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "GepardGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "PatriotGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+    "Hyuga",
+    "Ise"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

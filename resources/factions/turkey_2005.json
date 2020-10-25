@@ -1,0 +1,49 @@
+{
+  "country": "Turkey",
+  "name": "Turkey 2005",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "F_16C_50",
+    "F_4E",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leopard_2",
+    "MBT_Leopard_1A3",
+    "MBT_M60A3_Patton",
+    "APC_Cobra",
+    "APC_BTR_80"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249",
+    "Paratrooper_AKS"
+  ],
+  "shorads": [
+    "AvengerGenerator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "HawkGenerator"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}
