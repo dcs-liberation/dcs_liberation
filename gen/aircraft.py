@@ -935,10 +935,6 @@ class AircraftConflictGenerator:
             roe=OptROE.Values.OpenFireWeaponFree,
             rtb_winchester=OptRTBOnOutOfAmmo.Values.Unguided,
             restrict_jettison=True)
-        group.points[0].tasks.append(
-            EngageTargets(max_distance=nm_to_meter(10),
-                          targets=[Targets.All.GroundUnits.GroundVehicles])
-        )
 
     def configure_sead(self, group: FlyingGroup, package: Package,
                       flight: Flight,
@@ -1114,7 +1110,7 @@ class PydcsWaypointBuilder:
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.EGRESS: EgressPointBuilder,
-            FlightWaypointType.INGRESS_CAS: IngressBuilder,
+            FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_ESCORT: IngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
@@ -1162,6 +1158,14 @@ class IngressBuilder(PydcsWaypointBuilder):
         self.set_waypoint_tot(waypoint, self.timing.ingress)
         return waypoint
 
+class CasIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        self.set_waypoint_tot(waypoint, self.timing.ingress)
+        waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
+                              targets=[Targets.All.GroundUnits.GroundVehicles])
+        )
+        return waypoint
 
 class SeadIngressBuilder(IngressBuilder):
     def build(self) -> MovingPoint:
