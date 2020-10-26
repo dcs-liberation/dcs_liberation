@@ -1163,7 +1163,10 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
         self.set_waypoint_tot(waypoint, self.timing.ingress)
         waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
-                              targets=[Targets.All.GroundUnits.GroundVehicles])
+                              targets=[
+                                  Targets.All.GroundUnits.GroundVehicles,
+                                  Targets.All.GroundUnits.AirDefence,
+                              ])
         )
         waypoint.add_task(OptROE(OptROE.Values.OpenFireWeaponFree))
         return waypoint
