@@ -19,7 +19,7 @@ class GroupGenerator():
         wp.ETA_locked = True
 
     @property
-    def groupNamePrefix(self):
+    def groupNamePrefix(self) -> str:
         return ""
 
     def generate(self):

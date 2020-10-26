@@ -11,7 +11,7 @@ class GenericSamGroupGenerator(GroupGenerator):
     """
 
     @property
-    def groupNamePrefix(self):
+    def groupNamePrefix(self) -> str:
         # prefix the SAM site for use with the Skynet IADS plugin
         if self.faction == self.game.player_name: # this is the player faction
             return "BLUE SAM " 
