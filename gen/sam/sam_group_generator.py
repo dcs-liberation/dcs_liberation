@@ -106,7 +106,6 @@ def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerato
     """
     return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP.keys()]
 
-
 def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     """
     This generate a SAM group
@@ -118,7 +117,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
         sam_generator_class = random.choice(possible_sams_generators)
-        generator = sam_generator_class(game, ground_object)
+        generator = sam_generator_class(game, ground_object, faction)
         generator.generate()
         return generator.get_generated_group()
     return None
@@ -134,8 +133,6 @@ def generate_shorad_group(game, parent_cp, ground_object, faction_name: str):
         return generator.get_generated_group()
     else:
         return generate_anti_air_group(game, parent_cp, ground_object, faction_name)
-
-
 
 
 

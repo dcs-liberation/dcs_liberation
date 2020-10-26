@@ -148,23 +148,23 @@ class Operation:
             logging.debug(
                 f"Skipping already loaded {script} for {plugin_mnemonic}"
             )
+        else:
+            self.plugin_scripts.append(script_mnemonic)
 
-        self.plugin_scripts.append(script_mnemonic)
+            plugin_path = Path("./resources/plugins", plugin_mnemonic)
 
-        plugin_path = Path("./resources/plugins", plugin_mnemonic)
+            script_path = Path(plugin_path, script)
+            if not script_path.exists():
+                logging.error(
+                    f"Cannot find {script_path} for plugin {plugin_mnemonic}"
+                )
+                return
 
-        script_path = Path(plugin_path, script)
-        if not script_path.exists():
-            logging.error(
-                f"Cannot find {script_path} for plugin {plugin_mnemonic}"
-            )
-            return
-
-        trigger = TriggerStart(comment=f"Load {script_mnemonic}")
-        filename = script_path.resolve()
-        fileref = self.current_mission.map_resource.add_resource_file(filename)
-        trigger.add_action(DoScriptFile(fileref))
-        self.current_mission.triggerrules.triggers.append(trigger)
+            trigger = TriggerStart(comment=f"Load {script_mnemonic}")
+            filename = script_path.resolve()
+            fileref = self.current_mission.map_resource.add_resource_file(filename)
+            trigger.add_action(DoScriptFile(fileref))
+            self.current_mission.triggerrules.triggers.append(trigger)
 
     def generate(self):
         radio_registry = RadioRegistry()
