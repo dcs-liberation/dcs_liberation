@@ -1,0 +1,33 @@
+{
+  "country": "USA",
+  "name": "Private Military Company - USA",
+  "authors": "Khopa",
+  "description": "A private military company using western units.",
+  "aircrafts": [
+    "C_101CC",
+    "UH_1H",
+    "Mi_8MT",
+    "SA342M"
+  ],
+  "frontline_units": [
+    "APC_M1043_HMMWV_Armament",
+    "IFV_MCV_80"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "AvengerGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

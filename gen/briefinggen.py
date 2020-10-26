@@ -194,14 +194,10 @@ class BriefingGenerator(MissionInfoGenerator):
 
         conflict_number = 0
 
-        for c in self.game.theater.conflicts():
+        for front_line in self.game.theater.conflicts(from_player=True):
             conflict_number = conflict_number + 1
-            if c[0].captured:
-                player_base = c[0]
-                enemy_base = c[1]
-            else:
-                player_base = c[1]
-                enemy_base = c[0]
+            player_base = front_line.control_point_a
+            enemy_base = front_line.control_point_b
 
             has_numerical_superiority = player_base.base.total_armor > enemy_base.base.total_armor
             self.description += self.__random_frontline_sentence(player_base.name, enemy_base.name)

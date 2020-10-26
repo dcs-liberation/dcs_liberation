@@ -1,6 +1,7 @@
 from typing import Optional
 
 from PySide2.QtGui import QColor, QPainter
+from PySide2.QtWidgets import QAction, QMenu
 
 import qt_ui.uiconstants as const
 from qt_ui.models import GameModel
@@ -8,6 +9,7 @@ from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from theater import ControlPoint
 from .QMapObject import QMapObject
 from ...displayoptions import DisplayOptions
+from ...windows.GameUpdateSignal import GameUpdateSignal
 
 
 class QMapControlPoint(QMapObject):
@@ -20,6 +22,9 @@ class QMapControlPoint(QMapObject):
         self.setZValue(1)
         self.setToolTip(self.control_point.name)
         self.base_details_dialog: Optional[QBaseMenu2] = None
+        self.capture_action = QAction(
+            f"CHEAT: Capture {self.control_point.name}")
+        self.capture_action.triggered.connect(self.cheat_capture)
 
     def paint(self, painter, option, widget=None) -> None:
         if DisplayOptions.control_points:
@@ -64,3 +69,24 @@ class QMapControlPoint(QMapObject):
             self.game_model
         )
         self.base_details_dialog.show()
+
+    def add_context_menu_actions(self, menu: QMenu) -> None:
+        if self.control_point.is_fleet:
+            return
+
+        if self.control_point.captured:
+            return
+
+        for connected in self.control_point.connected_points:
+            if connected.captured:
+                break
+        else:
+            return
+
+        menu.addAction(self.capture_action)
+
+    def cheat_capture(self) -> None:
+        self.control_point.capture(self.game_model.game, for_player=True)
+        # Reinitialized ground planners and the like.
+        self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)

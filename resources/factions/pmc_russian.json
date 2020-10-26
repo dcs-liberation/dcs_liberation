@@ -1,0 +1,36 @@
+{
+  "country": "Russia",
+  "name": "Private Military Company - Russian",
+  "authors": "Khopa",
+  "description": "A private military company using Russian units.",
+  "aircrafts": [
+    "L_39C",
+    "L_39ZA",
+    "Mi_8MT",
+    "Mi_24V",
+    "Ka_50"
+  ],
+  "frontline_units": [
+    "APC_Cobra",
+    "APC_BTR_80",
+    "ARV_BRDM_2"
+  ],
+  "artillery_units": [
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "SA13Generator",
+    "SA9Generator"
+  ],
+  "sams": [
+    "SA13Generator"
+  ]
+}

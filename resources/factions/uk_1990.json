@@ -1,0 +1,70 @@
+{
+  "country": "UK",
+  "name": "United Kingdom 1990",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "Tornado_GR4",
+    "AV8BNA",
+    "F_4E",
+    "SA342M",
+    "AH_64A"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Challenger_II",
+    "IFV_MCV_80",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator",
+    "RapierGenerator"
+  ],
+  "sams": [
+    "HawkGenerator"
+  ],
+  "aircraft_carrier": [
+    "CVN_74_John_C__Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "Oliver_Hazzard_Perry_class"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+    "HMS Invincible",
+    "HMS Illustrious",
+    "HMS Ark Royal"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator",
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

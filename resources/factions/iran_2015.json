@@ -1,0 +1,78 @@
+{
+  "country": "Iran",
+  "name": "Iran 2015",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "MiG_21Bis",
+    "MiG_29A",
+    "F_4E",
+    "F_5E_3",
+    "F_14B",
+    "Su_17M4",
+    "Su_24M",
+    "Su_25",
+    "Su_25T",
+    "Mi_28N",
+    "Mi_24V"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "APC_M113",
+    "APC_BTR_80",
+    "MBT_M60A3_Patton",
+    "IFV_BMP_1",
+    "MBT_T_72B"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Insurgents",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "HQ7Generator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "SA2Generator",
+    "SA6Generator",
+    "SA11Generator",
+    "HawkGenerator",
+    "HQ7Generator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "FF_1135M_Rezky"
+  ],
+  "cruisers": [
+    "FSG_1241_1MP_Molniya"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "navy_generators": [
+    "GrishaGroupGenerator",
+    "MolniyaGroupGenerator",
+    "KiloSubGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

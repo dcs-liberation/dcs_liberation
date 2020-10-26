@@ -14,8 +14,8 @@ def generate_missile_group(game, ground_object, faction_name: str):
     :return: Nothing, but put the group reference inside the ground object
     """
     faction = db.FACTIONS[faction_name]
-    if "missiles" in faction:
-        generators = faction["missiles"]
+    if len(faction.missiles) > 0:
+        generators = faction.missiles
         if len(generators) > 0:
             gen = random.choice(generators)
             if gen in MISSILES_MAP.keys():

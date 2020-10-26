@@ -8,7 +8,6 @@ logs.txt
 dist/**
 a.py
 resources/tools/a.miz
-tests/**
 # User-specific stuff
 .idea/
 

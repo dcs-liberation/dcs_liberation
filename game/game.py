@@ -26,6 +26,7 @@ from . import persistency
 from .debriefing import Debriefing
 from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
+from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
 from plugin import LuaPluginManager
@@ -76,9 +77,9 @@ class Game:
         self.events: List[Event] = []
         self.theater = theater
         self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name]["country"]
+        self.player_country = db.FACTIONS[player_name].country
         self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name]["country"]
+        self.enemy_country = db.FACTIONS[enemy_name].country
         self.turn = 0
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
@@ -123,11 +124,11 @@ class Game:
                 self.enemy_country = "Russia"
 
     @property
-    def player_faction(self) -> Dict[str, Any]:
+    def player_faction(self) -> Faction:
         return db.FACTIONS[self.player_name]
 
     @property
-    def enemy_faction(self) -> Dict[str, Any]:
+    def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
 
     def _roll(self, prob, mult):
@@ -141,8 +142,10 @@ class Game:
         self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
 
     def _generate_events(self):
-        for player_cp, enemy_cp in self.theater.conflicts(True):
-            self._generate_player_event(FrontlineAttackEvent, player_cp, enemy_cp)
+        for front_line in self.theater.conflicts(True):
+            self._generate_player_event(FrontlineAttackEvent,
+                                        front_line.control_point_a,
+                                        front_line.control_point_b)
 
     def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> List[UnitType]:
         importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
@@ -235,10 +238,10 @@ class Game:
         if not hasattr(self, "conditions"):
             self.conditions = self.generate_conditions()
 
-    def pass_turn(self, no_action=False):
+    def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
-        self.turn = self.turn + 1
+        self.turn += 1
 
         for event in self.events:
             if self.settings.version == "dev":
@@ -259,6 +262,14 @@ class Game:
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
+        self.conditions = self.generate_conditions()
+
+        self.initialize_turn()
+
+        # Autosave progress
+        persistency.autosave(self)
+
+    def initialize_turn(self) -> None:
         self.events = []
         self._generate_events()
 
@@ -268,8 +279,6 @@ class Game:
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
             self.aircraft_inventory.set_from_control_point(cp)
-
-        self.conditions = self.generate_conditions()
 
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
@@ -283,9 +292,6 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
-
-        # Autosave progress
-        persistency.autosave(self)
 
     def _enemy_reinforcement(self):
         """
@@ -314,7 +320,7 @@ class Game:
             potential_cp_armor = self.theater.enemy_points()
 
         i = 0
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[PinpointStrike]]
+        potential_units = db.FACTIONS[self.enemy_name].frontline_units
 
         print("Enemy Recruiting")
         print(potential_cp_armor)
@@ -340,8 +346,9 @@ class Game:
         if budget_for_armored_units > 0:
             budget_for_aircraft += budget_for_armored_units
 
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if
-                           u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+        potential_units = [u for u in db.FACTIONS[self.enemy_name].aircrafts
+                           if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+
         if len(potential_units) > 0 and len(potential_cp_armor) > 0:
             while budget_for_aircraft > 0:
                 i = i + 1
@@ -388,10 +395,13 @@ class Game:
         points = []
 
         # By default, use the existing frontline conflict position
-        for conflict in self.theater.conflicts():
-            points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
-            points.append(conflict[0].position)
-            points.append(conflict[1].position)
+        for front_line in self.theater.conflicts():
+            position = Conflict.frontline_position(self.theater,
+                                                   front_line.control_point_a,
+                                                   front_line.control_point_b)
+            points.append(position[0])
+            points.append(front_line.control_point_a.position)
+            points.append(front_line.control_point_b.position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:

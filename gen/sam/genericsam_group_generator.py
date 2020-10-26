@@ -10,12 +10,10 @@ class GenericSamGroupGenerator(GroupGenerator):
     This is the base for all SAM group generators
     """
 
-    def getGroupNamePrefix(self, faction):
-        if not faction:
-            return ""
-
+    @property
+    def groupNamePrefix(self):
         # prefix the SAM site for use with the Skynet IADS plugin
-        prefix = "BLUE SAM " 
-        if db.FACTIONS[faction]["side"] == "red":
-            prefix = "RED SAM " 
-        return prefix        
+        if self.faction == self.game.player_name: # this is the player faction
+            return "BLUE SAM " 
+        else:
+            return "RED SAM " 

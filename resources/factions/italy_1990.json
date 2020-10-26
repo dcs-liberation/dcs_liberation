@@ -1,0 +1,64 @@
+{
+  "country": "Italy",
+  "name": "Italy 1990",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "Tornado_IDS",
+    "AV8BNA",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leopard_1A3",
+    "APC_M113"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "AvengerGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "Oliver_Hazzard_Perry_class"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+    "Giuseppe Garibaldi",
+    "Cavour"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

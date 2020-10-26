@@ -1,0 +1,71 @@
+{
+  "country": "India",
+  "name": "India 2010",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "Mirage_2000_5",
+    "M_2000C",
+    "MiG_27K",
+    "MiG_21Bis",
+    "MiG_29S",
+    "Su_30",
+    "AH_64A",
+    "Mi_8MT"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "MBT_T_90",
+    "MBT_T_72B",
+    "IFV_BMP_2"
+  ],
+  "artillery_units": [
+    "MLRS_9K57_Uragan_BM_27",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "SA8Generator",
+    "SA13Generator",
+    "SA19Generator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "SA6Generator",
+    "SA3Generator"
+  ],
+  "aircraft_carrier": [
+    "CV_1143_5_Admiral_Kuznetsov"
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "FF_1135M_Rezky"
+  ],
+  "cruisers": [
+  ],
+  "requirements": {},
+  "carrier_names": [
+    "INS Vikramaditya"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator",
+    "MolniyaGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

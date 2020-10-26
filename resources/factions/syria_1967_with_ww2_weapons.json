@@ -1,0 +1,64 @@
+{
+  "country": "Syria",
+  "name": "Syria 1967 (With WW2 Weapons)",
+  "authors": "Khopa",
+  "description": "(Yes Syria was still using a few Panzer IV and Stug in Yom Kippur War)",
+  "aircrafts": [
+    "MiG_15bis",
+    "MiG_19P",
+    "MiG_21Bis",
+
+    "Su_17M4",
+    "Mi_8MT"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "ARV_BRDM_2",
+    "MBT_T_55",
+    "MT_Pz_Kpfw_IV_Ausf_H",
+    "StuG_III_Ausf__G",
+    "TD_Jagdpanzer_IV"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Rus",
+    "Soldier_RPG"
+  ],
+  "shorads": [
+    "ZU23Generator",
+    "ZU23UralGenerator"
+  ],
+  "sams": [
+    "SA2Generator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "carrier_names": [
+  ],
+  "navy_generators": [
+    "GrishaGroupGenerator"
+  ], "requirements": {
+      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  },
+  "doctrine": "coldwar"
+}

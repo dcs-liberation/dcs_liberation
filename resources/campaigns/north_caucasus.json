@@ -1,99 +1,101 @@
 {
-    "name": "Caucasus - North Caucasus",
-    "theater": "Caucasus",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Kutaisi",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Vaziani",
-            "size": 600,
-            "importance": 1
-        },
-        {
-            "type": "carrier",
-            "id": 1001,
-            "x": -285810.6875,
-            "y": 496399.1875,
-            "captured_invert": true
-        },
-        {
-            "type": "lha",
-            "id": 1002,
-            "x": -326050.6875,
-            "y": 519452.1875,
-            "captured_invert": true
-        }
+  "name": "Caucasus - North Caucasus",
+  "theater": "Caucasus",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Kutaisi",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Vaziani",
+      "size": 600,
+      "importance": 1
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -285810.6875,
+      "y": 496399.1875,
+      "captured_invert": true
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -326050.6875,
+      "y": 519452.1875,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Beslan",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Nalchik",
+      "size": 1000,
+      "importance": 1.1
+    },
+    {
+      "type": "airbase",
+      "id": "Mozdok",
+      "size": 2000,
+      "importance": 1.1
+    },
+    {
+      "type": "airbase",
+      "id": "Mineralnye Vody",
+      "size": 2000,
+      "importance": 1.3
+    },
+    {
+      "type": "airbase",
+      "id": "Maykop-Khanskaya",
+      "size": 3000,
+      "importance": 1.4,
+      "captured_invert": true
+    }
+  ],
+  "links": [
+    [
+      "Kutaisi",
+      "Vaziani"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Beslan",
-            "size": 1000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Nalchik",
-            "size": 1000,
-            "importance": 1.1
-        },
-        {
-            "type": "airbase",
-            "id": "Mozdok",
-            "size": 2000,
-            "importance": 1.1
-        },
-        {
-            "type": "airbase",
-            "id": "Mineralnye Vody",
-            "size": 2000,
-            "importance": 1.3
-        },
-        {
-            "type": "airbase",
-            "id": "Maykop-Khanskaya",
-            "size": 3000,
-            "importance": 1.4,
-            "captured_invert": true
-        }
+    [
+      "Beslan",
+      "Vaziani"
     ],
-    "links": [
-        [
-            "Kutaisi",
-            "Vaziani"
-        ],
-        [
-            "Beslan",
-            "Vaziani"
-        ],
-        [
-            "Beslan",
-            "Mozdok"
-        ],
-        [
-            "Beslan",
-            "Nalchik"
-        ],
-        [
-            "Mozdok",
-            "Nalchik"
-        ],
-        [
-            "Mineralnye Vody",
-            "Nalchik"
-        ],
-        [
-            "Mineralnye Vody",
-            "Mozdok"
-        ],
-        [
-            "Maykop-Khanskaya",
-            "Mineralnye Vody"
-        ]
+    [
+      "Beslan",
+      "Mozdok"
+    ],
+    [
+      "Beslan",
+      "Nalchik"
+    ],
+    [
+      "Mozdok",
+      "Nalchik"
+    ],
+    [
+      "Mineralnye Vody",
+      "Nalchik"
+    ],
+    [
+      "Mineralnye Vody",
+      "Mozdok"
+    ],
+    [
+      "Maykop-Khanskaya",
+      "Mineralnye Vody"
     ]
+  ]
 }

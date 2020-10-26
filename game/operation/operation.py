@@ -67,9 +67,9 @@ class Operation:
                  to_cp: ControlPoint):
         self.game = game
         self.attacker_name = attacker_name
-        self.attacker_country = db.FACTIONS[attacker_name]["country"]
+        self.attacker_country = db.FACTIONS[attacker_name].country
         self.defender_name = defender_name
-        self.defender_country = db.FACTIONS[defender_name]["country"]
+        self.defender_country = db.FACTIONS[defender_name].country
         print(self.defender_country, self.attacker_country)
         self.from_cp = from_cp
         self.departure_cp = departure_cp
@@ -253,7 +253,9 @@ class Operation:
 
         # Generate ground units on frontline everywhere
         jtacs: List[JtacInfo] = []
-        for player_cp, enemy_cp in self.game.theater.conflicts(True):
+        for front_line in self.game.theater.conflicts(True):
+            player_cp = front_line.control_point_a
+            enemy_cp = front_line.control_point_b
             conflict = Conflict.frontline_cas_conflict(self.attacker_name, self.defender_name,
                                                        self.current_mission.country(self.attacker_country),
                                                        self.current_mission.country(self.defender_country),

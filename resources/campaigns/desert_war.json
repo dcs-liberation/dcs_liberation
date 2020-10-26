@@ -1,61 +1,63 @@
 {
-    "name": "Persian Gulf - Desert War",
-    "theater": "Persian Gulf",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Liwa Airbase",
-            "size": 2000,
-            "importance": 1.2
-        },
-        {
-            "type": "lha",
-            "id": 1002,
-            "x": -164000,
-            "y": -257000,
-            "captured_invert": true
-        },
-        {
-            "type": "carrier",
-            "id": 1001,
-            "x": -124000,
-            "y": -303000,
-            "captured_invert": true
-        }
+  "name": "Persian Gulf - Desert War",
+  "theater": "Persian Gulf",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Liwa Airbase",
+      "size": 2000,
+      "importance": 1.2
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -164000,
+      "y": -257000,
+      "captured_invert": true
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -124000,
+      "y": -303000,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Al Ain International Airport",
+      "size": 2000,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Al Maktoum Intl",
+      "size": 2000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Al Minhad AB",
+      "size": 1000,
+      "importance": 1
+    }
+  ],
+  "links": [
+    [
+      "Al Ain International Airport",
+      "Liwa Airbase"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Al Ain International Airport",
-            "size": 2000,
-            "importance": 1,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Al Maktoum Intl",
-            "size": 2000,
-            "importance": 1
-        },
-        {
-            "type": "airbase",
-            "id": "Al Minhad AB",
-            "size": 1000,
-            "importance": 1
-        }
+    [
+      "Al Ain International Airport",
+      "Al Maktoum Intl"
     ],
-    "links": [
-        [
-            "Al Ain International Airport",
-            "Liwa Airbase"
-        ],
-        [
-            "Al Ain International Airport",
-            "Al Maktoum Intl"
-        ],
-        [
-            "Al Maktoum Intl",
-            "Al Minhad AB"
-        ]
+    [
+      "Al Maktoum Intl",
+      "Al Minhad AB"
     ]
+  ]
 }

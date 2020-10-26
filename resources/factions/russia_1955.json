@@ -1,0 +1,60 @@
+{
+  "country": "Russia",
+  "name": "Russia 1955",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "MiG_15bis"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "ARV_BRDM_2",
+    "FDDM_Grad",
+    "APC_MTLB",
+    "MBT_T_55",
+    "AAA_ZU_23_on_Ural_375"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Rus",
+    "Soldier_RPG"
+  ],
+  "shorads": [
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
+  ],
+  "sams": [
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "navy_generators": [
+  ],
+  "has_jtac": false,
+  "doctrine": "coldwar"
+}

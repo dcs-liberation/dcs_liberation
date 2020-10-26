@@ -31,7 +31,7 @@ from theater import (
 )
 from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 
-UNIT_VARIETY = 3
+UNIT_VARIETY = 6
 UNIT_AMOUNT_FACTOR = 16
 UNIT_COUNT_IMPORTANCE_LOG = 1.3
 
@@ -90,6 +90,7 @@ def generate_groundobjects(theater: ConflictTheater, game):
             faction_name = game.player_name
         else:
             faction_name = game.enemy_name
+        faction = db.FACTIONS[faction_name]
 
         if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             # Create ground object group
@@ -110,8 +111,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.groups.append(group)
             cp.ground_objects.append(g)
             # Set new name :
-            if "carrier_names" in db.FACTIONS[faction_name]:
-                cp.name = random.choice(db.FACTIONS[faction_name]["carrier_names"])
+            if len(faction.carrier_names) > 0:
+                cp.name = random.choice(faction.carrier_names)
             else:
                 cp_to_remove.append(cp)
         elif cp.cptype == ControlPointType.LHA_GROUP:
@@ -133,8 +134,8 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 g.groups.append(group)
             cp.ground_objects.append(g)
             # Set new name :
-            if "lhanames" in db.FACTIONS[faction_name]:
-                cp.name = random.choice(db.FACTIONS[faction_name]["lhanames"])
+            if len(faction.helicopter_carrier_names) > 0:
+                cp.name = random.choice(faction.helicopter_carrier_names)
             else:
                 cp_to_remove.append(cp)
         else:
@@ -171,19 +172,14 @@ def generate_groundobjects(theater: ConflictTheater, game):
                 logging.info(ground_object.groups)
 
         # Generate navy groups
-        if "boat" in db.FACTIONS[faction_name].keys() and cp.allow_sea_units:
+        if len(faction.navy_generators) > 0 and cp.allow_sea_units:
 
             if cp.captured and game.settings.do_not_generate_player_navy:
                 continue
-
             if not cp.captured and game.settings.do_not_generate_enemy_navy:
                 continue
 
-            boat_count = 1
-            if "boat_count" in db.FACTIONS[faction_name].keys():
-                boat_count = int(db.FACTIONS[faction_name]["boat_count"])
-
-            for i in range(boat_count):
+            for i in range(faction.navy_group_count):
 
                 point = find_location(False, cp.position, theater, 5000, 40000, [], False)
 
@@ -210,15 +206,9 @@ def generate_groundobjects(theater: ConflictTheater, game):
                     g.groups.append(group)
                     cp.ground_objects.append(g)
 
+        if len(faction.missiles) > 0:
 
-
-        if "missiles" in db.FACTIONS[faction_name].keys():
-
-            missiles_count = 1
-            if "missiles_count" in db.FACTIONS[faction_name].keys():
-                missiles_count = int(db.FACTIONS[faction_name]["missiles_count"])
-
-            for i in range(missiles_count):
+            for i in range(faction.missiles_group_count):
 
                 point = find_location(True, cp.position, theater, 2500, 40000, [], False)
 
@@ -347,9 +337,7 @@ def generate_cp_ground_points(cp: ControlPoint, theater, game, group_id, templat
         faction = game.enemy_name
     faction_data = db.FACTIONS[faction]
 
-    available_categories = DEFAULT_AVAILABLE_BUILDINGS
-    if "objects" in faction_data.keys():
-        available_categories = faction_data["objects"]
+    available_categories = faction_data.building_set
 
     if len(available_categories) == 0:
         return False

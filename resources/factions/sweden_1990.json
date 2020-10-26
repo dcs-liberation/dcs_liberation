@@ -1,0 +1,42 @@
+{
+  "country": "Sweden",
+  "name": "Sweden 1990",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "AJS37",
+    "UH_1H"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "IFV_MCV_80",
+    "MBT_Leopard_2",
+    "APC_M1126_Stryker_ICV"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

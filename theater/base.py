@@ -148,6 +148,9 @@ class Base:
         elif self.strength <= 0:
             self.strength = BASE_MIN_STRENGTH
 
+    def set_strength_to_minimum(self) -> None:
+        self.strength = BASE_MIN_STRENGTH
+
     def scramble_count(self, multiplier: float, task: Task = None) -> int:
         if task:
             count = sum([v for k, v in self.aircraft.items() if db.unit_task(k) == task])

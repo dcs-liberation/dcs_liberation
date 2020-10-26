@@ -1,75 +1,77 @@
 {
-    "name": "Persian Gulf - Invasion of Iran [Lite]",
-    "theater": "Persian Gulf",
-    "player_points": [
-        {
-            "type": "airbase",
-            "id": "Bandar Lengeh",
-            "radials": [
-                270,
-                315,
-                0,
-                45
-            ],
-            "size": 600,
-            "importance": 1.4
-        },
-        {
-            "type": "carrier",
-            "id": 1001,
-            "x": 72000.324335475,
-            "y": -376000
-        },
-        {
-            "type": "lha",
-            "id": 1002,
-            "x": -27500.813952358,
-            "y": -147000.65947136
-        }
+  "name": "Persian Gulf - Invasion of Iran [Lite]",
+  "theater": "Persian Gulf",
+  "authors": "Khopa",
+  "description": "",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Bandar Lengeh",
+      "radials": [
+        270,
+        315,
+        0,
+        45
+      ],
+      "size": 600,
+      "importance": 1.4
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": 72000.324335475,
+      "y": -376000
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -27500.813952358,
+      "y": -147000.65947136
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Shiraz International Airport",
+      "size": 2000,
+      "importance": 1.4,
+      "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Jiroft Airport",
+      "size": 2000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Kerman Airport",
+      "size": 2000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Lar Airbase",
+      "size": 1000,
+      "importance": 1.4
+    }
+  ],
+  "links": [
+    [
+      "Bandar Lengeh",
+      "Lar Airbase"
     ],
-    "enemy_points": [
-        {
-            "type": "airbase",
-            "id": "Shiraz International Airport",
-            "size": 2000,
-            "importance": 1.4,
-            "captured_invert": true
-        },
-        {
-            "type": "airbase",
-            "id": "Jiroft Airport",
-            "size": 2000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Kerman Airport",
-            "size": 2000,
-            "importance": 1.4
-        },
-        {
-            "type": "airbase",
-            "id": "Lar Airbase",
-            "size": 1000,
-            "importance": 1.4
-        }
+    [
+      "Lar Airbase",
+      "Shiraz International Airport"
     ],
-    "links": [
-        [
-            "Bandar Lengeh",
-            "Lar Airbase"
-        ],
-        [
-            "Lar Airbase",
-            "Shiraz International Airport"
-        ],
-        [
-            "Kerman Airport",
-            "Shiraz International Airport"
-        ],
-        [
-            "Jiroft Airport",
-            "Kerman Airport"
-        ]
+    [
+      "Kerman Airport",
+      "Shiraz International Airport"
+    ],
+    [
+      "Jiroft Airport",
+      "Kerman Airport"
     ]
+  ]
 }

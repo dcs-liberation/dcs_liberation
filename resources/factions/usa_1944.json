@@ -1,0 +1,59 @@
+{
+  "country": "USA",
+  "name": "USA 1944",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "P_51D",
+    "P_51D_30_NA",
+    "P_47D_30",
+    "SpitfireLFMkIX",
+    "A_20G",
+    "B_17G"
+  ],
+  "frontline_units": [
+    "MT_M4A4_Sherman_Firefly",
+    "MT_M4_Sherman",
+    "APC_M2A1",
+    "M30_Cargo_Carrier",
+    "LAC_M8_Greyhound",
+    "TD_M10_GMC"
+  ],
+  "artillery_units": [
+    "M12_GMC"
+  ],
+  "logistics_units": [
+    "CCKW_353"
+  ],
+  "infantry_units": [
+    "Infantry_M1_Garand"
+  ],
+  "shorads": [
+    "BoforsGenerator"
+  ],
+  "sams": [
+    "BoforsGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "WW2LSTGroupGenerator"
+  ],
+  "navy_group_count": 1,
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2ally"
+}

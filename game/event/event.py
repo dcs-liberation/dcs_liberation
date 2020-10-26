@@ -195,29 +195,19 @@ class Event:
                     if cp.id == id:
 
                         if cp.captured and new_owner_coalition != coalition:
-                            cp.captured = False
+                            for_player = False
                             info = Information(cp.name + " lost !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
                             self.game.informations.append(info)
-                            pname = self.game.enemy_name
                             captured_cps.append(cp)
                         elif not(cp.captured) and new_owner_coalition == coalition:
-                            cp.captured = True
+                            for_player = True
                             info = Information(cp.name + " captured !", "We took control of " + cp.name + "! Great job !", self.game.turn)
                             self.game.informations.append(info)
-                            pname = self.game.player_name
                             captured_cps.append(cp)
                         else:
                             continue
 
-                        cp.base.aircraft = {}
-                        cp.base.armor = {}
-
-                        airbase_def_id = 0
-                        for g in cp.ground_objects:
-                            g.groups = []
-                            if g.airbase_group and pname != "":
-                                generate_airbase_defense_group(airbase_def_id, g, pname, self.game, cp)
-                                airbase_def_id = airbase_def_id + 1
+                        cp.capture(self.game, for_player)
 
                 for cp in captured_cps:
                     logging.info("Will run redeploy for " + cp.name)
