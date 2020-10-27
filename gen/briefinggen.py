@@ -213,23 +213,23 @@ class BriefingGenerator(MissionInfoGenerator):
                     if has_numerical_superiority:
                         self.description += "On this location, our ground forces will try to make progress against the enemy"
                         self.description += ". As the enemy is outnumbered, our forces should have no issue making progress.\n"
-                    elif has_numerical_superiority:
+                    else:
                         self.description += "On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.\n"
                 elif stance == CombatStance.ELIMINATION:
                     if has_numerical_superiority:
                         self.description += "On this location, our ground forces will focus on the destruction of enemy assets, before attempting to make progress toward " + enemy_base.name + ". "
                         self.description += "The enemy is already outnumbered, and this maneuver might draw a final blow to their forces.\n"
-                    elif has_numerical_superiority:
+                    else:
                         self.description += "On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.\n"
                 elif stance == CombatStance.BREAKTHROUGH:
                     if has_numerical_superiority:
                         self.description += "On this location, our ground forces will focus on progression toward " + enemy_base.name + ".\n"
-                    elif has_numerical_superiority:
+                    else:
                         self.description += "On this location, our ground forces have been ordered to rush toward " + enemy_base.name + ". Wish them luck... We are also expecting a counter attack.\n"
                 elif stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
                     if has_numerical_superiority:
                         self.description += "On this location, our ground forces will hold position. We are not expecting an enemy assault.\n"
-                    elif has_numerical_superiority:
+                    else:
                         self.description += "On this location, our ground forces have been ordered to hold still, and defend against enemy attacks. An enemy assault might be iminent.\n"
 
         if conflict_number == 0:
