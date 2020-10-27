@@ -76,6 +76,7 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
+from gen.conflictgen import FRONTLINE_LENGTH
 from dcs.mapping import Point
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
@@ -1105,11 +1106,6 @@ class PydcsWaypointBuilder:
         waypoint.ETA = tot
         waypoint.ETA_locked = True
         waypoint.speed_locked = False
-    
-    def get_flight_point(self, name):
-        for i in self.flight.points:
-            if i.name == name:
-                return i
 
     @classmethod
     def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
@@ -1168,16 +1164,11 @@ class IngressBuilder(PydcsWaypointBuilder):
 class CasIngressBuilder(IngressBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-        ingress_waypoint = self.get_flight_point('INGRESS')
-        cas_waypoint = self.get_flight_point('CAS')
         try:
-            ingress_point = Point(ingress_waypoint.position.x, ingress_waypoint.position.y)
-        
+            cas_waypoint = self.flight.waypoint_with_type((FlightWaypointType.CAS,))
             waypoint.add_task(EngageTargetsInZone(
-                                position=cas_waypoint,
-                                radius=ingress_point.distance_to_point(
-                                    cas_waypoint.position
-                                    ),
+                                position=cas_waypoint.position,
+                                radius=FRONTLINE_LENGTH / 2,
                                 targets=[
                                     Targets.All.GroundUnits.GroundVehicles,
                                     Targets.All.GroundUnits.AirDefence.AAA,
@@ -1185,7 +1176,7 @@ class CasIngressBuilder(IngressBuilder):
                                 ])
             )
         except AttributeError:
-            logging.error(f'Unable to create CAS target zone.  Falling back to search and engage')
+            logging.exception('Unable to create CAS target zone.  Falling back to search and engage')
             waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
                               targets=[
                                   Targets.All.GroundUnits.GroundVehicles,
