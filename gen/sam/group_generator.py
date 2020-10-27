@@ -8,12 +8,11 @@ from dcs.unit import Vehicle
 
 class GroupGenerator():
 
-    def __init__(self, game, ground_object, faction = None): # faction is not mandatory because some subclasses do not use it
+    def __init__(self, game, ground_object):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.faction = faction
         self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True

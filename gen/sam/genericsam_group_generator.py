@@ -9,6 +9,10 @@ class GenericSamGroupGenerator(GroupGenerator):
     """
     This is the base for all SAM group generators
     """
+    
+    def __init__(self, game, ground_object, faction):
+        self.faction = faction
+        super(GenericSamGroupGenerator, self).__init__(game, ground_object)
 
     @property
     def groupNamePrefix(self) -> str:
