@@ -1165,10 +1165,9 @@ class IngressBuilder(PydcsWaypointBuilder):
         self.set_waypoint_tot(waypoint, self.timing.ingress)
         return waypoint
 
-class CasIngressBuilder(PydcsWaypointBuilder):
+class CasIngressBuilder(IngressBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.ingress)
         ingress_waypoint = self.get_flight_point('INGRESS')
         cas_waypoint = self.get_flight_point('CAS')
         try:
