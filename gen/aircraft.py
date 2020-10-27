@@ -40,6 +40,7 @@ from dcs.task import (
     ControlledTask,
     EPLRS,
     EngageTargets,
+    EngageTargetsInZone,
     GroundAttack,
     OptROE,
     OptRTBOnBingoFuel,
@@ -75,6 +76,7 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
+from dcs.mapping import Point
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
@@ -1103,6 +1105,11 @@ class PydcsWaypointBuilder:
         waypoint.ETA = tot
         waypoint.ETA_locked = True
         waypoint.speed_locked = False
+    
+    def get_flight_point(self, name):
+        for i in self.flight.points:
+            if i.name == name:
+                return i
 
     @classmethod
     def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
@@ -1162,13 +1169,31 @@ class CasIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
         self.set_waypoint_tot(waypoint, self.timing.ingress)
-        waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
+        ingress_waypoint = self.get_flight_point('INGRESS')
+        cas_waypoint = self.get_flight_point('CAS')
+        try:
+            ingress_point = Point(ingress_waypoint.position.x, ingress_waypoint.position.y)
+        
+            waypoint.add_task(EngageTargetsInZone(
+                                position=cas_waypoint,
+                                radius=ingress_point.distance_to_point(
+                                    cas_waypoint.position
+                                    ),
+                                targets=[
+                                    Targets.All.GroundUnits.GroundVehicles,
+                                    Targets.All.GroundUnits.AirDefence.AAA,
+                                    Targets.All.GroundUnits.Infantry,
+                                ])
+            )
+        except AttributeError:
+            logging.error(f'Unable to create CAS target zone.  Falling back to search and engage')
+            waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
                               targets=[
                                   Targets.All.GroundUnits.GroundVehicles,
                                   Targets.All.GroundUnits.AirDefence.AAA,
                                   Targets.All.GroundUnits.Infantry,
                               ])
-        )
+            )
         waypoint.add_task(OptROE(OptROE.Values.OpenFireWeaponFree))
         return waypoint
 
