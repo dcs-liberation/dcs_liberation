@@ -276,8 +276,7 @@ class ControlPointGroundObjectGenerator:
             return
 
         for _ in range(self.faction.navy_group_count):
-            if not self.generate_ship():
-                break
+            self.generate_ship()
 
     def generate_ship(self) -> None:
         point = find_location(False, self.control_point.position,
@@ -413,6 +412,7 @@ class GroundObjectGenerator:
                 self.game.theater.controlpoints.remove(control_point)
 
     def generate_for_control_point(self, control_point: ControlPoint) -> bool:
+        generator: ControlPointGroundObjectGenerator
         if control_point.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
             generator = CarrierGroundObjectGenerator(self.game, control_point,
                                                      self.templates)
@@ -488,16 +488,16 @@ def find_location(on_ground: bool, near: Point, theater: ConflictTheater,
                     break
 
         if point:
-            for other in theater.controlpoints:
+            for control_point in theater.controlpoints:
                 if is_base_defense:
                     break
-                if other.position != near:
+                if control_point.position != near:
                     if point is None:
                         break
-                    if other.position.distance_to_point(point) < 30000:
+                    if control_point.position.distance_to_point(point) < 30000:
                         point = None
                         break
-                    for ground_obj in other.ground_objects:
+                    for ground_obj in control_point.ground_objects:
                         if ground_obj.position.distance_to_point(point) < 10000:
                             point = None
                             break

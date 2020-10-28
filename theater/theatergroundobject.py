@@ -133,8 +133,12 @@ class BuildingGroundObject(TheaterGroundObject):
         )
 
 
+class GenericCarrierGroundObject(TheaterGroundObject):
+    pass
+
+
 # TODO: Why is this both a CP and a TGO?
-class CarrierGroundObject(TheaterGroundObject):
+class CarrierGroundObject(GenericCarrierGroundObject):
     def __init__(self, name: str, group_id: int,
                  control_point: ControlPoint) -> None:
         super().__init__(
@@ -152,7 +156,7 @@ class CarrierGroundObject(TheaterGroundObject):
 
 
 # TODO: Why is this both a CP and a TGO?
-class LhaGroundObject(TheaterGroundObject):
+class LhaGroundObject(GenericCarrierGroundObject):
     def __init__(self, name: str, group_id: int,
                  control_point: ControlPoint) -> None:
         super().__init__(

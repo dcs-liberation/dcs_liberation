@@ -6,7 +6,12 @@ from dcs.point import PointAction
 from dcs.unit import Vehicle
 
 
-class GroupGenerator():
+# TODO: Generate a group description rather than a pydcs group.
+# It appears that all of this work gets redone at miz generation time (see
+# groundobjectsgen for an example). We can do less work and include the data we
+# care about in the format we want if we just generate our own group description
+# types rather than pydcs groups.
+class GroupGenerator:
 
     def __init__(self, game, ground_object, faction = None): # faction is not mandatory because some subclasses do not use it
         self.game = game
