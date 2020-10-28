@@ -9,6 +9,7 @@ from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
 from gen.sam.group_generator import GroupGenerator
+from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
@@ -99,7 +100,7 @@ SAM_PRICES = {
 }
 
 
-def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerator]]:
+def get_faction_possible_sams_generator(faction: str) -> List[Type[GenericSamGroupGenerator]]:
     """
     Return the list of possible SAM generator for the given faction
     :param faction: Faction name to search units for
