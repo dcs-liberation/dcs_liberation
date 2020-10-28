@@ -1161,31 +1161,35 @@ class IngressBuilder(PydcsWaypointBuilder):
         self.set_waypoint_tot(waypoint, self.timing.ingress)
         return waypoint
 
+
 class CasIngressBuilder(IngressBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-        try:
-            cas_waypoint = self.flight.waypoint_with_type((FlightWaypointType.CAS,))
-            waypoint.add_task(EngageTargetsInZone(
-                                position=cas_waypoint.position,
-                                radius=FRONTLINE_LENGTH / 2,
-                                targets=[
-                                    Targets.All.GroundUnits.GroundVehicles,
-                                    Targets.All.GroundUnits.AirDefence.AAA,
-                                    Targets.All.GroundUnits.Infantry,
-                                ])
+        cas_waypoint = self.flight.waypoint_with_type((FlightWaypointType.CAS,))
+        if cas_waypoint is None:
+            logging.error(
+                "No CAS waypoint found. Falling back to search and engage")
+            waypoint.add_task(EngageTargets(
+                max_distance=nm_to_meter(10),
+                targets=[
+                    Targets.All.GroundUnits.GroundVehicles,
+                    Targets.All.GroundUnits.AirDefence.AAA,
+                    Targets.All.GroundUnits.Infantry,
+                ])
             )
-        except AttributeError:
-            logging.exception('Unable to create CAS target zone.  Falling back to search and engage')
-            waypoint.add_task(EngageTargets(max_distance=nm_to_meter(10),
-                              targets=[
-                                  Targets.All.GroundUnits.GroundVehicles,
-                                  Targets.All.GroundUnits.AirDefence.AAA,
-                                  Targets.All.GroundUnits.Infantry,
-                              ])
+        else:
+            waypoint.add_task(EngageTargetsInZone(
+                position=cas_waypoint.position,
+                radius=FRONTLINE_LENGTH / 2,
+                targets=[
+                    Targets.All.GroundUnits.GroundVehicles,
+                    Targets.All.GroundUnits.AirDefence.AAA,
+                    Targets.All.GroundUnits.Infantry,
+                ])
             )
         waypoint.add_task(OptROE(OptROE.Values.OpenFireWeaponFree))
         return waypoint
+
 
 class SeadIngressBuilder(IngressBuilder):
     def build(self) -> MovingPoint:
