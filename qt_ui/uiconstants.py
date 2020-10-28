@@ -109,6 +109,10 @@ def load_icons():
     ICONS["ship"] = QPixmap("./resources/ui/ground_assets/ship.png")
     ICONS["ship_blue"] = QPixmap("./resources/ui/ground_assets/ship_blue.png")
 
+    ICONS["iads-controlcenter"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/iads-controlcenter.png")
+    ICONS["iads-commnode"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/iads-commnode.png")
+    ICONS["iads-ewr"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/iads-ewr.png")
+    ICONS["iads-power"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/iads-power.png")
     ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
     ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
     ICONS["Cheat"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/cheat.png")

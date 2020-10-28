@@ -1,7 +1,7 @@
 import inspect
 import dcs
 
-DEFAULT_AVAILABLE_BUILDINGS = ['fuel', 'ammo', 'comms', 'oil', 'ware', 'farp', 'fob', 'power', 'factory', 'derrick', 'aa']
+DEFAULT_AVAILABLE_BUILDINGS = ['fuel', 'ammo', 'comms', 'oil', 'ware', 'farp', 'fob', 'power', 'factory', 'derrick', 'aa', 'iads-controlcenter', 'iads-ewr', 'iads-commnode', 'iads-power']
 
 WW2_GERMANY_BUILDINGS = ['fuel', 'factory', 'ww2bunker', 'ww2bunker', 'ww2bunker', 'allycamp', 'allycamp', 'aa']
 WW2_ALLIES_BUILDINGS = ['fuel', 'factory', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'allycamp', 'aa']

@@ -4,11 +4,23 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "Python: Main",
       "type": "python",
       "request": "launch",
       "program": "qt_ui\\main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "preLaunchTask": "Prepare Environment"
+    },
+    {
+      "name": "Python: build ground objects templates",
+      "type": "python",
+      "request": "launch",
+      "program": "resources\\tools\\generate_groundobject_templates.py",
       "console": "integratedTerminal",
       "env": {
         "PYTHONPATH": ".;./pydcs"
