@@ -1,0 +1,48 @@
+DCS Liberation Turn {{ game.turn }}
+====================
+
+Most briefing information, including communications and flight plan information, can be found on your kneeboard.
+
+Current situation:
+====================
+{% if not frontlines  %}There are currently no fights on the ground.{% endif %}{% if frontlines %}{% for frontline in frontlines %}
+{{ frontline.description }}{% endfor %}{% endif %}
+
+Your flights:
+====================
+{% for flight in flights if flight.client_units %}
+--------------------------------------------------
+{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{ flight.size }}, {{ flight.package.target.name}}
+{% for waypoint in flight.waypoints %}{{ loop.index }} -- {{waypoint.name}} : {{ waypoint.description}}
+{% endfor %}
+--------------------------------------------------{% endfor %}
+
+
+Planned ally flights:
+====================
+{% for dep in allied_flights_by_departure %}
+{{ dep }}
+---------------------------------------------------
+{% for flight in allied_flights_by_departure[dep] %}
+{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay_delta }}, {{ flight.package.target.name}}{% endfor %}
+{% endfor %}
+
+Carriers and FARPs:
+===================={% for runway in dynamic_runways %}
+--------------------------------------------------
+{{ runway.airfield_name}}
+RADIO : {{ runway.atc }}
+TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
+{% if runway.icls %}ICLS Channel: {{ runway.icls }}{% endif %}
+{% endfor %}
+
+AWACS:
+====================
+{% for i in awacs %}{{ i.callsign }} -- Freq : {{i.freq.mhz}}
+{% endfor %}
+
+JTACS [F-10 Menu] : 
+====================
+{% for jtac in jtacs %}Frontline {{ jtac.region }} -- Code : {{ jtac.code }}
+{% endfor %}
+

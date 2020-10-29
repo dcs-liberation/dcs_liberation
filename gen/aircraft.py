@@ -277,6 +277,10 @@ class FlightData:
     def aircraft_type(self) -> FlyingType:
         """Returns the type of aircraft in this flight."""
         return self.units[0].unit_type
+    
+    @property
+    def departure_delay_delta(self) -> timedelta:
+        return timedelta(seconds=self.departure_delay)
 
     def num_radio_channels(self, radio_id: int) -> int:
         """Returns the number of preset channels for the given radio."""
