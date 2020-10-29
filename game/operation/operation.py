@@ -357,9 +357,9 @@ class Operation:
                         "position": { "x": flightTarget.position.x, "y": flightTarget.position.y}
                     }
                 
-
-        self.briefinggen.generate()
-        kneeboard_generator.generate()
+        ## These are being called twice in this method?
+        # self.briefinggen.generate()
+        # kneeboard_generator.generate()
 
 
         # set a LUA table with data from Liberation that we want to set

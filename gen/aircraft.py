@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Dict, List, Optional, Type, Union
 
 from dcs import helicopters
@@ -272,6 +273,10 @@ class FlightData:
     def aircraft_type(self) -> FlyingType:
         """Returns the type of aircraft in this flight."""
         return self.units[0].unit_type
+    
+    @property
+    def departure_delay_delta(self) -> timedelta:
+        return timedelta(seconds=self.departure_delay)
 
     def num_radio_channels(self, radio_id: int) -> int:
         """Returns the number of preset channels for the given radio."""
