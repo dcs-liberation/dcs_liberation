@@ -6,7 +6,7 @@ Most briefing information, including communications and flight plan information,
 Current situation:
 ====================
 {% if not frontlines  %}There are currently no fights on the ground.{% endif %}{% if frontlines %}{% for frontline in frontlines %}
-{{ frontline.description }}{% endfor %}{% endif %}
+{{ frontline.brief }}{% endfor %}{% endif %}
 
 Your flights:
 ====================
