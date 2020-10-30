@@ -1,6 +1,8 @@
 import os
 import random
+import logging
 from dataclasses import dataclass
+from theater.frontline import FrontLine
 from typing import List, Dict, TYPE_CHECKING
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -9,7 +11,8 @@ from dcs.mission import Mission
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
-from .conflictgen import Conflict
+# from .conflictgen import Conflict
+from theater import ControlPoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
@@ -23,18 +26,6 @@ class CommInfo:
     """Communications information for the kneeboard."""
     name: str
     freq: RadioFrequency
-
-
-@dataclass
-class BriefingInfo:
-    description: str
-
-
-@dataclass
-class FrontLineInfo(BriefingInfo):
-    enemy_base: str
-    player_base: str
-
 
 class MissionInfoGenerator:
     """Base type for generators of mission information for the player.
@@ -102,9 +93,9 @@ class MissionInfoGenerator:
 
 class BriefingGenerator(MissionInfoGenerator):
 
-    def __init__(self, mission: Mission, conflict: Conflict, game: 'Game'):
+    def __init__(self, mission: Mission, game: 'Game'):
         super().__init__(mission)
-        self.conflict = conflict
+        # self.conflict = conflict
         self.game = game
         self.title = ""
         self.description = ""
@@ -129,74 +120,15 @@ class BriefingGenerator(MissionInfoGenerator):
         self.dynamic_runways.append(runway)
 
     def generate(self):
-        self.generate_ongoing_war_text()
+        self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
         self.mission.set_description_text(self.template.render(vars(self)))
         self.mission.add_picture_blue(os.path.abspath(
             "./resources/ui/splash_screen.png"))
 
-    def __random_frontline_sentence(self, player_base_name, enemy_base_name):
-        templates = [
-            "There are combats between {} and {}. ",
-            "The war on the ground is still going on between {} and {}. ",
-            "Our ground forces in {} are opposed to enemy forces based in {}. ",
-            "Our forces from {} are fighting enemies based in {}. ",
-            "There is an active frontline between {} and {}. ",
-        ]
-        return random.choice(templates).format(player_base_name, enemy_base_name)
-
-    # TODO: refactor this, perhaps move to FrontLineInfo factory object or template?
-    def generate_ongoing_war_text(self):
+    def _generate_frontline_info(self):
         for front_line in self.game.theater.conflicts(from_player=True):
-            player_base = front_line.control_point_a
-            enemy_base = front_line.control_point_b
-            has_numerical_superiority = player_base.base.total_armor > enemy_base.base.total_armor
-            description = self.__random_frontline_sentence(player_base.name, enemy_base.name)
-            stance = player_base.stances[enemy_base.id]
-            if player_base.base.total_armor == 0:
-                player_zero = True
-                description += ("We do not have a single vehicle available to hold our position, the situation is"
-                                "critical, and we will lose ground inevitably.\n")
-            elif enemy_base.base.total_armor == 0:
-                player_zero = False
-                description += ("The enemy forces have been crushed, we will be able to make significant progress"
-                                f" toward {enemy_base.name}. \n")
-            else:
-                player_zero = False
-            if not player_zero:
-                if stance == CombatStance.AGGRESSIVE:
-                    if has_numerical_superiority:
-                        description += ("On this location, our ground forces will try to make "
-                                        "progress against the enemy. As the enemy is outnumbered, "
-                                        "our forces should have no issue making progress.\n")
-                    else:
-                        description += ("On this location, our ground forces will try an audacious "
-                                        "assault against enemies in superior numbers. The operation"
-                                        " is risky, and the enemy might counter attack.\n")
-                elif stance == CombatStance.ELIMINATION:
-                    if has_numerical_superiority:
-                        description += ("On this location, our ground forces will focus on the destruction of enemy"
-                                        f"assets, before attempting to make progress toward {enemy_base.name}. "
-                                        "The enemy is already outnumbered, and this maneuver might draw a final "
-                                        "blow to their forces.\n")
-                    else:
-                        description += ("On this location, our ground forces will try an audacious assault against "
-                                        "enemies in superior numbers. The operation is risky, and the enemy might "
-                                        "counter attack.\n")
-                elif stance == CombatStance.BREAKTHROUGH:
-                    if has_numerical_superiority:
-                        description += ("On this location, our ground forces will focus on progression toward "
-                                        f"{enemy_base.name}.\n")
-                    else:
-                        description += ("On this location, our ground forces have been ordered to rush toward "
-                                        f"{enemy_base.name}. Wish them luck... We are also expecting a counter attack.\n")
-                elif stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
-                    if has_numerical_superiority:
-                        description += "On this location, our ground forces will hold position. We are not expecting an enemy assault.\n"
-                    else:
-                        description += ("On this location, our ground forces have been ordered to hold still, "
-                                        "and defend against enemy attacks. An enemy assault might be iminent.\n")
-            self.add_frontline(FrontLineInfo(description, enemy_base, player_base))
+            self.add_frontline(front_line)
 
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
@@ -207,3 +139,109 @@ class BriefingGenerator(MissionInfoGenerator):
                     self.allied_flights_by_departure[name].append(flight)
                 else:
                     self.allied_flights_by_departure[name] = [flight]
+
+@dataclass
+class FrontLineInfo:
+    front_line: FrontLine
+    description: str = FrontLine.name
+    player_base: ControlPoint = FrontLine.control_point_a
+    enemy_base: ControlPoint = FrontLine.control_point_b
+    player_zero: bool = player_base.base.total_armor == 0
+    enemy_zero: bool = enemy_base.base.total_armor == 0
+    advantage: bool = player_base.base.total_armor > enemy_base.base.total_armor
+    stance: CombatStance = player_base.stances[enemy_base.id]
+    
+
+    @property
+    def _random_frontline_sentence(self) -> str:
+        '''Random sentences for start of situation briefing'''
+        templates = [
+            f"There are combats between {self.player_base.name} and {self.enemy_base.name}. ",
+            f"The war on the ground is still going on between {self.player_base.name} and {self.enemy_base.name}. ",
+            f"Our ground forces in {self.player_base.name} are opposed to enemy forces based in {self.enemy_base.name}. ",
+            f"Our forces from {self.player_base.name} are fighting enemies based in {self.enemy_base.name}. ",
+            f"There is an active frontline between {self.player_base.name} and {self.enemy_base.name}. ",
+        ]
+        return random.choice(templates)
+    
+    @property
+    def _zero_units_sentence(self) -> str:
+        '''Situation description if either side has zero units on a frontline'''
+        if self.player_zero:
+            return ("We do not have a single vehicle available to hold our position, the situation is"
+                    "critical, and we will lose ground inevitably.")
+        elif self.enemy_zero:
+            return ("The enemy forces have been crushed, we will be able to make significant progress"
+                    f" toward {enemy_base.name}.")
+
+    @property
+    def _advantage_description(self) -> str:
+        '''Situation description for when player has numerical advantage on the frontline'''
+        if self.stance == CombatStance.AGGRESSIVE:
+            return (
+                "On this location, our ground forces will try to make "
+                "progress against the enemy. As the enemy is outnumbered, "
+                "our forces should have no issue making progress."
+                )
+        elif self.stance == CombatStance.ELIMINATION:
+            return (
+                "On this location, our ground forces will focus on the destruction of enemy"
+                f"assets, before attempting to make progress toward {enemy_base.name}. "
+                "The enemy is already outnumbered, and this maneuver might draw a final "
+                "blow to their forces."
+            )
+        elif self.stance == CombatStance.BREAKTHROUGH:
+            return (
+                "On this location, our ground forces will focus on progression toward "
+                f"{enemy_base.name}."
+            )
+        elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
+            return (
+                "On this location, our ground forces will hold position. We are not expecting an enemy assault."
+            )
+        # TODO: Write a situation description for player RETREAT stance
+        elif self.stance == CombatStance.RETREAT:
+            return ''
+        else:
+            logging.warning('Briefing did not receive a known CombatStance')
+    
+    @property
+    def _disadvantage_description(self):
+        if self.stance == CombatStance.AGGRESSIVE:
+            return (
+                "On this location, our ground forces will try an audacious "
+                "assault against enemies in superior numbers. The operation"
+                " is risky, and the enemy might counter attack."
+                )
+        elif self.stance == CombatStance.ELIMINATION:
+            return (
+                "On this location, our ground forces will try an audacious assault against "
+                "enemies in superior numbers. The operation is risky, and the enemy might "
+                "counter attack.\n"
+            )
+        elif self.stance == CombatStance.BREAKTHROUGH:
+            return (
+                "On this location, our ground forces have been ordered to rush toward "
+                f"{enemy_base.name}. Wish them luck... We are also expecting a counter attack."
+            )
+        elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
+            return (
+                "On this location, our ground forces have been ordered to hold still, "
+                "and defend against enemy attacks. An enemy assault might be iminent."
+            )
+        # TODO: Write a situation description for player RETREAT stance
+        elif self.stance == CombatStance.RETREAT:
+            return ''
+        else:
+            logging.warning('Briefing did not receive a known CombatStance')
+    
+    @property
+    def brief(self):
+        if self.player_zero:
+            return self._zero_units_sentence
+        
+        situation = self._zero_units_sentence
+        if self.advantage:
+            situation += self._advantage_description
+        else:
+            situation += self._disadvantage_description
