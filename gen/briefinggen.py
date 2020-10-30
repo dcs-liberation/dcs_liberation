@@ -30,6 +30,7 @@ class CommInfo:
     name: str
     freq: RadioFrequency
 
+
 class FrontLineInfo:
     def __init__(self, front_line: FrontLine):
         self.front_line: FrontLine = front_line
@@ -39,7 +40,6 @@ class FrontLineInfo:
         self.enemy_zero: bool = self.enemy_base.base.total_armor == 0
         self.advantage: bool = self.player_base.base.total_armor > self.enemy_base.base.total_armor
         self.stance: CombatStance = self.player_base.stances[self.enemy_base.id]
-    
 
     @property
     def _random_frontline_sentence(self) -> str:
@@ -52,7 +52,7 @@ class FrontLineInfo:
             f"There is an active frontline between {self.player_base.name} and {self.enemy_base.name}. ",
         ]
         return random.choice(templates)
-    
+
     @property
     def _zero_units_sentence(self) -> str:
         '''Situation description if either side has zero units on a frontline'''
@@ -94,7 +94,7 @@ class FrontLineInfo:
             return ''
         else:
             logging.warning('Briefing did not receive a known CombatStance')
-    
+
     @property
     def _disadvantage_description(self):
         if self.stance == CombatStance.AGGRESSIVE:
@@ -124,7 +124,7 @@ class FrontLineInfo:
             return ''
         else:
             logging.warning('Briefing did not receive a known CombatStance')
-    
+
     @property
     def brief(self):
         if self._zero_units_sentence:
@@ -135,7 +135,8 @@ class FrontLineInfo:
         else:
             situation += self._disadvantage_description
         return situation
-        
+
+
 class MissionInfoGenerator:
     """Base type for generators of mission information for the player.
 
@@ -150,6 +151,7 @@ class MissionInfoGenerator:
         self.jtacs: List[JtacInfo] = []
         self.tankers: List[TankerInfo] = []
         self.frontlines: List[FrontLineInfo] = []
+        self.dynamic_runways: List[RunwayData] = []
 
     def add_awacs(self, awacs: AwacsInfo) -> None:
         """Adds an AWACS/GCI to the mission.
@@ -193,7 +195,20 @@ class MissionInfoGenerator:
         self.tankers.append(tanker)
 
     def add_frontline(self, frontline: FrontLineInfo) -> None:
+        '''Adds a frontline to the briefing
+
+        Arguments:
+            frontline {FrontLineInfo} -- [description]
+        '''
         self.frontlines.append(frontline)
+
+    def add_dynamic_runway(self, runway: RunwayData) -> None:
+        """Adds a dynamically generated runway to the briefing.
+
+        Dynamic runways are any valid landing point that is a unit rather than a
+        map feature. These include carriers, ships with a helipad, and FARPs.
+        """
+        self.dynamic_runways.append(runway)
 
     def generate(self) -> None:
         """Generates the mission information."""
@@ -208,7 +223,6 @@ class BriefingGenerator(MissionInfoGenerator):
         self.game = game
         self.title = ""
         self.description = ""
-        self.dynamic_runways: List[RunwayData] = []
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
         env = Environment(
             loader=FileSystemLoader('resources/briefing/templates'),
@@ -220,15 +234,9 @@ class BriefingGenerator(MissionInfoGenerator):
             )
         self.template = env.get_template('briefingtemplate_EN.j2')
 
-    def add_dynamic_runway(self, runway: RunwayData) -> None:
-        """Adds a dynamically generated runway to the briefing.
-
-        Dynamic runways are any valid landing point that is a unit rather than a
-        map feature. These include carriers, ships with a helipad, and FARPs.
-        """
-        self.dynamic_runways.append(runway)
-
     def generate(self):
+        '''Generate the mission briefing
+        '''
         self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
         with open('testgen.txt', 'w') as file:
@@ -238,16 +246,19 @@ class BriefingGenerator(MissionInfoGenerator):
             "./resources/ui/splash_screen.png"))
 
     def _generate_frontline_info(self):
+        '''Build FrontLineInfo objects from FrontLine type and append to briefing.
+        '''
         for front_line in self.game.theater.conflicts(from_player=True):
-            print(front_line.name)
             self.add_frontline(FrontLineInfo(front_line))
 
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
+        '''Create iterable to display allied flights grouped by departure airfield.
+        '''
         for flight in self.flights:
-            if not flight.client_units and flight.friendly:  # where else can we get this?
+            if not flight.client_units and flight.friendly:
                 name = flight.departure.airfield_name
-                if name in self.allied_flights_by_departure.keys():
+                if name in self.allied_flights_by_departure.keys():  # where else can we get this?
                     self.allied_flights_by_departure[name].append(flight)
                 else:
                     self.allied_flights_by_departure[name] = [flight]
