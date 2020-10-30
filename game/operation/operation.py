@@ -90,8 +90,7 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
-        self.briefinggen = BriefingGenerator(self.current_mission,
-                                             self.conflict, self.game)
+        self.briefinggen = BriefingGenerator(self.current_mission, self.game)
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
