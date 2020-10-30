@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import unittest
 
 from dcs.helicopters import UH_1H, AH_64A
@@ -11,13 +12,17 @@ from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
 from game.factions.faction import Faction
 
 
+THIS_DIR = Path(__file__).parent
+RESOURCES_DIR = THIS_DIR / "resources"
+
+
 class TestFactionLoader(unittest.TestCase):
 
     def setUp(self):
         pass
 
     def test_load_valid_faction(self):
-        with open("./resources/valid_faction.json", 'r') as data:
+        with (RESOURCES_DIR / "valid_faction.json").open('r') as data:
             faction = Faction.from_json(json.load(data))
 
             self.assertEqual(faction.country, "USA")
@@ -87,7 +92,7 @@ class TestFactionLoader(unittest.TestCase):
 
     def test_load_valid_faction_with_invalid_country(self):
 
-        with open("./resources/invalid_faction_country.json", 'r') as data:
+        with (RESOURCES_DIR / "invalid_faction_country.json").open("r") as data:
             try:
                 Faction.from_json(json.load(data))
                 self.fail("Should have thrown assertion error")
