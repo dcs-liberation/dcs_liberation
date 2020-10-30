@@ -162,7 +162,7 @@ class PackageModel(QAbstractListModel):
         """Returns the flight located at the given index."""
         return self.package.flights[index.row()]
 
-    def update_tot(self, tot: int) -> None:
+    def update_tot(self, tot: datetime.timedelta) -> None:
         self.package.time_over_target = tot
         self.layoutChanged.emit()
 

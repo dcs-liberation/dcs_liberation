@@ -19,7 +19,8 @@ class QFlightDepartureDisplay(QGroupBox):
         layout.addLayout(departure_row)
 
         estimator = TotEstimator(package)
-        delay = datetime.timedelta(seconds=estimator.mission_start_time(flight))
+        delay = datetime.timedelta(
+            seconds=int(estimator.mission_start_time(flight).total_seconds()))
 
         departure_row.addWidget(QLabel(
             f"Departing from <b>{flight.from_cp.name}</b>"

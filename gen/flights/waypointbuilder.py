@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import List, Optional, Union
+from dataclasses import dataclass
+from typing import List, Optional, Tuple, Union
 
 from dcs.mapping import Point
 from dcs.unit import Unit
@@ -13,23 +14,50 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 from ..runways import RunwayAssigner
 
 
+@dataclass(frozen=True)
+class StrikeTarget:
+    name: str
+    target: Union[TheaterGroundObject, Unit]
+
+
 class WaypointBuilder:
     def __init__(self, conditions: Conditions, flight: Flight,
-                 doctrine: Doctrine) -> None:
+                 doctrine: Doctrine,
+                 targets: Optional[List[StrikeTarget]] = None) -> None:
         self.conditions = conditions
         self.flight = flight
         self.doctrine = doctrine
-        self.waypoints: List[FlightWaypoint] = []
-        self.ingress_point: Optional[FlightWaypoint] = None
+        self.targets = targets
 
     @property
     def is_helo(self) -> bool:
         return getattr(self.flight.unit_type, "helicopter", False)
 
-    def build(self) -> List[FlightWaypoint]:
-        return self.waypoints
+    @staticmethod
+    def takeoff(departure: ControlPoint) -> FlightWaypoint:
+        """Create takeoff waypoint for the given arrival airfield or carrier.
 
-    def ascent(self, departure: ControlPoint) -> None:
+        Note that the takeoff waypoint will automatically be created by pydcs
+        when we create the group, but creating our own before generation makes
+        the planning code simpler.
+
+        Args:
+            departure: Departure airfield or carrier.
+        """
+        position = departure.position
+        waypoint = FlightWaypoint(
+            FlightWaypointType.TAKEOFF,
+            position.x,
+            position.y,
+            0
+        )
+        waypoint.name = "TAKEOFF"
+        waypoint.alt_type = "RADIO"
+        waypoint.description = "Takeoff"
+        waypoint.pretty_name = "Takeoff"
+        return waypoint
+
+    def ascent(self, departure: ControlPoint) -> FlightWaypoint:
         """Create ascent waypoint for the given departure airfield or carrier.
 
         Args:
@@ -49,9 +77,9 @@ class WaypointBuilder:
         waypoint.alt_type = "RADIO"
         waypoint.description = "Ascend"
         waypoint.pretty_name = "Ascend"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def descent(self, arrival: ControlPoint) -> None:
+    def descent(self, arrival: ControlPoint) -> FlightWaypoint:
         """Create descent waypoint for the given arrival airfield or carrier.
 
         Args:
@@ -73,9 +101,10 @@ class WaypointBuilder:
         waypoint.alt_type = "RADIO"
         waypoint.description = "Descend to pattern altitude"
         waypoint.pretty_name = "Descend"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def land(self, arrival: ControlPoint) -> None:
+    @staticmethod
+    def land(arrival: ControlPoint) -> FlightWaypoint:
         """Create descent waypoint for the given arrival airfield or carrier.
 
         Args:
@@ -92,9 +121,9 @@ class WaypointBuilder:
         waypoint.alt_type = "RADIO"
         waypoint.description = "Land"
         waypoint.pretty_name = "Land"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def hold(self, position: Point) -> None:
+    def hold(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.LOITER,
             position.x,
@@ -104,9 +133,9 @@ class WaypointBuilder:
         waypoint.pretty_name = "Hold"
         waypoint.description = "Wait until push time"
         waypoint.name = "HOLD"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def join(self, position: Point) -> None:
+    def join(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.JOIN,
             position.x,
@@ -116,9 +145,9 @@ class WaypointBuilder:
         waypoint.pretty_name = "Join"
         waypoint.description = "Rendezvous with package"
         waypoint.name = "JOIN"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def split(self, position: Point) -> None:
+    def split(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.SPLIT,
             position.x,
@@ -128,25 +157,30 @@ class WaypointBuilder:
         waypoint.pretty_name = "Split"
         waypoint.description = "Depart from package"
         waypoint.name = "SPLIT"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def ingress_cas(self, position: Point, objective: MissionTarget) -> None:
-        self._ingress(FlightWaypointType.INGRESS_CAS, position, objective)
+    def ingress_cas(self, position: Point,
+                    objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_CAS, position,
+                             objective)
 
-    def ingress_escort(self, position: Point, objective: MissionTarget) -> None:
-        self._ingress(FlightWaypointType.INGRESS_ESCORT, position, objective)
+    def ingress_escort(self, position: Point,
+                       objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_ESCORT, position,
+                             objective)
 
-    def ingress_sead(self, position: Point, objective: MissionTarget) -> None:
-        self._ingress(FlightWaypointType.INGRESS_SEAD, position, objective)
+    def ingress_sead(self, position: Point,
+                     objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_SEAD, position,
+                             objective)
 
-    def ingress_strike(self, position: Point, objective: MissionTarget) -> None:
-        self._ingress(FlightWaypointType.INGRESS_STRIKE, position, objective)
+    def ingress_strike(self, position: Point,
+                       objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_STRIKE, position,
+                             objective)
 
     def _ingress(self, ingress_type: FlightWaypointType, position: Point,
-                 objective: MissionTarget) -> None:
-        if self.ingress_point is not None:
-            raise RuntimeError("A flight plan can have only one ingress point.")
-
+                 objective: MissionTarget) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             ingress_type,
             position.x,
@@ -156,10 +190,11 @@ class WaypointBuilder:
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
         waypoint.name = "INGRESS"
-        self.waypoints.append(waypoint)
-        self.ingress_point = waypoint
+        # TODO: This seems wrong, but it's what was there before.
+        waypoint.targets.append(objective)
+        return waypoint
 
-    def egress(self, position: Point, target: MissionTarget) -> None:
+    def egress(self, position: Point, target: MissionTarget) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.EGRESS,
             position.x,
@@ -169,68 +204,45 @@ class WaypointBuilder:
         waypoint.pretty_name = "EGRESS from " + target.name
         waypoint.description = "EGRESS from " + target.name
         waypoint.name = "EGRESS"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def dead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
-                   location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE {name}", location)
-        # TODO: Seems fishy.
-        if self.ingress_point is not None:
-            self.ingress_point.targetGroup = location
+    def dead_point(self, target: StrikeTarget) -> FlightWaypoint:
+        return self._target_point(target, f"STRIKE {target.name}")
 
-    def sead_point(self, target: Union[TheaterGroundObject, Unit], name: str,
-                   location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE {name}", location)
-        # TODO: Seems fishy.
-        if self.ingress_point is not None:
-            self.ingress_point.targetGroup = location
+    def sead_point(self, target: StrikeTarget) -> FlightWaypoint:
+        return self._target_point(target, f"STRIKE {target.name}")
 
-    def strike_point(self, target: Union[TheaterGroundObject, Unit], name: str,
-                     location: MissionTarget) -> None:
-        self._target_point(target, name, f"STRIKE {name}", location)
+    def strike_point(self, target: StrikeTarget) -> FlightWaypoint:
+        return self._target_point(target, f"STRIKE {target.name}")
 
-    def _target_point(self, target: Union[TheaterGroundObject, Unit], name: str,
-                      description: str, location: MissionTarget) -> None:
-        if self.ingress_point is None:
-            raise RuntimeError(
-                "An ingress point must be added before target points."
-            )
-
+    @staticmethod
+    def _target_point(target: StrikeTarget, description: str) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_POINT,
-            target.position.x,
-            target.position.y,
+            target.target.position.x,
+            target.target.position.y,
             0
         )
         waypoint.description = description
         waypoint.pretty_name = description
-        waypoint.name = name
+        waypoint.name = target.name
         # The target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
         waypoint.only_for_player = True
-        self.waypoints.append(waypoint)
-        # TODO: This seems wrong, but it's what was there before.
-        self.ingress_point.targets.append(location)
+        return waypoint
 
-    def sead_area(self, target: MissionTarget) -> None:
-        self._target_area(f"SEAD on {target.name}", target)
-        # TODO: Seems fishy.
-        if self.ingress_point is not None:
-            self.ingress_point.targetGroup = target
+    def strike_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"STRIKE {target.name}", target)
 
-    def dead_area(self, target: MissionTarget) -> None:
-        self._target_area(f"DEAD on {target.name}", target)
-        # TODO: Seems fishy.
-        if self.ingress_point is not None:
-            self.ingress_point.targetGroup = target
+    def sead_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"SEAD on {target.name}", target)
 
-    def _target_area(self, name: str, location: MissionTarget) -> None:
-        if self.ingress_point is None:
-            raise RuntimeError(
-                "An ingress point must be added before target points."
-            )
+    def dead_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"DEAD on {target.name}", target)
 
+    @staticmethod
+    def _target_area(name: str, location: MissionTarget) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position.x,
@@ -244,11 +256,9 @@ class WaypointBuilder:
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
         waypoint.only_for_player = True
-        self.waypoints.append(waypoint)
-        # TODO: This seems wrong, but it's what was there before.
-        self.ingress_point.targets.append(location)
+        return waypoint
 
-    def cas(self, position: Point) -> None:
+    def cas(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.CAS,
             position.x,
@@ -259,9 +269,10 @@ class WaypointBuilder:
         waypoint.description = "Provide CAS"
         waypoint.name = "CAS"
         waypoint.pretty_name = "CAS"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def race_track_start(self, position: Point, altitude: int) -> None:
+    @staticmethod
+    def race_track_start(position: Point, altitude: int) -> FlightWaypoint:
         """Creates a racetrack start waypoint.
 
         Args:
@@ -277,9 +288,10 @@ class WaypointBuilder:
         waypoint.name = "RACETRACK START"
         waypoint.description = "Orbit between this point and the next point"
         waypoint.pretty_name = "Race-track start"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def race_track_end(self, position: Point, altitude: int) -> None:
+    @staticmethod
+    def race_track_end(position: Point, altitude: int) -> FlightWaypoint:
         """Creates a racetrack end waypoint.
 
         Args:
@@ -295,9 +307,10 @@ class WaypointBuilder:
         waypoint.name = "RACETRACK END"
         waypoint.description = "Orbit between this point and the previous point"
         waypoint.pretty_name = "Race-track end"
-        self.waypoints.append(waypoint)
+        return waypoint
 
-    def race_track(self, start: Point, end: Point, altitude: int) -> None:
+    def race_track(self, start: Point, end: Point,
+                   altitude: int) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates two waypoint for a racetrack orbit.
 
         Args:
@@ -305,20 +318,20 @@ class WaypointBuilder:
             end: The ending racetrack waypoint.
             altitude: The racetrack altitude.
         """
-        self.race_track_start(start, altitude)
-        self.race_track_end(end, altitude)
+        return (self.race_track_start(start, altitude),
+                self.race_track_end(end, altitude))
 
-    def rtb(self, arrival: ControlPoint) -> None:
+    def rtb(self,
+            arrival: ControlPoint) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates descent ant landing waypoints for the given control point.
 
         Args:
             arrival: Arrival airfield or carrier.
         """
-        self.descent(arrival)
-        self.land(arrival)
+        return self.descent(arrival), self.land(arrival)
 
-    def escort(self, ingress: Point, target: MissionTarget,
-               egress: Point) -> None:
+    def escort(self, ingress: Point, target: MissionTarget, egress: Point) -> \
+            Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 
         Args:
@@ -332,7 +345,8 @@ class WaypointBuilder:
         # description in gen.aircraft.JoinPointBuilder), so instead we give
         # the escort flights a flight plan including the ingress point, target
         # area, and egress point.
-        self._ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
+        ingress = self._ingress(FlightWaypointType.INGRESS_ESCORT, ingress,
+                                target)
 
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,
@@ -343,6 +357,6 @@ class WaypointBuilder:
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"
         waypoint.pretty_name = "Target area"
-        self.waypoints.append(waypoint)
 
-        self.egress(egress, target)
+        egress = self.egress(egress, target)
+        return ingress, waypoint, egress

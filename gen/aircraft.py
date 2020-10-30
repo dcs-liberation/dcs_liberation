@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Dict, List, Optional, Type, Union
 
 from dcs import helicopters
@@ -11,7 +12,6 @@ from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
 from dcs.helicopters import UH_1H, helicopter_map
-from dcs.mapping import Point
 from dcs.mission import Mission, StartType
 from dcs.planes import (
     AJS37,
@@ -81,7 +81,12 @@ from dcs.mapping import Point
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
-from .flights.traveltime import PackageWaypointTiming, TotEstimator
+from .flights.flightplan import (
+    CasFlightPlan,
+    FormationFlightPlan,
+    PatrollingFlightPlan,
+)
+from .flights.traveltime import TotEstimator
 from .naming import namegen
 from .runways import RunwayAssigner
 
@@ -785,7 +790,6 @@ class AircraftConflictGenerator:
         for package in ato.packages:
             if not package.flights:
                 continue
-            timing = PackageWaypointTiming.for_package(package)
             for flight in package.flights:
                 culled = self.game.position_culled(flight.from_cp.position)
                 if flight.client_count == 0 and culled:
@@ -795,10 +799,10 @@ class AircraftConflictGenerator:
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
                 self.setup_flight_group(group, package, flight, dynamic_runways)
-                self.create_waypoints(group, package, flight, timing)
+                self.create_waypoints(group, package, flight)
 
     def set_activation_time(self, flight: Flight, group: FlyingGroup,
-                            delay: int) -> None:
+                            delay: timedelta) -> None:
         # Note: Late activation causes the waypoint TOTs to look *weird* in the
         # mission editor. Waypoint times will be relative to the group
         # activation time rather than in absolute local time. A flight delayed
@@ -808,20 +812,22 @@ class AircraftConflictGenerator:
 
         activation_trigger = TriggerOnce(
             Event.NoEvent, f"FlightLateActivationTrigger{group.id}")
-        activation_trigger.add_condition(TimeAfter(seconds=delay))
+        activation_trigger.add_condition(
+            TimeAfter(seconds=int(delay.total_seconds())))
 
         self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
         activation_trigger.add_action(ActivateGroup(group.id))
         self.m.triggerrules.triggers.append(activation_trigger)
 
     def set_startup_time(self, flight: Flight, group: FlyingGroup,
-                         delay: int) -> None:
+                         delay: timedelta) -> None:
         # Uncontrolled causes the AI unit to spawn, but not begin startup.
         group.uncontrolled = True
 
         activation_trigger = TriggerOnce(Event.NoEvent,
                                          f"FlightStartTrigger{group.id}")
-        activation_trigger.add_condition(TimeAfter(seconds=delay))
+        activation_trigger.add_condition(
+            TimeAfter(seconds=int(delay.total_seconds())))
 
         self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
         group.add_trigger_action(StartCommand())
@@ -882,7 +888,6 @@ class AircraftConflictGenerator:
                 at=cp.position)
             group.points[0].alt = 1500
 
-        flight.group = group
         return group
 
     @staticmethod
@@ -1012,8 +1017,8 @@ class AircraftConflictGenerator:
 
         self.configure_eplrs(group, flight)
 
-    def create_waypoints(self, group: FlyingGroup, package: Package,
-                         flight: Flight, timing: PackageWaypointTiming) -> None:
+    def create_waypoints(
+            self, group: FlyingGroup, package: Package, flight: Flight) -> None:
 
         for waypoint in flight.points:
             waypoint.tot = None
@@ -1030,7 +1035,7 @@ class AircraftConflictGenerator:
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
-                point, group, flight, timing, self.m
+                point, group, package, flight, self.m
             ).build()
 
         # Set here rather than when the FlightData is created so they waypoints
@@ -1043,7 +1048,7 @@ class AircraftConflictGenerator:
         estimator = TotEstimator(package)
         start_time = estimator.mission_start_time(flight)
 
-        if start_time > 0:
+        if start_time.total_seconds() > 0:
             if self.should_activate_late(flight):
                 # Late activation causes the aircraft to not be spawned until
                 # triggered.
@@ -1085,12 +1090,12 @@ class AircraftConflictGenerator:
 
 class PydcsWaypointBuilder:
     def __init__(self, waypoint: FlightWaypoint, group: FlyingGroup,
-                 flight: Flight, timing: PackageWaypointTiming,
+                 package: Package, flight: Flight,
                  mission: Mission) -> None:
         self.waypoint = waypoint
         self.group = group
+        self.package = package
         self.flight = flight
-        self.timing = timing
         self.mission = mission
 
     def build(self) -> MovingPoint:
@@ -1099,35 +1104,32 @@ class PydcsWaypointBuilder:
 
         waypoint.alt_type = self.waypoint.alt_type
         waypoint.name = String(self.waypoint.name)
+        tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
+        if tot is not None:
+            self.set_waypoint_tot(waypoint, tot)
         return waypoint
 
-    def set_waypoint_tot(self, waypoint: MovingPoint, tot: int) -> None:
+    def set_waypoint_tot(self, waypoint: MovingPoint, tot: timedelta) -> None:
         self.waypoint.tot = tot
-        waypoint.ETA = tot
+        waypoint.ETA = int(tot.total_seconds())
         waypoint.ETA_locked = True
         waypoint.speed_locked = False
 
     @classmethod
     def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
-                     flight: Flight, timing: PackageWaypointTiming,
+                     package: Package, flight: Flight,
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
-            FlightWaypointType.EGRESS: EgressPointBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
-            FlightWaypointType.INGRESS_ESCORT: IngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
-            FlightWaypointType.SPLIT: SplitPointBuilder,
-            FlightWaypointType.TARGET_GROUP_LOC: TargetPointBuilder,
-            FlightWaypointType.TARGET_POINT: TargetPointBuilder,
-            FlightWaypointType.TARGET_SHIP: TargetPointBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
-        return builder(waypoint, group, flight, timing, mission)
+        return builder(waypoint, group, package, flight, mission)
 
 
 class DefaultWaypointBuilder(PydcsWaypointBuilder):
@@ -1141,32 +1143,35 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.Circle
         ))
-        push_time = self.timing.push_time(self.flight, self.waypoint)
+        if not isinstance(self.flight.flight_plan, FormationFlightPlan):
+            flight_plan_type = self.flight.flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot configure hold for for {self.flight} because "
+                f"{flight_plan_type} does not define a push time. AI will push "
+                "immediately and may flight unsuitable speeds."
+            )
+            return waypoint
+        push_time = self.flight.flight_plan.push_time
         self.waypoint.departure_time = push_time
-        loiter.stop_after_time(push_time)
+        loiter.stop_after_time(int(push_time.total_seconds()))
         waypoint.add_task(loiter)
         return waypoint
 
 
-class EgressPointBuilder(PydcsWaypointBuilder):
+class CasIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.egress)
-        return waypoint
-
-
-class IngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.ingress)
-        return waypoint
-
-
-class CasIngressBuilder(IngressBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-        cas_waypoint = self.flight.waypoint_with_type((FlightWaypointType.CAS,))
-        if cas_waypoint is None:
+        if isinstance(self.flight.flight_plan, CasFlightPlan):
+            waypoint.add_task(EngageTargetsInZone(
+                position=self.flight.flight_plan.target,
+                radius=FRONTLINE_LENGTH / 2,
+                targets=[
+                    Targets.All.GroundUnits.GroundVehicles,
+                    Targets.All.GroundUnits.AirDefence.AAA,
+                    Targets.All.GroundUnits.Infantry,
+                ])
+            )
+        else:
             logging.error(
                 "No CAS waypoint found. Falling back to search and engage")
             waypoint.add_task(EngageTargets(
@@ -1177,25 +1182,15 @@ class CasIngressBuilder(IngressBuilder):
                     Targets.All.GroundUnits.Infantry,
                 ])
             )
-        else:
-            waypoint.add_task(EngageTargetsInZone(
-                position=cas_waypoint.position,
-                radius=FRONTLINE_LENGTH / 2,
-                targets=[
-                    Targets.All.GroundUnits.GroundVehicles,
-                    Targets.All.GroundUnits.AirDefence.AAA,
-                    Targets.All.GroundUnits.Infantry,
-                ])
-            )
         waypoint.add_task(OptROE(OptROE.Values.OpenFireWeaponFree))
         return waypoint
 
 
-class SeadIngressBuilder(IngressBuilder):
+class SeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
-        target_group = self.waypoint.targetGroup
+        target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
             tgroup = self.mission.find_group(target_group.group_identifier)
             if tgroup is not None:
@@ -1218,7 +1213,7 @@ class SeadIngressBuilder(IngressBuilder):
         return waypoint
 
 
-class StrikeIngressBuilder(IngressBuilder):
+class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         if self.group.units[0].unit_type == B_17G:
             return self.build_bombing()
@@ -1265,7 +1260,6 @@ class StrikeIngressBuilder(IngressBuilder):
 class JoinPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.join)
         if self.flight.flight_type == FlightType.ESCORT:
             self.configure_escort_tasks(waypoint)
         return waypoint
@@ -1321,27 +1315,20 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
+        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
+            flight_plan_type = self.flight.flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create race track for {self.flight} because "
+                f"{flight_plan_type} does not define a patrol.")
+            return waypoint
+
         racetrack = ControlledTask(OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
-
-        self.set_waypoint_tot(waypoint,
-                              self.timing.race_track_start(self.flight))
-        racetrack.stop_after_time(self.timing.race_track_end(self.flight))
+        self.set_waypoint_tot(
+            waypoint, self.flight.flight_plan.patrol_start_time)
+        racetrack.stop_after_time(
+            int(self.flight.flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
-        return waypoint
-
-
-class SplitPointBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.split)
-        return waypoint
-
-
-class TargetPointBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-        self.set_waypoint_tot(waypoint, self.timing.target)
         return waypoint

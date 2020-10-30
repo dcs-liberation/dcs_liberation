@@ -30,9 +30,9 @@ from game.data.aaa_db import AAA_UNITS
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet
 from game.weather import TimeOfDay
-from gen import Conflict, PackageWaypointTiming
-from gen.ato import Package
+from gen import Conflict
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from gen.flights.flightplan import FlightPlan
 from qt_ui.displayoptions import DisplayOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
@@ -294,11 +294,10 @@ class QLiberationMap(QGraphicsView):
                     selected = (p_idx, f_idx) == self.selected_flight
                 if DisplayOptions.flight_paths.only_selected and not selected:
                     continue
-                self.draw_flight_plan(scene, package_model.package, flight,
-                                      selected)
+                self.draw_flight_plan(scene, flight, selected)
 
-    def draw_flight_plan(self, scene: QGraphicsScene, package: Package,
-                         flight: Flight, selected: bool) -> None:
+    def draw_flight_plan(self, scene: QGraphicsScene, flight: Flight,
+                         selected: bool) -> None:
         is_player = flight.from_cp.captured
         pos = self._transform_point(flight.from_cp.position)
 
@@ -310,7 +309,7 @@ class QLiberationMap(QGraphicsView):
             FlightWaypointType.TARGET_POINT,
             FlightWaypointType.TARGET_SHIP,
         )
-        for idx, point in enumerate(flight.points):
+        for idx, point in enumerate(flight.flight_plan.waypoints[1:]):
             new_pos = self._transform_point(Point(point.x, point.y))
             self.draw_flight_path(scene, prev_pos, new_pos, is_player,
                                   selected)
@@ -321,8 +320,8 @@ class QLiberationMap(QGraphicsView):
                         # Don't draw dozens of targets over each other.
                         continue
                     drew_target = True
-                self.draw_waypoint_info(scene, idx + 1, point, new_pos, package,
-                                        flight)
+                self.draw_waypoint_info(scene, idx + 1, point, new_pos,
+                                        flight.flight_plan)
             prev_pos = tuple(new_pos)
         self.draw_flight_path(scene, prev_pos, pos, is_player, selected)
 
@@ -337,21 +336,21 @@ class QLiberationMap(QGraphicsView):
 
     def draw_waypoint_info(self, scene: QGraphicsScene, number: int,
                            waypoint: FlightWaypoint, position: Tuple[int, int],
-                           package: Package, flight: Flight) -> None:
-        timing = PackageWaypointTiming.for_package(package)
+                           flight_plan: FlightPlan) -> None:
 
         altitude = meter_to_feet(waypoint.alt)
         altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
 
         prefix = "TOT"
-        time = timing.tot_for_waypoint(flight, waypoint)
+        time = flight_plan.tot_for_waypoint(waypoint)
         if time is None:
             prefix = "Depart"
-            time = timing.depart_time_for_waypoint(waypoint, flight)
+            time = flight_plan.depart_time_for_waypoint(waypoint)
         if time is None:
             tot = ""
         else:
-            tot = f"{prefix} T+{datetime.timedelta(seconds=time)}"
+            time = datetime.timedelta(seconds=int(time.total_seconds()))
+            tot = f"{prefix} T+{time}"
 
         pen = QPen(QColor("black"), 0.3)
         brush = QColor("white")

@@ -11,12 +11,14 @@ the single CAP flight.
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Dict, List, Optional
 
 from dcs.mapping import Point
 
 from theater.missiontarget import MissionTarget
 from .flights.flight import Flight, FlightType
+from .flights.flightplan import FormationFlightPlan
 
 
 @dataclass(frozen=True)
@@ -51,10 +53,66 @@ class Package:
 
     delay: int = field(default=0)
 
-    #: Desired TOT measured in seconds from mission start.
-    time_over_target: int = field(default=0)
+    #: Desired TOT as an offset from mission start.
+    time_over_target: timedelta = field(default=timedelta())
 
     waypoints: Optional[PackageWaypoints] = field(default=None)
+
+    @property
+    def formation_speed(self) -> Optional[int]:
+        """The speed of the package when in formation.
+
+        If none of the flights in the package will join a formation, this
+        returns None. This is nto uncommon, since only strike-like (strike,
+        DEAD, anti-ship, BAI, etc.) flights and their escorts fly in formation.
+        Others (CAP and CAS, currently) will coordinate in target timing but
+        fly their own path to the target.
+        """
+        speeds = []
+        for flight in self.flights:
+            if isinstance(flight.flight_plan, FormationFlightPlan):
+                speeds.append(flight.flight_plan.best_flight_formation_speed)
+        if not speeds:
+            return None
+        return min(speeds)
+
+    # TODO: Should depend on the type of escort.
+    # SEAD might be able to leave before CAP.
+    @property
+    def escort_start_time(self) -> Optional[timedelta]:
+        times = []
+        for flight in self.flights:
+            waypoint = flight.flight_plan.request_escort_at()
+            if waypoint is None:
+                continue
+            tot = flight.flight_plan.tot_for_waypoint(waypoint)
+            if tot is None:
+                logging.error(
+                    f"{flight} requested escort at {waypoint} but that "
+                    "waypoint has no TOT. It may not be escorted.")
+                continue
+            times.append(tot)
+        if times:
+            return min(times)
+        return None
+
+    @property
+    def escort_end_time(self) -> Optional[timedelta]:
+        times = []
+        for flight in self.flights:
+            waypoint = flight.flight_plan.dismiss_escort_at()
+            if waypoint is None:
+                continue
+            tot = flight.flight_plan.tot_for_waypoint(waypoint)
+            if tot is None:
+                logging.error(
+                    f"{flight} dismissed escort at {waypoint} but that "
+                    "waypoint has no TOT. It may not be escorted.")
+                continue
+            times.append(tot)
+        if times:
+            return max(times)
+        return None
 
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""

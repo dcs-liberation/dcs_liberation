@@ -1,5 +1,6 @@
 """Dialogs for creating and editing ATO packages."""
 import logging
+from datetime import timedelta
 from typing import Optional
 
 from PySide2.QtCore import QItemSelection, QTime, Signal
@@ -118,7 +119,7 @@ class QPackageDialog(QDialog):
         return self.game_model.game
 
     def tot_qtime(self) -> QTime:
-        delay = self.package_model.package.time_over_target
+        delay = int(self.package_model.package.time_over_target.total_seconds())
         hours = delay // 3600
         minutes = delay // 60 % 60
         seconds = delay % 60
@@ -137,11 +138,11 @@ class QPackageDialog(QDialog):
     def save_tot(self) -> None:
         time = self.tot_spinner.time()
         seconds = time.hour() * 3600 + time.minute() * 60 + time.second()
-        self.package_model.update_tot(seconds)
+        self.package_model.update_tot(timedelta(seconds=seconds))
 
     def reset_tot(self) -> None:
         if not list(self.package_model.flights):
-            self.package_model.update_tot(0)
+            self.package_model.update_tot(timedelta())
         else:
             self.package_model.update_tot(
                 TotEstimator(self.package_model.package).earliest_tot())

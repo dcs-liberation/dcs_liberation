@@ -2,61 +2,20 @@ from __future__ import annotations
 
 import logging
 import math
-from dataclasses import dataclass
-from typing import Iterable, Optional
+from datetime import timedelta
+from typing import Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.unittype import FlyingType
 
 from game.utils import meter_to_nm
-from gen.ato import Package
-from gen.flights.flight import (
-    Flight,
-    FlightType,
-    FlightWaypoint,
-    FlightWaypointType,
-)
+from gen.flights.flight import Flight
 
-
-CAP_DURATION = 30  # Minutes
-
-INGRESS_TYPES = {
-    FlightWaypointType.INGRESS_CAS,
-    FlightWaypointType.INGRESS_ESCORT,
-    FlightWaypointType.INGRESS_SEAD,
-    FlightWaypointType.INGRESS_STRIKE,
-}
+if TYPE_CHECKING:
+    from gen.ato import Package
 
 
 class GroundSpeed:
-    @staticmethod
-    def mission_speed(package: Package) -> int:
-        speeds = set()
-        for flight in package.flights:
-            # Find a waypoint that matches the mission start waypoint and use
-            # that for the altitude of the mission. That may not be true for the
-            # whole mission, but it's probably good enough for now.
-            waypoint = flight.waypoint_with_type({
-                FlightWaypointType.INGRESS_CAS,
-                FlightWaypointType.INGRESS_ESCORT,
-                FlightWaypointType.INGRESS_SEAD,
-                FlightWaypointType.INGRESS_STRIKE,
-                FlightWaypointType.PATROL_TRACK,
-            })
-            if waypoint is None:
-                logging.error(f"Could not find ingress point for {flight}.")
-                if flight.points:
-                    logging.warning(
-                        "Using first waypoint for mission altitude.")
-                    waypoint = flight.points[0]
-                else:
-                    logging.warning(
-                        "Flight has no waypoints. Assuming mission altitude "
-                        "of 25000 feet.")
-                    waypoint = FlightWaypoint(FlightWaypointType.NAV, 0, 0,
-                                              25000)
-            speeds.add(GroundSpeed.for_flight(flight, waypoint.alt))
-        return min(speeds)
 
     @classmethod
     def for_flight(cls, flight: Flight, altitude: int) -> int:
@@ -121,52 +80,53 @@ class GroundSpeed:
 
 class TravelTime:
     @staticmethod
-    def between_points(a: Point, b: Point, speed: float) -> int:
+    def between_points(a: Point, b: Point, speed: float) -> timedelta:
         error_factor = 1.1
         distance = meter_to_nm(a.distance_to_point(b))
-        hours = distance / speed
-        seconds = hours * 3600
-        return int(seconds * error_factor)
+        return timedelta(hours=distance / speed * error_factor)
 
 
 class TotEstimator:
     # An extra five minutes given as wiggle room. Expected to be spent at the
     # hold point performing any last minute configuration.
-    HOLD_TIME = 5 * 60
+    HOLD_TIME = timedelta(minutes=5)
 
     def __init__(self, package: Package) -> None:
         self.package = package
-        self.timing = PackageWaypointTiming.for_package(package)
 
-    def mission_start_time(self, flight: Flight) -> int:
+    def mission_start_time(self, flight: Flight) -> timedelta:
         takeoff_time = self.takeoff_time_for_flight(flight)
         startup_time = self.estimate_startup(flight)
         ground_ops_time = self.estimate_ground_ops(flight)
         return takeoff_time - startup_time - ground_ops_time
 
-    def takeoff_time_for_flight(self, flight: Flight) -> int:
-        stop_types = {FlightWaypointType.JOIN, FlightWaypointType.PATROL_TRACK}
-        travel_time = self.estimate_waypoints_to_target(flight, stop_types)
+    def takeoff_time_for_flight(self, flight: Flight) -> timedelta:
+        travel_time = self.travel_time_to_rendezvous_or_target(flight)
         if travel_time is None:
             logging.warning("Found no join point or patrol point. Cannot "
                             f"estimate takeoff time takeoff time for {flight}")
             # Takeoff immediately.
-            return 0
+            return timedelta()
 
-        # BARCAP flights do not coordinate with the rest of the package on join
-        # or ingress points.
-        if flight.flight_type == FlightType.BARCAP:
-            start_time = self.timing.race_track_start(flight)
+        from gen.flights.flightplan import FormationFlightPlan
+        if isinstance(flight.flight_plan, FormationFlightPlan):
+            tot = flight.flight_plan.tot_for_waypoint(
+                flight.flight_plan.join)
+            if tot is None:
+                logging.warning(
+                    "Could not determine the TOT of the join point. Takeoff "
+                    f"time for {flight} will be immediate.")
+                return timedelta()
         else:
-            start_time = self.timing.join
-        return start_time - travel_time - self.HOLD_TIME
+            tot = self.package.time_over_target
+        return tot - travel_time - self.HOLD_TIME
 
-    def earliest_tot(self) -> int:
+    def earliest_tot(self) -> timedelta:
         return max((
             self.earliest_tot_for_flight(f) for f in self.package.flights
         )) + self.HOLD_TIME
 
-    def earliest_tot_for_flight(self, flight: Flight) -> int:
+    def earliest_tot_for_flight(self, flight: Flight) -> timedelta:
         """Estimate fastest time from mission start to the target position.
 
         For BARCAP flights, this is time to race track start. This ensures that
@@ -182,211 +142,47 @@ class TotEstimator:
             The earliest possible TOT for the given flight in seconds. Returns 0
             if an ingress point cannot be found.
         """
-        if flight.flight_type == FlightType.BARCAP:
-            time_to_target = self.estimate_waypoints_to_target(flight, {
-                FlightWaypointType.PATROL_TRACK
-            })
-            if time_to_target is None:
-                logging.warning(
-                    f"Found no race track. Cannot estimate TOT for {flight}")
-                # Return 0 so this flight's travel time does not affect the rest
-                # of the package.
-                return 0
-        else:
-            time_to_ingress = self.estimate_waypoints_to_target(
-                flight, INGRESS_TYPES
-            )
-            if time_to_ingress is None:
-                logging.warning(
-                    f"Found no ingress types. Cannot estimate TOT for {flight}")
-                # Return 0 so this flight's travel time does not affect the rest
-                # of the package.
-                return 0
-
-            assert self.package.waypoints is not None
-            time_to_target = time_to_ingress + TravelTime.between_points(
-                self.package.waypoints.ingress, self.package.target.position,
-                GroundSpeed.mission_speed(self.package))
-        return sum([
-            self.estimate_startup(flight),
-            self.estimate_ground_ops(flight),
-            time_to_target,
-        ])
+        time_to_target = self.travel_time_to_target(flight)
+        if time_to_target is None:
+            logging.warning(f"Cannot estimate TOT for {flight}")
+            # Return 0 so this flight's travel time does not affect the rest
+            # of the package.
+            return timedelta()
+        startup = self.estimate_startup(flight)
+        ground_ops = self.estimate_ground_ops(flight)
+        return startup + ground_ops + time_to_target
 
     @staticmethod
-    def estimate_startup(flight: Flight) -> int:
+    def estimate_startup(flight: Flight) -> timedelta:
         if flight.start_type == "Cold":
             if flight.client_count:
-                return 10 * 60
+                return timedelta(minutes=10)
             else:
                 # The AI doesn't seem to have a real startup procedure.
-                return 2 * 60
-        return 0
+                return timedelta(minutes=2)
+        return timedelta()
 
     @staticmethod
-    def estimate_ground_ops(flight: Flight) -> int:
+    def estimate_ground_ops(flight: Flight) -> timedelta:
         if flight.start_type in ("Runway", "In Flight"):
-            return 0
+            return timedelta()
         if flight.from_cp.is_fleet:
-            return 2 * 60
+            return timedelta(minutes=2)
         else:
-            return 5 * 60
+            return timedelta(minutes=5)
 
-    def estimate_waypoints_to_target(
-            self, flight: Flight,
-            stop_types: Iterable[FlightWaypointType]) -> Optional[int]:
-        total = 0
-        # TODO: This is AGL. We want MSL.
-        previous_altitude = 0
-        previous_position = flight.from_cp.position
-        for waypoint in flight.points:
-            position = Point(waypoint.x, waypoint.y)
-            total += TravelTime.between_points(
-                previous_position, position,
-                self.speed_to_waypoint(flight, waypoint, previous_altitude)
-            )
-            previous_position = position
-            previous_altitude = waypoint.alt
-            if waypoint.waypoint_type in stop_types:
-                return total
+    @staticmethod
+    def travel_time_to_target(flight: Flight) -> Optional[timedelta]:
+        if flight.flight_plan is None:
+            return None
+        return flight.flight_plan.travel_time_to_target
 
-        return None
-
-    def speed_to_waypoint(self, flight: Flight, waypoint: FlightWaypoint,
-                          from_altitude: int) -> int:
-        # TODO: Adjust if AGL.
-        # We don't have an exact heightmap, but we should probably be performing
-        # *some* adjustment for NTTR since the minimum altitude of the map is
-        # near 2000 ft MSL.
-        alt_for_speed = min(from_altitude, waypoint.alt)
-        pre_join = (FlightWaypointType.LOITER, FlightWaypointType.JOIN)
-        if waypoint.waypoint_type == FlightWaypointType.ASCEND_POINT:
-            # Flights that start airborne already have some altitude and a good
-            # amount of speed.
-            factor = 1.0 if flight.start_type == "In Flight" else 0.5
-            return int(GroundSpeed.for_flight(flight, alt_for_speed) * factor)
-        elif waypoint.waypoint_type in pre_join:
-            return GroundSpeed.for_flight(flight, alt_for_speed)
-        return GroundSpeed.mission_speed(self.package)
-
-
-@dataclass(frozen=True)
-class PackageWaypointTiming:
-    #: The package being scheduled.
-    package: Package
-
-    #: The package join time.
-    join: int
-
-    #: The ingress waypoint TOT.
-    ingress: int
-
-    #: The egress waypoint TOT.
-    egress: int
-
-    #: The package split time.
-    split: int
-
-    @property
-    def target(self) -> int:
-        """The package time over target."""
-        assert self.package.time_over_target is not None
-        return self.package.time_over_target
-
-    def race_track_start(self, flight: Flight) -> int:
-        if flight.flight_type == FlightType.BARCAP:
-            return self.target
-        else:
-            # The only other type that (currently) uses race tracks is TARCAP,
-            # which is sort of in need of cleanup. TARCAP is only valid on front
-            # lines and they participate in join points and patrol between the
-            # ingress and egress points rather than on a race track actually
-            # pointed at the enemy.
-            return self.ingress
-
-    def race_track_end(self, flight: Flight) -> int:
-        if flight.flight_type == FlightType.BARCAP:
-            return self.target + CAP_DURATION * 60
-        else:
-            # For TARCAP. See the explanation in race_track_start.
-            return self.egress
-
-    def push_time(self, flight: Flight, hold_point: FlightWaypoint) -> int:
-        assert self.package.waypoints is not None
-        return self.join - TravelTime.between_points(
-            Point(hold_point.x, hold_point.y),
-            self.package.waypoints.join,
-            GroundSpeed.for_flight(flight, hold_point.alt)
-        )
-
-    def tot_for_waypoint(self, flight: Flight,
-                         waypoint: FlightWaypoint) -> Optional[int]:
-        target_types = (
-            FlightWaypointType.TARGET_GROUP_LOC,
-            FlightWaypointType.TARGET_POINT,
-            FlightWaypointType.TARGET_SHIP,
-        )
-
-        if waypoint.waypoint_type == FlightWaypointType.JOIN:
-            return self.join
-        elif waypoint.waypoint_type in INGRESS_TYPES:
-            return self.ingress
-        elif waypoint.waypoint_type in target_types:
-            return self.target
-        elif waypoint.waypoint_type == FlightWaypointType.EGRESS:
-            return self.egress
-        elif waypoint.waypoint_type == FlightWaypointType.SPLIT:
-            return self.split
-        elif waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK:
-            return self.race_track_start(flight)
-        return None
-
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint,
-                                 flight: Flight) -> Optional[int]:
-        if waypoint.waypoint_type == FlightWaypointType.LOITER:
-            return self.push_time(flight, waypoint)
-        elif waypoint.waypoint_type == FlightWaypointType.PATROL:
-            return self.race_track_end(flight)
-        return None
-
-    @classmethod
-    def for_package(cls, package: Package) -> PackageWaypointTiming:
-        assert package.waypoints is not None
-
-        # TODO: Plan similar altitudes for the in-country leg of the mission.
-        # Waypoint altitudes for a given flight *shouldn't* differ too much
-        # between the join and split points, so we don't need speeds for each
-        # leg individually since they should all be fairly similar. This doesn't
-        # hold too well right now since nothing is stopping each waypoint from
-        # jumping 20k feet each time, but that's a huge waste of energy we
-        # should be avoiding anyway.
-        if not package.flights:
-            raise ValueError("Cannot plan TOT for package with no flights")
-
-        group_ground_speed = GroundSpeed.mission_speed(package)
-
-        ingress = package.time_over_target - TravelTime.between_points(
-            package.waypoints.ingress,
-            package.target.position,
-            group_ground_speed
-        )
-
-        join = ingress - TravelTime.between_points(
-            package.waypoints.join,
-            package.waypoints.ingress,
-            group_ground_speed
-        )
-
-        egress = package.time_over_target + TravelTime.between_points(
-            package.target.position,
-            package.waypoints.egress,
-            group_ground_speed
-        )
-
-        split = egress + TravelTime.between_points(
-            package.waypoints.egress,
-            package.waypoints.split,
-            group_ground_speed
-        )
-
-        return cls(package, join, ingress, egress, split)
+    @staticmethod
+    def travel_time_to_rendezvous_or_target(
+            flight: Flight) -> Optional[timedelta]:
+        if flight.flight_plan is None:
+            return None
+        from gen.flights.flightplan import FormationFlightPlan
+        if isinstance(flight.flight_plan, FormationFlightPlan):
+            return flight.flight_plan.travel_time_to_rendezvous
+        return flight.flight_plan.travel_time_to_target

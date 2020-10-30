@@ -157,10 +157,10 @@ class FlightPlanBuilder:
             self._format_time(waypoint.waypoint.departure_time),
         ])
 
-    def _format_time(self, time: Optional[int]) -> str:
+    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
         if time is None:
             return ""
-        local_time = self.start_time + datetime.timedelta(seconds=time)
+        local_time = self.start_time + time
         return local_time.strftime(f"%H:%M:%S")
 
     def _waypoint_distance(self, waypoint: FlightWaypoint) -> str:
@@ -189,8 +189,8 @@ class FlightPlanBuilder:
         distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
-        duration = (waypoint.tot - last_time) / 3600
-        return f"{int(distance / duration)} kt"
+        duration = waypoint.tot - last_time
+        return f"{int(distance / duration.total_seconds())} kt"
 
     def build(self) -> List[List[str]]:
         return self.rows

@@ -1,4 +1,3 @@
-import datetime
 import itertools
 
 from PySide2.QtCore import QItemSelectionModel, QPoint
@@ -6,7 +5,6 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QHeaderView, QTableView
 
 from game.utils import meter_to_feet
-from gen.aircraft import PackageWaypointTiming
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
@@ -43,8 +41,6 @@ class QFlightWaypointList(QTableView):
 
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
 
-        timing = PackageWaypointTiming.for_package(self.package)
-
         # The first waypoint is set up by pydcs at mission generation time, so
         # we need to add that waypoint manually.
         takeoff = FlightWaypoint(self.flight.from_cp.position.x,
@@ -55,13 +51,12 @@ class QFlightWaypointList(QTableView):
 
         waypoints = itertools.chain([takeoff], self.flight.points)
         for row, waypoint in enumerate(waypoints):
-            self.add_waypoint_row(row, self.flight, waypoint, timing)
+            self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
                                               QItemSelectionModel.Select)
 
     def add_waypoint_row(self, row: int, flight: Flight,
-                         waypoint: FlightWaypoint,
-                         timing: PackageWaypointTiming) -> None:
+                         waypoint: FlightWaypoint) -> None:
         self.model.insertRow(self.model.rowCount())
 
         self.model.setItem(row, 0, QWaypointItem(waypoint, row))
@@ -72,18 +67,18 @@ class QFlightWaypointList(QTableView):
         altitude_item.setEditable(False)
         self.model.setItem(row, 1, altitude_item)
 
-        tot = self.tot_text(flight, waypoint, timing)
+        tot = self.tot_text(flight, waypoint)
         tot_item = QStandardItem(tot)
         tot_item.setEditable(False)
         self.model.setItem(row, 2, tot_item)
 
-    def tot_text(self, flight: Flight, waypoint: FlightWaypoint,
-                 timing: PackageWaypointTiming) -> str:
+    @staticmethod
+    def tot_text(flight: Flight, waypoint: FlightWaypoint) -> str:
         prefix = ""
-        time = timing.tot_for_waypoint(flight, waypoint)
+        time = flight.flight_plan.tot_for_waypoint(waypoint)
         if time is None:
             prefix = "Depart "
-            time = timing.depart_time_for_waypoint(waypoint, self.flight)
+            time = flight.flight_plan.depart_time_for_waypoint(waypoint)
         if time is None:
             return ""
-        return f"{prefix}T+{datetime.timedelta(seconds=time)}"
+        return f"{prefix}T+{time}"

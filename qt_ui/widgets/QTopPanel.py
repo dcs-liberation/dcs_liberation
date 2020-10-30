@@ -126,7 +126,7 @@ class QTopPanel(QFrame):
                 continue
             estimator = TotEstimator(package)
             for flight in package.flights:
-                if estimator.mission_start_time(flight) < 0:
+                if estimator.mission_start_time(flight).total_seconds() < 0:
                     packages.append(package)
                     break
         return packages

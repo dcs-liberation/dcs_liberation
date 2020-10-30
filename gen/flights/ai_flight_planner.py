@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-import random
 import operator
+import random
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple, Type
 
 from dcs.unittype import FlyingType, UnitType
@@ -12,7 +13,7 @@ from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
 from game.utils import nm_to_meter
-from gen import Conflict, PackageWaypointTiming
+from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
     CAP_CAPABLE,
@@ -483,11 +484,11 @@ class CoalitionMissionPlanner:
 
     def stagger_missions(self) -> None:
         def start_time_generator(count: int, earliest: int, latest: int,
-                                 margin: int) -> Iterator[int]:
+                                 margin: int) -> Iterator[timedelta]:
             interval = latest // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
-                yield max(0, time + error)
+                yield timedelta(minutes=max(0, time + error))
 
         dca_types = (FlightType.BARCAP, FlightType.INTERCEPTION)
 
@@ -512,7 +513,7 @@ class CoalitionMissionPlanner:
                 # airfields to hit grounded aircraft, since they're more likely
                 # to be present. Runway and air started aircraft will be
                 # delayed until their takeoff time by AirConflictGenerator.
-                package.time_over_target = next(start_time) * 60 + tot
+                package.time_over_target = next(start_time) + tot
 
     def message(self, title, text) -> None:
         """Emits a planning message to the player.
