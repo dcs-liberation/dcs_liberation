@@ -159,7 +159,7 @@ class MissionInfoGenerator:
     Examples of subtypes include briefing generators, kneeboard generators, etc.
     """
 
-    def __init__(self, mission: Mission, game: Optional['Game'] = None) -> None:
+    def __init__(self, mission: Mission, game: 'Game') -> None:
         self.mission = mission
         self.game = game
         self.awacs: List[AwacsInfo] = []
