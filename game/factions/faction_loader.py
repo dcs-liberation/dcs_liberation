@@ -16,6 +16,7 @@ class FactionLoader:
     @property
     def factions(self) -> Dict[str, Faction]:
         self.initialize()
+        assert self._factions is not None
         return self._factions
 
     def initialize(self) -> None:
