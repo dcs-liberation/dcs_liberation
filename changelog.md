@@ -2,16 +2,36 @@
 
 ## Features/Improvements :
 * **[Flight Planner]** Flight planner overhaul, with package and TOT system
+* **[Flight Planner]** Pick runways and ascent/descent based on headwind
 * **[Map]** Highlight the selected flight path on the map
 * **[Map]** Improved flight plan display settings 
 * **[Map]** Improved SAM display settings
 * **[Map]** Added polygon debug mode display
 * **[New Game]** Starting budget can be freely selected 
-* **[Moddability]** Custom campaigns can be designed through json files 
+* **[Moddability]** Custom campaigns can be designed through json files
+* **[Moddablility]** Custom factions can be designed through json files
+* **[Moddability]** LUA plugins can now be injected into Liberation missions.
+* **[Moddability]** Optional Skynet IADS lua plugin now included
+* **[Units/Factions]** Added frenchpack mod units
+* **[Units/Factions]** Added support for SU-57 mod by Cubanace
+* **[Units/Factions]** Added bombers to coalitions
+* **[UI]** Packages and flights now visible in the main window sidebar
+* **[UI]** Added a warning if you press takeoff with no player enabled flights
+* **[UI]** Add double and right click actions to many UI elements.
+* **[UI]** Add polygon drawing mode for map background
+* **[Cheat Menu]** Added ability to show red ATO
+* **[Cheat Menu]** Added ability to capture base from mission planner
+* **[Misc]** Flexible Dedicated Hosting Options for Mission Files via environment variables
+
 
 ## Fixes :
 * **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore 
 * **[UI]** Missing TER weapons in custom payload now selectable.
+* **[Flight Planner]** Fix waypoint alitudes for helicopters
+* **[Flight Planner]** Fixed CAS aircraft wandering away from frontline
+* **[Misc]** Fix inventory handling for new packages.
+* **[Radios]** Fix A-10C radio
+
 
 # 2.1.5
 
