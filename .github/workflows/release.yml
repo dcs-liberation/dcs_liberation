@@ -44,6 +44,11 @@ jobs:
         ./venv/scripts/activate
         mypy theater
 
+    - name: Test
+      run: |
+        ./venv/scripts/activate
+        pytest tests
+
     - name: Build binaries
       run: |
         ./venv/scripts/activate
