@@ -7,7 +7,7 @@ from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 
-from game import persistency
+from game import db, persistency
 from qt_ui import (
     liberation_install,
     liberation_theme,
@@ -23,6 +23,8 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import \
 logging_config.init_logging(uiconstants.VERSION_STRING)
 
 if __name__ == "__main__":
+    # Load eagerly to catch errors early.
+    db.FACTIONS.initialize()
 
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1" # Potential fix for 4K screens
     app = QApplication(sys.argv)

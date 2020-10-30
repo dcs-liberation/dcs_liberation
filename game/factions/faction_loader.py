@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Type
+from typing import Dict, Iterator, Optional, Type
 
 from game.factions.faction import Faction
 
@@ -10,6 +10,17 @@ FACTION_DIRECTORY = Path("./resources/factions/")
 
 
 class FactionLoader:
+    def __init__(self) -> None:
+        self._factions: Optional[Dict[str, Faction]] = None
+
+    @property
+    def factions(self) -> Dict[str, Faction]:
+        self.initialize()
+        return self._factions
+
+    def initialize(self) -> None:
+        if self._factions is None:
+            self._factions = self.load_factions()
 
     @classmethod
     def load_factions(cls: Type[FactionLoader]) -> Dict[str, Faction]:
@@ -26,3 +37,9 @@ class FactionLoader:
                 logging.exception(f"Unable to load faction : {f}")
 
         return factions
+
+    def __getitem__(self, name: str) -> Faction:
+        return self.factions[name]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.factions.keys())
