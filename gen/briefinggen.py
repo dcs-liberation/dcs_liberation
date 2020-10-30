@@ -1,3 +1,6 @@
+'''
+Briefing generation logic
+'''
 import os
 import random
 import logging
@@ -58,7 +61,7 @@ class FrontLineInfo:
                     "critical, and we will lose ground inevitably.")
         elif self.enemy_zero:
             return ("The enemy forces have been crushed, we will be able to make significant progress"
-                    f" toward {enemy_base.name}.")
+                    f" toward {self.enemy_base.name}.")
         return None
 
     @property
@@ -73,14 +76,14 @@ class FrontLineInfo:
         elif self.stance == CombatStance.ELIMINATION:
             return (
                 "On this location, our ground forces will focus on the destruction of enemy"
-                f"assets, before attempting to make progress toward {enemy_base.name}. "
+                f"assets, before attempting to make progress toward {self.enemy_base.name}. "
                 "The enemy is already outnumbered, and this maneuver might draw a final "
                 "blow to their forces."
             )
         elif self.stance == CombatStance.BREAKTHROUGH:
             return (
                 "On this location, our ground forces will focus on progression toward "
-                f"{enemy_base.name}."
+                f"{self.enemy_base.name}."
             )
         elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
             return (
@@ -109,7 +112,7 @@ class FrontLineInfo:
         elif self.stance == CombatStance.BREAKTHROUGH:
             return (
                 "On this location, our ground forces have been ordered to rush toward "
-                f"{enemy_base.name}. Wish them luck... We are also expecting a counter attack."
+                f"{self.enemy_base.name}. Wish them luck... We are also expecting a counter attack."
             )
         elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
             return (
@@ -131,6 +134,8 @@ class FrontLineInfo:
             situation += self._advantage_description
         else:
             situation += self._disadvantage_description
+        return situation
+        
 class MissionInfoGenerator:
     """Base type for generators of mission information for the player.
 
