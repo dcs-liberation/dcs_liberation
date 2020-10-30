@@ -26,7 +26,7 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
@@ -42,7 +42,8 @@ from .flights.flight import FlightWaypoint, FlightWaypointType
 from .radios import RadioFrequency
 from .runways import RunwayData
 
-
+if TYPE_CHECKING:
+    from game import Game
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
@@ -310,8 +311,8 @@ class BriefingPage(KneeboardPage):
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
-    def __init__(self, mission: Mission) -> None:
-        super().__init__(mission)
+    def __init__(self, mission: Mission, game: 'Game') -> None:
+        super().__init__(mission, game)
 
     def generate(self) -> None:
         """Generates a kneeboard per client flight."""
