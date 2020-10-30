@@ -300,12 +300,12 @@ class Operation:
                                         airsupportgen.air_support)
 
         kneeboard_generator = KneeboardGenerator(self.current_mission)
-        for dynamic_runway in groundobjectgen.runways.values():
-            self.briefinggen.add_dynamic_runway(dynamic_runway)
+        # for dynamic_runway in groundobjectgen.runways.values():
+        #     self.briefinggen.add_dynamic_runway(dynamic_runway)
 
         for tanker in airsupportgen.air_support.tankers:
-            self.briefinggen.add_tanker(tanker)
-            kneeboard_generator.add_tanker(tanker)
+            # self.briefinggen.add_tanker(tanker)
+            # kneeboard_generator.add_tanker(tanker)
             luaData["Tankers"][tanker.callsign] = { 
                 "dcsGroupName": tanker.dcsGroupName,
                 "callsign": tanker.callsign,
@@ -316,8 +316,8 @@ class Operation:
 
         if self.is_awacs_enabled:
             for awacs in airsupportgen.air_support.awacs:
-                self.briefinggen.add_awacs(awacs)
-                kneeboard_generator.add_awacs(awacs)
+                # self.briefinggen.add_awacs(awacs)
+                # kneeboard_generator.add_awacs(awacs)
                 luaData["AWACs"][awacs.callsign] = { 
                     "dcsGroupName": awacs.dcsGroupName,
                     "callsign": awacs.callsign,
@@ -325,8 +325,8 @@ class Operation:
                 }
 
         for jtac in jtacs:
-            self.briefinggen.add_jtac(jtac)
-            kneeboard_generator.add_jtac(jtac)
+            # self.briefinggen.add_jtac(jtac)
+            # kneeboard_generator.add_jtac(jtac)
             luaData["JTACs"][jtac.callsign] = { 
                 "dcsGroupName": jtac.dcsGroupName,
                 "callsign": jtac.callsign,
@@ -336,8 +336,8 @@ class Operation:
             }
 
         for flight in airgen.flights:
-            self.briefinggen.add_flight(flight)
-            kneeboard_generator.add_flight(flight)
+            # self.briefinggen.add_flight(flight)
+            # kneeboard_generator.add_flight(flight)
             if flight.friendly and flight.flight_type in [FlightType.ANTISHIP, FlightType.DEAD, FlightType.SEAD, FlightType.STRIKE]:
                 flightType = flight.flight_type.name
                 flightTarget = flight.package.target
