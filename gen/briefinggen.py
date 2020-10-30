@@ -132,9 +132,6 @@ class BriefingGenerator(MissionInfoGenerator):
         self.generate_ongoing_war_text()
         self.generate_allied_flights_by_departure()
         self.mission.set_description_text(self.template.render(vars(self)))
-        ## TODO: Remove debug code
-        with open(r'C:\Users\walte\Documents\briefing.txt', 'w') as file:
-            file.write(self.template.render(vars(self)))
         self.mission.add_picture_blue(os.path.abspath(
             "./resources/ui/splash_screen.png"))
 
@@ -148,54 +145,65 @@ class BriefingGenerator(MissionInfoGenerator):
         ]
         return random.choice(templates).format(player_base_name, enemy_base_name)
 
-    # TODO: refactor this, perhaps move to FrontLineInfo factory object? 
+    # TODO: refactor this, perhaps move to FrontLineInfo factory object or template?
     def generate_ongoing_war_text(self):
         for front_line in self.game.theater.conflicts(from_player=True):
             player_base = front_line.control_point_a
             enemy_base = front_line.control_point_b
             has_numerical_superiority = player_base.base.total_armor > enemy_base.base.total_armor
             description = self.__random_frontline_sentence(player_base.name, enemy_base.name)
-            stance = player_base.stances[enemy_base.id]  ## Sometimes this contains enum value, sometimes it contains int.
+            stance = player_base.stances[enemy_base.id]
             if player_base.base.total_armor == 0:
                 player_zero = True
-                description += "We do not have a single vehicle available to hold our position, the situation is critical, and we will lose ground inevitably.\n"
+                description += ("We do not have a single vehicle available to hold our position, the situation is"
+                                "critical, and we will lose ground inevitably.\n")
             elif enemy_base.base.total_armor == 0:
                 player_zero = False
-                description += "The enemy forces have been crushed, we will be able to make significant progress toward " + enemy_base.name + ". \n"
-            else: player_zero = False
+                description += ("The enemy forces have been crushed, we will be able to make significant progress"
+                                f" toward {enemy_base.name}. \n")
+            else:
+                player_zero = False
             if not player_zero:
                 if stance == CombatStance.AGGRESSIVE:
                     if has_numerical_superiority:
-                        description += "On this location, our ground forces will try to make progress against the enemy"
-                        description += ". As the enemy is outnumbered, our forces should have no issue making progress.\n"
+                        description += ("On this location, our ground forces will try to make "
+                                        "progress against the enemy. As the enemy is outnumbered, "
+                                        "our forces should have no issue making progress.\n")
                     else:
-                        description += "On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.\n"
+                        description += ("On this location, our ground forces will try an audacious "
+                                        "assault against enemies in superior numbers. The operation"
+                                        " is risky, and the enemy might counter attack.\n")
                 elif stance == CombatStance.ELIMINATION:
                     if has_numerical_superiority:
-                        description += "On this location, our ground forces will focus on the destruction of enemy assets, before attempting to make progress toward " + enemy_base.name + ". "
-                        description += "The enemy is already outnumbered, and this maneuver might draw a final blow to their forces.\n"
+                        description += ("On this location, our ground forces will focus on the destruction of enemy"
+                                        f"assets, before attempting to make progress toward {enemy_base.name}. "
+                                        "The enemy is already outnumbered, and this maneuver might draw a final "
+                                        "blow to their forces.\n")
                     else:
-                        description += "On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.\n"
+                        description += ("On this location, our ground forces will try an audacious assault against "
+                                        "enemies in superior numbers. The operation is risky, and the enemy might "
+                                        "counter attack.\n")
                 elif stance == CombatStance.BREAKTHROUGH:
                     if has_numerical_superiority:
-                        description += "On this location, our ground forces will focus on progression toward " + enemy_base.name + ".\n"
+                        description += ("On this location, our ground forces will focus on progression toward "
+                                        f"{enemy_base.name}.\n")
                     else:
-                        description += "On this location, our ground forces have been ordered to rush toward " + enemy_base.name + ". Wish them luck... We are also expecting a counter attack.\n"
+                        description += ("On this location, our ground forces have been ordered to rush toward "
+                                        f"{enemy_base.name}. Wish them luck... We are also expecting a counter attack.\n")
                 elif stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
                     if has_numerical_superiority:
                         description += "On this location, our ground forces will hold position. We are not expecting an enemy assault.\n"
                     else:
-                        description += "On this location, our ground forces have been ordered to hold still, and defend against enemy attacks. An enemy assault might be iminent.\n"
+                        description += ("On this location, our ground forces have been ordered to hold still, "
+                                        "and defend against enemy attacks. An enemy assault might be iminent.\n")
             self.add_frontline(FrontLineInfo(description, enemy_base, player_base))
-    
+
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
         for flight in self.flights:
-            if not flight.client_units and flight.friendly: ## where else can we get this?
+            if not flight.client_units and flight.friendly:  # where else can we get this?
                 name = flight.departure.airfield_name
-                if name in self.allied_flights_by_departure.keys():  
-                    self.allied_flights_by_departure[name].append(flight) 
+                if name in self.allied_flights_by_departure.keys():
+                    self.allied_flights_by_departure[name].append(flight)
                 else:
                     self.allied_flights_by_departure[name] = [flight]
-
-
