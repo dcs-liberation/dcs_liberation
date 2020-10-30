@@ -6,7 +6,7 @@ import random
 import logging
 from dataclasses import dataclass
 from theater.frontline import FrontLine
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, TYPE_CHECKING, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from dcs.mission import Mission
@@ -57,16 +57,20 @@ class FrontLineInfo:
     def _zero_units_sentence(self) -> str:
         '''Situation description if either side has zero units on a frontline'''
         if self.player_zero:
-            return ("We do not have a single vehicle available to hold our position, the situation is"
-                    "critical, and we will lose ground inevitably.")
+            return ("We do not have a single vehicle available to hold our position.  The situation is critical, "
+                    f"and we will lose ground inevitably betweeen {self.player_base.name} and {self.enemy_base.name}")
         elif self.enemy_zero:
             return ("The enemy forces have been crushed, we will be able to make significant progress"
                     f" toward {self.enemy_base.name}.")
-        return None
+        return ''
 
     @property
     def _advantage_description(self) -> str:
-        '''Situation description for when player has numerical advantage on the frontline'''
+        '''Situation description for when player has a numerical advantage
+
+        Returns:
+            str
+        '''
         if self.stance == CombatStance.AGGRESSIVE:
             return (
                 "On this location, our ground forces will try to make "
@@ -94,9 +98,15 @@ class FrontLineInfo:
             return ''
         else:
             logging.warning('Briefing did not receive a known CombatStance')
+            return ''
 
     @property
-    def _disadvantage_description(self):
+    def _disadvantage_description(self) -> str:
+        '''Situation description for when player has a numerical disadvantage
+
+        Returns:
+            str
+        '''
         if self.stance == CombatStance.AGGRESSIVE:
             return (
                 "On this location, our ground forces will try an audacious "
@@ -107,7 +117,7 @@ class FrontLineInfo:
             return (
                 "On this location, our ground forces will try an audacious assault against "
                 "enemies in superior numbers. The operation is risky, and the enemy might "
-                "counter attack.\n"
+                "counter attack."
             )
         elif self.stance == CombatStance.BREAKTHROUGH:
             return (
@@ -124,9 +134,15 @@ class FrontLineInfo:
             return ''
         else:
             logging.warning('Briefing did not receive a known CombatStance')
+            return ''
 
     @property
-    def brief(self):
+    def brief(self) -> str:
+        '''Situation briefing string
+
+        Returns:
+            str
+        '''
         if self._zero_units_sentence:
             return self._zero_units_sentence
         situation = self._random_frontline_sentence
@@ -143,8 +159,9 @@ class MissionInfoGenerator:
     Examples of subtypes include briefing generators, kneeboard generators, etc.
     """
 
-    def __init__(self, mission: Mission) -> None:
+    def __init__(self, mission: Mission, game: Optional['Game'] = None) -> None:
         self.mission = mission
+        self.game = game
         self.awacs: List[AwacsInfo] = []
         self.comms: List[CommInfo] = []
         self.flights: List[FlightData] = []
@@ -218,9 +235,8 @@ class MissionInfoGenerator:
 class BriefingGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, game: 'Game'):
-        super().__init__(mission)
+        super().__init__(mission, game)
         # self.conflict = conflict
-        self.game = game
         self.title = ""
         self.description = ""
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
@@ -234,18 +250,16 @@ class BriefingGenerator(MissionInfoGenerator):
             )
         self.template = env.get_template('briefingtemplate_EN.j2')
 
-    def generate(self):
+    def generate(self) -> None:
         '''Generate the mission briefing
         '''
         self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
-        with open('testgen.txt', 'w') as file:
-            file.write(self.template.render(vars(self)))
         self.mission.set_description_text(self.template.render(vars(self)))
         self.mission.add_picture_blue(os.path.abspath(
             "./resources/ui/splash_screen.png"))
 
-    def _generate_frontline_info(self):
+    def _generate_frontline_info(self) -> None:
         '''Build FrontLineInfo objects from FrontLine type and append to briefing.
         '''
         for front_line in self.game.theater.conflicts(from_player=True):
