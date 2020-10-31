@@ -29,7 +29,6 @@
 * **[UI]** Missing TER weapons in custom payload now selectable.
 * **[Flight Planner]** Fix waypoint alitudes for helicopters
 * **[Flight Planner]** Fixed CAS aircraft wandering away from frontline
-* **[Misc]** Fix inventory handling for new packages.
 * **[Radios]** Fix A-10C radio
 
 
