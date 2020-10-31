@@ -234,8 +234,6 @@ class BriefingGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, game: "Game"):
         super().__init__(mission, game)
-        self.title = ""
-        self.description = ""
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
         env = Environment(
             loader=FileSystemLoader("resources/briefing/templates"),
