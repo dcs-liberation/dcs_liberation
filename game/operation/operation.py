@@ -479,6 +479,7 @@ dcsLiberation.TargetPoints = {
 
         self.assign_channels_to_flights(airgen.flights,
                                         airsupportgen.air_support)
+        self.notify_info_generators(groundobjectgen, airsupportgen, jtacs, airgen)
 
     def assign_channels_to_flights(self, flights: List[FlightData],
                                    air_support: AirSupport) -> None:
