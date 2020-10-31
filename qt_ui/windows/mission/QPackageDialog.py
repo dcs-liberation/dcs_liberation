@@ -78,7 +78,7 @@ class QPackageDialog(QDialog):
         self.tot_spinner.timeChanged.connect(self.save_tot)
         self.tot_column.addWidget(self.tot_spinner)
 
-        self.reset_tot_button = QPushButton("Reset TOT")
+        self.reset_tot_button = QPushButton("ASAP")
         self.reset_tot_button.setToolTip(
             "Sets the package TOT to the earliest time that all flights can "
             "arrive at the target."
