@@ -1,5 +1,6 @@
 import pickle
 from typing import Collection, Optional, Tuple
+import logging
 
 Zone = Collection[Tuple[float, float]]
 Landmap = Tuple[Collection[Zone], Collection[Zone], Collection[Zone]]
@@ -10,6 +11,7 @@ def load_landmap(filename: str) -> Optional[Landmap]:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except:
+        logging.exception(f"Failed to load landmap {filename}")
         return None
 
 
