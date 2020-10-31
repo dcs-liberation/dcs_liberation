@@ -1,27 +1,44 @@
 # 2.2.X
 
 ## Features/Improvements :
-* **[Flight Planner]** Flight planner overhaul, with package and TOT system
-* **[Map]** Highlight the selected flight path on the map
-* **[Map]** Improved flight plan display settings 
-* **[Map]** Improved SAM display settings
-* **[Map]** Added polygon debug mode display
-* **[New Game]** Starting budget can be freely selected 
-* **[Moddability]** Custom campaigns can be designed through json files 
-* **[Moddability]** Custom factions can be designed through json files 
-* **[Factions]** Cold War / Middle eastern factions will use Flak sites 
+* **[Cheat Menu]** Added ability to capture base from mission planner
+* **[Cheat Menu]** Added ability to show red ATO
 * **[Factions]** Added WW2 factions that do not depend on WW2 asset pack
-* **[Units]** Added support for new P-47 variants 
+* **[Factions]** Cold War / Middle eastern factions will use Flak sites
+* **[Flight Planner]** Flight planner overhaul, with package and TOT system
+* **[Flight Planner]** Pick runways and ascent/descent based on headwind
+* **[Map]** Added polygon debug mode display
+* **[Map]** Highlight the selected flight path on the map
+* **[Map]** Improved SAM display settings
+* **[Map]** Improved flight plan display settings
+* **[Misc]** Flexible Dedicated Hosting Options for Mission Files via environment variables
+* **[Moddability]** Custom campaigns can be designed through json files
+* **[Moddability]** Custom campaigns can be designed through json files
+* **[Moddability]** Custom factions can be designed through json files
+* **[Moddability]** LUA plugins can now be injected into Liberation missions.
+* **[Moddability]** Optional Skynet IADS lua plugin now included
+* **[New Game]** Starting budget can be freely selected
+* **[UI]** Add double and right click actions to many UI elements.
+* **[UI]** Add polygon drawing mode for map background
+* **[UI]** Added a warning if you press takeoff with no player enabled flights
+* **[UI]** Packages and flights now visible in the main window sidebar
+* **[Units/Factions]** Added bombers to coalitions
+* **[Units/Factions]** Added frenchpack mod units
+* **[Units/Factions]** Added support for SU-57 mod by Cubanace
 * **[Units]** Added Freya EWR sites to german WW2 factions
-* **[Units]** Added support for many bombers (B-52H, B1B, Tu-22, Tu-142)  
+* **[Units]** Added support for many bombers (B-52H, B-1B, Tu-22, Tu-142)
+* **[Units]** Added support for new P-47 variants
 
 ## Fixes :
-* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore
-* **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
-* **[UI]** Missing TER weapons in custom payload now selectable.
-* **[UI]** Many missing unit icons were added
-* **[Maps]** Incirlik airbase was missing exclusions zones, so SAMS could end up being generated on the runway
 * **[Campaign Generator]** Big airbases could end up without any airbase defense.
+* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore
+* **[Flight Planner]** Fix waypoint alitudes for helicopters
+* **[Flight Planner]** Fixed CAS aircraft wandering away from frontline
+* **[Maps]** Incirlik airbase was missing exclusions zones, so SAMS could end up being generated on the runway
+* **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
+* **[Radios]** Fix A-10C radio
+* **[UI]** Many missing unit icons were added
+* **[UI]** Missing TER weapons in custom payload now selectable.
 
 # 2.1.5
 
