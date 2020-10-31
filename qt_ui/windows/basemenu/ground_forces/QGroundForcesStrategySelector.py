@@ -14,8 +14,8 @@ class QGroundForcesStrategySelector(QComboBox):
             self.cp.stances[enemy_cp.id] = CombatStance.DEFENSIVE
 
         for i, stance in enumerate(CombatStance):
-            self.addItem(stance.name, userData=CombatStance(i))
-            if self.cp.stances[enemy_cp.id] == CombatStance(i):
+            self.addItem(stance.name, userData=stance)
+            if self.cp.stances[enemy_cp.id] == stance:
                 self.setCurrentIndex(i)
 
         self.currentTextChanged.connect(self.on_change)

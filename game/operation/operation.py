@@ -47,6 +47,7 @@ class Operation:
     airsupportgen = None  # type: AirSupportConflictGenerator
     visualgen = None  # type: VisualGenerator
     groundobjectgen = None  # type: GroundObjectsGenerator
+    briefinggen = None  # type: BriefingGenerator
     forcedoptionsgen = None  # type: ForcedOptionsGenerator
     radio_registry: Optional[RadioRegistry] = None
     tacan_registry: Optional[TacanRegistry] = None
@@ -75,7 +76,6 @@ class Operation:
         self.to_cp = to_cp
         self.is_quick = False
         self.plugin_scripts: List[str] = []
-        self.subscribed_generators = [KneeboardGenerator, BriefingGenerator]
 
     def units_of(self, country_name: str) -> List[UnitType]:
         return []
@@ -90,6 +90,7 @@ class Operation:
     def initialize(self, mission: Mission, conflict: Conflict):
         self.current_mission = mission
         self.conflict = conflict
+        # self.briefinggen = BriefingGenerator(self.current_mission, self.game)  Is it safe to remove this, or does it also break save compat?
 
     def prepare(self, terrain: Terrain, is_quick: bool):
         with open("resources/default_options.lua", "r") as f:
@@ -164,25 +165,34 @@ class Operation:
             trigger.add_action(DoScriptFile(fileref))
             self.current_mission.triggerrules.triggers.append(trigger)
 
-    def notify_subscribed_generators(self):
-        '''Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)
-        '''
-        gens: List[MissionInfoGenerator] = [gen(self.current_mission, game=self.game) for gen in self.subscribed_generators]
+    def notify_info_generators(
+        self,
+        groundobjectgen: GroundObjectsGenerator,
+        airsupportgen: AirSupportConflictGenerator,
+        jtacs: List[JtacInfo],
+        airgen: AircraftConflictGenerator,
+        ):
+        """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)
+        """
+        gens: List[MissionInfoGenerator] = [
+            KneeboardGenerator(self.current_mission, self.game),
+            BriefingGenerator(self.current_mission, self.game)
+            ]
         for gen in gens:
-            for dynamic_runway in self.groundobjectgen.runways.values():
+            for dynamic_runway in groundobjectgen.runways.values():
                 gen.add_dynamic_runway(dynamic_runway)
 
-            for tanker in self.airsupportgen.air_support.tankers:
+            for tanker in airsupportgen.air_support.tankers:
                 gen.add_tanker(tanker)
 
             if self.is_awacs_enabled:
-                for awacs in self.airsupportgen.air_support.awacs:
+                for awacs in airsupportgen.air_support.awacs:
                     gen.add_awacs(awacs)
 
-            for jtac in self.jtacs:
+            for jtac in jtacs:
                 gen.add_jtac(jtac)
 
-            for flight in self.airgen.flights:
+            for flight in airgen.flights:
                 gen.add_flight(flight)
             gen.generate()
 
@@ -221,14 +231,14 @@ class Operation:
 
         # Generate ground object first
 
-        self.groundobjectgen = GroundObjectsGenerator(
+        groundobjectgen = GroundObjectsGenerator(
             self.current_mission,
             self.conflict,
             self.game,
             radio_registry,
             tacan_registry
         )
-        self.groundobjectgen.generate()
+        groundobjectgen.generate()
 
         # Generate destroyed units
         for d in self.game.get_destroyed_units():
@@ -250,29 +260,29 @@ class Operation:
                 )
 
         # Air Support (Tanker & Awacs)
-        self.airsupportgen = AirSupportConflictGenerator(
+        airsupportgen = AirSupportConflictGenerator(
             self.current_mission, self.conflict, self.game, radio_registry,
             tacan_registry)
-        self.airsupportgen.generate(self.is_awacs_enabled)
+        airsupportgen.generate(self.is_awacs_enabled)
 
         # Generate Activity on the map
-        self.airgen = AircraftConflictGenerator(
+        airgen = AircraftConflictGenerator(
             self.current_mission, self.conflict, self.game.settings, self.game,
             radio_registry)
 
-        self.airgen.generate_flights(
+        airgen.generate_flights(
             self.current_mission.country(self.game.player_country),
             self.game.blue_ato,
-            self.groundobjectgen.runways
+            groundobjectgen.runways
         )
-        self.airgen.generate_flights(
+        airgen.generate_flights(
             self.current_mission.country(self.game.enemy_country),
             self.game.red_ato,
-            self.groundobjectgen.runways
+            groundobjectgen.runways
         )
 
         # Generate ground units on frontline everywhere
-        self.jtacs: List[JtacInfo] = []
+        jtacs: List[JtacInfo] = []
         for front_line in self.game.theater.conflicts(True):
             player_cp = front_line.control_point_a
             enemy_cp = front_line.control_point_b
@@ -285,7 +295,7 @@ class Operation:
             enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             groundConflictGen = GroundConflictGenerator(self.current_mission, conflict, self.game, player_gp, enemy_gp, player_cp.stances[enemy_cp.id])
             groundConflictGen.generate()
-            self.jtacs.extend(groundConflictGen.jtacs)
+            jtacs.extend(groundConflictGen.jtacs)
 
         # Setup combined arms parameters
         self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
@@ -317,10 +327,10 @@ class Operation:
         luaData["JTACs"] = {}
         luaData["TargetPoints"] = {}
 
-        self.assign_channels_to_flights(self.airgen.flights,
-                                        self.airsupportgen.air_support)
+        self.assign_channels_to_flights(airgen.flights,
+                                        airsupportgen.air_support)
 
-        for tanker in self.airsupportgen.air_support.tankers:
+        for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = { 
                 "dcsGroupName": tanker.dcsGroupName,
                 "callsign": tanker.callsign,
@@ -330,14 +340,14 @@ class Operation:
             }
 
         if self.is_awacs_enabled:
-            for awacs in self.airsupportgen.air_support.awacs:
+            for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = { 
                     "dcsGroupName": awacs.dcsGroupName,
                     "callsign": awacs.callsign,
                     "radio": awacs.freq.mhz
                 }
 
-        for jtac in self.jtacs:
+        for jtac in jtacs:
             luaData["JTACs"][jtac.callsign] = { 
                 "dcsGroupName": jtac.dcsGroupName,
                 "callsign": jtac.callsign,
@@ -346,7 +356,7 @@ class Operation:
                 "laserCode": jtac.code
             }
 
-        for flight in self.airgen.flights:
+        for flight in airgen.flights:
             if flight.friendly and flight.flight_type in [FlightType.ANTISHIP, FlightType.DEAD, FlightType.SEAD, FlightType.STRIKE]:
                 flightType = flight.flight_type.name
                 flightTarget = flight.package.target
@@ -467,11 +477,8 @@ dcsLiberation.TargetPoints = {
             plugin.injectScripts(self)
             plugin.injectConfiguration(self)
 
-        self.assign_channels_to_flights(self.airgen.flights,
-                                        self.airsupportgen.air_support)
-        
-        # Generate kneeboard and briefing
-        self.notify_subscribed_generators()
+        self.assign_channels_to_flights(airgen.flights,
+                                        airsupportgen.air_support)
 
     def assign_channels_to_flights(self, flights: List[FlightData],
                                    air_support: AirSupport) -> None:
