@@ -238,7 +238,7 @@ class NevadaTheater(ConflictTheater):
     overview_image = "nevada.gif"
     reference_points = {(nevada.Mina_Airport_3Q0.position.x, nevada.Mina_Airport_3Q0.position.y): (45 * 2, -360 * 2),
                         (nevada.Laughlin_Airport.position.x, nevada.Laughlin_Airport.position.y): (440 * 2, 80 * 2), }
-    landmap = load_landmap("resources\\nev_landmap.p")
+    landmap = load_landmap("resources\\nevlandmap.p")
     daytime_map = {
         "dawn": (4, 6),
         "day": (6, 17),
