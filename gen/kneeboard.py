@@ -311,7 +311,7 @@ class BriefingPage(KneeboardPage):
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
-    def __init__(self, mission: Mission, game: 'Game') -> None:
+    def __init__(self, mission: Mission, game: "Game") -> None:
         super().__init__(mission, game)
 
     def generate(self) -> None:

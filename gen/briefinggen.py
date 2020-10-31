@@ -1,20 +1,19 @@
-'''
+"""
 Briefing generation logic
-'''
+"""
+from __future__ import annotations
 import os
 import random
 import logging
 from dataclasses import dataclass
 from theater.frontline import FrontLine
-from typing import List, Dict, TYPE_CHECKING, Optional
+from typing import List, Dict, TYPE_CHECKING
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from dcs.mission import Mission
-
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
-# from .conflictgen import Conflict
 from theater import ControlPoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
@@ -22,7 +21,6 @@ from .runways import RunwayData
 
 if TYPE_CHECKING:
     from game import Game
-
 
 @dataclass
 class CommInfo:
@@ -43,7 +41,7 @@ class FrontLineInfo:
 
     @property
     def _random_frontline_sentence(self) -> str:
-        '''Random sentences for start of situation briefing'''
+        """Random sentences for start of situation briefing"""
         templates = [
             f"There are combats between {self.player_base.name} and {self.enemy_base.name}. ",
             f"The war on the ground is still going on between {self.player_base.name} and {self.enemy_base.name}. ",
@@ -55,22 +53,22 @@ class FrontLineInfo:
 
     @property
     def _zero_units_sentence(self) -> str:
-        '''Situation description if either side has zero units on a frontline'''
+        """Situation description if either side has zero units on a frontline"""
         if self.player_zero:
             return ("We do not have a single vehicle available to hold our position.  The situation is critical, "
                     f"and we will lose ground inevitably betweeen {self.player_base.name} and {self.enemy_base.name}")
         elif self.enemy_zero:
             return ("The enemy forces have been crushed, we will be able to make significant progress"
                     f" toward {self.enemy_base.name}.")
-        return ''
+        return ""
 
     @property
     def _advantage_description(self) -> str:
-        '''Situation description for when player has a numerical advantage
+        """Situation description for when player has a numerical advantage
 
         Returns:
             str
-        '''
+        """
         if self.stance == CombatStance.AGGRESSIVE:
             return (
                 "On this location, our ground forces will try to make "
@@ -95,18 +93,18 @@ class FrontLineInfo:
             )
         # TODO: Write a situation description for player RETREAT stance
         elif self.stance == CombatStance.RETREAT:
-            return ''
+            return ""
         else:
-            logging.warning('Briefing did not receive a known CombatStance')
-            return ''
+            logging.warning("Briefing did not receive a known CombatStance")
+            return ""
 
     @property
     def _disadvantage_description(self) -> str:
-        '''Situation description for when player has a numerical disadvantage
+        """Situation description for when player has a numerical disadvantage
 
         Returns:
             str
-        '''
+        """
         if self.stance == CombatStance.AGGRESSIVE:
             return (
                 "On this location, our ground forces will try an audacious "
@@ -131,18 +129,18 @@ class FrontLineInfo:
             )
         # TODO: Write a situation description for player RETREAT stance
         elif self.stance == CombatStance.RETREAT:
-            return ''
+            return ""
         else:
-            logging.warning('Briefing did not receive a known CombatStance')
-            return ''
+            logging.warning("Briefing did not receive a known CombatStance")
+            return ""
 
     @property
     def brief(self) -> str:
-        '''Situation briefing string
+        """Situation briefing string
 
         Returns:
             str
-        '''
+        """
         if self._zero_units_sentence:
             return self._zero_units_sentence
         situation = self._random_frontline_sentence
@@ -159,7 +157,7 @@ class MissionInfoGenerator:
     Examples of subtypes include briefing generators, kneeboard generators, etc.
     """
 
-    def __init__(self, mission: Mission, game: 'Game') -> None:
+    def __init__(self, mission: Mission, game: Game) -> None:
         self.mission = mission
         self.game = game
         self.awacs: List[AwacsInfo] = []
@@ -212,11 +210,11 @@ class MissionInfoGenerator:
         self.tankers.append(tanker)
 
     def add_frontline(self, frontline: FrontLineInfo) -> None:
-        '''Adds a frontline to the briefing
+        """Adds a frontline to the briefing
 
         Arguments:
-            frontline {FrontLineInfo} -- [description]
-        '''
+            frontline: Frontline conflict information
+        """
         self.frontlines.append(frontline)
 
     def add_dynamic_runway(self, runway: RunwayData) -> None:
@@ -234,25 +232,24 @@ class MissionInfoGenerator:
 
 class BriefingGenerator(MissionInfoGenerator):
 
-    def __init__(self, mission: Mission, game: 'Game'):
+    def __init__(self, mission: Mission, game: "Game"):
         super().__init__(mission, game)
-        # self.conflict = conflict
         self.title = ""
         self.description = ""
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
         env = Environment(
-            loader=FileSystemLoader('resources/briefing/templates'),
+            loader=FileSystemLoader("resources/briefing/templates"),
             autoescape=select_autoescape(
-                disabled_extensions=('txt'),
+                disabled_extensions=("txt"),
                 default_for_string=True,
                 default=True,
                 )
             )
-        self.template = env.get_template('briefingtemplate_EN.j2')
+        self.template = env.get_template("briefingtemplate_EN.j2")
 
     def generate(self) -> None:
-        '''Generate the mission briefing
-        '''
+        """Generate the mission briefing
+        """
         self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
         self.mission.set_description_text(self.template.render(vars(self)))
@@ -260,15 +257,15 @@ class BriefingGenerator(MissionInfoGenerator):
             "./resources/ui/splash_screen.png"))
 
     def _generate_frontline_info(self) -> None:
-        '''Build FrontLineInfo objects from FrontLine type and append to briefing.
-        '''
+        """Build FrontLineInfo objects from FrontLine type and append to briefing.
+        """
         for front_line in self.game.theater.conflicts(from_player=True):
             self.add_frontline(FrontLineInfo(front_line))
 
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
-        '''Create iterable to display allied flights grouped by departure airfield.
-        '''
+        """Create iterable to display allied flights grouped by departure airfield.
+        """
         for flight in self.flights:
             if not flight.client_units and flight.friendly:
                 name = flight.departure.airfield_name
