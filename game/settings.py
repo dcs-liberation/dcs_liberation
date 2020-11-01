@@ -44,9 +44,10 @@ class Settings:
         for plugin in LuaPluginManager().getPlugins():
             plugin.setSettings(self)
 
-
         # Cheating
         self.show_red_ato = False
+
+        self.never_delay_player_flights = False
 
     def __setstate__(self, state) -> None:
         # __setstate__ is called with the dict of the object being unpickled. We

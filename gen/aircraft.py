@@ -1066,15 +1066,16 @@ class AircraftConflictGenerator:
         estimator = TotEstimator(package)
         start_time = estimator.mission_start_time(flight)
 
-        if start_time.total_seconds() > 0:
-            if self.should_activate_late(flight):
-                # Late activation causes the aircraft to not be spawned until
-                # triggered.
-                self.set_activation_time(flight, group, start_time)
-            elif flight.start_type == "Cold":
-                # Setting the start time causes the AI to wait until the
-                # specified time to begin their startup sequence.
-                self.set_startup_time(flight, group, start_time)
+        if flight.client_count and not self.settings.never_delay_player_flights:
+            if start_time.total_seconds() > 0:
+                if self.should_activate_late(flight):
+                    # Late activation causes the aircraft to not be spawned
+                    # until triggered.
+                    self.set_activation_time(flight, group, start_time)
+                elif flight.start_type == "Cold":
+                    # Setting the start time causes the AI to wait until the
+                    # specified time to begin their startup sequence.
+                    self.set_startup_time(flight, group, start_time)
 
         # And setting *our* waypoint TOT causes the takeoff time to show up in
         # the player's kneeboard.

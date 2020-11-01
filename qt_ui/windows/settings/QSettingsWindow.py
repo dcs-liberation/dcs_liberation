@@ -205,7 +205,7 @@ class QSettingsWindow(QDialog):
         self.generatorPage.setLayout(self.generatorLayout)
 
         self.gameplay = QGroupBox("Gameplay")
-        self.gameplayLayout = QGridLayout();
+        self.gameplayLayout = QGridLayout()
         self.gameplayLayout.setAlignment(Qt.AlignTop)
         self.gameplay.setLayout(self.gameplayLayout)
 
@@ -217,10 +217,23 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+        self.never_delay_players = QCheckBox()
+        self.never_delay_players.setChecked(
+            self.game.settings.never_delay_player_flights)
+        self.never_delay_players.toggled.connect(self.applySettings)
+        self.never_delay_players.setToolTip(
+            "When checked, player flights with a delayed start time will be "
+            "spawned immediately. AI wingmen may begin startup immediately."
+        )
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(
+            QLabel("Never delay player flights"), 2, 0)
+        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1,
+                                      Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -366,6 +379,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
+        self.game.settings.never_delay_player_flights = self.never_delay_players.isChecked()
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
 
