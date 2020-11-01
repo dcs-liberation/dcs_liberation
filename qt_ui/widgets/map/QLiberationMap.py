@@ -349,7 +349,6 @@ class QLiberationMap(QGraphicsView):
         if time is None:
             tot = ""
         else:
-            time = datetime.timedelta(seconds=int(time.total_seconds()))
             tot = f"{prefix} T+{time}"
 
         pen = QPen(QColor("black"), 0.3)

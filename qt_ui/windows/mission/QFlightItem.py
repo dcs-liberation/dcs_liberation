@@ -22,8 +22,7 @@ class QFlightItem(QStandardItem):
             self.setIcon(icon)
         self.setEditable(False)
         estimator = TotEstimator(self.package)
-        delay = datetime.timedelta(
-            seconds=int(estimator.mission_start_time(flight).total_seconds()))
+        delay = estimator.mission_start_time(flight)
         self.setText("["+str(self.flight.flight_type.name[:6])+"] "
                      + str(self.flight.count) + " x " + db.unit_type_name(self.flight.unit_type)
                      + "   in " + str(delay))
