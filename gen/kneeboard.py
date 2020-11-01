@@ -190,8 +190,8 @@ class FlightPlanBuilder:
         distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
-        duration = waypoint.tot - last_time
-        return f"{int(distance / duration.total_seconds())} kt"
+        duration = (waypoint.tot - last_time).total_seconds() / 3600
+        return f"{int(distance / duration)} kt"
 
     def build(self) -> List[List[str]]:
         return self.rows
