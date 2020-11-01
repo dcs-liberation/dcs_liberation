@@ -1,5 +1,6 @@
 import os
 from typing import Dict
+from pathlib import Path
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
@@ -7,6 +8,9 @@ from theater.theatergroundobject import CATEGORY_MAP
 from .liberation_theme import get_theme_icons
 
 VERSION_STRING = "2.2.0-preview"
+if Path("buildnumber").exists():
+    with open("buildnumber", "r") as file:
+        VERSION_STRING += f"-{file.readline()}"
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
