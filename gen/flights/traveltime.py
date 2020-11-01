@@ -83,7 +83,8 @@ class TravelTime:
     def between_points(a: Point, b: Point, speed: float) -> timedelta:
         error_factor = 1.1
         distance = meter_to_nm(a.distance_to_point(b))
-        return timedelta(hours=distance / speed * error_factor)
+        return timedelta(
+            seconds=timedelta(hours=distance / speed * error_factor).seconds)
 
 
 class TotEstimator:

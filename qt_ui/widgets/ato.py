@@ -64,8 +64,7 @@ class FlightDelegate(QStyledItemDelegate):
         count = flight.count
         name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)
-        delay = datetime.timedelta(
-            seconds=int(estimator.mission_start_time(flight).total_seconds()))
+        delay = estimator.mission_start_time(flight)
         return f"[{task}] {count} x {name} in {delay}"
 
     def second_row_text(self, index: QModelIndex) -> str:
@@ -329,9 +328,7 @@ class PackageDelegate(QStyledItemDelegate):
 
     def right_text(self, index: QModelIndex) -> str:
         package = self.package(index)
-        delay = datetime.timedelta(
-            seconds=int(package.time_over_target.total_seconds()))
-        return f"TOT T+{delay}"
+        return f"TOT T+{package.time_over_target}"
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem,
               index: QModelIndex) -> None:

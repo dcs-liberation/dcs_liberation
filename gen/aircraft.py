@@ -816,8 +816,7 @@ class AircraftConflictGenerator:
 
         activation_trigger = TriggerOnce(
             Event.NoEvent, f"FlightLateActivationTrigger{group.id}")
-        activation_trigger.add_condition(
-            TimeAfter(seconds=int(delay.total_seconds())))
+        activation_trigger.add_condition(TimeAfter(seconds=delay.seconds))
 
         self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
         activation_trigger.add_action(ActivateGroup(group.id))
@@ -830,8 +829,7 @@ class AircraftConflictGenerator:
 
         activation_trigger = TriggerOnce(Event.NoEvent,
                                          f"FlightStartTrigger{group.id}")
-        activation_trigger.add_condition(
-            TimeAfter(seconds=int(delay.total_seconds())))
+        activation_trigger.add_condition(TimeAfter(seconds=delay.seconds))
 
         self.prevent_spawn_at_hostile_airbase(flight, activation_trigger)
         group.add_trigger_action(StartCommand())
