@@ -146,7 +146,17 @@ class QPackageDialog(QDialog):
         else:
             self.package_model.update_tot(
                 TotEstimator(self.package_model.package).earliest_tot())
-        self.tot_spinner.setTime(self.tot_qtime())
+
+        # Block signals while setting the auto computed TOT. The actual TOT will
+        # have resolution down to the microsecond, but the QTimeEdit is not
+        # capable of displaying that, so when we set the rounded value it saves
+        # that back to the package with less precision. Block signals so we only
+        # update the UI and not the package's value.
+        self.tot_spinner.blockSignals(True)
+        try:
+            self.tot_spinner.setTime(self.tot_qtime())
+        finally:
+            self.tot_spinner.blockSignals(False)
 
     def on_selection_changed(self, selected: QItemSelection,
                              _deselected: QItemSelection) -> None:

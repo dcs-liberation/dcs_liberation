@@ -122,9 +122,10 @@ class TotEstimator:
         return tot - travel_time - self.HOLD_TIME
 
     def earliest_tot(self) -> timedelta:
-        return max((
+        tots = [
             self.earliest_tot_for_flight(f) for f in self.package.flights
-        )) + self.HOLD_TIME
+        ]
+        return max(tots) + self.HOLD_TIME
 
     def earliest_tot_for_flight(self, flight: Flight) -> timedelta:
         """Estimate fastest time from mission start to the target position.
