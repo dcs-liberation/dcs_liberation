@@ -98,7 +98,17 @@ class TotEstimator:
         takeoff_time = self.takeoff_time_for_flight(flight)
         startup_time = self.estimate_startup(flight)
         ground_ops_time = self.estimate_ground_ops(flight)
-        return takeoff_time - startup_time - ground_ops_time
+        start_time = takeoff_time - startup_time - ground_ops_time
+        # In case FP math has given us some barely below zero time, round to
+        # zero.
+        if math.isclose(start_time.total_seconds(), 0):
+            return timedelta()
+        # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
+        # and they're not interesting from a mission planning perspective so we
+        # don't want them in the UI.
+        #
+        # Round down so *barely* above zero start times are just zero.
+        return timedelta(seconds=math.floor(start_time.total_seconds()))
 
     def takeoff_time_for_flight(self, flight: Flight) -> timedelta:
         travel_time = self.travel_time_to_rendezvous_or_target(flight)
@@ -122,9 +132,16 @@ class TotEstimator:
         return tot - travel_time - self.HOLD_TIME
 
     def earliest_tot(self) -> timedelta:
-        return max((
+        earliest_tot = max((
             self.earliest_tot_for_flight(f) for f in self.package.flights
         )) + self.HOLD_TIME
+
+        # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
+        # and they're not interesting from a mission planning perspective so we
+        # don't want them in the UI.
+        #
+        # Round up so we don't get negative start times.
+        return timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
 
     def earliest_tot_for_flight(self, flight: Flight) -> timedelta:
         """Estimate fastest time from mission start to the target position.

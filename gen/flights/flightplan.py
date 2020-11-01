@@ -7,6 +7,7 @@ generating the waypoints for the mission.
 """
 from __future__ import annotations
 
+import math
 from datetime import timedelta
 from functools import cached_property
 import logging
@@ -93,29 +94,31 @@ class PackageWaypointTiming:
         if group_ground_speed is None:
             return None
 
-        ingress = package.time_over_target - TravelTime.between_points(
-            package.waypoints.ingress,
-            package.target.position,
-            group_ground_speed
-        )
+        # Round each waypoint TOT since DCS doesn't support sub-second timing
+        # and it's not interesting to the user.
+        ingress = timedelta(seconds=math.floor(
+            (package.time_over_target - TravelTime.between_points(
+                package.waypoints.ingress,
+                package.target.position,
+                group_ground_speed)).total_seconds()))
 
-        join = ingress - TravelTime.between_points(
-            package.waypoints.join,
-            package.waypoints.ingress,
-            group_ground_speed
-        )
+        join = timedelta(seconds=math.floor(
+            (ingress - TravelTime.between_points(
+                package.waypoints.join,
+                package.waypoints.ingress,
+                group_ground_speed)).total_seconds()))
 
-        egress = package.time_over_target + TravelTime.between_points(
-            package.target.position,
-            package.waypoints.egress,
-            group_ground_speed
-        )
+        egress = timedelta(seconds=math.floor(
+            (package.time_over_target + TravelTime.between_points(
+                package.target.position,
+                package.waypoints.egress,
+                group_ground_speed)).total_seconds()))
 
-        split = egress + TravelTime.between_points(
-            package.waypoints.egress,
-            package.waypoints.split,
-            group_ground_speed
-        )
+        split = timedelta(seconds=math.floor(
+            (egress + TravelTime.between_points(
+                package.waypoints.egress,
+                package.waypoints.split,
+                group_ground_speed)).total_seconds()))
 
         return cls(package, join, ingress, egress, split)
 
