@@ -41,6 +41,10 @@ jobs:
       run: |
         ./venv/scripts/activate
         mypy theater
+      
+    - name: update build number
+      run: |
+        [IO.File]::WriteAllLines($pwd.path + "\buildnumber", $env:GITHUB_RUN_NUMBER)
 
     - name: Build binaries
       run: |
