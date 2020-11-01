@@ -668,7 +668,8 @@ class AircraftConflictGenerator:
             units=group.units,
             size=len(group.units),
             friendly=flight.from_cp.captured,
-            departure_delay=flight.scheduled_in,
+            # Set later.
+            departure_delay=timedelta(),
             departure=departure_runway,
             arrival=departure_runway,
             # TODO: Support for divert airfields.

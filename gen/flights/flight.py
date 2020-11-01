@@ -139,11 +139,6 @@ class Flight:
         self.targets: List[MissionTarget] = []
         self.loadout: Dict[str, str] = {}
         self.start_type = start_type
-        # Late activation delay in seconds from mission start. This is not
-        # the same as the flight's takeoff time. Takeoff time depends on the
-        # mission's TOT and the other flights in the package. Takeoff time is
-        # determined by AirConflictGenerator.
-        self.scheduled_in = 0
         self.use_custom_loadout = False
         self.client_count = 0
 
