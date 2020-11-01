@@ -4,7 +4,8 @@ import logging
 import random
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Dict, List, Optional, Type, Union
+from functools import cached_property
+from typing import Dict, List, Optional, Type, Union, TYPE_CHECKING
 
 from dcs import helicopters
 from dcs.action import AITaskPush, ActivateGroup
@@ -89,6 +90,9 @@ from .flights.flightplan import (
 from .flights.traveltime import TotEstimator
 from .naming import namegen
 from .runways import RunwayAssigner
+
+if TYPE_CHECKING:
+    from game import Game
 
 WARM_START_HELI_AIRSPEED = 120
 WARM_START_HELI_ALT = 500
@@ -551,13 +555,28 @@ AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 class AircraftConflictGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
-                 game, radio_registry: RadioRegistry):
+                 game: Game, radio_registry: RadioRegistry):
         self.m = mission
         self.game = game
         self.settings = settings
         self.conflict = conflict
         self.radio_registry = radio_registry
         self.flights: List[FlightData] = []
+
+    @cached_property
+    def use_client(self) -> bool:
+        """True if Client should be used instead of Player."""
+        blue_clients = self.client_slots_in_ato(self.game.blue_ato)
+        red_clients = self.client_slots_in_ato(self.game.red_ato)
+        return blue_clients + red_clients > 1
+
+    @staticmethod
+    def client_slots_in_ato(ato: AirTaskingOrder) -> int:
+        total = 0
+        for package in ato.packages:
+            for flight in package.flights:
+                total += flight.client_count
+        return total
 
     def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
         """Allocates an intra-flight channel to a group.
@@ -608,13 +627,12 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
-        single_client = flight.client_count == 1
         for idx in range(0, min(len(group.units), flight.client_count)):
             unit = group.units[idx]
-            if single_client:
-                unit.set_player()
-            else:
+            if self.use_client:
                 unit.set_client()
+            else:
+                unit.set_player()
 
             # Do not generate player group with late activation.
             if group.late_activation:

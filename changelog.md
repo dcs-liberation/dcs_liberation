@@ -10,7 +10,8 @@
 * **[Moddability]** Custom campaigns can be designed through json files 
 
 ## Fixes :
-* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore 
+* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore
+* **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
 * **[UI]** Missing TER weapons in custom payload now selectable.
 
 # 2.1.5
