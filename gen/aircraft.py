@@ -228,7 +228,7 @@ class FlightData:
     friendly: bool
 
     #: Number of seconds after mission start the flight is set to depart.
-    departure_delay: int
+    departure_delay: timedelta
 
     #: Arrival airport.
     arrival: RunwayData
@@ -250,7 +250,7 @@ class FlightData:
 
     def __init__(self, package: Package, flight_type: FlightType,
                  units: List[FlyingUnit], size: int, friendly: bool,
-                 departure_delay: int, departure: RunwayData,
+                 departure_delay: timedelta, departure: RunwayData,
                  arrival: RunwayData, divert: Optional[RunwayData],
                  waypoints: List[FlightWaypoint],
                  intra_flight_channel: RadioFrequency) -> None:
@@ -277,10 +277,6 @@ class FlightData:
     def aircraft_type(self) -> FlyingType:
         """Returns the type of aircraft in this flight."""
         return self.units[0].unit_type
-    
-    @property
-    def departure_delay_delta(self) -> timedelta:
-        return timedelta(seconds=self.departure_delay)
 
     def num_radio_channels(self, radio_id: int) -> int:
         """Returns the number of preset channels for the given radio."""
@@ -1065,6 +1061,9 @@ class AircraftConflictGenerator:
         # And setting *our* waypoint TOT causes the takeoff time to show up in
         # the player's kneeboard.
         waypoint.tot = estimator.takeoff_time_for_flight(flight)
+        # And finally assign it to the FlightData info so it shows correctly in
+        # the briefing.
+        self.flights[-1].departure_delay = start_time
 
     @staticmethod
     def should_activate_late(flight: Flight) -> bool:

@@ -25,7 +25,7 @@ Planned ally flights:
 {{ dep }}
 ---------------------------------------------------
 {% for flight in allied_flights_by_departure[dep] %}
-{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay_delta }}, {{ flight.package.target.name}}{% endfor %}
+{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}{% endfor %}
 {% endfor %}
 
 Carriers and FARPs:
@@ -42,7 +42,7 @@ AWACS:
 {% for i in awacs %}{{ i.callsign }} -- Freq : {{i.freq.mhz}}
 {% endfor %}
 
-JTACS [F-10 Menu] : 
+JTACS [F-10 Menu] :
 ====================
 {% for jtac in jtacs %}Frontline {{ jtac.region }} -- Code : {{ jtac.code }}
 {% endfor %}

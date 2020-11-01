@@ -232,13 +232,13 @@ class MissionInfoGenerator:
 
 class BriefingGenerator(MissionInfoGenerator):
 
-    def __init__(self, mission: Mission, game: "Game"):
+    def __init__(self, mission: Mission, game: Game):
         super().__init__(mission, game)
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
         env = Environment(
             loader=FileSystemLoader("resources/briefing/templates"),
             autoescape=select_autoescape(
-                disabled_extensions=("txt"),
+                disabled_extensions=("txt",),
                 default_for_string=True,
                 default=True,
                 )
@@ -267,7 +267,7 @@ class BriefingGenerator(MissionInfoGenerator):
         for flight in self.flights:
             if not flight.client_units and flight.friendly:
                 name = flight.departure.airfield_name
-                if name in self.allied_flights_by_departure.keys():  # where else can we get this?
+                if name in self.allied_flights_by_departure:  # where else can we get this?
                     self.allied_flights_by_departure[name].append(flight)
                 else:
                     self.allied_flights_by_departure[name] = [flight]
