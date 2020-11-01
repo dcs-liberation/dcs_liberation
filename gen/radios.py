@@ -126,6 +126,12 @@ RADIOS: List[Radio] = [
 
     Radio("R&S M3AR VHF", MHz(120), MHz(174), step=MHz(1)),
     Radio("R&S M3AR UHF", MHz(225), MHz(400), step=MHz(1)),
+
+    # MiG-15bis
+    Radio("RSI-6K HF", MHz(3, 750), MHz(5), step=kHz(25)),
+
+    # MiG-19P
+    Radio("RSIU-4V", MHz(100), MHz(150), step=MHz(1)),
 ]
 
 

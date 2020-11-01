@@ -157,6 +157,14 @@ class ChannelNamer:
         return f"COMM{radio_id} Ch {channel_id}"
 
 
+class FarmerChannelNamer(ChannelNamer):
+    """Channel namer for the MiG-19P."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        return f"Ch {channel_id}"
+
+
 class MirageChannelNamer(ChannelNamer):
     """Channel namer for the M-2000."""
 
@@ -382,14 +390,26 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
 
 
 @dataclass(frozen=True)
-class WarthogRadioChannelAllocator(RadioChannelAllocator):
-    """Preset channel allocator for the A-10C."""
+class NoOpChannelAllocator(RadioChannelAllocator):
+    """Channel allocator for aircraft that don't support preset channels."""
 
     def assign_channels_for_flight(self, flight: FlightData,
                                    air_support: AirSupport) -> None:
-        # The A-10's radio works differently than most aircraft. Doesn't seem to
-        # be a way to set these from the mission editor, let alone pydcs.
         pass
+
+
+@dataclass(frozen=True)
+class FarmerRadioChannelAllocator(RadioChannelAllocator):
+    """Preset channel allocator for the MiG-19P."""
+
+    def assign_channels_for_flight(self, flight: FlightData,
+                                   air_support: AirSupport) -> None:
+        # The Farmer only has 6 preset channels. It also only has a VHF radio,
+        # and currently our ATC data and AWACS are only in the UHF band.
+        radio_id = 1
+        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
+        # TODO: Assign 4-6 to VHF frequencies of departure, arrival, and divert.
+        # TODO: Assign 2 and 3 to AWACS if it is VHF.
 
 
 @dataclass(frozen=True)
@@ -459,7 +479,7 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         # VHF for intraflight is not accepted anymore by DCS
         # (see https://forums.eagle.ru/showthread.php?p=4499738).
         intra_flight_radio=get_radio("AN/ARC-164"),
-        channel_allocator=WarthogRadioChannelAllocator()
+        channel_allocator=NoOpChannelAllocator()
     ),
 
     "AJS37": AircraftData(
@@ -536,6 +556,19 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
             intra_flight_radio_index=2
         ),
         channel_namer=MirageChannelNamer
+    ),
+
+    "MiG-15bis": AircraftData(
+        inter_flight_radio=get_radio("RSI-6K HF"),
+        intra_flight_radio=get_radio("RSI-6K HF"),
+        channel_allocator=NoOpChannelAllocator(),
+    ),
+
+    "MiG-19P": AircraftData(
+        inter_flight_radio=get_radio("RSIU-4V"),
+        intra_flight_radio=get_radio("RSIU-4V"),
+        channel_allocator=FarmerRadioChannelAllocator(),
+        channel_namer=FarmerChannelNamer
     ),
 
     "P-51D": AircraftData(
