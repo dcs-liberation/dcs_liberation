@@ -7,7 +7,6 @@ generating the waypoints for the mission.
 """
 from __future__ import annotations
 
-import math
 from datetime import timedelta
 from functools import cached_property
 import logging
@@ -50,77 +49,6 @@ class InvalidObjectiveLocation(PlanningError):
         super().__init__(
             f"{location.name} is not valid for {task.name} missions."
         )
-
-
-@dataclass(frozen=True)
-class PackageWaypointTiming:
-    #: The package being scheduled.
-    package: Package
-
-    #: The package join time.
-    join: timedelta
-
-    #: The ingress waypoint TOT.
-    ingress: timedelta
-
-    #: The egress waypoint TOT.
-    egress: timedelta
-
-    #: The package split time.
-    split: timedelta
-
-    @property
-    def target(self) -> timedelta:
-        """The package time over target."""
-        return self.package.time_over_target
-
-    @classmethod
-    def for_package(cls, package: Package) -> Optional[PackageWaypointTiming]:
-        """Computes and returns the timings for package formation waypoints.
-
-        Package waypoint timing depends on the composition of the package.
-        Whenever flights are added or removed they must be recomputed since the
-        mission speed may have changed.
-
-        If the package contains no flights with formation flight plans, this
-        returns None.
-        """
-        assert package.waypoints is not None
-
-        if not package.flights:
-            raise ValueError("Cannot plan TOT for package with no flights")
-
-        group_ground_speed = package.formation_speed
-        if group_ground_speed is None:
-            return None
-
-        # Round each waypoint TOT since DCS doesn't support sub-second timing
-        # and it's not interesting to the user.
-        ingress = timedelta(seconds=math.floor(
-            (package.time_over_target - TravelTime.between_points(
-                package.waypoints.ingress,
-                package.target.position,
-                group_ground_speed)).total_seconds()))
-
-        join = timedelta(seconds=math.floor(
-            (ingress - TravelTime.between_points(
-                package.waypoints.join,
-                package.waypoints.ingress,
-                group_ground_speed)).total_seconds()))
-
-        egress = timedelta(seconds=math.floor(
-            (package.time_over_target + TravelTime.between_points(
-                package.target.position,
-                package.waypoints.egress,
-                group_ground_speed)).total_seconds()))
-
-        split = timedelta(seconds=math.floor(
-            (egress + TravelTime.between_points(
-                package.waypoints.egress,
-                package.waypoints.split,
-                group_ground_speed)).total_seconds()))
-
-        return cls(package, join, ingress, egress, split)
 
 
 @dataclass(frozen=True)
@@ -179,9 +107,8 @@ class FlightPlan:
             self, destination: FlightWaypoint) -> timedelta:
         total = timedelta()
         for previous_waypoint, waypoint in self.edges:
-            total += TravelTime.between_points(
-                previous_waypoint.position, waypoint.position,
-                self.speed_between_waypoints(previous_waypoint, waypoint))
+            total += self.travel_time_between_waypoints(previous_waypoint,
+                                                        waypoint)
             if waypoint == destination:
                 break
         else:
@@ -189,6 +116,11 @@ class FlightPlan:
                 f"Did not find destination waypoint {destination} in "
                 f"waypoints for {self.flight}")
         return total
+
+    def travel_time_between_waypoints(self, a: FlightWaypoint,
+                                      b: FlightWaypoint) -> timedelta:
+        return TravelTime.between_points(a.position, b.position,
+                                         self.speed_between_waypoints(a, b))
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         raise NotImplementedError
@@ -209,14 +141,6 @@ class FormationFlightPlan(FlightPlan):
     hold: FlightWaypoint
     join: FlightWaypoint
     split: FlightWaypoint
-
-    @property
-    def package_timing(self) -> PackageWaypointTiming:
-        timing = PackageWaypointTiming.for_package(self.package)
-        # Should be able to create a PackageWaypointTiming for any package with
-        # a FormationFlightPlan flight.
-        assert timing is not None
-        return timing
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
@@ -266,23 +190,19 @@ class FormationFlightPlan(FlightPlan):
         """The estimated time between the first waypoint and the join point."""
         return self._travel_time_to_waypoint(self.join)
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        target_types = (
-            FlightWaypointType.TARGET_GROUP_LOC,
-            FlightWaypointType.TARGET_POINT,
-            FlightWaypointType.TARGET_SHIP,
-        )
+    @property
+    def join_time(self) -> timedelta:
+        raise NotImplementedError
 
-        if waypoint.waypoint_type == FlightWaypointType.JOIN:
-            return self.package_timing.join
-        elif waypoint.waypoint_type in INGRESS_TYPES:
-            return self.package_timing.ingress
-        elif waypoint.waypoint_type in target_types:
-            return self.package_timing.target
-        elif waypoint.waypoint_type == FlightWaypointType.EGRESS:
-            return self.package_timing.egress
-        elif waypoint.waypoint_type == FlightWaypointType.SPLIT:
-            return self.package_timing.split
+    @property
+    def split_time(self) -> timedelta:
+        raise NotImplementedError
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.join:
+            return self.join_time
+        elif waypoint == self.split:
+            return self.split_time
         return None
 
     def depart_time_for_waypoint(
@@ -293,7 +213,7 @@ class FormationFlightPlan(FlightPlan):
 
     @property
     def push_time(self) -> timedelta:
-        return self.package_timing.join - TravelTime.between_points(
+        return self.join_time - TravelTime.between_points(
             self.hold.position,
             self.join.position,
             GroundSpeed.for_flight(self.flight, self.hold.alt)
@@ -471,6 +391,43 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def mission_speed(self) -> int:
         return GroundSpeed.for_flight(self.flight, self.ingress.alt)
+
+    @property
+    def join_time(self) -> timedelta:
+        ingress_time = self.tot_for_waypoint(self.ingress)
+        travel_time = self.travel_time_between_waypoints(
+            self.join, self.ingress)
+        return ingress_time - travel_time
+
+    @property
+    def split_time(self) -> timedelta:
+        egress_time = self.tot_for_waypoint(self.egress)
+        travel_time = self.travel_time_between_waypoints(
+            self.egress, self.split)
+        return egress_time + travel_time
+
+    @property
+    def ingress_time(self) -> timedelta:
+        tot = self.package.time_over_target
+        travel_time = self.travel_time_between_waypoints(
+            self.ingress, self.tot_waypoint)
+        return tot - travel_time
+
+    @property
+    def egress_time(self) -> timedelta:
+        tot = self.package.time_over_target
+        travel_time = self.travel_time_between_waypoints(
+            self.tot_waypoint, self.egress)
+        return tot + travel_time
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.ingress:
+            return self.ingress_time
+        elif waypoint == self.egress:
+            return self.egress_time
+        elif waypoint in self.targets:
+            return self.package.time_over_target
+        return super().tot_for_waypoint(waypoint)
 
 
 @dataclass(frozen=True)
