@@ -384,9 +384,48 @@ class StrikeFlightPlan(FormationFlightPlan):
             self.split,
         } | set(self.targets)
 
+    def speed_between_waypoints(self, a: FlightWaypoint,
+                                b: FlightWaypoint) -> int:
+        # FlightWaypoint is only comparable by identity, so adding
+        # target_area_waypoint to package_speed_waypoints is useless.
+        if b.waypoint_type == FlightWaypointType.TARGET_GROUP_LOC:
+            # Should be impossible, as any package with at least one
+            # FormationFlightPlan flight needs a formation speed.
+            assert self.package.formation_speed is not None
+            return self.package.formation_speed
+        return super().speed_between_waypoints(a, b)
+
     @property
-    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+    def tot_waypoint(self) -> FlightWaypoint:
         return self.targets[0]
+
+    @property
+    def target_area_waypoint(self) -> FlightWaypoint:
+        return FlightWaypoint(FlightWaypointType.TARGET_GROUP_LOC,
+                              self.package.target.position.x,
+                              self.package.target.position.y, 0)
+
+    @property
+    def travel_time_to_target(self) -> timedelta:
+        """The estimated time between the first waypoint and the target."""
+        destination = self.tot_waypoint
+        total = timedelta()
+        for previous_waypoint, waypoint in self.edges:
+            if waypoint == self.tot_waypoint:
+                # For anything strike-like the TOT waypoint is the *flight's*
+                # mission target, but to synchronize with the rest of the
+                # package we need to use the travel time to the same position as
+                # the others.
+                total += self.travel_time_between_waypoints(
+                    previous_waypoint, self.target_area_waypoint)
+                break
+            total += self.travel_time_between_waypoints(previous_waypoint,
+                                                        waypoint)
+        else:
+            raise PlanningError(
+                f"Did not find destination waypoint {destination} in "
+                f"waypoints for {self.flight}")
+        return total
 
     @property
     def mission_speed(self) -> int:
@@ -394,30 +433,28 @@ class StrikeFlightPlan(FormationFlightPlan):
 
     @property
     def join_time(self) -> timedelta:
-        ingress_time = self.tot_for_waypoint(self.ingress)
         travel_time = self.travel_time_between_waypoints(
             self.join, self.ingress)
-        return ingress_time - travel_time
+        return self.ingress_time - travel_time
 
     @property
     def split_time(self) -> timedelta:
-        egress_time = self.tot_for_waypoint(self.egress)
         travel_time = self.travel_time_between_waypoints(
             self.egress, self.split)
-        return egress_time + travel_time
+        return self.egress_time + travel_time
 
     @property
     def ingress_time(self) -> timedelta:
         tot = self.package.time_over_target
         travel_time = self.travel_time_between_waypoints(
-            self.ingress, self.tot_waypoint)
+            self.ingress, self.target_area_waypoint)
         return tot - travel_time
 
     @property
     def egress_time(self) -> timedelta:
         tot = self.package.time_over_target
         travel_time = self.travel_time_between_waypoints(
-            self.tot_waypoint, self.egress)
+            self.target_area_waypoint, self.egress)
         return tot + travel_time
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
