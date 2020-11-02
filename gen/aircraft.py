@@ -165,6 +165,14 @@ class FarmerChannelNamer(ChannelNamer):
         return f"Ch {channel_id}"
 
 
+class HueyChannelNamer(ChannelNamer):
+    """Channel namer for the UH-1H."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        return f"COM3 Ch {channel_id}"
+
+
 class MirageChannelNamer(ChannelNamer):
     """Channel namer for the M-2000."""
 
@@ -548,6 +556,15 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         channel_namer=ViperChannelNamer
     ),
 
+    "Ka-50": AircraftData(
+        inter_flight_radio=get_radio("R-800L1"),
+        intra_flight_radio=get_radio("R-800L1"),
+        # The R-800L1 doesn't have preset channels, and the other radio is for
+        # communications with FAC and ground units, which don't currently have
+        # radios assigned, so no channels to configure.
+        channel_allocator=NoOpChannelAllocator(),
+    ),
+
     "M-2000C": AircraftData(
         inter_flight_radio=get_radio("TRT ERA 7000 V/UHF"),
         intra_flight_radio=get_radio("TRT ERA 7200 UHF"),
@@ -580,6 +597,19 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         ),
         channel_namer=SCR522ChannelNamer
     ),
+
+    "UH-1H": AircraftData(
+        inter_flight_radio=get_radio("AN/ARC-51BX"),
+        # Ideally this would use the AN/ARC-131 because that radio is supposed
+        # to be used for flight comms, but DCS won't allow it as the flight's
+        # frequency, nor will it allow the AN/ARC-134.
+        intra_flight_radio=get_radio("AN/ARC-51BX"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=1
+        ),
+        channel_namer=HueyChannelNamer
+    )
 }
 AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
 AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
