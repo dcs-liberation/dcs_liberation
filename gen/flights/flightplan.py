@@ -410,13 +410,7 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
     def depart_time_for_waypoint(
             self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.patrol_end:
-            timing = PackageWaypointTiming.for_package(self.package)
-            if timing is None:
-                # If the player for some reason planned a TAR
-                patrol_duration = self.patrol_duration
-            else:
-                patrol_duration = timing.egress
-            return self.package.time_over_target + patrol_duration
+            return self.patrol_end_time
         return super().depart_time_for_waypoint(waypoint)
 
     @property
