@@ -149,7 +149,7 @@ class QFlightWaypointTab(QFrame):
             if task == FlightType.CAP:
                 if isinstance(self.package.target, FrontLine):
                     task = FlightType.TARCAP
-                elif isinstance(self.package.target, ControlPoint):
+                else:
                     task = FlightType.BARCAP
             self.flight.flight_type = task
             self.planner.populate_flight_plan(self.flight)
