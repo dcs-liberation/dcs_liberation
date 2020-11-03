@@ -90,3 +90,10 @@ class QMapControlPoint(QMapObject):
         # Reinitialized ground planners and the like.
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+    
+    def open_new_package_dialog(self) -> None:
+        """Extends the default packagedialog to redirect to base menu for red air base."""
+        if not self.control_point.captured:
+            self.on_click()
+        else:
+            super(QMapControlPoint, self).open_new_package_dialog()
