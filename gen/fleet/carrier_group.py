@@ -4,7 +4,7 @@ from gen.sam.group_generator import ShipGroupGenerator
 
 
 class CarrierGroupGenerator(ShipGroupGenerator):
-    
+
     def generate(self):
 
         # Add carrier

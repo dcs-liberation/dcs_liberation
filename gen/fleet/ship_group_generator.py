@@ -11,8 +11,6 @@ from gen.fleet.ru_dd_group import RussianNavyGroupGenerator, GrishaGroupGenerato
 from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
-# from dcs import unitgroup
-# from dcs.unit import Ship
 
 
 SHIP_MAP = {
@@ -48,7 +46,7 @@ def generate_ship_group(game, ground_object, faction_name: str):
     return None
 
 
-def generate_carrier_group(faction:str, game, ground_object):
+def generate_carrier_group(faction: str, game, ground_object):
     """
     This generate a carrier group
     :param parentCp: The parent control point
@@ -61,7 +59,7 @@ def generate_carrier_group(faction:str, game, ground_object):
     return generator.get_generated_group()
 
 
-def generate_lha_group(faction:str, game, ground_object):
+def generate_lha_group(faction: str, game, ground_object):
     """
     This generate a lha carrier group
     :param parentCp: The parent control point
@@ -72,26 +70,3 @@ def generate_lha_group(faction:str, game, ground_object):
     generator = LHAGroupGenerator(game, ground_object, db.FACTIONS[faction])
     generator.generate()
     return generator.get_generated_group()
-
-# class ShipGroupGenerator(GroupGenerator):
-#     """Abstract class for other ship generator classes"""
-#     def __init__(self, game, ground_object, faction):
-#         self.game = game
-#         self.go = ground_object
-#         self.position = ground_object.position
-#         self.heading = random.randint(0, 359)
-#         self.faction = faction
-#         self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
-#         wp = self.vg.add_waypoint(self.position, 0)
-#         wp.ETA_locked = True
-    
-#     def add_unit(self, unit_type, name, pos_x, pos_y, heading):
-#         nn = "cgroup|" + str(self.go.cp_id) + '|' + str(self.go.group_id) + '|' + str(self.go.group_identifier) + "|" + name
-
-#         unit = Ship(self.game.next_unit_id(),
-#                        nn, unit_type)
-#         unit.position.x = pos_x
-#         unit.position.y = pos_y
-#         unit.heading = heading
-#         self.vg.add_unit(unit)
-#         return unit
