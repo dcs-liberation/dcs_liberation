@@ -1,15 +1,11 @@
 import random
 
 from gen.fleet.dd_group import DDGroupGenerator
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 from dcs.ships import *
 
 
-class ChineseNavyGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(ChineseNavyGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class ChineseNavyGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 

@@ -2,14 +2,10 @@ import random
 
 from dcs.ships import Uboat_VIIC_U_flak
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 
 
-class UBoatGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(UBoatGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class UBoatGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 

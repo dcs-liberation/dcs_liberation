@@ -1,13 +1,9 @@
 import random
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 
 
-class LHAGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(LHAGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class LHAGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 
