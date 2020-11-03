@@ -2,14 +2,10 @@ import random
 
 from dcs.ships import LS_Samuel_Chase, LST_Mk_II
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 
 
-class WW2LSTGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(WW2LSTGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class WW2LSTGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 

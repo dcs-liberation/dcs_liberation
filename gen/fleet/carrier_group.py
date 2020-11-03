@@ -1,14 +1,10 @@
 import random
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 
 
-class CarrierGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(CarrierGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
-
+class CarrierGroupGenerator(ShipGroupGenerator):
+    
     def generate(self):
 
         # Add carrier
