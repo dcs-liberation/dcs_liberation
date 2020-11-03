@@ -117,7 +117,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
         sam_generator_class = random.choice(possible_sams_generators)
-        generator = sam_generator_class(game, ground_object, faction)
+        generator = sam_generator_class(game, ground_object, db.FACTIONS[faction])
         generator.generate()
         return generator.get_generated_group()
     return None
