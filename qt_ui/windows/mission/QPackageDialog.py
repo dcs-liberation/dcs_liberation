@@ -36,8 +36,8 @@ class QPackageDialog(QDialog):
     #: Emitted when a change is made to the package.
     package_changed = Signal()
 
-    def __init__(self, game_model: GameModel, model: PackageModel) -> None:
-        super().__init__()
+    def __init__(self, game_model: GameModel, model: PackageModel, parent=None) -> None:
+        super().__init__(parent)
         self.game_model = game_model
         self.package_model = model
         self.add_flight_dialog: Optional[QFlightCreator] = None
@@ -156,7 +156,8 @@ class QPackageDialog(QDialog):
     def on_add_flight(self) -> None:
         """Opens the new flight dialog."""
         self.add_flight_dialog = QFlightCreator(self.game,
-                                                self.package_model.package)
+                                                self.package_model.package,
+                                                parent=self.window())
         self.add_flight_dialog.created.connect(self.add_flight)
         self.add_flight_dialog.show()
 
@@ -189,8 +190,8 @@ class QNewPackageDialog(QPackageDialog):
     """
 
     def __init__(self, game_model: GameModel, model: AtoModel,
-                 target: MissionTarget) -> None:
-        super().__init__(game_model, PackageModel(Package(target)))
+                 target: MissionTarget, parent=None) -> None:
+        super().__init__(game_model, PackageModel(Package(target)), parent=parent)
         self.ato_model = model
 
         self.save_button = QPushButton("Save")

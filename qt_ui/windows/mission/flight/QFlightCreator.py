@@ -23,8 +23,8 @@ from theater import ControlPoint
 class QFlightCreator(QDialog):
     created = Signal(Flight)
 
-    def __init__(self, game: Game, package: Package) -> None:
-        super().__init__()
+    def __init__(self, game: Game, package: Package, parent=None) -> None:
+        super().__init__(parent=parent)
 
         self.game = game
         self.package = package

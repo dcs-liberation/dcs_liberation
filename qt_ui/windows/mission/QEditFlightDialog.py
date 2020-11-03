@@ -15,8 +15,8 @@ from qt_ui.windows.mission.flight.QFlightPlanner import QFlightPlanner
 class QEditFlightDialog(QDialog):
     """Dialog window for editing flight plans and loadouts."""
 
-    def __init__(self, game_model: GameModel, package: Package, flight: Flight) -> None:
-        super().__init__()
+    def __init__(self, game_model: GameModel, package: Package, flight: Flight, parent=None) -> None:
+        super().__init__(parent=parent)
 
         self.game_model = game_model
 
