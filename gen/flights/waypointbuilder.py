@@ -168,6 +168,11 @@ class WaypointBuilder:
                        objective: MissionTarget) -> FlightWaypoint:
         return self._ingress(FlightWaypointType.INGRESS_ESCORT, position,
                              objective)
+    
+    def ingress_dead(self, position:Point,
+                     objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_DEAD, position,
+                             objective)
 
     def ingress_sead(self, position: Point,
                      objective: MissionTarget) -> FlightWaypoint:

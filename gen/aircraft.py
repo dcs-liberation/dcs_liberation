@@ -1027,9 +1027,21 @@ class AircraftConflictGenerator:
             rtb_winchester=OptRTBOnOutOfAmmo.Values.Unguided,
             restrict_jettison=True)
 
+    def configure_dead(self, group: FlyingGroup, package: Package,
+                       flight: Flight,
+                       dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = SEAD.name
+        self._setup_group(group, SEAD, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
+            restrict_jettison=True)
+
     def configure_sead(self, group: FlyingGroup, package: Package,
-                      flight: Flight,
-                      dynamic_runways: Dict[str, RunwayData]) -> None:
+                       flight: Flight,
+                       dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = SEAD.name
         self._setup_group(group, SEAD, package, flight, dynamic_runways)
         self.configure_behavior(
@@ -1087,7 +1099,9 @@ class AircraftConflictGenerator:
             self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
-        elif flight_type in [FlightType.SEAD, FlightType.DEAD]:
+        elif flight_type in [FlightType.DEAD, ]:
+            self.configure_dead(group, package, flight, dynamic_runways)
+        elif flight_type in [FlightType.SEAD, ]:
             self.configure_sead(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.STRIKE]:
             self.configure_strike(group, package, flight, dynamic_runways)
@@ -1208,6 +1222,7 @@ class PydcsWaypointBuilder:
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
+            FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
@@ -1273,14 +1288,14 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         return waypoint
 
 
-class SeadIngressBuilder(PydcsWaypointBuilder):
+class DeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_identifier)
-            if tgroup is not None:
+            tgroup = self.mission.find_group(target_group.group_identifier, search="match")  # Match search is used due to TheaterGroundObject.name not matching
+            if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
                 task = AttackGroup(tgroup.id)
                 task.params["expend"] = "All"
                 task.params["attackQtyLimit"] = False
@@ -1289,6 +1304,36 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 task.params["weaponType"] = 268402702  # Guided Weapons
                 task.params["groupAttack"] = True
                 waypoint.tasks.append(task)
+            else:
+                logging.error(f"Could not find group for DEAD mission {target_group.group_identifier}")
+
+        for i, t in enumerate(self.waypoint.targets):
+            if self.group.units[0].unit_type == JF_17 and i < 4:
+                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
+            if self.group.units[0].unit_type == F_14B and i == 0:
+                self.group.add_nav_target_point(t.position, "ST")
+            if self.group.units[0].unit_type == AJS37 and i < 9:
+                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        return waypoint
+
+
+class SeadIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        target_group = self.package.target
+        if isinstance(target_group, TheaterGroundObject):
+            tgroup = self.mission.find_group(target_group.group_identifier, search="match")  # Match search is used due to TheaterGroundObject.name not matching
+            if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
+                waypoint.add_task(EngageTargetsInZone(
+                                    position=tgroup.position,
+                                    radius=nm_to_meter(30),
+                                    targets=[
+                                        Targets.All.GroundUnits.AirDefence,
+                                    ])
+                                )
+            else:
+                logging.error(f"Could not find group for DEAD mission {target_group.group_identifier}")
 
         for i, t in enumerate(self.waypoint.targets):
             if self.group.units[0].unit_type == JF_17 and i < 4:
