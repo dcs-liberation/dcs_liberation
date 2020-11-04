@@ -1,4 +1,4 @@
 [submodule "pydcs"]
 	path = pydcs
-	url = https://github.com/pydcs/dcs
-	branch = master
+	url = https://github.com/khopa/dcs
+	branch = data-export
