@@ -1,0 +1,52 @@
+{
+  "country": "Third Reich",
+  "name": "Germany 1944 (Free)",
+  "authors": "Khopa",
+  "description": "",
+  "aircrafts": [
+    "FW_190A8",
+    "FW_190D9",
+    "Bf_109K_4"
+  ],
+  "frontline_units": [
+    "MT_Pz_Kpfw_IV_Ausf_H",
+    "APC_Sd_Kfz_251"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Blitz_3_6_6700A"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Rus"
+  ],
+  "shorads": [
+    "Flak18Generator"
+  ],
+  "sams": [
+    "Flak18Generator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+  ],
+  "navy_group_count": 0,
+  "missiles": [
+  ],
+  "missiles_group_count": 0,
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2free"
+}
