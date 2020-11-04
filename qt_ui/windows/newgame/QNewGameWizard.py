@@ -230,7 +230,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         if len(blue_faction.requirements.keys()) > 0:
             has_mod = True
             for mod in blue_faction.requirements.keys():
-                if not "requirements" in red_faction.keys() or mod not in red_faction.requirements.keys():
+                if mod not in red_faction.requirements.keys():
                     self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction.requirements[mod]+"\">" + blue_faction.requirements[mod] + "</a></li>")
 
         if has_mod:
