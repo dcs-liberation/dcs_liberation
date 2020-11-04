@@ -60,6 +60,7 @@ class FlightWaypointType(Enum):
     SPLIT = 17
     LOITER = 18
     INGRESS_ESCORT = 19
+    INGRESS_DEAD = 20
 
 
 class FlightWaypoint:

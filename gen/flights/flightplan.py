@@ -36,6 +36,7 @@ INGRESS_TYPES = {
     FlightWaypointType.INGRESS_ESCORT,
     FlightWaypointType.INGRESS_SEAD,
     FlightWaypointType.INGRESS_STRIKE,
+    FlightWaypointType.INGRESS_DEAD,
 }
 
 
@@ -545,7 +546,7 @@ class FlightPlanBuilder:
         elif task == FlightType.CAS:
             return self.generate_cas(flight)
         elif task == FlightType.DEAD:
-            return self.generate_sead(flight, custom_targets)
+            return self.generate_dead(flight, custom_targets)
         elif task == FlightType.ESCORT:
             return self.generate_escort(flight)
         elif task == FlightType.SEAD:
@@ -734,9 +735,34 @@ class FlightPlanBuilder:
             land=land
         )
 
+    def generate_dead(self, flight: Flight,
+                      custom_targets: Optional[List[Unit]]) -> StrikeFlightPlan:
+        """Generate a DEAD flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+            custom_targets: Specific radar equipped units selected by the user.
+        """
+        location = self.package.target
+
+        if not isinstance(location, TheaterGroundObject):
+            logging.exception(f"Invalid Objective Location for DEAD flight {flight=} at {location=}")
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        # TODO: Unify these.
+        # There doesn't seem to be any reason to treat the UI fragged missions
+        # different from the automatic missions.
+        targets: Optional[List[StrikeTarget]] = None
+        if custom_targets is not None:
+            targets = []
+            for target in custom_targets:
+                targets.append(StrikeTarget(location.name, target))
+
+        return self.strike_flightplan(flight, location, targets)
+
     def generate_sead(self, flight: Flight,
                       custom_targets: Optional[List[Unit]]) -> StrikeFlightPlan:
-        """Generate a SEAD/DEAD flight at a given location.
+        """Generate a SEAD flight at a given location.
 
         Args:
             flight: The flight to generate the flight plan for.
@@ -884,9 +910,13 @@ class FlightPlanBuilder:
         assert self.package.waypoints is not None
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine,
                                   targets)
-        sead_types = {FlightType.DEAD, FlightType.SEAD}
-        if flight.flight_type in sead_types:
+        # sead_types = {FlightType.DEAD, FlightType.SEAD}
+        if flight.flight_type is FlightType.SEAD:
             ingress = builder.ingress_sead(self.package.waypoints.ingress,
+                                           location)
+
+        elif flight.flight_type is FlightType.DEAD:
+            ingress = builder.ingress_dead(self.package.waypoints.ingress,
                                            location)
         else:
             ingress = builder.ingress_strike(self.package.waypoints.ingress,
