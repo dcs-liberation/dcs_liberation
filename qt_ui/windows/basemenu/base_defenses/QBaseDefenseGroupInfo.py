@@ -31,11 +31,13 @@ class QBaseDefenseGroupInfo(QGroupBox):
             attack_button.setMaximumWidth(180)
             attack_button.clicked.connect(self.onAttack)
             self.main_layout.addWidget(attack_button, 0, Qt.AlignLeft)
-        manage_button = QPushButton("Manage")
-        manage_button.setProperty("style", "btn-success")
-        manage_button.setMaximumWidth(180)
-        manage_button.clicked.connect(self.onManage)
-        self.main_layout.addWidget(manage_button, 0, Qt.AlignLeft)
+
+        if self.cp.captured:
+            manage_button = QPushButton("Manage")
+            manage_button.setProperty("style", "btn-success")
+            manage_button.setMaximumWidth(180)
+            manage_button.clicked.connect(self.onManage)
+            self.main_layout.addWidget(manage_button, 0, Qt.AlignLeft)
 
         self.setLayout(self.main_layout)
 
