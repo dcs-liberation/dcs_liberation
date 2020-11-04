@@ -2,7 +2,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Type, Union
 
+from dcs import Mission
 from dcs.countries import country_dict
+from dcs.country import Country
 from dcs.helicopters import (
     AH_1W,
     AH_64A,
@@ -1387,6 +1389,7 @@ _validate_db()
 class DefaultLiveries:
     class Default(Enum):
         af_standard = ""
+
 
 OH_58D.Liveries = DefaultLiveries
 F_16C_50.Liveries = DefaultLiveries

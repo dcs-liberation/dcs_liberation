@@ -23,6 +23,7 @@
     "Infantry_M4"
   ],
   "shorads": [
+    "EarlyColdWarFlakGenerator",
     "VulcanGenerator"
   ],
   "sams": [

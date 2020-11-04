@@ -16,7 +16,7 @@
     "KC130"
   ],
   "frontline_units": [
-    "MT_M4A4_Sherman_Firefly",
+    "MT_M4_Sherman",
     "APC_M2A1",
     "MBT_M60A3_Patton",
     "APC_M113"
@@ -46,8 +46,7 @@
   "cruisers": [
   ],
   "requirements": {
-    "Community A-4E": "https://heclak.github.io/community-a4e-c/",
-    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
   },
   "carrier_names": [
   ],

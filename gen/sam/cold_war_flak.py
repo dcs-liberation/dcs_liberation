@@ -35,8 +35,8 @@ class EarlyColdWarFlakGenerator(GroupGenerator):
         self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#1",
                       self.position.x + spacing * 2 + 40, self.position.y + spacing + 40, self.heading),
 
-        # Add a Kamaz truck
-        self.add_unit(Unarmed.Transport_KAMAZ_43101, "Kamaz#", self.position.x - 60, self.position.y - 20, self.heading)
+        # Add a truck
+        self.add_unit(Unarmed.Transport_KAMAZ_43101, "Truck#", self.position.x - 60, self.position.y - 20, self.heading)
 
 
 class ColdWarFlakGenerator(GroupGenerator):
@@ -46,7 +46,7 @@ class ColdWarFlakGenerator(GroupGenerator):
     The site is also fitted with a P-19 radar for early detection.
     """
 
-    name = "Early Cold War Flak Site"
+    name = "Cold War Flak Site"
     price = 72
 
     def generate(self):

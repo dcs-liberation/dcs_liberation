@@ -41,9 +41,9 @@
     "Soldier_RPG"
   ],
   "shorads": [
+    "ColdWarFlakGenerator",
     "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "ZU23Generator"
   ],
   "sams": [
     "SA3Generator",

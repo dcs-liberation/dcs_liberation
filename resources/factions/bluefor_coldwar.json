@@ -37,6 +37,7 @@
     "Soldier_M249"
   ],
   "shorads": [
+    "EarlyColdWarFlakGenerator",
     "VulcanGenerator"
   ],
   "sams": [

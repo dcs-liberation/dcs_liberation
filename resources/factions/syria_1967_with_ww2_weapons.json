@@ -38,9 +38,11 @@
   ],
   "shorads": [
     "ZU23Generator",
+    "EarlyColdWarFlakGenerator",
     "ZU23UralGenerator"
   ],
   "sams": [
+    "EarlyColdWarFlakGenerator",
     "SA2Generator"
   ],
   "aircraft_carrier": [

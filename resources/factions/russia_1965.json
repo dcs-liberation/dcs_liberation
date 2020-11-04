@@ -36,8 +36,8 @@
   ],
   "shorads": [
     "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "EarlyColdWarFlakGenerator",
+    "ZU23Generator"
   ],
   "sams": [
     "SA2Generator",

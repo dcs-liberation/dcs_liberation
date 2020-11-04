@@ -29,6 +29,7 @@
     "BoforsGenerator"
   ],
   "sams": [
+    "EarlyColdWarFlakGenerator",
     "BoforsGenerator"
   ],
   "aircraft_carrier": [

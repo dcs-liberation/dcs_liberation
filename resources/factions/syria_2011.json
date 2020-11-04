@@ -53,7 +53,8 @@
     "SA9Generator",
     "SA13Generator",
     "SA19Generator",
-    "ZSU23Generator"
+    "ZSU23Generator",
+    "ColdWarFlakGenerator"
   ],
   "sams": [
     "SA2Generator",
