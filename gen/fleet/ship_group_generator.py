@@ -12,6 +12,7 @@ from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
 
+
 SHIP_MAP = {
     "SchnellbootGroupGenerator": SchnellbootGroupGenerator,
     "WW2LSTGroupGenerator": WW2LSTGroupGenerator,
@@ -45,7 +46,7 @@ def generate_ship_group(game, ground_object, faction_name: str):
     return None
 
 
-def generate_carrier_group(faction:str, game, ground_object):
+def generate_carrier_group(faction: str, game, ground_object):
     """
     This generate a carrier group
     :param parentCp: The parent control point
@@ -58,7 +59,7 @@ def generate_carrier_group(faction:str, game, ground_object):
     return generator.get_generated_group()
 
 
-def generate_lha_group(faction:str, game, ground_object):
+def generate_lha_group(faction: str, game, ground_object):
     """
     This generate a lha carrier group
     :param parentCp: The parent control point

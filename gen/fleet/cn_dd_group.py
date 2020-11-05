@@ -1,15 +1,26 @@
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
+
+from dcs.ships import (
+    Type_052C_Destroyer,
+    Type_052B_Destroyer,
+    Type_054A_Frigate,
+    CGN_1144_2_Pyotr_Velikiy,
+)
+
+from game.factions.faction import Faction
 from gen.fleet.dd_group import DDGroupGenerator
-from gen.sam.group_generator import GroupGenerator
-from dcs.ships import *
+from gen.sam.group_generator import ShipGroupGenerator
+from theater.theatergroundobject import TheaterGroundObject
+
+if TYPE_CHECKING:
+    from game.game import Game
 
 
-class ChineseNavyGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(ChineseNavyGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class ChineseNavyGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 
@@ -38,5 +49,5 @@ class ChineseNavyGroupGenerator(GroupGenerator):
 
 
 class Type54GroupGenerator(DDGroupGenerator):
-    def __init__(self, game, ground_object, faction):
+    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
         super(Type54GroupGenerator, self).__init__(game, ground_object, faction, Type_054A_Frigate)

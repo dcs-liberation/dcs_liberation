@@ -25,7 +25,8 @@
   ],
   "shorads": [
     "VulcanGenerator",
-    "ChaparralGenerator"
+    "ChaparralGenerator",
+    "EarlyColdWarFlakGenerator"
   ],
   "sams": [
     "HawkGenerator",

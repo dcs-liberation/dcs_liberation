@@ -36,10 +36,9 @@
     "Paratrooper_RPG_16"
   ],
   "shorads": [
-    "ZSU23Generator",
     "ZU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "EarlyColdWarFlakGenerator",
+    "ColdWarFlakGenerator"
   ],
   "sams": [
     "SA2Generator",

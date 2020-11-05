@@ -1,13 +1,14 @@
 import random
 from typing import List, Type
 
-from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
 
 from game import db
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
+from gen.sam.aaa_flak18 import Flak18Generator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
+from gen.sam.cold_war_flak import EarlyColdWarFlakGenerator, ColdWarFlakGenerator
 from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
@@ -61,7 +62,10 @@ SAM_MAP = {
     "SA13Generator": SA13Generator,
     "SA15Generator": SA15Generator,
     "SA19Generator": SA19Generator,
-    "HQ7Generator": HQ7Generator
+    "HQ7Generator": HQ7Generator,
+    "Flak18Generator": Flak18Generator,
+    "ColdWarFlakGenerator": ColdWarFlakGenerator,
+    "EarlyColdWarFlakGenerator": EarlyColdWarFlakGenerator
 }
 
 SAM_PRICES = {
@@ -106,7 +110,8 @@ def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerato
     """
     return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP.keys()]
 
-def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
+
+def generate_anti_air_group(game, parent_cp, ground_object, faction: str):
     """
     This generate a SAM group
     :param parentCp: The parent control point
@@ -117,7 +122,7 @@ def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
         sam_generator_class = random.choice(possible_sams_generators)
-        generator = sam_generator_class(game, ground_object, faction)
+        generator = sam_generator_class(game, ground_object, db.FACTIONS[faction])
         generator.generate()
         return generator.get_generated_group()
     return None
@@ -133,8 +138,3 @@ def generate_shorad_group(game, parent_cp, ground_object, faction_name: str):
         return generator.get_generated_group()
     else:
         return generate_anti_air_group(game, parent_cp, ground_object, faction_name)
-
-
-
-
-

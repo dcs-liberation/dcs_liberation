@@ -1,6 +1,6 @@
 {
   "country": "Third Reich",
-  "name": "Germany 1944",
+  "name": "Germany 1942",
   "authors": "Khopa",
   "description": "",
   "aircrafts": [
@@ -12,7 +12,7 @@
   "frontline_units": [
     "MT_Pz_Kpfw_IV_Ausf_H",
     "APC_Sd_Kfz_251",
-    "IFV_Sd_Kfz_234_2_Puma",
+    "AC_Sd_Kfz_234_2_Puma",
     "TD_Jagdpanzer_IV"
   ],
   "artillery_units": [

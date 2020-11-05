@@ -1,14 +1,21 @@
-import random
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
-from gen.sam.group_generator import GroupGenerator
-from dcs.ships import *
+from game.factions.faction import Faction
+from theater.theatergroundobject import TheaterGroundObject
+
+from gen.sam.group_generator import ShipGroupGenerator
+from dcs.unittype import ShipType
+from dcs.ships import Oliver_Hazzard_Perry_class, USS_Arleigh_Burke_IIa
+
+if TYPE_CHECKING:
+    from game.game import Game
 
 
-class DDGroupGenerator(GroupGenerator):
+class DDGroupGenerator(ShipGroupGenerator):
 
-    def __init__(self, game, ground_object, faction, ddtype):
-        super(DDGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction, ddtype: ShipType):
+        super(DDGroupGenerator, self).__init__(game, ground_object, faction)
         self.ddtype = ddtype
 
     def generate(self):
@@ -18,10 +25,10 @@ class DDGroupGenerator(GroupGenerator):
 
 
 class OliverHazardPerryGroupGenerator(DDGroupGenerator):
-    def __init__(self, game, ground_object, faction):
+    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
         super(OliverHazardPerryGroupGenerator, self).__init__(game, ground_object, faction, Oliver_Hazzard_Perry_class)
 
 
 class ArleighBurkeGroupGenerator(DDGroupGenerator):
-    def __init__(self, game, ground_object, faction):
+    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
         super(ArleighBurkeGroupGenerator, self).__init__(game, ground_object, faction, USS_Arleigh_Burke_IIa)

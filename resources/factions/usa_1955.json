@@ -10,7 +10,6 @@
     "B_52H"
   ],
   "frontline_units": [
-    "MT_M4A4_Sherman_Firefly",
     "MT_M4_Sherman",
     "MBT_M60A3_Patton",
     "APC_M2A1"
@@ -22,13 +21,13 @@
     "Transport_M818"
   ],
   "infantry_units": [
-    "Infantry_M1_Garand"
+    "Infantry_M4"
   ],
   "shorads": [
     "BoforsGenerator"
   ],
   "sams": [
-    "BoforsGenerator"
+    "EarlyColdWarFlakGenerator"
   ],
   "doctrine": "ww2",
   "building_set": "ww2ally",

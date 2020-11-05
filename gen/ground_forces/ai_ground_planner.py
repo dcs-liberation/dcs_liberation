@@ -27,11 +27,11 @@ TYPE_TANKS = [
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
     Armor.MT_Pz_Kpfw_IV_Ausf_H,
     Armor.HT_Pz_Kpfw_VI_Tiger_I,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
     Armor.MT_M4_Sherman,
     Armor.MT_M4A4_Sherman_Firefly,
     Armor.StuG_IV,
-    Armor.ST_Centaur_IV,
+    Armor.CT_Centaur_IV,
     Armor.CT_Cromwell_IV,
     Armor.HIT_Churchill_VII,
 
@@ -73,13 +73,13 @@ TYPE_IFV = [
     Armor.IFV_Marder,
     Armor.IFV_MCV_80,
     Armor.IFV_LAV_25,
-    Armor.IFV_Sd_Kfz_234_2_Puma,
+    Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.IFV_M2A2_Bradley,
     Armor.IFV_BMD_1,
     Armor.ZBD_04A,
 
     # WW2
-    Armor.IFV_Sd_Kfz_234_2_Puma,
+    Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.LAC_M8_Greyhound,
 
     # Mods

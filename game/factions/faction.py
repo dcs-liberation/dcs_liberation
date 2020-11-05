@@ -10,7 +10,7 @@ from dcs.planes import plane_map
 from dcs.unittype import FlyingType, ShipType, VehicleType, UnitType
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
 
-from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS
+from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS, WW2_FREE
 from game.data.doctrine import Doctrine, MODERN_DOCTRINE, COLDWAR_DOCTRINE, WWII_DOCTRINE
 from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 
@@ -170,6 +170,8 @@ class Faction:
         building_set = json.get("building_set", "default")
         if building_set == "default":
             faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
+        elif building_set == "ww2free":
+            faction.building_set = WW2_FREE
         elif building_set == "ww2ally":
             faction.building_set = WW2_ALLIES_BUILDINGS
         elif building_set == "ww2germany":
