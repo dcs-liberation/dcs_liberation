@@ -7,7 +7,7 @@ from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 
-from game import db, persistency
+from game import db, persistency, VERSION
 from qt_ui import (
     liberation_install,
     liberation_theme,
@@ -20,7 +20,7 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import \
     QLiberationFirstStartWindow
 
 # Logging setup
-logging_config.init_logging(uiconstants.VERSION_STRING)
+logging_config.init_logging(VERSION)
 
 if __name__ == "__main__":
     # Load eagerly to catch errors early.

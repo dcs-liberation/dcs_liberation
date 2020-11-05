@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import datetime
 import logging
 from typing import List, Optional
 
@@ -10,15 +9,14 @@ from PySide2.QtWidgets import QVBoxLayout
 from dcs.task import CAP, CAS
 
 import qt_ui.uiconstants as CONST
-from game import Game, db
+from game import db
 from game.settings import Settings
-from gen import namegen
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
     load_campaigns,
 )
-from theater import ConflictTheater, start_generator
+from theater.start_generator import GameGenerator
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -76,38 +74,12 @@ class NewGameWizard(QtWidgets.QWizard):
         settings.do_not_generate_player_navy = no_player_navy
         settings.do_not_generate_enemy_navy = no_enemy_navy
 
-        self.generatedGame = self.start_new_game(player_name, enemy_name, conflictTheater, midGame, multiplier,
-                                                 timePeriod, settings, starting_money)
+        generator = GameGenerator(player_name, enemy_name, conflictTheater,
+                                  settings, timePeriod, starting_money,
+                                  multiplier, midGame)
+        self.generatedGame = generator.generate()
 
         super(NewGameWizard, self).accept()
-
-    def start_new_game(self, player_name: str, enemy_name: str, conflictTheater: ConflictTheater,
-                       midgame: bool, multiplier: float, period: datetime, settings:Settings, starting_money: int):
-
-        # Reset name generator
-        namegen.reset()
-        start_generator.prepare_theater(conflictTheater, settings, midgame)
-
-        print("-- Starting New Game Generator")
-        print("Enemy name : " + enemy_name)
-        print("Player name : " + player_name)
-        print("Midgame : " + str(midgame))
-        start_generator.generate_initial_units(conflictTheater, enemy_name, True, multiplier)
-
-        print("-- Initial units generated")
-        game = Game(player_name=player_name,
-                    enemy_name=enemy_name,
-                    theater=conflictTheater,
-                    start_date=period,
-                    settings=settings)
-
-        print("-- Game Object generated")
-        start_generator.generate_groundobjects(conflictTheater, game)
-        game.budget = starting_money
-        game.settings.multiplier = multiplier
-        game.settings.sams = True
-        game.settings.version = CONST.VERSION_STRING
-        return game
 
 
 class IntroPage(QtWidgets.QWizardPage):

@@ -35,7 +35,6 @@ class ControlPoint(MissionTarget):
 
     position = None  # type: Point
     name = None  # type: str
-    allow_sea_units = True
 
     captured = False
     has_frontline = True
@@ -47,10 +46,9 @@ class ControlPoint(MissionTarget):
                  at: db.StartingPosition, radials: List[int], size: int,
                  importance: float, has_frontline=True,
                  cptype=ControlPointType.AIRBASE):
+        super().__init__(" ".join(re.split(r" |-", name)[:2]), position)
         self.id = id
-        self.name = " ".join(re.split(r" |-", name)[:2])
         self.full_name = name
-        self.position: Point = position
         self.at = at
         self.ground_objects: List[TheaterGroundObject] = []
 
@@ -228,10 +226,8 @@ class ControlPoint(MissionTarget):
 
         # Handle cyclic dependency.
         from .start_generator import generate_airbase_defense_group
-        airbase_def_id = 0
-        for ground_object in self.ground_objects:
+        for idx, ground_object in enumerate(self.ground_objects):
             ground_object.groups = []
             if ground_object.airbase_group and faction_name != "":
-                generate_airbase_defense_group(airbase_def_id, ground_object,
-                                               faction_name, game, self)
-                airbase_def_id = airbase_def_id + 1
+                generate_airbase_defense_group(idx, ground_object,
+                                               faction_name, game)
