@@ -1,4 +1,5 @@
 import itertools
+from datetime import timedelta
 
 from PySide2.QtCore import QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItem, QStandardItemModel
@@ -81,4 +82,5 @@ class QFlightWaypointList(QTableView):
             time = flight.flight_plan.depart_time_for_waypoint(waypoint)
         if time is None:
             return ""
+        time = timedelta(seconds=int(time.total_seconds()))
         return f"{prefix}T+{time}"
