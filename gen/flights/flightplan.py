@@ -75,6 +75,14 @@ class FlightPlan:
             # Flights that start airborne already have some altitude and a good
             # amount of speed.
             factor = 0.5
+        elif b.waypoint_type == FlightWaypointType.LOITER:
+            # On the way to the hold point the AI won't climb unless they're in
+            # formation, so slowing down the flight lead gives them more time to
+            # form up and climb.
+            # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/dcs-wishlist-aa/7121300-ai-flights-will-not-climb-to-hold-point-because-wingman-not-joined
+            #
+            # Plus, it's a loiter point so there's no reason to hurry.
+            factor = 0.75
         # TODO: Adjust if AGL.
         # We don't have an exact heightmap, but we should probably be performing
         # *some* adjustment for NTTR since the minimum altitude of the map is
