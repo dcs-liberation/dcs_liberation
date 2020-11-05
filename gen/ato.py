@@ -105,9 +105,12 @@ class Package:
                 continue
             tot = flight.flight_plan.tot_for_waypoint(waypoint)
             if tot is None:
+                tot = flight.flight_plan.depart_time_for_waypoint(waypoint)
+            if tot is None:
                 logging.error(
                     f"{flight} dismissed escort at {waypoint} but that "
-                    "waypoint has no TOT. It may not be escorted.")
+                    "waypoint has no TOT or departure time. It may not be "
+                    "escorted.")
                 continue
             times.append(tot)
         if times:
