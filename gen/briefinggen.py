@@ -38,118 +38,7 @@ class FrontLineInfo:
         self.enemy_zero: bool = self.enemy_base.base.total_armor == 0
         self.advantage: bool = self.player_base.base.total_armor > self.enemy_base.base.total_armor
         self.stance: CombatStance = self.player_base.stances[self.enemy_base.id]
-
-    @property
-    def _random_frontline_sentence(self) -> str:
-        """Random sentences for start of situation briefing"""
-        templates = [
-            f"There are combats between {self.player_base.name} and {self.enemy_base.name}. ",
-            f"The war on the ground is still going on between {self.player_base.name} and {self.enemy_base.name}. ",
-            f"Our ground forces in {self.player_base.name} are opposed to enemy forces based in {self.enemy_base.name}. ",
-            f"Our forces from {self.player_base.name} are fighting enemies based in {self.enemy_base.name}. ",
-            f"There is an active frontline between {self.player_base.name} and {self.enemy_base.name}. ",
-        ]
-        return random.choice(templates)
-
-    @property
-    def _zero_units_sentence(self) -> str:
-        """Situation description if either side has zero units on a frontline"""
-        if self.player_zero:
-            return ("We do not have a single vehicle available to hold our position.  The situation is critical, "
-                    f"and we will lose ground inevitably betweeen {self.player_base.name} and {self.enemy_base.name}")
-        elif self.enemy_zero:
-            return ("The enemy forces have been crushed, we will be able to make significant progress"
-                    f" toward {self.enemy_base.name}.")
-        return ""
-
-    @property
-    def _advantage_description(self) -> str:
-        """Situation description for when player has a numerical advantage
-
-        Returns:
-            str
-        """
-        if self.stance == CombatStance.AGGRESSIVE:
-            return (
-                "On this location, our ground forces will try to make "
-                "progress against the enemy. As the enemy is outnumbered, "
-                "our forces should have no issue making progress."
-                )
-        elif self.stance == CombatStance.ELIMINATION:
-            return (
-                "On this location, our ground forces will focus on the destruction of enemy"
-                f"assets, before attempting to make progress toward {self.enemy_base.name}. "
-                "The enemy is already outnumbered, and this maneuver might draw a final "
-                "blow to their forces."
-            )
-        elif self.stance == CombatStance.BREAKTHROUGH:
-            return (
-                "On this location, our ground forces will focus on progression toward "
-                f"{self.enemy_base.name}."
-            )
-        elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
-            return (
-                "On this location, our ground forces will hold position. We are not expecting an enemy assault."
-            )
-        # TODO: Write a situation description for player RETREAT stance
-        elif self.stance == CombatStance.RETREAT:
-            return ""
-        else:
-            logging.warning("Briefing did not receive a known CombatStance")
-            return ""
-
-    @property
-    def _disadvantage_description(self) -> str:
-        """Situation description for when player has a numerical disadvantage
-
-        Returns:
-            str
-        """
-        if self.stance == CombatStance.AGGRESSIVE:
-            return (
-                "On this location, our ground forces will try an audacious "
-                "assault against enemies in superior numbers. The operation"
-                " is risky, and the enemy might counter attack."
-                )
-        elif self.stance == CombatStance.ELIMINATION:
-            return (
-                "On this location, our ground forces will try an audacious assault against "
-                "enemies in superior numbers. The operation is risky, and the enemy might "
-                "counter attack."
-            )
-        elif self.stance == CombatStance.BREAKTHROUGH:
-            return (
-                "On this location, our ground forces have been ordered to rush toward "
-                f"{self.enemy_base.name}. Wish them luck... We are also expecting a counter attack."
-            )
-        elif self.stance in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
-            return (
-                "On this location, our ground forces have been ordered to hold still, "
-                "and defend against enemy attacks. An enemy assault might be iminent."
-            )
-        # TODO: Write a situation description for player RETREAT stance
-        elif self.stance == CombatStance.RETREAT:
-            return ""
-        else:
-            logging.warning("Briefing did not receive a known CombatStance")
-            return ""
-
-    @property
-    def brief(self) -> str:
-        """Situation briefing string
-
-        Returns:
-            str
-        """
-        if self._zero_units_sentence:
-            return self._zero_units_sentence
-        situation = self._random_frontline_sentence
-        if self.advantage:
-            situation += self._advantage_description
-        else:
-            situation += self._disadvantage_description
-        return situation
-
+        self.combat_stances = CombatStance
 
 class MissionInfoGenerator:
     """Base type for generators of mission information for the player.
@@ -238,10 +127,12 @@ class BriefingGenerator(MissionInfoGenerator):
         env = Environment(
             loader=FileSystemLoader("resources/briefing/templates"),
             autoescape=select_autoescape(
-                disabled_extensions=("txt",),
+                disabled_extensions=("",),
                 default_for_string=True,
                 default=True,
-                )
+                ),
+            trim_blocks=True,
+            lstrip_blocks=True,
             )
         self.template = env.get_template("briefingtemplate_EN.j2")
 
