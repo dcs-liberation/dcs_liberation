@@ -15,7 +15,12 @@ if TYPE_CHECKING:
     from game.game import Game
 
 
-class GroupGenerator():
+# TODO: Generate a group description rather than a pydcs group.
+# It appears that all of this work gets redone at miz generation time (see
+# groundobjectsgen for an example). We can do less work and include the data we
+# care about in the format we want if we just generate our own group description
+# types rather than pydcs groups.
+class GroupGenerator:
 
     def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Optional[Faction] = None): # faction is not mandatory because some subclasses do not use it
         self.game = game
@@ -34,7 +39,7 @@ class GroupGenerator():
     def generate(self):
         raise NotImplementedError
 
-    def get_generated_group(self):
+    def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
     def add_unit(self, unit_type: VehicleType, name: str, pos_x: float, pos_y: float, heading: int):

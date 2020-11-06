@@ -14,7 +14,6 @@ from game.infos.information import Information
 from game.operation.operation import Operation
 from gen.ground_forces.combat_stance import CombatStance
 from theater import ControlPoint
-from theater.start_generator import generate_airbase_defense_group
 
 if TYPE_CHECKING:
     from ..game import Game
