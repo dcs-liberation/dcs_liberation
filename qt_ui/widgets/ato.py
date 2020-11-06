@@ -194,7 +194,8 @@ class QFlightList(QListView):
     def edit_flight(self, index: QModelIndex) -> None:
         from qt_ui.dialogs import Dialog
         Dialog.open_edit_flight_dialog(
-            self.package_model, self.package_model.flight_at_index(index)
+            self.package_model, self.package_model.flight_at_index(index),
+            parent=self.window()
         )
 
     def delete_flight(self, index: QModelIndex) -> None:
