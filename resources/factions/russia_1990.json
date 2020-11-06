@@ -4,15 +4,18 @@
   "authors": "Khopa",
   "description": "",
   "aircrafts": [
-    "MiG_23MLD",
     "MiG_25PD",
-    "MiG_29A",
     "MiG_29S",
     "MiG_31",
-    "Su_27",
     "Su_24M",
     "Su_25",
-    "Ka_50"
+    "Su_25T",
+    "Su_27",
+    "Su_33",
+    "Ka_50",
+    "Mi_8MT",
+    "Mi_24V",
+    "Tu_22M3"
   ],
   "awacs": [
     "A_50"
@@ -21,11 +24,11 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "ARV_BRDM_2",
     "APC_BTR_80",
-    "IFV_BMD_1",
     "IFV_BMP_1",
-    "MBT_T_55"
+    "IFV_BMP_2",
+    "MBT_T_72B",
+    "MBT_T_80U"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",
@@ -41,14 +44,12 @@
     "Paratrooper_RPG_16"
   ],
   "shorads": [
-    "SA9Generator",
     "SA13Generator",
-    "ZSU23Generator",
-    "ZU23Generator"
+    "SA8Generator"
   ],
   "sams": [
     "SA6Generator",
-    "SA3Generator"
+    "SA11Generator"
   ],
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
