@@ -73,7 +73,10 @@ class QLiberationWindow(QMainWindow):
         hbox.addWidget(vbox)
         vbox.addWidget(self.liberation_map)
         vbox.addWidget(self.info_panel)
-        hbox.setSizes([100, 600])
+
+        # Will make the ATO sidebar as small as necessary to fit the content. In
+        # practice this means it is sized by the hints in the panel.
+        hbox.setSizes([1, 10000000])
         vbox.setSizes([600, 100])
 
         vbox = QVBoxLayout()

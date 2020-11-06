@@ -1,5 +1,4 @@
 """Widgets for displaying air tasking orders."""
-import datetime
 import logging
 from contextlib import contextmanager
 from typing import ContextManager, Optional
@@ -22,6 +21,7 @@ from PySide2.QtWidgets import (
     QAction,
     QGroupBox,
     QHBoxLayout,
+    QLabel,
     QListView,
     QMenu,
     QPushButton,
@@ -235,6 +235,12 @@ class QFlightPanel(QGroupBox):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
+        self.tip = QLabel(
+            "To add flights to a package, edit the package by double clicking "
+            "it or pressing the edit button."
+        )
+        self.vbox.addWidget(self.tip)
+
         self.flight_list = QFlightList(game_model, package_model)
         self.vbox.addWidget(self.flight_list)
 
@@ -436,6 +442,13 @@ class QPackagePanel(QGroupBox):
 
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
+
+        self.tip = QLabel(
+            "To create a new package, right click the mission target on the "
+            "map. To target airbase objectives, use\n"
+            "the attack button in the airbase view."
+        )
+        self.vbox.addWidget(self.tip)
 
         self.package_list = QPackageList(self.ato_model)
         self.vbox.addWidget(self.package_list)
