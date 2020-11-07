@@ -160,11 +160,9 @@ class GameGenerator:
 
 
 class ControlPointGroundObjectGenerator:
-    def __init__(self, game: Game, control_point: ControlPoint,
-                 templates: GroundObjectTemplates) -> None:
+    def __init__(self, game: Game, control_point: ControlPoint) -> None:
         self.game = game
         self.control_point = control_point
-        self.templates = templates
 
     @property
     def faction_name(self) -> str:
@@ -179,7 +177,6 @@ class ControlPointGroundObjectGenerator:
 
     def generate(self) -> bool:
         self.control_point.ground_objects = []
-        self.generate_ground_points()
         if self.faction.navy_generators:
             # Even airbases can generate navies if they are close enough to the
             # water. This is not controlled by the control point definition, but
@@ -187,84 +184,7 @@ class ControlPointGroundObjectGenerator:
             # for the ship.
             self.generate_navy()
 
-        if self.faction.missiles:
-            # TODO: Presumably only for airbases?
-            self.generate_missile_sites()
-
         return True
-
-    def generate_ground_points(self) -> None:
-        """Generate ground objects and AA sites for the control point."""
-
-        if self.control_point.is_global:
-            return
-
-        # TODO: Should probably perform this check later.
-        # Just because we don't have factories for the faction doesn't mean we
-        # shouldn't generate AA.
-        available_categories = self.faction.building_set
-        if not available_categories:
-            return
-
-        # Always generate at least one AA point.
-        self.generate_aa_site()
-
-        # And between 2 and 7 other objectives.
-        amount = random.randrange(2, 7)
-        for i in range(amount):
-            # 1 in 4 additional objectives are AA.
-            if random.randint(0, 3) == 0:
-                self.generate_aa_site()
-            else:
-                category = random.choice(available_categories)
-                self.generate_ground_point(category)
-
-    def generate_ground_point(self, category: str) -> None:
-        obj_name = namegen.random_objective_name()
-        template = random.choice(list(self.templates[category].values()))
-        point = find_location(category != "oil",
-                              self.control_point.position,
-                              self.game.theater, 10000, 40000,
-                              self.control_point.ground_objects)
-
-        if point is None:
-            logging.error(
-                f"Could not find point for {obj_name} at {self.control_point}")
-            return
-
-        object_id = 0
-        group_id = self.game.next_group_id()
-
-        # TODO: Create only one TGO per objective, each with multiple units.
-        for unit in template:
-            object_id += 1
-
-            template_point = Point(unit["offset"].x, unit["offset"].y)
-            g = BuildingGroundObject(
-                obj_name, category, group_id, object_id, point + template_point,
-                unit["heading"], self.control_point, unit["type"])
-
-            self.control_point.ground_objects.append(g)
-
-    def generate_aa_site(self) -> None:
-        obj_name = namegen.random_objective_name()
-        position = find_location(True, self.control_point.position,
-                                 self.game.theater, 10000, 40000,
-                                 self.control_point.ground_objects)
-
-        if position is None:
-            logging.error(
-                f"Could not find point for {obj_name} at {self.control_point}")
-            return
-
-        group_id = self.game.next_group_id()
-
-        g = SamGroundObject(namegen.random_objective_name(), group_id,
-                            position, self.control_point, for_airbase=False)
-        group = generate_anti_air_group(self.game, g, self.faction_name)
-        if group is not None:
-            g.groups = [group]
-        self.control_point.ground_objects.append(g)
 
     def generate_navy(self) -> None:
         skip_player_navy = self.game.settings.do_not_generate_player_navy
@@ -296,29 +216,6 @@ class ControlPointGroundObjectGenerator:
         if group is not None:
             g.groups.append(group)
             self.control_point.ground_objects.append(g)
-
-    def generate_missile_sites(self) -> None:
-        for i in range(self.faction.missiles_group_count):
-            self.generate_missile_site()
-
-    def generate_missile_site(self) -> None:
-        point = find_location(True, self.control_point.position,
-                              self.game.theater, 2500, 40000, [], False)
-        if point is None:
-            logging.info(
-                f"Could not find point for {self.control_point} missile site")
-            return
-
-        group_id = self.game.next_group_id()
-
-        g = MissileSiteGroundObject(namegen.random_objective_name(), group_id,
-                                    point, self.control_point)
-        group = generate_missile_group(self.game, g, self.faction_name)
-        g.groups = []
-        if group is not None:
-            g.groups.append(group)
-            self.control_point.ground_objects.append(g)
-        return
 
 
 class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
@@ -372,15 +269,121 @@ class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
 
 class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
+    def __init__(self, game: Game, control_point: ControlPoint,
+                 templates: GroundObjectTemplates) -> None:
+        super().__init__(game, control_point)
+        self.templates = templates
+
     def generate(self) -> bool:
         if not super().generate():
             return False
 
-        for i in range(random.randint(3, 6)):
-            self.generate_sam(i)
+        self.generate_base_defenses()
+        self.generate_ground_points()
+
+        if self.faction.missiles:
+            self.generate_missile_sites()
+
         return True
 
-    def generate_sam(self, index: int) -> None:
+    def generate_ground_points(self) -> None:
+        """Generate ground objects and AA sites for the control point."""
+        if self.control_point.is_global:
+            return
+
+        # Always generate at least one AA point.
+        self.generate_aa_site()
+
+        # And between 2 and 7 other objectives.
+        amount = random.randrange(2, 7)
+        for i in range(amount):
+            # 1 in 4 additional objectives are AA.
+            if random.randint(0, 3) == 0:
+                self.generate_aa_site()
+            else:
+                self.generate_ground_point()
+
+    def generate_ground_point(self) -> None:
+        try:
+            category = random.choice(self.faction.building_set)
+        except IndexError:
+            logging.exception("Faction has no buildings defined")
+            return
+
+        obj_name = namegen.random_objective_name()
+        template = random.choice(list(self.templates[category].values()))
+        point = find_location(category != "oil",
+                              self.control_point.position,
+                              self.game.theater, 10000, 40000,
+                              self.control_point.ground_objects)
+
+        if point is None:
+            logging.error(
+                f"Could not find point for {obj_name} at {self.control_point}")
+            return
+
+        object_id = 0
+        group_id = self.game.next_group_id()
+
+        # TODO: Create only one TGO per objective, each with multiple units.
+        for unit in template:
+            object_id += 1
+
+            template_point = Point(unit["offset"].x, unit["offset"].y)
+            g = BuildingGroundObject(
+                obj_name, category, group_id, object_id, point + template_point,
+                unit["heading"], self.control_point, unit["type"])
+
+            self.control_point.ground_objects.append(g)
+
+    def generate_aa_site(self) -> None:
+        obj_name = namegen.random_objective_name()
+        position = find_location(True, self.control_point.position,
+                                 self.game.theater, 10000, 40000,
+                                 self.control_point.ground_objects)
+
+        if position is None:
+            logging.error(
+                f"Could not find point for {obj_name} at {self.control_point}")
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = SamGroundObject(namegen.random_objective_name(), group_id,
+                            position, self.control_point, for_airbase=False)
+        group = generate_anti_air_group(self.game, g, self.faction_name)
+        if group is not None:
+            g.groups = [group]
+        self.control_point.ground_objects.append(g)
+
+    def generate_missile_sites(self) -> None:
+        for i in range(self.faction.missiles_group_count):
+            self.generate_missile_site()
+
+    def generate_missile_site(self) -> None:
+        point = find_location(True, self.control_point.position,
+                              self.game.theater, 2500, 40000, [], False)
+        if point is None:
+            logging.info(
+                f"Could not find point for {self.control_point} missile site")
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = MissileSiteGroundObject(namegen.random_objective_name(), group_id,
+                                    point, self.control_point)
+        group = generate_missile_group(self.game, g, self.faction_name)
+        g.groups = []
+        if group is not None:
+            g.groups.append(group)
+            self.control_point.ground_objects.append(g)
+        return
+
+    def generate_base_defenses(self) -> None:
+        for i in range(random.randint(3, 6)):
+            self.generate_base_defense(i)
+
+    def generate_base_defense(self, index: int) -> None:
         position = find_location(True, self.control_point.position,
                                  self.game.theater, 800, 3200, [], True)
         if position is None:
@@ -414,11 +417,9 @@ class GroundObjectGenerator:
     def generate_for_control_point(self, control_point: ControlPoint) -> bool:
         generator: ControlPointGroundObjectGenerator
         if control_point.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
-            generator = CarrierGroundObjectGenerator(self.game, control_point,
-                                                     self.templates)
+            generator = CarrierGroundObjectGenerator(self.game, control_point)
         elif control_point.cptype == ControlPointType.LHA_GROUP:
-            generator = LhaGroundObjectGenerator(self.game, control_point,
-                                                 self.templates)
+            generator = LhaGroundObjectGenerator(self.game, control_point)
         else:
             generator = AirbaseGroundObjectGenerator(self.game, control_point,
                                                      self.templates)
