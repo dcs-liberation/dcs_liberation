@@ -955,23 +955,10 @@ COMMON_OVERRIDE = {
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
 
-    B_1B: {
-        CAS: "GBU-38*16, CBU-97*20",
-        PinpointStrike: "GBU-31*8, GBU-38*32",
-        GroundAttack: "GBU-31*8, GBU-38*32",
-    },
-    B_52H: {
-        PinpointStrike: "AGM-86C*20",
-        GroundAttack: "Mk 82*51",
-    },
-    F_117A: {
-        PinpointStrike: "GBU-10*2",
-    },
-    F_15E: {
-        CAS: "AIM-120B*2,AIM-9M*2,FUEL,GBU-12*4,GBU-38*4,AGM-65D*2",
-        GroundAttack: "AIM-120B*2,AIM-9M*2,FUEL*3,CBU-97*12",
-        PinpointStrike: "AIM-120B*2,AIM-9M*2,FUEL,GBU-31*4,AGM-154C*2",
-    },
+    B_1B: COMMON_OVERRIDE,
+    B_52H: COMMON_OVERRIDE,
+    F_117A: COMMON_OVERRIDE,
+    F_15E: COMMON_OVERRIDE,
     FA_18C_hornet: {
         CAP: "CAP HEAVY",
         Intercept: "CAP HEAVY",
@@ -995,12 +982,8 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     Tu_160: {
         PinpointStrike: "Kh-65*12",
     },
-    Tu_22M3: {
-        GroundAttack: "FAB-500*33, FAB-250*36",
-    },
-    Tu_95MS: {
-        PinpointStrike: "Kh-65*6",
-    },
+    Tu_22M3: COMMON_OVERRIDE,
+    Tu_95MS: COMMON_OVERRIDE,
     A_10A: COMMON_OVERRIDE,
     A_10C: COMMON_OVERRIDE,
     A_10C_2: COMMON_OVERRIDE,

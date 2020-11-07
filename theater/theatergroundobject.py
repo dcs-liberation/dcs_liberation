@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import itertools
 from typing import List, TYPE_CHECKING
 
 from dcs.mapping import Point
+from dcs.unit import Unit
 from dcs.unitgroup import Group
 
 if TYPE_CHECKING:
@@ -92,6 +94,13 @@ class TheaterGroundObject(MissionTarget):
     @property
     def group_identifier(self) -> str:
         return "{}|{}".format(self.category, self.group_id)
+
+    @property
+    def units(self) -> List[Unit]:
+        """
+        :return: all the units at this location
+        """
+        return list(itertools.chain.from_iterable([g.units for g in self.groups]))
 
     @property
     def name_abbrev(self) -> str:

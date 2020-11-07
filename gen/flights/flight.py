@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
-from dcs.unittype import UnitType
+from dcs.unittype import FlyingType
 
 from game import db
 from theater.controlpoint import ControlPoint, MissionTarget
@@ -128,7 +128,7 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: UnitType, count: int,
+    def __init__(self, package: Package, unit_type: FlyingType, count: int,
                  from_cp: ControlPoint, flight_type: FlightType,
                  start_type: str) -> None:
         self.package = package

@@ -29,7 +29,7 @@ from dcs.planes import (
     P_51D_30_NA,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
-    Su_33,
+    Su_33, A_20G, Tu_22M3, B_52H,
 )
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
@@ -54,7 +54,7 @@ from dcs.task import (
     SEAD,
     StartCommand,
     Targets,
-    Task,
+    Task, WeaponType,
 )
 from dcs.terrain.terrain import Airport
 from dcs.translation import String
@@ -1054,7 +1054,7 @@ class AircraftConflictGenerator:
     def configure_strike(self, group: FlyingGroup, package: Package,
                          flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
-        group.task = PinpointStrike.name
+        group.task = GroundAttack.name
         self._setup_group(group, GroundAttack, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
@@ -1347,7 +1347,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
 
 class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
-        if self.group.units[0].unit_type == B_17G:
+        if self.group.units[0].unit_type in [B_17G, A_20G, B_52H, Tu_22M3]:
             return self.build_bombing()
         else:
             return self.build_strike()
@@ -1370,7 +1370,7 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         bombing.params["attackQtyLimit"] = False
         bombing.params["directionEnabled"] = False
         bombing.params["altitudeEnabled"] = False
-        bombing.params["weaponType"] = 2032
+        bombing.params["weaponType"] = WeaponType.Bombs.value
         bombing.params["groupAttack"] = True
         waypoint.tasks.append(bombing)
         return waypoint
@@ -1378,14 +1378,38 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build_strike(self) -> MovingPoint:
         waypoint = super().build()
 
-        for i, t in enumerate(self.waypoint.targets):
-            waypoint.tasks.append(Bombing(t.position))
-            if self.group.units[0].unit_type == JF_17 and i < 4:
-                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
-            if self.group.units[0].unit_type == F_14B and i == 0:
-                self.group.add_nav_target_point(t.position, "ST")
-            if self.group.units[0].unit_type == AJS37 and i < 9:
-                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        i = 0
+        for target in self.waypoint.targets:
+
+            targets = [target]
+            # If the target type is a group of units,
+            # then target each unit in the group with a Bombing task on their position
+            # (It is not perfect, we should have an engage Group task instead,
+            # but we don't have the group ref in the model there)
+            # TODO : for building group, engage all the buildings as well
+            if isinstance(target, TheaterGroundObject):
+                if len(target.units) > 0:
+                    targets = target.units
+
+            for t in targets:
+                bombing = Bombing(t.position)
+                # If there is only one target, drop all ordnance in one pass
+                if len(self.waypoint.targets) == 1 and len(targets) == 1:
+                    bombing.params["expend"] = "All"
+                bombing.params["weaponType"] = WeaponType.Auto.value
+                bombing.params["groupAttack"] = True
+                waypoint.tasks.append(bombing)
+                print(bombing)
+
+                # Register special waypoints
+                if self.group.units[0].unit_type == JF_17 and i < 4:
+                    self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
+                if self.group.units[0].unit_type == F_14B and i == 0:
+                    self.group.add_nav_target_point(t.position, "ST")
+                if self.group.units[0].unit_type == AJS37 and i < 9:
+                    self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+                i = i + 1
+
         return waypoint
 
 
