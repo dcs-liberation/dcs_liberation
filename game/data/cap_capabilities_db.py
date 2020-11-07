@@ -11,10 +11,12 @@ from dcs.planes import (
     MiG_19P,
     MiG_21Bis,
     P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
     P_51D,
     P_51D_30_NA,
     SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
+    SpitfireLFMkIXCW
 )
 
 from pydcs_extensions.a4ec.a4ec import A_4E_C
@@ -41,6 +43,8 @@ GUNFIGHTERS = [
     P_51D_30_NA,
     P_51D,
     P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
     Bf_109K_4,

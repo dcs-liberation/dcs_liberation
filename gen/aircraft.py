@@ -25,6 +25,8 @@ from dcs.planes import (
     JF_17,
     Ju_88A4,
     P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
     P_51D,
     P_51D_30_NA,
     SpitfireLFMkIX,
@@ -132,6 +134,8 @@ def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
     allied_ww2_aircraft = [
         I_16,
         P_47D_30,
+        P_47D_30bl1,
+        P_47D_40,
         P_51D,
         P_51D_30_NA,
         SpitfireLFMkIX,
