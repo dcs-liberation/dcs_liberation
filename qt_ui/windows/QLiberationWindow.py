@@ -1,4 +1,5 @@
 import logging
+import traceback
 import webbrowser
 from typing import Optional
 
@@ -16,7 +17,7 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, persistency, VERSION
+from game import Game, VERSION, persistency
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
@@ -40,10 +41,9 @@ class QLiberationWindow(QMainWindow):
         self.game: Optional[Game] = None
         self.game_model = GameModel()
         Dialog.set_game(self.game_model)
-        self.ato_panel = None
-        self.info_panel = None
-        self.liberation_map = None
-        self.setGame(persistency.restore_game())
+        self.ato_panel = QAirTaskingOrderPanel(self.game_model)
+        self.info_panel = QInfoPanel(self.game)
+        self.liberation_map = QLiberationMap(self.game_model)
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
@@ -55,17 +55,14 @@ class QLiberationWindow(QMainWindow):
         self.initMenuBar()
         self.initToolbar()
         self.connectSignals()
-        self.onGameGenerated(self.game)
 
         screen = QDesktopWidget().screenGeometry()
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
 
-    def initUi(self):
-        self.ato_panel = QAirTaskingOrderPanel(self.game_model)
-        self.liberation_map = QLiberationMap(self.game_model)
-        self.info_panel = QInfoPanel(self.game)
+        self.onGameGenerated(persistency.restore_game())
 
+    def initUi(self):
         hbox = QSplitter(Qt.Horizontal)
         vbox = QSplitter(Qt.Vertical)
         hbox.addWidget(self.ato_panel)
@@ -193,8 +190,7 @@ class QLiberationWindow(QMainWindow):
                                                filter="*.liberation")
         if file is not None:
             game = persistency.load_game(file[0])
-            self.setGame(game)
-            GameUpdateSignal.get_instance().updateGame(self.game)
+            GameUpdateSignal.get_instance().updateGame(game)
 
     def saveGame(self):
         logging.info("Saving game")
@@ -217,14 +213,27 @@ class QLiberationWindow(QMainWindow):
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def setGame(self, game: Optional[Game]):
-        if game is not None:
-            game.on_load()
-        self.game = game
-        if self.info_panel is not None:
-            self.info_panel.setGame(game)
-        self.game_model.set(self.game)
-        if self.liberation_map is not None:
-            self.liberation_map.setGame(game)
+        try:
+            if game is not None:
+                game.on_load()
+            self.game = game
+            if self.info_panel is not None:
+                self.info_panel.setGame(game)
+            self.game_model.set(self.game)
+            if self.liberation_map is not None:
+                self.liberation_map.setGame(game)
+        except AttributeError:
+            logging.exception("Incompatible save game")
+            QMessageBox.critical(
+                self,
+                "Could not load save game",
+                "The save game you have loaded is incompatible with this "
+                "version of DCS Liberation.\n"
+                "\n"
+                f"{traceback.format_exc()}",
+                QMessageBox.Ok
+            )
+            GameUpdateSignal.get_instance().updateGame(None)
 
     def showAboutDialog(self):
         text = "<h3>DCS Liberation " + VERSION + "</h3>" + \
