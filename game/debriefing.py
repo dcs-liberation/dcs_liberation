@@ -24,7 +24,7 @@ class DebriefingDeadUnitInfo:
 
 class Debriefing:
     def __init__(self, state_data, game):
-        self.base_capture_events = state_data["base_capture_events"]
+        self.state_data = state_data
         self.killed_aircrafts = state_data["killed_aircrafts"]
         self.killed_ground_units = state_data["killed_ground_units"]
         self.weapons_fired = state_data["weapons_fired"]
@@ -161,6 +161,18 @@ class Debriefing:
         logging.info(self.enemy_dead_units_dict)
         logging.info(self.player_dead_buildings_dict)
         logging.info(self.enemy_dead_buildings_dict)
+
+    @property
+    def base_capture_events(self):
+        """Keeps only the last instance of a base capture event for each base ID"""
+        reversed_captures = [i for i in self.state_data["base_capture_events"][::-1]]
+        last_base_cap_indexes = []
+        for idx, base in enumerate(i.split("||")[0] for i in reversed_captures):
+            if base in [x[1] for x in last_base_cap_indexes]:
+                continue
+            else:
+                last_base_cap_indexes.append((idx, base))
+        return [reversed_captures[idx[0]] for idx in last_base_cap_indexes]        
 
 
 class PollDebriefingFileThread(threading.Thread):
