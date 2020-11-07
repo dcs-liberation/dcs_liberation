@@ -203,6 +203,19 @@ class SamGroundObject(TheaterGroundObject):
             airbase_group=for_airbase,
             sea_object=False
         )
+        # Set by the SAM unit generator if the generated group is compatible
+        # with Skynet.
+        self.skynet_capable = False
+
+    @property
+    def group_name(self) -> str:
+        if self.skynet_capable:
+            # Prefix the group names of SAM sites with the side color so Skynet
+            # can find them.
+            color = "BLUE" if self.control_point.captured else "RED"
+            return f"{color}|SAM|{self.group_id}"
+        else:
+            return super().group_name
 
 
 class ShipGroundObject(TheaterGroundObject):

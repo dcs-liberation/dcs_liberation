@@ -36,6 +36,7 @@ from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
 from theater import TheaterGroundObject
+from theater.theatergroundobject import SamGroundObject
 
 SAM_MAP = {
     "HawkGenerator": HawkGenerator,
@@ -125,13 +126,13 @@ def generate_anti_air_group(game: Game, ground_object: TheaterGroundObject,
     possible_sams_generators = get_faction_possible_sams_generator(faction)
     if len(possible_sams_generators) > 0:
         sam_generator_class = random.choice(possible_sams_generators)
-        generator = sam_generator_class(game, ground_object, db.FACTIONS[faction])
+        generator = sam_generator_class(game, ground_object)
         generator.generate()
         return generator.get_generated_group()
     return None
 
 
-def generate_shorad_group(game: Game, ground_object: TheaterGroundObject,
+def generate_shorad_group(game: Game, ground_object: SamGroundObject,
                           faction_name: str) -> Optional[VehicleGroup]:
     faction = db.FACTIONS[faction_name]
 

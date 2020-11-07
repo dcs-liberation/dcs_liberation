@@ -426,8 +426,8 @@ class GroundObjectGenerator:
 
 
 def generate_airbase_defense_group(airbase_defense_group_id: int,
-                                   ground_obj: TheaterGroundObject,
-                                   faction: str, game: Game) -> None:
+                                   ground_obj: SamGroundObject, faction: str,
+                                   game: Game) -> None:
     if airbase_defense_group_id == 0:
         group = generate_armor_group(faction, game, ground_obj)
     elif airbase_defense_group_id == 1 and random.randint(0, 1) == 0:

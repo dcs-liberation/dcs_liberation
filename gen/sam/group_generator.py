@@ -22,19 +22,15 @@ if TYPE_CHECKING:
 # types rather than pydcs groups.
 class GroupGenerator:
 
-    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Optional[Faction] = None): # faction is not mandatory because some subclasses do not use it
+    def __init__(self, game: Game, ground_object: TheaterGroundObject) -> None:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.faction = faction
-        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
+        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(),
+                                         self.go.group_name)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
-
-    @property
-    def groupNamePrefix(self) -> str:
-        return ""
 
     def generate(self):
         raise NotImplementedError
@@ -96,7 +92,8 @@ class ShipGroupGenerator(GroupGenerator):
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
         self.faction = faction
-        self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
+        self.vg = unitgroup.ShipGroup(self.game.next_group_id(),
+                                      self.go.group_name)
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
     
