@@ -34,6 +34,7 @@ TYPE_TANKS = [
     Armor.CT_Centaur_IV,
     Armor.CT_Cromwell_IV,
     Armor.HIT_Churchill_VII,
+    Armor.LT_Mk_VII_Tetrarch,
 
     # Mods
     frenchpack.DIM__TOYOTA_BLUE,
@@ -81,6 +82,7 @@ TYPE_IFV = [
     # WW2
     Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.LAC_M8_Greyhound,
+    Armor.Daimler_Armoured_Car,
 
     # Mods
     frenchpack.ERC_90,

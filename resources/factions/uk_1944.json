@@ -20,7 +20,9 @@
     "APC_M2A1",
     "CT_Cromwell_IV",
     "CT_Centaur_IV",
-    "HIT_Churchill_VII"
+    "HIT_Churchill_VII",
+    "Daimler_Armoured_Car",
+    "LT_Mk_VII_Tetrarch"
   ],
   "artillery_units": [
   ],
