@@ -17,7 +17,7 @@ from game import db
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
 from .missiontarget import MissionTarget
-from .theatergroundobject import TheaterGroundObject
+from .theatergroundobject import SamGroundObject, TheaterGroundObject
 
 if TYPE_CHECKING:
     from game import Game
@@ -226,8 +226,16 @@ class ControlPoint(MissionTarget):
 
         # Handle cyclic dependency.
         from .start_generator import generate_airbase_defense_group
-        for idx, ground_object in enumerate(self.ground_objects):
+        base_defense_idx = 0
+        for ground_object in self.ground_objects:
+            if not isinstance(ground_object, SamGroundObject):
+                continue
+            if not ground_object.airbase_group:
+                continue
+
+            # Reset in case we replace the SAM with something else.
+            ground_object.skynet_capable = False
             ground_object.groups = []
-            if ground_object.airbase_group and faction_name != "":
-                generate_airbase_defense_group(idx, ground_object,
-                                               faction_name, game)
+            generate_airbase_defense_group(base_defense_idx, ground_object,
+                                           faction_name, game)
+            base_defense_idx += 1
