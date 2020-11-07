@@ -20,6 +20,8 @@
 * **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
 * **[UI]** Missing TER weapons in custom payload now selectable.
 * **[UI]** Many missing unit icons were added
+* **[Maps]** Incirlik airbase was missing exclusions zones, so SAMS could end up being generated on the runway
+* **[Campaign Generator]** Big airbases could end up without any airbase defense.
 
 # 2.1.5
 
