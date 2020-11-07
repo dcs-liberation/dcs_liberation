@@ -37,6 +37,9 @@
     "HawkGenerator",
     "AvengerGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

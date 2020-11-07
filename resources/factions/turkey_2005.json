@@ -41,6 +41,9 @@
   "sams": [
     "HawkGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"
   ],

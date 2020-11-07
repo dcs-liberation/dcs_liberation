@@ -63,6 +63,9 @@
     "SA10Generator",
     "SA11Generator"
   ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
   "missiles": [
     "ScudGenerator"
   ],

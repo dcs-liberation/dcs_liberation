@@ -52,6 +52,9 @@
     "SA6Generator",
     "SA11Generator"
   ],
+  "ewrs": [
+    "SnowDriftGenerator"
+  ],
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
   ],

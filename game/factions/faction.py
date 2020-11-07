@@ -57,6 +57,9 @@ class Faction:
     # Possible SAMS site generators for this faction
     sams: List[str] = field(default_factory=list)
 
+    # Possible EWR generators for this faction.
+    ewrs: List[str] = field(default_factory=list)
+
     # Possible Missile site generators for this faction
     missiles: List[str] = field(default_factory=list)
 
@@ -132,6 +135,7 @@ class Faction:
             json.get("logistics_units", []))
 
         faction.sams = json.get("sams", [])
+        faction.ewrs = json.get("ewrs", [])
         faction.shorads = json.get("shorads", [])
         faction.missiles = json.get("missiles", [])
         faction.requirements = json.get("requirements", {})

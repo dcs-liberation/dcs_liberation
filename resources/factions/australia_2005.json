@@ -38,6 +38,9 @@
     "HawkGenerator",
     "RapierGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

@@ -48,6 +48,9 @@
     "SA10Generator",
     "SA11Generator"
   ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
   "requirements": {},
   "carrier_names": [
     "Admiral Kuznetov",

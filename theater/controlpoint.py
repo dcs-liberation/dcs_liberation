@@ -221,10 +221,8 @@ class ControlPoint(MissionTarget):
     def capture(self, game: Game, for_player: bool) -> None:
         if for_player:
             self.captured = True
-            faction_name = game.player_name
         else:
             self.captured = False
-            faction_name = game.enemy_name
 
         self.base.set_strength_to_minimum()
 
@@ -234,4 +232,4 @@ class ControlPoint(MissionTarget):
         # Handle cyclic dependency.
         from .start_generator import BaseDefenseGenerator
         self.base_defenses = []
-        BaseDefenseGenerator(game, self, faction_name).generate()
+        BaseDefenseGenerator(game, self).generate()

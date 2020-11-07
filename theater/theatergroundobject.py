@@ -218,6 +218,28 @@ class SamGroundObject(TheaterGroundObject):
             return super().group_name
 
 
+class EwrGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="EWR",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="EWR",
+            airbase_group=True,
+            sea_object=False
+        )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them.
+        color = "BLUE" if self.control_point.captured else "RED"
+        return f"{color}|{super().group_name}"
+
+
 class ShipGroundObject(TheaterGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint) -> None:

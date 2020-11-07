@@ -14,16 +14,6 @@
             "defaultValue": true
         },
         {
-            "nameInUI": "Long-range SAM act as EWR for RED coalition",
-            "mnemonic": "actAsEwrRED",
-            "defaultValue": true
-        },
-        {
-            "nameInUI": "Long-range SAM act as EWR for BLUE coalition",
-            "mnemonic": "actAsEwrBLUE",
-            "defaultValue": true
-        },
-        {
             "nameInUI": "Include RED IADS in radio menu",
             "mnemonic": "includeRedInRadio",
             "defaultValue": true

@@ -47,6 +47,9 @@
     "SA10Generator",
     "SA2Generator"
   ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "carrier_names": [

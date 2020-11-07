@@ -24,7 +24,7 @@ from gen.fleet.ship_group_generator import (
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.sam_group_generator import (
     generate_anti_air_group,
-    generate_shorad_group,
+    generate_ewr_group, generate_shorad_group,
 )
 from theater import (
     ConflictTheater,
@@ -34,7 +34,7 @@ from theater import (
 )
 from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from theater.theatergroundobject import (
-    SamGroundObject, BuildingGroundObject, CarrierGroundObject,
+    EwrGroundObject, SamGroundObject, BuildingGroundObject, CarrierGroundObject,
     LhaGroundObject,
     MissileSiteGroundObject, ShipGroundObject,
 )
@@ -269,29 +269,47 @@ class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
 
 class BaseDefenseGenerator:
-    def __init__(self, game: Game, control_point: ControlPoint,
-                 faction_name: str) -> None:
+    def __init__(self, game: Game, control_point: ControlPoint) -> None:
         self.game = game
         self.control_point = control_point
-        self.faction_name = faction_name
+
+    @property
+    def faction_name(self) -> str:
+        if self.control_point.captured:
+            return self.game.player_name
+        else:
+            return self.game.enemy_name
+
+    @property
+    def faction(self) -> Faction:
+        return db.FACTIONS[self.faction_name]
 
     def generate(self) -> None:
+        self.generate_ewr()
         for i in range(random.randint(3, 6)):
             self.generate_base_defense(i)
 
-    def generate_base_defense(self, index: int) -> None:
-        position = find_location(True, self.control_point.position,
-                                 self.game.theater, 400, 3200, [], True)
-
-        # Retry once, searching a bit further (On some big airbase, 3200 is too short (Ex : Incirlik))
-        # But searching farther on every base would be problematic, as some base defense units
-        # would end up very far away from small airfields.
-        # (I know it's not good for performance, but this is only done on campaign generation)
-        # TODO : Make the whole process less stupid with preset possible positions for each airbase
+    def generate_ewr(self) -> None:
+        position = self._find_location()
         if position is None:
-            position = find_location(True, self.control_point.position,
-                                     self.game.theater, 3200, 4800, [], True)
+            logging.error("Could not find position for "
+                          f"{self.control_point} EWR")
+            return
 
+        group_id = self.game.next_group_id()
+
+        g = EwrGroundObject(namegen.random_objective_name(), group_id,
+                            position, self.control_point)
+
+        group = generate_ewr_group(self.game, g, self.faction_name)
+        if group is None:
+            return
+
+        g.groups = [group]
+        self.control_point.base_defenses.append(g)
+
+    def generate_base_defense(self, index: int) -> None:
+        position = self._find_location()
         if position is None:
             logging.error("Could not find position for "
                           f"{self.control_point} base defense")
@@ -306,6 +324,20 @@ class BaseDefenseGenerator:
                                        self.game)
         self.control_point.base_defenses.append(g)
 
+    def _find_location(self) -> Optional[Point]:
+        position = find_location(True, self.control_point.position,
+                                 self.game.theater, 400, 3200, [], True)
+
+        # Retry once, searching a bit further (On some big airbase, 3200 is too short (Ex : Incirlik))
+        # But searching farther on every base would be problematic, as some base defense units
+        # would end up very far away from small airfields.
+        # (I know it's not good for performance, but this is only done on campaign generation)
+        # TODO : Make the whole process less stupid with preset possible positions for each airbase
+        if position is None:
+            position = find_location(True, self.control_point.position,
+                                     self.game.theater, 3200, 4800, [], True)
+        return position
+
 
 class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def __init__(self, game: Game, control_point: ControlPoint,
@@ -317,8 +349,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         if not super().generate():
             return False
 
-        BaseDefenseGenerator(self.game, self.control_point,
-                             self.faction_name).generate()
+        BaseDefenseGenerator(self.game, self.control_point).generate()
         self.generate_ground_points()
 
         if self.faction.missiles:

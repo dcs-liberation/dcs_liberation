@@ -44,6 +44,9 @@
     "HawkGenerator",
     "ChaparralGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"
   ],

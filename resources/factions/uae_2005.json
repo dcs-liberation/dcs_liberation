@@ -36,6 +36,9 @@
   "sams": [
     "HawkGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "requirements": {},
   "carrier_names": [
   ],

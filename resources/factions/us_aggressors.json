@@ -53,6 +53,9 @@
     "HawkGenerator",
     "PatriotGenerator"
   ],
+  "ewrs": [
+    "PatriotEwrGenerator"
+  ],
   "requirements": {},
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"

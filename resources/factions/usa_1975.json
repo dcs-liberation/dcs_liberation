@@ -33,6 +33,9 @@
     "HawkGenerator",
     "ChaparralGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"
   ],

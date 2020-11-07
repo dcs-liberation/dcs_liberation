@@ -41,6 +41,7 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, FrontLine
+from theater.theatergroundobject import EwrGroundObject
 
 
 class QLiberationMap(QGraphicsView):
@@ -215,7 +216,8 @@ class QLiberationMap(QGraphicsView):
                     buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                     scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
 
-                is_aa = ground_object.category == "aa"
+                is_ewr = isinstance(ground_object, EwrGroundObject)
+                is_aa = ground_object.category == "aa" or is_ewr
                 should_display = ((DisplayOptions.sam_ranges and cp.captured)
                                   or
                                   (DisplayOptions.enemy_sam_ranges and not cp.captured))

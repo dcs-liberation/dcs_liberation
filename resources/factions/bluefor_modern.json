@@ -63,6 +63,9 @@
     "HawkGenerator",
     "PatriotGenerator"
   ],
+  "ewrs": [
+    "PatriotEwrGenerator"
+  ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"
   ],

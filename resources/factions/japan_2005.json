@@ -43,6 +43,9 @@
     "HawkGenerator",
     "PatriotGenerator"
   ],
+  "ewrs": [
+    "PatriotEwrGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

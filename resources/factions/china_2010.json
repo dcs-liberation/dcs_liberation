@@ -48,6 +48,9 @@
     "SA10Generator",
     "SA6Generator"
   ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
   ],

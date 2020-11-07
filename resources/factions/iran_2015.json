@@ -53,6 +53,9 @@
     "HawkGenerator",
     "HQ7Generator"
   ],
+  "ewrs": [
+    "SnowDriftGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

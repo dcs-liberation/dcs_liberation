@@ -32,6 +32,9 @@
     "HawkGenerator",
     "ChaparralGenerator"
   ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
   "requirements": {},
   "doctrine": "coldwar"
 }

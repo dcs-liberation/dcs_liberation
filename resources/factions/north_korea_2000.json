@@ -51,6 +51,9 @@
     "SA3Generator",
     "SA6Generator"
   ],
+  "ewrs": [
+    "StraightFlushGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [
