@@ -505,6 +505,7 @@ PRICES = {
     AirDefence.Flak_Searchlight_37: 4,
     AirDefence.Maschinensatz_33: 10,
     AirDefence.AAA_8_8cm_Flak_41: 10,
+    AirDefence.EWR_FuMG_401_Freya_LZ: 25,
     AirDefence.AAA_Bofors_40mm: 8,
 
     # FRENCH PACK MOD

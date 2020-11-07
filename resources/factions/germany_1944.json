@@ -36,7 +36,8 @@
     "FlakGenerator"
   ],
   "sams": [
-    "FlakGenerator"
+    "FlakGenerator",
+    "FreyaGenerator"
   ],
   "aircraft_carrier": [
   ],

@@ -35,6 +35,7 @@ from gen.sam.sam_zsu23 import ZSU23Generator
 from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
+from gen.sam.freya_ewr import FreyaGenerator
 from theater import TheaterGroundObject
 
 SAM_MAP = {
@@ -67,7 +68,8 @@ SAM_MAP = {
     "HQ7Generator": HQ7Generator,
     "Flak18Generator": Flak18Generator,
     "ColdWarFlakGenerator": ColdWarFlakGenerator,
-    "EarlyColdWarFlakGenerator": EarlyColdWarFlakGenerator
+    "EarlyColdWarFlakGenerator": EarlyColdWarFlakGenerator,
+    "FreyaGenerator": FreyaGenerator
 }
 
 SAM_PRICES = {

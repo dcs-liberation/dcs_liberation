@@ -230,9 +230,9 @@ class QLiberationMap(QGraphicsView):
                                 unit = db.unit_type_from_name(u.type)
                                 if unit in UNITS_WITH_RADAR or unit in AAA_UNITS:
                                     can_fire = True
-                                if unit.detection_range > detection_range:
+                                if unit.detection_range and unit.detection_range > detection_range:
                                     detection_range = unit.detection_range
-                                if unit.threat_range > threat_range:
+                                if unit.threat_range and unit.threat_range > threat_range:
                                     threat_range = unit.threat_range
                     if can_fire:
                         threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
