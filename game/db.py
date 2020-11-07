@@ -422,6 +422,9 @@ PRICES = {
     Armor.StuG_III_Ausf__G: 12,
     Artillery.M12_GMC: 10,
     Artillery.Sturmpanzer_IV_Brummbär: 10,
+    Armor.Daimler_Armoured_Car: 8,
+    Armor.LT_Mk_VII_Tetrarch: 8,
+    Armor.M4_Tractor: 2,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -500,13 +503,16 @@ PRICES = {
     AirDefence.AAA_Flak_38: 6,
     AirDefence.AAA_8_8cm_Flak_36: 8,
     AirDefence.AAA_8_8cm_Flak_37: 9,
-    AirDefence.AAA_Flak_Vierling_38:6,
+    AirDefence.AAA_Flak_Vierling_38: 5,
     AirDefence.AAA_Kdo_G_40: 8,
     AirDefence.Flak_Searchlight_37: 4,
     AirDefence.Maschinensatz_33: 10,
     AirDefence.AAA_8_8cm_Flak_41: 10,
     AirDefence.EWR_FuMG_401_Freya_LZ: 25,
     AirDefence.AAA_Bofors_40mm: 8,
+    AirDefence.AAA_M1_37mm: 7,
+    AirDefence.AAA_M45_Quadmount: 4,
+    AirDefence.AA_gun_QF_3_7: 10,
 
     # FRENCH PACK MOD
     frenchpack.AMX_10RCR: 10,

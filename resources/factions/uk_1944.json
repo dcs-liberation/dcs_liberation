@@ -35,6 +35,7 @@
     "BoforsGenerator"
   ],
   "sams": [
+    "AllyWW2FlakGenerator",
     "BoforsGenerator"
   ],
   "aircraft_carrier": [
