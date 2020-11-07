@@ -242,6 +242,9 @@ class ObjectiveFinder:
         found_targets: Set[str] = set()
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
+                if ground_object.is_dead:
+                    continue
+
                 if ground_object.name in found_targets:
                     continue
 
@@ -287,6 +290,8 @@ class ObjectiveFinder:
         found_targets: Set[str] = set()
         for enemy_cp in self.enemy_control_points():
             for ground_object in enemy_cp.ground_objects:
+                if ground_object.is_dead:
+                    continue
                 if ground_object.name in found_targets:
                     continue
                 ranges: List[int] = []
