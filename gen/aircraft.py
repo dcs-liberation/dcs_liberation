@@ -1298,7 +1298,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_identifier, search="match")  # Match search is used due to TheaterGroundObject.name not matching
+            tgroup = self.mission.find_group(target_group.group_name, search="match")  # Match search is used due to TheaterGroundObject.name not matching
             if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
                 task = AttackGroup(tgroup.id)
                 task.params["expend"] = "All"
@@ -1309,7 +1309,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
                 task.params["groupAttack"] = True
                 waypoint.tasks.append(task)
             else:
-                logging.error(f"Could not find group for DEAD mission {target_group.group_identifier}")
+                logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
 
         for i, t in enumerate(self.waypoint.targets):
             if self.group.units[0].unit_type == JF_17 and i < 4:
@@ -1327,7 +1327,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_identifier, search="match")  # Match search is used due to TheaterGroundObject.name not matching
+            tgroup = self.mission.find_group(target_group.group_name, search="match")  # Match search is used due to TheaterGroundObject.name not matching
             if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
                 waypoint.add_task(EngageTargetsInZone(
                                     position=tgroup.position,
@@ -1337,7 +1337,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                                     ])
                                 )
             else:
-                logging.error(f"Could not find group for DEAD mission {target_group.group_identifier}")
+                logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
 
         for i, t in enumerate(self.waypoint.targets):
             if self.group.units[0].unit_type == JF_17 and i < 4:

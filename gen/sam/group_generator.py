@@ -42,11 +42,10 @@ class GroupGenerator:
     def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
-    def add_unit(self, unit_type: VehicleType, name: str, pos_x: float, pos_y: float, heading: int):
-        nn = "cgroup|" + str(self.go.cp_id) + '|' + str(self.go.group_id) + '|' + str(self.go.group_identifier) + "|" + name
-
+    def add_unit(self, unit_type: VehicleType, name: str, pos_x: float,
+                 pos_y: float, heading: int) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(),
-                       nn, unit_type.id)
+                       f"{self.go.group_name}|{name}", unit_type.id)
         unit.position.x = pos_x
         unit.position.y = pos_y
         unit.heading = heading
@@ -88,6 +87,7 @@ class GroupGenerator:
             current_offset += outer_offset
         return positions
 
+
 class ShipGroupGenerator(GroupGenerator):
     """Abstract class for other ship generator classes"""
     def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
@@ -100,11 +100,9 @@ class ShipGroupGenerator(GroupGenerator):
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
     
-    def add_unit(self, unit_type, name, pos_x, pos_y, heading):
-        nn = "cgroup|" + str(self.go.cp_id) + '|' + str(self.go.group_id) + '|' + str(self.go.group_identifier) + "|" + name
-
+    def add_unit(self, unit_type, name, pos_x, pos_y, heading) -> Ship:
         unit = Ship(self.game.next_unit_id(),
-                       nn, unit_type)
+                    f"{self.go.group_name}|{name}", unit_type)
         unit.position.x = pos_x
         unit.position.y = pos_y
         unit.heading = heading

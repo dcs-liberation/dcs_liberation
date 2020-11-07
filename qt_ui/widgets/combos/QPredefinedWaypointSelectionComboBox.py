@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
-from gen import Conflict, FlightWaypointType
+from gen import BuildingGroundObject, Conflict, FlightWaypointType
 from gen.flights.flight import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 from theater import ControlPointType
@@ -71,7 +71,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
             for cp in self.game.theater.controlpoints:
                 if (self.include_enemy and not cp.captured) or (self.include_friendly and cp.captured):
                     for ground_object in cp.ground_objects:
-                        if not ground_object.is_dead and not ground_object.dcs_identifier == "AA":
+                        if not ground_object.is_dead and not isinstance(ground_object, BuildingGroundObject):
                             wpt = FlightWaypoint(
                                 FlightWaypointType.CUSTOM,
                                 ground_object.position.x,

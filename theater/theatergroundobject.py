@@ -8,7 +8,6 @@ from dcs.unit import Unit
 from dcs.unitgroup import Group
 
 if TYPE_CHECKING:
-    from .conflicttheater import ConflictTheater
     from .controlpoint import ControlPoint
 from .missiontarget import MissionTarget
 
@@ -72,28 +71,20 @@ CATEGORY_MAP = {
 
 class TheaterGroundObject(MissionTarget):
 
-    def __init__(self, name: str, category: str, group_id: int, object_id: int,
-                 position: Point, heading: int, cp_id: int, dcs_identifier: str,
+    def __init__(self, name: str, category: str, group_id: int, position: Point,
+                 heading: int, control_point: ControlPoint, dcs_identifier: str,
                  airbase_group: bool, sea_object: bool) -> None:
         super().__init__(name, position)
         self.category = category
         self.group_id = group_id
-        self.object_id = object_id
         self.heading = heading
-        self.cp_id = cp_id
+        self.control_point = control_point
         self.dcs_identifier = dcs_identifier
         self.airbase_group = airbase_group
         self.sea_object = sea_object
         self.is_dead = False
+        # TODO: There is never more than one group.
         self.groups: List[Group] = []
-
-    @property
-    def string_identifier(self):
-        return "{}|{}|{}|{}".format(self.category, self.cp_id, self.group_id, self.object_id)
-
-    @property
-    def group_identifier(self) -> str:
-        return "{}|{}".format(self.category, self.group_id)
 
     @property
     def units(self) -> List[Unit]:
@@ -103,25 +94,19 @@ class TheaterGroundObject(MissionTarget):
         return list(itertools.chain.from_iterable([g.units for g in self.groups]))
 
     @property
-    def name_abbrev(self) -> str:
-        return ABBREV_NAME[self.category]
+    def group_name(self) -> str:
+        """The name of the unit group."""
+        return f"{self.category}|{self.group_id}"
 
     def __str__(self) -> str:
         return NAME_BY_CATEGORY[self.category]
 
-    def matches_string_identifier(self, identifier):
-        return self.string_identifier == identifier
+    def is_same_group(self, identifier: str) -> bool:
+        return self.group_id == identifier
 
     @property
     def obj_name(self) -> str:
         return self.name
-
-    def parent_control_point(self, theater: ConflictTheater) -> ControlPoint:
-        """Searches the theater for the parent control point."""
-        for cp in theater.controlpoints:
-            if cp.id == self.cp_id:
-                return cp
-        raise RuntimeError("Could not find matching control point in theater")
 
 
 class BuildingGroundObject(TheaterGroundObject):
@@ -132,14 +117,19 @@ class BuildingGroundObject(TheaterGroundObject):
             name=name,
             category=category,
             group_id=group_id,
-            object_id=object_id,
             position=position,
             heading=heading,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier=dcs_identifier,
             airbase_group=False,
             sea_object=False
         )
+        self.object_id = object_id
+
+    @property
+    def group_name(self) -> str:
+        """The name of the unit group."""
+        return f"{self.category}|{self.group_id}|{self.object_id}"
 
 
 class GenericCarrierGroundObject(TheaterGroundObject):
@@ -154,10 +144,9 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             name=name,
             category="CARRIER",
             group_id=group_id,
-            object_id=0,
             position=control_point.position,
             heading=0,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier="CARRIER",
             airbase_group=True,
             sea_object=True
@@ -172,10 +161,9 @@ class LhaGroundObject(GenericCarrierGroundObject):
             name=name,
             category="LHA",
             group_id=group_id,
-            object_id=0,
             position=control_point.position,
             heading=0,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier="LHA",
             airbase_group=True,
             sea_object=True
@@ -189,16 +177,18 @@ class MissileSiteGroundObject(TheaterGroundObject):
             name=name,
             category="aa",
             group_id=group_id,
-            object_id=0,
             position=position,
             heading=0,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier="AA",
             airbase_group=False,
             sea_object=False
         )
 
 
+# TODO: Differentiate types.
+# This type gets used both for AA sites (SAM, AAA, or SHORAD) but also for the
+# armor garrisons at airbases. These should each be split into their own types.
 class SamGroundObject(TheaterGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint, for_airbase: bool) -> None:
@@ -206,10 +196,9 @@ class SamGroundObject(TheaterGroundObject):
             name=name,
             category="aa",
             group_id=group_id,
-            object_id=0,
             position=position,
             heading=0,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier="AA",
             airbase_group=for_airbase,
             sea_object=False
@@ -223,10 +212,9 @@ class ShipGroundObject(TheaterGroundObject):
             name=name,
             category="aa",
             group_id=group_id,
-            object_id=0,
             position=position,
             heading=0,
-            cp_id=control_point.id,
+            control_point=control_point,
             dcs_identifier="AA",
             airbase_group=False,
             sea_object=True

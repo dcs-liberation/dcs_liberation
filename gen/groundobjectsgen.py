@@ -135,7 +135,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
         if not self.ground_object.is_dead:
             self.m.vehicle_group(
                 country=self.country,
-                name=self.ground_object.string_identifier,
+                name=self.ground_object.group_name,
                 _type=unit_type,
                 position=self.ground_object.position,
                 heading=self.ground_object.heading,
@@ -144,7 +144,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
     def generate_static(self, static_type: StaticType) -> None:
         self.m.static_group(
             country=self.country,
-            name=self.ground_object.string_identifier,
+            name=self.ground_object.group_name,
             _type=static_type,
             position=self.ground_object.position,
             heading=self.ground_object.heading,
