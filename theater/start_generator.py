@@ -382,7 +382,17 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
     def generate_sam(self, index: int) -> None:
         position = find_location(True, self.control_point.position,
-                                 self.game.theater, 800, 3200, [], True)
+                                 self.game.theater, 400, 3200, [], True)
+
+        # Retry once, searching a bit further (On some big airbase, 3200 is too short (Ex : Incirlik))
+        # But searching farther on every base would be problematic, as some base defense units
+        # would end up very far away from small airfields.
+        # (I know it's not good for performance, but this is only done on campaign generation)
+        # TODO : Make the whole process less stupid with preset possible positions for each airbase
+        if position is None:
+            position = find_location(True, self.control_point.position,
+                                     self.game.theater, 3200, 4800, [], True)
+
         if position is None:
             logging.error("Could not find position for "
                           f"{self.control_point} base defense")
