@@ -121,8 +121,8 @@ class QLiberationMap(QGraphicsView):
 
     def setGame(self, game: Optional[Game]):
         self.game = game
-        logging.debug("Reloading Map Canvas")
         if self.game is not None:
+            logging.debug("Reloading Map Canvas")
             self.reload_scene()
 
     """

@@ -145,8 +145,8 @@ class Event:
                     if ground_object.is_dead:
                         continue
 
-                    if ground_object.matches_string_identifier(destroyed_ground_unit_name):
-                        logging.info("cp {} killing ground object {}".format(cp, ground_object.string_identifier))
+                    if ground_object.is_same_group(destroyed_ground_unit_name):
+                        logging.info("cp {} killing ground object {}".format(cp, ground_object.group_name))
                         cp.ground_objects[i].is_dead = True
 
                         info = Information("Building destroyed",

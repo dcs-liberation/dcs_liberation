@@ -87,8 +87,8 @@ class Debriefing:
 
                 for i, ground_object in enumerate(cp.ground_objects):
                     logging.info(unit)
-                    logging.info(ground_object.string_identifier)
-                    if ground_object.matches_string_identifier(unit):
+                    logging.info(ground_object.group_name)
+                    if ground_object.is_same_group(unit):
                         unit = DebriefingDeadUnitInfo(country, player_unit, ground_object.dcs_identifier)
                         self.dead_buildings.append(unit)
                     elif ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:

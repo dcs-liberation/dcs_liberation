@@ -72,10 +72,10 @@ if dcsLiberation and SkynetIADS then
 		end
 
 		--add EW units to the IADS:
-		iads:addEarlyWarningRadarsByPrefix(coalitionPrefix .. " EW")
+		iads:addEarlyWarningRadarsByPrefix(coalitionPrefix .. "|EWR|")
 
 		--add SAM groups to the IADS:
-		iads:addSAMSitesByPrefix(coalitionPrefix .. " SAM")
+		iads:addSAMSitesByPrefix(coalitionPrefix .. "|SAM|")
 
 		-- specific configurations, for each SAM type
 		if actAsEwr then

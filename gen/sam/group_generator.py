@@ -22,19 +22,15 @@ if TYPE_CHECKING:
 # types rather than pydcs groups.
 class GroupGenerator:
 
-    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Optional[Faction] = None): # faction is not mandatory because some subclasses do not use it
+    def __init__(self, game: Game, ground_object: TheaterGroundObject) -> None:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.faction = faction
-        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
+        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(),
+                                         self.go.group_name)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
-
-    @property
-    def groupNamePrefix(self) -> str:
-        return ""
 
     def generate(self):
         raise NotImplementedError
@@ -42,11 +38,10 @@ class GroupGenerator:
     def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
-    def add_unit(self, unit_type: VehicleType, name: str, pos_x: float, pos_y: float, heading: int):
-        nn = "cgroup|" + str(self.go.cp_id) + '|' + str(self.go.group_id) + '|' + str(self.go.group_identifier) + "|" + name
-
+    def add_unit(self, unit_type: VehicleType, name: str, pos_x: float,
+                 pos_y: float, heading: int) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(),
-                       nn, unit_type.id)
+                       f"{self.go.group_name}|{name}", unit_type.id)
         unit.position.x = pos_x
         unit.position.y = pos_y
         unit.heading = heading
@@ -88,6 +83,7 @@ class GroupGenerator:
             current_offset += outer_offset
         return positions
 
+
 class ShipGroupGenerator(GroupGenerator):
     """Abstract class for other ship generator classes"""
     def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
@@ -96,15 +92,14 @@ class ShipGroupGenerator(GroupGenerator):
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
         self.faction = faction
-        self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.groupNamePrefix + self.go.group_identifier)
+        self.vg = unitgroup.ShipGroup(self.game.next_group_id(),
+                                      self.go.group_name)
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
     
-    def add_unit(self, unit_type, name, pos_x, pos_y, heading):
-        nn = "cgroup|" + str(self.go.cp_id) + '|' + str(self.go.group_id) + '|' + str(self.go.group_identifier) + "|" + name
-
+    def add_unit(self, unit_type, name, pos_x, pos_y, heading) -> Ship:
         unit = Ship(self.game.next_unit_id(),
-                       nn, unit_type)
+                    f"{self.go.group_name}|{name}", unit_type)
         unit.position.x = pos_x
         unit.position.y = pos_y
         unit.heading = heading

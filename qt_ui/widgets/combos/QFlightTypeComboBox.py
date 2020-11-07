@@ -95,7 +95,7 @@ class QFlightTypeComboBox(QComboBox):
                     yield from self.ENEMY_AIRBASE_MISSIONS
         elif isinstance(self.target, TheaterGroundObject):
             # TODO: Filter more based on the category.
-            friendly = self.target.parent_control_point(self.theater).captured
+            friendly = self.target.control_point.captured
             if friendly:
                 yield from self.FRIENDLY_GROUND_OBJECT_MISSIONS
             else:

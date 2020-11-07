@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import re
 from typing import Dict, List, TYPE_CHECKING
 from enum import Enum
@@ -17,7 +18,7 @@ from game import db
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
 from .missiontarget import MissionTarget
-from .theatergroundobject import TheaterGroundObject
+from .theatergroundobject import SamGroundObject, TheaterGroundObject
 
 if TYPE_CHECKING:
     from game import Game
@@ -50,7 +51,8 @@ class ControlPoint(MissionTarget):
         self.id = id
         self.full_name = name
         self.at = at
-        self.ground_objects: List[TheaterGroundObject] = []
+        self.connected_objectives: List[TheaterGroundObject] = []
+        self.base_defenses: List[SamGroundObject] = []
 
         self.size = size
         self.importance = importance
@@ -63,6 +65,11 @@ class ControlPoint(MissionTarget):
         self.cptype = cptype
         self.stances: Dict[int, CombatStance] = {}
         self.airport = None
+
+    @property
+    def ground_objects(self) -> List[TheaterGroundObject]:
+        return list(
+            itertools.chain(self.connected_objectives, self.base_defenses))
 
     @classmethod
     def from_airport(cls, airport: Airport, radials: List[int], size: int, importance: float, has_frontline=True):
@@ -225,9 +232,6 @@ class ControlPoint(MissionTarget):
         self.base.armor = {}
 
         # Handle cyclic dependency.
-        from .start_generator import generate_airbase_defense_group
-        for idx, ground_object in enumerate(self.ground_objects):
-            ground_object.groups = []
-            if ground_object.airbase_group and faction_name != "":
-                generate_airbase_defense_group(idx, ground_object,
-                                               faction_name, game)
+        from .start_generator import BaseDefenseGenerator
+        self.base_defenses = []
+        BaseDefenseGenerator(game, self, faction_name).generate()
