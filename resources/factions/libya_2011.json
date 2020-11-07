@@ -49,6 +49,10 @@
   ],
   "helicopter_carrier_names": [
   ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
   "destroyers": [
     "FF_1135M_Rezky"
   ],

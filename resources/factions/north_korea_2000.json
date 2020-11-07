@@ -64,6 +64,10 @@
   "requirements": {},
   "carrier_names": [
   ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
   "navy_generators": [
     "GrishaGroupGenerator",
     "MolniyaGroupGenerator"

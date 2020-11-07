@@ -1,10 +1,12 @@
 import logging
 import random
 from game import db
+from gen.missiles.scud_site import ScudGenerator
 from gen.missiles.v1_group import V1GroupGenerator
 
 MISSILES_MAP = {
     "V1GroupGenerator": V1GroupGenerator,
+    "ScudGenerator": ScudGenerator
 }
 
 

@@ -63,6 +63,10 @@
     "SA10Generator",
     "SA11Generator"
   ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

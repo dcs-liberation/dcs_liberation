@@ -59,6 +59,10 @@
   ],
   "cruisers": [
   ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
   "requirements": {},
   "carrier_names": [
   ],
