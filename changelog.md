@@ -8,11 +8,18 @@
 * **[Map]** Added polygon debug mode display
 * **[New Game]** Starting budget can be freely selected 
 * **[Moddability]** Custom campaigns can be designed through json files 
+* **[Moddability]** Custom factions can be designed through json files 
+* **[Factions]** Cold War / Middle eastern factions will use Flak sites 
+* **[Factions]** Added WW2 factions that do not depend on WW2 asset pack
+* **[Units]** Added support for new P-47 variants 
+* **[Units]** Added Freya EWR sites to german WW2 factions
+* **[Units]** Added support for many bombers (B-52H, B1B, Tu-22, Tu-142)  
 
 ## Fixes :
 * **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore
 * **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
 * **[UI]** Missing TER weapons in custom payload now selectable.
+* **[UI]** Many missing unit icons were added
 
 # 2.1.5
 
