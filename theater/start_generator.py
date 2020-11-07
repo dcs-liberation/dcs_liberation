@@ -176,7 +176,7 @@ class ControlPointGroundObjectGenerator:
         return db.FACTIONS[self.faction_name]
 
     def generate(self) -> bool:
-        self.control_point.ground_objects = []
+        self.control_point.connected_objectives = []
         if self.faction.navy_generators:
             # Even airbases can generate navies if they are close enough to the
             # water. This is not controlled by the control point definition, but
@@ -215,7 +215,7 @@ class ControlPointGroundObjectGenerator:
         g.groups = []
         if group is not None:
             g.groups.append(group)
-            self.control_point.ground_objects.append(g)
+            self.control_point.connected_objectives.append(g)
 
 
 class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
@@ -238,7 +238,7 @@ class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = []
         if group is not None:
             g.groups.append(group)
-        self.control_point.ground_objects.append(g)
+        self.control_point.connected_objectives.append(g)
         self.control_point.name = random.choice(carrier_names)
         return True
 
@@ -263,9 +263,38 @@ class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = []
         if group is not None:
             g.groups.append(group)
-        self.control_point.ground_objects.append(g)
+        self.control_point.connected_objectives.append(g)
         self.control_point.name = random.choice(lha_names)
         return True
+
+
+class BaseDefenseGenerator:
+    def __init__(self, game: Game, control_point: ControlPoint,
+                 faction_name: str) -> None:
+        self.game = game
+        self.control_point = control_point
+        self.faction_name = faction_name
+
+    def generate(self) -> None:
+        for i in range(random.randint(3, 6)):
+            self.generate_base_defense(i)
+
+    def generate_base_defense(self, index: int) -> None:
+        position = find_location(True, self.control_point.position,
+                                 self.game.theater, 800, 3200, [], True)
+        if position is None:
+            logging.error("Could not find position for "
+                          f"{self.control_point} base defense")
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = SamGroundObject(namegen.random_objective_name(), group_id,
+                            position, self.control_point, for_airbase=True)
+
+        generate_airbase_defense_group(index, g, self.faction_name,
+                                       self.game)
+        self.control_point.base_defenses.append(g)
 
 
 class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
@@ -278,7 +307,8 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         if not super().generate():
             return False
 
-        self.generate_base_defenses()
+        BaseDefenseGenerator(self.game, self.control_point,
+                             self.faction_name).generate()
         self.generate_ground_points()
 
         if self.faction.missiles:
@@ -334,7 +364,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 obj_name, category, group_id, object_id, point + template_point,
                 unit["heading"], self.control_point, unit["type"])
 
-            self.control_point.ground_objects.append(g)
+            self.control_point.connected_objectives.append(g)
 
     def generate_aa_site(self) -> None:
         obj_name = namegen.random_objective_name()
@@ -354,7 +384,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         group = generate_anti_air_group(self.game, g, self.faction_name)
         if group is not None:
             g.groups = [group]
-        self.control_point.ground_objects.append(g)
+        self.control_point.connected_objectives.append(g)
 
     def generate_missile_sites(self) -> None:
         for i in range(self.faction.missiles_group_count):
@@ -376,28 +406,8 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = []
         if group is not None:
             g.groups.append(group)
-            self.control_point.ground_objects.append(g)
+            self.control_point.connected_objectives.append(g)
         return
-
-    def generate_base_defenses(self) -> None:
-        for i in range(random.randint(3, 6)):
-            self.generate_base_defense(i)
-
-    def generate_base_defense(self, index: int) -> None:
-        position = find_location(True, self.control_point.position,
-                                 self.game.theater, 800, 3200, [], True)
-        if position is None:
-            logging.error("Could not find position for "
-                          f"{self.control_point} base defense")
-            return
-
-        group_id = self.game.next_group_id()
-
-        g = SamGroundObject(namegen.random_objective_name(), group_id,
-                            position, self.control_point, for_airbase=True)
-
-        generate_airbase_defense_group(index, g, self.faction_name, self.game)
-        self.control_point.ground_objects.append(g)
 
 
 class GroundObjectGenerator:
