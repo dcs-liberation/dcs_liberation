@@ -2,7 +2,7 @@
   "name": "Persian Gulf - Invasion of Iran",
   "theater": "Persian Gulf",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>In this scenario, you start in Bandar Abbas, and must invade Iran.</p>",
   "player_points": [
     {
       "type": "airbase",

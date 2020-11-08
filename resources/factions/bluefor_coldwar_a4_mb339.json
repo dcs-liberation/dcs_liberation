@@ -62,6 +62,7 @@
     "Ticonderoga_class"
   ],
   "requirements": {
+    "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/",
     "Community A-4E": "https://heclak.github.io/community-a4e-c/"
   },
   "carrier_names": [

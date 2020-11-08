@@ -2,7 +2,7 @@
   "name": "Persian Gulf - Desert War",
   "theater": "Persian Gulf",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>This is a simple scenario in the Desert near Dubai and Abu-Dhabi. Progress from Liwa airbase to Al-Minhad.</p><p>This scenario shouldn't require too much performance.</p>",
   "player_points": [
     {
       "type": "airbase",

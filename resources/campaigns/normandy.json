@@ -2,7 +2,7 @@
   "name": "Normandy - Normandy",
   "theater": "Normandy",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>Normandy 1944 D-Day scenario.</p>",
   "player_points": [
     {
       "type": "airbase",

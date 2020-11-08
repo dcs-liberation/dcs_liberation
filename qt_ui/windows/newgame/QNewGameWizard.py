@@ -17,6 +17,16 @@ from qt_ui.windows.newgame.QCampaignList import (
 )
 from theater.start_generator import GameGenerator
 
+jinja_env = Environment(
+    loader=FileSystemLoader("resources/ui/templates"),
+    autoescape=select_autoescape(
+        disabled_extensions=("",),
+        default_for_string=True,
+        default=True,
+    ),
+    trim_blocks=True,
+    lstrip_blocks=True,
+)
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
@@ -177,17 +187,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
         blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
 
-        env = Environment(
-            loader=FileSystemLoader("resources/ui/templates"),
-            autoescape=select_autoescape(
-                disabled_extensions=("",),
-                default_for_string=True,
-                default=True,
-            ),
-            trim_blocks=True,
-            lstrip_blocks=True,
-        )
-        template = env.get_template("factiontemplate_EN.j2")
+        template = jinja_env.get_template("factiontemplate_EN.j2")
 
         blue_faction_txt = template.render({"faction": blue_faction})
         red_faction_txt = template.render({"faction": red_faction})
@@ -235,10 +235,16 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         campaignList = QCampaignList(campaigns)
         self.registerField("selectedCampaign", campaignList)
 
+        # Faction description
+        self.campaignMapDescription = QTextEdit("")
+        self.campaignMapDescription.setReadOnly(True)
+
         def on_campaign_selected():
+            template = jinja_env.get_template("campaigntemplate_EN.j2")
             index = campaignList.selectionModel().currentIndex().row()
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
+            self.campaignMapDescription.setText(template.render({"campaign": campaign}))
 
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
@@ -274,8 +280,9 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
         layout.addWidget(campaignList, 0, 0, 3, 1)
-        layout.addWidget(mapSettingsGroup, 0, 1, 1, 1)
-        layout.addWidget(timeGroup, 1, 1, 1, 1)
+        layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
+        layout.addWidget(mapSettingsGroup, 1, 1, 1, 1)
+        layout.addWidget(timeGroup, 2, 1, 1, 1)
         self.setLayout(layout)
 
 

@@ -2,7 +2,7 @@
   "name": "Syria - Syrian Civil War",
   "theater": "Syria",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>This scenario can be used to simulate parts of the Syrian Civil War.</p>",
   "player_points": [
     {
       "type": "airbase",

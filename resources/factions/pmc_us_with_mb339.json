@@ -30,7 +30,7 @@
     "AvengerGenerator"
   ],
   "requirements": {
-    "MB-339A": "http://www.freccetricolorivirtuali.net/"
+    "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/"
   },
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

@@ -2,7 +2,7 @@
   "name": "Syria - Invasion from Turkey",
   "theater": "Syria",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>In this scenario, you start from Turkey and have to invade territories in northern Syria.</p>",
   "player_points": [
     {
       "type": "airbase",

@@ -20,6 +20,7 @@ class Campaign:
     name: str
     icon_name: str
     authors: str
+    description: str
     theater: ConflictTheater
 
     @classmethod
@@ -29,7 +30,7 @@ class Campaign:
 
         sanitized_theater = data["theater"].replace(" ", "")
         return cls(data["name"], f"Terrain_{sanitized_theater}", data.get("authors", "???"),
-                   ConflictTheater.from_json(data))
+                   data.get("description", ""), ConflictTheater.from_json(data))
 
 
 def load_campaigns() -> List[Campaign]:

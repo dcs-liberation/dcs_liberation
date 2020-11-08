@@ -2,7 +2,7 @@
   "name": "Caucasus - North Caucasus",
   "theater": "Caucasus",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>In this scenario you will have to fight in the moutain of Caucasus</p><p><strong>Note:</strong> Running CAS in the moutains can be a bit difficult.</p>",
   "player_points": [
     {
       "type": "airbase",

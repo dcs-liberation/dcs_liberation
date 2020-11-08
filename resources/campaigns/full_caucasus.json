@@ -2,7 +2,7 @@
   "name": "Caucasus - Full Map",
   "theater": "Caucasus",
   "authors": "george",
-  "description": "Full Caucasus Map",
+  "description": "<p>Full map of the Caucasus</p><p><strong>Note:</strong> This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
   "player_points": [
     {
       "type": "airbase",

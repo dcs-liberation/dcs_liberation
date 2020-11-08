@@ -2,7 +2,7 @@
   "name": "Syria - Full Map",
   "theater": "Syria",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>Full map of Syria</p><p><strong>Note:</strong> This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
   "player_points": [
     {
       "type": "airbase",

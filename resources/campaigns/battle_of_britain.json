@@ -2,7 +2,7 @@
   "name": "The Channel - Battle of Britain",
   "theater": "The Channel",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>Experience the Battle of Britain on the Channel map !<br/></p><p><strong>Note:</strong> It is not possible to cross the channel to capture enemy bases yet, but you can consider you won if you manage to destroy all the ennemy targets</p>",
   "player_points": [
     {
       "type": "airbase",

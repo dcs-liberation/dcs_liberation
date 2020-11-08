@@ -2,7 +2,7 @@
   "name": "Syria - Golan heights battle",
   "theater": "Syria",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.</p>",
   "player_points": [
     {
       "type": "airbase",

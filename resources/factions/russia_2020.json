@@ -71,7 +71,9 @@
   "cruisers": [
     "FSG_1241_1MP_Molniya"
   ],
-  "requirements": {},
+  "requirements": {
+    "SU-57 Felon By CubanAce Simulations": "https://www.digitalcombatsimulator.com/fr/files/2539621/"
+  },
   "carrier_names": [
     "Admiral Kuznetov"
   ],

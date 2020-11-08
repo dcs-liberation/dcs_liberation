@@ -2,7 +2,7 @@
   "name": "Normandy - Normandy Small",
   "theater": "Normandy",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>A lighter version of the Normandy 1944 D-Day scenario.</p>",
   "player_points": [
     {
       "type": "airbase",
