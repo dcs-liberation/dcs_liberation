@@ -1211,7 +1211,7 @@ class PydcsWaypointBuilder:
         waypoint.name = String(self.waypoint.name)
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
         if tot is not None:
-            waypoint = self.set_waypoint_tot(waypoint, tot)
+            self.set_waypoint_tot(waypoint, tot)
         return waypoint
 
     def set_waypoint_tot(self, waypoint: MovingPoint, tot: timedelta) -> None:
@@ -1220,7 +1220,6 @@ class PydcsWaypointBuilder:
             waypoint.ETA = int(tot.total_seconds())
             waypoint.ETA_locked = True
             waypoint.speed_locked = False
-        return waypoint
 
     @classmethod
     def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
