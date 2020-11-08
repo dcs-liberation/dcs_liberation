@@ -76,18 +76,21 @@ Planned ally flights:
 {{ dep }}
 ---------------------------------------------------
 {% for flight in allied_flights_by_departure[dep] %}
-{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}{% endfor %}
+{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+{% endfor %}
 {% endfor %}
 
 Carriers and FARPs:
-===================={% for runway in dynamic_runways %}
---------------------------------------------------
+====================
+{% for runway in dynamic_runways %}
 {{ runway.airfield_name}}
+--------------------------------------------------
 RADIO : {{ runway.atc }}
 TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
-{% if runway.icls %}ICLS Channel: {{ runway.icls }}{% endif %}
-{% endfor %}
+{% if runway.icls %}ICLS Channel: {{ runway.icls }}
+{% endif %}
 
+{% endfor %}
 AWACS:
 ====================
 {% for i in awacs %}{{ i.callsign }} -- Freq : {{i.freq.mhz}}
@@ -97,4 +100,3 @@ JTACS [F-10 Menu] :
 ====================
 {% for jtac in jtacs %}Frontline {{ jtac.region }} -- Code : {{ jtac.code }}
 {% endfor %}
-
