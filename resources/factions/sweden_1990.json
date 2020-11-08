@@ -2,7 +2,7 @@
   "country": "Sweden",
   "name": "Sweden 1990",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>Sweden in the 90s.</p><p>Note : Since we're missing the Draken and the Air-to-Air variant of the Viggen, this faction will struggle in air-to-air scenarios.</p>",
   "aircrafts": [
     "AJS37",
     "UH_1H"

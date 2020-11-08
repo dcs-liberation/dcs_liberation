@@ -2,7 +2,7 @@
   "country": "USA",
   "name": "Private Military Company - USA",
   "authors": "Khopa",
-  "description": "A private military company using western units.",
+  "description": "<p>A private military company using western units.</p>",
   "aircrafts": [
     "C_101CC",
     "UH_1H",

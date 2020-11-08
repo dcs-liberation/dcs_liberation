@@ -2,7 +2,7 @@
   "country": "Australia",
   "name": "Australia 2005",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>The Australian army in 2005.</p><p>Some units might not be accurate, but were picked to represent at best this army.</p>",
   "aircrafts": [
     "FA_18C_hornet",
     "UH_1H",

@@ -5,10 +5,9 @@ from typing import List, Optional
 
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
-from PySide2.QtWidgets import QVBoxLayout
-from dcs.task import CAP, CAS
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-import qt_ui.uiconstants as CONST
 from game import db
 from game.settings import Settings
 from qt_ui.windows.newgame.QCampaignList import (
@@ -39,7 +38,6 @@ class NewGameWizard(QtWidgets.QWizard):
         self.generatedGame = None
 
     def accept(self):
-
         logging.info("New Game Wizard accept")
         logging.info("======================")
 
@@ -112,7 +110,9 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         # Factions selection
         self.factionsGroup = QtWidgets.QGroupBox("Factions")
-        self.factionsGroupLayout = QtWidgets.QGridLayout()
+        self.factionsGroupLayout = QtWidgets.QHBoxLayout()
+        self.blueGroupLayout = QtWidgets.QGridLayout()
+        self.redGroupLayout = QtWidgets.QGridLayout()
 
         blueFaction = QtWidgets.QLabel("<b>Player Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
@@ -124,6 +124,13 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionSelect = QtWidgets.QComboBox()
         redFaction.setBuddy(self.redFactionSelect)
 
+        # Faction description
+        self.blueFactionDescription = QTextEdit("")
+        self.blueFactionDescription.setReadOnly(True)
+
+        self.redFactionDescription = QTextEdit("")
+        self.redFactionDescription.setReadOnly(True)
+
         # Setup default selected factions
         for i, r in enumerate(db.FACTIONS):
             self.redFactionSelect.addItem(r)
@@ -132,20 +139,16 @@ class FactionSelection(QtWidgets.QWizardPage):
             if r == "USA 2005":
                 self.blueFactionSelect.setCurrentIndex(i)
 
-        self.blueSideRecap = QtWidgets.QLabel("")
-        self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.blueSideRecap.setWordWrap(True)
+        self.blueGroupLayout.addWidget(blueFaction, 0, 0)
+        self.blueGroupLayout.addWidget(self.blueFactionSelect, 0, 1)
+        self.blueGroupLayout.addWidget(self.blueFactionDescription, 1, 0, 1, 2)
 
-        self.redSideRecap = QtWidgets.QLabel("")
-        self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.redSideRecap.setWordWrap(True)
+        self.redGroupLayout.addWidget(redFaction, 0, 0)
+        self.redGroupLayout.addWidget(self.redFactionSelect, 0, 1)
+        self.redGroupLayout.addWidget(self.redFactionDescription, 1, 0, 1, 2)
 
-        self.factionsGroupLayout.addWidget(blueFaction, 0, 0)
-        self.factionsGroupLayout.addWidget(self.blueFactionSelect, 0, 1)
-        self.factionsGroupLayout.addWidget(self.blueSideRecap, 1, 0, 1, 2)
-        self.factionsGroupLayout.addWidget(redFaction, 2, 0)
-        self.factionsGroupLayout.addWidget(self.redFactionSelect, 2, 1)
-        self.factionsGroupLayout.addWidget(self.redSideRecap, 3, 0, 1, 2)
+        self.factionsGroupLayout.addLayout(self.blueGroupLayout)
+        self.factionsGroupLayout.addLayout(self.redGroupLayout)
         self.factionsGroup.setLayout(self.factionsGroupLayout)
 
         # Create required mod layout
@@ -171,39 +174,44 @@ class FactionSelection(QtWidgets.QWizardPage):
 
     def updateUnitRecap(self):
 
-        self.requiredMods.setText("<ul>")
-
         red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
         blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
 
-        red_units = red_faction.aircrafts
-        blue_units = blue_faction.aircrafts
+        env = Environment(
+            loader=FileSystemLoader("resources/ui/templates"),
+            autoescape=select_autoescape(
+                disabled_extensions=("",),
+                default_for_string=True,
+                default=True,
+            ),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+        template = env.get_template("factiontemplate_EN.j2")
 
-        blue_txt = ""
-        for u in blue_units:
-            if u in db.UNIT_BY_TASK[CAP] or u in db.UNIT_BY_TASK[CAS]:
-                blue_txt = blue_txt + u.id + ", "
-        blue_txt = blue_txt + "\n"
-        self.blueSideRecap.setText(blue_txt)
+        blue_faction_txt = template.render({"faction": blue_faction})
+        red_faction_txt = template.render({"faction": red_faction})
 
-        red_txt = ""
-        for u in red_units:
-            if u in db.UNIT_BY_TASK[CAP] or u in db.UNIT_BY_TASK[CAS]:
-                red_txt = red_txt + u.id + ", "
-        red_txt = red_txt + "\n"
-        self.redSideRecap.setText(red_txt)
+        self.blueFactionDescription.setText(blue_faction_txt)
+        self.redFactionDescription.setText(red_faction_txt)
 
+        # Compute mod requirements txt
+        self.requiredMods.setText("<ul>")
         has_mod = False
         if len(red_faction.requirements.keys()) > 0:
             has_mod = True
             for mod in red_faction.requirements.keys():
-                self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+red_faction.requirements[mod]+"\">" + red_faction.requirements[mod] + "</a></li>")
+                self.requiredMods.setText(
+                    self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + red_faction.requirements[mod] + "\">" +
+                    red_faction.requirements[mod] + "</a></li>")
 
         if len(blue_faction.requirements.keys()) > 0:
             has_mod = True
             for mod in blue_faction.requirements.keys():
                 if mod not in red_faction.requirements.keys():
-                    self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction.requirements[mod]+"\">" + blue_faction.requirements[mod] + "</a></li>")
+                    self.requiredMods.setText(
+                        self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + blue_faction.requirements[
+                            mod] + "\">" + blue_faction.requirements[mod] + "</a></li>")
 
         if has_mod:
             self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")
@@ -336,7 +344,7 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.registerField('no_lha', no_lha)
         supercarrier = QtWidgets.QCheckBox()
         self.registerField('supercarrier', supercarrier)
-        no_player_navy= QtWidgets.QCheckBox()
+        no_player_navy = QtWidgets.QCheckBox()
         self.registerField('no_player_navy', no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField('no_enemy_navy', no_enemy_navy)

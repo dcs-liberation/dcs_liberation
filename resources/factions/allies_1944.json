@@ -2,7 +2,7 @@
   "country": "USA",
   "name": "Allies 1944",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>A generic WW2 ally factions, with all their WW2 units.</p>",
   "aircrafts": [
     "P_51D",
     "P_51D_30_NA",

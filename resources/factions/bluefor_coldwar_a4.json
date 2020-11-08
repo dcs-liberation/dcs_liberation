@@ -2,7 +2,7 @@
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Coldwar (With A4)",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>A generic bluefor coldwar faction. (With the A-4E-C mod)</p>",
   "aircrafts": [
     "F_14B",
     "F_4E",

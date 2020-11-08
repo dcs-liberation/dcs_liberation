@@ -2,7 +2,7 @@
   "country": "Russia",
   "name": "Private Military Company - Russian",
   "authors": "Khopa",
-  "description": "A private military company using Russian units.",
+  "description": "<p>A private military company using Russian units.</p>",
   "aircrafts": [
     "L_39C",
     "L_39ZA",

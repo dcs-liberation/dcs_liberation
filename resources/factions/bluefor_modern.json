@@ -2,7 +2,7 @@
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Modern",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>A generic bluefor modern faction. This also includes many redfor units and is meant to be a faction that has access to most modern flyable modules.</p>",
   "aircrafts": [
     "F_14B",
     "F_15C",

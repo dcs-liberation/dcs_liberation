@@ -1,0 +1,46 @@
+{{ faction.description|safe }}
+<br/>
+
+<strong>Author(s):</strong> {{ faction.authors }}
+<br/><br/>
+
+
+<strong>Available airplanes:</strong>
+<ul>
+{% for aircraft in faction.aircrafts %}
+<li>{{aircraft.id}}</li>
+{% endfor %}
+</ul>
+<br/>
+
+<strong>Frontlines vehicles:</strong>
+<ul>
+{% for vehicle in faction.frontline_units %}
+<li>{{vehicle.id}}</li>
+{% endfor %}
+</ul>
+<br/>
+
+<strong>Artillery units:</strong>
+<ul>
+{% for arty in faction.artillery_units %}
+<li>{{arty.id}}</li>
+{% endfor %}
+</ul>
+<br/>
+
+<strong>Air defenses :</strong>
+<ul>
+{% for sam in faction.sams %}
+<li>{{sam}}</li>
+{% endfor %}
+</ul>
+<br/>
+
+<strong>Short range air defenses :</strong>
+<ul>
+{% for shorad in faction.shorads %}
+<li>{{shorad}}</li>
+{% endfor %}
+</ul>
+<br/>

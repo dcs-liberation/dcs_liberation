@@ -2,7 +2,7 @@
   "country": "Insurgents",
   "name": "Insurgents",
   "authors": "Khopa",
-  "description": "",
+  "description": "<p>Insurgents faction.</p>",
   "aircrafts": [
   ],
   "frontline_units": [
@@ -12,7 +12,7 @@
     "AAA_ZU_23_Insurgent_on_Ural_375"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27",
+    "MLRS_BM_21_Grad",
     "SPH_2S19_Msta"
   ],
   "logistics_units": [

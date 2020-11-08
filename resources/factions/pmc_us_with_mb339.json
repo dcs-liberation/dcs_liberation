@@ -2,7 +2,7 @@
   "country": "USA",
   "name": "Private Military Company - USA (MB339)",
   "authors": "Khopa",
-  "description": "A private military company using western units (And using the MB339 mod).",
+  "description": "<p>A private military company using western units (And using the MB339 mod).</p>",
   "aircrafts": [
     "MB_339PAN",
     "C_101CC",
