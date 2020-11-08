@@ -186,10 +186,14 @@ class MissileSiteGroundObject(TheaterGroundObject):
         )
 
 
+class BaseDefenseGroundObject(TheaterGroundObject):
+    """Base type for all base defenses."""
+
+
 # TODO: Differentiate types.
 # This type gets used both for AA sites (SAM, AAA, or SHORAD) but also for the
 # armor garrisons at airbases. These should each be split into their own types.
-class SamGroundObject(TheaterGroundObject):
+class SamGroundObject(BaseDefenseGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint, for_airbase: bool) -> None:
         super().__init__(
@@ -218,7 +222,7 @@ class SamGroundObject(TheaterGroundObject):
             return super().group_name
 
 
-class EwrGroundObject(TheaterGroundObject):
+class EwrGroundObject(BaseDefenseGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint) -> None:
         super().__init__(

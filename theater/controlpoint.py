@@ -18,7 +18,11 @@ from game import db
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
 from .missiontarget import MissionTarget
-from .theatergroundobject import SamGroundObject, TheaterGroundObject
+from .theatergroundobject import (
+    BaseDefenseGroundObject,
+    SamGroundObject,
+    TheaterGroundObject,
+)
 
 if TYPE_CHECKING:
     from game import Game
@@ -52,7 +56,7 @@ class ControlPoint(MissionTarget):
         self.full_name = name
         self.at = at
         self.connected_objectives: List[TheaterGroundObject] = []
-        self.base_defenses: List[SamGroundObject] = []
+        self.base_defenses: List[BaseDefenseGroundObject] = []
 
         self.size = size
         self.importance = importance
