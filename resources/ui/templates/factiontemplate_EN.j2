@@ -16,7 +16,13 @@
 <strong>Frontlines vehicles:</strong>
 <ul>
 {% for vehicle in faction.frontline_units %}
-<li>{{vehicle.id}}</li>
+<li>
+{% if vehicle.name is not none %}
+    {{ vehicle.name }}
+{% else %}
+    {{ vehicle.id }}
+{%endif %}
+</li>
 {% endfor %}
 </ul>
 <br/>
@@ -24,7 +30,13 @@
 <strong>Artillery units:</strong>
 <ul>
 {% for arty in faction.artillery_units %}
-<li>{{arty.id}}</li>
+<li>
+{% if arty.name is not none %}
+    {{ arty.name }}
+{% else %}
+    {{ arty.id }}
+{%endif %}
+</li>
 {% endfor %}
 </ul>
 <br/>
