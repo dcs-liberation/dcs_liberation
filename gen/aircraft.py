@@ -1210,7 +1210,7 @@ class PydcsWaypointBuilder:
         waypoint.alt_type = self.waypoint.alt_type
         waypoint.name = String(self.waypoint.name)
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
-        if tot is not None:
+        if tot is not None and not self._viggen_client_tot():
             self.set_waypoint_tot(waypoint, tot)
         return waypoint
 
@@ -1236,6 +1236,33 @@ class PydcsWaypointBuilder:
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
+
+    def _viggen_client_tot(self) -> bool:
+        """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
+        If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
+        """
+        target_waypoints = (
+                FlightWaypointType.TARGET_GROUP_LOC,
+                FlightWaypointType.TARGET_POINT,
+                FlightWaypointType.TARGET_SHIP,
+            )
+        if (
+            (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and 
+            (self.waypoint.waypoint_type not in target_waypoints)
+        ):
+            return True
+        else:
+            return False
+
+    def register_special_waypoints(self, targets) -> None:
+        """Create special target waypoints for various aircraft"""
+        for i, t in enumerate(targets):
+            if self.group.units[0].unit_type == JF_17 and i < 4:
+                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
+            if self.group.units[0].unit_type == F_14B and i == 0:
+                self.group.add_nav_target_point(t.position, "ST")
+            if self.group.units[0].unit_type == AJS37 and i < 9:
+                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
 
 
 class DefaultWaypointBuilder(PydcsWaypointBuilder):
@@ -1310,14 +1337,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
                 waypoint.tasks.append(task)
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
-
-        for i, t in enumerate(self.waypoint.targets):
-            if self.group.units[0].unit_type == JF_17 and i < 4:
-                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
-            if self.group.units[0].unit_type == F_14B and i == 0:
-                self.group.add_nav_target_point(t.position, "ST")
-            if self.group.units[0].unit_type == AJS37 and i < 9:
-                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        self.register_special_waypoints(self.waypoint.targets)
         return waypoint
 
 
@@ -1338,14 +1358,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                                 )
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
-
-        for i, t in enumerate(self.waypoint.targets):
-            if self.group.units[0].unit_type == JF_17 and i < 4:
-                self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
-            if self.group.units[0].unit_type == F_14B and i == 0:
-                self.group.add_nav_target_point(t.position, "ST")
-            if self.group.units[0].unit_type == AJS37 and i < 9:
-                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
+        self.register_special_waypoints(self.waypoint.targets)
         return waypoint
 
 
@@ -1381,8 +1394,6 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
 
     def build_strike(self) -> MovingPoint:
         waypoint = super().build()
-
-        i = 0
         for target in self.waypoint.targets:
 
             targets = [target]
@@ -1406,14 +1417,7 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
                 print(bombing)
 
                 # Register special waypoints
-                if self.group.units[0].unit_type == JF_17 and i < 4:
-                    self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
-                if self.group.units[0].unit_type == F_14B and i == 0:
-                    self.group.add_nav_target_point(t.position, "ST")
-                if self.group.units[0].unit_type == AJS37 and i < 9:
-                    self.group.add_nav_target_point(t.position, "M" + str(i + 1))
-                i = i + 1
-
+                self.register_special_waypoints(targets)
         return waypoint
 
 
