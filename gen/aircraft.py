@@ -1210,15 +1210,16 @@ class PydcsWaypointBuilder:
         waypoint.alt_type = self.waypoint.alt_type
         waypoint.name = String(self.waypoint.name)
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
-        if tot is not None and not self._viggen_client_tot():
+        if tot is not None:
             self.set_waypoint_tot(waypoint, tot)
         return waypoint
 
     def set_waypoint_tot(self, waypoint: MovingPoint, tot: timedelta) -> None:
         self.waypoint.tot = tot
-        waypoint.ETA = int(tot.total_seconds())
-        waypoint.ETA_locked = True
-        waypoint.speed_locked = False
+        if not self._viggen_client_tot():
+            waypoint.ETA = int(tot.total_seconds())
+            waypoint.ETA_locked = True
+            waypoint.speed_locked = False
 
     @classmethod
     def for_waypoint(cls, waypoint: FlightWaypoint, group: FlyingGroup,
