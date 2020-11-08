@@ -490,7 +490,7 @@ class CoalitionMissionPlanner:
     def stagger_missions(self) -> None:
         def start_time_generator(count: int, earliest: int, latest: int,
                                  margin: int) -> Iterator[timedelta]:
-            interval = latest // count
+            interval = (latest - earliest) // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
                 yield timedelta(minutes=max(0, time + error))
