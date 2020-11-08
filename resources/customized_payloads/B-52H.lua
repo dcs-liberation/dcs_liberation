@@ -2,27 +2,6 @@ local unitPayloads = {
 	["name"] = "B-52H",
 	["payloads"] = {
 		[1] = {
-			["name"] = "STRIKE",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{585D626E-7F42-4073-AB70-41E728C333E2}",
-					["num"] = 1,
-				},
-				[2] = {
-					["CLSID"] = "{6C47D097-83FF-4FB2-9496-EAB36DDF0B05}",
-					["num"] = 2,
-				},
-				[3] = {
-					["CLSID"] = "{585D626E-7F42-4073-AB70-41E728C333E2}",
-					["num"] = 3,
-				},
-			},
-			["tasks"] = {
-				[1] = 32,
-				[2] = 34,
-			},
-		},
-		[2] = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
@@ -42,7 +21,7 @@ local unitPayloads = {
 				[1] = 33,
 			},
 		},
-		[3] = {
+		[2] = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
@@ -52,6 +31,27 @@ local unitPayloads = {
 			},
 			["tasks"] = {
 				[1] = 30,
+			},
+		},
+		[3] = {
+			["name"] = "STRIKE",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{696CFFC4-0BDE-42A8-BE4B-0BE3D9DD723C}",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "{6C47D097-83FF-4FB2-9496-EAB36DDF0B05}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{696CFFC4-0BDE-42A8-BE4B-0BE3D9DD723C}",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+				[2] = 34,
 			},
 		},
 		[4] = {
