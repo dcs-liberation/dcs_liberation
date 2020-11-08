@@ -161,8 +161,12 @@ class ChannelNamer:
         return f"COMM{radio_id} Ch {channel_id}"
 
 
-class FarmerChannelNamer(ChannelNamer):
-    """Channel namer for the MiG-19P."""
+class SingleRadioChannelNamer(ChannelNamer):
+    """Channel namer for the aircraft with only a single radio.
+
+    Aircraft like the MiG-19P and the MiG-21bis only have a single radio, so
+    it's not necessary for us to name the radio when naming the channel.
+    """
 
     @staticmethod
     def channel_name(radio_id: int, channel_id: int) -> str:
@@ -589,7 +593,17 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         inter_flight_radio=get_radio("RSIU-4V"),
         intra_flight_radio=get_radio("RSIU-4V"),
         channel_allocator=FarmerRadioChannelAllocator(),
-        channel_namer=FarmerChannelNamer
+        channel_namer=SingleRadioChannelNamer
+    ),
+
+    "MiG-21Bis": AircraftData(
+        inter_flight_radio=get_radio("RSIU-5V"),
+        intra_flight_radio=get_radio("RSIU-5V"),
+        channel_allocator=CommonRadioChannelAllocator(
+            inter_flight_radio_index=1,
+            intra_flight_radio_index=1
+        ),
+        channel_namer=SingleRadioChannelNamer,
     ),
 
     "P-51D": AircraftData(
