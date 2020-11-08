@@ -16,9 +16,10 @@ from gen.flights.flight import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
     QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import \
+from qt_ui.windows.mission.flight.waypoints\
+    .QPredefinedWaypointSelectionWindow import \
     QPredefinedWaypointSelectionWindow
-from theater import ControlPoint, FrontLine
+from theater import FrontLine
 
 
 class QFlightWaypointTab(QFrame):
@@ -59,6 +60,7 @@ class QFlightWaypointTab(QFrame):
         recreate_types = [
             FlightType.CAS,
             FlightType.CAP,
+            FlightType.DEAD,
             FlightType.ESCORT,
             FlightType.SEAD,
             FlightType.STRIKE
