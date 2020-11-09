@@ -144,8 +144,12 @@ class Event:
                 for i, ground_object in enumerate(cp.ground_objects):
                     if ground_object.is_dead:
                         continue
-
-                    if ground_object.is_same_group(destroyed_ground_unit_name):
+                        
+                    if (
+                        (ground_object.group_name == destroyed_ground_unit_name)
+                        or
+                        (ground_object.is_same_group(destroyed_ground_unit_name))
+                    ):
                         logging.info("cp {} killing ground object {}".format(cp, ground_object.group_name))
                         cp.ground_objects[i].is_dead = True
 
