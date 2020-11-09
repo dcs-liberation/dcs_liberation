@@ -56,7 +56,8 @@
     "SA19Generator"
   ],
   "ewrs": [
-    "BigBirdGenerator"
+    "BoxSpringGenerator",
+    "TallRackGenerator"
   ],
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"

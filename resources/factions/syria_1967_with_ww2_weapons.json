@@ -45,6 +45,9 @@
     "EarlyColdWarFlakGenerator",
     "SA2Generator"
   ],
+  "ewrs": [
+    "FlatFaceGenerator"
+  ],
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [

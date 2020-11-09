@@ -46,7 +46,7 @@
     "SA6Generator"
   ],
   "ewrs": [
-    "StraightFlushGenerator"
+    "BoxSpringGenerator"
   ],
   "missiles": [
     "ScudGenerator"

@@ -44,7 +44,8 @@
     "SA6Generator"
   ],
   "ewrs": [
-    "StraightFlushGenerator"
+    "BoxSpringGenerator",
+    "TallRackGenerator"
   ],
   "aircraft_carrier": [
   ],

@@ -45,7 +45,7 @@
     "SA6Generator"
   ],
   "ewrs": [
-    "StraightFlushGenerator"
+    "FlatFaceGenerator"
   ],
   "aircraft_carrier": [
   ],

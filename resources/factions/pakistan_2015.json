@@ -48,7 +48,8 @@
     "SA2Generator"
   ],
   "ewrs": [
-    "BigBirdGenerator"
+    "BoxSpringGenerator",
+    "TallRackGenerator"
   ],
   "aircraft_carrier": [
   ],
