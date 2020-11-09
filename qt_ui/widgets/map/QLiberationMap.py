@@ -26,8 +26,6 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.data.aaa_db import AAA_UNITS
-from game.data.radar_db import UNITS_WITH_RADAR
 from game.utils import meter_to_feet
 from game.weather import TimeOfDay
 from gen import Conflict
@@ -41,7 +39,7 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint, FrontLine
-from theater.theatergroundobject import EwrGroundObject
+from theater.theatergroundobject import EwrGroundObject, TheaterGroundObject
 
 
 class QLiberationMap(QGraphicsView):
@@ -164,6 +162,21 @@ class QLiberationMap(QGraphicsView):
         self.reload_scene()
     """
 
+    @staticmethod
+    def aa_ranges(ground_object: TheaterGroundObject) -> Tuple[int, int]:
+        detection_range = 0
+        threat_range = 0
+        for g in ground_object.groups:
+            for u in g.units:
+                unit = db.unit_type_from_name(u.type)
+                if unit is None:
+                    logging.error(f"Unknown unit type {u.type}")
+                    continue
+                detection_range = max(detection_range,
+                                      getattr(unit, "detection_range"))
+                threat_range = max(threat_range,
+                                   getattr(unit, "threat_range"))
+        return detection_range, threat_range
 
     def reload_scene(self):
         scene = self.scene()
@@ -223,35 +236,25 @@ class QLiberationMap(QGraphicsView):
                                   (DisplayOptions.enemy_sam_ranges and not cp.captured))
 
                 if is_aa and should_display:
-                    threat_range = 0
-                    detection_range = 0
-                    can_fire = False
-                    if ground_object.groups:
-                        for g in ground_object.groups:
-                            for u in g.units:
-                                unit = db.unit_type_from_name(u.type)
-                                if unit in UNITS_WITH_RADAR or unit in AAA_UNITS:
-                                    can_fire = True
-                                if unit.detection_range and unit.detection_range > detection_range:
-                                    detection_range = unit.detection_range
-                                if unit.threat_range and unit.threat_range > threat_range:
-                                    threat_range = unit.threat_range
-                    if can_fire:
+                    detection_range, threat_range = self.aa_ranges(
+                        ground_object
+                    )
+                    if threat_range:
                         threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
                                                                  ground_object.position.y+threat_range))
-                        detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
-                                                                    ground_object.position.y+detection_range))
                         threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
-                        detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
-
-                        # Add detection range circle
-                        if DisplayOptions.detection_range:
-                            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
-                                             detection_radius, detection_radius, self.detection_pen(cp.captured))
 
                         # Add threat range circle
                         scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
                                          threat_radius, threat_radius, self.threat_pen(cp.captured))
+                    if detection_range:
+                        # Add detection range circle
+                        detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
+                                                                    ground_object.position.y+detection_range))
+                        detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
+                        if DisplayOptions.detection_range:
+                            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                             detection_radius, detection_radius, self.detection_pen(cp.captured))
                 added_objects.append(ground_object.obj_name)
 
         for cp in self.game.theater.enemy_points():
