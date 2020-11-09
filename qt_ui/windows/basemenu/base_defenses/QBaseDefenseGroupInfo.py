@@ -25,7 +25,7 @@ class QBaseDefenseGroupInfo(QGroupBox):
 
         self.buildLayout()
         self.main_layout.addLayout(self.unit_layout)
-        if not self.cp.captured:
+        if not self.cp.captured and not self.ground_object.is_dead:
             attack_button = QPushButton("Attack")
             attack_button.setProperty("style", "btn-danger")
             attack_button.setMaximumWidth(180)
