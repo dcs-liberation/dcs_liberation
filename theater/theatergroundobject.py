@@ -108,6 +108,10 @@ class TheaterGroundObject(MissionTarget):
     def obj_name(self) -> str:
         return self.name
 
+    @property
+    def faction_color(self) -> str:
+        return "BLUE" if self.control_point.captured else "RED"
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(self, name: str, category: str, group_id: int, object_id: int,
@@ -152,6 +156,12 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             sea_object=True
         )
 
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"
+
 
 # TODO: Why is this both a CP and a TGO?
 class LhaGroundObject(GenericCarrierGroundObject):
@@ -168,6 +178,12 @@ class LhaGroundObject(GenericCarrierGroundObject):
             airbase_group=True,
             sea_object=True
         )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"
 
 
 class MissileSiteGroundObject(TheaterGroundObject):
@@ -216,8 +232,7 @@ class SamGroundObject(BaseDefenseGroundObject):
         if self.skynet_capable:
             # Prefix the group names of SAM sites with the side color so Skynet
             # can find them.
-            color = "BLUE" if self.control_point.captured else "RED"
-            return f"{color}|SAM|{self.group_id}"
+            return f"{self.faction_color}|SAM|{self.group_id}"
         else:
             return super().group_name
 
@@ -240,8 +255,7 @@ class EwrGroundObject(BaseDefenseGroundObject):
     @property
     def group_name(self) -> str:
         # Prefix the group names with the side color so Skynet can find them.
-        color = "BLUE" if self.control_point.captured else "RED"
-        return f"{color}|{super().group_name}"
+        return f"{self.faction_color}|{super().group_name}"
 
 
 class ShipGroundObject(TheaterGroundObject):
@@ -258,3 +272,9 @@ class ShipGroundObject(TheaterGroundObject):
             airbase_group=False,
             sea_object=True
         )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"
