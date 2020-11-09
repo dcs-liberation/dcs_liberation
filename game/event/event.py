@@ -165,7 +165,7 @@ class Event:
                                    "",
                                    self.game.turn)
                 for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:
+                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA", "EWR"]:
                         for g in ground_object.groups:
                             if not hasattr(g, "units_losts"):
                                 g.units_losts = []
