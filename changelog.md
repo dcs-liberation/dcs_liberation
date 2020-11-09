@@ -1,6 +1,8 @@
 # 2.2.X
 
 ## Features/Improvements :
+* **[Campaign Generator]** Added early warning radar generation
+* **[Campaign Generator]** Added scud launcher sites
 * **[Cheat Menu]** Added ability to capture base from mission planner
 * **[Cheat Menu]** Added ability to show red ATO
 * **[Factions]** Added WW2 factions that do not depend on WW2 asset pack
@@ -18,6 +20,7 @@
 * **[Moddability]** LUA plugins can now be injected into Liberation missions.
 * **[Moddability]** Optional Skynet IADS lua plugin now included
 * **[New Game]** Starting budget can be freely selected
+* **[New Game]** Exanded information for faction and campaign selection in the new game wizard
 * **[UI]** Add double and right click actions to many UI elements.
 * **[UI]** Add polygon drawing mode for map background
 * **[UI]** Added a warning if you press takeoff with no player enabled flights
