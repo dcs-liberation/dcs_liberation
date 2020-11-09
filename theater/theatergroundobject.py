@@ -25,7 +25,8 @@ NAME_BY_CATEGORY = {
     "derrick": "Derrick",
     "ww2bunker": "Bunker",
     "village": "Village",
-    "allycamp": "Camp"
+    "allycamp": "Camp",
+    "EWR":"EWR",
 }
 
 ABBREV_NAME = {
