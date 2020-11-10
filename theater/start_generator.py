@@ -21,6 +21,8 @@ from gen.fleet.ship_group_generator import (
     generate_lha_group,
     generate_ship_group,
 )
+from gen.locations.preset_location_finder import PresetLocationFinder
+from gen.locations.preset_locations import PresetLocation
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.sam_group_generator import (
     generate_anti_air_group,
@@ -163,6 +165,7 @@ class ControlPointGroundObjectGenerator:
     def __init__(self, game: Game, control_point: ControlPoint) -> None:
         self.game = game
         self.control_point = control_point
+        self.preset_locations = PresetLocationFinder.compute_possible_locations(game.theater.terrain.name, control_point.full_name)
 
     @property
     def faction_name(self) -> str:
@@ -216,6 +219,27 @@ class ControlPointGroundObjectGenerator:
         if group is not None:
             g.groups.append(group)
             self.control_point.connected_objectives.append(g)
+
+    def pick_preset_location(self, offshore=False) -> Optional[PresetLocation]:
+        """
+        Return a preset location if any is setup and still available for this point
+        @:param offshore Whether this should be an offshore location
+        @:return The preset location if found; None if it couldn't be found
+        """
+        if offshore:
+            if len(self.preset_locations.offshore_locations) > 0:
+                location = random.choice(self.preset_locations.offshore_locations)
+                self.preset_locations.offshore_locations.remove(location)
+                logging.info("Picked a preset offshore location")
+                return location
+        else:
+            if len(self.preset_locations.ashore_locations) > 0:
+                location = random.choice(self.preset_locations.ashore_locations)
+                self.preset_locations.ashore_locations.remove(location)
+                logging.info("Picked a preset ashore location")
+                return location
+        logging.info("No preset location found")
+        return None
 
 
 class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
@@ -383,10 +407,20 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
         obj_name = namegen.random_objective_name()
         template = random.choice(list(self.templates[category].values()))
-        point = find_location(category != "oil",
-                              self.control_point.position,
-                              self.game.theater, 10000, 40000,
-                              self.control_point.ground_objects)
+
+        offshore = category == "oil"
+
+        # Pick from preset locations
+        location = self.pick_preset_location(offshore)
+
+        # Else try the old algorithm
+        if location is None:
+            point = find_location(not offshore,
+                                  self.control_point.position,
+                                  self.game.theater, 10000, 40000,
+                                  self.control_point.ground_objects)
+        else:
+            point = location.position
 
         if point is None:
             logging.error(
@@ -409,9 +443,17 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
     def generate_aa_site(self) -> None:
         obj_name = namegen.random_objective_name()
-        position = find_location(True, self.control_point.position,
+
+        # Pick from preset locations
+        location = self.pick_preset_location(False)
+
+        # If no preset location, then try the old algorithm
+        if location is None:
+            position = find_location(True, self.control_point.position,
                                  self.game.theater, 10000, 40000,
                                  self.control_point.ground_objects)
+        else:
+            position = location.position
 
         if position is None:
             logging.error(
@@ -432,9 +474,20 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.generate_missile_site()
 
     def generate_missile_site(self) -> None:
-        point = find_location(True, self.control_point.position,
-                              self.game.theater, 2500, 40000, [], False)
-        if point is None:
+
+        # Pick from preset locations
+        location = self.pick_preset_location(False)
+
+        # If no preset location, then try the old algorithm
+        if location is None:
+            position = find_location(True, self.control_point.position,
+                                     self.game.theater, 2500, 40000,
+                                     [], False)
+        else:
+            position = location.position
+
+
+        if position is None:
             logging.info(
                 f"Could not find point for {self.control_point} missile site")
             return
@@ -442,7 +495,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         group_id = self.game.next_group_id()
 
         g = MissileSiteGroundObject(namegen.random_objective_name(), group_id,
-                                    point, self.control_point)
+                                    position, self.control_point)
         group = generate_missile_group(self.game, g, self.faction_name)
         g.groups = []
         if group is not None:
