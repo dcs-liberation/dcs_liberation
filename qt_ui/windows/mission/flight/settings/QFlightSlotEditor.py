@@ -1,3 +1,5 @@
+import logging
+
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QSpinBox, QGridLayout
 
@@ -10,30 +12,27 @@ class QFlightSlotEditor(QGroupBox):
         super(QFlightSlotEditor, self).__init__("Slots")
         self.flight = flight
         self.game = game
-        inventory = self.game.aircraft_inventory.for_control_point(
+        self.inventory = self.game.aircraft_inventory.for_control_point(
             flight.from_cp
         )
-        self.available = inventory.all_aircraft
-        if self.flight.unit_type not in self.available:
-            max = self.flight.count
-        else:
-            max = self.flight.count + self.available[self.flight.unit_type]
-        if max > 4:
-            max = 4
+        available = self.inventory.available(self.flight.unit_type)
+        max_count = self.flight.count + available
+        if max_count > 4:
+            max_count = 4
 
         layout = QGridLayout()
 
         self.aircraft_count = QLabel("Aircraft count :")
         self.aircraft_count_spinner = QSpinBox()
         self.aircraft_count_spinner.setMinimum(1)
-        self.aircraft_count_spinner.setMaximum(max)
+        self.aircraft_count_spinner.setMaximum(max_count)
         self.aircraft_count_spinner.setValue(flight.count)
         self.aircraft_count_spinner.valueChanged.connect(self._changed_aircraft_count)
 
         self.client_count = QLabel("Client slots count :")
         self.client_count_spinner = QSpinBox()
         self.client_count_spinner.setMinimum(0)
-        self.client_count_spinner.setMaximum(max)
+        self.client_count_spinner.setMaximum(max_count)
         self.client_count_spinner.setValue(flight.client_count)
         self.client_count_spinner.valueChanged.connect(self._changed_client_count)
 
@@ -50,9 +49,23 @@ class QFlightSlotEditor(QGroupBox):
         self.setLayout(layout)
 
     def _changed_aircraft_count(self):
+        self.game.aircraft_inventory.return_from_flight(self.flight)
+        old_count = self.flight.count
         self.flight.count = int(self.aircraft_count_spinner.value())
+        try:
+            self.game.aircraft_inventory.claim_for_flight(self.flight)
+        except ValueError:
+            # The UI should have prevented this, but if we ran out of aircraft
+            # then roll back the inventory change.
+            difference = self.flight.count - old_count
+            available = self.inventory.available(self.flight.unit_type)
+            logging.error(
+                f"Could not add {difference} additional aircraft to "
+                f"{self.flight} because {self.flight.from_cp} has only "
+                f"{available} {self.flight.unit_type} remaining")
+            self.flight.count = old_count
+            self.game.aircraft_inventory.claim_for_flight(self.flight)
         self.changed.emit()
-        # TODO check if enough aircraft are available
 
     def _changed_client_count(self):
         self.flight.client_count = int(self.client_count_spinner.value())

@@ -49,7 +49,10 @@ class ControlPointAircraftInventory:
         Args:
             aircraft: The type of aircraft to query.
         """
-        return self.inventory[aircraft]
+        try:
+            return self.inventory[aircraft]
+        except KeyError:
+            return 0
 
     @property
     def types_available(self) -> Iterator[UnitType]:
