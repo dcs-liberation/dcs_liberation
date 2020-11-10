@@ -1041,7 +1041,7 @@ class AircraftConflictGenerator:
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
-            roe=OptROE.Values.WeaponHold,
+            roe=OptROE.Values.OpenFire,
             rtb_winchester=OptRTBOnOutOfAmmo.Values.Unguided,
             restrict_jettison=True)
 
@@ -1330,7 +1330,6 @@ class CasIngressBuilder(PydcsWaypointBuilder):
                     Targets.All.GroundUnits.Infantry,
                 ])
             )
-        waypoint.add_task(OptROE(OptROE.Values.OpenFireWeaponFree))
         return waypoint
 
 
