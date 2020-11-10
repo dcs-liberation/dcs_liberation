@@ -1158,21 +1158,30 @@ class AircraftConflictGenerator:
         self.flights[-1].waypoints = [takeoff_point] + flight.points
         self._setup_custom_payload(flight, group)
 
+    def should_delay_flight(self, flight: Flight,
+                            start_time: timedelta) -> bool:
+        if start_time.total_seconds() <= 0:
+            return False
+
+        if not flight.client_count:
+            return True
+
+        return not self.settings.never_delay_player_flights
+
     def set_takeoff_time(self, waypoint: FlightWaypoint, package: Package,
                          flight: Flight, group: FlyingGroup) -> None:
         estimator = TotEstimator(package)
         start_time = estimator.mission_start_time(flight)
 
-        if flight.client_count and not self.settings.never_delay_player_flights:
-            if start_time.total_seconds() > 0:
-                if self.should_activate_late(flight):
-                    # Late activation causes the aircraft to not be spawned
-                    # until triggered.
-                    self.set_activation_time(flight, group, start_time)
-                elif flight.start_type == "Cold":
-                    # Setting the start time causes the AI to wait until the
-                    # specified time to begin their startup sequence.
-                    self.set_startup_time(flight, group, start_time)
+        if self.should_delay_flight(flight, start_time):
+            if self.should_activate_late(flight):
+                # Late activation causes the aircraft to not be spawned
+                # until triggered.
+                self.set_activation_time(flight, group, start_time)
+            elif flight.start_type == "Cold":
+                # Setting the start time causes the AI to wait until the
+                # specified time to begin their startup sequence.
+                self.set_startup_time(flight, group, start_time)
 
         # And setting *our* waypoint TOT causes the takeoff time to show up in
         # the player's kneeboard.
