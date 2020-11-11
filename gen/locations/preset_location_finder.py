@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from dcs import Mission
+from dcs import Mission, ships
 from dcs.vehicles import MissilesSS
 
 from gen.locations.preset_control_point_locations import PresetControlPointLocations
@@ -37,7 +37,7 @@ class PresetLocationFinder:
                                                            vehicle_group.name))
 
             for ship_group in m.country("USA").ship_group:
-                if len(ship_group.units) > 0:
+                if len(ship_group.units) > 0 and ship_group.units[0].type == ships.Oliver_Hazzard_Perry_class.id:
                     offshore_locations.append(PresetLocation(ship_group.position,
                                                              ship_group.units[0].heading,
                                                              ship_group.name))
