@@ -217,6 +217,8 @@ class AtoModel(QAbstractListModel):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.ato.add_package(package)
         self.endInsertRows()
+        # noinspection PyUnresolvedReferences
+        self.client_slots_changed.emit()
 
     def delete_package_at_index(self, index: QModelIndex) -> None:
         """Removes the package at the given index from the ATO."""
@@ -231,6 +233,8 @@ class AtoModel(QAbstractListModel):
         for flight in package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
         self.endRemoveRows()
+        # noinspection PyUnresolvedReferences
+        self.client_slots_changed.emit()
 
     def package_at_index(self, index: QModelIndex) -> Package:
         """Returns the package at the given index."""
