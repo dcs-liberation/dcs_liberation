@@ -28,6 +28,6 @@ class PatriotGenerator(GenericSamGroupGenerator):
 
         # Short range protection for high value site
         num_launchers = random.randint(3, 4)
-        positions = self.get_circular_position(num_launchers, launcher_distance=300, coverage=360)
+        positions = self.get_circular_position(num_launchers, launcher_distance=200, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.AAA_Vulcan_M163, "SPAAA#" + str(i), position[0], position[1], position[2])
