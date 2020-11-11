@@ -40,6 +40,7 @@ from theater import (
     FrontLine,
     MissionTarget,
     TheaterGroundObject,
+    SamGroundObject,
 )
 
 # Avoid importing some types that cause circular imports unless type checking.
@@ -242,13 +243,13 @@ class ObjectiveFinder:
         found_targets: Set[str] = set()
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
+                if not isinstance(ground_object, SamGroundObject):
+                    continue
+
                 if ground_object.is_dead:
                     continue
 
                 if ground_object.name in found_targets:
-                    continue
-
-                if ground_object.dcs_identifier != "AA":
                     continue
 
                 if not self.object_has_radar(ground_object):
