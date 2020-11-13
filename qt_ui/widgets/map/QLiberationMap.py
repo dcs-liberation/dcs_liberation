@@ -177,10 +177,17 @@ class QLiberationMap(QGraphicsView):
                 if unit is None:
                     logging.error(f"Unknown unit type {u.type}")
                     continue
-                detection_range = max(detection_range,
-                                      getattr(unit, "detection_range"))
-                threat_range = max(threat_range,
-                                   getattr(unit, "threat_range"))
+
+                # Some units in pydcs have detection_range and threat_range
+                # defined, but explicitly set to None.
+                unit_detection_range = getattr(unit, "detection_range", None)
+                if unit_detection_range is not None:
+                    detection_range = max(detection_range, unit_detection_range)
+
+                unit_threat_range = getattr(unit, "threat_range", None)
+                if unit_threat_range is not None:
+                    threat_range = max(threat_range, unit_threat_range)
+
         return detection_range, threat_range
 
     def reload_scene(self):
