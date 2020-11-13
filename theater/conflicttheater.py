@@ -15,9 +15,7 @@ from dcs.terrain.terrain import Terrain
 
 from .controlpoint import ControlPoint
 from .landmap import Landmap, load_landmap, poly_contains
-
-if TYPE_CHECKING:
-    from . import FrontLine
+from .frontline import FrontLine
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -128,7 +126,6 @@ class ConflictTheater:
         return [point for point in self.controlpoints if point.captured]
 
     def conflicts(self, from_player=True) -> Iterator[FrontLine]:
-        from . import FrontLine  # Circular import that needs to be resolved.
         for cp in [x for x in self.controlpoints if x.captured == from_player]:
             for connected_point in [x for x in cp.connected_points if x.captured != from_player]:
                 yield FrontLine(cp, connected_point)
@@ -169,7 +166,7 @@ class ConflictTheater:
             cp.captured_invert = False
 
         return cp
-
+        
     @staticmethod
     def from_json(data: Dict[str, Any]) -> ConflictTheater:
         theaters = {
@@ -183,7 +180,6 @@ class ConflictTheater:
         theater = theaters[data["theater"]]
         t = theater()
         cps = {}
-
         for p in data["player_points"]:
             cp = t.add_json_cp(theater, p)
             cp.captured = True

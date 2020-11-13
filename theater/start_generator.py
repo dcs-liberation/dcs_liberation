@@ -40,6 +40,7 @@ from theater.theatergroundobject import (
     LhaGroundObject,
     MissileSiteGroundObject, ShipGroundObject,
 )
+from theater.frontline import FrontLine
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
@@ -73,7 +74,7 @@ class GameGenerator:
         namegen.reset()
         self.prepare_theater()
         self.populate_red_airbases()
-
+        FrontLine.load_json_frontlines(self.theater.terrain.name)
         game = Game(player_name=self.player,
                     enemy_name=self.enemy,
                     theater=self.theater,
@@ -89,7 +90,6 @@ class GameGenerator:
 
     def prepare_theater(self) -> None:
         to_remove = []
-
         # Auto-capture half the bases if midgame.
         if self.midgame:
             control_points = self.theater.controlpoints

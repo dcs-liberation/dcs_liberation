@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import logging
-
+import json
+from pathlib import Path
 from itertools import tee
-from typing import Tuple, List, Union, Dict
+from typing import Tuple, List, Union, Dict, Optional
 
 from dcs.mapping import Point
 
@@ -60,18 +61,19 @@ class FrontLine(MissionTarget):
     Overwrites the entirety of MissionTarget __init__ method to allow for
     dynamic position calculation.
     """
+    frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
 
     def __init__(
         self,
         control_point_a: ControlPoint,
         control_point_b: ControlPoint,
-        frontline_data: Dict[str, ComplexFrontLine],
     ) -> None:
         self.control_point_a = control_point_a
         self.control_point_b = control_point_b
         self.segments: List[FrontLineSegment] = []
-        self._build_segments(frontline_data)
+        self._build_segments()
         self.name = f"Front line {control_point_a}/{control_point_b}"
+        print(f"FRONTLINE SEGMENTS {len(self.segments)}")
 
     @property
     def position(self):
@@ -125,6 +127,24 @@ class FrontLine(MissionTarget):
         strength_pct = self.control_point_a.base.strength / total_strength
         return self._adjust_for_min_dist(strength_pct * self.attack_distance)
 
+    @classmethod
+    def load_json_frontlines(cls, terrain_name: str) -> None:
+        try:
+            path = Path(f"resources/frontlines/{terrain_name.lower()}.json")
+            with open(path, "r") as file:
+                logging.debug(f"Loading frontline from {path}...")
+                data = json.load(file)
+            cls.frontline_data = {
+                frontline: ComplexFrontLine(
+                    data[frontline]["start_cp"],
+                    [Point(i[0], i[1]) for i in data[frontline]["points"]],
+                )
+                for frontline in data
+            }
+            print(cls.frontline_data)
+        except OSError:
+            logging.warning(f"Unable to load preset frontlines for {terrain_name}")
+
     def _calculate_position(self) -> Point:
         """
         The position where the conflict should occur
@@ -132,14 +152,14 @@ class FrontLine(MissionTarget):
         """
         return self.point_from_a(self._position_distance)
 
-    def _build_segments(self, frontline_data: Dict[str, ComplexFrontLine]) -> None:
+    def _build_segments(self) -> None:
         control_point_ids = "|".join(
             [str(self.control_point_a.id), str(self.control_point_b.id)]
         )
         reversed_cp_ids = "|".join(
             [str(self.control_point_b.id), str(self.control_point_a.id)]
         )
-        complex_frontlines = frontline_data
+        complex_frontlines = FrontLine.frontline_data
         if (complex_frontlines) and (
             (control_point_ids in complex_frontlines)
             or (reversed_cp_ids in complex_frontlines)
