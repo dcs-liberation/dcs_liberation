@@ -420,8 +420,6 @@ class QLiberationMap(QGraphicsView):
                 if not cp.captured:
                     scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
                 else:
-                    # pass
-                    # frontline = FrontLine(cp, connected_cp, self.game.theater.terrain)
                     posx = frontline.position
                     h = frontline.attack_heading
                     pos2 = self._transform_point(posx)
@@ -429,7 +427,6 @@ class QLiberationMap(QGraphicsView):
                         seg_a = self._transform_point(segment.point_a)
                         seg_b = self._transform_point(segment.point_b)
                         scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
-                    # scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
                     p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
                     p2 = point_from_heading(pos2[0], pos2[1], h, 25)
@@ -441,7 +438,6 @@ class QLiberationMap(QGraphicsView):
                         seg_a = self._transform_point(segment.point_a)
                         seg_b = self._transform_point(segment.point_b)
                         scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
-                # scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
     def wheelEvent(self, event: QWheelEvent):
 

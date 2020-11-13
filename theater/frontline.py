@@ -41,7 +41,6 @@ class ComplexFrontLine:
 
     start_cp: ControlPoint
     points: List[Point]
-    # control_points: List[ControlPoint]
 
 
 @dataclass
@@ -86,7 +85,11 @@ class FrontLine(MissionTarget):
 
     @property
     def position(self):
-        return self._calculate_position()
+        """
+        The position where the conflict should occur
+        according to the current strength of each control point.
+        """
+        return self.point_from_a(self._position_distance)
 
     @property
     def control_points(self) -> Tuple[ControlPoint, ControlPoint]:
@@ -124,13 +127,6 @@ class FrontLine(MissionTarget):
         )
         return self.segments[0]
 
-    def _calculate_position(self) -> Point:
-        """
-        The position where the conflict should occur
-        according to the current strength of each control point.
-        """
-        return self.point_from_a(self._position_distance)
-
     def point_from_a(self, distance: Numeric) -> Point:
         """
         Returns a point {distance} away from control_point_a along the frontline segments.
@@ -151,7 +147,7 @@ class FrontLine(MissionTarget):
     @property
     def _position_distance(self) -> float:
         """
-        The distance from point a where the conflict should occur
+        The distance from point "a" where the conflict should occur
         according to the current strength of each control point
         """
         total_strength = (
