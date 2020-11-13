@@ -370,7 +370,7 @@ class GroundObjectsGenerator:
             center = self.conflict.center
             heading = self.conflict.heading - 90
         else:
-            center, heading = self.conflict.frontline_position(self.conflict.theater, self.conflict.from_cp, self.conflict.to_cp)
+            center, heading = self.conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp)
             heading -= 90
 
         initial_position = center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE)

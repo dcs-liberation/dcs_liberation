@@ -93,7 +93,7 @@ class GroundConflictGenerator:
         if combat_width < 35000:
             combat_width = 35000
 
-        position = Conflict.frontline_position(self.game.theater, self.conflict.from_cp, self.conflict.to_cp)
+        position = Conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp)
 
         # Create player groups at random position
         for group in self.player_planned_combat_groups:

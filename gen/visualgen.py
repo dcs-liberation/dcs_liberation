@@ -104,7 +104,7 @@ class VisualGenerator:
             if from_cp.is_global or to_cp.is_global:
                 continue
 
-            frontline = Conflict.frontline_position(self.game.theater, from_cp, to_cp)
+            frontline = Conflict.frontline_position(from_cp, to_cp)
             if not frontline:
                 continue
 

@@ -38,7 +38,8 @@ from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint, FrontLine
+from theater import ControlPoint
+from theater.frontline import FrontLine
 from theater.theatergroundobject import (
     EwrGroundObject,
     MissileSiteGroundObject,
@@ -407,13 +408,21 @@ class QLiberationMap(QGraphicsView):
             pen = QPen(brush=color)
             pen.setColor(color)
             pen.setWidth(6)
+            frontline = FrontLine(cp, connected_cp)
             if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
                 if not cp.captured:
                     scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
                 else:
-                    posx, h = Conflict.frontline_position(self.game.theater, cp, connected_cp)
+                    # pass
+                    # frontline = FrontLine(cp, connected_cp, self.game.theater.terrain)
+                    posx = frontline.position
+                    h = frontline.attack_heading
                     pos2 = self._transform_point(posx)
-                    scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
+                    for segment in frontline.segments:
+                        seg_a = self._transform_point(segment.point_a)
+                        seg_b = self._transform_point(segment.point_b)
+                        scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
+                    # scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
                     p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
                     p2 = point_from_heading(pos2[0], pos2[1], h, 25)
@@ -421,7 +430,11 @@ class QLiberationMap(QGraphicsView):
                                              FrontLine(cp, connected_cp)))
 
             else:
-                scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
+                for segment in frontline.segments:
+                        seg_a = self._transform_point(segment.point_a)
+                        seg_b = self._transform_point(segment.point_b)
+                        scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
+                # scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
 
     def wheelEvent(self, event: QWheelEvent):
 

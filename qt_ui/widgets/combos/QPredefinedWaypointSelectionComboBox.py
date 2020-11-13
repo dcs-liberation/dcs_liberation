@@ -55,7 +55,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                 if cp.captured:
                     enemy_cp = [ecp for ecp in cp.connected_points if ecp.captured != cp.captured]
                     for ecp in enemy_cp:
-                        pos = Conflict.frontline_position(self.game.theater, cp, ecp)[0]
+                        pos = Conflict.frontline_position(cp, ecp)[0]
                         wpt = FlightWaypoint(
                             FlightWaypointType.CUSTOM,
                             pos.x,

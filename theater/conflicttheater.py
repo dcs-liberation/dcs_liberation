@@ -15,7 +15,7 @@ from dcs.terrain.terrain import Terrain
 
 from .controlpoint import ControlPoint
 from .landmap import Landmap, load_landmap, poly_contains
-from .frontline import FrontLine
+from .frontline import FrontLine, ComplexFrontLine
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -61,6 +61,7 @@ class ConflictTheater:
     reference_points: Dict[Tuple[float, float], Tuple[float, float]]
     overview_image: str
     landmap: Optional[Landmap]
+    frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
     """
     land_poly = None  # type: Polygon
     """
@@ -68,6 +69,7 @@ class ConflictTheater:
 
     def __init__(self):
         self.controlpoints: List[ControlPoint] = []
+        ConflictTheater.frontline_data = FrontLine.load_json_frontlines(self)
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
@@ -196,7 +198,7 @@ class ConflictTheater:
             cps[l[1]].connect(cps[l[0]])
 
         return t
-
+    
 
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
@@ -228,7 +230,6 @@ class PersianGulfTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-
 class NevadaTheater(ConflictTheater):
     terrain = nevada.Nevada()
     overview_image = "nevada.gif"
@@ -241,7 +242,6 @@ class NevadaTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
-
 
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
@@ -256,7 +256,6 @@ class NormandyTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-
 class TheChannelTheater(ConflictTheater):
     terrain = thechannel.TheChannel()
     overview_image = "thechannel.gif"
@@ -269,7 +268,6 @@ class TheChannelTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
-
 
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()

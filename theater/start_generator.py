@@ -74,7 +74,6 @@ class GameGenerator:
         namegen.reset()
         self.prepare_theater()
         self.populate_red_airbases()
-        FrontLine.load_json_frontlines(self.theater.terrain.name)
         game = Game(player_name=self.player,
                     enemy_name=self.enemy,
                     theater=self.theater,
