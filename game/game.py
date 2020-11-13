@@ -147,30 +147,6 @@ class Game:
                                         front_line.control_point_a,
                                         front_line.control_point_b)
 
-    def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> List[UnitType]:
-        importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
-
-        if for_task == AirDefence and not self.settings.sams:
-            return [x for x in db.find_unittype(AirDefence, self.enemy_name) if x not in db.SAM_BAN]
-        else:
-            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_name)
-
-    def _commision_units(self, cp: ControlPoint):
-        for for_task in [CAS, CAP, AirDefence]:
-            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance,
-                                                                  COMMISION_LIMITS_SCALE) * self.settings.multiplier
-            missing_units = limit - cp.base.total_units(for_task)
-            if missing_units > 0:
-                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance,
-                                                                                COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
-                points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
-                if points_to_spend > 0:
-                    unittypes = self.commision_unit_types(cp, for_task)
-                    if len(unittypes) > 0:
-                        d = {random.choice(unittypes): points_to_spend}
-                        logging.info("Commision {}: {}".format(cp, d))
-                        cp.base.commision_units(d)
-
     @property
     def budget_reward_amount(self):
         reward = 0
