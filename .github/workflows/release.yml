@@ -31,7 +31,7 @@ jobs:
 
     - name: Finalize version
       run: |
-        New-Item -ItemType file final
+        New-Item -ItemType file resources\final
 
     - name: mypy game
       run: |
