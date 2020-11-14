@@ -1,4 +1,4 @@
-# 2.2.X
+# 2.2.0
 
 ## Features/Improvements :
 * **[Campaign Generator]** Added early warning radar generation
@@ -13,10 +13,9 @@
 * **[Map]** Highlight the selected flight path on the map
 * **[Map]** Improved SAM display settings
 * **[Map]** Improved flight plan display settings
+* **[Map]** Caucasus and The Channel map use a new system to generate SAM and strike target location to reduce probability of targets generated in the middle of a forests
 * **[Misc]** Flexible Dedicated Hosting Options for Mission Files via environment variables
 * **[Moddability]** Custom campaigns can be designed through json files
-* **[Moddability]** Custom campaigns can be designed through json files
-* **[Moddability]** Custom factions can be designed through json files
 * **[Moddability]** LUA plugins can now be injected into Liberation missions.
 * **[Moddability]** Optional Skynet IADS lua plugin now included
 * **[New Game]** Starting budget can be freely selected
@@ -25,8 +24,7 @@
 * **[UI]** Add polygon drawing mode for map background
 * **[UI]** Added a warning if you press takeoff with no player enabled flights
 * **[UI]** Packages and flights now visible in the main window sidebar
-* **[Units/Factions]** Added bombers to coalitions
-* **[Units/Factions]** Added frenchpack mod units
+* **[Units/Factions]** Added bombers to some coalitions
 * **[Units/Factions]** Added support for SU-57 mod by Cubanace
 * **[Units]** Added Freya EWR sites to german WW2 factions
 * **[Units]** Added support for many bombers (B-52H, B-1B, Tu-22, Tu-142)
