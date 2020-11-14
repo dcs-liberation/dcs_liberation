@@ -12,10 +12,10 @@
 ![GitHub stars](https://img.shields.io/github/stars/khopa/dcs_liberation?style=social)
 
 ## About DCS Liberation
-DCS Liberation is a [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) turn based single-player semi dynamic campaign. 
+DCS Liberation is a [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) turn based single-player or co-op dynamic campaign. 
 It is an external program that generates full and complex DCS missions and manage a persistent combat environment.  
 
-![Logo](https://imgur.com/B6tvlBJ.png)
+![Logo](https://i.imgur.com/4hq0rLq.png)
 
 ## Downloads
 
