@@ -115,6 +115,11 @@ GERMAN_WW2_CHANNEL = MHz(40)
 HELICOPTER_CHANNEL = MHz(127)
 UHF_FALLBACK_CHANNEL = MHz(251)
 
+TARGET_WAYPOINTS = (
+                FlightWaypointType.TARGET_GROUP_LOC,
+                FlightWaypointType.TARGET_POINT,
+                FlightWaypointType.TARGET_SHIP,
+            )
 
 # TODO: Get radio information for all the special cases.
 def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
@@ -1142,12 +1147,28 @@ class AircraftConflictGenerator:
                                                   flight.from_cp)
         self.set_takeoff_time(takeoff_point, package, flight, group)
 
-        filtered_points = []
+        filtered_points = []  # type: List[FlightWaypoint]
+
         for point in flight.points:
             if point.only_for_player and not flight.client_count:
                 continue
             filtered_points.append(point)
-
+        # Only add 1 target waypoint for Viggens.  This only affects player flights, 
+        # the Viggen can't have more than 9 waypoints which leaves us with two target point
+        # under the current flight plans.
+        # TODO: Make this smarter, it currently selects a random unit in the group for target, 
+        # this could be updated to make it pick the "best" two targets in the group.
+        if flight.unit_type is AJS37 and flight.client_count:
+            viggen_target_points = [
+                (idx, point) for idx, point in enumerate(filtered_points) if point.waypoint_type in TARGET_WAYPOINTS
+            ]
+            keep_target = viggen_target_points[random.randint(0, len(viggen_target_points) - 1)]
+            filtered_points = [
+                point for idx, point in enumerate(filtered_points) if (
+                        point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
+                    )
+                ]
+            
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
                 point, group, package, flight, self.m
@@ -1265,14 +1286,9 @@ class PydcsWaypointBuilder:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
-        target_waypoints = (
-                FlightWaypointType.TARGET_GROUP_LOC,
-                FlightWaypointType.TARGET_POINT,
-                FlightWaypointType.TARGET_SHIP,
-            )
         if (
             (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and 
-            (self.waypoint.waypoint_type not in target_waypoints)
+            (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
         ):
             return True
         else:
@@ -1285,8 +1301,6 @@ class PydcsWaypointBuilder:
                 self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
             if self.group.units[0].unit_type == F_14B and i == 0:
                 self.group.add_nav_target_point(t.position, "ST")
-            if self.group.units[0].unit_type == AJS37 and i < 9:
-                self.group.add_nav_target_point(t.position, "M" + str(i + 1))
 
 
 class DefaultWaypointBuilder(PydcsWaypointBuilder):
