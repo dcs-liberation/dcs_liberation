@@ -1,5 +1,26 @@
+from dcs.ships import (
+    CGN_1144_2_Pyotr_Velikiy,
+    CG_1164_Moskva,
+    CVN_70_Carl_Vinson,
+    CVN_71_Theodore_Roosevelt,
+    CVN_72_Abraham_Lincoln,
+    CVN_73_George_Washington,
+    CVN_74_John_C__Stennis,
+    CV_1143_5_Admiral_Kuznetsov,
+    CV_1143_5_Admiral_Kuznetsov_2017,
+    FFG_11540_Neustrashimy,
+    FFL_1124_4_Grisha,
+    FF_1135M_Rezky,
+    FSG_1241_1MP_Molniya,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    Ticonderoga_class,
+    Type_052B_Destroyer,
+    Type_052C_Destroyer,
+    Type_054A_Frigate,
+    USS_Arleigh_Burke_IIa,
+)
 from dcs.vehicles import AirDefence
-from dcs.ships import *
 
 UNITS_WITH_RADAR = [
 

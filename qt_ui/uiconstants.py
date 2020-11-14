@@ -1,14 +1,12 @@
-# URL for UI links
 import os
 from typing import Dict
+from pathlib import Path
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
-from game.event import UnitsDeliveryEvent, FrontlineAttackEvent
 from theater.theatergroundobject import CATEGORY_MAP
-from userdata.liberation_theme import get_theme_icons
+from .liberation_theme import get_theme_icons
 
-VERSION_STRING = "2.1.5"
 
 URLS : Dict[str, str] = {
     "Manual": "https://github.com/khopa/dcs_liberation/wiki",
@@ -28,37 +26,32 @@ FONT_PRIMARY_I = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=True)
 FONT_PRIMARY_B = QFont(FONT_NAME, FONT_SIZE, weight=75, italic=False)
 FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
 
-# new themes can be added here
-THEMES: Dict[int, Dict[str, str]] = {
-    0: {'themeName': 'Vanilla',
-        'themeFile': 'windows-style.css',
-        'themeIcons': 'medium',
-        },
-
-    1: {'themeName': 'DCS World',
-        'themeFile': 'style-dcs.css',
-        'themeIcons': 'light',
-        },
-
-}
-
 COLORS: Dict[str, QColor] = {
     "white": QColor(255, 255, 255),
     "white_transparent": QColor(255, 255, 255, 35),
     "grey_transparent": QColor(150, 150, 150, 30),
 
+    "light_red": QColor(231, 92, 83, 90),
     "red": QColor(200, 80, 80),
     "dark_red": QColor(140, 20, 20),
     "red_transparent": QColor(227, 32, 0, 20),
+    "transparent": QColor(255, 255, 255, 0),
 
+    "light_blue": QColor(105, 182, 240, 90),
     "blue": QColor(0, 132, 255),
     "dark_blue": QColor(45, 62, 80),
+    "sea_blue": QColor(52, 68, 85),
     "blue_transparent": QColor(0, 132, 255, 20),
+
+    "purple": QColor(187, 137, 255),
+    "yellow": QColor(238, 225, 123),
 
     "bright_red": QColor(150, 80, 80),
     "super_red": QColor(227, 32, 0),
 
     "green": QColor(128, 186, 128),
+    "light_green": QColor(223, 255, 173),
+    "light_green_transparent": QColor(180, 255, 140, 50),
     "bright_green": QColor(64, 200, 64),
 
     "black": QColor(0, 0, 0),
@@ -68,6 +61,10 @@ COLORS: Dict[str, QColor] = {
 
     "night_overlay": QColor(12, 20, 69),
     "dawn_dust_overlay": QColor(46, 38, 85),
+
+    "grey": QColor(150, 150, 150),
+    "dark_grey": QColor(75, 75, 75),
+    "dark_dark_grey": QColor(48, 48, 48),
 
 }
 
@@ -85,10 +82,10 @@ def load_icons():
     ICONS["Hangar"] = QPixmap("./resources/ui/misc/hangar.png")
 
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")
-    ICONS["Terrain_Persian_Gulf"] = QPixmap("./resources/ui/terrain_pg.gif")
+    ICONS["Terrain_PersianGulf"] = QPixmap("./resources/ui/terrain_pg.gif")
     ICONS["Terrain_Nevada"] = QPixmap("./resources/ui/terrain_nevada.gif")
     ICONS["Terrain_Normandy"] = QPixmap("./resources/ui/terrain_normandy.gif")
-    ICONS["Terrain_Channel"] = QPixmap("./resources/ui/terrain_channel.gif")
+    ICONS["Terrain_TheChannel"] = QPixmap("./resources/ui/terrain_channel.gif")
     ICONS["Terrain_Syria"] = QPixmap("./resources/ui/terrain_syria.gif")
 
     ICONS["Dawn"] = QPixmap("./resources/ui/daytime/dawn.png")
@@ -115,6 +112,8 @@ def load_icons():
     ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
     ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
     ICONS["Cheat"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/cheat.png")
+    ICONS["Plugins"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/plugins.png")
+    ICONS["PluginsOptions"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/pluginsoptions.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")
@@ -127,15 +126,12 @@ EVENT_ICONS: Dict[str, QPixmap] = {}
 
 def load_event_icons():
     for image in os.listdir("./resources/ui/events/"):
-        print(image)
         if image.endswith(".PNG"):
             EVENT_ICONS[image[:-4]] = QPixmap(os.path.join("./resources/ui/events/", image))
 
 def load_aircraft_icons():
     for aircraft in os.listdir("./resources/ui/units/aircrafts/"):
-        print(aircraft)
         if aircraft.endswith(".jpg"):
-            print(aircraft[:-7] + " : " + os.path.join("./resources/ui/units/aircrafts/", aircraft) + " ")
             AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/", aircraft))
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
     AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
@@ -144,7 +140,5 @@ def load_aircraft_icons():
 
 def load_vehicle_icons():
     for vehicle in os.listdir("./resources/ui/units/vehicles/"):
-        print(vehicle)
         if vehicle.endswith(".jpg"):
-            print(vehicle[:-7] + " : " + os.path.join("./resources/ui/units/vehicles/", vehicle) + " ")
             VEHICLES_ICONS[vehicle[:-7]] = QPixmap(os.path.join("./resources/ui/units/vehicles/", vehicle))

@@ -1,11 +1,36 @@
-from datetime import datetime, timedelta
+import logging
+import math
+import random
+import sys
+from datetime import date, datetime, timedelta
+from typing import Dict, List
 
-from game.db import REWARDS, PLAYER_BUDGET_BASE, sys
+from dcs.action import Coalition
+from dcs.mapping import Point
+from dcs.task import CAP, CAS, PinpointStrike, Task
+from dcs.unittype import UnitType
+from dcs.vehicles import AirDefence
+
+from game import db
+from game.db import PLAYER_BUDGET_BASE, REWARDS
+from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
-from gen.flights.ai_flight_planner import FlightPlanner
+from game.plugins import LuaPluginManager
+from gen.ato import AirTaskingOrder
+from gen.conflictgen import Conflict
+from gen.flights.ai_flight_planner import CoalitionMissionPlanner
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
-from .event import *
+from theater import ConflictTheater, ControlPoint
+from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
+from . import persistency
+from .debriefing import Debriefing
+from .event.event import Event, UnitsDeliveryEvent
+from .event.frontlineattack import FrontlineAttackEvent
+from .factions.faction import Faction
+from .infos.information import Information
 from .settings import Settings
+from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -45,41 +70,45 @@ PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
 
 class Game:
-    settings = None  # type: Settings
-    budget = PLAYER_BUDGET_INITIAL
-    events = None  # type: typing.List[Event]
-    pending_transfers = None  # type: typing.Dict[]
-    ignored_cps = None  # type: typing.Collection[ControlPoint]
-    turn = 0
-    game_stats: GameStats = None
-
-    current_unit_id = 0
-    current_group_id = 0
-
-    def __init__(self, player_name: str, enemy_name: str, theater: ConflictTheater, start_date: datetime, settings):
+    def __init__(self, player_name: str, enemy_name: str,
+                 theater: ConflictTheater, start_date: datetime,
+                 settings: Settings):
         self.settings = settings
-        self.events = []
+        self.events: List[Event] = []
         self.theater = theater
         self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name]["country"]
+        self.player_country = db.FACTIONS[player_name].country
         self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name]["country"]
+        self.enemy_country = db.FACTIONS[enemy_name].country
         self.turn = 0
-        self.date = datetime(start_date.year, start_date.month, start_date.day)
+        self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.planners = {}
-        self.ground_planners = {}
+        self.ground_planners: Dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         self.__culling_points = self.compute_conflicts_position()
-        self.__frontlineData = []
-        self.__destroyed_units = []
-        self.jtacs = []
+        self.__destroyed_units: List[str] = []
         self.savepath = ""
+        self.budget = PLAYER_BUDGET_INITIAL
+        self.current_unit_id = 0
+        self.current_group_id = 0
+
+        self.conditions = self.generate_conditions()
+
+        self.blue_ato = AirTaskingOrder()
+        self.red_ato = AirTaskingOrder()
+
+        self.aircraft_inventory = GlobalAircraftInventory(
+            self.theater.controlpoints
+        )
 
         self.sanitize_sides()
+        self.on_load()
 
+    def generate_conditions(self) -> Conditions:
+        return Conditions.generate(self.theater, self.date,
+                                   self.current_turn_time_of_day, self.settings)
 
     def sanitize_sides(self):
         """
@@ -95,11 +124,11 @@ class Game:
                 self.enemy_country = "Russia"
 
     @property
-    def player_faction(self):
+    def player_faction(self) -> Faction:
         return db.FACTIONS[self.player_name]
 
     @property
-    def enemy_faction(self):
+    def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
 
     def _roll(self, prob, mult):
@@ -113,32 +142,10 @@ class Game:
         self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
 
     def _generate_events(self):
-        for player_cp, enemy_cp in self.theater.conflicts(True):
-            self._generate_player_event(FrontlineAttackEvent, player_cp, enemy_cp)
-
-    def commision_unit_types(self, cp: ControlPoint, for_task: Task) -> typing.Collection[UnitType]:
-        importance_factor = (cp.importance - IMPORTANCE_LOW) / (IMPORTANCE_HIGH - IMPORTANCE_LOW)
-
-        if for_task == AirDefence and not self.settings.sams:
-            return [x for x in db.find_unittype(AirDefence, self.enemy_name) if x not in db.SAM_BAN]
-        else:
-            return db.choose_units(for_task, importance_factor, COMMISION_UNIT_VARIETY, self.enemy_name)
-
-    def _commision_units(self, cp: ControlPoint):
-        for for_task in [CAS, CAP, AirDefence]:
-            limit = COMMISION_LIMITS_FACTORS[for_task] * math.pow(cp.importance,
-                                                                  COMMISION_LIMITS_SCALE) * self.settings.multiplier
-            missing_units = limit - cp.base.total_units(for_task)
-            if missing_units > 0:
-                awarded_points = COMMISION_AMOUNTS_FACTORS[for_task] * math.pow(cp.importance,
-                                                                                COMMISION_AMOUNTS_SCALE) * self.settings.multiplier
-                points_to_spend = cp.base.append_commision_points(for_task, awarded_points)
-                if points_to_spend > 0:
-                    unittypes = self.commision_unit_types(cp, for_task)
-                    if len(unittypes) > 0:
-                        d = {random.choice(unittypes): points_to_spend}
-                        logging.info("Commision {}: {}".format(cp, d))
-                        cp.base.commision_units(d)
+        for front_line in self.theater.conflicts(True):
+            self._generate_player_event(FrontlineAttackEvent,
+                                        front_line.control_point_a,
+                                        front_line.control_point_b)
 
     @property
     def budget_reward_amount(self):
@@ -194,11 +201,20 @@ class Game:
         else:
             return event and event.name and event.name == self.player_name
 
-    def pass_turn(self, no_action=False, ignored_cps: typing.Collection[ControlPoint] = None):
+    def on_load(self) -> None:
+        LuaPluginManager.load_settings(self.settings)
+        ObjectiveDistanceCache.set_theater(self.theater)
 
+        # Save game compatibility.
+
+        # TODO: Remove in 2.3.
+        if not hasattr(self, "conditions"):
+            self.conditions = self.generate_conditions()
+
+    def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
-        self.turn = self.turn + 1
+        self.turn += 1
 
         for event in self.events:
             if self.settings.version == "dev":
@@ -219,33 +235,36 @@ class Game:
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
-        self.ignored_cps = []
-        if ignored_cps:
-            self.ignored_cps = ignored_cps
+        self.conditions = self.generate_conditions()
 
-        self.events = []  # type: typing.List[Event]
+        self.initialize_turn()
+
+        # Autosave progress
+        persistency.autosave(self)
+
+    def initialize_turn(self) -> None:
+        self.events = []
         self._generate_events()
 
         # Update statistics
         self.game_stats.update(self)
 
+        self.aircraft_inventory.reset()
+        for cp in self.theater.controlpoints:
+            self.aircraft_inventory.set_from_control_point(cp)
+
         # Plan flights & combat for next turn
         self.__culling_points = self.compute_conflicts_position()
-        self.planners = {}
         self.ground_planners = {}
+        self.blue_ato.clear()
+        self.red_ato.clear()
+        CoalitionMissionPlanner(self, is_player=True).plan_missions()
+        CoalitionMissionPlanner(self, is_player=False).plan_missions()
         for cp in self.theater.controlpoints:
-            if cp.has_runway():
-                planner = FlightPlanner(cp, self)
-                planner.plan_flights()
-                self.planners[cp.id] = planner
-
             if cp.has_frontline:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
-
-        # Autosave progress
-        persistency.autosave(self)
 
     def _enemy_reinforcement(self):
         """
@@ -274,7 +293,7 @@ class Game:
             potential_cp_armor = self.theater.enemy_points()
 
         i = 0
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if u in db.UNIT_BY_TASK[PinpointStrike]]
+        potential_units = db.FACTIONS[self.enemy_name].frontline_units
 
         print("Enemy Recruiting")
         print(potential_cp_armor)
@@ -300,8 +319,9 @@ class Game:
         if budget_for_armored_units > 0:
             budget_for_aircraft += budget_for_armored_units
 
-        potential_units = [u for u in db.FACTIONS[self.enemy_name]["units"] if
-                           u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+        potential_units = [u for u in db.FACTIONS[self.enemy_name].aircrafts
+                           if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+
         if len(potential_units) > 0 and len(potential_cp_armor) > 0:
             while budget_for_aircraft > 0:
                 i = i + 1
@@ -319,11 +339,11 @@ class Game:
                 self.informations.append(info)
 
     @property
-    def current_turn_daytime(self):
-        return ["dawn", "day", "dusk", "night"][self.turn % 4]
+    def current_turn_time_of_day(self) -> TimeOfDay:
+        return list(TimeOfDay)[self.turn % 4]
 
     @property
-    def current_day(self):
+    def current_day(self) -> date:
         return self.date + timedelta(days=self.turn // 4)
 
     def next_unit_id(self):
@@ -348,10 +368,13 @@ class Game:
         points = []
 
         # By default, use the existing frontline conflict position
-        for conflict in self.theater.conflicts():
-            points.append(Conflict.frontline_position(self.theater, conflict[0], conflict[1])[0])
-            points.append(conflict[0].position)
-            points.append(conflict[1].position)
+        for front_line in self.theater.conflicts():
+            position = Conflict.frontline_position(self.theater,
+                                                   front_line.control_point_a,
+                                                   front_line.control_point_b)
+            points.append(position[0])
+            points.append(front_line.control_point_a.position)
+            points.append(front_line.control_point_b.position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:
@@ -400,6 +423,13 @@ class Game:
                     return False
             return True
 
+    def get_culling_points(self):
+        """
+        Check culling points
+        :return: List of culling points
+        """
+        return self.__culling_points
+
     # 1 = red, 2 = blue
     def get_player_coalition_id(self):
         return 2
@@ -408,10 +438,10 @@ class Game:
         return 1
 
     def get_player_coalition(self):
-        return dcs.action.Coalition.Blue
+        return Coalition.Blue
 
     def get_enemy_coalition(self):
-        return dcs.action.Coalition.Red
+        return Coalition.Red
 
     def get_player_color(self):
         return "blue"

@@ -1,0 +1,37 @@
+{
+  "country": "USA",
+  "name": "USA 1955",
+  "authors": "Khopa",
+  "description": "<p>US army in the 50s, circa Korean War.</p>",
+  "aircrafts": [
+    "F_86F_Sabre",
+    "P_51D",
+    "P_51D_30_NA",
+    "B_52H"
+  ],
+  "frontline_units": [
+    "MT_M4_Sherman",
+    "MBT_M60A3_Patton",
+    "APC_M2A1"
+  ],
+  "artillery_units": [
+    "M12_GMC"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4"
+  ],
+  "shorads": [
+    "BoforsGenerator"
+  ],
+  "sams": [
+    "EarlyColdWarFlakGenerator"
+  ],
+  "doctrine": "ww2",
+  "building_set": "ww2ally",
+  "requirements": {
+      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  }
+}

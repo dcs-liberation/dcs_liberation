@@ -1,0 +1,65 @@
+{
+  "country": "USAF Aggressors",
+  "name": "USAF Aggressors",
+  "authors": "Khopa",
+  "description": "<p>USAF aggresors.</p>",
+  "aircrafts": [
+    "F_15C",
+    "F_15E",
+    "F_14B",
+    "FA_18C_hornet",
+    "F_16C_50",
+    "A_10A",
+    "A_10C",
+    "AV8BNA",
+    "UH_1H",
+    "AH_64D",
+    "Ka_50",
+    "B_52H",
+    "B_1B",
+    "F_117A",
+    "Su_27"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_M1A2_Abrams",
+    "MBT_Leopard_2",
+    "ATGM_M1134_Stryker",
+    "IFV_M2A2_Bradley",
+    "IFV_LAV_25",
+    "APC_M1043_HMMWV_Armament"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "PatriotGenerator"
+  ],
+  "ewrs": [
+    "PatriotEwrGenerator"
+  ],
+  "requirements": {},
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

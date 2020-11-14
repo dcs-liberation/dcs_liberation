@@ -1,0 +1,62 @@
+{
+  "country": "Ukraine",
+  "name": "Ukraine 2010",
+  "authors": "Khopa",
+  "description": "<p>Ukrainian army in the 2010s.</p>",
+  "aircrafts": [
+    "Su_25",
+    "Su_25T",
+    "Su_24M",
+    "Su_27",
+    "MiG_29S",
+    "L_39ZA",
+    "Mi_8MT",
+    "Mi_24V"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "APC_M1043_HMMWV_Armament",
+    "IFV_BMP_3",
+    "IFV_BMP_2",
+    "APC_BTR_80",
+    "MBT_T_80U",
+    "MBT_T_72B"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Rus",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "SA9Generator",
+    "SA13Generator",
+    "SA19Generator"
+  ],
+  "sams": [
+    "SA3Generator",
+    "SA10Generator",
+    "SA11Generator"
+  ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
+  "requirements": {},
+  "carrier_names": [
+    "Admiral Kuznetov",
+    "Admiral Gorshkov"
+  ],
+  "navy_generators": [
+    "GrishaGroupGenerator"
+  ]
+}

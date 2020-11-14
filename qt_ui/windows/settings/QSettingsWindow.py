@@ -1,16 +1,49 @@
 import logging
+from typing import Callable
 
 from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItemModel, QStandardItem
-from PySide2.QtWidgets import QLabel, QDialog, QGridLayout, QListView, QStackedLayout, QComboBox, QWidget, \
-    QAbstractItemView, QPushButton, QGroupBox, QCheckBox, QVBoxLayout, QSpinBox
+from PySide2.QtWidgets import (
+    QLabel,
+    QDialog,
+    QGridLayout,
+    QListView,
+    QStackedLayout,
+    QComboBox,
+    QWidget,
+    QAbstractItemView,
+    QPushButton,
+    QGroupBox,
+    QCheckBox,
+    QVBoxLayout,
+    QSpinBox,
+)
 from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
+from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
+from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
+
+
+class CheatSettingsBox(QGroupBox):
+    def __init__(self, game: Game, apply_settings: Callable[[], None]) -> None:
+        super().__init__("Cheat Settings")
+        self.main_layout = QVBoxLayout()
+        self.setLayout(self.main_layout)
+
+        self.red_ato_checkbox = QCheckBox()
+        self.red_ato_checkbox.setChecked(game.settings.show_red_ato)
+        self.red_ato_checkbox.toggled.connect(apply_settings)
+        self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
+        self.main_layout.addLayout(self.red_ato)
+
+    @property
+    def show_red_ato(self) -> bool:
+        return self.red_ato_checkbox.isChecked()
 
 
 class QSettingsWindow(QDialog):
@@ -19,6 +52,8 @@ class QSettingsWindow(QDialog):
         super(QSettingsWindow, self).__init__()
 
         self.game = game
+        self.pluginsPage = None
+        self.pluginsOptionsPage = None
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -37,38 +72,53 @@ class QSettingsWindow(QDialog):
 
         self.categoryModel = QStandardItemModel(self.categoryList)
 
+        self.categoryList.setIconSize(QSize(32, 32))
+
+        self.initDifficultyLayout()
         difficulty = QStandardItem("Difficulty")
         difficulty.setIcon(CONST.ICONS["Missile"])
         difficulty.setEditable(False)
         difficulty.setSelectable(True)
+        self.categoryModel.appendRow(difficulty)
+        self.right_layout.addWidget(self.difficultyPage)
 
+        self.initGeneratorLayout()
         generator = QStandardItem("Mission Generator")
         generator.setIcon(CONST.ICONS["Generator"])
         generator.setEditable(False)
         generator.setSelectable(True)
+        self.categoryModel.appendRow(generator)
+        self.right_layout.addWidget(self.generatorPage)
 
+        self.initCheatLayout()
         cheat = QStandardItem("Cheat Menu")
         cheat.setIcon(CONST.ICONS["Cheat"])
         cheat.setEditable(False)
         cheat.setSelectable(True)
-
-        self.categoryList.setIconSize(QSize(32, 32))
-        self.categoryModel.appendRow(difficulty)
-        self.categoryModel.appendRow(generator)
         self.categoryModel.appendRow(cheat)
+        self.right_layout.addWidget(self.cheatPage)
+
+        self.pluginsPage = PluginsPage()
+        plugins = QStandardItem("LUA Plugins")
+        plugins.setIcon(CONST.ICONS["Plugins"])
+        plugins.setEditable(False)
+        plugins.setSelectable(True)
+        self.categoryModel.appendRow(plugins)
+        self.right_layout.addWidget(self.pluginsPage)
+
+        self.pluginsOptionsPage = PluginOptionsPage()
+        pluginsOptions = QStandardItem("LUA Plugins Options")
+        pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
+        pluginsOptions.setEditable(False)
+        pluginsOptions.setSelectable(True)
+        self.categoryModel.appendRow(pluginsOptions)
+        self.right_layout.addWidget(self.pluginsOptionsPage)
 
         self.categoryList.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.categoryList.setModel(self.categoryModel)
         self.categoryList.selectionModel().setCurrentIndex(self.categoryList.indexAt(QPoint(1,1)), QItemSelectionModel.Select)
         self.categoryList.selectionModel().selectionChanged.connect(self.onSelectionChanged)
 
-        self.initDifficultyLayout()
-        self.initGeneratorLayout()
-        self.initCheatLayout()
-
-        self.right_layout.addWidget(self.difficultyPage)
-        self.right_layout.addWidget(self.generatorPage)
-        self.right_layout.addWidget(self.cheatPage)
 
         self.layout.addWidget(self.categoryList, 0, 0, 1, 1)
         self.layout.addLayout(self.right_layout, 0, 1, 5, 1)
@@ -156,7 +206,7 @@ class QSettingsWindow(QDialog):
         self.generatorPage.setLayout(self.generatorLayout)
 
         self.gameplay = QGroupBox("Gameplay")
-        self.gameplayLayout = QGridLayout();
+        self.gameplayLayout = QGridLayout()
         self.gameplayLayout.setAlignment(Qt.AlignTop)
         self.gameplay.setLayout(self.gameplayLayout)
 
@@ -168,28 +218,23 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
-
-        if not hasattr(self.game.settings, "include_jtac_if_available"):
-            self.game.settings.include_jtac_if_available = True
-        if not hasattr(self.game.settings, "jtac_smoke_on"):
-            self.game.settings.jtac_smoke_on= True
-
-        self.include_jtac_if_available = QCheckBox()
-        self.include_jtac_if_available.setChecked(self.game.settings.include_jtac_if_available)
-        self.include_jtac_if_available.toggled.connect(self.applySettings)
-
-        self.jtac_smoke_on = QCheckBox()
-        self.jtac_smoke_on.setChecked(self.game.settings.jtac_smoke_on)
-        self.jtac_smoke_on.toggled.connect(self.applySettings)
+        self.never_delay_players = QCheckBox()
+        self.never_delay_players.setChecked(
+            self.game.settings.never_delay_player_flights)
+        self.never_delay_players.toggled.connect(self.applySettings)
+        self.never_delay_players.setToolTip(
+            "When checked, player flights with a delayed start time will be "
+            "spawned immediately. AI wingmen may begin startup immediately."
+        )
 
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Include JTAC (If available)"), 2, 0)
-        self.gameplayLayout.addWidget(self.include_jtac_if_available, 2, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Enable JTAC smoke markers"), 3, 0)
-        self.gameplayLayout.addWidget(self.jtac_smoke_on, 3, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(
+            QLabel("Never delay player flights"), 2, 0)
+        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1,
+                                      Qt.AlignRight)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -263,8 +308,11 @@ class QSettingsWindow(QDialog):
     def initCheatLayout(self):
 
         self.cheatPage = QWidget()
-        self.cheatLayout = QGridLayout()
+        self.cheatLayout = QVBoxLayout()
         self.cheatPage.setLayout(self.cheatLayout)
+
+        self.cheat_options = CheatSettingsBox(self.game, self.applySettings)
+        self.cheatLayout.addWidget(self.cheat_options)
 
         self.moneyCheatBox = QGroupBox("Money Cheat")
         self.moneyCheatBox.setAlignment(Qt.AlignTop)
@@ -281,7 +329,7 @@ class QSettingsWindow(QDialog):
                 btn.setProperty("style", "btn-danger")
             btn.clicked.connect(self.cheatLambda(amount))
             self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
-        self.cheatLayout.addWidget(self.moneyCheatBox, 0, 0)
+        self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
 
     def cheatLambda(self, amount):
         return lambda: self.cheatMoney(amount)
@@ -304,10 +352,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
-        self.game.settings.include_jtac_if_available = self.include_jtac_if_available.isChecked()
-        self.game.settings.jtac_smoke_on = self.jtac_smoke_on.isChecked()
-
-        print(self.game.settings.map_coalition_visibility)
+        self.game.settings.never_delay_player_flights = self.never_delay_players.isChecked()
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
 
@@ -321,6 +366,8 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
+
+        self.game.settings.show_red_ato = self.cheat_options.show_red_ato
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

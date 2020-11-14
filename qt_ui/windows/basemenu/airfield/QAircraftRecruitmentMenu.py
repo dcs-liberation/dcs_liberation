@@ -1,25 +1,40 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QVBoxLayout, QGridLayout, QGroupBox, QScrollArea, QFrame, QWidget, QHBoxLayout, QLabel
+from typing import Optional, Set
 
-from game.event import UnitsDeliveryEvent
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
+from dcs.unittype import UnitType
+
+from game.event.event import UnitsDeliveryEvent
+from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, CAP, CAS, db, ControlPointType
-from game import Game
+from theater import CAP, CAS, ControlPoint, db
 
 
 class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
-
-    def __init__(self, cp: ControlPoint, game: Game):
+    def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
         QFrame.__init__(self)
         self.cp = cp
-        self.game = game
+        self.game_model = game_model
+        self.deliveryEvent: Optional[UnitsDeliveryEvent] = None
 
-        for event in self.game.events:
+        self.bought_amount_labels = {}
+        self.existing_units_labels = {}
+
+        for event in self.game_model.game.events:
             if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
                 self.deliveryEvent = event
         if not self.deliveryEvent:
-            self.deliveryEvent = self.game.units_delivery_event(self.cp)
+            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
         # Determine maximum number of aircrafts that can be bought
         self.set_maximum_units(self.cp.available_aircraft_slots)
@@ -35,25 +50,27 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        units = {
-            CAP: db.find_unittype(CAP, self.game.player_name),
-            CAS: db.find_unittype(CAS, self.game.player_name),
-        }
+        tasks = [CAP, CAS]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         row = 0
 
-        for task_type in units.keys():
-            units_column = list(set(units[task_type]))
-            if len(units_column) == 0: continue
-            units_column.sort(key=lambda x: db.PRICES[x])
-            for unit_type in units_column:
-                if self.cp.is_carrier and not unit_type in db.CARRIER_CAPABLE:
+        unit_types: Set[UnitType] = set()
+        for task in tasks:
+            units = db.find_unittype(task, self.game_model.game.player_name)
+            if not units:
+                continue
+            for unit in units:
+                if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
                     continue
-                if self.cp.is_lha and not unit_type in db.LHA_CAPABLE:
+                if self.cp.is_lha and unit not in db.LHA_CAPABLE:
                     continue
-                row = self.add_purchase_row(unit_type, task_box_layout, row)
+                unit_types.add(unit)
+
+        sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
+        for unit_type in sorted_units:
+            row = self.add_purchase_row(unit_type, task_box_layout, row)
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
@@ -72,7 +89,21 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         super().buy(unit_type)
         self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
 
-    def sell(self, unit_type):
+    def sell(self, unit_type: UnitType):
+        # Don't need to remove aircraft from the inventory if we're canceling
+        # orders.
+        if self.deliveryEvent.units.get(unit_type, 0) <= 0:
+            global_inventory = self.game_model.game.aircraft_inventory
+            inventory = global_inventory.for_control_point(self.cp)
+            try:
+                inventory.remove_aircraft(unit_type, 1)
+            except ValueError:
+                QMessageBox.critical(
+                    self, "Could not sell aircraft",
+                    f"Attempted to sell one {unit_type.id} at {self.cp.name} "
+                    "but none are available. Are all aircraft currently "
+                    "assigned to a mission?", QMessageBox.Ok)
+                return
         super().sell(unit_type)
         self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
 

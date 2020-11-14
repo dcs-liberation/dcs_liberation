@@ -1,0 +1,34 @@
+{
+  "country": "USA",
+  "name": "USA 1960",
+  "authors": "Khopa",
+  "description": "<p>US army in the 60s, pre-Vietnam war.</p>",
+  "aircrafts": [
+    "F_86F_Sabre",
+    "P_51D",
+    "P_51D_30_NA",
+    "B_52H",
+    "UH_1H"
+  ],
+  "frontline_units": [
+    "MBT_M60A3_Patton",
+    "APC_M113"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4"
+  ],
+  "shorads": [
+    "EarlyColdWarFlakGenerator",
+    "VulcanGenerator"
+  ],
+  "sams": [
+    "VulcanGenerator"
+  ],
+  "requirements": {},
+  "doctrine": "coldwar"
+}

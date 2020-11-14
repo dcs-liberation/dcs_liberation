@@ -12,6 +12,7 @@ from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
 
+
 SHIP_MAP = {
     "SchnellbootGroupGenerator": SchnellbootGroupGenerator,
     "WW2LSTGroupGenerator": WW2LSTGroupGenerator,
@@ -28,26 +29,24 @@ SHIP_MAP = {
 }
 
 
-def generate_ship_group(game, ground_object, faction:str):
+def generate_ship_group(game, ground_object, faction_name: str):
     """
     This generate a ship group
     :return: Nothing, but put the group reference inside the ground object
     """
-    faction = db.FACTIONS[faction]
-    if "boat" in faction.keys():
-        generators = faction["boat"]
-        if len(generators) > 0:
-            gen = random.choice(generators)
-            if gen in SHIP_MAP.keys():
-                generator = SHIP_MAP[gen](game, ground_object, faction)
-                generator.generate()
-                return generator.get_generated_group()
-            else:
-                logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
+    faction = db.FACTIONS[faction_name]
+    if len(faction.navy_generators) > 0:
+        gen = random.choice(faction.navy_generators)
+        if gen in SHIP_MAP.keys():
+            generator = SHIP_MAP[gen](game, ground_object, faction)
+            generator.generate()
+            return generator.get_generated_group()
+        else:
+            logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
     return None
 
 
-def generate_carrier_group(faction:str, game, ground_object):
+def generate_carrier_group(faction: str, game, ground_object):
     """
     This generate a carrier group
     :param parentCp: The parent control point
@@ -60,7 +59,7 @@ def generate_carrier_group(faction:str, game, ground_object):
     return generator.get_generated_group()
 
 
-def generate_lha_group(faction:str, game, ground_object):
+def generate_lha_group(faction: str, game, ground_object):
     """
     This generate a lha carrier group
     :param parentCp: The parent control point

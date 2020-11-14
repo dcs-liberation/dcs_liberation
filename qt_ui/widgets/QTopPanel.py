@@ -1,27 +1,43 @@
-from PySide2.QtWidgets import QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QGroupBox
+from typing import List, Optional
 
-from game import Game
-from qt_ui.widgets.QBudgetBox import QBudgetBox
-from qt_ui.widgets.QFactionsInfos import QFactionsInfos
-from qt_ui.windows.finances.QFinancesMenu import QFinancesMenu
-from qt_ui.windows.stats.QStatsWindow import QStatsWindow
-from qt_ui.widgets.QTurnCounter import QTurnCounter
+from PySide2.QtWidgets import (
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QMessageBox,
+    QPushButton,
+)
 
 import qt_ui.uiconstants as CONST
+from game import Game
+from game.event import CAP, CAS, FrontlineAttackEvent
+from gen.ato import Package
+from gen.flights.traveltime import TotEstimator
+from qt_ui.models import GameModel
+from qt_ui.widgets.QBudgetBox import QBudgetBox
+from qt_ui.widgets.QFactionsInfos import QFactionsInfos
+from qt_ui.widgets.QTurnCounter import QTurnCounter
+from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from qt_ui.windows.mission.QMissionPlanning import QMissionPlanning
+from qt_ui.windows.QWaitingForMissionResultWindow import \
+    QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QTopPanel(QFrame):
 
-    def __init__(self, game: Game):
+    def __init__(self, game_model: GameModel):
         super(QTopPanel, self).__init__()
-        self.game = game
+        self.game_model = game_model
         self.setMaximumHeight(70)
         self.init_ui()
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().budgetupdated.connect(self.budget_update)
+
+    @property
+    def game(self) -> Optional[Game]:
+        return self.game_model.game
 
     def init_ui(self):
 
@@ -33,10 +49,10 @@ class QTopPanel(QFrame):
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
 
-        self.proceedButton = QPushButton("Mission Planning")
+        self.proceedButton = QPushButton("Take off")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
-        self.proceedButton.setProperty("style", "btn-success")
-        self.proceedButton.clicked.connect(self.proceed)
+        self.proceedButton.setProperty("style", "start-button")
+        self.proceedButton.clicked.connect(self.launch_mission)
         if self.game and self.game.turn == 0:
             self.proceedButton.setEnabled(False)
 
@@ -60,6 +76,8 @@ class QTopPanel(QFrame):
 
         self.proceedBox = QGroupBox("Proceed")
         self.proceedBoxLayout = QHBoxLayout()
+        self.proceedBoxLayout.addLayout(
+            MaxPlayerCount(self.game_model.ato_model))
         self.proceedBoxLayout.addWidget(self.passTurnButton)
         self.proceedBoxLayout.addWidget(self.proceedButton)
         self.proceedBox.setLayout(self.proceedBoxLayout)
@@ -75,17 +93,18 @@ class QTopPanel(QFrame):
         self.layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.layout)
 
-    def setGame(self, game:Game):
-        self.game = game
-        if game is not None:
-            self.turnCounter.setCurrentTurn(self.game.turn, self.game.current_day)
-            self.budgetBox.setGame(self.game)
-            self.factionsInfos.setGame(self.game)
+    def setGame(self, game: Optional[Game]):
+        if game is None:
+            return
 
-            if self.game and self.game.turn == 0:
-                self.proceedButton.setEnabled(False)
-            else:
-                self.proceedButton.setEnabled(True)
+        self.turnCounter.setCurrentTurn(game.turn, game.conditions)
+        self.budgetBox.setGame(game)
+        self.factionsInfos.setGame(game)
+
+        if game and game.turn == 0:
+            self.proceedButton.setEnabled(False)
+        else:
+            self.proceedButton.setEnabled(True)
 
     def openSettings(self):
         self.subwindow = QSettingsWindow(self.game)
@@ -100,9 +119,121 @@ class QTopPanel(QFrame):
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
 
-    def proceed(self):
-        self.subwindow = QMissionPlanning(self.game)
-        self.subwindow.show()
+    def negative_start_packages(self) -> List[Package]:
+        packages = []
+        for package in self.game_model.ato_model.ato.packages:
+            if not package.flights:
+                continue
+            estimator = TotEstimator(package)
+            for flight in package.flights:
+                if estimator.mission_start_time(flight).total_seconds() < 0:
+                    packages.append(package)
+                    break
+        return packages
+
+    @staticmethod
+    def fix_tots(packages: List[Package]) -> None:
+        for package in packages:
+            estimator = TotEstimator(package)
+            package.time_over_target = estimator.earliest_tot()
+
+    def ato_has_clients(self) -> bool:
+        for package in self.game.blue_ato.packages:
+            for flight in package.flights:
+                if flight.client_count > 0:
+                    return True
+        return False
+
+    def confirm_no_client_launch(self) -> bool:
+        result = QMessageBox.question(
+            self,
+            "Continue without client slots?",
+            ("No client slots have been created for players. Continuing will "
+             "allow the AI to perform the mission, but players will be unable "
+             "to participate.<br />"
+             "<br />"
+             "To add client slots for players, select a package from the "
+             "Packages panel on the left of the main window, and then a flight "
+             "from the Flights panel below the Packages panel. The edit button "
+             "below the Flights panel will allow you to edit the number of "
+             "client slots in the flight. Each client slot allows one player.<br />"
+             "<br />Click 'Yes' to continue with an AI only mission"
+             "<br />Click 'No' if you'd like to make more changes."),
+            QMessageBox.No,
+            QMessageBox.Yes
+        )
+        return result == QMessageBox.Yes
+
+    def confirm_negative_start_time(self,
+                                    negative_starts: List[Package]) -> bool:
+        formatted = '<br />'.join(
+            [f"{p.primary_task.name} {p.target.name}" for p in negative_starts]
+        )
+        mbox = QMessageBox(
+            QMessageBox.Question,
+            "Continue with past start times?",
+            ("Some flights in the following packages have start times set "
+             "earlier than mission start time:<br />"
+             "<br />"
+             f"{formatted}<br />"
+             "<br />"
+             "Flight start times are estimated based on the package TOT, so it "
+             "is possible that not all flights will be able to reach the "
+             "target area at their assigned times.<br />"
+             "<br />"
+             "You can either continue with the mission as planned, with the "
+             "misplanned flights potentially flying too fast and/or missing "
+             "their rendezvous; automatically fix negative TOTs; or cancel "
+             "mission start and fix the packages manually."),
+            parent=self
+        )
+        auto = mbox.addButton("Fix TOTs automatically", QMessageBox.ActionRole)
+        ignore = mbox.addButton("Continue without fixing",
+                                QMessageBox.DestructiveRole)
+        cancel = mbox.addButton(QMessageBox.Cancel)
+        mbox.setEscapeButton(cancel)
+        mbox.exec_()
+        clicked = mbox.clickedButton()
+        if clicked == auto:
+            self.fix_tots(negative_starts)
+            return True
+        elif clicked == ignore:
+            return True
+        return False
+
+    def launch_mission(self):
+        """Finishes planning and waits for mission completion."""
+        if not self.ato_has_clients() and not self.confirm_no_client_launch():
+            return
+
+        negative_starts = self.negative_start_packages()
+        if negative_starts:
+            if not self.confirm_negative_start_time(negative_starts):
+                return
+
+        # TODO: Refactor this nonsense.
+        game_event = None
+        for event in self.game.events:
+            if isinstance(event,
+                          FrontlineAttackEvent) and event.is_player_attacking:
+                game_event = event
+        if game_event is None:
+            game_event = FrontlineAttackEvent(
+                self.game,
+                self.game.theater.controlpoints[0],
+                self.game.theater.controlpoints[0],
+                self.game.theater.controlpoints[0].position,
+                self.game.player_name,
+                self.game.enemy_name)
+        game_event.is_awacs_enabled = True
+        game_event.ca_slots = 1
+        game_event.departure_cp = self.game.theater.controlpoints[0]
+        game_event.player_attacking({CAS: {}, CAP: {}})
+        game_event.depart_from = self.game.theater.controlpoints[0]
+
+        self.game.initiate_event(game_event)
+        waiting = QWaitingForMissionResultWindow(game_event, self.game)
+        waiting.show()
 
     def budget_update(self, game:Game):
         self.budgetBox.setGame(game)

@@ -1,14 +1,23 @@
+from __future__ import annotations
+
+from datetime import timedelta
 from enum import Enum
-from typing import List
+from typing import Dict, List, Optional, TYPE_CHECKING
+
+from dcs.mapping import Point
+from dcs.point import MovingPoint, PointAction
+from dcs.unittype import FlyingType
 
 from game import db
-from dcs.unittype import UnitType
-from dcs.point import MovingPoint, PointAction
-from theater.controlpoint import ControlPoint
+from theater.controlpoint import ControlPoint, MissionTarget
+
+if TYPE_CHECKING:
+    from gen.ato import Package
+    from gen.flights.flightplan import FlightPlan
 
 
 class FlightType(Enum):
-    CAP = 0
+    CAP = 0  # Do not use. Use BARCAP or TARCAP.
     TARCAP = 1
     BARCAP = 2
     CAS = 3
@@ -47,23 +56,26 @@ class FlightWaypointType(Enum):
     TARGET_GROUP_LOC = 13   # A target group approximate location
     TARGET_SHIP = 14        # A target ship known location
     CUSTOM = 15             # User waypoint (no specific behaviour)
-
-
-class PredefinedWaypointCategory(Enum):
-    NOT_PREDEFINED = 0
-    ALLY_CP = 1
-    ENEMY_CP = 2
-    FRONTLINE = 3
-    ENEMY_BUILDING = 4
-    ENEMY_UNIT = 5
-    ALLY_BUILDING = 6
-    ALLY_UNIT = 7
+    JOIN = 16
+    SPLIT = 17
+    LOITER = 18
+    INGRESS_ESCORT = 19
+    INGRESS_DEAD = 20
 
 
 class FlightWaypoint:
 
     def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
                  alt: int = 0) -> None:
+        """Creates a flight waypoint.
+
+        Args:
+            waypoint_type: The waypoint type.
+            x: X cooidinate of the waypoint.
+            y: Y coordinate of the waypoint.
+            alt: Altitude of the waypoint. By default this is AGL, but it can be
+            changed to MSL by setting alt_type to "RADIO".
+        """
         self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
@@ -71,20 +83,27 @@ class FlightWaypoint:
         self.alt_type = "BARO"
         self.name = ""
         self.description = ""
-        self.targets = []
-        self.targetGroup = None
+        self.targets: List[MissionTarget] = []
         self.obj_name = ""
         self.pretty_name = ""
-        self.category: PredefinedWaypointCategory = PredefinedWaypointCategory.NOT_PREDEFINED
         self.only_for_player = False
-        self.data = None
 
+        # These are set very late by the air conflict generator (part of mission
+        # generation). We do it late so that we don't need to propagate changes
+        # to waypoint times whenever the player alters the package TOT or the
+        # flight's offset in the UI.
+        self.tot: Optional[timedelta] = None
+        self.departure_time: Optional[timedelta] = None
+
+    @property
+    def position(self) -> Point:
+        return Point(self.x, self.y)
 
     @classmethod
     def from_pydcs(cls, point: MovingPoint,
                    from_cp: ControlPoint) -> "FlightWaypoint":
-        waypoint = FlightWaypoint(point.position.x, point.position.y,
-                                  point.alt)
+        waypoint = FlightWaypoint(FlightWaypointType.NAV, point.position.x,
+                                  point.position.y, point.alt)
         waypoint.alt_type = point.alt_type
         # Other actions exist... but none of them *should* be the first
         # waypoint for a flight.
@@ -108,43 +127,36 @@ class FlightWaypoint:
 
 
 class Flight:
-    unit_type: UnitType = None
-    from_cp = None
-    points: List[FlightWaypoint] = []
-    flight_type: FlightType = None
-    count: int = 0
-    client_count: int = 0
-    targets = []
-    use_custom_loadout = False
-    loadout = {}
-    preset_loadout_name = ""
-    start_type = "Runway"
-    group = False # Contains DCS Mission group data after mission has been generated
 
-    # How long before this flight should take off
-    scheduled_in = 0
-
-    def __init__(self, unit_type: UnitType, count: int, from_cp, flight_type: FlightType):
+    def __init__(self, package: Package, unit_type: FlyingType, count: int,
+                 from_cp: ControlPoint, flight_type: FlightType,
+                 start_type: str) -> None:
+        self.package = package
         self.unit_type = unit_type
         self.count = count
         self.from_cp = from_cp
         self.flight_type = flight_type
-        self.points = []
-        self.targets = []
-        self.loadout = {}
-        self.start_type = "Runway"
+        # TODO: Replace with FlightPlan.
+        self.targets: List[MissionTarget] = []
+        self.loadout: Dict[str, str] = {}
+        self.start_type = start_type
+        self.use_custom_loadout = False
+        self.client_count = 0
+
+        # Will be replaced with a more appropriate FlightPlan by
+        # FlightPlanBuilder, but an empty flight plan the flight begins with an
+        # empty flight plan.
+        from gen.flights.flightplan import CustomFlightPlan
+        self.flight_plan: FlightPlan = CustomFlightPlan(
+            package=package,
+            flight=self,
+            custom_waypoints=[]
+        )
+
+    @property
+    def points(self) -> List[FlightWaypoint]:
+        return self.flight_plan.waypoints[1:]
 
     def __repr__(self):
         return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
-               + " in " + str(self.scheduled_in) + " minutes (" + str(len(self.points)) + " wpt)"
-
-
-# Test
-if __name__ == '__main__':
-    from pydcs.dcs.planes import A_10C
-    from theater import ControlPoint, Point, List
-
-    from_cp = ControlPoint(0, "AA", Point(0, 0), None, [], 0, 0)
-    f = Flight(A_10C(), 4, from_cp, FlightType.CAS)
-    f.scheduled_in = 50
-    print(f)
+               + " (" + str(len(self.points)) + " wpt)"

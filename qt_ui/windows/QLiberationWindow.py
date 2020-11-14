@@ -1,23 +1,36 @@
 import logging
-import sys
+import traceback
 import webbrowser
+from typing import Optional
 
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QMainWindow, QAction, QMessageBox, QDesktopWidget, \
-    QSplitter, QFileDialog
+from PySide2.QtGui import QCloseEvent, QIcon
+from PySide2.QtWidgets import (
+    QAction,
+    QActionGroup, QDesktopWidget,
+    QFileDialog,
+    QMainWindow,
+    QMessageBox,
+    QSplitter,
+    QVBoxLayout,
+    QWidget,
+)
 
 import qt_ui.uiconstants as CONST
-from game import Game
+from game import Game, VERSION, persistency
+from qt_ui.dialogs import Dialog
+from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
+from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
+from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal, DebriefingSignal
+from qt_ui.windows.GameUpdateSignal import DebriefingSignal, GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
-from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
-from qt_ui.windows.preferences.QLiberationPreferencesWindow import QLiberationPreferencesWindow
-from userdata import persistency
+from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
+from qt_ui.windows.preferences.QLiberationPreferencesWindow import \
+    QLiberationPreferencesWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -25,11 +38,15 @@ class QLiberationWindow(QMainWindow):
     def __init__(self):
         super(QLiberationWindow, self).__init__()
 
-        self.info_panel = None
-        self.setGame(persistency.restore_game())
+        self.game: Optional[Game] = None
+        self.game_model = GameModel()
+        Dialog.set_game(self.game_model)
+        self.ato_panel = QAirTaskingOrderPanel(self.game_model)
+        self.info_panel = QInfoPanel(self.game)
+        self.liberation_map = QLiberationMap(self.game_model)
 
         self.setGeometry(300, 100, 270, 100)
-        self.setWindowTitle("DCS Liberation - v" + CONST.VERSION_STRING)
+        self.setWindowTitle(f"DCS Liberation - v{VERSION}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage('Ready')
 
@@ -38,26 +55,29 @@ class QLiberationWindow(QMainWindow):
         self.initMenuBar()
         self.initToolbar()
         self.connectSignals()
-        self.onGameGenerated(self.game)
 
         screen = QDesktopWidget().screenGeometry()
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
 
+        self.onGameGenerated(persistency.restore_game())
 
     def initUi(self):
-
-        self.liberation_map = QLiberationMap(self.game)
-        self.info_panel = QInfoPanel(self.game)
-
         hbox = QSplitter(Qt.Horizontal)
-        hbox.addWidget(self.info_panel)
-        hbox.addWidget(self.liberation_map)
-        hbox.setSizes([2, 8])
+        vbox = QSplitter(Qt.Vertical)
+        hbox.addWidget(self.ato_panel)
+        hbox.addWidget(vbox)
+        vbox.addWidget(self.liberation_map)
+        vbox.addWidget(self.info_panel)
+
+        # Will make the ATO sidebar as small as necessary to fit the content. In
+        # practice this means it is sized by the hints in the panel.
+        hbox.setSizes([1, 10000000])
+        vbox.setSizes([600, 100])
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        vbox.addWidget(QTopPanel(self.game))
+        vbox.addWidget(QTopPanel(self.game_model))
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
@@ -115,48 +135,23 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
-        #file_menu.addAction("Close Current Game", lambda: self.closeGame()) # Not working
-        file_menu.addAction("E&xit" , lambda: self.exit())
+        file_menu.addAction("E&xit", self.close)
 
         displayMenu = self.menu.addMenu("&Display")
 
-        tg_cp_visibility = QAction('&Control Point', displayMenu)
-        tg_cp_visibility.setCheckable(True)
-        tg_cp_visibility.setChecked(True)
-        tg_cp_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("cp", tg_cp_visibility.isChecked()))
-
-        tg_go_visibility = QAction('&Ground Objects', displayMenu)
-        tg_go_visibility.setCheckable(True)
-        tg_go_visibility.setChecked(True)
-        tg_go_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("go", tg_go_visibility.isChecked()))
-
-        tg_line_visibility = QAction('&Lines', displayMenu)
-        tg_line_visibility.setCheckable(True)
-        tg_line_visibility.setChecked(True)
-        tg_line_visibility.toggled.connect(
-            lambda: QLiberationMap.set_display_rule("lines", tg_line_visibility.isChecked()))
-
-        tg_event_visibility = QAction('&Events', displayMenu)
-        tg_event_visibility.setCheckable(True)
-        tg_event_visibility.setChecked(True)
-        tg_event_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("events", tg_event_visibility.isChecked()))
-
-        tg_sam_visibility = QAction('&SAM Range', displayMenu)
-        tg_sam_visibility.setCheckable(True)
-        tg_sam_visibility.setChecked(True)
-        tg_sam_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("sam", tg_sam_visibility.isChecked()))
-
-        tg_flight_path_visibility = QAction('&Flight Paths', displayMenu)
-        tg_flight_path_visibility.setCheckable(True)
-        tg_flight_path_visibility.setChecked(False)
-        tg_flight_path_visibility.toggled.connect(lambda: QLiberationMap.set_display_rule("flight_paths", tg_flight_path_visibility.isChecked()))
-
-        displayMenu.addAction(tg_go_visibility)
-        displayMenu.addAction(tg_cp_visibility)
-        displayMenu.addAction(tg_line_visibility)
-        displayMenu.addAction(tg_event_visibility)
-        displayMenu.addAction(tg_sam_visibility)
-        displayMenu.addAction(tg_flight_path_visibility)
+        last_was_group = True
+        for item in DisplayOptions.menu_items():
+            if isinstance(item, DisplayRule):
+                displayMenu.addAction(self.make_display_rule_action(item))
+                last_was_group = False
+            elif isinstance(item, DisplayGroup):
+                if not last_was_group:
+                    displayMenu.addSeparator()
+                group = QActionGroup(displayMenu)
+                for display_rule in item:
+                    displayMenu.addAction(
+                        self.make_display_rule_action(display_rule, group))
+                last_was_group = True
 
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction("&Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
@@ -169,6 +164,21 @@ class QLiberationWindow(QMainWindow):
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
 
+    @staticmethod
+    def make_display_rule_action(
+            display_rule, group: Optional[QActionGroup] = None) -> QAction:
+        def make_check_closure():
+            def closure():
+                display_rule.value = action.isChecked()
+
+            return closure
+
+        action = QAction(f"&{display_rule.menu_text}", group)
+        action.setCheckable(True)
+        action.setChecked(display_rule.value)
+        action.toggled.connect(make_check_closure())
+        return action
+
     def newGame(self):
         wizard = NewGameWizard(self)
         wizard.show()
@@ -180,8 +190,7 @@ class QLiberationWindow(QMainWindow):
                                                filter="*.liberation")
         if file is not None:
             game = persistency.load_game(file[0])
-            self.setGame(game)
-            GameUpdateSignal.get_instance().updateGame(self.game)
+            GameUpdateSignal.get_instance().updateGame(game)
 
     def saveGame(self):
         logging.info("Saving game")
@@ -203,20 +212,31 @@ class QLiberationWindow(QMainWindow):
         self.game = game
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-    def closeGame(self):
-        self.game = None
-        GameUpdateSignal.get_instance().updateGame(self.game)
-
-    def exit(self):
-        sys.exit(0)
-
-    def setGame(self, game: Game):
-        self.game = game
-        if self.info_panel:
-            self.info_panel.setGame(game)
+    def setGame(self, game: Optional[Game]):
+        try:
+            if game is not None:
+                game.on_load()
+            self.game = game
+            if self.info_panel is not None:
+                self.info_panel.setGame(game)
+            self.game_model.set(self.game)
+            if self.liberation_map is not None:
+                self.liberation_map.setGame(game)
+        except AttributeError:
+            logging.exception("Incompatible save game")
+            QMessageBox.critical(
+                self,
+                "Could not load save game",
+                "The save game you have loaded is incompatible with this "
+                "version of DCS Liberation.\n"
+                "\n"
+                f"{traceback.format_exc()}",
+                QMessageBox.Ok
+            )
+            GameUpdateSignal.get_instance().updateGame(None)
 
     def showAboutDialog(self):
-        text = "<h3>DCS Liberation " + CONST.VERSION_STRING + "</h3>" + \
+        text = "<h3>DCS Liberation " + VERSION + "</h3>" + \
                "<b>Source code :</b> https://github.com/khopa/dcs_liberation" + \
                "<h4>Authors</h4>" + \
                "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \
@@ -241,3 +261,14 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
         self.debriefing.show()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        result = QMessageBox.question(
+            self, "Quit Liberation?",
+            "Are you sure you want to quit? All unsaved progress will be lost.",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if result == QMessageBox.Yes:
+            super().closeEvent(event)
+        else:
+            event.ignore()

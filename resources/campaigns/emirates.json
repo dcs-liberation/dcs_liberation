@@ -1,0 +1,108 @@
+{
+  "name": "Persian Gulf - Emirates",
+  "theater": "Persian Gulf",
+  "authors": "Khopa",
+  "description": "<p>In this scenario, you can play an invasion of the Emirates and Oman, where your forces starts in Fujairah.</p><p><strong>Note:</strong> Fujairah airfield has very few slots for aircrafts, so it recommended to operate from carriers at the start of the campaign. Thus, a carrier-capable faction is recommended.</p>",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Fujairah Intl",
+      "radials": [
+        180,
+        225,
+        270,
+        315,
+        0
+      ],
+      "size": 1000,
+      "importance": 1,
+      "captured_invert": true
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -79770,
+      "y": 49430,
+      "captured_invert": true
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -61770,
+      "y": 69039,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Al Dhafra AB",
+      "size": 2000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Al Ain International Airport",
+      "size": 2000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Al Maktoum Intl",
+      "size": 2000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Al Minhad AB",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Sharjah Intl",
+      "size": 2000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Ras Al Khaimah",
+      "size": 1000,
+      "importance": 1
+    }
+  ],
+  "links": [
+    [
+      "Al Ain International Airport",
+      "Al Dhafra AB"
+    ],
+    [
+      "Al Dhafra AB",
+      "Al Maktoum Intl"
+    ],
+    [
+      "Al Ain International Airport",
+      "Fujairah Intl"
+    ],
+    [
+      "Al Ain International Airport",
+      "Al Maktoum Intl"
+    ],
+    [
+      "Al Maktoum Intl",
+      "Al Minhad AB"
+    ],
+    [
+      "Al Minhad AB",
+      "Sharjah Intl"
+    ],
+    [
+      "Ras Al Khaimah",
+      "Sharjah Intl"
+    ],
+    [
+      "Fujairah Intl",
+      "Sharjah Intl"
+    ]
+  ]
+}

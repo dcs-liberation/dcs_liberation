@@ -1,0 +1,185 @@
+{
+  "name": "Syria - Full Map",
+  "theater": "Syria",
+  "authors": "Khopa",
+  "description": "<p>Full map of Syria</p><p><strong>Note:</strong> This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Ramat David",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -151000,
+      "y": -106000,
+      "captured_invert": true
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -131000,
+      "y": -161000,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "King Hussein Air College",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Khalkhalah",
+      "size": 1000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Al-Dumayr",
+      "size": 1000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Al Qusayr",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Rene Mouawad",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Hama",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Bassel Al-Assad",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Palmyra",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Tabqa",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Jirah",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Aleppo",
+      "size": 1000,
+      "importance": 1.2
+    },
+    {
+      "type": "airbase",
+      "id": "Minakh",
+      "size": 1000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Hatay",
+      "size": 1000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Incirlik",
+      "size": 1000,
+      "importance": 1.4,
+      "captured_invert": true
+    }
+  ],
+  "links": [
+    [
+      "King Hussein Air College",
+      "Ramat David"
+    ],
+    [
+      "Khalkhalah",
+      "King Hussein Air College"
+    ],
+    [
+      "Al-Dumayr",
+      "Khalkhalah"
+    ],
+    [
+      "Al Qusayr",
+      "Al-Dumayr"
+    ],
+    [
+      "Al Qusayr",
+      "Hama"
+    ],
+    [
+      "Al Qusayr",
+      "Palmyra"
+    ],
+    [
+      "Al Qusayr",
+      "Rene Mouawad"
+    ],
+    [
+      "Bassel Al-Assad",
+      "Rene Mouawad"
+    ],
+    [
+      "Aleppo",
+      "Hama"
+    ],
+    [
+      "Bassel Al-Assad",
+      "Hama"
+    ],
+    [
+      "Bassel Al-Assad",
+      "Hatay"
+    ],
+    [
+      "Palmyra",
+      "Tabqa"
+    ],
+    [
+      "Jirah",
+      "Tabqa"
+    ],
+    [
+      "Aleppo",
+      "Jirah"
+    ],
+    [
+      "Aleppo",
+      "Minakh"
+    ],
+    [
+      "Hatay",
+      "Minakh"
+    ],
+    [
+      "Incirlik",
+      "Minakh"
+    ]
+  ]
+}

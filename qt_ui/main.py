@@ -1,5 +1,3 @@
-from userdata import logging_config
-
 import logging
 import os
 import sys
@@ -9,16 +7,24 @@ from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 
-from qt_ui import uiconstants
+from game import db, persistency, VERSION
+from qt_ui import (
+    liberation_install,
+    liberation_theme,
+    logging_config,
+    uiconstants,
+)
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
-from qt_ui.windows.preferences.QLiberationFirstStartWindow import QLiberationFirstStartWindow
-from userdata import liberation_install, persistency, liberation_theme
+from qt_ui.windows.preferences.QLiberationFirstStartWindow import \
+    QLiberationFirstStartWindow
 
 # Logging setup
-logging_config.init_logging(uiconstants.VERSION_STRING)
+logging_config.init_logging(VERSION)
 
 if __name__ == "__main__":
+    # Load eagerly to catch errors early.
+    db.FACTIONS.initialize()
 
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1" # Potential fix for 4K screens
     app = QApplication(sys.argv)

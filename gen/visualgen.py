@@ -1,18 +1,20 @@
-import typing
+from __future__ import annotations
+
 import random
-from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
+from dcs.mapping import Point
 from dcs.mission import Mission
-from dcs.statics import *
 from dcs.unit import Static
+from dcs.unittype import StaticType
 
-from theater import *
-from .conflictgen import *
-#from game.game import Game
-from game import db
+if TYPE_CHECKING:
+    from game import Game
+
+from .conflictgen import Conflict, FRONTLINE_LENGTH
 
 
-class MarkerSmoke(unittype.StaticType):
+class MarkerSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
@@ -20,7 +22,7 @@ class MarkerSmoke(unittype.StaticType):
     rate = 0.1
 
 
-class Smoke(unittype.StaticType):
+class Smoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
@@ -28,7 +30,7 @@ class Smoke(unittype.StaticType):
     rate = 1
 
 
-class BigSmoke(unittype.StaticType):
+class BigSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
@@ -36,7 +38,7 @@ class BigSmoke(unittype.StaticType):
     rate = 1
 
 
-class MassiveSmoke(unittype.StaticType):
+class MassiveSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
@@ -44,7 +46,7 @@ class MassiveSmoke(unittype.StaticType):
     rate = 1
 
 
-class Outpost(unittype.StaticType):
+class Outpost(StaticType):
     id = "outpost"
     name = "outpost"
     category = "Fortifications"
@@ -90,15 +92,15 @@ def turn_heading(heading, fac):
 
 
 class VisualGenerator:
-    game = None  # type: Game
-
-    def __init__(self, mission: Mission, conflict: Conflict, game):
+    def __init__(self, mission: Mission, conflict: Conflict, game: Game):
         self.mission = mission
         self.conflict = conflict
         self.game = game
 
     def _generate_frontline_smokes(self):
-        for from_cp, to_cp in self.game.theater.conflicts():
+        for front_line in self.game.theater.conflicts():
+            from_cp = front_line.control_point_a
+            to_cp = front_line.control_point_b
             if from_cp.is_global or to_cp.is_global:
                 continue
 

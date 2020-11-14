@@ -1,77 +1,173 @@
-import typing
-import enum
 from datetime import datetime
+from enum import Enum
+from typing import Dict, List, Optional, Tuple, Type, Union
 
-from dcs.countries import get_by_id, country_dict
-from dcs.vehicles import *
-from dcs.ships import *
-from dcs.planes import *
-from dcs.helicopters import *
+from dcs import Mission
+from dcs.countries import country_dict
+from dcs.country import Country
+from dcs.helicopters import (
+    AH_1W,
+    AH_64A,
+    AH_64D,
+    HelicopterType,
+    Ka_50,
+    Mi_24V,
+    Mi_28N,
+    Mi_8MT,
+    OH_58D,
+    SA342L,
+    SA342M,
+    SA342Minigun,
+    SA342Mistral,
+    UH_1H,
+    UH_60A,
+    helicopter_map,
+)
+from dcs.mapping import Point
+# mypy can't resolve these if they're wildcard imports for some reason.
+from dcs.planes import (
+    AJS37,
+    AV8BNA,
+    A_10A,
+    A_10C,
+    A_10C_2,
+    A_20G,
+    A_50,
+    An_26B,
+    An_30M,
+    B_17G,
+    B_1B,
+    B_52H,
+    Bf_109K_4,
+    C_101CC,
+    C_130,
+    E_3A,
+    FA_18C_hornet,
+    FW_190A8,
+    FW_190D9,
+    F_117A,
+    F_14B,
+    F_15C,
+    F_15E,
+    F_16A,
+    F_16C_50,
+    F_4E,
+    F_5E_3,
+    F_86F_Sabre,
+    F_A_18C,
+    IL_76MD,
+    IL_78M,
+    JF_17,
+    J_11A,
+    Ju_88A4,
+    KC130,
+    KC_135,
+    KJ_2000,
+    L_39C,
+    L_39ZA,
+    MQ_9_Reaper,
+    M_2000C,
+    MiG_15bis,
+    MiG_19P,
+    MiG_21Bis,
+    MiG_23MLD,
+    MiG_25PD,
+    MiG_27K,
+    MiG_29A,
+    MiG_29G,
+    MiG_29S,
+    MiG_31,
+    Mirage_2000_5,
+    P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
+    P_51D,
+    P_51D_30_NA,
+    PlaneType,
+    RQ_1A_Predator,
+    S_3B_Tanker,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+    Su_17M4,
+    Su_24M,
+    Su_24MR,
+    Su_25,
+    Su_25T,
+    Su_25TM,
+    Su_27,
+    Su_30,
+    Su_33,
+    Su_34,
+    Tornado_GR4,
+    Tornado_IDS,
+    Tu_160,
+    Tu_22M3,
+    Tu_95MS,
+    WingLoong_I,
+    Yak_40,
+    plane_map,
+)
+from dcs.ships import (
+    Armed_speedboat,
+    Bulk_cargo_ship_Yakushev,
+    CVN_71_Theodore_Roosevelt,
+    CVN_72_Abraham_Lincoln,
+    CVN_73_George_Washington,
+    CVN_74_John_C__Stennis,
+    CV_1143_5_Admiral_Kuznetsov,
+    CV_1143_5_Admiral_Kuznetsov_2017,
+    Dry_cargo_ship_Ivanov,
+    LHA_1_Tarawa,
+    Tanker_Elnya_160,
+    ship_map,
+)
+from dcs.task import (
+    AWACS,
+    AntishipStrike,
+    CAP,
+    CAS,
+    CargoTransportation,
+    Embarking,
+    Escort,
+    GroundAttack,
+    Intercept,
+    MainTask,
+    Nothing,
+    PinpointStrike,
+    Reconnaissance,
+    Refueling,
+    SEAD,
+    Task,
+    Transport,
+)
+from dcs.terrain.terrain import Airport
+from dcs.unit import Ship, Unit, Vehicle
+from dcs.unitgroup import ShipGroup, StaticGroup
+from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
+from dcs.vehicles import (
+    AirDefence,
+    Armor,
+    Artillery,
+    Carriage,
+    Infantry,
+    Unarmed,
+    vehicle_map,
+)
 
-from dcs.task import *
-from dcs.unit import *
-from dcs.unittype import *
-from dcs.unitgroup import *
-
-from game.factions.australia_2005 import Australia_2005
-from game.factions.bluefor_coldwar import BLUEFOR_COLDWAR
-from game.factions.bluefor_coldwar_a4 import BLUEFOR_COLDWAR_A4
-from game.factions.bluefor_coldwar_mods import BLUEFOR_COLDWAR_MODS
-from game.factions.canada_2005 import Canada_2005
-from game.factions.china_2010 import China_2010
-from game.factions.france_1995 import France_1995
-from game.factions.france_2005 import France_2005
-from game.factions.france_modded import France_2005_Modded
-from game.factions.germany_1944_easy import Germany_1944_Easy
-from game.factions.germany_1990 import Germany_1990
-from game.factions.insurgent import Insurgent
-from game.factions.insurgent_modded import Insurgent_modded
-from game.factions.iran_2015 import Iran_2015
-from game.factions.israel_1948 import Israel_1948
-from game.factions.israel_1973 import Israel_1973, Israel_1973_NO_WW2_UNITS, Israel_1982
-from game.factions.israel_2000 import Israel_2000
-from game.factions.italy_1990 import Italy_1990
-from game.factions.italy_1990_mb339 import Italy_1990_MB339
-from game.factions.japan_2005 import Japan_2005
-from game.factions.libya_2011 import Libya_2011
-from game.factions.netherlands_1990 import Netherlands_1990
-from game.factions.north_korea_2000 import NorthKorea_2000
-from game.factions.pakistan_2015 import Pakistan_2015
-from game.factions.private_miltary_companies import PMC_WESTERN_B, PMC_RUSSIAN, PMC_WESTERN_A
-from game.factions.russia_1975 import Russia_1975
-from game.factions.germany_1944 import Germany_1944
-from game.factions.india_2010 import India_2010
-from game.factions.russia_1955 import Russia_1955
-from game.factions.russia_1965 import Russia_1965
-from game.factions.russia_1990 import Russia_1990
-from game.factions.russia_2010 import Russia_2010
-from game.factions.spain_1990 import Spain_1990
-from game.factions.sweden_1990 import Sweden_1990
-from game.factions.syria import Syria_2011, Syria_1967, Syria_1967_WW2_Weapons, Syria_1973, Arab_Armies_1948, Syria_1982
-from game.factions.turkey_2005 import Turkey_2005
-from game.factions.uae_2005 import UAE_2005
-from game.factions.uk_1944 import UK_1944
-from game.factions.uk_1990 import UnitedKingdom_1990
-from game.factions.ukraine_2010 import Ukraine_2010
-from game.factions.us_aggressors import US_Aggressors
-from game.factions.usa_1944 import USA_1944, ALLIES_1944
-from game.factions.usa_1955 import USA_1955
-from game.factions.usa_1960 import USA_1960
-from game.factions.usa_1965 import USA_1965
-from game.factions.usa_1990 import USA_1990
-from game.factions.usa_2005 import USA_2005
-from game.factions.bluefor_modern import BLUEFOR_MODERN
-
+import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from game.factions.faction import Faction
 # PATCH pydcs data with MODS
+from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-import pydcs_extensions.frenchpack.frenchpack as frenchpack
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
+plane_map["Su-57"] = Su_57
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -148,6 +244,7 @@ PRICES = {
     J_11A: 26,
     JF_17: 20,
     Su_30: 24,
+    Su_57: 40,
 
     SpitfireLFMkIX: 14,
     SpitfireLFMkIXCW: 14,
@@ -212,6 +309,10 @@ PRICES = {
     # Bombers
     B_52H: 35,
     B_1B: 50,
+    F_117A: 100,
+    Tu_160: 50,
+    Tu_22M3: 40,
+    Tu_95MS: 35,
 
     # special
     IL_76MD: 30,
@@ -303,24 +404,27 @@ PRICES = {
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G:24,
     Armor.MT_Pz_Kpfw_IV_Ausf_H:16,
     Armor.HT_Pz_Kpfw_VI_Tiger_I:24,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II:26,
+    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II:26,
     Armor.TD_Jagdpanther_G1: 18,
     Armor.TD_Jagdpanzer_IV: 11,
     Armor.Sd_Kfz_184_Elefant: 18,
     Armor.APC_Sd_Kfz_251:4,
-    Armor.IFV_Sd_Kfz_234_2_Puma:8,
+    Armor.AC_Sd_Kfz_234_2_Puma:8,
     Armor.MT_M4_Sherman:12,
     Armor.MT_M4A4_Sherman_Firefly:16,
     Armor.CT_Cromwell_IV:12,
     Armor.M30_Cargo_Carrier:2,
     Armor.APC_M2A1:4,
-    Armor.ST_Centaur_IV: 10,
+    Armor.CT_Centaur_IV: 10,
     Armor.HIT_Churchill_VII: 16,
     Armor.LAC_M8_Greyhound: 8,
     Armor.TD_M10_GMC: 14,
     Armor.StuG_III_Ausf__G: 12,
     Artillery.M12_GMC: 10,
     Artillery.Sturmpanzer_IV_Brummbär: 10,
+    Armor.Daimler_Armoured_Car: 8,
+    Armor.LT_Mk_VII_Tetrarch: 8,
+    Armor.M4_Tractor: 2,
 
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
@@ -399,12 +503,16 @@ PRICES = {
     AirDefence.AAA_Flak_38: 6,
     AirDefence.AAA_8_8cm_Flak_36: 8,
     AirDefence.AAA_8_8cm_Flak_37: 9,
-    AirDefence.AAA_Flak_Vierling_38:6,
+    AirDefence.AAA_Flak_Vierling_38: 5,
     AirDefence.AAA_Kdo_G_40: 8,
     AirDefence.Flak_Searchlight_37: 4,
     AirDefence.Maschinensatz_33: 10,
     AirDefence.AAA_8_8cm_Flak_41: 10,
+    AirDefence.EWR_FuMG_401_Freya_LZ: 25,
     AirDefence.AAA_Bofors_40mm: 8,
+    AirDefence.AAA_M1_37mm: 7,
+    AirDefence.AAA_M45_Quadmount: 4,
+    AirDefence.AA_gun_QF_3_7: 10,
 
     # FRENCH PACK MOD
     frenchpack.AMX_10RCR: 10,
@@ -459,6 +567,7 @@ UNIT_BY_TASK = {
         F_5E_3,
         Su_27,
         Su_33,
+        Su_57,
         MiG_19P,
         MiG_21Bis,
         MiG_23MLD,
@@ -491,49 +600,53 @@ UNIT_BY_TASK = {
         SA342Mistral
     ],
     CAS: [
-        F_15E,
-        F_86F_Sabre,
-        MiG_15bis,
-        L_39ZA,
-        AV8BNA,
+        AH_1W,
+        AH_64A,
+        AH_64D,
         AJS37,
+        AV8BNA,
         A_10A,
         A_10C,
         A_10C_2,
-        Su_17M4,
-        Su_25,
-        Su_25T,
-        Su_34,
-        Ka_50,
-        SA342M,
-        SA342L,
-        SA342Minigun,
-        Su_24M,
-        Su_24MR,
-        AH_64A,
-        AH_64D,
-        OH_58D,
-        B_52H,
-        B_1B,
-        Tornado_IDS,
-        Tornado_GR4,
-        UH_1H,
-        Mi_8MT,
-        Mi_28N,
-        Mi_24V,
-        MiG_27K,
         A_20G,
+        B_17G,
+        B_1B,
+        B_52H,
+        F_117A,
+        F_15E,
+        F_86F_Sabre,
+        Ju_88A4,
+        Ka_50,
+        L_39ZA,
+        MB_339PAN,
+        MQ_9_Reaper,
+        MiG_15bis,
+        MiG_27K,
+        Mi_24V,
+        Mi_28N,
+        Mi_8MT,
+        OH_58D,
         P_47D_30,
         P_47D_30bl1,
         P_47D_40,
-        Ju_88A4,
-        B_17G,
-        MB_339PAN,
-        Rafale_A_S,
-        WingLoong_I,
-        MQ_9_Reaper,
         RQ_1A_Predator,
-        AH_1W
+        Rafale_A_S,
+        SA342L,
+        SA342M,
+        SA342Minigun,
+        Su_17M4,
+        Su_24M,
+        Su_24MR,
+        Su_25,
+        Su_25T,
+        Su_34,
+        Tornado_GR4,
+        Tornado_IDS,
+        Tu_160,
+        Tu_22M3,
+        Tu_95MS,
+        UH_1H,
+        WingLoong_I,
     ],
     Transport: [
         IL_76MD,
@@ -639,13 +752,13 @@ UNIT_BY_TASK = {
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
         Armor.MT_Pz_Kpfw_IV_Ausf_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
-        Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+        Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
         Armor.APC_Sd_Kfz_251,
         Armor.APC_Sd_Kfz_251,
         Armor.APC_Sd_Kfz_251,
         Armor.APC_Sd_Kfz_251,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
+        Armor.AC_Sd_Kfz_234_2_Puma,
+        Armor.AC_Sd_Kfz_234_2_Puma,
         Armor.MT_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.CT_Cromwell_IV,
@@ -658,12 +771,12 @@ UNIT_BY_TASK = {
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
         Armor.MT_Pz_Kpfw_IV_Ausf_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
-        Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+        Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
         Armor.TD_Jagdpanther_G1,
         Armor.TD_Jagdpanzer_IV,
         Armor.Sd_Kfz_184_Elefant,
         Armor.APC_Sd_Kfz_251,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
+        Armor.AC_Sd_Kfz_234_2_Puma,
         Armor.MT_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.CT_Cromwell_IV,
@@ -672,8 +785,8 @@ UNIT_BY_TASK = {
         Armor.M30_Cargo_Carrier,
         Armor.APC_M2A1,
         Armor.APC_M2A1,
-        Armor.ST_Centaur_IV,
-        Armor.ST_Centaur_IV,
+        Armor.CT_Centaur_IV,
+        Armor.CT_Centaur_IV,
         Armor.HIT_Churchill_VII,
         Armor.LAC_M8_Greyhound,
         Armor.LAC_M8_Greyhound,
@@ -793,13 +906,13 @@ SAM_CONVERT = {
 """
 Units that will always be spawned in the air
 """
-TAKEOFF_BAN = [
+TAKEOFF_BAN: List[Type[FlyingType]] = [
 ]
 
 """
 Units that will be always spawned in the air if launched from the carrier
 """
-CARRIER_TAKEOFF_BAN = [
+CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
    Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
 ]
 
@@ -807,98 +920,7 @@ CARRIER_TAKEOFF_BAN = [
 Units separated by country. 
 country : DCS Country name
 """
-FACTIONS = {
-
-    "Bluefor Modern": BLUEFOR_MODERN,
-    "Bluefor Cold War 1970s": BLUEFOR_COLDWAR,
-    "Bluefor Cold War (with A-4)": BLUEFOR_COLDWAR_A4,
-    "Bluefor Cold War (with A-4 and MB339)": BLUEFOR_COLDWAR_MODS,
-
-    "USA 1955 (WW2 Pack)": USA_1955,
-    "USA 1960": USA_1960,
-    "USA 1965": USA_1965,
-    "USA 1990": USA_1990,
-    "USA 2005": USA_2005,
-    "USA Aggressors 2005": US_Aggressors,
-
-    "Russia 1955": Russia_1955,
-    "Russia 1965": Russia_1965,
-    "Russia 1975": Russia_1975,
-    "Russia 1990": Russia_1990,
-    "Russia 2010": Russia_2010,
-
-    "France 1995": France_1995,
-    "France 2005": France_2005,
-    "France 2005 (Modded)": France_2005_Modded,
-
-    "Germany 1990": Germany_1990,
-
-    "Netherlands 1990": Netherlands_1990,
-
-    "United Kingdom 1990": UnitedKingdom_1990,
-
-    "Spain 1990": Spain_1990,
-
-    "Italy 1990": Italy_1990,
-    "Italy 1990 (With MB339)": Italy_1990_MB339,
-
-    "Israel 2000": Israel_2000,
-    "Israel 1982": Israel_1982,
-    "Israel 1973 (WW2 Pack)": Israel_1973,
-    "Israel 1973": Israel_1973_NO_WW2_UNITS,
-    "Israel 1948": Israel_1948,
-
-    "Arab Armies 1982": Syria_1982,
-    "Arab Armies 1973": Syria_1973,
-    "Arab Armies 1967 (WW2 Pack)": Syria_1967_WW2_Weapons,
-    "Arab Armies 1967": Syria_1967,
-    "Arab League 1948": Arab_Armies_1948,
-
-    "China 2010": China_2010,
-
-    "Sweden 1990": Sweden_1990,
-
-    "Australia 2005": Australia_2005,
-
-    "Canada 2005": Canada_2005,
-
-    "Japan 2005": Japan_2005,
-
-    "Turkey 2005": Turkey_2005,
-
-    "United Arab Emirates 2005": UAE_2005,
-
-    "Ukraine 2010": Ukraine_2010,
-
-    "India 2010": India_2010,
-
-    "Libya 2011": Libya_2011,
-
-    "Syria 2011": Syria_2011,
-
-
-    "Pakistan 2015": Pakistan_2015,
-
-    "Iran 2015": Iran_2015,
-
-    "North Korea 2000": NorthKorea_2000,
-
-    "Insurgent": Insurgent,
-    "Insurgent (Modded)": Insurgent_modded,
-
-    "PMC (American)": PMC_WESTERN_A,
-    "PMC (American) - MB339": PMC_WESTERN_B,
-    "PMC (Russian)": PMC_RUSSIAN,
-
-    "Allies 1944 (WW2 Pack)": USA_1944,
-    "USA 1944 (WW2 Pack)": ALLIES_1944,
-    "UK 1944 (WW2 Pack)": UK_1944,
-
-    "Germany 1944 (WW2 Pack)": Germany_1944,
-    "Germany 1944 Easy (WW2 Pack)": Germany_1944_Easy,
-
-}
-
+FACTIONS = FactionLoader()
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
@@ -934,11 +956,16 @@ COMMON_OVERRIDE = {
     PinpointStrike: "STRIKE",
     SEAD: "SEAD",
     AntishipStrike: "ANTISHIP",
-    GroundAttack: "STRIKE"
+    GroundAttack: "STRIKE",
+    Escort: "CAP",
 }
 
-PLANE_PAYLOAD_OVERRIDES = {
+PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
 
+    B_1B: COMMON_OVERRIDE,
+    B_52H: COMMON_OVERRIDE,
+    F_117A: COMMON_OVERRIDE,
+    F_15E: COMMON_OVERRIDE,
     FA_18C_hornet: {
         CAP: "CAP HEAVY",
         Intercept: "CAP HEAVY",
@@ -946,7 +973,8 @@ PLANE_PAYLOAD_OVERRIDES = {
         PinpointStrike: "STRIKE",
         SEAD: "SEAD",
         AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE"
+        GroundAttack: "STRIKE",
+        Escort: "CAP HEAVY",
     },
     F_A_18C: {
         CAP: "CAP HEAVY",
@@ -955,8 +983,14 @@ PLANE_PAYLOAD_OVERRIDES = {
         PinpointStrike: "STRIKE",
         SEAD: "SEAD",
         AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE"
+        GroundAttack: "STRIKE",
+        Escort: "CAP HEAVY",
     },
+    Tu_160: {
+        PinpointStrike: "Kh-65*12",
+    },
+    Tu_22M3: COMMON_OVERRIDE,
+    Tu_95MS: COMMON_OVERRIDE,
     A_10A: COMMON_OVERRIDE,
     A_10C: COMMON_OVERRIDE,
     A_10C_2: COMMON_OVERRIDE,
@@ -965,7 +999,6 @@ PLANE_PAYLOAD_OVERRIDES = {
     F_5E_3: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
-    F_15E: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
     M_2000C: COMMON_OVERRIDE,
@@ -983,6 +1016,7 @@ PLANE_PAYLOAD_OVERRIDES = {
     Su_24M:COMMON_OVERRIDE,
     Su_30: COMMON_OVERRIDE,
     Su_34: COMMON_OVERRIDE,
+    Su_57: COMMON_OVERRIDE,
     MiG_23MLD: COMMON_OVERRIDE,
     MiG_27K: COMMON_OVERRIDE,
     Tornado_GR4: COMMON_OVERRIDE,
@@ -1099,6 +1133,7 @@ CARRIER_CAPABLE = [
     AV8BNA,
     Su_33,
     A_4E_C,
+    Rafale_M,
 
     UH_1H,
     Mi_8MT,
@@ -1134,17 +1169,17 @@ LHA_CAPABLE = [
 ---------- END OF CONFIGURATION SECTION
 """
 
-UnitsDict = typing.Dict[UnitType, int]
-PlaneDict = typing.Dict[FlyingType, int]
-HeliDict = typing.Dict[HelicopterType, int]
-ArmorDict = typing.Dict[VehicleType, int]
-ShipDict = typing.Dict[ShipType, int]
-AirDefenseDict = typing.Dict[AirDefence, int]
+UnitsDict = Dict[UnitType, int]
+PlaneDict = Dict[FlyingType, int]
+HeliDict = Dict[HelicopterType, int]
+ArmorDict = Dict[VehicleType, int]
+ShipDict = Dict[ShipType, int]
+AirDefenseDict = Dict[AirDefence, int]
 
-AssignedUnitsDict = typing.Dict[typing.Type[UnitType], typing.Tuple[int, int]]
-TaskForceDict = typing.Dict[typing.Type[Task], AssignedUnitsDict]
+AssignedUnitsDict = Dict[Type[UnitType], Tuple[int, int]]
+TaskForceDict = Dict[Type[MainTask], AssignedUnitsDict]
 
-StartingPosition = typing.Optional[typing.Union[ShipGroup, StaticGroup, Airport, Point]]
+StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
 def upgrade_to_supercarrier(unit, name: str):
@@ -1162,7 +1197,8 @@ def upgrade_to_supercarrier(unit, name: str):
     else:
         return unit
 
-def unit_task(unit: UnitType) -> Task:
+
+def unit_task(unit: UnitType) -> Optional[Task]:
     for task, units in UNIT_BY_TASK.items():
         if unit in units:
             return task
@@ -1173,10 +1209,12 @@ def unit_task(unit: UnitType) -> Task:
     print(unit.name + " cause issue")
     return None
 
-def find_unittype(for_task: Task, country_name: str) -> typing.List[UnitType]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name]["units"]]
 
-def find_infantry(country_name: str) -> typing.List[UnitType]:
+def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
+    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
+
+
+def find_infantry(country_name: str) -> List[UnitType]:
     inf = [
         Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
         Infantry.Soldier_RPG,
@@ -1191,15 +1229,18 @@ def find_infantry(country_name: str) -> typing.List[UnitType]:
         Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
         Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
     ]
-    return [x for x in inf if x in FACTIONS[country_name]["units"]]
+    return [x for x in inf if x in FACTIONS[country_name].infantry_units]
+
 
 def unit_type_name(unit_type) -> str:
     return unit_type.id and unit_type.id or unit_type.name
 
+
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
-def unit_type_from_name(name: str) -> UnitType:
+
+def unit_type_from_name(name: str) -> Optional[UnitType]:
     if name in vehicle_map:
         return vehicle_map[name]
     elif name in plane_map:
@@ -1232,7 +1273,7 @@ def task_name(task) -> str:
         return task.name
 
 
-def choose_units(for_task: Task, factor: float, count: int, country: str) -> typing.Collection[UnitType]:
+def choose_units(for_task: Task, factor: float, count: int, country: str) -> List[UnitType]:
     suitable_unittypes = find_unittype(for_task, country)
     suitable_unittypes = [x for x in suitable_unittypes if x not in helicopter_map.values()]
     suitable_unittypes.sort(key=lambda x: PRICES[x])
@@ -1258,7 +1299,7 @@ def unitdict_merge(a: UnitsDict, b: UnitsDict) -> UnitsDict:
 
 
 def unitdict_split(unit_dict: UnitsDict, count: int):
-    buffer_dict = {}
+    buffer_dict: Dict[UnitType, int] = {}
     for unit_type, unit_count in unit_dict.items():
         for _ in range(unit_count):
             unitdict_append(buffer_dict, unit_type, 1)
@@ -1281,7 +1322,7 @@ def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict
         return {}
 
 
-def assigned_units_split(fd: AssignedUnitsDict) -> typing.Tuple[PlaneDict, PlaneDict]:
+def assigned_units_split(fd: AssignedUnitsDict) -> Tuple[PlaneDict, PlaneDict]:
     return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
 
 
@@ -1290,7 +1331,7 @@ def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
 
 
 def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
-    buffer_dict = {}
+    buffer_dict: Dict[Type[UnitType], Tuple[int, int]] = {}
     for unit_type, (unit_count, client_count) in dict.items():
         for _ in range(unit_count):
             new_count, new_client_count = buffer_dict.get(unit_type, (0, 0))
@@ -1338,6 +1379,7 @@ _validate_db()
 class DefaultLiveries:
     class Default(Enum):
         af_standard = ""
+
 
 OH_58D.Liveries = DefaultLiveries
 F_16C_50.Liveries = DefaultLiveries

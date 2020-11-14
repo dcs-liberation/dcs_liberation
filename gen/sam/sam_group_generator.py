@@ -1,13 +1,31 @@
 import random
-from typing import List
+from typing import List, Optional, Type
 
-from dcs.unittype import UnitType
 from dcs.vehicles import AirDefence
+from dcs.unitgroup import VehicleGroup
 
-from game import db
+from game import Game, db
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
+from gen.sam.aaa_flak18 import Flak18Generator
+from gen.sam.aaa_ww2_ally_flak import AllyWW2FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
+from gen.sam.cold_war_flak import EarlyColdWarFlakGenerator, ColdWarFlakGenerator
+
+
+from gen.sam.ewrs import (
+    BigBirdGenerator,
+    BoxSpringGenerator,
+    DogEarGenerator,
+    FlatFaceGenerator,
+    HawkEwrGenerator,
+    PatriotEwrGenerator,
+    RolandEwrGenerator,
+    SnowDriftGenerator,
+    StraightFlushGenerator,
+    TallRackGenerator,
+)
+from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
@@ -32,39 +50,43 @@ from gen.sam.sam_zsu23 import ZSU23Generator
 from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
+from gen.sam.freya_ewr import FreyaGenerator
+from theater import TheaterGroundObject
+from theater.theatergroundobject import SamGroundObject
 
 SAM_MAP = {
-    AirDefence.SAM_Hawk_PCP: HawkGenerator,
-    AirDefence.AAA_ZU_23_Emplacement: ZU23Generator,
-    AirDefence.AAA_ZU_23_Closed: ZU23Generator,
-    AirDefence.AAA_ZU_23_on_Ural_375: ZU23UralGenerator,
-    AirDefence.AAA_ZU_23_Insurgent_on_Ural_375: ZU23UralInsurgentGenerator,
-    AirDefence.AAA_ZU_23_Insurgent_Closed: ZU23InsurgentGenerator,
-    AirDefence.AAA_ZU_23_Insurgent: ZU23InsurgentGenerator,
-    AirDefence.SPAAA_ZSU_23_4_Shilka: ZSU23Generator,
-    AirDefence.AAA_Vulcan_M163: VulcanGenerator,
-    AirDefence.SAM_Linebacker_M6: LinebackerGenerator,
-    AirDefence.Rapier_FSA_Launcher: RapierGenerator,
-    AirDefence.SAM_Avenger_M1097: AvengerGenerator,
-    AirDefence.SPAAA_Gepard: GepardGenerator,
-    AirDefence.SAM_Roland_ADS: RolandGenerator,
-    AirDefence.SAM_Patriot_LN_M901: PatriotGenerator,
-    AirDefence.SAM_Patriot_EPP_III: PatriotGenerator,
-    AirDefence.SAM_Chaparral_M48: ChaparralGenerator,
-    AirDefence.AAA_Bofors_40mm: BoforsGenerator,
-    AirDefence.AAA_8_8cm_Flak_36: FlakGenerator,
-    AirDefence.SAM_SA_2_LN_SM_90: SA2Generator,
-    AirDefence.SAM_SA_3_S_125_LN_5P73: SA3Generator,
-    AirDefence.SAM_SA_6_Kub_LN_2P25: SA6Generator,
-    AirDefence.SAM_SA_8_Osa_9A33: SA8Generator,
-    AirDefence.SAM_SA_9_Strela_1_9P31: SA9Generator,
-    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: SA10Generator,
-    AirDefence.SAM_SA_10_S_300PS_CP_54K6: SA10Generator,
-    AirDefence.SAM_SA_11_Buk_LN_9A310M1: SA11Generator,
-    AirDefence.SAM_SA_13_Strela_10M3_9A35M3: SA13Generator,
-    AirDefence.SAM_SA_15_Tor_9A331: SA15Generator,
-    AirDefence.SAM_SA_19_Tunguska_2S6: SA19Generator,
-    AirDefence.HQ_7_Self_Propelled_LN: HQ7Generator
+    "HawkGenerator": HawkGenerator,
+    "ZU23Generator": ZU23Generator,
+    "ZU23UralGenerator": ZU23UralGenerator,
+    "ZU23UralInsurgentGenerator": ZU23UralInsurgentGenerator,
+    "ZU23InsurgentGenerator": ZU23InsurgentGenerator,
+    "ZSU23Generator": ZSU23Generator,
+    "VulcanGenerator": VulcanGenerator,
+    "LinebackerGenerator": LinebackerGenerator,
+    "RapierGenerator": RapierGenerator,
+    "AvengerGenerator": AvengerGenerator,
+    "GepardGenerator": GepardGenerator,
+    "RolandGenerator": RolandGenerator,
+    "PatriotGenerator": PatriotGenerator,
+    "ChaparralGenerator": ChaparralGenerator,
+    "BoforsGenerator": BoforsGenerator,
+    "FlakGenerator": FlakGenerator,
+    "SA2Generator": SA2Generator,
+    "SA3Generator": SA3Generator,
+    "SA6Generator": SA6Generator,
+    "SA8Generator": SA8Generator,
+    "SA9Generator": SA9Generator,
+    "SA10Generator": SA10Generator,
+    "SA11Generator": SA11Generator,
+    "SA13Generator": SA13Generator,
+    "SA15Generator": SA15Generator,
+    "SA19Generator": SA19Generator,
+    "HQ7Generator": HQ7Generator,
+    "Flak18Generator": Flak18Generator,
+    "ColdWarFlakGenerator": ColdWarFlakGenerator,
+    "EarlyColdWarFlakGenerator": EarlyColdWarFlakGenerator,
+    "FreyaGenerator": FreyaGenerator,
+    "AllyWW2FlakGenerator": AllyWW2FlakGenerator
 }
 
 SAM_PRICES = {
@@ -101,53 +123,80 @@ SAM_PRICES = {
     AirDefence.HQ_7_Self_Propelled_LN: 35
 }
 
+EWR_MAP = {
+    "BoxSpringGenerator": BoxSpringGenerator,
+    "TallRackGenerator": TallRackGenerator,
+    "DogEarGenerator": DogEarGenerator,
+    "RolandEwrGenerator": RolandEwrGenerator,
+    "FlatFaceGenerator": FlatFaceGenerator,
+    "PatriotEwrGenerator": PatriotEwrGenerator,
+    "BigBirdGenerator": BigBirdGenerator,
+    "SnowDriftGenerator": SnowDriftGenerator,
+    "StraightFlushGenerator": StraightFlushGenerator,
+    "HawkEwrGenerator": HawkEwrGenerator,
+}
 
-def get_faction_possible_sams_units(faction: str) -> List[UnitType]:
-    """
-    Return the list
-    :param faction: Faction to search units for
-    """
-    return [u for u in db.FACTIONS[faction]["units"] if u in AirDefence.__dict__.values()]
 
-
-def get_faction_possible_sams_generator(faction: str) -> List[UnitType]:
+def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerator]]:
     """
     Return the list of possible SAM generator for the given faction
-    :param faction: Faction to search units for
+    :param faction: Faction name to search units for
     """
-    return [SAM_MAP[u] for u in get_faction_possible_sams_units(faction)]
+    return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP]
 
 
-def generate_anti_air_group(game, parent_cp, ground_object, faction:str):
+def get_faction_possible_ewrs_generator(faction: str) -> List[Type[GroupGenerator]]:
+    """
+    Return the list of possible SAM generator for the given faction
+    :param faction: Faction name to search units for
+    """
+    return [EWR_MAP[s] for s in db.FACTIONS[faction].ewrs if s in EWR_MAP]
+
+
+def generate_anti_air_group(game: Game, ground_object: TheaterGroundObject,
+                            faction: str) -> Optional[VehicleGroup]:
     """
     This generate a SAM group
-    :param parentCp: The parent control point
-    :param ground_object: The ground object which will own the sam group
-    :param country: Owner country
-    :return: Nothing, but put the group reference inside the ground object
+    :param game: The Game.
+    :param ground_object: The ground object which will own the sam group.
+    :param faction: Owner faction.
+    :return: The generated group, or None if one could not be generated.
     """
-    possible_sams = get_faction_possible_sams_units(faction)
-    if len(possible_sams) > 0:
-        sam = random.choice(possible_sams)
-        generator = SAM_MAP[sam](game, ground_object)
+    possible_sams_generators = get_faction_possible_sams_generator(faction)
+    if len(possible_sams_generators) > 0:
+        sam_generator_class = random.choice(possible_sams_generators)
+        generator = sam_generator_class(game, ground_object)
         generator.generate()
         return generator.get_generated_group()
     return None
 
 
-def generate_shorad_group(game, parent_cp, ground_object, faction:str):
-    if("shorad") in db.FACTIONS[faction].keys():
-        shorad = db.FACTIONS[faction]["shorad"]
-        sam = random.choice(shorad)
+def generate_ewr_group(game: Game, ground_object: TheaterGroundObject,
+                       faction: str) -> Optional[VehicleGroup]:
+    """Generates an early warning radar group.
+
+    :param game: The Game.
+    :param ground_object: The ground object which will own the EWR group.
+    :param faction: Owner faction.
+    :return: The generated group, or None if one could not be generated.
+    """
+    generators = get_faction_possible_ewrs_generator(faction)
+    if len(generators) > 0:
+        generator_class = random.choice(generators)
+        generator = generator_class(game, ground_object)
+        generator.generate()
+        return generator.get_generated_group()
+    return None
+
+
+def generate_shorad_group(game: Game, ground_object: SamGroundObject,
+                          faction_name: str) -> Optional[VehicleGroup]:
+    faction = db.FACTIONS[faction_name]
+
+    if len(faction.shorads) > 0:
+        sam = random.choice(faction.shorads)
         generator = SAM_MAP[sam](game, ground_object)
         generator.generate()
         return generator.get_generated_group()
     else:
-        return generate_anti_air_group(game, parent_cp, ground_object, faction)
-
-
-
-
-
-
-
+        return generate_anti_air_group(game, ground_object, faction_name)

@@ -1,3 +1,46 @@
+# 2.2.0
+
+## Features/Improvements :
+* **[Campaign Generator]** Added early warning radar generation
+* **[Campaign Generator]** Added scud launcher sites
+* **[Cheat Menu]** Added ability to capture base from mission planner
+* **[Cheat Menu]** Added ability to show red ATO
+* **[Factions]** Added WW2 factions that do not depend on WW2 asset pack
+* **[Factions]** Cold War / Middle eastern factions will use Flak sites
+* **[Flight Planner]** Flight planner overhaul, with package and TOT system
+* **[Flight Planner]** Pick runways and ascent/descent based on headwind
+* **[Map]** Added polygon debug mode display
+* **[Map]** Highlight the selected flight path on the map
+* **[Map]** Improved SAM display settings
+* **[Map]** Improved flight plan display settings
+* **[Map]** Caucasus and The Channel map use a new system to generate SAM and strike target location to reduce probability of targets generated in the middle of a forests
+* **[Misc]** Flexible Dedicated Hosting Options for Mission Files via environment variables
+* **[Moddability]** Custom campaigns can be designed through json files
+* **[Moddability]** LUA plugins can now be injected into Liberation missions.
+* **[Moddability]** Optional Skynet IADS lua plugin now included
+* **[New Game]** Starting budget can be freely selected
+* **[New Game]** Exanded information for faction and campaign selection in the new game wizard
+* **[UI]** Add double and right click actions to many UI elements.
+* **[UI]** Add polygon drawing mode for map background
+* **[UI]** Added a warning if you press takeoff with no player enabled flights
+* **[UI]** Packages and flights now visible in the main window sidebar
+* **[Units/Factions]** Added bombers to some coalitions
+* **[Units/Factions]** Added support for SU-57 mod by Cubanace
+* **[Units]** Added Freya EWR sites to german WW2 factions
+* **[Units]** Added support for many bombers (B-52H, B-1B, Tu-22, Tu-142)
+* **[Units]** Added support for new P-47 variants
+
+## Fixes :
+* **[Campaign Generator]** Big airbases could end up without any airbase defense.
+* **[Campaign generator]** Ship group and offshore buildings should not be generated on land anymore
+* **[Flight Planner]** Fix waypoint alitudes for helicopters
+* **[Flight Planner]** Fixed CAS aircraft wandering away from frontline
+* **[Maps]** Incirlik airbase was missing exclusions zones, so SAMS could end up being generated on the runway
+* **[Mission Generator]** Fixed player/client confusion when a flight had only one player slot.
+* **[Radios]** Fix A-10C radio
+* **[UI]** Many missing unit icons were added
+* **[UI]** Missing TER weapons in custom payload now selectable.
+
 # 2.1.5
 
 ## Features/Improvements :
@@ -10,9 +53,7 @@
 # 2.1.4
 
 ## Fixes :
-* **[UI]** Fixed an issue that prevent generating the mission (take off button no working) on old savegames.
-
-# 2.1.3
+* **[UI]** Fixed an issue that prevented generating the mission (take off button no working) on old savegames.
 
 ## Features/Improvements :
 * **[Units/Factions]** Added A-10C_2 to USA 2005 and Bluefor modern factions

@@ -1,5 +1,15 @@
+from __future__ import annotations
+
+import itertools
+from typing import List, TYPE_CHECKING
+
 from dcs.mapping import Point
-import uuid
+from dcs.unit import Unit
+from dcs.unitgroup import Group
+
+if TYPE_CHECKING:
+    from .controlpoint import ControlPoint
+from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
     "power": "Power plant",
@@ -15,7 +25,8 @@ NAME_BY_CATEGORY = {
     "derrick": "Derrick",
     "ww2bunker": "Bunker",
     "village": "Village",
-    "allycamp": "Camp"
+    "allycamp": "Camp",
+    "EWR":"EWR",
 }
 
 ABBREV_NAME = {
@@ -59,37 +70,212 @@ CATEGORY_MAP = {
 }
 
 
-class TheaterGroundObject:
-    cp_id = 0
-    group_id = 0
-    object_id = 0
-    dcs_identifier = None  # type: str
-    is_dead = False
-    airbase_group = False
-    heading = 0
-    position = None  # type: Point
-    groups = []
-    obj_name = ""
-    sea_object = False
-    uuid = uuid.uuid1()
+class TheaterGroundObject(MissionTarget):
 
-    def __init__(self, category: str):
+    def __init__(self, name: str, category: str, group_id: int, position: Point,
+                 heading: int, control_point: ControlPoint, dcs_identifier: str,
+                 airbase_group: bool, sea_object: bool) -> None:
+        super().__init__(name, position)
         self.category = category
+        self.group_id = group_id
+        self.heading = heading
+        self.control_point = control_point
+        self.dcs_identifier = dcs_identifier
+        self.airbase_group = airbase_group
+        self.sea_object = sea_object
+        self.is_dead = False
+        # TODO: There is never more than one group.
+        self.groups: List[Group] = []
 
     @property
-    def string_identifier(self):
-        return "{}|{}|{}|{}".format(self.category, self.cp_id, self.group_id, self.object_id)
+    def units(self) -> List[Unit]:
+        """
+        :return: all the units at this location
+        """
+        return list(itertools.chain.from_iterable([g.units for g in self.groups]))
 
     @property
-    def group_identifier(self) -> str:
-        return "{}|{}".format(self.category, self.group_id)
+    def group_name(self) -> str:
+        """The name of the unit group."""
+        return f"{self.category}|{self.group_id}"
 
-    @property
-    def name_abbrev(self) -> str:
-        return ABBREV_NAME[self.category]
-
-    def __str__(self):
+    def __str__(self) -> str:
         return NAME_BY_CATEGORY[self.category]
 
-    def matches_string_identifier(self, id):
-        return self.string_identifier == id
+    def is_same_group(self, identifier: str) -> bool:
+        return self.group_id == identifier
+
+    @property
+    def obj_name(self) -> str:
+        return self.name
+
+    @property
+    def faction_color(self) -> str:
+        return "BLUE" if self.control_point.captured else "RED"
+
+
+class BuildingGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, category: str, group_id: int, object_id: int,
+                 position: Point, heading: int, control_point: ControlPoint,
+                 dcs_identifier: str) -> None:
+        super().__init__(
+            name=name,
+            category=category,
+            group_id=group_id,
+            position=position,
+            heading=heading,
+            control_point=control_point,
+            dcs_identifier=dcs_identifier,
+            airbase_group=False,
+            sea_object=False
+        )
+        self.object_id = object_id
+
+    @property
+    def group_name(self) -> str:
+        """The name of the unit group."""
+        return f"{self.category}|{self.group_id}|{self.object_id}"
+
+
+class GenericCarrierGroundObject(TheaterGroundObject):
+    pass
+
+
+# TODO: Why is this both a CP and a TGO?
+class CarrierGroundObject(GenericCarrierGroundObject):
+    def __init__(self, name: str, group_id: int,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="CARRIER",
+            group_id=group_id,
+            position=control_point.position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="CARRIER",
+            airbase_group=True,
+            sea_object=True
+        )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"
+
+
+# TODO: Why is this both a CP and a TGO?
+class LhaGroundObject(GenericCarrierGroundObject):
+    def __init__(self, name: str, group_id: int,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="LHA",
+            group_id=group_id,
+            position=control_point.position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="LHA",
+            airbase_group=True,
+            sea_object=True
+        )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"
+
+
+class MissileSiteGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="AA",
+            airbase_group=False,
+            sea_object=False
+        )
+
+
+class BaseDefenseGroundObject(TheaterGroundObject):
+    """Base type for all base defenses."""
+
+
+# TODO: Differentiate types.
+# This type gets used both for AA sites (SAM, AAA, or SHORAD) but also for the
+# armor garrisons at airbases. These should each be split into their own types.
+class SamGroundObject(BaseDefenseGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint, for_airbase: bool) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="AA",
+            airbase_group=for_airbase,
+            sea_object=False
+        )
+        # Set by the SAM unit generator if the generated group is compatible
+        # with Skynet.
+        self.skynet_capable = False
+
+    @property
+    def group_name(self) -> str:
+        if self.skynet_capable:
+            # Prefix the group names of SAM sites with the side color so Skynet
+            # can find them.
+            return f"{self.faction_color}|SAM|{self.group_id}"
+        else:
+            return super().group_name
+
+
+class EwrGroundObject(BaseDefenseGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="EWR",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="EWR",
+            airbase_group=True,
+            sea_object=False
+        )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them.
+        return f"{self.faction_color}|{super().group_name}"
+
+
+class ShipGroundObject(TheaterGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="AA",
+            airbase_group=False,
+            sea_object=True
+        )
+
+    @property
+    def group_name(self) -> str:
+        # Prefix the group names with the side color so Skynet can find them,
+        # add to EWR.
+        return f"{self.faction_color}|EWR|{super().group_name}"

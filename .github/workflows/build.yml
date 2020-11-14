@@ -18,14 +18,33 @@ jobs:
 
     - name: Install environment
       run: |
-        py -m venv ./venv
+        python -m venv ./venv
 
     - name: Install dependencies
       run: |
         ./venv/scripts/activate
-        pip install -r requirements.txt
+        python -m pip install -r requirements.txt
         # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
         Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
+
+    - name: mypy game
+      run: |
+        ./venv/scripts/activate
+        mypy game
+
+    - name: mypy gen
+      run: |
+        ./venv/scripts/activate
+        mypy gen
+
+    - name: mypy theater
+      run: |
+        ./venv/scripts/activate
+        mypy theater
+      
+    - name: update build number
+      run: |
+        [IO.File]::WriteAllLines($pwd.path + "\buildnumber", $env:GITHUB_RUN_NUMBER)
 
     - name: Build binaries
       run: |

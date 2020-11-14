@@ -1,24 +1,22 @@
-import typing
+from __future__ import annotations
+
 import logging
+import math
+from typing import Dict, List, Optional, Type, TYPE_CHECKING
 
-from dcs.action import Coalition
-from dcs.unittype import UnitType
-from dcs.task import *
-from dcs.vehicles import AirDefence
+from dcs.mapping import Point
+from dcs.task import Task
 from dcs.unittype import UnitType
 
-from game import *
+from game import db, persistency
+from game.debriefing import Debriefing
 from game.infos.information import Information
-from theater import *
-from gen.environmentgen import EnvironmentSettings
-from gen.conflictgen import Conflict
-from game.db import assigned_units_from, unitdict_from
-from theater.start_generator import generate_airbase_defense_group
+from game.operation.operation import Operation
+from gen.ground_forces.combat_stance import CombatStance
+from theater import ControlPoint
 
-from userdata.debriefing import Debriefing
-from userdata import persistency
-
-import game.db as db
+if TYPE_CHECKING:
+    from ..game import Game
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -27,6 +25,7 @@ EVENT_DEPARTURE_MAX_DISTANCE = 340000
 MINOR_DEFEAT_INFLUENCE = 0.1
 DEFEAT_INFLUENCE = 0.3
 STRONG_DEFEAT_INFLUENCE = 0.5
+
 
 class Event:
     silent = False
@@ -37,17 +36,15 @@ class Event:
     game = None  # type: Game
     location = None  # type: Point
     from_cp = None  # type: ControlPoint
-    departure_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
 
     operation = None  # type: Operation
     difficulty = 1  # type: int
-    environment_settings = None  # type: EnvironmentSettings
     BONUS_BASE = 5
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
         self.game = game
-        self.departure_cp = None
+        self.departure_cp: Optional[ControlPoint] = None
         self.from_cp = from_cp
         self.to_cp = target_cp
         self.location = location
@@ -59,14 +56,14 @@ class Event:
         return self.attacker_name == self.game.player_name
 
     @property
-    def enemy_cp(self) -> ControlPoint:
+    def enemy_cp(self) -> Optional[ControlPoint]:
         if self.attacker_name == self.game.player_name:
             return self.to_cp
         else:
             return self.departure_cp
 
     @property
-    def tasks(self) -> typing.Collection[typing.Type[Task]]:
+    def tasks(self) -> List[Type[Task]]:
         return []
 
     @property
@@ -90,18 +87,6 @@ class Event:
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return self.operation.is_successfull(debriefing)
-
-    def player_attacking(self, cp: ControlPoint, flights: db.TaskForceDict):
-        if self.is_player_attacking:
-            self.departure_cp = cp
-        else:
-            self.to_cp = cp
-
-    def player_defending(self, cp: ControlPoint, flights: db.TaskForceDict):
-        if self.is_player_attacking:
-            self.departure_cp = cp
-        else:
-            self.to_cp = cp
 
     def generate(self):
         self.operation.is_awacs_enabled = self.is_awacs_enabled
@@ -159,9 +144,13 @@ class Event:
                 for i, ground_object in enumerate(cp.ground_objects):
                     if ground_object.is_dead:
                         continue
-
-                    if ground_object.matches_string_identifier(destroyed_ground_unit_name):
-                        logging.info("cp {} killing ground object {}".format(cp, ground_object.string_identifier))
+                        
+                    if (
+                        (ground_object.group_name == destroyed_ground_unit_name)
+                        or
+                        (ground_object.is_same_group(destroyed_ground_unit_name))
+                    ):
+                        logging.info("cp {} killing ground object {}".format(cp, ground_object.group_name))
                         cp.ground_objects[i].is_dead = True
 
                         info = Information("Building destroyed",
@@ -176,7 +165,7 @@ class Event:
                                    "",
                                    self.game.turn)
                 for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA"]:
+                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA", "EWR"]:
                         for g in ground_object.groups:
                             if not hasattr(g, "units_losts"):
                                 g.units_losts = []
@@ -209,29 +198,19 @@ class Event:
                     if cp.id == id:
 
                         if cp.captured and new_owner_coalition != coalition:
-                            cp.captured = False
+                            for_player = False
                             info = Information(cp.name + " lost !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
                             self.game.informations.append(info)
-                            pname = self.game.enemy_name
                             captured_cps.append(cp)
                         elif not(cp.captured) and new_owner_coalition == coalition:
-                            cp.captured = True
+                            for_player = True
                             info = Information(cp.name + " captured !", "We took control of " + cp.name + "! Great job !", self.game.turn)
                             self.game.informations.append(info)
-                            pname = self.game.player_name
                             captured_cps.append(cp)
                         else:
                             continue
 
-                        cp.base.aircraft = {}
-                        cp.base.armor = {}
-
-                        airbase_def_id = 0
-                        for g in cp.ground_objects:
-                            g.groups = []
-                            if g.airbase_group and pname != "":
-                                generate_airbase_defense_group(airbase_def_id, g, pname, self.game, cp)
-                                airbase_def_id = airbase_def_id + 1
+                        cp.capture(self.game, for_player)
 
                 for cp in captured_cps:
                     logging.info("Will run redeploy for " + cp.name)
@@ -253,7 +232,7 @@ class Event:
             for enemy_cp in enemy_cps:
                 print("Compute frontline progression for : " + cp.name + " to " + enemy_cp.name)
 
-                delta = 0
+                delta = 0.0
                 player_won = True
                 ally_casualties = killed_unit_count_by_cp[cp.id]
                 enemy_casualties = killed_unit_count_by_cp[enemy_cp.id]
@@ -376,7 +355,6 @@ class Event:
 
 class UnitsDeliveryEvent(Event):
     informational = True
-    units = None  # type: typing.Dict[UnitType, int]
 
     def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
         super(UnitsDeliveryEvent, self).__init__(game=game,
@@ -386,12 +364,12 @@ class UnitsDeliveryEvent(Event):
                                                  attacker_name=attacker_name,
                                                  defender_name=defender_name)
 
-        self.units = {}
+        self.units: Dict[UnitType, int] = {}
 
     def __str__(self):
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: typing.Dict[UnitType, int]):
+    def deliver(self, units: Dict[UnitType, int]):
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 

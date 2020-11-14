@@ -1,13 +1,13 @@
 import random
 from enum import Enum
+from typing import Dict, List
 
-from dcs.vehicles import *
-
-from gen import Conflict
-from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
+from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
+from dcs.unittype import VehicleType
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from gen.ground_forces.combat_stance import CombatStance
+from theater import ControlPoint
 
 TYPE_TANKS = [
     Armor.MBT_T_55,
@@ -27,13 +27,14 @@ TYPE_TANKS = [
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
     Armor.MT_Pz_Kpfw_IV_Ausf_H,
     Armor.HT_Pz_Kpfw_VI_Tiger_I,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B__Tiger_II,
+    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
     Armor.MT_M4_Sherman,
     Armor.MT_M4A4_Sherman_Firefly,
     Armor.StuG_IV,
-    Armor.ST_Centaur_IV,
+    Armor.CT_Centaur_IV,
     Armor.CT_Cromwell_IV,
     Armor.HIT_Churchill_VII,
+    Armor.LT_Mk_VII_Tetrarch,
 
     # Mods
     frenchpack.DIM__TOYOTA_BLUE,
@@ -73,14 +74,15 @@ TYPE_IFV = [
     Armor.IFV_Marder,
     Armor.IFV_MCV_80,
     Armor.IFV_LAV_25,
-    Armor.IFV_Sd_Kfz_234_2_Puma,
+    Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.IFV_M2A2_Bradley,
     Armor.IFV_BMD_1,
     Armor.ZBD_04A,
 
     # WW2
-    Armor.IFV_Sd_Kfz_234_2_Puma,
+    Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.LAC_M8_Greyhound,
+    Armor.Daimler_Armoured_Car,
 
     # Mods
     frenchpack.ERC_90,
@@ -207,8 +209,8 @@ GROUP_SIZES_BY_COMBAT_STANCE = {
 
 class CombatGroup:
 
-    def __init__(self, role:CombatGroupRole):
-        self.units = []
+    def __init__(self, role: CombatGroupRole):
+        self.units: List[VehicleType] = []
         self.role = role
         self.assigned_enemy_cp = None
         self.start_position = None
@@ -222,33 +224,22 @@ class CombatGroup:
 
 class GroundPlanner:
 
-    cp = None
-    combat_groups_dict = {}
-    connected_enemy_cp = []
-
-    tank_groups = []
-    apc_group = []
-    ifv_group = []
-    art_group = []
-    shorad_groups = []
-    logi_groups = []
-
     def __init__(self, cp:ControlPoint, game):
         self.cp = cp
         self.game = game
         self.connected_enemy_cp = [cp for cp in self.cp.connected_points if cp.captured != self.cp.captured]
-        self.tank_groups = []
-        self.apc_group = []
-        self.ifv_group = []
-        self.art_group = []
-        self.atgm_group = []
-        self.logi_groups = []
-        self.shorad_groups = []
+        self.tank_groups: List[CombatGroup] = []
+        self.apc_group: List[CombatGroup] = []
+        self.ifv_group: List[CombatGroup] = []
+        self.art_group: List[CombatGroup] = []
+        self.atgm_group: List[CombatGroup] = []
+        self.logi_groups: List[CombatGroup] = []
+        self.shorad_groups: List[CombatGroup] = []
 
-        self.units_per_cp = {}
+        self.units_per_cp: Dict[int, List[CombatGroup]] = {}
         for cp in self.connected_enemy_cp:
             self.units_per_cp[cp.id] = []
-        self.reserve = []
+        self.reserve: List[CombatGroup] = []
 
 
     def plan_groundwar(self):

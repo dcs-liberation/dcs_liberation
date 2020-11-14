@@ -1,0 +1,65 @@
+{
+  "country": "Israel",
+  "name": "Israel 1982",
+  "authors": "Khopa",
+  "description": "<p>Israel during the 1982 war with Lebanon.</p>",
+  "aircrafts": [
+    "F_4E",
+    "A_4E_C",
+    "F_15C",
+    "F_16A",
+    "F_16C_50",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "APC_M113",
+    "MBT_M60A3_Patton",
+    "MBT_Merkava_Mk__4"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "ChaparralGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "ChaparralGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

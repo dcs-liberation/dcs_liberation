@@ -1,0 +1,68 @@
+{
+  "country": "Israel",
+  "name": "Israel 2000",
+  "authors": "Khopa",
+  "description": "<p>Modern Israeli faction.</p>",
+  "aircrafts": [
+    "F_4E",
+    "F_15C",
+    "F_15E",
+    "F_16C_50",
+    "UH_1H",
+    "AH_1W",
+    "AH_64D"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "APC_M113",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW",
+    "MBT_Merkava_Mk__4"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin",
+    "MLRS_M270"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "ChaparralGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "ChaparralGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

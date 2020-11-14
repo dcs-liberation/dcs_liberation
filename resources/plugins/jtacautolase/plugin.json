@@ -1,0 +1,27 @@
+{
+    "nameInUI": "JTAC Autolase",
+    "defaultValue": true,
+    "specificOptions": [
+        {
+            "nameInUI": "Use smoke",
+            "mnemonic": "smoke",
+            "defaultValue": true
+        }
+    ],
+    "scriptsWorkOrders": [
+        {
+            "file": "mist_4_3_74.lua",
+            "mnemonic": "mist"
+        },
+        {
+            "file": "JTACAutoLase.lua",
+            "mnemonic": "jtacautolase-script"
+        }
+    ],
+    "configurationWorkOrders": [
+        {
+            "file": "jtacautolase-config.lua",
+            "mnemonic": "jtacautolase-config"
+        }
+    ]
+}

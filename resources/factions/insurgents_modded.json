@@ -1,0 +1,39 @@
+{
+  "country": "Insurgents",
+  "name": "Insurgents (Modded)",
+  "authors": "Khopa",
+  "description": "<p>Insurgents faction using the modded insurgents units from the frenchpack mods.</p>",
+  "aircrafts": [
+  ],
+  "frontline_units": [
+    "DIM__TOYOTA_BLUE",
+    "DIM__TOYOTA_DESERT",
+    "DIM__TOYOTA_GREEN",
+    "DIM__KAMIKAZE",
+    "AAA_ZU_23_Insurgent_on_Ural_375"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Insurgents",
+    "Soldier_RPG"
+  ],
+  "shorads": [
+    "SA9Generator",
+    "ZU23Generator",
+    "ZSU23Generator"
+  ],
+  "sams": [
+    "ZU23Generator",
+    "ZSU23Generator"
+  ],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  }
+}

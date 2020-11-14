@@ -8,7 +8,6 @@ logs.txt
 dist/**
 a.py
 resources/tools/a.miz
-tests/**
 # User-specific stuff
 .idea/
 
@@ -16,9 +15,8 @@ tests/**
 /liberation_preferences.json
 /state.json
 
-logs/liberation.log
+logs/
 
 qt_ui/logs/liberation.log
 
 *.psd
-resources/scripts/plugins/*

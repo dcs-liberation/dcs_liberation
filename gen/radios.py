@@ -126,6 +126,25 @@ RADIOS: List[Radio] = [
 
     Radio("R&S M3AR VHF", MHz(120), MHz(174), step=MHz(1)),
     Radio("R&S M3AR UHF", MHz(225), MHz(400), step=MHz(1)),
+
+    # MiG-15bis
+    Radio("RSI-6K HF", MHz(3, 750), MHz(5), step=kHz(25)),
+
+    # MiG-19P
+    Radio("RSIU-4V", MHz(100), MHz(150), step=MHz(1)),
+
+    # MiG-21bis
+    Radio("RSIU-5V", MHz(100), MHz(150), step=MHz(1)),
+
+    # Ka-50
+    # Note: Also capable of 100MHz-150MHz, but we can't model gaps.
+    Radio("R-800L1", MHz(220), MHz(400), step=kHz(25)),
+    Radio("R-828", MHz(20), MHz(60), step=kHz(25)),
+
+    # UH-1H
+    Radio("AN/ARC-51BX", MHz(225), MHz(400), step=kHz(50)),
+    Radio("AN/ARC-131", MHz(30), MHz(76), step=kHz(50)),
+    Radio("AN/ARC-134", MHz(116), MHz(150), step=kHz(25)),
 ]
 
 

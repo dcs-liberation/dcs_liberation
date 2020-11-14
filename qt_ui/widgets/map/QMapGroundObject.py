@@ -1,86 +1,102 @@
-from PySide2.QtCore import QPoint, QRect, QPointF, Qt
-from PySide2.QtGui import QPainter, QBrush
-from PySide2.QtWidgets import QGraphicsRectItem, QGraphicsItem, QGraphicsSceneHoverEvent, QGraphicsSceneMouseEvent
+from typing import List, Optional
 
-import qt_ui.uiconstants as CONST
-from game import db, Game
+from PySide2.QtCore import QRect
+from PySide2.QtGui import QBrush
+from PySide2.QtWidgets import QGraphicsItem
+
+import qt_ui.uiconstants as const
+from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
+from game.db import REWARDS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
-from theater import TheaterGroundObject, ControlPoint
+from theater import ControlPoint, TheaterGroundObject
+from .QMapObject import QMapObject
+from ...displayoptions import DisplayOptions
 
 
-class QMapGroundObject(QGraphicsRectItem):
-
-    def __init__(self, parent, x: float, y: float, w: float, h: float, cp: ControlPoint, model: TheaterGroundObject, game:Game, buildings=[]):
-        super(QMapGroundObject, self).__init__(x, y, w, h)
-        self.model = model
-        self.cp = cp
+class QMapGroundObject(QMapObject):
+    def __init__(self, parent, x: float, y: float, w: float, h: float,
+                 control_point: ControlPoint,
+                 ground_object: TheaterGroundObject, game: Game,
+                 buildings: Optional[List[TheaterGroundObject]] = None) -> None:
+        super().__init__(x, y, w, h, mission_target=ground_object)
+        self.ground_object = ground_object
+        self.control_point = control_point
         self.parent = parent
         self.game = game
-        self.setAcceptHoverEvents(True)
         self.setZValue(2)
-        self.buildings = buildings
+        self.buildings = buildings if buildings is not None else []
         self.setFlag(QGraphicsItem.ItemIgnoresTransformations, False)
+        self.ground_object_dialog: Optional[QGroundObjectMenu] = None
+        self.setToolTip(self.tooltip)
 
-        if len(self.model.groups) > 0:
+    @property
+    def tooltip(self) -> str:
+        lines = [
+            f"[{self.ground_object.obj_name}]",
+            f"${self.production_per_turn} per turn",
+        ]
+        if self.ground_object.groups:
             units = {}
-            for g in self.model.groups:
-                print(g)
+            for g in self.ground_object.groups:
                 for u in g.units:
-                    if u.type in units.keys():
+                    if u.type in units:
                         units[u.type] = units[u.type]+1
                     else:
                         units[u.type] = 1
-            tooltip = "[" + self.model.obj_name + "]" + "\n"
+
             for unit in units.keys():
-                tooltip = tooltip + str(unit) + "x" + str(units[unit]) + "\n"
-            self.setToolTip(tooltip[:-1])
+                lines.append(f"{unit} x {units[unit]}")
         else:
-            tooltip = "[" + self.model.obj_name + "]" + "\n"
-            for building in buildings:
+            for building in self.buildings:
                 if not building.is_dead:
-                    tooltip = tooltip + str(building.dcs_identifier) + "\n"
-            self.setToolTip(tooltip[:-1])
+                    lines.append(f"{building.dcs_identifier}")
 
-    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
-        self.openEditionMenu()
+        return "\n".join(lines)
 
-    def paint(self, painter, option, widget=None):
-        #super(QMapControlPoint, self).paint(painter, option, widget)
+    @property
+    def production_per_turn(self) -> int:
+        production = 0
+        for g in self.control_point.ground_objects:
+            if g.category in REWARDS.keys():
+                production += REWARDS[g.category]
+        return production
 
-        playerIcons = "_blue"
-        enemyIcons = ""
+    def paint(self, painter, option, widget=None) -> None:
+        player_icons = "_blue"
+        enemy_icons = ""
 
-        if self.parent.get_display_rule("go"):
+        if DisplayOptions.ground_objects:
             painter.save()
 
-            cat = self.model.category
-            if cat == "aa" and self.model.sea_object:
+            cat = self.ground_object.category
+            if cat == "aa" and self.ground_object.sea_object:
                 cat = "ship"
 
-            rect = QRect(option.rect.x()+2,option.rect.y(),option.rect.width()-2,option.rect.height())
+            rect = QRect(option.rect.x() + 2, option.rect.y(),
+                         option.rect.width() - 2, option.rect.height())
 
-            is_dead = self.model.is_dead
+            is_dead = self.ground_object.is_dead
             for building in self.buildings:
                 if not building.is_dead:
                     is_dead = False
                     break
 
-            if not is_dead and not self.cp.captured:
-                painter.drawPixmap(rect, CONST.ICONS[cat + enemyIcons])
+            if not is_dead and not self.control_point.captured:
+                painter.drawPixmap(rect, const.ICONS[cat + enemy_icons])
             elif not is_dead:
-                painter.drawPixmap(rect, CONST.ICONS[cat + playerIcons])
+                painter.drawPixmap(rect, const.ICONS[cat + player_icons])
             else:
-                painter.drawPixmap(rect, CONST.ICONS["destroyed"])
+                painter.drawPixmap(rect, const.ICONS["destroyed"])
 
-            self.drawHealthGauge(painter, option)
+            self.draw_health_gauge(painter, option)
             painter.restore()
 
-    def drawHealthGauge(self, painter, option):
+    def draw_health_gauge(self, painter, option) -> None:
         units_alive = 0
         units_dead = 0
 
-        if len(self.model.groups) == 0:
+        if len(self.ground_object.groups) == 0:
             for building in self.buildings:
                 if building.dcs_identifier in FORTIFICATION_BUILDINGS:
                     continue
@@ -89,7 +105,7 @@ class QMapGroundObject(QGraphicsRectItem):
                 else:
                     units_alive += 1
 
-        for g in self.model.groups:
+        for g in self.ground_object.groups:
             units_alive += len(g.units)
             if hasattr(g, "units_losts"):
                 units_dead += len(g.units_losts)
@@ -97,22 +113,18 @@ class QMapGroundObject(QGraphicsRectItem):
         if units_dead + units_alive > 0:
             ratio = float(units_alive)/(float(units_dead) + float(units_alive))
             bar_height = ratio * option.rect.height()
-            painter.fillRect(option.rect.x(), option.rect.y(), 2, option.rect.height(), QBrush(CONST.COLORS["dark_red"]))
-            painter.fillRect(option.rect.x(), option.rect.y(), 2, bar_height, QBrush(CONST.COLORS["green"]))
+            painter.fillRect(option.rect.x(), option.rect.y(), 2,
+                             option.rect.height(),
+                             QBrush(const.COLORS["dark_red"]))
+            painter.fillRect(option.rect.x(), option.rect.y(), 2, bar_height,
+                             QBrush(const.COLORS["green"]))
 
-
-    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
-        self.update()
-        self.setCursor(Qt.PointingHandCursor)
-
-    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent):
-        self.update()
-        self.setCursor(Qt.PointingHandCursor)
-
-    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
-        self.update()
-
-    def openEditionMenu(self):
-        self.editionMenu = QGroundObjectMenu(self.window(), self.model, self.buildings, self.cp, self.game)
-        self.editionMenu.show()
-
+    def on_click(self) -> None:
+        self.ground_object_dialog = QGroundObjectMenu(
+            self.window(),
+            self.ground_object,
+            self.buildings,
+            self.control_point,
+            self.game
+        )
+        self.ground_object_dialog.show()

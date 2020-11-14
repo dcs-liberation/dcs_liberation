@@ -1,28 +1,42 @@
 from __future__ import unicode_literals
 
-import datetime
 import logging
+from typing import List, Optional
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QPoint, QItemSelectionModel
-from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout
-from dcs.task import CAP, CAS
+from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-import qt_ui.uiconstants as CONST
-from game import db, Game
+from game import db
 from game.settings import Settings
-from gen import namegen
-from qt_ui.windows.newgame.QCampaignList import QCampaignList, CAMPAIGNS
-from theater import start_generator, persiangulf, nevada, caucasus, ConflictTheater, normandy, thechannel
+from qt_ui.windows.newgame.QCampaignList import (
+    Campaign,
+    QCampaignList,
+    load_campaigns,
+)
+from theater.start_generator import GameGenerator
 
+jinja_env = Environment(
+    loader=FileSystemLoader("resources/ui/templates"),
+    autoescape=select_autoescape(
+        disabled_extensions=("",),
+        default_for_string=True,
+        default=True,
+    ),
+    trim_blocks=True,
+    lstrip_blocks=True,
+)
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
+        self.campaigns = load_campaigns()
+
         self.addPage(IntroPage())
         self.addPage(FactionSelection())
-        self.addPage(TheaterConfiguration())
+        self.addPage(TheaterConfiguration(self.campaigns))
         self.addPage(MiscOptions())
         self.addPage(ConclusionPage())
 
@@ -34,7 +48,6 @@ class NewGameWizard(QtWidgets.QWizard):
         self.generatedGame = None
 
     def accept(self):
-
         logging.info("New Game Wizard accept")
         logging.info("======================")
 
@@ -43,8 +56,9 @@ class NewGameWizard(QtWidgets.QWizard):
 
         selectedCampaign = self.field("selectedCampaign")
         if selectedCampaign is None:
-            selectedCampaign = CAMPAIGNS[0]
-        conflictTheater = selectedCampaign[1]()
+            selectedCampaign = self.campaigns[0]
+
+        conflictTheater = selectedCampaign.theater
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")
@@ -55,6 +69,7 @@ class NewGameWizard(QtWidgets.QWizard):
         no_player_navy = self.field("no_player_navy")
         no_enemy_navy = self.field("no_enemy_navy")
         invertMap = self.field("invertMap")
+        starting_money = int(self.field("starting_money"))
 
         player_name = blueFaction
         enemy_name = redFaction
@@ -67,42 +82,12 @@ class NewGameWizard(QtWidgets.QWizard):
         settings.do_not_generate_player_navy = no_player_navy
         settings.do_not_generate_enemy_navy = no_enemy_navy
 
-        self.generatedGame = self.start_new_game(player_name, enemy_name, conflictTheater, midGame, multiplier,
-                                                 timePeriod, settings)
+        generator = GameGenerator(player_name, enemy_name, conflictTheater,
+                                  settings, timePeriod, starting_money,
+                                  multiplier, midGame)
+        self.generatedGame = generator.generate()
 
         super(NewGameWizard, self).accept()
-
-    def start_new_game(self, player_name: str, enemy_name: str, conflictTheater: ConflictTheater,
-                       midgame: bool, multiplier: float, period: datetime, settings:Settings):
-
-        # Reset name generator
-        namegen.reset()
-        start_generator.prepare_theater(conflictTheater, settings, midgame)
-
-        print("-- Starting New Game Generator")
-        print("Enemy name : " + enemy_name)
-        print("Player name : " + player_name)
-        print("Midgame : " + str(midgame))
-        start_generator.generate_initial_units(conflictTheater, enemy_name, True, multiplier)
-
-        print("-- Initial units generated")
-        game = Game(player_name=player_name,
-                    enemy_name=enemy_name,
-                    theater=conflictTheater,
-                    start_date=period,
-                    settings=settings)
-
-        print("-- Game Object generated")
-        start_generator.generate_groundobjects(conflictTheater, game)
-        game.budget = int(game.budget * multiplier)
-        game.settings.multiplier = multiplier
-        game.settings.sams = True
-        game.settings.version = CONST.VERSION_STRING
-
-        if midgame:
-            game.budget = game.budget * 4 * len(list(conflictTheater.conflicts()))
-
-        return game
 
 
 class IntroPage(QtWidgets.QWizardPage):
@@ -135,7 +120,9 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         # Factions selection
         self.factionsGroup = QtWidgets.QGroupBox("Factions")
-        self.factionsGroupLayout = QtWidgets.QGridLayout()
+        self.factionsGroupLayout = QtWidgets.QHBoxLayout()
+        self.blueGroupLayout = QtWidgets.QGridLayout()
+        self.redGroupLayout = QtWidgets.QGridLayout()
 
         blueFaction = QtWidgets.QLabel("<b>Player Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
@@ -145,26 +132,33 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         redFaction = QtWidgets.QLabel("<b>Enemy Faction :</b>")
         self.redFactionSelect = QtWidgets.QComboBox()
-        for i, r in enumerate(db.FACTIONS):
-            self.redFactionSelect.addItem(r)
-            if r == "Russia 1990": # Default ennemy
-                self.redFactionSelect.setCurrentIndex(i)
         redFaction.setBuddy(self.redFactionSelect)
 
-        self.blueSideRecap = QtWidgets.QLabel("")
-        self.blueSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.blueSideRecap.setWordWrap(True)
+        # Faction description
+        self.blueFactionDescription = QTextEdit("")
+        self.blueFactionDescription.setReadOnly(True)
 
-        self.redSideRecap = QtWidgets.QLabel("")
-        self.redSideRecap.setFont(CONST.FONT_PRIMARY_I)
-        self.redSideRecap.setWordWrap(True)
+        self.redFactionDescription = QTextEdit("")
+        self.redFactionDescription.setReadOnly(True)
 
-        self.factionsGroupLayout.addWidget(blueFaction, 0, 0)
-        self.factionsGroupLayout.addWidget(self.blueFactionSelect, 0, 1)
-        self.factionsGroupLayout.addWidget(self.blueSideRecap, 1, 0, 1, 2)
-        self.factionsGroupLayout.addWidget(redFaction, 2, 0)
-        self.factionsGroupLayout.addWidget(self.redFactionSelect, 2, 1)
-        self.factionsGroupLayout.addWidget(self.redSideRecap, 3, 0, 1, 2)
+        # Setup default selected factions
+        for i, r in enumerate(db.FACTIONS):
+            self.redFactionSelect.addItem(r)
+            if r == "Russia 1990":
+                self.redFactionSelect.setCurrentIndex(i)
+            if r == "USA 2005":
+                self.blueFactionSelect.setCurrentIndex(i)
+
+        self.blueGroupLayout.addWidget(blueFaction, 0, 0)
+        self.blueGroupLayout.addWidget(self.blueFactionSelect, 0, 1)
+        self.blueGroupLayout.addWidget(self.blueFactionDescription, 1, 0, 1, 2)
+
+        self.redGroupLayout.addWidget(redFaction, 0, 0)
+        self.redGroupLayout.addWidget(self.redFactionSelect, 0, 1)
+        self.redGroupLayout.addWidget(self.redFactionDescription, 1, 0, 1, 2)
+
+        self.factionsGroupLayout.addLayout(self.blueGroupLayout)
+        self.factionsGroupLayout.addLayout(self.redGroupLayout)
         self.factionsGroup.setLayout(self.factionsGroupLayout)
 
         # Create required mod layout
@@ -190,39 +184,34 @@ class FactionSelection(QtWidgets.QWizardPage):
 
     def updateUnitRecap(self):
 
-        self.requiredMods.setText("<ul>")
-
         red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
         blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
 
-        red_units = red_faction["units"]
-        blue_units = blue_faction["units"]
+        template = jinja_env.get_template("factiontemplate_EN.j2")
 
-        blue_txt = ""
-        for u in blue_units:
-            if u in db.UNIT_BY_TASK[CAP] or u in db.UNIT_BY_TASK[CAS]:
-                blue_txt = blue_txt + u.id + ", "
-        blue_txt = blue_txt + "\n"
-        self.blueSideRecap.setText(blue_txt)
+        blue_faction_txt = template.render({"faction": blue_faction})
+        red_faction_txt = template.render({"faction": red_faction})
 
-        red_txt = ""
-        for u in red_units:
-            if u in db.UNIT_BY_TASK[CAP] or u in db.UNIT_BY_TASK[CAS]:
-                red_txt = red_txt + u.id + ", "
-        red_txt = red_txt + "\n"
-        self.redSideRecap.setText(red_txt)
+        self.blueFactionDescription.setText(blue_faction_txt)
+        self.redFactionDescription.setText(red_faction_txt)
 
+        # Compute mod requirements txt
+        self.requiredMods.setText("<ul>")
         has_mod = False
-        if "requirements" in red_faction.keys():
+        if len(red_faction.requirements.keys()) > 0:
             has_mod = True
-            for mod in red_faction["requirements"].keys():
-                self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+red_faction["requirements"][mod]+"\">" + red_faction["requirements"][mod] + "</a></li>")
+            for mod in red_faction.requirements.keys():
+                self.requiredMods.setText(
+                    self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + red_faction.requirements[mod] + "\">" +
+                    red_faction.requirements[mod] + "</a></li>")
 
-        if "requirements" in blue_faction.keys():
+        if len(blue_faction.requirements.keys()) > 0:
             has_mod = True
-            for mod in blue_faction["requirements"].keys():
-                if not "requirements" in red_faction.keys() or mod not in red_faction["requirements"].keys():
-                    self.requiredMods.setText(self.requiredMods.text() + "\n<li>" + mod + ": <a href=\""+blue_faction["requirements"][mod]+"\">" + blue_faction["requirements"][mod] + "</a></li>")
+            for mod in blue_faction.requirements.keys():
+                if mod not in red_faction.requirements.keys():
+                    self.requiredMods.setText(
+                        self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + blue_faction.requirements[
+                            mod] + "\">" + blue_faction.requirements[mod] + "</a></li>")
 
         if has_mod:
             self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")
@@ -231,8 +220,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(TheaterConfiguration, self).__init__(parent)
+    def __init__(self, campaigns: List[Campaign], parent=None) -> None:
+        super().__init__(parent)
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
@@ -242,49 +231,24 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
 
-        # Terrain selection
-        terrainGroup = QtWidgets.QGroupBox("Terrain")
-        terrainCaucasusSmall = QtWidgets.QRadioButton("Caucasus - Western Georgia")
-        terrainCaucasusSmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainRussia = QtWidgets.QRadioButton("Caucasus - Russia Small")
-        terrainRussia.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasus = QtWidgets.QRadioButton("Caucasus - Full map [NOT RECOMMENDED]")
-        terrainCaucasus.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-        terrainCaucasusNorth = QtWidgets.QRadioButton("Caucasus - North")
-        terrainCaucasusNorth.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Caucasus"]))
-
-        terrainPg = QtWidgets.QRadioButton("Persian Gulf - Full Map [NOT RECOMMENDED]")
-        terrainPg.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainIran = QtWidgets.QRadioButton("Persian Gulf - Invasion of Iran")
-        terrainIran.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainEmirates = QtWidgets.QRadioButton("Persian Gulf - Emirates")
-        terrainEmirates.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Persian_Gulf"]))
-        terrainNttr = QtWidgets.QRadioButton("Nevada - North Nevada")
-        terrainNttr.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Nevada"]))
-        terrainNormandy = QtWidgets.QRadioButton("Normandy")
-        terrainNormandy.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainNormandySmall = QtWidgets.QRadioButton("Normandy Small")
-        terrainNormandySmall.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Normandy"]))
-        terrainChannel = QtWidgets.QRadioButton("The Channel : Start in Dunkirk")
-        terrainChannel.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainChannelComplete = QtWidgets.QRadioButton("The Channel : Battle of Britain")
-        terrainChannelComplete.setIcon(QtGui.QIcon(CONST.ICONS["Terrain_Channel"]))
-        terrainCaucasusSmall.setChecked(True)
-
         # List of campaigns
-        campaignList = QCampaignList()
+        campaignList = QCampaignList(campaigns)
         self.registerField("selectedCampaign", campaignList)
 
+        # Faction description
+        self.campaignMapDescription = QTextEdit("")
+        self.campaignMapDescription.setReadOnly(True)
+
         def on_campaign_selected():
+            template = jinja_env.get_template("campaigntemplate_EN.j2")
             index = campaignList.selectionModel().currentIndex().row()
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
+            self.campaignMapDescription.setText(template.render({"campaign": campaign}))
 
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
-
-
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
@@ -316,9 +280,48 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
         layout.addWidget(campaignList, 0, 0, 3, 1)
-        layout.addWidget(mapSettingsGroup, 0, 1, 1, 1)
-        layout.addWidget(timeGroup, 1, 1, 1, 1)
+        layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
+        layout.addWidget(mapSettingsGroup, 1, 1, 1, 1)
+        layout.addWidget(timeGroup, 2, 1, 1, 1)
         self.setLayout(layout)
+
+
+class CurrencySpinner(QtWidgets.QSpinBox):
+    def __init__(self, minimum: Optional[int] = None,
+                 maximum: Optional[int] = None,
+                 initial: Optional[int] = None) -> None:
+        super().__init__()
+
+        if minimum is not None:
+            self.setMinimum(minimum)
+        if maximum is not None:
+            self.setMaximum(maximum)
+        if initial is not None:
+            self.setValue(initial)
+
+    def textFromValue(self, val: int) -> str:
+        return f"${val}"
+
+
+class BudgetInputs(QtWidgets.QGridLayout):
+    def __init__(self) -> None:
+        super().__init__()
+        self.addWidget(QtWidgets.QLabel("Starting money"), 0, 0)
+
+        minimum = 0
+        maximum = 5000
+        initial = 650
+
+        slider = QtWidgets.QSlider(Qt.Horizontal)
+        slider.setMinimum(minimum)
+        slider.setMaximum(maximum)
+        slider.setValue(initial)
+        self.starting_money = CurrencySpinner(minimum, maximum, initial)
+        slider.valueChanged.connect(lambda x: self.starting_money.setValue(x))
+        self.starting_money.valueChanged.connect(lambda x: slider.setValue(x))
+
+        self.addWidget(slider, 1, 0)
+        self.addWidget(self.starting_money, 1, 1)
 
 
 class MiscOptions(QtWidgets.QWizardPage):
@@ -348,10 +351,17 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.registerField('no_lha', no_lha)
         supercarrier = QtWidgets.QCheckBox()
         self.registerField('supercarrier', supercarrier)
-        no_player_navy= QtWidgets.QCheckBox()
+        no_player_navy = QtWidgets.QCheckBox()
         self.registerField('no_player_navy', no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField('no_enemy_navy', no_enemy_navy)
+
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
+        layout.addWidget(midGame, 1, 1)
+        layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
+        layout.addWidget(multiplier, 2, 1)
+        miscSettingsGroup.setLayout(layout)
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -366,16 +376,15 @@ class MiscOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorSettingsGroup.setLayout(generatorLayout)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        layout.addWidget(midGame, 1, 1)
-        layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
-        layout.addWidget(multiplier, 2, 1)
-        miscSettingsGroup.setLayout(layout)
+        budget_inputs = BudgetInputs()
+        economySettingsGroup = QtWidgets.QGroupBox("Economy")
+        economySettingsGroup.setLayout(budget_inputs)
+        self.registerField('starting_money', budget_inputs.starting_money)
 
         mlayout = QVBoxLayout()
         mlayout.addWidget(miscSettingsGroup)
         mlayout.addWidget(generatorSettingsGroup)
+        mlayout.addWidget(economySettingsGroup)
         self.setLayout(mlayout)
 
 

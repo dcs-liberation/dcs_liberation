@@ -1,8 +1,21 @@
 from dataclasses import dataclass, field
+from typing import List, Type
 
+from dcs.mission import Mission, StartType
+from dcs.planes import IL_78M
+from dcs.task import (
+    AWACS,
+    ActivateBeaconCommand,
+    MainTask,
+    Refueling,
+    SetImmortalCommand,
+    SetInvisibleCommand,
+)
+
+from game import db
+from .naming import namegen
 from .callsigns import callsign_for_support_unit
-from .conflictgen import *
-from .naming import *
+from .conflictgen import Conflict
 from .radios import RadioFrequency, RadioRegistry
 from .tacan import TacanBand, TacanChannel, TacanRegistry
 
@@ -17,6 +30,7 @@ AWACS_ALT = 13000
 @dataclass
 class AwacsInfo:
     """AWACS information for the kneeboard."""
+    dcsGroupName: str
     callsign: str
     freq: RadioFrequency
 
@@ -24,6 +38,7 @@ class AwacsInfo:
 @dataclass
 class TankerInfo:
     """Tanker information for the kneeboard."""
+    dcsGroupName: str
     callsign: str
     variant: str
     freq: RadioFrequency
@@ -49,7 +64,7 @@ class AirSupportConflictGenerator:
         self.tacan_registry = tacan_registry
 
     @classmethod
-    def support_tasks(cls) -> typing.Collection[typing.Type[MainTask]]:
+    def support_tasks(cls) -> List[Type[MainTask]]:
         return [Refueling, AWACS]
 
     def generate(self, is_awacs_enabled):
@@ -76,6 +91,7 @@ class AirSupportConflictGenerator:
                 speed=574,
                 tacanchannel=str(tacan),
             )
+            tanker_group.set_frequency(freq.mhz)
 
             callsign = callsign_for_support_unit(tanker_group)
             tacan_callsign = {
@@ -102,7 +118,7 @@ class AirSupportConflictGenerator:
             tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
-            self.air_support.tankers.append(TankerInfo(callsign, variant, freq, tacan))
+            self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
         if is_awacs_enabled:
             try:
@@ -118,10 +134,12 @@ class AirSupportConflictGenerator:
                     frequency=freq.mhz,
                     start_type=StartType.Warm,
                 )
+                awacs_flight.set_frequency(freq.mhz)
+
                 awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
                 awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
 
                 self.air_support.awacs.append(AwacsInfo(
-                    callsign_for_support_unit(awacs_flight), freq))
+                    str(awacs_flight.name), callsign_for_support_unit(awacs_flight), freq))
             except:
                 print("No AWACS for faction")

@@ -1,6 +1,7 @@
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QPushButton, QVBoxLayout
 
+from qt_ui.dialogs import Dialog
 from qt_ui.uiconstants import VEHICLES_ICONS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from theater import ControlPoint, TheaterGroundObject
@@ -23,13 +24,20 @@ class QBaseDefenseGroupInfo(QGroupBox):
     def init_ui(self):
 
         self.buildLayout()
-        manage_button = QPushButton("Manage")
-        manage_button.setProperty("style", "btn-success")
-        manage_button.setMaximumWidth(180)
-        manage_button.clicked.connect(self.onManage)
-
         self.main_layout.addLayout(self.unit_layout)
-        self.main_layout.addWidget(manage_button, 0, Qt.AlignLeft)
+        if not self.cp.captured and not self.ground_object.is_dead:
+            attack_button = QPushButton("Attack")
+            attack_button.setProperty("style", "btn-danger")
+            attack_button.setMaximumWidth(180)
+            attack_button.clicked.connect(self.onAttack)
+            self.main_layout.addWidget(attack_button, 0, Qt.AlignLeft)
+
+        if self.cp.captured:
+            manage_button = QPushButton("Manage")
+            manage_button.setProperty("style", "btn-success")
+            manage_button.setMaximumWidth(180)
+            manage_button.clicked.connect(self.onManage)
+            self.main_layout.addWidget(manage_button, 0, Qt.AlignLeft)
 
         self.setLayout(self.main_layout)
 
@@ -66,6 +74,9 @@ class QBaseDefenseGroupInfo(QGroupBox):
 
 
         self.setLayout(self.main_layout)
+    
+    def onAttack(self):
+        Dialog.open_new_package_dialog(self.ground_object, parent=self.window())
 
     def onManage(self):
         self.edition_menu = QGroundObjectMenu(self.window(), self.ground_object, self.buildings, self.cp, self.game)

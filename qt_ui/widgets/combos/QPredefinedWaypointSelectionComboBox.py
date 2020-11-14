@@ -1,9 +1,8 @@
-from PySide2.QtCore import QSortFilterProxyModel, Qt, QModelIndex
 from PySide2.QtGui import QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import QComboBox, QCompleter
+
 from game import Game
-from gen import Conflict, FlightWaypointType
-from gen.flights.flight import FlightWaypoint, PredefinedWaypointCategory
+from gen import BuildingGroundObject, Conflict, FlightWaypointType
+from gen.flights.flight import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 from theater import ControlPointType
 
@@ -66,15 +65,13 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                         wpt.alt_type = "RADIO"
                         wpt.pretty_name = wpt.name
                         wpt.description = "Frontline"
-                        wpt.data = [cp, ecp]
-                        wpt.category = PredefinedWaypointCategory.FRONTLINE
                         i = add_model_item(i, model, wpt.pretty_name, wpt)
 
         if self.include_targets:
             for cp in self.game.theater.controlpoints:
                 if (self.include_enemy and not cp.captured) or (self.include_friendly and cp.captured):
                     for ground_object in cp.ground_objects:
-                        if not ground_object.is_dead and not ground_object.dcs_identifier == "AA":
+                        if not ground_object.is_dead and not isinstance(ground_object, BuildingGroundObject):
                             wpt = FlightWaypoint(
                                 FlightWaypointType.CUSTOM,
                                 ground_object.position.x,
@@ -86,13 +83,10 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                             wpt.pretty_name = wpt.name
                             wpt.obj_name = ground_object.obj_name
                             wpt.targets.append(ground_object)
-                            wpt.data = ground_object
                             if cp.captured:
                                 wpt.description = "Friendly Building"
-                                wpt.category = PredefinedWaypointCategory.ALLY_BUILDING
                             else:
                                 wpt.description = "Enemy Building"
-                                wpt.category = PredefinedWaypointCategory.ENEMY_BUILDING
                             i = add_model_item(i, model, wpt.pretty_name, wpt)
 
         if self.include_units:
@@ -112,15 +106,12 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                     wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + u.type + " #" + str(j)
                                     wpt.pretty_name = wpt.name
                                     wpt.targets.append(u)
-                                    wpt.data = u
                                     wpt.obj_name = ground_object.obj_name
                                     wpt.waypoint_type = FlightWaypointType.CUSTOM
                                     if cp.captured:
                                         wpt.description = "Friendly unit : " + u.type
-                                        wpt.category = PredefinedWaypointCategory.ALLY_UNIT
                                     else:
                                         wpt.description = "Enemy unit : " + u.type
-                                        wpt.category = PredefinedWaypointCategory.ENEMY_UNIT
                                     i = add_model_item(i, model, wpt.pretty_name, wpt)
 
         if self.include_airbases:
@@ -134,13 +125,10 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                     )
                     wpt.alt_type = "RADIO"
                     wpt.name = cp.name
-                    wpt.data = cp
                     if cp.captured:
                         wpt.description = "Position of " + cp.name + " [Friendly Airbase]"
-                        wpt.category = PredefinedWaypointCategory.ALLY_CP
                     else:
                         wpt.description = "Position of " + cp.name + " [Enemy Airbase]"
-                        wpt.category = PredefinedWaypointCategory.ENEMY_CP
 
                     if cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
                         wpt.pretty_name = cp.name + " (Aircraft Carrier Group)"

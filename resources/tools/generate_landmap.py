@@ -1,15 +1,15 @@
 import pickle
 
 from dcs.mission import Mission
-from dcs.planes import A_10C
 
-for terrain in ["cau"]:
+for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
     print("Terrain " + terrain)
     m = Mission()
     m.load_file("./{}_terrain.miz".format(terrain))
 
     inclusion_zones = []
     exclusion_zones = []
+    seas_zones = []
     for plane_group in m.country("USA").plane_group:
         zone = [(x.position.x, x.position.y) for x in plane_group.points]
 
@@ -22,6 +22,10 @@ for terrain in ["cau"]:
             else:
                 inclusion_zones.append(zone)
 
+    for ship_group in m.country("USA").ship_group:
+        zone = [(x.position.x, x.position.y) for x in ship_group.points]
+        seas_zones.append(zone)
+
     with open("../{}landmap.p".format(terrain), "wb") as f:
-        print(len(inclusion_zones), len(exclusion_zones))
-        pickle.dump((inclusion_zones, exclusion_zones), f)
+        print(len(inclusion_zones), len(exclusion_zones), len(seas_zones))
+        pickle.dump((inclusion_zones, exclusion_zones, seas_zones), f)

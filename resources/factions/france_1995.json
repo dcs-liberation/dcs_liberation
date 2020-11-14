@@ -1,0 +1,75 @@
+{
+  "country": "France",
+  "name": "France 1995",
+  "authors": "Khopa",
+  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "aircrafts": [
+    "M_2000C",
+    "Mirage_2000_5",
+    "SA342M",
+    "SA342L",
+    "SA342Mistral"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leclerc",
+    "TPz_Fuchs",
+    "APC_Cobra",
+    "ATGM_M1134_Stryker",
+    "IFV_LAV_25",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "HQ7Generator",
+    "RolandGenerator"
+  ],
+  "sams": [
+    "RolandGenerator",
+    "HawkGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa",
+    "Oliver_Hazzard_Perry_class"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+    "Jeanne d'Arc"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator",
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

@@ -1,21 +1,11 @@
 import logging
-import typing
-import pdb
-import dcs
+import random
+from typing import Tuple
 
-from random import randint
-from dcs import Mission
+from dcs.country import Country
+from dcs.mapping import Point
 
-from dcs.mission import *
-from dcs.vehicles import *
-from dcs.unitgroup import *
-from dcs.unittype import *
-from dcs.mapping import *
-from dcs.point import *
-from dcs.task import *
-from dcs.country import *
-
-from theater import *
+from theater import ConflictTheater, ControlPoint
 
 AIR_DISTANCE = 40000
 
@@ -65,24 +55,6 @@ def _heading_sum(h, a) -> int:
 
 
 class Conflict:
-    attackers_side = None  # type: str
-    defenders_side = None  # type: str
-    attackers_country = None  # type: Country
-    defenders_country = None  # type: Country
-    from_cp = None  # type: ControlPoint
-    to_cp = None  # type: ControlPoint
-    position = None  # type: Point
-    size = None  # type: int
-    radials = None  # type: typing.List[int]
-
-    heading = None  # type: int
-    distance = None  # type: int
-
-    ground_attackers_location = None  # type: Point
-    ground_defenders_location = None  # type: Point
-    air_attackers_location = None  # type: Point
-    air_defenders_location = None  # type: Point
-
     def __init__(self,
                  theater: ConflictTheater,
                  from_cp: ControlPoint,
@@ -155,7 +127,7 @@ class Conflict:
         else:
             return self.position
 
-    def find_ground_position(self, at: Point, heading: int, max_distance: int = 40000) -> typing.Optional[Point]:
+    def find_ground_position(self, at: Point, heading: int, max_distance: int = 40000) -> Point:
         return Conflict._find_ground_position(at, max_distance, heading, self.theater)
 
     @classmethod
@@ -163,7 +135,7 @@ class Conflict:
         return from_cp.has_frontline and to_cp.has_frontline
 
     @classmethod
-    def frontline_position(cls, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint) -> typing.Optional[typing.Tuple[Point, int]]:
+    def frontline_position(cls, theater: ConflictTheater, from_cp: ControlPoint, to_cp: ControlPoint) -> Tuple[Point, int]:
         attack_heading = from_cp.position.heading_between_point(to_cp.position)
         attack_distance = from_cp.position.distance_to_point(to_cp.position)
         middle_point = from_cp.position.point_from_heading(attack_heading, attack_distance / 2)
@@ -174,9 +146,7 @@ class Conflict:
 
 
     @classmethod
-    def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> typing.Optional[typing.Tuple[Point, int, int]]:
-        initial, heading = cls.frontline_position(theater, from_cp, to_cp)
-
+    def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> Tuple[Point, int, int]:
         """
         probe_end_point = initial.point_from_heading(heading, FRONTLINE_LENGTH)
         probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y) ])
@@ -193,9 +163,6 @@ class Conflict:
         return Point(*intersection.xy[0]), _heading_sum(heading, 90), intersection.length
         """
         frontline = cls.frontline_position(theater, from_cp, to_cp)
-        if not frontline:
-            return None
-
         center_position, heading = frontline
         left_position, right_position = None, None
 
@@ -243,7 +210,7 @@ class Conflict:
         """
 
     @classmethod
-    def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> typing.Optional[Point]:
+    def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         pos = initial
         for _ in range(0, int(max_distance), 500):
             if theater.is_on_land(pos):
@@ -302,10 +269,14 @@ class Conflict:
 
         distance = to_cp.size * GROUND_DISTANCE_FACTOR
         attackers_location = position.point_from_heading(attack_heading, distance)
-        attackers_location = Conflict._find_ground_position(attackers_location, distance * 2, _heading_sum(attack_heading, 180), theater)
+        attackers_location = Conflict._find_ground_position(
+            attackers_location, int(distance * 2),
+            _heading_sum(attack_heading, 180), theater)
 
         defenders_location = position.point_from_heading(defense_heading, distance)
-        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+        defenders_location = Conflict._find_ground_position(
+            defenders_location, int(distance * 2),
+            _heading_sum(defense_heading, 180), theater)
 
         return cls(
             position=position,
@@ -429,7 +400,7 @@ class Conflict:
         assert cls.has_frontline_between(from_cp, to_cp)
 
         position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
-        attack_position = position.point_from_heading(heading, randint(0, int(distance)))
+        attack_position = position.point_from_heading(heading, random.randint(0, int(distance)))
         attackers_position = attack_position.point_from_heading(heading - 90, AIR_DISTANCE)
         defenders_position = attack_position.point_from_heading(heading + 90, random.randint(*CAP_CAS_DISTANCE))
 
@@ -456,7 +427,9 @@ class Conflict:
 
         distance = to_cp.size * GROUND_DISTANCE_FACTOR
         defenders_location = position.point_from_heading(defense_heading, distance)
-        defenders_location = Conflict._find_ground_position(defenders_location, distance * 2, _heading_sum(defense_heading, 180), theater)
+        defenders_location = Conflict._find_ground_position(
+            defenders_location, int(distance * 2),
+            _heading_sum(defense_heading, 180), theater)
 
         return cls(
             position=position,

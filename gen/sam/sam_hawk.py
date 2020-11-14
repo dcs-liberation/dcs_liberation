@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
 
 
-class HawkGenerator(GroupGenerator):
+class HawkGenerator(GenericSamGroupGenerator):
     """
     This generate an HAWK group
     """
@@ -14,8 +14,8 @@ class HawkGenerator(GroupGenerator):
     price = 115
 
     def generate(self):
-        self.add_unit(AirDefence.SAM_Hawk_PCP, "PCP", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_Hawk_SR_AN_MPQ_50, "SR", self.position.x + 20, self.position.y, self.heading)
+        self.add_unit(AirDefence.SAM_Hawk_PCP, "PCP", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_Hawk_TR_AN_MPQ_46, "TR", self.position.x + 40, self.position.y, self.heading)
 
         # Triple A for close range defense

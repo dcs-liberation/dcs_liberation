@@ -2,14 +2,10 @@ import random
 
 from dcs.ships import Schnellboot_type_S130
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import ShipGroupGenerator
 
 
-class SchnellbootGroupGenerator(GroupGenerator):
-
-    def __init__(self, game, ground_object, faction):
-        super(SchnellbootGroupGenerator, self).__init__(game, ground_object)
-        self.faction = faction
+class SchnellbootGroupGenerator(ShipGroupGenerator):
 
     def generate(self):
 

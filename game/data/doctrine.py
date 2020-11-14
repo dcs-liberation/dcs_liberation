@@ -1,95 +1,111 @@
+from dataclasses import dataclass
+from datetime import timedelta
+
 from game.utils import nm_to_meter, feet_to_meter
 
-MODERN_DOCTRINE = {
 
-    "GENERATORS": {
-        "CAS": True,
-        "CAP": True,
-        "SEAD": True,
-        "STRIKE": True,
-        "ANTISHIP": True,
-    },
+@dataclass(frozen=True)
+class Doctrine:
+    cas: bool
+    cap: bool
+    sead: bool
+    strike: bool
+    antiship: bool
 
-    "STRIKE_MAX_RANGE": 1500000,
-    "SEAD_MAX_RANGE": 1500000,
+    strike_max_range: int
+    sead_max_range: int
 
-    "CAP_EVERY_X_MINUTES": 20,
-    "CAS_EVERY_X_MINUTES": 30,
-    "SEAD_EVERY_X_MINUTES": 40,
-    "STRIKE_EVERY_X_MINUTES": 40,
+    rendezvous_altitude: int
+    join_distance: int
+    split_distance: int
+    ingress_egress_distance: int
+    ingress_altitude: int
+    egress_altitude: int
 
-    "INGRESS_EGRESS_DISTANCE": nm_to_meter(45),
-    "INGRESS_ALT": feet_to_meter(20000),
-    "EGRESS_ALT": feet_to_meter(20000),
-    "PATROL_ALT_RANGE": (feet_to_meter(15000), feet_to_meter(33000)),
-    "PATTERN_ALTITUDE": feet_to_meter(5000),
+    min_patrol_altitude: int
+    max_patrol_altitude: int
+    pattern_altitude: int
 
-    "CAP_PATTERN_LENGTH": (nm_to_meter(15), nm_to_meter(40)),
-    "FRONTLINE_CAP_DISTANCE_FROM_FRONTLINE": (nm_to_meter(6), nm_to_meter(15)),
-    "CAP_DISTANCE_FROM_CP": (nm_to_meter(10), nm_to_meter(40)),
+    cap_duration: timedelta
+    cap_min_track_length: int
+    cap_max_track_length: int
+    cap_min_distance_from_cp: int
+    cap_max_distance_from_cp: int
 
-    "MAX_NUMBER_OF_INTERCEPTION_GROUP": 3,
-}
+    cas_duration: timedelta
 
-COLDWAR_DOCTRINE = {
 
-    "GENERATORS": {
-        "CAS": True,
-        "CAP": True,
-        "SEAD": True,
-        "STRIKE": True,
-        "ANTISHIP": True,
-    },
+MODERN_DOCTRINE = Doctrine(
+    cap=True,
+    cas=True,
+    sead=True,
+    strike=True,
+    antiship=True,
+    strike_max_range=1500000,
+    sead_max_range=1500000,
+    rendezvous_altitude=feet_to_meter(25000),
+    join_distance=nm_to_meter(20),
+    split_distance=nm_to_meter(20),
+    ingress_egress_distance=nm_to_meter(45),
+    ingress_altitude=feet_to_meter(20000),
+    egress_altitude=feet_to_meter(20000),
+    min_patrol_altitude=feet_to_meter(15000),
+    max_patrol_altitude=feet_to_meter(33000),
+    pattern_altitude=feet_to_meter(5000),
+    cap_duration=timedelta(minutes=30),
+    cap_min_track_length=nm_to_meter(15),
+    cap_max_track_length=nm_to_meter(40),
+    cap_min_distance_from_cp=nm_to_meter(10),
+    cap_max_distance_from_cp=nm_to_meter(40),
+    cas_duration=timedelta(minutes=30),
+)
 
-    "STRIKE_MAX_RANGE": 1500000,
-    "SEAD_MAX_RANGE": 1500000,
+COLDWAR_DOCTRINE = Doctrine(
+    cap=True,
+    cas=True,
+    sead=True,
+    strike=True,
+    antiship=True,
+    strike_max_range=1500000,
+    sead_max_range=1500000,
+    rendezvous_altitude=feet_to_meter(22000),
+    join_distance=nm_to_meter(10),
+    split_distance=nm_to_meter(10),
+    ingress_egress_distance=nm_to_meter(30),
+    ingress_altitude=feet_to_meter(18000),
+    egress_altitude=feet_to_meter(18000),
+    min_patrol_altitude=feet_to_meter(10000),
+    max_patrol_altitude=feet_to_meter(24000),
+    pattern_altitude=feet_to_meter(5000),
+    cap_duration=timedelta(minutes=30),
+    cap_min_track_length=nm_to_meter(12),
+    cap_max_track_length=nm_to_meter(24),
+    cap_min_distance_from_cp=nm_to_meter(8),
+    cap_max_distance_from_cp=nm_to_meter(25),
+    cas_duration=timedelta(minutes=30),
+)
 
-    "CAP_EVERY_X_MINUTES": 20,
-    "CAS_EVERY_X_MINUTES": 30,
-    "SEAD_EVERY_X_MINUTES": 40,
-    "STRIKE_EVERY_X_MINUTES": 40,
-
-    "INGRESS_EGRESS_DISTANCE": nm_to_meter(30),
-    "INGRESS_ALT": feet_to_meter(18000),
-    "EGRESS_ALT": feet_to_meter(18000),
-    "PATROL_ALT_RANGE": (feet_to_meter(10000), feet_to_meter(24000)),
-    "PATTERN_ALTITUDE": feet_to_meter(5000),
-
-    "CAP_PATTERN_LENGTH": (nm_to_meter(12), nm_to_meter(24)),
-    "FRONTLINE_CAP_DISTANCE_FROM_FRONTLINE": (nm_to_meter(2), nm_to_meter(8)),
-    "CAP_DISTANCE_FROM_CP": (nm_to_meter(8), nm_to_meter(25)),
-
-    "MAX_NUMBER_OF_INTERCEPTION_GROUP": 3,
-}
-
-WWII_DOCTRINE = {
-
-    "GENERATORS": {
-        "CAS": True,
-        "CAP": True,
-        "SEAD": False,
-        "STRIKE": True,
-        "ANTISHIP": True,
-    },
-
-    "STRIKE_MAX_RANGE": 1500000,
-    "SEAD_MAX_RANGE": 1500000,
-
-    "CAP_EVERY_X_MINUTES": 20,
-    "CAS_EVERY_X_MINUTES": 30,
-    "SEAD_EVERY_X_MINUTES": 40,
-    "STRIKE_EVERY_X_MINUTES": 40,
-
-    "INGRESS_EGRESS_DISTANCE": nm_to_meter(7),
-    "INGRESS_ALT": feet_to_meter(8000),
-    "EGRESS_ALT": feet_to_meter(8000),
-    "PATROL_ALT_RANGE": (feet_to_meter(4000), feet_to_meter(15000)),
-    "PATTERN_ALTITUDE": feet_to_meter(5000),
-
-    "CAP_PATTERN_LENGTH": (nm_to_meter(8), nm_to_meter(18)),
-    "FRONTLINE_CAP_DISTANCE_FROM_FRONTLINE": (nm_to_meter(1), nm_to_meter(6)),
-    "CAP_DISTANCE_FROM_CP": (nm_to_meter(0), nm_to_meter(5)),
-
-    "MAX_NUMBER_OF_INTERCEPTION_GROUP": 3,
-
-}
+WWII_DOCTRINE = Doctrine(
+    cap=True,
+    cas=True,
+    sead=False,
+    strike=True,
+    antiship=True,
+    strike_max_range=1500000,
+    sead_max_range=1500000,
+    join_distance=nm_to_meter(5),
+    split_distance=nm_to_meter(5),
+    rendezvous_altitude=feet_to_meter(10000),
+    ingress_egress_distance=nm_to_meter(7),
+    ingress_altitude=feet_to_meter(8000),
+    egress_altitude=feet_to_meter(8000),
+    min_patrol_altitude=feet_to_meter(4000),
+    max_patrol_altitude=feet_to_meter(15000),
+    pattern_altitude=feet_to_meter(5000),
+    cap_duration=timedelta(minutes=30),
+    cap_min_track_length=nm_to_meter(8),
+    cap_max_track_length=nm_to_meter(18),
+    cap_min_distance_from_cp=nm_to_meter(0),
+    cap_max_distance_from_cp=nm_to_meter(5),
+    cas_duration=timedelta(minutes=30),
+)
