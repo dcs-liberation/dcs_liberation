@@ -6,6 +6,7 @@ from PySide2.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QScrollArea,
     QVBoxLayout,
     QWidget,
@@ -88,7 +89,21 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         super().buy(unit_type)
         self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
 
-    def sell(self, unit_type):
+    def sell(self, unit_type: UnitType):
+        # Don't need to remove aircraft from the inventory if we're canceling
+        # orders.
+        if self.deliveryEvent.units.get(unit_type, 0) <= 0:
+            global_inventory = self.game_model.game.aircraft_inventory
+            inventory = global_inventory.for_control_point(self.cp)
+            try:
+                inventory.remove_aircraft(unit_type, 1)
+            except ValueError:
+                QMessageBox.critical(
+                    self, "Could not sell aircraft",
+                    f"Attempted to sell one {unit_type.id} at {self.cp.name} "
+                    "but none are available. Are all aircraft currently "
+                    "assigned to a mission?", QMessageBox.Ok)
+                return
         super().sell(unit_type)
         self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
 

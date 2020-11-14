@@ -3,6 +3,7 @@ from typing import Optional
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
     QDialog,
+    QMessageBox,
     QPushButton,
     QVBoxLayout,
 )
@@ -95,7 +96,8 @@ class QFlightCreator(QDialog):
     def create_flight(self) -> None:
         error = self.verify_form()
         if error is not None:
-            self.error_box("Could not create flight", error)
+            QMessageBox.critical(self, "Could not create flight", error,
+                                 QMessageBox.Ok)
             return
 
         task = self.task_selector.currentData()
