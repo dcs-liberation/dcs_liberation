@@ -1387,7 +1387,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
 
 class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
-        if self.group.units[0].unit_type in [B_17G, A_20G, B_52H, Tu_22M3]:
+        if self.group.units[0].unit_type in [B_17G, B_52H, Tu_22M3]:
             return self.build_bombing()
         else:
             return self.build_strike()
