@@ -3,11 +3,12 @@ from pathlib import Path
 
 def _build_version_string() -> str:
     components = ["2.2.0"]
-    if Path("buildnumber").exists():
-        with open("buildnumber", "r") as file:
-            components.append(file.readline())
+    build_number_path = Path("resources/buildnumber")
+    if build_number_path.exists():
+        with build_number_path.open("r") as build_number_file:
+            components.append(build_number_file.readline())
 
-    if not Path("final").exists():
+    if not Path("resources/final").exists():
         components.append("preview")
 
     return "-".join(components)
