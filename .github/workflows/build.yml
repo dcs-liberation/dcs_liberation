@@ -44,7 +44,7 @@ jobs:
       
     - name: update build number
       run: |
-        [IO.File]::WriteAllLines($pwd.path + "\buildnumber", $env:GITHUB_RUN_NUMBER)
+        [IO.File]::WriteAllLines($pwd.path + "\resources\buildnumber", $env:GITHUB_RUN_NUMBER)
 
     - name: Build binaries
       run: |
