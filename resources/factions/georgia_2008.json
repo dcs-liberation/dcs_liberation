@@ -1,0 +1,46 @@
+{
+  "country": "Georgia",
+  "name": "Georgia 2008",
+  "authors": "HerrTom",
+  "description": "<p>A faction that represents Georgia during the South Ossetian War. They will have a lot more aircraft than historically, and no real A2A capability.</p>",
+  "aircrafts": [
+    "L_39ZA",
+    "Su_25",
+    "Mi_8MT",
+    "Mi_24V",
+    "UH_1H"
+  ],
+  "frontline_units": [
+    "APC_BTR_80",
+    "APC_MTLB",
+    "APC_Cobra",
+    "IFV_BMP_1",
+    "IFV_BMP_2",
+    "MBT_T_72B",
+    "MBT_T_55"
+  ],
+  "artillery_units": [
+    "MLRS_BM21_Grad",
+    "SPH_2S1_Gvozdika",
+    "SPH_2S3_Akatsia"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Paratrooper_RPG_16"
+  ],
+  "shorads": [
+    "SA13Generator",
+    "SA8Generator"
+  ],
+  "sams": [
+    "SA6Generator",
+    "SA11Generator"
+  ],
+  "requirements": {},
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}
