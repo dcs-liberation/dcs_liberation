@@ -1,3 +1,9 @@
+# 2.2.1
+
+# Features/Improvements
+* **[Factions]** Added factions : Georgia 2008, USN 1985, France 2005 Frenchpack by HerrTom
+* **[Factions]** Added map Persian Gulf full by Plob
+
 # 2.2.0
 
 ## Features/Improvements :
