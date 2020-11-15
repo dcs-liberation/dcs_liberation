@@ -1,0 +1,73 @@
+{
+  "country": "USA",
+  "name": "US Navy 1985",
+  "authors": "HerrTom",
+  "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
+  "aircrafts": [
+    "F_4E",
+    "F_14B",
+    "S_3B",
+    "UH_1H",
+    "AH_1W"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "S_3B_Tanker"
+  ],
+  "frontline_units": [
+    "MBT_M60A3_Patton",
+    "APC_M113",
+    "APC_M1025_HMMWV"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin",
+    "MLRS_M270"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "VulcanGenerator",
+    "ChaparralGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+    "ChaparralGenerator"
+  ],
+  "aircraft_carrier": [
+    "CVN_74_John_C__Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "Oliver_Hazzard_Perry_class"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "carrier_names": [
+    "CVN-71 Theodore Roosevelt",
+    "CVN-72 Abraham Lincoln",
+    "CVN-73 George Washington",
+    "CVN-74 John C. Stennis"
+  ],
+  "helicopter_carrier_names": [
+    "LHA-1 Tarawa",
+    "LHA-2 Saipan",
+    "LHA-3 Belleau Wood",
+    "LHA-4 Nassau",
+    "LHA-5 Peleliu"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "requirements": {},
+  "doctrine": "coldwar"
+}
