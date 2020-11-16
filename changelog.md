@@ -4,6 +4,9 @@
 * **[Factions]** Added factions : Georgia 2008, USN 1985, France 2005 Frenchpack by HerrTom
 * **[Factions]** Added map Persian Gulf full by Plob
 
+## Fixes :
+* **[Flight Planner]** Hold, join, and split points are planned cautiously near enemy airfields. Ascend/descend points are no longer planned.
+
 # 2.2.0
 
 ## Features/Improvements :

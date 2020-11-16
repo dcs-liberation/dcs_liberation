@@ -16,6 +16,8 @@ class Doctrine:
     sead_max_range: int
 
     rendezvous_altitude: int
+    hold_distance: int
+    push_distance: int
     join_distance: int
     split_distance: int
     ingress_egress_distance: int
@@ -44,6 +46,8 @@ MODERN_DOCTRINE = Doctrine(
     strike_max_range=1500000,
     sead_max_range=1500000,
     rendezvous_altitude=feet_to_meter(25000),
+    hold_distance=nm_to_meter(15),
+    push_distance=nm_to_meter(20),
     join_distance=nm_to_meter(20),
     split_distance=nm_to_meter(20),
     ingress_egress_distance=nm_to_meter(45),
@@ -69,6 +73,8 @@ COLDWAR_DOCTRINE = Doctrine(
     strike_max_range=1500000,
     sead_max_range=1500000,
     rendezvous_altitude=feet_to_meter(22000),
+    hold_distance=nm_to_meter(10),
+    push_distance=nm_to_meter(10),
     join_distance=nm_to_meter(10),
     split_distance=nm_to_meter(10),
     ingress_egress_distance=nm_to_meter(30),
@@ -93,6 +99,8 @@ WWII_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
+    hold_distance=nm_to_meter(5),
+    push_distance=nm_to_meter(5),
     join_distance=nm_to_meter(5),
     split_distance=nm_to_meter(5),
     rendezvous_altitude=feet_to_meter(10000),
