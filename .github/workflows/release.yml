@@ -29,6 +29,10 @@ jobs:
         # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
         Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
 
+    - name: Finalize version
+      run: |
+        New-Item -ItemType file resources\final
+
     - name: mypy game
       run: |
         ./venv/scripts/activate

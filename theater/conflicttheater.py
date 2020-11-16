@@ -350,6 +350,10 @@ class FrontLine(MissionTarget):
         self._build_segments()
         self.name = f"Front line {control_point_a}/{control_point_b}"
 
+    def is_friendly(self, to_player: bool) -> bool:
+        """Returns True if the objective is in friendly territory."""
+        raise False
+    
     @property
     def position(self):
         """

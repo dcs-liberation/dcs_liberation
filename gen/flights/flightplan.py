@@ -7,6 +7,7 @@ generating the waypoints for the mission.
 """
 from __future__ import annotations
 
+import math
 from datetime import timedelta
 from functools import cached_property
 import logging
@@ -104,6 +105,15 @@ class FlightPlan:
         """
         raise NotImplementedError
 
+    @property
+    def tot_offset(self) -> timedelta:
+        """This flight's offset from the package's TOT.
+
+        Positive values represent later TOTs. An offset of -2 minutes is used
+        for a flight that has a TOT 2 minutes before the rest of the package.
+        """
+        return timedelta()
+
     # Not cached because changes to the package might alter the formation speed.
     @property
     def travel_time_to_target(self) -> Optional[timedelta]:
@@ -146,8 +156,33 @@ class FlightPlan:
 
 
 @dataclass(frozen=True)
-class FormationFlightPlan(FlightPlan):
+class LoiterFlightPlan(FlightPlan):
     hold: FlightWaypoint
+
+    @property
+    def waypoints(self) -> List[FlightWaypoint]:
+        raise NotImplementedError
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        raise NotImplementedError
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        raise NotImplementedError
+
+    @property
+    def push_time(self) -> timedelta:
+        raise NotImplementedError
+
+    def depart_time_for_waypoint(
+            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.push_time
+        return None
+
+
+@dataclass(frozen=True)
+class FormationFlightPlan(LoiterFlightPlan):
     join: FlightWaypoint
     split: FlightWaypoint
 
@@ -214,12 +249,6 @@ class FormationFlightPlan(FlightPlan):
             return self.split_time
         return None
 
-    def depart_time_for_waypoint(
-            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.hold:
-            return self.push_time
-        return None
-
     @property
     def push_time(self) -> timedelta:
         return self.join_time - TravelTime.between_points(
@@ -275,18 +304,14 @@ class PatrollingFlightPlan(FlightPlan):
 @dataclass(frozen=True)
 class BarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    ascent: FlightWaypoint
-    descent: FlightWaypoint
     land: FlightWaypoint
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
         return [
             self.takeoff,
-            self.ascent,
             self.patrol_start,
             self.patrol_end,
-            self.descent,
             self.land,
         ]
 
@@ -294,20 +319,16 @@ class BarCapFlightPlan(PatrollingFlightPlan):
 @dataclass(frozen=True)
 class CasFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    ascent: FlightWaypoint
     target: FlightWaypoint
-    descent: FlightWaypoint
     land: FlightWaypoint
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
         return [
             self.takeoff,
-            self.ascent,
             self.patrol_start,
             self.target,
             self.patrol_end,
-            self.descent,
             self.land,
         ]
 
@@ -319,22 +340,23 @@ class CasFlightPlan(PatrollingFlightPlan):
 
 
 @dataclass(frozen=True)
-class FrontLineCapFlightPlan(PatrollingFlightPlan):
+class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    ascent: FlightWaypoint
-    descent: FlightWaypoint
     land: FlightWaypoint
+    lead_time: timedelta
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
         return [
             self.takeoff,
-            self.ascent,
             self.patrol_start,
             self.patrol_end,
-            self.descent,
             self.land,
         ]
+
+    @property
+    def tot_offset(self) -> timedelta:
+        return -self.lead_time
 
     def depart_time_for_waypoint(
             self, waypoint: FlightWaypoint) -> Optional[timedelta]:
@@ -346,8 +368,8 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
     def patrol_start_time(self) -> timedelta:
         start = self.package.escort_start_time
         if start is not None:
-            return start
-        return super().patrol_start_time
+            return start + self.tot_offset
+        return super().patrol_start_time + self.tot_offset
 
     @property
     def patrol_end_time(self) -> timedelta:
@@ -357,31 +379,31 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
         return super().patrol_end_time
 
 
+# TODO: Remove when breaking save compat.
+FrontLineCapFlightPlan = TarCapFlightPlan
+
+
 @dataclass(frozen=True)
 class StrikeFlightPlan(FormationFlightPlan):
     takeoff: FlightWaypoint
-    ascent: FlightWaypoint
     hold: FlightWaypoint
     join: FlightWaypoint
     ingress: FlightWaypoint
     targets: List[FlightWaypoint]
     egress: FlightWaypoint
     split: FlightWaypoint
-    descent: FlightWaypoint
     land: FlightWaypoint
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
         return [
             self.takeoff,
-            self.ascent,
             self.hold,
             self.join,
             self.ingress
         ] + self.targets + [
             self.egress,
             self.split,
-            self.descent,
             self.land,
         ]
 
@@ -477,6 +499,64 @@ class StrikeFlightPlan(FormationFlightPlan):
 
 
 @dataclass(frozen=True)
+class SweepFlightPlan(LoiterFlightPlan):
+    takeoff: FlightWaypoint
+    sweep_start: FlightWaypoint
+    sweep_end: FlightWaypoint
+    land: FlightWaypoint
+    lead_time: timedelta
+
+    @property
+    def waypoints(self) -> List[FlightWaypoint]:
+        return [
+            self.takeoff,
+            self.hold,
+            self.sweep_start,
+            self.sweep_end,
+            self.land,
+        ]
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.sweep_end
+
+    @property
+    def tot_offset(self) -> timedelta:
+        return -self.lead_time
+
+    @property
+    def sweep_start_time(self) -> timedelta:
+        travel_time = self.travel_time_between_waypoints(
+            self.sweep_start, self.sweep_end)
+        return self.sweep_end_time - travel_time
+
+    @property
+    def sweep_end_time(self) -> timedelta:
+        return self.package.time_over_target + self.tot_offset
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.sweep_start:
+            return self.sweep_start_time
+        if waypoint == self.sweep_end:
+            return self.sweep_end_time
+        return None
+
+    def depart_time_for_waypoint(
+            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.push_time
+        return None
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.sweep_end_time - TravelTime.between_points(
+            self.hold.position,
+            self.sweep_end.position,
+            GroundSpeed.for_flight(self.flight, self.hold.alt)
+        )
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -561,8 +641,10 @@ class FlightPlanBuilder:
             return self.generate_sead(flight, custom_targets)
         elif task == FlightType.STRIKE:
             return self.generate_strike(flight)
+        elif task == FlightType.SWEEP:
+            return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
-            return self.generate_frontline_cap(flight)
+            return self.generate_tarcap(flight)
         elif task == FlightType.TROOP_TRANSPORT:
             logging.error(
                 "Troop transport flight plan generation not implemented"
@@ -631,11 +713,57 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
+        start, end = self.racetrack_for_objective(location)
         patrol_alt = random.randint(
             self.doctrine.min_patrol_altitude,
             self.doctrine.max_patrol_altitude
         )
 
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        start, end = builder.race_track(start, end, patrol_alt)
+        descent, land = builder.rtb(flight.from_cp)
+
+        return BarCapFlightPlan(
+            package=self.package,
+            flight=flight,
+            patrol_duration=self.doctrine.cap_duration,
+            takeoff=builder.takeoff(flight.from_cp),
+            patrol_start=start,
+            patrol_end=end,
+            land=land
+        )
+
+    def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
+        """Generate a BARCAP flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        target = self.package.target.position
+
+        heading = self._heading_to_package_airfield(target)
+        start = target.point_from_heading(heading,
+                                          -self.doctrine.sweep_distance)
+
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        descent, land = builder.rtb(flight.from_cp)
+
+        start, end = builder.sweep(start, target,
+                                   self.doctrine.ingress_altitude)
+
+        return SweepFlightPlan(
+            package=self.package,
+            flight=flight,
+            lead_time=timedelta(minutes=5),
+            takeoff=builder.takeoff(flight.from_cp),
+            hold=builder.hold(self._hold_point(flight)),
+            sweep_start=start,
+            sweep_end=end,
+            land=land
+        )
+
+    def racetrack_for_objective(self,
+                                location: MissionTarget) -> Tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
         for airfield in closest_cache.closest_airfields:
             # If the mission is a BARCAP of an enemy airfield, find the *next*
@@ -671,37 +799,11 @@ class FlightPlanBuilder:
             self.doctrine.cap_max_track_length
         )
         start = end.point_from_heading(heading - 180, diameter)
+        return start, end
 
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        start, end = builder.race_track(start, end, patrol_alt)
-        descent, land = builder.rtb(flight.from_cp)
-
-        return BarCapFlightPlan(
-            package=self.package,
-            flight=flight,
-            patrol_duration=self.doctrine.cap_duration,
-            takeoff=builder.takeoff(flight.from_cp),
-            ascent=builder.ascent(flight.from_cp),
-            patrol_start=start,
-            patrol_end=end,
-            descent=descent,
-            land=land
-        )
-
-    def generate_frontline_cap(self, flight: Flight) -> FrontLineCapFlightPlan:
-        """Generate a CAP flight plan for the given front line.
-
-        Args:
-            flight: The flight to generate the flight plan for.
-        """
-        location = self.package.target
-
-        if not isinstance(location, FrontLine):
-            raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        ally_cp, enemy_cp = location.control_points
-        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
-                                    self.doctrine.max_patrol_altitude)
+    def racetrack_for_frontline(self,
+                                front_line: FrontLine) -> Tuple[Point, Point]:
+        ally_cp, enemy_cp = front_line.control_points
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(
@@ -722,24 +824,41 @@ class FlightPlanBuilder:
         orbit0p = orbit_center.point_from_heading(heading, radius)
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
+        return orbit0p, orbit1p
+
+    def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
+        """Generate a CAP flight plan for the given front line.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
+                                    self.doctrine.max_patrol_altitude)
+
         # Create points
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
 
+        if isinstance(location, FrontLine):
+            orbit0p, orbit1p = self.racetrack_for_frontline(location)
+        else:
+            orbit0p, orbit1p = self.racetrack_for_objective(location)
+
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
         descent, land = builder.rtb(flight.from_cp)
-        return FrontLineCapFlightPlan(
+        return TarCapFlightPlan(
             package=self.package,
             flight=flight,
+            lead_time=timedelta(minutes=2),
             # Note that this duration only has an effect if there are no
             # flights in the package that have requested escort. If the package
             # requests an escort the CAP flight will remain on station for the
             # duration of the escorted mission, or until it is winchester/bingo.
             patrol_duration=self.doctrine.cap_duration,
             takeoff=builder.takeoff(flight.from_cp),
-            ascent=builder.ascent(flight.from_cp),
             patrol_start=start,
             patrol_end=end,
-            descent=descent,
             land=land
         )
 
@@ -805,14 +924,12 @@ class FlightPlanBuilder:
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.from_cp),
-            ascent=builder.ascent(flight.from_cp),
             hold=builder.hold(self._hold_point(flight)),
             join=builder.join(self.package.waypoints.join),
             ingress=ingress,
             targets=[target],
             egress=egress,
             split=builder.split(self.package.waypoints.split),
-            descent=descent,
             land=land
         )
 
@@ -842,11 +959,9 @@ class FlightPlanBuilder:
             flight=flight,
             patrol_duration=self.doctrine.cas_duration,
             takeoff=builder.takeoff(flight.from_cp),
-            ascent=builder.ascent(flight.from_cp),
             patrol_start=builder.ingress_cas(ingress, location),
             target=builder.cas(center),
             patrol_end=builder.egress(egress, location),
-            descent=descent,
             land=land
         )
 
@@ -871,12 +986,50 @@ class FlightPlanBuilder:
             return builder.strike_area(location)
 
     def _hold_point(self, flight: Flight) -> Point:
-        heading = flight.from_cp.position.heading_between_point(
-            self.package.target.position
+        assert self.package.waypoints is not None
+        origin = flight.from_cp.position
+        target = self.package.target.position
+        join = self.package.waypoints.join
+        origin_to_target = origin.distance_to_point(target)
+        join_to_target = join.distance_to_point(target)
+        if origin_to_target < join_to_target:
+            # If the origin airfield is closer to the target than the join
+            # point, plan the hold point such that it retreats from the origin
+            # airfield.
+            return join.point_from_heading(target.heading_between_point(origin),
+                                           self.doctrine.push_distance)
+
+        heading_to_join = origin.heading_between_point(join)
+        hold_point = origin.point_from_heading(heading_to_join,
+                                               self.doctrine.push_distance)
+        if hold_point.distance_to_point(join) >= self.doctrine.push_distance:
+            # Hold point is between the origin airfield and the join point and
+            # spaced sufficiently.
+            return hold_point
+
+        # The hold point is between the origin airfield and the join point, but
+        # the distance between the hold point and the join point is too short.
+        # Bend the hold point out to extend the distance while maintaining the
+        # minimum distance from the origin airfield to keep the AI flying
+        # properly.
+        origin_to_join = origin.distance_to_point(join)
+        cos_theta = (
+                (self.doctrine.hold_distance ** 2 +
+                 origin_to_join ** 2 -
+                 self.doctrine.join_distance ** 2) /
+                (2 * self.doctrine.hold_distance * origin_to_join)
         )
-        return flight.from_cp.position.point_from_heading(
-            heading, nm_to_meter(15)
-        )
+        try:
+            theta = math.acos(cos_theta)
+        except ValueError:
+            # No solution that maintains hold and join distances. Extend the
+            # hold point away from the target.
+            return origin.point_from_heading(
+                target.heading_between_point(origin),
+                self.doctrine.hold_distance)
+
+        return origin.point_from_heading(heading_to_join - theta,
+                                         self.doctrine.hold_distance)
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
     def generate_ascend_point(self, flight: Flight,
@@ -944,23 +1097,37 @@ class FlightPlanBuilder:
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.from_cp),
-            ascent=builder.ascent(flight.from_cp),
             hold=builder.hold(self._hold_point(flight)),
             join=builder.join(self.package.waypoints.join),
             ingress=ingress,
             targets=target_waypoints,
             egress=builder.egress(self.package.waypoints.egress, location),
             split=builder.split(self.package.waypoints.split),
-            descent=descent,
             land=land
         )
 
     def _join_point(self, ingress_point: Point) -> Point:
+        ingress_distance = self._distance_to_package_airfield(ingress_point)
+        if ingress_distance < self.doctrine.join_distance:
+            # If the ingress point is close to the origin, plan the join point
+            # farther back.
+            return ingress_point.point_from_heading(
+                self.package.target.position.heading_between_point(
+                    self.package_airfield().position),
+                self.doctrine.join_distance)
         heading = self._heading_to_package_airfield(ingress_point)
         return ingress_point.point_from_heading(heading,
                                                 -self.doctrine.join_distance)
 
     def _split_point(self, egress_point: Point) -> Point:
+        egress_distance = self._distance_to_package_airfield(egress_point)
+        if egress_distance < self.doctrine.split_distance:
+            # If the ingress point is close to the origin, plan the split point
+            # farther back.
+            return egress_point.point_from_heading(
+                self.package.target.position.heading_between_point(
+                    self.package_airfield().position),
+                self.doctrine.split_distance)
         heading = self._heading_to_package_airfield(egress_point)
         return egress_point.point_from_heading(heading,
                                                -self.doctrine.split_distance)
@@ -982,6 +1149,9 @@ class FlightPlanBuilder:
 
     def _heading_to_package_airfield(self, point: Point) -> int:
         return self.package_airfield().position.heading_between_point(point)
+
+    def _distance_to_package_airfield(self, point: Point) -> int:
+        return self.package_airfield().position.distance_to_point(point)
 
     def package_airfield(self) -> ControlPoint:
         # We'll always have a package, but if this is being planned via the UI

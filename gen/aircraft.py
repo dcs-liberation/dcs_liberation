@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
-from typing import Dict, List, Optional, Type, Union, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union
 
 from dcs import helicopters
 from dcs.action import AITaskPush, ActivateGroup
@@ -13,10 +13,12 @@ from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
 from dcs.helicopters import UH_1H, helicopter_map
+from dcs.mapping import Point
 from dcs.mission import Mission, StartType
 from dcs.planes import (
     AJS37,
     B_17G,
+    B_52H,
     Bf_109K_4,
     FW_190A8,
     FW_190D9,
@@ -31,7 +33,8 @@ from dcs.planes import (
     P_51D_30_NA,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
-    Su_33, A_20G, Tu_22M3, B_52H,
+    Su_33,
+    Tu_22M3,
 )
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
@@ -49,10 +52,8 @@ from dcs.task import (
     OptRTBOnBingoFuel,
     OptRTBOnOutOfAmmo,
     OptReactOnThreat,
-    OptRestrictAfterburner,
     OptRestrictJettison,
     OrbitAction,
-    PinpointStrike,
     SEAD,
     StartCommand,
     Targets,
@@ -71,6 +72,7 @@ from game.utils import nm_to_meter
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
+from gen.conflictgen import FRONTLINE_LENGTH
 from gen.flights.flight import (
     Flight,
     FlightType,
@@ -79,15 +81,14 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from gen.conflictgen import FRONTLINE_LENGTH
-from dcs.mapping import Point
 from theater import TheaterGroundObject
 from theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
 from .flights.flightplan import (
     CasFlightPlan,
-    FormationFlightPlan,
+    LoiterFlightPlan,
     PatrollingFlightPlan,
+    SweepFlightPlan,
 )
 from .flights.traveltime import TotEstimator
 from .naming import namegen
@@ -1035,9 +1036,6 @@ class AircraftConflictGenerator:
 
         self.configure_behavior(group, rtb_winchester=ammo_type)
 
-        group.points[0].tasks.append(EngageTargets(max_distance=nm_to_meter(50),
-                                                   targets=[Targets.All.Air]))
-
     def configure_cas(self, group: FlyingGroup, package: Package,
                       flight: Flight,
                       dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -1118,7 +1116,7 @@ class AircraftConflictGenerator:
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
         if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
-                           FlightType.INTERCEPTION]:
+                           FlightType.INTERCEPTION, FlightType.SWEEP]:
             self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
@@ -1278,6 +1276,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
+            FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
@@ -1314,7 +1313,7 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.Circle
         ))
-        if not isinstance(self.flight.flight_plan, FormationFlightPlan):
+        if not isinstance(self.flight.flight_plan, LoiterFlightPlan):
             flight_plan_type = self.flight.flight_plan.__class__.__name__
             logging.error(
                 f"Cannot configure hold for for {self.flight} because "
@@ -1458,6 +1457,24 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         return waypoint
 
 
+class SweepIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        if not isinstance(self.flight.flight_plan, SweepFlightPlan):
+            flight_plan_type = self.flight.flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create sweep for {self.flight} because "
+                f"{flight_plan_type} is not a sweep flight plan.")
+            return waypoint
+
+        waypoint.tasks.append(EngageTargets(
+            max_distance=nm_to_meter(50),
+            targets=[Targets.All.Air.Planes.Fighters]))
+
+        return waypoint
+
+
 class JoinPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
@@ -1532,4 +1549,14 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         racetrack.stop_after_time(
             int(self.flight.flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
+
+        # TODO: Move the properties of this task into the flight plan?
+        # CAP is the only current user of this so it's not a big deal, but might
+        # be good to make this usable for things like BAI when we add that
+        # later.
+        cap_types = {FlightType.BARCAP, FlightType.TARCAP}
+        if self.flight.flight_type in cap_types:
+            waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
+                                                targets=[Targets.All.Air]))
+
         return waypoint

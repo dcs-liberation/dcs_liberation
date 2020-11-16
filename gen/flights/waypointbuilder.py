@@ -326,6 +326,56 @@ class WaypointBuilder:
         return (self.race_track_start(start, altitude),
                 self.race_track_end(end, altitude))
 
+    @staticmethod
+    def sweep_start(position: Point, altitude: int) -> FlightWaypoint:
+        """Creates a sweep start waypoint.
+
+        Args:
+            position: Position of the waypoint.
+            altitude: Altitude of the sweep in meters.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.INGRESS_SWEEP,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.name = "SWEEP START"
+        waypoint.description = "Proceed to the target and engage enemy aircraft"
+        waypoint.pretty_name = "Sweep start"
+        return waypoint
+
+    @staticmethod
+    def sweep_end(position: Point, altitude: int) -> FlightWaypoint:
+        """Creates a sweep end waypoint.
+
+        Args:
+            position: Position of the waypoint.
+            altitude: Altitude of the sweep in meters.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.EGRESS,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.name = "SWEEP END"
+        waypoint.description = "End of sweep"
+        waypoint.pretty_name = "Sweep end"
+        return waypoint
+
+    def sweep(self, start: Point, end: Point,
+              altitude: int) -> Tuple[FlightWaypoint, FlightWaypoint]:
+        """Creates two waypoint for a racetrack orbit.
+
+        Args:
+            start: The beginning of the sweep.
+            end: The end of the sweep.
+            altitude: The sweep altitude.
+        """
+        return (self.sweep_start(start, altitude),
+                self.sweep_end(end, altitude))
+
     def rtb(self,
             arrival: ControlPoint) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates descent ant landing waypoints for the given control point.

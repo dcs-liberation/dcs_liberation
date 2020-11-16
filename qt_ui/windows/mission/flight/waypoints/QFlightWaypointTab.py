@@ -149,10 +149,10 @@ class QFlightWaypointTab(QFrame):
             # departs, whereas BARCAP usually isn't part of a strike package and
             # has a fixed mission time.
             if task == FlightType.CAP:
-                if isinstance(self.package.target, FrontLine):
-                    task = FlightType.TARCAP
-                else:
+                if self.package.target.is_friendly(to_player=True):
                     task = FlightType.BARCAP
+                else:
+                    task = FlightType.TARCAP
             self.flight.flight_type = task
             self.planner.populate_flight_plan(self.flight)
             self.flight_waypoint_list.update_list()

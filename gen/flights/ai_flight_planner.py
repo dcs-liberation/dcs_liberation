@@ -496,7 +496,11 @@ class CoalitionMissionPlanner:
                 error = random.randint(-margin, margin)
                 yield timedelta(minutes=max(0, time + error))
 
-        dca_types = (FlightType.BARCAP, FlightType.INTERCEPTION)
+        dca_types = {
+            FlightType.BARCAP,
+            FlightType.INTERCEPTION,
+            FlightType.TARCAP,
+        }
 
         non_dca_packages = [p for p in self.ato.packages if
                             p.primary_task not in dca_types]

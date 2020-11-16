@@ -18,9 +18,11 @@ class QFlightTypeComboBox(QComboBox):
     """Combo box for selecting a flight task type."""
 
     COMMON_ENEMY_MISSIONS = [
+        FlightType.TARCAP,
         FlightType.ESCORT,
         FlightType.SEAD,
         FlightType.DEAD,
+        FlightType.SWEEP,
         # TODO: FlightType.ELINT,
         # TODO: FlightType.EWAR,
         # TODO: FlightType.RECON,
@@ -49,7 +51,6 @@ class QFlightTypeComboBox(QComboBox):
     ]
 
     ENEMY_AIRBASE_MISSIONS = [
-        FlightType.BARCAP,
         # TODO: FlightType.STRIKE
     ] + COMMON_ENEMY_MISSIONS
 
@@ -59,13 +60,11 @@ class QFlightTypeComboBox(QComboBox):
     ] + COMMON_FRIENDLY_MISSIONS
 
     ENEMY_GROUND_OBJECT_MISSIONS = [
-        FlightType.BARCAP,
         FlightType.STRIKE,
     ] + COMMON_ENEMY_MISSIONS
 
     FRONT_LINE_MISSIONS = [
         FlightType.CAS,
-        FlightType.TARCAP,
         # TODO: FlightType.TROOP_TRANSPORT
         # TODO: FlightType.EVAC
     ] + COMMON_ENEMY_MISSIONS

@@ -128,7 +128,14 @@ class TotEstimator:
                     f"time for {flight} will be immediate.")
                 return timedelta()
         else:
-            tot = self.package.time_over_target
+            tot_waypoint = flight.flight_plan.tot_waypoint
+            if tot_waypoint is None:
+                tot = self.package.time_over_target
+            else:
+                tot = flight.flight_plan.tot_for_waypoint(tot_waypoint)
+                if tot is None:
+                    logging.error(f"TOT waypoint for {flight} has no TOT")
+                    tot = self.package.time_over_target
         return tot - travel_time - self.HOLD_TIME
 
     def earliest_tot(self) -> timedelta:
@@ -165,9 +172,13 @@ class TotEstimator:
             # Return 0 so this flight's travel time does not affect the rest
             # of the package.
             return timedelta()
+        # Account for TOT offsets for the flight plan. An offset of -2 minutes
+        # means the flight's TOT is 2 minutes ahead of the package's so it needs
+        # an extra two minutes.
+        offset = -flight.flight_plan.tot_offset
         startup = self.estimate_startup(flight)
         ground_ops = self.estimate_ground_ops(flight)
-        return startup + ground_ops + time_to_target
+        return startup + ground_ops + time_to_target + offset
 
     @staticmethod
     def estimate_startup(flight: Flight) -> timedelta:

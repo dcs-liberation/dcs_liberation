@@ -1,0 +1,137 @@
+{
+  "name": "Persian Gulf - Full Map",
+  "theater": "Persian Gulf",
+  "authors": "Plob",
+  "description": "<p>In this scenario, you start at Liwa Airfield, and must work your way north through the whole map.</p>",
+  "player_points": [
+    {
+      "type": "airbase",
+      "id": "Liwa Airbase",
+      "size": 1000,
+      "importance": 0.2
+    },
+    {
+      "type": "lha",
+      "id": 1002,
+      "x": -164000,
+      "y": -257000,
+      "captured_invert": true
+    },
+    {
+      "type": "carrier",
+      "id": 1001,
+      "x": -124000,
+      "y": -303000,
+      "captured_invert": true
+    }
+  ],
+  "enemy_points": [
+    {
+      "type": "airbase",
+      "id": "Al Ain International Airport",
+      "size": 1000,
+      "importance": 1
+    },
+	{
+      "type": "airbase",
+      "id": "Al Dhafra AB",
+      "size": 2000,
+      "importance": 1
+    },
+	{
+      "type": "airbase",
+      "id": "Al Minhad AB",
+      "size": 1000,
+      "importance": 1
+    },
+	{
+      "type": "airbase",
+      "id": "Ras Al Khaimah",
+      "size": 1000,
+      "importance": 1
+    },
+	{
+      "type": "airbase",
+      "id": "Khasab",
+      "size": 1000,
+      "importance": 1
+    },
+	{
+      "type": "airbase",
+      "id": "Bandar Abbas Intl",
+      "size": 2000,
+      "importance": 1
+    },
+    {
+      "type": "airbase",
+      "id": "Jiroft Airport",
+      "size": 2000,
+      "importance": 1.4
+    },
+    {
+      "type": "airbase",
+      "id": "Kerman Airport",
+      "size": 2000,
+      "importance": 1.7,
+	  "captured_invert": true
+    },
+    {
+      "type": "airbase",
+      "id": "Lar Airbase",
+      "size": 1000,
+      "importance": 1.4
+    },
+	{
+      "type": "airbase",
+      "id": "Shiraz International Airport",
+      "size": 2000,
+      "importance": 1
+    }
+  ],
+  "links": [
+    [
+      "Al Dhafra AB",
+      "Liwa Airbase"
+	],
+	[
+      "Al Dhafra AB",
+      "Al Ain International Airport"
+	],
+	[
+      "Al Ain International Airport",
+      "Al Minhad AB"
+    ],
+	[
+      "Al Dhafra AB",
+      "Al Minhad AB"
+    ],
+	[
+      "Al Minhad AB",
+      "Ras Al Khaimah"
+    ],
+	[
+      "Khasab",
+      "Ras Al Khaimah"
+    ],
+	[
+      "Bandar Abbas Intl",
+      "Lar Airbase"
+    ],
+	[
+      "Shiraz International Airport",
+      "Lar Airbase"
+    ],
+	[
+      "Shiraz International Airport",
+      "Kerman Airport"
+    ],
+	[
+      "Jiroft Airport",
+      "Lar Airbase"
+    ],
+	[
+      "Jiroft Airport",
+      "Kerman Airport"
+    ]
+  ]
+}

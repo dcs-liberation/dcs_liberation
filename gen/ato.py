@@ -159,6 +159,7 @@ class Package:
             FlightType.TARCAP,
             FlightType.CAP,
             FlightType.BARCAP,
+            FlightType.SWEEP,
             FlightType.EWAR,
             FlightType.ESCORT,
         ]

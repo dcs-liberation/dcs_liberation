@@ -11,7 +11,6 @@ analysis = Analysis(
         ('resources', 'resources'),
         ('resources/caucasus.p', 'dcs/terrain/'),
         ('resources/nevada.p', 'dcs/terrain/'),
-        ('buildnumber', './')
     ],
     hookspath=[],
     runtime_hooks=[],

@@ -1,0 +1,84 @@
+{
+  "country": "France",
+  "name": "France 2005 (Frenchpack)",
+  "authors": "HerrTom",
+  "description": "<p>French equipment using the Frenchpack, but without the Rafale mod.</p>",
+  "aircrafts": [
+    "M_2000C",
+    "Mirage_2000_5",
+    "SA342M",
+    "SA342L",
+    "SA342Mistral"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "AMX_10RCR",
+    "AMX_10RCR_SEPAR",
+    "ERC_90",
+    "TRM_2000_PAMELA",
+    "VAB__50",
+    "VAB_MEPHISTO",
+    "VAB_T20_13",
+    "VAB_T20_13",
+    "VBL__50",
+    "VBL_AANF1",
+    "VBAE_CRAB",
+    "VBAE_CRAB_MMP",
+    "AMX_30B2",
+    "Leclerc_Serie_XXI"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249",
+    "Stinger_MANPADS"
+  ],
+  "shorads": [
+    "HQ7Generator",
+    "RolandGenerator"
+  ],
+  "sams": [
+    "RolandGenerator",
+    "HawkGenerator"
+  ],
+  "aircraft_carrier": [
+    "CVN_74_John_C__Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  },
+  "carrier_names": [
+    "L9013 Mistral",
+    "L9014 Tonerre",
+    "L9015 Dixmude"
+  ],
+  "helicopter_carrier_names": [
+    "Jeanne d'Arc"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}
