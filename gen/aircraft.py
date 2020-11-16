@@ -713,6 +713,17 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
+        # Override livery by faction file data
+        if flight.from_cp.captured:
+            faction = self.game.player_faction
+        else:
+            faction = self.game.enemy_faction
+
+        if unit_type in faction.liveries_overrides:
+            livery = random.choice(faction.liveries_overrides[unit_type])
+            for unit_instance in group.units:
+                unit_instance.livery_id = livery
+
         for idx in range(0, min(len(group.units), flight.client_count)):
             unit = group.units[idx]
             if self.use_client:

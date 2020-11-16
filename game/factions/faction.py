@@ -105,6 +105,9 @@ class Faction:
     # List of available buildings for this faction
     building_set: List[str] = field(default_factory=list)
 
+    # List of default livery overrides
+    liveries_overrides: Dict[UnitType, List[str]] = field(default_factory=dict)
+
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
 
@@ -182,6 +185,14 @@ class Faction:
             faction.building_set = WW2_GERMANY_BUILDINGS
         else:
             faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
+
+        # Load liveries override
+        faction.liveries_overrides = {}
+        liveries_overrides = json.get("liveries_overrides", {})
+        for k, v in liveries_overrides.items():
+            k = load_aircraft(k)
+            if k is not None:
+                faction.liveries_overrides[k] = [s.lower() for s in v]
 
         return faction
 
