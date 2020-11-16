@@ -105,6 +105,15 @@ class FlightPlan:
         """
         raise NotImplementedError
 
+    @property
+    def tot_offset(self) -> timedelta:
+        """This flight's offset from the package's TOT.
+
+        Positive values represent later TOTs. An offset of -2 minutes is used
+        for a flight that has a TOT 2 minutes before the rest of the package.
+        """
+        return timedelta()
+
     # Not cached because changes to the package might alter the formation speed.
     @property
     def travel_time_to_target(self) -> Optional[timedelta]:
@@ -147,8 +156,33 @@ class FlightPlan:
 
 
 @dataclass(frozen=True)
-class FormationFlightPlan(FlightPlan):
+class LoiterFlightPlan(FlightPlan):
     hold: FlightWaypoint
+
+    @property
+    def waypoints(self) -> List[FlightWaypoint]:
+        raise NotImplementedError
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        raise NotImplementedError
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        raise NotImplementedError
+
+    @property
+    def push_time(self) -> timedelta:
+        raise NotImplementedError
+
+    def depart_time_for_waypoint(
+            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.push_time
+        return None
+
+
+@dataclass(frozen=True)
+class FormationFlightPlan(LoiterFlightPlan):
     join: FlightWaypoint
     split: FlightWaypoint
 
@@ -213,12 +247,6 @@ class FormationFlightPlan(FlightPlan):
             return self.join_time
         elif waypoint == self.split:
             return self.split_time
-        return None
-
-    def depart_time_for_waypoint(
-            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.hold:
-            return self.push_time
         return None
 
     @property
@@ -462,6 +490,64 @@ class StrikeFlightPlan(FormationFlightPlan):
 
 
 @dataclass(frozen=True)
+class SweepFlightPlan(LoiterFlightPlan):
+    takeoff: FlightWaypoint
+    sweep_start: FlightWaypoint
+    sweep_end: FlightWaypoint
+    land: FlightWaypoint
+    lead_time: timedelta
+
+    @property
+    def waypoints(self) -> List[FlightWaypoint]:
+        return [
+            self.takeoff,
+            self.hold,
+            self.sweep_start,
+            self.sweep_end,
+            self.land,
+        ]
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.sweep_end
+
+    @property
+    def tot_offset(self) -> timedelta:
+        return -self.lead_time
+
+    @property
+    def sweep_start_time(self) -> timedelta:
+        travel_time = self.travel_time_between_waypoints(
+            self.sweep_start, self.sweep_end)
+        return self.sweep_end_time - travel_time
+
+    @property
+    def sweep_end_time(self) -> timedelta:
+        return self.package.time_over_target + self.tot_offset
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.sweep_start:
+            return self.sweep_start_time
+        if waypoint == self.sweep_end:
+            return self.sweep_end_time
+        return None
+
+    def depart_time_for_waypoint(
+            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.push_time
+        return None
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.sweep_end_time - TravelTime.between_points(
+            self.hold.position,
+            self.sweep_end.position,
+            GroundSpeed.for_flight(self.flight, self.hold.alt)
+        )
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -546,6 +632,8 @@ class FlightPlanBuilder:
             return self.generate_sead(flight, custom_targets)
         elif task == FlightType.STRIKE:
             return self.generate_strike(flight)
+        elif task == FlightType.SWEEP:
+            return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_frontline_cap(flight)
         elif task == FlightType.TROOP_TRANSPORT:
@@ -668,6 +756,35 @@ class FlightPlanBuilder:
             takeoff=builder.takeoff(flight.from_cp),
             patrol_start=start,
             patrol_end=end,
+            land=land
+        )
+
+    def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
+        """Generate a BARCAP flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        target = self.package.target.position
+
+        heading = self._heading_to_package_airfield(target)
+        start = target.point_from_heading(heading,
+                                          -self.doctrine.sweep_distance)
+
+        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        descent, land = builder.rtb(flight.from_cp)
+
+        start, end = builder.sweep(start, target,
+                                   self.doctrine.ingress_altitude)
+
+        return SweepFlightPlan(
+            package=self.package,
+            flight=flight,
+            lead_time=timedelta(minutes=5),
+            takeoff=builder.takeoff(flight.from_cp),
+            hold=builder.hold(self._hold_point(flight)),
+            sweep_start=start,
+            sweep_end=end,
             land=land
         )
 

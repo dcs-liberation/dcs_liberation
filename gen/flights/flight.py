@@ -38,6 +38,8 @@ class FlightType(Enum):
     RECON = 15
     EWAR = 16
 
+    SWEEP = 17
+
 
 class FlightWaypointType(Enum):
     TAKEOFF = 0             # Take off point
@@ -61,6 +63,7 @@ class FlightWaypointType(Enum):
     LOITER = 18
     INGRESS_ESCORT = 19
     INGRESS_DEAD = 20
+    INGRESS_SWEEP = 21
 
 
 class FlightWaypoint:

@@ -1,3 +1,8 @@
+# 2.3.0
+
+# Features/Improvements
+* **[Flight Planner]** Added fighter sweep missions.
+
 # 2.2.1
 
 # Features/Improvements

@@ -21,6 +21,7 @@ class QFlightTypeComboBox(QComboBox):
         FlightType.ESCORT,
         FlightType.SEAD,
         FlightType.DEAD,
+        FlightType.SWEEP,
         # TODO: FlightType.ELINT,
         # TODO: FlightType.EWAR,
         # TODO: FlightType.RECON,
