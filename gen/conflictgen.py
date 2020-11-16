@@ -5,8 +5,7 @@ from typing import Tuple
 from dcs.country import Country
 from dcs.mapping import Point
 
-from theater import ConflictTheater, ControlPoint
-from theater.frontline import FrontLine
+from theater import ConflictTheater, ControlPoint, FrontLine
 
 AIR_DISTANCE = 40000
 
@@ -136,8 +135,8 @@ class Conflict:
         return from_cp.has_frontline and to_cp.has_frontline
 
     @staticmethod
-    def frontline_position(from_cp: ControlPoint, to_cp: ControlPoint) -> Tuple[Point, int]:
-        frontline = FrontLine(from_cp, to_cp)
+    def frontline_position(from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> Tuple[Point, int]:
+        frontline = FrontLine(from_cp, to_cp, theater)
         attack_heading = frontline.attack_heading
         position = frontline.position
         return position, _opposite_heading(attack_heading)
@@ -160,7 +159,7 @@ class Conflict:
 
         return Point(*intersection.xy[0]), _heading_sum(heading, 90), intersection.length
         """
-        frontline = cls.frontline_position(from_cp, to_cp)
+        frontline = cls.frontline_position(from_cp, to_cp, theater)
         center_position, heading = frontline
         left_position, right_position = None, None
 
@@ -210,7 +209,7 @@ class Conflict:
     @classmethod
     def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         pos = initial
-        for _ in range(0, int(max_distance), 500):
+        for _ in range(0, int(max_distance), 100):
             if theater.is_on_land(pos):
                 return pos
 
@@ -477,7 +476,7 @@ class Conflict:
 
     @classmethod
     def transport_conflict(cls, attacker_name: str, defender_name: str, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
-        frontline_position, heading = cls.frontline_position(from_cp, to_cp)
+        frontline_position, heading = cls.frontline_position(from_cp, to_cp, theater)
         initial_dest = frontline_position.point_from_heading(heading, TRANSPORT_FRONTLINE_DIST)
         dest = cls._find_ground_position(initial_dest, from_cp.position.distance_to_point(to_cp.position) / 3, heading, theater)
         if not dest:

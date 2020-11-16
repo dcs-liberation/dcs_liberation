@@ -1,7 +1,8 @@
+from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.action import AITaskPush
@@ -36,6 +37,9 @@ from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from game.plugins import LuaPluginManager
 
+if TYPE_CHECKING:
+    from game import Game
+
 SPREAD_DISTANCE_FACTOR = 0.1, 0.3
 SPREAD_DISTANCE_SIZE_FACTOR = 0.1
 
@@ -65,7 +69,7 @@ class JtacInfo:
 
 class GroundConflictGenerator:
 
-    def __init__(self, mission: Mission, conflict: Conflict, game, player_planned_combat_groups, enemy_planned_combat_groups, player_stance):
+    def __init__(self, mission: Mission, conflict: Conflict, game: Game, player_planned_combat_groups, enemy_planned_combat_groups, player_stance):
         self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
@@ -93,7 +97,7 @@ class GroundConflictGenerator:
         if combat_width < 35000:
             combat_width = 35000
 
-        position = Conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp)
+        position = Conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp, self.game.theater)
 
         # Create player groups at random position
         for group in self.player_planned_combat_groups:
@@ -114,6 +118,8 @@ class GroundConflictGenerator:
                 player_groups.append((g,group))
 
                 self.gen_infantry_group_for_group(g, True, self.mission.country(self.game.player_country), self.conflict.heading + 90)
+            else:
+                logging.warning(f"Unable to get valid position for {group}")
 
         # Create enemy groups at random position
         for group in self.enemy_planned_combat_groups:
@@ -454,7 +460,7 @@ class GroundConflictGenerator:
 
     def get_valid_position_for_group(self, conflict_position, isplayer, combat_width, distance_from_frontline):
         i = 0
-        while i < 25: # 25 attempt for valid position
+        while i < 1000: # 25 attempt for valid position
             heading_diff = -90 if isplayer else 90
             shifted = conflict_position[0].point_from_heading(self.conflict.heading,
                                                      random.randint((int)(-combat_width / 2), (int)(combat_width / 2)))

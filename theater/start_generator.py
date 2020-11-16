@@ -40,7 +40,6 @@ from theater.theatergroundobject import (
     LhaGroundObject,
     MissileSiteGroundObject, ShipGroundObject,
 )
-from theater.frontline import FrontLine
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
