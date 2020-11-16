@@ -13,6 +13,7 @@
 
 ## Fixes :
 * **[Flight Planner]** Hold, join, and split points are planned cautiously near enemy airfields. Ascend/descend points are no longer planned.
+* **[Flight Planner]** Spitfire clipped wing variant was not seen as a flyable module
 
 # 2.2.0
 
