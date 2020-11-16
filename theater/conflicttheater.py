@@ -352,8 +352,8 @@ class FrontLine(MissionTarget):
 
     def is_friendly(self, to_player: bool) -> bool:
         """Returns True if the objective is in friendly territory."""
-        raise False
-    
+        return False
+
     @property
     def position(self):
         """
