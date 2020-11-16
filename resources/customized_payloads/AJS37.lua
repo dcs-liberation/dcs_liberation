@@ -5,28 +5,37 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{ARAKM70BHE}",
-					["num"] = 3,
+					["CLSID"] = "{RB75}",
+					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{ARAKM70BHE}",
-					["num"] = 2,
+					["CLSID"] = "{RB75}",
+					["num"] = 3,
 				},
 				[3] = {
+					["CLSID"] = "{RB75}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{RB75}",
+					["num"] = 6,
+				},
+				[5] = {
+					["CLSID"] = "{Robot24J}",
+					["num"] = 1,
+				},
+				[6] = {
+					["CLSID"] = "{Robot24J}",
+					["num"] = 7,
+				},
+				[7] = {
 					["CLSID"] = "{VIGGEN_X-TANK}",
 					["num"] = 4,
 				},
-				[4] = {
-					["CLSID"] = "{ARAKM70BHE}",
-					["num"] = 5,
-				},
-				[5] = {
-					["CLSID"] = "{ARAKM70BHE}",
-					["num"] = 6,
-				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 32,
+				[2] = 31,
 			},
 		},
 		[2] = {
