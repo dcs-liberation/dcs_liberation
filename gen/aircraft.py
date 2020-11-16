@@ -1468,8 +1468,9 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
                 f"{flight_plan_type} is not a sweep flight plan.")
             return waypoint
 
-        waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
-                                            targets=[Targets.All.Air]))
+        waypoint.tasks.append(EngageTargets(
+            max_distance=nm_to_meter(50),
+            targets=[Targets.All.Air.Planes.Fighters]))
 
         return waypoint
 
