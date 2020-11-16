@@ -340,9 +340,10 @@ class CasFlightPlan(PatrollingFlightPlan):
 
 
 @dataclass(frozen=True)
-class FrontLineCapFlightPlan(PatrollingFlightPlan):
+class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
     land: FlightWaypoint
+    lead_time: timedelta
 
     @property
     def waypoints(self) -> List[FlightWaypoint]:
@@ -352,6 +353,10 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
             self.patrol_end,
             self.land,
         ]
+
+    @property
+    def tot_offset(self) -> timedelta:
+        return -self.lead_time
 
     def depart_time_for_waypoint(
             self, waypoint: FlightWaypoint) -> Optional[timedelta]:
@@ -363,8 +368,8 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
     def patrol_start_time(self) -> timedelta:
         start = self.package.escort_start_time
         if start is not None:
-            return start
-        return super().patrol_start_time
+            return start + self.tot_offset
+        return super().patrol_start_time + self.tot_offset
 
     @property
     def patrol_end_time(self) -> timedelta:
@@ -372,6 +377,10 @@ class FrontLineCapFlightPlan(PatrollingFlightPlan):
         if end is not None:
             return end
         return super().patrol_end_time
+
+
+# TODO: Remove when breaking save compat.
+FrontLineCapFlightPlan = TarCapFlightPlan
 
 
 @dataclass(frozen=True)
@@ -635,7 +644,7 @@ class FlightPlanBuilder:
         elif task == FlightType.SWEEP:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
-            return self.generate_frontline_cap(flight)
+            return self.generate_tarcap(flight)
         elif task == FlightType.TROOP_TRANSPORT:
             logging.error(
                 "Troop transport flight plan generation not implemented"
@@ -704,46 +713,11 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
+        start, end = self.racetrack_for_objective(location)
         patrol_alt = random.randint(
             self.doctrine.min_patrol_altitude,
             self.doctrine.max_patrol_altitude
         )
-
-        closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
-        for airfield in closest_cache.closest_airfields:
-            # If the mission is a BARCAP of an enemy airfield, find the *next*
-            # closest enemy airfield.
-            if airfield == self.package.target:
-                continue
-            if airfield.captured != self.is_player:
-                closest_airfield = airfield
-                break
-        else:
-            raise PlanningError("Could not find any enemy airfields")
-
-        heading = location.position.heading_between_point(
-            closest_airfield.position
-        )
-
-        min_distance_from_enemy = nm_to_meter(20)
-        distance_to_airfield = int(closest_airfield.position.distance_to_point(
-            self.package.target.position
-        ))
-        distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
-        min_cap_distance = min(self.doctrine.cap_min_distance_from_cp,
-                               distance_to_no_fly)
-        max_cap_distance = min(self.doctrine.cap_max_distance_from_cp,
-                               distance_to_no_fly)
-
-        end = location.position.point_from_heading(
-            heading,
-            random.randint(min_cap_distance, max_cap_distance)
-        )
-        diameter = random.randint(
-            self.doctrine.cap_min_track_length,
-            self.doctrine.cap_max_track_length
-        )
-        start = end.point_from_heading(heading - 180, diameter)
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         start, end = builder.race_track(start, end, patrol_alt)
@@ -788,20 +762,48 @@ class FlightPlanBuilder:
             land=land
         )
 
-    def generate_frontline_cap(self, flight: Flight) -> FrontLineCapFlightPlan:
-        """Generate a CAP flight plan for the given front line.
+    def racetrack_for_objective(self,
+                                location: MissionTarget) -> Tuple[Point, Point]:
+        closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
+        for airfield in closest_cache.closest_airfields:
+            # If the mission is a BARCAP of an enemy airfield, find the *next*
+            # closest enemy airfield.
+            if airfield == self.package.target:
+                continue
+            if airfield.captured != self.is_player:
+                closest_airfield = airfield
+                break
+        else:
+            raise PlanningError("Could not find any enemy airfields")
 
-        Args:
-            flight: The flight to generate the flight plan for.
-        """
-        location = self.package.target
+        heading = location.position.heading_between_point(
+            closest_airfield.position
+        )
 
-        if not isinstance(location, FrontLine):
-            raise InvalidObjectiveLocation(flight.flight_type, location)
+        min_distance_from_enemy = nm_to_meter(20)
+        distance_to_airfield = int(closest_airfield.position.distance_to_point(
+            self.package.target.position
+        ))
+        distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
+        min_cap_distance = min(self.doctrine.cap_min_distance_from_cp,
+                               distance_to_no_fly)
+        max_cap_distance = min(self.doctrine.cap_max_distance_from_cp,
+                               distance_to_no_fly)
 
-        ally_cp, enemy_cp = location.control_points
-        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
-                                    self.doctrine.max_patrol_altitude)
+        end = location.position.point_from_heading(
+            heading,
+            random.randint(min_cap_distance, max_cap_distance)
+        )
+        diameter = random.randint(
+            self.doctrine.cap_min_track_length,
+            self.doctrine.cap_max_track_length
+        )
+        start = end.point_from_heading(heading - 180, diameter)
+        return start, end
+
+    def racetrack_for_frontline(self,
+                                front_line: FrontLine) -> Tuple[Point, Point]:
+        ally_cp, enemy_cp = front_line.control_points
 
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(
@@ -822,14 +824,33 @@ class FlightPlanBuilder:
         orbit0p = orbit_center.point_from_heading(heading, radius)
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
+        return orbit0p, orbit1p
+
+    def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
+        """Generate a CAP flight plan for the given front line.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
+                                    self.doctrine.max_patrol_altitude)
+
         # Create points
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
 
+        if isinstance(location, FrontLine):
+            orbit0p, orbit1p = self.racetrack_for_frontline(location)
+        else:
+            orbit0p, orbit1p = self.racetrack_for_objective(location)
+
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
         descent, land = builder.rtb(flight.from_cp)
-        return FrontLineCapFlightPlan(
+        return TarCapFlightPlan(
             package=self.package,
             flight=flight,
+            lead_time=timedelta(minutes=2),
             # Note that this duration only has an effect if there are no
             # flights in the package that have requested escort. If the package
             # requests an escort the CAP flight will remain on station for the

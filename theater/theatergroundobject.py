@@ -113,6 +113,9 @@ class TheaterGroundObject(MissionTarget):
     def faction_color(self) -> str:
         return "BLUE" if self.control_point.captured else "RED"
 
+    def is_friendly(self, to_player: bool) -> bool:
+        return not self.control_point.is_friendly(to_player)
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(self, name: str, category: str, group_id: int, object_id: int,

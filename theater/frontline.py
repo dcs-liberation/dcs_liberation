@@ -42,3 +42,6 @@ class FrontLine(MissionTarget):
     def control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """Returns a tuple of the two control points."""
         return self.control_point_a, self.control_point_b
+
+    def is_friendly(self, to_player: bool) -> bool:
+        return False

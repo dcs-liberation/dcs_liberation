@@ -2,6 +2,7 @@
 
 # Features/Improvements
 * **[Flight Planner]** Added fighter sweep missions.
+* **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
 
 # 2.2.1
 

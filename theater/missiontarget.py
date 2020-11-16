@@ -17,3 +17,7 @@ class MissionTarget:
     def distance_to(self, other: MissionTarget) -> int:
         """Computes the distance to the given mission target."""
         return self.position.distance_to_point(other.position)
+
+    def is_friendly(self, to_player: bool) -> bool:
+        """Returns True if the objective is in friendly territory."""
+        raise NotImplementedError
