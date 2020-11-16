@@ -69,5 +69,19 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "requirements": {},
-  "doctrine": "coldwar"
+  "doctrine": "coldwar",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "VFA-37",
+      "VFA-106",
+      "VFA-113",
+      "VFA-122",
+      "VFA-131",
+      "VFA-192",
+      "VFA-34",
+      "VFA-83",
+      "VFA-87",
+      "VFA-97"
+    ]
+  }
 }
