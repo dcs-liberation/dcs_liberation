@@ -133,6 +133,9 @@ class TotEstimator:
                 tot = self.package.time_over_target
             else:
                 tot = flight.flight_plan.tot_for_waypoint(tot_waypoint)
+                if tot is None:
+                    logging.error(f"TOT waypoint for {flight} has no TOT")
+                    tot = self.package.time_over_target
         return tot - travel_time - self.HOLD_TIME
 
     def earliest_tot(self) -> timedelta:
