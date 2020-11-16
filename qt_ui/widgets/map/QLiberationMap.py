@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import math
 from typing import List, Optional, Tuple
 
 from PySide2.QtCore import QPointF, Qt
@@ -39,13 +40,40 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint
-from theater.frontline import FrontLine
+from theater.conflicttheater import FrontLine
 from theater.theatergroundobject import (
     EwrGroundObject,
     MissileSiteGroundObject,
     TheaterGroundObject,
 )
 
+def binomial(i, n):
+    """Binomial coefficient"""
+    return math.factorial(n) / float(
+        math.factorial(i) * math.factorial(n - i))
+
+
+def bernstein(t, i, n):
+    """Bernstein polynom"""
+    return binomial(i, n) * (t ** i) * ((1 - t) ** (n - i))
+
+
+def bezier(t, points):
+    """Calculate coordinate of a point in the bezier curve"""
+    n = len(points) - 1
+    x = y = 0
+    for i, pos in enumerate(points):
+        bern = bernstein(t, i, n)
+        x += pos[0] * bern
+        y += pos[1] * bern
+    return x, y
+
+
+def bezier_curve_range(n, points):
+    """Range of points in a curve bezier"""
+    for i in range(n):
+        t = i / float(n - 1)
+        yield bezier(t, points)
 
 class QLiberationMap(QGraphicsView):
     WAYPOINT_SIZE = 4
@@ -190,6 +218,67 @@ class QLiberationMap(QGraphicsView):
 
         return detection_range, threat_range
 
+    def display_culling(self, scene: QGraphicsScene) -> None:
+        """Draws the culling distance rings on the map"""
+        culling_points = self.game_model.game.get_culling_points()
+        culling_distance = self.game_model.game.settings.perf_culling_distance
+        for point in culling_points:
+            culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
+            distance_point = self._transform_point(culling_distance_point)
+            transformed = self._transform_point(point)
+            diameter = distance_point[0] - transformed[0]
+            scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+    
+    @staticmethod
+    def ground_object_display_options(ground_object: TheaterGroundObject, cp: ControlPoint) -> Tuple[bool, bool]:
+        is_missile = isinstance(ground_object, MissileSiteGroundObject)
+        is_aa = ground_object.category == "aa" and not is_missile
+        is_ewr = isinstance(ground_object, EwrGroundObject)
+        is_display_type = is_aa or is_ewr
+        should_display = ((DisplayOptions.sam_ranges and cp.captured)
+                            or
+                            (DisplayOptions.enemy_sam_ranges and not cp.captured))
+        return is_display_type, should_display
+    
+    def draw_threat_range(self, scene: QGraphicsScene, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
+        go_pos = self._transform_point(ground_object.position)
+        detection_range, threat_range = self.aa_ranges(
+            ground_object
+        )
+        if threat_range:
+            threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
+                                                        ground_object.position.y+threat_range))
+            threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
+
+            # Add threat range circle
+            scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
+                                threat_radius, threat_radius, self.threat_pen(cp.captured))
+
+        if detection_range and DisplayOptions.detection_range:
+            # Add detection range circle
+            detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
+                                                        ground_object.position.y+detection_range))
+            detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
+            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
+                                detection_radius, detection_radius, self.detection_pen(cp.captured))
+
+    def draw_ground_objects(self, scene: QGraphicsScene, cp: ControlPoint) -> None:
+        added_objects = []
+        for ground_object in cp.ground_objects:
+            if ground_object.obj_name in added_objects:
+                continue
+
+            go_pos = self._transform_point(ground_object.position)
+            if not ground_object.airbase_group:
+                buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
+                scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
+            
+            is_display_type, should_display = self.ground_object_display_options(ground_object, cp)
+
+            if is_display_type and should_display:
+               self.draw_threat_range(scene, ground_object, cp)
+            added_objects.append(ground_object.obj_name)
+        
     def reload_scene(self):
         scene = self.scene()
         scene.clear()
@@ -200,20 +289,13 @@ class QLiberationMap(QGraphicsView):
         self.addBackground()
 
         # Uncomment below to help set up theater reference points
-        #for i, r in enumerate(self.game.theater.reference_points.items()):
-        #    text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-        #    text.setPos(0, i * 24)
+        # for i, r in enumerate(self.game.theater.reference_points.items()):
+        #     text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
+        #     text.setPos(0, i * 24)
 
         # Display Culling
         if DisplayOptions.culling and self.game.settings.perf_culling:
-            culling_points = self.game_model.game.get_culling_points()
-            culling_distance = self.game_model.game.settings.perf_culling_distance
-            for point in culling_points:
-                culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
-                distance_point = self._transform_point(culling_distance_point)
-                transformed = self._transform_point(point)
-                diameter = distance_point[0] - transformed[0]
-                scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+            self.display_culling()
 
         for cp in self.game.theater.controlpoints:
         
@@ -231,45 +313,7 @@ class QLiberationMap(QGraphicsView):
                 pen = QPen(brush=CONST.COLORS[enemyColor])
                 brush = CONST.COLORS[enemyColor+"_transparent"]
 
-            added_objects = []
-            for ground_object in cp.ground_objects:
-                if ground_object.obj_name in added_objects:
-                    continue
-
-                go_pos = self._transform_point(ground_object.position)
-                if not ground_object.airbase_group:
-                    buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
-                    scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
-
-                is_missile = isinstance(ground_object, MissileSiteGroundObject)
-                is_aa = ground_object.category == "aa" and not is_missile
-                is_ewr = isinstance(ground_object, EwrGroundObject)
-                is_display_type = is_aa or is_ewr
-                should_display = ((DisplayOptions.sam_ranges and cp.captured)
-                                  or
-                                  (DisplayOptions.enemy_sam_ranges and not cp.captured))
-
-                if is_display_type and should_display:
-                    detection_range, threat_range = self.aa_ranges(
-                        ground_object
-                    )
-                    if threat_range:
-                        threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
-                                                                 ground_object.position.y+threat_range))
-                        threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
-
-                        # Add threat range circle
-                        scene.addEllipse(go_pos[0] - threat_radius / 2 + 7, go_pos[1] - threat_radius / 2 + 6,
-                                         threat_radius, threat_radius, self.threat_pen(cp.captured))
-                    if detection_range:
-                        # Add detection range circle
-                        detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
-                                                                    ground_object.position.y+detection_range))
-                        detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
-                        if DisplayOptions.detection_range:
-                            scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
-                                             detection_radius, detection_radius, self.detection_pen(cp.captured))
-                added_objects.append(ground_object.obj_name)
+            self.draw_ground_objects(scene, cp)
 
         for cp in self.game.theater.enemy_points():
             if DisplayOptions.lines:
@@ -400,44 +444,45 @@ class QLiberationMap(QGraphicsView):
             flight_path_pen
         ))
 
+    def draw_bezier_frontline(self, scene: QGraphicsScene, pen:QPen, frontline: FrontLine) -> None:
+        """
+        Thanks to Alquimista for sharing a python implementation of the bezier algorithm this is adapted from.
+        https://gist.github.com/Alquimista/1274149#file-bezdraw-py
+        """
+        bezier_fixed_points = []
+        for segment in frontline.segments:
+            bezier_fixed_points.append(self._transform_point(segment.point_a))
+            bezier_fixed_points.append(self._transform_point(segment.point_b))
+        
+        old_point = bezier_fixed_points[0]
+        for point in bezier_curve_range(int(len(bezier_fixed_points) * 2), bezier_fixed_points):
+            scene.addLine(old_point[0], old_point[1], point[0], point[1], pen=pen)
+            old_point = point
+
     def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
         scene = self.scene()
-        pos = self._transform_point(cp.position)
         for connected_cp in cp.connected_points:
             pos2 = self._transform_point(connected_cp.position)
             if not cp.captured:
                 color = CONST.COLORS["dark_"+enemyColor]
-            elif cp.captured:
-                color = CONST.COLORS["dark_"+playerColor]
             else:
-                color = CONST.COLORS["dark_"+enemyColor]
-
+                color = CONST.COLORS["dark_"+playerColor]
             pen = QPen(brush=color)
             pen.setColor(color)
             pen.setWidth(6)
-            frontline = FrontLine(cp, connected_cp)
+            frontline = FrontLine(cp, connected_cp, self.game.theater)
             if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
-                if not cp.captured:
-                    scene.addLine(pos[0], pos[1], pos2[0], pos2[1], pen=pen)
-                else:
-                    posx = frontline.position
-                    h = frontline.attack_heading
-                    pos2 = self._transform_point(posx)
-                    for segment in frontline.segments:
-                        seg_a = self._transform_point(segment.point_a)
-                        seg_b = self._transform_point(segment.point_b)
-                        scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
-
-                    p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
-                    p2 = point_from_heading(pos2[0], pos2[1], h, 25)
-                    scene.addItem(QFrontLine(p1[0], p1[1], p2[0], p2[1],
-                                             FrontLine(cp, connected_cp)))
+                posx = frontline.position
+                h = frontline.attack_heading
+                pos2 = self._transform_point(posx)
+                self.draw_bezier_frontline(scene, pen, frontline)
+                p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
+                p2 = point_from_heading(pos2[0], pos2[1], h, 25)
+                scene.addItem(QFrontLine(p1[0], p1[1], p2[0], p2[1],
+                                            frontline, self.game_model))
 
             else:
-                for segment in frontline.segments:
-                        seg_a = self._transform_point(segment.point_a)
-                        seg_b = self._transform_point(segment.point_b)
-                        scene.addLine(seg_a[0], seg_a[1], seg_b[0], seg_b[1], pen=pen)
+                self.draw_bezier_frontline(scene, pen, frontline)
 
     def wheelEvent(self, event: QWheelEvent):
 
@@ -460,7 +505,7 @@ class QLiberationMap(QGraphicsView):
 
         #print(self.factorized, factor, self._zoom)
 
-    def _transform_point(self, p: Point, treshold=30) -> (int, int):
+    def _transform_point(self, p: Point, treshold=30) -> Tuple[int, int]:
         point_a = list(self.game.theater.reference_points.keys())[0]
         point_a_img = self.game.theater.reference_points[point_a]
 
@@ -510,18 +555,11 @@ class QLiberationMap(QGraphicsView):
         return CONST.COLORS[f"{name}_transparent"]
 
     def threat_pen(self, player: bool) -> QPen:
-        if player:
-            color = "blue"
-        else:
-            color = "red"
-        qpen = QPen(CONST.COLORS[color])
-        return qpen
+        color = "blue" if player else "red"
+        return QPen(CONST.COLORS[color])
 
     def detection_pen(self, player: bool) -> QPen:
-        if player:
-            color = "purple"
-        else:
-            color = "yellow"
+        color = "purple" if player else "yellow"
         qpen = QPen(CONST.COLORS[color])
         qpen.setStyle(Qt.DotLine)
         return qpen
