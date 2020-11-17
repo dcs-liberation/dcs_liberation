@@ -36,9 +36,14 @@ from theater import (
 )
 from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from theater.theatergroundobject import (
-    EwrGroundObject, SamGroundObject, BuildingGroundObject, CarrierGroundObject,
+    EwrGroundObject,
+    SamGroundObject,
+    BuildingGroundObject,
+    CarrierGroundObject,
     LhaGroundObject,
-    MissileSiteGroundObject, ShipGroundObject,
+    MissileSiteGroundObject,
+    ShipGroundObject,
+    VehicleGroupGroundObject,
 )
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
@@ -308,8 +313,8 @@ class BaseDefenseGenerator:
 
     def generate(self) -> None:
         self.generate_ewr()
-        for i in range(random.randint(3, 6)):
-            self.generate_base_defense(i)
+        self.generate_garrison()
+        self.generate_base_defenses()
 
     def generate_ewr(self) -> None:
         position = self._find_location()
@@ -330,11 +335,43 @@ class BaseDefenseGenerator:
         g.groups = [group]
         self.control_point.base_defenses.append(g)
 
-    def generate_base_defense(self, index: int) -> None:
+    def generate_base_defenses(self) -> None:
+        # First group has a 1/2 chance of being a SAM, 1/6 chance of SHORAD,
+        # and a 1/6 chance of a garrison.
+        #
+        # Further groups have a 1/3 chance of being SHORAD and 2/3 chance of
+        # being a garrison.
+        for i in range(random.randint(2, 5)):
+            if i == 0 and random.randint(0, 1) == 0:
+                self.generate_sam()
+            elif random.randint(0, 2) == 1:
+                self.generate_shorad()
+            else:
+                self.generate_garrison()
+
+    def generate_garrison(self) -> None:
         position = self._find_location()
         if position is None:
             logging.error("Could not find position for "
-                          f"{self.control_point} base defense")
+                          f"{self.control_point} garrison")
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = VehicleGroupGroundObject(namegen.random_objective_name(), group_id,
+                                     position, self.control_point,
+                                     for_airbase=True)
+
+        group = generate_armor_group(self.faction_name, self.game, g)
+        if group is not None:
+            g.groups.append(group)
+        self.control_point.base_defenses.append(g)
+
+    def generate_sam(self) -> None:
+        position = self._find_location()
+        if position is None:
+            logging.error("Could not find position for "
+                          f"{self.control_point} SAM")
             return
 
         group_id = self.game.next_group_id()
@@ -342,8 +379,26 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        generate_airbase_defense_group(index, g, self.faction_name,
-                                       self.game)
+        group = generate_anti_air_group(self.game, g, self.faction_name)
+        if group is not None:
+            g.groups.append(group)
+        self.control_point.base_defenses.append(g)
+
+    def generate_shorad(self) -> None:
+        position = self._find_location()
+        if position is None:
+            logging.error("Could not find position for "
+                          f"{self.control_point} SHORAD")
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = SamGroundObject(namegen.random_objective_name(), group_id,
+                            position, self.control_point, for_airbase=True)
+
+        group = generate_shorad_group(self.game, g, self.faction_name)
+        if group is not None:
+            g.groups.append(group)
         self.control_point.base_defenses.append(g)
 
     def _find_location(self) -> Optional[Point]:
@@ -526,23 +581,6 @@ class GroundObjectGenerator:
             generator = AirbaseGroundObjectGenerator(self.game, control_point,
                                                      self.templates)
         return generator.generate()
-
-
-def generate_airbase_defense_group(airbase_defense_group_id: int,
-                                   ground_obj: SamGroundObject, faction: str,
-                                   game: Game) -> None:
-    if airbase_defense_group_id == 0:
-        group = generate_armor_group(faction, game, ground_obj)
-    elif airbase_defense_group_id == 1 and random.randint(0, 1) == 0:
-        group = generate_anti_air_group(game, ground_obj, faction)
-    elif random.randint(0, 2) == 1:
-        group = generate_shorad_group(game, ground_obj, faction)
-    else:
-        group = generate_armor_group(faction, game, ground_obj)
-
-    ground_obj.groups = []
-    if group is not None:
-        ground_obj.groups.append(group)
 
 
 # TODO: https://stackoverflow.com/a/19482012/632035

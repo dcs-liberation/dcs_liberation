@@ -271,6 +271,22 @@ class SamGroundObject(BaseDefenseGroundObject):
         yield from super().mission_types(for_player)
 
 
+class VehicleGroupGroundObject(BaseDefenseGroundObject):
+    def __init__(self, name: str, group_id: int, position: Point,
+                 control_point: ControlPoint, for_airbase: bool) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier="AA",
+            airbase_group=for_airbase,
+            sea_object=False
+        )
+
+
 class EwrGroundObject(BaseDefenseGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint) -> None:
