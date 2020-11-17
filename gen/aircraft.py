@@ -47,6 +47,7 @@ from dcs.task import (
     EPLRS,
     EngageTargets,
     EngageTargetsInZone,
+    FighterSweep,
     GroundAttack,
     OptROE,
     OptRTBOnBingoFuel,
@@ -57,7 +58,8 @@ from dcs.task import (
     SEAD,
     StartCommand,
     Targets,
-    Task, WeaponType,
+    Task,
+    WeaponType,
 )
 from dcs.terrain.terrain import Airport
 from dcs.translation import String
@@ -1047,6 +1049,19 @@ class AircraftConflictGenerator:
 
         self.configure_behavior(group, rtb_winchester=ammo_type)
 
+    def configure_sweep(self, group: FlyingGroup, package: Package,
+                        flight: Flight,
+                        dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = FighterSweep.name
+        self._setup_group(group, FighterSweep, package, flight, dynamic_runways)
+
+        if flight.unit_type not in GUNFIGHTERS:
+            ammo_type = OptRTBOnOutOfAmmo.Values.AAM
+        else:
+            ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
+
+        self.configure_behavior(group, rtb_winchester=ammo_type)
+
     def configure_cas(self, group: FlyingGroup, package: Package,
                       flight: Flight,
                       dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -1127,17 +1142,19 @@ class AircraftConflictGenerator:
                            dynamic_runways: Dict[str, RunwayData]) -> None:
         flight_type = flight.flight_type
         if flight_type in [FlightType.BARCAP, FlightType.TARCAP,
-                           FlightType.INTERCEPTION, FlightType.SWEEP]:
+                           FlightType.INTERCEPTION]:
             self.configure_cap(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.SWEEP:
+            self.configure_sweep(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
-        elif flight_type in [FlightType.DEAD, ]:
+        elif flight_type == FlightType.DEAD:
             self.configure_dead(group, package, flight, dynamic_runways)
-        elif flight_type in [FlightType.SEAD, ]:
+        elif flight_type == FlightType.SEAD:
             self.configure_sead(group, package, flight, dynamic_runways)
-        elif flight_type in [FlightType.STRIKE]:
+        elif flight_type == FlightType.STRIKE:
             self.configure_strike(group, package, flight, dynamic_runways)
-        elif flight_type in [FlightType.ANTISHIP]:
+        elif flight_type == FlightType.ANTISHIP:
             self.configure_anti_ship(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ESCORT:
             self.configure_escort(group, package, flight, dynamic_runways)
