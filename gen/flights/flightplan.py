@@ -629,7 +629,9 @@ class FlightPlanBuilder:
             custom_targets: Optional[List[Unit]]) -> FlightPlan:
         # TODO: Flesh out mission types.
         task = flight.flight_type
-        if task == FlightType.BAI:
+        if task == FlightType.ANTISHIP:
+            return self.generate_anti_ship(flight)
+        elif task == FlightType.BAI:
             return self.generate_bai(flight)
         elif task == FlightType.BARCAP:
             return self.generate_barcap(flight)
@@ -711,6 +713,31 @@ class FlightPlanBuilder:
             flight: The flight to generate the flight plan for.
         """
         location = self.package.target
+
+        if not isinstance(location, TheaterGroundObject):
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        targets: List[StrikeTarget] = []
+        for group in location.groups:
+            targets.append(
+                StrikeTarget(f"{group.name} at {location.name}", group))
+
+        return self.strike_flightplan(flight, location, targets)
+
+    def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
+        """Generates an anti-ship flight plan.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        if isinstance(location, ControlPoint):
+            if location.is_fleet:
+                # The first group generated will be the carrier group itself.
+                location = location.ground_objects[0]
+            else:
+                raise InvalidObjectiveLocation(flight.flight_type, location)
 
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
@@ -985,7 +1012,7 @@ class FlightPlanBuilder:
     @staticmethod
     def target_waypoint(flight: Flight, builder: WaypointBuilder,
                         target: StrikeTarget) -> FlightWaypoint:
-        if flight.flight_type == FlightType.BAI:
+        if flight.flight_type in {FlightType.ANTISHIP, FlightType.BAI}:
             return builder.bai_group(target)
         elif flight.flight_type == FlightType.DEAD:
             return builder.dead_point(target)
@@ -1097,7 +1124,7 @@ class FlightPlanBuilder:
         elif flight.flight_type is FlightType.DEAD:
             ingress = builder.ingress_dead(self.package.waypoints.ingress,
                                            location)
-        elif flight.flight_type is FlightType.BAI:
+        elif flight.flight_type in {FlightType.ANTISHIP, FlightType.BAI}:
             ingress = builder.ingress_bai(self.package.waypoints.ingress,
                                           location)
         else:

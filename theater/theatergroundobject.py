@@ -156,7 +156,15 @@ class BuildingGroundObject(TheaterGroundObject):
         return f"{self.category}|{self.group_id}|{self.object_id}"
 
 
-class GenericCarrierGroundObject(TheaterGroundObject):
+class NavalGroundObject(TheaterGroundObject):
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if not self.is_friendly(for_player):
+            yield FlightType.ANTISHIP
+        yield from super().mission_types(for_player)
+
+
+class GenericCarrierGroundObject(NavalGroundObject):
     pass
 
 
@@ -284,7 +292,7 @@ class EwrGroundObject(BaseDefenseGroundObject):
         return f"{self.faction_color}|{super().group_name}"
 
 
-class ShipGroundObject(TheaterGroundObject):
+class ShipGroundObject(NavalGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint) -> None:
         super().__init__(

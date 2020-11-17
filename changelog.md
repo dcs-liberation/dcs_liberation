@@ -3,6 +3,7 @@
 # Features/Improvements
 * **[Flight Planner]** Added fighter sweep missions.
 * **[Flight Planner]** Added BAI missions.
+* **[Flight Planner]** Added anti-ship missions.
 * **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
 * **[Modding]** Possible to setup liveries overrides for factions
 

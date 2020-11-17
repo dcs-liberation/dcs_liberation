@@ -255,9 +255,7 @@ class ControlPoint(MissionTarget):
                 ]
         else:
             if self.is_fleet:
-                yield from [
-                    # TODO: FlightType.ANTISHIP
-                ]
+                yield FlightType.ANTISHIP
             else:
                 yield from [
                     # TODO: FlightType.STRIKE
