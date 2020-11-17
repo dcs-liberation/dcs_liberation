@@ -288,7 +288,7 @@ class ObjectiveFinder:
                 yield ground_object
                 found_targets.add(ground_object.name)
 
-    def threatening_sams(self) -> Iterator[TheaterGroundObject]:
+    def threatening_sams(self) -> Iterator[MissionTarget]:
         """Iterates over enemy SAMs in threat range of friendly control points.
 
         SAM sites are sorted by their closest proximity to any friendly control
@@ -308,7 +308,7 @@ class ObjectiveFinder:
 
                 yield ground_object
 
-    def threatening_vehicle_groups(self) -> Iterator[TheaterGroundObject]:
+    def threatening_vehicle_groups(self) -> Iterator[MissionTarget]:
         """Iterates over enemy vehicle groups near friendly control points.
 
         Groups are sorted by their closest proximity to any friendly control
@@ -327,7 +327,7 @@ class ObjectiveFinder:
 
                 yield ground_object
 
-    def threatening_ships(self) -> Iterator[TheaterGroundObject]:
+    def threatening_ships(self) -> Iterator[MissionTarget]:
         """Iterates over enemy ships near friendly control points.
 
         Groups are sorted by their closest proximity to any friendly control
@@ -337,7 +337,7 @@ class ObjectiveFinder:
 
     def _targets_by_range(
             self,
-            targets: Iterable[MissionTarget]) -> Iterator[TheaterGroundObject]:
+            targets: Iterable[MissionTarget]) -> Iterator[MissionTarget]:
         target_ranges: List[Tuple[MissionTarget, int]] = []
         for target in targets:
             ranges: List[int] = []
