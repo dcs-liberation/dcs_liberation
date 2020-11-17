@@ -321,7 +321,7 @@ class ObjectiveFinder:
                     continue
 
                 if Conflict.has_frontline_between(cp, connected):
-                    yield FrontLine(cp, connected)
+                    yield FrontLine(cp, connected, self.game.theater)
 
     def vulnerable_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over friendly CPs that are vulnerable to enemy CPs.

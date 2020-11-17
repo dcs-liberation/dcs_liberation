@@ -6,7 +6,7 @@ import os
 import random
 import logging
 from dataclasses import dataclass
-from theater.frontline import FrontLine
+from theater import FrontLine
 from typing import List, Dict, TYPE_CHECKING
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 

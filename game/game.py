@@ -369,9 +369,9 @@ class Game:
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
-            position = Conflict.frontline_position(self.theater,
-                                                   front_line.control_point_a,
-                                                   front_line.control_point_b)
+            position = Conflict.frontline_position(front_line.control_point_a,
+                                                   front_line.control_point_b,
+                                                   self.theater)
             points.append(position[0])
             points.append(front_line.control_point_a.position)
             points.append(front_line.control_point_b.position)
