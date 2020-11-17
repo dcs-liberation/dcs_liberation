@@ -291,6 +291,12 @@ class EwrGroundObject(BaseDefenseGroundObject):
         # Prefix the group names with the side color so Skynet can find them.
         return f"{self.faction_color}|{super().group_name}"
 
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if not self.is_friendly(for_player):
+            yield FlightType.DEAD
+        yield from super().mission_types(for_player)
+
 
 class ShipGroundObject(NavalGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,

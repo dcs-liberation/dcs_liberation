@@ -27,6 +27,7 @@ from theater import (
     SamGroundObject,
     TheaterGroundObject,
 )
+from theater.theatergroundobject import EwrGroundObject
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -919,7 +920,9 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        if not isinstance(location, SamGroundObject):
+        is_ewr = isinstance(location, EwrGroundObject)
+        is_sam = isinstance(location, SamGroundObject)
+        if not is_ewr and not is_sam:
             logging.exception(f"Invalid Objective Location for DEAD flight {flight=} at {location=}")
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
