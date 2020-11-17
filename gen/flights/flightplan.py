@@ -558,8 +558,8 @@ class FlightPlanBuilder:
     def regenerate_package_waypoints(self) -> None:
         ingress_point = self._ingress_point()
         egress_point = self._egress_point()
-        join_point = self._join_point(ingress_point)
-        split_point = self._split_point(egress_point)
+        join_point = self._rendezvous_point(ingress_point)
+        split_point = self._rendezvous_point(egress_point)
 
         from gen.ato import PackageWaypoints
         self.package.waypoints = PackageWaypoints(
@@ -968,31 +968,41 @@ class FlightPlanBuilder:
             land=land
         )
 
-    def _join_point(self, ingress_point: Point) -> Point:
-        ingress_distance = self._distance_to_package_airfield(ingress_point)
-        if ingress_distance < self.doctrine.join_distance:
-            # If the ingress point is close to the origin, plan the join point
-            # farther back.
-            return ingress_point.point_from_heading(
-                self.package.target.position.heading_between_point(
-                    self.package_airfield().position),
-                self.doctrine.join_distance)
-        heading = self._heading_to_package_airfield(ingress_point)
-        return ingress_point.point_from_heading(heading,
-                                                -self.doctrine.join_distance)
+    def _retreating_rendezvous_point(self, attack_transition: Point) -> Point:
+        """Creates a rendezvous point that retreats from the origin airfield."""
+        return attack_transition.point_from_heading(
+            self.package.target.position.heading_between_point(
+                self.package_airfield().position),
+            self.doctrine.join_distance)
 
-    def _split_point(self, egress_point: Point) -> Point:
-        egress_distance = self._distance_to_package_airfield(egress_point)
-        if egress_distance < self.doctrine.split_distance:
-            # If the ingress point is close to the origin, plan the split point
-            # farther back.
-            return egress_point.point_from_heading(
-                self.package.target.position.heading_between_point(
-                    self.package_airfield().position),
-                self.doctrine.split_distance)
-        heading = self._heading_to_package_airfield(egress_point)
-        return egress_point.point_from_heading(heading,
-                                               -self.doctrine.split_distance)
+    def _advancing_rendezvous_point(self, attack_transition: Point) -> Point:
+        """Creates a rendezvous point that advances toward the target."""
+        heading = self._heading_to_package_airfield(attack_transition)
+        return attack_transition.point_from_heading(heading,
+                                                    -self.doctrine.join_distance)
+
+    def _rendezvous_should_retreat(self, attack_transition: Point) -> bool:
+        transition_target_distance = attack_transition.distance_to_point(
+            self.package.target.position
+        )
+        origin_target_distance = self._distance_to_package_airfield(
+            self.package.target.position
+        )
+
+        # If the origin point is closer to the target than the ingress point,
+        # the rendezvous point should be positioned in a position that retreats
+        # from the origin airfield.
+        return origin_target_distance < transition_target_distance
+
+    def _rendezvous_point(self, attack_transition: Point) -> Point:
+        """Returns the position of the rendezvous point.
+
+        Args:
+            attack_transition: The ingress or egress point for this rendezvous.
+        """
+        if self._rendezvous_should_retreat(attack_transition):
+            return self._retreating_rendezvous_point(attack_transition)
+        return self._advancing_rendezvous_point(attack_transition)
 
     def _ingress_point(self) -> Point:
         heading = self._target_heading_to_package_airfield()
