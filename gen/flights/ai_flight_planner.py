@@ -44,6 +44,8 @@ from theater import (
 )
 
 # Avoid importing some types that cause circular imports unless type checking.
+from theater.theatergroundobject import EwrGroundObject
+
 if TYPE_CHECKING:
     from game import Game
     from game.inventory import GlobalAircraftInventory
@@ -243,7 +245,9 @@ class ObjectiveFinder:
         found_targets: Set[str] = set()
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
-                if not isinstance(ground_object, SamGroundObject):
+                is_ewr = isinstance(ground_object, EwrGroundObject)
+                is_sam = isinstance(ground_object, SamGroundObject)
+                if not is_ewr and not is_sam:
                     continue
 
                 if ground_object.is_dead:
@@ -410,7 +414,7 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
             ])
 
-        # Find front lines, plan CAP.
+        # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():
             yield ProposedMission(front_line, [
                 ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
