@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import math
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple, Iterator
 
 from PySide2.QtCore import QPointF, Qt
 from PySide2.QtGui import (
@@ -47,18 +47,18 @@ from theater.theatergroundobject import (
     TheaterGroundObject,
 )
 
-def binomial(i, n):
+def binomial(i: int, n: int) -> float:
     """Binomial coefficient"""
     return math.factorial(n) / float(
         math.factorial(i) * math.factorial(n - i))
 
 
-def bernstein(t, i, n):
+def bernstein(t: float, i: int, n: int) -> float:
     """Bernstein polynom"""
     return binomial(i, n) * (t ** i) * ((1 - t) ** (n - i))
 
 
-def bezier(t, points):
+def bezier(t: float, points: Iterable[Tuple[float, float]]) -> Tuple[float, float]:
     """Calculate coordinate of a point in the bezier curve"""
     n = len(points) - 1
     x = y = 0
@@ -69,7 +69,7 @@ def bezier(t, points):
     return x, y
 
 
-def bezier_curve_range(n, points):
+def bezier_curve_range(n: int, points: Iterable[Tuple[float, float]]) -> Iterator[Tuple[float, float]]:
     """Range of points in a curve bezier"""
     for i in range(n):
         t = i / float(n - 1)

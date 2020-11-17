@@ -460,7 +460,7 @@ class GroundConflictGenerator:
 
     def get_valid_position_for_group(self, conflict_position, isplayer, combat_width, distance_from_frontline):
         i = 0
-        while i < 1000: # 25 attempt for valid position
+        while i < 1000:
             heading_diff = -90 if isplayer else 90
             shifted = conflict_position[0].point_from_heading(self.conflict.heading,
                                                      random.randint((int)(-combat_width / 2), (int)(combat_width / 2)))
@@ -468,9 +468,8 @@ class GroundConflictGenerator:
 
             if self.conflict.theater.is_on_land(final_position):
                 return final_position
-            else:
-                i = i + 1
-                continue
+            i += 1
+            continue
         return None
 
     def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, move_formation: PointAction = PointAction.OffRoad, heading=0):
