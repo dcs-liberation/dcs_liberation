@@ -5,7 +5,16 @@ import operator
 import random
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple, Type
+from typing import (
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    TYPE_CHECKING,
+    Tuple,
+    Type,
+)
 
 from dcs.unittype import FlyingType, UnitType
 
@@ -16,6 +25,8 @@ from game.utils import nm_to_meter
 from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
+    ANTISHIP_CAPABLE,
+    ANTISHIP_PREFERRED,
     CAP_CAPABLE,
     CAP_PREFERRED,
     CAS_CAPABLE,
@@ -46,7 +57,7 @@ from theater import (
 # Avoid importing some types that cause circular imports unless type checking.
 from theater.theatergroundobject import (
     EwrGroundObject,
-    VehicleGroupGroundObject,
+    NavalGroundObject, VehicleGroupGroundObject,
 )
 
 if TYPE_CHECKING:
@@ -141,6 +152,8 @@ class AircraftAllocator:
         cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_PREFERRED
+        elif task == FlightType.ANTISHIP:
+            return ANTISHIP_PREFERRED
         elif task == FlightType.BAI:
             return CAS_CAPABLE
         elif task == FlightType.CAS:
@@ -159,6 +172,8 @@ class AircraftAllocator:
         cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_CAPABLE
+        elif task == FlightType.ANTISHIP:
+            return ANTISHIP_CAPABLE
         elif task == FlightType.BAI:
             return CAS_CAPABLE
         elif task == FlightType.CAS:
@@ -279,22 +294,10 @@ class ObjectiveFinder:
         SAM sites are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        sams: List[Tuple[TheaterGroundObject, int]] = []
-        for sam in self.enemy_sams():
-            ranges: List[int] = []
-            for cp in self.friendly_control_points():
-                ranges.append(sam.distance_to(cp))
-            sams.append((sam, min(ranges)))
-
-        sams = sorted(sams, key=operator.itemgetter(1))
-        for sam, _range in sams:
-            yield sam
+        return self._targets_by_range(self.enemy_sams())
 
     def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
         """Iterates over all enemy vehicle groups."""
-        # Control points might have the same ground object several times, for
-        # some reason.
-        found_targets: Set[str] = set()
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
                 if not isinstance(ground_object, VehicleGroupGroundObject):
@@ -303,11 +306,7 @@ class ObjectiveFinder:
                 if ground_object.is_dead:
                     continue
 
-                if ground_object.name in found_targets:
-                    continue
-
                 yield ground_object
-                found_targets.add(ground_object.name)
 
     def threatening_vehicle_groups(self) -> Iterator[TheaterGroundObject]:
         """Iterates over enemy vehicle groups near friendly control points.
@@ -315,16 +314,40 @@ class ObjectiveFinder:
         Groups are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        groups: List[Tuple[VehicleGroupGroundObject, int]] = []
-        for group in self.enemy_vehicle_groups():
+        return self._targets_by_range(self.enemy_vehicle_groups())
+
+    def enemy_ships(self) -> Iterator[NavalGroundObject]:
+        for cp in self.enemy_control_points():
+            for ground_object in cp.ground_objects:
+                if not isinstance(ground_object, NavalGroundObject):
+                    continue
+
+                if ground_object.is_dead:
+                    continue
+
+                yield ground_object
+
+    def threatening_ships(self) -> Iterator[TheaterGroundObject]:
+        """Iterates over enemy ships near friendly control points.
+
+        Groups are sorted by their closest proximity to any friendly control
+        point (airfield or fleet).
+        """
+        return self._targets_by_range(self.enemy_ships())
+
+    def _targets_by_range(
+            self,
+            targets: Iterable[MissionTarget]) -> Iterator[TheaterGroundObject]:
+        target_ranges: List[Tuple[MissionTarget, int]] = []
+        for target in targets:
             ranges: List[int] = []
             for cp in self.friendly_control_points():
-                ranges.append(group.distance_to(cp))
-            groups.append((group, min(ranges)))
+                ranges.append(target.distance_to(cp))
+            target_ranges.append((target, min(ranges)))
 
-        groups = sorted(groups, key=operator.itemgetter(1))
-        for group, _range in groups:
-            yield group
+        target_ranges = sorted(target_ranges, key=operator.itemgetter(1))
+        for target, _range in target_ranges:
+            yield target
 
     def strike_targets(self) -> Iterator[TheaterGroundObject]:
         """Iterates over enemy strike targets.
@@ -333,11 +356,17 @@ class ObjectiveFinder:
         point (airfield or fleet).
         """
         targets: List[Tuple[TheaterGroundObject, int]] = []
-        # Control points might have the same ground object several times, for
-        # some reason.
+        # Building objectives are made of several individual TGOs (one per
+        # building).
         found_targets: Set[str] = set()
         for enemy_cp in self.enemy_control_points():
             for ground_object in enemy_cp.ground_objects:
+                if isinstance(ground_object, VehicleGroupGroundObject):
+                    # BAI target, not strike target.
+                    continue
+                if isinstance(ground_object, NavalGroundObject):
+                    # Anti-ship target, not strike target.
+                    continue
                 if ground_object.is_dead:
                     continue
                 if ground_object.name in found_targets:
@@ -440,6 +469,7 @@ class CoalitionMissionPlanner:
     # TODO: Merge into doctrine, also limit by aircraft.
     MAX_CAP_RANGE = nm_to_meter(100)
     MAX_CAS_RANGE = nm_to_meter(50)
+    MAX_ANTISHIP_RANGE = nm_to_meter(150)
     MAX_BAI_RANGE = nm_to_meter(150)
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
@@ -474,6 +504,13 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.ESCORT, 2, self.MAX_SEAD_RANGE),
+            ])
+
+        for group in self.objective_finder.threatening_ships():
+            yield ProposedMission(group, [
+                ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
+                # TODO: Max escort range.
+                ProposedFlight(FlightType.ESCORT, 2, self.MAX_ANTISHIP_RANGE),
             ])
 
         for group in self.objective_finder.threatening_vehicle_groups():

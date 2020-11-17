@@ -444,6 +444,7 @@ STRIKE_PREFERRED = [
 ANTISHIP_CAPABLE = [
     Su_24M,
     Su_17M4,
+    FA_18C_hornet,
     F_A_18C,
     F_15E,
     AV8BNA,
@@ -458,7 +459,15 @@ ANTISHIP_CAPABLE = [
     Tornado_GR4,
 
     Ju_88A4,
-    Rafale_A_S
+    Rafale_A_S,
+]
+
+ANTISHIP_PREFERRED = [
+    FA_18C_hornet,
+    F_A_18C,
+    JF_17,
+    Rafale_A_S,
+    Su_24M,
 ]
 
 DRONES = [
