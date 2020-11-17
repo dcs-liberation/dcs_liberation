@@ -15,6 +15,7 @@ from PySide2.QtWidgets import (
 
 from qt_ui import liberation_install, liberation_theme
 from qt_ui.liberation_theme import THEMES, get_theme_index, set_theme_index
+from game.locale import Localize, Locale
 
 
 class QLiberationPreferences(QFrame):
@@ -40,6 +41,10 @@ class QLiberationPreferences(QFrame):
         self.themeSelect = QComboBox()
         [self.themeSelect.addItem(y['themeName']) for x, y in THEMES.items()]
 
+        self.locale_select = QComboBox()
+        for i in Locale:
+            self.locale_select.addItem(Localize.lang_desc(i))
+
         self.initUi()
 
     def initUi(self):
@@ -53,6 +58,8 @@ class QLiberationPreferences(QFrame):
         layout.addWidget(self.browse_install_dir, 3, 1, alignment=Qt.AlignRight)
         layout.addWidget(QLabel("<strong>Theme (Requires Restart)</strong>"), 4, 0)
         layout.addWidget(self.themeSelect, 4, 1, alignment=Qt.AlignRight)
+        layout.addWidget(QLabel("<strong>Localization</strong>"), 5, 0)
+        layout.addWidget(self.locale_select, 5, 1, alignment=Qt.AlignRight)
         self.themeSelect.setCurrentIndex(get_theme_index())
 
         main_layout.addLayout(layout)
@@ -101,7 +108,11 @@ class QLiberationPreferences(QFrame):
             error_dialog.exec_()
             return False
 
-        liberation_install.setup(self.saved_game_dir, self.dcs_install_dir)
+        liberation_install.setup(
+            self.saved_game_dir,
+            self.dcs_install_dir,
+            Localize.get_locale_from_desc(self.locale_select.currentText())
+        )
         liberation_install.save_config()
         liberation_theme.save_theme_config()
         return True

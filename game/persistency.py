@@ -3,31 +3,44 @@ import os
 import pickle
 import shutil
 from typing import Optional
+from game.locale import Locale, Localize
 
 _dcs_saved_game_folder: Optional[str] = None
+_locale: Optional[Locale] = None
 _file_abs_path = None
 
-def setup(user_folder: str):
+def setup(user_folder: str, locale: Locale):
     global _dcs_saved_game_folder
     _dcs_saved_game_folder = user_folder
+    Localize.locale = locale
     _file_abs_path = os.path.join(base_path(), "default.liberation")
+
 
 def base_path() -> str:
     global _dcs_saved_game_folder
     assert _dcs_saved_game_folder
     return _dcs_saved_game_folder
 
+def locale() -> Locale:
+    global _locale
+    assert _locale
+    return _locale
+
 def _save_file() -> str:
     return os.path.join(base_path(), "default.liberation")
+
 
 def _temporary_save_file() -> str:
     return os.path.join(base_path(), "tmpsave.liberation")
 
+
 def _autosave_path() -> str:
     return os.path.join(base_path(), "autosave.liberation")
 
+
 def _save_file_exists() -> bool:
     return os.path.exists(_save_file())
+
 
 def mission_path_for(name: str) -> str:
     return os.path.join(base_path(), "Missions", "{}".format(name))

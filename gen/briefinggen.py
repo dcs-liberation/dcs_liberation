@@ -18,6 +18,7 @@ from theater import ControlPoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
+from game.locale import Localize
 
 if TYPE_CHECKING:
     from game import Game
@@ -134,7 +135,9 @@ class BriefingGenerator(MissionInfoGenerator):
             trim_blocks=True,
             lstrip_blocks=True,
             )
-        self.template = env.get_template("briefingtemplate_EN.j2")
+        
+        template = f"briefingtemplate_{Localize.locale_str()}.j2"
+        self.template = env.get_template(template)
 
     def generate(self) -> None:
         """Generate the mission briefing
