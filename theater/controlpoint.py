@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import itertools
 import re
-from typing import Dict, List, TYPE_CHECKING
 from enum import Enum
+from typing import Dict, Iterator, List, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -20,12 +20,12 @@ from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     BaseDefenseGroundObject,
-    SamGroundObject,
     TheaterGroundObject,
 )
 
 if TYPE_CHECKING:
     from game import Game
+    from gen.flights.flight import FlightType
 
 
 class ControlPointType(Enum):
@@ -237,3 +237,28 @@ class ControlPoint(MissionTarget):
         from .start_generator import BaseDefenseGenerator
         self.base_defenses = []
         BaseDefenseGenerator(game, self).generate()
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            if self.is_fleet:
+                yield from [
+                    # TODO: FlightType.INTERCEPTION
+                    # TODO: Buddy tanking for the A-4?
+                    # TODO: Rescue chopper?
+                    # TODO: Inter-ship logistics?
+                ]
+            else:
+                yield from [
+                    # TODO: FlightType.INTERCEPTION
+                    # TODO: FlightType.LOGISTICS
+                ]
+        else:
+            if self.is_fleet:
+                yield from [
+                    # TODO: FlightType.ANTISHIP
+                ]
+            else:
+                yield from [
+                    # TODO: FlightType.STRIKE
+                ]

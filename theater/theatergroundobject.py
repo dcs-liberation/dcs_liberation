@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import itertools
-from typing import List, TYPE_CHECKING
+from typing import Iterator, List, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.unit import Unit
@@ -9,6 +9,8 @@ from dcs.unitgroup import Group
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
+    from gen.flights.flight import FlightType
+
 from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
@@ -114,7 +116,18 @@ class TheaterGroundObject(MissionTarget):
         return "BLUE" if self.control_point.captured else "RED"
 
     def is_friendly(self, to_player: bool) -> bool:
-        return not self.control_point.is_friendly(to_player)
+        return self.control_point.is_friendly(to_player)
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if self.is_friendly(for_player):
+            yield from [
+                # TODO: FlightType.LOGISTICS
+                # TODO: FlightType.TROOP_TRANSPORT
+            ]
+        else:
+            yield FlightType.STRIKE
+        yield from super().mission_types(for_player)
 
 
 class BuildingGroundObject(TheaterGroundObject):
@@ -239,6 +252,12 @@ class SamGroundObject(BaseDefenseGroundObject):
             return f"{self.faction_color}|SAM|{self.group_id}"
         else:
             return super().group_name
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if not self.is_friendly(for_player):
+            yield FlightType.DEAD
+        yield from super().mission_types(for_player)
 
 
 class EwrGroundObject(BaseDefenseGroundObject):

@@ -18,6 +18,7 @@ from dcs.terrain import (
 )
 from dcs.terrain.terrain import Terrain
 
+from gen.flights.flight import FlightType
 from .controlpoint import ControlPoint, MissionTarget
 from .landmap import Landmap, load_landmap, poly_contains
 
@@ -353,6 +354,14 @@ class FrontLine(MissionTarget):
     def is_friendly(self, to_player: bool) -> bool:
         """Returns True if the objective is in friendly territory."""
         return False
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from [
+            FlightType.CAS,
+            # TODO: FlightType.TROOP_TRANSPORT
+            # TODO: FlightType.EVAC
+        ]
+        yield from super().mission_types(for_player)
 
     @property
     def position(self):

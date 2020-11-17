@@ -20,7 +20,13 @@ from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
 from game.utils import nm_to_meter
-from theater import ControlPoint, FrontLine, MissionTarget, TheaterGroundObject
+from theater import (
+    ControlPoint,
+    FrontLine,
+    MissionTarget,
+    SamGroundObject,
+    TheaterGroundObject,
+)
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -616,13 +622,7 @@ class FlightPlanBuilder:
             raise RuntimeError("Flight must be a part of the package")
         if self.package.waypoints is None:
             self.regenerate_package_waypoints()
-
-        try:
-            flight_plan = self.generate_flight_plan(flight, custom_targets)
-        except PlanningError:
-            logging.exception(f"Could not create flight plan")
-            return
-        flight.flight_plan = flight_plan
+        flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
 
     def generate_flight_plan(
             self, flight: Flight,
@@ -872,7 +872,7 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        if not isinstance(location, TheaterGroundObject):
+        if not isinstance(location, SamGroundObject):
             logging.exception(f"Invalid Objective Location for DEAD flight {flight=} at {location=}")
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
@@ -896,9 +896,6 @@ class FlightPlanBuilder:
             custom_targets: Specific radar equipped units selected by the user.
         """
         location = self.package.target
-
-        if not isinstance(location, TheaterGroundObject):
-            raise InvalidObjectiveLocation(flight.flight_type, location)
 
         # TODO: Unify these.
         # There doesn't seem to be any reason to treat the UI fragged missions
@@ -1066,7 +1063,7 @@ class FlightPlanBuilder:
         return builder.land(arrival)
 
     def strike_flightplan(
-            self, flight: Flight, location: TheaterGroundObject,
+            self, flight: Flight, location: MissionTarget,
             targets: Optional[List[StrikeTarget]] = None) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine,
@@ -1116,8 +1113,8 @@ class FlightPlanBuilder:
     def _advancing_rendezvous_point(self, attack_transition: Point) -> Point:
         """Creates a rendezvous point that advances toward the target."""
         heading = self._heading_to_package_airfield(attack_transition)
-        return attack_transition.point_from_heading(heading,
-                                                    -self.doctrine.join_distance)
+        return attack_transition.point_from_heading(
+            heading, -self.doctrine.join_distance)
 
     def _rendezvous_should_retreat(self, attack_transition: Point) -> bool:
         transition_target_distance = attack_transition.distance_to_point(

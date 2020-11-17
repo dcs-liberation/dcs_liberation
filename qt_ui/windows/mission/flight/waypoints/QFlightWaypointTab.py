@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from PySide2.QtCore import Signal
@@ -13,13 +14,15 @@ from PySide2.QtWidgets import (
 from game import Game
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightType
-from gen.flights.flightplan import FlightPlanBuilder
+from gen.flights.flightplan import (
+    FlightPlanBuilder,
+    PlanningError,
+)
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
     QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints\
+from qt_ui.windows.mission.flight.waypoints \
     .QPredefinedWaypointSelectionWindow import \
     QPredefinedWaypointSelectionWindow
-from theater import FrontLine
 
 
 class QFlightWaypointTab(QFrame):
@@ -55,17 +58,8 @@ class QFlightWaypointTab(QFrame):
         rlayout.addWidget(QLabel("<strong>Generator :</strong>"))
         rlayout.addWidget(QLabel("<small>AI compatible</small>"))
 
-        # TODO: Filter by objective type.
         self.recreate_buttons.clear()
-        recreate_types = [
-            FlightType.CAS,
-            FlightType.CAP,
-            FlightType.DEAD,
-            FlightType.ESCORT,
-            FlightType.SEAD,
-            FlightType.STRIKE
-        ]
-        for task in recreate_types:
+        for task in self.package.target.mission_types(for_player=True):
             def make_closure(arg):
                 def closure():
                     return self.confirm_recreate(arg)
@@ -142,19 +136,17 @@ class QFlightWaypointTab(QFrame):
             QMessageBox.No,
             QMessageBox.Yes
         )
+        original_task = self.flight.flight_type
         if result == QMessageBox.Yes:
-            # TODO: Should be buttons for both BARCAP and TARCAP.
-            # BARCAP and TARCAP behave differently. TARCAP arrives a few minutes
-            # ahead of the rest of the package and stays until the package
-            # departs, whereas BARCAP usually isn't part of a strike package and
-            # has a fixed mission time.
-            if task == FlightType.CAP:
-                if self.package.target.is_friendly(to_player=True):
-                    task = FlightType.BARCAP
-                else:
-                    task = FlightType.TARCAP
             self.flight.flight_type = task
-            self.planner.populate_flight_plan(self.flight)
+            try:
+                self.planner.populate_flight_plan(self.flight)
+            except PlanningError as ex:
+                self.flight.flight_type = original_task
+                logging.exception("Could not recreate flight")
+                QMessageBox.critical(
+                    self, "Could not recreate flight", str(ex), QMessageBox.Ok
+                )
             self.flight_waypoint_list.update_list()
             self.on_change()
 

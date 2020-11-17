@@ -8,6 +8,7 @@ from PySide2.QtWidgets import (
     QDialog,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QTimeEdit,
     QVBoxLayout,
@@ -16,7 +17,7 @@ from PySide2.QtWidgets import (
 from game.game import Game
 from gen.ato import Package
 from gen.flights.flight import Flight
-from gen.flights.flightplan import FlightPlanBuilder
+from gen.flights.flightplan import FlightPlanBuilder, PlanningError
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
@@ -167,7 +168,15 @@ class QPackageDialog(QDialog):
         self.package_model.add_flight(flight)
         planner = FlightPlanBuilder(self.game, self.package_model.package,
                                     is_player=True)
-        planner.populate_flight_plan(flight)
+        try:
+            planner.populate_flight_plan(flight)
+        except PlanningError as ex:
+            self.game.aircraft_inventory.return_from_flight(flight)
+            self.package_model.delete_flight(flight)
+            logging.exception("Could not create flight")
+            QMessageBox.critical(
+                self, "Could not create flight", str(ex), QMessageBox.Ok
+            )
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
 
