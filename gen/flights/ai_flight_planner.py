@@ -44,7 +44,10 @@ from theater import (
 )
 
 # Avoid importing some types that cause circular imports unless type checking.
-from theater.theatergroundobject import EwrGroundObject
+from theater.theatergroundobject import (
+    EwrGroundObject,
+    VehicleGroupGroundObject,
+)
 
 if TYPE_CHECKING:
     from game import Game
@@ -138,6 +141,8 @@ class AircraftAllocator:
         cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_PREFERRED
+        elif task == FlightType.BAI:
+            return CAS_CAPABLE
         elif task == FlightType.CAS:
             return CAS_PREFERRED
         elif task in (FlightType.DEAD, FlightType.SEAD):
@@ -154,6 +159,8 @@ class AircraftAllocator:
         cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
         if task in cap_missions:
             return CAP_CAPABLE
+        elif task == FlightType.BAI:
+            return CAS_CAPABLE
         elif task == FlightType.CAS:
             return CAS_CAPABLE
         elif task in (FlightType.DEAD, FlightType.SEAD):
@@ -283,6 +290,42 @@ class ObjectiveFinder:
         for sam, _range in sams:
             yield sam
 
+    def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
+        """Iterates over all enemy vehicle groups."""
+        # Control points might have the same ground object several times, for
+        # some reason.
+        found_targets: Set[str] = set()
+        for cp in self.enemy_control_points():
+            for ground_object in cp.ground_objects:
+                if not isinstance(ground_object, VehicleGroupGroundObject):
+                    continue
+
+                if ground_object.is_dead:
+                    continue
+
+                if ground_object.name in found_targets:
+                    continue
+
+                yield ground_object
+                found_targets.add(ground_object.name)
+
+    def threatening_vehicle_groups(self) -> Iterator[TheaterGroundObject]:
+        """Iterates over enemy vehicle groups near friendly control points.
+
+        Groups are sorted by their closest proximity to any friendly control
+        point (airfield or fleet).
+        """
+        groups: List[Tuple[VehicleGroupGroundObject, int]] = []
+        for group in self.enemy_vehicle_groups():
+            ranges: List[int] = []
+            for cp in self.friendly_control_points():
+                ranges.append(group.distance_to(cp))
+            groups.append((group, min(ranges)))
+
+        groups = sorted(groups, key=operator.itemgetter(1))
+        for group, _range in groups:
+            yield group
+
     def strike_targets(self) -> Iterator[TheaterGroundObject]:
         """Iterates over enemy strike targets.
 
@@ -397,6 +440,7 @@ class CoalitionMissionPlanner:
     # TODO: Merge into doctrine, also limit by aircraft.
     MAX_CAP_RANGE = nm_to_meter(100)
     MAX_CAS_RANGE = nm_to_meter(50)
+    MAX_BAI_RANGE = nm_to_meter(150)
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
 
@@ -430,6 +474,13 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.ESCORT, 2, self.MAX_SEAD_RANGE),
+            ])
+
+        for group in self.objective_finder.threatening_vehicle_groups():
+            yield ProposedMission(group, [
+                ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
+                # TODO: Max escort range.
+                ProposedFlight(FlightType.ESCORT, 2, self.MAX_BAI_RANGE),
             ])
 
         # Plan strike missions.
