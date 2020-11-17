@@ -126,7 +126,10 @@ class TheaterGroundObject(MissionTarget):
                 # TODO: FlightType.TROOP_TRANSPORT
             ]
         else:
-            yield FlightType.STRIKE
+            yield from [
+                FlightType.STRIKE,
+                FlightType.BAI,
+            ]
         yield from super().mission_types(for_player)
 
 

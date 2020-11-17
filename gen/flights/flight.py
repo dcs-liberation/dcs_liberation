@@ -64,6 +64,7 @@ class FlightWaypointType(Enum):
     INGRESS_ESCORT = 19
     INGRESS_DEAD = 20
     INGRESS_SWEEP = 21
+    INGRESS_BAI = 22
 
 
 class FlightWaypoint:

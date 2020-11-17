@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple, Union
 
 from dcs.mapping import Point
 from dcs.unit import Unit
+from dcs.unitgroup import VehicleGroup
 
 from game.data.doctrine import Doctrine
 from game.utils import nm_to_meter
@@ -17,7 +18,7 @@ from ..runways import RunwayAssigner
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[TheaterGroundObject, Unit]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit]
 
 
 class WaypointBuilder:
@@ -168,6 +169,11 @@ class WaypointBuilder:
                        objective: MissionTarget) -> FlightWaypoint:
         return self._ingress(FlightWaypointType.INGRESS_ESCORT, position,
                              objective)
+
+    def ingress_bai(self, position: Point,
+                    objective: MissionTarget) -> FlightWaypoint:
+        return self._ingress(FlightWaypointType.INGRESS_BAI, position,
+                             objective)
     
     def ingress_dead(self, position:Point,
                      objective: MissionTarget) -> FlightWaypoint:
@@ -210,6 +216,9 @@ class WaypointBuilder:
         waypoint.description = "EGRESS from " + target.name
         waypoint.name = "EGRESS"
         return waypoint
+
+    def bai_group(self, target: StrikeTarget) -> FlightWaypoint:
+        return self._target_point(target, f"ATTACK {target.name}")
 
     def dead_point(self, target: StrikeTarget) -> FlightWaypoint:
         return self._target_point(target, f"STRIKE {target.name}")

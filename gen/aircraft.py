@@ -1279,6 +1279,7 @@ class PydcsWaypointBuilder:
                      package: Package, flight: Flight,
                      mission: Mission) -> PydcsWaypointBuilder:
         builders = {
+            FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
@@ -1339,6 +1340,32 @@ class HoldPointBuilder(PydcsWaypointBuilder):
         return waypoint
 
 
+class BaiIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        target_group = self.package.target
+        if isinstance(target_group, TheaterGroundObject):
+            # Match search is used due to TheaterGroundObject.name not matching
+            # the Mission group name because of SkyNet prefixes.
+            tgroup = self.mission.find_group(target_group.group_name,
+                                             search="match")
+            if tgroup is not None:
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
+                task.params["attackQtyLimit"] = False
+                task.params["directionEnabled"] = False
+                task.params["altitudeEnabled"] = False
+                task.params["groupAttack"] = True
+                waypoint.tasks.append(task)
+            else:
+                logging.error("Could not find group for BAI mission %s",
+                              target_group.group_name)
+        else:
+            logging.error("Unexpected target type for BAI mission: %s",
+                          target_group.__class__.__name__)
+        return waypoint
+
+
 class CasIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
@@ -1372,14 +1399,16 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name, search="match")  # Match search is used due to TheaterGroundObject.name not matching
-            if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
-                task = AttackGroup(tgroup.id)
+            # Match search is used due to TheaterGroundObject.name not matching
+            # the Mission group name because of SkyNet prefixes.
+            tgroup = self.mission.find_group(target_group.group_name,
+                                             search="match")
+            if tgroup is not None:
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
                 task.params["expend"] = "All"
                 task.params["attackQtyLimit"] = False
                 task.params["directionEnabled"] = False
                 task.params["altitudeEnabled"] = False
-                task.params["weaponType"] = 268402702  # Guided Weapons
                 task.params["groupAttack"] = True
                 waypoint.tasks.append(task)
             else:
@@ -1394,8 +1423,11 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name, search="match")  # Match search is used due to TheaterGroundObject.name not matching
-            if tgroup is not None:                                                           # the Mission group name because of SkyNet prefixes.
+            # Match search is used due to TheaterGroundObject.name not matching
+            # the Mission group name because of SkyNet prefixes.
+            tgroup = self.mission.find_group(target_group.group_name,
+                                             search="match")
+            if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
                                     position=tgroup.position,
                                     radius=nm_to_meter(30),

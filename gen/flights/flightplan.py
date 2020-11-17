@@ -629,7 +629,9 @@ class FlightPlanBuilder:
             custom_targets: Optional[List[Unit]]) -> FlightPlan:
         # TODO: Flesh out mission types.
         task = flight.flight_type
-        if task == FlightType.BARCAP:
+        if task == FlightType.BAI:
+            return self.generate_bai(flight)
+        elif task == FlightType.BARCAP:
             return self.generate_barcap(flight)
         elif task == FlightType.CAS:
             return self.generate_cas(flight)
@@ -699,6 +701,23 @@ class FlightPlanBuilder:
                     continue
 
                 targets.append(StrikeTarget(building.category, building))
+
+        return self.strike_flightplan(flight, location, targets)
+
+    def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
+        """Generates a BAI flight plan.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        if not isinstance(location, TheaterGroundObject):
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        targets: List[StrikeTarget] = []
+        for group in location.groups:
+            targets.append(StrikeTarget(f"{group.id}", group))
 
         return self.strike_flightplan(flight, location, targets)
 
@@ -965,7 +984,9 @@ class FlightPlanBuilder:
     @staticmethod
     def target_waypoint(flight: Flight, builder: WaypointBuilder,
                         target: StrikeTarget) -> FlightWaypoint:
-        if flight.flight_type == FlightType.DEAD:
+        if flight.flight_type == FlightType.BAI:
+            return builder.bai_group(target)
+        elif flight.flight_type == FlightType.DEAD:
             return builder.dead_point(target)
         elif flight.flight_type == FlightType.SEAD:
             return builder.sead_point(target)
@@ -1068,7 +1089,6 @@ class FlightPlanBuilder:
         assert self.package.waypoints is not None
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine,
                                   targets)
-        # sead_types = {FlightType.DEAD, FlightType.SEAD}
         if flight.flight_type is FlightType.SEAD:
             ingress = builder.ingress_sead(self.package.waypoints.ingress,
                                            location)
@@ -1076,6 +1096,9 @@ class FlightPlanBuilder:
         elif flight.flight_type is FlightType.DEAD:
             ingress = builder.ingress_dead(self.package.waypoints.ingress,
                                            location)
+        elif flight.flight_type is FlightType.BAI:
+            ingress = builder.ingress_bai(self.package.waypoints.ingress,
+                                          location)
         else:
             ingress = builder.ingress_strike(self.package.waypoints.ingress,
                                              location)
