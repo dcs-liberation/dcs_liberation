@@ -217,12 +217,13 @@ class QTopPanel(QFrame):
             if isinstance(event,
                           FrontlineAttackEvent) and event.is_player_attacking:
                 game_event = event
+        # TODO: Why does this exist?
         if game_event is None:
             game_event = FrontlineAttackEvent(
                 self.game,
                 self.game.theater.controlpoints[0],
-                self.game.theater.controlpoints[0],
-                self.game.theater.controlpoints[0].position,
+                self.game.theater.controlpoints[1],
+                self.game.theater.controlpoints[1].position,
                 self.game.player_name,
                 self.game.enemy_name)
         game_event.is_awacs_enabled = True
