@@ -1,5 +1,4 @@
 import logging
-import math
 import random
 import sys
 from datetime import date, datetime, timedelta
@@ -7,8 +6,7 @@ from typing import Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
-from dcs.task import CAP, CAS, PinpointStrike, Task
-from dcs.unittype import UnitType
+from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 
 from game import db
@@ -21,8 +19,6 @@ from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
-from theater import ConflictTheater, ControlPoint
-from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from . import persistency
 from .debriefing import Debriefing
 from .event.event import Event, UnitsDeliveryEvent
@@ -30,6 +26,7 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
+from .theater import ConflictTheater, ControlPoint
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4

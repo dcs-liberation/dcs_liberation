@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QAbstractItemView, QListView
 
 from qt_ui.models import GameModel
 from qt_ui.windows.mission.QFlightItem import QFlightItem
-from theater.controlpoint import ControlPoint
+from game.theater.controlpoint import ControlPoint
 
 
 class QPlannedFlightsView(QListView):

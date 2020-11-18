@@ -2,7 +2,7 @@ from abc import ABC
 
 from game import Game
 from gen.sam.group_generator import GroupGenerator
-from theater.theatergroundobject import SamGroundObject
+from game.theater.theatergroundobject import SamGroundObject
 
 
 class GenericSamGroupGenerator(GroupGenerator, ABC):

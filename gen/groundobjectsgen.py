@@ -28,7 +28,7 @@ from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.db import unit_type_from_name
 from theater import ControlPoint, TheaterGroundObject
-from theater.theatergroundobject import (
+from game.theater.theatergroundobject import (
     BuildingGroundObject, CarrierGroundObject,
     GenericCarrierGroundObject,
     LhaGroundObject, ShipGroundObject,

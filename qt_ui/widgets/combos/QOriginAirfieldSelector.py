@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QComboBox
 
 from dcs.planes import PlaneType
 from game.inventory import GlobalAircraftInventory
-from theater.controlpoint import ControlPoint
+from game.theater.controlpoint import ControlPoint
 
 
 class QOriginAirfieldSelector(QComboBox):

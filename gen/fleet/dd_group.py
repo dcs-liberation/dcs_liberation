@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from game.factions.faction import Faction
-from theater.theatergroundobject import TheaterGroundObject
+from game.theater.theatergroundobject import TheaterGroundObject
 
 from gen.sam.group_generator import ShipGroupGenerator
 from dcs.unittype import ShipType

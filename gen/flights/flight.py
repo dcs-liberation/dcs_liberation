@@ -9,7 +9,7 @@ from dcs.point import MovingPoint, PointAction
 from dcs.unittype import FlyingType
 
 from game import db
-from theater.controlpoint import ControlPoint, MissionTarget
+from game.theater.controlpoint import ControlPoint, MissionTarget
 
 if TYPE_CHECKING:
     from gen.ato import Package

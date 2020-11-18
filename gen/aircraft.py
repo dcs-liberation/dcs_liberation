@@ -84,7 +84,7 @@ from gen.flights.flight import (
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
 from theater import TheaterGroundObject
-from theater.controlpoint import ControlPoint, ControlPointType
+from game.theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
 from .flights.flightplan import (
     CasFlightPlan,

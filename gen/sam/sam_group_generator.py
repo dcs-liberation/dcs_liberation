@@ -1,18 +1,21 @@
 import random
 from typing import List, Optional, Type
 
-from dcs.vehicles import AirDefence
 from dcs.unitgroup import VehicleGroup
+from dcs.vehicles import AirDefence
 
 from game import Game, db
+from game.theater import TheaterGroundObject
+from game.theater.theatergroundobject import SamGroundObject
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_flak18 import Flak18Generator
 from gen.sam.aaa_ww2_ally_flak import AllyWW2FlakGenerator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
-from gen.sam.cold_war_flak import EarlyColdWarFlakGenerator, ColdWarFlakGenerator
-
-
+from gen.sam.cold_war_flak import (
+    ColdWarFlakGenerator,
+    EarlyColdWarFlakGenerator,
+)
 from gen.sam.ewrs import (
     BigBirdGenerator,
     BoxSpringGenerator,
@@ -25,6 +28,7 @@ from gen.sam.ewrs import (
     StraightFlushGenerator,
     TallRackGenerator,
 )
+from gen.sam.freya_ewr import FreyaGenerator
 from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
@@ -50,9 +54,6 @@ from gen.sam.sam_zsu23 import ZSU23Generator
 from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
-from gen.sam.freya_ewr import FreyaGenerator
-from theater import TheaterGroundObject
-from theater.theatergroundobject import SamGroundObject
 
 SAM_MAP = {
     "HawkGenerator": HawkGenerator,

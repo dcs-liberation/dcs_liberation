@@ -16,7 +16,7 @@ from typing import Dict, List, Optional
 
 from dcs.mapping import Point
 
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 from .flights.flight import Flight, FlightType
 from .flights.flightplan import FormationFlightPlan
 

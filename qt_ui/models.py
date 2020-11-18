@@ -16,7 +16,7 @@ from gen.ato import AirTaskingOrder, Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 
 
 class DeletableChildModelManager:

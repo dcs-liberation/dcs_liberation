@@ -1,5 +1,2 @@
-from .base import *
-from .conflicttheater import *
-from .controlpoint import *
-from .missiontarget import MissionTarget
-from .theatergroundobject import SamGroundObject
+# For save game compatibility. Remove before 2.3.
+from game.theater import *

@@ -34,8 +34,8 @@ from theater import (
     ControlPointType,
     TheaterGroundObject,
 )
-from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
-from theater.theatergroundobject import (
+from game.theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
+from game.theater.theatergroundobject import (
     EwrGroundObject,
     SamGroundObject,
     BuildingGroundObject,

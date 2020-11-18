@@ -2,19 +2,18 @@
 Briefing generation logic
 """
 from __future__ import annotations
+
 import os
-import random
-import logging
 from dataclasses import dataclass
-from theater import FrontLine
-from typing import List, Dict, TYPE_CHECKING
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from typing import Dict, List, TYPE_CHECKING
 
 from dcs.mission import Mission
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from game.theater import ControlPoint, FrontLine
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
-from theater import ControlPoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData

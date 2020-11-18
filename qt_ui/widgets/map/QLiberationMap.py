@@ -40,8 +40,8 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from theater import ControlPoint
-from theater.conflicttheater import FrontLine
-from theater.theatergroundobject import (
+from game.theater.conflicttheater import FrontLine
+from game.theater.theatergroundobject import (
     EwrGroundObject,
     MissileSiteGroundObject,
     TheaterGroundObject,

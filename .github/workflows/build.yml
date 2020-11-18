@@ -36,11 +36,6 @@ jobs:
       run: |
         ./venv/scripts/activate
         mypy gen
-
-    - name: mypy theater
-      run: |
-        ./venv/scripts/activate
-        mypy theater
       
     - name: update build number
       run: |

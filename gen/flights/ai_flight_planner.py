@@ -55,7 +55,7 @@ from theater import (
 )
 
 # Avoid importing some types that cause circular imports unless type checking.
-from theater.theatergroundobject import (
+from game.theater.theatergroundobject import (
     EwrGroundObject,
     NavalGroundObject, VehicleGroupGroundObject,
 )

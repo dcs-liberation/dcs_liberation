@@ -1,7 +1,7 @@
 from __future__ import annotations
 import math
 import random
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from dcs import unitgroup
 from dcs.point import PointAction
@@ -9,7 +9,7 @@ from dcs.unit import Vehicle, Ship
 from dcs.unittype import VehicleType
 
 from game.factions.faction import Faction
-from theater.theatergroundobject import TheaterGroundObject
+from game.theater.theatergroundobject import TheaterGroundObject
 
 if TYPE_CHECKING:
     from game.game import Game

@@ -24,7 +24,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.flight.QFlightCreator import QFlightCreator
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 
 
 class QPackageDialog(QDialog):

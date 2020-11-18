@@ -27,7 +27,7 @@ from theater import (
     SamGroundObject,
     TheaterGroundObject,
 )
-from theater.theatergroundobject import EwrGroundObject
+from game.theater.theatergroundobject import EwrGroundObject
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime

@@ -1,2 +1,3 @@
-"""Only here to keep compatibility for save games generated in version 2.2.0"""
-from theater.conflicttheater import *
+# For save compat. Remove in 2.3.
+from game.theater.frontline import *
+from game.theater.conflicttheater import FrontLine

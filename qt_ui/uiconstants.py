@@ -1,10 +1,9 @@
 import os
 from typing import Dict
-from pathlib import Path
 
 from PySide2.QtGui import QColor, QFont, QPixmap
 
-from theater.theatergroundobject import CATEGORY_MAP
+from game.theater.theatergroundobject import CATEGORY_MAP
 from .liberation_theme import get_theme_icons
 
 

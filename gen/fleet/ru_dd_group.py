@@ -16,7 +16,7 @@ from dcs.ships import (
 from gen.fleet.dd_group import DDGroupGenerator
 from gen.sam.group_generator import ShipGroupGenerator
 from game.factions.faction import Faction
-from theater.theatergroundobject import TheaterGroundObject
+from game.theater.theatergroundobject import TheaterGroundObject
 
 
 if TYPE_CHECKING:

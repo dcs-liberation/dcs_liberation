@@ -15,7 +15,7 @@ from qt_ui.windows.newgame.QCampaignList import (
     QCampaignList,
     load_campaigns,
 )
-from theater.start_generator import GameGenerator
+from game.theater.start_generator import GameGenerator
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),

@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
 
 from qt_ui.dialogs import Dialog
 from qt_ui.windows.mission.QPackageDialog import QNewPackageDialog
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 
 
 class QMapObject(QGraphicsRectItem):
