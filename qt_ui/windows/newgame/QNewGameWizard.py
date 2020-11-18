@@ -74,13 +74,14 @@ class NewGameWizard(QtWidgets.QWizard):
         player_name = blueFaction
         enemy_name = redFaction
 
-        settings = Settings()
-        settings.inverted = invertMap
-        settings.supercarrier = supercarrier
-        settings.do_not_generate_carrier = no_carrier
-        settings.do_not_generate_lha = no_lha
-        settings.do_not_generate_player_navy = no_player_navy
-        settings.do_not_generate_enemy_navy = no_enemy_navy
+        settings = Settings(
+            inverted=invertMap,
+            supercarrier=supercarrier,
+            do_not_generate_carrier=no_carrier,
+            do_not_generate_lha=no_lha,
+            do_not_generate_player_navy=no_player_navy,
+            do_not_generate_enemy_navy=no_enemy_navy
+        )
 
         generator = GameGenerator(player_name, enemy_name, conflictTheater,
                                   settings, timePeriod, starting_money,

@@ -277,10 +277,14 @@ class GameModel:
     This isn't a real Qt data model, but simplifies management of the game and
     its ATO objects.
     """
-    def __init__(self) -> None:
-        self.game: Optional[Game] = None
-        self.ato_model = AtoModel(self.game, AirTaskingOrder())
-        self.red_ato_model = AtoModel(self.game, AirTaskingOrder())
+    def __init__(self, game: Optional[Game]) -> None:
+        self.game: Optional[Game] = game
+        if self.game is None:
+            self.ato_model = AtoModel(self.game, AirTaskingOrder())
+            self.red_ato_model = AtoModel(self.game, AirTaskingOrder())
+        else:
+            self.ato_model = AtoModel(self.game, self.game.blue_ato)
+            self.red_ato_model = AtoModel(self.game, self.game.red_ato)
 
     def set(self, game: Optional[Game]) -> None:
         """Updates the managed Game object.

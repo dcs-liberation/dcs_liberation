@@ -35,11 +35,11 @@ from qt_ui.windows.preferences.QLiberationPreferencesWindow import \
 
 class QLiberationWindow(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, game: Optional[Game]) -> None:
         super(QLiberationWindow, self).__init__()
 
-        self.game: Optional[Game] = None
-        self.game_model = GameModel()
+        self.game = game
+        self.game_model = GameModel(game)
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
@@ -60,7 +60,10 @@ class QLiberationWindow(QMainWindow):
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
 
-        self.onGameGenerated(persistency.restore_game())
+        if self.game is None:
+            self.onGameGenerated(persistency.restore_game())
+        else:
+            self.onGameGenerated(self.game)
 
     def initUi(self):
         hbox = QSplitter(Qt.Horizontal)

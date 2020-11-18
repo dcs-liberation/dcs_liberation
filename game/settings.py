@@ -1,52 +1,52 @@
+from dataclasses import dataclass, field
 from typing import Dict
 
 
+@dataclass
 class Settings:
+    # Generator settings
+    inverted: bool = False
+    do_not_generate_carrier: bool = False  # TODO : implement
+    do_not_generate_lha: bool = False  # TODO : implement
+    do_not_generate_player_navy: bool = True  # TODO : implement
+    do_not_generate_enemy_navy: bool = True  # TODO : implement
 
-    def __init__(self):
-        # Generator settings
-        self.inverted = False
-        self.do_not_generate_carrier = False # TODO : implement
-        self.do_not_generate_lha = False     # TODO : implement
-        self.do_not_generate_player_navy = True          # TODO : implement
-        self.do_not_generate_enemy_navy = True           # TODO : implement
+    # Difficulty settings
+    player_skill: str = "Good"
+    enemy_skill: str = "Average"
+    enemy_vehicle_skill: str = "Average"
+    map_coalition_visibility: str = "All Units"
+    labels: str = "Full"
+    only_player_takeoff: bool = True  # Legacy parameter do not use
+    night_disabled: bool = False
+    external_views_allowed: bool = True
+    supercarrier: bool = False
+    multiplier: bool = 1
+    generate_marks: bool = True
+    sams: bool = True  # Legacy parameter do not use
+    cold_start: bool = False  # Legacy parameter do not use
+    version: bool = None
 
-        # Difficulty settings
-        self.player_skill = "Good"
-        self.enemy_skill = "Average"
-        self.enemy_vehicle_skill = "Average"
-        self.map_coalition_visibility = "All Units"
-        self.labels = "Full"
-        self.only_player_takeoff = True  # Legacy parameter do not use
-        self.night_disabled = False
-        self.external_views_allowed = True
-        self.supercarrier = False
-        self.multiplier = 1
-        self.generate_marks = True
-        self.sams = True # Legacy parameter do not use
-        self.cold_start = False # Legacy parameter do not use
-        self.version = None
+    # Performance oriented
+    perf_red_alert_state: bool = True
+    perf_smoke_gen: bool = True
+    perf_artillery: bool = True
+    perf_moving_units: bool = True
+    perf_infantry: bool = True
+    perf_ai_parking_start: bool = True
+    perf_destroyed_units: bool = True
 
-        # Performance oriented
-        self.perf_red_alert_state = True
-        self.perf_smoke_gen = True
-        self.perf_artillery = True
-        self.perf_moving_units = True
-        self.perf_infantry = True
-        self.perf_ai_parking_start = True
-        self.perf_destroyed_units = True
+    # Performance culling
+    perf_culling: bool = False
+    perf_culling_distance: int = 100
 
-        # Performance culling
-        self.perf_culling = False
-        self.perf_culling_distance = 100
+    # LUA Plugins system
+    plugins: Dict[str, bool] = field(default_factory=dict)
 
-        # LUA Plugins system
-        self.plugins: Dict[str, bool] = {}
+    # Cheating
+    show_red_ato: bool = False
 
-        # Cheating
-        self.show_red_ato = False
-
-        self.never_delay_player_flights = False
+    never_delay_player_flights: bool = False
 
     @staticmethod
     def plugin_settings_key(identifier: str) -> str:
