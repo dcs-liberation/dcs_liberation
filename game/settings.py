@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Dict, Optional
 
 
 @dataclass
@@ -21,11 +21,11 @@ class Settings:
     night_disabled: bool = False
     external_views_allowed: bool = True
     supercarrier: bool = False
-    multiplier: bool = 1
+    multiplier: float = 1
     generate_marks: bool = True
     sams: bool = True  # Legacy parameter do not use
     cold_start: bool = False  # Legacy parameter do not use
-    version: bool = None
+    version: Optional[str] = None
 
     # Performance oriented
     perf_red_alert_state: bool = True
