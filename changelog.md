@@ -5,6 +5,7 @@
 * **[Factions]** Added map Persian Gulf full by Plob
 * **[Flight Planner]** Player flights with start delays under ten minutes will spawn immediately.
 * **[UI]** Mission start screen now informs players about delayed flights.
+* **[Units]** Added support for F-14A-135-GR
 
 ## Fixes :
 * **[Flight Planner]** Hold, join, and split points are planned cautiously near enemy airfields. Ascend/descend points are no longer planned.
