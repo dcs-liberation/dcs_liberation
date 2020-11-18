@@ -6,6 +6,7 @@
 * **[Flight Planner]** Added anti-ship missions.
 * **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
 * **[Modding]** Possible to setup liveries overrides for factions
+* **[Units]** Added support for F-14A-135-GR
 
 # 2.2.1
 

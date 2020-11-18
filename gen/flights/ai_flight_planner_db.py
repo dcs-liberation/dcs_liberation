@@ -27,6 +27,7 @@ from dcs.planes import (
     FW_190A8,
     FW_190D9,
     F_117A,
+    F_14A_135_GR,
     F_14B,
     F_15C,
     F_15E,
@@ -104,6 +105,7 @@ INTERCEPT_CAPABLE = [
     Mirage_2000_5,
     Rafale_M,
 
+    F_14A_135_GR,
     F_14B,
     F_15C,
 
@@ -135,6 +137,7 @@ CAP_CAPABLE = [
     F_86F_Sabre,
     F_4E,
     F_5E_3,
+    F_14A_135_GR,
     F_14B,
     F_15C,
     F_15E,
@@ -183,6 +186,7 @@ CAP_PREFERRED = [
     Mirage_2000_5,
 
     F_86F_Sabre,
+    F_14A_135_GR,
     F_14B,
     F_15C,
 
@@ -226,6 +230,7 @@ CAS_CAPABLE = [
 
     F_86F_Sabre,
     F_5E_3,
+    F_14A_135_GR,
     F_14B,
     F_15E,
     F_16A,
@@ -390,6 +395,7 @@ STRIKE_CAPABLE = [
 
     F_86F_Sabre,
     F_5E_3,
+    F_14A_135_GR,
     F_14B,
     F_15E,
     F_16A,

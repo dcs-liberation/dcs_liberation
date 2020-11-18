@@ -4,6 +4,7 @@
   "authors": "Khopa",
   "description": "<p>A generic bluefor coldwar faction.</p>",
   "aircrafts": [
+    "F_14A_135_GR",
     "F_14B",
     "F_4E",
     "F_5E_3",
