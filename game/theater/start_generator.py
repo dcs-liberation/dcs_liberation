@@ -4,7 +4,7 @@ import logging
 import math
 import pickle
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -13,6 +13,17 @@ from dcs.vehicles import AirDefence
 from game import Game, db
 from game.factions.faction import Faction
 from game.settings import Settings
+from game.theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
+from game.theater.theatergroundobject import (
+    BuildingGroundObject,
+    CarrierGroundObject,
+    EwrGroundObject,
+    LhaGroundObject,
+    MissileSiteGroundObject,
+    SamGroundObject,
+    ShipGroundObject,
+    VehicleGroupGroundObject,
+)
 from game.version import VERSION
 from gen import namegen
 from gen.defenses.armor_group_generator import generate_armor_group
@@ -33,17 +44,6 @@ from theater import (
     ControlPoint,
     ControlPointType,
     TheaterGroundObject,
-)
-from game.theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
-from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    SamGroundObject,
-    BuildingGroundObject,
-    CarrierGroundObject,
-    LhaGroundObject,
-    MissileSiteGroundObject,
-    ShipGroundObject,
-    VehicleGroupGroundObject,
 )
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
@@ -317,10 +317,9 @@ class BaseDefenseGenerator:
         self.generate_base_defenses()
 
     def generate_ewr(self) -> None:
-        position = self._find_location()
+        position = self._find_location(
+            "EWR", self.control_point.preset_locations.random_ewr)
         if position is None:
-            logging.error("Could not find position for "
-                          f"{self.control_point} EWR")
             return
 
         group_id = self.game.next_group_id()
@@ -350,10 +349,9 @@ class BaseDefenseGenerator:
                 self.generate_garrison()
 
     def generate_garrison(self) -> None:
-        position = self._find_location()
+        position = self._find_location(
+            "garrison", self.control_point.preset_locations.random_garrison)
         if position is None:
-            logging.error("Could not find position for "
-                          f"{self.control_point} garrison")
             return
 
         group_id = self.game.next_group_id()
@@ -368,10 +366,9 @@ class BaseDefenseGenerator:
         self.control_point.base_defenses.append(g)
 
     def generate_sam(self) -> None:
-        position = self._find_location()
+        position = self._find_location(
+            "SAM", self.control_point.preset_locations.random_base_sam)
         if position is None:
-            logging.error("Could not find position for "
-                          f"{self.control_point} SAM")
             return
 
         group_id = self.game.next_group_id()
@@ -385,10 +382,9 @@ class BaseDefenseGenerator:
         self.control_point.base_defenses.append(g)
 
     def generate_shorad(self) -> None:
-        position = self._find_location()
+        position = self._find_location(
+            "SHORAD", self.control_point.preset_locations.random_garrison)
         if position is None:
-            logging.error("Could not find position for "
-                          f"{self.control_point} SHORAD")
             return
 
         group_id = self.game.next_group_id()
@@ -401,7 +397,21 @@ class BaseDefenseGenerator:
             g.groups.append(group)
         self.control_point.base_defenses.append(g)
 
-    def _find_location(self) -> Optional[Point]:
+    def _find_location(self, position_type: str,
+                       get_preset: Callable[[], None]) -> Optional[Point]:
+        position = get_preset()
+        if position is None:
+            logging.warning(
+                f"Found no preset location for {self.control_point} "
+                f"{position_type}. Falling back to random location."
+            )
+            position = self._find_random_location()
+        if position is None:
+            logging.error("Could not find position for "
+                          f"{self.control_point} {position_type}.")
+        return position
+
+    def _find_random_location(self) -> Optional[Point]:
         position = find_location(True, self.control_point.position,
                                  self.game.theater, 400, 3200, [], True)
 
