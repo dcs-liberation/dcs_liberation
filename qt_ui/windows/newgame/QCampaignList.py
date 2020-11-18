@@ -29,8 +29,10 @@ class Campaign:
             data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
-        return cls(data["name"], f"Terrain_{sanitized_theater}", data.get("authors", "???"),
-                   data.get("description", ""), ConflictTheater.from_json(data))
+        return cls(data["name"], f"Terrain_{sanitized_theater}",
+                   data.get("authors", "???"),
+                   data.get("description", ""),
+                   ConflictTheater.from_json(path.parent, data))
 
 
 def load_campaigns() -> List[Campaign]:

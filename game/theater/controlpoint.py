@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import itertools
+import random
 import re
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, TYPE_CHECKING
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -36,6 +38,43 @@ class ControlPointType(Enum):
     FOB = 5                    # A FOB (ground units only)
 
 
+@dataclass
+class PresetLocations:
+    base_garrisons: List[Point] = field(default_factory=list)
+    base_air_defense: List[Point] = field(default_factory=list)
+
+    ewrs: List[Point] = field(default_factory=list)
+    sams: List[Point] = field(default_factory=list)
+    coastal_defenses: List[Point] = field(default_factory=list)
+    strike_locations: List[Point] = field(default_factory=list)
+
+    @staticmethod
+    def _random_from(points: List[Point]) -> Optional[Point]:
+        if not points:
+            return None
+        point = random.choice(points)
+        points.remove(point)
+        return point
+
+    def random_garrison(self) -> Optional[Point]:
+        return self._random_from(self.base_garrisons)
+
+    def random_base_sam(self) -> Optional[Point]:
+        return self._random_from(self.base_air_defense)
+
+    def random_ewr(self) -> Optional[Point]:
+        return self._random_from(self.ewrs)
+
+    def random_sam(self) -> Optional[Point]:
+        return self._random_from(self.sams)
+
+    def random_coastal_defense(self) -> Optional[Point]:
+        return self._random_from(self.coastal_defenses)
+
+    def random_strike_location(self) -> Optional[Point]:
+        return self._random_from(self.strike_locations)
+
+
 class ControlPoint(MissionTarget):
 
     position = None  # type: Point
@@ -57,6 +96,7 @@ class ControlPoint(MissionTarget):
         self.at = at
         self.connected_objectives: List[TheaterGroundObject] = []
         self.base_defenses: List[BaseDefenseGroundObject] = []
+        self.preset_locations = PresetLocations()
 
         self.size = size
         self.importance = importance
@@ -79,7 +119,7 @@ class ControlPoint(MissionTarget):
     def from_airport(cls, airport: Airport, radials: List[int], size: int, importance: float, has_frontline=True):
         assert airport
         obj = cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
-        obj.airport = airport()
+        obj.airport = airport
         return obj
 
     @classmethod
@@ -157,7 +197,7 @@ class ControlPoint(MissionTarget):
         else:
             return 0
 
-    def connect(self, to):
+    def connect(self, to: ControlPoint) -> None:
         self.connected_points.append(to)
         self.stances[to.id] = CombatStance.DEFENSIVE
 
