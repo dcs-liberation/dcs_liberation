@@ -101,6 +101,10 @@ class TheaterGroundObject(MissionTarget):
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}"
 
+    @property
+    def waypoint_name(self) -> str:
+        return f"[{self.name}] {self.category}"
+
     def __str__(self) -> str:
         return NAME_BY_CATEGORY[self.category]
 
@@ -154,6 +158,10 @@ class BuildingGroundObject(TheaterGroundObject):
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}|{self.object_id}"
+
+    @property
+    def waypoint_name(self) -> str:
+        return f"{super().waypoint_name} #{self.object_id}"
 
 
 class NavalGroundObject(TheaterGroundObject):

@@ -769,7 +769,6 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         start, end = builder.race_track(start, end, patrol_alt)
-        descent, land = builder.rtb(flight.from_cp)
 
         return BarCapFlightPlan(
             package=self.package,
@@ -778,7 +777,7 @@ class FlightPlanBuilder:
             takeoff=builder.takeoff(flight.from_cp),
             patrol_start=start,
             patrol_end=end,
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
@@ -794,8 +793,6 @@ class FlightPlanBuilder:
                                           -self.doctrine.sweep_distance)
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        descent, land = builder.rtb(flight.from_cp)
-
         start, end = builder.sweep(start, target,
                                    self.doctrine.ingress_altitude)
 
@@ -807,7 +804,7 @@ class FlightPlanBuilder:
             hold=builder.hold(self._hold_point(flight)),
             sweep_start=start,
             sweep_end=end,
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     def racetrack_for_objective(self,
@@ -894,7 +891,6 @@ class FlightPlanBuilder:
             orbit0p, orbit1p = self.racetrack_for_objective(location)
 
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
-        descent, land = builder.rtb(flight.from_cp)
         return TarCapFlightPlan(
             package=self.package,
             flight=flight,
@@ -907,7 +903,7 @@ class FlightPlanBuilder:
             takeoff=builder.takeoff(flight.from_cp),
             patrol_start=start,
             patrol_end=end,
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     def generate_dead(self, flight: Flight,
@@ -965,7 +961,6 @@ class FlightPlanBuilder:
         ingress, target, egress = builder.escort(
             self.package.waypoints.ingress, self.package.target,
             self.package.waypoints.egress)
-        descent, land = builder.rtb(flight.from_cp)
 
         return StrikeFlightPlan(
             package=self.package,
@@ -977,7 +972,7 @@ class FlightPlanBuilder:
             targets=[target],
             egress=egress,
             split=builder.split(self.package.waypoints.split),
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     def generate_cas(self, flight: Flight) -> CasFlightPlan:
@@ -999,7 +994,6 @@ class FlightPlanBuilder:
         egress = ingress.point_from_heading(heading, distance)
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        descent, land = builder.rtb(flight.from_cp)
 
         return CasFlightPlan(
             package=self.package,
@@ -1009,7 +1003,7 @@ class FlightPlanBuilder:
             patrol_start=builder.ingress_cas(ingress, location),
             target=builder.cas(center),
             patrol_end=builder.egress(egress, location),
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     @staticmethod
@@ -1081,28 +1075,6 @@ class FlightPlanBuilder:
                                          self.doctrine.hold_distance)
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
-    def generate_ascend_point(self, flight: Flight,
-                              departure: ControlPoint) -> FlightWaypoint:
-        """Generate ascend point.
-
-        Args:
-            flight: The flight to generate the descend point for.
-            departure: Departure airfield or carrier.
-        """
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        return builder.ascent(departure)
-
-    def generate_descend_point(self, flight: Flight,
-                               arrival: ControlPoint) -> FlightWaypoint:
-        """Generate approach/descend point.
-
-        Args:
-            flight: The flight to generate the descend point for.
-            arrival: Arrival airfield or carrier.
-        """
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
-        return builder.descent(arrival)
-
     def generate_rtb_waypoint(self, flight: Flight,
                               arrival: ControlPoint) -> FlightWaypoint:
         """Generate RTB landing point.
@@ -1143,7 +1115,6 @@ class FlightPlanBuilder:
             target_waypoints.append(
                 self.target_area_waypoint(flight, location, builder))
 
-        descent, land = builder.rtb(flight.from_cp)
         return StrikeFlightPlan(
             package=self.package,
             flight=flight,
@@ -1154,7 +1125,7 @@ class FlightPlanBuilder:
             targets=target_waypoints,
             egress=builder.egress(self.package.waypoints.egress, location),
             split=builder.split(self.package.waypoints.split),
-            land=land
+            land=builder.land(flight.from_cp)
         )
 
     def _retreating_rendezvous_point(self, attack_transition: Point) -> Point:

@@ -1,11 +1,20 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QCheckBox
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtWidgets import (
+    QCheckBox,
+    QDialog,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from game import Game
 from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import QPredefinedWaypointSelectionComboBox
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import QFlightWaypointInfoBox
+from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import \
+    QPredefinedWaypointSelectionComboBox
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import \
+    QFlightWaypointInfoBox
 
 PREDEFINED_WAYPOINT_CATEGORIES = [
     "Frontline (CAS AREA)",
@@ -17,6 +26,8 @@ PREDEFINED_WAYPOINT_CATEGORIES = [
 
 class QPredefinedWaypointSelectionWindow(QDialog):
 
+    # List of FlightWaypoint
+    waypoints_added = Signal(list)
 
     def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
         super(QPredefinedWaypointSelectionWindow, self).__init__()
@@ -44,7 +55,6 @@ class QPredefinedWaypointSelectionWindow(QDialog):
 
         self.init_ui()
         self.on_select_wpt_changed()
-        print("DONE")
 
 
     def init_ui(self):
@@ -77,12 +87,5 @@ class QPredefinedWaypointSelectionWindow(QDialog):
             self.add_button.setDisabled(False)
 
     def add_waypoint(self):
-
-        for wpt in self.selected_waypoints:
-            self.flight.points.append(wpt)
-
-        self.flight_waypoint_list.update_list()
+        self.waypoints_added.emit(self.selected_waypoints)
         self.close()
-
-
-
