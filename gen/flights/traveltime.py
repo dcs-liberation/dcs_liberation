@@ -96,6 +96,11 @@ class TotEstimator:
 
     def mission_start_time(self, flight: Flight) -> timedelta:
         takeoff_time = self.takeoff_time_for_flight(flight)
+        if takeoff_time is None:
+            # Could not determine takeoff time, probably due to a custom flight
+            # plan. Start immediately.
+            return timedelta()
+
         startup_time = self.estimate_startup(flight)
         ground_ops_time = self.estimate_ground_ops(flight)
         start_time = takeoff_time - startup_time - ground_ops_time
@@ -110,13 +115,12 @@ class TotEstimator:
         # Round down so *barely* above zero start times are just zero.
         return timedelta(seconds=math.floor(start_time.total_seconds()))
 
-    def takeoff_time_for_flight(self, flight: Flight) -> timedelta:
+    def takeoff_time_for_flight(self, flight: Flight) -> Optional[timedelta]:
         travel_time = self.travel_time_to_rendezvous_or_target(flight)
         if travel_time is None:
-            logging.warning("Found no join point or patrol point. Cannot "
+            logging.warning("Found no rendezvous or target point. Cannot "
                             f"estimate takeoff time takeoff time for {flight}")
-            # Takeoff immediately.
-            return timedelta()
+            return None
 
         from gen.flights.flightplan import FormationFlightPlan
         if isinstance(flight.flight_plan, FormationFlightPlan):
@@ -126,7 +130,7 @@ class TotEstimator:
                 logging.warning(
                     "Could not determine the TOT of the join point. Takeoff "
                     f"time for {flight} will be immediate.")
-                return timedelta()
+                return None
         else:
             tot_waypoint = flight.flight_plan.tot_waypoint
             if tot_waypoint is None:

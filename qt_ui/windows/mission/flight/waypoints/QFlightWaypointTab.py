@@ -13,10 +13,12 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from gen.ato import Package
-from gen.flights.flight import Flight, FlightType
+from gen.flights.flight import Flight, FlightType, FlightWaypoint
 from gen.flights.flightplan import (
+    CustomFlightPlan,
     FlightPlanBuilder,
     PlanningError,
+    StrikeFlightPlan,
 )
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
     QFlightWaypointList
@@ -97,9 +99,29 @@ class QFlightWaypointTab(QFrame):
     def on_delete_waypoint(self):
         wpt = self.flight_waypoint_list.selectionModel().currentIndex().row()
         if wpt > 0:
-            del self.flight.points[wpt-1]
+            self.delete_waypoint(self.flight.flight_plan.waypoints[wpt])
             self.flight_waypoint_list.update_list()
         self.on_change()
+
+    def delete_waypoint(self, waypoint: FlightWaypoint) -> None:
+        # Need to degrade to a custom flight plan and remove the waypoint.
+        # If the waypoint is a target waypoint and is not the last target
+        # waypoint, we don't need to degrade.
+        flight_plan = self.flight.flight_plan
+        if isinstance(flight_plan, StrikeFlightPlan):
+            if waypoint in flight_plan.targets and len(flight_plan.targets) > 1:
+                flight_plan.targets.remove(waypoint)
+                return
+
+        if not isinstance(flight_plan, CustomFlightPlan):
+            flight_plan = CustomFlightPlan(
+                package=self.flight.package,
+                flight=self.flight,
+                custom_waypoints=flight_plan.waypoints
+            )
+
+        flight_plan.waypoints.remove(waypoint)
+        self.flight.flight_plan = flight_plan
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
