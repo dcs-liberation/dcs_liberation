@@ -16,6 +16,7 @@ We do not have a single vehicle available to hold our position.  The situation i
 {% if frontline.enemy_zero %}
 The enemy forces have been crushed, we will be able to make significant progress toward {{ frontline.enemy_base.name }}
 {% endif %}
+{% if not frontline.player_zero %}
 {# Pick a random sentence to describe each frontline #}
 {% set fl_sent1 %}There are combats between {{ frontline.player_base.name }} and {{frontline.enemy_base.name}}. {%+ endset %}
 {% set fl_sent2 %}The war on the ground is still going on between {{frontline.player_base.name}} and {{frontline.enemy_base.name}}. {%+ endset %}
@@ -57,8 +58,9 @@ On this location, our ground forces have been ordered to hold still, and defend 
 {# TODO: Write a retreat sentence #}
     {% endif %}
 {% endif %}
+{% endif %}
 
-{% endfor %}{% endif %}
+{%+ endfor %}{% endif %}
 
 Your flights:
 ====================

@@ -13,8 +13,9 @@ from PySide2.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
-    QTextEdit,
+    QTextBrowser,
 )
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game.debriefing import Debriefing, wait_for_debriefing
 from game.game import Event, Game, logging
@@ -65,27 +66,21 @@ class QWaitingForMissionResultWindow(QDialog):
         self.layout.addWidget(header, 0, 0)
 
         self.gridLayout = QGridLayout()
-        TEXT = "" + \
-                "<b>You are clear for takeoff</b>" + \
-                "" + \
-                "<h2>For Singleplayer :</h2>\n" + \
-                "In DCS, open the Mission Editor, and load the file : \n" + \
-                "<i>liberation_nextturn</i>\n" + \
-                "<p>Then once the mission is loaded in ME, in menu \"Flight\",\n" + \
-                "click on FLY Mission to launch.</p>\n" + \
-                "" + \
-                "<h2>For Multiplayer :</h2>" + \
-                "In DCS, open the Mission Editor, and load the file : " + \
-                "<i>liberation_nextturn</i>" + \
-                "<p>Click on File/Save. Then exit the mission editor, and go to Multiplayer.</p>" + \
-                "<p>Then host a server with the mission, and tell your friends to join !</p>" + \
-                "<i>(The step in the mission editor is important, and fix a game breaking bug.)</i>" + \
-                "<h2>Finishing</h2>" + \
-                "<p>Once you have played the mission, click on the \"Accept Results\" button.</p>" + \
-                "<p>If DCS Liberation does not detect mission end, use the manually submit button, and choose the state.json file.</p>"
 
-        self.instructions_text = QTextEdit(TEXT)
-        self.instructions_text.setReadOnly(True)
+        jinja = Environment(
+            loader=FileSystemLoader("resources/ui/templates"),
+            autoescape=select_autoescape(
+                disabled_extensions=("",),
+                default_for_string=True,
+                default=True,
+            ),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+        self.instructions_text = QTextBrowser()
+        self.instructions_text.setHtml(
+            jinja.get_template("mission_start_EN.j2").render())
+        self.instructions_text.setOpenExternalLinks(True)
         self.gridLayout.addWidget(self.instructions_text, 1, 0)
 
         progress = QLabel("")

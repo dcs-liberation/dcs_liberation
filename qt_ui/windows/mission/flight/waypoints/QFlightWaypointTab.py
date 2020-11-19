@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
@@ -12,11 +12,15 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from gen.ato import Package
-from gen.flights.flight import Flight, FlightType
-from gen.flights.flightplan import FlightPlanBuilder
+from gen.flights.flight import Flight, FlightType, FlightWaypoint
+from gen.flights.flightplan import (
+    CustomFlightPlan,
+    FlightPlanBuilder,
+    StrikeFlightPlan,
+)
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
     QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints\
+from qt_ui.windows.mission.flight.waypoints \
     .QPredefinedWaypointSelectionWindow import \
     QPredefinedWaypointSelectionWindow
 from theater import FrontLine
@@ -34,8 +38,6 @@ class QFlightWaypointTab(QFrame):
         self.planner = FlightPlanBuilder(self.game, package, is_player=True)
 
         self.flight_waypoint_list: Optional[QFlightWaypointList] = None
-        self.ascend_waypoint: Optional[QPushButton] = None
-        self.descend_waypoint: Optional[QPushButton] = None
         self.rtb_waypoint: Optional[QPushButton] = None
         self.delete_selected: Optional[QPushButton] = None
         self.open_fast_waypoint_button: Optional[QPushButton] = None
@@ -78,14 +80,6 @@ class QFlightWaypointTab(QFrame):
         rlayout.addWidget(QLabel("<strong>Advanced : </strong>"))
         rlayout.addWidget(QLabel("<small>Do not use for AI flights</small>"))
 
-        self.ascend_waypoint = QPushButton("Add Ascend Waypoint")
-        self.ascend_waypoint.clicked.connect(self.on_ascend_waypoint)
-        rlayout.addWidget(self.ascend_waypoint)
-
-        self.descend_waypoint = QPushButton("Add Descend Waypoint")
-        self.descend_waypoint.clicked.connect(self.on_descend_waypoint)
-        rlayout.addWidget(self.descend_waypoint)
-
         self.rtb_waypoint = QPushButton("Add RTB Waypoint")
         self.rtb_waypoint.clicked.connect(self.on_rtb_waypoint)
         rlayout.addWidget(self.rtb_waypoint)
@@ -103,35 +97,51 @@ class QFlightWaypointTab(QFrame):
     def on_delete_waypoint(self):
         wpt = self.flight_waypoint_list.selectionModel().currentIndex().row()
         if wpt > 0:
-            del self.flight.points[wpt-1]
+            self.delete_waypoint(self.flight.flight_plan.waypoints[wpt])
             self.flight_waypoint_list.update_list()
         self.on_change()
 
+    def delete_waypoint(self, waypoint: FlightWaypoint) -> None:
+        # Need to degrade to a custom flight plan and remove the waypoint.
+        # If the waypoint is a target waypoint and is not the last target
+        # waypoint, we don't need to degrade.
+        if isinstance(self.flight.flight_plan, StrikeFlightPlan):
+            is_target = waypoint in self.flight.flight_plan.targets
+            if is_target and len(self.flight.flight_plan.targets) > 1:
+                self.flight.flight_plan.targets.remove(waypoint)
+                return
+
+        self.degrade_to_custom_flight_plan()
+        self.flight.flight_plan.waypoints.remove(waypoint)
+
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
-        self.subwindow.finished.connect(self.on_change)
+        self.subwindow.waypoints_added.connect(self.on_waypoints_added)
         self.subwindow.show()
 
-    def on_ascend_waypoint(self):
-        ascend = self.planner.generate_ascend_point(self.flight,
-                                                    self.flight.from_cp)
-        self.flight.points.append(ascend)
+    def on_waypoints_added(self, waypoints: Iterable[FlightWaypoint]) -> None:
+        if not waypoints:
+            return
+        self.degrade_to_custom_flight_plan()
+        self.flight.flight_plan.waypoints.extend(waypoints)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
     def on_rtb_waypoint(self):
         rtb = self.planner.generate_rtb_waypoint(self.flight,
                                                  self.flight.from_cp)
-        self.flight.points.append(rtb)
+        self.degrade_to_custom_flight_plan()
+        self.flight.flight_plan.waypoints.append(rtb)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
-    def on_descend_waypoint(self):
-        descend = self.planner.generate_descend_point(self.flight,
-                                                      self.flight.from_cp)
-        self.flight.points.append(descend)
-        self.flight_waypoint_list.update_list()
-        self.on_change()
+    def degrade_to_custom_flight_plan(self) -> None:
+        if not isinstance(self.flight.flight_plan, CustomFlightPlan):
+            self.flight.flight_plan = CustomFlightPlan(
+                package=self.flight.package,
+                flight=self.flight,
+                custom_waypoints=self.flight.flight_plan.waypoints
+            )
 
     def confirm_recreate(self, task: FlightType) -> None:
         result = QMessageBox.question(

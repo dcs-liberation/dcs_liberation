@@ -2,9 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Type, Union
 
-from dcs import Mission
 from dcs.countries import country_dict
-from dcs.country import Country
 from dcs.helicopters import (
     AH_1W,
     AH_64A,
@@ -46,6 +44,7 @@ from dcs.planes import (
     FW_190A8,
     FW_190D9,
     F_117A,
+    F_14A_135_GR,
     F_14B,
     F_15C,
     F_15E,
@@ -105,7 +104,7 @@ from dcs.planes import (
     Tu_95MS,
     WingLoong_I,
     Yak_40,
-    plane_map,
+    plane_map
 )
 from dcs.ships import (
     Armed_speedboat,
@@ -155,7 +154,6 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
-from game.factions.faction import Faction
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
@@ -203,7 +201,6 @@ vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
 vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
 vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
 vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
-
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -273,6 +270,7 @@ PRICES = {
     F_15E: 24,
     F_16C_50: 20,
     F_16A: 14,
+    F_14A_135_GR: 20,
     F_14B: 24,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
@@ -401,20 +399,20 @@ PRICES = {
     Unarmed.Transport_M818: 3,
 
     # WW2
-    Armor.MT_Pz_Kpfw_V_Panther_Ausf_G:24,
-    Armor.MT_Pz_Kpfw_IV_Ausf_H:16,
-    Armor.HT_Pz_Kpfw_VI_Tiger_I:24,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II:26,
+    Armor.MT_Pz_Kpfw_V_Panther_Ausf_G: 24,
+    Armor.MT_Pz_Kpfw_IV_Ausf_H: 16,
+    Armor.HT_Pz_Kpfw_VI_Tiger_I: 24,
+    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II: 26,
     Armor.TD_Jagdpanther_G1: 18,
     Armor.TD_Jagdpanzer_IV: 11,
     Armor.Sd_Kfz_184_Elefant: 18,
-    Armor.APC_Sd_Kfz_251:4,
-    Armor.AC_Sd_Kfz_234_2_Puma:8,
-    Armor.MT_M4_Sherman:12,
-    Armor.MT_M4A4_Sherman_Firefly:16,
-    Armor.CT_Cromwell_IV:12,
-    Armor.M30_Cargo_Carrier:2,
-    Armor.APC_M2A1:4,
+    Armor.APC_Sd_Kfz_251: 4,
+    Armor.AC_Sd_Kfz_234_2_Puma: 8,
+    Armor.MT_M4_Sherman: 12,
+    Armor.MT_M4A4_Sherman_Firefly: 16,
+    Armor.CT_Cromwell_IV: 12,
+    Armor.M30_Cargo_Carrier: 2,
+    Armor.APC_M2A1: 4,
     Armor.CT_Centaur_IV: 10,
     Armor.HIT_Churchill_VII: 16,
     Armor.LAC_M8_Greyhound: 8,
@@ -577,6 +575,7 @@ UNIT_BY_TASK = {
         MiG_31,
         FA_18C_hornet,
         F_15C,
+        F_14A_135_GR,
         F_14B,
         F_16A,
         F_16C_50,
@@ -902,7 +901,6 @@ SAM_CONVERT = {
     }
 }
 
-
 """
 Units that will always be spawned in the air
 """
@@ -913,7 +911,7 @@ TAKEOFF_BAN: List[Type[FlyingType]] = [
 Units that will be always spawned in the air if launched from the carrier
 """
 CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
-   Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
+    Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
 ]
 
 """
@@ -924,6 +922,7 @@ FACTIONS = FactionLoader()
 
 CARRIER_TYPE_BY_PLANE = {
     FA_18C_hornet: CVN_74_John_C__Stennis,
+    F_14A_135_GR: CVN_74_John_C__Stennis,
     F_14B: CVN_74_John_C__Stennis,
     Ka_50: LHA_1_Tarawa,
     SA342M: LHA_1_Tarawa,
@@ -997,6 +996,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AV8BNA: COMMON_OVERRIDE,
     C_101CC: COMMON_OVERRIDE,
     F_5E_3: COMMON_OVERRIDE,
+    F_14A_135_GR: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
@@ -1006,14 +1006,14 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     MiG_19P: COMMON_OVERRIDE,
     MiG_21Bis: COMMON_OVERRIDE,
     AJS37: COMMON_OVERRIDE,
-    Su_25T:COMMON_OVERRIDE,
-    Su_25:COMMON_OVERRIDE,
-    Su_27:COMMON_OVERRIDE,
-    Su_33:COMMON_OVERRIDE,
-    MiG_29A:COMMON_OVERRIDE,
-    MiG_29G:COMMON_OVERRIDE,
-    MiG_29S:COMMON_OVERRIDE,
-    Su_24M:COMMON_OVERRIDE,
+    Su_25T: COMMON_OVERRIDE,
+    Su_25: COMMON_OVERRIDE,
+    Su_27: COMMON_OVERRIDE,
+    Su_33: COMMON_OVERRIDE,
+    MiG_29A: COMMON_OVERRIDE,
+    MiG_29G: COMMON_OVERRIDE,
+    MiG_29S: COMMON_OVERRIDE,
+    Su_24M: COMMON_OVERRIDE,
     Su_30: COMMON_OVERRIDE,
     Su_34: COMMON_OVERRIDE,
     Su_57: COMMON_OVERRIDE,
@@ -1022,21 +1022,21 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     Tornado_GR4: COMMON_OVERRIDE,
     Tornado_IDS: COMMON_OVERRIDE,
     Mirage_2000_5: COMMON_OVERRIDE,
-    MiG_31:COMMON_OVERRIDE,
-    SA342M:COMMON_OVERRIDE,
-    SA342L:COMMON_OVERRIDE,
-    SA342Mistral:COMMON_OVERRIDE,
-    Mi_8MT:COMMON_OVERRIDE,
-    Mi_24V:COMMON_OVERRIDE,
-    Mi_28N:COMMON_OVERRIDE,
-    Ka_50:COMMON_OVERRIDE,
-    L_39ZA:COMMON_OVERRIDE,
-    L_39C:COMMON_OVERRIDE,
+    MiG_31: COMMON_OVERRIDE,
+    SA342M: COMMON_OVERRIDE,
+    SA342L: COMMON_OVERRIDE,
+    SA342Mistral: COMMON_OVERRIDE,
+    Mi_8MT: COMMON_OVERRIDE,
+    Mi_24V: COMMON_OVERRIDE,
+    Mi_28N: COMMON_OVERRIDE,
+    Ka_50: COMMON_OVERRIDE,
+    L_39ZA: COMMON_OVERRIDE,
+    L_39C: COMMON_OVERRIDE,
     Su_17M4: COMMON_OVERRIDE,
     F_4E: COMMON_OVERRIDE,
-    P_47D_30:COMMON_OVERRIDE,
-    P_47D_30bl1:COMMON_OVERRIDE,
-    P_47D_40:COMMON_OVERRIDE,
+    P_47D_30: COMMON_OVERRIDE,
+    P_47D_30bl1: COMMON_OVERRIDE,
+    P_47D_40: COMMON_OVERRIDE,
     B_17G: COMMON_OVERRIDE,
     P_51D: COMMON_OVERRIDE,
     P_51D_30_NA: COMMON_OVERRIDE,
@@ -1129,6 +1129,7 @@ PLAYER_BUDGET_BASE = 20
 
 CARRIER_CAPABLE = [
     FA_18C_hornet,
+    F_14A_135_GR,
     F_14B,
     AV8BNA,
     Su_33,
@@ -1163,7 +1164,6 @@ LHA_CAPABLE = [
     SA342Minigun,
     SA342Mistral
 ]
-
 
 """
 ---------- END OF CONFIGURATION SECTION
@@ -1216,16 +1216,20 @@ def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
 
 def find_infantry(country_name: str) -> List[UnitType]:
     inf = [
-        Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+        Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+        Infantry.Paratrooper_AKS,
         Infantry.Soldier_RPG,
         Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
         Infantry.Soldier_M249,
         Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
         Infantry.Paratrooper_RPG_16,
-        Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
-        Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+        Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
+        Infantry.Georgian_soldier_with_M4,
+        Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+        Infantry.Infantry_Soldier_Rus,
         Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
-        Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+        Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+        Infantry.Infantry_Mauser_98,
         Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
         Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
     ]
@@ -1356,7 +1360,7 @@ def unitdict_from(fd: AssignedUnitsDict) -> Dict:
 
 
 def country_id_from_name(name):
-    for k,v in country_dict.items():
+    for k, v in country_dict.items():
         if v.name == name:
             return k
     return -1
@@ -1374,7 +1378,9 @@ def _validate_db():
     for unit_type in total_set:
         assert unit_type in PRICES, "{} not in prices".format(unit_type)
 
+
 _validate_db()
+
 
 class DefaultLiveries:
     class Default(Enum):

@@ -713,6 +713,17 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
 
+        # Override livery by faction file data
+        if flight.from_cp.captured:
+            faction = self.game.player_faction
+        else:
+            faction = self.game.enemy_faction
+
+        if unit_type in faction.liveries_overrides:
+            livery = random.choice(faction.liveries_overrides[unit_type])
+            for unit_instance in group.units:
+                unit_instance.livery_id = livery
+
         for idx in range(0, min(len(group.units), flight.client_count)):
             unit = group.units[idx]
             if self.use_client:
@@ -1162,12 +1173,13 @@ class AircraftConflictGenerator:
             viggen_target_points = [
                 (idx, point) for idx, point in enumerate(filtered_points) if point.waypoint_type in TARGET_WAYPOINTS
             ]
-            keep_target = viggen_target_points[random.randint(0, len(viggen_target_points) - 1)]
-            filtered_points = [
-                point for idx, point in enumerate(filtered_points) if (
-                        point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
-                    )
-                ]
+            if viggen_target_points:
+                keep_target = viggen_target_points[random.randint(0, len(viggen_target_points) - 1)]
+                filtered_points = [
+                    point for idx, point in enumerate(filtered_points) if (
+                            point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
+                        )
+                    ]
             
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
@@ -1186,6 +1198,12 @@ class AircraftConflictGenerator:
 
         if not flight.client_count:
             return True
+
+        if start_time < timedelta(minutes=10):
+            # Don't bother delaying client flights with short start delays. Much
+            # more than ten minutes starts to eat into fuel a bit more
+            # (espeicially for something fuel limited like a Harrier).
+            return False
 
         return not self.settings.never_delay_player_flights
 
@@ -1213,15 +1231,6 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def should_activate_late(flight: Flight) -> bool:
-        if flight.client_count:
-            # Never delay players. Note that cold start player flights with
-            # AI members will still be marked as uncontrolled until the start
-            # trigger fires to postpone engine start.
-            #
-            # Player flights that start on the runway or in the air will start
-            # immediately, and AI flight members will not be delayed.
-            return False
-
         if flight.start_type != "Cold":
             # Avoid spawning aircraft in the air or on the runway until it's
             # time for their mission. Also avoid burning through gas spawning

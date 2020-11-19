@@ -61,5 +61,24 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "NSAWC brown splinter",
+      "NAWDC black",
+      "VFC-12"
+    ],
+    "F_15C": [
+      "65th Aggressor SQN (WA) MiG",
+      "65th Aggressor SQN (WA) MiG",
+      "65th Aggressor SQN (WA) SUPER_Flanker"
+    ],
+    "F_16C_50": [
+      "usaf 64th aggressor sqn - shark",
+      "usaf 64th aggressor sqn-splinter",
+      "64th_aggressor_squadron_ghost"
+    ], "F_14B": [
+      "vf-74 adversary"
+    ]
+  }
 }

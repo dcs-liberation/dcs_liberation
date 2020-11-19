@@ -44,7 +44,6 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
         i = 0
 
         def add_model_item(i, model, name, wpt):
-            print(name)
             item = QStandardItem(name)
             model.setItem(i, 0, item)
             self.wpts.append(wpt)
@@ -79,7 +78,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                 0
                             )
                             wpt.alt_type = "RADIO"
-                            wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + ground_object.category + " #" + str(ground_object.object_id)
+                            wpt.name = ground_object.waypoint_name
                             wpt.pretty_name = wpt.name
                             wpt.obj_name = ground_object.obj_name
                             wpt.targets.append(ground_object)
