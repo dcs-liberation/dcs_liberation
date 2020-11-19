@@ -1213,6 +1213,12 @@ class AircraftConflictGenerator:
         if not flight.client_count:
             return True
 
+        if start_time < timedelta(minutes=10):
+            # Don't bother delaying client flights with short start delays. Much
+            # more than ten minutes starts to eat into fuel a bit more
+            # (espeicially for something fuel limited like a Harrier).
+            return False
+
         return not self.settings.never_delay_player_flights
 
     def set_takeoff_time(self, waypoint: FlightWaypoint, package: Package,
