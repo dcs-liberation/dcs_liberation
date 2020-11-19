@@ -1245,15 +1245,6 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def should_activate_late(flight: Flight) -> bool:
-        if flight.client_count:
-            # Never delay players. Note that cold start player flights with
-            # AI members will still be marked as uncontrolled until the start
-            # trigger fires to postpone engine start.
-            #
-            # Player flights that start on the runway or in the air will start
-            # immediately, and AI flight members will not be delayed.
-            return False
-
         if flight.start_type != "Cold":
             # Avoid spawning aircraft in the air or on the runway until it's
             # time for their mission. Also avoid burning through gas spawning
