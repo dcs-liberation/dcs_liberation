@@ -118,8 +118,11 @@ class TotEstimator:
     def takeoff_time_for_flight(self, flight: Flight) -> Optional[timedelta]:
         travel_time = self.travel_time_to_rendezvous_or_target(flight)
         if travel_time is None:
-            logging.warning("Found no rendezvous or target point. Cannot "
-                            f"estimate takeoff time takeoff time for {flight}")
+            from gen.flights.flightplan import CustomFlightPlan
+            if not isinstance(flight.flight_plan, CustomFlightPlan):
+                logging.warning(
+                    "Found no rendezvous or target point. Cannot estimate "
+                    f"takeoff time takeoff time for {flight}.")
             return None
 
         from gen.flights.flightplan import FormationFlightPlan

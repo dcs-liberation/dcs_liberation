@@ -7,11 +7,9 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
-from game.utils import nm_to_meter
 from game.weather import Conditions
 from theater import ControlPoint, MissionTarget, TheaterGroundObject
 from .flight import Flight, FlightWaypoint, FlightWaypointType
-from ..runways import RunwayAssigner
 
 
 @dataclass(frozen=True)
@@ -55,52 +53,6 @@ class WaypointBuilder:
         waypoint.alt_type = "RADIO"
         waypoint.description = "Takeoff"
         waypoint.pretty_name = "Takeoff"
-        return waypoint
-
-    def ascent(self, departure: ControlPoint) -> FlightWaypoint:
-        """Create ascent waypoint for the given departure airfield or carrier.
-
-        Args:
-            departure: Departure airfield or carrier.
-        """
-        heading = RunwayAssigner(self.conditions).takeoff_heading(departure)
-        position = departure.position.point_from_heading(
-            heading, nm_to_meter(5)
-        )
-        waypoint = FlightWaypoint(
-            FlightWaypointType.ASCEND_POINT,
-            position.x,
-            position.y,
-            500 if self.is_helo else self.doctrine.pattern_altitude
-        )
-        waypoint.name = "ASCEND"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Ascend"
-        waypoint.pretty_name = "Ascend"
-        return waypoint
-
-    def descent(self, arrival: ControlPoint) -> FlightWaypoint:
-        """Create descent waypoint for the given arrival airfield or carrier.
-
-        Args:
-            arrival: Arrival airfield or carrier.
-        """
-        landing_heading = RunwayAssigner(self.conditions).landing_heading(
-            arrival)
-        heading = (landing_heading + 180) % 360
-        position = arrival.position.point_from_heading(
-            heading, nm_to_meter(5)
-        )
-        waypoint = FlightWaypoint(
-            FlightWaypointType.DESCENT_POINT,
-            position.x,
-            position.y,
-            300 if self.is_helo else self.doctrine.pattern_altitude
-        )
-        waypoint.name = "DESCEND"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Descend to pattern altitude"
-        waypoint.pretty_name = "Descend"
         return waypoint
 
     @staticmethod
@@ -325,15 +277,6 @@ class WaypointBuilder:
         """
         return (self.race_track_start(start, altitude),
                 self.race_track_end(end, altitude))
-
-    def rtb(self,
-            arrival: ControlPoint) -> Tuple[FlightWaypoint, FlightWaypoint]:
-        """Creates descent ant landing waypoints for the given control point.
-
-        Args:
-            arrival: Arrival airfield or carrier.
-        """
-        return self.descent(arrival), self.land(arrival)
 
     def escort(self, ingress: Point, target: MissionTarget, egress: Point) -> \
             Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
