@@ -3,9 +3,14 @@
 # Features/Improvements
 * **[Factions]** Added factions : Georgia 2008, USN 1985, France 2005 Frenchpack by HerrTom
 * **[Factions]** Added map Persian Gulf full by Plob
+* **[Flight Planner]** Player flights with start delays under ten minutes will spawn immediately.
+* **[UI]** Mission start screen now informs players about delayed flights.
 
 ## Fixes :
 * **[Flight Planner]** Hold, join, and split points are planned cautiously near enemy airfields. Ascend/descend points are no longer planned.
+* **[Flight Planner]** Custom waypoints are usable again. Not that in most cases custom flight plans will revert to the 2.1 flight planning behavior.
+* **[Flight Planner]** Fixed UI bug that made it possible to create empty flights which would throw an error.
+* **[Flight Planner]** Player flights from carriers will now be delayed correctly according to the player's settings.
 
 # 2.2.0
 
