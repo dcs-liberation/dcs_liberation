@@ -241,11 +241,12 @@ class QLiberationWindow(QMainWindow):
                "<h4>Authors</h4>" + \
                "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \
                "<h4>Contributors</h4>" + \
-               "shdwp, Khopa, ColonelPanic, Wrycu, calvinmorrow, JohanAberg, Deus, root0fall, Captain Cody, steveveepee, pedromagueija, parithon, bwRavencl, davidp57" + \
+               "shdwp, Khopa, ColonelPanic, Roach, Wrycu, calvinmorrow, JohanAberg, Deus, root0fall, Captain Cody, steveveepee, pedromagueija, parithon, bwRavencl, davidp57" + \
                "<h4>Special Thanks  :</h4>" \
                "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
                "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"\
-               "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
+               "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"\
+               "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
         about.setIcon(QMessageBox.Icon.Information)
