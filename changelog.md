@@ -12,6 +12,8 @@
 * **[Flight Planner]** Custom waypoints are usable again. Not that in most cases custom flight plans will revert to the 2.1 flight planning behavior.
 * **[Flight Planner]** Fixed UI bug that made it possible to create empty flights which would throw an error.
 * **[Flight Planner]** Player flights from carriers will now be delayed correctly according to the player's settings.
+* **[Misc]** Spitfire variant with clipped wings was not seen as flyable by DCS Liberation (hence could not be setup as client/player slot)
+* **[Misc]** Updated Syria terrain parking slots database
 
 # 2.2.0
 
