@@ -54,11 +54,11 @@ class QFlightCreator(QDialog):
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData()
         )
-        self.airfield_selector.currentIndexChanged.connect(self.update_max_size)
+        self.airfield_selector.availability_changed.connect(self.update_max_size)
         layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
 
         self.flight_size_spinner = QFlightSizeSpinner()
-        self.update_max_size()
+        self.update_max_size(self.airfield_selector.available)
         layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
 
         self.client_slots_spinner = QFlightSizeSpinner(
@@ -91,6 +91,8 @@ class QFlightCreator(QDialog):
             return f"{origin.name} has no {aircraft.id} available."
         if size > available:
             return f"{origin.name} has only {available} {aircraft.id} available."
+        if size <= 0:
+            return f"Flight must have at least one aircraft."
         return None
 
     def create_flight(self) -> None:
@@ -120,7 +122,8 @@ class QFlightCreator(QDialog):
         new_aircraft = self.aircraft_selector.itemData(index)
         self.airfield_selector.change_aircraft(new_aircraft)
 
-    def update_max_size(self) -> None:
-        self.flight_size_spinner.setMaximum(
-            min(self.airfield_selector.available, 4)
-        )
+    def update_max_size(self, available: int) -> None:
+        self.flight_size_spinner.setMaximum(min(available, 4))
+        if self.flight_size_spinner.maximum() >= 2:
+            if self.flight_size_spinner.value() < 2:
+                self.flight_size_spinner.setValue(2)

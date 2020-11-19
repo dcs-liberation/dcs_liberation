@@ -1,9 +1,10 @@
 """Combo box for selecting a departure airfield."""
 from typing import Iterable
 
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QComboBox
-
 from dcs.planes import PlaneType
+
 from game.inventory import GlobalAircraftInventory
 from theater.controlpoint import ControlPoint
 
@@ -15,6 +16,8 @@ class QOriginAirfieldSelector(QComboBox):
     that have unassigned inventory of the given aircraft type.
     """
 
+    availability_changed = Signal(int)
+
     def __init__(self, global_inventory: GlobalAircraftInventory,
                  origins: Iterable[ControlPoint],
                  aircraft: PlaneType) -> None:
@@ -23,6 +26,7 @@ class QOriginAirfieldSelector(QComboBox):
         self.origins = list(origins)
         self.aircraft = aircraft
         self.rebuild_selector()
+        self.currentIndexChanged.connect(self.index_changed)
 
     def change_aircraft(self, aircraft: PlaneType) -> None:
         if self.aircraft == aircraft:
@@ -47,3 +51,10 @@ class QOriginAirfieldSelector(QComboBox):
             return 0
         inventory = self.global_inventory.for_control_point(origin)
         return inventory.available(self.aircraft)
+
+    def index_changed(self, index: int) -> None:
+        origin = self.itemData(index)
+        if origin is None:
+            return
+        inventory = self.global_inventory.for_control_point(origin)
+        self.availability_changed.emit(inventory.available(self.aircraft))
