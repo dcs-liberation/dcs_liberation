@@ -106,8 +106,8 @@ class QGroundObjectMenu(QDialog):
 
         self.buildingBox = QGroupBox("Buildings :")
         self.buildingsLayout = QGridLayout()
-        j = 0
 
+        j = 0
         total_income = 0
         received_income = 0
         for i, building in enumerate(self.buildings):
@@ -120,15 +120,10 @@ class QGroundObjectMenu(QDialog):
                 if not building.is_dead:
                     received_income = received_income + REWARDS[building.category]
 
-
         self.financesBox = QGroupBox("Finances: ")
         self.financesBoxLayout = QGridLayout()
-
-        str_total_income = 'Available: ' + str(total_income) + "M"
-        str_received_income = 'Receiving: ' + str(received_income) + "M"
-
-        self.financesBoxLayout.addWidget(QLabel(str_total_income), 2, 1)
-        self.financesBoxLayout.addWidget(QLabel(str_received_income), 2, 2)
+        self.financesBoxLayout.addWidget(QLabel("Available: " + str(total_income) + "M"), 2, 1)
+        self.financesBoxLayout.addWidget(QLabel("Receiving: " + str(received_income) + "M"), 2, 2)
 
         self.financesBox.setLayout(self.financesBoxLayout)
         self.buildingBox.setLayout(self.buildingsLayout)
