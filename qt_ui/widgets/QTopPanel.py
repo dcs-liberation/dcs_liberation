@@ -48,7 +48,7 @@ class QTopPanel(QFrame):
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
-        if not self.game or self.game.turn == 0:
+        if not self.game:
             self.passTurnButton.setEnabled(False)
 
         self.proceedButton = QPushButton("Take off")
