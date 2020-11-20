@@ -125,10 +125,10 @@ class QGroundObjectMenu(QDialog):
         self.financesBoxLayout = QGridLayout()
 
         str_total_income = 'Available: ' + str(total_income) + "M"
-        str_percived_income = 'Receiving: ' + str(received_income) + "M"
+        str_received_income = 'Receiving: ' + str(received_income) + "M"
 
         self.financesBoxLayout.addWidget(QLabel(str_total_income), 2, 1)
-        self.financesBoxLayout.addWidget(QLabel(str_percived_income), 2, 2)
+        self.financesBoxLayout.addWidget(QLabel(str_received_income), 2, 2)
 
         self.financesBox.setLayout(self.financesBoxLayout)
         self.buildingBox.setLayout(self.buildingsLayout)
