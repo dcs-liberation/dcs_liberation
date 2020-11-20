@@ -38,7 +38,7 @@ class Campaign:
 def load_campaigns() -> List[Campaign]:
     campaign_dir = Path("resources\\campaigns")
     campaigns = []
-    for path in campaign_dir.iterdir():
+    for path in campaign_dir.glob("*.json"):
         try:
             logging.debug(f"Loading campaign from {path}...")
             campaign = Campaign.from_json(path)
