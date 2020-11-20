@@ -50,7 +50,7 @@ class QFlightWaypointList(QTableView):
 
         self.model.setItem(row, 0, QWaypointItem(waypoint, row))
 
-        altitude = meter_to_feet(waypoint.alt)
+        altitude = int(waypoint.alt.to_feet)
         altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
         altitude_item = QStandardItem(f"{altitude} ft {altitude_type}")
         altitude_item.setEditable(False)

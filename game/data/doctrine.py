@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import timedelta
 
-from game.utils import nm_to_meter, feet_to_meter
+from game.utils import Distance, nm_to_meter, feet_to_meter
 
 
 @dataclass(frozen=True)
@@ -15,13 +15,13 @@ class Doctrine:
     strike_max_range: int
     sead_max_range: int
 
-    rendezvous_altitude: int
+    rendezvous_altitude: Distance
     hold_distance: int
     push_distance: int
     join_distance: int
     split_distance: int
     ingress_egress_distance: int
-    ingress_altitude: int
+    ingress_altitude: Distance
     egress_altitude: int
 
     min_patrol_altitude: int
@@ -47,13 +47,13 @@ MODERN_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
-    rendezvous_altitude=feet_to_meter(25000),
+    rendezvous_altitude=Distance.feet(25000),
     hold_distance=nm_to_meter(15),
     push_distance=nm_to_meter(20),
     join_distance=nm_to_meter(20),
     split_distance=nm_to_meter(20),
     ingress_egress_distance=nm_to_meter(45),
-    ingress_altitude=feet_to_meter(20000),
+    ingress_altitude=Distance.feet(20000),
     egress_altitude=feet_to_meter(20000),
     min_patrol_altitude=feet_to_meter(15000),
     max_patrol_altitude=feet_to_meter(33000),
@@ -75,13 +75,13 @@ COLDWAR_DOCTRINE = Doctrine(
     antiship=True,
     strike_max_range=1500000,
     sead_max_range=1500000,
-    rendezvous_altitude=feet_to_meter(22000),
+    rendezvous_altitude=Distance.feet(22000),
     hold_distance=nm_to_meter(10),
     push_distance=nm_to_meter(10),
     join_distance=nm_to_meter(10),
     split_distance=nm_to_meter(10),
     ingress_egress_distance=nm_to_meter(30),
-    ingress_altitude=feet_to_meter(18000),
+    ingress_altitude=Distance.feet(18000),
     egress_altitude=feet_to_meter(18000),
     min_patrol_altitude=feet_to_meter(10000),
     max_patrol_altitude=feet_to_meter(24000),
@@ -107,9 +107,9 @@ WWII_DOCTRINE = Doctrine(
     push_distance=nm_to_meter(5),
     join_distance=nm_to_meter(5),
     split_distance=nm_to_meter(5),
-    rendezvous_altitude=feet_to_meter(10000),
+    rendezvous_altitude=Distance.feet(10000),
     ingress_egress_distance=nm_to_meter(7),
-    ingress_altitude=feet_to_meter(8000),
+    ingress_altitude=Distance.feet(8000),
     egress_altitude=feet_to_meter(8000),
     min_patrol_altitude=feet_to_meter(4000),
     max_patrol_altitude=feet_to_meter(15000),
