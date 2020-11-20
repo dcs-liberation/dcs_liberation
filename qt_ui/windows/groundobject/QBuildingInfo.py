@@ -38,4 +38,3 @@ class QBuildingInfo(QGroupBox):
 
         footer = QHBoxLayout()
         self.setLayout(layout)
-
