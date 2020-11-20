@@ -16,7 +16,11 @@ from dcs.countries import (
 )
 from dcs.country import Country
 from dcs.mapping import Point
-from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa
+from dcs.ships import (
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    USS_Arleigh_Burke_IIa,
+)
 from dcs.statics import Fortification
 from dcs.terrain import (
     caucasus,
@@ -98,6 +102,8 @@ class MizCampaignLoader:
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
     GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
     STRIKE_TARGET_UNIT_TYPE = Fortification.Workshop_A.id
+    OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
+    SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
 
     BASE_DEFENSE_RADIUS = nm_to_meter(2)
 
@@ -166,6 +172,12 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def ships(self) -> Iterator[ShipGroup]:
+        for group in self.blue.ship_group:
+            if group.units[0].type == self.SHIP_UNIT_TYPE:
+                yield group
+
+    @property
     def ewrs(self) -> Iterator[VehicleGroup]:
         for group in self.blue.vehicle_group:
             if group.units[0].type == self.EWR_UNIT_TYPE:
@@ -187,6 +199,12 @@ class MizCampaignLoader:
     def strike_targets(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type == self.STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
+    @property
+    def offshore_strike_targets(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.OFFSHORE_STRIKE_TARGET_UNIT_TYPE:
                 yield group
 
     @cached_property
@@ -278,6 +296,15 @@ class MizCampaignLoader:
         for group in self.strike_targets:
             closest, distance = self.objective_info(group)
             closest.preset_locations.strike_locations.append(group.position)
+
+        for group in self.offshore_strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.offshore_strike_locations.append(
+                group.position)
+
+        for group in self.ships:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.ships.append(group.position)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():

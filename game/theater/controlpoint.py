@@ -59,9 +59,10 @@ class PresetLocations:
 
     ewrs: List[Point] = field(default_factory=list)
     sams: List[Point] = field(default_factory=list)
-    offshore: List[Point] = field(default_factory=list)
+    ships: List[Point] = field(default_factory=list)
     coastal_defenses: List[Point] = field(default_factory=list)
     strike_locations: List[Point] = field(default_factory=list)
+    offshore_strike_locations: List[Point] = field(default_factory=list)
 
     fixed_sams: List[Point] = field(default_factory=list)
 
@@ -85,9 +86,9 @@ class PresetLocations:
         if location_type == LocationType.Shorad:
             return self._random_from(self.base_garrisons)
         if location_type == LocationType.OffshoreStrikeTarget:
-            return self._random_from(self.offshore)
+            return self._random_from(self.offshore_strike_locations)
         if location_type == LocationType.Ship:
-            return self._random_from(self.offshore)
+            return self._random_from(self.ships)
         if location_type == LocationType.StrikeTarget:
             return self._random_from(self.strike_locations)
         logging.error(f"Unknown location type: {location_type}")
