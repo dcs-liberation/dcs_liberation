@@ -12,3 +12,7 @@ def meter_to_nm(value_in_meter: float) -> int:
 
 def nm_to_meter(value_in_nm: float) -> int:
     return int(value_in_nm * 1852)
+
+
+def knots_to_kph(knots: float) -> int:
+    return int(knots * 1.852)

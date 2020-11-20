@@ -42,8 +42,7 @@ from gen.sam.sam_group_generator import (
 from theater import (
     ConflictTheater,
     ControlPoint,
-    ControlPointType,
-    TheaterGroundObject,
+    ControlPointType, OffMapSpawn,
 )
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
@@ -139,7 +138,13 @@ class GameGenerator:
         control_point.base.commision_points = {}
         control_point.base.strength = 1
 
+        # The tasks here are confusing. PinpointStrike for some reason means
+        # ground units.
         for task in [PinpointStrike, CAP, CAS, AirDefence]:
+            if isinstance(control_point, OffMapSpawn):
+                # Off-map spawn locations start with no aircraft.
+                continue
+
             if IMPORTANCE_HIGH <= control_point.importance <= IMPORTANCE_LOW:
                 raise ValueError(
                     f"CP importance must be between {IMPORTANCE_LOW} and "
@@ -364,6 +369,11 @@ class ControlPointGroundObjectGenerator:
         if group is not None:
             g.groups.append(group)
             self.control_point.connected_objectives.append(g)
+
+
+class NoOpGroundObjectGenerator(ControlPointGroundObjectGenerator):
+    def generate(self) -> bool:
+        return True
 
 
 class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
@@ -660,6 +670,8 @@ class GroundObjectGenerator:
             generator = CarrierGroundObjectGenerator(self.game, control_point)
         elif control_point.cptype == ControlPointType.LHA_GROUP:
             generator = LhaGroundObjectGenerator(self.game, control_point)
+        elif isinstance(control_point, OffMapSpawn):
+            generator = NoOpGroundObjectGenerator(self.game, control_point)
         else:
             generator = AirbaseGroundObjectGenerator(self.game, control_point,
                                                      self.templates)

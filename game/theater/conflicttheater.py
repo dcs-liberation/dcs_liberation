@@ -16,6 +16,7 @@ from dcs.countries import (
 )
 from dcs.country import Country
 from dcs.mapping import Point
+from dcs.planes import F_15C
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     LHA_1_Tarawa,
@@ -31,11 +32,17 @@ from dcs.terrain import (
     thechannel,
 )
 from dcs.terrain.terrain import Airport, Terrain
-from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
+from dcs.unitgroup import (
+    FlyingGroup,
+    Group,
+    ShipGroup,
+    StaticGroup,
+    VehicleGroup,
+)
 from dcs.vehicles import AirDefence, Armor
 
 from gen.flights.flight import FlightType
-from .controlpoint import ControlPoint, MissionTarget
+from .controlpoint import ControlPoint, MissionTarget, OffMapSpawn
 from .landmap import Landmap, load_landmap, poly_contains
 from ..utils import nm_to_meter
 
@@ -93,6 +100,8 @@ def pairwise(iterable):
 class MizCampaignLoader:
     BLUE_COUNTRY = CombinedJointTaskForcesBlue()
     RED_COUNTRY = CombinedJointTaskForcesRed()
+
+    OFF_MAP_UNIT_TYPE = F_15C.id
 
     CV_UNIT_TYPE = CVN_74_John_C__Stennis.id
     LHA_UNIT_TYPE = LHA_1_Tarawa.id
@@ -175,6 +184,11 @@ class MizCampaignLoader:
     def red(self) -> Country:
         return self.country(blue=False)
 
+    def off_map_spawns(self, blue: bool) -> Iterator[FlyingGroup]:
+        for group in self.country(blue).plane_group:
+            if group.units[0].type == self.OFF_MAP_UNIT_TYPE:
+                yield group
+
     def carriers(self, blue: bool) -> Iterator[ShipGroup]:
         for group in self.country(blue).ship_group:
             if group.units[0].type == self.CV_UNIT_TYPE:
@@ -236,6 +250,12 @@ class MizCampaignLoader:
                 control_points[control_point.id] = control_point
 
         for blue in (False, True):
+            for group in self.off_map_spawns(blue):
+                control_point = OffMapSpawn(next(self.control_point_id),
+                                            str(group.name), group.position)
+                control_point.captured = blue
+                control_point.captured_invert = group.late_activation
+                control_points[control_point.id] = control_point
             for group in self.carriers(blue):
                 # TODO: Name the carrier.
                 control_point = ControlPoint.carrier(

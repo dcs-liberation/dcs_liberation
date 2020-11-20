@@ -42,15 +42,7 @@ class QFlightWaypointList(QTableView):
 
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
 
-        # The first waypoint is set up by pydcs at mission generation time, so
-        # we need to add that waypoint manually.
-        takeoff = FlightWaypoint(self.flight.from_cp.position.x,
-                                 self.flight.from_cp.position.y, 0)
-        takeoff.description = "Take Off"
-        takeoff.name = takeoff.pretty_name = "Take Off from " + self.flight.from_cp.name
-        takeoff.alt_type = "RADIO"
-
-        waypoints = itertools.chain([takeoff], self.flight.points)
+        waypoints = self.flight.flight_plan.waypoints
         for row, waypoint in enumerate(waypoints):
             self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),

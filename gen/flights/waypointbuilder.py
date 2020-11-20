@@ -8,11 +8,15 @@ from dcs.unit import Unit
 from dcs.unitgroup import VehicleGroup
 
 from game.data.doctrine import Doctrine
-from game.utils import nm_to_meter
+from game.utils import feet_to_meter
 from game.weather import Conditions
-from theater import ControlPoint, MissionTarget, TheaterGroundObject
+from theater import (
+    ControlPoint,
+    MissionTarget,
+    OffMapSpawn,
+    TheaterGroundObject,
+)
 from .flight import Flight, FlightWaypoint, FlightWaypointType
-from ..runways import RunwayAssigner
 
 
 @dataclass(frozen=True)
@@ -34,8 +38,7 @@ class WaypointBuilder:
     def is_helo(self) -> bool:
         return getattr(self.flight.unit_type, "helicopter", False)
 
-    @staticmethod
-    def takeoff(departure: ControlPoint) -> FlightWaypoint:
+    def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
 
         Note that the takeoff waypoint will automatically be created by pydcs
@@ -46,36 +49,59 @@ class WaypointBuilder:
             departure: Departure airfield or carrier.
         """
         position = departure.position
-        waypoint = FlightWaypoint(
-            FlightWaypointType.TAKEOFF,
-            position.x,
-            position.y,
-            0
-        )
-        waypoint.name = "TAKEOFF"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Takeoff"
-        waypoint.pretty_name = "Takeoff"
+        if isinstance(departure, OffMapSpawn):
+            waypoint = FlightWaypoint(
+                FlightWaypointType.NAV,
+                position.x,
+                position.y,
+                500 if self.is_helo else self.doctrine.rendezvous_altitude
+            )
+            waypoint.name = "NAV"
+            waypoint.alt_type = "BARO"
+            waypoint.description = "Enter theater"
+            waypoint.pretty_name = "Enter theater"
+        else:
+            waypoint = FlightWaypoint(
+                FlightWaypointType.TAKEOFF,
+                position.x,
+                position.y,
+                0
+            )
+            waypoint.name = "TAKEOFF"
+            waypoint.alt_type = "RADIO"
+            waypoint.description = "Takeoff"
+            waypoint.pretty_name = "Takeoff"
         return waypoint
 
-    @staticmethod
-    def land(arrival: ControlPoint) -> FlightWaypoint:
+    def land(self, arrival: ControlPoint) -> FlightWaypoint:
         """Create descent waypoint for the given arrival airfield or carrier.
 
         Args:
             arrival: Arrival airfield or carrier.
         """
         position = arrival.position
-        waypoint = FlightWaypoint(
-            FlightWaypointType.LANDING_POINT,
-            position.x,
-            position.y,
-            0
-        )
-        waypoint.name = "LANDING"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Land"
-        waypoint.pretty_name = "Land"
+        if isinstance(arrival, OffMapSpawn):
+            waypoint = FlightWaypoint(
+                FlightWaypointType.NAV,
+                position.x,
+                position.y,
+                500 if self.is_helo else self.doctrine.rendezvous_altitude
+            )
+            waypoint.name = "NAV"
+            waypoint.alt_type = "BARO"
+            waypoint.description = "Exit theater"
+            waypoint.pretty_name = "Exit theater"
+        else:
+            waypoint = FlightWaypoint(
+                FlightWaypointType.LANDING_POINT,
+                position.x,
+                position.y,
+                0
+            )
+            waypoint.name = "LANDING"
+            waypoint.alt_type = "RADIO"
+            waypoint.description = "Land"
+            waypoint.pretty_name = "Land"
         return waypoint
 
     def hold(self, position: Point) -> FlightWaypoint:

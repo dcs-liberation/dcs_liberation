@@ -26,7 +26,7 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint
+from .theater import ConflictTheater, ControlPoint, OffMapSpawn
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
@@ -288,6 +288,9 @@ class Game:
                     potential_cp_armor.append(cp)
         if len(potential_cp_armor) == 0:
             potential_cp_armor = self.theater.enemy_points()
+
+        potential_cp_armor = [p for p in potential_cp_armor if
+                              not isinstance(p, OffMapSpawn)]
 
         i = 0
         potential_units = db.FACTIONS[self.enemy_name].frontline_units

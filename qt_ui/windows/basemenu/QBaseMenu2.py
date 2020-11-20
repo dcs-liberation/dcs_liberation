@@ -18,7 +18,6 @@ class QBaseMenu2(QDialog):
         # Attrs
         self.cp = cp
         self.game_model = game_model
-        self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
         self.objectName = "menuDialogue"
 
         # Widgets

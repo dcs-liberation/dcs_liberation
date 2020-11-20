@@ -18,7 +18,7 @@ from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
-from theater import ControlPoint
+from theater import ControlPoint, OffMapSpawn
 
 
 class QFlightCreator(QDialog):
@@ -107,7 +107,9 @@ class QFlightCreator(QDialog):
         origin = self.airfield_selector.currentData()
         size = self.flight_size_spinner.value()
 
-        if self.game.settings.perf_ai_parking_start:
+        if isinstance(origin, OffMapSpawn):
+            start_type = "In Flight"
+        elif self.game.settings.perf_ai_parking_start:
             start_type = "Cold"
         else:
             start_type = "Warm"

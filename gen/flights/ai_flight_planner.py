@@ -50,7 +50,7 @@ from theater import (
     ControlPoint,
     FrontLine,
     MissionTarget,
-    TheaterGroundObject,
+    OffMapSpawn, TheaterGroundObject,
     SamGroundObject,
 )
 
@@ -232,8 +232,12 @@ class PackageBuilder:
         if assignment is None:
             return False
         airfield, aircraft = assignment
+        if isinstance(airfield, OffMapSpawn):
+            start_type = "In Flight"
+        else:
+            start_type = self.start_type
         flight = Flight(self.package, aircraft, plan.num_aircraft, airfield,
-                        plan.task, self.start_type)
+                        plan.task, start_type)
         self.package.add_flight(flight)
         return True
 
@@ -406,6 +410,9 @@ class ObjectiveFinder:
         CP.
         """
         for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                # Off-map spawn locations don't need protection.
+                continue
             airfields_in_proximity = self.closest_airfields_to(cp)
             airfields_in_threat_range = airfields_in_proximity.airfields_within(
                 self.AIRFIELD_THREAT_RANGE

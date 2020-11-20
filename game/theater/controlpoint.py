@@ -40,6 +40,7 @@ class ControlPointType(Enum):
     LHA_GROUP = 2              # A group with a Tarawa carrier (Helicopters & Harrier)
     FARP = 4                   # A FARP, with slots for helicopters
     FOB = 5                    # A FOB (ground units only)
+    OFF_MAP = 6
 
 
 class LocationType(Enum):
@@ -364,3 +365,17 @@ class ControlPoint(MissionTarget):
                 yield from [
                     # TODO: FlightType.STRIKE
                 ]
+
+
+class OffMapSpawn(ControlPoint):
+    def __init__(self, id: int, name: str, position: Point):
+        from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
+        super().__init__(id, name, position, at=position, radials=[],
+                         size=SIZE_REGULAR, importance=IMPORTANCE_MEDIUM,
+                         has_frontline=False, cptype=ControlPointType.OFF_MAP)
+
+    def capture(self, game: Game, for_player: bool) -> None:
+        raise RuntimeError("Off map control points cannot be captured")
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from []
