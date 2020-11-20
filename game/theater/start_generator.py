@@ -544,14 +544,30 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         # Always generate at least one AA point.
         self.generate_aa_site()
 
+        skip_sams = self.generate_required_aa()
+
         # And between 2 and 7 other objectives.
         amount = random.randrange(2, 7)
         for i in range(amount):
             # 1 in 4 additional objectives are AA.
             if random.randint(0, 3) == 0:
-                self.generate_aa_site()
+                if skip_sams > 0:
+                    skip_sams -= 1
+                else:
+                    self.generate_aa_site()
             else:
                 self.generate_ground_point()
+
+    def generate_required_aa(self) -> int:
+        """Generates the AA sites that are required by the campaign.
+
+        Returns:
+            The number of AA sites that were generated.
+        """
+        sams = self.control_point.preset_locations.required_sams
+        for position in sams:
+            self.generate_aa_at(position)
+        return len(sams)
 
     def generate_ground_point(self) -> None:
         try:
@@ -591,7 +607,9 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         position = self.location_finder.location_for(LocationType.Sam)
         if position is None:
             return
+        self.generate_aa_at(position)
 
+    def generate_aa_at(self, position: Point) -> None:
         group_id = self.game.next_group_id()
 
         g = SamGroundObject(namegen.random_objective_name(), group_id,

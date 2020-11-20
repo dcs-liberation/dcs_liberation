@@ -85,7 +85,7 @@ class PresetLocations:
     offshore_strike_locations: List[Point] = field(default_factory=list)
 
     #: Locations of SAMs which should always be spawned.
-    fixed_sams: List[Point] = field(default_factory=list)
+    required_sams: List[Point] = field(default_factory=list)
 
     @staticmethod
     def _random_from(points: List[Point]) -> Optional[Point]:

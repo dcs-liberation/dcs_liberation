@@ -105,6 +105,20 @@ class MizCampaignLoader:
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
 
+    # Multiple options for the required SAMs so campaign designers can more
+    # easily see the coverage of their IADS. Designers focused on campaigns that
+    # will primarily use SA-2s can place SA-2 launchers to ensure that they will
+    # have adequate coverage, and designers focused on campaigns that will
+    # primarily use SA-10s can do the same.
+    REQUIRED_SAM_UNIT_TYPES = {
+        AirDefence.SAM_Hawk_LN_M192,
+        AirDefence.SAM_Patriot_LN_M901,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85D,
+        AirDefence.SAM_SA_2_LN_SM_90,
+        AirDefence.SAM_SA_3_S_125_LN_5P73,
+    }
+
     BASE_DEFENSE_RADIUS = nm_to_meter(2)
 
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
@@ -207,6 +221,12 @@ class MizCampaignLoader:
             if group.units[0].type == self.OFFSHORE_STRIKE_TARGET_UNIT_TYPE:
                 yield group
 
+    @property
+    def required_sams(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type == self.REQUIRED_SAM_UNIT_TYPES:
+                yield group
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -305,6 +325,10 @@ class MizCampaignLoader:
         for group in self.ships:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ships.append(group.position)
+
+        for group in self.required_sams:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_sams.append(group.position)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
