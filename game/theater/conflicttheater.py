@@ -191,12 +191,14 @@ class MizCampaignLoader:
 
         for blue in (False, True):
             for group in self.carriers(blue):
+                # TODO: Name the carrier.
                 control_point = ControlPoint.carrier(
                     "carrier", group.position, next(self.control_point_id))
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for group in self.lhas(blue):
+                # TODO: Name the LHA.
                 control_point = ControlPoint.lha(
                     "lha", group.position, next(self.control_point_id))
                 control_point.captured = blue
