@@ -8,7 +8,7 @@ from dcs import Point
 
 from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, unit_type_of, PinpointStrike
+from game.db import PRICES, REWARDS, unit_type_of, PinpointStrike
 from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
@@ -51,6 +51,8 @@ class QGroundObjectMenu(QDialog):
             self.mainLayout.addWidget(self.intelBox)
         else:
             self.mainLayout.addWidget(self.buildingBox)
+            if self.cp.captured:
+                self.mainLayout.addWidget(self.financesBox)
 
         self.actionLayout = QHBoxLayout()
 
@@ -105,11 +107,30 @@ class QGroundObjectMenu(QDialog):
         self.buildingBox = QGroupBox("Buildings :")
         self.buildingsLayout = QGridLayout()
         j = 0
+
+        total_income = 0
+        received_income = 0
         for i, building in enumerate(self.buildings):
             if building.dcs_identifier not in FORTIFICATION_BUILDINGS:
                 self.buildingsLayout.addWidget(QBuildingInfo(building, self.ground_object), j/3, j%3)
                 j = j + 1
 
+            if building.category in REWARDS.keys():
+                total_income = total_income + REWARDS[building.category]
+                if not building.is_dead:
+                    received_income = received_income + REWARDS[building.category]
+
+
+        self.financesBox = QGroupBox("Finances: ")
+        self.financesBoxLayout = QGridLayout()
+
+        str_total_income = 'Available: ' + str(total_income) + "M"
+        str_percived_income = 'Receiving: ' + str(received_income) + "M"
+
+        self.financesBoxLayout.addWidget(QLabel(str_total_income), 2, 1)
+        self.financesBoxLayout.addWidget(QLabel(str_percived_income), 2, 2)
+
+        self.financesBox.setLayout(self.financesBoxLayout)
         self.buildingBox.setLayout(self.buildingsLayout)
         self.intelBox.setLayout(self.intelLayout)
 
