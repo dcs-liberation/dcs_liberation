@@ -23,7 +23,10 @@ from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     BaseDefenseGroundObject,
+    EwrGroundObject,
+    SamGroundObject,
     TheaterGroundObject,
+    VehicleGroupGroundObject,
 )
 
 if TYPE_CHECKING:
@@ -282,6 +285,24 @@ class ControlPoint(MissionTarget):
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
 
+    def clear_base_defenses(self) -> None:
+        for base_defense in self.base_defenses:
+            if isinstance(base_defense, EwrGroundObject):
+                self.preset_locations.ewrs.append(base_defense.position)
+            elif isinstance(base_defense, SamGroundObject):
+                self.preset_locations.base_air_defense.append(
+                    base_defense.position)
+            elif isinstance(base_defense, VehicleGroupGroundObject):
+                self.preset_locations.base_garrisons.append(
+                    base_defense.position)
+            else:
+                logging.error(
+                    "Could not determine preset location type for "
+                    f"{base_defense}. Assuming garrison type.")
+                self.preset_locations.base_garrisons.append(
+                    base_defense.position)
+        self.base_defenses = []
+
     def capture(self, game: Game, for_player: bool) -> None:
         if for_player:
             self.captured = True
@@ -293,9 +314,8 @@ class ControlPoint(MissionTarget):
         self.base.aircraft = {}
         self.base.armor = {}
 
-        # Handle cyclic dependency.
+        self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
-        self.base_defenses = []
         BaseDefenseGenerator(game, self).generate()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:

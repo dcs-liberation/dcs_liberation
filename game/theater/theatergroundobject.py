@@ -243,8 +243,8 @@ class BaseDefenseGroundObject(TheaterGroundObject):
 
 
 # TODO: Differentiate types.
-# This type gets used both for AA sites (SAM, AAA, or SHORAD) but also for the
-# armor garrisons at airbases. These should each be split into their own types.
+# This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
+# be split into their own types.
 class SamGroundObject(BaseDefenseGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
                  control_point: ControlPoint, for_airbase: bool) -> None:

@@ -502,7 +502,8 @@ class BaseDefenseGenerator:
         self.control_point.base_defenses.append(g)
 
     def generate_shorad(self) -> None:
-        position = self.location_finder.location_for(LocationType.Garrison)
+        position = self.location_finder.location_for(
+            LocationType.BaseAirDefense)
         if position is None:
             return
 
