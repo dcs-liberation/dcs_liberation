@@ -17,6 +17,7 @@ from dcs.countries import (
 from dcs.country import Country
 from dcs.mapping import Point
 from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa
+from dcs.statics import Fortification
 from dcs.terrain import (
     caucasus,
     nevada,
@@ -26,7 +27,7 @@ from dcs.terrain import (
     thechannel,
 )
 from dcs.terrain.terrain import Airport, Terrain
-from dcs.unitgroup import MovingGroup, ShipGroup, VehicleGroup
+from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.vehicles import AirDefence, Armor
 
 from gen.flights.flight import FlightType
@@ -96,6 +97,7 @@ class MizCampaignLoader:
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
     GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
+    STRIKE_TARGET_UNIT_TYPE = Fortification.Workshop_A.id
 
     BASE_DEFENSE_RADIUS = nm_to_meter(2)
 
@@ -181,6 +183,12 @@ class MizCampaignLoader:
             if group.units[0].type == self.GARRISON_UNIT_TYPE:
                 yield group
 
+    @property
+    def strike_targets(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -242,7 +250,7 @@ class MizCampaignLoader:
                 self.control_points[origin.id])
         return front_lines
 
-    def objective_info(self, group: MovingGroup) -> Tuple[ControlPoint, int]:
+    def objective_info(self, group: Group) -> Tuple[ControlPoint, int]:
         closest = self.theater.closest_control_point(group.position)
         distance = closest.position.distance_to_point(group.position)
         return closest, distance
@@ -266,6 +274,10 @@ class MizCampaignLoader:
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ewrs.append(group.position)
+
+        for group in self.strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.strike_locations.append(group.position)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
