@@ -85,7 +85,7 @@ from game.theater.controlpoint import (
 )
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.unitmap import UnitMap
-from game.utils import knots_to_kph, nm_to_meter
+from game.utils import Distance, Speed, knots_to_kph, kph, meters, nm_to_meter
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -110,12 +110,12 @@ from .naming import namegen
 if TYPE_CHECKING:
     from game import Game
 
-WARM_START_HELI_AIRSPEED = 120
-WARM_START_HELI_ALT = 500
-WARM_START_ALTITUDE = 3000
-WARM_START_AIRSPEED = 550
+WARM_START_HELI_AIRSPEED = kph(120)
+WARM_START_HELI_ALT = meters(500)
+WARM_START_ALTITUDE = meters(3000)
+WARM_START_AIRSPEED = kph(550)
 
-RTB_ALTITUDE = 800
+RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
 HELI_ALT = 500
 
@@ -867,7 +867,9 @@ class AircraftConflictGenerator:
             start_type=self._start_type(start_type),
             group_size=count)
 
-    def _add_radio_waypoint(self, group: FlyingGroup, position, altitude: int, airspeed: int = 600):
+    def _add_radio_waypoint(self, group: FlyingGroup, position,
+                            altitude: Distance,
+                            airspeed: int = 600) -> MovingPoint:
         point = group.add_waypoint(position, altitude, airspeed)
         point.alt_type = "RADIO"
         return point
@@ -884,7 +886,8 @@ class AircraftConflictGenerator:
             tod_location = position.point_from_heading(heading, RTB_DISTANCE)
             self._add_radio_waypoint(group, tod_location, last_waypoint.alt)
 
-        destination_waypoint = self._add_radio_waypoint(group, position, RTB_ALTITUDE)
+        destination_waypoint = self._add_radio_waypoint(group, position,
+                                                        RTB_ALTITUDE)
         if isinstance(at, Airport):
             group.land_at(at)
         return destination_waypoint
@@ -1380,7 +1383,8 @@ class PydcsWaypointBuilder:
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
-            Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt,
+            Point(self.waypoint.x, self.waypoint.y),
+            self.waypoint.alt.meters,
             name=self.mission.string(self.waypoint.name))
 
         if self.waypoint.flyover:

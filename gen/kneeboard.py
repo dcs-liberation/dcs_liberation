@@ -153,7 +153,7 @@ class FlightPlanBuilder:
         self.rows.append([
             str(waypoint.number),
             waypoint.waypoint.pretty_name,
-            str(int(units.meters_to_feet(waypoint.waypoint.alt))),
+            str(int(waypoint.waypoint.alt.feet)),
             self._waypoint_distance(waypoint.waypoint),
             self._ground_speed(waypoint.waypoint),
             self._format_time(waypoint.waypoint.tot),

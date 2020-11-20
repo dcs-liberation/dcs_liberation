@@ -10,6 +10,7 @@ from dcs.unittype import FlyingType
 
 from game import db
 from game.theater.controlpoint import ControlPoint, MissionTarget
+from game.utils import Distance, meters
 
 if TYPE_CHECKING:
     from gen.ato import Package
@@ -67,7 +68,7 @@ class FlightWaypointType(Enum):
 class FlightWaypoint:
 
     def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
-                 alt: int = 0) -> None:
+                 alt: Distance = meters(0)) -> None:
         """Creates a flight waypoint.
 
         Args:

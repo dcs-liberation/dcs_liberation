@@ -14,6 +14,7 @@ from game.theater import (
     OffMapSpawn,
     TheaterGroundObject,
 )
+from game.utils import Distance, meters
 from game.weather import Conditions
 from .flight import Flight, FlightWaypoint, FlightWaypointType
 
@@ -53,7 +54,9 @@ class WaypointBuilder:
                 FlightWaypointType.NAV,
                 position.x,
                 position.y,
-                500 if self.is_helo else self.doctrine.rendezvous_altitude
+                meters(
+                    500
+                ) if self.is_helo else self.doctrine.rendezvous_altitude
             )
             waypoint.name = "NAV"
             waypoint.alt_type = "BARO"
@@ -64,7 +67,7 @@ class WaypointBuilder:
                 FlightWaypointType.TAKEOFF,
                 position.x,
                 position.y,
-                0
+                meters(0)
             )
             waypoint.name = "TAKEOFF"
             waypoint.alt_type = "RADIO"
@@ -84,7 +87,9 @@ class WaypointBuilder:
                 FlightWaypointType.NAV,
                 position.x,
                 position.y,
-                500 if self.is_helo else self.doctrine.rendezvous_altitude
+                meters(
+                    500
+                ) if self.is_helo else self.doctrine.rendezvous_altitude
             )
             waypoint.name = "NAV"
             waypoint.alt_type = "BARO"
@@ -95,7 +100,7 @@ class WaypointBuilder:
                 FlightWaypointType.LANDING_POINT,
                 position.x,
                 position.y,
-                0
+                meters(0)
             )
             waypoint.name = "LANDING"
             waypoint.alt_type = "RADIO"
@@ -116,12 +121,12 @@ class WaypointBuilder:
         position = divert.position
         if isinstance(divert, OffMapSpawn):
             if self.is_helo:
-                altitude = 500
+                altitude = meters(500)
             else:
                 altitude = self.doctrine.rendezvous_altitude
             altitude_type = "BARO"
         else:
-            altitude = 0
+            altitude = meters(0)
             altitude_type = "RADIO"
 
         waypoint = FlightWaypoint(
@@ -142,7 +147,9 @@ class WaypointBuilder:
             FlightWaypointType.LOITER,
             position.x,
             position.y,
-            500 if self.is_helo else self.doctrine.rendezvous_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.rendezvous_altitude
         )
         waypoint.pretty_name = "Hold"
         waypoint.description = "Wait until push time"
@@ -154,7 +161,9 @@ class WaypointBuilder:
             FlightWaypointType.JOIN,
             position.x,
             position.y,
-            500 if self.is_helo else self.doctrine.ingress_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "Join"
         waypoint.description = "Rendezvous with package"
@@ -166,7 +175,9 @@ class WaypointBuilder:
             FlightWaypointType.SPLIT,
             position.x,
             position.y,
-            500 if self.is_helo else self.doctrine.ingress_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "Split"
         waypoint.description = "Depart from package"
@@ -179,7 +190,9 @@ class WaypointBuilder:
             ingress_type,
             position.x,
             position.y,
-            500 if self.is_helo else self.doctrine.ingress_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
@@ -193,7 +206,9 @@ class WaypointBuilder:
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
-            500 if self.is_helo else self.doctrine.ingress_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.pretty_name = "EGRESS from " + target.name
         waypoint.description = "EGRESS from " + target.name
@@ -218,7 +233,7 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_POINT,
             target.target.position.x,
             target.target.position.y,
-            0
+            meters(0)
         )
         waypoint.description = description
         waypoint.pretty_name = description
@@ -249,7 +264,7 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position.x,
             location.position.y,
-            0
+            meters(0)
         )
         waypoint.description = name
         waypoint.pretty_name = name
@@ -274,7 +289,7 @@ class WaypointBuilder:
             FlightWaypointType.CAS,
             position.x,
             position.y,
-            500 if self.is_helo else 1000
+            meters(500) if self.is_helo else meters(1000)
         )
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
@@ -283,12 +298,12 @@ class WaypointBuilder:
         return waypoint
 
     @staticmethod
-    def race_track_start(position: Point, altitude: int) -> FlightWaypoint:
+    def race_track_start(position: Point, altitude: Distance) -> FlightWaypoint:
         """Creates a racetrack start waypoint.
 
         Args:
             position: Position of the waypoint.
-            altitude: Altitude of the racetrack in meters.
+            altitude: Altitude of the racetrack.
         """
         waypoint = FlightWaypoint(
             FlightWaypointType.PATROL_TRACK,
@@ -302,12 +317,12 @@ class WaypointBuilder:
         return waypoint
 
     @staticmethod
-    def race_track_end(position: Point, altitude: int) -> FlightWaypoint:
+    def race_track_end(position: Point, altitude: Distance) -> FlightWaypoint:
         """Creates a racetrack end waypoint.
 
         Args:
             position: Position of the waypoint.
-            altitude: Altitude of the racetrack in meters.
+            altitude: Altitude of the racetrack.
         """
         waypoint = FlightWaypoint(
             FlightWaypointType.PATROL,
@@ -321,7 +336,7 @@ class WaypointBuilder:
         return waypoint
 
     def race_track(self, start: Point, end: Point,
-                   altitude: int) -> Tuple[FlightWaypoint, FlightWaypoint]:
+                   altitude: Distance) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates two waypoint for a racetrack orbit.
 
         Args:
@@ -333,7 +348,7 @@ class WaypointBuilder:
                 self.race_track_end(end, altitude))
 
     @staticmethod
-    def sweep_start(position: Point, altitude: int) -> FlightWaypoint:
+    def sweep_start(position: Point, altitude: Distance) -> FlightWaypoint:
         """Creates a sweep start waypoint.
 
         Args:
@@ -352,7 +367,7 @@ class WaypointBuilder:
         return waypoint
 
     @staticmethod
-    def sweep_end(position: Point, altitude: int) -> FlightWaypoint:
+    def sweep_end(position: Point, altitude: Distance) -> FlightWaypoint:
         """Creates a sweep end waypoint.
 
         Args:
@@ -371,7 +386,7 @@ class WaypointBuilder:
         return waypoint
 
     def sweep(self, start: Point, end: Point,
-              altitude: int) -> Tuple[FlightWaypoint, FlightWaypoint]:
+              altitude: Distance) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates two waypoint for a racetrack orbit.
 
         Args:
@@ -404,7 +419,9 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
-            500 if self.is_helo else self.doctrine.ingress_altitude
+            meters(
+                500
+            ) if self.is_helo else self.doctrine.ingress_altitude
         )
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"

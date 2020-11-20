@@ -28,7 +28,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import nm_to_meter, meter_to_nm
+from game.utils import Distance, meters, nm_to_meter, meter_to_nm
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -537,7 +537,8 @@ class StrikeFlightPlan(FormationFlightPlan):
     def target_area_waypoint(self) -> FlightWaypoint:
         return FlightWaypoint(FlightWaypointType.TARGET_GROUP_LOC,
                               self.package.target.position.x,
-                              self.package.target.position.y, 0)
+                              self.package.target.position.y,
+                              meters(0))
 
     @property
     def travel_time_to_target(self) -> timedelta:
@@ -863,10 +864,10 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         start, end = self.racetrack_for_objective(location)
-        patrol_alt = random.randint(
+        patrol_alt = meters(random.randint(
             self.doctrine.min_patrol_altitude,
             self.doctrine.max_patrol_altitude
-        )
+        ))
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         start, end = builder.race_track(start, end, patrol_alt)
@@ -983,8 +984,8 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        patrol_alt = random.randint(self.doctrine.min_patrol_altitude,
-                                    self.doctrine.max_patrol_altitude)
+        patrol_alt = meters(random.randint(self.doctrine.min_patrol_altitude,
+                                           self.doctrine.max_patrol_altitude))
 
         # Create points
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)

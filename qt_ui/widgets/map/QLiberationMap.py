@@ -441,7 +441,7 @@ class QLiberationMap(QGraphicsView):
                            waypoint: FlightWaypoint, position: Tuple[int, int],
                            flight_plan: FlightPlan) -> None:
 
-        altitude = meter_to_feet(waypoint.alt)
+        altitude = int(waypoint.alt.feet)
         altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
 
         prefix = "TOT"
