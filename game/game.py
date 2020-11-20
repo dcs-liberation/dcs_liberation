@@ -154,7 +154,7 @@ class Game:
             reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
             for cp in self.theater.player_points():
                 for g in cp.ground_objects:
-                    if g.category in REWARDS.keys():
+                    if g.category in REWARDS.keys() and not g.is_dead:
                         reward = reward + REWARDS[g.category]
             return reward
         else:
@@ -277,7 +277,7 @@ class Game:
         production = 0.0
         for enemy_point in self.theater.enemy_points():
             for g in enemy_point.ground_objects:
-                if g.category in REWARDS.keys():
+                if g.category in REWARDS.keys() and not g.is_dead:
                     production = production + REWARDS[g.category]
 
         production = production * 0.75
