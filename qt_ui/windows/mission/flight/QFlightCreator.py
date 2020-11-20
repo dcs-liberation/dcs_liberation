@@ -16,6 +16,8 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
+from qt_ui.widgets.combos.QArrivalAirfieldSelector import \
+    QArrivalAirfieldSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
 from theater import ControlPoint, OffMapSpawn
@@ -49,16 +51,30 @@ class QFlightCreator(QDialog):
             self.on_aircraft_changed)
         layout.addLayout(QLabeledWidget("Aircraft:", self.aircraft_selector))
 
-        self.airfield_selector = QOriginAirfieldSelector(
+        self.departure = QOriginAirfieldSelector(
             self.game.aircraft_inventory,
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData()
         )
-        self.airfield_selector.availability_changed.connect(self.update_max_size)
-        layout.addLayout(QLabeledWidget("Airfield:", self.airfield_selector))
+        self.departure.availability_changed.connect(self.update_max_size)
+        layout.addLayout(QLabeledWidget("Departure:", self.departure))
+
+        self.arrival = QArrivalAirfieldSelector(
+            [cp for cp in game.theater.controlpoints if cp.captured],
+            self.aircraft_selector.currentData(),
+            "Same as departure"
+        )
+        layout.addLayout(QLabeledWidget("Arrival:", self.arrival))
+
+        self.divert = QArrivalAirfieldSelector(
+            [cp for cp in game.theater.controlpoints if cp.captured],
+            self.aircraft_selector.currentData(),
+            "None"
+        )
+        layout.addLayout(QLabeledWidget("Divert:", self.divert))
 
         self.flight_size_spinner = QFlightSizeSpinner()
-        self.update_max_size(self.airfield_selector.available)
+        self.update_max_size(self.departure.available)
         layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
 
         self.client_slots_spinner = QFlightSizeSpinner(
@@ -82,10 +98,16 @@ class QFlightCreator(QDialog):
 
     def verify_form(self) -> Optional[str]:
         aircraft: PlaneType = self.aircraft_selector.currentData()
-        origin: ControlPoint = self.airfield_selector.currentData()
+        origin: ControlPoint = self.departure.currentData()
+        arrival: ControlPoint = self.arrival.currentData()
+        divert: ControlPoint = self.divert.currentData()
         size: int = self.flight_size_spinner.value()
         if not origin.captured:
             return f"{origin.name} is not owned by your coalition."
+        if arrival is not None and not arrival.captured:
+            return f"{arrival.name} is not owned by your coalition."
+        if divert is not None and not divert.captured:
+            return f"{divert.name} is not owned by your coalition."
         available = origin.base.aircraft.get(aircraft, 0)
         if not available:
             return f"{origin.name} has no {aircraft.id} available."
@@ -104,8 +126,13 @@ class QFlightCreator(QDialog):
 
         task = self.task_selector.currentData()
         aircraft = self.aircraft_selector.currentData()
-        origin = self.airfield_selector.currentData()
+        origin = self.departure.currentData()
+        arrival = self.arrival.currentData()
+        divert = self.divert.currentData()
         size = self.flight_size_spinner.value()
+
+        if arrival is None:
+            arrival = origin
 
         if isinstance(origin, OffMapSpawn):
             start_type = "In Flight"
@@ -113,7 +140,8 @@ class QFlightCreator(QDialog):
             start_type = "Cold"
         else:
             start_type = "Warm"
-        flight = Flight(self.package, aircraft, size, origin, task, start_type)
+        flight = Flight(self.package, aircraft, size, task, start_type, origin,
+                        arrival, divert)
         flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
@@ -122,7 +150,9 @@ class QFlightCreator(QDialog):
 
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
-        self.airfield_selector.change_aircraft(new_aircraft)
+        self.departure.change_aircraft(new_aircraft)
+        self.arrival.change_aircraft(new_aircraft)
+        self.divert.change_aircraft(new_aircraft)
 
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))

@@ -373,6 +373,10 @@ class QLiberationMap(QGraphicsView):
             FlightWaypointType.TARGET_SHIP,
         )
         for idx, point in enumerate(flight.flight_plan.waypoints[1:]):
+            if point.waypoint_type == FlightWaypointType.DIVERT:
+                # Don't clutter the map showing divert points.
+                continue
+
             new_pos = self._transform_point(Point(point.x, point.y))
             self.draw_flight_path(scene, prev_pos, new_pos, is_player,
                                   selected)
@@ -386,7 +390,6 @@ class QLiberationMap(QGraphicsView):
                 self.draw_waypoint_info(scene, idx + 1, point, new_pos,
                                         flight.flight_plan)
             prev_pos = tuple(new_pos)
-        self.draw_flight_path(scene, prev_pos, pos, is_player, selected)
 
     def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
                       player: bool, selected: bool) -> None:

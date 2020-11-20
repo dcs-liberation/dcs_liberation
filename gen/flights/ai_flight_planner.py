@@ -236,8 +236,10 @@ class PackageBuilder:
             start_type = "In Flight"
         else:
             start_type = self.start_type
-        flight = Flight(self.package, aircraft, plan.num_aircraft, airfield,
-                        plan.task, start_type)
+
+        flight = Flight(self.package, aircraft, plan.num_aircraft, plan.task,
+                        start_type, departure=airfield, arrival=airfield,
+                        divert=None)
         self.package.add_flight(flight)
         return True
 

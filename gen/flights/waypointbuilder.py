@@ -104,6 +104,40 @@ class WaypointBuilder:
             waypoint.pretty_name = "Land"
         return waypoint
 
+    def divert(self,
+               divert: Optional[ControlPoint]) -> Optional[FlightWaypoint]:
+        """Create divert waypoint for the given arrival airfield or carrier.
+
+        Args:
+            divert: Divert airfield or carrier.
+        """
+        if divert is None:
+            return None
+
+        position = divert.position
+        if isinstance(divert, OffMapSpawn):
+            if self.is_helo:
+                altitude = 500
+            else:
+                altitude = self.doctrine.rendezvous_altitude
+            altitude_type = "BARO"
+        else:
+            altitude = 0
+            altitude_type = "RADIO"
+
+        waypoint = FlightWaypoint(
+            FlightWaypointType.DIVERT,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.alt_type = altitude_type
+        waypoint.name = "DIVERT"
+        waypoint.description = "Divert"
+        waypoint.pretty_name = "Divert"
+        waypoint.only_for_player = True
+        return waypoint
+
     def hold(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.LOITER,

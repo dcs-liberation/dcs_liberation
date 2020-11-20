@@ -695,6 +695,18 @@ class AircraftConflictGenerator:
             return StartType.Cold
         return StartType.Warm
 
+    def determine_runway(self, cp: ControlPoint, dynamic_runways) -> RunwayData:
+        fallback = RunwayData(cp.full_name, runway_heading=0, runway_name="")
+        if cp.cptype == ControlPointType.AIRBASE:
+            assigner = RunwayAssigner(self.game.conditions)
+            return assigner.get_preferred_runway(cp.airport)
+        elif cp.is_fleet:
+            return dynamic_runways.get(cp.name, fallback)
+        else:
+            logging.warning(
+                f"Unhandled departure/arrival control point: {cp.cptype}")
+            return fallback
+
     def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
                      package: Package, flight: Flight,
                      dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -752,19 +764,9 @@ class AircraftConflictGenerator:
         channel = self.get_intra_flight_channel(unit_type)
         group.set_frequency(channel.mhz)
 
-        # TODO: Support for different departure/arrival airfields.
-        cp = flight.from_cp
-        fallback_runway = RunwayData(cp.full_name, runway_heading=0,
-                                     runway_name="")
-        if cp.cptype == ControlPointType.AIRBASE:
-            assigner = RunwayAssigner(self.game.conditions)
-            departure_runway = assigner.get_preferred_runway(
-                flight.from_cp.airport)
-        elif cp.is_fleet:
-            departure_runway = dynamic_runways.get(cp.name, fallback_runway)
-        else:
-            logging.warning(f"Unhandled departure control point: {cp.cptype}")
-            departure_runway = fallback_runway
+        divert = None
+        if flight.divert is not None:
+            divert = self.determine_runway(flight.divert, dynamic_runways)
 
         self.flights.append(FlightData(
             package=package,
@@ -774,10 +776,9 @@ class AircraftConflictGenerator:
             friendly=flight.from_cp.captured,
             # Set later.
             departure_delay=timedelta(),
-            departure=departure_runway,
-            arrival=departure_runway,
-            # TODO: Support for divert airfields.
-            divert=None,
+            departure=self.determine_runway(flight.departure, dynamic_runways),
+            arrival=self.determine_runway(flight.arrival, dynamic_runways),
+            divert=divert,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
             intra_flight_channel=channel
