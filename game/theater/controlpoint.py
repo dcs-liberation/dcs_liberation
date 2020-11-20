@@ -57,20 +57,39 @@ class LocationType(Enum):
 
 @dataclass
 class PresetLocations:
+    """Defines the preset locations loaded from the campaign mission file."""
+
+    #: Locations used for spawning ground defenses for bases.
     base_garrisons: List[Point] = field(default_factory=list)
+
+    #: Locations used for spawning air defenses for bases. Used by SAMs, AAA,
+    #: and SHORADs.
     base_air_defense: List[Point] = field(default_factory=list)
 
+    #: Locations used by EWRs.
     ewrs: List[Point] = field(default_factory=list)
+
+    #: Locations used by SAMs outside of bases.
     sams: List[Point] = field(default_factory=list)
+
+    #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[Point] = field(default_factory=list)
+
+    #: Locations used by coastal defenses.
     coastal_defenses: List[Point] = field(default_factory=list)
+
+    #: Locations used by ground based strike objectives.
     strike_locations: List[Point] = field(default_factory=list)
+
+    #: Locations used by offshore strike objectives.
     offshore_strike_locations: List[Point] = field(default_factory=list)
 
+    #: Locations of SAMs which should always be spawned.
     fixed_sams: List[Point] = field(default_factory=list)
 
     @staticmethod
     def _random_from(points: List[Point]) -> Optional[Point]:
+        """Finds, removes, and returns a random position from the given list."""
         if not points:
             return None
         point = random.choice(points)
@@ -78,6 +97,11 @@ class PresetLocations:
         return point
 
     def random_for(self, location_type: LocationType) -> Optional[Point]:
+        """Returns a position suitable for the given location type.
+
+        The location, if found, will be claimed by the caller and not available
+        to subsequent calls.
+        """
         if location_type == LocationType.Garrison:
             return self._random_from(self.base_garrisons)
         if location_type == LocationType.Sam:
