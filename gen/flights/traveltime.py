@@ -45,20 +45,21 @@ class GroundSpeed:
         return int(cls.from_mach(mach, altitude))  # knots
 
     @staticmethod
-    def from_mach(mach: float, altitude: int) -> float:
+    def from_mach(mach: float, altitude_m: int) -> float:
         """Returns the ground speed in knots for the given mach and altitude.
 
         Args:
             mach: The mach number to convert to ground speed.
-            altitude: The altitude in feet.
+            altitude_m: The altitude in meters.
 
         Returns:
             The ground speed corresponding to the given altitude and mach number
             in knots.
         """
         # https://www.grc.nasa.gov/WWW/K-12/airplane/atmos.html
-        if altitude <= 36152:
-            temperature_f = 59 - 0.00356 * altitude
+        altitude_ft = altitude_m * 3.28084
+        if altitude_ft <= 36152:
+            temperature_f = 59 - 0.00356 * altitude_ft
         else:
             # There's another formula for altitudes over 82k feet, but we better
             # not be planning waypoints that high...
