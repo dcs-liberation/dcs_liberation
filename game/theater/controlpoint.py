@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import logging
 import random
 import re
 from dataclasses import dataclass, field
@@ -38,6 +39,19 @@ class ControlPointType(Enum):
     FOB = 5                    # A FOB (ground units only)
 
 
+class LocationType(Enum):
+    BaseAirDefense = "base air defense"
+    Coastal = "coastal defense"
+    Ewr = "EWR"
+    Garrison = "garrison"
+    MissileSite = "missile site"
+    OffshoreStrikeTarget = "offshore strike target"
+    Sam = "SAM"
+    Ship = "ship"
+    Shorad = "SHORAD"
+    StrikeTarget = "strike target"
+
+
 @dataclass
 class PresetLocations:
     base_garrisons: List[Point] = field(default_factory=list)
@@ -45,8 +59,11 @@ class PresetLocations:
 
     ewrs: List[Point] = field(default_factory=list)
     sams: List[Point] = field(default_factory=list)
+    offshore: List[Point] = field(default_factory=list)
     coastal_defenses: List[Point] = field(default_factory=list)
     strike_locations: List[Point] = field(default_factory=list)
+
+    fixed_sams: List[Point] = field(default_factory=list)
 
     @staticmethod
     def _random_from(points: List[Point]) -> Optional[Point]:
@@ -56,23 +73,25 @@ class PresetLocations:
         points.remove(point)
         return point
 
-    def random_garrison(self) -> Optional[Point]:
-        return self._random_from(self.base_garrisons)
-
-    def random_base_sam(self) -> Optional[Point]:
-        return self._random_from(self.base_air_defense)
-
-    def random_ewr(self) -> Optional[Point]:
-        return self._random_from(self.ewrs)
-
-    def random_sam(self) -> Optional[Point]:
-        return self._random_from(self.sams)
-
-    def random_coastal_defense(self) -> Optional[Point]:
-        return self._random_from(self.coastal_defenses)
-
-    def random_strike_location(self) -> Optional[Point]:
-        return self._random_from(self.strike_locations)
+    def random_for(self, location_type: LocationType) -> Optional[Point]:
+        if location_type == LocationType.Garrison:
+            return self._random_from(self.base_garrisons)
+        if location_type == LocationType.Sam:
+            return self._random_from(self.sams)
+        if location_type == LocationType.BaseAirDefense:
+            return self._random_from(self.base_air_defense)
+        if location_type == LocationType.Ewr:
+            return self._random_from(self.ewrs)
+        if location_type == LocationType.Shorad:
+            return self._random_from(self.base_garrisons)
+        if location_type == LocationType.OffshoreStrikeTarget:
+            return self._random_from(self.offshore)
+        if location_type == LocationType.Ship:
+            return self._random_from(self.offshore)
+        if location_type == LocationType.StrikeTarget:
+            return self._random_from(self.strike_locations)
+        logging.error(f"Unknown location type: {location_type}")
+        return None
 
 
 class ControlPoint(MissionTarget):
