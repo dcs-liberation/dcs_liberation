@@ -366,8 +366,6 @@ class Game:
             points.append(front_line.control_point_b.position)
 
         # If do_not_cull_carrier is enabled, add carriers as culling point
-        print("------")
-        print(self.settings.perf_do_not_cull_carrier)
         if self.settings.perf_do_not_cull_carrier:
             for cp in self.theater.controlpoints:
                 if cp.is_carrier or cp.is_lha:
