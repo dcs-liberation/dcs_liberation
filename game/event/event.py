@@ -352,11 +352,13 @@ class Event:
                     logging.info(info.text)
 
 
-
 class UnitsDeliveryEvent(Event):
+
     informational = True
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
+    def __init__(self, attacker_name: str, defender_name: str,
+                 from_cp: ControlPoint, to_cp: ControlPoint,
+                 game: Game) -> None:
         super(UnitsDeliveryEvent, self).__init__(game=game,
                                                  location=to_cp.position,
                                                  from_cp=from_cp,
@@ -364,17 +366,16 @@ class UnitsDeliveryEvent(Event):
                                                  attacker_name=attacker_name,
                                                  defender_name=defender_name)
 
-        self.units: Dict[UnitType, int] = {}
+        self.units: Dict[Type[UnitType], int] = {}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: Dict[UnitType, int]):
+    def deliver(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 
-    def skip(self):
-
+    def skip(self) -> None:
         for k, v in self.units.items():
             info = Information("Ally Reinforcement", str(k.id) + " x " + str(v) + " at " + self.to_cp.name, self.game.turn)
             self.game.informations.append(info)
