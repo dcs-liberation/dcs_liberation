@@ -279,6 +279,10 @@ class QSettingsWindow(QDialog):
         self.culling_distance.setValue(self.game.settings.perf_culling_distance)
         self.culling_distance.valueChanged.connect(self.applySettings)
 
+        self.culling_do_not_cull_carrier = QCheckBox()
+        self.culling_do_not_cull_carrier.setChecked(self.game.settings.perf_do_not_cull_carrier)
+        self.culling_do_not_cull_carrier.toggled.connect(self.applySettings)
+
         self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
@@ -299,6 +303,8 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
         self.performanceLayout.addWidget(self.culling_distance, 9, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Do not cull carrier's surroundings"), 10, 0)
+        self.performanceLayout.addWidget(self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight)
 
         self.generatorLayout.addWidget(self.gameplay)
         self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
@@ -366,9 +372,11 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
+        self.game.settings.perf_do_not_cull_carrier = self.culling_do_not_cull_carrier.isChecked()
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
 
+        self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def onSelectionChanged(self):

@@ -39,6 +39,7 @@ class Settings:
     # Performance culling
     perf_culling: bool = False
     perf_culling_distance: int = 100
+    perf_do_not_cull_carrier = True
 
     # LUA Plugins system
     plugins: Dict[str, bool] = field(default_factory=dict)
