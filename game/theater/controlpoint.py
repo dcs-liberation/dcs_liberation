@@ -33,6 +33,7 @@ from .theatergroundobject import (
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from ..event import UnitsDeliveryEvent
 
 
 class ControlPointType(Enum):
@@ -158,6 +159,7 @@ class ControlPoint(MissionTarget):
         self.cptype = cptype
         self.stances: Dict[int, CombatStance] = {}
         self.airport = None
+        self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
@@ -387,3 +389,7 @@ class OffMapSpawn(ControlPoint):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         yield from []
+
+    @property
+    def available_aircraft_slots(self) -> int:
+        return 1000

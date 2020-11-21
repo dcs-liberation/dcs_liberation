@@ -11,12 +11,12 @@ from dcs.unittype import UnitType
 from game import db, persistency
 from game.debriefing import Debriefing
 from game.infos.information import Information
-from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from ..game import Game
+    from game.operation.operation import Operation
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000

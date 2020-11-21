@@ -160,9 +160,6 @@ class Game:
     def _budget_player(self):
         self.budget += self.budget_reward_amount
 
-    def awacs_expense_commit(self):
-        self.budget -= AWACS_BUDGET_COST
-
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
         event = UnitsDeliveryEvent(attacker_name=self.player_name,
                                    defender_name=self.player_name,
@@ -171,10 +168,6 @@ class Game:
                                    game=self)
         self.events.append(event)
         return event
-
-    def units_delivery_remove(self, event: Event):
-        if event in self.events:
-            self.events.remove(event)
 
     def initiate_event(self, event: Event):
         #assert event in self.events
@@ -242,6 +235,7 @@ class Game:
 
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
+            cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
 
         # Plan flights & combat for next turn
