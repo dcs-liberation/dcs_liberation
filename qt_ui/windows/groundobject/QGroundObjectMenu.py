@@ -130,6 +130,8 @@ class QGroundObjectMenu(QDialog):
                 total_income = total_income + REWARDS[building.category]
                 if not building.is_dead:
                     received_income = received_income + REWARDS[building.category]
+            else:
+                logging.warning(building.category + " not in REWARDS")
 
         self.financesBox = QGroupBox("Finances: ")
         self.financesBoxLayout = QGridLayout()
@@ -315,9 +317,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buyArmorButton.setText("Buy [$" + str(db.PRICES[self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())] * self.amount.value()) + "M][-$" + str(self.current_group_value) + "M]")
 
     def buyArmor(self):
-        print("Buy Armor ")
+        logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-        print(utype)
+        logging.info(utype)
         price = db.PRICES[utype] * self.amount.value() - self.current_group_value
         if price > self.game.budget:
             self.error_money()
