@@ -38,7 +38,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        self.hangar_status = QHangarStatus(self.cp)
+        self.hangar_status = QHangarStatus(game_model, self.cp)
 
         self.init_ui()
 
@@ -82,7 +82,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def buy(self, unit_type):
         if self.maximum_units > 0:
-            if self.cp.unclaimed_parking <= 0:
+            if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
                 return
 
@@ -110,8 +110,10 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
 class QHangarStatus(QHBoxLayout):
 
-    def __init__(self, control_point: ControlPoint) -> None:
+    def __init__(self, game_model: GameModel,
+                 control_point: ControlPoint) -> None:
         super().__init__()
+        self.game_model = game_model
         self.control_point = control_point
 
         self.icon = QLabel()
@@ -125,6 +127,22 @@ class QHangarStatus(QHBoxLayout):
         self.setAlignment(Qt.AlignLeft)
 
     def update_label(self) -> None:
-        current_amount = self.control_point.expected_aircraft_next_turn
+        next_turn = self.control_point.expected_aircraft_next_turn(
+            self.game_model.game)
         max_amount = self.control_point.total_aircraft_parking
-        self.text.setText(f"<strong>{current_amount}/{max_amount}</strong>")
+
+        components = [f"{next_turn.present} present"]
+        if next_turn.ordered > 0:
+            components.append(f"{next_turn.ordered} purchased")
+        elif next_turn.ordered < 0:
+            components.append(f"{-next_turn.ordered} sold")
+
+        transferring = next_turn.transferring
+        if transferring > 0:
+            components.append(f"{transferring} transferring in")
+        if transferring < 0:
+            components.append(f"{-transferring} transferring out")
+
+        details = ", ".join(components)
+        self.text.setText(
+            f"<strong>{next_turn.total}/{max_amount}</strong> ({details})")

@@ -6,7 +6,7 @@ import random
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -123,6 +123,17 @@ class PresetLocations:
             return self._random_from(self.strike_locations)
         logging.error(f"Unknown location type: {location_type}")
         return None
+
+
+@dataclass(frozen=True)
+class PendingOccupancy:
+    present: int
+    ordered: int
+    transferring: int
+
+    @property
+    def total(self) -> int:
+        return self.present + self.ordered + self.transferring
 
 
 class ControlPoint(MissionTarget):
@@ -379,18 +390,36 @@ class ControlPoint(MissionTarget):
             return False
         return True
 
-    @property
-    def expected_aircraft_next_turn(self) -> int:
-        total = self.base.total_aircraft
-        assert self.pending_unit_deliveries
-        for unit_bought in self.pending_unit_deliveries.units:
-            if issubclass(unit_bought, FlyingType):
-                total += self.pending_unit_deliveries.units[unit_bought]
+    def aircraft_transferring(self, game: Game) -> int:
+        if self.captured:
+            ato = game.blue_ato
+        else:
+            ato = game.red_ato
+
+        total = 0
+        for package in ato.packages:
+            for flight in package.flights:
+                if flight.departure == flight.arrival:
+                    continue
+                if flight.departure == self:
+                    total -= flight.count
+                elif flight.arrival == self:
+                    total += flight.count
         return total
 
-    @property
-    def unclaimed_parking(self) -> int:
-        return self.total_aircraft_parking - self.expected_aircraft_next_turn
+    def expected_aircraft_next_turn(self, game: Game) -> PendingOccupancy:
+        assert self.pending_unit_deliveries
+        on_order = 0
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                on_order += self.pending_unit_deliveries.units[unit_bought]
+
+        return PendingOccupancy(self.base.total_aircraft, on_order,
+                                self.aircraft_transferring(game))
+
+    def unclaimed_parking(self, game: Game) -> int:
+        return (self.total_aircraft_parking -
+                self.expected_aircraft_next_turn(game).total)
 
 
 class OffMapSpawn(ControlPoint):
