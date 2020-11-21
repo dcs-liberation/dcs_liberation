@@ -107,14 +107,16 @@ class Event:
         for destroyed_aircraft in debriefing.killed_aircrafts:
             try:
                 cpid = int(destroyed_aircraft.split("|")[3])
-                type = db.unit_type_from_name(destroyed_aircraft.split("|")[4])
-                if cpid in cp_map.keys():
+                aircraft = db.unit_type_from_name(
+                    destroyed_aircraft.split("|")[4])
+                if cpid in cp_map:
                     cp = cp_map[cpid]
-                    if type in cp.base.aircraft.keys():
-                        logging.info("Aircraft destroyed : " + str(type))
-                        cp.base.aircraft[type] = max(0, cp.base.aircraft[type]-1)
-            except Exception as e:
-                print(e)
+                    if aircraft in cp.base.aircraft:
+                        logging.info(f"Aircraft destroyed: {aircraft}")
+                        cp.base.aircraft[aircraft] = max(
+                            0, cp.base.aircraft[aircraft] - 1)
+            except Exception:
+                logging.exception("Failed to commit destroyed aircraft")
 
         # ------------------------------
         # Destroyed ground units
@@ -123,13 +125,13 @@ class Event:
         for killed_ground_unit in debriefing.killed_ground_units:
             try:
                 cpid = int(killed_ground_unit.split("|")[3])
-                type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
+                aircraft = db.unit_type_from_name(killed_ground_unit.split("|")[4])
                 if cpid in cp_map.keys():
                     killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
                     cp = cp_map[cpid]
-                    if type in cp.base.armor.keys():
-                        logging.info("Ground unit destroyed : " + str(type))
-                        cp.base.armor[type] = max(0, cp.base.armor[type] - 1)
+                    if aircraft in cp.base.armor.keys():
+                        logging.info("Ground unit destroyed : " + str(aircraft))
+                        cp.base.armor[aircraft] = max(0, cp.base.armor[aircraft] - 1)
             except Exception as e:
                 print(e)
 

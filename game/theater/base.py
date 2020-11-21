@@ -22,7 +22,7 @@ BASE_MIN_STRENGTH = 0
 class Base:
 
     def __init__(self):
-        self.aircraft: Dict[FlyingType, int] = {}
+        self.aircraft: Dict[Type[FlyingType], int] = {}
         self.armor: Dict[VehicleType, int] = {}
         self.aa: Dict[AirDefence, int] = {}
         self.commision_points: Dict[Type, float] = {}

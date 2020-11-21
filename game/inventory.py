@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING
+from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING, Type
 
 from dcs.unittype import FlyingType
 
@@ -17,9 +17,9 @@ class ControlPointAircraftInventory:
 
     def __init__(self, control_point: ControlPoint) -> None:
         self.control_point = control_point
-        self.inventory: Dict[FlyingType, int] = defaultdict(int)
+        self.inventory: Dict[Type[FlyingType], int] = defaultdict(int)
 
-    def add_aircraft(self, aircraft: FlyingType, count: int) -> None:
+    def add_aircraft(self, aircraft: Type[FlyingType], count: int) -> None:
         """Adds aircraft to the inventory.
 
         Args:
@@ -28,7 +28,7 @@ class ControlPointAircraftInventory:
         """
         self.inventory[aircraft] += count
 
-    def remove_aircraft(self, aircraft: FlyingType, count: int) -> None:
+    def remove_aircraft(self, aircraft: Type[FlyingType], count: int) -> None:
         """Removes aircraft from the inventory.
 
         Args:
@@ -47,7 +47,7 @@ class ControlPointAircraftInventory:
             )
         self.inventory[aircraft] -= count
 
-    def available(self, aircraft: FlyingType) -> int:
+    def available(self, aircraft: Type[FlyingType]) -> int:
         """Returns the number of available aircraft of the given type.
 
         Args:

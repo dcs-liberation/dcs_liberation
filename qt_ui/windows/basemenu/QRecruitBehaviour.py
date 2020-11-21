@@ -1,4 +1,5 @@
 import logging
+from typing import Type
 
 from PySide2.QtWidgets import (
     QGroupBox,
@@ -106,7 +107,7 @@ class QRecruitBehaviour:
 
         return row + 1
 
-    def _update_count_label(self, unit_type: UnitType):
+    def _update_count_label(self, unit_type: Type[UnitType]):
 
         self.bought_amount_labels[unit_type].setText("<b>{}</b>".format(
             unit_type in self.pending_deliveries.units and "{}".format(self.pending_deliveries.units[unit_type]) or "0"
@@ -125,7 +126,7 @@ class QRecruitBehaviour:
                 child.setText(
                     QRecruitBehaviour.BUDGET_FORMAT.format(self.budget))
 
-    def buy(self, unit_type):
+    def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]
         if self.budget >= price:
             self.pending_deliveries.deliver({unit_type: 1})
