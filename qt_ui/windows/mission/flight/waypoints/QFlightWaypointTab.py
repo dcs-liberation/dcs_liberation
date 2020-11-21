@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import logging
-=======
->>>>>>> develop_2_2_x
 from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
@@ -20,10 +17,7 @@ from gen.flights.flight import Flight, FlightType, FlightWaypoint
 from gen.flights.flightplan import (
     CustomFlightPlan,
     FlightPlanBuilder,
-<<<<<<< HEAD
     PlanningError,
-=======
->>>>>>> develop_2_2_x
     StrikeFlightPlan,
 )
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
