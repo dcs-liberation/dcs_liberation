@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Set
 
 from PySide2.QtCore import Qt
@@ -37,7 +38,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        self.hangar_status = QHangarStatus(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status = QHangarStatus(self.total_aircraft, self.cp.available_aircraft_slots)
 
         self.init_ui()
 
@@ -80,8 +81,18 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def buy(self, unit_type):
+        if self.maximum_units > 0:
+            if self.total_aircraft + 1 > self.maximum_units:
+                logging.debug(f"No space for additional aircraft at {self.cp}.")
+                return
+
         super().buy(unit_type)
-        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status.update_label(self.total_aircraft,
+                                        self.cp.available_aircraft_slots)
+
+    @property
+    def total_aircraft(self) -> int:
+        return self.cp.expected_aircraft_next_turn
 
     def sell(self, unit_type: UnitType):
         # Don't need to remove aircraft from the inventory if we're canceling
@@ -99,7 +110,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     "assigned to a mission?", QMessageBox.Ok)
                 return
         super().sell(unit_type)
-        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status.update_label(self.total_aircraft, self.cp.available_aircraft_slots)
 
 
 class QHangarStatus(QHBoxLayout):

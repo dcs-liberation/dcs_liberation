@@ -126,13 +126,6 @@ class QRecruitBehaviour:
                     QRecruitBehaviour.BUDGET_FORMAT.format(self.budget))
 
     def buy(self, unit_type):
-
-        if self.maximum_units > 0:
-            if self.total_units + 1 > self.maximum_units:
-                logging.info("Not enough space left !")
-                # TODO : display modal warning
-                return
-
         price = db.PRICES[unit_type]
         if self.budget >= price:
             self.pending_deliveries.deliver({unit_type: 1})
@@ -157,19 +150,6 @@ class QRecruitBehaviour:
 
         self._update_count_label(unit_type)
         self.update_available_budget()
-
-    @property
-    def total_units(self):
-        total = 0
-        for unit_type in self.recruitables_types:
-            total += self.cp.base.total_units(unit_type)
-
-        if self.pending_deliveries:
-            for unit_bought in self.pending_deliveries.units:
-                if db.unit_task(unit_bought) in self.recruitables_types:
-                    total += self.pending_deliveries.units[unit_bought]
-
-        return total
 
     def set_maximum_units(self, maximum_units):
         """

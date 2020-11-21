@@ -316,7 +316,7 @@ class Game:
                 if i > 50 or budget_for_aircraft <= 0:
                     break
                 target_cp = random.choice(potential_cp_armor)
-                if target_cp.base.total_planes >= MAX_AIRCRAFT:
+                if target_cp.base.total_aircraft >= MAX_AIRCRAFT:
                     continue
                 unit = random.choice(potential_units)
                 price = db.PRICES[unit] * 2

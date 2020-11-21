@@ -376,6 +376,15 @@ class ControlPoint(MissionTarget):
             return False
         return True
 
+    @property
+    def expected_aircraft_next_turn(self) -> int:
+        total = self.base.total_aircraft
+        assert self.pending_unit_deliveries
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                total += self.pending_unit_deliveries.units[unit_bought]
+        return total
+
 
 class OffMapSpawn(ControlPoint):
     def __init__(self, id: int, name: str, position: Point):
