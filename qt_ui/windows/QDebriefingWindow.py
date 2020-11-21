@@ -1,3 +1,5 @@
+import logging
+
 from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtWidgets import (
     QDialog,
@@ -55,29 +57,35 @@ class QDebriefingWindow(QDialog):
         lostUnits.setLayout(lostUnitsLayout)
 
         row = 0
-        for unit_type, count in self.debriefing.player_dead_aircraft_dict.items():
+        player_air_losses = self.debriefing.air_losses.by_type(player=True)
+        for unit_type, count in player_air_losses.items():
             try:
-                lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                lostUnitsLayout.addWidget(
+                    QLabel(db.unit_type_name(unit_type)), row, 0)
+                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
-            except:
-                print("Issue adding " + str(unit_type) + " to debriefing information")
+            except AttributeError:
+                logging.exception(
+                    f"Issue adding {unit_type} to debriefing information")
 
         for unit_type, count in self.debriefing.player_dead_units_dict.items():
             try:
-                lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                lostUnitsLayout.addWidget(
+                    QLabel(db.unit_type_name(unit_type)), row, 0)
+                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
-            except:
-                print("Issue adding " + str(unit_type) + " to debriefing information")
+            except AttributeError:
+                logging.exception(
+                    f"Issue adding {unit_type} to debriefing information")
 
         for building, count in self.debriefing.player_dead_buildings_dict.items():
             try:
                 lostUnitsLayout.addWidget(QLabel(building, row, 0))
-                lostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
-            except:
-                print("Issue adding " + str(building) + " to debriefing information")
+            except AttributeError:
+                logging.exception(
+                    f"Issue adding {building} to debriefing information")
 
         self.layout.addWidget(lostUnits)
 
@@ -92,15 +100,16 @@ class QDebriefingWindow(QDialog):
         #    enemylostUnitsLayout.addWidget(QLabel("{}".format(len(self.debriefing.destroyed_objects))), row, 1)
         #    row += 1
 
-        for unit_type, count in self.debriefing.enemy_dead_aircraft_dict.items():
-            if count == 0:
-                continue
+        enemy_air_losses = self.debriefing.air_losses.by_type(player=False)
+        for unit_type, count in enemy_air_losses.items():
             try:
-                enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-                enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
+                enemylostUnitsLayout.addWidget(
+                    QLabel(db.unit_type_name(unit_type)), row, 0)
+                enemylostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
-            except:
-                print("Issue adding " + str(unit_type) + " to debriefing information")
+            except AttributeError:
+                logging.exception(
+                    f"Issue adding {unit_type} to debriefing information")
 
         for unit_type, count in self.debriefing.enemy_dead_units_dict.items():
             if count == 0:
@@ -114,8 +123,9 @@ class QDebriefingWindow(QDialog):
                 enemylostUnitsLayout.addWidget(QLabel(building), row, 0)
                 enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
                 row += 1
-            except:
-                print("Issue adding " + str(building) + " to debriefing information")
+            except AttributeError:
+                logging.exception(
+                    f"Issue adding {building} to debriefing information")
 
         self.layout.addWidget(enemylostUnits)
 

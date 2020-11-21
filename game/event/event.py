@@ -13,6 +13,7 @@ from game.debriefing import Debriefing
 from game.infos.information import Information
 from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
+from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
     from ..game import Game
@@ -85,17 +86,18 @@ class Event:
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
-    def is_successfull(self, debriefing: Debriefing) -> bool:
-        return self.operation.is_successfull(debriefing)
+    def is_successful(self, debriefing: Debriefing) -> bool:
+        return self.operation.is_successful(debriefing)
 
-    def generate(self):
+    def generate(self) -> UnitMap:
         self.operation.is_awacs_enabled = self.is_awacs_enabled
         self.operation.ca_slots = self.ca_slots
 
         self.operation.prepare(self.game)
-        self.operation.generate()
-        self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
-        self.environment_settings = self.operation.environment_settings
+        unit_map = self.operation.generate()
+        self.operation.current_mission.save(
+            persistency.mission_path_for("liberation_nextturn.miz"))
+        return unit_map
 
     def commit(self, debriefing: Debriefing):
 
@@ -103,41 +105,39 @@ class Event:
 
         # ------------------------------
         # Destroyed aircrafts
-        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
-        for destroyed_aircraft in debriefing.killed_aircrafts:
-            try:
-                cpid = int(destroyed_aircraft.split("|")[3])
-                aircraft = db.unit_type_from_name(
-                    destroyed_aircraft.split("|")[4])
-                if cpid in cp_map:
-                    cp = cp_map[cpid]
-                    if aircraft in cp.base.aircraft:
-                        logging.info(f"Aircraft destroyed: {aircraft}")
-                        cp.base.aircraft[aircraft] = max(
-                            0, cp.base.aircraft[aircraft] - 1)
-            except Exception:
-                logging.exception("Failed to commit destroyed aircraft")
+        for loss in debriefing.air_losses.losses:
+            aircraft = loss.flight.unit_type
+            cp = loss.flight.departure
+            available = cp.base.total_units_of_type(aircraft)
+            if available <= 0:
+                logging.error(
+                    f"Found killed {aircraft} from {cp} but that airbase has "
+                    f"none available.")
+                continue
+
+            logging.info(f"{aircraft} destroyed from {cp}")
+            cp.base.aircraft[aircraft] -= 1
 
         # ------------------------------
         # Destroyed ground units
         killed_unit_count_by_cp = {cp.id: 0 for cp in self.game.theater.controlpoints}
         cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
-        for killed_ground_unit in debriefing.killed_ground_units:
+        for killed_ground_unit in debriefing.state_data.killed_ground_units:
             try:
                 cpid = int(killed_ground_unit.split("|")[3])
-                aircraft = db.unit_type_from_name(killed_ground_unit.split("|")[4])
+                unit_type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
                 if cpid in cp_map.keys():
                     killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
                     cp = cp_map[cpid]
-                    if aircraft in cp.base.armor.keys():
-                        logging.info("Ground unit destroyed : " + str(aircraft))
-                        cp.base.armor[aircraft] = max(0, cp.base.armor[aircraft] - 1)
+                    if unit_type in cp.base.armor.keys():
+                        logging.info(f"Ground unit destroyed: {unit_type}")
+                        cp.base.armor[unit_type] = max(0, cp.base.armor[unit_type] - 1)
             except Exception as e:
                 print(e)
 
         # ------------------------------
         # Static ground objects
-        for destroyed_ground_unit_name in debriefing.killed_ground_units:
+        for destroyed_ground_unit_name in debriefing.state_data.killed_ground_units:
             for cp in self.game.theater.controlpoints:
                 if not cp.ground_objects:
                     continue
@@ -224,7 +224,7 @@ class Event:
 
         # Destroyed units carcass
         # -------------------------
-        for destroyed_unit in debriefing.destroyed_units:
+        for destroyed_unit in debriefing.state_data.destroyed_statics:
             self.game.add_destroyed_units(destroyed_unit)
 
         # -----------------------------------
