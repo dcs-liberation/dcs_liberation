@@ -8,14 +8,13 @@ from dcs.unit import Unit
 from dcs.unitgroup import VehicleGroup
 
 from game.data.doctrine import Doctrine
-from game.utils import feet_to_meter
-from game.weather import Conditions
-from theater import (
+from game.theater import (
     ControlPoint,
     MissionTarget,
     OffMapSpawn,
     TheaterGroundObject,
 )
+from game.weather import Conditions
 from .flight import Flight, FlightWaypoint, FlightWaypointType
 
 

@@ -39,10 +39,11 @@ from gen.sam.sam_group_generator import (
     generate_anti_air_group,
     generate_ewr_group, generate_shorad_group,
 )
-from theater import (
+from . import (
     ConflictTheater,
     ControlPoint,
-    ControlPointType, OffMapSpawn,
+    ControlPointType,
+    OffMapSpawn,
 )
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]

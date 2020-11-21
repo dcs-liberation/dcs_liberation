@@ -1,11 +1,15 @@
 """Inventory management APIs."""
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, Set, Tuple
+from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING
 
 from dcs.unittype import UnitType
 
 from gen.flights.flight import Flight
-from theater import ControlPoint
+
+if TYPE_CHECKING:
+    from game.theater import ControlPoint
 
 
 class ControlPointAircraftInventory:

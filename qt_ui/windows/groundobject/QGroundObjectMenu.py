@@ -2,20 +2,31 @@ import logging
 
 from PySide2 import QtCore
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QHBoxLayout, QDialog, QGridLayout, QLabel, QGroupBox, QVBoxLayout, QPushButton, \
-    QComboBox, QSpinBox, QMessageBox
+from PySide2.QtWidgets import (
+    QComboBox,
+    QDialog,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+)
 from dcs import Point
 
 from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, REWARDS, unit_type_of, PinpointStrike
-from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
+from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
+from game.theater import ControlPoint, TheaterGroundObject
+from gen.defenses.armor_group_generator import \
+    generate_armor_group_of_type_and_size
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
-from theater import ControlPoint, TheaterGroundObject
 
 
 class QGroundObjectMenu(QDialog):

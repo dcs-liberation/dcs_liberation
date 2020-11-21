@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
 from dcs.planes import PlaneType
 
 from game import Game
+from game.theater import ControlPoint, OffMapSpawn
 from gen.ato import Package
 from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
@@ -20,7 +21,6 @@ from qt_ui.widgets.combos.QArrivalAirfieldSelector import \
     QArrivalAirfieldSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
-from theater import ControlPoint, OffMapSpawn
 
 
 class QFlightCreator(QDialog):

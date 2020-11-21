@@ -21,6 +21,19 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
+from game.theater import (
+    ControlPoint,
+    FrontLine,
+    MissionTarget,
+    OffMapSpawn,
+    SamGroundObject,
+    TheaterGroundObject,
+)
+# Avoid importing some types that cause circular imports unless type checking.
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    NavalGroundObject, VehicleGroupGroundObject,
+)
 from game.utils import nm_to_meter
 from gen import Conflict
 from gen.ato import Package
@@ -46,19 +59,6 @@ from gen.flights.flight import (
 )
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.flights.traveltime import TotEstimator
-from theater import (
-    ControlPoint,
-    FrontLine,
-    MissionTarget,
-    OffMapSpawn, TheaterGroundObject,
-    SamGroundObject,
-)
-
-# Avoid importing some types that cause circular imports unless type checking.
-from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    NavalGroundObject, VehicleGroupGroundObject,
-)
 
 if TYPE_CHECKING:
     from game import Game

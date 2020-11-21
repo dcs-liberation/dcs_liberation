@@ -7,20 +7,19 @@ generating the waypoints for the mission.
 """
 from __future__ import annotations
 
-import math
-from datetime import timedelta
-from functools import cached_property
 import logging
+import math
 import random
 from dataclasses import dataclass
+from datetime import timedelta
+from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
 from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
-from game.utils import nm_to_meter
-from theater import (
+from game.theater import (
     ControlPoint,
     FrontLine,
     MissionTarget,
@@ -28,6 +27,7 @@ from theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
+from game.utils import nm_to_meter
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -391,10 +391,6 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         if end is not None:
             return end
         return super().patrol_end_time
-
-
-# TODO: Remove when breaking save compat.
-FrontLineCapFlightPlan = TarCapFlightPlan
 
 
 @dataclass(frozen=True)

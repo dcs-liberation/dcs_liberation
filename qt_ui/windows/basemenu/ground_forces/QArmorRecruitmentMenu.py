@@ -6,11 +6,13 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.task import PinpointStrike
 
+from game import db
 from game.event import UnitsDeliveryEvent
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, PinpointStrike, db
 
 
 class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):

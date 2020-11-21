@@ -11,13 +11,15 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.task import CAP, CAS
 from dcs.unittype import UnitType
 
+from game import db
 from game.event.event import UnitsDeliveryEvent
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import CAP, CAS, ControlPoint, db
 
 
 class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):

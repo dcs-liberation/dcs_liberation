@@ -202,12 +202,6 @@ class Game:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
 
-        # Save game compatibility.
-
-        # TODO: Remove in 2.3.
-        if not hasattr(self, "conditions"):
-            self.conditions = self.generate_conditions()
-
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))

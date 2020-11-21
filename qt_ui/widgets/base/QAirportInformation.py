@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout, QLCDNumber
 
-from theater import ControlPoint, Airport
+from game.theater import ControlPoint, Airport
 
 
 class QAirportInformation(QGroupBox):

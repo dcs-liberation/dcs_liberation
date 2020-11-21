@@ -1,3 +1,5 @@
+import logging
+
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -6,11 +8,9 @@ from PySide2.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
 )
-import logging
 from dcs.unittype import UnitType
 
-from theater import db
-
+from game import db
 
 
 class QRecruitBehaviour:

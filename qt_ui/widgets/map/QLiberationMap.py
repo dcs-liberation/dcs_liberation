@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import math
-from typing import Iterable, List, Optional, Tuple, Iterator
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 from PySide2.QtCore import QPointF, Qt
 from PySide2.QtGui import (
@@ -27,6 +27,13 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.theater import ControlPoint
+from game.theater.conflicttheater import FrontLine
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    MissileSiteGroundObject,
+    TheaterGroundObject,
+)
 from game.utils import meter_to_feet
 from game.weather import TimeOfDay
 from gen import Conflict
@@ -39,13 +46,7 @@ from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint
-from game.theater.conflicttheater import FrontLine
-from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    MissileSiteGroundObject,
-    TheaterGroundObject,
-)
+
 
 def binomial(i: int, n: int) -> float:
     """Binomial coefficient"""

@@ -12,7 +12,7 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
 import qt_ui.uiconstants as CONST
-from theater import ConflictTheater
+from game.theater import ConflictTheater
 
 
 @dataclass(frozen=True)

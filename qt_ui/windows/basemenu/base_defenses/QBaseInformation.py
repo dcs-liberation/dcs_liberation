@@ -1,10 +1,15 @@
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QVBoxLayout, QFrame, QWidget, QScrollArea
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
-from game import db
-from qt_ui.uiconstants import AIRCRAFT_ICONS, VEHICLES_ICONS
-from qt_ui.windows.basemenu.base_defenses.QBaseDefenseGroupInfo import QBaseDefenseGroupInfo
-from theater import ControlPoint, Airport
+from game.theater import Airport, ControlPoint
+from qt_ui.windows.basemenu.base_defenses.QBaseDefenseGroupInfo import \
+    QBaseDefenseGroupInfo
 
 
 class QBaseInformation(QFrame):

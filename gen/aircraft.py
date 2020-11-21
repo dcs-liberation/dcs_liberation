@@ -70,6 +70,12 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
+from game.theater.controlpoint import (
+    ControlPoint,
+    ControlPointType,
+    OffMapSpawn,
+)
+from game.theater.theatergroundobject import TheaterGroundObject
 from game.utils import knots_to_kph, nm_to_meter
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
@@ -83,12 +89,6 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from theater import TheaterGroundObject
-from game.theater.controlpoint import (
-    ControlPoint,
-    ControlPointType,
-    OffMapSpawn,
-)
 from .conflictgen import Conflict
 from .flights.flightplan import (
     CasFlightPlan,

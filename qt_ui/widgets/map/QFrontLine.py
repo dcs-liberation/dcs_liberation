@@ -13,11 +13,11 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as const
+from game.theater import FrontLine
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.QPackageDialog import QNewPackageDialog
-from theater import FrontLine
 
 
 class QFrontLine(QGraphicsLineItem):
