@@ -5,8 +5,7 @@
 * **[Flight Planner]** Added BAI missions.
 * **[Flight Planner]** Added anti-ship missions.
 * **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
-* **[Modding]** Possible to setup liveries overrides for factions
-* **[Units]** Added support for F-14A-135-GR
+* **[Culling]** Added possibility to include/exclude carriers from culling zones
 
 # 2.2.1
 
@@ -15,13 +14,17 @@
 * **[Factions]** Added map Persian Gulf full by Plob
 * **[Flight Planner]** Player flights with start delays under ten minutes will spawn immediately.
 * **[UI]** Mission start screen now informs players about delayed flights.
+* **[Units]** Added support for F-14A-135-GR
+* **[Modding]** Possible to setup liveries overrides in factions definition files
 
 ## Fixes :
 * **[Flight Planner]** Hold, join, and split points are planned cautiously near enemy airfields. Ascend/descend points are no longer planned.
-* **[Flight Planner]** Spitfire clipped wing variant was not seen as a flyable module
 * **[Flight Planner]** Custom waypoints are usable again. Not that in most cases custom flight plans will revert to the 2.1 flight planning behavior.
 * **[Flight Planner]** Fixed UI bug that made it possible to create empty flights which would throw an error.
 * **[Flight Planner]** Player flights from carriers will now be delayed correctly according to the player's settings.
+* **[Misc]** Spitfire variant with clipped wings was not seen as flyable by DCS Liberation (hence could not be setup as client/player slot)
+* **[Misc]** Updated Syria terrain parking slots database, the out-of-date database could end up generating aircraft in wrong slots (We are still experiencing issues with somes airbases, such as Khalkhalah though)
+
 
 # 2.2.0
 
