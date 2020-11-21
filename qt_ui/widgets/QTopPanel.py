@@ -229,7 +229,7 @@ class QTopPanel(QFrame):
         game_event.is_awacs_enabled = True
         game_event.ca_slots = 1
         game_event.departure_cp = self.game.theater.controlpoints[0]
-        game_event.player_attacking({CAS: {}, CAP: {}})
+        # game_event.player_attacking({CAS: {}, CAP: {}})
         game_event.depart_from = self.game.theater.controlpoints[0]
 
         self.game.initiate_event(game_event)

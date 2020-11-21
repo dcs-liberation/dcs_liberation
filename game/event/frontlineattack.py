@@ -3,7 +3,7 @@ from typing import List, Type
 from dcs.task import CAP, CAS, Task
 
 from game import db
-from game.operation.frontlineattack import FrontlineAttackOperation
+# from game.operation.frontlineattack import FrontlineAttackOperation
 from .event import Event
 from ..debriefing import Debriefing
 
