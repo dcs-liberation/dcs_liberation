@@ -1119,7 +1119,7 @@ TIME_PERIODS = {
 }
 
 REWARDS = {
-    "power": 4, "warehouse": 2, "fuel": 2, "ammo": 2,
+    "power": 4, "warehouse": 2, "ware": 2, "fuel": 2, "ammo": 2,
     "farp": 1, "fob": 1, "factory": 10, "comms": 10, "oil": 10,
     "derrick": 8
 }
