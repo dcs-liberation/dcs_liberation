@@ -67,10 +67,7 @@ class Conflict:
                  position: Point,
                  heading=None,
                  distance=None,
-                 ground_attackers_location: Point = None,
-                 ground_defenders_location: Point = None,
-                 air_attackers_location: Point = None,
-                 air_defenders_location: Point = None):
+                 ):
 
         self.attackers_side = attackers_side
         self.defenders_side = defenders_side
@@ -84,11 +81,6 @@ class Conflict:
         self.heading = heading
         self.distance = distance
         self.size = to_cp.size
-        self.radials = to_cp.radials
-        self.ground_attackers_location = ground_attackers_location
-        self.ground_defenders_location = ground_defenders_location
-        self.air_attackers_location = air_attackers_location
-        self.air_defenders_location = air_defenders_location
 
     @property
     def center(self) -> Point:
