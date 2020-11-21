@@ -12,7 +12,7 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
 import qt_ui.uiconstants as CONST
-from theater import ConflictTheater
+from game.theater import ConflictTheater
 
 
 @dataclass(frozen=True)
@@ -29,14 +29,16 @@ class Campaign:
             data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
-        return cls(data["name"], f"Terrain_{sanitized_theater}", data.get("authors", "???"),
-                   data.get("description", ""), ConflictTheater.from_json(data))
+        return cls(data["name"], f"Terrain_{sanitized_theater}",
+                   data.get("authors", "???"),
+                   data.get("description", ""),
+                   ConflictTheater.from_json(path.parent, data))
 
 
 def load_campaigns() -> List[Campaign]:
     campaign_dir = Path("resources\\campaigns")
     campaigns = []
-    for path in campaign_dir.iterdir():
+    for path in campaign_dir.glob("*.json"):
         try:
             logging.debug(f"Loading campaign from {path}...")
             campaign = Campaign.from_json(path)

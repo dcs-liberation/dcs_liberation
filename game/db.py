@@ -1244,7 +1244,7 @@ def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
 
-def unit_type_from_name(name: str) -> Optional[UnitType]:
+def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:
         return vehicle_map[name]
     elif name in plane_map:

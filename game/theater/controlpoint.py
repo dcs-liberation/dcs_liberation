@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import itertools
+import logging
+import random
 import re
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, TYPE_CHECKING
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -13,6 +16,7 @@ from dcs.ships import (
     Type_071_Amphibious_Transport_Dock,
 )
 from dcs.terrain.terrain import Airport
+from dcs.unittype import FlyingType
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
@@ -20,12 +24,16 @@ from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     BaseDefenseGroundObject,
+    EwrGroundObject,
+    SamGroundObject,
     TheaterGroundObject,
+    VehicleGroupGroundObject,
 )
 
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from ..event import UnitsDeliveryEvent
 
 
 class ControlPointType(Enum):
@@ -34,6 +42,87 @@ class ControlPointType(Enum):
     LHA_GROUP = 2              # A group with a Tarawa carrier (Helicopters & Harrier)
     FARP = 4                   # A FARP, with slots for helicopters
     FOB = 5                    # A FOB (ground units only)
+    OFF_MAP = 6
+
+
+class LocationType(Enum):
+    BaseAirDefense = "base air defense"
+    Coastal = "coastal defense"
+    Ewr = "EWR"
+    Garrison = "garrison"
+    MissileSite = "missile site"
+    OffshoreStrikeTarget = "offshore strike target"
+    Sam = "SAM"
+    Ship = "ship"
+    Shorad = "SHORAD"
+    StrikeTarget = "strike target"
+
+
+@dataclass
+class PresetLocations:
+    """Defines the preset locations loaded from the campaign mission file."""
+
+    #: Locations used for spawning ground defenses for bases.
+    base_garrisons: List[Point] = field(default_factory=list)
+
+    #: Locations used for spawning air defenses for bases. Used by SAMs, AAA,
+    #: and SHORADs.
+    base_air_defense: List[Point] = field(default_factory=list)
+
+    #: Locations used by EWRs.
+    ewrs: List[Point] = field(default_factory=list)
+
+    #: Locations used by SAMs outside of bases.
+    sams: List[Point] = field(default_factory=list)
+
+    #: Locations used by non-carrier ships. Carriers and LHAs are not random.
+    ships: List[Point] = field(default_factory=list)
+
+    #: Locations used by coastal defenses.
+    coastal_defenses: List[Point] = field(default_factory=list)
+
+    #: Locations used by ground based strike objectives.
+    strike_locations: List[Point] = field(default_factory=list)
+
+    #: Locations used by offshore strike objectives.
+    offshore_strike_locations: List[Point] = field(default_factory=list)
+
+    #: Locations of SAMs which should always be spawned.
+    required_sams: List[Point] = field(default_factory=list)
+
+    @staticmethod
+    def _random_from(points: List[Point]) -> Optional[Point]:
+        """Finds, removes, and returns a random position from the given list."""
+        if not points:
+            return None
+        point = random.choice(points)
+        points.remove(point)
+        return point
+
+    def random_for(self, location_type: LocationType) -> Optional[Point]:
+        """Returns a position suitable for the given location type.
+
+        The location, if found, will be claimed by the caller and not available
+        to subsequent calls.
+        """
+        if location_type == LocationType.Garrison:
+            return self._random_from(self.base_garrisons)
+        if location_type == LocationType.Sam:
+            return self._random_from(self.sams)
+        if location_type == LocationType.BaseAirDefense:
+            return self._random_from(self.base_air_defense)
+        if location_type == LocationType.Ewr:
+            return self._random_from(self.ewrs)
+        if location_type == LocationType.Shorad:
+            return self._random_from(self.base_garrisons)
+        if location_type == LocationType.OffshoreStrikeTarget:
+            return self._random_from(self.offshore_strike_locations)
+        if location_type == LocationType.Ship:
+            return self._random_from(self.ships)
+        if location_type == LocationType.StrikeTarget:
+            return self._random_from(self.strike_locations)
+        logging.error(f"Unknown location type: {location_type}")
+        return None
 
 
 class ControlPoint(MissionTarget):
@@ -57,6 +146,7 @@ class ControlPoint(MissionTarget):
         self.at = at
         self.connected_objectives: List[TheaterGroundObject] = []
         self.base_defenses: List[BaseDefenseGroundObject] = []
+        self.preset_locations = PresetLocations()
 
         self.size = size
         self.importance = importance
@@ -69,6 +159,7 @@ class ControlPoint(MissionTarget):
         self.cptype = cptype
         self.stances: Dict[int, CombatStance] = {}
         self.airport = None
+        self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
@@ -79,7 +170,7 @@ class ControlPoint(MissionTarget):
     def from_airport(cls, airport: Airport, radials: List[int], size: int, importance: float, has_frontline=True):
         assert airport
         obj = cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
-        obj.airport = airport()
+        obj.airport = airport
         return obj
 
     @classmethod
@@ -144,7 +235,7 @@ class ControlPoint(MissionTarget):
         return result
 
     @property
-    def available_aircraft_slots(self):
+    def total_aircraft_parking(self):
         """
         :return: The maximum number of aircraft that can be stored in this control point
         """
@@ -157,7 +248,7 @@ class ControlPoint(MissionTarget):
         else:
             return 0
 
-    def connect(self, to):
+    def connect(self, to: ControlPoint) -> None:
         self.connected_points.append(to)
         self.stances[to.id] = CombatStance.DEFENSIVE
 
@@ -222,6 +313,24 @@ class ControlPoint(MissionTarget):
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
 
+    def clear_base_defenses(self) -> None:
+        for base_defense in self.base_defenses:
+            if isinstance(base_defense, EwrGroundObject):
+                self.preset_locations.ewrs.append(base_defense.position)
+            elif isinstance(base_defense, SamGroundObject):
+                self.preset_locations.base_air_defense.append(
+                    base_defense.position)
+            elif isinstance(base_defense, VehicleGroupGroundObject):
+                self.preset_locations.base_garrisons.append(
+                    base_defense.position)
+            else:
+                logging.error(
+                    "Could not determine preset location type for "
+                    f"{base_defense}. Assuming garrison type.")
+                self.preset_locations.base_garrisons.append(
+                    base_defense.position)
+        self.base_defenses = []
+
     def capture(self, game: Game, for_player: bool) -> None:
         if for_player:
             self.captured = True
@@ -233,9 +342,8 @@ class ControlPoint(MissionTarget):
         self.base.aircraft = {}
         self.base.armor = {}
 
-        # Handle cyclic dependency.
+        self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
-        self.base_defenses = []
         BaseDefenseGenerator(game, self).generate()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
@@ -260,3 +368,41 @@ class ControlPoint(MissionTarget):
                 yield from [
                     # TODO: FlightType.STRIKE
                 ]
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        if self.is_carrier and aircraft not in db.CARRIER_CAPABLE:
+            return False
+        if self.is_lha and aircraft not in db.LHA_CAPABLE:
+            return False
+        return True
+
+    @property
+    def expected_aircraft_next_turn(self) -> int:
+        total = self.base.total_aircraft
+        assert self.pending_unit_deliveries
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                total += self.pending_unit_deliveries.units[unit_bought]
+        return total
+
+    @property
+    def unclaimed_parking(self) -> int:
+        return self.total_aircraft_parking - self.expected_aircraft_next_turn
+
+
+class OffMapSpawn(ControlPoint):
+    def __init__(self, id: int, name: str, position: Point):
+        from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
+        super().__init__(id, name, position, at=position, radials=[],
+                         size=SIZE_REGULAR, importance=IMPORTANCE_MEDIUM,
+                         has_frontline=False, cptype=ControlPointType.OFF_MAP)
+
+    def capture(self, game: Game, for_player: bool) -> None:
+        raise RuntimeError("Off map control points cannot be captured")
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from []
+
+    @property
+    def total_aircraft_parking(self) -> int:
+        return 1000

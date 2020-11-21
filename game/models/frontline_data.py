@@ -1,4 +1,4 @@
-from theater import ControlPoint
+from game.theater import ControlPoint
 
 
 class FrontlineData:

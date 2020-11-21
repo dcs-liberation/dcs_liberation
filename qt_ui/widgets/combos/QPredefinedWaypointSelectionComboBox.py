@@ -1,10 +1,10 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
+from game.theater import ControlPointType
 from gen import BuildingGroundObject, Conflict, FlightWaypointType
 from gen.flights.flight import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
-from theater import ControlPointType
 
 
 class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):

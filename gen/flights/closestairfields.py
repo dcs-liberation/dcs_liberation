@@ -1,7 +1,7 @@
 """Objective adjacency lists."""
 from typing import Dict, Iterator, List, Optional
 
-from theater import ConflictTheater, ControlPoint, MissionTarget
+from game.theater import ConflictTheater, ControlPoint, MissionTarget
 
 
 class ClosestAirfields:

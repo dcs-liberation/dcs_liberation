@@ -5,7 +5,8 @@ from typing import Tuple
 from dcs.country import Country
 from dcs.mapping import Point
 
-from theater import ConflictTheater, ControlPoint, FrontLine
+from game.theater.conflicttheater import ConflictTheater, FrontLine
+from game.theater.controlpoint import ControlPoint
 
 AIR_DISTANCE = 40000
 

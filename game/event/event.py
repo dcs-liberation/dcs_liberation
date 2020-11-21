@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Dict, List, Optional, Type, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
@@ -11,12 +11,12 @@ from dcs.unittype import UnitType
 from game import db, persistency
 from game.debriefing import Debriefing
 from game.infos.information import Information
-from game.operation.operation import Operation
+from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
 
 if TYPE_CHECKING:
     from ..game import Game
+    from game.operation.operation import Operation
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -107,14 +107,16 @@ class Event:
         for destroyed_aircraft in debriefing.killed_aircrafts:
             try:
                 cpid = int(destroyed_aircraft.split("|")[3])
-                type = db.unit_type_from_name(destroyed_aircraft.split("|")[4])
-                if cpid in cp_map.keys():
+                aircraft = db.unit_type_from_name(
+                    destroyed_aircraft.split("|")[4])
+                if cpid in cp_map:
                     cp = cp_map[cpid]
-                    if type in cp.base.aircraft.keys():
-                        logging.info("Aircraft destroyed : " + str(type))
-                        cp.base.aircraft[type] = max(0, cp.base.aircraft[type]-1)
-            except Exception as e:
-                print(e)
+                    if aircraft in cp.base.aircraft:
+                        logging.info(f"Aircraft destroyed: {aircraft}")
+                        cp.base.aircraft[aircraft] = max(
+                            0, cp.base.aircraft[aircraft] - 1)
+            except Exception:
+                logging.exception("Failed to commit destroyed aircraft")
 
         # ------------------------------
         # Destroyed ground units
@@ -123,13 +125,13 @@ class Event:
         for killed_ground_unit in debriefing.killed_ground_units:
             try:
                 cpid = int(killed_ground_unit.split("|")[3])
-                type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
+                aircraft = db.unit_type_from_name(killed_ground_unit.split("|")[4])
                 if cpid in cp_map.keys():
                     killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
                     cp = cp_map[cpid]
-                    if type in cp.base.armor.keys():
-                        logging.info("Ground unit destroyed : " + str(type))
-                        cp.base.armor[type] = max(0, cp.base.armor[type] - 1)
+                    if aircraft in cp.base.armor.keys():
+                        logging.info("Ground unit destroyed : " + str(aircraft))
+                        cp.base.armor[aircraft] = max(0, cp.base.armor[aircraft] - 1)
             except Exception as e:
                 print(e)
 
@@ -352,11 +354,13 @@ class Event:
                     logging.info(info.text)
 
 
-
 class UnitsDeliveryEvent(Event):
+
     informational = True
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
+    def __init__(self, attacker_name: str, defender_name: str,
+                 from_cp: ControlPoint, to_cp: ControlPoint,
+                 game: Game) -> None:
         super(UnitsDeliveryEvent, self).__init__(game=game,
                                                  location=to_cp.position,
                                                  from_cp=from_cp,
@@ -364,17 +368,16 @@ class UnitsDeliveryEvent(Event):
                                                  attacker_name=attacker_name,
                                                  defender_name=defender_name)
 
-        self.units: Dict[UnitType, int] = {}
+        self.units: Dict[Type[UnitType], int] = {}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: Dict[UnitType, int]):
+    def deliver(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 
-    def skip(self):
-
+    def skip(self) -> None:
         for k, v in self.units.items():
             info = Information("Ally Reinforcement", str(k.id) + " x " + str(v) + " at " + self.to_cp.name, self.game.turn)
             self.game.informations.append(info)

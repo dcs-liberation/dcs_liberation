@@ -4,9 +4,9 @@ from PySide2.QtGui import QColor, QPainter
 from PySide2.QtWidgets import QAction, QMenu
 
 import qt_ui.uiconstants as const
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
-from theater import ControlPoint
 from .QMapObject import QMapObject
 from ...displayoptions import DisplayOptions
 from ...windows.GameUpdateSignal import GameUpdateSignal
@@ -79,11 +79,8 @@ class QMapControlPoint(QMapObject):
 
         for connected in self.control_point.connected_points:
             if connected.captured:
+                menu.addAction(self.capture_action)
                 break
-        else:
-            return
-
-        menu.addAction(self.capture_action)
 
     def cheat_capture(self) -> None:
         self.control_point.capture(self.game_model.game, for_player=True)

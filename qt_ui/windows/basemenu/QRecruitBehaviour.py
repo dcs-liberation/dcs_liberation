@@ -1,3 +1,6 @@
+import logging
+from typing import Type
+
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -6,17 +9,17 @@ from PySide2.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
 )
-import logging
 from dcs.unittype import UnitType
 
-from theater import db
-
+from game import db
+from game.event import UnitsDeliveryEvent
+from game.theater import ControlPoint
+from qt_ui.models import GameModel
 
 
 class QRecruitBehaviour:
-    game = None
-    cp = None
-    deliveryEvent = None
+    game_model: GameModel
+    cp: ControlPoint
     existing_units_labels = None
     bought_amount_labels = None
     maximum_units = -1
@@ -24,11 +27,15 @@ class QRecruitBehaviour:
     BUDGET_FORMAT = "Available Budget: <b>${}M</b>"
 
     def __init__(self) -> None:
-        self.deliveryEvent = None
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
         self.recruitable_types = []
         self.update_available_budget()
+
+    @property
+    def pending_deliveries(self) -> UnitsDeliveryEvent:
+        assert self.cp.pending_unit_deliveries
+        return self.cp.pending_unit_deliveries
 
     @property
     def budget(self) -> int:
@@ -47,7 +54,7 @@ class QRecruitBehaviour:
         exist.setLayout(existLayout)
 
         existing_units = self.cp.base.total_units_of_type(unit_type)
-        scheduled_units = self.deliveryEvent.units.get(unit_type, 0)
+        scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
         unitName = QLabel("<b>" + db.unit_type_name_2(unit_type) + "</b>")
         unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
@@ -100,10 +107,10 @@ class QRecruitBehaviour:
 
         return row + 1
 
-    def _update_count_label(self, unit_type: UnitType):
+    def _update_count_label(self, unit_type: Type[UnitType]):
 
         self.bought_amount_labels[unit_type].setText("<b>{}</b>".format(
-            unit_type in self.deliveryEvent.units and "{}".format(self.deliveryEvent.units[unit_type]) or "0"
+            unit_type in self.pending_deliveries.units and "{}".format(self.pending_deliveries.units[unit_type]) or "0"
         ))
 
         self.existing_units_labels[unit_type].setText("<b>{}</b>".format(
@@ -119,17 +126,10 @@ class QRecruitBehaviour:
                 child.setText(
                     QRecruitBehaviour.BUDGET_FORMAT.format(self.budget))
 
-    def buy(self, unit_type):
-
-        if self.maximum_units > 0:
-            if self.total_units + 1 > self.maximum_units:
-                logging.info("Not enough space left !")
-                # TODO : display modal warning
-                return
-
+    def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]
         if self.budget >= price:
-            self.deliveryEvent.deliver({unit_type: 1})
+            self.pending_deliveries.deliver({unit_type: 1})
             self.budget -= price
         else:
             # TODO : display modal warning
@@ -138,12 +138,12 @@ class QRecruitBehaviour:
         self.update_available_budget()
 
     def sell(self, unit_type):
-        if self.deliveryEvent.units.get(unit_type, 0) > 0:
+        if self.pending_deliveries.units.get(unit_type, 0) > 0:
             price = db.PRICES[unit_type]
             self.budget += price
-            self.deliveryEvent.units[unit_type] = self.deliveryEvent.units[unit_type] - 1
-            if self.deliveryEvent.units[unit_type] == 0:
-                del self.deliveryEvent.units[unit_type]
+            self.pending_deliveries.units[unit_type] = self.pending_deliveries.units[unit_type] - 1
+            if self.pending_deliveries.units[unit_type] == 0:
+                del self.pending_deliveries.units[unit_type]
         elif self.cp.base.total_units_of_type(unit_type) > 0:
             price = db.PRICES[unit_type]
             self.budget += price
@@ -151,25 +151,6 @@ class QRecruitBehaviour:
 
         self._update_count_label(unit_type)
         self.update_available_budget()
-
-    @property
-    def total_units(self):
-
-        total = 0
-        for unit_type in self.recruitables_types:
-            total += self.cp.base.total_units(unit_type)
-            print(unit_type, total, self.cp.base.total_units(unit_type))
-        print("--------------------------------")
-
-        if self.deliveryEvent:
-            for unit_bought in self.deliveryEvent.units:
-                if db.unit_task(unit_bought) in self.recruitables_types:
-                    total += self.deliveryEvent.units[unit_bought]
-                    print(unit_bought, total, self.deliveryEvent.units[unit_bought])
-
-        print("=============================")
-
-        return total
 
     def set_maximum_units(self, maximum_units):
         """

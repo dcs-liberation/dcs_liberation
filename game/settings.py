@@ -6,10 +6,10 @@ from typing import Dict, Optional
 class Settings:
     # Generator settings
     inverted: bool = False
-    do_not_generate_carrier: bool = False  # TODO : implement
-    do_not_generate_lha: bool = False  # TODO : implement
-    do_not_generate_player_navy: bool = True  # TODO : implement
-    do_not_generate_enemy_navy: bool = True  # TODO : implement
+    do_not_generate_carrier: bool = False
+    do_not_generate_lha: bool = False
+    do_not_generate_player_navy: bool = False
+    do_not_generate_enemy_navy: bool = False
 
     # Difficulty settings
     player_skill: str = "Good"

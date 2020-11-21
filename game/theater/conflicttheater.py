@@ -1,13 +1,28 @@
 from __future__ import annotations
 
-import logging
+import itertools
 import json
+import logging
 from dataclasses import dataclass
+from functools import cached_property
 from itertools import tee
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
+from dcs import Mission
+from dcs.countries import (
+    CombinedJointTaskForcesBlue,
+    CombinedJointTaskForcesRed,
+)
+from dcs.country import Country
 from dcs.mapping import Point
+from dcs.planes import F_15C
+from dcs.ships import (
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    USS_Arleigh_Burke_IIa,
+)
+from dcs.statics import Fortification
 from dcs.terrain import (
     caucasus,
     nevada,
@@ -16,11 +31,20 @@ from dcs.terrain import (
     syria,
     thechannel,
 )
-from dcs.terrain.terrain import Terrain
+from dcs.terrain.terrain import Airport, Terrain
+from dcs.unitgroup import (
+    FlyingGroup,
+    Group,
+    ShipGroup,
+    StaticGroup,
+    VehicleGroup,
+)
+from dcs.vehicles import AirDefence, Armor
 
 from gen.flights.flight import FlightType
-from .controlpoint import ControlPoint, MissionTarget
+from .controlpoint import ControlPoint, MissionTarget, OffMapSpawn
 from .landmap import Landmap, load_landmap, poly_contains
+from ..utils import nm_to_meter
 
 Numeric = Union[int, float]
 
@@ -73,6 +97,266 @@ def pairwise(iterable):
     return zip(a, b)
 
 
+class MizCampaignLoader:
+    BLUE_COUNTRY = CombinedJointTaskForcesBlue()
+    RED_COUNTRY = CombinedJointTaskForcesRed()
+
+    OFF_MAP_UNIT_TYPE = F_15C.id
+
+    CV_UNIT_TYPE = CVN_74_John_C__Stennis.id
+    LHA_UNIT_TYPE = LHA_1_Tarawa.id
+    FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
+
+    EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
+    SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
+    GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
+    STRIKE_TARGET_UNIT_TYPE = Fortification.Workshop_A.id
+    OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
+    SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
+
+    # Multiple options for the required SAMs so campaign designers can more
+    # easily see the coverage of their IADS. Designers focused on campaigns that
+    # will primarily use SA-2s can place SA-2 launchers to ensure that they will
+    # have adequate coverage, and designers focused on campaigns that will
+    # primarily use SA-10s can do the same.
+    REQUIRED_SAM_UNIT_TYPES = {
+        AirDefence.SAM_Hawk_LN_M192,
+        AirDefence.SAM_Patriot_LN_M901,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85D,
+        AirDefence.SAM_SA_2_LN_SM_90,
+        AirDefence.SAM_SA_3_S_125_LN_5P73,
+    }
+
+    BASE_DEFENSE_RADIUS = nm_to_meter(2)
+
+    def __init__(self, miz: Path, theater: ConflictTheater) -> None:
+        self.theater = theater
+        self.mission = Mission()
+        self.mission.load_file(str(miz))
+        self.control_point_id = itertools.count(1000)
+
+        # If there are no red carriers there usually aren't red units. Make sure
+        # both countries are initialized so we don't have to deal with None.
+        if self.mission.country(self.BLUE_COUNTRY.name) is None:
+            self.mission.coalition["blue"].add_country(self.BLUE_COUNTRY)
+        if self.mission.country(self.RED_COUNTRY.name) is None:
+            self.mission.coalition["red"].add_country(self.RED_COUNTRY)
+
+    @staticmethod
+    def control_point_from_airport(airport: Airport) -> ControlPoint:
+        # TODO: Radials?
+        radials = LAND
+
+        # The wiki says this is a legacy property and to just use regular.
+        size = SIZE_REGULAR
+
+        # The importance is taken from the periodicity of the airport's
+        # warehouse divided by 10. 30 is the default, and out of range (valid
+        # values are between 1.0 and 1.4). If it is used, pick the default
+        # importance.
+        if airport.periodicity == 30:
+            importance = IMPORTANCE_MEDIUM
+        else:
+            importance = airport.periodicity / 10
+
+        cp = ControlPoint.from_airport(airport, radials, size, importance)
+        cp.captured = airport.is_blue()
+
+        # Use the unlimited aircraft option to determine if an airfield should
+        # be owned by the player when the campaign is "inverted".
+        cp.captured_invert = airport.unlimited_aircrafts
+
+        return cp
+
+    def country(self, blue: bool) -> Country:
+        country = self.mission.country(
+            self.BLUE_COUNTRY.name if blue else self.RED_COUNTRY.name)
+        # Should be guaranteed because we initialized them.
+        assert country
+        return country
+
+    @property
+    def blue(self) -> Country:
+        return self.country(blue=True)
+
+    @property
+    def red(self) -> Country:
+        return self.country(blue=False)
+
+    def off_map_spawns(self, blue: bool) -> Iterator[FlyingGroup]:
+        for group in self.country(blue).plane_group:
+            if group.units[0].type == self.OFF_MAP_UNIT_TYPE:
+                yield group
+
+    def carriers(self, blue: bool) -> Iterator[ShipGroup]:
+        for group in self.country(blue).ship_group:
+            if group.units[0].type == self.CV_UNIT_TYPE:
+                yield group
+
+    def lhas(self, blue: bool) -> Iterator[ShipGroup]:
+        for group in self.country(blue).ship_group:
+            if group.units[0].type == self.LHA_UNIT_TYPE:
+                yield group
+
+    @property
+    def ships(self) -> Iterator[ShipGroup]:
+        for group in self.blue.ship_group:
+            if group.units[0].type == self.SHIP_UNIT_TYPE:
+                yield group
+
+    @property
+    def ewrs(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.EWR_UNIT_TYPE:
+                yield group
+
+    @property
+    def sams(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.SAM_UNIT_TYPE:
+                yield group
+
+    @property
+    def garrisons(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.GARRISON_UNIT_TYPE:
+                yield group
+
+    @property
+    def strike_targets(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
+    @property
+    def offshore_strike_targets(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.OFFSHORE_STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
+    @property
+    def required_sams(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type == self.REQUIRED_SAM_UNIT_TYPES:
+                yield group
+
+    @cached_property
+    def control_points(self) -> Dict[int, ControlPoint]:
+        control_points = {}
+        for airport in self.mission.terrain.airport_list():
+            if airport.is_blue() or airport.is_red():
+                control_point = self.control_point_from_airport(airport)
+                control_points[control_point.id] = control_point
+
+        for blue in (False, True):
+            for group in self.off_map_spawns(blue):
+                control_point = OffMapSpawn(next(self.control_point_id),
+                                            str(group.name), group.position)
+                control_point.captured = blue
+                control_point.captured_invert = group.late_activation
+                control_points[control_point.id] = control_point
+            for group in self.carriers(blue):
+                # TODO: Name the carrier.
+                control_point = ControlPoint.carrier(
+                    "carrier", group.position, next(self.control_point_id))
+                control_point.captured = blue
+                control_point.captured_invert = group.late_activation
+                control_points[control_point.id] = control_point
+            for group in self.lhas(blue):
+                # TODO: Name the LHA.
+                control_point = ControlPoint.lha(
+                    "lha", group.position, next(self.control_point_id))
+                control_point.captured = blue
+                control_point.captured_invert = group.late_activation
+                control_points[control_point.id] = control_point
+
+        return control_points
+
+    @property
+    def front_line_path_groups(self) -> Iterator[VehicleGroup]:
+        for group in self.country(blue=True).vehicle_group:
+            if group.units[0].type == self.FRONT_LINE_UNIT_TYPE:
+                yield group
+
+    @cached_property
+    def front_lines(self) -> Dict[str, ComplexFrontLine]:
+        # Dict of front line ID to a front line.
+        front_lines = {}
+        for group in self.front_line_path_groups:
+            # The unit will have its first waypoint at the source CP and the
+            # final waypoint at the destination CP. Intermediate waypoints
+            # define the curve of the front line.
+            waypoints = [p.position for p in group.points]
+            origin = self.mission.terrain.nearest_airport(waypoints[0])
+            if origin is None:
+                raise RuntimeError(
+                    f"No airport near the first waypoint of {group.name}")
+            destination = self.mission.terrain.nearest_airport(waypoints[-1])
+            if destination is None:
+                raise RuntimeError(
+                    f"No airport near the final waypoint of {group.name}")
+
+            # Snap the begin and end points to the control points.
+            waypoints[0] = origin.position
+            waypoints[-1] = destination.position
+            front_line_id = f"{origin.id}|{destination.id}"
+            front_lines[front_line_id] = ComplexFrontLine(origin, waypoints)
+            self.control_points[origin.id].connect(
+                self.control_points[destination.id])
+            self.control_points[destination.id].connect(
+                self.control_points[origin.id])
+        return front_lines
+
+    def objective_info(self, group: Group) -> Tuple[ControlPoint, int]:
+        closest = self.theater.closest_control_point(group.position)
+        distance = closest.position.distance_to_point(group.position)
+        return closest, distance
+
+    def add_preset_locations(self) -> None:
+        for group in self.garrisons:
+            closest, distance = self.objective_info(group)
+            if distance < self.BASE_DEFENSE_RADIUS:
+                closest.preset_locations.base_garrisons.append(group.position)
+            else:
+                logging.warning(
+                    f"Found garrison unit too far from base: {group.name}")
+
+        for group in self.sams:
+            closest, distance = self.objective_info(group)
+            if distance < self.BASE_DEFENSE_RADIUS:
+                closest.preset_locations.base_air_defense.append(group.position)
+            else:
+                closest.preset_locations.sams.append(group.position)
+
+        for group in self.ewrs:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.ewrs.append(group.position)
+
+        for group in self.strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.strike_locations.append(group.position)
+
+        for group in self.offshore_strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.offshore_strike_locations.append(
+                group.position)
+
+        for group in self.ships:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.ships.append(group.position)
+
+        for group in self.required_sams:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_sams.append(group.position)
+
+    def populate_theater(self) -> None:
+        for control_point in self.control_points.values():
+            self.theater.add_controlpoint(control_point)
+        self.add_preset_locations()
+        self.theater.set_frontline_data(self.front_lines)
+
+
 class ConflictTheater:
     terrain: Terrain
 
@@ -83,16 +367,34 @@ class ConflictTheater:
     land_poly = None  # type: Polygon
     """
     daytime_map: Dict[str, Tuple[int, int]]
-    frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
+    _frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
 
     def __init__(self):
         self.controlpoints: List[ControlPoint] = []
-        self.frontline_data = FrontLine.load_json_frontlines(self)
+        self._frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
+
+    @property
+    def frontline_data(self) -> Optional[Dict[str, ComplexFrontLine]]:
+        if self._frontline_data is None:
+            self.load_frontline_data_from_file()
+        return self._frontline_data
+
+    def load_frontline_data_from_file(self) -> None:
+        if self._frontline_data is not None:
+            logging.warning("Replacing existing frontline data from file")
+        self._frontline_data = FrontLine.load_json_frontlines(self)
+        if self._frontline_data is None:
+            self._frontline_data = {}
+
+    def set_frontline_data(self, data: Dict[str, ComplexFrontLine]) -> None:
+        if self._frontline_data is not None:
+            logging.warning("Replacing existing frontline data")
+        self._frontline_data = data
 
     def add_controlpoint(self, point: ControlPoint,
                          connected_to: Optional[List[ControlPoint]] = None):
@@ -153,11 +455,21 @@ class ConflictTheater:
     def enemy_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if not point.captured]
 
+    def closest_control_point(self, point: Point) -> ControlPoint:
+        closest = self.controlpoints[0]
+        closest_distance = point.distance_to_point(closest.position)
+        for control_point in self.controlpoints[1:]:
+            distance = point.distance_to_point(control_point.position)
+            if distance < closest_distance:
+                closest = control_point
+                closest_distance = distance
+        return closest
+
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
 
         if p["type"] == "airbase":
 
-            airbase = theater.terrain.airports[p["id"]].__class__
+            airbase = theater.terrain.airports[p["id"]]
 
             if "radials" in p.keys():
                 radials = p["radials"]
@@ -188,7 +500,7 @@ class ConflictTheater:
         return cp
         
     @staticmethod
-    def from_json(data: Dict[str, Any]) -> ConflictTheater:
+    def from_json(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
         theaters = {
             "Caucasus": CaucasusTheater,
             "Nevada": NevadaTheater,
@@ -199,6 +511,12 @@ class ConflictTheater:
         }
         theater = theaters[data["theater"]]
         t = theater()
+
+        miz = data.get("miz", None)
+        if miz is not None:
+            MizCampaignLoader(directory / miz, t).populate_theater()
+            return t
+
         cps = {}
         for p in data["player_points"]:
             cp = t.add_json_cp(theater, p)
@@ -375,10 +693,6 @@ class FrontLine(MissionTarget):
     def control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """Returns a tuple of the two control points."""
         return self.control_point_a, self.control_point_b
-
-    @property
-    def middle_point(self):
-        self.point_from_a(self.attack_distance / 2)
 
     @property
     def attack_distance(self):

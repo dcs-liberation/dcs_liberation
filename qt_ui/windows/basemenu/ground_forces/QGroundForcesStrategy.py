@@ -1,8 +1,9 @@
-from PySide2.QtWidgets import QLabel, QGroupBox, QVBoxLayout
+from PySide2.QtWidgets import QGroupBox, QLabel, QVBoxLayout
 
 from game import Game
-from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import QGroundForcesStrategySelector
-from theater import ControlPoint
+from game.theater import ControlPoint
+from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import \
+    QGroundForcesStrategySelector
 
 
 class QGroundForcesStrategy(QGroupBox):

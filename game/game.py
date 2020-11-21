@@ -26,7 +26,7 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint
+from .theater import ConflictTheater, ControlPoint, OffMapSpawn
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
@@ -151,7 +151,7 @@ class Game:
             reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
             for cp in self.theater.player_points():
                 for g in cp.ground_objects:
-                    if g.category in REWARDS.keys():
+                    if g.category in REWARDS.keys() and not g.is_dead:
                         reward = reward + REWARDS[g.category]
             return reward
         else:
@@ -159,9 +159,6 @@ class Game:
 
     def _budget_player(self):
         self.budget += self.budget_reward_amount
-
-    def awacs_expense_commit(self):
-        self.budget -= AWACS_BUDGET_COST
 
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
         event = UnitsDeliveryEvent(attacker_name=self.player_name,
@@ -171,10 +168,6 @@ class Game:
                                    game=self)
         self.events.append(event)
         return event
-
-    def units_delivery_remove(self, event: Event):
-        if event in self.events:
-            self.events.remove(event)
 
     def initiate_event(self, event: Event):
         #assert event in self.events
@@ -201,12 +194,6 @@ class Game:
     def on_load(self) -> None:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-
-        # Save game compatibility.
-
-        # TODO: Remove in 2.3.
-        if not hasattr(self, "conditions"):
-            self.conditions = self.generate_conditions()
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
@@ -248,6 +235,7 @@ class Game:
 
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
+            cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
 
         # Plan flights & combat for next turn
@@ -274,7 +262,7 @@ class Game:
         production = 0.0
         for enemy_point in self.theater.enemy_points():
             for g in enemy_point.ground_objects:
-                if g.category in REWARDS.keys():
+                if g.category in REWARDS.keys() and not g.is_dead:
                     production = production + REWARDS[g.category]
 
         production = production * 0.75
@@ -288,6 +276,9 @@ class Game:
                     potential_cp_armor.append(cp)
         if len(potential_cp_armor) == 0:
             potential_cp_armor = self.theater.enemy_points()
+
+        potential_cp_armor = [p for p in potential_cp_armor if
+                              not isinstance(p, OffMapSpawn)]
 
         i = 0
         potential_units = db.FACTIONS[self.enemy_name].frontline_units
@@ -325,7 +316,7 @@ class Game:
                 if i > 50 or budget_for_aircraft <= 0:
                     break
                 target_cp = random.choice(potential_cp_armor)
-                if target_cp.base.total_planes >= MAX_AIRCRAFT:
+                if target_cp.base.total_aircraft >= MAX_AIRCRAFT:
                     continue
                 unit = random.choice(potential_units)
                 price = db.PRICES[unit] * 2

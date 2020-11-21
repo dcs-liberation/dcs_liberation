@@ -16,11 +16,24 @@ from typing import (
     Type,
 )
 
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import FlyingType
 
 from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
+from game.theater import (
+    ControlPoint,
+    FrontLine,
+    MissionTarget,
+    OffMapSpawn,
+    SamGroundObject,
+    TheaterGroundObject,
+)
+# Avoid importing some types that cause circular imports unless type checking.
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    NavalGroundObject, VehicleGroupGroundObject,
+)
 from game.utils import nm_to_meter
 from gen import Conflict
 from gen.ato import Package
@@ -46,19 +59,6 @@ from gen.flights.flight import (
 )
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.flights.traveltime import TotEstimator
-from theater import (
-    ControlPoint,
-    FrontLine,
-    MissionTarget,
-    TheaterGroundObject,
-    SamGroundObject,
-)
-
-# Avoid importing some types that cause circular imports unless type checking.
-from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    NavalGroundObject, VehicleGroupGroundObject,
-)
 
 if TYPE_CHECKING:
     from game import Game
@@ -119,7 +119,7 @@ class AircraftAllocator:
 
     def find_aircraft_for_flight(
             self, flight: ProposedFlight
-    ) -> Optional[Tuple[ControlPoint, UnitType]]:
+    ) -> Optional[Tuple[ControlPoint, FlyingType]]:
         """Finds aircraft suitable for the given mission.
 
         Searches for aircraft capable of performing the given mission within the
@@ -190,7 +190,7 @@ class AircraftAllocator:
 
     def find_aircraft_of_type(
             self, flight: ProposedFlight, types: List[Type[FlyingType]],
-    ) -> Optional[Tuple[ControlPoint, UnitType]]:
+    ) -> Optional[Tuple[ControlPoint, FlyingType]]:
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
@@ -214,6 +214,8 @@ class PackageBuilder:
                  global_inventory: GlobalAircraftInventory,
                  is_player: bool,
                  start_type: str) -> None:
+        self.closest_airfields = closest_airfields
+        self.is_player = is_player
         self.package = Package(location)
         self.allocator = AircraftAllocator(closest_airfields, global_inventory,
                                            is_player)
@@ -232,10 +234,31 @@ class PackageBuilder:
         if assignment is None:
             return False
         airfield, aircraft = assignment
-        flight = Flight(self.package, aircraft, plan.num_aircraft, airfield,
-                        plan.task, self.start_type)
+        if isinstance(airfield, OffMapSpawn):
+            start_type = "In Flight"
+        else:
+            start_type = self.start_type
+
+        flight = Flight(self.package, aircraft, plan.num_aircraft, plan.task,
+                        start_type, departure=airfield, arrival=airfield,
+                        divert=self.find_divert_field(aircraft, airfield))
         self.package.add_flight(flight)
         return True
+
+    def find_divert_field(self, aircraft: FlyingType,
+                          arrival: ControlPoint) -> Optional[ControlPoint]:
+        divert_limit = nm_to_meter(150)
+        for airfield in self.closest_airfields.airfields_within(divert_limit):
+            if airfield.captured != self.is_player:
+                continue
+            if airfield == arrival:
+                continue
+            if not airfield.can_land(aircraft):
+                continue
+            if isinstance(airfield, OffMapSpawn):
+                continue
+            return airfield
+        return None
 
     def build(self) -> Package:
         """Returns the built package."""
@@ -406,6 +429,9 @@ class ObjectiveFinder:
         CP.
         """
         for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                # Off-map spawn locations don't need protection.
+                continue
             airfields_in_proximity = self.closest_airfields_to(cp)
             airfields_in_threat_range = airfields_in_proximity.airfields_within(
                 self.AIRFIELD_THREAT_RANGE

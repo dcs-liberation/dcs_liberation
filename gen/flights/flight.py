@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
@@ -65,6 +65,7 @@ class FlightWaypointType(Enum):
     INGRESS_DEAD = 20
     INGRESS_SWEEP = 21
     INGRESS_BAI = 22
+    DIVERT = 23
 
 
 class FlightWaypoint:
@@ -132,13 +133,16 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: FlyingType, count: int,
-                 from_cp: ControlPoint, flight_type: FlightType,
-                 start_type: str) -> None:
+    def __init__(self, package: Package, unit_type: Type[FlyingType],
+                 count: int, flight_type: FlightType, start_type: str,
+                 departure: ControlPoint, arrival: ControlPoint,
+                 divert: Optional[ControlPoint]) -> None:
         self.package = package
         self.unit_type = unit_type
         self.count = count
-        self.from_cp = from_cp
+        self.departure = departure
+        self.arrival = arrival
+        self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
@@ -156,6 +160,10 @@ class Flight:
             flight=self,
             custom_waypoints=[]
         )
+
+    @property
+    def from_cp(self) -> ControlPoint:
+        return self.departure
 
     @property
     def points(self) -> List[FlightWaypoint]:

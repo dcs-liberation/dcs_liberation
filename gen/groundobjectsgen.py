@@ -20,14 +20,14 @@ from dcs.task import (
     EPLRS,
     OptAlarmState,
 )
-from dcs.unit import Ship, Vehicle, Unit
+from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import Group, ShipGroup, StaticGroup
 from dcs.unittype import StaticType, UnitType
 
 from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.db import unit_type_from_name
-from theater import ControlPoint, TheaterGroundObject
+from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject, CarrierGroundObject,
     GenericCarrierGroundObject,

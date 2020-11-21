@@ -70,7 +70,13 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
-from game.utils import nm_to_meter
+from game.theater.controlpoint import (
+    ControlPoint,
+    ControlPointType,
+    OffMapSpawn,
+)
+from game.theater.theatergroundobject import TheaterGroundObject
+from game.utils import knots_to_kph, nm_to_meter
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -83,8 +89,6 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from theater import TheaterGroundObject
-from game.theater.controlpoint import ControlPoint, ControlPointType
 from .conflictgen import Conflict
 from .flights.flightplan import (
     CasFlightPlan,
@@ -92,7 +96,7 @@ from .flights.flightplan import (
     PatrollingFlightPlan,
     SweepFlightPlan,
 )
-from .flights.traveltime import TotEstimator
+from .flights.traveltime import GroundSpeed, TotEstimator
 from .naming import namegen
 from .runways import RunwayAssigner
 
@@ -691,6 +695,18 @@ class AircraftConflictGenerator:
             return StartType.Cold
         return StartType.Warm
 
+    def determine_runway(self, cp: ControlPoint, dynamic_runways) -> RunwayData:
+        fallback = RunwayData(cp.full_name, runway_heading=0, runway_name="")
+        if cp.cptype == ControlPointType.AIRBASE:
+            assigner = RunwayAssigner(self.game.conditions)
+            return assigner.get_preferred_runway(cp.airport)
+        elif cp.is_fleet:
+            return dynamic_runways.get(cp.name, fallback)
+        else:
+            logging.warning(
+                f"Unhandled departure/arrival control point: {cp.cptype}")
+            return fallback
+
     def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
                      package: Package, flight: Flight,
                      dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -748,19 +764,9 @@ class AircraftConflictGenerator:
         channel = self.get_intra_flight_channel(unit_type)
         group.set_frequency(channel.mhz)
 
-        # TODO: Support for different departure/arrival airfields.
-        cp = flight.from_cp
-        fallback_runway = RunwayData(cp.full_name, runway_heading=0,
-                                     runway_name="")
-        if cp.cptype == ControlPointType.AIRBASE:
-            assigner = RunwayAssigner(self.game.conditions)
-            departure_runway = assigner.get_preferred_runway(
-                flight.from_cp.airport)
-        elif cp.is_fleet:
-            departure_runway = dynamic_runways.get(cp.name, fallback_runway)
-        else:
-            logging.warning(f"Unhandled departure control point: {cp.cptype}")
-            departure_runway = fallback_runway
+        divert = None
+        if flight.divert is not None:
+            divert = self.determine_runway(flight.divert, dynamic_runways)
 
         self.flights.append(FlightData(
             package=package,
@@ -770,10 +776,9 @@ class AircraftConflictGenerator:
             friendly=flight.from_cp.captured,
             # Set later.
             departure_delay=timedelta(),
-            departure=departure_runway,
-            arrival=departure_runway,
-            # TODO: Support for divert airfields.
-            divert=None,
+            departure=self.determine_runway(flight.departure, dynamic_runways),
+            arrival=self.determine_runway(flight.arrival, dynamic_runways),
+            divert=divert,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
             intra_flight_channel=channel
@@ -804,31 +809,37 @@ class AircraftConflictGenerator:
             group_size=count,
             parking_slots=None)
 
-    def _generate_inflight(self, name: str, side: Country, unit_type: FlyingType, count: int, at: Point) -> FlyingGroup:
-        assert count > 0
+    def _generate_inflight(self, name: str, side: Country, flight: Flight,
+                           origin: ControlPoint) -> FlyingGroup:
+        assert flight.count > 0
+        at = origin.position
 
-        if unit_type in helicopters.helicopter_map.values():
+        alt_type = "RADIO"
+        if isinstance(origin, OffMapSpawn):
+            alt = flight.flight_plan.waypoints[0].alt
+            alt_type = flight.flight_plan.waypoints[0].alt_type
+        elif flight.unit_type in helicopters.helicopter_map.values():
             alt = WARM_START_HELI_ALT
-            speed = WARM_START_HELI_AIRSPEED
         else:
             alt = WARM_START_ALTITUDE
-            speed = WARM_START_AIRSPEED
+
+        speed = knots_to_kph(GroundSpeed.for_flight(flight, alt))
 
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
 
-        logging.info("airgen: {} for {} at {} at {}".format(unit_type, side.id, alt, speed))
+        logging.info("airgen: {} for {} at {} at {}".format(flight.unit_type, side.id, alt, speed))
         group = self.m.flight_group(
             country=side,
             name=name,
-            aircraft_type=unit_type,
+            aircraft_type=flight.unit_type,
             airport=None,
             position=pos,
             altitude=alt,
             speed=speed,
             maintask=None,
-            group_size=count)
+            group_size=flight.count)
 
-        group.points[0].alt_type = "RADIO"
+        group.points[0].alt_type = alt_type
         return group
 
     def _generate_at_group(self, name: str, side: Country,
@@ -974,9 +985,8 @@ class AircraftConflictGenerator:
                 group = self._generate_inflight(
                     name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                     side=country,
-                    unit_type=flight.unit_type,
-                    count=flight.count,
-                    at=cp.position)
+                    flight=flight,
+                    origin=cp)
             elif cp.is_fleet:
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
@@ -1002,9 +1012,8 @@ class AircraftConflictGenerator:
             group = self._generate_inflight(
                 name=namegen.next_unit_name(country, cp.id, flight.unit_type),
                 side=country,
-                unit_type=flight.unit_type,
-                count=flight.count,
-                at=cp.position)
+                flight=flight,
+                origin=cp)
             group.points[0].alt = 1500
 
         return group

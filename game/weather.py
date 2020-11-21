@@ -10,7 +10,7 @@ from typing import Optional
 from dcs.weather import Weather as PydcsWeather, Wind
 
 from game.settings import Settings
-from theater import ConflictTheater
+from game.theater import ConflictTheater
 
 
 class TimeOfDay(Enum):

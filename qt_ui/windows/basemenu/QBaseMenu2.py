@@ -2,12 +2,12 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QPixmap
 from PySide2.QtWidgets import QDialog, QGridLayout, QHBoxLayout, QLabel, QWidget
 
+from game.theater import ControlPoint, ControlPointType
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, ControlPointType
 
 
 class QBaseMenu2(QDialog):
@@ -18,7 +18,6 @@ class QBaseMenu2(QDialog):
         # Attrs
         self.cp = cp
         self.game_model = game_model
-        self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
         self.objectName = "menuDialogue"
 
         # Widgets
@@ -58,7 +57,7 @@ class QBaseMenu2(QDialog):
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
-        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_planes, self.cp.base.total_armor,
+        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_aircraft, self.cp.base.total_armor,
                                                             "Available" if self.cp.has_runway() else "Unavailable"))
         self.topLayout.addWidget(title)
         self.topLayout.addWidget(unitsPower)

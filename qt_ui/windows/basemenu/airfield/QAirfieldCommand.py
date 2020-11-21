@@ -1,10 +1,10 @@
 from PySide2.QtWidgets import QFrame, QGridLayout, QGroupBox, QVBoxLayout
 
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.airfield.QAircraftRecruitmentMenu import \
     QAircraftRecruitmentMenu
 from qt_ui.windows.mission.QPlannedFlightsView import QPlannedFlightsView
-from theater import ControlPoint
 
 
 class QAirfieldCommand(QFrame):
