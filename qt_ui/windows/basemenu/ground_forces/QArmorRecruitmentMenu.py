@@ -6,11 +6,12 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.task import PinpointStrike
 
-from game.event import UnitsDeliveryEvent
+from game import db
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, PinpointStrike, db
 
 
 class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
@@ -22,12 +23,6 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
-
-        for event in self.game_model.game.events:
-            if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
-                self.deliveryEvent = event
-        if not self.deliveryEvent:
-            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
         self.init_ui()
 

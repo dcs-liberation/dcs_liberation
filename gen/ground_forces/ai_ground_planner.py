@@ -2,12 +2,12 @@ import random
 from enum import Enum
 from typing import Dict, List
 
-from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 from dcs.unittype import VehicleType
+from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
 
 TYPE_TANKS = [
     Armor.MBT_T_55,

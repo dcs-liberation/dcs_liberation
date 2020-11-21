@@ -8,8 +8,8 @@ import qt_ui.uiconstants as const
 from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import REWARDS
+from game.theater import ControlPoint, TheaterGroundObject
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
-from theater import ControlPoint, TheaterGroundObject
 from .QMapObject import QMapObject
 from ...displayoptions import DisplayOptions
 

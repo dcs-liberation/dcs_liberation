@@ -1,7 +1,9 @@
 from PySide2.QtWidgets import QFrame, QGridLayout
+
 from game import Game
-from qt_ui.windows.basemenu.base_defenses.QBaseInformation import QBaseInformation
-from theater import ControlPoint
+from game.theater import ControlPoint
+from qt_ui.windows.basemenu.base_defenses.QBaseInformation import \
+    QBaseInformation
 
 
 class QBaseDefensesHQ(QFrame):

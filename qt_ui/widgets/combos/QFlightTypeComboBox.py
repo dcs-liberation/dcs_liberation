@@ -2,7 +2,7 @@
 
 from PySide2.QtWidgets import QComboBox
 
-from theater import ConflictTheater, MissionTarget
+from game.theater import ConflictTheater, MissionTarget
 
 
 class QFlightTypeComboBox(QComboBox):

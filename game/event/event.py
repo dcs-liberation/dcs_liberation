@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Dict, List, Optional, Type, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
@@ -11,12 +11,12 @@ from dcs.unittype import UnitType
 from game import db, persistency
 from game.debriefing import Debriefing
 from game.infos.information import Information
-from game.operation.operation import Operation
+from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
 
 if TYPE_CHECKING:
     from ..game import Game
+    from game.operation.operation import Operation
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000

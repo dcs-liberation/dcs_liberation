@@ -11,13 +11,14 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.task import CAP, CAS
 from dcs.unittype import UnitType
 
-from game.event.event import UnitsDeliveryEvent
+from game import db
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import CAP, CAS, ControlPoint, db
 
 
 class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
@@ -25,16 +26,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         QFrame.__init__(self)
         self.cp = cp
         self.game_model = game_model
-        self.deliveryEvent: Optional[UnitsDeliveryEvent] = None
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
-
-        for event in self.game_model.game.events:
-            if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
-                self.deliveryEvent = event
-        if not self.deliveryEvent:
-            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
 
         # Determine maximum number of aircrafts that can be bought
         self.set_maximum_units(self.cp.available_aircraft_slots)
@@ -92,7 +86,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def sell(self, unit_type: UnitType):
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
-        if self.deliveryEvent.units.get(unit_type, 0) <= 0:
+        if self.pending_deliveries.units.get(unit_type, 0) <= 0:
             global_inventory = self.game_model.game.aircraft_inventory
             inventory = global_inventory.for_control_point(self.cp)
             try:

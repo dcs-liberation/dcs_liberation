@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import math
-from typing import Iterable, List, Optional, Tuple, Iterator
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 from PySide2.QtCore import QPointF, Qt
 from PySide2.QtGui import (
@@ -27,6 +27,13 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.theater import ControlPoint
+from game.theater.conflicttheater import FrontLine
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    MissileSiteGroundObject,
+    TheaterGroundObject,
+)
 from game.utils import meter_to_feet
 from game.weather import TimeOfDay
 from gen import Conflict
@@ -39,13 +46,7 @@ from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from theater import ControlPoint
-from game.theater.conflicttheater import FrontLine
-from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    MissileSiteGroundObject,
-    TheaterGroundObject,
-)
+
 
 def binomial(i: int, n: int) -> float:
     """Binomial coefficient"""
@@ -373,6 +374,10 @@ class QLiberationMap(QGraphicsView):
             FlightWaypointType.TARGET_SHIP,
         )
         for idx, point in enumerate(flight.flight_plan.waypoints[1:]):
+            if point.waypoint_type == FlightWaypointType.DIVERT:
+                # Don't clutter the map showing divert points.
+                continue
+
             new_pos = self._transform_point(Point(point.x, point.y))
             self.draw_flight_path(scene, prev_pos, new_pos, is_player,
                                   selected)
@@ -386,7 +391,6 @@ class QLiberationMap(QGraphicsView):
                 self.draw_waypoint_info(scene, idx + 1, point, new_pos,
                                         flight.flight_plan)
             prev_pos = tuple(new_pos)
-        self.draw_flight_path(scene, prev_pos, pos, is_player, selected)
 
     def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
                       player: bool, selected: bool) -> None:

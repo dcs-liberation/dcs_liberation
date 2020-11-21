@@ -16,6 +16,7 @@ from dcs.ships import (
     Type_071_Amphibious_Transport_Dock,
 )
 from dcs.terrain.terrain import Airport
+from dcs.unittype import FlyingType
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
@@ -32,6 +33,7 @@ from .theatergroundobject import (
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from ..event import UnitsDeliveryEvent
 
 
 class ControlPointType(Enum):
@@ -157,6 +159,7 @@ class ControlPoint(MissionTarget):
         self.cptype = cptype
         self.stances: Dict[int, CombatStance] = {}
         self.airport = None
+        self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
@@ -366,6 +369,13 @@ class ControlPoint(MissionTarget):
                     # TODO: FlightType.STRIKE
                 ]
 
+    def can_land(self, aircraft: FlyingType) -> bool:
+        if self.is_carrier and aircraft not in db.CARRIER_CAPABLE:
+            return False
+        if self.is_lha and aircraft not in db.LHA_CAPABLE:
+            return False
+        return True
+
 
 class OffMapSpawn(ControlPoint):
     def __init__(self, id: int, name: str, position: Point):
@@ -379,3 +389,7 @@ class OffMapSpawn(ControlPoint):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         yield from []
+
+    @property
+    def available_aircraft_slots(self) -> int:
+        return 1000

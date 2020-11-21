@@ -1,10 +1,16 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, QGroupBox, QPushButton, QVBoxLayout
+from PySide2.QtWidgets import (
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+)
 
+from game.theater import ControlPoint, TheaterGroundObject
 from qt_ui.dialogs import Dialog
 from qt_ui.uiconstants import VEHICLES_ICONS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
-from theater import ControlPoint, TheaterGroundObject
 
 
 class QBaseDefenseGroupInfo(QGroupBox):

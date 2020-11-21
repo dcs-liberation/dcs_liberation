@@ -7,8 +7,8 @@ from typing import Iterator, Optional
 
 from dcs.terrain.terrain import Airport
 
+from game.theater import ControlPoint, ControlPointType
 from game.weather import Conditions
-from theater import ControlPoint, ControlPointType
 from .airfields import AIRFIELD_DATA
 from .radios import RadioFrequency
 from .tacan import TacanChannel

@@ -1,11 +1,11 @@
-from PySide2.QtWidgets import QFrame, QGridLayout, QLabel, QTabWidget
+from PySide2.QtWidgets import QTabWidget
 
+from game.theater import ControlPoint, OffMapSpawn
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.airfield.QAirfieldCommand import QAirfieldCommand
 from qt_ui.windows.basemenu.base_defenses.QBaseDefensesHQ import QBaseDefensesHQ
 from qt_ui.windows.basemenu.ground_forces.QGroundForcesHQ import QGroundForcesHQ
 from qt_ui.windows.basemenu.intel.QIntelInfo import QIntelInfo
-from theater import ControlPoint, OffMapSpawn
 
 
 class QBaseMenuTabs(QTabWidget):
