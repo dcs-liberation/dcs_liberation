@@ -76,6 +76,7 @@ from game.theater.controlpoint import (
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import TheaterGroundObject
+from game.unitmap import UnitMap
 from game.utils import knots_to_kph, nm_to_meter
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
@@ -647,12 +648,13 @@ AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
 class AircraftConflictGenerator:
-    def __init__(self, mission: Mission, settings: Settings,
-                 game: Game, radio_registry: RadioRegistry):
+    def __init__(self, mission: Mission, settings: Settings, game: Game,
+                 radio_registry: RadioRegistry, unit_map: UnitMap) -> None:
         self.m = mission
         self.game = game
         self.settings = settings
         self.radio_registry = radio_registry
+        self.unit_map = unit_map
         self.flights: List[FlightData] = []
 
     @cached_property
@@ -927,6 +929,7 @@ class AircraftConflictGenerator:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
+                self.unit_map.add_aircraft(group, flight)
                 self.setup_flight_group(group, package, flight, dynamic_runways)
                 self.create_waypoints(group, package, flight)
 

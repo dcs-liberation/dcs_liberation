@@ -23,7 +23,7 @@ class FrontlineAttackEvent(Event):
     def __str__(self):
         return "Frontline attack"
 
-    def is_successfull(self, debriefing: Debriefing):
+    def is_successful(self, debriefing: Debriefing):
         attackers_success = True
         if self.from_cp.captured:
             return attackers_success

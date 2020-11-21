@@ -235,8 +235,9 @@ class QTopPanel(QFrame):
         game_event.departure_cp = self.game.theater.controlpoints[0]
         game_event.player_attacking()
 
-        self.game.initiate_event(game_event)
-        waiting = QWaitingForMissionResultWindow(game_event, self.game)
+        unit_map = self.game.initiate_event(game_event)
+        waiting = QWaitingForMissionResultWindow(game_event, self.game,
+                                                 unit_map)
         waiting.show()
 
     def budget_update(self, game:Game):

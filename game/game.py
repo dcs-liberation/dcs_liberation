@@ -27,6 +27,7 @@ from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
 from .theater import ConflictTheater, ControlPoint, OffMapSpawn
+from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
@@ -173,15 +174,15 @@ class Game:
         self.events.append(event)
         return event
 
-    def initiate_event(self, event: Event):
+    def initiate_event(self, event: Event) -> UnitMap:
         #assert event in self.events
         logging.info("Generating {} (regular)".format(event))
-        event.generate()
+        return event.generate()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        if event.is_successfull(debriefing):
+        if event.is_successful(debriefing):
             self.budget += event.bonus()
 
         if event in self.events:

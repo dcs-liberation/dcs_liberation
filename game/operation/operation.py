@@ -34,6 +34,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 
 from .. import db
 from ..debriefing import Debriefing
+from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
     from game import Game
@@ -59,6 +60,7 @@ class Operation:
     is_quick = None
     is_awacs_enabled = False
     ca_slots = 0
+    unit_map: UnitMap
 
     def __init__(self,
                  departure_cp: ControlPoint,
@@ -94,7 +96,7 @@ class Operation:
     def units_of(self, country_name: str) -> List[UnitType]:
         return []
 
-    def is_successfull(self, debriefing: Debriefing) -> bool:
+    def is_successful(self, debriefing: Debriefing) -> bool:
         return True
 
     @classmethod
@@ -176,6 +178,10 @@ class Operation:
             for flight in airgen.flights:
                 gen.add_flight(flight)
             gen.generate()
+
+    @classmethod
+    def create_unit_map(cls) -> None:
+        cls.unit_map = UnitMap()
 
     @classmethod
     def create_radio_registries(cls) -> None:
@@ -269,8 +275,9 @@ class Operation:
                     dead=True,
                 )
 
-    def generate(self):
+    def generate(self) -> UnitMap:
         """Build the final Mission to be exported"""
+        self.create_unit_map()
         self.create_radio_registries()
         # Set mission time and weather conditions.
         EnvironmentGenerator(self.current_mission,
@@ -323,6 +330,8 @@ class Operation:
             self.airgen
         )
 
+        return self.unit_map
+
     @classmethod
     def _generate_air_units(cls) -> None:
         """Generate the air units for the Operation"""
@@ -339,7 +348,7 @@ class Operation:
         # Generate Aircraft Activity on the map
         cls.airgen = AircraftConflictGenerator(
             cls.current_mission, cls.game.settings, cls.game,
-            cls.radio_registry)
+            cls.radio_registry, cls.unit_map)
 
         cls.airgen.generate_flights(
             cls.current_mission.country(cls.game.player_country),
