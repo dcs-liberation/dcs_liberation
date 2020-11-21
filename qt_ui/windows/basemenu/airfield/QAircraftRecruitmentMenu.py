@@ -32,13 +32,13 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.existing_units_labels = {}
 
         # Determine maximum number of aircrafts that can be bought
-        self.set_maximum_units(self.cp.available_aircraft_slots)
+        self.set_maximum_units(self.cp.total_aircraft_parking)
         self.set_recruitable_types([CAP, CAS])
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        self.hangar_status = QHangarStatus(self.total_aircraft, self.cp.available_aircraft_slots)
+        self.hangar_status = QHangarStatus(self.cp)
 
         self.init_ui()
 
@@ -82,17 +82,12 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def buy(self, unit_type):
         if self.maximum_units > 0:
-            if self.total_aircraft + 1 > self.maximum_units:
+            if self.cp.unclaimed_parking <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
                 return
 
         super().buy(unit_type)
-        self.hangar_status.update_label(self.total_aircraft,
-                                        self.cp.available_aircraft_slots)
-
-    @property
-    def total_aircraft(self) -> int:
-        return self.cp.expected_aircraft_next_turn
+        self.hangar_status.update_label()
 
     def sell(self, unit_type: UnitType):
         # Don't need to remove aircraft from the inventory if we're canceling
@@ -110,22 +105,26 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     "assigned to a mission?", QMessageBox.Ok)
                 return
         super().sell(unit_type)
-        self.hangar_status.update_label(self.total_aircraft, self.cp.available_aircraft_slots)
+        self.hangar_status.update_label()
 
 
 class QHangarStatus(QHBoxLayout):
 
-    def __init__(self, current_amount: int, max_amount: int):
-        super(QHangarStatus, self).__init__()
+    def __init__(self, control_point: ControlPoint) -> None:
+        super().__init__()
+        self.control_point = control_point
+
         self.icon = QLabel()
         self.icon.setPixmap(ICONS["Hangar"])
         self.text = QLabel("")
 
-        self.update_label(current_amount, max_amount)
+        self.update_label()
         self.addWidget(self.icon, Qt.AlignLeft)
         self.addWidget(self.text, Qt.AlignLeft)
         self.addStretch(50)
         self.setAlignment(Qt.AlignLeft)
 
-    def update_label(self, current_amount: int, max_amount: int):
-        self.text.setText("<strong>{}/{}</strong>".format(current_amount, max_amount))
+    def update_label(self) -> None:
+        current_amount = self.control_point.expected_aircraft_next_turn
+        max_amount = self.control_point.total_aircraft_parking
+        self.text.setText(f"<strong>{current_amount}/{max_amount}</strong>")
