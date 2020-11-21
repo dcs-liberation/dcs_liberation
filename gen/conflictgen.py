@@ -158,6 +158,24 @@ class Conflict:
         return left_position, _heading_sum(heading, 90), int(right_position.distance_to_point(left_position))
 
     @classmethod
+    def frontline_cas_conflict(cls, attacker_name: str, defender_name: str, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
+        assert cls.has_frontline_between(from_cp, to_cp)
+        position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
+
+        return cls(
+            position=position,
+            heading=heading,
+            distance=distance,
+            theater=theater,
+            from_cp=from_cp,
+            to_cp=to_cp,
+            attackers_side=attacker_name,
+            defenders_side=defender_name,
+            attackers_country=attacker,
+            defenders_country=defender,
+        )
+
+    @classmethod
     def _extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         pos = initial
         for offset in range(0, int(max_distance), 500):

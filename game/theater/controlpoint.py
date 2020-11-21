@@ -160,6 +160,9 @@ class ControlPoint(MissionTarget):
         self.stances: Dict[int, CombatStance] = {}
         self.airport = None
         self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
+    
+    def __repr__(self):
+        return f"<{__class__}: {self.name}>"
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:

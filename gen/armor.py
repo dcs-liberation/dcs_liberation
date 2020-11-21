@@ -75,9 +75,32 @@ class GroundConflictGenerator:
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
         self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = random.choice([CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESSIVE])
+        self.enemy_stance = self._enemy_stance()
         self.game = game
         self.jtacs: List[JtacInfo] = []
+
+    def _enemy_stance(self):
+        """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
+        if len(self.enemy_planned_combat_groups) > len(self.player_planned_combat_groups): 
+            return random.choice(
+                [
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.ELIMINATION,
+                    CombatStance.BREAKTHROUGH
+                ]
+            )
+        else:
+            return random.choice(
+                [
+                    CombatStance.DEFENSIVE,
+                    CombatStance.DEFENSIVE,
+                    CombatStance.DEFENSIVE,
+                    CombatStance.AMBUSH,
+                    CombatStance.AGGRESSIVE
+                ]
+            )
 
     def _group_point(self, point) -> Point:
         distance = random.randint(
@@ -266,7 +289,7 @@ class GroundConflictGenerator:
                             hold_2.number = 3
                             dcs_group.add_trigger_action(hold_2)
 
-                            retreat_task = GoToWaypoint(toIndex=3)
+                            retreat_task = GoToWaypoint(to_index=3)
                             retreat_task.number = 4
                             dcs_group.add_trigger_action(retreat_task)
 
@@ -362,7 +385,7 @@ class GroundConflictGenerator:
         dcs_group.add_waypoint(self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)), PointAction.OffRoad)
 
         # Fallback task
-        fallback = ControlledTask(GoToWaypoint(toIndex=len(dcs_group.points)))
+        fallback = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
         fallback.enabled = False
         dcs_group.add_trigger_action(Hold())
         dcs_group.add_trigger_action(fallback)

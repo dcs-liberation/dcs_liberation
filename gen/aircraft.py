@@ -647,12 +647,11 @@ AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
 
 
 class AircraftConflictGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, settings: Settings,
+    def __init__(self, mission: Mission, settings: Settings,
                  game: Game, radio_registry: RadioRegistry):
         self.m = mission
         self.game = game
         self.settings = settings
-        self.conflict = conflict
         self.radio_registry = radio_registry
         self.flights: List[FlightData] = []
 

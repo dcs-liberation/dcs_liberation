@@ -92,7 +92,7 @@ class Event:
         self.operation.is_awacs_enabled = self.is_awacs_enabled
         self.operation.ca_slots = self.ca_slots
 
-        self.operation.prepare(self.game.theater.terrain, is_quick=False)
+        self.operation.prepare(self.game)
         self.operation.generate()
         self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
         self.environment_settings = self.operation.environment_settings

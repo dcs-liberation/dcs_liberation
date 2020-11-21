@@ -92,9 +92,8 @@ def turn_heading(heading, fac):
 
 
 class VisualGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, game: Game):
+    def __init__(self, mission: Mission, game: Game):
         self.mission = mission
-        self.conflict = conflict
         self.game = game
 
     def _generate_frontline_smokes(self):
