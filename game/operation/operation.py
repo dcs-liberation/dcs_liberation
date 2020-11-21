@@ -65,7 +65,7 @@ class Operation:
         self.departure_cp = departure_cp
         self.plugin_scripts: List[str] = []
         self.jtacs: List[JtacInfo] = []
-    
+
     @classmethod
     def prepare(cls, game: Game):
         with open("resources/default_options.lua", "r") as f:
@@ -74,7 +74,7 @@ class Operation:
         cls.game = game
         cls._setup_mission_coalitions()
         cls.current_mission.options.load_from_dict(options_dict)
-    
+
     @classmethod
     def conflicts(cls) -> Iterable[Conflict]:
         assert cls.game
@@ -179,13 +179,13 @@ class Operation:
             for flight in airgen.flights:
                 gen.add_flight(flight)
             gen.generate()
-    
+
     @classmethod
     def create_radio_registries(cls) -> None:
         unique_map_frequencies = set()  # type: Set[RadioFrequency]
         cls._create_tacan_registry(unique_map_frequencies)
         cls._create_radio_registry(unique_map_frequencies)
-    
+
     def assign_channels_to_flights(self, flights: List[FlightData],
                                    air_support: AirSupport) -> None:
         """Assigns preset radio channels for client flights."""
@@ -273,8 +273,9 @@ class Operation:
                     heading=d["orientation"],
                     dead=True,
                 )
-    
+
     def generate(self):
+        """Build the final Mission to be exported"""
         self.create_radio_registries()
         # Set mission time and weather conditions.
         EnvironmentGenerator(self.current_mission,
@@ -283,7 +284,7 @@ class Operation:
         self._generate_destroyed_units()
         self._generate_air_units()
         self.assign_channels_to_flights(self.airgen.flights,
-                                self.airsupportgen.air_support)
+                                        self.airsupportgen.air_support)
         self._generate_ground_conflicts()
 
         #  TODO: This is silly, once Bulls position is defined without Conflict this should be removed.
@@ -301,7 +302,8 @@ class Operation:
             self.current_mission.groundControl.red_tactical_commander = self.ca_slots
 
         # Options
-        forcedoptionsgen = ForcedOptionsGenerator(self.current_mission, self.game)
+        forcedoptionsgen = ForcedOptionsGenerator(
+            self.current_mission, self.game)
         forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
@@ -309,13 +311,72 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             visualgen.generate()
 
+        self.register_lua_plugins(self)
+
         self.notify_info_generators(
             self.groundobjectgen,
             self.airsupportgen,
             self.jtacs,
             self.airgen
-            )
+        )
 
+    @classmethod
+    def _generate_air_units(cls) -> None:
+        """Generate the air units for the Operation"""
+        #  TODO: this is silly, once AirSupportConflictGenerator doesn't require Conflict this can be removed.
+        default_conflict = [i for i in cls.conflicts()][0]
+
+        # Air Support (Tanker & Awacs)
+        cls.airsupportgen = AirSupportConflictGenerator(
+            cls.current_mission, default_conflict, cls.game, cls.radio_registry,
+            cls.tacan_registry)
+        cls.airsupportgen.generate(cls.is_awacs_enabled)
+
+        # Generate Aircraft Activity on the map
+        cls.airgen = AircraftConflictGenerator(
+            cls.current_mission, cls.game.settings, cls.game,
+            cls.radio_registry)
+
+        cls.airgen.generate_flights(
+            cls.current_mission.country(cls.game.player_country),
+            cls.game.blue_ato,
+            cls.groundobjectgen.runways
+        )
+        cls.airgen.generate_flights(
+            cls.current_mission.country(cls.game.enemy_country),
+            cls.game.red_ato,
+            cls.groundobjectgen.runways
+        )
+
+    def _generate_ground_conflicts(self) -> None:
+        """For each frontline in the Operation, generate the ground conflicts and JTACs"""
+        self.jtacs: List[JtacInfo] = []
+        for front_line in self.game.theater.conflicts(True):
+            player_cp = front_line.control_point_a
+            enemy_cp = front_line.control_point_b
+            conflict = Conflict.frontline_cas_conflict(
+                self.game.player_name,
+                self.game.enemy_name,
+                self.current_mission.country(self.game.player_country),
+                self.current_mission.country(self.game.enemy_country),
+                player_cp,
+                enemy_cp,
+                self.game.theater
+            )
+            # Generate frontline ops
+            player_gp = self.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
+            enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
+            ground_conflict_gen = GroundConflictGenerator(
+                self.current_mission,
+                conflict, self.game,
+                player_gp, enemy_gp,
+                player_cp.stances[enemy_cp.id]
+            )
+            ground_conflict_gen.generate()
+            self.jtacs.extend(ground_conflict_gen.jtacs)
+
+    def register_lua_plugins(self):
+        #  TODO: Refactor this
         luaData = {
             "AircraftCarriers": {},
             "Tankers": {},
@@ -471,58 +532,3 @@ dcsLiberation.TargetPoints = {
             if plugin.enabled:
                 plugin.inject_scripts(self)
                 plugin.inject_configuration(self)
-
-    @classmethod
-    def _generate_air_units(cls) -> None:
-        """Generate the air units for the Operation"""
-        #  TODO: this is silly, once AirSupportConflictGenerator doesn't require Conflict this can be removed.
-        default_conflict = [i for i in cls.conflicts()][0]
-
-        # Air Support (Tanker & Awacs)
-        cls.airsupportgen = AirSupportConflictGenerator(
-            cls.current_mission, default_conflict, cls.game, cls.radio_registry,
-            cls.tacan_registry)
-        cls.airsupportgen.generate(cls.is_awacs_enabled)
-
-        # Generate Aircraft Activity on the map
-        cls.airgen = AircraftConflictGenerator(
-            cls.current_mission, cls.game.settings, cls.game,
-            cls.radio_registry)
-
-        cls.airgen.generate_flights(
-            cls.current_mission.country(cls.game.player_country),
-            cls.game.blue_ato,
-            cls.groundobjectgen.runways
-        )
-        cls.airgen.generate_flights(
-            cls.current_mission.country(cls.game.enemy_country),
-            cls.game.red_ato,
-            cls.groundobjectgen.runways
-        )
-
-    def _generate_ground_conflicts(self) -> None:
-        """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        self.jtacs: List[JtacInfo] = []
-        for front_line in self.game.theater.conflicts(True):
-            player_cp = front_line.control_point_a
-            enemy_cp = front_line.control_point_b
-            conflict = Conflict.frontline_cas_conflict(
-                self.game.player_name,
-                self.game.enemy_name,
-                self.current_mission.country(self.game.player_country),
-                self.current_mission.country(self.game.enemy_country),
-                player_cp,
-                enemy_cp,
-                self.game.theater
-            )
-            # Generate frontline ops
-            player_gp = self.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
-            enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
-            ground_conflict_gen = GroundConflictGenerator(
-                self.current_mission,
-                conflict, self.game,
-                player_gp, enemy_gp,
-                player_cp.stances[enemy_cp.id]
-            )
-            ground_conflict_gen.generate()
-            self.jtacs.extend(ground_conflict_gen.jtacs)
