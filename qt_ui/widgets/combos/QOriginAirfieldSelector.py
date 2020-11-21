@@ -3,7 +3,7 @@ from typing import Iterable
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QComboBox
-from dcs.planes import PlaneType
+from dcs.unittype import FlyingType
 
 from game.inventory import GlobalAircraftInventory
 from game.theater.controlpoint import ControlPoint
@@ -20,7 +20,7 @@ class QOriginAirfieldSelector(QComboBox):
 
     def __init__(self, global_inventory: GlobalAircraftInventory,
                  origins: Iterable[ControlPoint],
-                 aircraft: PlaneType) -> None:
+                 aircraft: FlyingType) -> None:
         super().__init__()
         self.global_inventory = global_inventory
         self.origins = list(origins)
@@ -28,7 +28,7 @@ class QOriginAirfieldSelector(QComboBox):
         self.rebuild_selector()
         self.currentIndexChanged.connect(self.index_changed)
 
-    def change_aircraft(self, aircraft: PlaneType) -> None:
+    def change_aircraft(self, aircraft: FlyingType) -> None:
         if self.aircraft == aircraft:
             return
         self.aircraft = aircraft

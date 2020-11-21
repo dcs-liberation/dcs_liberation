@@ -16,6 +16,7 @@ from dcs.ships import (
     Type_071_Amphibious_Transport_Dock,
 )
 from dcs.terrain.terrain import Airport
+from dcs.unittype import FlyingType
 
 from game import db
 from gen.ground_forces.combat_stance import CombatStance
@@ -365,6 +366,13 @@ class ControlPoint(MissionTarget):
                 yield from [
                     # TODO: FlightType.STRIKE
                 ]
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        if self.is_carrier and aircraft not in db.CARRIER_CAPABLE:
+            return False
+        if self.is_lha and aircraft not in db.LHA_CAPABLE:
+            return False
+        return True
 
 
 class OffMapSpawn(ControlPoint):

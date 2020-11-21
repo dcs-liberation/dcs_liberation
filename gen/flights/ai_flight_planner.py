@@ -16,7 +16,7 @@ from typing import (
     Type,
 )
 
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import FlyingType
 
 from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
@@ -119,7 +119,7 @@ class AircraftAllocator:
 
     def find_aircraft_for_flight(
             self, flight: ProposedFlight
-    ) -> Optional[Tuple[ControlPoint, UnitType]]:
+    ) -> Optional[Tuple[ControlPoint, FlyingType]]:
         """Finds aircraft suitable for the given mission.
 
         Searches for aircraft capable of performing the given mission within the
@@ -190,7 +190,7 @@ class AircraftAllocator:
 
     def find_aircraft_of_type(
             self, flight: ProposedFlight, types: List[Type[FlyingType]],
-    ) -> Optional[Tuple[ControlPoint, UnitType]]:
+    ) -> Optional[Tuple[ControlPoint, FlyingType]]:
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
@@ -214,6 +214,8 @@ class PackageBuilder:
                  global_inventory: GlobalAircraftInventory,
                  is_player: bool,
                  start_type: str) -> None:
+        self.closest_airfields = closest_airfields
+        self.is_player = is_player
         self.package = Package(location)
         self.allocator = AircraftAllocator(closest_airfields, global_inventory,
                                            is_player)
@@ -239,9 +241,24 @@ class PackageBuilder:
 
         flight = Flight(self.package, aircraft, plan.num_aircraft, plan.task,
                         start_type, departure=airfield, arrival=airfield,
-                        divert=None)
+                        divert=self.find_divert_field(aircraft, airfield))
         self.package.add_flight(flight)
         return True
+
+    def find_divert_field(self, aircraft: FlyingType,
+                          arrival: ControlPoint) -> Optional[ControlPoint]:
+        divert_limit = nm_to_meter(150)
+        for airfield in self.closest_airfields.airfields_within(divert_limit):
+            if airfield.captured != self.is_player:
+                continue
+            if airfield == arrival:
+                continue
+            if not airfield.can_land(aircraft):
+                continue
+            if isinstance(airfield, OffMapSpawn):
+                continue
+            return airfield
+        return None
 
     def build(self) -> Package:
         """Returns the built package."""
