@@ -235,7 +235,7 @@ class ControlPoint(MissionTarget):
         return result
 
     @property
-    def available_aircraft_slots(self):
+    def total_aircraft_parking(self):
         """
         :return: The maximum number of aircraft that can be stored in this control point
         """
@@ -376,6 +376,19 @@ class ControlPoint(MissionTarget):
             return False
         return True
 
+    @property
+    def expected_aircraft_next_turn(self) -> int:
+        total = self.base.total_aircraft
+        assert self.pending_unit_deliveries
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                total += self.pending_unit_deliveries.units[unit_bought]
+        return total
+
+    @property
+    def unclaimed_parking(self) -> int:
+        return self.total_aircraft_parking - self.expected_aircraft_next_turn
+
 
 class OffMapSpawn(ControlPoint):
     def __init__(self, id: int, name: str, position: Point):
@@ -391,5 +404,5 @@ class OffMapSpawn(ControlPoint):
         yield from []
 
     @property
-    def available_aircraft_slots(self) -> int:
+    def total_aircraft_parking(self) -> int:
         return 1000

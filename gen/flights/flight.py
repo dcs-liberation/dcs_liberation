@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
@@ -133,8 +133,8 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: FlyingType, count: int,
-                 flight_type: FlightType, start_type: str,
+    def __init__(self, package: Package, unit_type: Type[FlyingType],
+                 count: int, flight_type: FlightType, start_type: str,
                  departure: ControlPoint, arrival: ControlPoint,
                  divert: Optional[ControlPoint]) -> None:
         self.package = package

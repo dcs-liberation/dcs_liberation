@@ -57,7 +57,7 @@ class QBaseMenu2(QDialog):
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
-        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_planes, self.cp.base.total_armor,
+        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_aircraft, self.cp.base.total_armor,
                                                             "Available" if self.cp.has_runway() else "Unavailable"))
         self.topLayout.addWidget(title)
         self.topLayout.addWidget(unitsPower)

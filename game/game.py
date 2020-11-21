@@ -84,7 +84,8 @@ class Game:
         self.ground_planners: Dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
-        self.__culling_points = self.compute_conflicts_position()
+        self.__culling_points: List[Point] = []
+        self.compute_conflicts_position()
         self.__destroyed_units: List[str] = []
         self.savepath = ""
         self.budget = PLAYER_BUDGET_INITIAL
@@ -239,7 +240,7 @@ class Game:
             self.aircraft_inventory.set_from_control_point(cp)
 
         # Plan flights & combat for next turn
-        self.__culling_points = self.compute_conflicts_position()
+        self.compute_conflicts_position()
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
@@ -316,7 +317,7 @@ class Game:
                 if i > 50 or budget_for_aircraft <= 0:
                     break
                 target_cp = random.choice(potential_cp_armor)
-                if target_cp.base.total_planes >= MAX_AIRCRAFT:
+                if target_cp.base.total_aircraft >= MAX_AIRCRAFT:
                     continue
                 unit = random.choice(potential_units)
                 price = db.PRICES[unit] * 2
@@ -364,6 +365,12 @@ class Game:
             points.append(front_line.control_point_a.position)
             points.append(front_line.control_point_b.position)
 
+        # If do_not_cull_carrier is enabled, add carriers as culling point
+        if self.settings.perf_do_not_cull_carrier:
+            for cp in self.theater.controlpoints:
+                if cp.is_carrier or cp.is_lha:
+                    points.append(cp.position)
+
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:
             cpoint = None
@@ -387,7 +394,7 @@ class Game:
         if len(points) == 0:
             points.append(Point(0, 0))
 
-        return points
+        self.__culling_points = points
 
     def add_destroyed_units(self, data):
         pos = Point(data["x"], data["z"])

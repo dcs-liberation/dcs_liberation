@@ -4,9 +4,8 @@ import math
 import typing
 from typing import Dict, Type
 
-from dcs.planes import PlaneType
 from dcs.task import CAP, CAS, Embarking, PinpointStrike, Task
-from dcs.unittype import UnitType, VehicleType
+from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import AirDefence, Armor
 
 from game import db
@@ -21,20 +20,16 @@ BASE_MIN_STRENGTH = 0
 
 
 class Base:
-    aircraft = {}  # type: typing.Dict[PlaneType, int]
-    armor = {}  # type: typing.Dict[VehicleType, int]
-    aa = {}  # type: typing.Dict[AirDefence, int]
-    strength = 1  # type: float
 
     def __init__(self):
-        self.aircraft = {}
-        self.armor = {}
-        self.aa = {}
+        self.aircraft: Dict[Type[FlyingType], int] = {}
+        self.armor: Dict[VehicleType, int] = {}
+        self.aa: Dict[AirDefence, int] = {}
         self.commision_points: Dict[Type, float] = {}
         self.strength = 1
 
     @property
-    def total_planes(self) -> int:
+    def total_aircraft(self) -> int:
         return sum(self.aircraft.values())
 
     @property
@@ -83,7 +78,7 @@ class Base:
         logging.info("{} for {} ({}): {}".format(self, for_type, count, result))
         return result
 
-    def _find_best_planes(self, for_type: Task, count: int) -> typing.Dict[PlaneType, int]:
+    def _find_best_planes(self, for_type: Task, count: int) -> typing.Dict[FlyingType, int]:
         return self._find_best_unit(self.aircraft, for_type, count)
 
     def _find_best_armor(self, for_type: Task, count: int) -> typing.Dict[Armor, int]:
@@ -155,7 +150,7 @@ class Base:
         if task:
             count = sum([v for k, v in self.aircraft.items() if db.unit_task(k) == task])
         else:
-            count = self.total_planes
+            count = self.total_aircraft
 
         count = int(math.ceil(count * PLANES_SCRAMBLE_FACTOR * self.strength))
         return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), count)
@@ -167,18 +162,18 @@ class Base:
         # previous logic removed because we always want the full air defense capabilities.
         return self.total_aa
 
-    def scramble_sweep(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+    def scramble_sweep(self, multiplier: float) -> typing.Dict[FlyingType, int]:
         return self._find_best_planes(CAP, self.scramble_count(multiplier, CAP))
 
     def scramble_last_defense(self):
         # return as many CAP-capable aircraft as we can since this is the last defense of the base
         # (but not more than 20 - that's just nuts)
-        return self._find_best_planes(CAP, min(self.total_planes, 20))
+        return self._find_best_planes(CAP, min(self.total_aircraft, 20))
 
-    def scramble_cas(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+    def scramble_cas(self, multiplier: float) -> typing.Dict[FlyingType, int]:
         return self._find_best_planes(CAS, self.scramble_count(multiplier, CAS))
 
-    def scramble_interceptors(self, multiplier: float) -> typing.Dict[PlaneType, int]:
+    def scramble_interceptors(self, multiplier: float) -> typing.Dict[FlyingType, int]:
         return self._find_best_planes(CAP, self.scramble_count(multiplier, CAP))
 
     def assemble_attack(self) -> typing.Dict[Armor, int]:

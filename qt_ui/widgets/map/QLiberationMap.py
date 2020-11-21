@@ -296,7 +296,7 @@ class QLiberationMap(QGraphicsView):
 
         # Display Culling
         if DisplayOptions.culling and self.game.settings.perf_culling:
-            self.display_culling()
+            self.display_culling(scene)
 
         for cp in self.game.theater.controlpoints:
         
