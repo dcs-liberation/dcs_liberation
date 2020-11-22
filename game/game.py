@@ -101,6 +101,9 @@ class Game:
             self.theater.controlpoints
         )
 
+        for cp in self.theater.controlpoints:
+            cp.pending_unit_deliveries = self.units_delivery_event(cp)
+
         self.sanitize_sides()
         self.on_load()
 

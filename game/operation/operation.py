@@ -311,14 +311,46 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        self.register_lua_plugins()
+        self.generate_lua(airgen, airsupportgen, jtacs)
 
+        # Inject Plugins Lua Scripts and data
+        for plugin in LuaPluginManager.plugins():
+            if plugin.enabled:
+                plugin.inject_scripts(self)
+                plugin.inject_configuration(self)
+
+        self.assign_channels_to_flights(self.airgen.flights,
+                                        self.airsupportgen.air_support)
         self.notify_info_generators(
             self.groundobjectgen,
             self.airsupportgen,
             self.jtacs,
             self.airgen
         )
+
+    def assign_channels_to_flights(self, flights: List[FlightData],
+                                   air_support: AirSupport) -> None:
+        """Assigns preset radio channels for client flights."""
+        for flight in flights:
+            if not flight.client_units:
+                continue
+            self.assign_channels_to_flight(flight, air_support)
+
+    def assign_channels_to_flight(self, flight: FlightData,
+                                  air_support: AirSupport) -> None:
+        """Assigns preset radio channels for a client flight."""
+        airframe = flight.aircraft_type
+
+        try:
+            aircraft_data = AIRCRAFT_DATA[airframe.id]
+        except KeyError:
+            logging.warning(f"No aircraft data for {airframe.id}")
+            return
+
+        if aircraft_data.channel_allocator is not None:
+            aircraft_data.channel_allocator.assign_channels_for_flight(
+                flight, air_support
+            )
 
     @classmethod
     def _generate_air_units(cls) -> None:
@@ -375,7 +407,9 @@ class Operation:
             ground_conflict_gen.generate()
             self.jtacs.extend(ground_conflict_gen.jtacs)
 
-    def register_lua_plugins(self):
+    def generate_lua(self, airgen: AircraftConflictGenerator,
+                     airsupportgen: AirSupportConflictGenerator,
+                     jtacs: List[JtacInfo]) -> None:
         #  TODO: Refactor this
         luaData = {
             "AircraftCarriers": {},
@@ -385,7 +419,7 @@ class Operation:
             "TargetPoints": {},
         }
 
-        for tanker in self.airsupportgen.air_support.tankers:
+        for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = {
                 "dcsGroupName": tanker.dcsGroupName,
                 "callsign": tanker.callsign,
@@ -395,14 +429,14 @@ class Operation:
             }
 
         if self.is_awacs_enabled:
-            for awacs in self.airsupportgen.air_support.awacs:
+            for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = {
                     "dcsGroupName": awacs.dcsGroupName,
                     "callsign": awacs.callsign,
                     "radio": awacs.freq.mhz
                 }
 
-        for jtac in self.jtacs:
+        for jtac in jtacs:
             luaData["JTACs"][jtac.callsign] = {
                 "dcsGroupName": jtac.dcsGroupName,
                 "callsign": jtac.callsign,
@@ -411,8 +445,11 @@ class Operation:
                 "laserCode": jtac.code
             }
 
-        for flight in self.airgen.flights:
-            if flight.friendly and flight.flight_type in [FlightType.ANTISHIP, FlightType.DEAD, FlightType.SEAD, FlightType.STRIKE]:
+        for flight in airgen.flights:
+            if flight.friendly and flight.flight_type in [FlightType.ANTISHIP,
+                                                          FlightType.DEAD,
+                                                          FlightType.SEAD,
+                                                          FlightType.STRIKE]:
                 flightType = flight.flight_type.name
                 flightTarget = flight.package.target
                 if flightTarget:
@@ -428,7 +465,8 @@ class Operation:
                     luaData["TargetPoints"][flightTargetName] = {
                         "name": flightTargetName,
                         "type": flightTargetType,
-                        "position": {"x": flightTarget.position.x, "y": flightTarget.position.y}
+                        "position": {"x": flightTarget.position.x,
+                                     "y": flightTarget.position.y}
                     }
 
         # set a LUA table with data from Liberation that we want to set
@@ -436,22 +474,22 @@ class Operation:
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath(".") + "]]"
         lua = """
--- setting configuration table
-env.info("DCSLiberation|: setting configuration table")
+        -- setting configuration table
+        env.info("DCSLiberation|: setting configuration table")
 
--- all data in this table is overridable.
-dcsLiberation = {}
+        -- all data in this table is overridable.
+        dcsLiberation = {}
 
--- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-dcsLiberation.installPath=""" + state_location + """
+        -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
+        dcsLiberation.installPath=""" + state_location + """
 
-"""
+        """
         # Process the tankers
         lua += """
 
--- list the tankers generated by Liberation
-dcsLiberation.Tankers = {
-"""
+        -- list the tankers generated by Liberation
+        dcsLiberation.Tankers = {
+        """
         for key in luaData["Tankers"]:
             data = luaData["Tankers"][key]
             dcsGroupName = data["dcsGroupName"]
@@ -460,30 +498,30 @@ dcsLiberation.Tankers = {
             tacan = data["tacan"]
             radio = data["radio"]
             lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', variant='{variant}', tacan='{tacan}', radio='{radio}' }}, \n"
-            #lua += f"    {{name='{dcsGroupName}', description='{callsign} ({variant})', information='Tacan:{tacan} Radio:{radio}' }}, \n"
+            # lua += f"    {{name='{dcsGroupName}', description='{callsign} ({variant})', information='Tacan:{tacan} Radio:{radio}' }}, \n"
         lua += "}"
 
         # Process the AWACSes
         lua += """
 
--- list the AWACs generated by Liberation
-dcsLiberation.AWACs = {
-"""
+        -- list the AWACs generated by Liberation
+        dcsLiberation.AWACs = {
+        """
         for key in luaData["AWACs"]:
             data = luaData["AWACs"][key]
             dcsGroupName = data["dcsGroupName"]
             callsign = data["callsign"]
             radio = data["radio"]
             lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', radio='{radio}' }}, \n"
-            #lua += f"    {{name='{dcsGroupName}', description='{callsign} (AWACS)', information='Radio:{radio}' }}, \n"
+            # lua += f"    {{name='{dcsGroupName}', description='{callsign} (AWACS)', information='Radio:{radio}' }}, \n"
         lua += "}"
 
         # Process the JTACs
         lua += """
 
--- list the JTACs generated by Liberation
-dcsLiberation.JTACs = {
-"""
+        -- list the JTACs generated by Liberation
+        dcsLiberation.JTACs = {
+        """
         for key in luaData["JTACs"]:
             data = luaData["JTACs"][key]
             dcsGroupName = data["dcsGroupName"]
@@ -492,15 +530,15 @@ dcsLiberation.JTACs = {
             laserCode = data["laserCode"]
             dcsUnit = data["dcsUnit"]
             lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone='{zone}', laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
-            #lua += f"    {{name='{dcsGroupName}', description='JTAC {callsign} ', information='Laser:{laserCode}', jtac={laserCode} }}, \n"
+            # lua += f"    {{name='{dcsGroupName}', description='JTAC {callsign} ', information='Laser:{laserCode}', jtac={laserCode} }}, \n"
         lua += "}"
 
         # Process the Target Points
         lua += """
 
--- list the target points generated by Liberation
-dcsLiberation.TargetPoints = {
-"""
+        -- list the target points generated by Liberation
+        dcsLiberation.TargetPoints = {
+        """
         for key in luaData["TargetPoints"]:
             data = luaData["TargetPoints"][key]
             name = data["name"]
@@ -508,27 +546,21 @@ dcsLiberation.TargetPoints = {
             positionX = data["position"]["x"]
             positionY = data["position"]["y"]
             lua += f"    {{name='{name}', pointType='{pointType}', positionX='{positionX}', positionY='{positionY}' }}, \n"
-            #lua += f"    {{name='{pointType} {name}', point{{x={positionX}, z={positionY} }} }}, \n"
+            # lua += f"    {{name='{pointType} {name}', point{{x={positionX}, z={positionY} }} }}, \n"
         lua += "}"
 
         lua += """
 
--- list the airbases generated by Liberation
--- dcsLiberation.Airbases = {}
+        -- list the airbases generated by Liberation
+        -- dcsLiberation.Airbases = {}
 
--- list the aircraft carriers generated by Liberation
--- dcsLiberation.Carriers = {}
+        -- list the aircraft carriers generated by Liberation
+        -- dcsLiberation.Carriers = {}
 
--- later, we'll add more data to the table
+        -- later, we'll add more data to the table
 
-"""
+        """
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
         trigger.add_action(DoScript(String(lua)))
         self.current_mission.triggerrules.triggers.append(trigger)
-
-        # Inject Plugins Lua Scripts and data
-        for plugin in LuaPluginManager.plugins():
-            if plugin.enabled:
-                plugin.inject_scripts(self)
-                plugin.inject_configuration(self)
