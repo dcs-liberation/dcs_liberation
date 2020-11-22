@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.theater.theatergroundobject import TheaterGroundObject
 
 import logging
 import os
@@ -95,10 +96,6 @@ class Operation:
 
     def is_successfull(self, debriefing: Debriefing) -> bool:
         return True
-
-    @property
-    def is_player_attack(self) -> bool:
-        return self.from_cp.captured
 
     @classmethod
     def _set_mission(cls, mission: Mission) -> None:
@@ -233,15 +230,13 @@ class Operation:
         cls.radio_registry = RadioRegistry()
         for data in AIRFIELD_DATA.values():
             if data.theater == cls.game.theater.terrain.name:
-                unique_map_frequencies.add(data.atc.hf)
-                unique_map_frequencies.add(data.atc.vhf_fm)
-                unique_map_frequencies.add(data.atc.vhf_am)
-                unique_map_frequencies.add(data.atc.uhf)
-                # No need to reserve ILS or TACAN because those are in the
-                # beacon list.
-        unique_map_frequencies: Set[RadioFrequency] = set()
-        for frequency in unique_map_frequencies:
-            cls.radio_registry.reserve(frequency)
+                if data.atc:
+                    unique_map_frequencies.add(data.atc.hf)
+                    unique_map_frequencies.add(data.atc.vhf_fm)
+                    unique_map_frequencies.add(data.atc.vhf_am)
+                    unique_map_frequencies.add(data.atc.uhf)
+                    # No need to reserve ILS or TACAN because those are in the
+                    # beacon list.
 
     @classmethod
     def _generate_ground_units(cls):
@@ -328,30 +323,6 @@ class Operation:
             self.airgen
         )
 
-    def assign_channels_to_flights(self, flights: List[FlightData],
-                                   air_support: AirSupport) -> None:
-        """Assigns preset radio channels for client flights."""
-        for flight in flights:
-            if not flight.client_units:
-                continue
-            self.assign_channels_to_flight(flight, air_support)
-
-    def assign_channels_to_flight(self, flight: FlightData,
-                                  air_support: AirSupport) -> None:
-        """Assigns preset radio channels for a client flight."""
-        airframe = flight.aircraft_type
-
-        try:
-            aircraft_data = AIRCRAFT_DATA[airframe.id]
-        except KeyError:
-            logging.warning(f"No aircraft data for {airframe.id}")
-            return
-
-        if aircraft_data.channel_allocator is not None:
-            aircraft_data.channel_allocator.assign_channels_for_flight(
-                flight, air_support
-            )
-
     @classmethod
     def _generate_air_units(cls) -> None:
         """Generate the air units for the Operation"""
@@ -359,6 +330,7 @@ class Operation:
         default_conflict = [i for i in cls.conflicts()][0]
 
         # Air Support (Tanker & Awacs)
+        assert cls.radio_registry and cls.tacan_registry
         cls.airsupportgen = AirSupportConflictGenerator(
             cls.current_mission, default_conflict, cls.game, cls.radio_registry,
             cls.tacan_registry)
@@ -382,7 +354,6 @@ class Operation:
 
     def _generate_ground_conflicts(self) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        self.jtacs: List[JtacInfo] = []
         for front_line in self.game.theater.conflicts(True):
             player_cp = front_line.control_point_a
             enemy_cp = front_line.control_point_b
@@ -417,7 +388,7 @@ class Operation:
             "AWACs": {},
             "JTACs": {},
             "TargetPoints": {},
-        }
+        }  # type: ignore
 
         for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = {
@@ -455,7 +426,7 @@ class Operation:
                 if flightTarget:
                     flightTargetName = None
                     flightTargetType = None
-                    if hasattr(flightTarget, 'obj_name'):
+                    if isinstance(flightTarget, TheaterGroundObject):
                         flightTargetName = flightTarget.obj_name
                         flightTargetType = flightType + \
                             f" TGT ({flightTarget.category})"
@@ -563,4 +534,4 @@ class Operation:
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
         trigger.add_action(DoScript(String(lua)))
-        self.current_mission.triggerrules.triggers.append(trigger)
+        Operation.current_mission.triggerrules.triggers.append(trigger)
