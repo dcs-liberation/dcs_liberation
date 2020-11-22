@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-import typing
+from typing import TYPE_CHECKING
 from enum import IntEnum
 
 from dcs.mission import Mission
@@ -7,6 +9,8 @@ from dcs.forcedoptions import ForcedOptions
 
 from .conflictgen import *
 
+if TYPE_CHECKING:
+    from game.game import Game
 
 class Labels(IntEnum):
     Off = 0
@@ -16,9 +20,8 @@ class Labels(IntEnum):
 
 
 class ForcedOptionsGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, game):
+    def __init__(self, mission: Mission, game: Game):
         self.mission = mission
-        self.conflict = conflict
         self.game = game
 
     def _set_options_view(self):

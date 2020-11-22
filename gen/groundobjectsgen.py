@@ -353,39 +353,15 @@ class GroundObjectsGenerator:
     locations for spawning ground objects, determining their types, and creating
     the appropriate generators.
     """
-    FARP_CAPACITY = 4
 
-    def __init__(self, mission: Mission, conflict: Conflict, game: Game,
+    def __init__(self, mission: Mission, game: Game,
                  radio_registry: RadioRegistry, tacan_registry: TacanRegistry):
         self.m = mission
-        self.conflict = conflict
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
-
-    def generate_farps(self, number_of_units=1) -> Iterator[StaticGroup]:
-        if self.conflict.is_vector:
-            center = self.conflict.center
-            heading = self.conflict.heading - 90
-        else:
-            center, heading = self.conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp, self.game.theater)
-            heading -= 90
-
-        initial_position = center.point_from_heading(heading, FARP_FRONTLINE_DISTANCE)
-        position = self.conflict.find_ground_position(initial_position, heading)
-        if not position:
-            position = initial_position
-
-        for i, _ in enumerate(range(0, number_of_units, self.FARP_CAPACITY)):
-            position = position.point_from_heading(0, i * 275)
-
-            yield self.m.farp(
-                country=self.m.country(self.game.player_country),
-                name="FARP",
-                position=position,
-            )
 
     def generate(self):
         for cp in self.game.theater.controlpoints:

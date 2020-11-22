@@ -32,7 +32,7 @@ class Silence(Option):
 class TriggersGenerator:
     def __init__(self, mission: Mission, conflict: Conflict, game):
         self.mission = mission
-        self.conflict = conflict
+        self.conflict = conflict  #  TODO: Move conflict out of this class.  Only needed for bullseye position
         self.game = game
 
     def _set_allegiances(self, player_coalition: str, enemy_coalition: str):

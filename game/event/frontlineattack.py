@@ -1,11 +1,10 @@
 from typing import List, Type
 
 from dcs.task import CAP, CAS, Task
+from game.operation.operation import Operation
 
-from game import db
-from game.operation.frontlineattack import FrontlineAttackOperation
-from .event import Event
 from ..debriefing import Debriefing
+from .event import Event
 
 
 class FrontlineAttackEvent(Event):
@@ -38,12 +37,6 @@ class FrontlineAttackEvent(Event):
         if self.to_cp.captured:
             self.to_cp.base.affect_strength(-0.1)
 
-    def player_attacking(self, flights: db.TaskForceDict):
+    def player_attacking(self):
         assert self.departure_cp is not None
-        op = FrontlineAttackOperation(game=self.game,
-                                      attacker_name=self.attacker_name,
-                                      defender_name=self.defender_name,
-                                      from_cp=self.from_cp,
-                                      departure_cp=self.departure_cp,
-                                      to_cp=self.to_cp)
-        self.operation = op
+        self.operation = Operation(departure_cp=self.departure_cp,)

@@ -75,9 +75,32 @@ class GroundConflictGenerator:
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
         self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = random.choice([CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.AGGRESSIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]) if len(enemy_planned_combat_groups) > len(player_planned_combat_groups) else random.choice([CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.DEFENSIVE, CombatStance.AMBUSH, CombatStance.AGGRESSIVE])
+        self.enemy_stance = self._enemy_stance()
         self.game = game
         self.jtacs: List[JtacInfo] = []
+
+    def _enemy_stance(self):
+        """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
+        if len(self.enemy_planned_combat_groups) > len(self.player_planned_combat_groups): 
+            return random.choice(
+                [
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.ELIMINATION,
+                    CombatStance.BREAKTHROUGH
+                ]
+            )
+        else:
+            return random.choice(
+                [
+                    CombatStance.DEFENSIVE,
+                    CombatStance.DEFENSIVE,
+                    CombatStance.DEFENSIVE,
+                    CombatStance.AMBUSH,
+                    CombatStance.AGGRESSIVE
+                ]
+            )
 
     def _group_point(self, point) -> Point:
         distance = random.randint(
