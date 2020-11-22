@@ -104,7 +104,8 @@ from dcs.planes import (
     Tu_95MS,
     WingLoong_I,
     Yak_40,
-    plane_map
+    plane_map,
+    I_16
 )
 from dcs.ships import (
     Armed_speedboat,
@@ -245,6 +246,7 @@ PRICES = {
 
     SpitfireLFMkIX: 14,
     SpitfireLFMkIXCW: 14,
+    I_16: 10,
     Bf_109K_4: 14,
     FW_190D9: 16,
     FW_190A8: 14,
@@ -589,6 +591,7 @@ UNIT_BY_TASK = {
         JF_17,
         F_4E,
         C_101CC,
+        I_16,
         Bf_109K_4,
         FW_190D9,
         FW_190A8,
@@ -1043,6 +1046,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     FW_190D9: COMMON_OVERRIDE,
     FW_190A8: COMMON_OVERRIDE,
     Bf_109K_4: COMMON_OVERRIDE,
+    I_16: COMMON_OVERRIDE,
     SpitfireLFMkIXCW: COMMON_OVERRIDE,
     SpitfireLFMkIX: COMMON_OVERRIDE,
     A_20G: COMMON_OVERRIDE,

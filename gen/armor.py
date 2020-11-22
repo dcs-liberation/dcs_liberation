@@ -289,7 +289,7 @@ class GroundConflictGenerator:
                             hold_2.number = 3
                             dcs_group.add_trigger_action(hold_2)
 
-                            retreat_task = GoToWaypoint(toIndex=3)
+                            retreat_task = GoToWaypoint(to_index=3)
                             retreat_task.number = 4
                             dcs_group.add_trigger_action(retreat_task)
 
@@ -385,7 +385,7 @@ class GroundConflictGenerator:
         dcs_group.add_waypoint(self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)), PointAction.OffRoad)
 
         # Fallback task
-        fallback = ControlledTask(GoToWaypoint(toIndex=len(dcs_group.points)))
+        fallback = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
         fallback.enabled = False
         dcs_group.add_trigger_action(Hold())
         dcs_group.add_trigger_action(fallback)

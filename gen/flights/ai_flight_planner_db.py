@@ -79,6 +79,7 @@ from dcs.planes import (
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
+    I_16
 )
 
 # Interceptor are the aircraft prioritized for interception tasks
@@ -154,6 +155,8 @@ CAP_CAPABLE = [
     P_47D_30bl1,
     P_47D_40,
 
+    I_16,
+
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
 
@@ -195,6 +198,8 @@ CAP_PREFERRED = [
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+
+    I_16,
 
     Bf_109K_4,
     FW_190D9,
@@ -272,6 +277,8 @@ CAS_CAPABLE = [
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
 
+    I_16,
+
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
@@ -328,6 +335,7 @@ CAS_PREFERRED = [
     P_47D_30bl1,
     P_47D_40,
     A_20G,
+    I_16,
 
     A_4E_C,
     Rafale_A_S,
