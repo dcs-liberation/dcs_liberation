@@ -1197,12 +1197,13 @@ class AircraftConflictGenerator:
             viggen_target_points = [
                 (idx, point) for idx, point in enumerate(filtered_points) if point.waypoint_type in TARGET_WAYPOINTS
             ]
-            keep_target = viggen_target_points[random.randint(0, len(viggen_target_points) - 1)]
-            filtered_points = [
-                point for idx, point in enumerate(filtered_points) if (
-                        point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
-                    )
-                ]
+            if viggen_target_points:
+                keep_target = viggen_target_points[random.randint(0, len(viggen_target_points) - 1)]
+                filtered_points = [
+                    point for idx, point in enumerate(filtered_points) if (
+                            point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
+                        )
+                    ]
             
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(

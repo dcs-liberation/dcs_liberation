@@ -31,6 +31,10 @@ First, a big thanks to shdwp, for starting the original DCS Liberation project.
 
 Then, DCS Liberation uses [pydcs](http://github.com/pydcs/dcs) for mission generation, and nothing would be possible without this.
 It also uses the popular [Mist](https://github.com/mrSkortch/MissionScriptingTools) lua framework for mission scripting.
-And for the JTAC feature, DCS Liberation embed Ciribob's JTAC Autolase [script](https://github.com/ciribob/DCS-JTACAutoLaze).
+
+Excellent lua scripts DCS Liberation uses as plugins:
+
+* For the JTAC feature, DCS Liberation embeds Ciribob's JTAC Autolase [script](https://github.com/ciribob/DCS-JTACAutoLaze).
+* Walder's [Skynet-IADS](https://github.com/walder/Skynet-IADS) is used for Integrated Air Defense System.
 
 Please also show some support to these projects ! 

@@ -161,5 +161,3 @@ class QFlightWaypointTab(QFrame):
     def on_change(self):
         self.flight_waypoint_list.update_list()
         self.on_flight_changed.emit()
-
-

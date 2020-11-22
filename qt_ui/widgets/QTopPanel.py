@@ -48,12 +48,14 @@ class QTopPanel(QFrame):
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
+        if not self.game:
+            self.passTurnButton.setEnabled(False)
 
         self.proceedButton = QPushButton("Take off")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
         self.proceedButton.setProperty("style", "start-button")
         self.proceedButton.clicked.connect(self.launch_mission)
-        if self.game and self.game.turn == 0:
+        if not self.game or self.game.turn == 0:
             self.proceedButton.setEnabled(False)
 
         self.factionsInfos = QFactionsInfos(self.game)
@@ -100,6 +102,8 @@ class QTopPanel(QFrame):
         self.turnCounter.setCurrentTurn(game.turn, game.conditions)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
+
+        self.passTurnButton.setEnabled(True)
 
         if game and game.turn == 0:
             self.proceedButton.setEnabled(False)
