@@ -36,10 +36,14 @@ class ForcedOptionsGenerator:
         elif self.game.settings.labels == "Off":
             self.mission.forced_options.labels = int(Labels.Off)
 
+    def _set_unrestricted_satnav(self) -> None:
+        blue = self.game.player_faction
+        red = self.game.enemy_faction
+        if blue.unrestricted_satnav or red.unrestricted_satnav:
+            self.mission.forced_options.unrestricted_satnav = True
+
     def generate(self):
         self._set_options_view()
         self._set_external_views()
         self._set_labels()
-
-
-        
+        self._set_unrestricted_satnav()
