@@ -116,6 +116,16 @@ class Conflict:
         position = frontline.position
         return position, _opposite_heading(attack_heading)
 
+    @classmethod
+    def flight_frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> Tuple[Point, int, int]:
+        """Returns the frontline vector without regard for exclusion zones, used in CAS flight plan"""
+        frontline = cls.frontline_position(from_cp, to_cp, theater)
+        center_position, heading = frontline
+        left_position = center_position.point_from_heading(_heading_sum(heading, -90), int(FRONTLINE_LENGTH/2))
+        right_position = center_position.point_from_heading(_heading_sum(heading, 90), int(FRONTLINE_LENGTH/2))
+
+        return left_position, _heading_sum(heading, 90), int(right_position.distance_to_point(left_position))
+
 
     @classmethod
     def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> Tuple[Point, int, int]:
