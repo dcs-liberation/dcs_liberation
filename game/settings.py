@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
+from dcs.forcedoptions import ForcedOptions
+
 
 @dataclass
 class Settings:
@@ -15,7 +17,7 @@ class Settings:
     player_skill: str = "Good"
     enemy_skill: str = "Average"
     enemy_vehicle_skill: str = "Average"
-    map_coalition_visibility: str = "All Units"
+    map_coalition_visibility: ForcedOptions.Views = ForcedOptions.Views.All
     labels: str = "Full"
     only_player_takeoff: bool = True  # Legacy parameter do not use
     night_disabled: bool = False
