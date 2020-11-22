@@ -253,6 +253,7 @@ class WaypointBuilder:
         waypoint.description = description
         waypoint.pretty_name = description
         waypoint.name = target.name
+        waypoint.alt_type = "RADIO"
         # The target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
@@ -279,6 +280,7 @@ class WaypointBuilder:
         waypoint.description = name
         waypoint.pretty_name = name
         waypoint.name = name
+        waypoint.alt_type = "RADIO"
         # The target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
