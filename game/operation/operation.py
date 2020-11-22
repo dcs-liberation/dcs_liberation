@@ -311,7 +311,7 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        self.register_lua_plugins(self)
+        self.register_lua_plugins()
 
         self.notify_info_generators(
             self.groundobjectgen,
