@@ -311,7 +311,7 @@ class Operation:
         if self.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        self.generate_lua(airgen, airsupportgen, jtacs)
+        self.generate_lua(self.airgen, self.airsupportgen, self.jtacs)
 
         # Inject Plugins Lua Scripts and data
         for plugin in LuaPluginManager.plugins():
