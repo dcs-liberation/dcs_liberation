@@ -108,6 +108,15 @@ class Faction:
     # List of default livery overrides
     liveries_overrides: Dict[UnitType, List[str]] = field(default_factory=dict)
 
+    #: Set to True if the faction should force the "Unrestricted satnav" option
+    #: for the mission. This option enables GPS for capable aircraft regardless
+    #: of the time period or operator. For example, the CJTF "countries" don't
+    #: appear to have GPS capability, so they need this.
+    #:
+    #: Note that this option cannot be set per-side. If either faction needs it,
+    #: both will use it.
+    unrestricted_satnav: bool = False
+
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
 
@@ -193,6 +202,8 @@ class Faction:
             k = load_aircraft(k)
             if k is not None:
                 faction.liveries_overrides[k] = [s.lower() for s in v]
+
+        faction.unrestricted_satnav = json.get("unrestricted_satnav", False)
 
         return faction
 
