@@ -9,9 +9,10 @@ from dcs.task import Task
 from dcs.unittype import UnitType
 
 from game import db, persistency
-from game.debriefing import Debriefing
+from game.debriefing import AirLosses, Debriefing
 from game.infos.information import Information
 from game.theater import ControlPoint
+from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..unitmap import UnitMap
 
@@ -99,6 +100,52 @@ class Event:
             persistency.mission_path_for("liberation_nextturn.miz"))
         return unit_map
 
+    @staticmethod
+    def _transfer_aircraft(ato: AirTaskingOrder, losses: AirLosses,
+                           for_player: bool) -> None:
+        for package in ato.packages:
+            for flight in package.flights:
+                # No need to transfer to the same location.
+                if flight.departure == flight.arrival:
+                    continue
+
+                # Don't transfer to bases that were captured. Note that if the
+                # airfield was back-filling transfers it may overflow. We could
+                # attempt to be smarter in the future by performing transfers in
+                # order up a graph to prevent transfers to full airports and
+                # send overflow off-map, but overflow is fine for now.
+                if flight.arrival.captured != for_player:
+                    logging.info(
+                        f"Not transferring {flight} because {flight.arrival} "
+                        "was captured")
+                    continue
+
+                transfer_count = losses.surviving_flight_members(flight)
+                if transfer_count < 0:
+                    logging.error(f"{flight} had {flight.count} aircraft but "
+                                  f"{transfer_count} losses were recorded.")
+                    continue
+
+                aircraft = flight.unit_type
+                available = flight.departure.base.total_units_of_type(aircraft)
+                if available < transfer_count:
+                    logging.error(
+                        f"Found killed {aircraft} from {flight.departure} but "
+                        f"that airbase has only {available} available.")
+                    continue
+
+                flight.departure.base.aircraft[aircraft] -= transfer_count
+                if aircraft not in flight.arrival.base.aircraft:
+                    # TODO: Should use defaultdict.
+                    flight.arrival.base.aircraft[aircraft] = 0
+                flight.arrival.base.aircraft[aircraft] += transfer_count
+
+    def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
+        self._transfer_aircraft(self.game.blue_ato, debriefing.air_losses,
+                                for_player=True)
+        self._transfer_aircraft(self.game.red_ato, debriefing.air_losses,
+                                for_player=False)
+
     def commit(self, debriefing: Debriefing):
 
         logging.info("Commiting mission results")
@@ -132,8 +179,9 @@ class Event:
                     if unit_type in cp.base.armor.keys():
                         logging.info(f"Ground unit destroyed: {unit_type}")
                         cp.base.armor[unit_type] = max(0, cp.base.armor[unit_type] - 1)
-            except Exception as e:
-                print(e)
+            except Exception:
+                logging.exception(
+                    f"Could not commit lost ground unit {killed_ground_unit}")
 
         # ------------------------------
         # Static ground objects
@@ -217,10 +265,10 @@ class Event:
                 for cp in captured_cps:
                     logging.info("Will run redeploy for " + cp.name)
                     self.redeploy_units(cp)
+            except Exception:
+                logging.exception(f"Could not process base capture {captured}")
 
-
-            except Exception as e:
-                print(e)
+        self.complete_aircraft_transfers(debriefing)
 
         # Destroyed units carcass
         # -------------------------

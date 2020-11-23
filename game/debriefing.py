@@ -61,6 +61,13 @@ class AirLosses:
             losses_by_type[loss.flight.unit_type] += loss.flight.count
         return losses_by_type
 
+    def surviving_flight_members(self, flight: Flight) -> int:
+        losses = 0
+        for loss in self.losses:
+            if loss.flight == flight:
+                losses += 1
+        return flight.count - losses
+
 
 @dataclass(frozen=True)
 class StateData:
