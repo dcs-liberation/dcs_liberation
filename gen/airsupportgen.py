@@ -14,7 +14,6 @@ from dcs.task import (
 )
 
 from game import db
-from game.operation.operation import Operation
 from .naming import namegen
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
@@ -122,9 +121,10 @@ class AirSupportConflictGenerator:
 
             self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
-        try:
+        awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
+        if awacs_unit:
             freq = self.radio_registry.alloc_uhf()
-            awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
+            
             awacs_flight = self.mission.awacs_flight(
                 country=self.mission.country(self.game.player_country),
                 name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
@@ -142,6 +142,5 @@ class AirSupportConflictGenerator:
 
             self.air_support.awacs.append(AwacsInfo(
                 str(awacs_flight.name), callsign_for_support_unit(awacs_flight), freq))
-        except:
-            Operation.player_awacs_enabled = False
+        else:
             logging.warning("No AWACS for faction")

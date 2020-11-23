@@ -8,37 +8,8 @@ from dcs.mapping import Point
 from game.theater.conflicttheater import ConflictTheater, FrontLine
 from game.theater.controlpoint import ControlPoint
 
-AIR_DISTANCE = 40000
-
-CAPTURE_AIR_ATTACKERS_DISTANCE = 25000
-CAPTURE_AIR_DEFENDERS_DISTANCE = 60000
-STRIKE_AIR_ATTACKERS_DISTANCE = 45000
-STRIKE_AIR_DEFENDERS_DISTANCE = 25000
-
-CAP_CAS_DISTANCE = 10000, 120000
-
-GROUND_INTERCEPT_SPREAD = 5000
-GROUND_DISTANCE_FACTOR = 1.4
-GROUND_DISTANCE = 2000
-
-GROUND_ATTACK_DISTANCE = 25000, 13000
-
-TRANSPORT_FRONTLINE_DIST = 1800
-
-INTERCEPT_ATTACKERS_HEADING = -45, 45
-INTERCEPT_DEFENDERS_HEADING = -10, 10
-INTERCEPT_CONFLICT_DISTANCE = 50000
-INTERCEPT_ATTACKERS_DISTANCE = 100000
-INTERCEPT_MAX_DISTANCE = 160000
-INTERCEPT_MIN_DISTANCE = 100000
-
-NAVAL_INTERCEPT_DISTANCE_FACTOR = 1
-NAVAL_INTERCEPT_DISTANCE_MAX = 40000
-NAVAL_INTERCEPT_STEP = 5000
 
 FRONTLINE_LENGTH = 80000
-FRONTLINE_MIN_CP_DISTANCE = 5000
-FRONTLINE_DISTANCE_STRENGTH_FACTOR = 0.7
 
 
 def _opposite_heading(h):
@@ -97,10 +68,6 @@ class Conflict:
     @property
     def opposite_heading(self) -> int:
         return _heading_sum(self.heading, 180)
-
-    @property
-    def to_size(self):
-        return self.to_cp.size * GROUND_DISTANCE_FACTOR
 
     def find_ground_position(self, at: Point, heading: int, max_distance: int = 40000) -> Point:
         return Conflict._find_ground_position(at, max_distance, heading, self.theater)

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from itertools import tee
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 from dcs import Mission
 from dcs.countries import (
@@ -471,7 +471,7 @@ class ConflictTheater:
                 closest_distance = distance
         return closest
     
-    def closest_opposing_control_points(self) -> Tuple[ControlPoint]:
+    def closest_opposing_control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """
         Returns a tuple of the two nearest opposing ControlPoints in theater.
         (player_cp, enemy_cp)
@@ -487,17 +487,19 @@ class ConflictTheater:
                         closest_distance = dist
                     if dist < closest_distance:
                         distances[cp.id] = dist
-            closest_cp = min(distances, key=distances.get)
-            all_cp_min_distances[(control_point.id, closest_cp)] = distances[closest_cp]
+            closest_cp_id = min(distances, key=distances.get)  # type: ignore
+
+            all_cp_min_distances[(control_point.id, closest_cp_id)] = distances[closest_cp_id]
         closest_opposing_cps = [
             self.find_control_point_by_id(i)
-            for i 
-            in min(all_cp_min_distances, key=all_cp_min_distances.get)
+            for i
+            in min(all_cp_min_distances, key=all_cp_min_distances.get)  # type: ignore
           ]  # type: List[ControlPoint]
+        assert len(closest_opposing_cps) == 2
         if closest_opposing_cps[0].captured:
-            return tuple(closest_opposing_cps)
+            return cast(Tuple[ControlPoint, ControlPoint], tuple(closest_opposing_cps))
         else:
-            return tuple(reversed(closest_opposing_cps))
+            return cast(Tuple[ControlPoint, ControlPoint], tuple(reversed(closest_opposing_cps)))
 
     def find_control_point_by_id(self, id: int) -> ControlPoint:
         for i in self.controlpoints:

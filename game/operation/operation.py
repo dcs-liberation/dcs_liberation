@@ -14,9 +14,7 @@ from dcs.lua.parse import loads
 from dcs.mapping import Point
 from dcs.translation import String
 from dcs.triggers import TriggerStart
-from dcs.unittype import UnitType
 from game.plugins import LuaPluginManager
-from game.theater import ControlPoint
 from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
@@ -59,8 +57,7 @@ class Operation:
     player_awacs_enabled = True
     #  TODO: #436 Generate Air Support for red
     enemy_awacs_enabled = True
-    is_awacs_enabled = False
-    ca_slots = 0
+    ca_slots = 1
     unit_map: UnitMap
     jtacs: List[JtacInfo] = []
     plugin_scripts: List[str] = []
