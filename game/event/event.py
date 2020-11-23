@@ -15,10 +15,11 @@ from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..unitmap import UnitMap
+from game.operation.operation import Operation
 
 if TYPE_CHECKING:
     from ..game import Game
-    from game.operation.operation import Operation
+
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -32,21 +33,18 @@ STRONG_DEFEAT_INFLUENCE = 0.5
 class Event:
     silent = False
     informational = False
-    is_awacs_enabled = False
-    ca_slots = 0
 
     game = None  # type: Game
     location = None  # type: Point
     from_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
 
-    operation = None  # type: Operation
+    operation = Operation
     difficulty = 1  # type: int
     BONUS_BASE = 5
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
         self.game = game
-        self.departure_cp: Optional[ControlPoint] = None
         self.from_cp = from_cp
         self.to_cp = target_cp
         self.location = location
@@ -58,40 +56,13 @@ class Event:
         return self.attacker_name == self.game.player_name
 
     @property
-    def enemy_cp(self) -> Optional[ControlPoint]:
-        if self.attacker_name == self.game.player_name:
-            return self.to_cp
-        else:
-            return self.departure_cp
-
-    @property
     def tasks(self) -> List[Type[Task]]:
         return []
-
-    @property
-    def global_cp_available(self) -> bool:
-        return False
-
-    def is_departure_available_from(self, cp: ControlPoint) -> bool:
-        if not cp.captured:
-            return False
-
-        if self.location.distance_to_point(cp.position) > EVENT_DEPARTURE_MAX_DISTANCE:
-            return False
-
-        if cp.is_global and not self.global_cp_available:
-            return False
-
-        return True
 
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
-    def is_successful(self, debriefing: Debriefing) -> bool:
-        return self.operation.is_successful(debriefing)
-
     def generate(self) -> UnitMap:
-        self.operation.is_awacs_enabled = self.is_awacs_enabled
         self.operation.ca_slots = self.ca_slots
 
         self.operation.prepare(self.game)

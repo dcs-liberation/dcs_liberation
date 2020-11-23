@@ -41,9 +41,7 @@ if TYPE_CHECKING:
 
 
 class Operation:
-    attackers_starting_position = None  # type: db.StartingPosition
-    defenders_starting_position = None  # type: db.StartingPosition
-
+    """Static class for managing the final Mission generation"""
     current_mission = None  # type: Mission
     airgen = None  # type: AircraftConflictGenerator
     triggersgen = None  # type: TriggersGenerator
@@ -58,16 +56,14 @@ class Operation:
     environment_settings = None
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
+    player_awacs_enabled = True
+    #  TODO: #436 Generate Air Support for red
+    enemy_awacs_enabled = True
     is_awacs_enabled = False
     ca_slots = 0
     unit_map: UnitMap
-
-    def __init__(self,
-                 departure_cp: ControlPoint,
-                 ):
-        self.departure_cp = departure_cp
-        self.plugin_scripts: List[str] = []
-        self.jtacs: List[JtacInfo] = []
+    jtacs: List[JtacInfo] = []
+    plugin_scripts: List[str] = []
 
     @classmethod
     def prepare(cls, game: Game):
@@ -93,12 +89,6 @@ class Operation:
                 frontline.position
             )
 
-    def units_of(self, country_name: str) -> List[UnitType]:
-        return []
-
-    def is_successful(self, debriefing: Debriefing) -> bool:
-        return True
-
     @classmethod
     def _set_mission(cls, mission: Mission) -> None:
         cls.current_mission = mission
@@ -115,22 +105,25 @@ class Operation:
         cls.current_mission.coalition["red"].add_country(
             country_dict[db.country_id_from_name(e_country)]())
 
-    def inject_lua_trigger(self, contents: str, comment: str) -> None:
+    @classmethod
+    def inject_lua_trigger(cls, contents: str, comment: str) -> None:
         trigger = TriggerStart(comment=comment)
         trigger.add_action(DoScript(String(contents)))
-        self.current_mission.triggerrules.triggers.append(trigger)
+        cls.current_mission.triggerrules.triggers.append(trigger)
 
-    def bypass_plugin_script(self, mnemonic: str) -> None:
-        self.plugin_scripts.append(mnemonic)
+    @classmethod
+    def bypass_plugin_script(cls, mnemonic: str) -> None:
+        cls.plugin_scripts.append(mnemonic)
 
-    def inject_plugin_script(self, plugin_mnemonic: str, script: str,
+    @classmethod
+    def inject_plugin_script(cls, plugin_mnemonic: str, script: str,
                              script_mnemonic: str) -> None:
-        if script_mnemonic in self.plugin_scripts:
+        if script_mnemonic in cls.plugin_scripts:
             logging.debug(
                 f"Skipping already loaded {script} for {plugin_mnemonic}"
             )
         else:
-            self.plugin_scripts.append(script_mnemonic)
+            cls.plugin_scripts.append(script_mnemonic)
 
             plugin_path = Path("./resources/plugins", plugin_mnemonic)
 
@@ -143,13 +136,14 @@ class Operation:
 
             trigger = TriggerStart(comment=f"Load {script_mnemonic}")
             filename = script_path.resolve()
-            fileref = self.current_mission.map_resource.add_resource_file(
+            fileref = cls.current_mission.map_resource.add_resource_file(
                 filename)
             trigger.add_action(DoScriptFile(fileref))
-            self.current_mission.triggerrules.triggers.append(trigger)
+            cls.current_mission.triggerrules.triggers.append(trigger)
 
+    @classmethod
     def notify_info_generators(
-        self,
+        cls,
         groundobjectgen: GroundObjectsGenerator,
         airsupportgen: AirSupportConflictGenerator,
         jtacs: List[JtacInfo],
@@ -158,8 +152,8 @@ class Operation:
         """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)
         """
         gens: List[MissionInfoGenerator] = [
-            KneeboardGenerator(self.current_mission, self.game),
-            BriefingGenerator(self.current_mission, self.game)
+            KneeboardGenerator(cls.current_mission, cls.game),
+            BriefingGenerator(cls.current_mission, cls.game)
         ]
         for gen in gens:
             for dynamic_runway in groundobjectgen.runways.values():
@@ -168,7 +162,7 @@ class Operation:
             for tanker in airsupportgen.air_support.tankers:
                 gen.add_tanker(tanker)
 
-            if self.is_awacs_enabled:
+            if cls.player_awacs_enabled:
                 for awacs in airsupportgen.air_support.awacs:
                     gen.add_awacs(awacs)
 
@@ -189,15 +183,17 @@ class Operation:
         cls._create_tacan_registry(unique_map_frequencies)
         cls._create_radio_registry(unique_map_frequencies)
 
-    def assign_channels_to_flights(self, flights: List[FlightData],
+    @classmethod
+    def assign_channels_to_flights(cls, flights: List[FlightData],
                                    air_support: AirSupport) -> None:
         """Assigns preset radio channels for client flights."""
         for flight in flights:
             if not flight.client_units:
                 continue
-            self.assign_channels_to_flight(flight, air_support)
+            cls.assign_channels_to_flight(flight, air_support)
 
-    def assign_channels_to_flight(self, flight: FlightData,
+    @staticmethod
+    def assign_channels_to_flight(flight: FlightData,
                                   air_support: AirSupport) -> None:
         """Assigns preset radio channels for a client flight."""
         airframe = flight.aircraft_type
@@ -235,12 +231,11 @@ class Operation:
     def _create_radio_registry(cls, unique_map_frequencies: Set[RadioFrequency]) -> None:
         cls.radio_registry = RadioRegistry()
         for data in AIRFIELD_DATA.values():
-            if data.theater == cls.game.theater.terrain.name:
-                if data.atc:
-                    unique_map_frequencies.add(data.atc.hf)
-                    unique_map_frequencies.add(data.atc.vhf_fm)
-                    unique_map_frequencies.add(data.atc.vhf_am)
-                    unique_map_frequencies.add(data.atc.uhf)
+            if data.theater == cls.game.theater.terrain.name and data.atc:
+                unique_map_frequencies.add(data.atc.hf)
+                unique_map_frequencies.add(data.atc.vhf_fm)
+                unique_map_frequencies.add(data.atc.vhf_am)
+                unique_map_frequencies.add(data.atc.uhf)
                     # No need to reserve ILS or TACAN because those are in the
                     # beacon list.
 
@@ -254,19 +249,20 @@ class Operation:
         )
         cls.groundobjectgen.generate()
 
-    def _generate_destroyed_units(self) -> None:
+    @classmethod
+    def _generate_destroyed_units(cls) -> None:
         """Add destroyed units to the Mission"""
-        for d in self.game.get_destroyed_units():
+        for d in cls.game.get_destroyed_units():
             try:
                 utype = db.unit_type_from_name(d["type"])
             except KeyError:
                 continue
 
             pos = Point(d["x"], d["z"])
-            if utype is not None and not self.game.position_culled(pos) and self.game.settings.perf_destroyed_units:
-                self.current_mission.static_group(
-                    country=self.current_mission.country(
-                        self.game.player_country),
+            if utype is not None and not cls.game.position_culled(pos) and cls.game.settings.perf_destroyed_units:
+                cls.current_mission.static_group(
+                    country=cls.current_mission.country(
+                        cls.game.player_country),
                     name="",
                     _type=utype,
                     hidden=True,
@@ -274,63 +270,64 @@ class Operation:
                     heading=d["orientation"],
                     dead=True,
                 )
-
-    def generate(self) -> UnitMap:
+    
+    @classmethod
+    def generate(cls) -> UnitMap:
         """Build the final Mission to be exported"""
-        self.create_unit_map()
-        self.create_radio_registries()
+        cls.create_unit_map()
+        cls.create_radio_registries()
         # Set mission time and weather conditions.
-        EnvironmentGenerator(self.current_mission,
-                             self.game.conditions).generate()
-        self._generate_ground_units()
-        self._generate_destroyed_units()
-        self._generate_air_units()
-        self.assign_channels_to_flights(self.airgen.flights,
-                                        self.airsupportgen.air_support)
-        self._generate_ground_conflicts()
+        EnvironmentGenerator(cls.current_mission,
+                             cls.game.conditions).generate()
+        cls._generate_ground_units()
+        cls._generate_destroyed_units()
+        cls._generate_air_units()
+        cls.assign_channels_to_flights(cls.airgen.flights,
+                                        cls.airsupportgen.air_support)
+        cls._generate_ground_conflicts()
 
         #  TODO: This is silly, once Bulls position is defined without Conflict this should be removed.
-        default_conflict = [i for i in self.conflicts()][0]
+        default_conflict = [i for i in cls.conflicts()][0]
         # Triggers
-        triggersgen = TriggersGenerator(self.current_mission, default_conflict,
-                                        self.game)
+        triggersgen = TriggersGenerator(cls.current_mission, default_conflict,
+                                        cls.game)
         triggersgen.generate()
 
         # Setup combined arms parameters
-        self.current_mission.groundControl.pilot_can_control_vehicles = self.ca_slots > 0
-        if self.game.player_country in [country.name for country in self.current_mission.coalition["blue"].countries.values()]:
-            self.current_mission.groundControl.blue_tactical_commander = self.ca_slots
+        cls.current_mission.groundControl.pilot_can_control_vehicles = cls.ca_slots > 0
+        if cls.game.player_country in [country.name for country in cls.current_mission.coalition["blue"].countries.values()]:
+            cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
         else:
-            self.current_mission.groundControl.red_tactical_commander = self.ca_slots
+            cls.current_mission.groundControl.red_tactical_commander = cls.ca_slots
 
         # Options
         forcedoptionsgen = ForcedOptionsGenerator(
-            self.current_mission, self.game)
+            cls.current_mission, cls.game)
         forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
-        visualgen = VisualGenerator(self.current_mission, self.game)
-        if self.game.settings.perf_smoke_gen:
+        visualgen = VisualGenerator(cls.current_mission, cls.game)
+        if cls.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        self.generate_lua(self.airgen, self.airsupportgen, self.jtacs)
+        cls.generate_lua(cls.airgen, cls.airsupportgen, cls.jtacs)
 
         # Inject Plugins Lua Scripts and data
         for plugin in LuaPluginManager.plugins():
             if plugin.enabled:
-                plugin.inject_scripts(self)
-                plugin.inject_configuration(self)
+                plugin.inject_scripts(cls)
+                plugin.inject_configuration(cls)
 
-        self.assign_channels_to_flights(self.airgen.flights,
-                                        self.airsupportgen.air_support)
-        self.notify_info_generators(
-            self.groundobjectgen,
-            self.airsupportgen,
-            self.jtacs,
-            self.airgen
+        cls.assign_channels_to_flights(cls.airgen.flights,
+                                        cls.airsupportgen.air_support)
+        cls.notify_info_generators(
+            cls.groundobjectgen,
+            cls.airsupportgen,
+            cls.jtacs,
+            cls.airgen
         )
 
-        return self.unit_map
+        return cls.unit_map
 
     @classmethod
     def _generate_air_units(cls) -> None:
@@ -343,7 +340,7 @@ class Operation:
         cls.airsupportgen = AirSupportConflictGenerator(
             cls.current_mission, default_conflict, cls.game, cls.radio_registry,
             cls.tacan_registry)
-        cls.airsupportgen.generate(cls.is_awacs_enabled)
+        cls.airsupportgen.generate()
 
         # Generate Aircraft Activity on the map
         cls.airgen = AircraftConflictGenerator(
@@ -364,33 +361,35 @@ class Operation:
             cls.current_mission.country(cls.game.player_country),
             cls.current_mission.country(cls.game.enemy_country))
 
-    def _generate_ground_conflicts(self) -> None:
+    @classmethod
+    def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        for front_line in self.game.theater.conflicts(True):
+        for front_line in cls.game.theater.conflicts(True):
             player_cp = front_line.control_point_a
             enemy_cp = front_line.control_point_b
             conflict = Conflict.frontline_cas_conflict(
-                self.game.player_name,
-                self.game.enemy_name,
-                self.current_mission.country(self.game.player_country),
-                self.current_mission.country(self.game.enemy_country),
+                cls.game.player_name,
+                cls.game.enemy_name,
+                cls.current_mission.country(cls.game.player_country),
+                cls.current_mission.country(cls.game.enemy_country),
                 player_cp,
                 enemy_cp,
-                self.game.theater
+                cls.game.theater
             )
             # Generate frontline ops
-            player_gp = self.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
-            enemy_gp = self.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
+            player_gp = cls.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
+            enemy_gp = cls.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             ground_conflict_gen = GroundConflictGenerator(
-                self.current_mission,
-                conflict, self.game,
+                cls.current_mission,
+                conflict, cls.game,
                 player_gp, enemy_gp,
                 player_cp.stances[enemy_cp.id]
             )
             ground_conflict_gen.generate()
-            self.jtacs.extend(ground_conflict_gen.jtacs)
+            cls.jtacs.extend(ground_conflict_gen.jtacs)
 
-    def generate_lua(self, airgen: AircraftConflictGenerator,
+    @classmethod
+    def generate_lua(cls, airgen: AircraftConflictGenerator,
                      airsupportgen: AirSupportConflictGenerator,
                      jtacs: List[JtacInfo]) -> None:
         #  TODO: Refactor this
@@ -411,7 +410,7 @@ class Operation:
                 "tacan": str(tanker.tacan.number) + tanker.tacan.band.name
             }
 
-        if self.is_awacs_enabled:
+        if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = {
                     "dcsGroupName": awacs.dcsGroupName,

@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game import Game
-from game.event import CAP, CAS, FrontlineAttackEvent
+from game.event.airwar import AirWarEvent
 from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
@@ -214,26 +214,14 @@ class QTopPanel(QFrame):
         if negative_starts:
             if not self.confirm_negative_start_time(negative_starts):
                 return
-
-        # TODO: Refactor this nonsense.
-        game_event = None
-        for event in self.game.events:
-            if isinstance(event,
-                          FrontlineAttackEvent) and event.is_player_attacking:
-                game_event = event
-        # TODO: Why does this exist?
-        if game_event is None:
-            game_event = FrontlineAttackEvent(
-                self.game,
-                self.game.theater.controlpoints[0],
-                self.game.theater.controlpoints[1],
-                self.game.theater.controlpoints[1].position,
-                self.game.player_name,
-                self.game.enemy_name)
-        game_event.is_awacs_enabled = True
-        game_event.ca_slots = 1
-        game_event.departure_cp = self.game.theater.controlpoints[0]
-        game_event.player_attacking()
+        closest_cps = self.game.theater.closest_opposing_control_points()
+        game_event = AirWarEvent(
+            self.game,
+            closest_cps[0],
+            closest_cps[1],
+            self.game.theater.controlpoints[0].position,
+            self.game.player_name,
+            self.game.enemy_name)
 
         unit_map = self.game.initiate_event(game_event)
         waiting = QWaitingForMissionResultWindow(game_event, self.game,

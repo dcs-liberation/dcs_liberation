@@ -470,6 +470,40 @@ class ConflictTheater:
                 closest = control_point
                 closest_distance = distance
         return closest
+    
+    def closest_opposing_control_points(self) -> Tuple[ControlPoint]:
+        """
+        Returns a tuple of the two nearest opposing ControlPoints in theater.
+        (player_cp, enemy_cp)
+        """
+        all_cp_min_distances = {}
+        for idx, control_point in enumerate(self.controlpoints):
+            distances = {}
+            closest_distance = None
+            for i, cp in enumerate(self.controlpoints):
+                if i != idx and cp.captured is not control_point.captured:
+                    dist = cp.position.distance_to_point(control_point.position)
+                    if not closest_distance:
+                        closest_distance = dist
+                    if dist < closest_distance:
+                        distances[cp.id] = dist
+            closest_cp = min(distances, key=distances.get)
+            all_cp_min_distances[(control_point.id, closest_cp)] = distances[closest_cp]
+        closest_opposing_cps = [
+            self.find_control_point_by_id(i)
+            for i 
+            in min(all_cp_min_distances, key=all_cp_min_distances.get)
+          ]  # type: List[ControlPoint]
+        if closest_opposing_cps[0].captured:
+            return tuple(closest_opposing_cps)
+        else:
+            return tuple(reversed(closest_opposing_cps))
+
+    def find_control_point_by_id(self, id: int) -> ControlPoint:
+        for i in self.controlpoints:
+            if i.id == id:
+                return i
+        raise RuntimeError(f"Cannot find ControlPoint with ID {id}")
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
         cp: ControlPoint
