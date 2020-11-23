@@ -61,7 +61,7 @@ from dcs.task import (
     Task,
     WeaponType,
 )
-from dcs.terrain.terrain import Airport
+from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
@@ -795,7 +795,8 @@ class AircraftConflictGenerator:
                     unit.fuel = Su_33.fuel_max * 0.8
 
     def _generate_at_airport(self, name: str, side: Country,
-                             unit_type: FlyingType, count: int, start_type: str,
+                             unit_type: Type[FlyingType], count: int,
+                             start_type: str,
                              airport: Optional[Airport] = None) -> FlyingGroup:
         assert count > 0
 
@@ -844,7 +845,8 @@ class AircraftConflictGenerator:
         return group
 
     def _generate_at_group(self, name: str, side: Country,
-                           unit_type: FlyingType, count: int, start_type: str,
+                           unit_type: Type[FlyingType], count: int,
+                           start_type: str,
                            at: Union[ShipGroup, StaticGroup]) -> FlyingGroup:
         assert count > 0
 
@@ -890,7 +892,6 @@ class AircraftConflictGenerator:
         else:
             assert False
 
-
     def _setup_custom_payload(self, flight, group:FlyingGroup):
         if flight.use_custom_loadout:
 
@@ -932,6 +933,49 @@ class AircraftConflictGenerator:
                 self.unit_map.add_aircraft(group, flight)
                 self.setup_flight_group(group, package, flight, dynamic_runways)
                 self.create_waypoints(group, package, flight)
+
+    def spawn_unused_aircraft(self, player_country: Country,
+                              enemy_country: Country) -> None:
+        inventories = self.game.aircraft_inventory.inventories
+        for control_point, inventory in inventories.items():
+            if isinstance(control_point, OffMapSpawn):
+                continue
+            if control_point.is_fleet:
+                # Don't crowd the deck since the AI will struggle.
+                continue
+
+            if control_point.captured:
+                country = player_country
+            else:
+                country = enemy_country
+
+            for aircraft, available in inventory.all_aircraft:
+                try:
+                    self._spawn_unused_at(control_point, country, aircraft,
+                                          available)
+                except NoParkingSlotError:
+                    # If we run out of parking, stop spawning aircraft.
+                    return
+
+    def _spawn_unused_at(self, control_point: ControlPoint, country: Country,
+                         aircraft: Type[FlyingType], number: int) -> None:
+        for _ in range(number):
+            # Creating a flight even those this isn't a fragged mission lets us
+            # reuse the existing debriefing code.
+            # TODO: Special flight type?
+            flight = Flight(Package(control_point), aircraft, 1, FlightType.CAP,
+                            "Cold", departure=control_point,
+                            arrival=control_point, divert=None)
+            group = self._generate_at_airport(
+                name=namegen.next_unit_name(country, control_point.id,
+                                            aircraft),
+                side=country,
+                unit_type=aircraft,
+                count=1,
+                start_type="Cold",
+                airport=control_point.airport)
+            group.uncontrolled = True
+            self.unit_map.add_aircraft(group, flight)
 
     def set_activation_time(self, flight: Flight, group: FlyingGroup,
                             delay: timedelta) -> None:

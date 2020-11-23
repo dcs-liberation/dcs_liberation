@@ -360,6 +360,9 @@ class Operation:
             cls.game.red_ato,
             cls.groundobjectgen.runways
         )
+        cls.airgen.spawn_unused_aircraft(
+            cls.current_mission.country(cls.game.player_country),
+            cls.current_mission.country(cls.game.enemy_country))
 
     def _generate_ground_conflicts(self) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""

@@ -19,5 +19,5 @@ class UnitMap:
                 raise RuntimeError(f"Duplicate unit name: {name}")
             self.aircraft[name] = flight
 
-    def flight(self, group_name: str) -> Optional[Flight]:
-        return self.aircraft.get(group_name, None)
+    def flight(self, unit_name: str) -> Optional[Flight]:
+        return self.aircraft.get(unit_name, None)
