@@ -5,12 +5,14 @@ import logging
 import random
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from dcs.weather import Weather as PydcsWeather, Wind
 
 from game.settings import Settings
-from game.theater import ConflictTheater
+
+if TYPE_CHECKING:
+    from game.theater import ConflictTheater
 
 
 class TimeOfDay(Enum):

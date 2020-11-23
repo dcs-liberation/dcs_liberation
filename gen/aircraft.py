@@ -71,8 +71,10 @@ from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.settings import Settings
 from game.theater.controlpoint import (
+    Airfield,
     ControlPoint,
     ControlPointType,
+    NavalControlPoint,
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import TheaterGroundObject
@@ -696,18 +698,6 @@ class AircraftConflictGenerator:
             return StartType.Cold
         return StartType.Warm
 
-    def determine_runway(self, cp: ControlPoint, dynamic_runways) -> RunwayData:
-        fallback = RunwayData(cp.full_name, runway_heading=0, runway_name="")
-        if cp.cptype == ControlPointType.AIRBASE:
-            assigner = RunwayAssigner(self.game.conditions)
-            return assigner.get_preferred_runway(cp.airport)
-        elif cp.is_fleet:
-            return dynamic_runways.get(cp.name, fallback)
-        else:
-            logging.warning(
-                f"Unhandled departure/arrival control point: {cp.cptype}")
-            return fallback
-
     def _setup_group(self, group: FlyingGroup, for_task: Type[Task],
                      package: Package, flight: Flight,
                      dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -767,7 +757,8 @@ class AircraftConflictGenerator:
 
         divert = None
         if flight.divert is not None:
-            divert = self.determine_runway(flight.divert, dynamic_runways)
+            divert = flight.divert.active_runway(self.game.conditions,
+                                                 dynamic_runways)
 
         self.flights.append(FlightData(
             package=package,
@@ -777,8 +768,10 @@ class AircraftConflictGenerator:
             friendly=flight.from_cp.captured,
             # Set later.
             departure_delay=timedelta(),
-            departure=self.determine_runway(flight.departure, dynamic_runways),
-            arrival=self.determine_runway(flight.arrival, dynamic_runways),
+            departure=flight.departure.active_runway(self.game.conditions,
+                                                     dynamic_runways),
+            arrival=flight.arrival.active_runway(self.game.conditions,
+                                                 dynamic_runways),
             divert=divert,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
@@ -911,9 +904,8 @@ class AircraftConflictGenerator:
 
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:
-            if cp.airport is not None:
-                for parking_slot in cp.airport.parking_slots:
-                    parking_slot.unit_id = None
+            for parking_slot in cp.parking_slots:
+                parking_slot.unit_id = None
 
     def generate_flights(self, country, ato: AirTaskingOrder,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -938,10 +930,7 @@ class AircraftConflictGenerator:
                               enemy_country: Country) -> None:
         inventories = self.game.aircraft_inventory.inventories
         for control_point, inventory in inventories.items():
-            if isinstance(control_point, OffMapSpawn):
-                continue
-            if control_point.is_fleet:
-                # Don't crowd the deck since the AI will struggle.
+            if not isinstance(control_point, Airfield):
                 continue
 
             if control_point.captured:
@@ -957,7 +946,7 @@ class AircraftConflictGenerator:
                     # If we run out of parking, stop spawning aircraft.
                     return
 
-    def _spawn_unused_at(self, control_point: ControlPoint, country: Country,
+    def _spawn_unused_at(self, control_point: Airfield, country: Country,
                          aircraft: Type[FlyingType], number: int) -> None:
         for _ in range(number):
             # Creating a flight even those this isn't a fragged mission lets us
@@ -1033,7 +1022,7 @@ class AircraftConflictGenerator:
                     side=country,
                     flight=flight,
                     origin=cp)
-            elif cp.is_fleet:
+            elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
                     name=namegen.next_unit_name(country, cp.id, flight.unit_type),
@@ -1043,8 +1032,12 @@ class AircraftConflictGenerator:
                     start_type=flight.start_type,
                     at=self.m.find_group(group_name))
             else:
+                if not isinstance(cp, Airfield):
+                    raise RuntimeError(
+                        f"Attempted to spawn at airfield for non-airfield {cp}")
                 group = self._generate_at_airport(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_unit_name(country, cp.id,
+                                                flight.unit_type),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,

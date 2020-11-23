@@ -4,9 +4,10 @@ import itertools
 import logging
 import random
 import re
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -15,10 +16,11 @@ from dcs.ships import (
     LHA_1_Tarawa,
     Type_071_Amphibious_Transport_Dock,
 )
-from dcs.terrain.terrain import Airport
+from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from gen.runways import RunwayAssigner, RunwayData
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
 from .missiontarget import MissionTarget
@@ -29,6 +31,7 @@ from .theatergroundobject import (
     TheaterGroundObject,
     VehicleGroupGroundObject,
 )
+from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
@@ -37,11 +40,16 @@ if TYPE_CHECKING:
 
 
 class ControlPointType(Enum):
-    AIRBASE = 0                # An airbase with slots for everything
-    AIRCRAFT_CARRIER_GROUP = 1 # A group with a Stennis type carrier (F/A-18, F-14 compatible)
-    LHA_GROUP = 2              # A group with a Tarawa carrier (Helicopters & Harrier)
-    FARP = 4                   # A FARP, with slots for helicopters
-    FOB = 5                    # A FOB (ground units only)
+    #: An airbase with slots for everything.
+    AIRBASE = 0
+    #: A group with a Stennis type carrier (F/A-18, F-14 compatible).
+    AIRCRAFT_CARRIER_GROUP = 1
+    #: A group with a Tarawa carrier (Helicopters & Harrier).
+    LHA_GROUP = 2
+    #: A FARP, with slots for helicopters
+    FARP = 4
+    #: A FOB (ground units only)
+    FOB = 5
     OFF_MAP = 6
 
 
@@ -136,7 +144,7 @@ class PendingOccupancy:
         return self.present + self.ordered + self.transferring
 
 
-class ControlPoint(MissionTarget):
+class ControlPoint(MissionTarget, ABC):
 
     position = None  # type: Point
     name = None  # type: str
@@ -147,29 +155,36 @@ class ControlPoint(MissionTarget):
 
     alt = 0
 
-    def __init__(self, id: int, name: str, position: Point,
+    # TODO: Only airbases have IDs.
+    # TODO: Radials seem to be pointless.
+    # TODO: has_frontline is only reasonable for airbases.
+    # TODO: cptype is obsolete.
+    def __init__(self, cp_id: int, name: str, position: Point,
                  at: db.StartingPosition, radials: List[int], size: int,
                  importance: float, has_frontline=True,
                  cptype=ControlPointType.AIRBASE):
-        super().__init__(" ".join(re.split(r" |-", name)[:2]), position)
-        self.id = id
+        super().__init__(" ".join(re.split(r"[ \-]", name)[:2]), position)
+        # TODO: Should be Airbase specific.
+        self.id = cp_id
         self.full_name = name
         self.at = at
         self.connected_objectives: List[TheaterGroundObject] = []
         self.base_defenses: List[BaseDefenseGroundObject] = []
         self.preset_locations = PresetLocations()
 
+        # TODO: Should be Airbase specific.
         self.size = size
         self.importance = importance
         self.captured = False
         self.captured_invert = False
+        # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.radials = radials
         self.connected_points: List[ControlPoint] = []
         self.base: Base = Base()
         self.cptype = cptype
+        # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
-        self.airport = None
         self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
     
     def __repr__(self):
@@ -180,35 +195,10 @@ class ControlPoint(MissionTarget):
         return list(
             itertools.chain(self.connected_objectives, self.base_defenses))
 
-    @classmethod
-    def from_airport(cls, airport: Airport, radials: List[int], size: int, importance: float, has_frontline=True):
-        assert airport
-        obj = cls(airport.id, airport.name, airport.position, airport, radials, size, importance, has_frontline, cptype=ControlPointType.AIRBASE)
-        obj.airport = airport
-        return obj
-
-    @classmethod
-    def carrier(cls, name: str, at: Point, id: int):
-        import game.theater.conflicttheater
-        cp = cls(id, name, at, at, game.theater.conflicttheater.LAND, game.theater.conflicttheater.SIZE_SMALL, 1,
-                 has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
-        return cp
-
-    @classmethod
-    def lha(cls, name: str, at: Point, id: int):
-        import game.theater.conflicttheater
-        cp = cls(id, name, at, at, game.theater.conflicttheater.LAND, game.theater.conflicttheater.SIZE_SMALL, 1,
-                 has_frontline=False, cptype=ControlPointType.LHA_GROUP)
-        return cp
-
     @property
-    def heading(self):
-        if self.cptype == ControlPointType.AIRBASE:
-            return self.airport.runways[0].heading
-        elif self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]:
-            return 0 # TODO compute heading
-        else:
-            return 0
+    @abstractmethod
+    def heading(self) -> int:
+        ...
 
     def __str__(self):
         return self.name
@@ -222,21 +212,21 @@ class ControlPoint(MissionTarget):
         """
         :return: Whether this control point is an aircraft carrier
         """
-        return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+        return False
 
     @property
     def is_fleet(self):
         """
         :return: Whether this control point is a boat (mobile)
         """
-        return self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
+        return False
 
     @property
     def is_lha(self):
         """
         :return: Whether this control point is an LHA
         """
-        return self.cptype in [ControlPointType.LHA_GROUP]
+        return False
 
     @property
     def sea_radials(self) -> List[int]:
@@ -249,52 +239,42 @@ class ControlPoint(MissionTarget):
         return result
 
     @property
+    @abstractmethod
     def total_aircraft_parking(self):
         """
-        :return: The maximum number of aircraft that can be stored in this control point
+        :return: The maximum number of aircraft that can be stored in this
+                 control point
         """
-        if self.cptype == ControlPointType.AIRBASE:
-            return len(self.airport.parking_slots)
-        elif self.is_lha:
-            return 20
-        elif self.is_carrier:
-            return 90
-        else:
-            return 0
+        ...
 
+    # TODO: Should be Airbase specific.
     def connect(self, to: ControlPoint) -> None:
         self.connected_points.append(to)
         self.stances[to.id] = CombatStance.DEFENSIVE
 
-    def has_runway(self):
+    @abstractmethod
+    def has_runway(self) -> bool:
         """
-        Check whether this control point can have aircraft taking off or landing.
+        Check whether this control point supports taking offs and landings.
         :return:
         """
-        if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP] :
-            for g in self.ground_objects:
-                if g.dcs_identifier in ["CARRIER", "LHA"]:
-                    for group in g.groups:
-                        for u in group.units:
-                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, Type_071_Amphibious_Transport_Dock]:
-                                return True
-            return False
-        elif self.cptype in [ControlPointType.AIRBASE, ControlPointType.FARP]:
-            return True
-        else:
-            return True
+        ...
 
+    # TODO: Should be naval specific.
     def get_carrier_group_name(self):
         """
         Get the carrier group name if the airbase is a carrier
         :return: Carrier group name
         """
-        if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP] :
+        if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP,
+                           ControlPointType.LHA_GROUP]:
             for g in self.ground_objects:
                 if g.dcs_identifier == "CARRIER":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [CVN_74_John_C__Stennis, CV_1143_5_Admiral_Kuznetsov]:
+                            if db.unit_type_from_name(u.type) in [
+                                    CVN_74_John_C__Stennis,
+                                    CV_1143_5_Admiral_Kuznetsov]:
                                 return group.name
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
@@ -303,6 +283,7 @@ class ControlPoint(MissionTarget):
                                 return group.name
         return None
 
+    # TODO: Should be Airbase specific.
     def is_connected(self, to) -> bool:
         return to in self.connected_points
 
@@ -327,6 +308,7 @@ class ControlPoint(MissionTarget):
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
 
+    # TODO: Should be Airbase specific.
     def clear_base_defenses(self) -> None:
         for base_defense in self.base_defenses:
             if isinstance(base_defense, EwrGroundObject):
@@ -345,6 +327,7 @@ class ControlPoint(MissionTarget):
                     base_defense.position)
         self.base_defenses = []
 
+    # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
         if for_player:
             self.captured = True
@@ -360,35 +343,9 @@ class ControlPoint(MissionTarget):
         from .start_generator import BaseDefenseGenerator
         BaseDefenseGenerator(game, self).generate()
 
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        yield from super().mission_types(for_player)
-        if self.is_friendly(for_player):
-            if self.is_fleet:
-                yield from [
-                    # TODO: FlightType.INTERCEPTION
-                    # TODO: Buddy tanking for the A-4?
-                    # TODO: Rescue chopper?
-                    # TODO: Inter-ship logistics?
-                ]
-            else:
-                yield from [
-                    # TODO: FlightType.INTERCEPTION
-                    # TODO: FlightType.LOGISTICS
-                ]
-        else:
-            if self.is_fleet:
-                yield FlightType.ANTISHIP
-            else:
-                yield from [
-                    # TODO: FlightType.STRIKE
-                ]
-
+    @abstractmethod
     def can_land(self, aircraft: FlyingType) -> bool:
-        if self.is_carrier and aircraft not in db.CARRIER_CAPABLE:
-            return False
-        if self.is_lha and aircraft not in db.LHA_CAPABLE:
-            return False
-        return True
+        ...
 
     def aircraft_transferring(self, game: Game) -> int:
         if self.captured:
@@ -421,11 +378,158 @@ class ControlPoint(MissionTarget):
         return (self.total_aircraft_parking -
                 self.expected_aircraft_next_turn(game).total)
 
+    @abstractmethod
+    def active_runway(self, conditions: Conditions,
+                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+        ...
+
+    @property
+    def parking_slots(self) -> Iterator[ParkingSlot]:
+        yield from []
+
+
+class Airfield(ControlPoint):
+
+    def __init__(self, airport: Airport, radials: List[int], size: int,
+                 importance: float, has_frontline=True):
+        super().__init__(airport.id, airport.name, airport.position, airport,
+                         radials, size, importance, has_frontline,
+                         cptype=ControlPointType.AIRBASE)
+        self.airport = airport
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        return True
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            yield from [
+                    # TODO: FlightType.INTERCEPTION
+                    # TODO: FlightType.LOGISTICS
+                ]
+        else:
+            yield from [
+                    # TODO: FlightType.STRIKE
+                ]
+
+    @property
+    def total_aircraft_parking(self) -> int:
+        return len(self.airport.parking_slots)
+
+    @property
+    def heading(self) -> int:
+        return self.airport.runways[0].heading
+
+    def has_runway(self) -> bool:
+        return True
+
+    def active_runway(self, conditions: Conditions,
+                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+        assigner = RunwayAssigner(conditions)
+        return assigner.get_preferred_runway(self.airport)
+
+    @property
+    def parking_slots(self) -> Iterator[ParkingSlot]:
+        yield from self.airport.parking_slots
+
+
+class NavalControlPoint(ControlPoint, ABC):
+    @property
+    def is_fleet(self) -> bool:
+        return True
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            yield from [
+                # TODO: FlightType.INTERCEPTION
+                # TODO: Buddy tanking for the A-4?
+                # TODO: Rescue chopper?
+                # TODO: Inter-ship logistics?
+            ]
+        else:
+            yield FlightType.ANTISHIP
+
+    @property
+    def heading(self) -> int:
+        return 0  # TODO compute heading
+
+    def has_runway(self) -> bool:
+        # Necessary because it's possible for the carrier itself to have sunk
+        # while its escorts are still alive.
+        for g in self.ground_objects:
+            if g.dcs_identifier in ["CARRIER", "LHA"]:
+                for group in g.groups:
+                    for u in group.units:
+                        if db.unit_type_from_name(u.type) in [
+                                CVN_74_John_C__Stennis, LHA_1_Tarawa,
+                                CV_1143_5_Admiral_Kuznetsov,
+                                Type_071_Amphibious_Transport_Dock]:
+                            return True
+        return False
+
+    def active_runway(self, conditions: Conditions,
+                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+        # TODO: Assign TACAN and ICLS earlier so we don't need this.
+        fallback = RunwayData(self.full_name, runway_heading=0, runway_name="")
+        return dynamic_runways.get(self.name, fallback)
+
+
+class Carrier(NavalControlPoint):
+
+    def __init__(self, name: str, at: Point, cp_id: int):
+        import game.theater.conflicttheater
+        super().__init__(cp_id, name, at, at, game.theater.conflicttheater.LAND,
+                         game.theater.conflicttheater.SIZE_SMALL, 1,
+                         has_frontline=False,
+                         cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
+
+    def capture(self, game: Game, for_player: bool) -> None:
+        raise RuntimeError("Carriers cannot be captured")
+
+    @property
+    def is_carrier(self):
+        return True
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        return aircraft in db.CARRIER_CAPABLE
+
+    @property
+    def total_aircraft_parking(self) -> int:
+        return 90
+
+
+class Lha(NavalControlPoint):
+
+    def __init__(self, name: str, at: Point, cp_id: int):
+        import game.theater.conflicttheater
+        super().__init__(cp_id, name, at, at, game.theater.conflicttheater.LAND,
+                         game.theater.conflicttheater.SIZE_SMALL, 1,
+                         has_frontline=False, cptype=ControlPointType.LHA_GROUP)
+
+    def capture(self, game: Game, for_player: bool) -> None:
+        raise RuntimeError("LHAs cannot be captured")
+
+    @property
+    def is_lha(self) -> bool:
+        return True
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        return aircraft in db.LHA_CAPABLE
+
+    @property
+    def total_aircraft_parking(self) -> int:
+        return 20
+
 
 class OffMapSpawn(ControlPoint):
-    def __init__(self, id: int, name: str, position: Point):
+
+    def has_runway(self) -> bool:
+        return True
+
+    def __init__(self, cp_id: int, name: str, position: Point):
         from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
-        super().__init__(id, name, position, at=position, radials=[],
+        super().__init__(cp_id, name, position, at=position, radials=[],
                          size=SIZE_REGULAR, importance=IMPORTANCE_MEDIUM,
                          has_frontline=False, cptype=ControlPointType.OFF_MAP)
 
@@ -438,3 +542,15 @@ class OffMapSpawn(ControlPoint):
     @property
     def total_aircraft_parking(self) -> int:
         return 1000
+
+    def can_land(self, aircraft: FlyingType) -> bool:
+        return True
+
+    @property
+    def heading(self) -> int:
+        return 0
+
+    def active_runway(self, conditions: Conditions,
+                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+        logging.warning("TODO: Off map spawns have no runways.")
+        return RunwayData(self.full_name, runway_heading=0, runway_name="")

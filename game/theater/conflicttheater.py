@@ -42,7 +42,13 @@ from dcs.unitgroup import (
 from dcs.vehicles import AirDefence, Armor
 
 from gen.flights.flight import FlightType
-from .controlpoint import ControlPoint, MissionTarget, OffMapSpawn
+from .controlpoint import (
+    Airfield,
+    Carrier,
+    ControlPoint,
+    Lha, MissionTarget,
+    OffMapSpawn,
+)
 from .landmap import Landmap, load_landmap, poly_contains
 from ..utils import nm_to_meter
 
@@ -160,7 +166,7 @@ class MizCampaignLoader:
         else:
             importance = airport.periodicity / 10
 
-        cp = ControlPoint.from_airport(airport, radials, size, importance)
+        cp = Airfield(airport, radials, size, importance)
         cp.captured = airport.is_blue()
 
         # Use the unlimited aircraft option to determine if an airfield should
@@ -258,14 +264,14 @@ class MizCampaignLoader:
                 control_points[control_point.id] = control_point
             for group in self.carriers(blue):
                 # TODO: Name the carrier.
-                control_point = ControlPoint.carrier(
+                control_point = Carrier(
                     "carrier", group.position, next(self.control_point_id))
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for group in self.lhas(blue):
                 # TODO: Name the LHA.
-                control_point = ControlPoint.lha(
+                control_point = Lha(
                     "lha", group.position, next(self.control_point_id))
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
@@ -466,7 +472,7 @@ class ConflictTheater:
         return closest
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
-
+        cp: ControlPoint
         if p["type"] == "airbase":
 
             airbase = theater.terrain.airports[p["id"]]
@@ -486,11 +492,11 @@ class ConflictTheater:
             else:
                 importance = IMPORTANCE_MEDIUM
 
-            cp = ControlPoint.from_airport(airbase, radials, size, importance)
+            cp = Airfield(airbase, radials, size, importance)
         elif p["type"] == "carrier":
-            cp = ControlPoint.carrier("carrier", Point(p["x"], p["y"]), p["id"])
+            cp = Carrier("carrier", Point(p["x"], p["y"]), p["id"])
         else:
-            cp = ControlPoint.lha("lha", Point(p["x"], p["y"]), p["id"])
+            cp = Lha("lha", Point(p["x"], p["y"]), p["id"])
 
         if "captured_invert" in p.keys():
             cp.captured_invert = p["captured_invert"]
