@@ -44,6 +44,8 @@ from gen.flights.ai_flight_planner_db import (
     CAP_PREFERRED,
     CAS_CAPABLE,
     CAS_PREFERRED,
+    RUNWAY_ATTACK_CAPABLE,
+    RUNWAY_ATTACK_PREFERRED,
     SEAD_CAPABLE,
     SEAD_PREFERRED,
     STRIKE_CAPABLE,
@@ -160,6 +162,8 @@ class AircraftAllocator:
             return CAS_PREFERRED
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_PREFERRED
+        elif task == FlightType.RUNWAY_ATTACK:
+            return RUNWAY_ATTACK_PREFERRED
         elif task == FlightType.STRIKE:
             return STRIKE_PREFERRED
         elif task == FlightType.ESCORT:
@@ -180,6 +184,8 @@ class AircraftAllocator:
             return CAS_CAPABLE
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_CAPABLE
+        elif task == FlightType.RUNWAY_ATTACK:
+            return RUNWAY_ATTACK_CAPABLE
         elif task == FlightType.STRIKE:
             return STRIKE_CAPABLE
         elif task == FlightType.ESCORT:

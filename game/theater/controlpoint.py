@@ -401,16 +401,18 @@ class Airfield(ControlPoint):
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        yield from super().mission_types(for_player)
+        from gen.flights.flight import FlightType
         if self.is_friendly(for_player):
             yield from [
-                    # TODO: FlightType.INTERCEPTION
-                    # TODO: FlightType.LOGISTICS
-                ]
+                # TODO: FlightType.INTERCEPTION
+                # TODO: FlightType.LOGISTICS
+            ]
         else:
             yield from [
-                    # TODO: FlightType.STRIKE
-                ]
+                FlightType.RUNWAY_ATTACK,
+                # TODO: FlightType.OCA_STRIKE
+            ]
+        yield from super().mission_types(for_player)
 
     @property
     def total_aircraft_parking(self) -> int:

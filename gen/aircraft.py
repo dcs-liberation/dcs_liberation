@@ -41,6 +41,7 @@ from dcs.task import (
     AntishipStrike,
     AttackGroup,
     Bombing,
+    BombingRunway,
     CAP,
     CAS,
     ControlledTask,
@@ -55,6 +56,7 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
+    RunwayAttack,
     SEAD,
     StartCommand,
     Targets,
@@ -1169,6 +1171,18 @@ class AircraftConflictGenerator:
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True)
 
+    def configure_runway_attack(
+            self, group: FlyingGroup, package: Package, flight: Flight,
+            dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = RunwayAttack.name
+        self._setup_group(group, RunwayAttack, package, flight,
+                          dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            restrict_jettison=True)
+
     def configure_escort(self, group: FlyingGroup, package: Package,
                          flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -1206,6 +1220,9 @@ class AircraftConflictGenerator:
             self.configure_anti_ship(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ESCORT:
             self.configure_escort(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.RUNWAY_ATTACK:
+            self.configure_runway_attack(group, package, flight,
+                                         dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 
@@ -1345,6 +1362,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
+            FlightWaypointType.INGRESS_RUNWAY_BOMBING: RunwayBombingIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
@@ -1477,6 +1495,22 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
         self.register_special_waypoints(self.waypoint.targets)
+        return waypoint
+
+
+class RunwayBombingIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        target = self.package.target
+        if not isinstance(target, Airfield):
+            logging.error(
+                "Unexpected target type for runway bombing mission: %s",
+                target.__class__.__name__)
+            return waypoint
+
+        waypoint.tasks.append(
+            BombingRunway(airport_id=target.airport.id, group_attack=True))
         return waypoint
 
 

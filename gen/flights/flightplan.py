@@ -20,6 +20,7 @@ from dcs.unit import Unit
 
 from game.data.doctrine import Doctrine
 from game.theater import (
+    Airfield,
     ControlPoint,
     FrontLine,
     MissionTarget,
@@ -650,6 +651,8 @@ class FlightPlanBuilder:
             return self.generate_dead(flight, custom_targets)
         elif task == FlightType.ESCORT:
             return self.generate_escort(flight)
+        elif task == FlightType.RUNWAY_ATTACK:
+            return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
             return self.generate_sead(flight, custom_targets)
         elif task == FlightType.STRIKE:
@@ -713,7 +716,9 @@ class FlightPlanBuilder:
 
                 targets.append(StrikeTarget(building.category, building))
 
-        return self.strike_flightplan(flight, location, targets)
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_STRIKE,
+                                      targets)
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.
@@ -731,7 +736,8 @@ class FlightPlanBuilder:
             targets.append(
                 StrikeTarget(f"{group.name} at {location.name}", group))
 
-        return self.strike_flightplan(flight, location, targets)
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_BAI, targets)
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
         """Generates an anti-ship flight plan.
@@ -756,7 +762,8 @@ class FlightPlanBuilder:
             targets.append(
                 StrikeTarget(f"{group.name} at {location.name}", group))
 
-        return self.strike_flightplan(flight, location, targets)
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_BAI, targets)
 
     def generate_barcap(self, flight: Flight) -> BarCapFlightPlan:
         """Generate a BARCAP flight at a given location.
@@ -942,7 +949,25 @@ class FlightPlanBuilder:
             for target in custom_targets:
                 targets.append(StrikeTarget(location.name, target))
 
-        return self.strike_flightplan(flight, location, targets)
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_DEAD, targets)
+
+    def generate_runway_attack(self, flight: Flight) -> StrikeFlightPlan:
+        """Generate a runway attack flight plan at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        if not isinstance(location, Airfield):
+            logging.exception(
+                f"Invalid Objective Location for runway bombing flight "
+                f"{flight=} at {location=}.")
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_RUNWAY_BOMBING)
 
     def generate_sead(self, flight: Flight,
                       custom_targets: Optional[List[Unit]]) -> StrikeFlightPlan:
@@ -963,7 +988,8 @@ class FlightPlanBuilder:
             for target in custom_targets:
                 targets.append(StrikeTarget(location.name, target))
 
-        return self.strike_flightplan(flight, location, targets)
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_SEAD, targets)
 
     def generate_escort(self, flight: Flight) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
@@ -1012,7 +1038,8 @@ class FlightPlanBuilder:
             flight=flight,
             patrol_duration=self.doctrine.cas_duration,
             takeoff=builder.takeoff(flight.departure),
-            patrol_start=builder.ingress_cas(ingress, location),
+            patrol_start=builder.ingress(FlightWaypointType.INGRESS_CAS,
+                                         ingress, location),
             target=builder.cas(center),
             patrol_end=builder.egress(egress, location),
             land=builder.land(flight.arrival),
@@ -1101,23 +1128,11 @@ class FlightPlanBuilder:
 
     def strike_flightplan(
             self, flight: Flight, location: MissionTarget,
+            ingress_type: FlightWaypointType,
             targets: Optional[List[StrikeTarget]] = None) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine,
                                   targets)
-        if flight.flight_type is FlightType.SEAD:
-            ingress = builder.ingress_sead(self.package.waypoints.ingress,
-                                           location)
-
-        elif flight.flight_type is FlightType.DEAD:
-            ingress = builder.ingress_dead(self.package.waypoints.ingress,
-                                           location)
-        elif flight.flight_type in {FlightType.ANTISHIP, FlightType.BAI}:
-            ingress = builder.ingress_bai(self.package.waypoints.ingress,
-                                          location)
-        else:
-            ingress = builder.ingress_strike(self.package.waypoints.ingress,
-                                             location)
 
         target_waypoints: List[FlightWaypoint] = []
         if targets is not None:
@@ -1134,7 +1149,8 @@ class FlightPlanBuilder:
             takeoff=builder.takeoff(flight.departure),
             hold=builder.hold(self._hold_point(flight)),
             join=builder.join(self.package.waypoints.join),
-            ingress=ingress,
+            ingress=builder.ingress(ingress_type,
+                                    self.package.waypoints.ingress, location),
             targets=target_waypoints,
             egress=builder.egress(self.package.waypoints.egress, location),
             split=builder.split(self.package.waypoints.split),

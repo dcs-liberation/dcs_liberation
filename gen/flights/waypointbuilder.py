@@ -173,38 +173,8 @@ class WaypointBuilder:
         waypoint.name = "SPLIT"
         return waypoint
 
-    def ingress_cas(self, position: Point,
-                    objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_CAS, position,
-                             objective)
-
-    def ingress_escort(self, position: Point,
-                       objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_ESCORT, position,
-                             objective)
-
-    def ingress_bai(self, position: Point,
-                    objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_BAI, position,
-                             objective)
-    
-    def ingress_dead(self, position:Point,
-                     objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_DEAD, position,
-                             objective)
-
-    def ingress_sead(self, position: Point,
-                     objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_SEAD, position,
-                             objective)
-
-    def ingress_strike(self, position: Point,
-                       objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_STRIKE, position,
-                             objective)
-
-    def _ingress(self, ingress_type: FlightWaypointType, position: Point,
-                 objective: MissionTarget) -> FlightWaypoint:
+    def ingress(self, ingress_type: FlightWaypointType, position: Point,
+                objective: MissionTarget) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             ingress_type,
             position.x,
@@ -415,8 +385,8 @@ class WaypointBuilder:
         # description in gen.aircraft.JoinPointBuilder), so instead we give
         # the escort flights a flight plan including the ingress point, target
         # area, and egress point.
-        ingress = self._ingress(FlightWaypointType.INGRESS_ESCORT, ingress,
-                                target)
+        ingress = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress,
+                               target)
 
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,

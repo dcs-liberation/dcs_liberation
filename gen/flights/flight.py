@@ -39,6 +39,7 @@ class FlightType(Enum):
     EWAR = 16
 
     SWEEP = 17
+    RUNWAY_ATTACK = 18
 
 
 class FlightWaypointType(Enum):
@@ -66,6 +67,7 @@ class FlightWaypointType(Enum):
     INGRESS_SWEEP = 21
     INGRESS_BAI = 22
     DIVERT = 23
+    INGRESS_RUNWAY_BOMBING = 24
 
 
 class FlightWaypoint:
