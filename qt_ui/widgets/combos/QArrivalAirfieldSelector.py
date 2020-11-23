@@ -37,4 +37,4 @@ class QArrivalAirfieldSelector(QComboBox):
                 self.addItem(destination.name, destination)
         self.model().sort(0)
         self.insertItem(0, self.optional_text, None)
-        self.update()
+        self.setCurrentIndex(0)
