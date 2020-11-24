@@ -954,8 +954,8 @@ class AircraftConflictGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(Package(control_point), aircraft, 1, FlightType.CAP,
-                            "Cold", departure=control_point,
+            flight = Flight(Package(control_point), aircraft, 1,
+                            FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
             group = self._generate_at_airport(
                 name=namegen.next_unit_name(country, control_point.id,
@@ -1196,7 +1196,7 @@ class AircraftConflictGenerator:
 
     def configure_unknown_task(self, group: FlyingGroup,
                                flight: Flight) -> None:
-        logging.error(f"Unhandled flight type: {flight.flight_type.name}")
+        logging.error(f"Unhandled flight type: {flight.flight_type}")
         self.configure_behavior(group)
 
     def setup_flight_group(self, group: FlyingGroup, package: Package,

@@ -1,5 +1,3 @@
-import datetime
-
 from PySide2.QtGui import QStandardItem, QIcon
 
 from game import db
@@ -23,6 +21,4 @@ class QFlightItem(QStandardItem):
         self.setEditable(False)
         estimator = TotEstimator(self.package)
         delay = estimator.mission_start_time(flight)
-        self.setText("["+str(self.flight.flight_type.name[:6])+"] "
-                     + str(self.flight.count) + " x " + db.unit_type_name(self.flight.unit_type)
-                     + "   in " + str(delay))
+        self.setText(f"{flight} in {delay}")

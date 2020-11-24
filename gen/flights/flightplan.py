@@ -56,9 +56,7 @@ class PlanningError(RuntimeError):
 class InvalidObjectiveLocation(PlanningError):
     """Raised when the objective location is invalid for the mission type."""
     def __init__(self, task: FlightType, location: MissionTarget) -> None:
-        super().__init__(
-            f"{location.name} is not valid for {task.name} missions."
-        )
+        super().__init__(f"{location.name} is not valid for {task} missions.")
 
 
 @dataclass(frozen=True)
@@ -661,12 +659,8 @@ class FlightPlanBuilder:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
-        elif task == FlightType.TROOP_TRANSPORT:
-            logging.error(
-                "Troop transport flight plan generation not implemented"
-            )
         raise PlanningError(
-            f"{task.name} flight plan generation not implemented")
+            f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
         ingress_point = self._ingress_point()

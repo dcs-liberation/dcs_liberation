@@ -64,7 +64,7 @@ class QFlightWaypointTab(QFrame):
                 def closure():
                     return self.confirm_recreate(arg)
                 return closure
-            button = QPushButton(f"Recreate as {task.name}")
+            button = QPushButton(f"Recreate as {task}")
             button.clicked.connect(make_closure(task))
             rlayout.addWidget(button)
             self.recreate_buttons.append(button)

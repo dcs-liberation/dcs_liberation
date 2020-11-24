@@ -433,7 +433,7 @@ class Operation:
                                                           FlightType.DEAD,
                                                           FlightType.SEAD,
                                                           FlightType.STRIKE]:
-                flightType = flight.flight_type.name
+                flightType = str(flight.flight_type)
                 flightTarget = flight.package.target
                 if flightTarget:
                     flightTargetName = None

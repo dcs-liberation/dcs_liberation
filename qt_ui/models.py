@@ -121,14 +121,11 @@ class PackageModel(QAbstractListModel):
 
     def text_for_flight(self, flight: Flight) -> str:
         """Returns the text that should be displayed for the flight."""
-        task = flight.flight_type.name
-        count = flight.count
-        name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)
         delay = datetime.timedelta(
             seconds=int(estimator.mission_start_time(flight).total_seconds()))
         origin = flight.from_cp.name
-        return f"[{task}] {count} x {name} from {origin} in {delay}"
+        return f"{flight} from {origin} in {delay}"
 
     @staticmethod
     def icon_for_flight(flight: Flight) -> Optional[QIcon]:

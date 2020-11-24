@@ -147,20 +147,13 @@ class Package:
             FlightType.CAS,
             FlightType.STRIKE,
             FlightType.ANTISHIP,
+            FlightType.RUNWAY_ATTACK,
             FlightType.BAI,
-            FlightType.EVAC,
-            FlightType.TROOP_TRANSPORT,
-            FlightType.RECON,
-            FlightType.ELINT,
             FlightType.DEAD,
             FlightType.SEAD,
-            FlightType.LOGISTICS,
-            FlightType.INTERCEPTION,
             FlightType.TARCAP,
-            FlightType.CAP,
             FlightType.BARCAP,
             FlightType.SWEEP,
-            FlightType.EWAR,
             FlightType.ESCORT,
         ]
         for task in task_priorities:
@@ -179,7 +172,7 @@ class Package:
         task = self.primary_task
         if task is None:
             return "No mission"
-        return task.name
+        return str(task)
 
     def __hash__(self) -> int:
         # TODO: Far from perfect. Number packages?

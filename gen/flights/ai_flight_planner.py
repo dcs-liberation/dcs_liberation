@@ -86,7 +86,7 @@ class ProposedFlight:
     max_distance: int
 
     def __str__(self) -> str:
-        return f"{self.task.name} {self.num_aircraft} ship"
+        return f"{self.task} {self.num_aircraft} ship"
 
 
 @dataclass(frozen=True)

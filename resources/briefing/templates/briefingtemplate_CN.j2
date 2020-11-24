@@ -66,7 +66,7 @@ DCS Liberation 第 {{ game.turn }} 回合
 ====================
 {% for flight in flights if flight.client_units %}
 --------------------------------------------------
-{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{ flight.size }}, {{ flight.package.target.name}}
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{ flight.size }}, {{ flight.package.target.name}}
 {% for waypoint in flight.waypoints %}{{ loop.index }} -- {{waypoint.name}} : {{ waypoint.description}}
 {% endfor %}
 --------------------------------------------------{% endfor %}
@@ -78,7 +78,7 @@ DCS Liberation 第 {{ game.turn }} 回合
 {{ dep }}
 ---------------------------------------------------
 {% for flight in allied_flights_by_departure[dep] %}
-{{ flight.flight_type.name }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
 {% endfor %}
 {% endfor %}
 

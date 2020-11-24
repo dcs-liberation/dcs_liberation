@@ -171,7 +171,7 @@ class QTopPanel(QFrame):
     def confirm_negative_start_time(self,
                                     negative_starts: List[Package]) -> bool:
         formatted = '<br />'.join(
-            [f"{p.primary_task.name} {p.target.name}" for p in negative_starts]
+            [f"{p.primary_task} {p.target.name}" for p in negative_starts]
         )
         mbox = QMessageBox(
             QMessageBox.Question,

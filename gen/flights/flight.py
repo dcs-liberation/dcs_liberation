@@ -17,29 +17,21 @@ if TYPE_CHECKING:
 
 
 class FlightType(Enum):
-    CAP = 0  # Do not use. Use BARCAP or TARCAP.
-    TARCAP = 1
-    BARCAP = 2
-    CAS = 3
-    INTERCEPTION = 4
-    STRIKE = 5
-    ANTISHIP = 6
-    SEAD = 7
-    DEAD = 8
-    ESCORT = 9
-    BAI = 10
+    TARCAP = "TARCAP"
+    BARCAP = "BARCAP"
+    CAS = "CAS"
+    INTERCEPTION = "Intercept"
+    STRIKE = "Strike"
+    ANTISHIP = "Anti-ship"
+    SEAD = "SEAD"
+    DEAD = "DEAD"
+    ESCORT = "Escort"
+    BAI = "BAI"
+    SWEEP = "Fighter sweep"
+    RUNWAY_ATTACK = "Runway attack"
 
-    # Helos
-    TROOP_TRANSPORT = 11
-    LOGISTICS = 12
-    EVAC = 13
-
-    ELINT = 14
-    RECON = 15
-    EWAR = 16
-
-    SWEEP = 17
-    RUNWAY_ATTACK = 18
+    def __str__(self) -> str:
+        return self.value
 
 
 class FlightWaypointType(Enum):
@@ -172,5 +164,5 @@ class Flight:
         return self.flight_plan.waypoints[1:]
 
     def __repr__(self):
-        return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
-               + " (" + str(len(self.points)) + " wpt)"
+        name = db.unit_type_name(self.unit_type)
+        return f"[{self.flight_type}] {self.count} x {name}"

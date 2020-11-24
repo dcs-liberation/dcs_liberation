@@ -13,4 +13,4 @@ class QFlightTypeComboBox(QComboBox):
         self.theater = theater
         self.target = target
         for mission_type in self.target.mission_types(for_player=True):
-            self.addItem(mission_type.name, userData=mission_type)
+            self.addItem(str(mission_type), userData=mission_type)
