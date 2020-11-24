@@ -22,6 +22,7 @@ from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
 from game.theater import (
+    Airfield,
     ControlPoint,
     FrontLine,
     MissionTarget,
@@ -451,6 +452,15 @@ class ObjectiveFinder:
                     yield cp
                     break
 
+    def oca_targets(self, min_aircraft: int) -> Iterator[MissionTarget]:
+        airfields = []
+        for control_point in self.enemy_control_points():
+            if not isinstance(control_point, Airfield):
+                continue
+            if control_point.base.total_aircraft >= min_aircraft:
+                airfields.append(control_point)
+        return self._targets_by_range(airfields)
+
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
         return (c for c in self.game.theater.controlpoints if
@@ -507,6 +517,7 @@ class CoalitionMissionPlanner:
     MAX_CAS_RANGE = nm_to_meter(50)
     MAX_ANTISHIP_RANGE = nm_to_meter(150)
     MAX_BAI_RANGE = nm_to_meter(150)
+    MAX_OCA_RANGE = nm_to_meter(150)
     MAX_SEAD_RANGE = nm_to_meter(150)
     MAX_STRIKE_RANGE = nm_to_meter(150)
 
@@ -554,6 +565,15 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.ESCORT, 2, self.MAX_BAI_RANGE),
+            ])
+
+        for target in self.objective_finder.oca_targets(min_aircraft=20):
+            yield ProposedMission(target, [
+                ProposedFlight(FlightType.OCA_STRIKE, 2, self.MAX_OCA_RANGE),
+                ProposedFlight(FlightType.RUNWAY_ATTACK, 2, self.MAX_OCA_RANGE),
+                # TODO: Max escort range.
+                ProposedFlight(FlightType.ESCORT, 2, self.MAX_OCA_RANGE),
+                ProposedFlight(FlightType.SEAD, 2, self.MAX_OCA_RANGE),
             ])
 
         # Plan strike missions.
