@@ -64,33 +64,6 @@ IMPORTANCE_LOW = 1
 IMPORTANCE_MEDIUM = 1.2
 IMPORTANCE_HIGH = 1.4
 
-"""
-ALL_RADIALS = [0, 45, 90, 135, 180, 225, 270, 315, ]
-COAST_NS_E = [45, 90, 135, ]
-COAST_EW_N = [315, 0, 45, ]
-COAST_NSEW_E = [225, 270, 315, ]
-COAST_NSEW_W = [45, 90, 135, ]
-
-COAST_NS_W = [225, 270, 315, ]
-COAST_EW_S = [135, 180, 225, ]
-"""
-
-LAND = [0, 45, 90, 135, 180, 225, 270, 315, ]
-
-COAST_V_E = [0, 45, 90, 135, 180]
-COAST_V_W = [180, 225, 270, 315, 0]
-
-COAST_A_W = [315, 0, 45, 135, 180, 225, 270]
-COAST_A_E = [0, 45, 90, 135, 180, 225, 315]
-
-COAST_H_N = [270, 315, 0, 45, 90]
-COAST_H_S = [90, 135, 180, 225, 270]
-
-COAST_DL_E = [45, 90, 135, 180, 225]
-COAST_DL_W = [225, 270, 315, 0, 45]
-COAST_DR_E = [315, 0, 45, 90, 135]
-COAST_DR_W = [135, 180, 225, 315]
-
 FRONTLINE_MIN_CP_DISTANCE = 5000
 
 def pairwise(iterable):
@@ -151,8 +124,6 @@ class MizCampaignLoader:
 
     @staticmethod
     def control_point_from_airport(airport: Airport) -> ControlPoint:
-        # TODO: Radials?
-        radials = LAND
 
         # The wiki says this is a legacy property and to just use regular.
         size = SIZE_REGULAR
@@ -166,7 +137,7 @@ class MizCampaignLoader:
         else:
             importance = airport.periodicity / 10
 
-        cp = Airfield(airport, radials, size, importance)
+        cp = Airfield(airport, size, importance)
         cp.captured = airport.is_blue()
 
         # Use the unlimited aircraft option to determine if an airfield should
@@ -514,11 +485,6 @@ class ConflictTheater:
 
             airbase = theater.terrain.airports[p["id"]]
 
-            if "radials" in p.keys():
-                radials = p["radials"]
-            else:
-                radials = LAND
-
             if "size" in p.keys():
                 size = p["size"]
             else:
@@ -529,7 +495,7 @@ class ConflictTheater:
             else:
                 importance = IMPORTANCE_MEDIUM
 
-            cp = Airfield(airbase, radials, size, importance)
+            cp = Airfield(airbase, size, importance)
         elif p["type"] == "carrier":
             cp = Carrier("carrier", Point(p["x"], p["y"]), p["id"])
         else:
