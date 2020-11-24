@@ -162,6 +162,8 @@ class AircraftAllocator:
             return CAS_PREFERRED
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_PREFERRED
+        elif task == FlightType.OCA_STRIKE:
+            return CAS_PREFERRED
         elif task == FlightType.RUNWAY_ATTACK:
             return RUNWAY_ATTACK_PREFERRED
         elif task == FlightType.STRIKE:
@@ -184,6 +186,8 @@ class AircraftAllocator:
             return CAS_CAPABLE
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_CAPABLE
+        elif task == FlightType.OCA_STRIKE:
+            return CAS_CAPABLE
         elif task == FlightType.RUNWAY_ATTACK:
             return RUNWAY_ATTACK_CAPABLE
         elif task == FlightType.STRIKE:

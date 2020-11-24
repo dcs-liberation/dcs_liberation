@@ -147,6 +147,7 @@ class Package:
             FlightType.CAS,
             FlightType.STRIKE,
             FlightType.ANTISHIP,
+            FlightType.OCA_STRIKE,
             FlightType.RUNWAY_ATTACK,
             FlightType.BAI,
             FlightType.DEAD,

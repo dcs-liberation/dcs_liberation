@@ -29,6 +29,7 @@ class FlightType(Enum):
     BAI = "BAI"
     SWEEP = "Fighter sweep"
     RUNWAY_ATTACK = "Runway attack"
+    OCA_STRIKE = "OCA Strike"
 
     def __str__(self) -> str:
         return self.value
@@ -60,6 +61,7 @@ class FlightWaypointType(Enum):
     INGRESS_BAI = 22
     DIVERT = 23
     INGRESS_RUNWAY_BOMBING = 24
+    INGRESS_OCA_STRIKE = 25
 
 
 class FlightWaypoint:
@@ -86,6 +88,7 @@ class FlightWaypoint:
         self.obj_name = ""
         self.pretty_name = ""
         self.only_for_player = False
+        self.flyover = False
 
         # These are set very late by the air conflict generator (part of mission
         # generation). We do it late so that we don't need to propagate changes

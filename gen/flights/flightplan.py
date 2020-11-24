@@ -39,7 +39,6 @@ if TYPE_CHECKING:
     from game import Game
     from gen.ato import Package
 
-
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
     FlightWaypointType.INGRESS_ESCORT,
@@ -55,6 +54,7 @@ class PlanningError(RuntimeError):
 
 class InvalidObjectiveLocation(PlanningError):
     """Raised when the objective location is invalid for the mission type."""
+
     def __init__(self, task: FlightType, location: MissionTarget) -> None:
         super().__init__(f"{location.name} is not valid for {task} missions.")
 
@@ -412,7 +412,7 @@ class StrikeFlightPlan(FormationFlightPlan):
             self.ingress
         ]
         yield from self.targets
-        yield from[
+        yield from [
             self.egress,
             self.split,
             self.land,
@@ -423,9 +423,9 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
         return {
-            self.ingress,
-            self.egress,
-            self.split,
+           self.ingress,
+           self.egress,
+           self.split,
         } | set(self.targets)
 
     def speed_between_waypoints(self, a: FlightWaypoint,
@@ -649,6 +649,8 @@ class FlightPlanBuilder:
             return self.generate_dead(flight, custom_targets)
         elif task == FlightType.ESCORT:
             return self.generate_escort(flight)
+        elif task == FlightType.OCA_STRIKE:
+            return self.generate_oca_strike(flight)
         elif task == FlightType.RUNWAY_ATTACK:
             return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
@@ -876,7 +878,7 @@ class FlightPlanBuilder:
         if combat_width < 35000:
             combat_width = 35000
 
-        radius = combat_width*1.25
+        radius = combat_width * 1.25
         orbit0p = orbit_center.point_from_heading(heading, radius)
         orbit1p = orbit_center.point_from_heading(heading + 180, radius)
 
@@ -931,7 +933,8 @@ class FlightPlanBuilder:
         is_ewr = isinstance(location, EwrGroundObject)
         is_sam = isinstance(location, SamGroundObject)
         if not is_ewr and not is_sam:
-            logging.exception(f"Invalid Objective Location for DEAD flight {flight=} at {location=}")
+            logging.exception(
+                f"Invalid Objective Location for DEAD flight {flight=} at {location=}")
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         # TODO: Unify these.
@@ -945,6 +948,23 @@ class FlightPlanBuilder:
 
         return self.strike_flightplan(flight, location,
                                       FlightWaypointType.INGRESS_DEAD, targets)
+
+    def generate_oca_strike(self, flight: Flight) -> StrikeFlightPlan:
+        """Generate an OCA Strike flight plan at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        if not isinstance(location, Airfield):
+            logging.exception(
+                f"Invalid Objective Location for OCA Strike flight "
+                f"{flight=} at {location=}.")
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        return self.strike_flightplan(flight, location,
+                                      FlightWaypointType.INGRESS_OCA_STRIKE)
 
     def generate_runway_attack(self, flight: Flight) -> StrikeFlightPlan:
         """Generate a runway attack flight plan at a given location.
@@ -1059,6 +1079,8 @@ class FlightPlanBuilder:
             return builder.dead_area(location)
         elif flight.flight_type == FlightType.SEAD:
             return builder.sead_area(location)
+        elif flight.flight_type == FlightType.OCA_STRIKE:
+            return builder.oca_strike_area(location)
         else:
             return builder.strike_area(location)
 

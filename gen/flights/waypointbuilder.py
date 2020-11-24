@@ -239,8 +239,12 @@ class WaypointBuilder:
     def dead_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"DEAD on {target.name}", target)
 
+    def oca_strike_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"ATTACK {target.name}", target, flyover=True)
+
     @staticmethod
-    def _target_area(name: str, location: MissionTarget) -> FlightWaypoint:
+    def _target_area(name: str, location: MissionTarget,
+                     flyover: bool = False) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position.x,
@@ -251,10 +255,18 @@ class WaypointBuilder:
         waypoint.pretty_name = name
         waypoint.name = name
         waypoint.alt_type = "RADIO"
-        # The target waypoints are only for the player's benefit. AI tasks for
+
+        # Most target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
-        waypoint.only_for_player = True
+        #
+        # The exception is for flight plans that require passing over the
+        # target. For example, OCA strikes need to get close enough to detect
+        # the targets in their engagement zone or they will RTB immediately.
+        if flyover:
+            waypoint.flyover = True
+        else:
+            waypoint.only_for_player = True
         return waypoint
 
     def cas(self, position: Point) -> FlightWaypoint:

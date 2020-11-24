@@ -1175,8 +1175,18 @@ class AircraftConflictGenerator:
             self, group: FlyingGroup, package: Package, flight: Flight,
             dynamic_runways: Dict[str, RunwayData]) -> None:
         group.task = RunwayAttack.name
-        self._setup_group(group, RunwayAttack, package, flight,
-                          dynamic_runways)
+        self._setup_group(group, RunwayAttack, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.OpenFire,
+            restrict_jettison=True)
+
+    def configure_oca_strike(
+            self, group: FlyingGroup, package: Package, flight: Flight,
+            dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = CAS.name
+        self._setup_group(group, CAS, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1223,6 +1233,8 @@ class AircraftConflictGenerator:
         elif flight_type == FlightType.RUNWAY_ATTACK:
             self.configure_runway_attack(group, package, flight,
                                          dynamic_runways)
+        elif flight_type == FlightType.OCA_STRIKE:
+            self.configure_oca_strike(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 
@@ -1340,6 +1352,9 @@ class PydcsWaypointBuilder:
         waypoint = self.group.add_waypoint(
             Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt)
 
+        if self.waypoint.flyover:
+            waypoint.type = PointAction.FlyOverPoint.value
+
         waypoint.alt_type = self.waypoint.alt_type
         waypoint.name = String(self.waypoint.name)
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
@@ -1362,14 +1377,15 @@ class PydcsWaypointBuilder:
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
+            FlightWaypointType.INGRESS_OCA_STRIKE: OcaStrikeIngressBuilder,
             FlightWaypointType.INGRESS_RUNWAY_BOMBING: RunwayBombingIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
+            FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
-            FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
@@ -1495,6 +1511,32 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
         self.register_special_waypoints(self.waypoint.targets)
+        return waypoint
+
+
+class OcaStrikeIngressBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        target = self.package.target
+        if not isinstance(target, Airfield):
+            logging.error(
+                "Unexpected target type for OCA Strike mission: %s",
+                target.__class__.__name__)
+            return waypoint
+
+        task = EngageTargetsInZone(
+            position=target.position,
+            # Al Dhafra is 4 nm across at most. Add a little wiggle room in case
+            # the airport position from DCS is not centered.
+            radius=nm_to_meter(3),
+            targets=[Targets.All.Air]
+        )
+        task.params["attackQtyLimit"] = False
+        task.params["directionEnabled"] = False
+        task.params["altitudeEnabled"] = False
+        task.params["groupAttack"] = True
+        waypoint.tasks.append(task)
         return waypoint
 
 
