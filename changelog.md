@@ -7,6 +7,9 @@
 * **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
 * **[Culling]** Added possibility to include/exclude carriers from culling zones
 
+## Fixes :
+* **[Map]** Missiles sites now have a proper icon and will not re-use the SAM sites icon
+
 # 2.2.1
 
 # Features/Improvements
