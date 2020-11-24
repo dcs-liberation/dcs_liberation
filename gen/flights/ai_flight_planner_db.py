@@ -198,7 +198,6 @@ CAP_PREFERRED = [
     F_14B,
     F_15C,
     F_16C_50,
-    FA_18C_hornet,
 
     P_51D_30_NA,
     P_51D,
@@ -305,15 +304,10 @@ CAS_PREFERRED = [
     Su_30,
     Su_34,
 
-    JF_17,
-
     A_10A,
     A_10C,
     A_10C_2,
     AV8BNA,
-
-    F_16C_50,
-    FA_18C_hornet,
 
     Tornado_GR4,
 
@@ -330,8 +324,6 @@ CAS_PREFERRED = [
     AH_64D,
     AH_1W,
 
-    UH_1H,
-    Mi_8MT,
     Mi_28N,
     Mi_24V,
     Ka_50,
@@ -379,7 +371,6 @@ SEAD_PREFERRED = [
     Su_25T,
     Su_25TM,
     Tornado_IDS,
-    AV8BNA,
     F_16C_50,
     FA_18C_hornet,
     Su_30,
