@@ -1,0 +1,49 @@
+{
+  "country": "Sweden",
+  "name": "Sweden 1970s Alternate Universe",
+  "authors": "Starfire",
+  "description": "<p>Sweden 1970</p><p>Since we do not yet have Heatblur's AI Draken, this faction includes the Mirage 2000C in order to provide Sweden with some form of A2A capability.</p>",
+  "aircrafts": [
+    "AJS37",
+    "M_2000C",
+	"UH_1H"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "IFV_MCV_80",
+    "MBT_Leopard_2",
+    "APC_M1126_Stryker_ICV"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator",
+	"EarlyColdWarFlakGenerator",
+    "VulcanGenerator"
+  ],
+  "sams": [
+    "HawkGenerator",
+	"ChaparralGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": false,
+  "doctrine": "coldwar"
+  }
