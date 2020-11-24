@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from itertools import tee
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 from dcs import Mission
 from dcs.countries import (
@@ -470,6 +470,43 @@ class ConflictTheater:
                 closest = control_point
                 closest_distance = distance
         return closest
+    
+    def closest_opposing_control_points(self) -> Tuple[ControlPoint, ControlPoint]:
+        """
+        Returns a tuple of the two nearest opposing ControlPoints in theater.
+        (player_cp, enemy_cp)
+        """
+        all_cp_min_distances = {}
+        for idx, control_point in enumerate(self.controlpoints):
+            distances = {}
+            closest_distance = None
+            for i, cp in enumerate(self.controlpoints):
+                if i != idx and cp.captured is not control_point.captured:
+                    dist = cp.position.distance_to_point(control_point.position)
+                    if not closest_distance:
+                        closest_distance = dist
+                        distances[cp.id] = dist
+                    if dist < closest_distance:
+                        distances[cp.id] = dist
+            closest_cp_id = min(distances, key=distances.get)
+
+            all_cp_min_distances[(control_point.id, closest_cp_id)] = distances[closest_cp_id]
+        closest_opposing_cps = [
+            self.find_control_point_by_id(i)
+            for i
+            in min(all_cp_min_distances, key=all_cp_min_distances.get)
+          ]  # type: List[ControlPoint]
+        assert len(closest_opposing_cps) == 2
+        if closest_opposing_cps[0].captured:
+            return cast(Tuple[ControlPoint, ControlPoint], tuple(closest_opposing_cps))
+        else:
+            return cast(Tuple[ControlPoint, ControlPoint], tuple(reversed(closest_opposing_cps)))
+
+    def find_control_point_by_id(self, id: int) -> ControlPoint:
+        for i in self.controlpoints:
+            if i.id == id:
+                return i
+        raise RuntimeError(f"Cannot find ControlPoint with ID {id}")
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
         cp: ControlPoint

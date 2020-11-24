@@ -182,8 +182,7 @@ class Game:
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        if event.is_successful(debriefing):
-            self.budget += event.bonus()
+        self.budget += event.bonus()
 
         if event in self.events:
             self.events.remove(event)
@@ -194,7 +193,7 @@ class Game:
         if isinstance(event, Event):
             return event and event.attacker_name and event.attacker_name == self.player_name
         else:
-            return event and event.name and event.name == self.player_name
+            raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self) -> None:
         LuaPluginManager.load_settings(self.settings)
