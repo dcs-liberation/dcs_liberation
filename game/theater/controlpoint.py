@@ -151,7 +151,6 @@ class ControlPoint(MissionTarget, ABC):
 
     captured = False
     has_frontline = True
-    frontline_offset = 0.0
 
     alt = 0
 
