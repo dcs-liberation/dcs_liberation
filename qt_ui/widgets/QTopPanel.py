@@ -16,13 +16,13 @@ from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
-from qt_ui.widgets.QTurnCounter import QTurnCounter
 from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QWaitingForMissionResultWindow import \
     QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
+from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 
 
 class QTopPanel(QFrame):
@@ -39,9 +39,8 @@ class QTopPanel(QFrame):
     def game(self) -> Optional[Game]:
         return self.game_model.game
 
-    def init_ui(self):
-
-        self.turnCounter = QTurnCounter()
+    def init_ui(self):        
+        self.conditionsWidget = QConditionsWidget()
         self.budgetBox = QBudgetBox(self.game)
 
         self.passTurnButton = QPushButton("Pass Turn")
@@ -85,21 +84,23 @@ class QTopPanel(QFrame):
         self.proceedBox.setLayout(self.proceedBoxLayout)
 
         self.layout = QHBoxLayout()
+        
         self.layout.addWidget(self.factionsInfos)
-        self.layout.addWidget(self.turnCounter)
+        self.layout.addWidget(self.conditionsWidget)
         self.layout.addWidget(self.budgetBox)
         self.layout.addWidget(self.buttonBox)
         self.layout.addStretch(1)
         self.layout.addWidget(self.proceedBox)
 
         self.layout.setContentsMargins(0,0,0,0)
+        
         self.setLayout(self.layout)
 
     def setGame(self, game: Optional[Game]):
         if game is None:
             return
 
-        self.turnCounter.setCurrentTurn(game.turn, game.conditions)
+        self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
 
