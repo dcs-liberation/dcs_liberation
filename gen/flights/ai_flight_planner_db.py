@@ -36,7 +36,6 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
-    F_A_18C,
     JF_17,
     J_11A,
     Ju_88A4,
@@ -101,7 +100,11 @@ INTERCEPT_CAPABLE = [
     MiG_29A,
     MiG_29G,
     MiG_29K,
-
+    JF_17,
+    J_11A,
+    Su_27,
+    Su_30,
+    Su_33,
     M_2000C,
     Mirage_2000_5,
     Rafale_M,
@@ -109,6 +112,9 @@ INTERCEPT_CAPABLE = [
     F_14A_135_GR,
     F_14B,
     F_15C,
+    F_16A,
+    F_16C_50,
+    FA_18C_hornet,
 
 ]
 
@@ -173,14 +179,13 @@ CAP_PREFERRED = [
     MiG_19P,
     MiG_21Bis,
     MiG_23MLD,
-    MiG_25PD,
     MiG_29A,
     MiG_29G,
     MiG_29S,
-    MiG_31,
 
     Su_27,
     J_11A,
+    JF_17,
     Su_30,
     Su_33,
     Su_57,
@@ -192,6 +197,8 @@ CAP_PREFERRED = [
     F_14A_135_GR,
     F_14B,
     F_15C,
+    F_16C_50,
+    FA_18C_hornet,
 
     P_51D_30_NA,
     P_51D,
@@ -222,6 +229,7 @@ CAS_CAPABLE = [
     Su_25,
     Su_25T,
     Su_25TM,
+    Su_30,
     Su_34,
 
     JF_17,
@@ -235,14 +243,10 @@ CAS_CAPABLE = [
 
     F_86F_Sabre,
     F_5E_3,
-    F_14A_135_GR,
-    F_14B,
-    F_15E,
-    F_16A,
+
     F_16C_50,
     FA_18C_hornet,
-
-    B_1B,
+    F_15E,
 
     Tornado_IDS,
     Tornado_GR4,
@@ -298,6 +302,7 @@ CAS_PREFERRED = [
     Su_25,
     Su_25T,
     Su_25TM,
+    Su_30,
     Su_34,
 
     JF_17,
@@ -307,7 +312,8 @@ CAS_PREFERRED = [
     A_10C_2,
     AV8BNA,
 
-    F_15E,
+    F_16C_50,
+    FA_18C_hornet,
 
     Tornado_GR4,
 
@@ -325,7 +331,6 @@ CAS_PREFERRED = [
     AH_1W,
 
     UH_1H,
-
     Mi_8MT,
     Mi_28N,
     Mi_24V,
@@ -349,7 +354,7 @@ CAS_PREFERRED = [
 SEAD_CAPABLE = [
     F_4E,
     FA_18C_hornet,
-    F_15E,
+
     F_16C_50,
     AV8BNA,
     JF_17,
@@ -372,7 +377,14 @@ SEAD_CAPABLE = [
 SEAD_PREFERRED = [
     F_4E,
     Su_25T,
+    Su_25TM,
     Tornado_IDS,
+    AV8BNA,
+    F_16C_50,
+    FA_18C_hornet,
+    Su_30,
+    Su_34,
+    Su_24M,
 ]
 
 # Aircraft used for Strike mission
@@ -386,7 +398,15 @@ STRIKE_CAPABLE = [
     Su_24MR,
     Su_25,
     Su_25T,
+    Su_25TM,
+    Su_27,
+    Su_33,
+    Su_30,
     Su_34,
+    MiG_29A,
+    MiG_29G,
+    MiG_29K,
+    MiG_29S,
 
     Tu_160,
     Tu_22M3,
@@ -396,13 +416,13 @@ STRIKE_CAPABLE = [
 
     M_2000C,
 
-    A_10A,
     A_10C,
     A_10C_2,
     AV8BNA,
 
     F_86F_Sabre,
     F_5E_3,
+
     F_14A_135_GR,
     F_14B,
     F_15E,
@@ -449,6 +469,10 @@ STRIKE_PREFERRED = [
     B_52H,
     F_117A,
     F_15E,
+    Su_24M,
+    Su_30,
+    Su_34,
+    Tornado_IDS,
     Tornado_GR4,
     Tu_160,
     Tu_22M3,
@@ -456,18 +480,18 @@ STRIKE_PREFERRED = [
 ]
 
 ANTISHIP_CAPABLE = [
+    AJS37,
+
     Su_24M,
     Su_17M4,
     FA_18C_hornet,
-    F_A_18C,
-    F_15E,
+
     AV8BNA,
     JF_17,
-    F_16A,
-    F_16C_50,
-    A_10C,
-    A_10C_2,
-    A_10A,
+
+    Su_30,
+    Su_34,
+    Tu_22M3,
 
     Tornado_IDS,
     Tornado_GR4,
@@ -477,16 +501,23 @@ ANTISHIP_CAPABLE = [
 ]
 
 ANTISHIP_PREFERRED = [
+    AJS37,
     FA_18C_hornet,
-    F_A_18C,
     JF_17,
     Rafale_A_S,
     Su_24M,
+    Su_30,
+    Su_34,
+    Tu_22M3,
+    Ju_88A4
 ]
 
 RUNWAY_ATTACK_PREFERRED = [
     JF_17,
     M_2000C,
+    Su_30,
+    Su_34,
+    Tornado_IDS,
 ]
 
 RUNWAY_ATTACK_CAPABLE = STRIKE_CAPABLE
