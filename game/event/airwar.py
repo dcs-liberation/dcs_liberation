@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class AirWarEvent(Event):
-    """An Event centered on the overall Air War"""
+    """Event handler for the air battle"""
 
     def __str__(self):
-        return "Frontline attack"
+        return "AirWar"

@@ -485,6 +485,7 @@ class ConflictTheater:
                     dist = cp.position.distance_to_point(control_point.position)
                     if not closest_distance:
                         closest_distance = dist
+                        distances[cp.id] = dist
                     if dist < closest_distance:
                         distances[cp.id] = dist
             closest_cp_id = min(distances, key=distances.get)  # type: ignore

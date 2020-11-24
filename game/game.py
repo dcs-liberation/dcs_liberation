@@ -193,7 +193,7 @@ class Game:
         if isinstance(event, Event):
             return event and event.attacker_name and event.attacker_name == self.player_name
         else:
-            raise RuntimeError(f"{event} was passed when an expected")
+            raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self) -> None:
         LuaPluginManager.load_settings(self.settings)

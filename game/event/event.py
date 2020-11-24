@@ -38,7 +38,6 @@ class Event:
     location = None  # type: Point
     from_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
-    operation = Operation
     difficulty = 1  # type: int
     BONUS_BASE = 5
 
@@ -62,9 +61,9 @@ class Event:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
     def generate(self) -> UnitMap:
-        self.operation.prepare(self.game)
-        unit_map = self.operation.generate()
-        self.operation.current_mission.save(
+        Operation.prepare(self.game)
+        unit_map = Operation.generate()
+        Operation.current_mission.save(
             persistency.mission_path_for("liberation_nextturn.miz"))
         return unit_map
 
