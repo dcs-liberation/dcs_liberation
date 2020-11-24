@@ -507,3 +507,18 @@ QWidget[style="baseMenuHeader"]{
 QLabel[style="small"]{
     font-size: 8px;
 }
+
+QFrame[style="QConditionsWidget"] { 
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+}
+
+QGroupBox[style="QWeatherWidget"] {
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 5px;
+    margin-top: 1ex;
+    margin-bottom: 5px;
+}

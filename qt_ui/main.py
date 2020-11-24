@@ -34,6 +34,7 @@ def run_ui(game: Optional[Game] = None) -> None:
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
     with open("./resources/stylesheets/"+liberation_theme.get_theme_css_file()) as stylesheet:
+        logging.info('Loading stylesheet: %s', liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
 
     # Inject custom payload in pydcs framework
