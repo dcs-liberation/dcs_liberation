@@ -84,6 +84,7 @@ from dcs.planes import (
 # Interceptor are the aircraft prioritized for interception tasks
 # If none is available, the AI will use regular CAP-capable aircraft instead
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
 
@@ -151,6 +152,7 @@ CAP_CAPABLE = [
     F_16A,
     F_16C_50,
     FA_18C_hornet,
+    F_22A,
 
     C_101CC,
     L_39ZA,
@@ -198,6 +200,7 @@ CAP_PREFERRED = [
     F_14B,
     F_15C,
     F_16C_50,
+    F_22A,
 
     P_51D_30_NA,
     P_51D,
@@ -246,6 +249,7 @@ CAS_CAPABLE = [
     F_16C_50,
     FA_18C_hornet,
     F_15E,
+    F_22A,
 
     Tornado_IDS,
     Tornado_GR4,

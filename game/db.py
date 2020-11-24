@@ -158,6 +158,7 @@ import pydcs_extensions.frenchpack.frenchpack as frenchpack
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
 from pydcs_extensions.su57.su57 import Su_57
@@ -274,6 +275,7 @@ PRICES = {
     F_16A: 14,
     F_14A_135_GR: 20,
     F_14B: 24,
+    F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
 
@@ -577,6 +579,7 @@ UNIT_BY_TASK = {
         MiG_31,
         FA_18C_hornet,
         F_15C,
+        F_22A,
         F_14A_135_GR,
         F_14B,
         F_16A,
@@ -1002,6 +1005,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     F_14A_135_GR: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
+    F_22A: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
     M_2000C: COMMON_OVERRIDE,
