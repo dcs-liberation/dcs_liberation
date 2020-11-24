@@ -95,6 +95,9 @@ class PresetLocations:
     #: Locations used by offshore strike objectives.
     offshore_strike_locations: List[Point] = field(default_factory=list)
 
+    #: Locations used by missile sites like scuds and V-2s.
+    missile_sites: List[Point] = field(default_factory=list)
+
     #: Locations of SAMs which should always be spawned.
     required_sams: List[Point] = field(default_factory=list)
 
@@ -113,20 +116,24 @@ class PresetLocations:
         The location, if found, will be claimed by the caller and not available
         to subsequent calls.
         """
-        if location_type == LocationType.Garrison:
-            return self._random_from(self.base_garrisons)
-        if location_type == LocationType.Sam:
-            return self._random_from(self.sams)
         if location_type == LocationType.BaseAirDefense:
             return self._random_from(self.base_air_defense)
+        if location_type == LocationType.Coastal:
+            return self._random_from(self.coastal_defenses)
         if location_type == LocationType.Ewr:
             return self._random_from(self.ewrs)
-        if location_type == LocationType.Shorad:
+        if location_type == LocationType.Garrison:
             return self._random_from(self.base_garrisons)
+        if location_type == LocationType.MissileSite:
+            return self._random_from(self.missile_sites)
         if location_type == LocationType.OffshoreStrikeTarget:
             return self._random_from(self.offshore_strike_locations)
+        if location_type == LocationType.Sam:
+            return self._random_from(self.sams)
         if location_type == LocationType.Ship:
             return self._random_from(self.ships)
+        if location_type == LocationType.Shorad:
+            return self._random_from(self.base_garrisons)
         if location_type == LocationType.StrikeTarget:
             return self._random_from(self.strike_locations)
         logging.error(f"Unknown location type: {location_type}")

@@ -39,14 +39,15 @@ from dcs.unitgroup import (
     StaticGroup,
     VehicleGroup,
 )
-from dcs.vehicles import AirDefence, Armor
+from dcs.vehicles import AirDefence, Armor, MissilesSS
 
 from gen.flights.flight import FlightType
 from .controlpoint import (
     Airfield,
     Carrier,
     ControlPoint,
-    Lha, MissionTarget,
+    Lha,
+    MissionTarget,
     OffMapSpawn,
 )
 from .landmap import Landmap, load_landmap, poly_contains
@@ -92,6 +93,8 @@ class MizCampaignLoader:
     STRIKE_TARGET_UNIT_TYPE = Fortification.Workshop_A.id
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
+    MISSILE_SITE_UNIT_TYPE = MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M.id
+    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.SS_N_2_Silkworm.id
 
     # Multiple options for the required SAMs so campaign designers can more
     # easily see the coverage of their IADS. Designers focused on campaigns that
@@ -213,6 +216,18 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def missile_sites(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.MISSILE_SITE_UNIT_TYPE:
+                yield group
+
+    @property
+    def coastal_defenses(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.COASTAL_DEFENSE_UNIT_TYPE:
+                yield group
+
+    @property
     def required_sams(self) -> Iterator[VehicleGroup]:
         for group in self.red.vehicle_group:
             if group.units[0].type == self.REQUIRED_SAM_UNIT_TYPES:
@@ -322,6 +337,14 @@ class MizCampaignLoader:
         for group in self.ships:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ships.append(group.position)
+
+        for group in self.missile_sites:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.missile_sites.append(group.position)
+
+        for group in self.coastal_defenses:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.coastal_defenses.append(group.position)
 
         for group in self.required_sams:
             closest, distance = self.objective_info(group)
