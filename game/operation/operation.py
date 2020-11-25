@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Iterable, List, Optional, Set
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
 from dcs.coalition import Coalition
-from dcs.countries import country_dict
+from dcs.countries import country_dict, CombinedJointTaskForcesBlue, CombinedJointTaskForcesRed
 from dcs.lua.parse import loads
 from dcs.mapping import Point
 from dcs.translation import String
@@ -101,6 +101,10 @@ class Operation:
             country_dict[db.country_id_from_name(p_country)]())
         cls.current_mission.coalition["red"].add_country(
             country_dict[db.country_id_from_name(e_country)]())
+
+        if p_country in [CombinedJointTaskForcesBlue.name, CombinedJointTaskForcesRed.name]:
+            logging.info('Forcing Unrestricted SATNAV Since player is in Blue or Red Coallition')
+            cls.current_mission.forced_options.unrestricted_satnav = True
 
     @classmethod
     def inject_lua_trigger(cls, contents: str, comment: str) -> None:
