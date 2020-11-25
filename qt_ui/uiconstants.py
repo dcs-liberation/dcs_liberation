@@ -124,6 +124,7 @@ def load_icons():
     """
     Weather Icons
     """
+    ICONS["Weather_winds"] = QPixmap("./resources/ui/conditions/weather/winds.png")
     ICONS["Weather_day-clear"] = QPixmap("./resources/ui/conditions/weather/day-clear.png")
     ICONS["Weather_day-cloudy-fog"] = QPixmap("./resources/ui/conditions/weather/day-cloudy-fog.png")
     ICONS["Weather_day-fog"] = QPixmap("./resources/ui/conditions/weather/day-fog.png")

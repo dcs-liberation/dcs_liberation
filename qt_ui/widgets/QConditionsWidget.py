@@ -1,18 +1,13 @@
-import datetime
-import logging
-
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QVBoxLayout, QFrame, QSizePolicy, QStyle, QPushButton, QGridLayout
-from PySide2.QtGui import QFont
+from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QVBoxLayout, QFrame, QGridLayout
+from PySide2.QtGui import QPixmap
 
 from game.weather import Conditions, TimeOfDay, Weather
-from game.utils import meter_to_nm
+from game.utils import meter_to_nm, mps_to_knots
 from dcs.weather import Weather as PydcsWeather
 
 from qt_ui.windows.weather.QWeatherInfoWindow import QWeatherInfoWindow
 import qt_ui.uiconstants as CONST
-
-
 
 class QTimeTurnWidget(QGroupBox):
     """
@@ -68,9 +63,7 @@ class QWeatherWidget(QGroupBox):
 
     def __init__(self):
         super(QWeatherWidget, self).__init__("")
-        self.setProperty('style', 'QWeatherWidget')
-        self.conditions = None
-        
+        self.setProperty('style', 'QWeatherWidget')   
 
         self.icons = {
             TimeOfDay.Dawn: CONST.ICONS["Dawn"],
@@ -82,61 +75,118 @@ class QWeatherWidget(QGroupBox):
         self.layout = QHBoxLayout()
         self.setLayout(self.layout)
 
+        self.makeWeatherIcon()
+        self.makeCloudRainFogWidget()
+        self.makeWindsWidget()
+   
+    def makeWeatherIcon(self):
+        """Makes the Weather Icon Widget
+        """
         self.weather_icon = QLabel()
         self.weather_icon.setPixmap(self.icons[TimeOfDay.Dawn])
         self.layout.addWidget(self.weather_icon)
 
+    def makeCloudRainFogWidget(self):
+        """Makes the Cloud, Rain, Fog Widget
+        """
         self.textLayout = QVBoxLayout()
         self.layout.addLayout(self.textLayout)
 
-        self.forecastClouds = QLabel('')
-        self.forecastClouds.setProperty('style', 'text-sm')
+        self.forecastClouds = self.makeLabel()
         self.textLayout.addWidget(self.forecastClouds)
 
-        self.forecastRain = QLabel('')
-        self.forecastRain.setProperty('style', 'text-sm')
+        self.forecastRain = self.makeLabel()
         self.textLayout.addWidget(self.forecastRain)
 
-        self.forecastFog = QLabel('')
-        self.forecastFog.setProperty('style', 'text-sm')
+        self.forecastFog = self.makeLabel()
         self.textLayout.addWidget(self.forecastFog)
 
-        self.details = QPushButton("Weather")
-        self.details.setProperty("style", "btn-primary")
-        self.details.setDisabled(True)
-        self.details.clicked.connect(self.openDetailWindow)
-        self.layout.addWidget(self.details)
+    def makeWindsWidget(self):
+        """Factory for the winds widget.
+        """
+        windsLayout = QGridLayout()
+        self.layout.addLayout(windsLayout)
 
-    def openDetailWindow(self):
-        self.subwindow = QWeatherInfoWindow(self.turn, self.conditions)
-        self.subwindow.show()
+        windsLayout.addWidget(self.makeIcon(CONST.ICONS['Weather_winds']), 0, 0, 3, 1)
+
+        windsLayout.addWidget(self.makeLabel('At GL'), 0, 1)
+        windsLayout.addWidget(self.makeLabel('At FL08'), 1, 1)
+        windsLayout.addWidget(self.makeLabel('At FL26'), 2, 1)
+
+        self.windGLSpeedLabel = self.makeLabel('0kts')
+        self.windGLDirLabel = self.makeLabel('0º')
+        windsLayout.addWidget(self.windGLSpeedLabel, 0, 2)
+        windsLayout.addWidget(self.windGLDirLabel, 0, 3)
+
+        
+        self.windFL08SpeedLabel = self.makeLabel('0kts')
+        self.windFL08DirLabel = self.makeLabel('0º')
+        windsLayout.addWidget(self.windFL08SpeedLabel, 1, 2)
+        windsLayout.addWidget(self.windFL08DirLabel, 1, 3)
+
+        self.windFL26SpeedLabel = self.makeLabel('0kts')
+        self.windFL26DirLabel = self.makeLabel('0º')
+        windsLayout.addWidget(self.windFL26SpeedLabel, 2, 2)
+        windsLayout.addWidget(self.windFL26DirLabel, 2, 3)
+
+    def makeLabel(self, text: str = '') -> QLabel:
+        """Shorthand to generate a QLabel with widget standard style
+
+        :arg pixmap QPixmap for the icon.
+        """
+        label = QLabel(text)
+        label.setProperty('style', 'text-sm')
+
+        return label
+    
+    def makeIcon(self, pixmap: QPixmap) -> QLabel:
+        """Shorthand to generate a QIcon with pixmap.
+
+        :arg pixmap QPixmap for the icon.
+        """
+        icon = QLabel()
+        icon.setPixmap(pixmap)
+
+        return icon
 
     def setCurrentTurn(self, turn: int, conditions: Conditions) -> None:
         """Sets the turn information display.
 
+        :arg turn Current turn number.
         :arg conditions Current time and weather conditions.
         """
-        self.turn
+        self.turn = turn
         self.conditions = conditions
 
-        if not conditions:
-            self.details.setDisabled(True)
-        else:
-            self.details.setDisabled(False)
-
         self.updateForecast()
+        self.updateWinds()
+
+    def updateWinds(self):
+        """Updates the UI with the current conditions wind info.
+        """
+        windGlSpeed = mps_to_knots(self.conditions.weather.wind.at_0m.speed or 0)
+        windGlDir = self.conditions.weather.wind.at_0m.direction or 0
+        self.windGLSpeedLabel.setText('{}kts'.format(windGlSpeed))
+        self.windGLDirLabel.setText('{}º'.format(windGlDir))
+
+        windFL08Speed = mps_to_knots(self.conditions.weather.wind.at_2000m.speed or 0)
+        windFL08Dir = self.conditions.weather.wind.at_2000m.direction or 0
+        self.windFL08SpeedLabel.setText('{}kts'.format(windFL08Speed))
+        self.windFL08DirLabel.setText('{}º'.format(windFL08Dir))
+
+        windFL26Speed = mps_to_knots(self.conditions.weather.wind.at_8000m.speed or 0)
+        windFL26Dir = self.conditions.weather.wind.at_8000m.direction or 0
+        self.windFL26SpeedLabel.setText('{}kts'.format(windFL26Speed))
+        self.windFL26DirLabel.setText('{}º'.format(windFL26Dir))
 
     def updateForecast(self):
+        """Updates the Forecast Text and icon with the current conditions wind info.
         """
-        Updates the Forecast Text based on turn conditions
-        """
+        icon = []
         cloudDensity = self.conditions.weather.clouds.density or 0
         precipitation = self.conditions.weather.clouds.precipitation or None
         fog = self.conditions.weather.fog or None
-
-        icon = []
-
-        is_night = self.conditions.time_of_day == TimeOfDay.Night        
+        is_night = self.conditions.time_of_day == TimeOfDay.Night
         time = 'night' if is_night else 'day'
 
         if cloudDensity <= 0:
@@ -175,20 +225,15 @@ class QWeatherWidget(QGroupBox):
 
 
         icon_key = "Weather_{}".format('-'.join(filter(None.__ne__, icon)))
-
-        icon = CONST.ICONS.get(icon_key) or CONST.ICONS['Weather_night-partly-cloudy']
-        
+        icon = CONST.ICONS.get(icon_key) or CONST.ICONS['Weather_night-partly-cloudy']        
         self.weather_icon.setPixmap(icon)
 
 
-    def updateDetailsBtn(self):        
-        if not self.conditions:
-            self.details.setEnable(False)
-        else:
-            self.details.setEnable(True)
-
-
 class QConditionsWidget(QFrame):
+    """
+    UI Component to display Turn Number, Day Time & Hour and weather combined.
+    """
+
     def __init__(self):
         super(QConditionsWidget, self).__init__()
         self.setProperty('style', 'QConditionsWidget')
@@ -200,14 +245,21 @@ class QConditionsWidget(QFrame):
         self.setLayout(self.layout)
 
         self.time_turn_widget = QTimeTurnWidget()
-        self.time_turn_widget.setStyleSheet('QGroupBox { margin-right: 0px; border-right: 0px; }')
+        self.time_turn_widget.setStyleSheet('QGroupBox { margin-right: 0px; }')
         self.layout.addWidget(self.time_turn_widget, 0, 0)
 
         self.weather_widget = QWeatherWidget()
-        self.weather_widget.setStyleSheet('QGroupBox { margin-top: 5px; margin-left: 0px; }')
+        self.weather_widget.setStyleSheet('QGroupBox { margin-top: 5px; margin-left: 0px; border-left: 0px; }')
+        self.weather_widget.hide()
         self.layout.addWidget(self.weather_widget, 0, 1)
 
     def setCurrentTurn(self, turn: int, conditions: Conditions) -> None:
+        """Sets the turn information display.
+
+        :arg turn Current turn number.
+        :arg conditions Current time and weather conditions.
+        """
         self.time_turn_widget.setCurrentTurn(turn, conditions)
         self.weather_widget.setCurrentTurn(turn, conditions)
+        self.weather_widget.show()
 
