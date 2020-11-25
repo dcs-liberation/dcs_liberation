@@ -121,8 +121,10 @@ class AirSupportConflictGenerator:
 
             self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
-        awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
-        if awacs_unit:
+        possible_awacs = db.find_unittype(AWACS, self.conflict.attackers_side)
+
+        if len(possible_awacs) > 0:
+            awacs_unit = possible_awacs[0]
             freq = self.radio_registry.alloc_uhf()
             
             awacs_flight = self.mission.awacs_flight(

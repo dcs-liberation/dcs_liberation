@@ -117,6 +117,9 @@ class Event:
 
         logging.info("Commiting mission results")
 
+        for damaged_runway in debriefing.damaged_runways:
+            damaged_runway.damaged = True
+
         # ------------------------------
         # Destroyed aircrafts
         for loss in debriefing.air_losses.losses:

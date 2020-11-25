@@ -183,8 +183,13 @@ class QWeatherWidget(QGroupBox):
         """Updates the Forecast Text and icon with the current conditions wind info.
         """
         icon = []
-        cloudDensity = self.conditions.weather.clouds.density or 0
-        precipitation = self.conditions.weather.clouds.precipitation or None
+        if self.conditions.weather.clouds is None:
+            cloudDensity = 0
+            precipitation = None
+        else:
+            cloudDensity = self.conditions.weather.clouds.density
+            precipitation = self.conditions.weather.clouds.precipitation
+
         fog = self.conditions.weather.fog or None
         is_night = self.conditions.time_of_day == TimeOfDay.Night
         time = 'night' if is_night else 'day'

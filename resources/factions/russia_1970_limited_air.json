@@ -1,0 +1,69 @@
+{
+  "country": "Russia",
+  "name": "Russia 1970 Limited Air",
+  "authors": "Starfire",
+  "description": "<p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>",
+  "aircrafts": [
+    "MiG_19P",
+	"MiG_21Bis",
+	"Mi_8MT",
+    "Mi_24V"
+  ],
+  "frontline_units": [
+    "ARV_BRDM_2",
+    "APC_BTR_80",
+    "IFV_BMD_1",
+    "IFV_BMP_1",
+    "MBT_T_55"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S9_Nona",
+    "SPH_2S1_Gvozdika"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Rus",
+    "Soldier_RPG"
+  ],
+  "shorads": [
+    "ColdWarFlakGenerator",
+    "ZSU23Generator",
+    "ZU23Generator",
+	"SA13Generator",
+    "SA8Generator"
+  ],
+  "sams": [
+    "SA3Generator",
+    "SA6Generator",
+	"SA11Generator"
+  ],
+  "ewrs": [
+    "FlatFaceGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "navy_generators": [
+	"RussianNavyGroupGenerator"
+  ],
+  "has_jtac": false,
+  "doctrine": "coldwar"
+}

@@ -32,6 +32,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 
 from .. import db
 from ..debriefing import Debriefing
+from ..theater import Airfield
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -173,6 +174,9 @@ class Operation:
     @classmethod
     def create_unit_map(cls) -> None:
         cls.unit_map = UnitMap()
+        for control_point in cls.game.theater.controlpoints:
+            if isinstance(control_point, Airfield):
+                cls.unit_map.add_airfield(control_point)
 
     @classmethod
     def create_radio_registries(cls) -> None:

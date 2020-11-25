@@ -3,12 +3,14 @@ from typing import Dict, Optional
 
 from dcs.unitgroup import FlyingGroup
 
+from game.theater import Airfield
 from gen.flights.flight import Flight
 
 
 class UnitMap:
     def __init__(self) -> None:
         self.aircraft: Dict[str, Flight] = {}
+        self.airfields: Dict[str, Airfield] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -21,3 +23,11 @@ class UnitMap:
 
     def flight(self, unit_name: str) -> Optional[Flight]:
         return self.aircraft.get(unit_name, None)
+
+    def add_airfield(self, airfield: Airfield) -> None:
+        if airfield.name in self.airfields:
+            raise RuntimeError(f"Duplicate airfield: {airfield.name}")
+        self.airfields[airfield.name] = airfield
+
+    def airfield(self, name: str) -> Optional[Airfield]:
+        return self.airfields.get(name, None)

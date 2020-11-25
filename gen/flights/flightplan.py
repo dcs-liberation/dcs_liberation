@@ -649,9 +649,9 @@ class FlightPlanBuilder:
             return self.generate_dead(flight, custom_targets)
         elif task == FlightType.ESCORT:
             return self.generate_escort(flight)
-        elif task == FlightType.OCA_STRIKE:
+        elif task == FlightType.OCA_AIRCRAFT:
             return self.generate_oca_strike(flight)
-        elif task == FlightType.RUNWAY_ATTACK:
+        elif task == FlightType.OCA_RUNWAY:
             return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
             return self.generate_sead(flight, custom_targets)
@@ -964,7 +964,7 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         return self.strike_flightplan(flight, location,
-                                      FlightWaypointType.INGRESS_OCA_STRIKE)
+                                      FlightWaypointType.INGRESS_OCA_AIRCRAFT)
 
     def generate_runway_attack(self, flight: Flight) -> StrikeFlightPlan:
         """Generate a runway attack flight plan at a given location.
@@ -981,7 +981,7 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         return self.strike_flightplan(flight, location,
-                                      FlightWaypointType.INGRESS_RUNWAY_BOMBING)
+                                      FlightWaypointType.INGRESS_OCA_RUNWAY)
 
     def generate_sead(self, flight: Flight,
                       custom_targets: Optional[List[Unit]]) -> StrikeFlightPlan:
@@ -1079,7 +1079,7 @@ class FlightPlanBuilder:
             return builder.dead_area(location)
         elif flight.flight_type == FlightType.SEAD:
             return builder.sead_area(location)
-        elif flight.flight_type == FlightType.OCA_STRIKE:
+        elif flight.flight_type == FlightType.OCA_AIRCRAFT:
             return builder.oca_strike_area(location)
         else:
             return builder.strike_area(location)

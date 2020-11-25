@@ -39,14 +39,15 @@ from dcs.unitgroup import (
     StaticGroup,
     VehicleGroup,
 )
-from dcs.vehicles import AirDefence, Armor
+from dcs.vehicles import AirDefence, Armor, MissilesSS
 
 from gen.flights.flight import FlightType
 from .controlpoint import (
     Airfield,
     Carrier,
     ControlPoint,
-    Lha, MissionTarget,
+    Lha,
+    MissionTarget,
     OffMapSpawn,
 )
 from .landmap import Landmap, load_landmap, poly_contains
@@ -63,33 +64,6 @@ SIZE_LARGE = 3000
 IMPORTANCE_LOW = 1
 IMPORTANCE_MEDIUM = 1.2
 IMPORTANCE_HIGH = 1.4
-
-"""
-ALL_RADIALS = [0, 45, 90, 135, 180, 225, 270, 315, ]
-COAST_NS_E = [45, 90, 135, ]
-COAST_EW_N = [315, 0, 45, ]
-COAST_NSEW_E = [225, 270, 315, ]
-COAST_NSEW_W = [45, 90, 135, ]
-
-COAST_NS_W = [225, 270, 315, ]
-COAST_EW_S = [135, 180, 225, ]
-"""
-
-LAND = [0, 45, 90, 135, 180, 225, 270, 315, ]
-
-COAST_V_E = [0, 45, 90, 135, 180]
-COAST_V_W = [180, 225, 270, 315, 0]
-
-COAST_A_W = [315, 0, 45, 135, 180, 225, 270]
-COAST_A_E = [0, 45, 90, 135, 180, 225, 315]
-
-COAST_H_N = [270, 315, 0, 45, 90]
-COAST_H_S = [90, 135, 180, 225, 270]
-
-COAST_DL_E = [45, 90, 135, 180, 225]
-COAST_DL_W = [225, 270, 315, 0, 45]
-COAST_DR_E = [315, 0, 45, 90, 135]
-COAST_DR_W = [135, 180, 225, 315]
 
 FRONTLINE_MIN_CP_DISTANCE = 5000
 
@@ -116,9 +90,10 @@ class MizCampaignLoader:
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
     GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
-    STRIKE_TARGET_UNIT_TYPE = Fortification.Workshop_A.id
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
+    MISSILE_SITE_UNIT_TYPE = MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M.id
+    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.SS_N_2_Silkworm.id
 
     # Multiple options for the required SAMs so campaign designers can more
     # easily see the coverage of their IADS. Designers focused on campaigns that
@@ -151,8 +126,6 @@ class MizCampaignLoader:
 
     @staticmethod
     def control_point_from_airport(airport: Airport) -> ControlPoint:
-        # TODO: Radials?
-        radials = LAND
 
         # The wiki says this is a legacy property and to just use regular.
         size = SIZE_REGULAR
@@ -166,7 +139,7 @@ class MizCampaignLoader:
         else:
             importance = airport.periodicity / 10
 
-        cp = Airfield(airport, radials, size, importance)
+        cp = Airfield(airport, size, importance)
         cp.captured = airport.is_blue()
 
         # Use the unlimited aircraft option to determine if an airfield should
@@ -230,15 +203,21 @@ class MizCampaignLoader:
                 yield group
 
     @property
-    def strike_targets(self) -> Iterator[StaticGroup]:
-        for group in self.blue.static_group:
-            if group.units[0].type == self.STRIKE_TARGET_UNIT_TYPE:
-                yield group
-
-    @property
     def offshore_strike_targets(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type == self.OFFSHORE_STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
+    @property
+    def missile_sites(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.MISSILE_SITE_UNIT_TYPE:
+                yield group
+
+    @property
+    def coastal_defenses(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type == self.COASTAL_DEFENSE_UNIT_TYPE:
                 yield group
 
     @property
@@ -333,15 +312,11 @@ class MizCampaignLoader:
             if distance < self.BASE_DEFENSE_RADIUS:
                 closest.preset_locations.base_air_defense.append(group.position)
             else:
-                closest.preset_locations.sams.append(group.position)
+                closest.preset_locations.strike_locations.append(group.position)
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ewrs.append(group.position)
-
-        for group in self.strike_targets:
-            closest, distance = self.objective_info(group)
-            closest.preset_locations.strike_locations.append(group.position)
 
         for group in self.offshore_strike_targets:
             closest, distance = self.objective_info(group)
@@ -351,6 +326,14 @@ class MizCampaignLoader:
         for group in self.ships:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ships.append(group.position)
+
+        for group in self.missile_sites:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.missile_sites.append(group.position)
+
+        for group in self.coastal_defenses:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.coastal_defenses.append(group.position)
 
         for group in self.required_sams:
             closest, distance = self.objective_info(group)
@@ -514,11 +497,6 @@ class ConflictTheater:
 
             airbase = theater.terrain.airports[p["id"]]
 
-            if "radials" in p.keys():
-                radials = p["radials"]
-            else:
-                radials = LAND
-
             if "size" in p.keys():
                 size = p["size"]
             else:
@@ -529,7 +507,7 @@ class ConflictTheater:
             else:
                 importance = IMPORTANCE_MEDIUM
 
-            cp = Airfield(airbase, radials, size, importance)
+            cp = Airfield(airbase, size, importance)
         elif p["type"] == "carrier":
             cp = Carrier("carrier", Point(p["x"], p["y"]), p["id"])
         else:

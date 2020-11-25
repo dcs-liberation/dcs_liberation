@@ -80,9 +80,6 @@ class PresetLocations:
     #: Locations used by EWRs.
     ewrs: List[Point] = field(default_factory=list)
 
-    #: Locations used by SAMs outside of bases.
-    sams: List[Point] = field(default_factory=list)
-
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[Point] = field(default_factory=list)
 
@@ -94,6 +91,9 @@ class PresetLocations:
 
     #: Locations used by offshore strike objectives.
     offshore_strike_locations: List[Point] = field(default_factory=list)
+
+    #: Locations used by missile sites like scuds and V-2s.
+    missile_sites: List[Point] = field(default_factory=list)
 
     #: Locations of SAMs which should always be spawned.
     required_sams: List[Point] = field(default_factory=list)
@@ -113,20 +113,24 @@ class PresetLocations:
         The location, if found, will be claimed by the caller and not available
         to subsequent calls.
         """
-        if location_type == LocationType.Garrison:
-            return self._random_from(self.base_garrisons)
-        if location_type == LocationType.Sam:
-            return self._random_from(self.sams)
         if location_type == LocationType.BaseAirDefense:
             return self._random_from(self.base_air_defense)
+        if location_type == LocationType.Coastal:
+            return self._random_from(self.coastal_defenses)
         if location_type == LocationType.Ewr:
             return self._random_from(self.ewrs)
-        if location_type == LocationType.Shorad:
+        if location_type == LocationType.Garrison:
             return self._random_from(self.base_garrisons)
+        if location_type == LocationType.MissileSite:
+            return self._random_from(self.missile_sites)
         if location_type == LocationType.OffshoreStrikeTarget:
             return self._random_from(self.offshore_strike_locations)
+        if location_type == LocationType.Sam:
+            return self._random_from(self.strike_locations)
         if location_type == LocationType.Ship:
             return self._random_from(self.ships)
+        if location_type == LocationType.Shorad:
+            return self._random_from(self.base_garrisons)
         if location_type == LocationType.StrikeTarget:
             return self._random_from(self.strike_locations)
         logging.error(f"Unknown location type: {location_type}")
@@ -151,16 +155,14 @@ class ControlPoint(MissionTarget, ABC):
 
     captured = False
     has_frontline = True
-    frontline_offset = 0.0
 
     alt = 0
 
     # TODO: Only airbases have IDs.
-    # TODO: Radials seem to be pointless.
     # TODO: has_frontline is only reasonable for airbases.
     # TODO: cptype is obsolete.
     def __init__(self, cp_id: int, name: str, position: Point,
-                 at: db.StartingPosition, radials: List[int], size: int,
+                 at: db.StartingPosition, size: int,
                  importance: float, has_frontline=True,
                  cptype=ControlPointType.AIRBASE):
         super().__init__(" ".join(re.split(r"[ \-]", name)[:2]), position)
@@ -179,7 +181,6 @@ class ControlPoint(MissionTarget, ABC):
         self.captured_invert = False
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
-        self.radials = radials
         self.connected_points: List[ControlPoint] = []
         self.base: Base = Base()
         self.cptype = cptype
@@ -229,16 +230,6 @@ class ControlPoint(MissionTarget, ABC):
         return False
 
     @property
-    def sea_radials(self) -> List[int]:
-        # TODO: fix imports
-        all_radials = [0, 45, 90, 135, 180, 225, 270, 315, ]
-        result = []
-        for r in all_radials:
-            if r not in self.radials:
-                result.append(r)
-        return result
-
-    @property
     @abstractmethod
     def total_aircraft_parking(self):
         """
@@ -286,17 +277,6 @@ class ControlPoint(MissionTarget, ABC):
     # TODO: Should be Airbase specific.
     def is_connected(self, to) -> bool:
         return to in self.connected_points
-
-    def find_radial(self, heading: int, ignored_radial: int = None) -> int:
-        closest_radial = 0
-        closest_radial_delta = 360
-        for radial in [x for x in self.radials if x != ignored_radial]:
-            delta = abs(radial - heading)
-            if delta < closest_radial_delta:
-                closest_radial = radial
-                closest_radial_delta = delta
-
-        return closest_radial
 
     def find_ground_objects_by_obj_name(self, obj_name):
         found = []
@@ -390,12 +370,13 @@ class ControlPoint(MissionTarget, ABC):
 
 class Airfield(ControlPoint):
 
-    def __init__(self, airport: Airport, radials: List[int], size: int,
+    def __init__(self, airport: Airport, size: int,
                  importance: float, has_frontline=True):
         super().__init__(airport.id, airport.name, airport.position, airport,
-                         radials, size, importance, has_frontline,
+                         size, importance, has_frontline,
                          cptype=ControlPointType.AIRBASE)
         self.airport = airport
+        self.damaged = False
 
     def can_land(self, aircraft: FlyingType) -> bool:
         return True
@@ -409,8 +390,8 @@ class Airfield(ControlPoint):
             ]
         else:
             yield from [
-                FlightType.OCA_STRIKE,
-                FlightType.RUNWAY_ATTACK,
+                FlightType.OCA_AIRCRAFT,
+                FlightType.OCA_RUNWAY,
             ]
         yield from super().mission_types(for_player)
 
@@ -481,7 +462,7 @@ class Carrier(NavalControlPoint):
 
     def __init__(self, name: str, at: Point, cp_id: int):
         import game.theater.conflicttheater
-        super().__init__(cp_id, name, at, at, game.theater.conflicttheater.LAND,
+        super().__init__(cp_id, name, at, at,
                          game.theater.conflicttheater.SIZE_SMALL, 1,
                          has_frontline=False,
                          cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
@@ -505,7 +486,7 @@ class Lha(NavalControlPoint):
 
     def __init__(self, name: str, at: Point, cp_id: int):
         import game.theater.conflicttheater
-        super().__init__(cp_id, name, at, at, game.theater.conflicttheater.LAND,
+        super().__init__(cp_id, name, at, at,
                          game.theater.conflicttheater.SIZE_SMALL, 1,
                          has_frontline=False, cptype=ControlPointType.LHA_GROUP)
 
@@ -531,7 +512,7 @@ class OffMapSpawn(ControlPoint):
 
     def __init__(self, cp_id: int, name: str, position: Point):
         from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
-        super().__init__(cp_id, name, position, at=position, radials=[],
+        super().__init__(cp_id, name, position, at=position,
                          size=SIZE_REGULAR, importance=IMPORTANCE_MEDIUM,
                          has_frontline=False, cptype=ControlPointType.OFF_MAP)
 

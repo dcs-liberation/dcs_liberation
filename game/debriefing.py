@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Type, TYPE_CHECKING
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
-from game.theater import TheaterGroundObject
+from game.theater import Airfield, TheaterGroundObject
 from game.unitmap import UnitMap
 from gen.flights.flight import Flight
 
@@ -91,7 +91,9 @@ class StateData:
         return cls(
             mission_ended=data["mission_ended"],
             killed_aircraft=data["killed_aircrafts"],
-            killed_ground_units=data["killed_ground_units"],
+            # Airfields emit a new "dead" event every time a bomb is dropped on
+            # them when they've already dead. Dedup.
+            killed_ground_units=list(set(data["killed_ground_units"])),
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"]
         )
@@ -114,27 +116,10 @@ class Debriefing:
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 
         self.air_losses = self.dead_aircraft()
-        self.dead_units: List[DebriefingDeadUnitInfo] = []
+        self.dead_units = self.dead_ground_units()
+        self.damaged_runways = self.find_damaged_runways()
         self.dead_aaa_groups: List[DebriefingDeadUnitInfo] = []
         self.dead_buildings: List[DebriefingDeadBuildingInfo] = []
-
-        for unit_name in self.state_data.killed_ground_units:
-            try:
-                if isinstance(unit_name, int):
-                    # For some reason the state file will include many raw
-                    # integers in the list of destroyed units. These might be
-                    # from the smoke effects?
-                    continue
-                country = int(unit_name.split("|")[1])
-                unit_type = db.unit_type_from_name(unit_name.split("|")[4])
-                if unit_type is None:
-                    logging.error(f"Could not determine type of {unit_name}")
-                    continue
-                player_unit = country == self.player_country_id
-                self.dead_units.append(
-                    DebriefingDeadUnitInfo(player_unit, unit_type))
-            except Exception:
-                logging.exception(f"Failed to process dead unit {unit_name}")
 
         for unit_name in self.state_data.killed_ground_units:
             for cp in game.theater.controlpoints:
@@ -203,6 +188,40 @@ class Debriefing:
                 continue
             losses.append(DebriefingDeadAircraftInfo(flight))
         return AirLosses(losses)
+
+    def dead_ground_units(self) -> List[DebriefingDeadUnitInfo]:
+        losses = []
+        for unit_name in self.state_data.killed_ground_units:
+            try:
+                if isinstance(unit_name, int):
+                    # For some reason the state file will include many raw
+                    # integers in the list of destroyed units. These might be
+                    # from the smoke effects?
+                    continue
+                if self._is_airfield(unit_name):
+                    continue
+                country = int(unit_name.split("|")[1])
+                unit_type = db.unit_type_from_name(unit_name.split("|")[4])
+                if unit_type is None:
+                    logging.error(f"Could not determine type of {unit_name}")
+                    continue
+                player_unit = country == self.player_country_id
+                losses.append(DebriefingDeadUnitInfo(player_unit, unit_type))
+            except Exception:
+                logging.exception(f"Failed to process dead unit {unit_name}")
+        return losses
+
+    def find_damaged_runways(self) -> List[Airfield]:
+        losses = []
+        for name in self.state_data.killed_ground_units:
+            airfield = self.unit_map.airfield(name)
+            if airfield is None:
+                continue
+            losses.append(airfield)
+        return losses
+
+    def _is_airfield(self, unit_name: str) -> bool:
+        return self.unit_map.airfield(unit_name) is not None
 
     @property
     def base_capture_events(self):
