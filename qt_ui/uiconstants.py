@@ -87,10 +87,10 @@ def load_icons():
     ICONS["Terrain_TheChannel"] = QPixmap("./resources/ui/terrain_channel.gif")
     ICONS["Terrain_Syria"] = QPixmap("./resources/ui/terrain_syria.gif")
 
-    ICONS["Dawn"] = QPixmap("./resources/ui/daytime/dawn.png")
-    ICONS["Day"] = QPixmap("./resources/ui/daytime/day.png")
-    ICONS["Dusk"] = QPixmap("./resources/ui/daytime/dusk.png")
-    ICONS["Night"] = QPixmap("./resources/ui/daytime/night.png")
+    ICONS["Dawn"] = QPixmap("./resources/ui/conditions/timeofday/dawn.png")
+    ICONS["Day"] = QPixmap("./resources/ui/conditions/timeofday/day.png")
+    ICONS["Dusk"] = QPixmap("./resources/ui/conditions/timeofday/dusk.png")
+    ICONS["Night"] = QPixmap("./resources/ui/conditions/timeofday/night.png")
 
     ICONS["Money"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/money_icon.png")
     ICONS["PassTurn"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/hourglass.png")
@@ -120,6 +120,24 @@ def load_icons():
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")
     ICONS["TaskSEAD"] = QPixmap("./resources/ui/tasks/sead.png")
     ICONS["TaskEmpty"] = QPixmap("./resources/ui/tasks/empty.png")
+
+    """
+    Weather Icons
+    """
+    ICONS["Weather_day-clear"] = QPixmap("./resources/ui/conditions/weather/day-clear.png")
+    ICONS["Weather_day-cloudy-fog"] = QPixmap("./resources/ui/conditions/weather/day-cloudy-fog.png")
+    ICONS["Weather_day-fog"] = QPixmap("./resources/ui/conditions/weather/day-fog.png")
+    ICONS["Weather_day-partly-cloudy"] = QPixmap("./resources/ui/conditions/weather/day-partly-cloudy.png")
+    ICONS["Weather_day-rain"] = QPixmap("./resources/ui/conditions/weather/day-rain.png")
+    ICONS["Weather_day-thunderstorm"] = QPixmap("./resources/ui/conditions/weather/day-thunderstorm.png")
+    ICONS["Weather_day-totally-cloud"] = QPixmap("./resources/ui/conditions/weather/day-totally-cloud.png")
+    ICONS["Weather_night-clear"] = QPixmap("./resources/ui/conditions/weather/night-clear.png")
+    ICONS["Weather_night-cloudy-fog"] = QPixmap("./resources/ui/conditions/weather/night-cloudy-fog.png")
+    ICONS["Weather_night-fog"] = QPixmap("./resources/ui/conditions/weather/night-fog.png")
+    ICONS["Weather_night-partly-cloudy"] = QPixmap("./resources/ui/conditions/weather/night-partly-cloudy.png")
+    ICONS["Weather_night-rain"] = QPixmap("./resources/ui/conditions/weather/night-rain.png")
+    ICONS["Weather_night-thunderstorm"] = QPixmap("./resources/ui/conditions/weather/night-thunderstorm.png")
+    ICONS["Weather_night-totally-cloud"] = QPixmap("./resources/ui/conditions/weather/night-totally-cloud.png")
 
 
 EVENT_ICONS: Dict[str, QPixmap] = {}
