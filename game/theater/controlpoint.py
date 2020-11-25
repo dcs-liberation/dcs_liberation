@@ -80,9 +80,6 @@ class PresetLocations:
     #: Locations used by EWRs.
     ewrs: List[Point] = field(default_factory=list)
 
-    #: Locations used by SAMs outside of bases.
-    sams: List[Point] = field(default_factory=list)
-
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[Point] = field(default_factory=list)
 
@@ -129,7 +126,7 @@ class PresetLocations:
         if location_type == LocationType.OffshoreStrikeTarget:
             return self._random_from(self.offshore_strike_locations)
         if location_type == LocationType.Sam:
-            return self._random_from(self.sams)
+            return self._random_from(self.strike_locations)
         if location_type == LocationType.Ship:
             return self._random_from(self.ships)
         if location_type == LocationType.Shorad:
