@@ -16,3 +16,10 @@ def nm_to_meter(value_in_nm: float) -> int:
 
 def knots_to_kph(knots: float) -> int:
     return int(knots * 1.852)
+
+def mps_to_knots(mps: float) -> int:
+    """Converts Meters Per Second To Knots
+
+    :arg mps Meters Per Second
+    """
+    return int(mps * 1.943)
