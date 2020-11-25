@@ -23,7 +23,7 @@ class Settings:
     night_disabled: bool = False
     external_views_allowed: bool = True
     supercarrier: bool = False
-    multiplier: float = 1
+    multiplier: float = 1.0
     generate_marks: bool = True
     sams: bool = True  # Legacy parameter do not use
     cold_start: bool = False  # Legacy parameter do not use
