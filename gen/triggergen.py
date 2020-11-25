@@ -6,6 +6,7 @@ from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Skill
 
+from game.theater import Airfield
 from .conflictgen import Conflict
 
 PUSH_TRIGGER_SIZE = 3000
@@ -56,9 +57,8 @@ class TriggersGenerator:
                 airport.operating_level_fuel = 0
 
         for cp in self.game.theater.controlpoints:
-            if cp.is_global:
-                continue
-            self.mission.terrain.airport_by_id(cp.at.id).set_coalition(cp.captured and player_coalition or enemy_coalition)
+            if isinstance(cp, Airfield):
+                self.mission.terrain.airport_by_id(cp.at.id).set_coalition(cp.captured and player_coalition or enemy_coalition)
 
     def _set_skill(self, player_coalition: str, enemy_coalition: str):
         """
