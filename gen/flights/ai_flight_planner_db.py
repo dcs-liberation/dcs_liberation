@@ -509,7 +509,6 @@ ANTISHIP_PREFERRED = [
 
 RUNWAY_ATTACK_PREFERRED = [
     JF_17,
-    M_2000C,
     Su_30,
     Su_34,
     Tornado_IDS,
