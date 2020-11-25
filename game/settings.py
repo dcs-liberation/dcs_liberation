@@ -21,7 +21,7 @@ class Settings:
         self.night_disabled = False
         self.external_views_allowed = True
         self.supercarrier = False
-        self.multiplier = 1
+        self.multiplier = 1.0
         self.generate_marks = True
         self.sams = True # Legacy parameter do not use
         self.cold_start = False # Legacy parameter do not use
