@@ -376,6 +376,7 @@ class Airfield(ControlPoint):
                          size, importance, has_frontline,
                          cptype=ControlPointType.AIRBASE)
         self.airport = airport
+        self.damaged = False
 
     def can_land(self, aircraft: FlyingType) -> bool:
         return True
