@@ -1,10 +1,12 @@
 import datetime
+import logging
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QVBoxLayout, QFrame, QSizePolicy, QStyle, QPushButton, QGridLayout
 from PySide2.QtGui import QFont
 
 from game.weather import Conditions, TimeOfDay, Weather
+from game.utils import meter_to_nm
 from dcs.weather import Weather as PydcsWeather
 
 from qt_ui.windows.weather.QWeatherInfoWindow import QWeatherInfoWindow
@@ -88,12 +90,15 @@ class QWeatherWidget(QGroupBox):
         self.layout.addLayout(self.textLayout)
 
         self.forecastClouds = QLabel('')
+        self.forecastClouds.setProperty('style', 'text-sm')
         self.textLayout.addWidget(self.forecastClouds)
 
         self.forecastRain = QLabel('')
+        self.forecastRain.setProperty('style', 'text-sm')
         self.textLayout.addWidget(self.forecastRain)
 
         self.forecastFog = QLabel('')
+        self.forecastFog.setProperty('style', 'text-sm')
         self.textLayout.addWidget(self.forecastFog)
 
         self.details = QPushButton("Weather")
@@ -114,53 +119,66 @@ class QWeatherWidget(QGroupBox):
         self.turn
         self.conditions = conditions
 
-        if conditions and turn > 0:
+        if not conditions:
             self.details.setDisabled(True)
         else:
             self.details.setDisabled(False)
 
-        self.updateIcon()
-        self.updateText()
+        self.updateForecast()
 
-        pass
-
-    def updateIcon(self):
-        """
-        Updates the Forecast Icon based on turn conditions
-        """
-        
-
-        pass
-
-    def updateText(self):
+    def updateForecast(self):
         """
         Updates the Forecast Text based on turn conditions
         """
-        cloudDensity = self.conditions.weather.clouds.density
-        precipitation = self.conditions.weather.clouds.precipitation
+        cloudDensity = self.conditions.weather.clouds.density or 0
+        precipitation = self.conditions.weather.clouds.precipitation or None
+        fog = self.conditions.weather.fog or None
+
+        icon = []
+
+        is_night = self.conditions.time_of_day == TimeOfDay.Night        
+        time = 'night' if is_night else 'day'
 
         if cloudDensity <= 0:
             self.forecastClouds.setText('Sunny')
+            icon = [time, 'clear']
         
         if cloudDensity > 0 and cloudDensity < 3:
             self.forecastClouds.setText('Partly Cloudy')
+            icon = [time, 'partly-cloudy']
 
-        if cloudDensity > 3 and cloudDensity < 6:
+        if cloudDensity >= 3 and cloudDensity < 5:
             self.forecastClouds.setText('Mostly Cloudy')
+            icon = [time, 'partly-cloudy']
 
-        if cloudDensity > 6:
+        if cloudDensity >= 5:
             self.forecastClouds.setText('Totally Cloudy')
-        
+            icon = [time, 'partly-cloudy']
 
         if precipitation == PydcsWeather.Preceptions.Rain:
             self.forecastRain.setText('Rain')
+            icon = [time, 'rain']
+
         elif precipitation == PydcsWeather.Preceptions.Thunderstorm:
             self.forecastRain.setText('Thunderstorm')
+            icon = [time, 'thunderstorm']
+            
         else:
             self.forecastRain.setText('No Rain')
 
-        if not self.conditions.weather.fog:
-            self.textLayout.removeWidget(self.forecastFog)
+        if not fog:
+            self.forecastFog.setText('No fog')
+        else:       
+            visvibilityNm = round(meter_to_nm(fog.visibility), 1)
+            self.forecastFog.setText('Fog vis: {}nm'.format(visvibilityNm))
+            icon = [time, ('cloudy' if cloudDensity > 1 else None), 'fog']
+
+
+        icon_key = "Weather_{}".format('-'.join(filter(None.__ne__, icon)))
+
+        icon = CONST.ICONS.get(icon_key) or CONST.ICONS['Weather_night-partly-cloudy']
+        
+        self.weather_icon.setPixmap(icon)
 
 
     def updateDetailsBtn(self):        
