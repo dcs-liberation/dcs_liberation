@@ -6,7 +6,6 @@ from game.weather import Conditions, TimeOfDay, Weather
 from game.utils import meter_to_nm, mps_to_knots
 from dcs.weather import Weather as PydcsWeather
 
-from qt_ui.windows.weather.QWeatherInfoWindow import QWeatherInfoWindow
 import qt_ui.uiconstants as CONST
 
 class QTimeTurnWidget(QGroupBox):
