@@ -102,8 +102,10 @@ class Operation:
         cls.current_mission.coalition["red"].add_country(
             country_dict[db.country_id_from_name(e_country)]())
 
+
+        # Fix for issue #426
         if p_country in [CombinedJointTaskForcesBlue.name, CombinedJointTaskForcesRed.name]:
-            logging.info('Forcing Unrestricted SATNAV Since player is in Blue or Red Coallition')
+            logging.info('Forcing Unrestricted SATNAV Since player is in Blue or Red CJTF')
             cls.current_mission.forced_options.unrestricted_satnav = True
 
     @classmethod
