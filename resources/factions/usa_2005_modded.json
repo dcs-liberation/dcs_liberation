@@ -2,7 +2,7 @@
   "country": "USA",
   "name": "USA 2005 Modded",
   "authors": "Khopa",
-  "description": "<p>USA 2005 with the Raptor mod, with the F-22 mod.</p>",
+  "description": "<p>USA 2005 with the Raptor mod, with the F-22 mod by Grinelli Designs.</p>",
   "aircrafts": [
     "F_15C",
     "F_15E",
@@ -87,7 +87,7 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "requirements": {
-    "F-22A mod": "https://drive.google.com/file/d/1aLDbSvkgOnwv4C-xtdc_dfMXNROynl_c/view?usp=sharing"
+    "F-22A mod by Grinnelli Designs": "https://drive.google.com/file/d/1aLDbSvkgOnwv4C-xtdc_dfMXNROynl_c/view?usp=sharing"
   },
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper",
