@@ -33,13 +33,12 @@ class QMapControlPoint(QMapObject):
             painter.setBrush(self.brush_color)
             painter.setPen(self.pen_color)
 
-            if self.control_point.has_runway():
-                if self.isUnderMouse():
-                    painter.setBrush(const.COLORS["white"])
-                    painter.setPen(self.pen_color)
+            if not self.control_point.has_runway():
+                painter.setBrush(const.COLORS["black"])
+                painter.setPen(self.brush_color)
 
-                r = option.rect
-                painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
+            r = option.rect
+            painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
             # TODO: Draw sunk carriers differently.
             # Either don't draw them at all, or perhaps use a sunk ship icon.
             painter.restore()

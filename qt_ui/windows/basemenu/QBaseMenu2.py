@@ -61,7 +61,7 @@ class QBaseMenu2(QDialog):
         title.setProperty("style", "base-title")
         aircraft = self.cp.base.total_aircraft
         armor = self.cp.base.total_armor
-        runway_status = "operational" if self.cp.has_runway() else "inoperative"
+        runway_status = "operational" if self.cp.has_runway() else "damaged"
         intel_summary = QLabel("\n".join([
             f"{aircraft} aircraft",
             f"{armor} ground units",

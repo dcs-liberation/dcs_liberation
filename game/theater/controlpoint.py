@@ -404,7 +404,7 @@ class Airfield(ControlPoint):
         return self.airport.runways[0].heading
 
     def has_runway(self) -> bool:
-        return True
+        return not self.damaged
 
     def active_runway(self, conditions: Conditions,
                       dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
