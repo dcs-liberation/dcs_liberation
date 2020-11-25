@@ -80,7 +80,7 @@ class QBaseMenu2(QDialog):
         bottom_row = QHBoxLayout()
         main_layout.addLayout(bottom_row)
 
-        if FlightType.RUNWAY_ATTACK in self.cp.mission_types(for_player=True):
+        if FlightType.OCA_RUNWAY in self.cp.mission_types(for_player=True):
             runway_attack_button = QPushButton("Attack airfield")
             bottom_row.addWidget(runway_attack_button)
 

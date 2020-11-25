@@ -1230,10 +1230,10 @@ class AircraftConflictGenerator:
             self.configure_anti_ship(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ESCORT:
             self.configure_escort(group, package, flight, dynamic_runways)
-        elif flight_type == FlightType.RUNWAY_ATTACK:
+        elif flight_type == FlightType.OCA_RUNWAY:
             self.configure_runway_attack(group, package, flight,
                                          dynamic_runways)
-        elif flight_type == FlightType.OCA_STRIKE:
+        elif flight_type == FlightType.OCA_AIRCRAFT:
             self.configure_oca_strike(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
@@ -1377,8 +1377,8 @@ class PydcsWaypointBuilder:
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
-            FlightWaypointType.INGRESS_OCA_STRIKE: OcaStrikeIngressBuilder,
-            FlightWaypointType.INGRESS_RUNWAY_BOMBING: RunwayBombingIngressBuilder,
+            FlightWaypointType.INGRESS_OCA_AIRCRAFT: OcaAircraftIngressBuilder,
+            FlightWaypointType.INGRESS_OCA_RUNWAY: OcaRunwayIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
@@ -1514,7 +1514,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
         return waypoint
 
 
-class OcaStrikeIngressBuilder(PydcsWaypointBuilder):
+class OcaAircraftIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
@@ -1540,7 +1540,7 @@ class OcaStrikeIngressBuilder(PydcsWaypointBuilder):
         return waypoint
 
 
-class RunwayBombingIngressBuilder(PydcsWaypointBuilder):
+class OcaRunwayIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 

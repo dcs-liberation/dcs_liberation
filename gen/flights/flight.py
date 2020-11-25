@@ -28,8 +28,8 @@ class FlightType(Enum):
     ESCORT = "Escort"
     BAI = "BAI"
     SWEEP = "Fighter sweep"
-    RUNWAY_ATTACK = "Runway attack"
-    OCA_STRIKE = "OCA Strike"
+    OCA_RUNWAY = "OCA/Runway"
+    OCA_AIRCRAFT = "OCA/Aircraft"
 
     def __str__(self) -> str:
         return self.value
@@ -60,8 +60,8 @@ class FlightWaypointType(Enum):
     INGRESS_SWEEP = 21
     INGRESS_BAI = 22
     DIVERT = 23
-    INGRESS_RUNWAY_BOMBING = 24
-    INGRESS_OCA_STRIKE = 25
+    INGRESS_OCA_RUNWAY = 24
+    INGRESS_OCA_AIRCRAFT = 25
 
 
 class FlightWaypoint:

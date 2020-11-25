@@ -163,9 +163,9 @@ class AircraftAllocator:
             return CAS_PREFERRED
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_PREFERRED
-        elif task == FlightType.OCA_STRIKE:
+        elif task == FlightType.OCA_AIRCRAFT:
             return CAS_PREFERRED
-        elif task == FlightType.RUNWAY_ATTACK:
+        elif task == FlightType.OCA_RUNWAY:
             return RUNWAY_ATTACK_PREFERRED
         elif task == FlightType.STRIKE:
             return STRIKE_PREFERRED
@@ -187,9 +187,9 @@ class AircraftAllocator:
             return CAS_CAPABLE
         elif task in (FlightType.DEAD, FlightType.SEAD):
             return SEAD_CAPABLE
-        elif task == FlightType.OCA_STRIKE:
+        elif task == FlightType.OCA_AIRCRAFT:
             return CAS_CAPABLE
-        elif task == FlightType.RUNWAY_ATTACK:
+        elif task == FlightType.OCA_RUNWAY:
             return RUNWAY_ATTACK_CAPABLE
         elif task == FlightType.STRIKE:
             return STRIKE_CAPABLE
@@ -569,8 +569,8 @@ class CoalitionMissionPlanner:
 
         for target in self.objective_finder.oca_targets(min_aircraft=20):
             yield ProposedMission(target, [
-                ProposedFlight(FlightType.OCA_STRIKE, 2, self.MAX_OCA_RANGE),
-                ProposedFlight(FlightType.RUNWAY_ATTACK, 2, self.MAX_OCA_RANGE),
+                ProposedFlight(FlightType.OCA_AIRCRAFT, 2, self.MAX_OCA_RANGE),
+                ProposedFlight(FlightType.OCA_RUNWAY, 2, self.MAX_OCA_RANGE),
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.ESCORT, 2, self.MAX_OCA_RANGE),
                 ProposedFlight(FlightType.SEAD, 2, self.MAX_OCA_RANGE),

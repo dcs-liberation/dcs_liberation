@@ -389,8 +389,8 @@ class Airfield(ControlPoint):
             ]
         else:
             yield from [
-                FlightType.OCA_STRIKE,
-                FlightType.RUNWAY_ATTACK,
+                FlightType.OCA_AIRCRAFT,
+                FlightType.OCA_RUNWAY,
             ]
         yield from super().mission_types(for_player)
 

@@ -147,8 +147,8 @@ class Package:
             FlightType.CAS,
             FlightType.STRIKE,
             FlightType.ANTISHIP,
-            FlightType.OCA_STRIKE,
-            FlightType.RUNWAY_ATTACK,
+            FlightType.OCA_AIRCRAFT,
+            FlightType.OCA_RUNWAY,
             FlightType.BAI,
             FlightType.DEAD,
             FlightType.SEAD,
@@ -173,6 +173,9 @@ class Package:
         task = self.primary_task
         if task is None:
             return "No mission"
+        oca_strike_types = {FlightType.OCA_AIRCRAFT, FlightType.OCA_RUNWAY}
+        if task in oca_strike_types:
+            return "OCA Strike"
         return str(task)
 
     def __hash__(self) -> int:
