@@ -388,6 +388,7 @@ SEAD_PREFERRED = [
 # Aircraft used for Strike mission
 STRIKE_CAPABLE = [
     MiG_15bis,
+    MiG_21Bis,
     MiG_27K,
     MB_339PAN,
 
