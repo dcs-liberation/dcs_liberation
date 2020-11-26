@@ -1,3 +1,4 @@
+import datetime
 
 class Information():
 
@@ -5,7 +6,12 @@ class Information():
         self.title = title
         self.text = text
         self.turn = turn
+        self.timestamp = datetime.datetime.now()
 
     def __str__(self):
-        s = "[" + str(self.turn) + "] " + self.title + "\n" + self.text
-        return s
+        return '[{}][{}] {} {}'.format(
+            self.timestamp.strftime("%Y-%m-%d %H:%M:%S") if self.timestamp is not None else '',
+            self.turn,
+            self.title,
+            self.text
+        )
