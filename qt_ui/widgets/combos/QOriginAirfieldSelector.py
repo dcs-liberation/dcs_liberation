@@ -1,5 +1,5 @@
 """Combo box for selecting a departure airfield."""
-from typing import Iterable
+from typing import Iterable, Type
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QComboBox
@@ -20,7 +20,7 @@ class QOriginAirfieldSelector(QComboBox):
 
     def __init__(self, global_inventory: GlobalAircraftInventory,
                  origins: Iterable[ControlPoint],
-                 aircraft: FlyingType) -> None:
+                 aircraft: Type[FlyingType]) -> None:
         super().__init__()
         self.global_inventory = global_inventory
         self.origins = list(origins)
@@ -37,12 +37,14 @@ class QOriginAirfieldSelector(QComboBox):
     def rebuild_selector(self) -> None:
         self.clear()
         for origin in self.origins:
+            if not origin.can_operate(self.aircraft):
+                continue
+
             inventory = self.global_inventory.for_control_point(origin)
             available = inventory.available(self.aircraft)
             if available:
                 self.addItem(f"{origin.name} ({available} available)", origin)
         self.model().sort(0)
-        self.update()
 
     @property
     def available(self) -> int:

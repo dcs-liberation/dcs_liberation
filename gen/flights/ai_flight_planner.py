@@ -201,7 +201,7 @@ class AircraftAllocator:
 
     def find_aircraft_of_type(
             self, flight: ProposedFlight, types: List[Type[FlyingType]],
-    ) -> Optional[Tuple[ControlPoint, FlyingType]]:
+    ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
@@ -210,6 +210,8 @@ class AircraftAllocator:
                 continue
             inventory = self.global_inventory.for_control_point(airfield)
             for aircraft, available in inventory.all_aircraft:
+                if not airfield.can_operate(aircraft):
+                    continue
                 if aircraft in types and available >= flight.num_aircraft:
                     inventory.remove_aircraft(aircraft, flight.num_aircraft)
                     return airfield, aircraft
@@ -264,7 +266,7 @@ class PackageBuilder:
                 continue
             if airfield == arrival:
                 continue
-            if not airfield.can_land(aircraft):
+            if not airfield.can_operate(aircraft):
                 continue
             if isinstance(airfield, OffMapSpawn):
                 continue

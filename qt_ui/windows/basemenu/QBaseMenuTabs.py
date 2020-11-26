@@ -20,9 +20,8 @@ class QBaseMenuTabs(QTabWidget):
             self.intel = QIntelInfo(cp, game_model.game)
             self.addTab(self.intel, "Intel")
         else:
-            if cp.has_runway():
-                self.airfield_command = QAirfieldCommand(cp, game_model)
-                self.addTab(self.airfield_command, "Airfield Command")
+            self.airfield_command = QAirfieldCommand(cp, game_model)
+            self.addTab(self.airfield_command, "Airfield Command")
 
             if cp.is_carrier:
                 self.base_defenses_hq = QBaseDefensesHQ(cp, game_model.game)

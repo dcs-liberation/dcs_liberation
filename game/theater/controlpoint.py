@@ -7,7 +7,7 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -283,7 +283,7 @@ class ControlPoint(MissionTarget, ABC):
         self.stances[to.id] = CombatStance.DEFENSIVE
 
     @abstractmethod
-    def has_runway(self) -> bool:
+    def runway_is_operational(self) -> bool:
         """
         Check whether this control point supports taking offs and landings.
         :return:
@@ -363,7 +363,7 @@ class ControlPoint(MissionTarget, ABC):
         BaseDefenseGenerator(game, self).generate()
 
     @abstractmethod
-    def can_land(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: Type[FlyingType]) -> bool:
         ...
 
     def aircraft_transferring(self, game: Game) -> int:
@@ -437,8 +437,13 @@ class Airfield(ControlPoint):
         self.airport = airport
         self._runway_status = RunwayStatus()
 
-    def can_land(self, aircraft: FlyingType) -> bool:
-        return True
+    def can_operate(self, aircraft: FlyingType) -> bool:
+        # TODO: Allow helicopters.
+        # Need to implement ground spawns so the helos don't use the runway.
+        # TODO: Allow harrier.
+        # Needs ground spawns just like helos do, but also need to be able to
+        # limit takeoff weight to ~20500 lbs or it won't be able to take off.
+        return self.runway_is_operational()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
@@ -462,7 +467,7 @@ class Airfield(ControlPoint):
     def heading(self) -> int:
         return self.airport.runways[0].heading
 
-    def has_runway(self) -> bool:
+    def runway_is_operational(self) -> bool:
         return not self.runway_status.damaged
 
     @property
@@ -503,7 +508,7 @@ class NavalControlPoint(ControlPoint, ABC):
     def heading(self) -> int:
         return 0  # TODO compute heading
 
-    def has_runway(self) -> bool:
+    def runway_is_operational(self) -> bool:
         # Necessary because it's possible for the carrier itself to have sunk
         # while its escorts are still alive.
         for g in self.ground_objects:
@@ -525,7 +530,7 @@ class NavalControlPoint(ControlPoint, ABC):
 
     @property
     def runway_status(self) -> RunwayStatus:
-        return RunwayStatus(damaged=not self.has_runway())
+        return RunwayStatus(damaged=not self.runway_is_operational())
 
     @property
     def runway_can_be_repaired(self) -> bool:
@@ -548,7 +553,7 @@ class Carrier(NavalControlPoint):
     def is_carrier(self):
         return True
 
-    def can_land(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: FlyingType) -> bool:
         return aircraft in db.CARRIER_CAPABLE
 
     @property
@@ -571,7 +576,7 @@ class Lha(NavalControlPoint):
     def is_lha(self) -> bool:
         return True
 
-    def can_land(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: FlyingType) -> bool:
         return aircraft in db.LHA_CAPABLE
 
     @property
@@ -581,7 +586,7 @@ class Lha(NavalControlPoint):
 
 class OffMapSpawn(ControlPoint):
 
-    def has_runway(self) -> bool:
+    def runway_is_operational(self) -> bool:
         return True
 
     def __init__(self, cp_id: int, name: str, position: Point):
@@ -600,7 +605,7 @@ class OffMapSpawn(ControlPoint):
     def total_aircraft_parking(self) -> int:
         return 1000
 
-    def can_land(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: FlyingType) -> bool:
         return True
 
     @property

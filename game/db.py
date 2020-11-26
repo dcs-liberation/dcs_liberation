@@ -1223,7 +1223,7 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     return None
 
 
-def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
+def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 

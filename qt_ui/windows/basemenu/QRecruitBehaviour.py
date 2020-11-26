@@ -5,6 +5,7 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QLayout,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
@@ -45,7 +46,8 @@ class QRecruitBehaviour:
     def budget(self, value: int) -> None:
         self.game_model.game.budget = value
 
-    def add_purchase_row(self, unit_type, layout, row):
+    def add_purchase_row(self, unit_type: Type[UnitType], layout: QLayout,
+                         row: int, disabled: bool = False) -> int:
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
         exist.setMaximumHeight(36)
@@ -80,6 +82,7 @@ class QRecruitBehaviour:
 
         buy = QPushButton("+")
         buy.setProperty("style", "btn-buy")
+        buy.setDisabled(disabled)
         buy.setMinimumSize(16, 16)
         buy.setMaximumSize(16, 16)
         buy.clicked.connect(lambda: self.buy(unit_type))
@@ -87,6 +90,7 @@ class QRecruitBehaviour:
 
         sell = QPushButton("-")
         sell.setProperty("style", "btn-sell")
+        sell.setDisabled(disabled)
         sell.setMinimumSize(16, 16)
         sell.setMaximumSize(16, 16)
         sell.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))

@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Set
+from typing import Optional, Set, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.task import CAP, CAS
-from dcs.unittype import UnitType
+from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import ControlPoint
@@ -51,12 +51,14 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         task_box_layout = QGridLayout()
         row = 0
 
-        unit_types: Set[UnitType] = set()
+        unit_types: Set[Type[FlyingType]] = set()
         for task in tasks:
             units = db.find_unittype(task, self.game_model.game.player_name)
             if not units:
                 continue
             for unit in units:
+                if not issubclass(unit, FlyingType):
+                    continue
                 if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
                     continue
                 if self.cp.is_lha and unit not in db.LHA_CAPABLE:
@@ -65,7 +67,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
         for unit_type in sorted_units:
-            row = self.add_purchase_row(unit_type, task_box_layout, row)
+            row = self.add_purchase_row(
+                unit_type, task_box_layout, row,
+                disabled=not self.cp.can_operate(unit_type))
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)

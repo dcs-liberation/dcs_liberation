@@ -33,7 +33,7 @@ class QMapControlPoint(QMapObject):
             painter.setBrush(self.brush_color)
             painter.setPen(self.pen_color)
 
-            if not self.control_point.has_runway():
+            if not self.control_point.runway_is_operational():
                 painter.setBrush(const.COLORS["black"])
                 painter.setPen(self.brush_color)
 
