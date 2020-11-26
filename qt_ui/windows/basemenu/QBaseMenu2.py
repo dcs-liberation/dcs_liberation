@@ -4,11 +4,13 @@ from PySide2.QtWidgets import (
     QDialog,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
+from game import db
 from game.theater import ControlPoint, ControlPointType
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
@@ -59,17 +61,17 @@ class QBaseMenu2(QDialog):
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
-        aircraft = self.cp.base.total_aircraft
-        armor = self.cp.base.total_armor
-        runway_status = "operational" if self.cp.has_runway() else "damaged"
-        intel_summary = QLabel("\n".join([
-            f"{aircraft} aircraft",
-            f"{armor} ground units",
-            f"Runway {runway_status}"
-        ]))
+        self.intel_summary = QLabel()
+        self.update_intel_summary()
         top_layout.addWidget(title)
-        top_layout.addWidget(intel_summary)
+        top_layout.addWidget(self.intel_summary)
         top_layout.setAlignment(Qt.AlignTop)
+
+        self.repair_button = QPushButton()
+        self.repair_button.clicked.connect(self.begin_runway_repair)
+        self.update_repair_button()
+        top_layout.addWidget(self.repair_button)
+
         base_menu_header.setProperty("style", "baseMenuHeader")
         base_menu_header.setLayout(top_layout)
 
@@ -96,7 +98,66 @@ class QBaseMenu2(QDialog):
         bottom_row.addWidget(budget_display)
         self.setLayout(main_layout)
 
-    def closeEvent(self, closeEvent:QCloseEvent):
+    @property
+    def can_repair_runway(self) -> bool:
+        return self.cp.captured and self.cp.runway_can_be_repaired
+
+    @property
+    def can_afford_runway_repair(self) -> bool:
+        return self.game_model.game.budget >= db.RUNWAY_REPAIR_COST
+
+    def begin_runway_repair(self) -> None:
+        if not self.can_afford_runway_repair:
+            QMessageBox.critical(
+                self,
+                "Cannot repair runway",
+                f"Runway repair costs ${db.RUNWAY_REPAIR_COST}M but you have "
+                f"only ${self.game_model.game.budget}M available.",
+                QMessageBox.Ok)
+            return
+        if not self.can_repair_runway:
+            QMessageBox.critical(
+                self,
+                "Cannot repair runway",
+                f"Cannot repair this runway.", QMessageBox.Ok)
+            return
+
+        self.cp.begin_runway_repair()
+        self.game_model.game.budget -= db.RUNWAY_REPAIR_COST
+        self.update_repair_button()
+        self.update_intel_summary()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+
+    def update_repair_button(self) -> None:
+        self.repair_button.setVisible(True)
+        turns_remaining = self.cp.runway_status.repair_turns_remaining
+        if self.cp.captured and turns_remaining is not None:
+            self.repair_button.setText("Repairing...")
+            self.repair_button.setDisabled(True)
+            return
+
+        if self.can_repair_runway:
+            if self.can_afford_runway_repair:
+                self.repair_button.setText(f"Repair ${db.RUNWAY_REPAIR_COST}M")
+                self.repair_button.setDisabled(False)
+                return
+            else:
+                self.repair_button.setText(
+                    f"Cannot afford repair ${db.RUNWAY_REPAIR_COST}M")
+                self.repair_button.setDisabled(True)
+                return
+
+        self.repair_button.setVisible(False)
+        self.repair_button.setDisabled(True)
+
+    def update_intel_summary(self) -> None:
+        self.intel_summary.setText("\n".join([
+            f"{self.cp.base.total_aircraft} aircraft",
+            f"{self.cp.base.total_armor} ground units",
+            str(self.cp.runway_status)
+        ]))
+
+    def closeEvent(self, close_event: QCloseEvent):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):

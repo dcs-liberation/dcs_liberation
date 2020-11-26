@@ -225,6 +225,11 @@ from this example `Identifier` should be used (which may or may not include cate
 For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla is called `AirDefence.SAM_SA_18_Igla_S_MANPADS`
 """
 
+# This should probably be much higher, but the AI doesn't rollover their budget
+# and isn't smart enough to save to repair a critical runway anyway, so it has
+# to be cheap enough to repair with a single turn's income.
+RUNWAY_REPAIR_COST = 100
+
 """
 Prices for the aircraft. 
 This defines both price for the player (although only aircraft listed in CAP/CAS/Transport/Armor/AirDefense roles will be purchasable) 

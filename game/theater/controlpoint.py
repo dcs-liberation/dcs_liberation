@@ -148,6 +148,45 @@ class PendingOccupancy:
         return self.present + self.ordered + self.transferring
 
 
+@dataclass
+class RunwayStatus:
+    damaged: bool = False
+    repair_turns_remaining: Optional[int] = None
+
+    def damage(self) -> None:
+        self.damaged = True
+        # If the runway is already under repair and is damaged again, progress
+        # is reset.
+        self.repair_turns_remaining = None
+
+    def begin_repair(self) -> None:
+        if self.repair_turns_remaining is not None:
+            logging.error("Runway already under repair. Restarting.")
+        self.repair_turns_remaining = 4
+
+    def process_turn(self) -> None:
+        if self.repair_turns_remaining is not None:
+            if self.repair_turns_remaining == 1:
+                self.repair_turns_remaining = None
+                self.damaged = False
+            else:
+                self.repair_turns_remaining -= 1
+
+    @property
+    def needs_repair(self) -> bool:
+        return self.damaged and self.repair_turns_remaining is None
+
+    def __str__(self) -> str:
+        if not self.damaged:
+            return "Runway operational"
+
+        turns_remaining = self.repair_turns_remaining
+        if turns_remaining is None:
+            return "Runway damaged"
+
+        return f"Runway repairing, {turns_remaining} turns remaining"
+
+
 class ControlPoint(MissionTarget, ABC):
 
     position = None  # type: Point
@@ -367,6 +406,26 @@ class ControlPoint(MissionTarget, ABC):
     def parking_slots(self) -> Iterator[ParkingSlot]:
         yield from []
 
+    @property
+    @abstractmethod
+    def runway_status(self) -> RunwayStatus:
+        ...
+
+    @property
+    def runway_can_be_repaired(self) -> bool:
+        return self.runway_status.needs_repair
+
+    def begin_runway_repair(self) -> None:
+        if not self.runway_can_be_repaired:
+            logging.error(f"Cannot repair runway at {self}")
+            return
+        self.runway_status.begin_repair()
+
+    def process_turn(self) -> None:
+        runway_status = self.runway_status
+        if runway_status is not None:
+            runway_status.process_turn()
+
 
 class Airfield(ControlPoint):
 
@@ -376,7 +435,7 @@ class Airfield(ControlPoint):
                          size, importance, has_frontline,
                          cptype=ControlPointType.AIRBASE)
         self.airport = airport
-        self.damaged = False
+        self._runway_status = RunwayStatus()
 
     def can_land(self, aircraft: FlyingType) -> bool:
         return True
@@ -404,7 +463,14 @@ class Airfield(ControlPoint):
         return self.airport.runways[0].heading
 
     def has_runway(self) -> bool:
-        return not self.damaged
+        return not self.runway_status.damaged
+
+    @property
+    def runway_status(self) -> RunwayStatus:
+        return self._runway_status
+
+    def damage_runway(self) -> None:
+        self.runway_status.damage()
 
     def active_runway(self, conditions: Conditions,
                       dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
@@ -456,6 +522,14 @@ class NavalControlPoint(ControlPoint, ABC):
         # TODO: Assign TACAN and ICLS earlier so we don't need this.
         fallback = RunwayData(self.full_name, runway_heading=0, runway_name="")
         return dynamic_runways.get(self.name, fallback)
+
+    @property
+    def runway_status(self) -> RunwayStatus:
+        return RunwayStatus(damaged=not self.has_runway())
+
+    @property
+    def runway_can_be_repaired(self) -> bool:
+        return False
 
 
 class Carrier(NavalControlPoint):
@@ -537,3 +611,7 @@ class OffMapSpawn(ControlPoint):
                       dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
         logging.warning("TODO: Off map spawns have no runways.")
         return RunwayData(self.full_name, runway_heading=0, runway_name="")
+
+    @property
+    def runway_status(self) -> RunwayStatus:
+        return RunwayStatus()

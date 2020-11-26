@@ -26,7 +26,7 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint, OffMapSpawn
+from .theater import Airfield, ConflictTheater, ControlPoint, OffMapSpawn
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -212,6 +212,9 @@ class Game:
             else:
                 event.skip()
 
+        for control_point in self.theater.controlpoints:
+            control_point.process_turn()
+
         self._enemy_reinforcement()
         self._budget_player()
 
@@ -269,9 +272,20 @@ class Game:
                 if g.category in REWARDS.keys() and not g.is_dead:
                     production = production + REWARDS[g.category]
 
-        production = production * 0.75
-        budget_for_armored_units = production / 2
-        budget_for_aircraft = production / 2
+        # TODO: Why doesn't the enemy get the full budget?
+        budget = production * 0.75
+
+        for control_point in self.theater.enemy_points():
+            if budget < db.RUNWAY_REPAIR_COST:
+                break
+            if control_point.runway_can_be_repaired:
+                control_point.begin_runway_repair()
+                budget -= db.RUNWAY_REPAIR_COST
+                self.informations.append(Information(
+                    f"OPFOR has begun repairing the runway at {control_point}"))
+
+        budget_for_armored_units = budget / 2
+        budget_for_aircraft = budget / 2
 
         potential_cp_armor = []
         for cp in self.theater.enemy_points():
