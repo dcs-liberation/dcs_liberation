@@ -37,6 +37,9 @@ class QBudgetBox(QGroupBox):
         self.money_amount.setText(str(budget) + "M (+" + str(reward) + "M)")
 
     def setGame(self, game):
+        if game is None:
+            return
+
         self.game = game
         self.setBudget(self.game.budget, self.game.budget_reward_amount)
         self.finances.setEnabled(True)
