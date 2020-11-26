@@ -6,7 +6,6 @@ from game.weather import Conditions, TimeOfDay, Weather
 from game.utils import meter_to_nm, mps_to_knots
 from dcs.weather import Weather as PydcsWeather
 
-from qt_ui.windows.weather.QWeatherInfoWindow import QWeatherInfoWindow
 import qt_ui.uiconstants as CONST
 
 class QTimeTurnWidget(QGroupBox):
@@ -165,17 +164,17 @@ class QWeatherWidget(QGroupBox):
         """Updates the UI with the current conditions wind info.
         """
         windGlSpeed = mps_to_knots(self.conditions.weather.wind.at_0m.speed or 0)
-        windGlDir = self.conditions.weather.wind.at_0m.direction or 0
+        windGlDir = str(self.conditions.weather.wind.at_0m.direction or 0).rjust(3, '0')
         self.windGLSpeedLabel.setText('{}kts'.format(windGlSpeed))
         self.windGLDirLabel.setText('{}º'.format(windGlDir))
 
         windFL08Speed = mps_to_knots(self.conditions.weather.wind.at_2000m.speed or 0)
-        windFL08Dir = self.conditions.weather.wind.at_2000m.direction or 0
+        windFL08Dir = str(self.conditions.weather.wind.at_2000m.direction or 0).rjust(3, '0')
         self.windFL08SpeedLabel.setText('{}kts'.format(windFL08Speed))
         self.windFL08DirLabel.setText('{}º'.format(windFL08Dir))
 
         windFL26Speed = mps_to_knots(self.conditions.weather.wind.at_8000m.speed or 0)
-        windFL26Dir = self.conditions.weather.wind.at_8000m.direction or 0
+        windFL26Dir = str(self.conditions.weather.wind.at_8000m.direction or 0).rjust(3, '0')
         self.windFL26SpeedLabel.setText('{}kts'.format(windFL26Speed))
         self.windFL26DirLabel.setText('{}º'.format(windFL26Dir))
 
