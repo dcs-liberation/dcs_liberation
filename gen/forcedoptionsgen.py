@@ -1,19 +1,12 @@
 from __future__ import annotations
 
-from enum import IntEnum
 from typing import TYPE_CHECKING
 
+from dcs.forcedoptions import ForcedOptions
 from dcs.mission import Mission
 
 if TYPE_CHECKING:
     from game.game import Game
-
-
-class Labels(IntEnum):
-    Off = 0
-    Full = 1
-    Abbreviated = 2
-    Dot = 3
 
 
 class ForcedOptionsGenerator:
@@ -29,12 +22,14 @@ class ForcedOptionsGenerator:
             self.mission.forced_options.external_views = self.game.settings.external_views_allowed
 
     def _set_labels(self) -> None:
+        # TODO: Fix settings to use the real type.
+        # TODO: Allow forcing "full" and have default do nothing.
         if self.game.settings.labels == "Abbreviated":
-            self.mission.forced_options.labels = int(Labels.Abbreviated)
+            self.mission.forced_options.labels = ForcedOptions.Labels.Abbreviate
         elif self.game.settings.labels == "Dot Only":
-            self.mission.forced_options.labels = int(Labels.Dot)
+            self.mission.forced_options.labels = ForcedOptions.Labels.DotOnly
         elif self.game.settings.labels == "Off":
-            self.mission.forced_options.labels = int(Labels.Off)
+            self.mission.forced_options.labels = ForcedOptions.Labels.None_
 
     def _set_unrestricted_satnav(self) -> None:
         blue = self.game.player_faction
