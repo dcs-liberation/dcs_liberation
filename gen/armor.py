@@ -1,6 +1,5 @@
 from __future__ import annotations
 import logging
-from pydcs.dcs.unitgroup import VehicleGroup
 import random
 from dataclasses import dataclass
 from typing import List, TYPE_CHECKING, Tuple
@@ -26,6 +25,7 @@ from dcs.task import (
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Vehicle
 from dcs.unittype import VehicleType
+from dcs.unitgroup import VehicleGroup
 
 from game import db
 from .naming import namegen
