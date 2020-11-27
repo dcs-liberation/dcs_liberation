@@ -44,8 +44,9 @@
     "ZU23Generator"
   ],
   "sams": [
+    "SA2Generator",
     "SA10Generator",
-    "SA2Generator"
+    "SA11Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

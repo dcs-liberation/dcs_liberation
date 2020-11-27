@@ -51,9 +51,11 @@
     "SA19Generator"
   ],
   "sams": [
-    "SA11Generator",
+    "SA8Generator",
     "SA10Generator",
-    "SA19Generator"
+    "SA11Generator",
+    "Tier2SA10Generator",
+    "Tier3SA10Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",
