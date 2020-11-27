@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dcs.action import MarkToAll
 from dcs.condition import TimeAfter
 from dcs.mission import Mission
@@ -5,7 +7,7 @@ from dcs.task import Option
 from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Skill
-
+from dcs.unitgroup import FlyingGroup
 from .conflictgen import Conflict
 
 PUSH_TRIGGER_SIZE = 3000
@@ -73,8 +75,9 @@ class TriggersGenerator:
                 continue
 
             for country in coalition.countries.values():
-                for plane_group in country.plane_group:
-                    for plane_unit in plane_group.units:
+                flying_groups = country.plane_group + country.helicopter_group  # type: FlyingGroup
+                for flying_group in flying_groups:
+                    for plane_unit in flying_group.units:
                         if plane_unit.skill != Skill.Client and plane_unit.skill != Skill.Player:
                             plane_unit.skill = Skill(skill_level[0])
 
