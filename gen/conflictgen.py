@@ -97,42 +97,16 @@ class Conflict:
     @classmethod
     def frontline_vector(cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater) -> Tuple[Point, int, int]:
         """
-        probe_end_point = initial.point_from_heading(heading, FRONTLINE_LENGTH)
-        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y) ])
-        intersection = probe.intersection(theater.land_poly)
-
-        if isinstance(intersection, geometry.LineString):
-            intersection = intersection
-        elif isinstance(intersection, geometry.MultiLineString):
-            intersection = intersection.geoms[0]
-        else:
-            print(intersection)
-            return None
-
-        return Point(*intersection.xy[0]), _heading_sum(heading, 90), intersection.length
+        Returns a vector for a valid frontline location avoiding exclusion zones.
         """
-        frontline = cls.frontline_position(from_cp, to_cp, theater)
-        center_position, heading = frontline
-        left_position, right_position = None, None
-
-        if not theater.is_on_land(center_position):
-            pos = cls._find_ground_position(center_position, FRONTLINE_LENGTH, _heading_sum(heading, -90), theater)
-            if pos:
-                right_position = pos
-                center_position = pos
-            else:
-                pos = cls._find_ground_position(center_position, FRONTLINE_LENGTH, _heading_sum(heading, +90), theater)
-                if pos:
-                    left_position = pos
-                    center_position = pos
-
-        if left_position is None:
-            left_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH/2), _heading_sum(heading, -90), theater)
-
-        if right_position is None:
-            right_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH/2), _heading_sum(heading, 90), theater)
-
-        return left_position, _heading_sum(heading, 90), int(right_position.distance_to_point(left_position))
+        center_position, heading = cls.frontline_position(from_cp, to_cp, theater)
+        center_position = cls._find_ground_position(center_position, FRONTLINE_LENGTH, _heading_sum(heading, 90), theater)
+        left_heading = _heading_sum(heading, 90)
+        right_heading =  _heading_sum(heading, -90)
+        left_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH / 2), left_heading, theater)
+        right_position = cls._extend_ground_position(center_position, int(FRONTLINE_LENGTH / 2), right_heading, theater)
+        distance = int(left_position.distance_to_point(right_position))
+        return left_position, right_heading, distance
 
     @classmethod
     def frontline_cas_conflict(cls, attacker_name: str, defender_name: str, attacker: Country, defender: Country, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater):
@@ -154,46 +128,27 @@ class Conflict:
 
     @classmethod
     def _extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+        """Finds a valid ground position in one heading from an initial point"""
         pos = initial
-        for offset in range(0, int(max_distance), 500):
-            new_pos = initial.point_from_heading(heading, offset)
-            if theater.is_on_land(new_pos):
-                pos = new_pos
-            else:
+        for distance in range(0, int(max_distance), 100):
+            if not theater.is_on_land(pos):
                 return pos
-        return pos
-
-        """
-        probe_end_point = initial.point_from_heading(heading, max_distance)
-        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y)])
-
-        intersection = probe.intersection(theater.land_poly)
-        if intersection is geometry.LineString:
-            return Point(*intersection.xy[1])
-        elif intersection is geometry.MultiLineString:
-            return Point(*intersection.geoms[0].xy[1])
-
-        return None
-        """
+            pos = initial.point_from_heading(heading, distance)
+        if theater.is_on_land(pos):
+            return pos
+        logging.error("Didn't find ground position ({})!".format(initial))
+        return initial
 
     @classmethod
     def _find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
+        """Finds the nearest ground position along a provided heading and it's inverse"""
         pos = initial
-        for _ in range(0, int(max_distance), 100):
+        for distance in range(0, int(max_distance), 100):
             if theater.is_on_land(pos):
                 return pos
-
-            pos = pos.point_from_heading(heading, 500)
-        """
-        probe_end_point = initial.point_from_heading(heading, max_distance)
-        probe = geometry.LineString([(initial.x, initial.y), (probe_end_point.x, probe_end_point.y) ])
-
-        intersection = probe.intersection(theater.land_poly)
-        if isinstance(intersection, geometry.LineString):
-            return Point(*intersection.xy[1])
-        elif isinstance(intersection, geometry.MultiLineString):
-            return Point(*intersection.geoms[0].xy[1])
-        """
-
+            pos = initial.point_from_heading(heading, distance)
+            if theater.is_on_land(pos):
+                return pos
+            pos = initial.point_from_heading(_opposite_heading(heading), distance)
         logging.error("Didn't find ground position ({})!".format(initial))
         return initial
