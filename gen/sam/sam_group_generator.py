@@ -1,10 +1,10 @@
 import random
-from typing import List, Optional, Type
+from typing import Iterable, List, Optional, Type
 
 from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import AirDefence
 
-from game import Game, db
+from game import Game
 from game.factions.faction import Faction
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import SamGroundObject
@@ -151,7 +151,8 @@ EWR_MAP = {
 
 def get_faction_possible_sams_generator(
         faction: Faction,
-        filter_names: Optional[List[str]] = None) -> List[Type[GroupGenerator]]:
+        filter_names: Optional[Iterable[str]] = None
+) -> List[Type[GroupGenerator]]:
     """
     Return the list of possible SAM generator for the given faction
     :param faction: Faction name to search units for
@@ -171,7 +172,7 @@ def get_faction_possible_ewrs_generator(faction: Faction) -> List[Type[GroupGene
 
 def generate_anti_air_group(
         game: Game, ground_object: TheaterGroundObject, faction: Faction,
-        filter_names: Optional[List[str]] = None) -> Optional[VehicleGroup]:
+        filter_names: Optional[Iterable[str]] = None) -> Optional[VehicleGroup]:
     """
     This generate a SAM group
     :param game: The Game.

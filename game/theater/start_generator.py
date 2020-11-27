@@ -4,7 +4,7 @@ import logging
 import math
 import pickle
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, Optional
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -632,7 +632,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.generate_aa_at(position)
 
     def generate_aa_at(self, position: Point,
-                       filter_names: Optional[List[str]] = None) -> None:
+                       filter_names: Optional[Iterable[str]] = None) -> None:
         group_id = self.game.next_group_id()
 
         g = SamGroundObject(namegen.random_objective_name(), group_id,
