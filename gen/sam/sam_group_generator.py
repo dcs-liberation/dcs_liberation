@@ -1,10 +1,11 @@
 import random
-from typing import List, Optional, Type
+from typing import Iterable, List, Optional, Type
 
 from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import AirDefence
 
-from game import Game, db
+from game import Game
+from game.factions.faction import Faction
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import SamGroundObject
 from gen.sam.aaa_bofors import BoforsGenerator
@@ -90,6 +91,16 @@ SAM_MAP = {
     "AllyWW2FlakGenerator": AllyWW2FlakGenerator
 }
 
+#: Used to fill the long-range required SAM locations in the campaign.
+LONG_RANGE_SAMS = {
+    "SA10Generator",
+    "PatriotGenerator",
+}
+
+#: Used to fill the medium-range required SAM location in the campaign.
+MEDIUM_RANGE_SAMS = SAM_MAP.keys() - LONG_RANGE_SAMS
+
+
 SAM_PRICES = {
     AirDefence.SAM_Hawk_PCP: 35,
     AirDefence.AAA_ZU_23_Emplacement: 10,
@@ -138,34 +149,41 @@ EWR_MAP = {
 }
 
 
-def get_faction_possible_sams_generator(faction: str) -> List[Type[GroupGenerator]]:
+def get_faction_possible_sams_generator(
+        faction: Faction,
+        filter_names: Optional[Iterable[str]] = None
+) -> List[Type[GroupGenerator]]:
+    """
+    Return the list of possible SAM generator for the given faction
+    :param faction: Faction name to search units for
+    :param filter_names: Optional list of names to filter allowed SAMs by.
+    """
+    return [SAM_MAP[s] for s in faction.sams if
+            filter_names is None or s in filter_names]
+
+
+def get_faction_possible_ewrs_generator(faction: Faction) -> List[Type[GroupGenerator]]:
     """
     Return the list of possible SAM generator for the given faction
     :param faction: Faction name to search units for
     """
-    return [SAM_MAP[s] for s in db.FACTIONS[faction].sams if s in SAM_MAP]
+    return [EWR_MAP[s] for s in faction.ewrs]
 
 
-def get_faction_possible_ewrs_generator(faction: str) -> List[Type[GroupGenerator]]:
-    """
-    Return the list of possible SAM generator for the given faction
-    :param faction: Faction name to search units for
-    """
-    return [EWR_MAP[s] for s in db.FACTIONS[faction].ewrs if s in EWR_MAP]
-
-
-def generate_anti_air_group(game: Game, ground_object: TheaterGroundObject,
-                            faction: str) -> Optional[VehicleGroup]:
+def generate_anti_air_group(
+        game: Game, ground_object: TheaterGroundObject, faction: Faction,
+        filter_names: Optional[Iterable[str]] = None) -> Optional[VehicleGroup]:
     """
     This generate a SAM group
     :param game: The Game.
     :param ground_object: The ground object which will own the sam group.
     :param faction: Owner faction.
+    :param filter_names: Optional list of names to filter allowed SAMs by.
     :return: The generated group, or None if one could not be generated.
     """
-    possible_sams_generators = get_faction_possible_sams_generator(faction)
-    if len(possible_sams_generators) > 0:
-        sam_generator_class = random.choice(possible_sams_generators)
+    generators = get_faction_possible_sams_generator(faction, filter_names)
+    if len(generators) > 0:
+        sam_generator_class = random.choice(generators)
         generator = sam_generator_class(game, ground_object)
         generator.generate()
         return generator.get_generated_group()
@@ -173,7 +191,7 @@ def generate_anti_air_group(game: Game, ground_object: TheaterGroundObject,
 
 
 def generate_ewr_group(game: Game, ground_object: TheaterGroundObject,
-                       faction: str) -> Optional[VehicleGroup]:
+                       faction: Faction) -> Optional[VehicleGroup]:
     """Generates an early warning radar group.
 
     :param game: The Game.
@@ -191,13 +209,11 @@ def generate_ewr_group(game: Game, ground_object: TheaterGroundObject,
 
 
 def generate_shorad_group(game: Game, ground_object: SamGroundObject,
-                          faction_name: str) -> Optional[VehicleGroup]:
-    faction = db.FACTIONS[faction_name]
-
+                          faction: Faction) -> Optional[VehicleGroup]:
     if len(faction.shorads) > 0:
         sam = random.choice(faction.shorads)
         generator = SAM_MAP[sam](game, ground_object)
         generator.generate()
         return generator.get_generated_group()
     else:
-        return generate_anti_air_group(game, ground_object, faction_name)
+        return generate_anti_air_group(game, ground_object, faction)

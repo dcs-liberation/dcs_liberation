@@ -95,8 +95,11 @@ class PresetLocations:
     #: Locations used by missile sites like scuds and V-2s.
     missile_sites: List[Point] = field(default_factory=list)
 
-    #: Locations of SAMs which should always be spawned.
-    required_sams: List[Point] = field(default_factory=list)
+    #: Locations of long range SAMs which should always be spawned.
+    required_long_range_sams: List[Point] = field(default_factory=list)
+
+    #: Locations of medium range SAMs which should always be spawned.
+    required_medium_range_sams: List[Point] = field(default_factory=list)
 
     @staticmethod
     def _random_from(points: List[Point]) -> Optional[Point]:

@@ -86,7 +86,7 @@ from dcs.planes import (
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 
 # TODO: These lists really ought to be era (faction) dependent.
 # Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
@@ -292,6 +292,7 @@ CAS_CAPABLE = [
 
     A_4E_C,
     Rafale_A_S,
+    Rafale_B,
 
     WingLoong_I,
     MQ_9_Reaper,
@@ -340,6 +341,7 @@ CAS_PREFERRED = [
 
     A_4E_C,
     Rafale_A_S,
+    Rafale_B,
 
     WingLoong_I,
     MQ_9_Reaper,
@@ -367,7 +369,8 @@ SEAD_CAPABLE = [
     Tornado_GR4,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+    Rafale_B
 ]
 
 SEAD_PREFERRED = [
@@ -385,6 +388,7 @@ SEAD_PREFERRED = [
 # Aircraft used for Strike mission
 STRIKE_CAPABLE = [
     MiG_15bis,
+    MiG_21Bis,
     MiG_27K,
     MB_339PAN,
 
@@ -452,7 +456,8 @@ STRIKE_CAPABLE = [
     FW_190A8,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+    Rafale_B
 
 ]
 
@@ -493,6 +498,7 @@ ANTISHIP_CAPABLE = [
 
     Ju_88A4,
     Rafale_A_S,
+    Rafale_B
 ]
 
 ANTISHIP_PREFERRED = [
@@ -500,6 +506,7 @@ ANTISHIP_PREFERRED = [
     FA_18C_hornet,
     JF_17,
     Rafale_A_S,
+    Rafale_B,
     Su_24M,
     Su_30,
     Su_34,

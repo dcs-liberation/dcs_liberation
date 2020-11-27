@@ -160,13 +160,14 @@ from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
+plane_map["Rafale_B"] = Rafale_B
 plane_map["Su-57"] = Su_57
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
@@ -352,6 +353,7 @@ PRICES = {
     # Modded
     Rafale_M: 26,
     Rafale_A_S: 26,
+    Rafale_B: 26,
 
     # armor
     Armor.APC_MTLB: 4,
@@ -641,6 +643,7 @@ UNIT_BY_TASK = {
         P_47D_40,
         RQ_1A_Predator,
         Rafale_A_S,
+        Rafale_B,
         SA342L,
         SA342M,
         SA342Minigun,
@@ -1063,6 +1066,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     MB_339PAN: COMMON_OVERRIDE,
     Rafale_M: COMMON_OVERRIDE,
     Rafale_A_S: COMMON_OVERRIDE,
+    Rafale_B: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
     F_16A: COMMON_OVERRIDE,
     MQ_9_Reaper: COMMON_OVERRIDE,

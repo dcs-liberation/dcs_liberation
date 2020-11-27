@@ -128,7 +128,7 @@ def parse_args() -> argparse.Namespace:
 def create_game(campaign_path: Path, blue: str, red: str,
                 supercarrier: bool) -> Game:
     campaign = Campaign.from_json(campaign_path)
-    generator = GameGenerator(blue, red, campaign.theater,
+    generator = GameGenerator(blue, red, campaign.load_theater(),
                               Settings(supercarrier=supercarrier),
                               start_date=datetime.today(),
                               starting_budget=650,

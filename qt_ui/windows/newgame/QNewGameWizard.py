@@ -58,7 +58,7 @@ class NewGameWizard(QtWidgets.QWizard):
         if selectedCampaign is None:
             selectedCampaign = self.campaigns[0]
 
-        conflictTheater = selectedCampaign.theater
+        conflictTheater = selectedCampaign.load_theater()
 
         timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
         midGame = self.field("midGame")

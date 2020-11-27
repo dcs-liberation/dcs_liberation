@@ -4,7 +4,7 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List
 
 from PySide2 import QtGui
 from PySide2.QtCore import QItemSelectionModel
@@ -21,7 +21,8 @@ class Campaign:
     icon_name: str
     authors: str
     description: str
-    theater: ConflictTheater
+    data: Dict[str, Any]
+    path: Path
 
     @classmethod
     def from_json(cls, path: Path) -> Campaign:
@@ -29,10 +30,17 @@ class Campaign:
             data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
-        return cls(data["name"], f"Terrain_{sanitized_theater}",
-                   data.get("authors", "???"),
-                   data.get("description", ""),
-                   ConflictTheater.from_json(path.parent, data))
+        return cls(
+            data["name"],
+            f"Terrain_{sanitized_theater}",
+            data.get("authors", "???"),
+            data.get("description", ""),
+            data,
+            path
+        )
+
+    def load_theater(self) -> ConflictTheater:
+        return ConflictTheater.from_json(self.path.parent, self.data)
 
 
 def load_campaigns() -> List[Campaign]:

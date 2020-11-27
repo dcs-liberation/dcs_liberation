@@ -60,11 +60,13 @@ class QTopPanel(QFrame):
         self.factionsInfos = QFactionsInfos(self.game)
 
         self.settings = QPushButton("Settings")
+        self.settings.setDisabled(True)
         self.settings.setIcon(CONST.ICONS["Settings"])
         self.settings.setProperty("style", "btn-primary")
         self.settings.clicked.connect(self.openSettings)
 
         self.statistics = QPushButton("Statistics")
+        self.statistics.setDisabled(True)
         self.statistics.setIcon(CONST.ICONS["Statistics"])
         self.statistics.setProperty("style", "btn-primary")
         self.statistics.clicked.connect(self.openStatisticsWindow)
@@ -99,6 +101,9 @@ class QTopPanel(QFrame):
     def setGame(self, game: Optional[Game]):
         if game is None:
             return
+
+        self.settings.setEnabled(True)
+        self.statistics.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
         self.budgetBox.setGame(game)
