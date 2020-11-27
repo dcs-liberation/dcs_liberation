@@ -248,7 +248,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        faction = self.game.player_name
+        faction = self.game.player_faction
 
         # Sams
 
@@ -268,7 +268,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         # Armored units
 
-        armored_units = db.find_unittype(PinpointStrike, faction) # Todo : refactor this legacy nonsense
+        armored_units = db.find_unittype(PinpointStrike, faction.name) # Todo : refactor this legacy nonsense
         for unit in set(armored_units):
             self.buyArmorCombo.addItem(db.unit_type_name_2(unit) + " [$" + str(db.PRICES[unit]) + "M]", userData=unit)
         self.buyArmorCombo.currentIndexChanged.connect(self.armorComboChanged)

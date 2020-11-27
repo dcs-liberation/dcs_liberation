@@ -4,7 +4,7 @@ import logging
 import math
 import pickle
 import random
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -36,7 +36,7 @@ from gen.fleet.ship_group_generator import (
 from gen.locations.preset_location_finder import MizDataLocationFinder
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.sam_group_generator import (
-    generate_anti_air_group,
+    LONG_RANGE_SAMS, MEDIUM_RANGE_SAMS, generate_anti_air_group,
     generate_ewr_group, generate_shorad_group,
 )
 from . import (
@@ -268,7 +268,6 @@ class LocationFinder:
         Find a valid ground object location
         :param on_ground: Whether it should be on ground or on sea (True = on
         ground)
-        :param theater: Theater object
         :param min_range: Minimal range from point
         :param max_range: Max range from point
         :param is_base_defense: True if the location is for base defense.
@@ -459,7 +458,7 @@ class BaseDefenseGenerator:
         g = EwrGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point)
 
-        group = generate_ewr_group(self.game, g, self.faction_name)
+        group = generate_ewr_group(self.game, g, self.faction)
         if group is None:
             return
 
@@ -507,7 +506,7 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        group = generate_anti_air_group(self.game, g, self.faction_name)
+        group = generate_anti_air_group(self.game, g, self.faction)
         if group is not None:
             g.groups.append(group)
         self.control_point.base_defenses.append(g)
@@ -523,7 +522,7 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        group = generate_shorad_group(self.game, g, self.faction_name)
+        group = generate_shorad_group(self.game, g, self.faction)
         if group is not None:
             g.groups.append(group)
         self.control_point.base_defenses.append(g)
@@ -575,10 +574,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         Returns:
             The number of AA sites that were generated.
         """
-        sams = self.control_point.preset_locations.required_sams
-        for position in sams:
-            self.generate_aa_at(position)
-        return len(sams)
+        presets = self.control_point.preset_locations
+        for position in presets.required_long_range_sams:
+            self.generate_aa_at(position, filter_names=LONG_RANGE_SAMS)
+        for position in presets.required_medium_range_sams:
+            self.generate_aa_at(position, filter_names=MEDIUM_RANGE_SAMS)
+        return (len(presets.required_long_range_sams) +
+                len(presets.required_medium_range_sams))
 
     def generate_ground_point(self) -> None:
         try:
@@ -620,12 +622,14 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             return
         self.generate_aa_at(position)
 
-    def generate_aa_at(self, position: Point) -> None:
+    def generate_aa_at(self, position: Point,
+                       filter_names: Optional[List[str]] = None) -> None:
         group_id = self.game.next_group_id()
 
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=False)
-        group = generate_anti_air_group(self.game, g, self.faction_name)
+        group = generate_anti_air_group(self.game, g, self.faction,
+                                        filter_names)
         if group is not None:
             g.groups = [group]
         self.control_point.connected_objectives.append(g)

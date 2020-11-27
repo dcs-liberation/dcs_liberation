@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from itertools import tee
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Iterator, List, Optional, Set, Tuple, Union, cast
 
 from dcs import Mission
 from dcs.countries import (
@@ -96,17 +96,17 @@ class MizCampaignLoader:
     COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.SS_N_2_Silkworm.id
 
     # Multiple options for the required SAMs so campaign designers can more
-    # easily see the coverage of their IADS. Designers focused on campaigns that
-    # will primarily use SA-2s can place SA-2 launchers to ensure that they will
-    # have adequate coverage, and designers focused on campaigns that will
-    # primarily use SA-10s can do the same.
-    REQUIRED_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Hawk_LN_M192,
-        AirDefence.SAM_Patriot_LN_M901,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85C,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85D,
-        AirDefence.SAM_SA_2_LN_SM_90,
-        AirDefence.SAM_SA_3_S_125_LN_5P73,
+    # accurately see the coverage of their IADS for the expected type.
+    REQUIRED_LONG_RANGE_SAM_UNIT_TYPES = {
+        AirDefence.SAM_Patriot_LN_M901.id,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85C.id,
+        AirDefence.SAM_SA_10_S_300PS_LN_5P85D.id,
+    }
+
+    REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES = {
+        AirDefence.SAM_Hawk_LN_M192.id,
+        AirDefence.SAM_SA_2_LN_SM_90.id,
+        AirDefence.SAM_SA_3_S_125_LN_5P73.id,
     }
 
     BASE_DEFENSE_RADIUS = nm_to_meter(2)
@@ -221,9 +221,15 @@ class MizCampaignLoader:
                 yield group
 
     @property
-    def required_sams(self) -> Iterator[VehicleGroup]:
+    def required_long_range_sams(self) -> Iterator[VehicleGroup]:
         for group in self.red.vehicle_group:
-            if group.units[0].type == self.REQUIRED_SAM_UNIT_TYPES:
+            if group.units[0].type in self.REQUIRED_LONG_RANGE_SAM_UNIT_TYPES:
+                yield group
+
+    @property
+    def required_medium_range_sams(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type in self.REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES:
                 yield group
 
     @cached_property
@@ -335,9 +341,17 @@ class MizCampaignLoader:
             closest, distance = self.objective_info(group)
             closest.preset_locations.coastal_defenses.append(group.position)
 
-        for group in self.required_sams:
+        for group in self.required_long_range_sams:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.required_sams.append(group.position)
+            closest.preset_locations.required_long_range_sams.append(
+                group.position
+            )
+
+        for group in self.required_medium_range_sams:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_medium_range_sams.append(
+                group.position
+            )
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
