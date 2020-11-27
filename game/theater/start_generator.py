@@ -460,6 +460,7 @@ class BaseDefenseGenerator:
 
         group = generate_ewr_group(self.game, g, self.faction)
         if group is None:
+            logging.error(f"Could not generate EWR at {self.control_point}")
             return
 
         g.groups = [group]
@@ -491,8 +492,11 @@ class BaseDefenseGenerator:
                                      for_airbase=True)
 
         group = generate_armor_group(self.faction_name, self.game, g)
-        if group is not None:
-            g.groups.append(group)
+        if group is None:
+            logging.error(
+                f"Could not generate garrison at {self.control_point}")
+            return
+        g.groups.append(group)
         self.control_point.base_defenses.append(g)
 
     def generate_sam(self) -> None:
@@ -507,8 +511,10 @@ class BaseDefenseGenerator:
                             position, self.control_point, for_airbase=True)
 
         group = generate_anti_air_group(self.game, g, self.faction)
-        if group is not None:
-            g.groups.append(group)
+        if group is None:
+            logging.error(f"Could not generate SAM at {self.control_point}")
+            return
+        g.groups.append(group)
         self.control_point.base_defenses.append(g)
 
     def generate_shorad(self) -> None:
@@ -523,8 +529,11 @@ class BaseDefenseGenerator:
                             position, self.control_point, for_airbase=True)
 
         group = generate_shorad_group(self.game, g, self.faction)
-        if group is not None:
-            g.groups.append(group)
+        if group is None:
+            logging.error(
+                f"Could not generate SHORAD group at {self.control_point}")
+            return
+        g.groups.append(group)
         self.control_point.base_defenses.append(g)
 
 
@@ -630,8 +639,17 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                             position, self.control_point, for_airbase=False)
         group = generate_anti_air_group(self.game, g, self.faction,
                                         filter_names)
-        if group is not None:
-            g.groups = [group]
+        if group is None:
+            location = f"{g.name} at {self.control_point}"
+            if filter_names is not None:
+                logging.warning(
+                    "Could not generate SAM group for %s from types: %s",
+                    location, ", ".join(filter_names)
+                )
+            else:
+                logging.error("Could not generate SAM group for %s", location)
+            return
+        g.groups = [group]
         self.control_point.connected_objectives.append(g)
 
     def generate_missile_sites(self) -> None:
