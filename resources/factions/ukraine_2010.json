@@ -45,8 +45,12 @@
   ],
   "sams": [
     "SA3Generator",
+    "SA6Generator",
+    "SA8Generator",
     "SA10Generator",
-    "SA11Generator"
+    "SA11Generator",
+    "Tier2SA10Generator",
+    "Tier3SA10Generator"
   ],
   "ewrs": [
     "BigBirdGenerator"

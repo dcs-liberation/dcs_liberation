@@ -40,7 +40,11 @@ from gen.sam.sam_linebacker import LinebackerGenerator
 from gen.sam.sam_patriot import PatriotGenerator
 from gen.sam.sam_rapier import RapierGenerator
 from gen.sam.sam_roland import RolandGenerator
-from gen.sam.sam_sa10 import SA10Generator
+from gen.sam.sam_sa10 import (
+    SA10Generator,
+    Tier2SA10Generator,
+    Tier3SA10Generator,
+)
 from gen.sam.sam_sa11 import SA11Generator
 from gen.sam.sam_sa13 import SA13Generator
 from gen.sam.sam_sa15 import SA15Generator
@@ -79,6 +83,8 @@ SAM_MAP = {
     "SA8Generator": SA8Generator,
     "SA9Generator": SA9Generator,
     "SA10Generator": SA10Generator,
+    "Tier2SA10Generator": Tier2SA10Generator,
+    "Tier3SA10Generator": Tier3SA10Generator,
     "SA11Generator": SA11Generator,
     "SA13Generator": SA13Generator,
     "SA15Generator": SA15Generator,
@@ -95,6 +101,8 @@ SAM_MAP = {
 LONG_RANGE_SAMS = {
     "SA10Generator",
     "PatriotGenerator",
+    "Tier2SA10Generator",
+    "Tier3SA10Generator",
 }
 
 #: Used to fill the medium-range required SAM location in the campaign.

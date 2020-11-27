@@ -45,8 +45,10 @@
   ],
   "sams": [
     "HQ7Generator",
+    "SA6Generator",
     "SA10Generator",
-    "SA6Generator"
+    "Tier2SA10Generator",
+    "SA11Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

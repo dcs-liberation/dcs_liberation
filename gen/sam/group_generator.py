@@ -1,7 +1,7 @@
 from __future__ import annotations
 import math
 import random
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
 from dcs import unitgroup
 from dcs.point import PointAction
@@ -38,7 +38,7 @@ class GroupGenerator:
     def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
-    def add_unit(self, unit_type: VehicleType, name: str, pos_x: float,
+    def add_unit(self, unit_type: Type[VehicleType], name: str, pos_x: float,
                  pos_y: float, heading: int) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(),
                        f"{self.go.group_name}|{name}", unit_type.id)
