@@ -557,13 +557,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
+        skip_sams = self.generate_required_aa()
+
         if self.control_point.is_global:
             return
 
         # Always generate at least one AA point.
         self.generate_aa_site()
-
-        skip_sams = self.generate_required_aa()
 
         # And between 2 and 7 other objectives.
         amount = random.randrange(2, 7)
