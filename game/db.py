@@ -114,6 +114,7 @@ from dcs.ships import (
     CVN_72_Abraham_Lincoln,
     CVN_73_George_Washington,
     CVN_74_John_C__Stennis,
+    CVN_75_Harry_S__Truman,
     CV_1143_5_Admiral_Kuznetsov,
     CV_1143_5_Admiral_Kuznetsov_2017,
     Dry_cargo_ship_Ivanov,
@@ -1207,6 +1208,8 @@ def upgrade_to_supercarrier(unit, name: str):
             return CVN_72_Abraham_Lincoln
         elif name == "CVN-73 George Washington":
             return CVN_73_George_Washington
+        elif name == "CVN-75 Harry S. Truman":
+            return CVN_75_Harry_S__Truman
         else:
             return CVN_71_Theodore_Roosevelt
     elif unit == CV_1143_5_Admiral_Kuznetsov:
