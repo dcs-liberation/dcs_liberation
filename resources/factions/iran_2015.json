@@ -42,16 +42,13 @@
     "Infantry_Soldier_Insurgents",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
+  "air_defenses": [
+    "HawkGenerator",
     "HQ7Generator",
-    "ZSU23Generator"
-  ],
-  "sams": [
     "SA2Generator",
     "SA6Generator",
     "SA11Generator",
-    "HawkGenerator",
-    "HQ7Generator"
+    "ZSU23Generator"
   ],
   "ewrs": [
     "TallRackGenerator"

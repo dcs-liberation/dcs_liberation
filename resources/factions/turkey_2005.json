@@ -34,12 +34,10 @@
     "Soldier_M249",
     "Paratrooper_AKS"
   ],
-  "shorads": [
+  "air_defenses": [
     "AvengerGenerator",
+    "HawkGenerator",
     "ZSU23Generator"
-  ],
-  "sams": [
-    "HawkGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

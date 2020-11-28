@@ -30,10 +30,7 @@
   "infantry_units": [
     "Infantry_M1_Garand"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "AllyWW2FlakGenerator",
     "BoforsGenerator"
   ],

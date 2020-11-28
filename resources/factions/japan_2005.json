@@ -36,10 +36,8 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "GepardGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "GepardGenerator",
     "HawkGenerator",
     "PatriotGenerator"
   ],

@@ -33,15 +33,13 @@
     "Infantry_Soldier_Insurgents",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
+  "air_defenses": [
     "HQ7Generator",
-    "SA8Generator",
-    "ZSU23Generator"
-  ],
-  "sams": [
     "SA2Generator",
     "SA3Generator",
-    "SA6Generator"
+    "SA6Generator",
+    "SA8Generator",
+    "ZSU23Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

@@ -33,13 +33,11 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "VulcanGenerator",
-    "ChaparralGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "ChaparralGenerator",
+    "ChaparralGenerator",
     "HawkGenerator",
-    "ChaparralGenerator"
+    "VulcanGenerator"
   ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"

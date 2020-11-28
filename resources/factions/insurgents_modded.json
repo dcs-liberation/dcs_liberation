@@ -24,12 +24,8 @@
     "Infantry_Soldier_Insurgents",
     "Soldier_RPG"
   ],
-  "shorads": [
+  "air_defenses": [
     "SA9Generator",
-    "ZU23Generator",
-    "ZSU23Generator"
-  ],
-  "sams": [
     "ZU23Generator",
     "ZSU23Generator"
   ],

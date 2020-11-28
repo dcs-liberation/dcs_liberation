@@ -22,10 +22,7 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "AvengerGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "AvengerGenerator"
   ],
   "has_jtac": true,

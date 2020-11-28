@@ -35,15 +35,13 @@
     "Infantry_Soldier_Rus",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
-    "ZU23Generator",
+  "air_defenses": [
+    "ColdWarFlakGenerator",
     "EarlyColdWarFlakGenerator",
-    "ColdWarFlakGenerator"
-  ],
-  "sams": [
     "SA2Generator",
     "SA3Generator",
-    "SA6Generator"
+    "SA6Generator",
+    "ZU23Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator"

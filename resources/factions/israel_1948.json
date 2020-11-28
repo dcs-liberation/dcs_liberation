@@ -25,12 +25,9 @@
   "infantry_units": [
     "Infantry_SMLE_No_4_Mk_1"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
-    "EarlyColdWarFlakGenerator",
-    "BoforsGenerator"
+  "air_defenses": [
+    "BoforsGenerator",
+    "EarlyColdWarFlakGenerator"
   ],
   "aircraft_carrier": [
   ],

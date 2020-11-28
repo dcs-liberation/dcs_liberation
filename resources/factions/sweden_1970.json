@@ -29,14 +29,12 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "AvengerGenerator",
+  "air_defenses": [
+	"ChaparralGenerator",
 	"EarlyColdWarFlakGenerator",
-    "VulcanGenerator"
-  ],
-  "sams": [
+    "AvengerGenerator",
     "HawkGenerator",
-	"ChaparralGenerator"
+    "VulcanGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

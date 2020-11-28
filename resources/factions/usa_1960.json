@@ -22,11 +22,8 @@
   "infantry_units": [
     "Infantry_M4"
   ],
-  "shorads": [
+  "air_defenses": [
     "EarlyColdWarFlakGenerator",
-    "VulcanGenerator"
-  ],
-  "sams": [
     "VulcanGenerator"
   ],
   "requirements": {},

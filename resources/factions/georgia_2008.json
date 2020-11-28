@@ -32,13 +32,11 @@
     "Paratrooper_AKS",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
-    "SA13Generator",
-    "SA8Generator"
-  ],
-  "sams": [
+  "air_defenses": [
     "SA6Generator",
-    "SA11Generator"
+    "SA8Generator",
+    "SA11Generator",
+    "SA13Generator"
   ],
   "requirements": {},
   "has_jtac": true,

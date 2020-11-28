@@ -33,12 +33,10 @@
     "Infantry_Soldier_Rus",
     "Soldier_RPG"
   ],
-  "shorads": [
+  "air_defenses": [
+    "SA2Generator",
     "ZU23Generator",
     "ZU23UralGenerator"
-  ],
-  "sams": [
-    "SA2Generator"
   ],
   "ewrs": [
     "FlatFaceGenerator"

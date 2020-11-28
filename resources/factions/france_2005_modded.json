@@ -47,11 +47,8 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
+  "air_defenses": [
     "HQ7Generator",
-    "RolandGenerator"
-  ],
-  "sams": [
     "RolandGenerator",
     "HawkGenerator"
   ],

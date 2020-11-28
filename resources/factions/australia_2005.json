@@ -31,10 +31,7 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "RapierGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "HawkGenerator",
     "RapierGenerator"
   ],

@@ -26,11 +26,8 @@
     "Paratrooper_AKS",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
-    "SA13Generator",
-    "SA9Generator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "SA9Generator",
     "SA13Generator"
   ]
 }

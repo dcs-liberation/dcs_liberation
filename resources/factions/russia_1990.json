@@ -44,13 +44,11 @@
     "Infantry_Soldier_Rus",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
-    "SA13Generator",
-    "SA8Generator"
-  ],
-  "sams": [
+  "air_defenses": [
     "SA6Generator",
-    "SA11Generator"
+    "SA8Generator",
+    "SA11Generator",
+    "SA13Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

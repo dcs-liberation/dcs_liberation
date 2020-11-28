@@ -30,12 +30,10 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
-    "HawkGenerator",
-    "ChaparralGenerator"
+  "air_defenses": [
+    "BoforsGenerator",
+    "ChaparralGenerator",
+    "HawkGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

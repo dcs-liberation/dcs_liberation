@@ -38,17 +38,15 @@
     "Infantry_Soldier_Rus",
     "Paratrooper_RPG_16"
   ],
-  "shorads": [
-    "SA9Generator",
-    "SA13Generator",
-    "SA19Generator"
-  ],
-  "sams": [
+  "air_defenses": [
     "SA3Generator",
     "SA6Generator",
     "SA8Generator",
+    "SA9Generator",
     "SA10Generator",
     "SA11Generator",
+    "SA13Generator",
+    "SA19Generator",
     "Tier2SA10Generator",
     "Tier3SA10Generator"
   ],
