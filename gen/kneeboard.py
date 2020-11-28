@@ -231,7 +231,7 @@ class BriefingPage(KneeboardPage):
         ])
 
         writer.table([
-            [str(self.flight.bingo_fuel), self.flight.joker_fuel]
+            [str(self.flight.bingo_fuel), str(self.flight.joker_fuel)]
         ], ['Bingo', 'Joker'])
 
         # Package Section

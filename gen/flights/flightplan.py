@@ -143,18 +143,18 @@ class FlightPlan:
         return self.bingo_fuel + 1000
 
     @property
-    def farthest_wpt_from_arrival(self) -> Optional[FlightWaypoint]:
+    def farthest_wpt_from_arrival(self) -> FlightWaypoint:
         """Returns the farthest waypoint of the flight plan from the arrival airport.
         """
         return self.farthest_wpt_from(self.flight.arrival)
 
     @property
-    def farthest_wpt_from_divert(self) -> Optional[FlightWaypoint]:
+    def farthest_wpt_from_divert(self) -> FlightWaypoint:
         """Returns the farthest waypoint of the flight plan from the divert airport.
         """
         return self.farthest_wpt_from(self.flight.divert)
     
-    def farthest_wpt_from(self, cp: ControlPoint) -> Optional[FlightWaypoint]:
+    def farthest_wpt_from(self, cp: ControlPoint) -> FlightWaypoint:
         """Returns the farthest waypoint of the flight plan from the ControlPoint.
         
         :arg cp ControlPoint to measure distance from.
