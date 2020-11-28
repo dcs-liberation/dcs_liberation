@@ -131,8 +131,8 @@ class FlightPlan:
         bingo += 250 # Visual Traffic
         bingo += 15 * distanceToArrival
 
-        if self.farthest_wpt_from_divert is not None:
-            assert isinstance(self.farthest_wpt_from_divert, ControlPoint)
+        if self.flight.divert is not None and self.farthest_wpt_from_divert is not None:
+            assert self.farthest_wpt_from_divert is not None
             assert self.flight.divert is not None
             distanceToDivert = self.farthest_wpt_from_divert.position.distance_to_point(self.flight.divert.position)
             distanceToDivert = meter_to_nm(distanceToDivert)
