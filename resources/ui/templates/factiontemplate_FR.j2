@@ -41,18 +41,10 @@
 </ul>
 <br/>
 
-<strong>Défense Sol-Air (SAM) :</strong>
+<strong>Défense Sol-Air:</strong>
 <ul>
-{% for sam in faction.sams %}
-<li>{{sam}}</li>
-{% endfor %}
-</ul>
-<br/>
-
-<strong>Défense Sol-Air de courte portée (SHORAD) :</strong>
-<ul>
-{% for shorad in faction.shorads %}
-<li>{{shorad}}</li>
+{% for air_defense in faction.air_defenses %}
+<li>{{air_defense}}</li>
 {% endfor %}
 </ul>
 <br/>
