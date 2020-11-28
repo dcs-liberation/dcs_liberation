@@ -43,3 +43,15 @@ def mps_to_knots(value_in_mps: float) -> int:
     :arg value_in_mps Meters Per Second
     """
     return int(value_in_mps * 1.943)
+
+def heading_sum(h, a) -> int:
+    h += a
+    if h > 360:
+        return h - 360
+    elif h < 0:
+        return 360 + h
+    else:
+        return h
+
+def opposite_heading(h):
+    return h+180

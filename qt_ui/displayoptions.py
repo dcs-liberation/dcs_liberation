@@ -58,6 +58,7 @@ class DisplayOptions:
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
+    actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
 
     @classmethod
     def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:

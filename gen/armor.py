@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Tuple
 
 from dcs import Mission
 from dcs.action import AITaskPush
@@ -25,17 +25,19 @@ from dcs.task import (
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Vehicle
 from dcs.unittype import VehicleType
+from dcs.unitgroup import VehicleGroup
 
 from game import db
 from .naming import namegen
 from gen.ground_forces.ai_ground_planner import (
-    CombatGroupRole,
+    CombatGroup, CombatGroupRole,
     DISTANCE_FROM_FRONTLINE,
 )
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from game.plugins import LuaPluginManager
+from game.utils import heading_sum, opposite_heading
 
 if TYPE_CHECKING:
     from game import Game
@@ -69,7 +71,15 @@ class JtacInfo:
 
 class GroundConflictGenerator:
 
-    def __init__(self, mission: Mission, conflict: Conflict, game: Game, player_planned_combat_groups, enemy_planned_combat_groups, player_stance):
+    def __init__(
+        self,
+        mission: Mission,
+        conflict: Conflict,
+        game: Game,
+        player_planned_combat_groups: List[CombatGroup],
+        enemy_planned_combat_groups: List[CombatGroup],
+        player_stance: CombatStance
+    ):
         self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
@@ -102,7 +112,7 @@ class GroundConflictGenerator:
                 ]
             )
 
-    def _group_point(self, point) -> Point:
+    def _group_point(self, point: Point) -> Point:
         distance = random.randint(
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[0]),
                 int(self.conflict.size * SPREAD_DISTANCE_FACTOR[1]),
@@ -110,60 +120,19 @@ class GroundConflictGenerator:
         return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
 
     def generate(self):
-
-        player_groups = []
-        enemy_groups = []
-
-        combat_width = self.conflict.distance/2
-        if combat_width > 500000:
-            combat_width = 500000
-        if combat_width < 35000:
-            combat_width = 35000
-
         position = Conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp, self.game.theater)
+        frontline_vector = Conflict.frontline_vector(
+            self.conflict.from_cp,
+            self.conflict.to_cp,
+            self.game.theater
+            )
 
         # Create player groups at random position
-        for group in self.player_planned_combat_groups:
-            if group.role == CombatGroupRole.ARTILLERY:
-                distance_from_frontline = self.get_artilery_group_distance_from_frontline(group)
-            else:
-                distance_from_frontline = DISTANCE_FROM_FRONTLINE[group.role]
-            final_position = self.get_valid_position_for_group(position, True, combat_width, distance_from_frontline)
-
-            if final_position is not None:
-                g = self._generate_group(
-                    side=self.mission.country(self.game.player_country),
-                    unit=group.units[0],
-                    heading=self.conflict.heading+90,
-                    count=len(group.units),
-                    at=final_position)
-                g.set_skill(self.game.settings.player_skill)
-                player_groups.append((g,group))
-
-                self.gen_infantry_group_for_group(g, True, self.mission.country(self.game.player_country), self.conflict.heading + 90)
-            else:
-                logging.warning(f"Unable to get valid position for {group}")
+        player_groups = self._generate_groups(self.player_planned_combat_groups, frontline_vector, True)
 
         # Create enemy groups at random position
-        for group in self.enemy_planned_combat_groups:
-            if group.role == CombatGroupRole.ARTILLERY:
-                distance_from_frontline = self.get_artilery_group_distance_from_frontline(group)
-            else:
-                distance_from_frontline = DISTANCE_FROM_FRONTLINE[group.role]
-            final_position = self.get_valid_position_for_group(position, False, combat_width, distance_from_frontline)
-
-            if final_position is not None:
-                g = self._generate_group(
-                    side=self.mission.country(self.game.enemy_country),
-                    unit=group.units[0],
-                    heading=self.conflict.heading - 90,
-                    count=len(group.units),
-                    at=final_position)
-                g.set_skill(self.game.settings.enemy_vehicle_skill)
-                enemy_groups.append((g, group))
-
-                self.gen_infantry_group_for_group(g, False, self.mission.country(self.game.enemy_country), self.conflict.heading - 90)
-
+        enemy_groups = self._generate_groups(self.enemy_planned_combat_groups, frontline_vector, False)
+        
         # Plan combat actions for groups
         self.plan_action_for_groups(self.player_stance, player_groups, enemy_groups, self.conflict.heading + 90, self.conflict.from_cp, self.conflict.to_cp)
         self.plan_action_for_groups(self.enemy_stance, enemy_groups, player_groups, self.conflict.heading - 90, self.conflict.to_cp, self.conflict.from_cp)
@@ -481,21 +450,70 @@ class GroundConflictGenerator:
         return rg
 
 
-    def get_valid_position_for_group(self, conflict_position, isplayer, combat_width, distance_from_frontline):
+    def get_valid_position_for_group(
+        self,
+        conflict_position: Point,
+        combat_width: int,
+        distance_from_frontline: int,
+        heading: int,
+        spawn_heading: int
+    ):
         i = 0
         while i < 1000:
-            heading_diff = -90 if isplayer else 90
-            shifted = conflict_position[0].point_from_heading(self.conflict.heading,
-                                                     random.randint((int)(-combat_width / 2), (int)(combat_width / 2)))
-            final_position = shifted.point_from_heading(self.conflict.heading + heading_diff, distance_from_frontline)
+            shifted = conflict_position.point_from_heading(heading, random.randint(0, combat_width))
+            final_position = shifted.point_from_heading(spawn_heading, distance_from_frontline)
 
             if self.conflict.theater.is_on_land(final_position):
                 return final_position
             i += 1
             continue
         return None
+    
+    def _generate_groups(self, groups: List[CombatGroup], frontline_vector: Tuple[Point, int, int], is_player: bool):
+        """Finds valid positions for planned groups and generates a pydcs group for them"""
+        positioned_groups = []
+        position, heading, combat_width = frontline_vector
+        spawn_heading = int(heading_sum(heading, -90)) if is_player else int(heading_sum(heading, 90))
+        country = self.game.player_country if is_player else self.game.enemy_country
+        for group in groups:
+            if group.role == CombatGroupRole.ARTILLERY:
+                distance_from_frontline = self.get_artilery_group_distance_from_frontline(group)
+            else:
+                distance_from_frontline = DISTANCE_FROM_FRONTLINE[group.role]
 
-    def _generate_group(self, side: Country, unit: VehicleType, count: int, at: Point, move_formation: PointAction = PointAction.OffRoad, heading=0):
+            final_position = self.get_valid_position_for_group(
+                position,
+                combat_width,
+                distance_from_frontline,
+                heading,
+                spawn_heading
+            )
+
+            if final_position is not None:
+                g = self._generate_group(
+                    self.mission.country(country),
+                    group.units[0],
+                    len(group.units),
+                    final_position,
+                    heading=opposite_heading(spawn_heading)
+                )
+                g.set_skill(self.game.settings.player_skill)
+                positioned_groups.append((g,group))
+                self.gen_infantry_group_for_group(g, True, self.mission.country(country), opposite_heading(spawn_heading))
+            else:
+                logging.warning(f"Unable to get valid position for {group}")
+
+        return positioned_groups
+
+    def _generate_group(
+        self,
+        side: Country,
+        unit: VehicleType,
+        count: int,
+        at: Point,
+        move_formation: PointAction = PointAction.OffRoad,
+        heading=0
+    ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:
             cp = self.conflict.from_cp

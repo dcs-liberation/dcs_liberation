@@ -1038,7 +1038,7 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        ingress, heading, distance = Conflict.flight_frontline_vector(
+        ingress, heading, distance = Conflict.frontline_vector(
             location.control_points[0], location.control_points[1],
             self.game.theater
         )

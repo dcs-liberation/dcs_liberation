@@ -476,17 +476,52 @@ class QLiberationMap(QGraphicsView):
             pen.setWidth(6)
             frontline = FrontLine(cp, connected_cp, self.game.theater)
             if cp.captured and not connected_cp.captured and Conflict.has_frontline_between(cp, connected_cp):
-                posx = frontline.position
-                h = frontline.attack_heading
-                pos2 = self._transform_point(posx)
-                self.draw_bezier_frontline(scene, pen, frontline)
-                p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
-                p2 = point_from_heading(pos2[0], pos2[1], h, 25)
-                scene.addItem(QFrontLine(p1[0], p1[1], p2[0], p2[1],
-                                            frontline, self.game_model))
-
+                if DisplayOptions.actual_frontline_pos:
+                    self.draw_actual_frontline(frontline, scene, pen)
+                else:
+                    self.draw_frontline_approximation(frontline, scene, pen)
             else:
                 self.draw_bezier_frontline(scene, pen, frontline)
+    
+    def draw_frontline_approximation(self, frontline: FrontLine, scene: QGraphicsScene, pen: QPen) -> None:
+        posx = frontline.position
+        h = frontline.attack_heading
+        pos2 = self._transform_point(posx)
+        self.draw_bezier_frontline(scene, pen, frontline)
+        p1 = point_from_heading(pos2[0], pos2[1], h+180, 25)
+        p2 = point_from_heading(pos2[0], pos2[1], h, 25)
+        scene.addItem(
+            QFrontLine(
+                p1[0],
+                p1[1],
+                p2[0],
+                p2[1],
+                frontline,
+                self.game_model
+            )
+        )
+
+    def draw_actual_frontline(self, frontline: FrontLine, scene: QGraphicsScene, pen: QPen) -> None:
+        self.draw_bezier_frontline(scene, pen, frontline)
+        vector = Conflict.frontline_vector(
+            frontline.control_point_a,
+            frontline.control_point_b,
+            self.game.theater
+        )
+        left_pos = self._transform_point(vector[0])
+        right_pos = self._transform_point(
+        vector[0].point_from_heading(vector[1], vector[2])
+            )
+        scene.addItem(
+            QFrontLine(
+                left_pos[0],
+                left_pos[1],
+                right_pos[0],
+                right_pos[1],
+                frontline,
+                self.game_model
+            )
+        )
 
     def wheelEvent(self, event: QWheelEvent):
 
