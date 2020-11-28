@@ -314,6 +314,7 @@ class Operation:
         cls.generate_lua(cls.airgen, cls.airsupportgen, cls.jtacs)
 
         # Inject Plugins Lua Scripts and data
+        cls.plugin_scripts.clear()
         for plugin in LuaPluginManager.plugins():
             if plugin.enabled:
                 plugin.inject_scripts(cls)
