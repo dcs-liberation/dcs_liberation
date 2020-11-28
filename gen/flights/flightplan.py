@@ -136,7 +136,7 @@ class FlightPlan:
             distanceToDivert = meter_to_nm(distanceToDivert)
             bingo += 10 * distanceToDivert
 
-        return bingo
+        return round(bingo / 100) * 100
 
     @cached_property
     def joker_fuel(self) -> int:
