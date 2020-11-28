@@ -4,7 +4,7 @@ import logging
 import math
 import pickle
 import random
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Set
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -35,9 +35,11 @@ from gen.fleet.ship_group_generator import (
 )
 from gen.locations.preset_location_finder import MizDataLocationFinder
 from gen.missiles.missiles_group_generator import generate_missile_group
+from gen.sam.airdefensegroupgenerator import AirDefenseRange
 from gen.sam.sam_group_generator import (
-    LONG_RANGE_SAMS, MEDIUM_RANGE_SAMS, generate_anti_air_group,
-    generate_ewr_group, generate_shorad_group,
+    generate_anti_air_group,
+    generate_ewr_group,
+    generate_shorad_group,
 )
 from . import (
     ConflictTheater,
@@ -585,9 +587,16 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """
         presets = self.control_point.preset_locations
         for position in presets.required_long_range_sams:
-            self.generate_aa_at(position, filter_names=LONG_RANGE_SAMS)
+            self.generate_aa_at(position, ranges=[
+                {AirDefenseRange.Long},
+                {AirDefenseRange.Medium},
+                {AirDefenseRange.Short},
+            ])
         for position in presets.required_medium_range_sams:
-            self.generate_aa_at(position, filter_names=MEDIUM_RANGE_SAMS)
+            self.generate_aa_at(position, ranges=[
+                {AirDefenseRange.Medium},
+                {AirDefenseRange.Short},
+            ])
         return (len(presets.required_long_range_sams) +
                 len(presets.required_medium_range_sams))
 
@@ -629,25 +638,23 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         position = self.location_finder.location_for(LocationType.Sam)
         if position is None:
             return
-        self.generate_aa_at(position)
+        self.generate_aa_at(position, ranges=[
+            # Prefer to use proper SAMs, but fall back to SHORADs if needed.
+            {AirDefenseRange.Long, AirDefenseRange.Medium},
+            {AirDefenseRange.Short},
+        ])
 
-    def generate_aa_at(self, position: Point,
-                       filter_names: Optional[Iterable[str]] = None) -> None:
+    def generate_aa_at(
+            self, position: Point,
+            ranges: Iterable[Set[AirDefenseRange]]) -> None:
         group_id = self.game.next_group_id()
 
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=False)
-        group = generate_anti_air_group(self.game, g, self.faction,
-                                        filter_names)
+        group = generate_anti_air_group(self.game, g, self.faction, ranges)
         if group is None:
-            location = f"{g.name} at {self.control_point}"
-            if filter_names is not None:
-                logging.warning(
-                    "Could not generate SAM group for %s from types: %s",
-                    location, ", ".join(filter_names)
-                )
-            else:
-                logging.error("Could not generate SAM group for %s", location)
+            logging.error("Could not generate air defense group for %s at %s",
+                          g.name, self.control_point)
             return
         g.groups = [group]
         self.control_point.connected_objectives.append(g)
