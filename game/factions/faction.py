@@ -51,11 +51,8 @@ class Faction:
     # Logistics units used
     logistics_units: List[VehicleType] = field(default_factory=list)
 
-    # List of units that can be deployed as SHORAD
-    shorads: List[str] = field(default_factory=list)
-
     # Possible SAMS site generators for this faction
-    sams: List[str] = field(default_factory=list)
+    air_defenses: List[str] = field(default_factory=list)
 
     # Possible EWR generators for this faction.
     ewrs: List[str] = field(default_factory=list)
@@ -146,9 +143,14 @@ class Faction:
         faction.logistics_units = load_all_vehicles(
             json.get("logistics_units", []))
 
-        faction.sams = json.get("sams", [])
         faction.ewrs = json.get("ewrs", [])
-        faction.shorads = json.get("shorads", [])
+
+        faction.air_defenses = json.get("air_defenses", [])
+        # Compatibility for older factions. All air defenses now belong to a
+        # single group and the generator decides what belongs where.
+        faction.air_defenses.extend(json.get("sams", []))
+        faction.air_defenses.extend(json.get("shorads", []))
+
         faction.missiles = json.get("missiles", [])
         faction.requirements = json.get("requirements", {})
 

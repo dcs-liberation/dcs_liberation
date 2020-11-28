@@ -156,7 +156,7 @@ def get_faction_possible_sams_generator(
     Return the list of possible SAM generator for the given faction
     :param faction: Faction name to search units for
     """
-    return [SAM_MAP[s] for s in faction.sams]
+    return [SAM_MAP[s] for s in faction.air_defenses]
 
 
 def get_faction_possible_ewrs_generator(faction: Faction) -> List[Type[GroupGenerator]]:
@@ -233,14 +233,3 @@ def generate_ewr_group(game: Game, ground_object: TheaterGroundObject,
         generator.generate()
         return generator.get_generated_group()
     return None
-
-
-def generate_shorad_group(game: Game, ground_object: SamGroundObject,
-                          faction: Faction) -> Optional[VehicleGroup]:
-    if len(faction.shorads) > 0:
-        sam = random.choice(faction.shorads)
-        generator = SAM_MAP[sam](game, ground_object)
-        generator.generate()
-        return generator.get_generated_group()
-    else:
-        return generate_anti_air_group(game, ground_object, faction)

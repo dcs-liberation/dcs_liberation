@@ -39,7 +39,6 @@ from gen.sam.airdefensegroupgenerator import AirDefenseRange
 from gen.sam.sam_group_generator import (
     generate_anti_air_group,
     generate_ewr_group,
-    generate_shorad_group,
 )
 from . import (
     ConflictTheater,
@@ -530,7 +529,8 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        group = generate_shorad_group(self.game, g, self.faction)
+        group = generate_anti_air_group(self.game, g, self.faction,
+                                        ranges=[{AirDefenseRange.Short}])
         if group is None:
             logging.error(
                 f"Could not generate SHORAD group at {self.control_point}")
