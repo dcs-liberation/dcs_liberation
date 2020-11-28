@@ -231,21 +231,21 @@ class BriefingPage(KneeboardPage):
         ])
 
         writer.table([
-            [str(self.flight.bingo_fuel), str(self.flight.joker_fuel)]
+            ["{}lbs".format(self.flight.bingo_fuel), "{}lbs".format(self.flight.joker_fuel)]
         ], ['Bingo', 'Joker'])
 
         # Package Section
         writer.heading("Comm ladder")
         packageTable = []
         for comm in self.comms:
-            packageTable.append([comm.name, None, None, None, self.format_frequency(comm.freq)])
+            packageTable.append([comm.name, '', '', '', self.format_frequency(comm.freq)])
 
         for a in self.awacs:
             packageTable.append([
                 a.callsign,
                 'AWACS',
-                None,
-                None,
+                '',
+                '',
                 self.format_frequency(a.freq)
             ])
         for tanker in self.tankers:
@@ -257,6 +257,7 @@ class BriefingPage(KneeboardPage):
                 self.format_frequency(tanker.freq),
             ])        
 
+        
         writer.table(packageTable, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
 
 

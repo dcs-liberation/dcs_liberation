@@ -121,9 +121,9 @@ class FlightPlan:
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
         """
-        if self.waypoints is None:
-            raise ValueError
-        
+        if self.waypoints is None or self.farthest_wpt_from_arrival is None:
+            return 0
+
         distanceToArrival = self.farthest_wpt_from_arrival.position.distance_to_point(self.flight.arrival.position)
         distanceToArrival = meter_to_nm(distanceToArrival)
 
@@ -131,7 +131,9 @@ class FlightPlan:
         bingo += 250 # Visual Traffic
         bingo += 15 * distanceToArrival
 
-        if self.flight.divert is not None:
+        if self.farthest_wpt_from_divert is not None:
+            assert isinstance(self.farthest_wpt_from_divert, ControlPoint)
+            assert self.flight.divert is not None
             distanceToDivert = self.farthest_wpt_from_divert.position.distance_to_point(self.flight.divert.position)
             distanceToDivert = meter_to_nm(distanceToDivert)
             bingo += 10 * distanceToDivert
@@ -143,22 +145,31 @@ class FlightPlan:
         return self.bingo_fuel + 1000
 
     @property
-    def farthest_wpt_from_arrival(self) -> FlightWaypoint:
+    def farthest_wpt_from_arrival(self) -> Optional[FlightWaypoint]:
         """Returns the farthest waypoint of the flight plan from the arrival airport.
         """
+        if self.flight.arrival is None:
+            return None
+
         return self.farthest_wpt_from(self.flight.arrival)
 
     @property
-    def farthest_wpt_from_divert(self) -> FlightWaypoint:
+    def farthest_wpt_from_divert(self) -> Optional[FlightWaypoint]:
         """Returns the farthest waypoint of the flight plan from the divert airport.
         """
+        if self.flight.divert is None:
+            return None
+ 
         return self.farthest_wpt_from(self.flight.divert)
     
-    def farthest_wpt_from(self, cp: ControlPoint) -> FlightWaypoint:
+    def farthest_wpt_from(self, cp) -> Optional[FlightWaypoint]:
         """Returns the farthest waypoint of the flight plan from the ControlPoint.
         
         :arg cp ControlPoint to measure distance from.
         """
+        if self.waypoints is None:
+            return None
+
         waypoints = list(map(lambda wpt: (wpt, cp.position.distance_to_point(wpt.position)), self.waypoints))
         waypoints.sort(key=lambda pair: pair[1], reverse=True)
 
