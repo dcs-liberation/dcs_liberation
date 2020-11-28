@@ -28,7 +28,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import nm_to_meter
+from game.utils import nm_to_meter, meter_to_nm
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -68,6 +68,8 @@ class FlightPlan:
     def waypoints(self) -> List[FlightWaypoint]:
         """A list of all waypoints in the flight plan, in order."""
         return list(self.iter_waypoints())
+
+    
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         """Iterates over all waypoints in the flight plan, in order."""
@@ -114,6 +116,50 @@ class FlightPlan:
         failed to generate. Nevertheless, we have to defend against it.
         """
         raise NotImplementedError
+    
+    @cached_property
+    def bingo_fuel(self) -> Optional[int]:
+        """Bingo fuel for the FlightPlan
+        """
+        if self.waypoints is None:
+            raise ValueError
+        
+        distanceToArrival = self.farthest_wpt_from_arrival.position.distance_to_point(self.flight.arrival.position)
+        distanceToArrival = meter_to_nm(distanceToArrival)
+
+        bingo = 1000 # Minimum Emergency Fuel
+        bingo += 250 # Visual Traffic
+        bingo += 15 * distanceToArrival
+
+        if self.flight.divert is not None:
+            distanceToDivert = self.farthest_wpt_from_divert.position.distance_to_point(self.flight.divert.position)
+            distanceToDivert = meter_to_nm(distanceToDivert)
+            bingo += 10 * distanceToDivert
+
+        return bingo
+
+    @property
+    def farthest_wpt_from_arrival(self) -> Optional[FlightWaypoint]:
+        """Returns the farthest waypoint of the flight plan from the arrival airport.
+        """
+        return self.farthest_wpt_from(self.flight.arrival)
+
+    @property
+    def farthest_wpt_from_divert(self) -> Optional[FlightWaypoint]:
+        """Returns the farthest waypoint of the flight plan from the divert airport.
+        """
+        return self.farthest_wpt_from(self.flight.divert)
+    
+    def farthest_wpt_from(self, cp: ControlPoint) -> Optional[FlightWaypoint]:
+        """Returns the farthest waypoint of the flight plan from the ControlPoint.
+        
+        :arg cp ControlPoint to measure distance from.
+        """
+        waypoints = list(map(lambda wpt: (wpt, cp.position.distance_to_point(wpt.position)), self.waypoints))
+        waypoints.sort(key=lambda pair: pair[1], reverse=True)
+
+        return waypoints[0][0] if len(waypoints) > 0 else None
+
 
     @property
     def tot_offset(self) -> timedelta:

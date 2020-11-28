@@ -230,6 +230,8 @@ class BriefingPage(KneeboardPage):
             "#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"
         ])
 
+        writer.heading("Bingo Fuel: {}".format(self.flight.bingo_fuel))
+
         writer.heading("Comm Ladder")
         comms = []
         for comm in self.comms:
