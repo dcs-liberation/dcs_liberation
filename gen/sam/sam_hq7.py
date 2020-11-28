@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class HQ7Generator(GenericSamGroupGenerator):
+class HQ7Generator(AirDefenseGroupGenerator):
     """
     This generate an HQ7 group
     """
@@ -26,3 +29,7 @@ class HQ7Generator(GenericSamGroupGenerator):
             positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=360)
             for i, position in enumerate(positions):
                 self.add_unit(AirDefence.HQ_7_Self_Propelled_LN, "LN#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

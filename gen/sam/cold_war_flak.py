@@ -2,10 +2,14 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 from gen.sam.group_generator import GroupGenerator
 
 
-class EarlyColdWarFlakGenerator(GroupGenerator):
+class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic an early cold-war era flak AAA site.
     The Flak 18 88mm is used as the main long range gun and 2 Bofors 40mm guns provide short range protection.
@@ -38,8 +42,12 @@ class EarlyColdWarFlakGenerator(GroupGenerator):
         # Add a truck
         self.add_unit(Unarmed.Transport_KAMAZ_43101, "Truck#", self.position.x - 60, self.position.y - 20, self.heading)
 
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short
 
-class ColdWarFlakGenerator(GroupGenerator):
+
+class ColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic a cold-war era flak AAA site.
     The Flak 18 88mm is used as the main long range gun while 2 Zu-23 guns provide short range protection.
@@ -70,3 +78,7 @@ class ColdWarFlakGenerator(GroupGenerator):
 
         # Add a P19 Radar for EWR
         self.add_unit(AirDefence.SAM_SR_P_19, "SR#0", self.position.x - 60, self.position.y - 20, self.heading)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

@@ -1,5 +1,5 @@
 import random
-from typing import Iterable, List, Optional, Type
+from typing import Dict, Iterable, List, Optional, Type
 
 from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import AirDefence
@@ -30,6 +30,7 @@ from gen.sam.ewrs import (
     TallRackGenerator,
 )
 from gen.sam.freya_ewr import FreyaGenerator
+from gen.sam.airdefensegroupgenerator import AirDefenseGroupGenerator
 from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
@@ -60,7 +61,7 @@ from gen.sam.sam_zu23 import ZU23Generator
 from gen.sam.sam_zu23_ural import ZU23UralGenerator
 from gen.sam.sam_zu23_ural_insurgent import ZU23UralInsurgentGenerator
 
-SAM_MAP = {
+SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
     "HawkGenerator": HawkGenerator,
     "ZU23Generator": ZU23Generator,
     "ZU23UralGenerator": ZU23UralGenerator,

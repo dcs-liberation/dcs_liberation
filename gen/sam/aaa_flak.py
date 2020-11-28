@@ -2,11 +2,22 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
-GFLAK = [AirDefence.AAA_Flak_Vierling_38, AirDefence.AAA_8_8cm_Flak_18, AirDefence.AAA_8_8cm_Flak_36, AirDefence.AAA_8_8cm_Flak_37, AirDefence.AAA_8_8cm_Flak_41, AirDefence.AAA_Flak_38]
+GFLAK = [
+    AirDefence.AAA_Flak_Vierling_38,
+    AirDefence.AAA_8_8cm_Flak_18,
+    AirDefence.AAA_8_8cm_Flak_36,
+    AirDefence.AAA_8_8cm_Flak_37,
+    AirDefence.AAA_8_8cm_Flak_41,
+    AirDefence.AAA_Flak_38,
+]
 
-class FlakGenerator(GroupGenerator):
+
+class FlakGenerator(AirDefenseGroupGenerator):
     """
     This generate a German flak artillery group
     """
@@ -54,3 +65,7 @@ class FlakGenerator(GroupGenerator):
                 self.add_unit(Unarmed.Blitz_3_6_6700A, "AAA#" + str(index),
                               self.position.x + 200 + 15*i + random.randint(1,5),
                               self.position.y + 15*j + random.randint(1,5), 90)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

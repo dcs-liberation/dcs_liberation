@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class PatriotGenerator(GenericSamGroupGenerator):
+class PatriotGenerator(AirDefenseGroupGenerator):
     """
     This generate a Patriot group
     """
@@ -31,3 +34,7 @@ class PatriotGenerator(GenericSamGroupGenerator):
         positions = self.get_circular_position(num_launchers, launcher_distance=200, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.AAA_Vulcan_M163, "SPAAA#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Long

@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class RapierGenerator(GenericSamGroupGenerator):
+class RapierGenerator(AirDefenseGroupGenerator):
     """
     This generate a Rapier Group
     """
@@ -22,3 +25,7 @@ class RapierGenerator(GenericSamGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.Rapier_FSA_Launcher, "LN#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short
