@@ -497,9 +497,12 @@ class GroundConflictGenerator:
                     final_position,
                     heading=opposite_heading(spawn_heading)
                 )
-                g.set_skill(self.game.settings.player_skill)
+                if is_player:
+                    g.set_skill(self.game.settings.player_skill)
+                else:
+                    g.set_skill(self.game.settings.enemy_vehicle_skill)
                 positioned_groups.append((g,group))
-                self.gen_infantry_group_for_group(g, True, self.mission.country(country), opposite_heading(spawn_heading))
+                self.gen_infantry_group_for_group(g, is_player, self.mission.country(country), opposite_heading(spawn_heading))
             else:
                 logging.warning(f"Unable to get valid position for {group}")
 
