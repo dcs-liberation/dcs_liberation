@@ -49,11 +49,16 @@
   ],
   "air_defenses": [
     "SA8Generator",
+    "SA9Generator",
     "SA10Generator",
     "SA11Generator",
+    "SA13Generator",
+    "SA15Generator",
     "SA19Generator",
     "Tier2SA10Generator",
-    "Tier3SA10Generator"
+    "Tier3SA10Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

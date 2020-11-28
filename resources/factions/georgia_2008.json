@@ -33,10 +33,15 @@
     "Paratrooper_RPG_16"
   ],
   "air_defenses": [
+    "SA3Generator",
     "SA6Generator",
     "SA8Generator",
     "SA11Generator",
-    "SA13Generator"
+    "SA13Generator",
+    "SA15Generator",
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "requirements": {},
   "has_jtac": true,

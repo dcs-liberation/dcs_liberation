@@ -40,9 +40,14 @@
     "SA3Generator",
     "SA6Generator",
     "SA8Generator",
+    "SA9Generator",
+    "SA10Generator",
+    "SA11Generator",
     "SA13Generator",
     "SA19Generator",
-    "ZSU23Generator"
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

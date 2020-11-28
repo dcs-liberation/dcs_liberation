@@ -47,10 +47,12 @@
   ],
   "air_defenses": [
     "AvengerGenerator",
-    "HawkGenerator"
+    "ChaparralGenerator",
+    "HawkGenerator",
+    "PatriotGenerator"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"

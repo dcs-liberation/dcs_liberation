@@ -39,6 +39,8 @@
   "air_defenses": [
     "EarlyColdWarFlakGenerator",
     "SA2Generator",
+    "SA3Generator",
+    "ZSU23Generator",
     "ZU23Generator",
     "ZU23UralGenerator"
   ],

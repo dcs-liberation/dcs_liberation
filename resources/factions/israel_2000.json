@@ -38,7 +38,9 @@
   ],
   "air_defenses": [
     "ChaparralGenerator",
-    "HawkGenerator"
+    "HawkGenerator",
+    "PatriotGenerator",
+    "VulcanGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

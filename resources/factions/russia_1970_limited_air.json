@@ -30,14 +30,16 @@
     "Soldier_RPG"
   ],
   "air_defenses": [
+    "SA2Generator",
     "SA3Generator",
     "SA6Generator",
     "SA8Generator",
-	"SA11Generator",
-	"SA13Generator",
+    "SA9Generator",
+    "SA11Generator",
     "ColdWarFlakGenerator",
     "ZSU23Generator",
-    "ZU23Generator"
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "FlatFaceGenerator"

@@ -35,10 +35,13 @@
   ],
   "air_defenses": [
     "HQ7Generator",
+    "RapierGenerator",
     "SA2Generator",
     "SA3Generator",
     "SA6Generator",
     "SA8Generator",
+    "SA9Generator",
+    "SA13Generator",
     "ZSU23Generator"
   ],
   "ewrs": [

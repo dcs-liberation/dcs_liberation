@@ -59,10 +59,13 @@
     "SA10Generator",
     "SA11Generator",
     "SA13Generator",
+    "SA15Generator",
     "SA19Generator",
     "Tier2SA10Generator",
     "Tier3SA10Generator",
-    "ZSU23Generator"
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

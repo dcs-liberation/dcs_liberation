@@ -37,6 +37,8 @@
   "air_defenses": [
     "AvengerGenerator",
     "HawkGenerator",
+    "RapierGenerator",
+    "SA3Generator",
     "ZSU23Generator"
   ],
   "ewrs": [

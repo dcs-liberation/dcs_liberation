@@ -34,11 +34,13 @@
     "Soldier_M249"
   ],
   "air_defenses": [
+    "GepardGenerator",
     "HawkGenerator",
-    "RolandGenerator"
+    "RolandGenerator",
+    "PatriotGenerator"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
   ],
