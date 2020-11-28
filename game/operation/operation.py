@@ -347,6 +347,7 @@ class Operation:
         cls.airgen = AircraftConflictGenerator(
             cls.current_mission, cls.game.settings, cls.game,
             cls.radio_registry, cls.unit_map)
+        cls.airgen.clear_parking_slots()
 
         cls.airgen.generate_flights(
             cls.current_mission.country(cls.game.player_country),

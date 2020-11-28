@@ -911,7 +911,6 @@ class AircraftConflictGenerator:
 
     def generate_flights(self, country, ato: AirTaskingOrder,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
-        self.clear_parking_slots()
 
         for package in ato.packages:
             if not package.flights:
