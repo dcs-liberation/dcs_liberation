@@ -118,8 +118,8 @@ class FlightPlan:
         raise NotImplementedError
     
     @cached_property
-    def bingo_fuel(self) -> Optional[int]:
-        """Bingo fuel for the FlightPlan
+    def bingo_fuel(self) -> int:
+        """Bingo fuel value for the FlightPlan
         """
         if self.waypoints is None:
             raise ValueError
@@ -137,6 +137,10 @@ class FlightPlan:
             bingo += 10 * distanceToDivert
 
         return bingo
+
+    @cached_property
+    def joker_fuel(self) -> int:
+        return self.bingo_fuel + 1000
 
     @property
     def farthest_wpt_from_arrival(self) -> Optional[FlightWaypoint]:
