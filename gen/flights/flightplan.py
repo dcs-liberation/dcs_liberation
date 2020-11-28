@@ -128,7 +128,7 @@ class FlightPlan:
         distanceToArrival = meter_to_nm(distanceToArrival)
 
         bingo = 1000 # Minimum Emergency Fuel
-        bingo += 250 # Visual Traffic
+        bingo += 500 # Visual Traffic
         bingo += 15 * distanceToArrival
 
         if self.flight.divert is not None and self.farthest_wpt_from_divert is not None:
