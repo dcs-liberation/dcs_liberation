@@ -293,12 +293,19 @@ class FlightData:
     #: Map of radio frequencies to their assigned radio and channel, if any.
     frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
 
+    #: Bingo fuel value in lbs.
+    bingo_fuel: Optional[int]
+
+    joker_fuel: Optional[int]
+
     def __init__(self, package: Package, flight_type: FlightType,
                  units: List[FlyingUnit], size: int, friendly: bool,
                  departure_delay: timedelta, departure: RunwayData,
                  arrival: RunwayData, divert: Optional[RunwayData],
                  waypoints: List[FlightWaypoint],
-                 intra_flight_channel: RadioFrequency) -> None:
+                 intra_flight_channel: RadioFrequency,
+                 bingo_fuel: Optional[int],
+                 joker_fuel: Optional[int]) -> None:
         self.package = package
         self.flight_type = flight_type
         self.units = units
@@ -311,6 +318,8 @@ class FlightData:
         self.waypoints = waypoints
         self.intra_flight_channel = intra_flight_channel
         self.frequency_to_channel_map = {}
+        self.bingo_fuel = bingo_fuel
+        self.joker_fuel = joker_fuel
         self.callsign = create_group_callsign_from_unit(self.units[0])
 
     @property
@@ -777,7 +786,9 @@ class AircraftConflictGenerator:
             divert=divert,
             # Waypoints are added later, after they've had their TOTs set.
             waypoints=[],
-            intra_flight_channel=channel
+            intra_flight_channel=channel,
+            bingo_fuel=flight.flight_plan.bingo_fuel,
+            joker_fuel=flight.flight_plan.joker_fuel
         ))
 
         # Special case so Su 33 carrier take off

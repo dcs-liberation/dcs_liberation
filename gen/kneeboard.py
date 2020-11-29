@@ -230,28 +230,37 @@ class BriefingPage(KneeboardPage):
             "#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"
         ])
 
-        writer.heading("Comm Ladder")
-        comms = []
+        flight_plan_builder
+        writer.table([
+            ["{}lbs".format(self.flight.bingo_fuel), "{}lbs".format(self.flight.joker_fuel)]
+        ], ['Bingo', 'Joker'])
+
+        # Package Section
+        writer.heading("Comm ladder")
+        comm_ladder = []
         for comm in self.comms:
-            comms.append([comm.name, self.format_frequency(comm.freq)])
-        writer.table(comms, headers=["Name", "UHF"])
+            comm_ladder.append([comm.name, '', '', '', self.format_frequency(comm.freq)])
 
-        writer.heading("AWACS")
-        awacs = []
         for a in self.awacs:
-            awacs.append([a.callsign, self.format_frequency(a.freq)])
-        writer.table(awacs, headers=["Callsign", "UHF"])
-
-        writer.heading("Tankers")
-        tankers = []
+            comm_ladder.append([
+                a.callsign,
+                'AWACS',
+                '',
+                '',
+                self.format_frequency(a.freq)
+            ])
         for tanker in self.tankers:
-            tankers.append([
+            comm_ladder.append([
                 tanker.callsign,
+                "Tanker",
                 tanker.variant,
                 str(tanker.tacan),
                 self.format_frequency(tanker.freq),
-            ])
-        writer.table(tankers, headers=["Callsign", "Type", "TACAN", "UHF"])
+            ])        
+
+        
+        writer.table(comm_ladder, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
+
 
         writer.heading("JTAC")
         jtacs = []
