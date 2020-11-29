@@ -39,7 +39,7 @@ from dcs.unitgroup import (
     StaticGroup,
     VehicleGroup,
 )
-from dcs.vehicles import AirDefence, Armor, MissilesSS
+from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
 from gen.flights.flight import FlightType
 from .controlpoint import (
@@ -49,6 +49,7 @@ from .controlpoint import (
     Lha,
     MissionTarget,
     OffMapSpawn,
+    Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
 from ..utils import nm_to_meter
@@ -86,6 +87,8 @@ class MizCampaignLoader:
     CV_UNIT_TYPE = CVN_74_John_C__Stennis.id
     LHA_UNIT_TYPE = LHA_1_Tarawa.id
     FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
+
+    FOB_UNIT_TYPE = Unarmed.CP_SKP_11_ATC_Mobile_Command_Post.id
 
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
@@ -177,6 +180,11 @@ class MizCampaignLoader:
         for group in self.country(blue).ship_group:
             if group.units[0].type == self.LHA_UNIT_TYPE:
                 yield group
+    
+    def fobs(self, blue: bool) -> Iterator[VehicleGroup]:
+        for group in self.country(blue).vehicle_group:
+            if group.units[0].type == self.FOB_UNIT_TYPE:
+                yield group
 
     @property
     def ships(self) -> Iterator[ShipGroup]:
@@ -261,6 +269,13 @@ class MizCampaignLoader:
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
+            for group in self.fobs(blue):
+                control_point = Fob(
+                    "fob", group.position, next(self.control_point_id)
+                )
+                control_point.captured = blue
+                control_point.captured_invert = group.late_activation
+                control_points[control_point.id] = control_point
 
         return control_points
 
@@ -279,14 +294,14 @@ class MizCampaignLoader:
             # final waypoint at the destination CP. Intermediate waypoints
             # define the curve of the front line.
             waypoints = [p.position for p in group.points]
-            origin = self.mission.terrain.nearest_airport(waypoints[0])
+            origin =  self.theater.closest_control_point(waypoints[0])
             if origin is None:
                 raise RuntimeError(
-                    f"No airport near the first waypoint of {group.name}")
-            destination = self.mission.terrain.nearest_airport(waypoints[-1])
+                    f"No control point near the first waypoint of {group.name}")
+            destination = self.theater.closest_control_point(waypoints[-1])
             if destination is None:
                 raise RuntimeError(
-                    f"No airport near the final waypoint of {group.name}")
+                    f"No control point near the final waypoint of {group.name}")
 
             # Snap the begin and end points to the control points.
             waypoints[0] = origin.position
