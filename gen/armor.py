@@ -179,7 +179,7 @@ class GroundConflictGenerator:
         else:
             faction = self.game.enemy_name
 
-        possible_infantry_units = db.find_infantry(faction)
+        possible_infantry_units = db.find_infantry(faction, allow_manpad=self.game.settings.manpads)
         if len(possible_infantry_units) == 0:
             return
 
@@ -202,7 +202,6 @@ class GroundConflictGenerator:
                 group_size=1,
                 heading=forward_heading,
                 move_formation=PointAction.OffRoad)
-
 
     def plan_action_for_groups(self, stance, ally_groups, enemy_groups, forward_heading, from_cp, to_cp):
 
@@ -334,7 +333,6 @@ class GroundConflictGenerator:
                 dcs_group.add_waypoint(retreat_point, PointAction.OnRoad)
                 dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
 
-
     def add_morale_trigger(self, dcs_group, forward_heading):
         """
         This add a trigger to manage units fleeing whenever their group is hit hard, or being engaged by CAS
@@ -370,7 +368,6 @@ class GroundConflictGenerator:
         fallback.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
 
         self.mission.triggerrules.triggers.append(fallback)
-
 
     def find_retreat_point(self, dcs_group, frontline_heading, distance=RETREAT_DISTANCE):
         """
@@ -438,7 +435,6 @@ class GroundConflictGenerator:
                 return potential_target.points[0].position
         return None
 
-
     def get_artilery_group_distance_from_frontline(self, group):
         """
         For artilery group, decide the distance from frontline with the range of the unit
@@ -449,7 +445,6 @@ class GroundConflictGenerator:
         if rg < DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK]:
             rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK] + 100
         return rg
-
 
     def get_valid_position_for_group(
         self,

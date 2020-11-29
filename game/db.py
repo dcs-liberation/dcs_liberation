@@ -1234,7 +1234,7 @@ def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
-def find_infantry(country_name: str) -> List[UnitType]:
+def find_infantry(country_name: str, allow_manpad: bool = False) -> List[UnitType]:
     inf = [
         Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
         Infantry.Paratrooper_AKS,
@@ -1253,6 +1253,10 @@ def find_infantry(country_name: str) -> List[UnitType]:
         Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
         Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
     ]
+    if allow_manpad:
+        inf.append(AirDefence.SAM_SA_18_Igla_MANPADS)
+        inf.append(AirDefence.SAM_SA_18_Igla_S_MANPADS)
+        inf.append(AirDefence.Stinger_MANPADS)
     return [x for x in inf if x in FACTIONS[country_name].infantry_units]
 
 
