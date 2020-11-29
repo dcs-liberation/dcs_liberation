@@ -112,12 +112,13 @@ class GroundConflictGenerator:
                 ]
             )
 
-    def _group_point(self, point: Point) -> Point:
+    @staticmethod
+    def _group_point(point: Point, base_distance) -> Point:
         distance = random.randint(
-                int(self.conflict.size * SPREAD_DISTANCE_FACTOR[0]),
-                int(self.conflict.size * SPREAD_DISTANCE_FACTOR[1]),
+                int(base_distance * SPREAD_DISTANCE_FACTOR[0]),
+                int(base_distance * SPREAD_DISTANCE_FACTOR[1]),
                 )
-        return point.random_point_within(distance, self.conflict.size * SPREAD_DISTANCE_SIZE_FACTOR)
+        return point.random_point_within(distance, base_distance * SPREAD_DISTANCE_SIZE_FACTOR)
 
     def generate(self):
         position = Conflict.frontline_position(self.conflict.from_cp, self.conflict.to_cp, self.game.theater)
@@ -495,7 +496,8 @@ class GroundConflictGenerator:
                     group.units[0],
                     len(group.units),
                     final_position,
-                    heading=opposite_heading(spawn_heading)
+                    distance_from_frontline,
+                    heading=opposite_heading(spawn_heading),
                 )
                 if is_player:
                     g.set_skill(self.game.settings.player_skill)
@@ -514,8 +516,9 @@ class GroundConflictGenerator:
         unit: VehicleType,
         count: int,
         at: Point,
+        distance_from_frontline,
         move_formation: PointAction = PointAction.OffRoad,
-        heading=0
+        heading=0,
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:
@@ -527,7 +530,7 @@ class GroundConflictGenerator:
         group = self.mission.vehicle_group(
                 side,
                 namegen.next_unit_name(side, cp.id, unit), unit,
-                position=self._group_point(at),
+                position=self._group_point(at, distance_from_frontline),
                 group_size=count,
                 heading=heading,
                 move_formation=move_formation)

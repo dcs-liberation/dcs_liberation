@@ -54,4 +54,4 @@ def heading_sum(h, a) -> int:
         return h
 
 def opposite_heading(h):
-    return h+180
+    return heading_sum(h, 180)

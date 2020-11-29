@@ -82,24 +82,21 @@ class Conflict:
 
     @classmethod
     def extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
-        """Finds a valid ground position in one heading from an initial point"""
+        """Finds the first intersection with an exclusion zone in one heading from an initial point up to max_distance"""
         pos = initial
         for distance in range(0, int(max_distance), 100):
-            if not theater.is_on_land(pos):
-                return pos
             pos = initial.point_from_heading(heading, distance)
-        if theater.is_on_land(pos):
-            return pos
-        logging.error("Didn't find ground position ({})!".format(initial))
-        return initial
+            if not theater.is_on_land(pos):
+                return initial.point_from_heading(heading, distance - 100)
+        return pos
 
     @classmethod
     def find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
-        """Finds the nearest ground position along a provided heading and it's inverse"""
+        """Finds the nearest valid ground position along a provided heading and it's inverse"""
         pos = initial
+        if theater.is_on_land(pos):
+            return pos
         for distance in range(0, int(max_distance), 100):
-            if theater.is_on_land(pos):
-                return pos
             pos = initial.point_from_heading(heading, distance)
             if theater.is_on_land(pos):
                 return pos
