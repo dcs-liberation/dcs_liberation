@@ -236,12 +236,12 @@ class BriefingPage(KneeboardPage):
 
         # Package Section
         writer.heading("Comm ladder")
-        packageTable = []
+        comm_ladder = []
         for comm in self.comms:
-            packageTable.append([comm.name, '', '', '', self.format_frequency(comm.freq)])
+            comm_ladder.append([comm.name, '', '', '', self.format_frequency(comm.freq)])
 
         for a in self.awacs:
-            packageTable.append([
+            comm_ladder.append([
                 a.callsign,
                 'AWACS',
                 '',
@@ -249,7 +249,7 @@ class BriefingPage(KneeboardPage):
                 self.format_frequency(a.freq)
             ])
         for tanker in self.tankers:
-            packageTable.append([
+            comm_ladder.append([
                 tanker.callsign,
                 "Tanker",
                 tanker.variant,
@@ -258,7 +258,7 @@ class BriefingPage(KneeboardPage):
             ])        
 
         
-        writer.table(packageTable, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
+        writer.table(comm_ladder, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
 
 
         writer.heading("JTAC")

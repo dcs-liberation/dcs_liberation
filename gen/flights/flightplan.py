@@ -121,22 +121,15 @@ class FlightPlan:
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
         """
-        if self.waypoints is None or self.farthest_wpt_from_arrival is None:
-            return 0
-
-        distanceToArrival = self.farthest_wpt_from_arrival.position.distance_to_point(self.flight.arrival.position)
-        distanceToArrival = meter_to_nm(distanceToArrival)
+        assert self.farthest_wpt_from_arrival is not None
+        distanceToArrival = meter_to_nm(self.farthest_wpt_from_arrival)
 
         bingo = 1000 # Minimum Emergency Fuel
         bingo += 500 # Visual Traffic
         bingo += 15 * distanceToArrival
 
-        if self.flight.divert is not None and self.farthest_wpt_from_divert is not None:
-            assert self.farthest_wpt_from_divert is not None
-            assert self.flight.divert is not None
-            distanceToDivert = self.farthest_wpt_from_divert.position.distance_to_point(self.flight.divert.position)
-            distanceToDivert = meter_to_nm(distanceToDivert)
-            bingo += 10 * distanceToDivert
+        if self.farthest_wpt_from_divert is not None:
+            bingo += 10 * meter_to_nm(self.farthest_wpt_from_divert)
 
         return round(bingo / 100) * 100
 
@@ -145,36 +138,29 @@ class FlightPlan:
         return self.bingo_fuel + 1000
 
     @property
-    def farthest_wpt_from_arrival(self) -> Optional[FlightWaypoint]:
+    def farthest_wpt_from_arrival(self) -> Optional[float]:
         """Returns the farthest waypoint of the flight plan from the arrival airport.
         """
         if self.flight.arrival is None:
             return None
 
-        return self.farthest_wpt_from(self.flight.arrival)
+        return self.max_distance_from(self.flight.arrival)
 
     @property
-    def farthest_wpt_from_divert(self) -> Optional[FlightWaypoint]:
+    def farthest_wpt_from_divert(self) -> Optional[float]:
         """Returns the farthest waypoint of the flight plan from the divert airport.
         """
         if self.flight.divert is None:
             return None
  
-        return self.farthest_wpt_from(self.flight.divert)
+        return self.max_distance_from(self.flight.divert)
     
-    def farthest_wpt_from(self, cp) -> Optional[FlightWaypoint]:
-        """Returns the farthest waypoint of the flight plan from the ControlPoint.
-        
-        :arg cp ControlPoint to measure distance from.
+    def max_distance_from(self, cp: ControlPoint) -> float:
+        """Returns the farthest waypoint of the flight plan from a ControlPoint.
         """
-        if self.waypoints is None:
-            return None
-
-        waypoints = list(map(lambda wpt: (wpt, cp.position.distance_to_point(wpt.position)), self.waypoints))
-        waypoints.sort(key=lambda pair: pair[1], reverse=True)
-
-        return waypoints[0][0] if len(waypoints) > 0 else None
-
+        if not self.waypoints:
+            return 0
+        return max([cp.position.distance_to_point(w.position) for w in self.waypoints])
 
     @property
     def tot_offset(self) -> timedelta:
