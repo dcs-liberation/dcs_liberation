@@ -727,7 +727,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
             template_point = Point(unit["offset"].x, unit["offset"].y)
             g = BuildingGroundObject(
                 obj_name, category, group_id, object_id, point + template_point,
-                unit["heading"], self.control_point, unit["type"])
+                unit["heading"], self.control_point, unit["type"], airbase_group=True)
             self.control_point.connected_objectives.append(g)
 
 class GroundObjectGenerator:
