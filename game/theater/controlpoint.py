@@ -632,6 +632,7 @@ class Fob(ControlPoint):
         super().__init__(cp_id, name, at, at,
                          game.theater.conflicttheater.SIZE_SMALL, 1,
                          has_frontline=True, cptype=ControlPointType.FOB)
+        self.name = name
     
     def runway_is_operational(self) -> bool:
         return False

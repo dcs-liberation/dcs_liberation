@@ -45,6 +45,7 @@ from . import (
     ControlPoint,
     ControlPointType,
     OffMapSpawn,
+    Fob,
 )
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
@@ -537,7 +538,27 @@ class BaseDefenseGenerator:
             return
         g.groups.append(group)
         self.control_point.base_defenses.append(g)
-
+class FobDefenseGenerator(BaseDefenseGenerator):
+    def generate(self) -> None:
+        self.generate_garrison()
+        self.generate_fob_defenses()
+        # self.generate_fob()
+    
+    def generate_fob_defenses(self):
+        # First group has a 1/2 chance of being a SHORAD,
+        # and a 1/2 chance of a garrison.
+        #
+        # Further groups have a 1/3 chance of being SHORAD and 2/3 chance of
+        # being a garrison.
+        for i in range(random.randint(2, 5)):
+            if i == 0 and random.randint(0, 1) == 0:
+                self.generate_shorad()
+            elif i == 0 and random.randint(0, 1) == 0:
+                self.generate_garrison()
+            elif random.randint(0, 2) == 1:
+                self.generate_shorad()
+            else:
+                self.generate_garrison()
 
 class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def __init__(self, game: Game, control_point: ControlPoint,
@@ -679,6 +700,35 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point.connected_objectives.append(g)
         return
 
+class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
+    def generate(self) -> bool:
+        self.generate_fob()
+        FobDefenseGenerator(self.game, self.control_point).generate()
+        return True
+
+    def generate_fob(self) -> None:
+        try:
+            category = self.faction.building_set[self.faction.building_set.index('fob')]
+        except IndexError:
+            logging.exception("Faction has no fob buildings defined")
+            return
+
+        obj_name = self.control_point.name
+        template = random.choice(list(self.templates[category].values()))
+        point = self.control_point.position
+        # Pick from preset locations
+        object_id = 0
+        group_id = self.game.next_group_id()
+
+        # TODO: Create only one TGO per objective, each with multiple units.
+        for unit in template:
+            object_id += 1
+
+            template_point = Point(unit["offset"].x, unit["offset"].y)
+            g = BuildingGroundObject(
+                obj_name, category, group_id, object_id, point + template_point,
+                unit["heading"], self.control_point, unit["type"])
+            self.control_point.connected_objectives.append(g)
 
 class GroundObjectGenerator:
     def __init__(self, game: Game) -> None:
@@ -702,6 +752,9 @@ class GroundObjectGenerator:
             generator = LhaGroundObjectGenerator(self.game, control_point)
         elif isinstance(control_point, OffMapSpawn):
             generator = NoOpGroundObjectGenerator(self.game, control_point)
+        elif isinstance(control_point, Fob):
+            generator = FobGroundObjectGenerator(self.game, control_point,
+                                                 self.templates)
         else:
             generator = AirbaseGroundObjectGenerator(self.game, control_point,
                                                      self.templates)

@@ -271,7 +271,7 @@ class MizCampaignLoader:
                 control_points[control_point.id] = control_point
             for group in self.fobs(blue):
                 control_point = Fob(
-                    "fob", group.position, next(self.control_point_id)
+                    str(group.name), group.position, next(self.control_point_id)
                 )
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
