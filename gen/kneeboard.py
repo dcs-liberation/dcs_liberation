@@ -230,6 +230,7 @@ class BriefingPage(KneeboardPage):
             "#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"
         ])
 
+        flight_plan_builder
         writer.table([
             ["{}lbs".format(self.flight.bingo_fuel), "{}lbs".format(self.flight.joker_fuel)]
         ], ['Bingo', 'Joker'])

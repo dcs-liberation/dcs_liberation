@@ -121,42 +121,29 @@ class FlightPlan:
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
         """
-        assert self.farthest_wpt_from_arrival is not None
-        distanceToArrival = meter_to_nm(self.farthest_wpt_from_arrival)
+        distance_to_arrival = meter_to_nm(self.max_distance_from(self.flight.arrival))
 
         bingo = 1000 # Minimum Emergency Fuel
         bingo += 500 # Visual Traffic
-        bingo += 15 * distanceToArrival
+        bingo += 15 * distance_to_arrival
 
-        if self.farthest_wpt_from_divert is not None:
-            bingo += 10 * meter_to_nm(self.farthest_wpt_from_divert)
+        # TODO: Per aircraft tweaks.
+
+        if self.flight.divert is not None:
+            bingo += 10 * meter_to_nm(self.max_distance_from(self.flight.divert))
 
         return round(bingo / 100) * 100
 
     @cached_property
     def joker_fuel(self) -> int:
+        """Joker fuel value for the FlightPlan
+        """
         return self.bingo_fuel + 1000
 
-    @property
-    def farthest_wpt_from_arrival(self) -> Optional[float]:
-        """Returns the farthest waypoint of the flight plan from the arrival airport.
-        """
-        if self.flight.arrival is None:
-            return None
-
-        return self.max_distance_from(self.flight.arrival)
-
-    @property
-    def farthest_wpt_from_divert(self) -> Optional[float]:
-        """Returns the farthest waypoint of the flight plan from the divert airport.
-        """
-        if self.flight.divert is None:
-            return None
- 
-        return self.max_distance_from(self.flight.divert)
-    
-    def max_distance_from(self, cp: ControlPoint) -> float:
+   
+    def max_distance_from(self, cp: ControlPoint) -> int:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
+        :arg cp The ControlPoint to measure distance from.
         """
         if not self.waypoints:
             return 0
