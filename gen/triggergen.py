@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from dcs.action import MarkToAll
 from dcs.condition import TimeAfter
 from dcs.mission import Mission
@@ -11,6 +13,9 @@ from dcs.unit import Skill
 from game.theater import Airfield
 from dcs.unitgroup import FlyingGroup
 from .conflictgen import Conflict
+
+if TYPE_CHECKING:
+    from game.game import Game
 
 PUSH_TRIGGER_SIZE = 3000
 PUSH_TRIGGER_ACTIVATION_AGL = 25
@@ -34,9 +39,8 @@ class Silence(Option):
 
 
 class TriggersGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, game):
+    def __init__(self, mission: Mission, game: Game):
         self.mission = mission
-        self.conflict = conflict  #  TODO: Move conflict out of this class.  Only needed for bullseye position
         self.game = game
 
     def _set_allegiances(self, player_coalition: str, enemy_coalition: str):
@@ -111,10 +115,11 @@ class TriggersGenerator:
         player_coalition = "blue"
         enemy_coalition = "red"
 
-        self.mission.coalition["blue"].bullseye = {"x": self.conflict.position.x,
-                                                   "y": self.conflict.position.y}
-        self.mission.coalition["red"].bullseye = {"x": self.conflict.position.x,
-                                                  "y": self.conflict.position.y}
+        player_cp, enemy_cp = self.game.theater.closest_opposing_control_points()
+        self.mission.coalition["blue"].bullseye = {"x": enemy_cp.position.x,
+                                                   "y": enemy_cp.position.y}
+        self.mission.coalition["red"].bullseye = {"x": player_cp.position.x,
+                                                  "y": player_cp.position.y}
 
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)

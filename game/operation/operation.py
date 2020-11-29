@@ -86,6 +86,25 @@ class Operation:
                 cls.game.enemy_country,
                 frontline.position
             )
+    
+    @classmethod
+    def air_conflict(cls) -> Conflict:
+        assert cls.game
+        player_cp, enemy_cp = cls.game.theater.closest_opposing_control_points()
+        mid_point = player_cp.position.point_from_heading(
+            player_cp.position.heading_between_point(enemy_cp.position),
+            player_cp.position.distance_to_point(enemy_cp.position) / 2
+        )
+        return Conflict(
+            cls.game.theater,
+            player_cp,
+            enemy_cp,
+            cls.game.player_name,
+            cls.game.enemy_name,
+            cls.game.player_country,
+            cls.game.enemy_country,
+            mid_point            
+        )
 
     @classmethod
     def _set_mission(cls, mission: Mission) -> None:
@@ -287,11 +306,8 @@ class Operation:
                                         cls.airsupportgen.air_support)
         cls._generate_ground_conflicts()
 
-        #  TODO: This is silly, once Bulls position is defined without Conflict this should be removed.
-        default_conflict = [i for i in cls.conflicts()][0]
         # Triggers
-        triggersgen = TriggersGenerator(cls.current_mission, default_conflict,
-                                        cls.game)
+        triggersgen = TriggersGenerator(cls.current_mission, cls.game)
         triggersgen.generate()
 
         # Setup combined arms parameters
@@ -334,13 +350,11 @@ class Operation:
     @classmethod
     def _generate_air_units(cls) -> None:
         """Generate the air units for the Operation"""
-        #  TODO: this is silly, once AirSupportConflictGenerator doesn't require Conflict this can be removed.
-        default_conflict = [i for i in cls.conflicts()][0]
 
         # Air Support (Tanker & Awacs)
         assert cls.radio_registry and cls.tacan_registry
         cls.airsupportgen = AirSupportConflictGenerator(
-            cls.current_mission, default_conflict, cls.game, cls.radio_registry,
+            cls.current_mission, cls.air_conflict(), cls.game, cls.radio_registry,
             cls.tacan_registry)
         cls.airsupportgen.generate()
 
