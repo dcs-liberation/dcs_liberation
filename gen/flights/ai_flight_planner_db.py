@@ -481,7 +481,7 @@ STRIKE_PREFERRED = [
 
 ANTISHIP_CAPABLE = [
     AJS37,
-
+    C_101CC,
     Su_24M,
     Su_17M4,
     FA_18C_hornet,
@@ -503,6 +503,7 @@ ANTISHIP_CAPABLE = [
 
 ANTISHIP_PREFERRED = [
     AJS37,
+    C_101CC,
     FA_18C_hornet,
     JF_17,
     Rafale_A_S,

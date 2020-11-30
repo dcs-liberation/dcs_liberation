@@ -151,6 +151,10 @@ class QSettingsWindow(QDialog):
         self.enemyCoalitionSkill.currentIndexChanged.connect(self.applySettings)
         self.enemyAASkill.currentIndexChanged.connect(self.applySettings)
 
+        self.manpads = QCheckBox()
+        self.manpads.setChecked(self.game.settings.manpads)
+        self.manpads.toggled.connect(self.applySettings)
+
         self.difficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
         self.difficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1, Qt.AlignRight)
         self.difficultyLayout.addWidget(QLabel("Enemy skill"), 1, 0)
@@ -158,19 +162,22 @@ class QSettingsWindow(QDialog):
         self.difficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
         self.difficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
 
+        self.difficultyLayout.addWidget(QLabel("Manpads"), 3, 0)
+        self.difficultyLayout.addWidget(self.manpads, 3, 1, Qt.AlignRight)
+
         self.difficultyLabel = QComboBox()
         [self.difficultyLabel.addItem(t) for t in CONST.LABELS_OPTIONS]
         self.difficultyLabel.setCurrentIndex(CONST.LABELS_OPTIONS.index(self.game.settings.labels))
         self.difficultyLabel.currentIndexChanged.connect(self.applySettings)
 
-        self.difficultyLayout.addWidget(QLabel("In Game Labels"), 3, 0)
-        self.difficultyLayout.addWidget(self.difficultyLabel, 3, 1, Qt.AlignRight)
+        self.difficultyLayout.addWidget(QLabel("In Game Labels"), 4, 0)
+        self.difficultyLayout.addWidget(self.difficultyLabel, 4, 1, Qt.AlignRight)
 
         self.noNightMission = QCheckBox()
         self.noNightMission.setChecked(self.game.settings.night_disabled)
         self.noNightMission.toggled.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("No night missions"), 4, 0)
-        self.difficultyLayout.addWidget(self.noNightMission, 4, 1, Qt.AlignRight)
+        self.difficultyLayout.addWidget(QLabel("No night missions"), 5, 0)
+        self.difficultyLayout.addWidget(self.noNightMission, 5, 1, Qt.AlignRight)
 
         self.mapVisibiitySelection = QComboBox()
         self.mapVisibiitySelection.addItem("All", ForcedOptions.Views.All)
@@ -189,14 +196,14 @@ class QSettingsWindow(QDialog):
         if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
             self.mapVisibiitySelection.setCurrentIndex(4)
         self.mapVisibiitySelection.currentIndexChanged.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("Map visibility options"), 5, 0)
-        self.difficultyLayout.addWidget(self.mapVisibiitySelection, 5, 1, Qt.AlignRight)
+        self.difficultyLayout.addWidget(QLabel("Map visibility options"), 6, 0)
+        self.difficultyLayout.addWidget(self.mapVisibiitySelection, 6, 1, Qt.AlignRight)
 
         self.ext_views = QCheckBox()
         self.ext_views.setChecked(self.game.settings.external_views_allowed)
         self.ext_views.toggled.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("Allow external views"), 6, 0)
-        self.difficultyLayout.addWidget(self.ext_views, 6, 1, Qt.AlignRight)
+        self.difficultyLayout.addWidget(QLabel("Allow external views"), 7, 0)
+        self.difficultyLayout.addWidget(self.ext_views, 7, 1, Qt.AlignRight)
 
 
     def initGeneratorLayout(self):
@@ -353,6 +360,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.player_skill = CONST.SKILL_OPTIONS[self.playerCoalitionSkill.currentIndex()]
         self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[self.enemyCoalitionSkill.currentIndex()]
         self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
+        self.game.settings.manpads = self.manpads.isChecked()
         self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
         self.game.settings.night_disabled = self.noNightMission.isChecked()
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()

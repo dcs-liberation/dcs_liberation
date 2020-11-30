@@ -26,6 +26,7 @@ class Settings:
     multiplier: float = 1.0
     generate_marks: bool = True
     sams: bool = True  # Legacy parameter do not use
+    manpads: bool = True
     cold_start: bool = False  # Legacy parameter do not use
     version: Optional[str] = None
 

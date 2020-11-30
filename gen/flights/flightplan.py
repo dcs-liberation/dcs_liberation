@@ -28,7 +28,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import nm_to_meter
+from game.utils import nm_to_meter, meter_to_nm
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -68,6 +68,8 @@ class FlightPlan:
     def waypoints(self) -> List[FlightWaypoint]:
         """A list of all waypoints in the flight plan, in order."""
         return list(self.iter_waypoints())
+
+    
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         """Iterates over all waypoints in the flight plan, in order."""
@@ -114,6 +116,38 @@ class FlightPlan:
         failed to generate. Nevertheless, we have to defend against it.
         """
         raise NotImplementedError
+    
+    @cached_property
+    def bingo_fuel(self) -> int:
+        """Bingo fuel value for the FlightPlan
+        """
+        distance_to_arrival = meter_to_nm(self.max_distance_from(self.flight.arrival))
+
+        bingo = 1000 # Minimum Emergency Fuel
+        bingo += 500 # Visual Traffic
+        bingo += 15 * distance_to_arrival
+
+        # TODO: Per aircraft tweaks.
+
+        if self.flight.divert is not None:
+            bingo += 10 * meter_to_nm(self.max_distance_from(self.flight.divert))
+
+        return round(bingo / 100) * 100
+
+    @cached_property
+    def joker_fuel(self) -> int:
+        """Joker fuel value for the FlightPlan
+        """
+        return self.bingo_fuel + 1000
+
+   
+    def max_distance_from(self, cp: ControlPoint) -> int:
+        """Returns the farthest waypoint of the flight plan from a ControlPoint.
+        :arg cp The ControlPoint to measure distance from.
+        """
+        if not self.waypoints:
+            return 0
+        return max([cp.position.distance_to_point(w.position) for w in self.waypoints])
 
     @property
     def tot_offset(self) -> timedelta:
