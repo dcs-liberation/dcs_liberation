@@ -542,7 +542,6 @@ class FobDefenseGenerator(BaseDefenseGenerator):
     def generate(self) -> None:
         self.generate_garrison()
         self.generate_fob_defenses()
-        # self.generate_fob()
     
     def generate_fob_defenses(self):
         # First group has a 1/2 chance of being a SHORAD,

@@ -671,8 +671,3 @@ class Fob(ControlPoint):
     @property
     def heading(self) -> int:
         return 0
-
-    # def active_runway(self, conditions: Conditions,
-    #                   dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
-    #     logging.warning("TODO: FOBs have no runways")
-    #     return RunwayData(self.full_name, runway_heading=0, runway_name="")
