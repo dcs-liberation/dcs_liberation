@@ -165,10 +165,6 @@ class GroundConflictGenerator:
 
     def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
 
-        # Disable infantry unit gen if disabled
-        if not self.game.settings.perf_infantry:
-            return
-
         infantry_position = group.points[0].position.random_point_within(250, 50)
 
         if side == self.conflict.attackers_country:
@@ -180,6 +176,23 @@ class GroundConflictGenerator:
             faction = self.game.player_name
         else:
             faction = self.game.enemy_name
+
+        # Disable infantry unit gen if disabled
+        if not self.game.settings.perf_infantry:
+            if self.game.settings.manpads:
+                # 50% of armored units protected by manpad
+                if random.choice([True, False]):
+                    u = random.choice(db.find_manpad(faction))
+                    self.mission.vehicle_group(
+                        side,
+                        namegen.next_infantry_name(side, cp, u), u,
+                        position=infantry_position,
+                        group_size=1,
+                        heading=forward_heading,
+                        move_formation=PointAction.OffRoad)
+            return
+
+
 
         possible_infantry_units = db.find_infantry(faction, allow_manpad=self.game.settings.manpads)
         if len(possible_infantry_units) == 0:

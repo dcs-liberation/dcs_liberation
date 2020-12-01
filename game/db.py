@@ -1234,29 +1234,41 @@ def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
-def find_infantry(country_name: str, allow_manpad: bool = False) -> List[UnitType]:
-    inf = [
-        Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
-        Infantry.Paratrooper_AKS,
-        Infantry.Soldier_RPG,
-        Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
-        Infantry.Soldier_M249,
-        Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
-        Infantry.Paratrooper_RPG_16,
-        Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
-        Infantry.Georgian_soldier_with_M4,
-        Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
-        Infantry.Infantry_Soldier_Rus,
-        Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
-        Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
-        Infantry.Infantry_Mauser_98,
-        Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
-        Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
-    ]
+MANPADS: List[VehicleType] = [
+    AirDefence.SAM_SA_18_Igla_MANPADS,
+    AirDefence.SAM_SA_18_Igla_S_MANPADS,
+    AirDefence.Stinger_MANPADS
+]
+
+INFANTRY: List[VehicleType] = [
+    Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
+    Infantry.Soldier_RPG,
+    Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
+    Infantry.Soldier_M249,
+    Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
+    Infantry.Paratrooper_RPG_16,
+    Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
+    Infantry.Georgian_soldier_with_M4,
+    Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
+    Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
+    Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
+]
+
+
+def find_manpad(country_name: str) -> List[VehicleType]:
+    return [x for x in MANPADS if x in FACTIONS[country_name].infantry_units]
+
+
+def find_infantry(country_name: str, allow_manpad: bool = False) -> List[VehicleType]:
     if allow_manpad:
-        inf.append(AirDefence.SAM_SA_18_Igla_MANPADS)
-        inf.append(AirDefence.SAM_SA_18_Igla_S_MANPADS)
-        inf.append(AirDefence.Stinger_MANPADS)
+        inf = INFANTRY + MANPADS
+    else:
+        inf = INFANTRY
     return [x for x in inf if x in FACTIONS[country_name].infantry_units]
 
 
