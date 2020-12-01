@@ -71,6 +71,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
+from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
     Airfield,
@@ -760,7 +761,6 @@ class AircraftConflictGenerator:
             if unit_type is F_14B:
                 unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
 
-
         group.points[0].tasks.append(OptReactOnThreat(OptReactOnThreat.Values.EvadeFire))
 
         channel = self.get_intra_flight_channel(unit_type)
@@ -947,18 +947,20 @@ class AircraftConflictGenerator:
 
             if control_point.captured:
                 country = player_country
+                faction = self.game.player_faction
             else:
                 country = enemy_country
+                faction = self.game.enemy_faction
 
             for aircraft, available in inventory.all_aircraft:
                 try:
-                    self._spawn_unused_at(control_point, country, aircraft,
+                    self._spawn_unused_at(control_point, country, faction, aircraft,
                                           available)
                 except NoParkingSlotError:
                     # If we run out of parking, stop spawning aircraft.
                     return
 
-    def _spawn_unused_at(self, control_point: Airfield, country: Country,
+    def _spawn_unused_at(self, control_point: Airfield, country: Country, faction: Faction,
                          aircraft: Type[FlyingType], number: int) -> None:
         for _ in range(number):
             # Creating a flight even those this isn't a fragged mission lets us
@@ -967,6 +969,7 @@ class AircraftConflictGenerator:
             flight = Flight(Package(control_point), aircraft, 1,
                             FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
+
             group = self._generate_at_airport(
                 name=namegen.next_unit_name(country, control_point.id,
                                             aircraft),
@@ -975,6 +978,12 @@ class AircraftConflictGenerator:
                 count=1,
                 start_type="Cold",
                 airport=control_point.airport)
+
+            if aircraft in faction.liveries_overrides:
+                livery = random.choice(faction.liveries_overrides[aircraft])
+                for unit in group.units:
+                    unit.livery_id = livery
+
             group.uncontrolled = True
             self.unit_map.add_aircraft(group, flight)
 
