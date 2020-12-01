@@ -623,3 +623,51 @@ class OffMapSpawn(ControlPoint):
     @property
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus()
+
+
+class Fob(ControlPoint):
+
+    def __init__(self, name: str, at: Point, cp_id: int):
+        import game.theater.conflicttheater
+        super().__init__(cp_id, name, at, at,
+                         game.theater.conflicttheater.SIZE_SMALL, 1,
+                         has_frontline=True, cptype=ControlPointType.FOB)
+        self.name = name
+    
+    def runway_is_operational(self) -> bool:
+        return False
+    
+    def active_runway(self, conditions: Conditions,
+                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+        logging.warning("TODO: FOBs have no runways.")
+        return RunwayData(self.full_name, runway_heading=0, runway_name="")
+
+    @property
+    def runway_status(self) -> RunwayStatus:
+        return RunwayStatus()
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.BARCAP,
+                # TODO: FlightType.LOGISTICS
+            ]
+        else:
+            yield from [
+                FlightType.STRIKE,
+                FlightType.SWEEP,
+                FlightType.ESCORT,
+                FlightType.SEAD,
+            ]
+
+    @property
+    def total_aircraft_parking(self) -> int:
+        return 0
+
+    def can_operate(self, aircraft: FlyingType) -> bool:
+        return False
+
+    @property
+    def heading(self) -> int:
+        return 0

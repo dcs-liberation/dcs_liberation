@@ -140,7 +140,7 @@ class TheaterGroundObject(MissionTarget):
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(self, name: str, category: str, group_id: int, object_id: int,
                  position: Point, heading: int, control_point: ControlPoint,
-                 dcs_identifier: str) -> None:
+                 dcs_identifier: str, airbase_group=False) -> None:
         super().__init__(
             name=name,
             category=category,
@@ -149,7 +149,7 @@ class BuildingGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=False,
+            airbase_group=airbase_group,
             sea_object=False
         )
         self.object_id = object_id
