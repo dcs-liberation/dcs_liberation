@@ -29,7 +29,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
         grid_x = random.randint(2, 3)
         grid_y = random.randint(2, 3)
 
-        spacing = random.randint(30, 60)
+        spacing = random.randint(20, 35)
 
         index = 0
         mixed = random.choice([True, False])
@@ -46,7 +46,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
                     unit_type = random.choice(GFLAK)
 
         # Search lights
-        search_pos = self.get_circular_position(random.randint(2,3), 90)
+        search_pos = self.get_circular_position(random.randint(2,3), 80)
         for index, pos in enumerate(search_pos):
             self.add_unit(AirDefence.Flak_Searchlight_37, "SearchLight#" + str(index), pos[0], pos[1], self.heading)
 
@@ -63,8 +63,8 @@ class FlakGenerator(AirDefenseGroupGenerator):
         for i in range(int(max(1,grid_x/2))):
             for j in range(int(max(1,grid_x/2))):
                 self.add_unit(Unarmed.Blitz_3_6_6700A, "AAA#" + str(index),
-                              self.position.x + 200 + 15*i + random.randint(1,5),
-                              self.position.y + 15*j + random.randint(1,5), 90)
+                              self.position.x + 125 + 15*i + random.randint(1,5),
+                              self.position.y + 15*j + random.randint(1,5), 75)
 
     @classmethod
     def range(cls) -> AirDefenseRange:
