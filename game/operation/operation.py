@@ -400,7 +400,8 @@ class Operation:
                 cls.current_mission,
                 conflict, cls.game,
                 player_gp, enemy_gp,
-                player_cp.stances[enemy_cp.id]
+                player_cp.stances[enemy_cp.id],
+                cls.unit_map
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)

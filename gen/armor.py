@@ -28,6 +28,7 @@ from dcs.unittype import VehicleType
 from dcs.unitgroup import VehicleGroup
 
 from game import db
+from game.unitmap import UnitMap
 from .naming import namegen
 from gen.ground_forces.ai_ground_planner import (
     CombatGroup, CombatGroupRole,
@@ -72,14 +73,14 @@ class JtacInfo:
 class GroundConflictGenerator:
 
     def __init__(
-        self,
-        mission: Mission,
-        conflict: Conflict,
-        game: Game,
-        player_planned_combat_groups: List[CombatGroup],
-        enemy_planned_combat_groups: List[CombatGroup],
-        player_stance: CombatStance
-    ):
+            self,
+            mission: Mission,
+            conflict: Conflict,
+            game: Game,
+            player_planned_combat_groups: List[CombatGroup],
+            enemy_planned_combat_groups: List[CombatGroup],
+            player_stance: CombatStance,
+            unit_map: UnitMap) -> None:
         self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
@@ -87,6 +88,7 @@ class GroundConflictGenerator:
         self.player_stance = CombatStance(player_stance)
         self.enemy_stance = self._enemy_stance()
         self.game = game
+        self.unit_map = unit_map
         self.jtacs: List[JtacInfo] = []
 
     def _enemy_stance(self):
@@ -529,6 +531,8 @@ class GroundConflictGenerator:
                 group_size=count,
                 heading=heading,
                 move_formation=move_formation)
+
+        self.unit_map.add_front_line_units(group, cp)
 
         for c in range(count):
             vehicle: Vehicle = group.units[c]

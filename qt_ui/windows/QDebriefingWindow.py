@@ -68,7 +68,10 @@ class QDebriefingWindow(QDialog):
                 logging.exception(
                     f"Issue adding {unit_type} to debriefing information")
 
-        for unit_type, count in self.debriefing.player_dead_units_dict.items():
+        front_line_losses = self.debriefing.front_line_losses.by_type(
+            player=True
+        )
+        for unit_type, count in front_line_losses.items():
             try:
                 lostUnitsLayout.addWidget(
                     QLabel(db.unit_type_name(unit_type)), row, 0)
@@ -111,7 +114,10 @@ class QDebriefingWindow(QDialog):
                 logging.exception(
                     f"Issue adding {unit_type} to debriefing information")
 
-        for unit_type, count in self.debriefing.enemy_dead_units_dict.items():
+        front_line_losses = self.debriefing.front_line_losses.by_type(
+            player=False
+        )
+        for unit_type, count in front_line_losses.items():
             if count == 0:
                 continue
             enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)

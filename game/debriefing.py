@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Type, TYPE_CHECKING
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
-from game.theater import Airfield, TheaterGroundObject
+from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.unitmap import UnitMap
 from gen.flights.flight import Flight
 
@@ -39,6 +39,17 @@ class DebriefingDeadAircraftInfo:
 
 
 @dataclass(frozen=True)
+class DebriefingDeadFrontLineUnitInfo:
+    #: The Flight that resulted in the generated unit.
+    unit_type: Type[UnitType]
+    control_point: ControlPoint
+
+    @property
+    def player_unit(self) -> bool:
+        return self.control_point.captured
+
+
+@dataclass(frozen=True)
 class DebriefingDeadBuildingInfo:
     #: The ground object this building was present at.
     ground_object: TheaterGroundObject
@@ -58,7 +69,7 @@ class AirLosses:
             if loss.flight.departure.captured != player:
                 continue
 
-            losses_by_type[loss.flight.unit_type] += loss.flight.count
+            losses_by_type[loss.flight.unit_type] += 1
         return losses_by_type
 
     def surviving_flight_members(self, flight: Flight) -> int:
@@ -67,6 +78,20 @@ class AirLosses:
             if loss.flight == flight:
                 losses += 1
         return flight.count - losses
+
+
+@dataclass(frozen=True)
+class FrontLineLosses:
+    losses: List[DebriefingDeadFrontLineUnitInfo]
+
+    def by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        for loss in self.losses:
+            if loss.control_point.captured != player:
+                continue
+
+            losses_by_type[loss.unit_type] += 1
+        return losses_by_type
 
 
 @dataclass(frozen=True)
@@ -116,7 +141,8 @@ class Debriefing:
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 
         self.air_losses = self.dead_aircraft()
-        self.dead_units = self.dead_ground_units()
+        self.front_line_losses = self.dead_front_line_units()
+        self.dead_units = []
         self.damaged_runways = self.find_damaged_runways()
         self.dead_aaa_groups: List[DebriefingDeadUnitInfo] = []
         self.dead_buildings: List[DebriefingDeadBuildingInfo] = []
@@ -174,6 +200,7 @@ class Debriefing:
         logging.info("Debriefing pre process results :")
         logging.info("--------------------------------")
         logging.info(self.air_losses)
+        logging.info(self.front_line_losses)
         logging.info(self.player_dead_units_dict)
         logging.info(self.enemy_dead_units_dict)
         logging.info(self.player_dead_buildings_dict)
@@ -189,27 +216,17 @@ class Debriefing:
             losses.append(DebriefingDeadAircraftInfo(flight))
         return AirLosses(losses)
 
-    def dead_ground_units(self) -> List[DebriefingDeadUnitInfo]:
+    def dead_front_line_units(self) -> FrontLineLosses:
         losses = []
         for unit_name in self.state_data.killed_ground_units:
-            try:
-                if isinstance(unit_name, int):
-                    # For some reason the state file will include many raw
-                    # integers in the list of destroyed units. These might be
-                    # from the smoke effects?
-                    continue
-                if self._is_airfield(unit_name):
-                    continue
-                country = int(unit_name.split("|")[1])
-                unit_type = db.unit_type_from_name(unit_name.split("|")[4])
-                if unit_type is None:
-                    logging.error(f"Could not determine type of {unit_name}")
-                    continue
-                player_unit = country == self.player_country_id
-                losses.append(DebriefingDeadUnitInfo(player_unit, unit_type))
-            except Exception:
-                logging.exception(f"Failed to process dead unit {unit_name}")
-        return losses
+            unit = self.unit_map.front_line_unit(unit_name)
+            if unit is None:
+                # Killed "ground units" might also be runways or TGO units, so
+                # no need to log an error.
+                continue
+            losses.append(
+                DebriefingDeadFrontLineUnitInfo(unit.unit_type, unit.origin))
+        return FrontLineLosses(losses)
 
     def find_damaged_runways(self) -> List[Airfield]:
         losses = []

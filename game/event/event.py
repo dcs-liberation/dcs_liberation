@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+from collections import defaultdict
 from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
@@ -113,15 +114,8 @@ class Event:
         self._transfer_aircraft(self.game.red_ato, debriefing.air_losses,
                                 for_player=False)
 
-    def commit(self, debriefing: Debriefing):
-
-        logging.info("Commiting mission results")
-
-        for damaged_runway in debriefing.damaged_runways:
-            damaged_runway.damage_runway()
-
-        # ------------------------------
-        # Destroyed aircrafts
+    @staticmethod
+    def commit_air_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
             aircraft = loss.flight.unit_type
             cp = loss.flight.departure
@@ -129,29 +123,38 @@ class Event:
             if available <= 0:
                 logging.error(
                     f"Found killed {aircraft} from {cp} but that airbase has "
-                    f"none available.")
+                    "none available.")
                 continue
 
             logging.info(f"{aircraft} destroyed from {cp}")
             cp.base.aircraft[aircraft] -= 1
 
-        # ------------------------------
-        # Destroyed ground units
-        killed_unit_count_by_cp = {cp.id: 0 for cp in self.game.theater.controlpoints}
-        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
-        for killed_ground_unit in debriefing.state_data.killed_ground_units:
-            try:
-                cpid = int(killed_ground_unit.split("|")[3])
-                unit_type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
-                if cpid in cp_map.keys():
-                    killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
-                    cp = cp_map[cpid]
-                    if unit_type in cp.base.armor.keys():
-                        logging.info(f"Ground unit destroyed: {unit_type}")
-                        cp.base.armor[unit_type] = max(0, cp.base.armor[unit_type] - 1)
-            except Exception:
-                logging.exception(
-                    f"Could not commit lost ground unit {killed_ground_unit}")
+    @staticmethod
+    def commit_front_line_losses(debriefing: Debriefing) -> Dict[int, int]:
+        killed_unit_count_by_cp: Dict[int, int] = defaultdict(int)
+        for loss in debriefing.front_line_losses.losses:
+            unit_type = loss.unit_type
+            control_point = loss.control_point
+            killed_unit_count_by_cp[control_point.id] += 1
+            available = control_point.base.total_units_of_type(unit_type)
+            if available <= 0:
+                logging.error(
+                    f"Found killed {unit_type} from {control_point} but that "
+                    "airbase has none available.")
+                continue
+
+            logging.info(f"{unit_type} destroyed from {control_point}")
+            control_point.base.armor[unit_type] -= 1
+        return killed_unit_count_by_cp
+
+    def commit(self, debriefing: Debriefing):
+        logging.info("Committing mission results")
+
+        for damaged_runway in debriefing.damaged_runways:
+            damaged_runway.damage_runway()
+
+        self.commit_air_losses(debriefing)
+        killed_unit_count_by_cp = self.commit_front_line_losses(debriefing)
 
         # ------------------------------
         # Static ground objects
