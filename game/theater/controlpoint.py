@@ -229,6 +229,8 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
         self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
+
+        self.target_position = None
     
     def __repr__(self):
         return f"<{__class__}: {self.name}>"
@@ -268,6 +270,13 @@ class ControlPoint(MissionTarget, ABC):
     def is_lha(self):
         """
         :return: Whether this control point is an LHA
+        """
+        return False
+
+    @property
+    def moveable(self) -> bool:
+        """
+        :return: Whether this control point can be moved around
         """
         return False
 
@@ -491,6 +500,7 @@ class Airfield(ControlPoint):
 
 
 class NavalControlPoint(ControlPoint, ABC):
+
     @property
     def is_fleet(self) -> bool:
         return True
@@ -539,6 +549,10 @@ class NavalControlPoint(ControlPoint, ABC):
     def runway_can_be_repaired(self) -> bool:
         return False
 
+    @property
+    def moveable(self) -> bool:
+        return True
+
 
 class Carrier(NavalControlPoint):
 
@@ -546,8 +560,7 @@ class Carrier(NavalControlPoint):
         import game.theater.conflicttheater
         super().__init__(cp_id, name, at, at,
                          game.theater.conflicttheater.SIZE_SMALL, 1,
-                         has_frontline=False,
-                         cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
+                         has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")

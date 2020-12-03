@@ -5,7 +5,8 @@ import logging
 import math
 from typing import Iterable, Iterator, List, Optional, Tuple
 
-from PySide2.QtCore import QPointF, Qt
+from PySide2 import QtWidgets, QtCore
+from PySide2.QtCore import QPointF, Qt, QLineF
 from PySide2.QtGui import (
     QBrush,
     QColor,
@@ -13,21 +14,20 @@ from PySide2.QtGui import (
     QPen,
     QPixmap,
     QPolygonF,
-    QWheelEvent,
-)
+    QWheelEvent, )
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
     QGraphicsOpacityEffect,
     QGraphicsScene,
-    QGraphicsView,
+    QGraphicsView, QGraphicsSceneMouseEvent,
 )
 from dcs import Point
 from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.theater import ControlPoint
+from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine
 from game.theater.theatergroundobject import (
     EwrGroundObject,
@@ -76,6 +76,12 @@ def bezier_curve_range(n: int, points: Iterable[Tuple[float, float]]) -> Iterato
         t = i / float(n - 1)
         yield bezier(t, points)
 
+
+class QLiberationMapState(Enum):
+    NORMAL = 0
+    MOVING_UNIT = 1
+
+
 class QLiberationMap(QGraphicsView):
     WAYPOINT_SIZE = 4
 
@@ -86,6 +92,7 @@ class QLiberationMap(QGraphicsView):
         QLiberationMap.instance = self
         self.game_model = game_model
         self.game: Optional[Game] = game_model.game
+        self.state = QLiberationMapState.NORMAL
 
         self.waypoint_info_font = QFont()
         self.waypoint_info_font.setPointSize(12)
@@ -101,6 +108,11 @@ class QLiberationMap(QGraphicsView):
         self.factorized = 1
         self.init_scene()
         self.setGame(game_model.game)
+
+        # Object displayed when unit is selected
+        self.movement_line = QtWidgets.QGraphicsLineItem(QtCore.QLineF(QPointF(0,0),QPointF(0,0)))
+        self.movement_line.setPen(QPen(CONST.COLORS["orange"], width=10.0))
+        self.selected_cp: QMapControlPoint = None
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
             lambda: self.draw_flight_plans(self.scene())
@@ -315,6 +327,12 @@ class QLiberationMap(QGraphicsView):
                 brush = CONST.COLORS[enemyColor+"_transparent"]
 
             self.draw_ground_objects(scene, cp)
+
+            if cp.target_position is not None:
+                tpos = cp.target_position
+                scene.addLine(QLineF(QPointF(pos[0], pos[1]), QPointF(tpos[0], tpos[1])),
+                              QPen(CONST.COLORS["green"], width=10, s=Qt.DashDotLine))
+
 
         for cp in self.game.theater.enemy_points():
             if DisplayOptions.lines:
@@ -572,6 +590,10 @@ class QLiberationMap(QGraphicsView):
 
         return X > treshold and X or treshold, Y > treshold and Y or treshold
 
+
+    def _scene_to_dcs_coords(self, x, y):
+        pass
+
     def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
         return QColor(255, 255, 0, 20 if transparent else 255)
 
@@ -657,6 +679,32 @@ class QLiberationMap(QGraphicsView):
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
                     scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
+    def setSelectedUnit(self, selected_cp: QMapControlPoint):
+        self.state = QLiberationMapState.MOVING_UNIT
+        self.selected_cp = selected_cp
+        position = self._transform_point(selected_cp.control_point.position)
+        self.movement_line = QtWidgets.QGraphicsLineItem(QLineF(QPointF(*position), QPointF(*position)))
+        self.scene().addItem(self.movement_line)
 
+    def sceneMouseMovedEvent(self, event: QGraphicsSceneMouseEvent):
+        if self.state == QLiberationMapState.MOVING_UNIT:
+            self.setCursor(Qt.PointingHandCursor)
+            p1 = self.movement_line.line().p1()
+            self.movement_line.setLine(QLineF(p1, event.scenePos()))
 
-
+    def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
+        if self.state == QLiberationMapState.MOVING_UNIT:
+            if event.buttons() == Qt.RightButton:
+                pass
+            elif event.buttons() == Qt.LeftButton:
+                if self.selected_cp is not None:
+                    # Set movement position for the cp
+                    pos = event.scenePos()
+                    point = Point(int(pos.x()), int(pos.y()))
+                    self.selected_cp.control_point.target_position = point.x, point.y # TODO : convert to DCS coords !
+                    GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+            else:
+                return
+            self.state = QLiberationMapState.NORMAL
+            self.scene().removeItem(self.movement_line)
+            self.selected_cp = None

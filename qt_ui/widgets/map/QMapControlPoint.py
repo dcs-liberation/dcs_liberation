@@ -26,6 +26,12 @@ class QMapControlPoint(QMapObject):
             f"CHEAT: Capture {self.control_point.name}")
         self.capture_action.triggered.connect(self.cheat_capture)
 
+        self.move_action = QAction("Move")
+        self.move_action.triggered.connect(self.move)
+
+        self.cancel_move_action = QAction("Cancel Move")
+        self.cancel_move_action.triggered.connect(self.cancel_move)
+
     def paint(self, painter, option, widget=None) -> None:
         if DisplayOptions.control_points:
             painter.save()
@@ -70,6 +76,12 @@ class QMapControlPoint(QMapObject):
         self.base_details_dialog.show()
 
     def add_context_menu_actions(self, menu: QMenu) -> None:
+
+        if self.control_point.moveable and self.control_point.captured:
+            menu.addAction(self.move_action)
+            if self.control_point.target_position is not None:
+                menu.addAction(self.cancel_move_action)
+
         if self.control_point.is_fleet:
             return
 
@@ -85,6 +97,13 @@ class QMapControlPoint(QMapObject):
         self.control_point.capture(self.game_model.game, for_player=True)
         # Reinitialized ground planners and the like.
         self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+
+    def move(self):
+        self.parent.setSelectedUnit(self)
+
+    def cancel_move(self):
+        self.control_point.target_position = None
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
     
     def open_new_package_dialog(self) -> None:
