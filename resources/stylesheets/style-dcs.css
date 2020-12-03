@@ -48,6 +48,21 @@ QMenuBar::item:pressed {
     background: #1D2731;
 }
 
+QToolButton:checked {
+    border-color: #435466;
+    background: #14202B;
+}
+
+QToolButton:hover {
+    background: #536476;
+}
+
+QToolBar::separator {
+    background:white;
+    width:1px;
+    height:1px;
+}
+
 QMenu::item:selected  {
     background: #435466;
 }

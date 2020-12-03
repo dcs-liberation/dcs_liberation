@@ -78,6 +78,24 @@ def load_icons():
     ICONS["New"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/new.png")
     ICONS["Open"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/open.png")
     ICONS["Save"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/save.png")
+    ICONS["Discord"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/discord.png")
+    ICONS["Github"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/github.png")
+
+
+    ICONS["Control Points"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/circle.png")
+    ICONS["Ground Objects"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/industry.png")
+    ICONS["Lines"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/arrows-h.png")
+    ICONS["Waypoint Information"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/info.png")
+    ICONS["Map Polygon Debug Mode"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/map.png")
+    ICONS["Ally SAM Threat Range"] = QPixmap("./resources/ui/misc/blue-sam.png")
+    ICONS["Enemy SAM Threat Range"] = QPixmap("./resources/ui/misc/red-sam.png")
+    ICONS["SAM Detection Range"] = QPixmap("./resources/ui/misc/detection-sam.png")
+    ICONS["Display Culling Zones"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/eraser.png")
+    ICONS["Hide Flight Paths"] = QPixmap("./resources/ui/misc/hide-flight-path.png")
+    ICONS["Show Selected Flight Path"] = QPixmap("./resources/ui/misc/flight-path.png")
+    ICONS["Show All Flight Paths"] = QPixmap("./resources/ui/misc/all-flight-paths.png")
+
+
     ICONS["Hangar"] = QPixmap("./resources/ui/misc/hangar.png")
 
     ICONS["Terrain_Caucasus"] = QPixmap("./resources/ui/terrain_caucasus.gif")

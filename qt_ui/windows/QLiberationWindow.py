@@ -52,8 +52,8 @@ class QLiberationWindow(QMainWindow):
 
         self.initUi()
         self.initActions()
-        self.initMenuBar()
         self.initToolbar()
+        self.initMenuBar()
         self.connectSignals()
 
         screen = QDesktopWidget().screenGeometry()
@@ -120,11 +120,26 @@ class QLiberationWindow(QMainWindow):
         self.showLiberationPrefDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showLiberationPrefDialogAction.triggered.connect(self.showLiberationDialog)
 
+        self.openDiscordAction = QAction("&Discord Server", self)
+        self.openDiscordAction.setIcon(CONST.ICONS["Discord"])
+        self.openDiscordAction.triggered.connect(lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
+
+        self.openGithubAction = QAction("&Github Repo", self)
+        self.openGithubAction.setIcon(CONST.ICONS["Github"])
+        self.openGithubAction.triggered.connect(lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
         self.tool_bar.addAction(self.openAction)
         self.tool_bar.addAction(self.saveGameAction)
+
+        self.links_bar = self.addToolBar("Links")
+        self.links_bar.addAction(self.openDiscordAction)
+        self.links_bar.addAction(self.openGithubAction)
+
+        self.display_bar = self.addToolBar("Display")
+
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -145,20 +160,26 @@ class QLiberationWindow(QMainWindow):
         last_was_group = True
         for item in DisplayOptions.menu_items():
             if isinstance(item, DisplayRule):
-                displayMenu.addAction(self.make_display_rule_action(item))
+                action = self.make_display_rule_action(item)
+                displayMenu.addAction(action)
+                if action.icon():
+                    self.display_bar.addAction(action)
                 last_was_group = False
             elif isinstance(item, DisplayGroup):
                 if not last_was_group:
                     displayMenu.addSeparator()
+                    self.display_bar.addSeparator()
                 group = QActionGroup(displayMenu)
                 for display_rule in item:
-                    displayMenu.addAction(
-                        self.make_display_rule_action(display_rule, group))
+                    action = self.make_display_rule_action(display_rule, group)
+                    displayMenu.addAction(action)
+                    if action.icon():
+                        self.display_bar.addAction(action)
                 last_was_group = True
 
         help_menu = self.menu.addMenu("&Help")
-        help_menu.addAction("&Discord Server", lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
-        help_menu.addAction("&Github Repository", lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+        help_menu.addAction(self.openDiscordAction)
+        help_menu.addAction(self.openGithubAction)
         help_menu.addAction("&Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
         help_menu.addAction("&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
         help_menu.addAction("&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
@@ -177,6 +198,10 @@ class QLiberationWindow(QMainWindow):
             return closure
 
         action = QAction(f"&{display_rule.menu_text}", group)
+
+        if display_rule.menu_text in CONST.ICONS.keys():
+            action.setIcon(CONST.ICONS[display_rule.menu_text])
+
         action.setCheckable(True)
         action.setChecked(display_rule.value)
         action.toggled.connect(make_check_closure())

@@ -230,7 +230,7 @@ class ControlPoint(MissionTarget, ABC):
         self.stances: Dict[int, CombatStance] = {}
         self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
 
-        self.target_position = None
+        self.target_position: Point = None
     
     def __repr__(self):
         return f"<{__class__}: {self.name}>"
