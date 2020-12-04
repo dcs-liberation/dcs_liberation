@@ -18,7 +18,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
 
     def generate(self):
         # Command Post
-        self.add_unit(AirDefence.SAM_Patriot_STR_AN_MPQ_53, "ICC", self.position.x + 30, self.position.y + 30, self.heading)
+        self.add_unit(AirDefence.SAM_Patriot_STR_AN_MPQ_53, "STR", self.position.x + 30, self.position.y + 30, self.heading)
         self.add_unit(AirDefence.SAM_Patriot_AMG_AN_MRC_137, "MRC", self.position.x, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_Patriot_ECS_AN_MSQ_104, "MSQ", self.position.x + 30, self.position.y, self.heading)
         self.add_unit(AirDefence.SAM_Patriot_ICC, "ICC", self.position.x + 60, self.position.y, self.heading)
