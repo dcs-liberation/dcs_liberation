@@ -2,18 +2,32 @@
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
-from dcs.unitgroup import FlyingGroup, Group
-from dcs.unittype import UnitType
+from dcs.unit import Unit
+from dcs.unitgroup import FlyingGroup, Group, StaticGroup
+from dcs.unittype import VehicleType
 
 from game import db
-from game.theater import Airfield, ControlPoint
+from game.theater import Airfield, ControlPoint, TheaterGroundObject
+from game.theater.theatergroundobject import BuildingGroundObject
 from gen.flights.flight import Flight
 
 
-@dataclass
+@dataclass(frozen=True)
 class FrontLineUnit:
-    unit_type: Type[UnitType]
+    unit_type: Type[VehicleType]
     origin: ControlPoint
+
+
+@dataclass(frozen=True)
+class GroundObjectUnit:
+    ground_object: TheaterGroundObject
+    group: Group
+    unit: Unit
+
+
+@dataclass(frozen=True)
+class Building:
+    ground_object: BuildingGroundObject
 
 
 class UnitMap:
@@ -21,6 +35,8 @@ class UnitMap:
         self.aircraft: Dict[str, Flight] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
+        self.ground_object_units: Dict[str, GroundObjectUnit] = {}
+        self.buildings: Dict[str, Building] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -52,7 +68,36 @@ class UnitMap:
             unit_type = db.unit_type_from_name(unit.type)
             if unit_type is None:
                 raise RuntimeError(f"Unknown unit type: {unit.type}")
+            if not issubclass(unit_type, VehicleType):
+                raise RuntimeError(
+                    f"{name} is a {unit_type.__name__}, expected a VehicleType")
             self.front_line_units[name] = FrontLineUnit(unit_type, origin)
 
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
         return self.front_line_units.get(name, None)
+
+    def add_ground_object_units(self, ground_object: TheaterGroundObject,
+                                group: Group) -> None:
+        for unit in group.units:
+            # The actual name is a String (the pydcs translatable string), which
+            # doesn't define __eq__.
+            name = str(unit.name)
+            if name in self.ground_object_units:
+                raise RuntimeError(f"Duplicate TGO unit: {name}")
+            self.ground_object_units[name] = GroundObjectUnit(ground_object,
+                                                              group, unit)
+
+    def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
+        return self.ground_object_units.get(name, None)
+
+    def add_building(self, ground_object: BuildingGroundObject,
+                     building: StaticGroup) -> None:
+        # The actual name is a String (the pydcs translatable string), which
+        # doesn't define __eq__.
+        name = str(building.name)
+        if name in self.buildings:
+            raise RuntimeError(f"Duplicate TGO unit: {name}")
+        self.buildings[name] = Building(ground_object)
+
+    def building(self, name: str) -> Optional[Building]:
+        return self.buildings.get(name, None)
