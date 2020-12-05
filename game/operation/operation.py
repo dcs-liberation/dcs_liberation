@@ -265,7 +265,8 @@ class Operation:
             cls.current_mission,
             cls.game,
             cls.radio_registry,
-            cls.tacan_registry
+            cls.tacan_registry,
+            cls.unit_map
         )
         cls.groundobjectgen.generate()
 
