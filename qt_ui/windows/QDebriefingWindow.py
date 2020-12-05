@@ -41,6 +41,13 @@ class QDebriefingWindow(QDialog):
         self.layout.addWidget(header)
         self.layout.addStretch()
 
+        # Result
+        #if self.gameEvent.is_successfull(self.debriefing):
+        #    title = QLabel("<b>Operation end !</b>")
+        #    title.setProperty("style", "title-success")
+        #else:
+        #    title = QLabel("<b>Operation end !</b>")
+        #    title.setProperty("style", "title-danger")
         title = QLabel("<b>Casualty report</b>")
         self.layout.addWidget(title)
 
@@ -61,7 +68,7 @@ class QDebriefingWindow(QDialog):
                 logging.exception(
                     f"Issue adding {unit_type} to debriefing information")
 
-        front_line_losses = self.debriefing.front_line_losses_by_type(
+        front_line_losses = self.debriefing.front_line_losses.by_type(
             player=True
         )
         for unit_type, count in front_line_losses.items():
@@ -74,10 +81,9 @@ class QDebriefingWindow(QDialog):
                 logging.exception(
                     f"Issue adding {unit_type} to debriefing information")
 
-        building_losses = self.debriefing.building_losses_by_type(player=True)
-        for building, count in building_losses.items():
+        for building, count in self.debriefing.player_dead_buildings_dict.items():
             try:
-                lostUnitsLayout.addWidget(QLabel(building), row, 0)
+                lostUnitsLayout.addWidget(QLabel(building, row, 0))
                 lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
             except AttributeError:
@@ -91,6 +97,12 @@ class QDebriefingWindow(QDialog):
         enemylostUnitsLayout = QGridLayout()
         enemylostUnits.setLayout(enemylostUnitsLayout)
 
+        #row = 0
+        #if self.debriefing.destroyed_objects:
+        #    enemylostUnitsLayout.addWidget(QLabel("Ground assets"), row, 0)
+        #    enemylostUnitsLayout.addWidget(QLabel("{}".format(len(self.debriefing.destroyed_objects))), row, 1)
+        #    row += 1
+
         enemy_air_losses = self.debriefing.air_losses.by_type(player=False)
         for unit_type, count in enemy_air_losses.items():
             try:
@@ -102,7 +114,7 @@ class QDebriefingWindow(QDialog):
                 logging.exception(
                     f"Issue adding {unit_type} to debriefing information")
 
-        front_line_losses = self.debriefing.front_line_losses_by_type(
+        front_line_losses = self.debriefing.front_line_losses.by_type(
             player=False
         )
         for unit_type, count in front_line_losses.items():
@@ -112,8 +124,7 @@ class QDebriefingWindow(QDialog):
             enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
             row += 1
 
-        building_losses = self.debriefing.building_losses_by_type(player=False)
-        for building, count in building_losses.items():
+        for building, count in self.debriefing.enemy_dead_buildings_dict.items():
             try:
                 enemylostUnitsLayout.addWidget(QLabel(building), row, 0)
                 enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
@@ -123,8 +134,6 @@ class QDebriefingWindow(QDialog):
                     f"Issue adding {building} to debriefing information")
 
         self.layout.addWidget(enemylostUnits)
-
-        # TODO: Display dead ground object units and runways.
 
         # confirm button
         okay = QPushButton("Okay")

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 import random
-from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type
+from typing import Dict, Iterator, Optional, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.country import Country
@@ -33,7 +33,7 @@ from game.theater.theatergroundobject import (
     GenericCarrierGroundObject,
     LhaGroundObject, ShipGroundObject,
 )
-from game.unitmap import UnitMap
+from .conflictgen import Conflict
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
 from .tacan import TacanBand, TacanChannel, TacanRegistry
@@ -52,12 +52,11 @@ class GenericGroundObjectGenerator:
     Currently used only for SAM and missile (V1/V2) sites.
     """
     def __init__(self, ground_object: TheaterGroundObject, country: Country,
-                 game: Game, mission: Mission, unit_map: UnitMap) -> None:
+                 game: Game, mission: Mission) -> None:
         self.ground_object = ground_object
         self.country = country
         self.game = game
         self.m = mission
-        self.unit_map = unit_map
 
     def generate(self) -> None:
         if self.game.position_culled(self.ground_object.position):
@@ -90,10 +89,9 @@ class GenericGroundObjectGenerator:
 
             self.enable_eplrs(vg, unit_type)
             self.set_alarm_state(vg)
-            self._register_unit_group(vg)
 
     @staticmethod
-    def enable_eplrs(group: Group, unit_type: Type[UnitType]) -> None:
+    def enable_eplrs(group: Group, unit_type: UnitType) -> None:
         if hasattr(unit_type, 'eplrs'):
             if unit_type.eplrs:
                 group.points[0].tasks.append(EPLRS(group.id))
@@ -103,9 +101,6 @@ class GenericGroundObjectGenerator:
             group.points[0].tasks.append(OptAlarmState(2))
         else:
             group.points[0].tasks.append(OptAlarmState(1))
-
-    def _register_unit_group(self, group: Group) -> None:
-        self.unit_map.add_ground_object_units(self.ground_object, group)
 
 
 class BuildingSiteGenerator(GenericGroundObjectGenerator):
@@ -138,17 +133,16 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
 
     def generate_vehicle_group(self, unit_type: UnitType) -> None:
         if not self.ground_object.is_dead:
-            group = self.m.vehicle_group(
+            self.m.vehicle_group(
                 country=self.country,
                 name=self.ground_object.group_name,
                 _type=unit_type,
                 position=self.ground_object.position,
                 heading=self.ground_object.heading,
             )
-            self._register_unit_group(group)
 
     def generate_static(self, static_type: StaticType) -> None:
-        group = self.m.static_group(
+        self.m.static_group(
             country=self.country,
             name=self.ground_object.group_name,
             _type=static_type,
@@ -156,11 +150,6 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
             heading=self.ground_object.heading,
             dead=self.ground_object.is_dead,
         )
-        self._register_building(group)
-
-    def _register_building(self, building: StaticGroup) -> None:
-        assert isinstance(self.ground_object, BuildingGroundObject)
-        self.unit_map.add_building(self.ground_object, building)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):
@@ -172,8 +161,8 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
                  control_point: ControlPoint, country: Country, game: Game,
                  mission: Mission, radio_registry: RadioRegistry,
                  tacan_registry: TacanRegistry, icls_alloc: Iterator[int],
-                 runways: Dict[str, RunwayData], unit_map: UnitMap) -> None:
-        super().__init__(ground_object, country, game, mission, unit_map)
+                 runways: Dict[str, RunwayData]) -> None:
+        super().__init__(ground_object, country, game, mission)
         self.ground_object = ground_object
         self.control_point = control_point
         self.radio_registry = radio_registry
@@ -201,9 +190,8 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
             brc = self.steam_into_wind(ship_group)
             self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
             self.add_runway_data(brc or 0, atc, tacan, tacan_callsign, icls)
-            self._register_unit_group(ship_group)
 
-    def get_carrier_type(self, group: Group) -> Type[UnitType]:
+    def get_carrier_type(self, group: Group) -> UnitType:
         unit_type = unit_type_from_name(group.units[0].type)
         if unit_type is None:
             raise RuntimeError(
@@ -340,9 +328,8 @@ class ShipObjectGenerator(GenericGroundObjectGenerator):
 
             self.generate_group(group, unit_type)
 
-    def generate_group(self, group_def: Group,
-                       first_unit_type: Type[UnitType]) -> None:
-        group = self.m.ship_group(self.country, group_def.name, first_unit_type,
+    def generate_group(self, group_def: Group, unit_type: UnitType):
+        group = self.m.ship_group(self.country, group_def.name, unit_type,
                                   position=group_def.position,
                                   heading=group_def.units[0].heading)
         group.units[0].name = self.m.string(group_def.units[0].name)
@@ -356,7 +343,6 @@ class ShipObjectGenerator(GenericGroundObjectGenerator):
             ship.heading = unit.heading
             group.add_unit(ship)
         self.set_alarm_state(group)
-        self._register_unit_group(group)
 
 
 class GroundObjectsGenerator:
@@ -369,13 +355,11 @@ class GroundObjectsGenerator:
     """
 
     def __init__(self, mission: Mission, game: Game,
-                 radio_registry: RadioRegistry, tacan_registry: TacanRegistry,
-                 unit_map: UnitMap) -> None:
+                 radio_registry: RadioRegistry, tacan_registry: TacanRegistry):
         self.m = mission
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.unit_map = unit_map
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
 
@@ -389,26 +373,25 @@ class GroundObjectsGenerator:
 
             for ground_object in cp.ground_objects:
                 if isinstance(ground_object, BuildingGroundObject):
-                    generator = BuildingSiteGenerator(
-                        ground_object, country, self.game, self.m,
-                        self.unit_map)
+                    generator = BuildingSiteGenerator(ground_object, country,
+                                                      self.game, self.m)
                 elif isinstance(ground_object, CarrierGroundObject):
-                    generator = CarrierGenerator(
-                        ground_object, cp, country, self.game, self.m,
-                        self.radio_registry, self.tacan_registry,
-                        self.icls_alloc, self.runways, self.unit_map)
+                    generator = CarrierGenerator(ground_object, cp, country,
+                                                 self.game, self.m,
+                                                 self.radio_registry,
+                                                 self.tacan_registry,
+                                                 self.icls_alloc, self.runways)
                 elif isinstance(ground_object, LhaGroundObject):
-                    generator = CarrierGenerator(
-                        ground_object, cp, country, self.game, self.m,
-                        self.radio_registry, self.tacan_registry,
-                        self.icls_alloc, self.runways, self.unit_map)
+                    generator = CarrierGenerator(ground_object, cp, country,
+                                                 self.game, self.m,
+                                                 self.radio_registry,
+                                                 self.tacan_registry,
+                                                 self.icls_alloc, self.runways)
                 elif isinstance(ground_object, ShipGroundObject):
-                    generator = ShipObjectGenerator(
-                        ground_object, country, self.game, self.m,
-                        self.unit_map)
+                    generator = ShipObjectGenerator(ground_object, country,
+                                                    self.game, self.m)
                 else:
-
-                    generator = GenericGroundObjectGenerator(
-                        ground_object, country, self.game, self.m,
-                        self.unit_map)
+                    generator = GenericGroundObjectGenerator(ground_object,
+                                                             country, self.game,
+                                                             self.m)
                 generator.generate()

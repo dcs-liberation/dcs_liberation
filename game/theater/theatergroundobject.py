@@ -136,10 +136,6 @@ class TheaterGroundObject(MissionTarget):
             ]
         yield from super().mission_types(for_player)
 
-    @property
-    def alive_unit_count(self) -> int:
-        return sum(len(g.units) for g in self.groups)
-
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(self, name: str, category: str, group_id: int, object_id: int,

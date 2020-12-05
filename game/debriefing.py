@@ -6,28 +6,26 @@ import os
 import threading
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Type,
-    TYPE_CHECKING,
-)
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Type, TYPE_CHECKING
 
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
-from game.theater import Airfield, ControlPoint
-from game.unitmap import Building, FrontLineUnit, GroundObjectUnit, UnitMap
+from game.theater import Airfield, ControlPoint, TheaterGroundObject
+from game.unitmap import UnitMap
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
     from game import Game
 
 DEBRIEFING_LOG_EXTENSION = "log"
+
+
+@dataclass(frozen=True)
+class DebriefingDeadUnitInfo:
+    player_unit: bool
+    type: Type[UnitType]
 
 
 @dataclass(frozen=True)
@@ -38,6 +36,27 @@ class DebriefingDeadAircraftInfo:
     @property
     def player_unit(self) -> bool:
         return self.flight.departure.captured
+
+
+@dataclass(frozen=True)
+class DebriefingDeadFrontLineUnitInfo:
+    #: The Flight that resulted in the generated unit.
+    unit_type: Type[UnitType]
+    control_point: ControlPoint
+
+    @property
+    def player_unit(self) -> bool:
+        return self.control_point.captured
+
+
+@dataclass(frozen=True)
+class DebriefingDeadBuildingInfo:
+    #: The ground object this building was present at.
+    ground_object: TheaterGroundObject
+
+    @property
+    def player_unit(self) -> bool:
+        return self.ground_object.control_point.captured
 
 
 @dataclass(frozen=True)
@@ -61,12 +80,18 @@ class AirLosses:
         return flight.count - losses
 
 
-@dataclass
-class GroundLosses:
-    front_line: List[FrontLineUnit] = field(default_factory=list)
-    ground_objects: List[GroundObjectUnit] = field(default_factory=list)
-    buildings: List[Building] = field(default_factory=list)
-    airfields: List[Airfield] = field(default_factory=list)
+@dataclass(frozen=True)
+class FrontLineLosses:
+    losses: List[DebriefingDeadFrontLineUnitInfo]
+
+    def by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        for loss in self.losses:
+            if loss.control_point.captured != player:
+                continue
+
+            losses_by_type[loss.unit_type] += 1
+        return losses_by_type
 
 
 @dataclass(frozen=True)
@@ -106,51 +131,80 @@ class Debriefing:
         self.game = game
         self.unit_map = unit_map
 
+        logging.info("--------------------------------")
+        logging.info("Starting Debriefing preprocessing")
+        logging.info("--------------------------------")
+        logging.info(self.state_data)
+        logging.info("--------------------------------")
+
         self.player_country_id = db.country_id_from_name(game.player_country)
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 
         self.air_losses = self.dead_aircraft()
-        self.ground_losses = self.dead_ground_units()
+        self.front_line_losses = self.dead_front_line_units()
+        self.dead_units = []
+        self.damaged_runways = self.find_damaged_runways()
+        self.dead_aaa_groups: List[DebriefingDeadUnitInfo] = []
+        self.dead_buildings: List[DebriefingDeadBuildingInfo] = []
 
-    @property
-    def front_line_losses(self) -> Iterator[FrontLineUnit]:
-        yield from self.ground_losses.front_line
+        for unit_name in self.state_data.killed_ground_units:
+            for cp in game.theater.controlpoints:
+                if cp.captured:
+                    country = self.player_country_id
+                else:
+                    country = self.enemy_country_id
+                player_unit = (country == self.player_country_id)
 
-    @property
-    def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
-        yield from self.ground_losses.ground_objects
+                for ground_object in cp.ground_objects:
+                    # TODO: This seems to destroy an arbitrary building?
+                    if ground_object.is_same_group(unit_name):
+                        self.dead_buildings.append(
+                            DebriefingDeadBuildingInfo(ground_object))
+                    elif ground_object.dcs_identifier in ["AA", "CARRIER",
+                                                          "LHA"]:
+                        for g in ground_object.groups:
+                            for u in g.units:
+                                if u.name != unit_name:
+                                    continue
+                                unit_type = db.unit_type_from_name(u.type)
+                                if unit_type is None:
+                                    logging.error(
+                                        f"Could not determine type of %s",
+                                        unit_name)
+                                    continue
+                                self.dead_units.append(DebriefingDeadUnitInfo(
+                                    player_unit, unit_type))
 
-    @property
-    def building_losses(self) -> Iterator[Building]:
-        yield from self.ground_losses.buildings
+        self.player_dead_units = [a for a in self.dead_units if a.player_unit]
+        self.enemy_dead_units = [a for a in self.dead_units if not a.player_unit]
+        self.player_dead_buildings = [a for a in self.dead_buildings if a.player_unit]
+        self.enemy_dead_buildings = [a for a in self.dead_buildings if not a.player_unit]
 
-    @property
-    def damaged_runways(self) -> Iterator[Airfield]:
-        yield from self.ground_losses.airfields
+        self.player_dead_units_dict: Dict[Type[UnitType], int] = defaultdict(int)
+        for a in self.player_dead_units:
+            self.player_dead_units_dict[a.type] += 1
 
-    def casualty_count(self, control_point: ControlPoint) -> int:
-        return len(
-            [x for x in self.front_line_losses if x.origin == control_point]
-        )
+        self.enemy_dead_units_dict: Dict[Type[UnitType], int] = defaultdict(int)
+        for a in self.enemy_dead_units:
+            self.enemy_dead_units_dict[a.type] += 1
 
-    def front_line_losses_by_type(
-            self, player: bool) -> Dict[Type[UnitType], int]:
-        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
-        for loss in self.ground_losses.front_line:
-            if loss.origin.captured != player:
-                continue
+        self.player_dead_buildings_dict: Dict[str, int] = defaultdict(int)
+        for b in self.player_dead_buildings:
+            self.player_dead_buildings_dict[b.ground_object.dcs_identifier] += 1
 
-            losses_by_type[loss.unit_type] += 1
-        return losses_by_type
+        self.enemy_dead_buildings_dict: Dict[str, int] = defaultdict(int)
+        for b in self.enemy_dead_buildings:
+            self.enemy_dead_buildings_dict[b.ground_object.dcs_identifier] += 1
 
-    def building_losses_by_type(self, player: bool) -> Dict[str, int]:
-        losses_by_type: Dict[str, int] = defaultdict(int)
-        for loss in self.ground_losses.buildings:
-            if loss.ground_object.control_point.captured != player:
-                continue
-
-            losses_by_type[loss.ground_object.dcs_identifier] += 1
-        return losses_by_type
+        logging.info("--------------------------------")
+        logging.info("Debriefing pre process results :")
+        logging.info("--------------------------------")
+        logging.info(self.air_losses)
+        logging.info(self.front_line_losses)
+        logging.info(self.player_dead_units_dict)
+        logging.info(self.enemy_dead_units_dict)
+        logging.info(self.player_dead_buildings_dict)
+        logging.info(self.enemy_dead_buildings_dict)
 
     def dead_aircraft(self) -> AirLosses:
         losses = []
@@ -162,37 +216,29 @@ class Debriefing:
             losses.append(DebriefingDeadAircraftInfo(flight))
         return AirLosses(losses)
 
-    def dead_ground_units(self) -> GroundLosses:
-        losses = GroundLosses()
+    def dead_front_line_units(self) -> FrontLineLosses:
+        losses = []
         for unit_name in self.state_data.killed_ground_units:
-            front_line_unit = self.unit_map.front_line_unit(unit_name)
-            if front_line_unit is not None:
-                losses.front_line.append(front_line_unit)
+            unit = self.unit_map.front_line_unit(unit_name)
+            if unit is None:
+                # Killed "ground units" might also be runways or TGO units, so
+                # no need to log an error.
                 continue
+            losses.append(
+                DebriefingDeadFrontLineUnitInfo(unit.unit_type, unit.origin))
+        return FrontLineLosses(losses)
 
-            ground_object_unit = self.unit_map.ground_object_unit(unit_name)
-            if ground_object_unit is not None:
-                losses.ground_objects.append(ground_object_unit)
+    def find_damaged_runways(self) -> List[Airfield]:
+        losses = []
+        for name in self.state_data.killed_ground_units:
+            airfield = self.unit_map.airfield(name)
+            if airfield is None:
                 continue
-
-            building = self.unit_map.building(unit_name)
-            if building is not None:
-                losses.buildings.append(building)
-                continue
-
-            airfield = self.unit_map.airfield(unit_name)
-            if airfield is not None:
-                losses.airfields.append(airfield)
-                continue
-
-            # Only logging as debug because we don't currently track infantry
-            # deaths, so we expect to see quite a few unclaimed dead ground
-            # units. We should start tracking those and covert this to a
-            # warning.
-            logging.debug(f"Death of untracked ground unit {unit_name} will "
-                          "have no effect. This may be normal behavior.")
-
+            losses.append(airfield)
         return losses
+
+    def _is_airfield(self, unit_name: str) -> bool:
+        return self.unit_map.airfield(unit_name) is not None
 
     @property
     def base_capture_events(self):

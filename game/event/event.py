@@ -2,20 +2,21 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Dict, List, TYPE_CHECKING, Type
+from collections import defaultdict
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
 from dcs.unittype import UnitType
 
-from game import persistency
+from game import db, persistency
 from game.debriefing import AirLosses, Debriefing
 from game.infos.information import Information
-from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..unitmap import UnitMap
+from game.operation.operation import Operation
 
 if TYPE_CHECKING:
     from ..game import Game
@@ -129,10 +130,12 @@ class Event:
             cp.base.aircraft[aircraft] -= 1
 
     @staticmethod
-    def commit_front_line_losses(debriefing: Debriefing) -> None:
-        for loss in debriefing.front_line_losses:
+    def commit_front_line_losses(debriefing: Debriefing) -> Dict[int, int]:
+        killed_unit_count_by_cp: Dict[int, int] = defaultdict(int)
+        for loss in debriefing.front_line_losses.losses:
             unit_type = loss.unit_type
-            control_point = loss.origin
+            control_point = loss.control_point
+            killed_unit_count_by_cp[control_point.id] += 1
             available = control_point.base.total_units_of_type(unit_type)
             if available <= 0:
                 logging.error(
@@ -142,41 +145,64 @@ class Event:
 
             logging.info(f"{unit_type} destroyed from {control_point}")
             control_point.base.armor[unit_type] -= 1
-
-    @staticmethod
-    def commit_ground_object_losses(debriefing: Debriefing) -> None:
-        for loss in debriefing.ground_object_losses:
-            # TODO: This should be stored in the TGO, not in the pydcs Group.
-            if not hasattr(loss.group, "units_losts"):
-                loss.group.units_losts = []
-
-            loss.group.units.remove(loss.unit)
-            loss.group.units_losts.append(loss.unit)
-            if not loss.ground_object.alive_unit_count:
-                loss.ground_object.is_dead = True
-
-    def commit_building_losses(self, debriefing: Debriefing) -> None:
-        for loss in debriefing.building_losses:
-            loss.ground_object.is_dead = True
-            self.game.informations.append(Information(
-                "Building destroyed",
-                f"{loss.ground_object.dcs_identifier} has been destroyed at "
-                f"location {loss.ground_object.obj_name}", self.game.turn
-            ))
-
-    @staticmethod
-    def commit_damaged_runways(debriefing: Debriefing) -> None:
-        for damaged_runway in debriefing.damaged_runways:
-            damaged_runway.damage_runway()
+        return killed_unit_count_by_cp
 
     def commit(self, debriefing: Debriefing):
         logging.info("Committing mission results")
 
+        for damaged_runway in debriefing.damaged_runways:
+            damaged_runway.damage_runway()
+
         self.commit_air_losses(debriefing)
-        self.commit_front_line_losses(debriefing)
-        self.commit_ground_object_losses(debriefing)
-        self.commit_building_losses(debriefing)
-        self.commit_damaged_runways(debriefing)
+        killed_unit_count_by_cp = self.commit_front_line_losses(debriefing)
+
+        # ------------------------------
+        # Static ground objects
+        for destroyed_ground_unit_name in debriefing.state_data.killed_ground_units:
+            for cp in self.game.theater.controlpoints:
+                if not cp.ground_objects:
+                    continue
+
+                # -- Static ground objects
+                for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.is_dead:
+                        continue
+                        
+                    if (
+                        (ground_object.group_name == destroyed_ground_unit_name)
+                        or
+                        (ground_object.is_same_group(destroyed_ground_unit_name))
+                    ):
+                        logging.info("cp {} killing ground object {}".format(cp, ground_object.group_name))
+                        cp.ground_objects[i].is_dead = True
+
+                        info = Information("Building destroyed",
+                                           ground_object.dcs_identifier + " has been destroyed at location " + ground_object.obj_name,
+                                           self.game.turn)
+                        self.game.informations.append(info)
+
+
+                # -- AA Site groups
+                destroyed_units = 0
+                info = Information("Units destroyed at " + ground_object.obj_name,
+                                   "",
+                                   self.game.turn)
+                for i, ground_object in enumerate(cp.ground_objects):
+                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA", "EWR"]:
+                        for g in ground_object.groups:
+                            if not hasattr(g, "units_losts"):
+                                g.units_losts = []
+                            for u in g.units:
+                                if u.name == destroyed_ground_unit_name:
+                                    g.units.remove(u)
+                                    g.units_losts.append(u)
+                                    destroyed_units = destroyed_units + 1
+                                    info.text = u.type
+                        ucount = sum([len(g.units) for g in ground_object.groups])
+                        if ucount == 0:
+                            ground_object.is_dead = True
+                if destroyed_units > 0:
+                    self.game.informations.append(info)
 
         # ------------------------------
         # Captured bases
@@ -231,8 +257,8 @@ class Event:
 
                 delta = 0.0
                 player_won = True
-                ally_casualties = debriefing.casualty_count(cp)
-                enemy_casualties = debriefing.casualty_count(enemy_cp)
+                ally_casualties = killed_unit_count_by_cp[cp.id]
+                enemy_casualties = killed_unit_count_by_cp[enemy_cp.id]
                 ally_units_alive = cp.base.total_armor
                 enemy_units_alive = enemy_cp.base.total_armor
 
