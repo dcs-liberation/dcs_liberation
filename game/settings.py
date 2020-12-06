@@ -17,7 +17,6 @@ class Settings:
     night_disabled: bool = False
     external_views_allowed: bool = True
     supercarrier: bool = False
-    multiplier: float = 1.0
     generate_marks: bool = True
     manpads: bool = True
     cold_start: bool = False  # Legacy parameter do not use

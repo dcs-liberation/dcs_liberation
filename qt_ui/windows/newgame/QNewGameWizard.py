@@ -81,7 +81,6 @@ class NewGameWizard(QtWidgets.QWizard):
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
-            multiplier=self.field("multiplier") / 10,
             midgame=self.field("midGame"),
             inverted=self.field("invertMap"),
             no_carrier=self.field("no_carrier"),
@@ -359,10 +358,6 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         layout.addWidget(economy_group)
         economy_layout = QtWidgets.QVBoxLayout()
         economy_group.setLayout(economy_layout)
-
-        multiplier = TenthsSpinSlider("Enemy forces multiplier", 1, 50, 10)
-        self.registerField('multiplier', multiplier.spinner)
-        economy_layout.addLayout(multiplier)
 
         player_income = TenthsSpinSlider("Player income multiplier", 1, 50, 10)
         self.registerField("player_income_multiplier", player_income.spinner)

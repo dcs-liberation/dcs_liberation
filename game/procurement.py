@@ -73,12 +73,11 @@ class ProcurementAi:
         if not self.faction.frontline_units:
             return budget
 
-        armor_limit = int(30 * self.game.settings.multiplier)
-        candidates = self.front_line_candidates(armor_limit)
-        if not candidates:
-            return budget
-
         while budget > 0:
+            candidates = self.front_line_candidates()
+            if not candidates:
+                break
+
             cp = random.choice(candidates)
             unit = self.random_affordable_ground_unit(budget)
             if unit is None:
@@ -88,11 +87,6 @@ class ProcurementAi:
             budget -= db.PRICES[unit]
             assert cp.pending_unit_deliveries is not None
             cp.pending_unit_deliveries.deliver({unit: 1})
-
-            if cp.base.total_armor >= armor_limit:
-                candidates.remove(cp)
-                if not candidates:
-                    break
 
         return budget
 
@@ -115,7 +109,11 @@ class ProcurementAi:
 
         while budget > 0:
             group_size = 2
-            cp = random.choice(self.airbase_candidates(group_size))
+            candidates = self.airbase_candidates(group_size)
+            if not candidates:
+                break
+
+            cp = random.choice(candidates)
             unit = self.random_affordable_aircraft_group(budget, group_size)
             if unit is None:
                 # Can't afford any more aircraft.
@@ -156,13 +154,14 @@ class ProcurementAi:
         # Otherwise buy them anywhere valid.
         return all_usable
 
-    def front_line_candidates(self, unit_limit: int) -> List[ControlPoint]:
+    def front_line_candidates(self) -> List[ControlPoint]:
         candidates = []
 
         # Prefer to buy front line units at active front lines that are not
         # already overloaded.
         for cp in self.owned_points:
-            if cp.base.total_armor >= unit_limit:
+            if cp.base.total_armor >= 30:
+                # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:
                 if not connected.is_friendly(to_player=self.is_player):

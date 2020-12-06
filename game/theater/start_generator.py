@@ -69,7 +69,6 @@ class GeneratorSettings:
     start_date: datetime
     player_budget: int
     enemy_budget: int
-    multiplier: float
     midgame: bool
     inverted: bool
     no_carrier: bool
