@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import logging
 import math
 import random
-from typing import List, TYPE_CHECKING, Type
+from typing import List, Optional, TYPE_CHECKING, Type
 
 from dcs.task import CAP, CAS
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import FlyingType, UnitType, VehicleType
 
 from game import db
 from game.factions.faction import Faction
@@ -62,6 +61,14 @@ class ProcurementAi:
                     )
         return budget
 
+    def random_affordable_ground_unit(
+            self, budget: int) -> Optional[Type[VehicleType]]:
+        affordable_units = [u for u in self.faction.frontline_units if
+                            db.PRICES[u] <= budget]
+        if not affordable_units:
+            return None
+        return random.choice(affordable_units)
+
     def reinforce_front_line(self, budget: int) -> int:
         if not self.faction.frontline_units:
             return budget
@@ -71,19 +78,16 @@ class ProcurementAi:
         if not candidates:
             return budget
 
-        # TODO: No need to limit?
-        for _ in range(50):
-            if budget <= 0:
+        while budget > 0:
+            cp = random.choice(candidates)
+            unit = self.random_affordable_ground_unit(budget)
+            if unit is None:
+                # Can't afford any more units.
                 break
 
-            cp = random.choice(candidates)
-            unit = random.choice(self.faction.frontline_units)
-            price = db.PRICES[unit] * 2
-            # TODO: Don't allow negative budget.
-            # Build a list of only affordable units and choose from those.
-            budget -= price * 2
-            cp.base.armor[unit] = cp.base.armor.get(unit, 0) + 2
-            self.reinforcement_message(unit, cp)
+            budget -= db.PRICES[unit]
+            cp.base.armor[unit] = cp.base.armor.get(unit, 0) + 1
+            self.reinforcement_message(unit, cp, group_size=1)
 
             if cp.base.total_armor >= armor_limit:
                 candidates.remove(cp)
@@ -91,6 +95,17 @@ class ProcurementAi:
                     break
 
         return budget
+
+    def random_affordable_aircraft_group(
+            self, budget: int, size: int) -> Optional[Type[FlyingType]]:
+        unit_pool = [u for u in self.faction.aircrafts
+                     if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
+
+        affordable_units = [u for u in unit_pool
+                            if db.PRICES[u] * size <= budget]
+        if not affordable_units:
+            return None
+        return random.choice(affordable_units)
 
     def purchase_aircraft(self, budget: int) -> int:
         aircraft_limit = int(25 * self.game.settings.multiplier)
@@ -103,19 +118,17 @@ class ProcurementAi:
         if not unit_pool:
             return budget
 
-        # TODO: No need to limit?
-        for _ in range(50):
-            if budget <= 0:
+        while budget > 0:
+            cp = random.choice(candidates)
+            group_size = 2
+            unit = self.random_affordable_aircraft_group(budget, group_size)
+            if unit is None:
+                # Can't afford any more aircraft.
                 break
 
-            cp = random.choice(candidates)
-            unit = random.choice(unit_pool)
-            price = db.PRICES[unit] * 2
-            # TODO: Don't allow negative budget.
-            # Build a list of only affordable units and choose from those.
-            budget -= price * 2
-            cp.base.aircraft[unit] = cp.base.aircraft.get(unit, 0) + 2
-            self.reinforcement_message(unit, cp)
+            budget -= db.PRICES[unit] * group_size
+            cp.base.aircraft[unit] = cp.base.aircraft.get(unit, 0) + group_size
+            self.reinforcement_message(unit, cp, group_size)
 
             if cp.base.total_aircraft >= aircraft_limit:
                 candidates.remove(cp)
@@ -125,8 +138,9 @@ class ProcurementAi:
         return budget
 
     def reinforcement_message(self, unit_type: Type[UnitType],
-                              control_point: ControlPoint) -> None:
-        description = f"{unit_type.id} x 2 at {control_point.name}"
+                              control_point: ControlPoint,
+                              group_size: int) -> None:
+        description = f"{unit_type.id} x {group_size} at {control_point.name}"
         if self.is_player:
             self.game.message(f"Our reinforcements: {description}")
         else:
