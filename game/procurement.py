@@ -108,19 +108,14 @@ class ProcurementAi:
         return random.choice(affordable_units)
 
     def purchase_aircraft(self, budget: int) -> int:
-        aircraft_limit = int(25 * self.game.settings.multiplier)
-        candidates = self.airbase_candidates(aircraft_limit)
-        if not candidates:
-            return budget
-
         unit_pool = [u for u in self.faction.aircrafts
                      if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
         if not unit_pool:
             return budget
 
         while budget > 0:
-            cp = random.choice(candidates)
             group_size = 2
+            cp = random.choice(self.airbase_candidates(group_size))
             unit = self.random_affordable_aircraft_group(budget, group_size)
             if unit is None:
                 # Can't afford any more aircraft.
@@ -129,11 +124,6 @@ class ProcurementAi:
             budget -= db.PRICES[unit] * group_size
             assert cp.pending_unit_deliveries is not None
             cp.pending_unit_deliveries.deliver({unit: group_size})
-
-            if cp.base.total_aircraft >= aircraft_limit:
-                candidates.remove(cp)
-                if not candidates:
-                    break
 
         return budget
 
@@ -144,25 +134,27 @@ class ProcurementAi:
         else:
             return self.game.theater.enemy_points()
 
-    def airbase_candidates(self, unit_limit: int) -> List[ControlPoint]:
-        candidates = []
-
-        # Prefer to buy front line units at active front lines that are not
-        # already overloaded.
-        # TODO: Buy aircraft where they are needed, not at front lines.
+    def airbase_candidates(self, group_size: int) -> List[ControlPoint]:
+        all_usable = []
+        preferred = []
         for cp in self.owned_points:
-            if cp.base.total_aircraft >= unit_limit:
+            if not cp.runway_is_operational():
                 continue
+            if cp.unclaimed_parking(self.game) < group_size:
+                continue
+
+            all_usable.append(cp)
             for connected in cp.connected_points:
+                # Prefer to buy aircraft at active front lines.
+                # TODO: Buy aircraft where they are needed, not at front lines.
                 if not connected.is_friendly(to_player=self.is_player):
-                    candidates.append(cp)
+                    preferred.append(cp)
 
-        if not candidates:
-            # Otherwise buy them anywhere valid.
-            candidates = [p for p in self.owned_points
-                          if p.can_deploy_ground_units]
+        if preferred:
+            return preferred
 
-        return candidates
+        # Otherwise buy them anywhere valid.
+        return all_usable
 
     def front_line_candidates(self, unit_limit: int) -> List[ControlPoint]:
         candidates = []
