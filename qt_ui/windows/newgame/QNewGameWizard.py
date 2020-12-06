@@ -29,6 +29,10 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
+
+DEFAULT_BUDGET = 650
+
+
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
@@ -38,7 +42,8 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(IntroPage())
         self.addPage(FactionSelection())
         self.addPage(TheaterConfiguration(self.campaigns))
-        self.addPage(MiscOptions())
+        self.addPage(GeneratorOptions())
+        self.addPage(DifficultyAndAutomationOptions())
         self.addPage(ConclusionPage())
 
         self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
@@ -60,12 +65,20 @@ class NewGameWizard(QtWidgets.QWizard):
             player_income_multiplier=self.field(
                 "player_income_multiplier") / 10,
             enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
+            automate_runway_repair=self.field("automate_runway_repairs"),
+            automate_front_line_reinforcements=self.field(
+                "automate_front_line_purchases"
+            ),
+            automate_aircraft_reinforcements=self.field(
+                "automate_aircraft_purchases"
+            ),
             supercarrier=self.field("supercarrier")
         )
         generator_settings = GeneratorSettings(
             start_date=db.TIME_PERIODS[
                 list(db.TIME_PERIODS.keys())[self.field("timePeriod")]],
-            starting_budget=int(self.field("starting_money")),
+            player_budget=int(self.field("starting_money")),
+            enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
             multiplier=self.field("multiplier") / 10,
@@ -310,13 +323,13 @@ class CurrencySpinner(QtWidgets.QSpinBox):
 
 
 class BudgetInputs(QtWidgets.QGridLayout):
-    def __init__(self) -> None:
+    def __init__(self, label: str) -> None:
         super().__init__()
-        self.addWidget(QtWidgets.QLabel("Starting money"), 0, 0)
+        self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
         minimum = 0
         maximum = 5000
-        initial = 650
+        initial = DEFAULT_BUDGET
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
         slider.setMinimum(minimum)
@@ -330,25 +343,76 @@ class BudgetInputs(QtWidgets.QGridLayout):
         self.addWidget(self.starting_money, 1, 1)
 
 
-class MiscOptions(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(MiscOptions, self).__init__(parent)
+class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
 
-        self.setTitle("Miscellaneous settings")
-        self.setSubTitle("\nOthers settings for the game.")
+        self.setTitle("Difficulty and automation options")
+        self.setSubTitle("\nOptions controlling game difficulty and level of "
+                         "player involvement.")
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
+        layout = QtWidgets.QVBoxLayout()
+
+        economy_group = QtWidgets.QGroupBox("Economy options")
+        layout.addWidget(economy_group)
+        economy_layout = QtWidgets.QVBoxLayout()
+        economy_group.setLayout(economy_layout)
+
         multiplier = TenthsSpinSlider("Enemy forces multiplier", 1, 50, 10)
         self.registerField('multiplier', multiplier.spinner)
+        economy_layout.addLayout(multiplier)
 
         player_income = TenthsSpinSlider("Player income multiplier", 1, 50, 10)
         self.registerField("player_income_multiplier", player_income.spinner)
+        economy_layout.addLayout(player_income)
 
         enemy_income = TenthsSpinSlider("Enemy income multiplier", 1, 50, 10)
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
+        economy_layout.addLayout(enemy_income)
 
-        miscSettingsGroup = QtWidgets.QGroupBox("Misc Settings")
+        player_budget = BudgetInputs("Player starting budget")
+        self.registerField('starting_money', player_budget.starting_money)
+        economy_layout.addLayout(player_budget)
+
+        enemy_budget = BudgetInputs("Enemy starting budget")
+        self.registerField("enemy_starting_money", enemy_budget.starting_money)
+        economy_layout.addLayout(enemy_budget)
+
+        assist_group = QtWidgets.QGroupBox("Player assists")
+        layout.addWidget(assist_group)
+        assist_layout = QtWidgets.QGridLayout()
+        assist_group.setLayout(assist_layout)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate runway repairs"), 0, 0)
+        runway_repairs = QtWidgets.QCheckBox()
+        self.registerField("automate_runway_repairs", runway_repairs)
+        assist_layout.addWidget(runway_repairs, 0, 1, Qt.AlignRight)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate front-line purchases"), 1, 0)
+        front_line = QtWidgets.QCheckBox()
+        self.registerField("automate_front_line_purchases", front_line)
+        assist_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate aircraft purchases"), 2, 0)
+        aircraft = QtWidgets.QCheckBox()
+        self.registerField("automate_aircraft_purchases", aircraft)
+        assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
+
+        self.setLayout(layout)
+
+
+class GeneratorOptions(QtWidgets.QWizardPage):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setTitle("Generator settings")
+        self.setSubTitle("\nOptions affecting the generation of the game.")
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
+                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
         # Campaign settings
         generatorSettingsGroup = QtWidgets.QGroupBox("Generator Settings")
@@ -363,12 +427,6 @@ class MiscOptions(QtWidgets.QWizardPage):
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField('no_enemy_navy', no_enemy_navy)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addLayout(multiplier, 0, 0)
-        layout.addLayout(player_income, 1, 0)
-        layout.addLayout(enemy_income, 2, 0)
-        miscSettingsGroup.setLayout(layout)
-
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
         generatorLayout.addWidget(no_carrier, 1, 1)
@@ -382,15 +440,8 @@ class MiscOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorSettingsGroup.setLayout(generatorLayout)
 
-        budget_inputs = BudgetInputs()
-        economySettingsGroup = QtWidgets.QGroupBox("Economy")
-        economySettingsGroup.setLayout(budget_inputs)
-        self.registerField('starting_money', budget_inputs.starting_money)
-
         mlayout = QVBoxLayout()
-        mlayout.addWidget(miscSettingsGroup)
         mlayout.addWidget(generatorSettingsGroup)
-        mlayout.addWidget(economySettingsGroup)
         self.setLayout(mlayout)
 
 

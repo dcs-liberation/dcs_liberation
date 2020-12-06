@@ -61,9 +61,6 @@ ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 # cost of AWACS for single operation
 AWACS_BUDGET_COST = 4
 
-# Initial budget value
-PLAYER_BUDGET_INITIAL = 650
-
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
@@ -71,7 +68,8 @@ PLAYER_BUDGET_IMPORTANCE_LOG = 2
 class Game:
     def __init__(self, player_name: str, enemy_name: str,
                  theater: ConflictTheater, start_date: datetime,
-                 settings: Settings):
+                 settings: Settings, player_budget: int,
+                 enemy_budget: int) -> None:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
@@ -90,8 +88,8 @@ class Game:
         self.compute_conflicts_position()
         self.__destroyed_units: List[str] = []
         self.savepath = ""
-        self.budget = PLAYER_BUDGET_INITIAL
-        self.enemy_budget = PLAYER_BUDGET_INITIAL
+        self.budget = player_budget
+        self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
 

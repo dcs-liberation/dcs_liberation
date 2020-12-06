@@ -67,7 +67,8 @@ COUNT_BY_TASK = {
 @dataclass(frozen=True)
 class GeneratorSettings:
     start_date: datetime
-    starting_budget: int
+    player_budget: int
+    enemy_budget: int
     multiplier: float
     midgame: bool
     inverted: bool
@@ -91,14 +92,17 @@ class GameGenerator:
         # Reset name generator
         namegen.reset()
         self.prepare_theater()
-        game = Game(player_name=self.player,
-                    enemy_name=self.enemy,
-                    theater=self.theater,
-                    start_date=self.generator_settings.start_date,
-                    settings=self.settings)
+        game = Game(
+            player_name=self.player,
+            enemy_name=self.enemy,
+            theater=self.theater,
+            start_date=self.generator_settings.start_date,
+            settings=self.settings,
+            player_budget=self.generator_settings.player_budget,
+            enemy_budget=self.generator_settings.enemy_budget
+        )
 
         GroundObjectGenerator(game, self.generator_settings).generate()
-        game.budget = self.generator_settings.starting_budget
         game.settings.version = VERSION
         return game
 

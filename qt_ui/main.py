@@ -23,6 +23,7 @@ from qt_ui import (
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.newgame.QCampaignList import Campaign
+from qt_ui.windows.newgame.QNewGameWizard import DEFAULT_BUDGET
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import \
     QLiberationFirstStartWindow
 
@@ -133,7 +134,8 @@ def create_game(campaign_path: Path, blue: str, red: str,
         Settings(supercarrier=supercarrier),
         GeneratorSettings(
             start_date=datetime.today(),
-            starting_budget=650,
+            player_budget=DEFAULT_BUDGET,
+            enemy_budget=DEFAULT_BUDGET,
             multiplier=1.0,
             midgame=False,
             inverted=False,
