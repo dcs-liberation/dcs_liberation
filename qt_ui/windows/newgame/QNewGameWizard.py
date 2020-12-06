@@ -256,8 +256,13 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         invertMap = QtWidgets.QCheckBox()
         self.registerField('invertMap', invertMap)
         mapSettingsLayout = QtWidgets.QGridLayout()
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 1, 0)
-        mapSettingsLayout.addWidget(invertMap, 1, 1)
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
+        mapSettingsLayout.addWidget(invertMap, 0, 1)
+
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
+        midgame = QtWidgets.QCheckBox()
+        self.registerField('midGame', midgame)
+        mapSettingsLayout.addWidget(midgame, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -334,7 +339,6 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
-        midGame = QtWidgets.QCheckBox()
         multiplier = TenthsSpinSlider("Enemy forces multiplier", 1, 50, 10)
         self.registerField('multiplier', multiplier.spinner)
 
@@ -345,7 +349,6 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
 
         miscSettingsGroup = QtWidgets.QGroupBox("Misc Settings")
-        self.registerField('midGame', midGame)
 
         # Campaign settings
         generatorSettingsGroup = QtWidgets.QGroupBox("Generator Settings")
@@ -361,11 +364,9 @@ class MiscOptions(QtWidgets.QWizardPage):
         self.registerField('no_enemy_navy', no_enemy_navy)
 
         layout = QtWidgets.QGridLayout()
-        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        layout.addWidget(midGame, 1, 1)
-        layout.addLayout(multiplier, 2, 0)
-        layout.addLayout(player_income, 3, 0)
-        layout.addLayout(enemy_income, 4, 0)
+        layout.addLayout(multiplier, 0, 0)
+        layout.addLayout(player_income, 1, 0)
+        layout.addLayout(enemy_income, 2, 0)
         miscSettingsGroup.setLayout(layout)
 
         generatorLayout = QtWidgets.QGridLayout()
