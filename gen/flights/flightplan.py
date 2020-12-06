@@ -69,8 +69,6 @@ class FlightPlan:
         """A list of all waypoints in the flight plan, in order."""
         return list(self.iter_waypoints())
 
-    
-
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         """Iterates over all waypoints in the flight plan, in order."""
         raise NotImplementedError

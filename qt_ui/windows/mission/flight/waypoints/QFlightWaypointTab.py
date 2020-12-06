@@ -104,7 +104,8 @@ class QFlightWaypointTab(QFrame):
                 return
 
         self.degrade_to_custom_flight_plan()
-        self.flight.flight_plan.waypoints.remove(waypoint)
+        assert isinstance(self.flight.flight_plan, CustomFlightPlan)
+        self.flight.flight_plan.custom_waypoints.remove(waypoint)
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)

@@ -1,4 +1,3 @@
-import itertools
 from datetime import timedelta
 
 from PySide2.QtCore import QItemSelectionModel, QPoint
@@ -32,10 +31,6 @@ class QFlightWaypointList(QTableView):
         self.update_list()
 
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
-        self.selectionModel().selectionChanged.connect(self.on_waypoint_selected_changed)
-
-    def on_waypoint_selected_changed(self):
-        index = self.selectionModel().currentIndex().row()
 
     def update_list(self):
         self.model.clear()
