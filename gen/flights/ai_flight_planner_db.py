@@ -1,3 +1,6 @@
+import logging
+from typing import List, Type
+
 from dcs.helicopters import (
     AH_1W,
     AH_64A,
@@ -80,19 +83,22 @@ from dcs.planes import (
     WingLoong_I,
     I_16
 )
+from dcs.unittype import FlyingType
 
-# Interceptor are the aircraft prioritized for interception tasks
-# If none is available, the AI will use regular CAP-capable aircraft instead
+from gen.flights.flight import FlightType
+
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
+from pydcs_extensions.su57.su57 import Su_57
 
 # TODO: These lists really ought to be era (faction) dependent.
 # Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
 # factions that also have F-4s should not.
-from pydcs_extensions.su57.su57 import Su_57
 
+# Interceptor are the aircraft prioritized for interception tasks
+# If none is available, the AI will use regular CAP-capable aircraft instead
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
     MiG_25PD,
@@ -529,3 +535,52 @@ DRONES = [
     RQ_1A_Predator,
     WingLoong_I
 ]
+
+
+def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    if task in cap_missions:
+        return CAP_PREFERRED
+    elif task == FlightType.ANTISHIP:
+        return ANTISHIP_PREFERRED
+    elif task == FlightType.BAI:
+        return CAS_CAPABLE
+    elif task == FlightType.CAS:
+        return CAS_PREFERRED
+    elif task in (FlightType.DEAD, FlightType.SEAD):
+        return SEAD_PREFERRED
+    elif task == FlightType.OCA_AIRCRAFT:
+        return CAS_PREFERRED
+    elif task == FlightType.OCA_RUNWAY:
+        return RUNWAY_ATTACK_PREFERRED
+    elif task == FlightType.STRIKE:
+        return STRIKE_PREFERRED
+    elif task == FlightType.ESCORT:
+        return CAP_PREFERRED
+    else:
+        return []
+
+
+def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    if task in cap_missions:
+        return CAP_CAPABLE
+    elif task == FlightType.ANTISHIP:
+        return ANTISHIP_CAPABLE
+    elif task == FlightType.BAI:
+        return CAS_CAPABLE
+    elif task == FlightType.CAS:
+        return CAS_CAPABLE
+    elif task in (FlightType.DEAD, FlightType.SEAD):
+        return SEAD_CAPABLE
+    elif task == FlightType.OCA_AIRCRAFT:
+        return CAS_CAPABLE
+    elif task == FlightType.OCA_RUNWAY:
+        return RUNWAY_ATTACK_CAPABLE
+    elif task == FlightType.STRIKE:
+        return STRIKE_CAPABLE
+    elif task == FlightType.ESCORT:
+        return CAP_CAPABLE
+    else:
+        logging.error(f"Unplannable flight type: {task}")
+        return []

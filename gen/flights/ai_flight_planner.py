@@ -21,6 +21,7 @@ from dcs.unittype import FlyingType
 from game import db
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
+from game.procurement import AircraftProcurementRequest
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -50,7 +51,7 @@ from gen.flights.ai_flight_planner_db import (
     SEAD_CAPABLE,
     SEAD_PREFERRED,
     STRIKE_CAPABLE,
-    STRIKE_PREFERRED,
+    STRIKE_PREFERRED, capable_aircraft_for_task, preferred_aircraft_for_task,
 )
 from gen.flights.closestairfields import (
     ClosestAirfields,
@@ -142,62 +143,13 @@ class AircraftAllocator:
         responsible for returning them to the inventory.
         """
         result = self.find_aircraft_of_type(
-            flight, self.preferred_aircraft_for_task(flight.task)
+            flight, preferred_aircraft_for_task(flight.task)
         )
         if result is not None:
             return result
         return self.find_aircraft_of_type(
-            flight, self.capable_aircraft_for_task(flight.task)
+            flight, capable_aircraft_for_task(flight.task)
         )
-
-    @staticmethod
-    def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
-        if task in cap_missions:
-            return CAP_PREFERRED
-        elif task == FlightType.ANTISHIP:
-            return ANTISHIP_PREFERRED
-        elif task == FlightType.BAI:
-            return CAS_CAPABLE
-        elif task == FlightType.CAS:
-            return CAS_PREFERRED
-        elif task in (FlightType.DEAD, FlightType.SEAD):
-            return SEAD_PREFERRED
-        elif task == FlightType.OCA_AIRCRAFT:
-            return CAS_PREFERRED
-        elif task == FlightType.OCA_RUNWAY:
-            return RUNWAY_ATTACK_PREFERRED
-        elif task == FlightType.STRIKE:
-            return STRIKE_PREFERRED
-        elif task == FlightType.ESCORT:
-            return CAP_PREFERRED
-        else:
-            return []
-
-    @staticmethod
-    def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-        cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
-        if task in cap_missions:
-            return CAP_CAPABLE
-        elif task == FlightType.ANTISHIP:
-            return ANTISHIP_CAPABLE
-        elif task == FlightType.BAI:
-            return CAS_CAPABLE
-        elif task == FlightType.CAS:
-            return CAS_CAPABLE
-        elif task in (FlightType.DEAD, FlightType.SEAD):
-            return SEAD_CAPABLE
-        elif task == FlightType.OCA_AIRCRAFT:
-            return CAS_CAPABLE
-        elif task == FlightType.OCA_RUNWAY:
-            return RUNWAY_ATTACK_CAPABLE
-        elif task == FlightType.STRIKE:
-            return STRIKE_CAPABLE
-        elif task == FlightType.ESCORT:
-            return CAP_CAPABLE
-        else:
-            logging.error(f"Unplannable flight type: {task}")
-            return []
 
     def find_aircraft_of_type(
             self, flight: ProposedFlight, types: List[Type[FlyingType]],
@@ -528,6 +480,7 @@ class CoalitionMissionPlanner:
         self.is_player = is_player
         self.objective_finder = ObjectiveFinder(self.game, self.is_player)
         self.ato = self.game.blue_ato if is_player else self.game.red_ato
+        self.procurement_requests: List[AircraftProcurementRequest] = []
 
     def propose_missions(self) -> Iterator[ProposedMission]:
         """Identifies and iterates over potential mission in priority order."""
@@ -620,6 +573,12 @@ class CoalitionMissionPlanner:
         for proposed_flight in mission.flights:
             if not builder.plan_flight(proposed_flight):
                 missing_types.add(proposed_flight.task)
+                self.procurement_requests.append(AircraftProcurementRequest(
+                    near=mission.location,
+                    range=proposed_flight.max_distance,
+                    task_capability=proposed_flight.task,
+                    number=proposed_flight.num_aircraft
+                ))
 
         if missing_types:
             missing_types_str = ", ".join(

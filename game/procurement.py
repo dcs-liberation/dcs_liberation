@@ -1,23 +1,33 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import math
 import random
-from typing import List, Optional, TYPE_CHECKING, Type
+from typing import Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.task import CAP, CAS
 from dcs.unittype import FlyingType, UnitType, VehicleType
 
 from game import db
 from game.factions.faction import Faction
-from game.theater import ControlPoint
+from game.theater import ControlPoint, MissionTarget
+from gen.flights.ai_flight_planner_db import (
+    capable_aircraft_for_task,
+    preferred_aircraft_for_task,
+)
+from gen.flights.closestairfields import ObjectiveDistanceCache
+from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
     from game import Game
 
 
-class AircraftProcurer:
-    def __init__(self, faction: Faction) -> None:
-        self.faction = faction
+@dataclass(frozen=True)
+class AircraftProcurementRequest:
+    near: MissionTarget
+    range: int
+    task_capability: FlightType
+    number: int
 
 
 class ProcurementAi:
@@ -31,7 +41,9 @@ class ProcurementAi:
         self.manage_front_line = manage_front_line
         self.manage_aircraft = manage_aircraft
 
-    def spend_budget(self, budget: int) -> int:
+    def spend_budget(
+            self, budget: int,
+            aircraft_requests: List[AircraftProcurementRequest]) -> int:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
@@ -39,7 +51,7 @@ class ProcurementAi:
             budget -= armor_budget
             budget += self.reinforce_front_line(armor_budget)
         if self.manage_aircraft:
-            budget = self.purchase_aircraft(budget)
+            budget = self.purchase_aircraft(budget, aircraft_requests)
         return budget
 
     def repair_runways(self, budget: int) -> int:
@@ -90,38 +102,52 @@ class ProcurementAi:
 
         return budget
 
-    def random_affordable_aircraft_group(
-            self, budget: int, size: int) -> Optional[Type[FlyingType]]:
-        unit_pool = [u for u in self.faction.aircrafts
-                     if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
-
-        affordable_units = [u for u in unit_pool
-                            if db.PRICES[u] * size <= budget]
+    def _affordable_aircraft_of_types(
+            self, types: List[Type[FlyingType]], airbase: ControlPoint,
+            number: int, max_price: int) -> Optional[Type[FlyingType]]:
+        unit_pool = [u for u in self.faction.aircrafts if u in types]
+        affordable_units = [
+            u for u in unit_pool
+            if db.PRICES[u] * number <= max_price and airbase.can_operate(u)
+        ]
         if not affordable_units:
             return None
         return random.choice(affordable_units)
 
-    def purchase_aircraft(self, budget: int) -> int:
+    def affordable_aircraft_for(
+            self, request: AircraftProcurementRequest,
+            airbase: ControlPoint, budget: int) -> Optional[Type[FlyingType]]:
+        aircraft = self._affordable_aircraft_of_types(
+            preferred_aircraft_for_task(request.task_capability),
+            airbase, request.number, budget)
+        if aircraft is not None:
+            return aircraft
+        return self._affordable_aircraft_of_types(
+            capable_aircraft_for_task(request.task_capability),
+            airbase, request.number, budget)
+
+    def purchase_aircraft(
+            self, budget: int,
+            aircraft_requests: List[AircraftProcurementRequest]) -> int:
         unit_pool = [u for u in self.faction.aircrafts
                      if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
         if not unit_pool:
             return budget
 
-        while budget > 0:
-            group_size = 2
-            candidates = self.airbase_candidates(group_size)
-            if not candidates:
-                break
+        for request in aircraft_requests:
+            for airbase in self.best_airbases_for(request):
+                unit = self.affordable_aircraft_for(request, airbase, budget)
+                if unit is None:
+                    # Can't afford any aircraft capable of performing the
+                    # required mission that can operate from this airbase. We
+                    # might be able to afford aircraft at other airbases though,
+                    # in the case where the airbase we attempted to use is only
+                    # able to operate expensive aircraft.
+                    continue
 
-            cp = random.choice(candidates)
-            unit = self.random_affordable_aircraft_group(budget, group_size)
-            if unit is None:
-                # Can't afford any more aircraft.
-                break
-
-            budget -= db.PRICES[unit] * group_size
-            assert cp.pending_unit_deliveries is not None
-            cp.pending_unit_deliveries.deliver({unit: group_size})
+                budget -= db.PRICES[unit] * request.number
+                assert airbase.pending_unit_deliveries is not None
+                airbase.pending_unit_deliveries.deliver({unit: request.number})
 
         return budget
 
@@ -132,27 +158,20 @@ class ProcurementAi:
         else:
             return self.game.theater.enemy_points()
 
-    def airbase_candidates(self, group_size: int) -> List[ControlPoint]:
-        all_usable = []
-        preferred = []
-        for cp in self.owned_points:
+    def best_airbases_for(
+            self,
+            request: AircraftProcurementRequest) -> Iterator[ControlPoint]:
+        distance_cache = ObjectiveDistanceCache.get_closest_airfields(
+            request.near
+        )
+        for cp in distance_cache.airfields_within(request.range):
+            if not cp.is_friendly(self.is_player):
+                continue
             if not cp.runway_is_operational():
                 continue
-            if cp.unclaimed_parking(self.game) < group_size:
+            if cp.unclaimed_parking(self.game) < request.number:
                 continue
-
-            all_usable.append(cp)
-            for connected in cp.connected_points:
-                # Prefer to buy aircraft at active front lines.
-                # TODO: Buy aircraft where they are needed, not at front lines.
-                if not connected.is_friendly(to_player=self.is_player):
-                    preferred.append(cp)
-
-        if preferred:
-            return preferred
-
-        # Otherwise buy them anywhere valid.
-        return all_usable
+            yield cp
 
     def front_line_candidates(self) -> List[ControlPoint]:
         candidates = []

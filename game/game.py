@@ -106,9 +106,19 @@ class Game:
             cp.pending_unit_deliveries = self.units_delivery_event(cp)
 
         self.sanitize_sides()
-        # Turn 0 procurement.
-        self.plan_procurement()
+
         self.on_load()
+
+        # Turn 0 procurement. We don't actually have any missions to plan, but
+        # the planner will tell us what it would like to plan so we can use that
+        # to drive purchase decisions.
+        blue_planner = CoalitionMissionPlanner(self, is_player=True)
+        blue_planner.plan_missions()
+
+        red_planner = CoalitionMissionPlanner(self, is_player=False)
+        red_planner.plan_missions()
+
+        self.plan_procurement(blue_planner, red_planner)
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(self.theater, self.date,
@@ -164,6 +174,7 @@ class Game:
         self.budget += self.budget_reward_amount
 
     def process_enemy_income(self):
+        # TODO: Clean up save compat.
         if not hasattr(self, "enemy_budget"):
             self.enemy_budget = 0
 
@@ -262,17 +273,23 @@ class Game:
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
-        CoalitionMissionPlanner(self, is_player=True).plan_missions()
-        CoalitionMissionPlanner(self, is_player=False).plan_missions()
+
+        blue_planner = CoalitionMissionPlanner(self, is_player=True)
+        blue_planner.plan_missions()
+
+        red_planner = CoalitionMissionPlanner(self, is_player=False)
+        red_planner.plan_missions()
+
         for cp in self.theater.controlpoints:
             if cp.has_frontline:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
 
-        self.plan_procurement()
+        self.plan_procurement(blue_planner, red_planner)
 
-    def plan_procurement(self) -> None:
+    def plan_procurement(self, blue_planner: CoalitionMissionPlanner,
+                         red_planner: CoalitionMissionPlanner) -> None:
         self.budget = ProcurementAi(
             self,
             for_player=True,
@@ -280,7 +297,7 @@ class Game:
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements
-        ).spend_budget(self.budget)
+        ).spend_budget(self.budget, blue_planner.procurement_requests)
 
         self.enemy_budget = ProcurementAi(
             self,
@@ -289,7 +306,7 @@ class Game:
             manage_runways=True,
             manage_front_line=True,
             manage_aircraft=True
-        ).spend_budget(self.enemy_budget)
+        ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))
