@@ -1404,6 +1404,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.JOIN: JoinPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
+            FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
@@ -1760,4 +1761,19 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
             waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
                                                 targets=[Targets.All.Air]))
 
+        return waypoint
+
+
+class RaceTrackEndBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
+            flight_plan_type = self.flight.flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create race track for {self.flight} because "
+                f"{flight_plan_type} does not define a patrol.")
+            return waypoint
+
+        self.waypoint.departure_time = self.flight.flight_plan.patrol_end_time
         return waypoint
