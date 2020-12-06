@@ -51,7 +51,7 @@ class QTimeTurnWidget(QGroupBox):
         self.date_display.setText(conditions.start_time.strftime("%d %b %Y"))
         self.time_display.setText(
             conditions.start_time.strftime("%H:%M:%S Local"))
-        self.setTitle("Turn " + str(turn + 1))
+        self.setTitle(f"Turn {turn}")
 
 class QWeatherWidget(QGroupBox):
     """
