@@ -22,6 +22,8 @@ class Settings:
     manpads: bool = True
     cold_start: bool = False  # Legacy parameter do not use
     version: Optional[str] = None
+    player_income_multiplier: float = 1.0
+    enemy_income_multiplier: float = 1.0
 
     # Performance oriented
     perf_red_alert_state: bool = True

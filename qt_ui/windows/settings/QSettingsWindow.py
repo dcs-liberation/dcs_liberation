@@ -24,6 +24,7 @@ import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
+from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
@@ -150,6 +151,15 @@ class QSettingsWindow(QDialog):
         self.enemyCoalitionSkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_skill))
         self.enemyAASkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_vehicle_skill))
 
+        self.player_income = TenthsSpinSlider(
+            "Player income multiplier", 1, 50,
+            int(self.game.settings.player_income_multiplier * 10))
+        self.player_income.spinner.valueChanged.connect(self.applySettings)
+        self.enemy_income = TenthsSpinSlider(
+            "Enemy income multiplier", 1, 50,
+            int(self.game.settings.enemy_income_multiplier * 10))
+        self.enemy_income.spinner.valueChanged.connect(self.applySettings)
+
         self.playerCoalitionSkill.currentIndexChanged.connect(self.applySettings)
         self.enemyCoalitionSkill.currentIndexChanged.connect(self.applySettings)
         self.enemyAASkill.currentIndexChanged.connect(self.applySettings)
@@ -203,6 +213,8 @@ class QSettingsWindow(QDialog):
         self.aiDifficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
         self.aiDifficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
         self.aiDifficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
+        self.aiDifficultyLayout.addLayout(self.player_income, 3, 0)
+        self.aiDifficultyLayout.addLayout(self.enemy_income, 4, 0)
         self.aiDifficultySettings.setLayout(self.aiDifficultyLayout)
         self.difficultyLayout.addWidget(self.aiDifficultySettings)
 
@@ -377,6 +389,8 @@ class QSettingsWindow(QDialog):
         self.game.settings.player_skill = CONST.SKILL_OPTIONS[self.playerCoalitionSkill.currentIndex()]
         self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[self.enemyCoalitionSkill.currentIndex()]
         self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
+        self.game.settings.player_income_multiplier = self.player_income.value
+        self.game.settings.enemy_income_multiplier = self.enemy_income.value
         self.game.settings.manpads = self.manpads.isChecked()
         self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
         self.game.settings.night_disabled = self.noNightMission.isChecked()

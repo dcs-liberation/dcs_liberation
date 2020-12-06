@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.settings import Settings
+from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
@@ -56,7 +57,10 @@ class NewGameWizard(QtWidgets.QWizard):
             campaign = self.campaigns[0]
 
         settings = Settings(
-            supercarrier=self.field("supercarrier"),
+            player_income_multiplier=self.field(
+                "player_income_multiplier") / 10,
+            enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
+            supercarrier=self.field("supercarrier")
         )
         generator_settings = GeneratorSettings(
             start_date=db.TIME_PERIODS[
@@ -321,44 +325,6 @@ class BudgetInputs(QtWidgets.QGridLayout):
         self.addWidget(self.starting_money, 1, 1)
 
 
-class ForceMultiplierSpinner(QtWidgets.QSpinBox):
-    def __init__(self, minimum: Optional[int] = None,
-                 maximum: Optional[int] = None,
-                 initial: Optional[int] = None) -> None:
-        super().__init__()
-
-        if minimum is not None:
-            self.setMinimum(minimum)
-        if maximum is not None:
-            self.setMaximum(maximum)
-        if initial is not None:
-            self.setValue(initial)
-
-    def textFromValue(self, val: int) -> str:
-        return f"X {val / 10:.1f}"
-
-
-class ForceMultiplierInputs(QtWidgets.QGridLayout):
-    def __init__(self) -> None:
-        super().__init__()
-        self.addWidget(QtWidgets.QLabel("Enemy forces multiplier"), 0, 0)
-
-        minimum = 1
-        maximum = 50
-        initial = 10
-
-        slider = QtWidgets.QSlider(Qt.Horizontal)
-        slider.setMinimum(minimum)
-        slider.setMaximum(maximum)
-        slider.setValue(initial)
-        self.multiplier = ForceMultiplierSpinner(minimum, maximum, initial)
-        slider.valueChanged.connect(lambda x: self.multiplier.setValue(x))
-        self.multiplier.valueChanged.connect(lambda x: slider.setValue(x))
-
-        self.addWidget(slider, 1, 0)
-        self.addWidget(self.multiplier, 1, 1)
-
-
 class MiscOptions(QtWidgets.QWizardPage):
     def __init__(self, parent=None):
         super(MiscOptions, self).__init__(parent)
@@ -369,9 +335,14 @@ class MiscOptions(QtWidgets.QWizardPage):
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
         midGame = QtWidgets.QCheckBox()
-        multiplier_inputs = ForceMultiplierInputs()
-        self.registerField('multiplier', multiplier_inputs.multiplier)
+        multiplier = TenthsSpinSlider("Enemy forces multiplier", 1, 50, 10)
+        self.registerField('multiplier', multiplier.spinner)
 
+        player_income = TenthsSpinSlider("Player income multiplier", 1, 50, 10)
+        self.registerField("player_income_multiplier", player_income.spinner)
+
+        enemy_income = TenthsSpinSlider("Enemy income multiplier", 1, 50, 10)
+        self.registerField("enemy_income_multiplier", enemy_income.spinner)
 
         miscSettingsGroup = QtWidgets.QGroupBox("Misc Settings")
         self.registerField('midGame', midGame)
@@ -392,7 +363,9 @@ class MiscOptions(QtWidgets.QWizardPage):
         layout = QtWidgets.QGridLayout()
         layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
         layout.addWidget(midGame, 1, 1)
-        layout.addLayout(multiplier_inputs, 2, 0)
+        layout.addLayout(multiplier, 2, 0)
+        layout.addLayout(player_income, 3, 0)
+        layout.addLayout(enemy_income, 4, 0)
         miscSettingsGroup.setLayout(layout)
 
         generatorLayout = QtWidgets.QGridLayout()

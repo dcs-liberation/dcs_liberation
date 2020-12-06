@@ -150,17 +150,13 @@ class Game:
                                         front_line.control_point_b)
 
     @property
-    def budget_reward_amount(self):
-        reward = 0
-        if len(self.theater.player_points()) > 0:
-            reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
-            for cp in self.theater.player_points():
-                for g in cp.ground_objects:
-                    if g.category in REWARDS.keys() and not g.is_dead:
-                        reward = reward + REWARDS[g.category]
-            return reward
-        else:
-            return reward
+    def budget_reward_amount(self) -> int:
+        reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
+        for cp in self.theater.player_points():
+            for g in cp.ground_objects:
+                if g.category in REWARDS.keys() and not g.is_dead:
+                    reward += REWARDS[g.category]
+        return int(reward * self.settings.player_income_multiplier)
 
     def _budget_player(self):
         self.budget += self.budget_reward_amount
@@ -182,7 +178,8 @@ class Game:
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        self.budget += event.bonus()
+        self.budget += int(event.bonus() *
+                           self.settings.player_income_multiplier)
 
         if event in self.events:
             self.events.remove(event)
@@ -272,8 +269,7 @@ class Game:
                 if g.category in REWARDS.keys() and not g.is_dead:
                     production = production + REWARDS[g.category]
 
-        # TODO: Why doesn't the enemy get the full budget?
-        budget = production * 0.75
+        budget = production * self.settings.enemy_income_multiplier
 
         for control_point in self.theater.enemy_points():
             if budget < db.RUNWAY_REPAIR_COST:

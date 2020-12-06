@@ -64,7 +64,11 @@ class QFinancesMenu(QDialog):
 
         self.setLayout(layout)
 
-        layout.addWidget(QHorizontalSeparationLine(), i+1, 0, 1, 3)
-
-        layout.addWidget(QLabel("<b>" + str(self.game.budget_reward_amount) + "M </b>"), i+2, 2)
-
+        layout.addWidget(QHorizontalSeparationLine(), i + 1, 0, 1, 3)
+        layout.addWidget(QLabel(
+            f"Income multiplier: {game.settings.player_income_multiplier:.1f}"),
+            i + 2, 1
+        )
+        layout.addWidget(
+            QLabel("<b>" + str(self.game.budget_reward_amount) + "M </b>"),
+            i + 2, 2)
