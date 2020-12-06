@@ -12,7 +12,9 @@ class QLiberationScene(QGraphicsScene):
         item.setDefaultTextColor(CONST.COLORS["white"])
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
+        super(QLiberationScene, self).mouseMoveEvent(event)
         self.parent().sceneMouseMovedEvent(event)
 
     def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
+        super(QLiberationScene, self).mousePressEvent(event)
         self.parent().sceneMousePressEvent(event)
