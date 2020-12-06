@@ -282,6 +282,11 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     @abstractmethod
+    def can_deploy_ground_units(self) -> bool:
+        ...
+
+    @property
+    @abstractmethod
     def total_aircraft_parking(self):
         """
         :return: The maximum number of aircraft that can be stored in this
@@ -498,6 +503,10 @@ class Airfield(ControlPoint):
     def parking_slots(self) -> Iterator[ParkingSlot]:
         yield from self.airport.parking_slots
 
+    @property
+    def can_deploy_ground_units(self) -> bool:
+        return True
+
 
 class NavalControlPoint(ControlPoint, ABC):
 
@@ -552,6 +561,10 @@ class NavalControlPoint(ControlPoint, ABC):
     @property
     def moveable(self) -> bool:
         return True
+
+    @property
+    def can_deploy_ground_units(self) -> bool:
+        return False
 
 
 class Carrier(NavalControlPoint):
@@ -637,6 +650,10 @@ class OffMapSpawn(ControlPoint):
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus()
 
+    @property
+    def can_deploy_ground_units(self) -> bool:
+        return False
+
 
 class Fob(ControlPoint):
 
@@ -684,3 +701,7 @@ class Fob(ControlPoint):
     @property
     def heading(self) -> int:
         return 0
+
+    @property
+    def can_deploy_ground_units(self) -> bool:
+        return True
