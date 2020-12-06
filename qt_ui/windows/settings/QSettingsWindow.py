@@ -248,7 +248,7 @@ class QSettingsWindow(QDialog):
         campaign_layout.setAlignment(Qt.AlignTop)
         self.campaign_management_page.setLayout(campaign_layout)
 
-        automation = QGroupBox("HQ Automation (WORK IN PROGRESS)")
+        automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 
         automation_layout = QGridLayout()
