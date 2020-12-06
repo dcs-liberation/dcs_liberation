@@ -140,6 +140,10 @@ class TheaterGroundObject(MissionTarget):
     def alive_unit_count(self) -> int:
         return sum(len(g.units) for g in self.groups)
 
+    @property
+    def might_have_aa(self) -> bool:
+        return False
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(self, name: str, category: str, group_id: int, object_id: int,
@@ -174,6 +178,10 @@ class NavalGroundObject(TheaterGroundObject):
         if not self.is_friendly(for_player):
             yield FlightType.ANTISHIP
         yield from super().mission_types(for_player)
+
+    @property
+    def might_have_aa(self) -> bool:
+        return True
 
 
 class GenericCarrierGroundObject(NavalGroundObject):
@@ -282,6 +290,10 @@ class SamGroundObject(BaseDefenseGroundObject):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
 
+    @property
+    def might_have_aa(self) -> bool:
+        return True
+
 
 class VehicleGroupGroundObject(BaseDefenseGroundObject):
     def __init__(self, name: str, group_id: int, position: Point,
@@ -324,6 +336,10 @@ class EwrGroundObject(BaseDefenseGroundObject):
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
+
+    @property
+    def might_have_aa(self) -> bool:
+        return True
 
 
 class ShipGroundObject(NavalGroundObject):

@@ -27,7 +27,7 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.theater import ControlPoint, Enum
+from game.theater import ControlPoint, Enum, NavalControlPoint
 from game.theater.conflicttheater import FrontLine
 from game.theater.theatergroundobject import (
     EwrGroundObject,
@@ -243,15 +243,9 @@ class QLiberationMap(QGraphicsView):
             scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
     
     @staticmethod
-    def ground_object_display_options(ground_object: TheaterGroundObject, cp: ControlPoint) -> Tuple[bool, bool]:
-        is_missile = isinstance(ground_object, MissileSiteGroundObject)
-        is_aa = ground_object.category == "aa" and not is_missile
-        is_ewr = isinstance(ground_object, EwrGroundObject)
-        is_display_type = is_aa or is_ewr
-        should_display = ((DisplayOptions.sam_ranges and cp.captured)
-                            or
-                            (DisplayOptions.enemy_sam_ranges and not cp.captured))
-        return is_display_type, should_display
+    def should_display_ground_objects_at(cp: ControlPoint) -> bool:
+        return ((DisplayOptions.sam_ranges and cp.captured) or
+                (DisplayOptions.enemy_sam_ranges and not cp.captured))
     
     def draw_threat_range(self, scene: QGraphicsScene, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
         go_pos = self._transform_point(ground_object.position)
@@ -286,9 +280,8 @@ class QLiberationMap(QGraphicsView):
                 buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
             
-            is_display_type, should_display = self.ground_object_display_options(ground_object, cp)
-
-            if is_display_type and should_display:
+            should_display = self.should_display_ground_objects_at(cp)
+            if ground_object.might_have_aa and should_display:
                self.draw_threat_range(scene, ground_object, cp)
             added_objects.append(ground_object.obj_name)
         
