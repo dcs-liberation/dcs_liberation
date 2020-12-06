@@ -123,15 +123,25 @@ def parse_args() -> argparse.Namespace:
         help="Use the supercarrier module."
     )
 
+    new_game.add_argument(
+        "--auto-procurement", action="store_true",
+        help="Automate bluefor procurement."
+    )
+
     return parser.parse_args()
 
 
 def create_game(campaign_path: Path, blue: str, red: str,
-                supercarrier: bool) -> Game:
+                supercarrier: bool, auto_procurement: bool) -> Game:
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue, red, campaign.load_theater(),
-        Settings(supercarrier=supercarrier),
+        Settings(
+            supercarrier=supercarrier,
+            automate_runway_repair=auto_procurement,
+            automate_front_line_reinforcements=auto_procurement,
+            automate_aircraft_reinforcements=auto_procurement
+        ),
         GeneratorSettings(
             start_date=datetime.today(),
             player_budget=DEFAULT_BUDGET,
@@ -159,7 +169,7 @@ def main():
     args = parse_args()
     if args.subcommand == "new-game":
         game = create_game(args.campaign, args.blue, args.red,
-                           args.supercarrier)
+                           args.supercarrier, args.auto_procurement)
 
     run_ui(game)
 
