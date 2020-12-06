@@ -15,7 +15,7 @@ from qt_ui.windows.newgame.QCampaignList import (
     QCampaignList,
     load_campaigns,
 )
-from game.theater.start_generator import GameGenerator
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),
@@ -51,43 +51,37 @@ class NewGameWizard(QtWidgets.QWizard):
         logging.info("New Game Wizard accept")
         logging.info("======================")
 
-        blueFaction = [c for c in db.FACTIONS][self.field("blueFaction")]
-        redFaction = [c for c in db.FACTIONS][self.field("redFaction")]
-
-        selectedCampaign = self.field("selectedCampaign")
-        if selectedCampaign is None:
-            selectedCampaign = self.campaigns[0]
-
-        conflictTheater = selectedCampaign.load_theater()
-
-        timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
-        midGame = self.field("midGame")
-        # QSlider forces integers, so we use 1 to 50 and divide by 10 to give
-        # 0.1 to 5.0.
-        multiplier = self.field("multiplier") / 10
-        no_carrier = self.field("no_carrier")
-        no_lha = self.field("no_lha")
-        supercarrier = self.field("supercarrier")
-        no_player_navy = self.field("no_player_navy")
-        no_enemy_navy = self.field("no_enemy_navy")
-        invertMap = self.field("invertMap")
-        starting_money = int(self.field("starting_money"))
-
-        player_name = blueFaction
-        enemy_name = redFaction
+        campaign = self.field("selectedCampaign")
+        if campaign is None:
+            campaign = self.campaigns[0]
 
         settings = Settings(
-            inverted=invertMap,
-            supercarrier=supercarrier,
-            do_not_generate_carrier=no_carrier,
-            do_not_generate_lha=no_lha,
-            do_not_generate_player_navy=no_player_navy,
-            do_not_generate_enemy_navy=no_enemy_navy
+            supercarrier=self.field("supercarrier"),
+        )
+        generator_settings = GeneratorSettings(
+            start_date=db.TIME_PERIODS[
+                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]],
+            starting_budget=int(self.field("starting_money")),
+            # QSlider forces integers, so we use 1 to 50 and divide by 10 to
+            # give 0.1 to 5.0.
+            multiplier=self.field("multiplier") / 10,
+            midgame=self.field("midGame"),
+            inverted=self.field("invertMap"),
+            no_carrier=self.field("no_carrier"),
+            no_lha=self.field("no_lha"),
+            no_player_navy=self.field("no_player_navy"),
+            no_enemy_navy=self.field("no_enemy_navy")
         )
 
-        generator = GameGenerator(player_name, enemy_name, conflictTheater,
-                                  settings, timePeriod, starting_money,
-                                  multiplier, midGame)
+        blue_faction = [c for c in db.FACTIONS][self.field("blueFaction")]
+        red_faction = [c for c in db.FACTIONS][self.field("redFaction")]
+        generator = GameGenerator(
+            blue_faction,
+            red_faction,
+            campaign.load_theater(),
+            settings,
+            generator_settings
+        )
         self.generatedGame = generator.generate()
 
         super(NewGameWizard, self).accept()

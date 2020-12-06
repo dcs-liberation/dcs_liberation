@@ -4,7 +4,9 @@ import logging
 import math
 import pickle
 import random
-from typing import Any, Dict, Iterable, Optional, Set
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, Iterable, List, Optional, Set
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -12,8 +14,7 @@ from dcs.vehicles import AirDefence
 
 from game import Game, db
 from game.factions.faction import Faction
-from game.settings import Settings
-from game.theater import LocationType
+from game.theater import Carrier, Lha, LocationType
 from game.theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
@@ -44,9 +45,10 @@ from . import (
     ConflictTheater,
     ControlPoint,
     ControlPointType,
-    OffMapSpawn,
     Fob,
+    OffMapSpawn,
 )
+from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
@@ -62,18 +64,28 @@ COUNT_BY_TASK = {
 }
 
 
+@dataclass(frozen=True)
+class GeneratorSettings:
+    start_date: datetime
+    starting_budget: int
+    multiplier: float
+    midgame: bool
+    inverted: bool
+    no_carrier: bool
+    no_lha: bool
+    no_player_navy: bool
+    no_enemy_navy: bool
+
+
 class GameGenerator:
     def __init__(self, player: str, enemy: str, theater: ConflictTheater,
-                 settings: Settings, start_date, starting_budget: int,
-                 multiplier: float, midgame: bool) -> None:
+                 settings: Settings,
+                 generator_settings: GeneratorSettings) -> None:
         self.player = player
         self.enemy = enemy
         self.theater = theater
         self.settings = settings
-        self.start_date = start_date
-        self.starting_budget = starting_budget
-        self.multiplier = multiplier
-        self.midgame = midgame
+        self.generator_settings = generator_settings
 
     def generate(self) -> Game:
         # Reset name generator
@@ -83,35 +95,30 @@ class GameGenerator:
         game = Game(player_name=self.player,
                     enemy_name=self.enemy,
                     theater=self.theater,
-                    start_date=self.start_date,
+                    start_date=self.generator_settings.start_date,
                     settings=self.settings)
 
-        GroundObjectGenerator(game).generate()
-        game.budget = self.starting_budget
-        game.settings.multiplier = self.multiplier
-        game.settings.sams = True
+        GroundObjectGenerator(game, self.generator_settings).generate()
+        game.budget = self.generator_settings.starting_budget
         game.settings.version = VERSION
         return game
 
     def prepare_theater(self) -> None:
-        to_remove = []
+        to_remove: List[ControlPoint] = []
         # Auto-capture half the bases if midgame.
-        if self.midgame:
+        if self.generator_settings.midgame:
             control_points = self.theater.controlpoints
             for control_point in control_points[:len(control_points) // 2]:
                 control_point.captured = True
 
         # Remove carrier and lha, invert situation if needed
         for cp in self.theater.controlpoints:
-            no_carrier = self.settings.do_not_generate_carrier
-            no_lha = self.settings.do_not_generate_lha
-            if cp.cptype is ControlPointType.AIRCRAFT_CARRIER_GROUP and \
-                    no_carrier:
+            if isinstance(cp, Carrier) and self.generator_settings.no_carrier:
                 to_remove.append(cp)
-            elif cp.cptype is ControlPointType.LHA_GROUP and no_lha:
+            elif isinstance(cp, Lha) and self.generator_settings.no_lha:
                 to_remove.append(cp)
 
-            if self.settings.inverted:
+            if self.generator_settings.inverted:
                 cp.captured = cp.captured_invert
 
         # do remove
@@ -120,7 +127,7 @@ class GameGenerator:
 
         # TODO: Fix this. This captures all bases for blue.
         # reapply midgame inverted if needed
-        if self.midgame and self.settings.inverted:
+        if self.generator_settings.midgame and self.generator_settings.inverted:
             for i, cp in enumerate(reversed(self.theater.controlpoints)):
                 if i > len(self.theater.controlpoints):
                     break
@@ -163,9 +170,10 @@ class GameGenerator:
 
             count_log = math.log(control_point.importance + 0.01,
                                  UNIT_COUNT_IMPORTANCE_LOG)
-            count = max(
-                COUNT_BY_TASK[task] * self.multiplier * (1 + count_log), 1
-            )
+            count = max((COUNT_BY_TASK[task] *
+                         self.generator_settings.multiplier *
+                         (count_log + 1)),
+                        1)
 
             count_per_type = max(int(float(count) / len(unit_types)), 1)
             for unit_type in unit_types:
@@ -316,8 +324,10 @@ class LocationFinder:
 
 
 class ControlPointGroundObjectGenerator:
-    def __init__(self, game: Game, control_point: ControlPoint) -> None:
+    def __init__(self, game: Game, generator_settings: GeneratorSettings,
+                 control_point: ControlPoint) -> None:
         self.game = game
+        self.generator_settings = generator_settings
         self.control_point = control_point
         self.location_finder = LocationFinder(game, control_point)
 
@@ -344,11 +354,11 @@ class ControlPointGroundObjectGenerator:
         return True
 
     def generate_navy(self) -> None:
-        skip_player_navy = self.game.settings.do_not_generate_player_navy
+        skip_player_navy = self.generator_settings.no_player_navy
         if self.control_point.captured and skip_player_navy:
             return
 
-        skip_enemy_navy = self.game.settings.do_not_generate_enemy_navy
+        skip_enemy_navy = self.generator_settings.no_enemy_navy
         if not self.control_point.captured and skip_enemy_navy:
             return
 
@@ -538,6 +548,8 @@ class BaseDefenseGenerator:
             return
         g.groups.append(group)
         self.control_point.base_defenses.append(g)
+
+
 class FobDefenseGenerator(BaseDefenseGenerator):
     def generate(self) -> None:
         self.generate_garrison()
@@ -559,10 +571,12 @@ class FobDefenseGenerator(BaseDefenseGenerator):
             else:
                 self.generate_garrison()
 
+
 class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
-    def __init__(self, game: Game, control_point: ControlPoint,
+    def __init__(self, game: Game, generator_settings: GeneratorSettings,
+                 control_point: ControlPoint,
                  templates: GroundObjectTemplates) -> None:
-        super().__init__(game, control_point)
+        super().__init__(game, generator_settings, control_point)
         self.templates = templates
 
     def generate(self) -> bool:
@@ -699,6 +713,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point.connected_objectives.append(g)
         return
 
+
 class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
     def generate(self) -> bool:
         self.generate_fob()
@@ -729,9 +744,12 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
                 unit["heading"], self.control_point, unit["type"], airbase_group=True)
             self.control_point.connected_objectives.append(g)
 
+
 class GroundObjectGenerator:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game,
+                 generator_settings: GeneratorSettings) -> None:
         self.game = game
+        self.generator_settings = generator_settings
         with open("resources/groundobject_templates.p", "rb") as f:
             self.templates: GroundObjectTemplates = pickle.load(f)
 
@@ -746,15 +764,20 @@ class GroundObjectGenerator:
     def generate_for_control_point(self, control_point: ControlPoint) -> bool:
         generator: ControlPointGroundObjectGenerator
         if control_point.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
-            generator = CarrierGroundObjectGenerator(self.game, control_point)
+            generator = CarrierGroundObjectGenerator(
+                self.game, self.generator_settings, control_point)
         elif control_point.cptype == ControlPointType.LHA_GROUP:
-            generator = LhaGroundObjectGenerator(self.game, control_point)
+            generator = LhaGroundObjectGenerator(
+                self.game, self.generator_settings, control_point)
         elif isinstance(control_point, OffMapSpawn):
-            generator = NoOpGroundObjectGenerator(self.game, control_point)
+            generator = NoOpGroundObjectGenerator(
+                self.game, self.generator_settings, control_point)
         elif isinstance(control_point, Fob):
-            generator = FobGroundObjectGenerator(self.game, control_point,
-                                                 self.templates)
+            generator = FobGroundObjectGenerator(
+                self.game, self.generator_settings, control_point,
+                self.templates)
         else:
-            generator = AirbaseGroundObjectGenerator(self.game, control_point,
-                                                     self.templates)
+            generator = AirbaseGroundObjectGenerator(
+                self.game, self.generator_settings, control_point,
+                self.templates)
         return generator.generate()

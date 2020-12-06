@@ -13,7 +13,7 @@ from PySide2.QtWidgets import QApplication, QSplashScreen
 
 from game import Game, db, persistency, VERSION
 from game.settings import Settings
-from game.theater.start_generator import GameGenerator
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
     liberation_install,
     liberation_theme,
@@ -128,11 +128,21 @@ def parse_args() -> argparse.Namespace:
 def create_game(campaign_path: Path, blue: str, red: str,
                 supercarrier: bool) -> Game:
     campaign = Campaign.from_json(campaign_path)
-    generator = GameGenerator(blue, red, campaign.load_theater(),
-                              Settings(supercarrier=supercarrier),
-                              start_date=datetime.today(),
-                              starting_budget=650,
-                              multiplier=1, midgame=False)
+    generator = GameGenerator(
+        blue, red, campaign.load_theater(),
+        Settings(supercarrier=supercarrier),
+        GeneratorSettings(
+            start_date=datetime.today(),
+            starting_budget=650,
+            multiplier=1.0,
+            midgame=False,
+            inverted=False,
+            no_carrier=False,
+            no_lha=False,
+            no_player_navy=False,
+            no_enemy_navy=False
+        )
+    )
     return generator.generate()
 
 

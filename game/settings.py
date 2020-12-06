@@ -6,12 +6,6 @@ from dcs.forcedoptions import ForcedOptions
 
 @dataclass
 class Settings:
-    # Generator settings
-    inverted: bool = False
-    do_not_generate_carrier: bool = False
-    do_not_generate_lha: bool = False
-    do_not_generate_player_navy: bool = False
-    do_not_generate_enemy_navy: bool = False
 
     # Difficulty settings
     player_skill: str = "Good"
@@ -25,7 +19,6 @@ class Settings:
     supercarrier: bool = False
     multiplier: float = 1.0
     generate_marks: bool = True
-    sams: bool = True  # Legacy parameter do not use
     manpads: bool = True
     cold_start: bool = False  # Legacy parameter do not use
     version: Optional[str] = None
