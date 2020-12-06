@@ -243,9 +243,9 @@ class Game:
             self,
             for_player=True,
             faction=self.player_faction,
-            manage_runways=False,
-            manage_front_line=False,
-            manage_aircraft=False
+            manage_runways=self.settings.automate_runway_repair,
+            manage_front_line=self.settings.automate_front_line_reinforcements,
+            manage_aircraft=self.settings.automate_aircraft_reinforcements
         ).spend_budget(self.budget)
 
         if not no_action and self.turn > 1:

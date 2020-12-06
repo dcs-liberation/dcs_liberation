@@ -55,6 +55,7 @@ class QSettingsWindow(QDialog):
         self.game = game
         self.pluginsPage = None
         self.pluginsOptionsPage = None
+        self.campaign_management_page = QWidget()
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -82,6 +83,14 @@ class QSettingsWindow(QDialog):
         difficulty.setSelectable(True)
         self.categoryModel.appendRow(difficulty)
         self.right_layout.addWidget(self.difficultyPage)
+
+        self.init_campaign_management_layout()
+        campaign_management = QStandardItem("Campaign Management")
+        campaign_management.setIcon(CONST.ICONS["Money"])
+        campaign_management.setEditable(False)
+        campaign_management.setSelectable(True)
+        self.categoryModel.appendRow(campaign_management)
+        self.right_layout.addWidget(self.campaign_management_page)
 
         self.initGeneratorLayout()
         generator = QStandardItem("Mission Generator")
@@ -234,6 +243,50 @@ class QSettingsWindow(QDialog):
         self.missionRestrictionsSettings.setLayout(self.missionRestrictionsLayout)
         self.difficultyLayout.addWidget(self.missionRestrictionsSettings)
 
+    def init_campaign_management_layout(self) -> None:
+        campaign_layout = QVBoxLayout()
+        campaign_layout.setAlignment(Qt.AlignTop)
+        self.campaign_management_page.setLayout(campaign_layout)
+
+        automation = QGroupBox("HQ Automation (WORK IN PROGRESS)")
+        campaign_layout.addWidget(automation)
+
+        automation_layout = QGridLayout()
+        automation.setLayout(automation_layout)
+
+        def set_runway_automation(value: bool) -> None:
+            self.game.settings.automate_runway_repair = value
+
+        def set_front_line_automation(value: bool) -> None:
+            self.game.settings.automate_front_line_reinforcements = value
+
+        def set_aircraft_automation(value: bool) -> None:
+            self.game.settings.automate_aircraft_reinforcements = value
+
+        runway_repair = QCheckBox()
+        runway_repair.setChecked(
+            self.game.settings.automate_runway_repair)
+        runway_repair.toggled.connect(set_runway_automation)
+
+        automation_layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
+        automation_layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
+
+        front_line = QCheckBox()
+        front_line.setChecked(
+            self.game.settings.automate_front_line_reinforcements)
+        front_line.toggled.connect(set_front_line_automation)
+
+        automation_layout.addWidget(
+            QLabel("Automate front-line purchases"), 1, 0)
+        automation_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
+
+        aircraft = QCheckBox()
+        aircraft.setChecked(
+            self.game.settings.automate_aircraft_reinforcements)
+        aircraft.toggled.connect(set_aircraft_automation)
+
+        automation_layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
+        automation_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()

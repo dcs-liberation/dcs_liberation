@@ -25,6 +25,11 @@ class Settings:
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
 
+    # Campaign management
+    automate_runway_repair: bool = False
+    automate_front_line_reinforcements: bool = False
+    automate_aircraft_reinforcements: bool = False
+
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True
