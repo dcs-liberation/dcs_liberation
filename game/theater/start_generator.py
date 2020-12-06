@@ -91,7 +91,6 @@ class GameGenerator:
         # Reset name generator
         namegen.reset()
         self.prepare_theater()
-        self.populate_red_airbases()
         game = Game(player_name=self.player,
                     enemy_name=self.enemy,
                     theater=self.theater,
@@ -133,51 +132,6 @@ class GameGenerator:
                     break
                 else:
                     cp.captured = True
-
-    def populate_red_airbases(self) -> None:
-        for control_point in self.theater.enemy_points():
-            if control_point.captured:
-                continue
-            self.populate_red_airbase(control_point)
-
-    def populate_red_airbase(self, control_point: ControlPoint) -> None:
-        # Force reset cp on generation
-        control_point.base.aircraft = {}
-        control_point.base.armor = {}
-        control_point.base.aa = {}
-        control_point.base.commision_points = {}
-        control_point.base.strength = 1
-
-        # The tasks here are confusing. PinpointStrike for some reason means
-        # ground units.
-        for task in [PinpointStrike, CAP, CAS, AirDefence]:
-            if isinstance(control_point, OffMapSpawn):
-                # Off-map spawn locations start with no aircraft.
-                continue
-
-            if IMPORTANCE_HIGH <= control_point.importance <= IMPORTANCE_LOW:
-                raise ValueError(
-                    f"CP importance must be between {IMPORTANCE_LOW} and "
-                    f"{IMPORTANCE_HIGH}, is {control_point.importance}")
-
-            importance_factor = ((control_point.importance - IMPORTANCE_LOW) /
-                                 (IMPORTANCE_HIGH - IMPORTANCE_LOW))
-            # noinspection PyTypeChecker
-            unit_types = db.choose_units(task, importance_factor, UNIT_VARIETY,
-                                         self.enemy)
-            if not unit_types:
-                continue
-
-            count_log = math.log(control_point.importance + 0.01,
-                                 UNIT_COUNT_IMPORTANCE_LOG)
-            count = max((COUNT_BY_TASK[task] *
-                         self.generator_settings.multiplier *
-                         (count_log + 1)),
-                        1)
-
-            count_per_type = max(int(float(count) / len(unit_types)), 1)
-            for unit_type in unit_types:
-                control_point.base.commision_units({unit_type: count_per_type})
 
 
 class LocationFinder:

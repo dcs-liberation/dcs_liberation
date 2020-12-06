@@ -86,8 +86,8 @@ class ProcurementAi:
                 break
 
             budget -= db.PRICES[unit]
-            cp.base.armor[unit] = cp.base.armor.get(unit, 0) + 1
-            self.reinforcement_message(unit, cp, group_size=1)
+            assert cp.pending_unit_deliveries is not None
+            cp.pending_unit_deliveries.deliver({unit: 1})
 
             if cp.base.total_armor >= armor_limit:
                 candidates.remove(cp)
@@ -127,8 +127,8 @@ class ProcurementAi:
                 break
 
             budget -= db.PRICES[unit] * group_size
-            cp.base.aircraft[unit] = cp.base.aircraft.get(unit, 0) + group_size
-            self.reinforcement_message(unit, cp, group_size)
+            assert cp.pending_unit_deliveries is not None
+            cp.pending_unit_deliveries.deliver({unit: group_size})
 
             if cp.base.total_aircraft >= aircraft_limit:
                 candidates.remove(cp)
@@ -136,15 +136,6 @@ class ProcurementAi:
                     break
 
         return budget
-
-    def reinforcement_message(self, unit_type: Type[UnitType],
-                              control_point: ControlPoint,
-                              group_size: int) -> None:
-        description = f"{unit_type.id} x {group_size} at {control_point.name}"
-        if self.is_player:
-            self.game.message(f"Our reinforcements: {description}")
-        else:
-            self.game.message(f"OPFOR reinforcements: {description}")
 
     @property
     def owned_points(self) -> List[ControlPoint]:

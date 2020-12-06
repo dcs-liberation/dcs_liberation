@@ -374,7 +374,11 @@ class UnitsDeliveryEvent(Event):
 
     def skip(self) -> None:
         for k, v in self.units.items():
-            info = Information("Ally Reinforcement", str(k.id) + " x " + str(v) + " at " + self.to_cp.name, self.game.turn)
-            self.game.informations.append(info)
+            if self.to_cp.captured:
+                name = "Ally "
+            else:
+                name = "Enemy "
+            self.game.message(
+                f"{name} reinforcements: {k.id} x {v} at {self.to_cp.name}")
 
         self.to_cp.base.commision_units(self.units)
