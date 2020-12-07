@@ -1,19 +1,11 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from PySide2.QtCore import QObject, Signal
 
 from game import Game
-from game.event import Event, Debriefing
-
-
-class DebriefingSignal:
-
-    def __init__(self, game, gameEvent, debriefing):
-        self.game = game
-        self.gameEvent = gameEvent
-        self.debriefing = debriefing
+from game.event import Debriefing
 
 
 class GameUpdateSignal(QObject):
@@ -21,7 +13,7 @@ class GameUpdateSignal(QObject):
     instance = None
     gameupdated = Signal(Game)
     budgetupdated = Signal(Game)
-    debriefingReceived = Signal(DebriefingSignal)
+    debriefingReceived = Signal(Debriefing)
 
     flight_paths_changed = Signal()
     package_selection_changed = Signal(int)  # -1 indicates no selection.
@@ -51,12 +43,9 @@ class GameUpdateSignal(QObject):
         # noinspection PyUnresolvedReferences
         self.budgetupdated.emit(game)
 
-    def sendDebriefing(self, game: Game, gameEvent: Event, debriefing: Debriefing):
-        sig = DebriefingSignal(game, gameEvent, debriefing)
+    def sendDebriefing(self, debriefing: Debriefing) -> None:
         # noinspection PyUnresolvedReferences
-        self.gameupdated.emit(game)
-        # noinspection PyUnresolvedReferences
-        self.debriefingReceived.emit(sig)
+        self.debriefingReceived.emit(debriefing)
 
     @staticmethod
     def get_instance() -> GameUpdateSignal:

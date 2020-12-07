@@ -10,23 +10,20 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
+from game import db
 from game.debriefing import Debriefing
-from game.game import Event, Game, db
 
 
 class QDebriefingWindow(QDialog):
 
-    def __init__(self, debriefing: Debriefing, gameEvent: Event, game: Game):
+    def __init__(self, debriefing: Debriefing):
         super(QDebriefingWindow, self).__init__()
+        self.debriefing = debriefing
 
         self.setModal(True)
         self.setWindowTitle("Debriefing")
         self.setMinimumSize(300, 200)
         self.setWindowIcon(QIcon("./resources/icon.png"))
-
-        self.game = game
-        self.gameEvent = gameEvent
-        self.debriefing = debriefing
 
         self.initUI()
 
@@ -45,7 +42,8 @@ class QDebriefingWindow(QDialog):
         self.layout.addWidget(title)
 
         # Player lost units
-        lostUnits = QGroupBox(self.game.player_country + "'s lost units :")
+        lostUnits = QGroupBox(
+            f"{self.debriefing.player_country}'s lost units:")
         lostUnitsLayout = QGridLayout()
         lostUnits.setLayout(lostUnitsLayout)
 
@@ -87,7 +85,8 @@ class QDebriefingWindow(QDialog):
         self.layout.addWidget(lostUnits)
 
         # Enemy lost units
-        enemylostUnits = QGroupBox(self.game.enemy_country + "'s lost units :")
+        enemylostUnits = QGroupBox(
+            f"{self.debriefing.enemy_country}'s lost units:")
         enemylostUnitsLayout = QGridLayout()
         enemylostUnits.setLayout(enemylostUnitsLayout)
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 
@@ -37,7 +39,7 @@ class DebriefingFileWrittenSignal(QObject):
         self.debriefingReceived.emit(debriefing)
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> DebriefingFileWrittenSignal:
         return DebriefingFileWrittenSignal.instance
 
 
@@ -185,7 +187,8 @@ class QWaitingForMissionResultWindow(QDialog):
         self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
         self.game.pass_turn()
 
-        GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, self.debriefing)
+        GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
+        GameUpdateSignal.get_instance().updateGame(self.game)
         self.close()
 
     def debriefing_directory_location(self) -> str:

@@ -18,6 +18,7 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
+from game.debriefing import Debriefing
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
@@ -286,9 +287,9 @@ class QLiberationWindow(QMainWindow):
         self.subwindow = QLiberationPreferencesWindow()
         self.subwindow.show()
 
-    def onDebriefing(self, debrief: DebriefingSignal):
+    def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")
-        self.debriefing = QDebriefingWindow(debrief.debriefing, debrief.gameEvent, debrief.game)
+        self.debriefing = QDebriefingWindow(debrief)
         self.debriefing.show()
 
     def closeEvent(self, event: QCloseEvent) -> None:

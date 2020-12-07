@@ -103,9 +103,10 @@ class Debriefing:
     def __init__(self, state_data: Dict[str, Any], game: Game,
                  unit_map: UnitMap) -> None:
         self.state_data = StateData.from_json(state_data)
-        self.game = game
         self.unit_map = unit_map
 
+        self.player_country = game.player_country
+        self.enemy_country = game.enemy_country
         self.player_country_id = db.country_id_from_name(game.player_country)
         self.enemy_country_id = db.country_id_from_name(game.enemy_country)
 
