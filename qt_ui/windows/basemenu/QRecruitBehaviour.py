@@ -125,10 +125,7 @@ class QRecruitBehaviour:
         parent = self.parent()
         while parent.objectName != "menuDialogue":
             parent = parent.parent()
-        for child in parent.children():
-            if child.objectName() == "budgetField":
-                child.setText(
-                    QRecruitBehaviour.BUDGET_FORMAT.format(self.budget))
+        parent.update_dialogue_budget(self.budget)
 
     def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]

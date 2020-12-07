@@ -170,3 +170,10 @@ class QBaseMenu2(QDialog):
 
     def new_package(self) -> None:
         Dialog.open_new_package_dialog(self.cp, parent=self.window())
+
+    def update_dialogue_budget(self, budget):
+        GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
+        for child in self.children():
+            if child.objectName() == "budgetField":
+                child.setText(
+                    QRecruitBehaviour.BUDGET_FORMAT.format(budget))
