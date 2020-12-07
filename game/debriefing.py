@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import json
 import logging
 import os
@@ -31,42 +32,42 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 
 @dataclass(frozen=True)
-class DebriefingDeadAircraftInfo:
-    #: The Flight that resulted in the generated unit.
-    flight: Flight
+class AirLosses:
+    player: List[Flight]
+    enemy: List[Flight]
 
     @property
-    def player_unit(self) -> bool:
-        return self.flight.departure.captured
-
-
-@dataclass(frozen=True)
-class AirLosses:
-    losses: List[DebriefingDeadAircraftInfo]
+    def losses(self) -> Iterator[Flight]:
+        return itertools.chain(self.player, self.enemy)
 
     def by_type(self, player: bool) -> Dict[Type[FlyingType], int]:
         losses_by_type: Dict[Type[FlyingType], int] = defaultdict(int)
-        for loss in self.losses:
-            if loss.flight.departure.captured != player:
-                continue
-
-            losses_by_type[loss.flight.unit_type] += 1
+        losses = self.player if player else self.enemy
+        for loss in losses:
+            losses_by_type[loss.unit_type] += 1
         return losses_by_type
 
     def surviving_flight_members(self, flight: Flight) -> int:
         losses = 0
         for loss in self.losses:
-            if loss.flight == flight:
+            if loss == flight:
                 losses += 1
         return flight.count - losses
 
 
 @dataclass
 class GroundLosses:
-    front_line: List[FrontLineUnit] = field(default_factory=list)
-    ground_objects: List[GroundObjectUnit] = field(default_factory=list)
-    buildings: List[Building] = field(default_factory=list)
-    airfields: List[Airfield] = field(default_factory=list)
+    player_front_line: List[FrontLineUnit] = field(default_factory=list)
+    enemy_front_line: List[FrontLineUnit] = field(default_factory=list)
+
+    player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
+    enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
+
+    player_buildings: List[Building] = field(default_factory=list)
+    enemy_buildings: List[Building] = field(default_factory=list)
+
+    player_airfields: List[Airfield] = field(default_factory=list)
+    enemy_airfields: List[Airfield] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -115,19 +116,23 @@ class Debriefing:
 
     @property
     def front_line_losses(self) -> Iterator[FrontLineUnit]:
-        yield from self.ground_losses.front_line
+        yield from self.ground_losses.player_front_line
+        yield from self.ground_losses.enemy_front_line
 
     @property
     def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
-        yield from self.ground_losses.ground_objects
+        yield from self.ground_losses.player_ground_objects
+        yield from self.ground_losses.enemy_ground_objects
 
     @property
     def building_losses(self) -> Iterator[Building]:
-        yield from self.ground_losses.buildings
+        yield from self.ground_losses.player_buildings
+        yield from self.ground_losses.enemy_buildings
 
     @property
     def damaged_runways(self) -> Iterator[Airfield]:
-        yield from self.ground_losses.airfields
+        yield from self.ground_losses.player_airfields
+        yield from self.ground_losses.enemy_airfields
 
     def casualty_count(self, control_point: ControlPoint) -> int:
         return len(
@@ -137,16 +142,21 @@ class Debriefing:
     def front_line_losses_by_type(
             self, player: bool) -> Dict[Type[UnitType], int]:
         losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
-        for loss in self.ground_losses.front_line:
-            if loss.origin.captured != player:
-                continue
-
+        if player:
+            losses = self.ground_losses.player_front_line
+        else:
+            losses = self.ground_losses.enemy_front_line
+        for loss in losses:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
 
     def building_losses_by_type(self, player: bool) -> Dict[str, int]:
         losses_by_type: Dict[str, int] = defaultdict(int)
-        for loss in self.ground_losses.buildings:
+        if player:
+            losses = self.ground_losses.player_buildings
+        else:
+            losses = self.ground_losses.enemy_buildings
+        for loss in losses:
             if loss.ground_object.control_point.captured != player:
                 continue
 
@@ -154,36 +164,52 @@ class Debriefing:
         return losses_by_type
 
     def dead_aircraft(self) -> AirLosses:
-        losses = []
+        player_losses = []
+        enemy_losses = []
         for unit_name in self.state_data.killed_aircraft:
             flight = self.unit_map.flight(unit_name)
             if flight is None:
                 logging.error(f"Could not find Flight matching {unit_name}")
                 continue
-            losses.append(DebriefingDeadAircraftInfo(flight))
-        return AirLosses(losses)
+            if flight.departure.captured:
+                player_losses.append(flight)
+            else:
+                enemy_losses.append(flight)
+        return AirLosses(player_losses, enemy_losses)
 
     def dead_ground_units(self) -> GroundLosses:
         losses = GroundLosses()
         for unit_name in self.state_data.killed_ground_units:
             front_line_unit = self.unit_map.front_line_unit(unit_name)
             if front_line_unit is not None:
-                losses.front_line.append(front_line_unit)
+                if front_line_unit.origin.captured:
+                    losses.player_front_line.append(front_line_unit)
+                else:
+                    losses.enemy_front_line.append(front_line_unit)
                 continue
 
             ground_object_unit = self.unit_map.ground_object_unit(unit_name)
             if ground_object_unit is not None:
-                losses.ground_objects.append(ground_object_unit)
+                if ground_object_unit.ground_object.control_point.captured:
+                    losses.player_ground_objects.append(ground_object_unit)
+                else:
+                    losses.enemy_ground_objects.append(ground_object_unit)
                 continue
 
             building = self.unit_map.building_or_fortification(unit_name)
             if building is not None:
-                losses.buildings.append(building)
+                if building.ground_object.control_point.captured:
+                    losses.player_buildings.append(building)
+                else:
+                    losses.enemy_buildings.append(building)
                 continue
 
             airfield = self.unit_map.airfield(unit_name)
             if airfield is not None:
-                losses.airfields.append(airfield)
+                if airfield.captured:
+                    losses.player_airfields.append(airfield)
+                else:
+                    losses.enemy_airfields.append(airfield)
                 continue
 
             # Only logging as debug because we don't currently track infantry

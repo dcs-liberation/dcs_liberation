@@ -26,7 +26,7 @@ from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
-from qt_ui.windows.GameUpdateSignal import DebriefingSignal, GameUpdateSignal
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard

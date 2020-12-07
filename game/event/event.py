@@ -116,8 +116,8 @@ class Event:
     @staticmethod
     def commit_air_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
-            aircraft = loss.flight.unit_type
-            cp = loss.flight.departure
+            aircraft = loss.unit_type
+            cp = loss.departure
             available = cp.base.total_units_of_type(aircraft)
             if available <= 0:
                 logging.error(
