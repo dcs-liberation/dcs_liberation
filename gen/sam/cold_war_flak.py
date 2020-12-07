@@ -36,7 +36,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
         # Short range guns
         self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#1",
                       self.position.x - 40, self.position.y - 40, self.heading + 180),
-        self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#1",
+        self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#2",
                       self.position.x + spacing * 2 + 40, self.position.y + spacing + 40, self.heading),
 
         # Add a truck
@@ -73,7 +73,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
         # Short range guns
         self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#1",
                       self.position.x - 40, self.position.y - 40, self.heading + 180),
-        self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#1",
+        self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#2",
                       self.position.x + spacing * 2 + 40, self.position.y + spacing + 40, self.heading),
 
         # Add a P19 Radar for EWR
