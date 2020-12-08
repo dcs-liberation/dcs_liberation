@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 import logging
 import random
 from dataclasses import dataclass
-from typing import List, TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from dcs import Mission
 from dcs.action import AITaskPush
@@ -11,34 +12,25 @@ from dcs.country import Country
 from dcs.mapping import Point
 from dcs.planes import MQ_9_Reaper
 from dcs.point import PointAction
-from dcs.task import (
-    AttackGroup,
-    ControlledTask,
-    EPLRS,
-    FireAtPoint,
-    GoToWaypoint,
-    Hold,
-    OrbitAction,
-    SetImmortalCommand,
-    SetInvisibleCommand,
-)
+from dcs.task import (EPLRS, AttackGroup, ControlledTask, FireAtPoint,
+                      GoToWaypoint, Hold, OrbitAction, SetImmortalCommand,
+                      SetInvisibleCommand)
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Vehicle
-from dcs.unittype import VehicleType
 from dcs.unitgroup import VehicleGroup
-
+from dcs.unittype import VehicleType
 from game import db
 from game.unitmap import UnitMap
-from .naming import namegen
-from gen.ground_forces.ai_ground_planner import (
-    CombatGroup, CombatGroupRole,
-    DISTANCE_FROM_FRONTLINE,
-)
+from game.utils import heading_sum, opposite_heading
+from game.theater.controlpoint import ControlPoint
+
+from gen.ground_forces.ai_ground_planner import (DISTANCE_FROM_FRONTLINE,
+                                                 CombatGroup, CombatGroupRole)
+
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
-from game.plugins import LuaPluginManager
-from game.utils import heading_sum, opposite_heading
+from .naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
@@ -93,7 +85,7 @@ class GroundConflictGenerator:
 
     def _enemy_stance(self):
         """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
-        if len(self.enemy_planned_combat_groups) > len(self.player_planned_combat_groups): 
+        if len(self.enemy_planned_combat_groups) > len(self.player_planned_combat_groups):
             return random.choice(
                 [
                     CombatStance.AGGRESSIVE,
@@ -135,10 +127,24 @@ class GroundConflictGenerator:
 
         # Create enemy groups at random position
         enemy_groups = self._generate_groups(self.enemy_planned_combat_groups, frontline_vector, False)
-        
+
         # Plan combat actions for groups
-        self.plan_action_for_groups(self.player_stance, player_groups, enemy_groups, self.conflict.heading + 90, self.conflict.from_cp, self.conflict.to_cp)
-        self.plan_action_for_groups(self.enemy_stance, enemy_groups, player_groups, self.conflict.heading - 90, self.conflict.to_cp, self.conflict.from_cp)
+        self.plan_action_for_groups(
+            self.player_stance,
+            player_groups,
+            enemy_groups,
+            self.conflict.heading + 90,
+            self.conflict.from_cp,
+            self.conflict.to_cp
+        )
+        self.plan_action_for_groups(
+            self.enemy_stance,
+            enemy_groups,
+            player_groups,
+            self.conflict.heading - 90,
+            self.conflict.to_cp,
+            self.conflict.from_cp
+        )
 
         # Add JTAC
         if self.game.player_faction.has_jtac:
@@ -163,7 +169,13 @@ class GroundConflictGenerator:
             callsign = callsign_for_support_unit(jtac)
             self.jtacs.append(JtacInfo(str(jtac.name), n, callsign, frontline, str(code)))
 
-    def gen_infantry_group_for_group(self, group, is_player, side:Country, forward_heading):
+    def gen_infantry_group_for_group(
+        self,
+        group: VehicleGroup,
+        is_player: bool,
+        side: Country,
+        forward_heading: int
+    ) -> None:
 
         infantry_position = group.points[0].position.random_point_within(250, 50)
 
@@ -192,8 +204,6 @@ class GroundConflictGenerator:
                         move_formation=PointAction.OffRoad)
             return
 
-
-
         possible_infantry_units = db.find_infantry(faction, allow_manpad=self.game.settings.manpads)
         if len(possible_infantry_units) == 0:
             return
@@ -218,124 +228,191 @@ class GroundConflictGenerator:
                 heading=forward_heading,
                 move_formation=PointAction.OffRoad)
 
-    def plan_action_for_groups(self, stance, ally_groups, enemy_groups, forward_heading, from_cp, to_cp):
+    def _plan_artillery_action(
+        self,
+        stance: CombatStance,
+        gen_group: CombatGroup,
+        dcs_group: VehicleGroup,
+        forward_heading: int,
+        target: Point
+    ) -> bool:
+        """
+        Handles adding the DCS tasks for artillery groups for all combat stances.
+        Returns True if tasking was added, returns False if the stance was not a combat stance.
+        """
+        if stance != CombatStance.RETREAT:
+            hold_task = Hold()
+            hold_task.number = 1
+            dcs_group.add_trigger_action(hold_task)
+
+        # Artillery strike random start
+        artillery_trigger = TriggerOnce(Event.NoEvent, "ArtilleryFireTask #" + str(dcs_group.id))
+        artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45) * 60))
+        # TODO: Update to fire at group instead of point
+        fire_task = FireAtPoint(target, len(gen_group.units) * 10, 100)
+        fire_task.number = 2 if stance != CombatStance.RETREAT else 1
+        dcs_group.add_trigger_action(fire_task)
+        artillery_trigger.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
+        self.mission.triggerrules.triggers.append(artillery_trigger)
+
+        # Artillery will fall back when under attack
+        if stance != CombatStance.RETREAT:
+
+            # Hold position
+            dcs_group.points[0].tasks.append(Hold())
+            retreat = self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE/3))
+            dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
+            dcs_group.points[1].tasks.append(Hold())
+            dcs_group.add_waypoint(retreat, PointAction.OffRoad)
+
+            artillery_fallback = TriggerOnce(Event.NoEvent, "ArtilleryRetreat #" + str(dcs_group.id))
+            for i, u in enumerate(dcs_group.units):
+                artillery_fallback.add_condition(UnitDamaged(u.id))
+                if i < len(dcs_group.units) - 1:
+                    artillery_fallback.add_condition(Or())
+
+            hold_2 = Hold()
+            hold_2.number = 3
+            dcs_group.add_trigger_action(hold_2)
+
+            retreat_task = GoToWaypoint(to_index=3)
+            retreat_task.number = 4
+            dcs_group.add_trigger_action(retreat_task)
+
+            artillery_fallback.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
+            self.mission.triggerrules.triggers.append(artillery_fallback)
+
+            for u in dcs_group.units:
+                u.initial = True
+                u.heading = forward_heading + random.randint(-5, 5)
+            return True
+        return False
+
+    def _plan_tank_ifv_action(
+        self,
+        stance: CombatStance,
+        enemy_groups: List[Tuple[VehicleGroup, CombatGroup]],
+        dcs_group: VehicleGroup,
+        forward_heading: int,
+        to_cp: ControlPoint,
+    ) -> bool:
+        """
+        Handles adding the DCS tasks for tank and IFV groups for all combat stances.
+        Returns True if tasking was added, returns False if the stance was not a combat stance.
+        """
+        if stance == CombatStance.AGGRESSIVE:
+            # Attack nearest enemy if any
+            # Then move forward OR Attack enemy base if it is not too far away
+            target = self.find_nearest_enemy_group(dcs_group, enemy_groups)
+            if target is not None:
+                rand_offset = Point(
+                    random.randint(
+                        -RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK
+                    ),
+                    random.randint(
+                        -RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK
+                    )
+                )
+                dcs_group.add_waypoint(target.points[0].position + rand_offset, PointAction.OffRoad)
+                dcs_group.points[1].tasks.append(AttackGroup(target.id))
+
+            if (
+                to_cp.position.distance_to_point(dcs_group.points[0].position)
+                <=
+                AGGRESIVE_MOVE_DISTANCE
+            ):
+                attack_point = to_cp.position.random_point_within(500, 0)
+            else:
+                attack_point = self.find_offensive_point(
+                    dcs_group,
+                    forward_heading,
+                    AGGRESIVE_MOVE_DISTANCE
+                )
+            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+        elif stance == CombatStance.BREAKTHROUGH:
+            # In breakthrough mode, the units will move forward
+            # If the enemy base is close enough, the units will attack the base
+            if to_cp.position.distance_to_point(
+                    dcs_group.points[0].position) <= BREAKTHROUGH_OFFENSIVE_DISTANCE:
+                attack_point = to_cp.position.random_point_within(500, 0)
+            else:
+                attack_point = self.find_offensive_point(dcs_group, forward_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
+            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+        elif stance == CombatStance.ELIMINATION:
+            # In elimination mode, the units focus on destroying as much enemy groups as possible
+            targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
+            for i, target in enumerate(targets, start=1):
+                rand_offset = Point(
+                    random.randint(
+                        -RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK
+                    ),
+                    random.randint(
+                        -RANDOM_OFFSET_ATTACK,
+                        RANDOM_OFFSET_ATTACK
+                    )
+                )
+                dcs_group.add_waypoint(target.points[0].position+rand_offset, PointAction.OffRoad)
+                dcs_group.points[i].tasks.append(AttackGroup(target.id))
+            if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
+                attack_point = to_cp.position.random_point_within(500, 0)
+                dcs_group.add_waypoint(attack_point)
+
+        if stance != CombatStance.RETREAT:
+            self.add_morale_trigger(dcs_group, forward_heading)
+            return True
+        return False
+
+    def _plan_apc_atgm_action(
+        self,
+        stance: CombatStance,
+        dcs_group: VehicleGroup,
+        forward_heading: int,
+        to_cp: ControlPoint,
+    ) -> bool:
+        """
+        Handles adding the DCS tasks for APC and ATGM groups for all combat stances.
+        Returns True if tasking was added, returns False if the stance was not a combat stance.
+        """
+        if stance in [CombatStance.AGGRESSIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
+            # APC & ATGM will never move too much forward, but will follow along any offensive
+            if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
+                attack_point = to_cp.position.random_point_within(500, 0)
+            else:
+                attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
+            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+
+        if stance != CombatStance.RETREAT:
+            self.add_morale_trigger(dcs_group, forward_heading)
+            return True
+        return False
+
+    def plan_action_for_groups(
+        self, stance: CombatStance,
+        ally_groups: List[Tuple[VehicleGroup, CombatGroup]],
+        enemy_groups: List[Tuple[VehicleGroup, CombatGroup]],
+        forward_heading: int,
+        from_cp: ControlPoint,
+        to_cp: ControlPoint
+    ) -> None:
 
         if not self.game.settings.perf_moving_units:
             return
 
         for dcs_group, group in ally_groups:
-
-            if hasattr(group.units[0], 'eplrs'):
-                if group.units[0].eplrs:
-                    dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
+            if hasattr(group.units[0], 'eplrs') and group.units[0].eplrs:
+                dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
 
             if group.role == CombatGroupRole.ARTILLERY:
-                # Fire on any ennemy in range
                 if self.game.settings.perf_artillery:
                     target = self.get_artillery_target_in_range(dcs_group, group, enemy_groups)
                     if target is not None:
-
-                        if stance != CombatStance.RETREAT:
-                            hold_task = Hold()
-                            hold_task.number = 1
-                            dcs_group.add_trigger_action(hold_task)
-
-                        # Artillery strike random start
-                        artillery_trigger = TriggerOnce(Event.NoEvent, "ArtilleryFireTask #" + str(dcs_group.id))
-                        artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45)* 60))
-
-                        fire_task = FireAtPoint(target, len(group.units) * 10, 100)
-                        if stance != CombatStance.RETREAT:
-                            fire_task.number = 2
-                        else:
-                            fire_task.number = 1
-                        dcs_group.add_trigger_action(fire_task)
-                        artillery_trigger.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
-                        self.mission.triggerrules.triggers.append(artillery_trigger)
-
-                        # Artillery will fall back when under attack
-                        if stance != CombatStance.RETREAT:
-
-                            # Hold position
-                            dcs_group.points[0].tasks.append(Hold())
-                            retreat = self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE/3))
-                            dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
-                            dcs_group.points[1].tasks.append(Hold())
-                            dcs_group.add_waypoint(retreat, PointAction.OffRoad)
-
-                            artillery_fallback = TriggerOnce(Event.NoEvent, "ArtilleryRetreat #" + str(dcs_group.id))
-                            for i, u in enumerate(dcs_group.units):
-                                artillery_fallback.add_condition(UnitDamaged(u.id))
-                                if i < len(dcs_group.units) - 1:
-                                    artillery_fallback.add_condition(Or())
-
-                            hold_2 = Hold()
-                            hold_2.number = 3
-                            dcs_group.add_trigger_action(hold_2)
-
-                            retreat_task = GoToWaypoint(to_index=3)
-                            retreat_task.number = 4
-                            dcs_group.add_trigger_action(retreat_task)
-
-                            artillery_fallback.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
-                            self.mission.triggerrules.triggers.append(artillery_fallback)
-
-                            for u in dcs_group.units:
-                                u.initial = True
-                                u.heading = forward_heading + random.randint(-5,5)
+                        self._plan_artillery_action(stance, group, dcs_group, forward_heading, target)
 
             elif group.role in [CombatGroupRole.TANK, CombatGroupRole.IFV]:
-                if stance == CombatStance.AGGRESSIVE:
-                    # Attack nearest enemy if any
-                    # Then move forward OR Attack enemy base if it is not too far away
-                    target = self.find_nearest_enemy_group(dcs_group, enemy_groups)
-                    if target is not None:
-                        rand_offset = Point(random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK), random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK))
-                        dcs_group.add_waypoint(target.points[0].position + rand_offset, PointAction.OffRoad)
-                        dcs_group.points[1].tasks.append(AttackGroup(target.id))
-
-                    if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
-                        attack_point = to_cp.position.random_point_within(500, 0)
-                    else:
-                        attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
-                elif stance == CombatStance.BREAKTHROUGH:
-                    # In breakthrough mode, the units will move forward
-                    # If the enemy base is close enough, the units will attack the base
-                    if to_cp.position.distance_to_point(
-                            dcs_group.points[0].position) <= BREAKTHROUGH_OFFENSIVE_DISTANCE:
-                        attack_point = to_cp.position.random_point_within(500, 0)
-                    else:
-                        attack_point = self.find_offensive_point(dcs_group, forward_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
-                elif stance == CombatStance.ELIMINATION:
-                    # In elimination mode, the units focus on destroying as much enemy groups as possible
-                    targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
-                    i = 1
-                    for target in targets:
-                        rand_offset = Point(random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK), random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK))
-                        dcs_group.add_waypoint(target.points[0].position+rand_offset, PointAction.OffRoad)
-                        dcs_group.points[i].tasks.append(AttackGroup(target.id))
-                        i = i + 1
-                    if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
-                        attack_point = to_cp.position.random_point_within(500, 0)
-                        dcs_group.add_waypoint(attack_point)
-
-                if stance != CombatStance.RETREAT:
-                    self.add_morale_trigger(dcs_group, forward_heading)
+                self._plan_tank_ifv_action(stance, enemy_groups, dcs_group, forward_heading, to_cp)
 
             elif group.role in [CombatGroupRole.APC, CombatGroupRole.ATGM]:
-
-                if stance in [CombatStance.AGGRESSIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
-                    # APC & ATGM will never move too much forward, but will follow along any offensive
-                    if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
-                        attack_point = to_cp.position.random_point_within(500, 0)
-                    else:
-                        attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
-
-                if stance != CombatStance.RETREAT:
-                    self.add_morale_trigger(dcs_group, forward_heading)
+                self._plan_apc_atgm_action(stance, dcs_group, forward_heading, to_cp)
 
             if stance == CombatStance.RETREAT:
                 # In retreat mode, the units will fall back
@@ -348,7 +425,7 @@ class GroundConflictGenerator:
                 dcs_group.add_waypoint(retreat_point, PointAction.OffRoad)
                 dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
 
-    def add_morale_trigger(self, dcs_group, forward_heading):
+    def add_morale_trigger(self, dcs_group: VehicleGroup, forward_heading: int) -> None:
         """
         This add a trigger to manage units fleeing whenever their group is hit hard, or being engaged by CAS
         """
@@ -365,7 +442,10 @@ class GroundConflictGenerator:
         dcs_group.manualHeading = True
 
         # We add a new retreat waypoint
-        dcs_group.add_waypoint(self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)), PointAction.OffRoad)
+        dcs_group.add_waypoint(
+            self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)),
+            PointAction.OffRoad
+        )
 
         # Fallback task
         fallback = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
@@ -384,7 +464,12 @@ class GroundConflictGenerator:
 
         self.mission.triggerrules.triggers.append(fallback)
 
-    def find_retreat_point(self, dcs_group, frontline_heading, distance=RETREAT_DISTANCE):
+    @staticmethod
+    def find_retreat_point(
+        dcs_group: VehicleGroup,
+        frontline_heading: int,
+        distance: int = RETREAT_DISTANCE
+    ) -> Point:
         """
         Find a point to retreat to
         :param dcs_group: DCS mission group we are searching a retreat point for
@@ -393,7 +478,12 @@ class GroundConflictGenerator:
         """
         return dcs_group.points[0].position.point_from_heading(frontline_heading-180, distance)
 
-    def find_offensive_point(self, dcs_group, frontline_heading, distance):
+    @staticmethod
+    def find_offensive_point(
+        dcs_group: VehicleGroup,
+        frontline_heading: int,
+        distance: int
+    ) -> Point:
         """
         Find a point to attack
         :param dcs_group:  DCS mission group we are searching an attack point for
@@ -403,24 +493,36 @@ class GroundConflictGenerator:
         """
         return dcs_group.points[0].position.point_from_heading(frontline_heading, distance)
 
-    def find_n_nearest_enemy_groups(self, player_group, enemy_groups, n):
+    @staticmethod
+    def find_n_nearest_enemy_groups(
+        player_group: VehicleGroup,
+        enemy_groups: List[Tuple[VehicleGroup, CombatGroup]],
+        n: int
+    ) -> List[VehicleGroup]:
         """
-        Return the neaarest enemy group for the player group
+        Return the nearest enemy group for the player group
         @param group Group for which we should find the nearest ennemies
         @param enemy_groups Potential enemy groups
         @param n number of nearby groups to take
         """
-        targets = []
-        sorted_list = sorted(enemy_groups, key=lambda group: player_group.points[0].position.distance_to_point(group[0].points[0].position))
+        targets = []  # type: Optional[List[VehicleGroup]]
+        sorted_list = sorted(
+            enemy_groups,
+            key=lambda group: player_group.points[0].position.distance_to_point(group[0].points[0].position)
+        )
         for i in range(n):
+            # TODO: Is this supposed to return no groups if enemy_groups is less than n?
             if len(sorted_list) <= i:
                 break
             else:
                 targets.append(sorted_list[i][0])
         return targets
 
-
-    def find_nearest_enemy_group(self, player_group, enemy_groups):
+    @staticmethod
+    def find_nearest_enemy_group(
+        player_group: CombatGroup,
+        enemy_groups: List[Tuple[VehicleGroup, CombatGroup]]
+    ) -> Optional[VehicleGroup]:
         """
         Search the enemy groups for a potential target suitable to armored assault
         @param group Group for which we should find the nearest ennemy
@@ -428,22 +530,27 @@ class GroundConflictGenerator:
         """
         min_distance = 99999999
         target = None
-        for dcs_group, group in enemy_groups:
+        for dcs_group, _ in enemy_groups:
             dist = player_group.points[0].position.distance_to_point(dcs_group.points[0].position)
             if dist < min_distance:
                 min_distance = dist
                 target = dcs_group
         return target
 
-
-    def get_artillery_target_in_range(self, dcs_group, group, enemy_groups):
+    @staticmethod
+    def get_artillery_target_in_range(
+        dcs_group: VehicleGroup,
+        group: CombatGroup,
+        enemy_groups: List[Tuple[VehicleGroup, CombatGroup]]
+    ) -> Optional[Point]:
         """
         Search the enemy groups for a potential target suitable to an artillery unit
         """
+        # TODO: Update to return a list of groups instead of a single point
         rng = group.units[0].threat_range
-        if len(enemy_groups) == 0:
+        if not enemy_groups:
             return None
-        for o in range(10):
+        for _ in range(10):
             potential_target = random.choice(enemy_groups)[0]
             distance_to_target = dcs_group.points[0].position.distance_to_point(potential_target.points[0].position)
             if distance_to_target < rng:
@@ -479,8 +586,13 @@ class GroundConflictGenerator:
             i += 1
             continue
         return None
-    
-    def _generate_groups(self, groups: List[CombatGroup], frontline_vector: Tuple[Point, int, int], is_player: bool):
+
+    def _generate_groups(
+        self,
+        groups: List[CombatGroup],
+        frontline_vector: Tuple[Point, int, int],
+        is_player: bool
+    ) -> List[Tuple[VehicleGroup, CombatGroup]]:
         """Finds valid positions for planned groups and generates a pydcs group for them"""
         positioned_groups = []
         position, heading, combat_width = frontline_vector
@@ -513,8 +625,13 @@ class GroundConflictGenerator:
                     g.set_skill(self.game.settings.player_skill)
                 else:
                     g.set_skill(self.game.settings.enemy_vehicle_skill)
-                positioned_groups.append((g,group))
-                self.gen_infantry_group_for_group(g, is_player, self.mission.country(country), opposite_heading(spawn_heading))
+                positioned_groups.append((g, group))
+                self.gen_infantry_group_for_group(
+                    g,
+                    is_player,
+                    self.mission.country(country),
+                    opposite_heading(spawn_heading)
+                )
             else:
                 logging.warning(f"Unable to get valid position for {group}")
 

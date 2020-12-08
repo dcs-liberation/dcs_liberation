@@ -22,8 +22,8 @@ class Conflict:
                  attackers_country: Country,
                  defenders_country: Country,
                  position: Point,
-                 heading=None,
-                 size=None
+                 heading: int = None,
+                 size: int = None
                  ):
 
         self.attackers_side = attackers_side
