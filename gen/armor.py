@@ -298,7 +298,7 @@ class GroundConflictGenerator:
                         attack_point = to_cp.position.random_point_within(500, 0)
                     else:
                         attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OnRoad)
+                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
                 elif stance == CombatStance.BREAKTHROUGH:
                     # In breakthrough mode, the units will move forward
                     # If the enemy base is close enough, the units will attack the base
@@ -307,7 +307,7 @@ class GroundConflictGenerator:
                         attack_point = to_cp.position.random_point_within(500, 0)
                     else:
                         attack_point = self.find_offensive_point(dcs_group, forward_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OnRoad)
+                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
                 elif stance == CombatStance.ELIMINATION:
                     # In elimination mode, the units focus on destroying as much enemy groups as possible
                     targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
@@ -332,7 +332,7 @@ class GroundConflictGenerator:
                         attack_point = to_cp.position.random_point_within(500, 0)
                     else:
                         attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
-                    dcs_group.add_waypoint(attack_point, PointAction.OnRoad)
+                    dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
 
                 if stance != CombatStance.RETREAT:
                     self.add_morale_trigger(dcs_group, forward_heading)
@@ -345,7 +345,7 @@ class GroundConflictGenerator:
                 else:
                     retreat_point = self.find_retreat_point(dcs_group, forward_heading)
                 reposition_point = retreat_point.point_from_heading(forward_heading, 10)  # Another point to make the unit face the enemy
-                dcs_group.add_waypoint(retreat_point, PointAction.OnRoad)
+                dcs_group.add_waypoint(retreat_point, PointAction.OffRoad)
                 dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
 
     def add_morale_trigger(self, dcs_group, forward_heading):
