@@ -505,7 +505,7 @@ class GroundConflictGenerator:
         @param enemy_groups Potential enemy groups
         @param n number of nearby groups to take
         """
-        targets = []  # type: Optional[List[VehicleGroup]]
+        targets = []  # type: List[Optional[VehicleGroup]]
         sorted_list = sorted(
             enemy_groups,
             key=lambda group: player_group.points[0].position.distance_to_point(group[0].points[0].position)
@@ -520,7 +520,7 @@ class GroundConflictGenerator:
 
     @staticmethod
     def find_nearest_enemy_group(
-        player_group: CombatGroup,
+        player_group: VehicleGroup,
         enemy_groups: List[Tuple[VehicleGroup, CombatGroup]]
     ) -> Optional[VehicleGroup]:
         """
