@@ -204,7 +204,10 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
             tacan_callsign = self.tacan_callsign()
             icls = next(self.icls_alloc)
 
-            brc = self.steam_into_wind(ship_group)
+            if self.control_point.target_position is not None:
+                brc = self.steam_to_target_position(ship_group)
+            else:
+                brc = self.steam_into_wind(ship_group)
             self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
             self.add_runway_data(brc or 0, atc, tacan, tacan_callsign, icls)
             self._register_unit_group(group, ship_group)
@@ -247,6 +250,10 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
                 group.add_waypoint(point)
                 return brc
         return None
+
+    def steam_to_target_position(self, group: ShipGroup) -> Optional[int]:
+        group.add_waypoint(self.control_point.target_position)
+        return group.position.heading_between_point(self.control_point.target_position)
 
     def tacan_callsign(self) -> str:
         raise NotImplementedError

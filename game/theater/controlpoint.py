@@ -29,7 +29,7 @@ from .theatergroundobject import (
     EwrGroundObject,
     SamGroundObject,
     TheaterGroundObject,
-    VehicleGroupGroundObject,
+    VehicleGroupGroundObject, GenericCarrierGroundObject,
 )
 from ..weather import Conditions
 
@@ -442,6 +442,20 @@ class ControlPoint(MissionTarget, ABC):
         runway_status = self.runway_status
         if runway_status is not None:
             runway_status.process_turn()
+
+        # Process movements for ships control points group
+        if self.target_position is not None:
+            delta = self.target_position - self.position
+            self.position = self.target_position
+            self.target_position = None
+
+            # Move the linked unit groups
+            for ground_object in self.ground_objects:
+                if isinstance(ground_object, GenericCarrierGroundObject):
+                    for group in ground_object.groups:
+                        for u in group.units:
+                            u.position.x = u.position.x + delta.x
+                            u.position.y = u.position.y + delta.y
 
 
 class Airfield(ControlPoint):
