@@ -66,7 +66,7 @@ class QLiberationWindow(QMainWindow):
             last_save_file = liberation_install.get_last_save_file()
             if last_save_file:
                 try:
-                    logging.info("Loading last saved game : {0}".format(str(last_save_file)))
+                    logging.info("Loading last saved game : " + str(last_save_file))
                     game = persistency.load_game(last_save_file)
                     self.onGameGenerated(game)
                 except:

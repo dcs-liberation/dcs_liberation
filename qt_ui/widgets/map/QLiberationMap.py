@@ -6,7 +6,7 @@ import math
 from typing import Iterable, Iterator, List, Optional, Tuple
 
 from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import QPointF, Qt, QLineF
+from PySide2.QtCore import QPointF, Qt, QLineF, QRectF
 from PySide2.QtGui import (
     QBrush,
     QColor,
@@ -27,11 +27,9 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.theater import ControlPoint, Enum, NavalControlPoint
+from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine
 from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    MissileSiteGroundObject,
     TheaterGroundObject,
 )
 from game.utils import meter_to_feet
@@ -323,7 +321,8 @@ class QLiberationMap(QGraphicsView):
 
             if cp.target_position is not None:
                 tpos = cp.target_position
-                scene.addLine(QLineF(QPointF(pos[0], pos[1]), QPointF(tpos[0], tpos[1])),
+                proj = self._transform_point(Point(tpos[0], tpos[1]))
+                scene.addLine(QLineF(QPointF(pos[0], pos[1]), QPointF(proj[0], proj[1])),
                               QPen(CONST.COLORS["green"], width=10, s=Qt.DashDotLine))
 
 
@@ -535,7 +534,6 @@ class QLiberationMap(QGraphicsView):
         )
 
     def wheelEvent(self, event: QWheelEvent):
-
         if event.angleDelta().y() > 0:
             factor = 1.25
             self._zoom += 1
@@ -553,9 +551,7 @@ class QLiberationMap(QGraphicsView):
             else:
                 self._zoom = -4
 
-        #print(self.factorized, factor, self._zoom)
-
-    def _transform_point(self, p: Point, treshold=30) -> Tuple[int, int]:
+    def _transform_point(self, p: Point) -> Tuple[int, int]:
         point_a = list(self.game.theater.reference_points.keys())[0]
         point_a_img = self.game.theater.reference_points[point_a]
 
@@ -578,14 +574,29 @@ class QLiberationMap(QGraphicsView):
         X = point_b_img[1] + X_offset * X_scale
         Y = point_a_img[0] - Y_offset * Y_scale
 
-        #X += 5
-        #Y += 5
+        return X, Y
 
-        return X > treshold and X or treshold, Y > treshold and Y or treshold
+    def _scene_to_dcs_coords(self, p: Point):
+        pa = list(self.game.theater.reference_points.keys())[0]
+        pa2 = self.game.theater.reference_points[pa]
 
+        pb = list(self.game.theater.reference_points.keys())[1]
+        pb2 = self.game.theater.reference_points[pb]
 
-    def _scene_to_dcs_coords(self, x, y):
-        pass
+        dy2 = pa2[0] - pb2[0]
+        dy = pa[1] - pb[1]
+
+        dx2 = pa2[1] - pb2[1]
+        dx = pb[0] - pa[0]
+
+        ys = float(dy2) / float(dy)
+        xs = float(dx2) / float(dx)
+
+        X = ((float(p.x - pb2[1])) / float(xs)) + pa[1]
+        Y = ((float(pa2[0] - p.y)) / float(ys)) + pa[0]
+
+        return Y, X
+
 
     def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
         return QColor(255, 255, 0, 20 if transparent else 255)
@@ -633,6 +644,7 @@ class QLiberationMap(QGraphicsView):
     def addBackground(self):
         scene = self.scene()
 
+
         if not DisplayOptions.map_poly:
             bg = QPixmap("./resources/" + self.game.theater.overview_image)
             scene.addPixmap(bg)
@@ -672,6 +684,34 @@ class QLiberationMap(QGraphicsView):
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
                     scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
+        # Uncomment to display plan projection test
+        #self.projection_test(scene)
+
+        zero = self._transform_point(Point(0,0))
+        self.scene().addRect(QRectF(zero[0] + 1, zero[1] + 1, 50, 50), CONST.COLORS["red"], QBrush(CONST.COLORS["red"]))
+
+    def projection_test(self, scene):
+        for i in range(100):
+            for j in range(100):
+                x = i * 100
+                y = j * 100
+                self.scene().addRect(QRectF(x, y, 4, 4), CONST.COLORS["green"])
+                proj = self._scene_to_dcs_coords(Point(x, y))
+                unproj = self._transform_point(Point(proj[0], proj[1]))
+                text = scene.addText(str(i) + ", " + str(j) + "\n" + str(unproj[0]) + ", " + str(unproj[1]),
+                                     font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+                text.setPos(unproj[0] + 2, unproj[1] + 2)
+                text.setDefaultTextColor(Qt.red)
+                text2 = scene.addText(str(i) + ", " + str(j) + "\n" + str(x) + ", " + str(y),
+                                      font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+                text2.setPos(x + 2, y + 10)
+                text2.setDefaultTextColor(Qt.green)
+                self.scene().addRect(QRectF(unproj[0] + 1, unproj[1] + 1, 4, 4), CONST.COLORS["red"])
+                if i % 2 == 0:
+                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["yellow"])
+                else:
+                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["purple"])
+
     def setSelectedUnit(self, selected_cp: QMapControlPoint):
         self.state = QLiberationMapState.MOVING_UNIT
         self.selected_cp = selected_cp
@@ -694,10 +734,15 @@ class QLiberationMap(QGraphicsView):
                     # Set movement position for the cp
                     pos = event.scenePos()
                     point = Point(int(pos.x()), int(pos.y()))
-                    self.selected_cp.control_point.target_position = point.x, point.y # TODO : convert to DCS coords !
+                    proj = self._scene_to_dcs_coords(point)
+                    self.selected_cp.control_point.target_position = proj # TODO : convert to DCS coords !
+                    print(proj)
                     GameUpdateSignal.get_instance().updateGame(self.game_model.game)
             else:
                 return
             self.state = QLiberationMapState.NORMAL
-            self.scene().removeItem(self.movement_line)
+            try:
+                self.scene().removeItem(self.movement_line)
+            except:
+                pass
             self.selected_cp = None
