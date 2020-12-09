@@ -19,6 +19,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
+from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
@@ -62,7 +63,16 @@ class QLiberationWindow(QMainWindow):
         self.setWindowState(Qt.WindowMaximized)
 
         if self.game is None:
-            self.onGameGenerated(persistency.restore_game())
+            last_save_file = liberation_install.get_last_save_file()
+            if last_save_file:
+                try:
+                    logging.info("Loading last saved game : {0}".format(str(last_save_file)))
+                    game = persistency.load_game(last_save_file)
+                    self.onGameGenerated(game)
+                except:
+                    logging.info("Error loading latest save game")
+            else:
+                logging.info("No existing save game")
         else:
             self.onGameGenerated(self.game)
 
@@ -227,6 +237,8 @@ class QLiberationWindow(QMainWindow):
         if self.game.savepath:
             persistency.save_game(self.game)
             GameUpdateSignal.get_instance().updateGame(self.game)
+            liberation_install.setup_last_save_file(self.game.savepath)
+            liberation_install.save_config()
         else:
             self.saveGameAs()
 
@@ -235,6 +247,8 @@ class QLiberationWindow(QMainWindow):
         if file is not None:
             self.game.savepath = file[0]
             persistency.save_game(self.game)
+            liberation_install.setup_last_save_file(self.game.savepath)
+            liberation_install.save_config()
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")

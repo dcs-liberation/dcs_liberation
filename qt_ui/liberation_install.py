@@ -8,6 +8,7 @@ from game import persistency
 
 global __dcs_saved_game_directory
 global __dcs_installation_directory
+global __last_save_file
 
 PREFERENCES_FILE_PATH = "liberation_preferences.json"
 
@@ -15,6 +16,7 @@ PREFERENCES_FILE_PATH = "liberation_preferences.json"
 def init():
     global __dcs_saved_game_directory
     global __dcs_installation_directory
+    global __last_save_file
 
     if os.path.isfile(PREFERENCES_FILE_PATH):
         try:
@@ -22,10 +24,15 @@ def init():
                 pref_data = json.loads(prefs.read())
                 __dcs_saved_game_directory = pref_data["saved_game_dir"]
                 __dcs_installation_directory = pref_data["dcs_install_dir"]
+                if "last_save_file" in pref_data:
+                    __last_save_file = pref_data["last_save_file"]
+                else:
+                    __last_save_file = ""
             is_first_start = False
         except:
             __dcs_saved_game_directory = ""
             __dcs_installation_directory = ""
+            __last_save_file = ""
             is_first_start = True
     else:
         try:
@@ -52,11 +59,18 @@ def setup(saved_game_dir, install_dir):
     persistency.setup(__dcs_saved_game_directory)
 
 
+def setup_last_save_file(last_save_file):
+    global __last_save_file
+    __last_save_file = last_save_file
+
+
 def save_config():
     global __dcs_saved_game_directory
     global __dcs_installation_directory
+    global __last_save_file
     pref_data = {"saved_game_dir": __dcs_saved_game_directory,
-                 "dcs_install_dir": __dcs_installation_directory}
+                 "dcs_install_dir": __dcs_installation_directory,
+                 "last_save_file": __last_save_file}
     with(open(PREFERENCES_FILE_PATH, "w")) as prefs:
         prefs.write(json.dumps(pref_data))
 
@@ -69,6 +83,15 @@ def get_dcs_install_directory():
 def get_saved_game_dir():
     global __dcs_saved_game_directory
     return __dcs_saved_game_directory
+
+
+def get_last_save_file():
+    global __last_save_file
+    print(__last_save_file)
+    if os.path.exists(__last_save_file):
+        return __last_save_file
+    else:
+        return None
 
 
 def replace_mission_scripting_file():
