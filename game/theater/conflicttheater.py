@@ -500,13 +500,13 @@ class ConflictTheater:
                         distances[cp.id] = dist
                     if dist < closest_distance:
                         distances[cp.id] = dist
-            closest_cp_id = min(distances, key=distances.get)
+            closest_cp_id = min(distances, key=distances.get)  # type: ignore
 
             all_cp_min_distances[(control_point.id, closest_cp_id)] = distances[closest_cp_id]
         closest_opposing_cps = [
             self.find_control_point_by_id(i)
             for i
-            in min(all_cp_min_distances, key=all_cp_min_distances.get)
+            in min(all_cp_min_distances, key=all_cp_min_distances.get)  # type: ignore
           ]  # type: List[ControlPoint]
         assert len(closest_opposing_cps) == 2
         if closest_opposing_cps[0].captured:

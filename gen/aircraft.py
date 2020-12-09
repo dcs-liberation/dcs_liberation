@@ -20,12 +20,15 @@ from dcs.planes import (
     B_17G,
     B_52H,
     Bf_109K_4,
+    C_101EB,
+    C_101CC,
     FW_190A8,
     FW_190D9,
     F_14B,
     I_16,
     JF_17,
     Ju_88A4,
+    PlaneType,
     P_47D_30,
     P_47D_30bl1,
     P_47D_40,
@@ -791,14 +794,9 @@ class AircraftConflictGenerator:
             joker_fuel=flight.flight_plan.joker_fuel
         ))
 
-        # Special case so Su 33 carrier take off
-        if unit_type is Su_33:
-            if flight.flight_type is not CAP:
-                for unit in group.units:
-                    unit.fuel = Su_33.fuel_max / 2.2
-            else:
-                for unit in group.units:
-                    unit.fuel = Su_33.fuel_max * 0.8
+        # Special case so Su 33 and C101 can take off
+        if unit_type in [Su_33, C_101EB, C_101CC]:
+            self.set_reduced_fuel(flight, group, unit_type)
 
     def _generate_at_airport(self, name: str, side: Country,
                              unit_type: Type[FlyingType], count: int,
@@ -1079,6 +1077,20 @@ class AircraftConflictGenerator:
         return group
 
     @staticmethod
+    def set_reduced_fuel(flight: Flight, group: FlyingGroup, unit_type: Type[PlaneType]) -> None:
+        if unit_type is Su_33:
+            for unit in group.units:
+                if flight.flight_type is not CAP:
+                    unit.fuel = Su_33.fuel_max / 2.2
+                else:
+                    unit.fuel = Su_33.fuel_max * 0.8
+        elif unit_type in [C_101EB, C_101CC]:
+            for unit in group.units:
+                unit.fuel = unit_type.fuel_max * 0.5
+        else:
+            raise RuntimeError(f"No reduced fuel case for type {unit_type}")
+
+    @staticmethod
     def configure_behavior(
             group: FlyingGroup,
             react_on_threat: Optional[OptReactOnThreat.Values] = None,
@@ -1275,10 +1287,10 @@ class AircraftConflictGenerator:
             if point.only_for_player and not flight.client_count:
                 continue
             filtered_points.append(point)
-        # Only add 1 target waypoint for Viggens.  This only affects player flights, 
+        # Only add 1 target waypoint for Viggens.  This only affects player flights,
         # the Viggen can't have more than 9 waypoints which leaves us with two target point
         # under the current flight plans.
-        # TODO: Make this smarter, it currently selects a random unit in the group for target, 
+        # TODO: Make this smarter, it currently selects a random unit in the group for target,
         # this could be updated to make it pick the "best" two targets in the group.
         if flight.unit_type is AJS37 and flight.client_count:
             viggen_target_points = [
@@ -1291,7 +1303,7 @@ class AircraftConflictGenerator:
                             point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
                         )
                     ]
-            
+
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
                 point, group, package, flight, self.m
@@ -1415,7 +1427,7 @@ class PydcsWaypointBuilder:
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
         if (
-            (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and 
+            (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and
             (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
         ):
             return True

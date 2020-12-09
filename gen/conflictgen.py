@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import Tuple
+from typing import Tuple, Optional
 
 from dcs.country import Country
 from dcs.mapping import Point
@@ -22,8 +22,8 @@ class Conflict:
                  attackers_country: Country,
                  defenders_country: Country,
                  position: Point,
-                 heading=None,
-                 size=None
+                 heading: Optional[int] = None,
+                 size: Optional[int] = None
                  ):
 
         self.attackers_side = attackers_side

@@ -132,7 +132,7 @@ class TriggersGenerator:
             self.mission.triggerrules.triggers.append(mark_trigger)
 
     def _generate_capture_triggers(self, player_coalition: str, enemy_coalition: str) -> None:
-        """Creates a pair of triggers for each control point of `cls.capture_zone_types`.  
+        """Creates a pair of triggers for each control point of `cls.capture_zone_types`.
         One for the initial capture of a control point, and one if it is recaptured.
         Directly appends to the global `base_capture_events` var declared by `dcs_libaration.lua`
         """
@@ -193,12 +193,9 @@ class TriggersGenerator:
         self._set_allegiances(player_coalition, enemy_coalition)
         self._gen_markers()
         self._generate_capture_triggers(player_coalition, enemy_coalition)
-        print("Test")
-    
-    
+
     @classmethod
     def get_capture_zone_flag(cls):
         flag = cls.capture_zone_flag
         cls.capture_zone_flag += 1
         return flag
-
