@@ -82,8 +82,9 @@ class QLiberationMapState(Enum):
 
 
 class QLiberationMap(QGraphicsView):
-    WAYPOINT_SIZE = 4
 
+    WAYPOINT_SIZE = 4
+    reference_point_setup_mode = False
     instance: Optional[QLiberationMap] = None
 
     def __init__(self, game_model: GameModel):
@@ -175,41 +176,50 @@ class QLiberationMap(QGraphicsView):
 
     """
     
-    Uncomment to set up theather reference points
+    Uncomment to set up theather reference points"""
     def keyPressEvent(self, event):
-        #super(QLiberationMap, self).keyPressEvent(event)
-
-        numpad_mod = int(event.modifiers()) & QtCore.Qt.KeypadModifier
-        i = 0
-        for k,v in self.game.theater.reference_points.items():
-            if i == 0:
-                point_0 = k
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
+        if not self.reference_point_setup_mode:
+            if modifiers == QtCore.Qt.ShiftModifier and event.key() == QtCore.Qt.Key_R:
+                self.reference_point_setup_mode = True
+                self.reload_scene()
             else:
-                point_1 = k
-            i = i + 1
+                super(QLiberationMap, self).keyPressEvent(event)
+        else:
+            if modifiers == QtCore.Qt.ShiftModifier and event.key() == QtCore.Qt.Key_R:
+                self.reference_point_setup_mode = False
+                self.reload_scene()
+            else:
+                numpad_mod = int(event.modifiers()) & QtCore.Qt.KeypadModifier
+                i = 0
+                for k,v in self.game.theater.reference_points.items():
+                    if i == 0:
+                        point_0 = k
+                    else:
+                        point_1 = k
+                    i = i + 1
 
-        if event.key() == QtCore.Qt.Key_Down:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 10, self.game.theater.reference_points[point_0][1]
-        if event.key() == QtCore.Qt.Key_Up:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 10, self.game.theater.reference_points[point_0][1]
-        if event.key() == QtCore.Qt.Key_Left:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 10
-        if event.key() == QtCore.Qt.Key_Right:
-            self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 10
+                if event.key() == QtCore.Qt.Key_Down:
+                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 10, self.game.theater.reference_points[point_0][1]
+                if event.key() == QtCore.Qt.Key_Up:
+                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 10, self.game.theater.reference_points[point_0][1]
+                if event.key() == QtCore.Qt.Key_Left:
+                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 10
+                if event.key() == QtCore.Qt.Key_Right:
+                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 10
 
 
-        if event.key() == QtCore.Qt.Key_2 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 10, self.game.theater.reference_points[point_1][1]
-        if event.key() == QtCore.Qt.Key_8 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 10, self.game.theater.reference_points[point_1][1]
-        if event.key() == QtCore.Qt.Key_4 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 10
-        if event.key() == QtCore.Qt.Key_6 and numpad_mod:
-            self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 10
+                if event.key() == QtCore.Qt.Key_2 and numpad_mod:
+                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 10, self.game.theater.reference_points[point_1][1]
+                if event.key() == QtCore.Qt.Key_8 and numpad_mod:
+                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 10, self.game.theater.reference_points[point_1][1]
+                if event.key() == QtCore.Qt.Key_4 and numpad_mod:
+                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 10
+                if event.key() == QtCore.Qt.Key_6 and numpad_mod:
+                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 10
 
-        print(self.game.theater.reference_points)
-        self.reload_scene()
-    """
+                print(self.game.theater.reference_points)
+                self.reload_scene()
 
     @staticmethod
     def aa_ranges(ground_object: TheaterGroundObject) -> Tuple[int, int]:
@@ -296,11 +306,6 @@ class QLiberationMap(QGraphicsView):
         enemyColor = self.game.get_enemy_color()
 
         self.addBackground()
-
-        # Uncomment below to help set up theater reference points
-        # for i, r in enumerate(self.game.theater.reference_points.items()):
-        #     text = scene.addText(str(r), font=QFont("Trebuchet MS", 10, weight=5, italic=False))
-        #     text.setPos(0, i * 24)
 
         # Display Culling
         if DisplayOptions.culling and self.game.settings.perf_culling:
@@ -706,26 +711,44 @@ class QLiberationMap(QGraphicsView):
                 effect.setOpacity(0.3)
                 overlay.setGraphicsEffect(effect)
 
-        else:
+        if DisplayOptions.map_poly or self.reference_point_setup_mode:
             # Polygon display mode
             if self.game.theater.landmap is not None:
 
                 for sea_zone in self.game.theater.landmap[2]:
                     print(sea_zone)
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in sea_zone])
-                    scene.addPolygon(poly, CONST.COLORS["sea_blue"], CONST.COLORS["sea_blue"])
+                    if self.reference_point_setup_mode:
+                        color = "sea_blue_transparent"
+                    else:
+                        color = "sea_blue"
+                    scene.addPolygon(poly, CONST.COLORS[color], CONST.COLORS[color])
 
                 for inclusion_zone in self.game.theater.landmap[0]:
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
-                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
+                    if self.reference_point_setup_mode:
+                        scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_grey_transparent"])
+                    else:
+                        scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
 
                 for exclusion_zone in self.game.theater.landmap[1]:
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
-                    scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
+                    if self.reference_point_setup_mode:
+                        scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_dark_grey_transparent"])
+                    else:
+                        scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
         # Uncomment to display plan projection test
         #self.projection_test(scene)
         self.draw_scale()
+
+        if self.reference_point_setup_mode:
+            for i, r in enumerate(self.game.theater.reference_points.values()):
+                self.scene().addRect(QRectF(r[0], r[1], 25, 25), pen=CONST.COLORS["red"], brush=CONST.COLORS["red"])
+                text = self.scene().addText("P{0} = {1}, {2}".format(i, r[0], r[1]),
+                                            font=QFont("Trebuchet MS", 14, weight=8, italic=False))
+                text.setDefaultTextColor(CONST.COLORS["red"])
+                text.setPos(r[0]+26, r[1])
 
     def projection_test(self, scene):
         for i in range(100):

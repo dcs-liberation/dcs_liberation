@@ -28,7 +28,6 @@ FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
 COLORS: Dict[str, QColor] = {
     "white": QColor(255, 255, 255),
     "white_transparent": QColor(255, 255, 255, 35),
-    "grey_transparent": QColor(150, 150, 150, 30),
 
     "light_red": QColor(231, 92, 83, 90),
     "red": QColor(200, 80, 80),
@@ -40,6 +39,7 @@ COLORS: Dict[str, QColor] = {
     "blue": QColor(0, 132, 255),
     "dark_blue": QColor(45, 62, 80),
     "sea_blue": QColor(52, 68, 85),
+    "sea_blue_transparent": QColor(52, 68, 85, 150),
     "blue_transparent": QColor(0, 132, 255, 20),
 
     "purple": QColor(187, 137, 255),
@@ -62,8 +62,11 @@ COLORS: Dict[str, QColor] = {
     "dawn_dust_overlay": QColor(46, 38, 85),
 
     "grey": QColor(150, 150, 150),
+    "grey_transparent": QColor(150, 150, 150, 150),
     "dark_grey": QColor(75, 75, 75),
+    "dark_grey_transparent": QColor(75, 75, 75, 150),
     "dark_dark_grey": QColor(48, 48, 48),
+    "dark_dark_grey_transparent": QColor(48, 48, 48, 150),
 
 }
 
