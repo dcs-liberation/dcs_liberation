@@ -2,6 +2,7 @@ import logging
 import random
 import sys
 from datetime import date, datetime, timedelta
+from enum import Enum
 from typing import Dict, List
 
 from dcs.action import Coalition
@@ -64,6 +65,10 @@ AWACS_BUDGET_COST = 4
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
+class TurnState(Enum):
+    WIN = 0
+    LOSS = 1
+    CONTINUE = 2
 
 class Game:
     def __init__(self, player_name: str, enemy_name: str,
@@ -256,6 +261,14 @@ class Game:
         # Autosave progress
         persistency.autosave(self)
 
+    def check_win_loss(self):
+        captured_states = {i.captured for i in self.theater.controlpoints}
+        if True not in captured_states:
+            return TurnState.LOSS
+        if False not in captured_states:
+            return TurnState.WIN
+        return TurnState.CONTINUE
+
     def initialize_turn(self) -> None:
         self.events = []
         self._generate_events()
@@ -267,6 +280,11 @@ class Game:
         for cp in self.theater.controlpoints:
             cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
+
+        # Check for win or loss condition
+        turn_state = self.check_win_loss()
+        if turn_state in (TurnState.LOSS,TurnState.WIN):
+            return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
         self.compute_conflicts_position()
@@ -427,3 +445,9 @@ class Game:
 
     def get_enemy_color(self):
         return "red"
+
+    def process_win_loss(self, turn_state: TurnState):
+        if turn_state is TurnState.WIN:
+            return self.message("Congratulations, you are victorious!  Start a new campaign to continue.")
+        elif turn_state is TurnState.LOSS:
+            return self.message("Game Over, you lose. Start a new campaign to continue.")
