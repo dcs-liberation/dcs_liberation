@@ -160,6 +160,7 @@ import pydcs_extensions.frenchpack.frenchpack as frenchpack
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
@@ -170,6 +171,7 @@ plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
 plane_map["Rafale_B"] = Rafale_B
 plane_map["Su-57"] = Su_57
+plane_map["Hercules"] = Hercules
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -337,6 +339,7 @@ PRICES = {
     KJ_2000: 50,
     E_3A: 50,
     C_130: 25,
+    Hercules: 25,
 
     # WW2
     P_51D_30_NA: 18,
@@ -661,6 +664,7 @@ UNIT_BY_TASK = {
         Tu_95MS,
         UH_1H,
         WingLoong_I,
+        Hercules
     ],
     Transport: [
         IL_76MD,
@@ -669,6 +673,7 @@ UNIT_BY_TASK = {
         Yak_40,
 
         C_130,
+        Hercules,
     ],
     Refueling: [
         IL_78M,
@@ -1076,6 +1081,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_1W: COMMON_OVERRIDE,
     AH_64D: COMMON_OVERRIDE,
     AH_64A: COMMON_OVERRIDE,
+    Hercules: COMMON_OVERRIDE,
 
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
