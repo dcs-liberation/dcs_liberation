@@ -262,10 +262,10 @@ class Game:
         persistency.autosave(self)
 
     def check_win_loss(self):
-        cps = {i.captured: i for i in self.theater.controlpoints}
-        if True not in cps.keys():
+        captured_states = {i.captured for i in self.theater.controlpoints}
+        if True not in captured_states:
             return TurnState.LOSS
-        if False not in cps.keys():
+        if False not in captured_states:
             return TurnState.WIN
         return TurnState.CONTINUE
 
