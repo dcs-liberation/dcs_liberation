@@ -35,6 +35,7 @@ def init():
             __last_save_file = ""
             is_first_start = True
     else:
+        __last_save_file = ""
         try:
             __dcs_saved_game_directory = dcs.installation.get_dcs_saved_games_directory()
             if os.path.exists(__dcs_saved_game_directory + ".openbeta"):
