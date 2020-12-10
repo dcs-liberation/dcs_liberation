@@ -664,7 +664,6 @@ UNIT_BY_TASK = {
         Tu_95MS,
         UH_1H,
         WingLoong_I,
-        Hercules
     ],
     Transport: [
         IL_76MD,
