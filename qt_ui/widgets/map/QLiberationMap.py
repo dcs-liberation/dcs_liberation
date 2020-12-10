@@ -6,7 +6,7 @@ import math
 from typing import Iterable, Iterator, List, Optional, Tuple
 
 from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import QPointF, Qt, QLineF
+from PySide2.QtCore import QPointF, Qt, QLineF, QRectF
 from PySide2.QtGui import (
     QBrush,
     QColor,
@@ -27,14 +27,12 @@ from dcs.mapping import point_from_heading
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
-from game.theater import ControlPoint, Enum, NavalControlPoint
+from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine
 from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    MissileSiteGroundObject,
     TheaterGroundObject,
 )
-from game.utils import meter_to_feet
+from game.utils import meter_to_feet, nm_to_meter, meter_to_nm
 from game.weather import TimeOfDay
 from gen import Conflict
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
@@ -47,6 +45,7 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
+MAX_SHIP_DISTANCE = 80
 
 def binomial(i: int, n: int) -> float:
     """Binomial coefficient"""
@@ -155,6 +154,9 @@ class QLiberationMap(QGraphicsView):
             update_flight_selection
         )
 
+        self.nm_to_pixel_ratio: int = 0
+
+
     def init_scene(self):
         scene = QLiberationScene(self)
         self.setScene(scene)
@@ -168,6 +170,7 @@ class QLiberationMap(QGraphicsView):
         self.game = game
         if self.game is not None:
             logging.debug("Reloading Map Canvas")
+            self.nm_to_pixel_ratio = self.km_to_pixel(float(nm_to_meter(1)) / 1000.0)
             self.reload_scene()
 
     """
@@ -241,12 +244,12 @@ class QLiberationMap(QGraphicsView):
             transformed = self._transform_point(point)
             diameter = distance_point[0] - transformed[0]
             scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
-    
+
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
         return ((DisplayOptions.sam_ranges and cp.captured) or
                 (DisplayOptions.enemy_sam_ranges and not cp.captured))
-    
+
     def draw_threat_range(self, scene: QGraphicsScene, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
         go_pos = self._transform_point(ground_object.position)
         detection_range, threat_range = self.aa_ranges(
@@ -279,12 +282,12 @@ class QLiberationMap(QGraphicsView):
             if not ground_object.airbase_group:
                 buildings = self.game.theater.find_ground_objects_by_obj_name(ground_object.obj_name)
                 scene.addItem(QMapGroundObject(self, go_pos[0], go_pos[1], 14, 12, cp, ground_object, self.game, buildings))
-            
+
             should_display = self.should_display_ground_objects_at(cp)
             if ground_object.might_have_aa and should_display:
                self.draw_threat_range(scene, ground_object, cp)
             added_objects.append(ground_object.obj_name)
-        
+
     def reload_scene(self):
         scene = self.scene()
         scene.clear()
@@ -304,7 +307,7 @@ class QLiberationMap(QGraphicsView):
             self.display_culling(scene)
 
         for cp in self.game.theater.controlpoints:
-        
+
             pos = self._transform_point(cp.position)
 
             scene.addItem(QMapControlPoint(self, pos[0] - CONST.CP_SIZE / 2,
@@ -322,10 +325,9 @@ class QLiberationMap(QGraphicsView):
             self.draw_ground_objects(scene, cp)
 
             if cp.target_position is not None:
-                tpos = cp.target_position
-                scene.addLine(QLineF(QPointF(pos[0], pos[1]), QPointF(tpos[0], tpos[1])),
+                proj = self._transform_point(cp.target_position)
+                scene.addLine(QLineF(QPointF(pos[0], pos[1]), QPointF(proj[0], proj[1])),
                               QPen(CONST.COLORS["green"], width=10, s=Qt.DashDotLine))
-
 
         for cp in self.game.theater.enemy_points():
             if DisplayOptions.lines:
@@ -468,7 +470,7 @@ class QLiberationMap(QGraphicsView):
         for segment in frontline.segments:
             bezier_fixed_points.append(self._transform_point(segment.point_a))
             bezier_fixed_points.append(self._transform_point(segment.point_b))
-        
+
         old_point = bezier_fixed_points[0]
         for point in bezier_curve_range(int(len(bezier_fixed_points) * 2), bezier_fixed_points):
             scene.addLine(old_point[0], old_point[1], point[0], point[1], pen=pen)
@@ -493,7 +495,7 @@ class QLiberationMap(QGraphicsView):
                     self.draw_frontline_approximation(frontline, scene, pen)
             else:
                 self.draw_bezier_frontline(scene, pen, frontline)
-    
+
     def draw_frontline_approximation(self, frontline: FrontLine, scene: QGraphicsScene, pen: QPen) -> None:
         posx = frontline.position
         h = frontline.attack_heading
@@ -534,8 +536,38 @@ class QLiberationMap(QGraphicsView):
             )
         )
 
-    def wheelEvent(self, event: QWheelEvent):
+    def draw_scale(self, scale_distance_nm=20, number_of_points=4):
 
+        PADDING = 14
+        POS_X = 0
+        POS_Y = 10
+        BIG_LINE = 5
+        SMALL_LINE = 2
+
+        dist = self.km_to_pixel(nm_to_meter(scale_distance_nm)/1000.0)
+        self.scene().addRect(POS_X, POS_Y-PADDING, PADDING*2 + dist, BIG_LINE*2+3*PADDING, pen=CONST.COLORS["black"], brush=CONST.COLORS["black"])
+        l = self.scene().addLine(POS_X + PADDING, POS_Y + BIG_LINE*2, POS_X + PADDING + dist, POS_Y + BIG_LINE*2)
+
+        text = self.scene().addText("0nm", font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+        text.setPos(POS_X, POS_Y + BIG_LINE*2)
+        text.setDefaultTextColor(Qt.white)
+
+        text2 = self.scene().addText(str(scale_distance_nm) + "nm", font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+        text2.setPos(POS_X + dist, POS_Y + BIG_LINE * 2)
+        text2.setDefaultTextColor(Qt.white)
+
+        l.setPen(CONST.COLORS["white"])
+        for i in range(number_of_points+1):
+            d = float(i)/float(number_of_points)
+            if i == 0 or i == number_of_points:
+                h = BIG_LINE
+            else:
+                h = SMALL_LINE
+
+            l = self.scene().addLine(POS_X + PADDING + d * dist, POS_Y + BIG_LINE*2, POS_X + PADDING + d * dist, POS_Y + BIG_LINE - h)
+            l.setPen(CONST.COLORS["white"])
+
+    def wheelEvent(self, event: QWheelEvent):
         if event.angleDelta().y() > 0:
             factor = 1.25
             self._zoom += 1
@@ -553,9 +585,7 @@ class QLiberationMap(QGraphicsView):
             else:
                 self._zoom = -4
 
-        #print(self.factorized, factor, self._zoom)
-
-    def _transform_point(self, p: Point, treshold=30) -> Tuple[int, int]:
+    def _transform_point(self, p: Point) -> Tuple[int, int]:
         point_a = list(self.game.theater.reference_points.keys())[0]
         point_a_img = self.game.theater.reference_points[point_a]
 
@@ -578,14 +608,35 @@ class QLiberationMap(QGraphicsView):
         X = point_b_img[1] + X_offset * X_scale
         Y = point_a_img[0] - Y_offset * Y_scale
 
-        #X += 5
-        #Y += 5
+        return X, Y
 
-        return X > treshold and X or treshold, Y > treshold and Y or treshold
+    def _scene_to_dcs_coords(self, p: Point):
+        pa = list(self.game.theater.reference_points.keys())[0]
+        pa2 = self.game.theater.reference_points[pa]
 
+        pb = list(self.game.theater.reference_points.keys())[1]
+        pb2 = self.game.theater.reference_points[pb]
 
-    def _scene_to_dcs_coords(self, x, y):
-        pass
+        dy2 = pa2[0] - pb2[0]
+        dy = pa[1] - pb[1]
+
+        dx2 = pa2[1] - pb2[1]
+        dx = pb[0] - pa[0]
+
+        ys = float(dy2) / float(dy)
+        xs = float(dx2) / float(dx)
+
+        X = ((float(p.x - pb2[1])) / float(xs)) + pa[1]
+        Y = ((float(pa2[0] - p.y)) / float(ys)) + pa[0]
+
+        return Y, X
+
+    def km_to_pixel(self, km):
+        p1 = Point(0, 0)
+        p2 = Point(0, 1000*km)
+        p1a = Point(*self._transform_point(p1))
+        p2a = Point(*self._transform_point(p2))
+        return p1a.distance_to_point(p2a)
 
     def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
         return QColor(255, 255, 0, 20 if transparent else 255)
@@ -672,6 +723,32 @@ class QLiberationMap(QGraphicsView):
                     poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
                     scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
+        # Uncomment to display plan projection test
+        #self.projection_test(scene)
+        self.draw_scale()
+
+    def projection_test(self, scene):
+        for i in range(100):
+            for j in range(100):
+                x = i * 100
+                y = j * 100
+                self.scene().addRect(QRectF(x, y, 4, 4), CONST.COLORS["green"])
+                proj = self._scene_to_dcs_coords(Point(x, y))
+                unproj = self._transform_point(Point(proj[0], proj[1]))
+                text = scene.addText(str(i) + ", " + str(j) + "\n" + str(unproj[0]) + ", " + str(unproj[1]),
+                                     font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+                text.setPos(unproj[0] + 2, unproj[1] + 2)
+                text.setDefaultTextColor(Qt.red)
+                text2 = scene.addText(str(i) + ", " + str(j) + "\n" + str(x) + ", " + str(y),
+                                      font=QFont("Trebuchet MS", 6, weight=5, italic=False))
+                text2.setPos(x + 2, y + 10)
+                text2.setDefaultTextColor(Qt.green)
+                self.scene().addRect(QRectF(unproj[0] + 1, unproj[1] + 1, 4, 4), CONST.COLORS["red"])
+                if i % 2 == 0:
+                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["yellow"])
+                else:
+                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["purple"])
+
     def setSelectedUnit(self, selected_cp: QMapControlPoint):
         self.state = QLiberationMapState.MOVING_UNIT
         self.selected_cp = selected_cp
@@ -682,8 +759,19 @@ class QLiberationMap(QGraphicsView):
     def sceneMouseMovedEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:
             self.setCursor(Qt.PointingHandCursor)
+            pos = event.scenePos()
             p1 = self.movement_line.line().p1()
-            self.movement_line.setLine(QLineF(p1, event.scenePos()))
+
+            distance = Point(p1.x(), p1.y()).distance_to_point(Point(pos.x(), pos.y()))
+
+            self.movement_line.setLine(QLineF(p1, pos))
+
+            if distance / self.nm_to_pixel_ratio < MAX_SHIP_DISTANCE:
+                self.movement_line.setPen(CONST.COLORS["green"])
+            else:
+                self.movement_line.setPen(CONST.COLORS["red"])
+
+
 
     def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:
@@ -694,10 +782,23 @@ class QLiberationMap(QGraphicsView):
                     # Set movement position for the cp
                     pos = event.scenePos()
                     point = Point(int(pos.x()), int(pos.y()))
-                    self.selected_cp.control_point.target_position = point.x, point.y # TODO : convert to DCS coords !
+                    proj = Point(*self._scene_to_dcs_coords(point))
+
+                    # Check distance (max = 80 nm)
+                    distance = meter_to_nm(proj.distance_to_point(self.selected_cp.control_point.position))
+
+                    # Check if point is in sea
+                    if self.game.theater.is_in_sea(proj) and distance < MAX_SHIP_DISTANCE:
+                        self.selected_cp.control_point.target_position = proj
+                    else:
+                        self.selected_cp.control_point.target_position = None
+
                     GameUpdateSignal.get_instance().updateGame(self.game_model.game)
             else:
                 return
             self.state = QLiberationMapState.NORMAL
-            self.scene().removeItem(self.movement_line)
+            try:
+                self.scene().removeItem(self.movement_line)
+            except:
+                pass
             self.selected_cp = None
