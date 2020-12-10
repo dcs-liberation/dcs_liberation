@@ -636,8 +636,8 @@ class NevadaTheater(ConflictTheater):
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
     overview_image = "normandy.gif"
-    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (-170, -1000),
-                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (2020, 500)}
+    reference_points = {(normandy.Needs_Oar_Point.position.x, normandy.Needs_Oar_Point.position.y): (330, -970),
+                        (normandy.Evreux.position.x, normandy.Evreux.position.y): (1780, 520)}
     landmap = load_landmap("resources\\normandylandmap.p")
     daytime_map = {
         "dawn": (6, 8),
