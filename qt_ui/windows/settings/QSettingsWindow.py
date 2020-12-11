@@ -363,7 +363,7 @@ class QSettingsWindow(QDialog):
         self.culling.toggled.connect(self.applySettings)
 
         self.culling_distance = QSpinBox()
-        self.culling_distance.setMinimum(50)
+        self.culling_distance.setMinimum(10)
         self.culling_distance.setMaximum(10000)
         self.culling_distance.setValue(self.game.settings.perf_culling_distance)
         self.culling_distance.valueChanged.connect(self.applySettings)

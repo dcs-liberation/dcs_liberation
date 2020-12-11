@@ -270,8 +270,8 @@ class QLiberationMap(QGraphicsView):
             culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
             distance_point = self._transform_point(culling_distance_point)
             transformed = self._transform_point(point)
-            diameter = distance_point[0] - transformed[0]
-            scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+            radius = distance_point[0] - transformed[0]
+            scene.addEllipse(transformed[0]-radius, transformed[1]-radius, 2*radius, 2*radius, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
 
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
