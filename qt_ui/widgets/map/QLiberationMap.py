@@ -28,7 +28,7 @@ from dcs.mapping import point_from_heading
 import qt_ui.uiconstants as CONST
 from game import Game, db
 from game.theater import ControlPoint, Enum
-from game.theater.conflicttheater import FrontLine
+from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
@@ -190,36 +190,54 @@ class QLiberationMap(QGraphicsView):
                 self.reference_point_setup_mode = False
                 self.reload_scene()
             else:
-                numpad_mod = int(event.modifiers()) & QtCore.Qt.KeypadModifier
-                i = 0
-                for k,v in self.game.theater.reference_points.items():
-                    if i == 0:
-                        point_0 = k
-                    else:
-                        point_1 = k
-                    i = i + 1
+                distance = 1
+                modifiers = int(event.modifiers())
+                if modifiers & QtCore.Qt.ShiftModifier:
+                    distance *= 10
+                elif modifiers & QtCore.Qt.ControlModifier:
+                    distance *= 100
 
                 if event.key() == QtCore.Qt.Key_Down:
-                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] + 10, self.game.theater.reference_points[point_0][1]
+                    self.update_reference_point(
+                        self.game.theater.reference_points[0],
+                        Point(0, distance))
                 if event.key() == QtCore.Qt.Key_Up:
-                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0] - 10, self.game.theater.reference_points[point_0][1]
+                    self.update_reference_point(
+                        self.game.theater.reference_points[0],
+                        Point(0, -distance))
                 if event.key() == QtCore.Qt.Key_Left:
-                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] + 10
+                    self.update_reference_point(
+                        self.game.theater.reference_points[0],
+                        Point(-distance, 0))
                 if event.key() == QtCore.Qt.Key_Right:
-                    self.game.theater.reference_points[point_0] = self.game.theater.reference_points[point_0][0], self.game.theater.reference_points[point_0][1] - 10
+                    self.update_reference_point(
+                        self.game.theater.reference_points[0],
+                        Point(distance, 0))
 
+                if event.key() == QtCore.Qt.Key_S:
+                    self.update_reference_point(
+                        self.game.theater.reference_points[1],
+                        Point(0, distance))
+                if event.key() == QtCore.Qt.Key_W:
+                    self.update_reference_point(
+                        self.game.theater.reference_points[1],
+                        Point(0, -distance))
+                if event.key() == QtCore.Qt.Key_A:
+                    self.update_reference_point(
+                        self.game.theater.reference_points[1],
+                        Point(-distance, 0))
+                if event.key() == QtCore.Qt.Key_D:
+                    self.update_reference_point(
+                        self.game.theater.reference_points[1],
+                        Point(distance, 0))
 
-                if event.key() == QtCore.Qt.Key_2 and numpad_mod:
-                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] + 10, self.game.theater.reference_points[point_1][1]
-                if event.key() == QtCore.Qt.Key_8 and numpad_mod:
-                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0] - 10, self.game.theater.reference_points[point_1][1]
-                if event.key() == QtCore.Qt.Key_4 and numpad_mod:
-                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] + 10
-                if event.key() == QtCore.Qt.Key_6 and numpad_mod:
-                    self.game.theater.reference_points[point_1] = self.game.theater.reference_points[point_1][0], self.game.theater.reference_points[point_1][1] - 10
-
-                print(self.game.theater.reference_points)
+                logging.debug(
+                    f"Reference points: {self.game.theater.reference_points}")
                 self.reload_scene()
+
+    @staticmethod
+    def update_reference_point(point: ReferencePoint, change: Point) -> None:
+        point.image_coordinates += change
 
     @staticmethod
     def aa_ranges(ground_object: TheaterGroundObject) -> Tuple[int, int]:
@@ -590,51 +608,60 @@ class QLiberationMap(QGraphicsView):
             else:
                 self._zoom = -4
 
-    def _transform_point(self, p: Point) -> Tuple[int, int]:
-        point_a = list(self.game.theater.reference_points.keys())[0]
-        point_a_img = self.game.theater.reference_points[point_a]
+    @staticmethod
+    def _transpose_point(p: Point) -> Point:
+        return Point(p.y, p.x)
 
-        point_b = list(self.game.theater.reference_points.keys())[1]
-        point_b_img = self.game.theater.reference_points[point_b]
+    def _scaling_factor(self) -> Point:
+        point_a = self.game.theater.reference_points[0]
+        point_b = self.game.theater.reference_points[1]
 
-        Y_dist = point_a_img[0] - point_b_img[0]
-        lon_dist = point_a[1] - point_b[1]
+        world_distance = self._transpose_point(
+            point_b.world_coordinates - point_a.world_coordinates)
+        image_distance = point_b.image_coordinates - point_a.image_coordinates
 
-        X_dist = point_a_img[1] - point_b_img[1]
-        lat_dist = point_b[0] - point_a[0]
+        x_scale = image_distance.x / world_distance.x
+        y_scale = image_distance.y / world_distance.y
+        return Point(x_scale, y_scale)
 
-        Y_scale = float(Y_dist) / float(lon_dist)
-        X_scale = float(X_dist) / float(lat_dist)
+    # TODO: Move this and its inverse into ConflictTheater.
+    def _transform_point(self, world_point: Point) -> Tuple[float, float]:
+        """Transforms world coordinates to image coordinates.
 
-        # ---
-        Y_offset = p.x - point_a[0]
-        X_offset = p.y - point_a[1]
+        World coordinates are transposed. X increases toward the North, Y
+        increases toward the East. The origin point depends on the map.
 
-        X = point_b_img[1] + X_offset * X_scale
-        Y = point_a_img[0] - Y_offset * Y_scale
+        Image coordinates originate from the top left. X increases to the right,
+        Y increases toward the bottom.
 
-        return X, Y
+        The two points should be as distant as possible in both latitude and
+        logitude, and tuning the reference points will be simpler if they are in
+        geographically recognizable locations. For example, the Caucasus map is
+        aligned using the first point on Gelendzhik and the second on Batumi.
 
-    def _scene_to_dcs_coords(self, p: Point):
-        pa = list(self.game.theater.reference_points.keys())[0]
-        pa2 = self.game.theater.reference_points[pa]
+        The distances between each point are computed and a scaling factor is
+        determined from that. The given point is then offset from the first
+        point using the scaling factor.
 
-        pb = list(self.game.theater.reference_points.keys())[1]
-        pb2 = self.game.theater.reference_points[pb]
+        X is latitude, increasing northward.
+        Y is longitude, increasing eastward.
+        """
+        point_a = self.game.theater.reference_points[0]
+        scale = self._scaling_factor()
 
-        dy2 = pa2[0] - pb2[0]
-        dy = pa[1] - pb[1]
+        offset = self._transpose_point(point_a.world_coordinates - world_point)
+        scaled = Point(offset.x * scale.x, offset.y * scale.y)
+        transformed = point_a.image_coordinates - scaled
+        return transformed.x, transformed.y
 
-        dx2 = pa2[1] - pb2[1]
-        dx = pb[0] - pa[0]
+    def _scene_to_dcs_coords(self, scene_point: Point) -> Point:
+        point_a = self.game.theater.reference_points[0]
+        scale = self._scaling_factor()
 
-        ys = float(dy2) / float(dy)
-        xs = float(dx2) / float(dx)
-
-        X = ((float(p.x - pb2[1])) / float(xs)) + pa[1]
-        Y = ((float(pa2[0] - p.y)) / float(ys)) + pa[0]
-
-        return Y, X
+        offset = point_a.image_coordinates - scene_point
+        scaled = self._transpose_point(
+            Point(offset.x / scale.x, offset.y / scale.y))
+        return point_a.world_coordinates - scaled
 
     def km_to_pixel(self, km):
         p1 = Point(0, 0)
@@ -739,38 +766,47 @@ class QLiberationMap(QGraphicsView):
                         scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_dark_grey"])
 
         # Uncomment to display plan projection test
-        #self.projection_test(scene)
+        # self.projection_test()
         self.draw_scale()
 
         if self.reference_point_setup_mode:
-            for i, r in enumerate(self.game.theater.reference_points.values()):
-                self.scene().addRect(QRectF(r[0], r[1], 25, 25), pen=CONST.COLORS["red"], brush=CONST.COLORS["red"])
-                text = self.scene().addText("P{0} = {1}, {2}".format(i, r[0], r[1]),
-                                            font=QFont("Trebuchet MS", 14, weight=8, italic=False))
+            for i, point in enumerate(self.game.theater.reference_points):
+                self.scene().addRect(
+                    QRectF(point.image_coordinates.x, point.image_coordinates.y,
+                           25, 25), pen=CONST.COLORS["red"],
+                    brush=CONST.COLORS["red"])
+                text = self.scene().addText(
+                    f"P{i} = {point.image_coordinates}",
+                    font=QFont("Trebuchet MS", 14, weight=8, italic=False))
                 text.setDefaultTextColor(CONST.COLORS["red"])
-                text.setPos(r[0]+26, r[1])
+                text.setPos(point.image_coordinates.x + 26,
+                            point.image_coordinates.y)
 
-    def projection_test(self, scene):
+                # Set to True to visually debug _transform_point.
+                draw_transformed = False
+                if draw_transformed:
+                    x, y = self._transform_point(point.world_coordinates)
+                    self.scene().addRect(
+                        QRectF(x, y, 25, 25),
+                        pen=CONST.COLORS["red"],
+                        brush=CONST.COLORS["red"])
+                    text = self.scene().addText(
+                        f"P{i}' = {x}, {y}",
+                        font=QFont("Trebuchet MS", 14, weight=8, italic=False))
+                    text.setDefaultTextColor(CONST.COLORS["red"])
+                    text.setPos(x + 26, y)
+
+    def projection_test(self):
         for i in range(100):
             for j in range(100):
-                x = i * 100
-                y = j * 100
-                self.scene().addRect(QRectF(x, y, 4, 4), CONST.COLORS["green"])
-                proj = self._scene_to_dcs_coords(Point(x, y))
-                unproj = self._transform_point(Point(proj[0], proj[1]))
-                text = scene.addText(str(i) + ", " + str(j) + "\n" + str(unproj[0]) + ", " + str(unproj[1]),
-                                     font=QFont("Trebuchet MS", 6, weight=5, italic=False))
-                text.setPos(unproj[0] + 2, unproj[1] + 2)
-                text.setDefaultTextColor(Qt.red)
-                text2 = scene.addText(str(i) + ", " + str(j) + "\n" + str(x) + ", " + str(y),
-                                      font=QFont("Trebuchet MS", 6, weight=5, italic=False))
-                text2.setPos(x + 2, y + 10)
-                text2.setDefaultTextColor(Qt.green)
-                self.scene().addRect(QRectF(unproj[0] + 1, unproj[1] + 1, 4, 4), CONST.COLORS["red"])
-                if i % 2 == 0:
-                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["yellow"])
-                else:
-                    self.scene().addLine(QLineF(x + 1, y + 1, unproj[0], unproj[1]), CONST.COLORS["purple"])
+                x = i * 100.0
+                y = j * 100.0
+                original = Point(x, y)
+                proj = self._scene_to_dcs_coords(original)
+                unproj = self._transform_point(proj)
+                converted = Point(*unproj)
+                assert math.isclose(original.x, converted.x, abs_tol=0.00000001)
+                assert math.isclose(original.y, converted.y, abs_tol=0.00000001)
 
     def setSelectedUnit(self, selected_cp: QMapControlPoint):
         self.state = QLiberationMapState.MOVING_UNIT
@@ -779,22 +815,26 @@ class QLiberationMap(QGraphicsView):
         self.movement_line = QtWidgets.QGraphicsLineItem(QLineF(QPointF(*position), QPointF(*position)))
         self.scene().addItem(self.movement_line)
 
+    def is_valid_ship_pos(self, scene_position: Point) -> bool:
+        world_destination = self._scene_to_dcs_coords(scene_position)
+        distance = self.selected_cp.control_point.position.distance_to_point(
+            world_destination
+        )
+        if meter_to_nm(distance) > MAX_SHIP_DISTANCE:
+            return False
+        return self.game.theater.is_in_sea(world_destination)
+
     def sceneMouseMovedEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:
             self.setCursor(Qt.PointingHandCursor)
-            pos = event.scenePos()
-            p1 = self.movement_line.line().p1()
+            self.movement_line.setLine(
+                QLineF(self.movement_line.line().p1(), event.scenePos()))
 
-            distance = Point(p1.x(), p1.y()).distance_to_point(Point(pos.x(), pos.y()))
-
-            self.movement_line.setLine(QLineF(p1, pos))
-
-            if distance / self.nm_to_pixel_ratio < MAX_SHIP_DISTANCE:
+            pos = Point(event.scenePos().x(), event.scenePos().y())
+            if self.is_valid_ship_pos(pos):
                 self.movement_line.setPen(CONST.COLORS["green"])
             else:
                 self.movement_line.setPen(CONST.COLORS["red"])
-
-
 
     def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:
@@ -805,13 +845,9 @@ class QLiberationMap(QGraphicsView):
                     # Set movement position for the cp
                     pos = event.scenePos()
                     point = Point(int(pos.x()), int(pos.y()))
-                    proj = Point(*self._scene_to_dcs_coords(point))
+                    proj = self._scene_to_dcs_coords(point)
 
-                    # Check distance (max = 80 nm)
-                    distance = meter_to_nm(proj.distance_to_point(self.selected_cp.control_point.position))
-
-                    # Check if point is in sea
-                    if self.game.theater.is_in_sea(proj) and distance < MAX_SHIP_DISTANCE:
+                    if self.is_valid_ship_pos(point):
                         self.selected_cp.control_point.target_position = proj
                     else:
                         self.selected_cp.control_point.target_position = None
