@@ -6,9 +6,11 @@
 * **[Campaign Map]** Added off-map spawn locations
 * **[Campaign AI]** Overhauled AI recruiting behaviour
 * **[Campaign AI]** Added AI proucurement for Blue
+* **[Campaign]** New Campaign: "Black Sea"
 * **[Mission Planner]** Possible to move carrier and tarawa on the campaign map
 * **[Mission Generator]** Infantry squads on frontline can have manpads
 * **[Mission Generator]** Unused aircraft now spawned to allow for OCA strikes
+* **[Mission Generator]** Opfor now obeys parking limits
 * **[Flight Planner]** Added fighter sweep missions.
 * **[Flight Planner]** Added BAI missions.
 * **[Flight Planner]** Added anti-ship missions.
@@ -19,7 +21,6 @@
 * **[QOL]** On liberation startup, your latest save game is loaded automatically
 * **[Units]** Reduced starting fuel load for C101
 * **[UI]** Inform the user of the weather
-* **[Factions]** Added livery overrides in faction files
 * **[Game]** Added new Economy options for adjusting income multipliers and starting budgets.
 
 ## Fixes :
