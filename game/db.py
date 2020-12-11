@@ -664,15 +664,14 @@ UNIT_BY_TASK = {
         Tu_95MS,
         UH_1H,
         WingLoong_I,
+        Hercules
     ],
     Transport: [
         IL_76MD,
         An_26B,
         An_30M,
         Yak_40,
-
-        C_130,
-        Hercules,
+        C_130
     ],
     Refueling: [
         IL_78M,
