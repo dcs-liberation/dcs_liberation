@@ -128,11 +128,17 @@ def parse_args() -> argparse.Namespace:
         help="Automate bluefor procurement."
     )
 
+    new_game.add_argument(
+        "--inverted", action="store_true",
+        help="Invert the campaign."
+    )
+
     return parser.parse_args()
 
 
 def create_game(campaign_path: Path, blue: str, red: str,
-                supercarrier: bool, auto_procurement: bool) -> Game:
+                supercarrier: bool, auto_procurement: bool,
+                inverted: bool) -> Game:
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue, red, campaign.load_theater(),
@@ -147,7 +153,7 @@ def create_game(campaign_path: Path, blue: str, red: str,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             midgame=False,
-            inverted=False,
+            inverted=inverted,
             no_carrier=False,
             no_lha=False,
             no_player_navy=False,
@@ -168,7 +174,8 @@ def main():
     args = parse_args()
     if args.subcommand == "new-game":
         game = create_game(args.campaign, args.blue, args.red,
-                           args.supercarrier, args.auto_procurement)
+                           args.supercarrier, args.auto_procurement,
+                           args.inverted)
 
     run_ui(game)
 
