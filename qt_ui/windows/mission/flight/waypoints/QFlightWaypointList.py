@@ -6,7 +6,8 @@ from PySide2.QtWidgets import QHeaderView, QTableView
 
 from game.utils import meter_to_feet
 from gen.ato import Package
-from gen.flights.flight import Flight, FlightWaypoint
+from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
     QWaypointItem
 
@@ -60,8 +61,9 @@ class QFlightWaypointList(QTableView):
         tot_item.setEditable(False)
         self.model.setItem(row, 2, tot_item)
 
-    @staticmethod
-    def tot_text(flight: Flight, waypoint: FlightWaypoint) -> str:
+    def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
+        if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:
+            return self.takeoff_text(flight)
         prefix = ""
         time = flight.flight_plan.tot_for_waypoint(waypoint)
         if time is None:
@@ -71,3 +73,9 @@ class QFlightWaypointList(QTableView):
             return ""
         time = timedelta(seconds=int(time.total_seconds()))
         return f"{prefix}T+{time}"
+
+    def takeoff_text(self, flight: Flight) -> str:
+        estimator = TotEstimator(self.package)
+        start_time = timedelta(seconds=int(
+            estimator.takeoff_time_for_flight(flight).total_seconds()))
+        return f"T+{start_time}"
