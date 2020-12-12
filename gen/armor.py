@@ -177,7 +177,12 @@ class GroundConflictGenerator:
         forward_heading: int
     ) -> None:
 
-        infantry_position = group.points[0].position.random_point_within(250, 50)
+        infantry_position = self.conflict.find_ground_position(
+            group.points[0].position.random_point_within(250, 50),
+            500,
+            forward_heading,
+            self.conflict.theater
+            )
 
         if side == self.conflict.attackers_country:
             cp = self.conflict.from_cp
@@ -236,7 +241,7 @@ class GroundConflictGenerator:
         """Setting a waypoint close to the spawn position allows the group to reform gracefully
         rather than spin        
         """
-        reform_point = dcs_group.position.point_from_heading(forward_heading, 30)
+        reform_point = dcs_group.position.point_from_heading(forward_heading, 50)
         dcs_group.add_waypoint(reform_point)
 
     def _plan_artillery_action(
@@ -326,7 +331,10 @@ class GroundConflictGenerator:
                         -RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK
                     )
                 )
-                dcs_group.add_waypoint(target.points[0].position + rand_offset, PointAction.OffRoad)
+                target_point = self.conflict.theater.nearest_land_pos(
+                    target.points[0].position + rand_offset
+                )
+                dcs_group.add_waypoint(target_point)
                 dcs_group.points[2].tasks.append(AttackGroup(target.id))
 
             if (
@@ -334,7 +342,9 @@ class GroundConflictGenerator:
                 <=
                 AGGRESIVE_MOVE_DISTANCE
             ):
-                attack_point = to_cp.position.random_point_within(500, 0)
+                attack_point = self.conflict.theater.nearest_land_pos(
+                    to_cp.position.random_point_within(500, 0)
+                )
             else:
                 attack_point = self.find_offensive_point(
                     dcs_group,
@@ -347,7 +357,9 @@ class GroundConflictGenerator:
             # If the enemy base is close enough, the units will attack the base
             if to_cp.position.distance_to_point(
                     dcs_group.points[0].position) <= BREAKTHROUGH_OFFENSIVE_DISTANCE:
-                attack_point = to_cp.position.random_point_within(500, 0)
+                attack_point = self.conflict.theater.nearest_land_pos(
+                    to_cp.position.random_point_within(500, 0)
+                )
             else:
                 attack_point = self.find_offensive_point(dcs_group, forward_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
             dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
@@ -364,10 +376,15 @@ class GroundConflictGenerator:
                         RANDOM_OFFSET_ATTACK
                     )
                 )
-                dcs_group.add_waypoint(target.points[0].position+rand_offset, PointAction.OffRoad)
+                target_point = self.conflict.theater.nearest_land_pos(
+                    target.points[0].position+rand_offset
+                )
+                dcs_group.add_waypoint(target_point, PointAction.OffRoad)
                 dcs_group.points[i + 1].tasks.append(AttackGroup(target.id))
             if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
-                attack_point = to_cp.position.random_point_within(500, 0)
+                attack_point = self.conflict.theater.nearest_land_pos(
+                    to_cp.position.random_point_within(500, 0)
+                )
                 dcs_group.add_waypoint(attack_point)
 
         if stance != CombatStance.RETREAT:
@@ -390,7 +407,7 @@ class GroundConflictGenerator:
         if stance in [CombatStance.AGGRESSIVE, CombatStance.BREAKTHROUGH, CombatStance.ELIMINATION]:
             # APC & ATGM will never move too much forward, but will follow along any offensive
             if to_cp.position.distance_to_point(dcs_group.points[0].position) <= AGGRESIVE_MOVE_DISTANCE:
-                attack_point = to_cp.position.random_point_within(500, 0)
+                attack_point = self.conflict.theater.nearest_land_pos(to_cp.position.random_point_within(500, 0))
             else:
                 attack_point = self.find_offensive_point(dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE)
             dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
@@ -491,12 +508,9 @@ class GroundConflictGenerator:
         :return: dcs.mapping.Point object with the desired position
         """
         desired_point = dcs_group.points[0].position.point_from_heading(heading_sum(frontline_heading, +180), distance)
-        return Conflict.find_ground_position(
-            desired_point,
-            1000000,
-            heading_sum(frontline_heading, 90),
-            self.conflict.theater,
-        )
+        if self.conflict.theater.is_on_land(desired_point):
+            return desired_point
+        return self.conflict.theater.nearest_land_pos(desired_point)
 
 
     def find_offensive_point(
@@ -513,12 +527,9 @@ class GroundConflictGenerator:
         :return: dcs.mapping.Point object with the desired position
         """
         desired_point = dcs_group.points[0].position.point_from_heading(frontline_heading, distance)
-        return Conflict.find_ground_position(
-            desired_point,
-            1000000,
-            heading_sum(frontline_heading, 90),
-            self.conflict.theater,
-        )
+        if self.conflict.theater.is_on_land(desired_point):
+            return desired_point
+        return self.conflict.theater.nearest_land_pos(desired_point)
 
     @staticmethod
     def find_n_nearest_enemy_groups(
@@ -681,7 +692,7 @@ class GroundConflictGenerator:
         group = self.mission.vehicle_group(
                 side,
                 namegen.next_unit_name(side, cp.id, unit), unit,
-                position=self._group_point(at, distance_from_frontline),
+                position=at,
                 group_size=count,
                 heading=heading,
                 move_formation=move_formation)

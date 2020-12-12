@@ -91,8 +91,12 @@ class Conflict:
         return pos
 
     @classmethod
-    def find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
-        """Finds the nearest valid ground position along a provided heading and it's inverse"""
+    def find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater, coerce=True) -> Optional[Point]:
+        """
+        Finds the nearest valid ground position along a provided heading and it's inverse up to max_distance.
+        `coerce=True` will return the closest land position to `initial` regardless of heading or distance
+        `coerce=False` will return None if a point isn't found
+        """
         pos = initial
         if theater.is_on_land(pos):
             return pos
@@ -101,5 +105,9 @@ class Conflict:
             if theater.is_on_land(pos):
                 return pos
             pos = initial.point_from_heading(opposite_heading(heading), distance)
+        if coerce:
+            pos = theater.nearest_land_pos(initial)
+            return pos
         logging.error("Didn't find ground position ({})!".format(initial))
         return None
+        
