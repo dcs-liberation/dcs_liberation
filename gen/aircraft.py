@@ -1381,13 +1381,13 @@ class PydcsWaypointBuilder:
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
-            Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt)
+            Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt,
+            name=self.mission.string(self.waypoint.name))
 
         if self.waypoint.flyover:
             waypoint.type = PointAction.FlyOverPoint.value
 
         waypoint.alt_type = self.waypoint.alt_type
-        waypoint.name = String(self.waypoint.name)
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
         if tot is not None:
             self.set_waypoint_tot(waypoint, tot)
