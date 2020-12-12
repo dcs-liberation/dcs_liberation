@@ -744,7 +744,7 @@ class QLiberationMap(QGraphicsView):
 
                 for sea_zone in self.game.theater.landmap[2]:
                     print(sea_zone)
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in sea_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in sea_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         color = "sea_blue_transparent"
                     else:
@@ -752,14 +752,14 @@ class QLiberationMap(QGraphicsView):
                     scene.addPolygon(poly, CONST.COLORS[color], CONST.COLORS[color])
 
                 for inclusion_zone in self.game.theater.landmap[0]:
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_grey_transparent"])
                     else:
                         scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
 
                 for exclusion_zone in self.game.theater.landmap[1]:
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_dark_grey_transparent"])
                     else:

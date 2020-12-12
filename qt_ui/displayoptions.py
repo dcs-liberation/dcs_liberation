@@ -20,8 +20,9 @@ class DisplayRule:
     def value(self, value: bool) -> None:
         from qt_ui.widgets.map.QLiberationMap import QLiberationMap
         self._value = value
-        QLiberationMap.instance.reload_scene()
-        QLiberationMap.instance.update()
+        if QLiberationMap.instance is not None:
+            QLiberationMap.instance.reload_scene()
+            QLiberationMap.instance.update()
 
     def __bool__(self) -> bool:
         return self.value
