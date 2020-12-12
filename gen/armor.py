@@ -183,7 +183,9 @@ class GroundConflictGenerator:
             forward_heading,
             self.conflict.theater
             )
-
+        if not infantry_position:
+            logging.warning("Could not find infantry position")
+            return
         if side == self.conflict.attackers_country:
             cp = self.conflict.from_cp
         else:
@@ -610,7 +612,7 @@ class GroundConflictGenerator:
         self,
         conflict_position: Point,
         combat_width: int,
-        distance_from_frontline: int,
+        distance_from_frontline: Tuple[int, int],
         heading: int,
         spawn_heading: int
     ):

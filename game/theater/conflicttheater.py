@@ -482,6 +482,8 @@ class ConflictTheater:
             return point
         point = geometry.Point(point.x, point.y)
         nearest_points = []
+        if not self.landmap:
+            raise RuntimeError("Landmap not initialized")
         for inclusion_zone in self.landmap[0]:
             nearest_pair = ops.nearest_points(point, inclusion_zone)
             nearest_points.append(nearest_pair[1])
