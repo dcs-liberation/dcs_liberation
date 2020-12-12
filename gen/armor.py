@@ -201,14 +201,16 @@ class GroundConflictGenerator:
             if self.game.settings.manpads:
                 # 50% of armored units protected by manpad
                 if random.choice([True, False]):
-                    u = random.choice(db.find_manpad(faction))
-                    self.mission.vehicle_group(
-                        side,
-                        namegen.next_infantry_name(side, cp, u), u,
-                        position=infantry_position,
-                        group_size=1,
-                        heading=forward_heading,
-                        move_formation=PointAction.OffRoad)
+                    manpads = db.find_manpad(faction)
+                    if len(manpads) > 0:
+                        u = random.choice(manpads)
+                        self.mission.vehicle_group(
+                            side,
+                            namegen.next_infantry_name(side, cp, u), u,
+                            position=infantry_position,
+                            group_size=1,
+                            heading=forward_heading,
+                            move_formation=PointAction.OffRoad)
             return
 
         possible_infantry_units = db.find_infantry(faction, allow_manpad=self.game.settings.manpads)
