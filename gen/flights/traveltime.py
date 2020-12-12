@@ -87,6 +87,7 @@ class TravelTime:
         return timedelta(hours=distance / speed * error_factor)
 
 
+# TODO: Most if not all of this should move into FlightPlan.
 class TotEstimator:
     # An extra five minutes given as wiggle room. Expected to be spent at the
     # hold point performing any last minute configuration.
