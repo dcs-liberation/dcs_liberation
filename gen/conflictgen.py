@@ -102,4 +102,4 @@ class Conflict:
                 return pos
             pos = initial.point_from_heading(opposite_heading(heading), distance)
         logging.error("Didn't find ground position ({})!".format(initial))
-        return initial
+        return None
