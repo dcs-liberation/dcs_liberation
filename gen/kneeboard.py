@@ -26,7 +26,7 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
@@ -44,6 +44,8 @@ from .runways import RunwayData
 
 if TYPE_CHECKING:
     from game import Game
+
+
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
@@ -191,7 +193,15 @@ class FlightPlanBuilder:
             waypoint.position
         ))
         duration = (waypoint.tot - last_time).total_seconds() / 3600
-        return f"{int(distance / duration)} kt"
+        try:
+            return f"{int(distance / duration)} kt"
+        except ZeroDivisionError:
+            # TODO: Improve resolution of unit conversions.
+            # When waypoints are very close to each other they can end up with
+            # identical TOTs because our unit conversion functions truncate to
+            # int. When waypoints have the same TOT the duration will be zero.
+            # https://github.com/Khopa/dcs_liberation/issues/557
+            return "-"
 
     def build(self) -> List[List[str]]:
         return self.rows
