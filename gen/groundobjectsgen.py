@@ -34,6 +34,7 @@ from game.theater.theatergroundobject import (
     LhaGroundObject, ShipGroundObject,
 )
 from game.unitmap import UnitMap
+from game.utils import knots_to_kph, kph_to_mps, mps_to_kph
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
 from .tacan import TacanBand, TacanChannel, TacanRegistry
@@ -243,12 +244,16 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
         return ship
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[int]:
-        brc = self.m.weather.wind_at_ground.direction + 180
+        wind = self.game.conditions.weather.wind.at_0m
+        brc = wind.direction + 180
+        # Aim for 25kts over the deck.
+        carrier_speed = knots_to_kph(25) - mps_to_kph(wind.speed)
         for attempt in range(5):
             point = group.points[0].position.point_from_heading(
                 brc, 100000 - attempt * 20000)
             if self.game.theater.is_in_sea(point):
-                group.add_waypoint(point)
+                group.points[0].speed = kph_to_mps(carrier_speed)
+                group.add_waypoint(point, carrier_speed)
                 return brc
         return None
 
