@@ -9,6 +9,9 @@ from itertools import tee
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Set, Tuple, Union, cast
 
+from shapely import geometry
+from shapely import ops
+
 from dcs import Mission
 from dcs.countries import (
     CombinedJointTaskForcesBlue,
@@ -471,6 +474,32 @@ class ConflictTheater:
                 return False
 
         return True
+
+    def nearest_land_pos(self, point: Point, extend_dist: int = 50) -> Point:
+        """Returns the nearest point inside a land exclusion zone from point
+        `extend_dist` determines how far inside the zone the point should be placed"""
+        if self.is_on_land(point):
+            return point
+        point = geometry.Point(point.x, point.y)
+        nearest_points = []
+        for inclusion_zone in self.landmap[0]:
+            nearest_pair = ops.nearest_points(point, inclusion_zone)
+            nearest_points.append(nearest_pair[1])
+        min_distance = None # type: Optional[geometry.Point]
+        nearest_point = None # type: Optional[geometry.Point]
+        for pt in nearest_points:
+            distance = point.distance(pt)
+            if not min_distance or distance < min_distance:
+                min_distance = distance
+                nearest_point = pt
+        assert isinstance(nearest_point, geometry.Point)
+        point = Point(point.x, point.y)
+        nearest_point = Point(nearest_point.x, nearest_point.y)
+        new_point = point.point_from_heading(
+            point.heading_between_point(nearest_point),
+            point.distance_to_point(nearest_point) + extend_dist
+        )
+        return new_point
 
     def player_points(self) -> List[ControlPoint]:
         return [point for point in self.controlpoints if point.captured]
