@@ -270,8 +270,8 @@ class QLiberationMap(QGraphicsView):
             culling_distance_point = Point(point.x + culling_distance*1000, point.y + culling_distance*1000)
             distance_point = self._transform_point(culling_distance_point)
             transformed = self._transform_point(point)
-            diameter = distance_point[0] - transformed[0]
-            scene.addEllipse(transformed[0]-diameter/2, transformed[1]-diameter/2, diameter, diameter, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
+            radius = distance_point[0] - transformed[0]
+            scene.addEllipse(transformed[0]-radius, transformed[1]-radius, 2*radius, 2*radius, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
 
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
@@ -744,7 +744,7 @@ class QLiberationMap(QGraphicsView):
 
                 for sea_zone in self.game.theater.landmap[2]:
                     print(sea_zone)
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in sea_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in sea_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         color = "sea_blue_transparent"
                     else:
@@ -752,14 +752,14 @@ class QLiberationMap(QGraphicsView):
                     scene.addPolygon(poly, CONST.COLORS[color], CONST.COLORS[color])
 
                 for inclusion_zone in self.game.theater.landmap[0]:
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in inclusion_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_grey_transparent"])
                     else:
                         scene.addPolygon(poly, CONST.COLORS["grey"], CONST.COLORS["dark_grey"])
 
                 for exclusion_zone in self.game.theater.landmap[1]:
-                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone])
+                    poly = QPolygonF([QPointF(*self._transform_point(Point(point[0], point[1]))) for point in exclusion_zone.exterior.coords])
                     if self.reference_point_setup_mode:
                         scene.addPolygon(poly, CONST.COLORS["grey_transparent"], CONST.COLORS["dark_dark_grey_transparent"])
                     else:
