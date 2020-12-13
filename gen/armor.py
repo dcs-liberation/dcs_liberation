@@ -597,29 +597,36 @@ class GroundConflictGenerator:
                 return potential_target.points[0].position
         return None
 
-    def get_artilery_group_distance_from_frontline(self, group):
+    @staticmethod
+    def get_artilery_group_distance_from_frontline(group: CombatGroup) -> int:
         """
         For artilery group, decide the distance from frontline with the range of the unit
         """
         rg = group.units[0].threat_range - 7500
         if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
-            rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY]
-        if rg < DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
-            rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK]
+            rg = random.randint(
+                DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][0],
+                DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]
+            )
+        elif rg < DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
+            rg = random.randint(
+                DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK][0],
+                DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK][1]
+            )
         return rg
 
     def get_valid_position_for_group(
         self,
         conflict_position: Point,
         combat_width: int,
-        distance_from_frontline: Tuple[int, int],
+        distance_from_frontline: int,
         heading: int,
         spawn_heading: int
     ):
         shifted = conflict_position.point_from_heading(heading, random.randint(0, combat_width))
         desired_point = shifted.point_from_heading(
             spawn_heading,
-            random.randint(distance_from_frontline[0], distance_from_frontline[1])
+            distance_from_frontline
         )
         return Conflict.find_ground_position(desired_point, combat_width, heading, self.conflict.theater)
 
@@ -639,7 +646,10 @@ class GroundConflictGenerator:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = self.get_artilery_group_distance_from_frontline(group)
             else:
-                distance_from_frontline = DISTANCE_FROM_FRONTLINE[group.role]
+                distance_from_frontline = random.randint(
+                    DISTANCE_FROM_FRONTLINE[group.role][0], 
+                    DISTANCE_FROM_FRONTLINE[group.role][1]
+                )
 
             final_position = self.get_valid_position_for_group(
                 position,
@@ -655,7 +665,7 @@ class GroundConflictGenerator:
                     group.units[0],
                     len(group.units),
                     final_position,
-                    random.randint(distance_from_frontline[0], distance_from_frontline[1]),
+                    distance_from_frontline,
                     heading=opposite_heading(spawn_heading),
                 )
                 if is_player:
