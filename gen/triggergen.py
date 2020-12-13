@@ -82,7 +82,13 @@ class TriggersGenerator:
                 airport.operating_level_air = 0
                 airport.operating_level_equipment = 0
                 airport.operating_level_fuel = 0
-
+        
+        for airport in self.mission.terrain.airport_list():
+            if airport.id not in cp_ids:
+                airport.unlimited_fuel = True
+                airport.unlimited_munitions = True
+                airport.unlimited_aircrafts = True
+        
         for cp in self.game.theater.controlpoints:
             if isinstance(cp, Airfield):
                 self.mission.terrain.airport_by_id(cp.at.id).set_coalition(cp.captured and player_coalition or enemy_coalition)
