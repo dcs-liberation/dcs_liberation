@@ -76,6 +76,9 @@ class QFlightWaypointList(QTableView):
 
     def takeoff_text(self, flight: Flight) -> str:
         estimator = TotEstimator(self.package)
-        start_time = timedelta(seconds=int(
-            estimator.takeoff_time_for_flight(flight).total_seconds()))
+        takeoff_time = estimator.takeoff_time_for_flight(flight)
+        # Handle custom flight plans where we can't estimate the takeoff time.
+        if takeoff_time is None:
+            takeoff_time = timedelta()
+        start_time = timedelta(seconds=int(takeoff_time.total_seconds()))
         return f"T+{start_time}"
