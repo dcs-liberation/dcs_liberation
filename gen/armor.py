@@ -602,10 +602,9 @@ class GroundConflictGenerator:
         For artilery group, decide the distance from frontline with the range of the unit
         """
         rg = group.units[0].threat_range - 7500
-        if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
-            rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY]
+        rg = min(rg, DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1])
         if rg < DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
-            rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK]
+            rg = DISTANCE_FROM_FRONTLINE[CombatGroupRole.TANK][1]
         return rg
 
     def get_valid_position_for_group(
@@ -639,7 +638,7 @@ class GroundConflictGenerator:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = self.get_artilery_group_distance_from_frontline(group)
             else:
-                distance_from_frontline = DISTANCE_FROM_FRONTLINE[group.role]
+                distance_from_frontline = random.randint(DISTANCE_FROM_FRONTLINE[group.role][0], DISTANCE_FROM_FRONTLINE[group.role][1])
 
             final_position = self.get_valid_position_for_group(
                 position,
