@@ -46,6 +46,7 @@ from dcs.planes import (
     F_117A,
     F_14A_135_GR,
     F_14B,
+    F_111F,
     F_15C,
     F_15E,
     F_16A,
@@ -61,6 +62,7 @@ from dcs.planes import (
     Ju_88A4,
     KC130,
     KC_135,
+    KC135MPRS,
     KJ_2000,
     L_39C,
     L_39ZA,
@@ -262,7 +264,7 @@ PRICES = {
     FW_190A8: 14,
     A_20G: 22,
     Ju_88A4: 24,
-
+   
     F_5E_3: 8,
     MiG_15bis: 4,
     MiG_19P: 6,
@@ -324,7 +326,8 @@ PRICES = {
     Tu_160: 50,
     Tu_22M3: 40,
     Tu_95MS: 35,
-
+    F_111F: 21,
+    
     # special
     IL_76MD: 30,
     An_26B: 25,
@@ -334,6 +337,7 @@ PRICES = {
     IL_78M: 25,
     KC_135: 25,
     KC130: 25,
+    KC135MPRS: 25,
 
     A_50: 50,
     KJ_2000: 50,
@@ -626,6 +630,7 @@ UNIT_BY_TASK = {
         A_10C_2,
         A_20G,
         B_17G,
+        F_111F,
         B_1B,
         B_52H,
         F_117A,
@@ -678,8 +683,13 @@ UNIT_BY_TASK = {
         KC_135,
         KC130,
         S_3B_Tanker,
+        KC135MPRS,
     ],
-    AWACS: [E_3A, A_50, KJ_2000],
+    AWACS: [
+        E_3A, 
+        A_50, 
+        KJ_2000
+    ],
     PinpointStrike: [
         Armor.APC_MTLB,
         Armor.APC_MTLB,
@@ -1017,6 +1027,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     F_14A_135_GR: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
+    F_111F: COMMON_OVERRIDE,
     F_22A: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
