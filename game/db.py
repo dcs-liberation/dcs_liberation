@@ -812,6 +812,8 @@ UNIT_BY_TASK = {
         Armor.StuG_III_Ausf__G,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
+        Armor.Daimler_Armoured_Car,
+        Armor.LT_Mk_VII_Tetrarch,
 
         Artillery.MLRS_M270,
         Artillery.SPH_M109_Paladin,
