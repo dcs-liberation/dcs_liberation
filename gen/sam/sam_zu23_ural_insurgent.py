@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class ZU23UralInsurgentGenerator(GroupGenerator):
+class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     """
     This generate a Zu23 Ural group
     """
@@ -19,3 +22,8 @@ class ZU23UralInsurgentGenerator(GroupGenerator):
         positions = self.get_circular_position(num_launchers, launcher_distance=80, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.AAA_ZU_23_Insurgent_on_Ural_375, "SPAA#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short
+

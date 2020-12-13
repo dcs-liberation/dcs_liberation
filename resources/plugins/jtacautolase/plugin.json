@@ -10,10 +10,6 @@
     ],
     "scriptsWorkOrders": [
         {
-            "file": "mist_4_3_74.lua",
-            "mnemonic": "mist"
-        },
-        {
             "file": "JTACAutoLase.lua",
             "mnemonic": "jtacautolase-script"
         }

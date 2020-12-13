@@ -2,7 +2,7 @@
 from typing import Optional
 
 from gen.flights.flight import Flight
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 from .models import GameModel, PackageModel
 from .windows.mission.QEditFlightDialog import QEditFlightDialog
 from .windows.mission.QPackageDialog import (

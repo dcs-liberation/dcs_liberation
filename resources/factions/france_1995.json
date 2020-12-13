@@ -35,13 +35,10 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
-    "HQ7Generator",
-    "RolandGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "RolandGenerator",
     "HawkGenerator"
   ],

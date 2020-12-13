@@ -106,7 +106,8 @@ from dcs.planes import (
     Tu_95MS,
     WingLoong_I,
     Yak_40,
-    plane_map
+    plane_map,
+    I_16
 )
 from dcs.ships import (
     Armed_speedboat,
@@ -115,6 +116,7 @@ from dcs.ships import (
     CVN_72_Abraham_Lincoln,
     CVN_73_George_Washington,
     CVN_74_John_C__Stennis,
+    CVN_75_Harry_S__Truman,
     CV_1143_5_Admiral_Kuznetsov,
     CV_1143_5_Admiral_Kuznetsov_2017,
     Dry_cargo_ship_Ivanov,
@@ -159,15 +161,19 @@ import pydcs_extensions.frenchpack.frenchpack as frenchpack
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
+plane_map["Rafale_B"] = Rafale_B
 plane_map["Su-57"] = Su_57
+plane_map["Hercules"] = Hercules
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -225,6 +231,11 @@ from this example `Identifier` should be used (which may or may not include cate
 For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla is called `AirDefence.SAM_SA_18_Igla_S_MANPADS`
 """
 
+# This should probably be much higher, but the AI doesn't rollover their budget
+# and isn't smart enough to save to repair a critical runway anyway, so it has
+# to be cheap enough to repair with a single turn's income.
+RUNWAY_REPAIR_COST = 100
+
 """
 Prices for the aircraft. 
 This defines both price for the player (although only aircraft listed in CAP/CAS/Transport/Armor/AirDefense roles will be purchasable) 
@@ -247,6 +258,7 @@ PRICES = {
 
     SpitfireLFMkIX: 14,
     SpitfireLFMkIXCW: 14,
+    I_16: 10,
     Bf_109K_4: 14,
     FW_190D9: 16,
     FW_190A8: 14,
@@ -274,6 +286,7 @@ PRICES = {
     F_16A: 14,
     F_14A_135_GR: 20,
     F_14B: 24,
+    F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
 
@@ -330,6 +343,7 @@ PRICES = {
     KJ_2000: 50,
     E_3A: 50,
     C_130: 25,
+    Hercules: 25,
 
     # WW2
     P_51D_30_NA: 18,
@@ -347,6 +361,7 @@ PRICES = {
     # Modded
     Rafale_M: 26,
     Rafale_A_S: 26,
+    Rafale_B: 26,
 
     # armor
     Armor.APC_MTLB: 4,
@@ -579,6 +594,7 @@ UNIT_BY_TASK = {
         MiG_31,
         FA_18C_hornet,
         F_15C,
+        F_22A,
         F_14A_135_GR,
         F_14B,
         F_16A,
@@ -593,6 +609,7 @@ UNIT_BY_TASK = {
         JF_17,
         F_4E,
         C_101CC,
+        I_16,
         Bf_109K_4,
         FW_190D9,
         FW_190A8,
@@ -635,6 +652,7 @@ UNIT_BY_TASK = {
         P_47D_40,
         RQ_1A_Predator,
         Rafale_A_S,
+        Rafale_B,
         SA342L,
         SA342M,
         SA342Minigun,
@@ -651,14 +669,14 @@ UNIT_BY_TASK = {
         Tu_95MS,
         UH_1H,
         WingLoong_I,
+        Hercules
     ],
     Transport: [
         IL_76MD,
         An_26B,
         An_30M,
         Yak_40,
-
-        C_130,
+        C_130
     ],
     Refueling: [
         IL_78M,
@@ -1010,6 +1028,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
     F_111F: COMMON_OVERRIDE,
+    F_22A: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
     M_2000C: COMMON_OVERRIDE,
@@ -1054,6 +1073,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     FW_190D9: COMMON_OVERRIDE,
     FW_190A8: COMMON_OVERRIDE,
     Bf_109K_4: COMMON_OVERRIDE,
+    I_16: COMMON_OVERRIDE,
     SpitfireLFMkIXCW: COMMON_OVERRIDE,
     SpitfireLFMkIX: COMMON_OVERRIDE,
     A_20G: COMMON_OVERRIDE,
@@ -1061,6 +1081,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     MB_339PAN: COMMON_OVERRIDE,
     Rafale_M: COMMON_OVERRIDE,
     Rafale_A_S: COMMON_OVERRIDE,
+    Rafale_B: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
     F_16A: COMMON_OVERRIDE,
     MQ_9_Reaper: COMMON_OVERRIDE,
@@ -1069,6 +1090,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_1W: COMMON_OVERRIDE,
     AH_64D: COMMON_OVERRIDE,
     AH_64A: COMMON_OVERRIDE,
+    Hercules: COMMON_OVERRIDE,
 
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
@@ -1130,7 +1152,7 @@ TIME_PERIODS = {
 }
 
 REWARDS = {
-    "power": 4, "warehouse": 2, "fuel": 2, "ammo": 2,
+    "power": 4, "warehouse": 2, "ware": 2, "fuel": 2, "ammo": 2,
     "farp": 1, "fob": 1, "factory": 10, "comms": 10, "oil": 10,
     "derrick": 8
 }
@@ -1201,6 +1223,8 @@ def upgrade_to_supercarrier(unit, name: str):
             return CVN_72_Abraham_Lincoln
         elif name == "CVN-73 George Washington":
             return CVN_73_George_Washington
+        elif name == "CVN-75 Harry S. Truman":
+            return CVN_75_Harry_S__Truman
         else:
             return CVN_71_Theodore_Roosevelt
     elif unit == CV_1143_5_Admiral_Kuznetsov:
@@ -1221,29 +1245,45 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     return None
 
 
-def find_unittype(for_task: Task, country_name: str) -> List[UnitType]:
+def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
-def find_infantry(country_name: str) -> List[UnitType]:
-    inf = [
-        Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
-        Infantry.Paratrooper_AKS,
-        Infantry.Soldier_RPG,
-        Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
-        Infantry.Soldier_M249,
-        Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
-        Infantry.Paratrooper_RPG_16,
-        Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
-        Infantry.Georgian_soldier_with_M4,
-        Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
-        Infantry.Infantry_Soldier_Rus,
-        Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
-        Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
-        Infantry.Infantry_Mauser_98,
-        Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
-        Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
-    ]
+MANPADS: List[VehicleType] = [
+    AirDefence.SAM_SA_18_Igla_MANPADS,
+    AirDefence.SAM_SA_18_Igla_S_MANPADS,
+    AirDefence.Stinger_MANPADS
+]
+
+INFANTRY: List[VehicleType] = [
+    Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
+    Infantry.Soldier_RPG,
+    Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
+    Infantry.Soldier_M249,
+    Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
+    Infantry.Paratrooper_RPG_16,
+    Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
+    Infantry.Georgian_soldier_with_M4,
+    Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
+    Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
+    Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
+]
+
+
+def find_manpad(country_name: str) -> List[VehicleType]:
+    return [x for x in MANPADS if x in FACTIONS[country_name].infantry_units]
+
+
+def find_infantry(country_name: str, allow_manpad: bool = False) -> List[VehicleType]:
+    if allow_manpad:
+        inf = INFANTRY + MANPADS
+    else:
+        inf = INFANTRY
     return [x for x in inf if x in FACTIONS[country_name].infantry_units]
 
 
@@ -1255,7 +1295,7 @@ def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
 
-def unit_type_from_name(name: str) -> Optional[UnitType]:
+def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:
         return vehicle_map[name]
     elif name in plane_map:

@@ -1,0 +1,50 @@
+{
+  "country": "USSR",
+  "name": "Soviet Union 1943",
+  "authors": "Khopa",
+  "description": "<p>Soviet Union in 1943. Featuring the I16, and using some allies units to represent either lend leased vehicles or soviet equivalent vehicles. BM-21 is used to represent BM-13</p>",
+  "aircrafts": [
+    "SpitfireLFMkIX",
+    "I_16"
+  ],
+  "frontline_units": [
+    "MT_M4_Sherman",
+    "APC_M2A1",
+    "Daimler_Armoured_Car",
+    "LT_Mk_VII_Tetrarch"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad"
+  ],
+  "logistics_units": [
+    "Bedford_MWD",
+    "CCKW_353"
+  ],
+  "infantry_units": [
+    "Infantry_SMLE_No_4_Mk_1"
+  ],
+  "air_defenses": [
+    "AllyWW2FlakGenerator",
+    "BoforsGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+  ],
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2ally"
+}

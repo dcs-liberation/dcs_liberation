@@ -265,6 +265,50 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
+		[7] = {
+			["name"] = "RUNWAY_ATTACK",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 9,
+				},
+				[2] = {
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{BRU33_2X_MK-82}",
+					["num"] = 5,
+				},
+				[4] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 6,
+				},
+				[5] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 7,
+				},
+				[7] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{BRU33_2X_MK-82}",
+					["num"] = 2,
+				},
+				[9] = {
+					["CLSID"] = "{BRU33_2X_MK-82}",
+					["num"] = 8,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+			},
+		},
 	},
 	["tasks"] = {
 	},

@@ -45,20 +45,21 @@ class GroundSpeed:
         return int(cls.from_mach(mach, altitude))  # knots
 
     @staticmethod
-    def from_mach(mach: float, altitude: int) -> float:
+    def from_mach(mach: float, altitude_m: int) -> float:
         """Returns the ground speed in knots for the given mach and altitude.
 
         Args:
             mach: The mach number to convert to ground speed.
-            altitude: The altitude in feet.
+            altitude_m: The altitude in meters.
 
         Returns:
             The ground speed corresponding to the given altitude and mach number
             in knots.
         """
         # https://www.grc.nasa.gov/WWW/K-12/airplane/atmos.html
-        if altitude <= 36152:
-            temperature_f = 59 - 0.00356 * altitude
+        altitude_ft = altitude_m * 3.28084
+        if altitude_ft <= 36152:
+            temperature_f = 59 - 0.00356 * altitude_ft
         else:
             # There's another formula for altitudes over 82k feet, but we better
             # not be planning waypoints that high...
@@ -86,6 +87,7 @@ class TravelTime:
         return timedelta(hours=distance / speed * error_factor)
 
 
+# TODO: Most if not all of this should move into FlightPlan.
 class TotEstimator:
     # An extra five minutes given as wiggle room. Expected to be spent at the
     # hold point performing any last minute configuration.
@@ -135,7 +137,14 @@ class TotEstimator:
                     f"time for {flight} will be immediate.")
                 return None
         else:
-            tot = self.package.time_over_target
+            tot_waypoint = flight.flight_plan.tot_waypoint
+            if tot_waypoint is None:
+                tot = self.package.time_over_target
+            else:
+                tot = flight.flight_plan.tot_for_waypoint(tot_waypoint)
+                if tot is None:
+                    logging.error(f"TOT waypoint for {flight} has no TOT")
+                    tot = self.package.time_over_target
         return tot - travel_time - self.HOLD_TIME
 
     def earliest_tot(self) -> timedelta:
@@ -172,9 +181,13 @@ class TotEstimator:
             # Return 0 so this flight's travel time does not affect the rest
             # of the package.
             return timedelta()
+        # Account for TOT offsets for the flight plan. An offset of -2 minutes
+        # means the flight's TOT is 2 minutes ahead of the package's so it needs
+        # an extra two minutes.
+        offset = -flight.flight_plan.tot_offset
         startup = self.estimate_startup(flight)
         ground_ops = self.estimate_ground_ops(flight)
-        return startup + ground_ops + time_to_target
+        return startup + ground_ops + time_to_target + offset
 
     @staticmethod
     def estimate_startup(flight: Flight) -> timedelta:

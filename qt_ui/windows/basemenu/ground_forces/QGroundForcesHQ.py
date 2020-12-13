@@ -1,11 +1,11 @@
 from PySide2.QtWidgets import QFrame, QGridLayout
 
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.ground_forces.QArmorRecruitmentMenu import \
     QArmorRecruitmentMenu
 from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategy import \
     QGroundForcesStrategy
-from theater import ControlPoint
 
 
 class QGroundForcesHQ(QFrame):

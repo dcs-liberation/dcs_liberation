@@ -92,9 +92,8 @@ def turn_heading(heading, fac):
 
 
 class VisualGenerator:
-    def __init__(self, mission: Mission, conflict: Conflict, game: Game):
+    def __init__(self, mission: Mission, game: Game):
         self.mission = mission
-        self.conflict = conflict
         self.game = game
 
     def _generate_frontline_smokes(self):
@@ -104,15 +103,12 @@ class VisualGenerator:
             if from_cp.is_global or to_cp.is_global:
                 continue
 
-            frontline = Conflict.frontline_position(self.game.theater, from_cp, to_cp)
-            if not frontline:
+            plane_start, heading, distance = Conflict.frontline_vector(from_cp, to_cp, self.game.theater)
+            if not plane_start:
                 continue
 
-            point, heading = frontline
-            plane_start = point.point_from_heading(turn_heading(heading, 90), FRONTLINE_LENGTH / 2)
-
-            for offset in range(0, FRONTLINE_LENGTH, FRONT_SMOKE_SPACING):
-                position = plane_start.point_from_heading(turn_heading(heading, - 90), offset)
+            for offset in range(0, distance, FRONT_SMOKE_SPACING):
+                position = plane_start.point_from_heading(heading, offset)
 
                 for k, v in FRONT_SMOKE_TYPE_CHANCES.items():
                     if random.randint(0, 100) <= k:

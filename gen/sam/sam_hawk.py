@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class HawkGenerator(GenericSamGroupGenerator):
+class HawkGenerator(AirDefenseGroupGenerator):
     """
     This generate an HAWK group
     """
@@ -26,3 +29,7 @@ class HawkGenerator(GenericSamGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.SAM_Hawk_LN_M192, "LN#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Medium

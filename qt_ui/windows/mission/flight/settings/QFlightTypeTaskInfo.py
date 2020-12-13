@@ -16,8 +16,8 @@ class QFlightTypeTaskInfo(QGroupBox):
         if db.unit_type_name(self.flight.unit_type) in AIRCRAFT_ICONS:
             self.aircraft_icon.setPixmap(AIRCRAFT_ICONS[db.unit_type_name(self.flight.unit_type)])
 
-        self.task = QLabel("Task :")
-        self.task_type = QLabel(flight.flight_type.name)
+        self.task = QLabel("Task:")
+        self.task_type = QLabel(str(flight.flight_type))
         self.task_type.setProperty("style", flight.flight_type.name)
 
         layout.addWidget(self.aircraft_icon, 0, 0)

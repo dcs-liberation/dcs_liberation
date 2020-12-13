@@ -71,9 +71,9 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn(Infantry.Infantry_M4, faction.infantry_units)
             self.assertIn(Infantry.Soldier_M249, faction.infantry_units)
 
-            self.assertIn("AvengerGenerator", faction.shorads)
+            self.assertIn("AvengerGenerator", faction.air_defenses)
 
-            self.assertIn("HawkGenerator", faction.sams)
+            self.assertIn("HawkGenerator", faction.air_defenses)
 
             self.assertIn(CVN_74_John_C__Stennis, faction.aircraft_carrier)
             self.assertIn(LHA_1_Tarawa, faction.helicopter_carrier)

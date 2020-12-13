@@ -1,3 +1,21 @@
+# 2.3.0
+
+# Features/Improvements
+* **[Campaign Map]** Overhauled the campaign model
+* **[Campaign Map]** Possible to add FOB as control points
+* **[Campaign AI]** Overhauled AI recruiting behaviour
+* **[Mission Planner]** Possible to move carrier and tarawa on the campaign map
+* **[Mission Generator]** Infantry squads on frontline can have manpads
+* **[Flight Planner]** Added fighter sweep missions.
+* **[Flight Planner]** Added BAI missions.
+* **[Flight Planner]** Added anti-ship missions.
+* **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
+* **[Culling]** Added possibility to include/exclude carriers from culling zones
+* **[QOL]** On liberation startup, your latest save game is loaded automatically
+
+## Fixes :
+* **[Map]** Missiles sites now have a proper icon and will not re-use the SAM sites icon
+
 # 2.2.1
 
 # Features/Improvements

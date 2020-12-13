@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class Flak18Generator(GroupGenerator):
+class Flak18Generator(AirDefenseGroupGenerator):
     """
     This generate a German flak artillery group using only free units, thus not requiring the WW2 asset pack
     """
@@ -27,3 +30,7 @@ class Flak18Generator(GroupGenerator):
 
         # Add a commander truck
         self.add_unit(Unarmed.Blitz_3_6_6700A, "Blitz#", self.position.x - 35, self.position.y - 20, self.heading)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

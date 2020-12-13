@@ -1,4 +1,5 @@
-from typing import Optional, Set
+import logging
+from typing import Optional, Set, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
@@ -11,13 +12,14 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.unittype import UnitType
+from dcs.task import CAP, CAS
+from dcs.unittype import FlyingType, UnitType
 
-from game.event.event import UnitsDeliveryEvent
+from game import db
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import CAP, CAS, ControlPoint, db
 
 
 class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
@@ -25,25 +27,18 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         QFrame.__init__(self)
         self.cp = cp
         self.game_model = game_model
-        self.deliveryEvent: Optional[UnitsDeliveryEvent] = None
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        for event in self.game_model.game.events:
-            if event.__class__ == UnitsDeliveryEvent and event.from_cp == self.cp:
-                self.deliveryEvent = event
-        if not self.deliveryEvent:
-            self.deliveryEvent = self.game_model.game.units_delivery_event(self.cp)
-
         # Determine maximum number of aircrafts that can be bought
-        self.set_maximum_units(self.cp.available_aircraft_slots)
+        self.set_maximum_units(self.cp.total_aircraft_parking)
         self.set_recruitable_types([CAP, CAS])
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        self.hangar_status = QHangarStatus(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status = QHangarStatus(game_model, self.cp)
 
         self.init_ui()
 
@@ -56,12 +51,14 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         task_box_layout = QGridLayout()
         row = 0
 
-        unit_types: Set[UnitType] = set()
+        unit_types: Set[Type[FlyingType]] = set()
         for task in tasks:
             units = db.find_unittype(task, self.game_model.game.player_name)
             if not units:
                 continue
             for unit in units:
+                if not issubclass(unit, FlyingType):
+                    continue
                 if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
                     continue
                 if self.cp.is_lha and unit not in db.LHA_CAPABLE:
@@ -70,7 +67,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
         for unit_type in sorted_units:
-            row = self.add_purchase_row(unit_type, task_box_layout, row)
+            row = self.add_purchase_row(
+                unit_type, task_box_layout, row,
+                disabled=not self.cp.can_operate(unit_type))
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
@@ -86,13 +85,18 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def buy(self, unit_type):
+        if self.maximum_units > 0:
+            if self.cp.unclaimed_parking(self.game_model.game) <= 0:
+                logging.debug(f"No space for additional aircraft at {self.cp}.")
+                return
+
         super().buy(unit_type)
-        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status.update_label()
 
     def sell(self, unit_type: UnitType):
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
-        if self.deliveryEvent.units.get(unit_type, 0) <= 0:
+        if self.pending_deliveries.units.get(unit_type, 0) <= 0:
             global_inventory = self.game_model.game.aircraft_inventory
             inventory = global_inventory.for_control_point(self.cp)
             try:
@@ -105,22 +109,44 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     "assigned to a mission?", QMessageBox.Ok)
                 return
         super().sell(unit_type)
-        self.hangar_status.update_label(self.total_units, self.cp.available_aircraft_slots)
+        self.hangar_status.update_label()
 
 
 class QHangarStatus(QHBoxLayout):
 
-    def __init__(self, current_amount: int, max_amount: int):
-        super(QHangarStatus, self).__init__()
+    def __init__(self, game_model: GameModel,
+                 control_point: ControlPoint) -> None:
+        super().__init__()
+        self.game_model = game_model
+        self.control_point = control_point
+
         self.icon = QLabel()
         self.icon.setPixmap(ICONS["Hangar"])
         self.text = QLabel("")
 
-        self.update_label(current_amount, max_amount)
+        self.update_label()
         self.addWidget(self.icon, Qt.AlignLeft)
         self.addWidget(self.text, Qt.AlignLeft)
         self.addStretch(50)
         self.setAlignment(Qt.AlignLeft)
 
-    def update_label(self, current_amount: int, max_amount: int):
-        self.text.setText("<strong>{}/{}</strong>".format(current_amount, max_amount))
+    def update_label(self) -> None:
+        next_turn = self.control_point.expected_aircraft_next_turn(
+            self.game_model.game)
+        max_amount = self.control_point.total_aircraft_parking
+
+        components = [f"{next_turn.present} present"]
+        if next_turn.ordered > 0:
+            components.append(f"{next_turn.ordered} purchased")
+        elif next_turn.ordered < 0:
+            components.append(f"{-next_turn.ordered} sold")
+
+        transferring = next_turn.transferring
+        if transferring > 0:
+            components.append(f"{transferring} transferring in")
+        if transferring < 0:
+            components.append(f"{-transferring} transferring out")
+
+        details = ", ".join(components)
+        self.text.setText(
+            f"<strong>{next_turn.total}/{max_amount}</strong> ({details})")

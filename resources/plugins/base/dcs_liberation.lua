@@ -6,7 +6,6 @@ logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
 killed_aircrafts = {}
 killed_ground_units = {}
-weapons_fired = {}
 base_capture_events = {}
 destroyed_objects_positions = {}
 mission_ended = false
@@ -33,7 +32,6 @@ function write_state()
     local game_state = {
         ["killed_aircrafts"] = killed_aircrafts,
         ["killed_ground_units"] = killed_ground_units,
-        ["weapons_fired"] = weapons_fired,
         ["base_capture_events"] = base_capture_events,
         ["mission_ended"] = mission_ended,
         ["destroyed_objects_positions"] = destroyed_objects_positions,

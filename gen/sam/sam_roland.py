@@ -1,9 +1,12 @@
 from dcs.vehicles import AirDefence, Unarmed
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class RolandGenerator(GenericSamGroupGenerator):
+class RolandGenerator(AirDefenseGroupGenerator):
     """
     This generate a Roland group
     """
@@ -16,3 +19,6 @@ class RolandGenerator(GenericSamGroupGenerator):
         self.add_unit(AirDefence.SAM_Roland_ADS, "ADS", self.position.x, self.position.y, self.heading)
         self.add_unit(Unarmed.Transport_M818, "TRUCK", self.position.x + 80, self.position.y, self.heading)
 
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

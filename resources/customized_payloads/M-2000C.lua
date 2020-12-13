@@ -189,6 +189,54 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
+		[6] = {
+			["name"] = "RUNWAY_ATTACK",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[3] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+				[4] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 8,
+				},
+				[5] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 2,
+				},
+				[6] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 7,
+				},
+				[7] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 4,
+				},
+				[9] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 6,
+				},
+				[10] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 5,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+			},
+		},
 	},
 	["tasks"] = {
 	},

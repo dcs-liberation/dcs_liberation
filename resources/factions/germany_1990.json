@@ -31,17 +31,17 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
-    "RolandGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "GepardGenerator",
     "HawkGenerator",
-    "RolandGenerator"
+    "RolandGenerator",
+    "PatriotGenerator"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
   ],

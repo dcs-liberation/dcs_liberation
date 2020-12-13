@@ -2,7 +2,7 @@ import os
 
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel
-
+from game.db import REWARDS
 
 class QBuildingInfo(QGroupBox):
 
@@ -28,6 +28,13 @@ class QBuildingInfo(QGroupBox):
         layout = QVBoxLayout()
         layout.addWidget(self.header)
         layout.addWidget(self.name)
+
+        if self.building.category in REWARDS.keys():
+            income_label_text = 'Value: ' + str(REWARDS[self.building.category]) + "M"
+            if self.building.is_dead:
+                income_label_text = '<s>' + income_label_text + '</s>'
+            self.reward = QLabel(income_label_text)
+            layout.addWidget(self.reward)
+
         footer = QHBoxLayout()
         self.setLayout(layout)
-

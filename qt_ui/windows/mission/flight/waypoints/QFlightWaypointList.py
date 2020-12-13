@@ -1,4 +1,3 @@
-import itertools
 from datetime import timedelta
 
 from PySide2.QtCore import QItemSelectionModel, QPoint
@@ -7,7 +6,8 @@ from PySide2.QtWidgets import QHeaderView, QTableView
 
 from game.utils import meter_to_feet
 from gen.ato import Package
-from gen.flights.flight import Flight, FlightWaypoint
+from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
     QWaypointItem
 
@@ -32,25 +32,13 @@ class QFlightWaypointList(QTableView):
         self.update_list()
 
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
-        self.selectionModel().selectionChanged.connect(self.on_waypoint_selected_changed)
-
-    def on_waypoint_selected_changed(self):
-        index = self.selectionModel().currentIndex().row()
 
     def update_list(self):
         self.model.clear()
 
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
 
-        # The first waypoint is set up by pydcs at mission generation time, so
-        # we need to add that waypoint manually.
-        takeoff = FlightWaypoint(self.flight.from_cp.position.x,
-                                 self.flight.from_cp.position.y, 0)
-        takeoff.description = "Take Off"
-        takeoff.name = takeoff.pretty_name = "Take Off from " + self.flight.from_cp.name
-        takeoff.alt_type = "RADIO"
-
-        waypoints = itertools.chain([takeoff], self.flight.points)
+        waypoints = self.flight.flight_plan.waypoints
         for row, waypoint in enumerate(waypoints):
             self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
@@ -73,8 +61,9 @@ class QFlightWaypointList(QTableView):
         tot_item.setEditable(False)
         self.model.setItem(row, 2, tot_item)
 
-    @staticmethod
-    def tot_text(flight: Flight, waypoint: FlightWaypoint) -> str:
+    def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
+        if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:
+            return self.takeoff_text(flight)
         prefix = ""
         time = flight.flight_plan.tot_for_waypoint(waypoint)
         if time is None:
@@ -84,3 +73,12 @@ class QFlightWaypointList(QTableView):
             return ""
         time = timedelta(seconds=int(time.total_seconds()))
         return f"{prefix}T+{time}"
+
+    def takeoff_text(self, flight: Flight) -> str:
+        estimator = TotEstimator(self.package)
+        takeoff_time = estimator.takeoff_time_for_flight(flight)
+        # Handle custom flight plans where we can't estimate the takeoff time.
+        if takeoff_time is None:
+            takeoff_time = timedelta()
+        start_time = timedelta(seconds=int(takeoff_time.total_seconds()))
+        return f"T+{start_time}"

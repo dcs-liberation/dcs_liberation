@@ -34,17 +34,21 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Paratrooper_RPG_16"
+    "Paratrooper_RPG_16",
+    "SAM_SA_18_Igla_S_MANPADS"
   ],
-  "shorads": [
+  "air_defenses": [
+    "SA3Generator",
+    "SA6Generator",
     "SA8Generator",
+    "SA9Generator",
+    "SA10Generator",
+    "SA11Generator",
     "SA13Generator",
     "SA19Generator",
-    "ZSU23Generator"
-  ],
-  "sams": [
-    "SA6Generator",
-    "SA3Generator"
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

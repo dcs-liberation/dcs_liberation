@@ -1,3 +1,6 @@
+import logging
+from typing import List, Type
+
 from dcs.helicopters import (
     AH_1W,
     AH_64A,
@@ -36,7 +39,6 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
-    F_A_18C,
     JF_17,
     J_11A,
     Ju_88A4,
@@ -79,19 +81,24 @@ from dcs.planes import (
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
+    I_16
 )
+from dcs.unittype import FlyingType
 
-# Interceptor are the aircraft prioritized for interception tasks
-# If none is available, the AI will use regular CAP-capable aircraft instead
+from gen.flights.flight import FlightType
+
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
+from pydcs_extensions.su57.su57 import Su_57
 
 # TODO: These lists really ought to be era (faction) dependent.
 # Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
 # factions that also have F-4s should not.
-from pydcs_extensions.su57.su57 import Su_57
 
+# Interceptor are the aircraft prioritized for interception tasks
+# If none is available, the AI will use regular CAP-capable aircraft instead
 INTERCEPT_CAPABLE = [
     MiG_21Bis,
     MiG_25PD,
@@ -100,7 +107,11 @@ INTERCEPT_CAPABLE = [
     MiG_29A,
     MiG_29G,
     MiG_29K,
-
+    JF_17,
+    J_11A,
+    Su_27,
+    Su_30,
+    Su_33,
     M_2000C,
     Mirage_2000_5,
     Rafale_M,
@@ -108,6 +119,9 @@ INTERCEPT_CAPABLE = [
     F_14A_135_GR,
     F_14B,
     F_15C,
+    F_16A,
+    F_16C_50,
+    FA_18C_hornet,
 
 ]
 
@@ -144,6 +158,7 @@ CAP_CAPABLE = [
     F_16A,
     F_16C_50,
     FA_18C_hornet,
+    F_22A,
 
     C_101CC,
     L_39ZA,
@@ -153,6 +168,8 @@ CAP_CAPABLE = [
     P_47D_30,
     P_47D_30bl1,
     P_47D_40,
+
+    I_16,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
@@ -170,14 +187,13 @@ CAP_PREFERRED = [
     MiG_19P,
     MiG_21Bis,
     MiG_23MLD,
-    MiG_25PD,
     MiG_29A,
     MiG_29G,
     MiG_29S,
-    MiG_31,
 
     Su_27,
     J_11A,
+    JF_17,
     Su_30,
     Su_33,
     Su_57,
@@ -189,12 +205,16 @@ CAP_PREFERRED = [
     F_14A_135_GR,
     F_14B,
     F_15C,
+    F_16C_50,
+    F_22A,
 
     P_51D_30_NA,
     P_51D,
 
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+
+    I_16,
 
     Bf_109K_4,
     FW_190D9,
@@ -217,6 +237,7 @@ CAS_CAPABLE = [
     Su_25,
     Su_25T,
     Su_25TM,
+    Su_30,
     Su_34,
 
     JF_17,
@@ -230,14 +251,11 @@ CAS_CAPABLE = [
 
     F_86F_Sabre,
     F_5E_3,
-    F_14A_135_GR,
-    F_14B,
-    F_15E,
-    F_16A,
+
     F_16C_50,
     FA_18C_hornet,
-
-    B_1B,
+    F_15E,
+    F_22A,
 
     Tornado_IDS,
     Tornado_GR4,
@@ -272,12 +290,15 @@ CAS_CAPABLE = [
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
 
+    I_16,
+
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
 
     A_4E_C,
     Rafale_A_S,
+    Rafale_B,
 
     WingLoong_I,
     MQ_9_Reaper,
@@ -291,16 +312,13 @@ CAS_PREFERRED = [
     Su_25,
     Su_25T,
     Su_25TM,
+    Su_30,
     Su_34,
-
-    JF_17,
 
     A_10A,
     A_10C,
     A_10C_2,
     AV8BNA,
-
-    F_15E,
 
     Tornado_GR4,
 
@@ -317,9 +335,6 @@ CAS_PREFERRED = [
     AH_64D,
     AH_1W,
 
-    UH_1H,
-
-    Mi_8MT,
     Mi_28N,
     Mi_24V,
     Ka_50,
@@ -328,9 +343,11 @@ CAS_PREFERRED = [
     P_47D_30bl1,
     P_47D_40,
     A_20G,
+    I_16,
 
     A_4E_C,
     Rafale_A_S,
+    Rafale_B,
 
     WingLoong_I,
     MQ_9_Reaper,
@@ -341,7 +358,7 @@ CAS_PREFERRED = [
 SEAD_CAPABLE = [
     F_4E,
     FA_18C_hornet,
-    F_15E,
+
     F_16C_50,
     AV8BNA,
     JF_17,
@@ -358,18 +375,26 @@ SEAD_CAPABLE = [
     Tornado_GR4,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+    Rafale_B
 ]
 
 SEAD_PREFERRED = [
     F_4E,
     Su_25T,
+    Su_25TM,
     Tornado_IDS,
+    F_16C_50,
+    FA_18C_hornet,
+    Su_30,
+    Su_34,
+    Su_24M,
 ]
 
 # Aircraft used for Strike mission
 STRIKE_CAPABLE = [
     MiG_15bis,
+    MiG_21Bis,
     MiG_27K,
     MB_339PAN,
 
@@ -378,7 +403,15 @@ STRIKE_CAPABLE = [
     Su_24MR,
     Su_25,
     Su_25T,
+    Su_25TM,
+    Su_27,
+    Su_33,
+    Su_30,
     Su_34,
+    MiG_29A,
+    MiG_29G,
+    MiG_29K,
+    MiG_29S,
 
     Tu_160,
     Tu_22M3,
@@ -388,13 +421,13 @@ STRIKE_CAPABLE = [
 
     M_2000C,
 
-    A_10A,
     A_10C,
     A_10C_2,
     AV8BNA,
 
     F_86F_Sabre,
     F_5E_3,
+
     F_14A_135_GR,
     F_14B,
     F_15E,
@@ -429,7 +462,8 @@ STRIKE_CAPABLE = [
     FW_190A8,
 
     A_4E_C,
-    Rafale_A_S
+    Rafale_A_S,
+    Rafale_B
 
 ]
 
@@ -441,6 +475,10 @@ STRIKE_PREFERRED = [
     B_52H,
     F_117A,
     F_15E,
+    Su_24M,
+    Su_30,
+    Su_34,
+    Tornado_IDS,
     Tornado_GR4,
     Tu_160,
     Tu_22M3,
@@ -448,27 +486,101 @@ STRIKE_PREFERRED = [
 ]
 
 ANTISHIP_CAPABLE = [
+    AJS37,
+    C_101CC,
     Su_24M,
     Su_17M4,
-    F_A_18C,
-    F_15E,
+    FA_18C_hornet,
+
     AV8BNA,
     JF_17,
-    F_16A,
-    F_16C_50,
-    A_10C,
-    A_10C_2,
-    A_10A,
+
+    Su_30,
+    Su_34,
+    Tu_22M3,
 
     Tornado_IDS,
     Tornado_GR4,
 
     Ju_88A4,
-    Rafale_A_S
+    Rafale_A_S,
+    Rafale_B
 ]
+
+ANTISHIP_PREFERRED = [
+    AJS37,
+    C_101CC,
+    FA_18C_hornet,
+    JF_17,
+    Rafale_A_S,
+    Rafale_B,
+    Su_24M,
+    Su_30,
+    Su_34,
+    Tu_22M3,
+    Ju_88A4
+]
+
+RUNWAY_ATTACK_PREFERRED = [
+    JF_17,
+    Su_30,
+    Su_34,
+    Tornado_IDS,
+]
+
+RUNWAY_ATTACK_CAPABLE = STRIKE_CAPABLE
 
 DRONES = [
     MQ_9_Reaper,
     RQ_1A_Predator,
     WingLoong_I
 ]
+
+
+def preferred_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    if task in cap_missions:
+        return CAP_PREFERRED
+    elif task == FlightType.ANTISHIP:
+        return ANTISHIP_PREFERRED
+    elif task == FlightType.BAI:
+        return CAS_CAPABLE
+    elif task == FlightType.CAS:
+        return CAS_PREFERRED
+    elif task in (FlightType.DEAD, FlightType.SEAD):
+        return SEAD_PREFERRED
+    elif task == FlightType.OCA_AIRCRAFT:
+        return CAS_PREFERRED
+    elif task == FlightType.OCA_RUNWAY:
+        return RUNWAY_ATTACK_PREFERRED
+    elif task == FlightType.STRIKE:
+        return STRIKE_PREFERRED
+    elif task == FlightType.ESCORT:
+        return CAP_PREFERRED
+    else:
+        return []
+
+
+def capable_aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    if task in cap_missions:
+        return CAP_CAPABLE
+    elif task == FlightType.ANTISHIP:
+        return ANTISHIP_CAPABLE
+    elif task == FlightType.BAI:
+        return CAS_CAPABLE
+    elif task == FlightType.CAS:
+        return CAS_CAPABLE
+    elif task in (FlightType.DEAD, FlightType.SEAD):
+        return SEAD_CAPABLE
+    elif task == FlightType.OCA_AIRCRAFT:
+        return CAS_CAPABLE
+    elif task == FlightType.OCA_RUNWAY:
+        return RUNWAY_ATTACK_CAPABLE
+    elif task == FlightType.STRIKE:
+        return STRIKE_CAPABLE
+    elif task == FlightType.ESCORT:
+        return CAP_CAPABLE
+    else:
+        logging.error(f"Unplannable flight type: {task}")
+        return []

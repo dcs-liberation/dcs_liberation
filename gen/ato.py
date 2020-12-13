@@ -16,7 +16,7 @@ from typing import Dict, List, Optional
 
 from dcs.mapping import Point
 
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 from .flights.flight import Flight, FlightType
 from .flights.flightplan import FormationFlightPlan
 
@@ -147,19 +147,14 @@ class Package:
             FlightType.CAS,
             FlightType.STRIKE,
             FlightType.ANTISHIP,
+            FlightType.OCA_AIRCRAFT,
+            FlightType.OCA_RUNWAY,
             FlightType.BAI,
-            FlightType.EVAC,
-            FlightType.TROOP_TRANSPORT,
-            FlightType.RECON,
-            FlightType.ELINT,
             FlightType.DEAD,
             FlightType.SEAD,
-            FlightType.LOGISTICS,
-            FlightType.INTERCEPTION,
             FlightType.TARCAP,
-            FlightType.CAP,
             FlightType.BARCAP,
-            FlightType.EWAR,
+            FlightType.SWEEP,
             FlightType.ESCORT,
         ]
         for task in task_priorities:
@@ -178,7 +173,10 @@ class Package:
         task = self.primary_task
         if task is None:
             return "No mission"
-        return task.name
+        oca_strike_types = {FlightType.OCA_AIRCRAFT, FlightType.OCA_RUNWAY}
+        if task in oca_strike_types:
+            return "OCA Strike"
+        return str(task)
 
     def __hash__(self) -> int:
         # TODO: Far from perfect. Number packages?

@@ -1,14 +1,13 @@
 import logging
-import math
 import random
 import sys
 from datetime import date, datetime, timedelta
+from enum import Enum
 from typing import Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
-from dcs.task import CAP, CAS, PinpointStrike, Task
-from dcs.unittype import UnitType
+from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 
 from game import db
@@ -21,15 +20,16 @@ from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
-from theater import ConflictTheater, ControlPoint
-from theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from . import persistency
 from .debriefing import Debriefing
 from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
+from .procurement import ProcurementAi
 from .settings import Settings
+from .theater import ConflictTheater, ControlPoint
+from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
 COMMISION_UNIT_VARIETY = 4
@@ -62,17 +62,19 @@ ENEMY_BASE_STRENGTH_RECOVERY = 0.05
 # cost of AWACS for single operation
 AWACS_BUDGET_COST = 4
 
-# Initial budget value
-PLAYER_BUDGET_INITIAL = 650
-
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
+class TurnState(Enum):
+    WIN = 0
+    LOSS = 1
+    CONTINUE = 2
 
 class Game:
     def __init__(self, player_name: str, enemy_name: str,
                  theater: ConflictTheater, start_date: datetime,
-                 settings: Settings):
+                 settings: Settings, player_budget: int,
+                 enemy_budget: int) -> None:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
@@ -87,10 +89,12 @@ class Game:
         self.ground_planners: Dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
-        self.__culling_points = self.compute_conflicts_position()
+        self.__culling_points: List[Point] = []
+        self.compute_conflicts_position()
         self.__destroyed_units: List[str] = []
         self.savepath = ""
-        self.budget = PLAYER_BUDGET_INITIAL
+        self.budget = player_budget
+        self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
 
@@ -103,8 +107,23 @@ class Game:
             self.theater.controlpoints
         )
 
+        for cp in self.theater.controlpoints:
+            cp.pending_unit_deliveries = self.units_delivery_event(cp)
+
         self.sanitize_sides()
+
         self.on_load()
+
+        # Turn 0 procurement. We don't actually have any missions to plan, but
+        # the planner will tell us what it would like to plan so we can use that
+        # to drive purchase decisions.
+        blue_planner = CoalitionMissionPlanner(self, is_player=True)
+        blue_planner.plan_missions()
+
+        red_planner = CoalitionMissionPlanner(self, is_player=False)
+        red_planner.plan_missions()
+
+        self.plan_procurement(blue_planner, red_planner)
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(self.theater, self.date,
@@ -148,23 +167,29 @@ class Game:
                                         front_line.control_point_b)
 
     @property
-    def budget_reward_amount(self):
-        reward = 0
-        if len(self.theater.player_points()) > 0:
-            reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
-            for cp in self.theater.player_points():
-                for g in cp.ground_objects:
-                    if g.category in REWARDS.keys():
-                        reward = reward + REWARDS[g.category]
-            return reward
-        else:
-            return reward
+    def budget_reward_amount(self) -> int:
+        reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
+        for cp in self.theater.player_points():
+            for g in cp.ground_objects:
+                if g.category in REWARDS.keys() and not g.is_dead:
+                    reward += REWARDS[g.category]
+        return int(reward * self.settings.player_income_multiplier)
 
-    def _budget_player(self):
+    def process_player_income(self):
         self.budget += self.budget_reward_amount
 
-    def awacs_expense_commit(self):
-        self.budget -= AWACS_BUDGET_COST
+    def process_enemy_income(self):
+        # TODO: Clean up save compat.
+        if not hasattr(self, "enemy_budget"):
+            self.enemy_budget = 0
+
+        production = 0.0
+        for enemy_point in self.theater.enemy_points():
+            for g in enemy_point.ground_objects:
+                if g.category in REWARDS.keys() and not g.is_dead:
+                    production = production + REWARDS[g.category]
+
+        self.enemy_budget += production * self.settings.enemy_income_multiplier
 
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
         event = UnitsDeliveryEvent(attacker_name=self.player_name,
@@ -175,20 +200,16 @@ class Game:
         self.events.append(event)
         return event
 
-    def units_delivery_remove(self, event: Event):
-        if event in self.events:
-            self.events.remove(event)
-
-    def initiate_event(self, event: Event):
+    def initiate_event(self, event: Event) -> UnitMap:
         #assert event in self.events
         logging.info("Generating {} (regular)".format(event))
-        event.generate()
+        return event.generate()
 
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        if event.is_successfull(debriefing):
-            self.budget += event.bonus()
+        self.budget += int(event.bonus() *
+                           self.settings.player_income_multiplier)
 
         if event in self.events:
             self.events.remove(event)
@@ -199,17 +220,11 @@ class Game:
         if isinstance(event, Event):
             return event and event.attacker_name and event.attacker_name == self.player_name
         else:
-            return event and event.name and event.name == self.player_name
+            raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self) -> None:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-
-        # Save game compatibility.
-
-        # TODO: Remove in 2.3.
-        if not hasattr(self, "conditions"):
-            self.conditions = self.generate_conditions()
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
@@ -224,8 +239,12 @@ class Game:
             else:
                 event.skip()
 
-        self._enemy_reinforcement()
-        self._budget_player()
+        for control_point in self.theater.controlpoints:
+            control_point.process_turn()
+
+        self.process_enemy_income()
+
+        self.process_player_income()
 
         if not no_action and self.turn > 1:
             for cp in self.theater.player_points():
@@ -242,6 +261,14 @@ class Game:
         # Autosave progress
         persistency.autosave(self)
 
+    def check_win_loss(self):
+        captured_states = {i.captured for i in self.theater.controlpoints}
+        if True not in captured_states:
+            return TurnState.LOSS
+        if False not in captured_states:
+            return TurnState.WIN
+        return TurnState.CONTINUE
+
     def initialize_turn(self) -> None:
         self.events = []
         self._generate_events()
@@ -251,92 +278,56 @@ class Game:
 
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
+            cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
 
+        # Check for win or loss condition
+        turn_state = self.check_win_loss()
+        if turn_state in (TurnState.LOSS,TurnState.WIN):
+            return self.process_win_loss(turn_state)
+
         # Plan flights & combat for next turn
-        self.__culling_points = self.compute_conflicts_position()
+        self.compute_conflicts_position()
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
-        CoalitionMissionPlanner(self, is_player=True).plan_missions()
-        CoalitionMissionPlanner(self, is_player=False).plan_missions()
+
+        blue_planner = CoalitionMissionPlanner(self, is_player=True)
+        blue_planner.plan_missions()
+
+        red_planner = CoalitionMissionPlanner(self, is_player=False)
+        red_planner.plan_missions()
+
         for cp in self.theater.controlpoints:
             if cp.has_frontline:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
 
-    def _enemy_reinforcement(self):
-        """
-        Compute and commision reinforcement for enemy bases
-        """
+        self.plan_procurement(blue_planner, red_planner)
 
-        MAX_ARMOR = 30 * self.settings.multiplier
-        MAX_AIRCRAFT = 25 * self.settings.multiplier
+    def plan_procurement(self, blue_planner: CoalitionMissionPlanner,
+                         red_planner: CoalitionMissionPlanner) -> None:
+        self.budget = ProcurementAi(
+            self,
+            for_player=True,
+            faction=self.player_faction,
+            manage_runways=self.settings.automate_runway_repair,
+            manage_front_line=self.settings.automate_front_line_reinforcements,
+            manage_aircraft=self.settings.automate_aircraft_reinforcements
+        ).spend_budget(self.budget, blue_planner.procurement_requests)
 
-        production = 0.0
-        for enemy_point in self.theater.enemy_points():
-            for g in enemy_point.ground_objects:
-                if g.category in REWARDS.keys():
-                    production = production + REWARDS[g.category]
+        self.enemy_budget = ProcurementAi(
+            self,
+            for_player=False,
+            faction=self.enemy_faction,
+            manage_runways=True,
+            manage_front_line=True,
+            manage_aircraft=True
+        ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
 
-        production = production * 0.75
-        budget_for_armored_units = production / 2
-        budget_for_aircraft = production / 2
-
-        potential_cp_armor = []
-        for cp in self.theater.enemy_points():
-            for cpe in cp.connected_points:
-                if cpe.captured and cp.base.total_armor < MAX_ARMOR:
-                    potential_cp_armor.append(cp)
-        if len(potential_cp_armor) == 0:
-            potential_cp_armor = self.theater.enemy_points()
-
-        i = 0
-        potential_units = db.FACTIONS[self.enemy_name].frontline_units
-
-        print("Enemy Recruiting")
-        print(potential_cp_armor)
-        print(budget_for_armored_units)
-        print(potential_units)
-
-        if len(potential_units) > 0 and len(potential_cp_armor) > 0:
-            while budget_for_armored_units > 0:
-                i = i + 1
-                if i > 50 or budget_for_armored_units <= 0:
-                    break
-                target_cp = random.choice(potential_cp_armor)
-                if target_cp.base.total_armor >= MAX_ARMOR:
-                    continue
-                unit = random.choice(potential_units)
-                price = db.PRICES[unit] * 2
-                budget_for_armored_units -= price * 2
-                target_cp.base.armor[unit] = target_cp.base.armor.get(unit, 0) + 2
-                info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
-                print(str(info))
-                self.informations.append(info)
-
-        if budget_for_armored_units > 0:
-            budget_for_aircraft += budget_for_armored_units
-
-        potential_units = [u for u in db.FACTIONS[self.enemy_name].aircrafts
-                           if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
-
-        if len(potential_units) > 0 and len(potential_cp_armor) > 0:
-            while budget_for_aircraft > 0:
-                i = i + 1
-                if i > 50 or budget_for_aircraft <= 0:
-                    break
-                target_cp = random.choice(potential_cp_armor)
-                if target_cp.base.total_planes >= MAX_AIRCRAFT:
-                    continue
-                unit = random.choice(potential_units)
-                price = db.PRICES[unit] * 2
-                budget_for_aircraft -= price * 2
-                target_cp.base.aircraft[unit] = target_cp.base.aircraft.get(unit, 0) + 2
-                info = Information("Enemy Reinforcement", unit.id + " x 2 at " + target_cp.name, self.turn)
-                print(str(info))
-                self.informations.append(info)
+    def message(self, text: str) -> None:
+        self.informations.append(Information(text, turn=self.turn))
 
     @property
     def current_turn_time_of_day(self) -> TimeOfDay:
@@ -369,12 +360,18 @@ class Game:
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
-            position = Conflict.frontline_position(self.theater,
-                                                   front_line.control_point_a,
-                                                   front_line.control_point_b)
+            position = Conflict.frontline_position(front_line.control_point_a,
+                                                   front_line.control_point_b,
+                                                   self.theater)
             points.append(position[0])
             points.append(front_line.control_point_a.position)
             points.append(front_line.control_point_b.position)
+
+        # If do_not_cull_carrier is enabled, add carriers as culling point
+        if self.settings.perf_do_not_cull_carrier:
+            for cp in self.theater.controlpoints:
+                if cp.is_carrier or cp.is_lha:
+                    points.append(cp.position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(points) == 0:
@@ -399,7 +396,7 @@ class Game:
         if len(points) == 0:
             points.append(Point(0, 0))
 
-        return points
+        self.__culling_points = points
 
     def add_destroyed_units(self, data):
         pos = Point(data["x"], data["z"])
@@ -448,3 +445,9 @@ class Game:
 
     def get_enemy_color(self):
         return "red"
+
+    def process_win_loss(self, turn_state: TurnState):
+        if turn_state is TurnState.WIN:
+            return self.message("Congratulations, you are victorious!  Start a new campaign to continue.")
+        elif turn_state is TurnState.LOSS:
+            return self.message("Game Over, you lose. Start a new campaign to continue.")

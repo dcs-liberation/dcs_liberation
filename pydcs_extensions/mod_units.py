@@ -1,11 +1,13 @@
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_M, Rafale_A_S
+from pydcs_extensions.rafale.rafale import Rafale_M, Rafale_A_S, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
-MODDED_AIRPLANES = [A_4E_C, MB_339PAN, Rafale_A_S, Rafale_M, Su_57]
+MODDED_AIRPLANES = [A_4E_C, MB_339PAN, Rafale_A_S, Rafale_M, Rafale_B, Su_57, F_22A, Hercules]
 MODDED_VEHICLES = [
     frenchpack._FIELD_HIDE,
     frenchpack._FIELD_HIDE_SMALL,

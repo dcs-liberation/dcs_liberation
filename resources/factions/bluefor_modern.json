@@ -54,12 +54,11 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
-    "AvengerGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "AvengerGenerator",
     "HawkGenerator",
     "PatriotGenerator"
   ],
@@ -96,5 +95,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "unrestricted_satnav": true
 }

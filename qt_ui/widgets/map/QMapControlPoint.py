@@ -4,9 +4,9 @@ from PySide2.QtGui import QColor, QPainter
 from PySide2.QtWidgets import QAction, QMenu
 
 import qt_ui.uiconstants as const
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
-from theater import ControlPoint
 from .QMapObject import QMapObject
 from ...displayoptions import DisplayOptions
 from ...windows.GameUpdateSignal import GameUpdateSignal
@@ -26,6 +26,12 @@ class QMapControlPoint(QMapObject):
             f"CHEAT: Capture {self.control_point.name}")
         self.capture_action.triggered.connect(self.cheat_capture)
 
+        self.move_action = QAction("Move")
+        self.move_action.triggered.connect(self.move)
+
+        self.cancel_move_action = QAction("Cancel Move")
+        self.cancel_move_action.triggered.connect(self.cancel_move)
+
     def paint(self, painter, option, widget=None) -> None:
         if DisplayOptions.control_points:
             painter.save()
@@ -33,13 +39,12 @@ class QMapControlPoint(QMapObject):
             painter.setBrush(self.brush_color)
             painter.setPen(self.pen_color)
 
-            if self.control_point.has_runway():
-                if self.isUnderMouse():
-                    painter.setBrush(const.COLORS["white"])
-                    painter.setPen(self.pen_color)
+            if not self.control_point.runway_is_operational():
+                painter.setBrush(const.COLORS["black"])
+                painter.setPen(self.brush_color)
 
-                r = option.rect
-                painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
+            r = option.rect
+            painter.drawEllipse(r.x(), r.y(), r.width(), r.height())
             # TODO: Draw sunk carriers differently.
             # Either don't draw them at all, or perhaps use a sunk ship icon.
             painter.restore()
@@ -71,6 +76,12 @@ class QMapControlPoint(QMapObject):
         self.base_details_dialog.show()
 
     def add_context_menu_actions(self, menu: QMenu) -> None:
+
+        if self.control_point.moveable and self.control_point.captured:
+            menu.addAction(self.move_action)
+            if self.control_point.target_position is not None:
+                menu.addAction(self.cancel_move_action)
+
         if self.control_point.is_fleet:
             return
 
@@ -79,16 +90,20 @@ class QMapControlPoint(QMapObject):
 
         for connected in self.control_point.connected_points:
             if connected.captured:
+                menu.addAction(self.capture_action)
                 break
-        else:
-            return
-
-        menu.addAction(self.capture_action)
 
     def cheat_capture(self) -> None:
         self.control_point.capture(self.game_model.game, for_player=True)
         # Reinitialized ground planners and the like.
         self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+
+    def move(self):
+        self.parent.setSelectedUnit(self)
+
+    def cancel_move(self):
+        self.control_point.target_position = None
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
     
     def open_new_package_dialog(self) -> None:

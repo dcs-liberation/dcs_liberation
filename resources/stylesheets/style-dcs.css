@@ -48,6 +48,21 @@ QMenuBar::item:pressed {
     background: #1D2731;
 }
 
+QToolButton:checked {
+    border-color: #435466;
+    background: #14202B;
+}
+
+QToolButton:hover {
+    background: #536476;
+}
+
+QToolBar::separator {
+    background:white;
+    width:1px;
+    height:1px;
+}
+
 QMenu::item:selected  {
     background: #435466;
 }
@@ -504,6 +519,40 @@ QWidget[style="baseMenuHeader"]{
     color:white;
 }*/
 
-QLabel[style="small"]{
+QLabel[style="small"], QLabel[style="text-xs"]{
     font-size: 8px;
+}
+
+QLabel[style="text-sm"]{
+    font-size: 10px;
+}
+
+QLabel[style="text-md"] {
+    font-size: 12px;
+}
+
+QLabel[style="text-xl"] {
+    font-size: 14px;
+}
+
+QFrame[style="QConditionsWidget"] { 
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+}
+
+QGroupBox[style="QWeatherWidget"] {
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 5px;
+    margin-top: 1ex;
+    margin-bottom: 5px;
+}
+
+QGroupBox[style="QWeatherWidget"] QLabel[style="text-sm"] {
+    padding: 0px;
+    margin: 0px;
+    font-size: 9px;
+    line-height: 9px;
 }

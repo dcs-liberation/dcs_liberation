@@ -134,7 +134,7 @@ RADIOS: List[Radio] = [
     Radio("RSIU-4V", MHz(100), MHz(150), step=MHz(1)),
 
     # MiG-21bis
-    Radio("RSIU-5V", MHz(100), MHz(150), step=MHz(1)),
+    Radio("RSIU-5V", MHz(118), MHz(140), step=MHz(1)),
 
     # Ka-50
     # Note: Also capable of 100MHz-150MHz, but we can't model gaps.

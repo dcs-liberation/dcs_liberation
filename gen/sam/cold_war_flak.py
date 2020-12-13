@@ -2,10 +2,14 @@ import random
 
 from dcs.vehicles import AirDefence, Unarmed
 
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 from gen.sam.group_generator import GroupGenerator
 
 
-class EarlyColdWarFlakGenerator(GroupGenerator):
+class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic an early cold-war era flak AAA site.
     The Flak 18 88mm is used as the main long range gun and 2 Bofors 40mm guns provide short range protection.
@@ -32,14 +36,18 @@ class EarlyColdWarFlakGenerator(GroupGenerator):
         # Short range guns
         self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#1",
                       self.position.x - 40, self.position.y - 40, self.heading + 180),
-        self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#1",
+        self.add_unit(AirDefence.AAA_Bofors_40mm, "SHO#2",
                       self.position.x + spacing * 2 + 40, self.position.y + spacing + 40, self.heading),
 
         # Add a truck
         self.add_unit(Unarmed.Transport_KAMAZ_43101, "Truck#", self.position.x - 60, self.position.y - 20, self.heading)
 
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short
 
-class ColdWarFlakGenerator(GroupGenerator):
+
+class ColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic a cold-war era flak AAA site.
     The Flak 18 88mm is used as the main long range gun while 2 Zu-23 guns provide short range protection.
@@ -65,8 +73,12 @@ class ColdWarFlakGenerator(GroupGenerator):
         # Short range guns
         self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#1",
                       self.position.x - 40, self.position.y - 40, self.heading + 180),
-        self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#1",
+        self.add_unit(AirDefence.AAA_ZU_23_Closed, "SHO#2",
                       self.position.x + spacing * 2 + 40, self.position.y + spacing + 40, self.heading),
 
         # Add a P19 Radar for EWR
         self.add_unit(AirDefence.SAM_SR_P_19, "SR#0", self.position.x - 60, self.position.y - 20, self.heading)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

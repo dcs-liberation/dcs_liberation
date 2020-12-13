@@ -32,10 +32,7 @@
   "infantry_units": [
     "Infantry_Mauser_98"
   ],
-  "shorads": [
-    "FlakGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "FlakGenerator",
     "FreyaGenerator"
   ],

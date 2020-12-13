@@ -10,12 +10,13 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.settings import Settings
+from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
     load_campaigns,
 )
-from theater.start_generator import GameGenerator
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),
@@ -28,6 +29,10 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
+
+DEFAULT_BUDGET = 650
+
+
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
@@ -37,7 +42,8 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(IntroPage())
         self.addPage(FactionSelection())
         self.addPage(TheaterConfiguration(self.campaigns))
-        self.addPage(MiscOptions())
+        self.addPage(GeneratorOptions())
+        self.addPage(DifficultyAndAutomationOptions())
         self.addPage(ConclusionPage())
 
         self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
@@ -51,40 +57,47 @@ class NewGameWizard(QtWidgets.QWizard):
         logging.info("New Game Wizard accept")
         logging.info("======================")
 
-        blueFaction = [c for c in db.FACTIONS][self.field("blueFaction")]
-        redFaction = [c for c in db.FACTIONS][self.field("redFaction")]
+        campaign = self.field("selectedCampaign")
+        if campaign is None:
+            campaign = self.campaigns[0]
 
-        selectedCampaign = self.field("selectedCampaign")
-        if selectedCampaign is None:
-            selectedCampaign = self.campaigns[0]
+        settings = Settings(
+            player_income_multiplier=self.field(
+                "player_income_multiplier") / 10,
+            enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
+            automate_runway_repair=self.field("automate_runway_repairs"),
+            automate_front_line_reinforcements=self.field(
+                "automate_front_line_purchases"
+            ),
+            automate_aircraft_reinforcements=self.field(
+                "automate_aircraft_purchases"
+            ),
+            supercarrier=self.field("supercarrier")
+        )
+        generator_settings = GeneratorSettings(
+            start_date=db.TIME_PERIODS[
+                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]],
+            player_budget=int(self.field("starting_money")),
+            enemy_budget=int(self.field("enemy_starting_money")),
+            # QSlider forces integers, so we use 1 to 50 and divide by 10 to
+            # give 0.1 to 5.0.
+            midgame=self.field("midGame"),
+            inverted=self.field("invertMap"),
+            no_carrier=self.field("no_carrier"),
+            no_lha=self.field("no_lha"),
+            no_player_navy=self.field("no_player_navy"),
+            no_enemy_navy=self.field("no_enemy_navy")
+        )
 
-        conflictTheater = selectedCampaign.theater
-
-        timePeriod = db.TIME_PERIODS[list(db.TIME_PERIODS.keys())[self.field("timePeriod")]]
-        midGame = self.field("midGame")
-        multiplier = self.field("multiplier")
-        no_carrier = self.field("no_carrier")
-        no_lha = self.field("no_lha")
-        supercarrier = self.field("supercarrier")
-        no_player_navy = self.field("no_player_navy")
-        no_enemy_navy = self.field("no_enemy_navy")
-        invertMap = self.field("invertMap")
-        starting_money = int(self.field("starting_money"))
-
-        player_name = blueFaction
-        enemy_name = redFaction
-
-        settings = Settings()
-        settings.inverted = invertMap
-        settings.supercarrier = supercarrier
-        settings.do_not_generate_carrier = no_carrier
-        settings.do_not_generate_lha = no_lha
-        settings.do_not_generate_player_navy = no_player_navy
-        settings.do_not_generate_enemy_navy = no_enemy_navy
-
-        generator = GameGenerator(player_name, enemy_name, conflictTheater,
-                                  settings, timePeriod, starting_money,
-                                  multiplier, midGame)
+        blue_faction = [c for c in db.FACTIONS][self.field("blueFaction")]
+        red_faction = [c for c in db.FACTIONS][self.field("redFaction")]
+        generator = GameGenerator(
+            blue_faction,
+            red_faction,
+            campaign.load_theater(),
+            settings,
+            generator_settings
+        )
         self.generatedGame = generator.generate()
 
         super(NewGameWizard, self).accept()
@@ -255,8 +268,13 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         invertMap = QtWidgets.QCheckBox()
         self.registerField('invertMap', invertMap)
         mapSettingsLayout = QtWidgets.QGridLayout()
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 1, 0)
-        mapSettingsLayout.addWidget(invertMap, 1, 1)
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
+        mapSettingsLayout.addWidget(invertMap, 0, 1)
+
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
+        midgame = QtWidgets.QCheckBox()
+        self.registerField('midGame', midgame)
+        mapSettingsLayout.addWidget(midgame, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -304,13 +322,13 @@ class CurrencySpinner(QtWidgets.QSpinBox):
 
 
 class BudgetInputs(QtWidgets.QGridLayout):
-    def __init__(self) -> None:
+    def __init__(self, label: str) -> None:
         super().__init__()
-        self.addWidget(QtWidgets.QLabel("Starting money"), 0, 0)
+        self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
         minimum = 0
         maximum = 5000
-        initial = 650
+        initial = DEFAULT_BUDGET
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
         slider.setMinimum(minimum)
@@ -324,24 +342,72 @@ class BudgetInputs(QtWidgets.QGridLayout):
         self.addWidget(self.starting_money, 1, 1)
 
 
-class MiscOptions(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(MiscOptions, self).__init__(parent)
+class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
 
-        self.setTitle("Miscellaneous settings")
-        self.setSubTitle("\nOthers settings for the game.")
+        self.setTitle("Difficulty and automation options")
+        self.setSubTitle("\nOptions controlling game difficulty and level of "
+                         "player involvement.")
         self.setPixmap(QtWidgets.QWizard.LogoPixmap,
                        QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
-        midGame = QtWidgets.QCheckBox()
-        multiplier = QtWidgets.QSpinBox()
-        multiplier.setEnabled(False)
-        multiplier.setMinimum(1)
-        multiplier.setMaximum(5)
+        layout = QtWidgets.QVBoxLayout()
 
-        miscSettingsGroup = QtWidgets.QGroupBox("Misc Settings")
-        self.registerField('midGame', midGame)
-        self.registerField('multiplier', multiplier)
+        economy_group = QtWidgets.QGroupBox("Economy options")
+        layout.addWidget(economy_group)
+        economy_layout = QtWidgets.QVBoxLayout()
+        economy_group.setLayout(economy_layout)
+
+        player_income = TenthsSpinSlider("Player income multiplier", 1, 50, 10)
+        self.registerField("player_income_multiplier", player_income.spinner)
+        economy_layout.addLayout(player_income)
+
+        enemy_income = TenthsSpinSlider("Enemy income multiplier", 1, 50, 10)
+        self.registerField("enemy_income_multiplier", enemy_income.spinner)
+        economy_layout.addLayout(enemy_income)
+
+        player_budget = BudgetInputs("Player starting budget")
+        self.registerField('starting_money', player_budget.starting_money)
+        economy_layout.addLayout(player_budget)
+
+        enemy_budget = BudgetInputs("Enemy starting budget")
+        self.registerField("enemy_starting_money", enemy_budget.starting_money)
+        economy_layout.addLayout(enemy_budget)
+
+        assist_group = QtWidgets.QGroupBox("Player assists")
+        layout.addWidget(assist_group)
+        assist_layout = QtWidgets.QGridLayout()
+        assist_group.setLayout(assist_layout)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate runway repairs"), 0, 0)
+        runway_repairs = QtWidgets.QCheckBox()
+        self.registerField("automate_runway_repairs", runway_repairs)
+        assist_layout.addWidget(runway_repairs, 0, 1, Qt.AlignRight)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate front-line purchases"), 1, 0)
+        front_line = QtWidgets.QCheckBox()
+        self.registerField("automate_front_line_purchases", front_line)
+        assist_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
+
+        assist_layout.addWidget(
+            QtWidgets.QLabel("Automate aircraft purchases"), 2, 0)
+        aircraft = QtWidgets.QCheckBox()
+        self.registerField("automate_aircraft_purchases", aircraft)
+        assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
+
+        self.setLayout(layout)
+
+
+class GeneratorOptions(QtWidgets.QWizardPage):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setTitle("Generator settings")
+        self.setSubTitle("\nOptions affecting the generation of the game.")
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
+                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
 
         # Campaign settings
         generatorSettingsGroup = QtWidgets.QGroupBox("Generator Settings")
@@ -356,13 +422,6 @@ class MiscOptions(QtWidgets.QWizardPage):
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField('no_enemy_navy', no_enemy_navy)
 
-        layout = QtWidgets.QGridLayout()
-        layout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        layout.addWidget(midGame, 1, 1)
-        layout.addWidget(QtWidgets.QLabel("Ennemy forces multiplier [Disabled for Now]"), 2, 0)
-        layout.addWidget(multiplier, 2, 1)
-        miscSettingsGroup.setLayout(layout)
-
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
         generatorLayout.addWidget(no_carrier, 1, 1)
@@ -376,15 +435,8 @@ class MiscOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorSettingsGroup.setLayout(generatorLayout)
 
-        budget_inputs = BudgetInputs()
-        economySettingsGroup = QtWidgets.QGroupBox("Economy")
-        economySettingsGroup.setLayout(budget_inputs)
-        self.registerField('starting_money', budget_inputs.starting_money)
-
         mlayout = QVBoxLayout()
-        mlayout.addWidget(miscSettingsGroup)
         mlayout.addWidget(generatorSettingsGroup)
-        mlayout.addWidget(economySettingsGroup)
         self.setLayout(mlayout)
 
 

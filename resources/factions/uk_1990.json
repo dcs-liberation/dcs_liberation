@@ -32,14 +32,13 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
+  "air_defenses": [
     "AvengerGenerator",
+    "HawkGenerator",
     "RapierGenerator"
-  ],
-  "sams": [
-    "HawkGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

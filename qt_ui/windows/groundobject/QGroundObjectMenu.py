@@ -2,20 +2,31 @@ import logging
 
 from PySide2 import QtCore
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QHBoxLayout, QDialog, QGridLayout, QLabel, QGroupBox, QVBoxLayout, QPushButton, \
-    QComboBox, QSpinBox, QMessageBox
+from PySide2.QtWidgets import (
+    QComboBox,
+    QDialog,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+)
 from dcs import Point
 
 from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, unit_type_of, PinpointStrike
-from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
+from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
+from game.theater import ControlPoint, TheaterGroundObject
+from gen.defenses.armor_group_generator import \
+    generate_armor_group_of_type_and_size
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
-from theater import ControlPoint, TheaterGroundObject
 
 
 class QGroundObjectMenu(QDialog):
@@ -51,6 +62,8 @@ class QGroundObjectMenu(QDialog):
             self.mainLayout.addWidget(self.intelBox)
         else:
             self.mainLayout.addWidget(self.buildingBox)
+            if self.cp.captured:
+                self.mainLayout.addWidget(self.financesBox)
 
         self.actionLayout = QHBoxLayout()
 
@@ -104,12 +117,28 @@ class QGroundObjectMenu(QDialog):
 
         self.buildingBox = QGroupBox("Buildings :")
         self.buildingsLayout = QGridLayout()
+
         j = 0
+        total_income = 0
+        received_income = 0
         for i, building in enumerate(self.buildings):
             if building.dcs_identifier not in FORTIFICATION_BUILDINGS:
                 self.buildingsLayout.addWidget(QBuildingInfo(building, self.ground_object), j/3, j%3)
                 j = j + 1
 
+            if building.category in REWARDS.keys():
+                total_income = total_income + REWARDS[building.category]
+                if not building.is_dead:
+                    received_income = received_income + REWARDS[building.category]
+            else:
+                logging.warning(building.category + " not in REWARDS")
+
+        self.financesBox = QGroupBox("Finances: ")
+        self.financesBoxLayout = QGridLayout()
+        self.financesBoxLayout.addWidget(QLabel("Available: " + str(total_income) + "M"), 2, 1)
+        self.financesBoxLayout.addWidget(QLabel("Receiving: " + str(received_income) + "M"), 2, 2)
+
+        self.financesBox.setLayout(self.financesBoxLayout)
         self.buildingBox.setLayout(self.buildingsLayout)
         self.intelBox.setLayout(self.intelLayout)
 
@@ -161,6 +190,7 @@ class QGroundObjectMenu(QDialog):
             group.units_losts = [u for u in group.units_losts if u.id != unit.id]
             group.units.append(unit)
             GameUpdateSignal.get_instance().updateGame(self.game)
+            self.parent().update_dialogue_budget(self.game.budget)
 
             # Remove destroyed units in the vicinity
             destroyed_units = self.game.get_destroyed_units()
@@ -180,6 +210,7 @@ class QGroundObjectMenu(QDialog):
         self.ground_object.groups = []
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateBudget(self.game)
+        self.parent().update_dialogue_budget(self.game.budget)
 
     def buy_group(self):
         self.subwindow = QBuyGroupForGroundObjectDialog(self, self.ground_object, self.cp, self.game, self.total_value)
@@ -219,7 +250,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        faction = self.game.player_name
+        faction = self.game.player_faction
 
         # Sams
 
@@ -239,7 +270,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         # Armored units
 
-        armored_units = db.find_unittype(PinpointStrike, faction) # Todo : refactor this legacy nonsense
+        armored_units = db.find_unittype(PinpointStrike, faction.name) # Todo : refactor this legacy nonsense
         for unit in set(armored_units):
             self.buyArmorCombo.addItem(db.unit_type_name_2(unit) + " [$" + str(db.PRICES[unit]) + "M]", userData=unit)
         self.buyArmorCombo.currentIndexChanged.connect(self.armorComboChanged)
@@ -288,9 +319,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buyArmorButton.setText("Buy [$" + str(db.PRICES[self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())] * self.amount.value()) + "M][-$" + str(self.current_group_value) + "M]")
 
     def buyArmor(self):
-        print("Buy Armor ")
+        logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-        print(utype)
+        logging.info(utype)
         price = db.PRICES[utype] * self.amount.value() - self.current_group_value
         if price > self.game.budget:
             self.error_money()
@@ -304,6 +335,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.ground_object.groups = [group]
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
+        self.parent().parent().update_dialogue_budget(self.game.budget)
 
         self.changed.emit()
         self.close()
@@ -324,6 +356,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.ground_object.groups = [generated_group]
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
+        self.parent().parent().update_dialogue_budget(self.game.budget)
 
         self.changed.emit()
         self.close()

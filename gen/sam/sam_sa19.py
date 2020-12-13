@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class SA19Generator(GroupGenerator):
+class SA19Generator(AirDefenseGroupGenerator):
     """
     This generate a SA-19 group
     """
@@ -22,3 +25,7 @@ class SA19Generator(GroupGenerator):
             positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=180)
             for i, position in enumerate(positions):
                 self.add_unit(AirDefence.SAM_SA_19_Tunguska_2S6, "LN#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

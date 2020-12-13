@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unittype import FlyingType
 
 from game import db
-from theater.controlpoint import ControlPoint, MissionTarget
+from game.theater.controlpoint import ControlPoint, MissionTarget
 
 if TYPE_CHECKING:
     from gen.ato import Package
@@ -17,26 +17,22 @@ if TYPE_CHECKING:
 
 
 class FlightType(Enum):
-    CAP = 0  # Do not use. Use BARCAP or TARCAP.
-    TARCAP = 1
-    BARCAP = 2
-    CAS = 3
-    INTERCEPTION = 4
-    STRIKE = 5
-    ANTISHIP = 6
-    SEAD = 7
-    DEAD = 8
-    ESCORT = 9
-    BAI = 10
+    TARCAP = "TARCAP"
+    BARCAP = "BARCAP"
+    CAS = "CAS"
+    INTERCEPTION = "Intercept"
+    STRIKE = "Strike"
+    ANTISHIP = "Anti-ship"
+    SEAD = "SEAD"
+    DEAD = "DEAD"
+    ESCORT = "Escort"
+    BAI = "BAI"
+    SWEEP = "Fighter sweep"
+    OCA_RUNWAY = "OCA/Runway"
+    OCA_AIRCRAFT = "OCA/Aircraft"
 
-    # Helos
-    TROOP_TRANSPORT = 11
-    LOGISTICS = 12
-    EVAC = 13
-
-    ELINT = 14
-    RECON = 15
-    EWAR = 16
+    def __str__(self) -> str:
+        return self.value
 
 
 class FlightWaypointType(Enum):
@@ -61,6 +57,11 @@ class FlightWaypointType(Enum):
     LOITER = 18
     INGRESS_ESCORT = 19
     INGRESS_DEAD = 20
+    INGRESS_SWEEP = 21
+    INGRESS_BAI = 22
+    DIVERT = 23
+    INGRESS_OCA_RUNWAY = 24
+    INGRESS_OCA_AIRCRAFT = 25
 
 
 class FlightWaypoint:
@@ -87,6 +88,7 @@ class FlightWaypoint:
         self.obj_name = ""
         self.pretty_name = ""
         self.only_for_player = False
+        self.flyover = False
 
         # These are set very late by the air conflict generator (part of mission
         # generation). We do it late so that we don't need to propagate changes
@@ -128,13 +130,16 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: FlyingType, count: int,
-                 from_cp: ControlPoint, flight_type: FlightType,
-                 start_type: str) -> None:
+    def __init__(self, package: Package, unit_type: Type[FlyingType],
+                 count: int, flight_type: FlightType, start_type: str,
+                 departure: ControlPoint, arrival: ControlPoint,
+                 divert: Optional[ControlPoint]) -> None:
         self.package = package
         self.unit_type = unit_type
         self.count = count
-        self.from_cp = from_cp
+        self.departure = departure
+        self.arrival = arrival
+        self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
@@ -154,9 +159,13 @@ class Flight:
         )
 
     @property
+    def from_cp(self) -> ControlPoint:
+        return self.departure
+
+    @property
     def points(self) -> List[FlightWaypoint]:
         return self.flight_plan.waypoints[1:]
 
     def __repr__(self):
-        return self.flight_type.name + " | " + str(self.count) + "x" + db.unit_type_name(self.unit_type) \
-               + " (" + str(len(self.points)) + " wpt)"
+        name = db.unit_type_name(self.unit_type)
+        return f"[{self.flight_type}] {self.count} x {name}"

@@ -28,13 +28,12 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "SAM_SA_18_Igla_S_MANPADS"
   ],
-  "shorads": [
+  "air_defenses": [
+    "HawkGenerator",
     "RapierGenerator"
-  ],
-  "sams": [
-    "HawkGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"

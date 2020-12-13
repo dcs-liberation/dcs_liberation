@@ -5,17 +5,23 @@ from typing import List, Optional, Tuple, Union
 
 from dcs.mapping import Point
 from dcs.unit import Unit
+from dcs.unitgroup import VehicleGroup
 
 from game.data.doctrine import Doctrine
+from game.theater import (
+    ControlPoint,
+    MissionTarget,
+    OffMapSpawn,
+    TheaterGroundObject,
+)
 from game.weather import Conditions
-from theater import ControlPoint, MissionTarget, TheaterGroundObject
 from .flight import Flight, FlightWaypoint, FlightWaypointType
 
 
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[TheaterGroundObject, Unit]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit]
 
 
 class WaypointBuilder:
@@ -31,8 +37,7 @@ class WaypointBuilder:
     def is_helo(self) -> bool:
         return getattr(self.flight.unit_type, "helicopter", False)
 
-    @staticmethod
-    def takeoff(departure: ControlPoint) -> FlightWaypoint:
+    def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
 
         Note that the takeoff waypoint will automatically be created by pydcs
@@ -43,36 +48,93 @@ class WaypointBuilder:
             departure: Departure airfield or carrier.
         """
         position = departure.position
-        waypoint = FlightWaypoint(
-            FlightWaypointType.TAKEOFF,
-            position.x,
-            position.y,
-            0
-        )
-        waypoint.name = "TAKEOFF"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Takeoff"
-        waypoint.pretty_name = "Takeoff"
+        if isinstance(departure, OffMapSpawn):
+            waypoint = FlightWaypoint(
+                FlightWaypointType.NAV,
+                position.x,
+                position.y,
+                500 if self.is_helo else self.doctrine.rendezvous_altitude
+            )
+            waypoint.name = "NAV"
+            waypoint.alt_type = "BARO"
+            waypoint.description = "Enter theater"
+            waypoint.pretty_name = "Enter theater"
+        else:
+            waypoint = FlightWaypoint(
+                FlightWaypointType.TAKEOFF,
+                position.x,
+                position.y,
+                0
+            )
+            waypoint.name = "TAKEOFF"
+            waypoint.alt_type = "RADIO"
+            waypoint.description = "Takeoff"
+            waypoint.pretty_name = "Takeoff"
         return waypoint
 
-    @staticmethod
-    def land(arrival: ControlPoint) -> FlightWaypoint:
+    def land(self, arrival: ControlPoint) -> FlightWaypoint:
         """Create descent waypoint for the given arrival airfield or carrier.
 
         Args:
             arrival: Arrival airfield or carrier.
         """
         position = arrival.position
+        if isinstance(arrival, OffMapSpawn):
+            waypoint = FlightWaypoint(
+                FlightWaypointType.NAV,
+                position.x,
+                position.y,
+                500 if self.is_helo else self.doctrine.rendezvous_altitude
+            )
+            waypoint.name = "NAV"
+            waypoint.alt_type = "BARO"
+            waypoint.description = "Exit theater"
+            waypoint.pretty_name = "Exit theater"
+        else:
+            waypoint = FlightWaypoint(
+                FlightWaypointType.LANDING_POINT,
+                position.x,
+                position.y,
+                0
+            )
+            waypoint.name = "LANDING"
+            waypoint.alt_type = "RADIO"
+            waypoint.description = "Land"
+            waypoint.pretty_name = "Land"
+        return waypoint
+
+    def divert(self,
+               divert: Optional[ControlPoint]) -> Optional[FlightWaypoint]:
+        """Create divert waypoint for the given arrival airfield or carrier.
+
+        Args:
+            divert: Divert airfield or carrier.
+        """
+        if divert is None:
+            return None
+
+        position = divert.position
+        if isinstance(divert, OffMapSpawn):
+            if self.is_helo:
+                altitude = 500
+            else:
+                altitude = self.doctrine.rendezvous_altitude
+            altitude_type = "BARO"
+        else:
+            altitude = 0
+            altitude_type = "RADIO"
+
         waypoint = FlightWaypoint(
-            FlightWaypointType.LANDING_POINT,
+            FlightWaypointType.DIVERT,
             position.x,
             position.y,
-            0
+            altitude
         )
-        waypoint.name = "LANDING"
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Land"
-        waypoint.pretty_name = "Land"
+        waypoint.alt_type = altitude_type
+        waypoint.name = "DIVERT"
+        waypoint.description = "Divert"
+        waypoint.pretty_name = "Divert"
+        waypoint.only_for_player = True
         return waypoint
 
     def hold(self, position: Point) -> FlightWaypoint:
@@ -111,33 +173,8 @@ class WaypointBuilder:
         waypoint.name = "SPLIT"
         return waypoint
 
-    def ingress_cas(self, position: Point,
-                    objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_CAS, position,
-                             objective)
-
-    def ingress_escort(self, position: Point,
-                       objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_ESCORT, position,
-                             objective)
-    
-    def ingress_dead(self, position:Point,
-                     objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_DEAD, position,
-                             objective)
-
-    def ingress_sead(self, position: Point,
-                     objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_SEAD, position,
-                             objective)
-
-    def ingress_strike(self, position: Point,
-                       objective: MissionTarget) -> FlightWaypoint:
-        return self._ingress(FlightWaypointType.INGRESS_STRIKE, position,
-                             objective)
-
-    def _ingress(self, ingress_type: FlightWaypointType, position: Point,
-                 objective: MissionTarget) -> FlightWaypoint:
+    def ingress(self, ingress_type: FlightWaypointType, position: Point,
+                objective: MissionTarget) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             ingress_type,
             position.x,
@@ -163,6 +200,9 @@ class WaypointBuilder:
         waypoint.name = "EGRESS"
         return waypoint
 
+    def bai_group(self, target: StrikeTarget) -> FlightWaypoint:
+        return self._target_point(target, f"ATTACK {target.name}")
+
     def dead_point(self, target: StrikeTarget) -> FlightWaypoint:
         return self._target_point(target, f"STRIKE {target.name}")
 
@@ -183,6 +223,7 @@ class WaypointBuilder:
         waypoint.description = description
         waypoint.pretty_name = description
         waypoint.name = target.name
+        waypoint.alt_type = "RADIO"
         # The target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
@@ -198,8 +239,12 @@ class WaypointBuilder:
     def dead_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"DEAD on {target.name}", target)
 
+    def oca_strike_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"ATTACK {target.name}", target, flyover=True)
+
     @staticmethod
-    def _target_area(name: str, location: MissionTarget) -> FlightWaypoint:
+    def _target_area(name: str, location: MissionTarget,
+                     flyover: bool = False) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position.x,
@@ -209,10 +254,19 @@ class WaypointBuilder:
         waypoint.description = name
         waypoint.pretty_name = name
         waypoint.name = name
-        # The target waypoints are only for the player's benefit. AI tasks for
+        waypoint.alt_type = "RADIO"
+
+        # Most target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
         # *before* reaching the target.
-        waypoint.only_for_player = True
+        #
+        # The exception is for flight plans that require passing over the
+        # target. For example, OCA strikes need to get close enough to detect
+        # the targets in their engagement zone or they will RTB immediately.
+        if flyover:
+            waypoint.flyover = True
+        else:
+            waypoint.only_for_player = True
         return waypoint
 
     def cas(self, position: Point) -> FlightWaypoint:
@@ -278,6 +332,56 @@ class WaypointBuilder:
         return (self.race_track_start(start, altitude),
                 self.race_track_end(end, altitude))
 
+    @staticmethod
+    def sweep_start(position: Point, altitude: int) -> FlightWaypoint:
+        """Creates a sweep start waypoint.
+
+        Args:
+            position: Position of the waypoint.
+            altitude: Altitude of the sweep in meters.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.INGRESS_SWEEP,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.name = "SWEEP START"
+        waypoint.description = "Proceed to the target and engage enemy aircraft"
+        waypoint.pretty_name = "Sweep start"
+        return waypoint
+
+    @staticmethod
+    def sweep_end(position: Point, altitude: int) -> FlightWaypoint:
+        """Creates a sweep end waypoint.
+
+        Args:
+            position: Position of the waypoint.
+            altitude: Altitude of the sweep in meters.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.EGRESS,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.name = "SWEEP END"
+        waypoint.description = "End of sweep"
+        waypoint.pretty_name = "Sweep end"
+        return waypoint
+
+    def sweep(self, start: Point, end: Point,
+              altitude: int) -> Tuple[FlightWaypoint, FlightWaypoint]:
+        """Creates two waypoint for a racetrack orbit.
+
+        Args:
+            start: The beginning of the sweep.
+            end: The end of the sweep.
+            altitude: The sweep altitude.
+        """
+        return (self.sweep_start(start, altitude),
+                self.sweep_end(end, altitude))
+
     def escort(self, ingress: Point, target: MissionTarget, egress: Point) -> \
             Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
@@ -293,8 +397,8 @@ class WaypointBuilder:
         # description in gen.aircraft.JoinPointBuilder), so instead we give
         # the escort flights a flight plan including the ingress point, target
         # area, and egress point.
-        ingress = self._ingress(FlightWaypointType.INGRESS_ESCORT, ingress,
-                                target)
+        ingress = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress,
+                               target)
 
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,

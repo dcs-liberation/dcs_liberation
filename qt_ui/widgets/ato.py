@@ -60,7 +60,7 @@ class FlightDelegate(QStyledItemDelegate):
 
     def first_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)
-        task = flight.flight_type.name
+        task = flight.flight_type
         count = flight.count
         name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)

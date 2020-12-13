@@ -30,10 +30,7 @@
     "Infantry_Soldier_Rus",
     "Soldier_RPG"
   ],
-  "shorads": [
-    "EarlyColdWarFlakGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "EarlyColdWarFlakGenerator"
   ],
   "aircraft_carrier": [

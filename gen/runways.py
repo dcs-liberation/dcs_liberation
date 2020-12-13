@@ -8,7 +8,6 @@ from typing import Iterator, Optional
 from dcs.terrain.terrain import Airport
 
 from game.weather import Conditions
-from theater import ControlPoint, ControlPointType
 from .airfields import AIRFIELD_DATA
 from .radios import RadioFrequency
 from .tacan import TacanChannel
@@ -117,23 +116,3 @@ class RunwayAssigner:
         # Otherwise the only difference between the two is the distance from
         # parking, which we don't know, so just pick the first one.
         return best_runways[0]
-
-    def takeoff_heading(self, departure: ControlPoint) -> int:
-        if departure.cptype == ControlPointType.AIRBASE:
-            return self.get_preferred_runway(departure.airport).runway_heading
-        elif departure.is_fleet:
-            # The carrier will be angled into the wind automatically.
-            return (self.conditions.weather.wind.at_0m.direction + 180) % 360
-        logging.warning(
-            f"Unhandled departure control point: {departure.cptype}")
-        return 0
-
-    def landing_heading(self, arrival: ControlPoint) -> int:
-        if arrival.cptype == ControlPointType.AIRBASE:
-            return self.get_preferred_runway(arrival.airport).runway_heading
-        elif arrival.is_fleet:
-            # The carrier will be angled into the wind automatically.
-            return (self.conditions.weather.wind.at_0m.direction + 180) % 360
-        logging.warning(
-            f"Unhandled departure control point: {arrival.cptype}")
-        return 0
