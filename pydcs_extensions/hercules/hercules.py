@@ -117,7 +117,7 @@ class HerculesWeapons:
     Herc_ZSU_23_4 = {"clsid": "Herc_ZSU_23_4", "name": "AAA ZSU-23-4 Shilka [32912lb]", "weight": 14960}
     M61_Vulcan_Rotary_Cannon__20mm_ = {"clsid": "{Herc_M61_Vulcan_Rotary_Cannon}", "name": "M61 Vulcan Rotary Cannon (20mm)", "weight": 595.9426}
     _105mm_Howitzer = {"clsid": "{Herc_105mm_Howitzer}", "name": "105mm Howitzer", "weight": 595.9426}
-
+    Herc_GBU_43_B_MOAB_ = {"clsid": "Herc_GBU-43/B(MOAB)", "name": "GBU-43/B(MOAB)", "weight": 9800}
 
 class Hercules(PlaneType):
     id = "Hercules"
@@ -132,7 +132,6 @@ class Hercules(PlaneType):
     charge_total = 1680
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Air"  #{C168A850-3C0B-436a-95B5-C4A015552560}
     radio_frequency = 305
 
     panel_radio = {
@@ -483,6 +482,7 @@ class Hercules(PlaneType):
         Herc_Ammo_S24B_missiles = (10, HerculesWeapons.Herc_Ammo_S24B_missiles)
         Herc_Ammo_S25OFM_missiles = (10, HerculesWeapons.Herc_Ammo_S25OFM_missiles)
         Herc_Ammo_S25L_missiles = (10, HerculesWeapons.Herc_Ammo_S25L_missiles)
+        #Herc_Ammo_TOW_missiles = (10, HerculesWeapons.Herc_Ammo_TOW_missiles)
         Herc_Ammo_GBU_10_bombs = (10, HerculesWeapons.Herc_Ammo_GBU_10_bombs)
         Herc_Ammo_GBU_12_bombs = (10, HerculesWeapons.Herc_Ammo_GBU_12_bombs)
         Herc_Ammo_GBU_16_bombs = (10, HerculesWeapons.Herc_Ammo_GBU_16_bombs)
@@ -530,7 +530,7 @@ class Hercules(PlaneType):
         Herc_Ammo_S530D_missiles = (10, HerculesWeapons.Herc_Ammo_S530D_missiles)
         Herc_Ammo_AIM54C_missiles = (10, HerculesWeapons.Herc_Ammo_AIM54C_missiles)
         Herc_APC_M1043_HMMWV_Armament = (10, HerculesWeapons.Herc_APC_M1043_HMMWV_Armament)
-        Herc_ATGM_M1045_HMMWV_TOW = (10, HerculesWeapons.Herc_ATGM_M1045_HMMWV_TOW)
+        #Herc_ATGM_M1045_HMMWV_TOW = (10, HerculesWeapons.Herc_ATGM_M1045_HMMWV_TOW)
         Herc_APC_M1025_HMMWV = (10, HerculesWeapons.Herc_APC_M1025_HMMWV)
         Herc_SAM_M1097_HMMWV = (10, HerculesWeapons.Herc_SAM_M1097_HMMWV)
         Herc_APC_COBRA = (10, HerculesWeapons.Herc_APC_COBRA)
@@ -559,6 +559,8 @@ class Hercules(PlaneType):
         Herc_Ammo_S24B_missiles = (11, HerculesWeapons.Herc_Ammo_S24B_missiles)
         Herc_Ammo_S25OFM_missiles = (11, HerculesWeapons.Herc_Ammo_S25OFM_missiles)
         Herc_Ammo_S25L_missiles = (11, HerculesWeapons.Herc_Ammo_S25L_missiles)
+        #Herc_Ammo_TOW_missiles = (11, HerculesWeapons.Herc_Ammo_TOW_missiles)
+        Herc_GBU_43_B_MOAB_ = (11, HerculesWeapons.Herc_GBU_43_B_MOAB_)
         Herc_Ammo_GBU_10_bombs = (11, HerculesWeapons.Herc_Ammo_GBU_10_bombs)
         Herc_Ammo_GBU_12_bombs = (11, HerculesWeapons.Herc_Ammo_GBU_12_bombs)
         Herc_Ammo_GBU_16_bombs = (11, HerculesWeapons.Herc_Ammo_GBU_16_bombs)
@@ -665,6 +667,7 @@ class Hercules(PlaneType):
         Herc_Ammo_S24B_missiles = (12, HerculesWeapons.Herc_Ammo_S24B_missiles)
         Herc_Ammo_S25OFM_missiles = (12, HerculesWeapons.Herc_Ammo_S25OFM_missiles)
         Herc_Ammo_S25L_missiles = (12, HerculesWeapons.Herc_Ammo_S25L_missiles)
+        #Herc_Ammo_TOW_missiles = (12, HerculesWeapons.Herc_Ammo_TOW_missiles)
         Herc_Ammo_GBU_10_bombs = (12, HerculesWeapons.Herc_Ammo_GBU_10_bombs)
         Herc_Ammo_GBU_12_bombs = (12, HerculesWeapons.Herc_Ammo_GBU_12_bombs)
         Herc_Ammo_GBU_16_bombs = (12, HerculesWeapons.Herc_Ammo_GBU_16_bombs)
