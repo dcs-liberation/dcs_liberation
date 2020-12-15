@@ -3,18 +3,34 @@
 # Features/Improvements
 * **[Campaign Map]** Overhauled the campaign model
 * **[Campaign Map]** Possible to add FOB as control points
+* **[Campaign Map]** Added off-map spawn locations
 * **[Campaign AI]** Overhauled AI recruiting behaviour
+* **[Campaign AI]** Added AI proucurement for Blue
+* **[Campaign]** New Campaign: "Black Sea"
 * **[Mission Planner]** Possible to move carrier and tarawa on the campaign map
 * **[Mission Generator]** Infantry squads on frontline can have manpads
+* **[Mission Generator]** Unused aircraft now spawned to allow for OCA strikes
+* **[Mission Generator]** Opfor now obeys parking limits
 * **[Flight Planner]** Added fighter sweep missions.
 * **[Flight Planner]** Added BAI missions.
 * **[Flight Planner]** Added anti-ship missions.
 * **[Flight Planner]** Differentiated BARCAP and TARCAP. TARCAP is now for hostile areas and will arrive before the package.
+* **[Flight Planner]** Added OCA missions
+* **[Flight Planner]** Added Alternate/divert airfields
 * **[Culling]** Added possibility to include/exclude carriers from culling zones
 * **[QOL]** On liberation startup, your latest save game is loaded automatically
+* **[Units]** Reduced starting fuel load for C101
+* **[UI]** Inform the user of the weather
+* **[Game]** Added new Economy options for adjusting income multipliers and starting budgets.
 
 ## Fixes :
 * **[Map]** Missiles sites now have a proper icon and will not re-use the SAM sites icon
+* **[Mission Generator]** Ground unit waypoints improperly set to "On Road" - fixed
+* **[Mission Generator]** Target waypoints not at ground level - fixed
+* **[Mission Generator]** Selected skill not applied to Helicopters - fixed
+* **[Mission Generator]** Ground units do not always spawn - fixed
+* **[Kneeboard]** Briefing waypoints off by one - fixed
+* **[Game]** Destroyed buildings still granting budget - fixed
 
 # 2.2.1
 
