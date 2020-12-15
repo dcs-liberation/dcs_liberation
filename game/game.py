@@ -90,7 +90,6 @@ class Game:
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         self.__culling_points: List[Point] = []
-        self.compute_conflicts_position()
         self.__destroyed_units: List[str] = []
         self.savepath = ""
         self.budget = player_budget
@@ -225,6 +224,7 @@ class Game:
     def on_load(self) -> None:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
+        self.compute_conflicts_position()
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
