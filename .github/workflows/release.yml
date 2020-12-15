@@ -53,11 +53,6 @@ jobs:
       env:
         TAG_NAME: ${{ github.ref }}
       run: |
-    #   $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
-    #   (Get-Content .\installer\dcs_liberation.iss) -replace "{{version}}",$version | Out-File .\build\installer.iss
-    #   cd .\installer
-    #   iscc.exe ..\build\installer.iss
-        cd ..
         Copy-Item .\changelog.md .\dist
 
     - uses: actions/upload-artifact@v2
