@@ -925,10 +925,6 @@ class AircraftConflictGenerator:
             if not package.flights:
                 continue
             for flight in package.flights:
-                culled = self.game.position_culled(flight.from_cp.position)
-                if flight.client_count == 0 and culled:
-                    logging.info("Flight not generated: culled")
-                    continue
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country,
                                                      flight)
