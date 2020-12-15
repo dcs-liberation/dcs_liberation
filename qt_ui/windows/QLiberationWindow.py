@@ -289,7 +289,8 @@ class QLiberationWindow(QMainWindow):
                "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
                "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"\
                "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"\
-               "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
+               "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"\
+               "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
         about.setIcon(QMessageBox.Icon.Information)
