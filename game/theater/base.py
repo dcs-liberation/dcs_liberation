@@ -113,8 +113,10 @@ class Base:
             elif for_task == AirDefence:
                 target_dict = self.aa
 
-            assert target_dict is not None
-            target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
+            if target_dict is not None:
+                target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
+            else:
+                logging.error("Unable to determine target dict for " + str(unit_type))
 
     def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
 

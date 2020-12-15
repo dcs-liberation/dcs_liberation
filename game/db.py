@@ -720,6 +720,7 @@ UNIT_BY_TASK = {
         Armor.IFV_BMP_2,
         Armor.IFV_BMP_3,
         Armor.IFV_BMP_3,
+        Armor.IFV_BMD_1,
         Armor.ZBD_04A,
         Armor.ZBD_04A,
         Armor.ZBD_04A,
