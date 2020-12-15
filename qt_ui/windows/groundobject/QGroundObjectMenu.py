@@ -1,4 +1,5 @@
 import logging
+from typing import List, Optional
 
 from PySide2 import QtCore
 from PySide2.QtGui import Qt
@@ -33,11 +34,16 @@ class QGroundObjectMenu(QDialog):
 
     changed = QtCore.Signal()
 
-    def __init__(self, parent, ground_object: TheaterGroundObject, buildings:[], cp: ControlPoint, game: Game):
-        super(QGroundObjectMenu, self).__init__(parent)
+    def __init__(self, parent, ground_object: TheaterGroundObject,
+                 buildings: Optional[List[TheaterGroundObject]],
+                 cp: ControlPoint, game: Game):
+        super().__init__(parent)
         self.setMinimumWidth(350)
         self.ground_object = ground_object
-        self.buildings = buildings
+        if buildings is None:
+            self.buildings = []
+        else:
+            self.buildings = buildings
         self.cp = cp
         self.game = game
         self.setWindowTitle("Location " + self.ground_object.obj_name)
@@ -190,7 +196,6 @@ class QGroundObjectMenu(QDialog):
             group.units_losts = [u for u in group.units_losts if u.id != unit.id]
             group.units.append(unit)
             GameUpdateSignal.get_instance().updateGame(self.game)
-            self.parent().update_dialogue_budget(self.game.budget)
 
             # Remove destroyed units in the vicinity
             destroyed_units = self.game.get_destroyed_units()
@@ -210,7 +215,6 @@ class QGroundObjectMenu(QDialog):
         self.ground_object.groups = []
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateBudget(self.game)
-        self.parent().update_dialogue_budget(self.game.budget)
 
     def buy_group(self):
         self.subwindow = QBuyGroupForGroundObjectDialog(self, self.ground_object, self.cp, self.game, self.total_value)
@@ -335,7 +339,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.ground_object.groups = [group]
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
-        self.parent().parent().update_dialogue_budget(self.game.budget)
 
         self.changed.emit()
         self.close()
@@ -356,7 +359,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.ground_object.groups = [generated_group]
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
-        self.parent().parent().update_dialogue_budget(self.game.budget)
 
         self.changed.emit()
         self.close()

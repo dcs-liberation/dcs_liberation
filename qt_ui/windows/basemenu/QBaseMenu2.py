@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import db
+from game import Game, db
 from game.theater import ControlPoint, ControlPointType
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
@@ -89,13 +89,14 @@ class QBaseMenu2(QDialog):
             runway_attack_button.setProperty("style", "btn-danger")
             runway_attack_button.clicked.connect(self.new_package)
 
-        budget_display = QLabel(
+        self.budget_display = QLabel(
             QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
         )
-        budget_display.setObjectName("budgetField")
-        budget_display.setAlignment(Qt.AlignRight | Qt.AlignBottom)
-        budget_display.setProperty("style", "budget-label")
-        bottom_row.addWidget(budget_display)
+        self.budget_display.setAlignment(Qt.AlignRight | Qt.AlignBottom)
+        self.budget_display.setProperty("style", "budget-label")
+        bottom_row.addWidget(self.budget_display)
+        GameUpdateSignal.get_instance().budgetupdated.connect(
+            self.update_budget)
         self.setLayout(main_layout)
 
     @property
@@ -171,9 +172,6 @@ class QBaseMenu2(QDialog):
     def new_package(self) -> None:
         Dialog.open_new_package_dialog(self.cp, parent=self.window())
 
-    def update_dialogue_budget(self, budget: int):
-        GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
-        for child in self.children():
-            if child.objectName() == "budgetField":
-                child.setText(
-                    QRecruitBehaviour.BUDGET_FORMAT.format(budget))
+    def update_budget(self, game: Game) -> None:
+        self.budget_display.setText(
+            QRecruitBehaviour.BUDGET_FORMAT.format(game.budget))

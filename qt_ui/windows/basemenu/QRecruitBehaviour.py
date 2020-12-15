@@ -16,6 +16,7 @@ from game import db
 from game.event import UnitsDeliveryEvent
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 class QRecruitBehaviour:
@@ -121,11 +122,8 @@ class QRecruitBehaviour:
             self.cp.base.total_units_of_type(unit_type)
         ))
 
-    def update_available_budget(self):
-        parent = self.parent()
-        while parent.objectName != "menuDialogue":
-            parent = parent.parent()
-        parent.update_dialogue_budget(self.budget)
+    def update_available_budget(self) -> None:
+        GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
     def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]
