@@ -36,6 +36,8 @@ class Doctrine:
 
     cas_duration: timedelta
 
+    sweep_distance: int
+
 
 MODERN_DOCTRINE = Doctrine(
     cap=True,
@@ -62,6 +64,7 @@ MODERN_DOCTRINE = Doctrine(
     cap_min_distance_from_cp=nm_to_meter(10),
     cap_max_distance_from_cp=nm_to_meter(40),
     cas_duration=timedelta(minutes=30),
+    sweep_distance=nm_to_meter(60),
 )
 
 COLDWAR_DOCTRINE = Doctrine(
@@ -89,6 +92,7 @@ COLDWAR_DOCTRINE = Doctrine(
     cap_min_distance_from_cp=nm_to_meter(8),
     cap_max_distance_from_cp=nm_to_meter(25),
     cas_duration=timedelta(minutes=30),
+    sweep_distance=nm_to_meter(40),
 )
 
 WWII_DOCTRINE = Doctrine(
@@ -116,4 +120,5 @@ WWII_DOCTRINE = Doctrine(
     cap_min_distance_from_cp=nm_to_meter(0),
     cap_max_distance_from_cp=nm_to_meter(5),
     cas_duration=timedelta(minutes=30),
+    sweep_distance=nm_to_meter(10),
 )

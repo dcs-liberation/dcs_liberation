@@ -20,10 +20,7 @@
   "infantry_units": [
     "Infantry_Soldier_Rus"
   ],
-  "shorads": [
-    "Flak18Generator"
-  ],
-  "sams": [
+  "air_defenses": [
     "Flak18Generator"
   ],
   "aircraft_carrier": [

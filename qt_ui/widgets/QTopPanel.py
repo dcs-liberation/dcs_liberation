@@ -10,19 +10,19 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game import Game
-from game.event import CAP, CAS, FrontlineAttackEvent
+from game.event.airwar import AirWarEvent
 from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
-from qt_ui.widgets.QTurnCounter import QTurnCounter
 from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QWaitingForMissionResultWindow import \
     QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
+from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 
 
 class QTopPanel(QFrame):
@@ -39,31 +39,34 @@ class QTopPanel(QFrame):
     def game(self) -> Optional[Game]:
         return self.game_model.game
 
-    def init_ui(self):
-
-        self.turnCounter = QTurnCounter()
+    def init_ui(self):        
+        self.conditionsWidget = QConditionsWidget()
         self.budgetBox = QBudgetBox(self.game)
 
         self.passTurnButton = QPushButton("Pass Turn")
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
+        if not self.game:
+            self.passTurnButton.setEnabled(False)
 
         self.proceedButton = QPushButton("Take off")
         self.proceedButton.setIcon(CONST.ICONS["Proceed"])
         self.proceedButton.setProperty("style", "start-button")
         self.proceedButton.clicked.connect(self.launch_mission)
-        if self.game and self.game.turn == 0:
+        if not self.game or self.game.turn == 0:
             self.proceedButton.setEnabled(False)
 
         self.factionsInfos = QFactionsInfos(self.game)
 
         self.settings = QPushButton("Settings")
+        self.settings.setDisabled(True)
         self.settings.setIcon(CONST.ICONS["Settings"])
         self.settings.setProperty("style", "btn-primary")
         self.settings.clicked.connect(self.openSettings)
 
         self.statistics = QPushButton("Statistics")
+        self.statistics.setDisabled(True)
         self.statistics.setIcon(CONST.ICONS["Statistics"])
         self.statistics.setProperty("style", "btn-primary")
         self.statistics.clicked.connect(self.openStatisticsWindow)
@@ -83,23 +86,30 @@ class QTopPanel(QFrame):
         self.proceedBox.setLayout(self.proceedBoxLayout)
 
         self.layout = QHBoxLayout()
+        
         self.layout.addWidget(self.factionsInfos)
-        self.layout.addWidget(self.turnCounter)
+        self.layout.addWidget(self.conditionsWidget)
         self.layout.addWidget(self.budgetBox)
         self.layout.addWidget(self.buttonBox)
         self.layout.addStretch(1)
         self.layout.addWidget(self.proceedBox)
 
         self.layout.setContentsMargins(0,0,0,0)
+        
         self.setLayout(self.layout)
 
     def setGame(self, game: Optional[Game]):
         if game is None:
             return
 
-        self.turnCounter.setCurrentTurn(game.turn, game.conditions)
+        self.settings.setEnabled(True)
+        self.statistics.setEnabled(True)
+
+        self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
+
+        self.passTurnButton.setEnabled(True)
 
         if game and game.turn == 0:
             self.proceedButton.setEnabled(False)
@@ -167,7 +177,7 @@ class QTopPanel(QFrame):
     def confirm_negative_start_time(self,
                                     negative_starts: List[Package]) -> bool:
         formatted = '<br />'.join(
-            [f"{p.primary_task.name} {p.target.name}" for p in negative_starts]
+            [f"{p.primary_task} {p.target.name}" for p in negative_starts]
         )
         mbox = QMessageBox(
             QMessageBox.Question,
@@ -210,29 +220,18 @@ class QTopPanel(QFrame):
         if negative_starts:
             if not self.confirm_negative_start_time(negative_starts):
                 return
+        closest_cps = self.game.theater.closest_opposing_control_points()
+        game_event = AirWarEvent(
+            self.game,
+            closest_cps[0],
+            closest_cps[1],
+            self.game.theater.controlpoints[0].position,
+            self.game.player_name,
+            self.game.enemy_name)
 
-        # TODO: Refactor this nonsense.
-        game_event = None
-        for event in self.game.events:
-            if isinstance(event,
-                          FrontlineAttackEvent) and event.is_player_attacking:
-                game_event = event
-        if game_event is None:
-            game_event = FrontlineAttackEvent(
-                self.game,
-                self.game.theater.controlpoints[0],
-                self.game.theater.controlpoints[0],
-                self.game.theater.controlpoints[0].position,
-                self.game.player_name,
-                self.game.enemy_name)
-        game_event.is_awacs_enabled = True
-        game_event.ca_slots = 1
-        game_event.departure_cp = self.game.theater.controlpoints[0]
-        game_event.player_attacking({CAS: {}, CAP: {}})
-        game_event.depart_from = self.game.theater.controlpoints[0]
-
-        self.game.initiate_event(game_event)
-        waiting = QWaitingForMissionResultWindow(game_event, self.game)
+        unit_map = self.game.initiate_event(game_event)
+        waiting = QWaitingForMissionResultWindow(game_event, self.game,
+                                                 unit_map)
         waiting.show()
 
     def budget_update(self, game:Game):

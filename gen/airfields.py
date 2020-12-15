@@ -83,7 +83,7 @@ AIRFIELD_DATA = {
         tacan_callsign="BTM",
         atc=AtcData(MHz(4, 250), MHz(131, 0), MHz(40, 400), MHz(260, 0)),
         ils={
-            "13": ("ILU", MHz(110, 30)),
+            "13": ("ILU", MHz(110, 300)),
         },
     ),
 
@@ -96,7 +96,7 @@ AIRFIELD_DATA = {
         tacan_callsign="KBL",
         atc=AtcData(MHz(4, 350), MHz(133, 0), MHz(40, 800), MHz(262, 0)),
         ils={
-            "07": ("IKB", MHz(111, 50)),
+            "07": ("IKB", MHz(111, 500)),
         },
         outer_ndb={
             "07": ("KT", MHz(870, 0)),
@@ -115,7 +115,7 @@ AIRFIELD_DATA = {
         tacan_callsign="TSK",
         atc=AtcData(MHz(4, 300), MHz(132, 0), MHz(40, 600), MHz(261, 0)),
         ils={
-            "09": ("ITS", MHz(108, 90)),
+            "09": ("ITS", MHz(108, 900)),
         },
         outer_ndb={
             "09": ("BI", MHz(335, 0)),
@@ -134,7 +134,7 @@ AIRFIELD_DATA = {
         tacan_callsign="KTS",
         atc=AtcData(MHz(4, 400), MHz(134, 0), MHz(41, 0), MHz(263, 0)),
         ils={
-            "08": ("IKS", MHz(109, 75)),
+            "08": ("IKS", MHz(109, 750)),
         },
     ),
 
@@ -167,7 +167,7 @@ AIRFIELD_DATA = {
         runway_length=9686,
         atc=AtcData(MHz(4, 50), MHz(127, 0), MHz(39, 600), MHz(256, 0)),
         ils={
-            "06": ("ISO", MHz(111, 10)),
+            "06": ("ISO", MHz(111, 100)),
         },
     ),
 
@@ -290,8 +290,8 @@ AIRFIELD_DATA = {
         vor=("MN", MHz(117, 10)),
         atc=AtcData(MHz(4, 450), MHz(135, 0), MHz(41, 200), MHz(264, 0)),
         ils={
-            "30": ("IMW", MHz(109, 30)),
-            "12": ("IMD", MHz(111, 70)),
+            "30": ("IMW", MHz(109, 300)),
+            "12": ("IMD", MHz(111, 700)),
         },
         outer_ndb={
             "30": ("NR", MHz(583, 0)),
@@ -310,7 +310,7 @@ AIRFIELD_DATA = {
         runway_length=7082,
         atc=AtcData(MHz(4, 500), MHz(136, 0), MHz(41, 400), MHz(265, 0)),
         ils={
-            "24": ("INL", MHz(110, 50)),
+            "24": ("INL", MHz(110, 500)),
         },
         outer_ndb={
             "24": ("NL", MHz(718, 0)),
@@ -348,7 +348,7 @@ AIRFIELD_DATA = {
         runway_length=9327,
         atc=AtcData(MHz(4, 750), MHz(141, 0), MHz(42, 400), MHz(270, 0)),
         ils={
-            "10": ("ICH", MHz(110, 50)),
+            "10": ("ICH", MHz(110, 500)),
         },
         outer_ndb={
             "10": ("CX", MHz(1, 5)),
@@ -367,8 +367,8 @@ AIRFIELD_DATA = {
         tacan_callsign="GTB",
         atc=AtcData(MHz(4, 600), MHz(138, 0), MHz(41, 800), MHz(267, 0)),
         ils={
-            "13": ("INA", MHz(110, 30)),
-            "30": ("INA", MHz(108, 90)),
+            "13": ("INA", MHz(110, 300)),
+            "30": ("INA", MHz(108, 900)),
         },
         outer_ndb={
             "13": ("BP", MHz(342, 0)),
@@ -399,8 +399,8 @@ AIRFIELD_DATA = {
         tacan_callsign="VAS",
         atc=AtcData(MHz(4, 700), MHz(140, 0), MHz(42, 200), MHz(269, 0)),
         ils={
-            "13": ("IVZ", MHz(108, 75)),
-            "31": ("IVZ", MHz(108, 75)),
+            "13": ("IVZ", MHz(108, 750)),
+            "31": ("IVZ", MHz(108, 750)),
         },
     ),
 
@@ -1016,8 +1016,8 @@ AIRFIELD_DATA = {
         tacan_callsign="TQQ",
         atc=AtcData(MHz(3, 800), MHz(124, 750), MHz(38, 500), MHz(257, 950)),
         ils={
-            "32": ("I-UVV", MHz(111, 70)),
-            "14": ("I-RVP", MHz(108, 30)),
+            "32": ("I-UVV", MHz(111, 700)),
+            "14": ("I-RVP", MHz(108, 300)),
         },
     ),
 
@@ -1043,7 +1043,7 @@ AIRFIELD_DATA = {
         tacan_callsign="GRL",
         atc=AtcData(MHz(3, 850), MHz(118, 0), MHz(38, 600), MHz(250, 50)),
         ils={
-            "32": ("GLRI", MHz(109, 30)),
+            "32": ("GLRI", MHz(109, 300)),
         },
     ),
 
@@ -1069,7 +1069,7 @@ AIRFIELD_DATA = {
         tacan_callsign="INS",
         atc=AtcData(MHz(3, 825), MHz(118, 300), MHz(38, 550), MHz(360, 600)),
         ils={
-            "8": ("ICRR", MHz(108, 70)),
+            "8": ("ICRR", MHz(108, 700)),
         },
     ),
 
@@ -1092,7 +1092,7 @@ AIRFIELD_DATA = {
         tacan_callsign="LSV",
         atc=AtcData(MHz(3, 900), MHz(132, 550), MHz(38, 700), MHz(327, 0)),
         ils={
-            "21": ("IDIQ", MHz(109, 10)),
+            "21": ("IDIQ", MHz(109, 100)),
         },
     ),
 
@@ -1113,7 +1113,7 @@ AIRFIELD_DATA = {
         tacan_callsign="LAS",
         atc=AtcData(MHz(3, 875), MHz(119, 900), MHz(38, 650), MHz(257, 800)),
         ils={
-            "25": ("I-LAS", MHz(110, 30)),
+            "25": ("I-LAS", MHz(110, 300)),
         },
     ),
 

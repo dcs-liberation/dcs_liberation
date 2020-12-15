@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 
@@ -20,6 +22,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from game.debriefing import Debriefing, wait_for_debriefing
 from game.game import Event, Game, logging
 from game.persistency import base_path
+from game.unitmap import UnitMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
@@ -36,25 +39,30 @@ class DebriefingFileWrittenSignal(QObject):
         self.debriefingReceived.emit(debriefing)
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> DebriefingFileWrittenSignal:
         return DebriefingFileWrittenSignal.instance
+
 
 DebriefingFileWrittenSignal()
 
+
 class QWaitingForMissionResultWindow(QDialog):
 
-    def __init__(self, gameEvent: Event, game: Game):
+    def __init__(self, gameEvent: Event, game: Game, unit_map: UnitMap) -> None:
         super(QWaitingForMissionResultWindow, self).__init__()
         self.setModal(True)
         self.gameEvent = gameEvent
         self.game = game
+        self.unit_map = unit_map
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
 
         self.initUi()
         DebriefingFileWrittenSignal.get_instance().debriefingReceived.connect(self.updateLayout)
-        self.wait_thread = wait_for_debriefing(lambda debriefing: self.on_debriefing_udpate(debriefing), self.game)
+        self.wait_thread = wait_for_debriefing(
+            lambda debriefing: self.on_debriefing_update(debriefing), self.game,
+            self.unit_map)
 
     def initUi(self):
         self.layout = QGridLayout()
@@ -119,57 +127,68 @@ class QWaitingForMissionResultWindow(QDialog):
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
 
-    def updateLayout(self, debriefing):
+    def updateLayout(self, debriefing: Debriefing) -> None:
         updateBox = QGroupBox("Mission status")
         updateLayout = QGridLayout()
         updateBox.setLayout(updateLayout)
         self.debriefing = debriefing
 
         updateLayout.addWidget(QLabel("<b>Aircraft destroyed</b>"), 0, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.killed_aircrafts))), 0, 1)
+        updateLayout.addWidget(
+            QLabel(str(len(list(debriefing.air_losses.losses)))), 0, 1)
 
-        updateLayout.addWidget(QLabel("<b>Ground units destroyed</b>"), 1, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.killed_ground_units))), 1, 1)
+        updateLayout.addWidget(
+            QLabel("<b>Front line units destroyed</b>"), 1, 0)
+        updateLayout.addWidget(
+            QLabel(str(len(list(debriefing.front_line_losses)))), 1, 1)
 
-        #updateLayout.addWidget(QLabel("<b>Weapons fired</b>"), 2, 0)
-        #updateLayout.addWidget(QLabel(str(len(debriefing.weapons_fired))), 2, 1)
+        updateLayout.addWidget(
+            QLabel("<b>Other ground units destroyed</b>"), 2, 0)
+        updateLayout.addWidget(
+            QLabel(str(len(list(debriefing.ground_object_losses)))), 2, 1)
 
-        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 2, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 2, 1)
+        updateLayout.addWidget(
+            QLabel("<b>Buildings destroyed</b>"), 3, 0)
+        updateLayout.addWidget(
+            QLabel(str(len(list(debriefing.building_losses)))), 3, 1)
+
+        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 4, 0)
+        updateLayout.addWidget(
+            QLabel(str(len(debriefing.base_capture_events))), 4, 1)
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):
             try:
                 self.gridLayout.itemAt(i).widget().setParent(None)
             except:
-                pass
+                logging.exception("Failed to clear window")
 
         # Set new window content
         self.gridLayout.addWidget(updateBox, 0, 0)
 
-        if not debriefing.mission_ended:
+        if not debriefing.state_data.mission_ended:
             self.gridLayout.addWidget(QLabel("<b>Mission is being played</b>"), 1, 0)
             self.gridLayout.addWidget(self.actions, 2, 0)
         else:
             self.gridLayout.addWidget(QLabel("<b>Mission is over</b>"), 1, 0)
             self.gridLayout.addWidget(self.actions2, 2, 0)
 
-
-    def on_debriefing_udpate(self, debriefing):
+    def on_debriefing_update(self, debriefing: Debriefing) -> None:
         try:
             logging.info("On Debriefing update")
-            print(debriefing)
+            logging.debug(debriefing)
             DebriefingFileWrittenSignal.get_instance().sendDebriefing(debriefing)
-        except Exception as e:
-            logging.error("Got an error while sending debriefing")
-            logging.error(e)
-        self.wait_thread = wait_for_debriefing(lambda debriefing: self.on_debriefing_udpate(debriefing), self.game)
+        except Exception:
+            logging.exception("Got an error while sending debriefing")
+        self.wait_thread = wait_for_debriefing(
+            lambda d: self.on_debriefing_update(d), self.game, self.unit_map)
 
     def process_debriefing(self):
         self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
         self.game.pass_turn()
 
-        GameUpdateSignal.get_instance().sendDebriefing(self.game, self.gameEvent, self.debriefing)
+        GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
+        GameUpdateSignal.get_instance().updateGame(self.game)
         self.close()
 
     def debriefing_directory_location(self) -> str:
@@ -187,8 +206,8 @@ class QWaitingForMissionResultWindow(QDialog):
             with open(file[0], "r") as json_file:
                 json_data = json.load(json_file)
                 json_data["mission_ended"] = True
-                debriefing = Debriefing(json_data, self.game)
-                self.on_debriefing_udpate(debriefing)
+                debriefing = Debriefing(json_data, self.game, self.unit_map)
+                self.on_debriefing_update(debriefing)
         except Exception as e:
             logging.error(e)
             msg = QMessageBox()

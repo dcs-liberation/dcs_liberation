@@ -25,10 +25,7 @@
   "infantry_units": [
     "Paratrooper_AKS"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "BoforsGenerator"
   ],
   "aircraft_carrier": [

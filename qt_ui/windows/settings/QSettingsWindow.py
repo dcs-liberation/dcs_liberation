@@ -24,6 +24,7 @@ import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
+from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
@@ -54,6 +55,7 @@ class QSettingsWindow(QDialog):
         self.game = game
         self.pluginsPage = None
         self.pluginsOptionsPage = None
+        self.campaign_management_page = QWidget()
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -81,6 +83,14 @@ class QSettingsWindow(QDialog):
         difficulty.setSelectable(True)
         self.categoryModel.appendRow(difficulty)
         self.right_layout.addWidget(self.difficultyPage)
+
+        self.init_campaign_management_layout()
+        campaign_management = QStandardItem("Campaign Management")
+        campaign_management.setIcon(CONST.ICONS["Money"])
+        campaign_management.setEditable(False)
+        campaign_management.setSelectable(True)
+        self.categoryModel.appendRow(campaign_management)
+        self.right_layout.addWidget(self.campaign_management_page)
 
         self.initGeneratorLayout()
         generator = QStandardItem("Mission Generator")
@@ -131,10 +141,13 @@ class QSettingsWindow(QDialog):
     def initDifficultyLayout(self):
 
         self.difficultyPage = QWidget()
-        self.difficultyLayout = QGridLayout()
+        self.difficultyLayout = QVBoxLayout()
         self.difficultyLayout.setAlignment(Qt.AlignTop)
         self.difficultyPage.setLayout(self.difficultyLayout)
 
+        # DCS AI difficulty settings
+        self.aiDifficultySettings = QGroupBox("AI Difficulty")
+        self.aiDifficultyLayout = QGridLayout()
         self.playerCoalitionSkill = QComboBox()
         self.enemyCoalitionSkill = QComboBox()
         self.enemyAASkill = QComboBox()
@@ -147,30 +160,39 @@ class QSettingsWindow(QDialog):
         self.enemyCoalitionSkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_skill))
         self.enemyAASkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_vehicle_skill))
 
+        self.player_income = TenthsSpinSlider(
+            "Player income multiplier", 1, 50,
+            int(self.game.settings.player_income_multiplier * 10))
+        self.player_income.spinner.valueChanged.connect(self.applySettings)
+        self.enemy_income = TenthsSpinSlider(
+            "Enemy income multiplier", 1, 50,
+            int(self.game.settings.enemy_income_multiplier * 10))
+        self.enemy_income.spinner.valueChanged.connect(self.applySettings)
+
         self.playerCoalitionSkill.currentIndexChanged.connect(self.applySettings)
         self.enemyCoalitionSkill.currentIndexChanged.connect(self.applySettings)
         self.enemyAASkill.currentIndexChanged.connect(self.applySettings)
 
-        self.difficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
-        self.difficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1, Qt.AlignRight)
-        self.difficultyLayout.addWidget(QLabel("Enemy skill"), 1, 0)
-        self.difficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
-        self.difficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
-        self.difficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
+        # Mission generation settings related to difficulty
+        self.missionSettings = QGroupBox("Mission Difficulty")
+        self.missionLayout = QGridLayout()
+
+        self.manpads = QCheckBox()
+        self.manpads.setChecked(self.game.settings.manpads)
+        self.manpads.toggled.connect(self.applySettings)
+
+        self.noNightMission = QCheckBox()
+        self.noNightMission.setChecked(self.game.settings.night_disabled)
+        self.noNightMission.toggled.connect(self.applySettings)
+
+        # DCS Mission options
+        self.missionRestrictionsSettings = QGroupBox("Mission Restrictions")
+        self.missionRestrictionsLayout = QGridLayout()
 
         self.difficultyLabel = QComboBox()
         [self.difficultyLabel.addItem(t) for t in CONST.LABELS_OPTIONS]
         self.difficultyLabel.setCurrentIndex(CONST.LABELS_OPTIONS.index(self.game.settings.labels))
         self.difficultyLabel.currentIndexChanged.connect(self.applySettings)
-
-        self.difficultyLayout.addWidget(QLabel("In Game Labels"), 3, 0)
-        self.difficultyLayout.addWidget(self.difficultyLabel, 3, 1, Qt.AlignRight)
-
-        self.noNightMission = QCheckBox()
-        self.noNightMission.setChecked(self.game.settings.night_disabled)
-        self.noNightMission.toggled.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("No night missions"), 4, 0)
-        self.difficultyLayout.addWidget(self.noNightMission, 4, 1, Qt.AlignRight)
 
         self.mapVisibiitySelection = QComboBox()
         self.mapVisibiitySelection.addItem("All", ForcedOptions.Views.All)
@@ -189,15 +211,82 @@ class QSettingsWindow(QDialog):
         if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
             self.mapVisibiitySelection.setCurrentIndex(4)
         self.mapVisibiitySelection.currentIndexChanged.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("Map visibility options"), 5, 0)
-        self.difficultyLayout.addWidget(self.mapVisibiitySelection, 5, 1, Qt.AlignRight)
 
         self.ext_views = QCheckBox()
         self.ext_views.setChecked(self.game.settings.external_views_allowed)
         self.ext_views.toggled.connect(self.applySettings)
-        self.difficultyLayout.addWidget(QLabel("Allow external views"), 6, 0)
-        self.difficultyLayout.addWidget(self.ext_views, 6, 1, Qt.AlignRight)
 
+        self.aiDifficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
+        self.aiDifficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1, Qt.AlignRight)
+        self.aiDifficultyLayout.addWidget(QLabel("Enemy coalition skill"), 1, 0)
+        self.aiDifficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
+        self.aiDifficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
+        self.aiDifficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
+        self.aiDifficultyLayout.addLayout(self.player_income, 3, 0)
+        self.aiDifficultyLayout.addLayout(self.enemy_income, 4, 0)
+        self.aiDifficultySettings.setLayout(self.aiDifficultyLayout)
+        self.difficultyLayout.addWidget(self.aiDifficultySettings)
+
+        self.missionLayout.addWidget(QLabel("Manpads on frontlines"), 0, 0)
+        self.missionLayout.addWidget(self.manpads, 0, 1, Qt.AlignRight)
+        self.missionLayout.addWidget(QLabel("No night missions"), 1, 0)
+        self.missionLayout.addWidget(self.noNightMission, 1, 1, Qt.AlignRight)
+        self.missionSettings.setLayout(self.missionLayout)
+        self.difficultyLayout.addWidget(self.missionSettings)
+
+        self.missionRestrictionsLayout.addWidget(QLabel("In Game Labels"), 0, 0)
+        self.missionRestrictionsLayout.addWidget(self.difficultyLabel, 0, 1, Qt.AlignRight)
+        self.missionRestrictionsLayout.addWidget(QLabel("Map visibility options"), 1, 0)
+        self.missionRestrictionsLayout.addWidget(self.mapVisibiitySelection, 1, 1, Qt.AlignRight)
+        self.missionRestrictionsLayout.addWidget(QLabel("Allow external views"), 2, 0)
+        self.missionRestrictionsLayout.addWidget(self.ext_views, 2, 1, Qt.AlignRight)
+        self.missionRestrictionsSettings.setLayout(self.missionRestrictionsLayout)
+        self.difficultyLayout.addWidget(self.missionRestrictionsSettings)
+
+    def init_campaign_management_layout(self) -> None:
+        campaign_layout = QVBoxLayout()
+        campaign_layout.setAlignment(Qt.AlignTop)
+        self.campaign_management_page.setLayout(campaign_layout)
+
+        automation = QGroupBox("HQ Automation")
+        campaign_layout.addWidget(automation)
+
+        automation_layout = QGridLayout()
+        automation.setLayout(automation_layout)
+
+        def set_runway_automation(value: bool) -> None:
+            self.game.settings.automate_runway_repair = value
+
+        def set_front_line_automation(value: bool) -> None:
+            self.game.settings.automate_front_line_reinforcements = value
+
+        def set_aircraft_automation(value: bool) -> None:
+            self.game.settings.automate_aircraft_reinforcements = value
+
+        runway_repair = QCheckBox()
+        runway_repair.setChecked(
+            self.game.settings.automate_runway_repair)
+        runway_repair.toggled.connect(set_runway_automation)
+
+        automation_layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
+        automation_layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
+
+        front_line = QCheckBox()
+        front_line.setChecked(
+            self.game.settings.automate_front_line_reinforcements)
+        front_line.toggled.connect(set_front_line_automation)
+
+        automation_layout.addWidget(
+            QLabel("Automate front-line purchases"), 1, 0)
+        automation_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
+
+        aircraft = QCheckBox()
+        aircraft.setChecked(
+            self.game.settings.automate_aircraft_reinforcements)
+        aircraft.toggled.connect(set_aircraft_automation)
+
+        automation_layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
+        automation_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()
@@ -274,10 +363,14 @@ class QSettingsWindow(QDialog):
         self.culling.toggled.connect(self.applySettings)
 
         self.culling_distance = QSpinBox()
-        self.culling_distance.setMinimum(50)
+        self.culling_distance.setMinimum(10)
         self.culling_distance.setMaximum(10000)
         self.culling_distance.setValue(self.game.settings.perf_culling_distance)
         self.culling_distance.valueChanged.connect(self.applySettings)
+
+        self.culling_do_not_cull_carrier = QCheckBox()
+        self.culling_do_not_cull_carrier.setChecked(self.game.settings.perf_do_not_cull_carrier)
+        self.culling_do_not_cull_carrier.toggled.connect(self.applySettings)
 
         self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
@@ -299,6 +392,8 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
         self.performanceLayout.addWidget(self.culling_distance, 9, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Do not cull carrier's surroundings"), 10, 0)
+        self.performanceLayout.addWidget(self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight)
 
         self.generatorLayout.addWidget(self.gameplay)
         self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
@@ -347,6 +442,9 @@ class QSettingsWindow(QDialog):
         self.game.settings.player_skill = CONST.SKILL_OPTIONS[self.playerCoalitionSkill.currentIndex()]
         self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[self.enemyCoalitionSkill.currentIndex()]
         self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
+        self.game.settings.player_income_multiplier = self.player_income.value
+        self.game.settings.enemy_income_multiplier = self.enemy_income.value
+        self.game.settings.manpads = self.manpads.isChecked()
         self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
         self.game.settings.night_disabled = self.noNightMission.isChecked()
         self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
@@ -366,9 +464,11 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
+        self.game.settings.perf_do_not_cull_carrier = self.culling_do_not_cull_carrier.isChecked()
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
 
+        self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def onSelectionChanged(self):

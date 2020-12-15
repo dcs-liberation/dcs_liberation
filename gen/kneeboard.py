@@ -26,7 +26,7 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
@@ -44,6 +44,8 @@ from .runways import RunwayData
 
 if TYPE_CHECKING:
     from game import Game
+
+
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
@@ -191,7 +193,15 @@ class FlightPlanBuilder:
             waypoint.position
         ))
         duration = (waypoint.tot - last_time).total_seconds() / 3600
-        return f"{int(distance / duration)} kt"
+        try:
+            return f"{int(distance / duration)} kt"
+        except ZeroDivisionError:
+            # TODO: Improve resolution of unit conversions.
+            # When waypoints are very close to each other they can end up with
+            # identical TOTs because our unit conversion functions truncate to
+            # int. When waypoints have the same TOT the duration will be zero.
+            # https://github.com/Khopa/dcs_liberation/issues/557
+            return "-"
 
     def build(self) -> List[List[str]]:
         return self.rows
@@ -230,28 +240,37 @@ class BriefingPage(KneeboardPage):
             "#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"
         ])
 
-        writer.heading("Comm Ladder")
-        comms = []
+        flight_plan_builder
+        writer.table([
+            ["{}lbs".format(self.flight.bingo_fuel), "{}lbs".format(self.flight.joker_fuel)]
+        ], ['Bingo', 'Joker'])
+
+        # Package Section
+        writer.heading("Comm ladder")
+        comm_ladder = []
         for comm in self.comms:
-            comms.append([comm.name, self.format_frequency(comm.freq)])
-        writer.table(comms, headers=["Name", "UHF"])
+            comm_ladder.append([comm.name, '', '', '', self.format_frequency(comm.freq)])
 
-        writer.heading("AWACS")
-        awacs = []
         for a in self.awacs:
-            awacs.append([a.callsign, self.format_frequency(a.freq)])
-        writer.table(awacs, headers=["Callsign", "UHF"])
-
-        writer.heading("Tankers")
-        tankers = []
+            comm_ladder.append([
+                a.callsign,
+                'AWACS',
+                '',
+                '',
+                self.format_frequency(a.freq)
+            ])
         for tanker in self.tankers:
-            tankers.append([
+            comm_ladder.append([
                 tanker.callsign,
+                "Tanker",
                 tanker.variant,
                 str(tanker.tacan),
                 self.format_frequency(tanker.freq),
-            ])
-        writer.table(tankers, headers=["Callsign", "Type", "TACAN", "UHF"])
+            ])        
+
+        
+        writer.table(comm_ladder, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
+
 
         writer.heading("JTAC")
         jtacs = []

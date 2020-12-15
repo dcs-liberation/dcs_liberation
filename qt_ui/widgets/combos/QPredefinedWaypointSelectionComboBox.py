@@ -1,10 +1,10 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
+from game.theater import ControlPointType
 from gen import BuildingGroundObject, Conflict, FlightWaypointType
 from gen.flights.flight import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
-from theater import ControlPointType
 
 
 class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
@@ -54,7 +54,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                 if cp.captured:
                     enemy_cp = [ecp for ecp in cp.connected_points if ecp.captured != cp.captured]
                     for ecp in enemy_cp:
-                        pos = Conflict.frontline_position(self.game.theater, cp, ecp)[0]
+                        pos = Conflict.frontline_position(cp, ecp, self.game.theater)[0]
                         wpt = FlightWaypoint(
                             FlightWaypointType.CUSTOM,
                             pos.x,

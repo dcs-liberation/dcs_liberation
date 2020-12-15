@@ -21,12 +21,10 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
-    "AvengerGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "AvengerGenerator"
   ],
   "requirements": {

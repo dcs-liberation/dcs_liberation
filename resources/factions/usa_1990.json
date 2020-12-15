@@ -43,16 +43,17 @@
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Soldier_M249",
+    "Stinger_MANPADS"
   ],
-  "shorads": [
-    "AvengerGenerator"
-  ],
-  "sams": [
-    "HawkGenerator"
+  "air_defenses": [
+    "AvengerGenerator",
+    "ChaparralGenerator",
+    "HawkGenerator",
+    "PatriotGenerator"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"
@@ -72,7 +73,8 @@
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",
     "CVN-73 George Washington",
-    "CVN-74 John C. Stennis"
+    "CVN-74 John C. Stennis",
+    "CVN-75 Harry S. Truman"
   ],
   "helicopter_carrier_names": [
     "LHA-1 Tarawa",

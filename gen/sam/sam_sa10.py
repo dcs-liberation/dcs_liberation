@@ -2,16 +2,19 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class SA10Generator(GenericSamGroupGenerator):
+class SA10Generator(AirDefenseGroupGenerator):
     """
     This generate a SA-10 group
     """
 
     name = "SA-10/S-300PS Battery"
-    price = 450
+    price = 550
 
     def generate(self):
         # Search Radar
@@ -38,15 +41,55 @@ class SA10Generator(GenericSamGroupGenerator):
             else:
                 self.add_unit(AirDefence.SAM_SA_10_S_300PS_LN_5P85D, "LN#" + str(i), position[0], position[1], position[2])
 
-        # Then let's add short range protection to this high value site
-        # Sa-13 Strela are great for that
-        num_launchers = random.randint(2, 4)
-        positions = self.get_circular_position(num_launchers, launcher_distance=140, coverage=360)
-        for i, position in enumerate(positions):
-            self.add_unit(AirDefence.SAM_SA_13_Strela_10M3_9A35M3, "IR#" + str(i), position[0], position[1], position[2])
+        self.generate_defensive_groups()
 
-        # And even some AA
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Long
+
+    def generate_defensive_groups(self) -> None:
+        # AAA for defending against close targets.
         num_launchers = random.randint(6, 8)
-        positions = self.get_circular_position(num_launchers, launcher_distance=210, coverage=360)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=210, coverage=360)
         for i, position in enumerate(positions):
-            self.add_unit(AirDefence.SPAAA_ZSU_23_4_Shilka, "AA#" + str(i), position[0], position[1], position[2])
+            self.add_unit(AirDefence.SPAAA_ZSU_23_4_Shilka, "AA#" + str(i),
+                          position[0], position[1], position[2])
+
+
+class Tier2SA10Generator(SA10Generator):
+    def generate_defensive_groups(self) -> None:
+        # SA-15 for both shorter range targets and point defense.
+        num_launchers = random.randint(2, 4)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=140, coverage=360)
+        for i, position in enumerate(positions):
+            self.add_unit(AirDefence.SAM_SA_15_Tor_9A331, "PD#" + str(i),
+                          position[0], position[1], position[2])
+
+        # AAA for defending against close targets.
+        num_launchers = random.randint(6, 8)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=210, coverage=360)
+        for i, position in enumerate(positions):
+            self.add_unit(AirDefence.SPAAA_ZSU_23_4_Shilka, "AA#" + str(i),
+                          position[0], position[1], position[2])
+
+
+class Tier3SA10Generator(SA10Generator):
+    def generate_defensive_groups(self) -> None:
+        # SA-15 for both shorter range targets and point defense.
+        num_launchers = random.randint(2, 4)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=140, coverage=360)
+        for i, position in enumerate(positions):
+            self.add_unit(AirDefence.SAM_SA_15_Tor_9A331, "PD#" + str(i),
+                          position[0], position[1], position[2])
+
+        # AAA for defending against close targets.
+        num_launchers = random.randint(6, 8)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=210, coverage=360)
+        for i, position in enumerate(positions):
+            self.add_unit(AirDefence.SAM_SA_19_Tunguska_2S6, "AA#" + str(i),
+                          position[0], position[1], position[2])

@@ -1,11 +1,14 @@
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QVBoxLayout,
+)
+from dcs.task import CAP, CAS, Embarking, PinpointStrike
 
-
-from PySide2.QtWidgets import QLabel, QGroupBox, QVBoxLayout, QFrame, QGridLayout
-from dcs.task import Embarking, CAS, PinpointStrike, CAP
-
-from game import Game
-from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import QGroundForcesStrategySelector
-from theater import ControlPoint, db
+from game import Game, db
+from game.theater import ControlPoint
 
 
 class QIntelInfo(QFrame):

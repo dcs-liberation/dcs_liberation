@@ -1,5 +1,5 @@
 {
-  "country": "Syria",
+  "country": "Combined Joint Task Forces Red",
   "name": "Syria 2011",
   "authors": "Khopa",
   "description": "<p>Syrian Arab Army at the start of the Syrian Civil War.</p>",
@@ -46,22 +46,24 @@
   "infantry_units": [
     "Paratrooper_AKS",
     "Infantry_Soldier_Rus",
-    "Paratrooper_RPG_16"
+    "Paratrooper_RPG_16",
+    "SAM_SA_18_Igla_S_MANPADS"
   ],
-  "shorads": [
-    "SA8Generator",
-    "SA9Generator",
-    "SA13Generator",
-    "SA19Generator",
-    "ZSU23Generator",
-    "ColdWarFlakGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "ColdWarFlakGenerator",
     "SA2Generator",
     "SA3Generator",
     "SA6Generator",
+    "SA8Generator",
+    "SA8Generator",
+    "SA9Generator",
     "SA10Generator",
-    "SA11Generator"
+    "SA11Generator",
+    "SA13Generator",
+    "SA19Generator",
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
   ],
   "ewrs": [
     "BoxSpringGenerator",

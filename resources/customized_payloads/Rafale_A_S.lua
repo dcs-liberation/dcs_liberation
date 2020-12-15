@@ -2,38 +2,14 @@ local unitPayloads = {
 	["name"] = "Rafale_A_S",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
-					["num"] = 10,
-				},
-				[2] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
-					["num"] = 6,
-				},
-				[4] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
-					["num"] = 4,
-				},
-			},
-			["tasks"] = {
-				[1] = 11,
-			},
-		},
-		[2] = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 1,
 				},
 				[3] = {
@@ -73,15 +49,15 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
-		[3] = {
+		[2] = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 1,
 				},
 				[3] = {
@@ -121,15 +97,39 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
+		[3] = {
+			["name"] = "CAP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
 		[4] = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 1,
 				},
 				[3] = {
@@ -173,11 +173,11 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{0DA03783-61E4-40B2-8FAE-6AEE0A5C5AAE}",
+					["CLSID"] = "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}",
 					["num"] = 1,
 				},
 				[3] = {
@@ -193,11 +193,11 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{SCALP}",
+					["CLSID"] = "{GBU_49}",
 					["num"] = 8,
 				},
 				[7] = {
-					["CLSID"] = "{SCALP}",
+					["CLSID"] = "{GBU_49}",
 					["num"] = 3,
 				},
 				[8] = {

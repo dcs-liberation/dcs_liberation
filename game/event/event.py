@@ -2,21 +2,24 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Dict, List, Optional, Type, TYPE_CHECKING
+from typing import Dict, List, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
 from dcs.unittype import UnitType
 
-from game import db, persistency
-from game.debriefing import Debriefing
+from game import persistency
+from game.debriefing import AirLosses, Debriefing
 from game.infos.information import Information
 from game.operation.operation import Operation
+from game.theater import ControlPoint
+from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
+from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
     from ..game import Game
+
 
 DIFFICULTY_LOG_BASE = 1.1
 EVENT_DEPARTURE_MAX_DISTANCE = 340000
@@ -30,21 +33,16 @@ STRONG_DEFEAT_INFLUENCE = 0.5
 class Event:
     silent = False
     informational = False
-    is_awacs_enabled = False
-    ca_slots = 0
 
     game = None  # type: Game
     location = None  # type: Point
     from_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
-
-    operation = None  # type: Operation
     difficulty = 1  # type: int
     BONUS_BASE = 5
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
         self.game = game
-        self.departure_cp: Optional[ControlPoint] = None
         self.from_cp = from_cp
         self.to_cp = target_cp
         self.location = location
@@ -56,130 +54,129 @@ class Event:
         return self.attacker_name == self.game.player_name
 
     @property
-    def enemy_cp(self) -> Optional[ControlPoint]:
-        if self.attacker_name == self.game.player_name:
-            return self.to_cp
-        else:
-            return self.departure_cp
-
-    @property
     def tasks(self) -> List[Type[Task]]:
         return []
-
-    @property
-    def global_cp_available(self) -> bool:
-        return False
-
-    def is_departure_available_from(self, cp: ControlPoint) -> bool:
-        if not cp.captured:
-            return False
-
-        if self.location.distance_to_point(cp.position) > EVENT_DEPARTURE_MAX_DISTANCE:
-            return False
-
-        if cp.is_global and not self.global_cp_available:
-            return False
-
-        return True
 
     def bonus(self) -> int:
         return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
-    def is_successfull(self, debriefing: Debriefing) -> bool:
-        return self.operation.is_successfull(debriefing)
+    def generate(self) -> UnitMap:
+        Operation.prepare(self.game)
+        unit_map = Operation.generate()
+        Operation.current_mission.save(
+            persistency.mission_path_for("liberation_nextturn.miz"))
+        return unit_map
 
-    def generate(self):
-        self.operation.is_awacs_enabled = self.is_awacs_enabled
-        self.operation.ca_slots = self.ca_slots
-
-        self.operation.prepare(self.game.theater.terrain, is_quick=False)
-        self.operation.generate()
-        self.operation.current_mission.save(persistency.mission_path_for("liberation_nextturn.miz"))
-        self.environment_settings = self.operation.environment_settings
-
-    def commit(self, debriefing: Debriefing):
-
-        logging.info("Commiting mission results")
-
-        # ------------------------------
-        # Destroyed aircrafts
-        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
-        for destroyed_aircraft in debriefing.killed_aircrafts:
-            try:
-                cpid = int(destroyed_aircraft.split("|")[3])
-                type = db.unit_type_from_name(destroyed_aircraft.split("|")[4])
-                if cpid in cp_map.keys():
-                    cp = cp_map[cpid]
-                    if type in cp.base.aircraft.keys():
-                        logging.info("Aircraft destroyed : " + str(type))
-                        cp.base.aircraft[type] = max(0, cp.base.aircraft[type]-1)
-            except Exception as e:
-                print(e)
-
-        # ------------------------------
-        # Destroyed ground units
-        killed_unit_count_by_cp = {cp.id: 0 for cp in self.game.theater.controlpoints}
-        cp_map = {cp.id: cp for cp in self.game.theater.controlpoints}
-        for killed_ground_unit in debriefing.killed_ground_units:
-            try:
-                cpid = int(killed_ground_unit.split("|")[3])
-                type = db.unit_type_from_name(killed_ground_unit.split("|")[4])
-                if cpid in cp_map.keys():
-                    killed_unit_count_by_cp[cpid] = killed_unit_count_by_cp[cpid] + 1
-                    cp = cp_map[cpid]
-                    if type in cp.base.armor.keys():
-                        logging.info("Ground unit destroyed : " + str(type))
-                        cp.base.armor[type] = max(0, cp.base.armor[type] - 1)
-            except Exception as e:
-                print(e)
-
-        # ------------------------------
-        # Static ground objects
-        for destroyed_ground_unit_name in debriefing.killed_ground_units:
-            for cp in self.game.theater.controlpoints:
-                if not cp.ground_objects:
+    @staticmethod
+    def _transfer_aircraft(ato: AirTaskingOrder, losses: AirLosses,
+                           for_player: bool) -> None:
+        for package in ato.packages:
+            for flight in package.flights:
+                # No need to transfer to the same location.
+                if flight.departure == flight.arrival:
                     continue
 
-                # -- Static ground objects
-                for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.is_dead:
-                        continue
-                        
-                    if (
-                        (ground_object.group_name == destroyed_ground_unit_name)
-                        or
-                        (ground_object.is_same_group(destroyed_ground_unit_name))
-                    ):
-                        logging.info("cp {} killing ground object {}".format(cp, ground_object.group_name))
-                        cp.ground_objects[i].is_dead = True
+                # Don't transfer to bases that were captured. Note that if the
+                # airfield was back-filling transfers it may overflow. We could
+                # attempt to be smarter in the future by performing transfers in
+                # order up a graph to prevent transfers to full airports and
+                # send overflow off-map, but overflow is fine for now.
+                if flight.arrival.captured != for_player:
+                    logging.info(
+                        f"Not transferring {flight} because {flight.arrival} "
+                        "was captured")
+                    continue
 
-                        info = Information("Building destroyed",
-                                           ground_object.dcs_identifier + " has been destroyed at location " + ground_object.obj_name,
-                                           self.game.turn)
-                        self.game.informations.append(info)
+                transfer_count = losses.surviving_flight_members(flight)
+                if transfer_count < 0:
+                    logging.error(f"{flight} had {flight.count} aircraft but "
+                                  f"{transfer_count} losses were recorded.")
+                    continue
 
+                aircraft = flight.unit_type
+                available = flight.departure.base.total_units_of_type(aircraft)
+                if available < transfer_count:
+                    logging.error(
+                        f"Found killed {aircraft} from {flight.departure} but "
+                        f"that airbase has only {available} available.")
+                    continue
 
-                # -- AA Site groups
-                destroyed_units = 0
-                info = Information("Units destroyed at " + ground_object.obj_name,
-                                   "",
-                                   self.game.turn)
-                for i, ground_object in enumerate(cp.ground_objects):
-                    if ground_object.dcs_identifier in ["AA", "CARRIER", "LHA", "EWR"]:
-                        for g in ground_object.groups:
-                            if not hasattr(g, "units_losts"):
-                                g.units_losts = []
-                            for u in g.units:
-                                if u.name == destroyed_ground_unit_name:
-                                    g.units.remove(u)
-                                    g.units_losts.append(u)
-                                    destroyed_units = destroyed_units + 1
-                                    info.text = u.type
-                        ucount = sum([len(g.units) for g in ground_object.groups])
-                        if ucount == 0:
-                            ground_object.is_dead = True
-                if destroyed_units > 0:
-                    self.game.informations.append(info)
+                flight.departure.base.aircraft[aircraft] -= transfer_count
+                if aircraft not in flight.arrival.base.aircraft:
+                    # TODO: Should use defaultdict.
+                    flight.arrival.base.aircraft[aircraft] = 0
+                flight.arrival.base.aircraft[aircraft] += transfer_count
+
+    def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
+        self._transfer_aircraft(self.game.blue_ato, debriefing.air_losses,
+                                for_player=True)
+        self._transfer_aircraft(self.game.red_ato, debriefing.air_losses,
+                                for_player=False)
+
+    @staticmethod
+    def commit_air_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.air_losses.losses:
+            aircraft = loss.unit_type
+            cp = loss.departure
+            available = cp.base.total_units_of_type(aircraft)
+            if available <= 0:
+                logging.error(
+                    f"Found killed {aircraft} from {cp} but that airbase has "
+                    "none available.")
+                continue
+
+            logging.info(f"{aircraft} destroyed from {cp}")
+            cp.base.aircraft[aircraft] -= 1
+
+    @staticmethod
+    def commit_front_line_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.front_line_losses:
+            unit_type = loss.unit_type
+            control_point = loss.origin
+            available = control_point.base.total_units_of_type(unit_type)
+            if available <= 0:
+                logging.error(
+                    f"Found killed {unit_type} from {control_point} but that "
+                    "airbase has none available.")
+                continue
+
+            logging.info(f"{unit_type} destroyed from {control_point}")
+            control_point.base.armor[unit_type] -= 1
+
+    @staticmethod
+    def commit_ground_object_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.ground_object_losses:
+            # TODO: This should be stored in the TGO, not in the pydcs Group.
+            if not hasattr(loss.group, "units_losts"):
+                loss.group.units_losts = []
+
+            loss.group.units.remove(loss.unit)
+            loss.group.units_losts.append(loss.unit)
+            if not loss.ground_object.alive_unit_count:
+                loss.ground_object.is_dead = True
+
+    def commit_building_losses(self, debriefing: Debriefing) -> None:
+        for loss in debriefing.building_losses:
+            loss.ground_object.is_dead = True
+            self.game.informations.append(Information(
+                "Building destroyed",
+                f"{loss.ground_object.dcs_identifier} has been destroyed at "
+                f"location {loss.ground_object.obj_name}", self.game.turn
+            ))
+
+    @staticmethod
+    def commit_damaged_runways(debriefing: Debriefing) -> None:
+        for damaged_runway in debriefing.damaged_runways:
+            damaged_runway.damage_runway()
+
+    def commit(self, debriefing: Debriefing):
+        logging.info("Committing mission results")
+
+        self.commit_air_losses(debriefing)
+        self.commit_front_line_losses(debriefing)
+        self.commit_ground_object_losses(debriefing)
+        self.commit_building_losses(debriefing)
+        self.commit_damaged_runways(debriefing)
 
         # ------------------------------
         # Captured bases
@@ -215,14 +212,14 @@ class Event:
                 for cp in captured_cps:
                     logging.info("Will run redeploy for " + cp.name)
                     self.redeploy_units(cp)
+            except Exception:
+                logging.exception(f"Could not process base capture {captured}")
 
-
-            except Exception as e:
-                print(e)
+        self.complete_aircraft_transfers(debriefing)
 
         # Destroyed units carcass
         # -------------------------
-        for destroyed_unit in debriefing.destroyed_units:
+        for destroyed_unit in debriefing.state_data.destroyed_statics:
             self.game.add_destroyed_units(destroyed_unit)
 
         # -----------------------------------
@@ -234,8 +231,8 @@ class Event:
 
                 delta = 0.0
                 player_won = True
-                ally_casualties = killed_unit_count_by_cp[cp.id]
-                enemy_casualties = killed_unit_count_by_cp[enemy_cp.id]
+                ally_casualties = debriefing.casualty_count(cp)
+                enemy_casualties = debriefing.casualty_count(enemy_cp)
                 ally_units_alive = cp.base.total_armor
                 enemy_units_alive = enemy_cp.base.total_armor
 
@@ -352,11 +349,13 @@ class Event:
                     logging.info(info.text)
 
 
-
 class UnitsDeliveryEvent(Event):
+
     informational = True
 
-    def __init__(self, attacker_name: str, defender_name: str, from_cp: ControlPoint, to_cp: ControlPoint, game):
+    def __init__(self, attacker_name: str, defender_name: str,
+                 from_cp: ControlPoint, to_cp: ControlPoint,
+                 game: Game) -> None:
         super(UnitsDeliveryEvent, self).__init__(game=game,
                                                  location=to_cp.position,
                                                  from_cp=from_cp,
@@ -364,19 +363,22 @@ class UnitsDeliveryEvent(Event):
                                                  attacker_name=attacker_name,
                                                  defender_name=defender_name)
 
-        self.units: Dict[UnitType, int] = {}
+        self.units: Dict[Type[UnitType], int] = {}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: Dict[UnitType, int]):
+    def deliver(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 
-    def skip(self):
-
+    def skip(self) -> None:
         for k, v in self.units.items():
-            info = Information("Ally Reinforcement", str(k.id) + " x " + str(v) + " at " + self.to_cp.name, self.game.turn)
-            self.game.informations.append(info)
+            if self.to_cp.captured:
+                name = "Ally "
+            else:
+                name = "Enemy "
+            self.game.message(
+                f"{name} reinforcements: {k.id} x {v} at {self.to_cp.name}")
 
         self.to_cp.base.commision_units(self.units)

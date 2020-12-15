@@ -23,10 +23,8 @@
   "infantry_units": [
     "Infantry_M4"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "BoforsGenerator",
     "EarlyColdWarFlakGenerator"
   ],
   "doctrine": "ww2",

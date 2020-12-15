@@ -43,11 +43,6 @@ jobs:
         ./venv/scripts/activate
         mypy gen
 
-    - name: mypy theater
-      run: |
-        ./venv/scripts/activate
-        mypy theater
-
     - name: Build binaries
       run: |
         ./venv/scripts/activate

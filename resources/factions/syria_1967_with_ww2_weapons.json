@@ -36,14 +36,13 @@
     "Infantry_Soldier_Rus",
     "Soldier_RPG"
   ],
-  "shorads": [
+  "air_defenses": [
+    "EarlyColdWarFlakGenerator",
+    "SA2Generator",
+    "SA3Generator",
+    "ZSU23Generator",
     "ZU23Generator",
-    "EarlyColdWarFlakGenerator",
     "ZU23UralGenerator"
-  ],
-  "sams": [
-    "EarlyColdWarFlakGenerator",
-    "SA2Generator"
   ],
   "ewrs": [
     "FlatFaceGenerator"

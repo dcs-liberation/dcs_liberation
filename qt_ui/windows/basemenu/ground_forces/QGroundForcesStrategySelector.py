@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QComboBox
 
-from theater import ControlPoint, CombatStance
+from game.theater import CombatStance, ControlPoint
 
 
 class QGroundForcesStrategySelector(QComboBox):

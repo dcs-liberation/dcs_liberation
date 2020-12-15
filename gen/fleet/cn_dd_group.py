@@ -14,7 +14,7 @@ from dcs.ships import (
 from game.factions.faction import Faction
 from gen.fleet.dd_group import DDGroupGenerator
 from gen.sam.group_generator import ShipGroupGenerator
-from theater.theatergroundobject import TheaterGroundObject
+from game.theater.theatergroundobject import TheaterGroundObject
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -38,8 +38,8 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
 
         if include_dd:
             dd_type = random.choice([Type_052C_Destroyer, Type_052B_Destroyer])
-            self.add_unit(dd_type, "FF1", self.position.x + 2400, self.position.y + 900, self.heading)
-            self.add_unit(dd_type, "FF2", self.position.x + 2400, self.position.y - 900, self.heading)
+            self.add_unit(dd_type, "DD1", self.position.x + 2400, self.position.y + 900, self.heading)
+            self.add_unit(dd_type, "DD2", self.position.x + 2400, self.position.y - 900, self.heading)
 
         if include_cc:
             cc_type = random.choice([CGN_1144_2_Pyotr_Velikiy])

@@ -27,12 +27,9 @@
   "infantry_units": [
     "Infantry_Mauser_98"
   ],
-  "shorads": [
-    "FlakGenerator"
-  ],
-  "sams": [
-    "FreyaGenerator",
-    "FlakGenerator"
+  "air_defenses": [
+    "FlakGenerator",
+    "FreyaGenerator"
   ],
   "aircraft_carrier": [
   ],

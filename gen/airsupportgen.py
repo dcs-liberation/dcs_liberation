@@ -1,8 +1,10 @@
+import logging
 from dataclasses import dataclass, field
-from typing import List, Type
+from typing import List, Type, Tuple
 
 from dcs.mission import Mission, StartType
-from dcs.planes import IL_78M
+from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135
+from dcs.unittype import UnitType
 from dcs.task import (
     AWACS,
     ActivateBeaconCommand,
@@ -67,13 +69,24 @@ class AirSupportConflictGenerator:
     def support_tasks(cls) -> List[Type[MainTask]]:
         return [Refueling, AWACS]
 
-    def generate(self, is_awacs_enabled):
+    @staticmethod
+    def _get_tanker_params(unit_type: Type[UnitType]) -> Tuple[int, int]:
+        if unit_type is KC130:
+            return (TANKER_ALT - 500, 596)
+        elif unit_type is KC_135:
+            return (TANKER_ALT, 770)
+        elif unit_type is KC135MPRS:
+            return (TANKER_ALT + 500, 596)
+        return (TANKER_ALT, 574)
+        
+    def generate(self):
         player_cp = self.conflict.from_cp if self.conflict.from_cp.captured else self.conflict.to_cp
 
         fallback_tanker_number = 0
 
         for i, tanker_unit_type in enumerate(db.find_unittype(Refueling, self.conflict.attackers_side)):
-            variant = db.unit_type_name(tanker_unit_type)
+            alt, airspeed = self._get_tanker_params(tanker_unit_type)
+            variant = db.unit_type_name(tanker_unit_type)            
             freq = self.radio_registry.alloc_uhf()
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
             tanker_heading = self.conflict.to_cp.position.heading_between_point(self.conflict.from_cp.position) + TANKER_HEADING_OFFSET * i
@@ -84,11 +97,11 @@ class AirSupportConflictGenerator:
                 airport=None,
                 plane_type=tanker_unit_type,
                 position=tanker_position,
-                altitude=TANKER_ALT,
+                altitude=alt,
                 race_distance=58000,
                 frequency=freq.mhz,
                 start_type=StartType.Warm,
-                speed=574,
+                speed=airspeed,
                 tacanchannel=str(tacan),
             )
             tanker_group.set_frequency(freq.mhz)
@@ -120,26 +133,28 @@ class AirSupportConflictGenerator:
 
             self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
-        if is_awacs_enabled:
-            try:
-                freq = self.radio_registry.alloc_uhf()
-                awacs_unit = db.find_unittype(AWACS, self.conflict.attackers_side)[0]
-                awacs_flight = self.mission.awacs_flight(
-                    country=self.mission.country(self.game.player_country),
-                    name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
-                    plane_type=awacs_unit,
-                    altitude=AWACS_ALT,
-                    airport=None,
-                    position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
-                    frequency=freq.mhz,
-                    start_type=StartType.Warm,
-                )
-                awacs_flight.set_frequency(freq.mhz)
+        possible_awacs = db.find_unittype(AWACS, self.conflict.attackers_side)
 
-                awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
-                awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
+        if len(possible_awacs) > 0:
+            awacs_unit = possible_awacs[0]
+            freq = self.radio_registry.alloc_uhf()
+            
+            awacs_flight = self.mission.awacs_flight(
+                country=self.mission.country(self.game.player_country),
+                name=namegen.next_awacs_name(self.mission.country(self.game.player_country)),
+                plane_type=awacs_unit,
+                altitude=AWACS_ALT,
+                airport=None,
+                position=self.conflict.position.random_point_within(AWACS_DISTANCE, AWACS_DISTANCE),
+                frequency=freq.mhz,
+                start_type=StartType.Warm,
+            )
+            awacs_flight.set_frequency(freq.mhz)
 
-                self.air_support.awacs.append(AwacsInfo(
-                    str(awacs_flight.name), callsign_for_support_unit(awacs_flight), freq))
-            except:
-                print("No AWACS for faction")
+            awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
+            awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
+
+            self.air_support.awacs.append(AwacsInfo(
+                str(awacs_flight.name), callsign_for_support_unit(awacs_flight), freq))
+        else:
+            logging.warning("No AWACS for faction")

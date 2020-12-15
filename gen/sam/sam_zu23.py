@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class ZU23Generator(GroupGenerator):
+class ZU23Generator(AirDefenseGroupGenerator):
     """
     This generate a ZU23 flak artillery group
     """
@@ -26,3 +29,7 @@ class ZU23Generator(GroupGenerator):
                 self.add_unit(AirDefence.AAA_ZU_23_Closed, "AAA#" + str(index),
                               self.position.x + spacing*i,
                               self.position.y + spacing*j, self.heading)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

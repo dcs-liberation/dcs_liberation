@@ -20,8 +20,9 @@ class DisplayRule:
     def value(self, value: bool) -> None:
         from qt_ui.widgets.map.QLiberationMap import QLiberationMap
         self._value = value
-        QLiberationMap.instance.reload_scene()
-        QLiberationMap.instance.update()
+        if QLiberationMap.instance is not None:
+            QLiberationMap.instance.reload_scene()
+            QLiberationMap.instance.update()
 
     def __bool__(self) -> bool:
         return self.value
@@ -50,7 +51,6 @@ class DisplayOptions:
     ground_objects = DisplayRule("Ground Objects", True)
     control_points = DisplayRule("Control Points", True)
     lines = DisplayRule("Lines", True)
-    events = DisplayRule("Events", True)
     sam_ranges = DisplayRule("Ally SAM Threat Range", False)
     enemy_sam_ranges = DisplayRule("Enemy SAM Threat Range", True)
     detection_range = DisplayRule("SAM Detection Range", False)
@@ -58,6 +58,7 @@ class DisplayOptions:
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
+    actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
 
     @classmethod
     def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:

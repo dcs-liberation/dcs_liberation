@@ -13,9 +13,11 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as const
+from game.theater import FrontLine
 from qt_ui.dialogs import Dialog
+from qt_ui.models import GameModel
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.QPackageDialog import QNewPackageDialog
-from theater.missiontarget import MissionTarget
 
 
 class QFrontLine(QGraphicsLineItem):
@@ -26,9 +28,10 @@ class QFrontLine(QGraphicsLineItem):
     """
 
     def __init__(self, x1: float, y1: float, x2: float, y2: float,
-                 mission_target: MissionTarget) -> None:
+                 mission_target: FrontLine, game_model: GameModel) -> None:
         super().__init__(x1, y1, x2, y2)
         self.mission_target = mission_target
+        self.game_model = game_model
         self.new_package_dialog: Optional[QNewPackageDialog] = None
         self.setAcceptHoverEvents(True)
 
@@ -55,6 +58,14 @@ class QFrontLine(QGraphicsLineItem):
         new_package_action.triggered.connect(self.open_new_package_dialog)
         menu.addAction(new_package_action)
 
+        cheat_forward = QAction(f"CHEAT: Advance Frontline")
+        cheat_forward.triggered.connect(self.cheat_forward)
+        menu.addAction(cheat_forward)
+
+        cheat_backward = QAction(f"CHEAT: Retreat Frontline")
+        cheat_backward.triggered.connect(self.cheat_backward)
+        menu.addAction(cheat_backward)
+
         menu.exec_(event.screenPos())
 
     @property
@@ -80,3 +91,16 @@ class QFrontLine(QGraphicsLineItem):
     def open_new_package_dialog(self) -> None:
         """Opens the dialog for planning a new mission package."""
         Dialog.open_new_package_dialog(self.mission_target)
+
+    def cheat_forward(self) -> None:
+        self.mission_target.control_point_a.base.affect_strength(0.1)
+        self.mission_target.control_point_b.base.affect_strength(-0.1)
+        self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+    
+    def cheat_backward(self) -> None:
+        self.mission_target.control_point_a.base.affect_strength(-0.1)
+        self.mission_target.control_point_b.base.affect_strength(0.1)
+        self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+        

@@ -2,19 +2,20 @@
 Briefing generation logic
 """
 from __future__ import annotations
+
 import os
-import random
-import logging
 from dataclasses import dataclass
-from theater.frontline import FrontLine
-from typing import List, Dict, TYPE_CHECKING
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from datetime import timedelta
+from typing import Dict, List, TYPE_CHECKING
 
 from dcs.mission import Mission
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from game.theater import ControlPoint, FrontLine
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
-from theater import ControlPoint
+from .flights.flight import FlightWaypoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
@@ -119,6 +120,16 @@ class MissionInfoGenerator:
         raise NotImplementedError
 
 
+def format_waypoint_time(waypoint: FlightWaypoint, depart_prefix: str) -> str:
+    if waypoint.tot is not None:
+        time = timedelta(seconds=int(waypoint.tot.total_seconds()))
+        return f"T+{time} "
+    elif waypoint.departure_time is not None:
+        time = timedelta(seconds=int(waypoint.departure_time.total_seconds()))
+        return f"{depart_prefix} T+{time} "
+    return ""
+
+
 class BriefingGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, game: Game):
@@ -134,6 +145,7 @@ class BriefingGenerator(MissionInfoGenerator):
             trim_blocks=True,
             lstrip_blocks=True,
             )
+        env.filters["waypoint_timing"] = format_waypoint_time
         self.template = env.get_template("briefingtemplate_EN.j2")
 
     def generate(self) -> None:

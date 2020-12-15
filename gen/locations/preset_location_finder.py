@@ -8,7 +8,7 @@ from gen.locations.preset_control_point_locations import PresetControlPointLocat
 from gen.locations.preset_locations import PresetLocation
 
 
-class PresetLocationFinder:
+class MizDataLocationFinder:
 
     @staticmethod
     def compute_possible_locations(terrain_name: str, cp_name: str) -> PresetControlPointLocations:

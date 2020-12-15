@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
 
 from qt_ui.dialogs import Dialog
 from qt_ui.windows.mission.QPackageDialog import QNewPackageDialog
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 
 
 class QMapObject(QGraphicsRectItem):
@@ -47,9 +47,12 @@ class QMapObject(QGraphicsRectItem):
         object_details_action.triggered.connect(self.on_click)
         menu.addAction(object_details_action)
 
-        new_package_action = QAction(f"New package")
-        new_package_action.triggered.connect(self.open_new_package_dialog)
-        menu.addAction(new_package_action)
+        # Not all locations have valid objetives. Off-map spawns, for example,
+        # have no mission types.
+        if list(self.mission_target.mission_types(for_player=True)):
+            new_package_action = QAction(f"New package")
+            new_package_action.triggered.connect(self.open_new_package_dialog)
+            menu.addAction(new_package_action)
 
         self.add_context_menu_actions(menu)
 

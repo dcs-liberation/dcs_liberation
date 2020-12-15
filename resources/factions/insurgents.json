@@ -21,15 +21,13 @@
   ],
   "infantry_units": [
     "Infantry_Soldier_Insurgents",
-    "Soldier_RPG"
+    "Soldier_RPG",
+    "SAM_SA_18_Igla_MANPADS"
   ],
-  "shorads": [
+  "air_defenses": [
     "SA9Generator",
+    "ZSU23Generator",
     "ZU23Generator",
-    "ZSU23Generator"
-  ],
-  "sams": [
-    "ZU23Generator",
-    "ZSU23Generator"
+    "ZU23UralInsurgentGenerator"
   ]
 }

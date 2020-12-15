@@ -18,6 +18,7 @@ class QBudgetBox(QGroupBox):
         self.money_amount = QLabel()
 
         self.finances = QPushButton("Details")
+        self.finances.setDisabled(True)
         self.finances.setProperty("style", "btn-primary")
         self.finances.clicked.connect(self.openFinances)
 
@@ -36,8 +37,12 @@ class QBudgetBox(QGroupBox):
         self.money_amount.setText(str(budget) + "M (+" + str(reward) + "M)")
 
     def setGame(self, game):
+        if game is None:
+            return
+
         self.game = game
         self.setBudget(self.game.budget, self.game.budget_reward_amount)
+        self.finances.setEnabled(True)
 
     def openFinances(self):
         self.subwindow = QFinancesMenu(self.game)

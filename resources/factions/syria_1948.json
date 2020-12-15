@@ -22,10 +22,7 @@
   "infantry_units": [
     "Infantry_SMLE_No_4_Mk_1"
   ],
-  "shorads": [
-    "FlakGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "FlakGenerator"
   ],
   "aircraft_carrier": [

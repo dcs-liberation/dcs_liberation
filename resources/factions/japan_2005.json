@@ -27,7 +27,8 @@
   ],
   "artillery_units": [
     "SPH_M109_Paladin",
-    "MLRS_M270"
+    "MLRS_M270",
+    "Stinger_MANPADS"
   ],
   "logistics_units": [
     "Transport_M818"
@@ -36,10 +37,8 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "GepardGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
+    "GepardGenerator",
     "HawkGenerator",
     "PatriotGenerator"
   ],

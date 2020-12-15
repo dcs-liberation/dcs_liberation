@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class BoforsGenerator(GroupGenerator):
+class BoforsGenerator(AirDefenseGroupGenerator):
     """
     This generate a Bofors flak artillery group
     """
@@ -26,3 +29,7 @@ class BoforsGenerator(GroupGenerator):
                 self.add_unit(AirDefence.AAA_Bofors_40mm, "AAA#" + str(index),
                               self.position.x + spacing*i,
                               self.position.y + spacing*j, self.heading)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

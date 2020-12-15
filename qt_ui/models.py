@@ -16,7 +16,7 @@ from gen.ato import AirTaskingOrder, Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
-from theater.missiontarget import MissionTarget
+from game.theater.missiontarget import MissionTarget
 
 
 class DeletableChildModelManager:
@@ -121,14 +121,11 @@ class PackageModel(QAbstractListModel):
 
     def text_for_flight(self, flight: Flight) -> str:
         """Returns the text that should be displayed for the flight."""
-        task = flight.flight_type.name
-        count = flight.count
-        name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)
         delay = datetime.timedelta(
             seconds=int(estimator.mission_start_time(flight).total_seconds()))
         origin = flight.from_cp.name
-        return f"[{task}] {count} x {name} from {origin} in {delay}"
+        return f"{flight} from {origin} in {delay}"
 
     @staticmethod
     def icon_for_flight(flight: Flight) -> Optional[QIcon]:
@@ -277,10 +274,14 @@ class GameModel:
     This isn't a real Qt data model, but simplifies management of the game and
     its ATO objects.
     """
-    def __init__(self) -> None:
-        self.game: Optional[Game] = None
-        self.ato_model = AtoModel(self.game, AirTaskingOrder())
-        self.red_ato_model = AtoModel(self.game, AirTaskingOrder())
+    def __init__(self, game: Optional[Game]) -> None:
+        self.game: Optional[Game] = game
+        if self.game is None:
+            self.ato_model = AtoModel(self.game, AirTaskingOrder())
+            self.red_ato_model = AtoModel(self.game, AirTaskingOrder())
+        else:
+            self.ato_model = AtoModel(self.game, self.game.blue_ato)
+            self.red_ato_model = AtoModel(self.game, self.game.red_ato)
 
     def set(self, game: Optional[Game]) -> None:
         """Updates the managed Game object.

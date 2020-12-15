@@ -1,13 +1,24 @@
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QPixmap
-from PySide2.QtWidgets import QDialog, QGridLayout, QHBoxLayout, QLabel, QWidget
+from PySide2.QtWidgets import (
+    QDialog,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
+from game import Game, db
+from game.theater import ControlPoint, ControlPointType
+from gen.flights.flight import FlightType
+from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from theater import ControlPoint, ControlPointType
 
 
 class QBaseMenu2(QDialog):
@@ -18,11 +29,7 @@ class QBaseMenu2(QDialog):
         # Attrs
         self.cp = cp
         self.game_model = game_model
-        self.is_carrier = self.cp.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP, ControlPointType.LHA_GROUP]
         self.objectName = "menuDialogue"
-
-        # Widgets
-        self.qbase_menu_tab = QBaseMenuTabs(cp, self.game_model)
 
         try:
             game = self.game_model.game
@@ -40,15 +47,11 @@ class QBaseMenu2(QDialog):
         self.setMinimumWidth(800)
         self.setMaximumWidth(800)
         self.setModal(True)
-        self.initUi()
 
-    def initUi(self):
         self.setWindowTitle(self.cp.name)
-        self.topLayoutWidget = QWidget()
-        self.topLayout = QHBoxLayout()
 
-        self.topLayoutWidget = QWidget()
-        self.topLayout = QHBoxLayout()
+        base_menu_header = QWidget()
+        top_layout = QHBoxLayout()
 
         header = QLabel(self)
         header.setGeometry(0, 0, 655, 106)
@@ -58,28 +61,104 @@ class QBaseMenu2(QDialog):
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
-        unitsPower = QLabel("{} / {} /  Runway : {}".format(self.cp.base.total_planes, self.cp.base.total_armor,
-                                                            "Available" if self.cp.has_runway() else "Unavailable"))
-        self.topLayout.addWidget(title)
-        self.topLayout.addWidget(unitsPower)
-        self.topLayout.setAlignment(Qt.AlignTop)
-        self.topLayoutWidget.setProperty("style", "baseMenuHeader")
-        self.topLayoutWidget.setLayout(self.topLayout)
+        self.intel_summary = QLabel()
+        self.update_intel_summary()
+        top_layout.addWidget(title)
+        top_layout.addWidget(self.intel_summary)
+        top_layout.setAlignment(Qt.AlignTop)
 
-        self.mainLayout = QGridLayout()
-        self.mainLayout.addWidget(header, 0, 0)
-        self.mainLayout.addWidget(self.topLayoutWidget, 1, 0)
-        self.mainLayout.addWidget(self.qbase_menu_tab, 2, 0)
-        totalBudget = QLabel(
+        self.repair_button = QPushButton()
+        self.repair_button.clicked.connect(self.begin_runway_repair)
+        self.update_repair_button()
+        top_layout.addWidget(self.repair_button)
+
+        base_menu_header.setProperty("style", "baseMenuHeader")
+        base_menu_header.setLayout(top_layout)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(header)
+        main_layout.addWidget(base_menu_header)
+        main_layout.addWidget(QBaseMenuTabs(cp, self.game_model))
+        bottom_row = QHBoxLayout()
+        main_layout.addLayout(bottom_row)
+
+        if FlightType.OCA_RUNWAY in self.cp.mission_types(for_player=True):
+            runway_attack_button = QPushButton("Attack airfield")
+            bottom_row.addWidget(runway_attack_button)
+
+            runway_attack_button.setProperty("style", "btn-danger")
+            runway_attack_button.clicked.connect(self.new_package)
+
+        self.budget_display = QLabel(
             QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
         )
-        totalBudget.setObjectName("budgetField")
-        totalBudget.setAlignment(Qt.AlignRight | Qt.AlignBottom)
-        totalBudget.setProperty("style", "budget-label")
-        self.mainLayout.addWidget(totalBudget)
-        self.setLayout(self.mainLayout)
+        self.budget_display.setAlignment(Qt.AlignRight | Qt.AlignBottom)
+        self.budget_display.setProperty("style", "budget-label")
+        bottom_row.addWidget(self.budget_display)
+        GameUpdateSignal.get_instance().budgetupdated.connect(
+            self.update_budget)
+        self.setLayout(main_layout)
 
-    def closeEvent(self, closeEvent:QCloseEvent):
+    @property
+    def can_repair_runway(self) -> bool:
+        return self.cp.captured and self.cp.runway_can_be_repaired
+
+    @property
+    def can_afford_runway_repair(self) -> bool:
+        return self.game_model.game.budget >= db.RUNWAY_REPAIR_COST
+
+    def begin_runway_repair(self) -> None:
+        if not self.can_afford_runway_repair:
+            QMessageBox.critical(
+                self,
+                "Cannot repair runway",
+                f"Runway repair costs ${db.RUNWAY_REPAIR_COST}M but you have "
+                f"only ${self.game_model.game.budget}M available.",
+                QMessageBox.Ok)
+            return
+        if not self.can_repair_runway:
+            QMessageBox.critical(
+                self,
+                "Cannot repair runway",
+                f"Cannot repair this runway.", QMessageBox.Ok)
+            return
+
+        self.cp.begin_runway_repair()
+        self.game_model.game.budget -= db.RUNWAY_REPAIR_COST
+        self.update_repair_button()
+        self.update_intel_summary()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+
+    def update_repair_button(self) -> None:
+        self.repair_button.setVisible(True)
+        turns_remaining = self.cp.runway_status.repair_turns_remaining
+        if self.cp.captured and turns_remaining is not None:
+            self.repair_button.setText("Repairing...")
+            self.repair_button.setDisabled(True)
+            return
+
+        if self.can_repair_runway:
+            if self.can_afford_runway_repair:
+                self.repair_button.setText(f"Repair ${db.RUNWAY_REPAIR_COST}M")
+                self.repair_button.setDisabled(False)
+                return
+            else:
+                self.repair_button.setText(
+                    f"Cannot afford repair ${db.RUNWAY_REPAIR_COST}M")
+                self.repair_button.setDisabled(True)
+                return
+
+        self.repair_button.setVisible(False)
+        self.repair_button.setDisabled(True)
+
+    def update_intel_summary(self) -> None:
+        self.intel_summary.setText("\n".join([
+            f"{self.cp.base.total_aircraft} aircraft",
+            f"{self.cp.base.total_armor} ground units",
+            str(self.cp.runway_status)
+        ]))
+
+    def closeEvent(self, close_event: QCloseEvent):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):
@@ -89,3 +168,10 @@ class QBaseMenu2(QDialog):
             return "./resources/ui/lha.png"
         else:
             return "./resources/ui/airbase.png"
+
+    def new_package(self) -> None:
+        Dialog.open_new_package_dialog(self.cp, parent=self.window())
+
+    def update_budget(self, game: Game) -> None:
+        self.budget_display.setText(
+            QRecruitBehaviour.BUDGET_FORMAT.format(game.budget))

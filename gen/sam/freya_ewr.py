@@ -1,11 +1,12 @@
-import random
+from dcs.vehicles import AirDefence, Infantry, Unarmed
 
-from dcs.vehicles import AirDefence, Unarmed, Infantry
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
-from gen.sam.group_generator import GroupGenerator
 
-
-class FreyaGenerator(GroupGenerator):
+class FreyaGenerator(AirDefenseGroupGenerator):
     """
     This generate a German flak artillery group using only free units, thus not requiring the WW2 asset pack
     """
@@ -37,3 +38,7 @@ class FreyaGenerator(GroupGenerator):
         self.add_unit(Infantry.Infantry_Mauser_98, "Inf#1", self.position.x + 20, self.position.y - 14, self.heading)
         self.add_unit(Infantry.Infantry_Mauser_98, "Inf#2", self.position.x + 20, self.position.y - 22, self.heading)
         self.add_unit(Infantry.Infantry_Mauser_98, "Inf#3", self.position.x + 20, self.position.y - 24, self.heading + 45)
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Short

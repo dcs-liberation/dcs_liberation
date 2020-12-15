@@ -31,14 +31,14 @@
     "Infantry_M4",
     "Soldier_M249"
   ],
-  "shorads": [
-    "AvengerGenerator"
-  ],
-  "sams": [
-    "HawkGenerator"
+  "air_defenses": [
+    "AvengerGenerator",
+    "HawkGenerator",
+    "PatriotGenerator",
+    "RolandGenerator"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
     "CVN_74_John_C__Stennis"

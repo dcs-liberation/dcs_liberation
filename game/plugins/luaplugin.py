@@ -5,7 +5,7 @@ import logging
 import textwrap
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING, Type
 
 from game.settings import Settings
 
@@ -22,7 +22,7 @@ class LuaPluginWorkOrder:
         self.mnemonic = mnemonic
         self.disable = disable
 
-    def work(self, operation: Operation) -> None:
+    def work(self, operation: Type[Operation]) -> None:
         if self.disable:
             operation.bypass_plugin_script(self.mnemonic)
         else:
@@ -144,11 +144,11 @@ class LuaPlugin(PluginSettings):
         for option in self.definition.options:
             option.set_settings(self.settings)
 
-    def inject_scripts(self, operation: Operation) -> None:
+    def inject_scripts(self, operation: Type[Operation]) -> None:
         for work_order in self.definition.work_orders:
             work_order.work(operation)
 
-    def inject_configuration(self, operation: Operation) -> None:
+    def inject_configuration(self, operation: Type[Operation]) -> None:
         # inject the plugin options
         if self.options:
             option_decls = []

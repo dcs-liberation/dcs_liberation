@@ -1,3 +1,4 @@
+import logging
 from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
@@ -16,6 +17,7 @@ from gen.flights.flight import Flight, FlightType, FlightWaypoint
 from gen.flights.flightplan import (
     CustomFlightPlan,
     FlightPlanBuilder,
+    PlanningError,
     StrikeFlightPlan,
 )
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
@@ -23,7 +25,6 @@ from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
 from qt_ui.windows.mission.flight.waypoints \
     .QPredefinedWaypointSelectionWindow import \
     QPredefinedWaypointSelectionWindow
-from theater import FrontLine
 
 
 class QFlightWaypointTab(QFrame):
@@ -57,22 +58,13 @@ class QFlightWaypointTab(QFrame):
         rlayout.addWidget(QLabel("<strong>Generator :</strong>"))
         rlayout.addWidget(QLabel("<small>AI compatible</small>"))
 
-        # TODO: Filter by objective type.
         self.recreate_buttons.clear()
-        recreate_types = [
-            FlightType.CAS,
-            FlightType.CAP,
-            FlightType.DEAD,
-            FlightType.ESCORT,
-            FlightType.SEAD,
-            FlightType.STRIKE
-        ]
-        for task in recreate_types:
+        for task in self.package.target.mission_types(for_player=True):
             def make_closure(arg):
                 def closure():
                     return self.confirm_recreate(arg)
                 return closure
-            button = QPushButton(f"Recreate as {task.name}")
+            button = QPushButton(f"Recreate as {task}")
             button.clicked.connect(make_closure(task))
             rlayout.addWidget(button)
             self.recreate_buttons.append(button)
@@ -112,7 +104,8 @@ class QFlightWaypointTab(QFrame):
                 return
 
         self.degrade_to_custom_flight_plan()
-        self.flight.flight_plan.waypoints.remove(waypoint)
+        assert isinstance(self.flight.flight_plan, CustomFlightPlan)
+        self.flight.flight_plan.custom_waypoints.remove(waypoint)
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
@@ -152,24 +145,20 @@ class QFlightWaypointTab(QFrame):
             QMessageBox.No,
             QMessageBox.Yes
         )
+        original_task = self.flight.flight_type
         if result == QMessageBox.Yes:
-            # TODO: Should be buttons for both BARCAP and TARCAP.
-            # BARCAP and TARCAP behave differently. TARCAP arrives a few minutes
-            # ahead of the rest of the package and stays until the package
-            # departs, whereas BARCAP usually isn't part of a strike package and
-            # has a fixed mission time.
-            if task == FlightType.CAP:
-                if isinstance(self.package.target, FrontLine):
-                    task = FlightType.TARCAP
-                else:
-                    task = FlightType.BARCAP
             self.flight.flight_type = task
-            self.planner.populate_flight_plan(self.flight)
+            try:
+                self.planner.populate_flight_plan(self.flight)
+            except PlanningError as ex:
+                self.flight.flight_type = original_task
+                logging.exception("Could not recreate flight")
+                QMessageBox.critical(
+                    self, "Could not recreate flight", str(ex), QMessageBox.Ok
+                )
             self.flight_waypoint_list.update_list()
             self.on_change()
 
     def on_change(self):
         self.flight_waypoint_list.update_list()
         self.on_flight_changed.emit()
-
-

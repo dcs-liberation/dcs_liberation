@@ -45,11 +45,7 @@
     "Soldier_M249",
     "Stinger_MANPADS"
   ],
-  "shorads": [
-    "HQ7Generator",
-    "RolandGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "RolandGenerator",
     "HawkGenerator"
   ],
@@ -69,12 +65,13 @@
     "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
   },
   "carrier_names": [
+    "R91 Charles de Gaulle"
+  ],
+  "helicopter_carrier_names": [
+    "R97 Jeanne d'Arc",
     "L9013 Mistral",
     "L9014 Tonerre",
     "L9015 Dixmude"
-  ],
-  "helicopter_carrier_names": [
-    "Jeanne d'Arc"
   ],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"

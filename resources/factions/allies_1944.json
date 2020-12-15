@@ -38,10 +38,7 @@
     "Infantry_SMLE_No_4_Mk_1",
     "Infantry_M1_Garand"
   ],
-  "shorads": [
-    "BoforsGenerator"
-  ],
-  "sams": [
+  "air_defenses": [
     "AllyWW2FlakGenerator",
     "BoforsGenerator"
   ],

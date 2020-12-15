@@ -1,5 +1,4 @@
-from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QGraphicsScene
+from PySide2.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
 import qt_ui.uiconstants as CONST
 
@@ -11,3 +10,11 @@ class QLiberationScene(QGraphicsScene):
         item = self.addText("Go to \"File/New Game\" to setup a new campaign or go to \"File/Open\" to load an existing save game.",
                             CONST.FONT_PRIMARY)
         item.setDefaultTextColor(CONST.COLORS["white"])
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
+        super(QLiberationScene, self).mouseMoveEvent(event)
+        self.parent().sceneMouseMovedEvent(event)
+
+    def mousePressEvent(self, event:QGraphicsSceneMouseEvent):
+        super(QLiberationScene, self).mousePressEvent(event)
+        self.parent().sceneMousePressEvent(event)

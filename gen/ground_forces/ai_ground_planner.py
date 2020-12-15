@@ -2,12 +2,12 @@ import random
 from enum import Enum
 from typing import Dict, List
 
-from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 from dcs.unittype import VehicleType
+from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
-from theater import ControlPoint
 
 TYPE_TANKS = [
     Armor.MBT_T_55,
@@ -187,14 +187,14 @@ class CombatGroupRole(Enum):
 
 
 DISTANCE_FROM_FRONTLINE = {
-    CombatGroupRole.TANK:3200,
-    CombatGroupRole.APC:8000,
-    CombatGroupRole.IFV:3700,
-    CombatGroupRole.ARTILLERY:18000,
-    CombatGroupRole.SHORAD:13000,
-    CombatGroupRole.LOGI:20000,
-    CombatGroupRole.INFANTRY:3000,
-    CombatGroupRole.ATGM:6200
+    CombatGroupRole.TANK: (2200, 3200),
+    CombatGroupRole.APC: (7500, 8500),
+    CombatGroupRole.IFV: (2700, 3700),
+    CombatGroupRole.ARTILLERY: (16000, 18000),
+    CombatGroupRole.SHORAD: (12000, 13000),
+    CombatGroupRole.LOGI: (18000, 20000),
+    CombatGroupRole.INFANTRY: (2800, 3300),
+    CombatGroupRole.ATGM: (5200, 6200),
 }
 
 GROUP_SIZES_BY_COMBAT_STANCE = {

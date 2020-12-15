@@ -2,10 +2,13 @@ import random
 
 from dcs.vehicles import AirDefence
 
-from gen.sam.genericsam_group_generator import GenericSamGroupGenerator
+from gen.sam.airdefensegroupgenerator import (
+    AirDefenseRange,
+    AirDefenseGroupGenerator,
+)
 
 
-class SA6Generator(GenericSamGroupGenerator):
+class SA6Generator(AirDefenseGroupGenerator):
     """
     This generate a SA-6 group
     """
@@ -21,3 +24,7 @@ class SA6Generator(GenericSamGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(AirDefence.SAM_SA_6_Kub_LN_2P25, "LN#" + str(i), position[0], position[1], position[2])
+
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.Medium
