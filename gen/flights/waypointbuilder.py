@@ -237,7 +237,7 @@ class WaypointBuilder:
         return self._target_area(f"SEAD on {target.name}", target, flyover=True)
 
     def dead_area(self, target: MissionTarget) -> FlightWaypoint:
-        return self._target_area(f"DEAD on {target.name}", target, flyover=True)
+        return self._target_area(f"DEAD on {target.name}", target)
 
     def oca_strike_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"ATTACK {target.name}", target, flyover=True)
