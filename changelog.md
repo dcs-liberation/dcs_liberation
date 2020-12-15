@@ -11,6 +11,7 @@
 * **[Mission Generator]** Infantry squads on frontline can have manpads
 * **[Mission Generator]** Unused aircraft now spawned to allow for OCA strikes
 * **[Mission Generator]** Opfor now obeys parking limits
+* **[Mission Generator]** Support for Anubis C-130 Hercules mod
 * **[Flight Planner]** Added fighter sweep missions.
 * **[Flight Planner]** Added BAI missions.
 * **[Flight Planner]** Added anti-ship missions.
@@ -21,6 +22,7 @@
 * **[QOL]** On liberation startup, your latest save game is loaded automatically
 * **[Units]** Reduced starting fuel load for C101
 * **[UI]** Inform the user of the weather
+* **[UI]** Added toolbar buttons to change map display settings
 * **[Game]** Added new Economy options for adjusting income multipliers and starting budgets.
 
 ## Fixes :
