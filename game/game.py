@@ -391,6 +391,11 @@ class Game:
             if cpoint is not None:
                 points.append(cpoint)
 
+        for package in self.blue_ato.packages:
+            points.append(package.target.position)
+        for package in self.red_ato.packages:
+            points.append(package.target.position)
+
         # Else 0,0, since we need a default value
         # (in this case this means the whole map is owned by the same player, so it is not an issue)
         if len(points) == 0:
