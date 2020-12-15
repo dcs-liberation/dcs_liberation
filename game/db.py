@@ -140,6 +140,7 @@ from dcs.task import (
     SEAD,
     Task,
     Transport,
+    RunwayAttack,
 )
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
@@ -978,6 +979,7 @@ COMMON_OVERRIDE = {
     AntishipStrike: "ANTISHIP",
     GroundAttack: "STRIKE",
     Escort: "CAP",
+    RunwayAttack: "RUNWAY_ATTACK"
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {

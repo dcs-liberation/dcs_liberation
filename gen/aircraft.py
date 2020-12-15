@@ -65,6 +65,7 @@ from dcs.task import (
     Targets,
     Task,
     WeaponType,
+    PinpointStrike,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.translation import String
@@ -728,6 +729,11 @@ class AircraftConflictGenerator:
             if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
                 payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
                 group.load_loadout(payload_name)
+                if not group.units[0].pylons and for_task == RunwayAttack:
+                    if PinpointStrike in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                        logging.warning("No loadout for \"Runway Attack\" for the {}, defaulting to Strike loadout".format(str(unit_type)))
+                        payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][PinpointStrike]
+                        group.load_loadout(payload_name)
                 did_load_loadout = True
                 logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
 
