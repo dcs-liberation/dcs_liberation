@@ -1756,15 +1756,11 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 f"{flight_plan_type} does not define a patrol.")
             return waypoint
 
-        racetrack = ControlledTask(OrbitAction(
-            altitude=waypoint.alt,
-            pattern=OrbitAction.OrbitPattern.RaceTrack
-        ))
-        self.set_waypoint_tot(
-            waypoint, self.flight.flight_plan.patrol_start_time)
-        racetrack.stop_after_time(
-            int(self.flight.flight_plan.patrol_end_time.total_seconds()))
-        waypoint.add_task(racetrack)
+        # NB: It's important that the engage task comes before the orbit task.
+        # Though they're on the same waypoint, if the orbit task comes first it
+        # is their first priority and they will not engage any targets because
+        # they're fully focused on orbiting. If the STE task is first, they will
+        # engage targets if available and orbit if they find nothing to shoot.
 
         # TODO: Move the properties of this task into the flight plan?
         # CAP is the only current user of this so it's not a big deal, but might
@@ -1774,6 +1770,16 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         if self.flight.flight_type in cap_types:
             waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
                                                 targets=[Targets.All.Air]))
+
+        racetrack = ControlledTask(OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.RaceTrack
+        ))
+        self.set_waypoint_tot(
+            waypoint, self.flight.flight_plan.patrol_start_time)
+        racetrack.stop_after_time(
+            int(self.flight.flight_plan.patrol_end_time.total_seconds()))
+        waypoint.add_task(racetrack)
 
         return waypoint
 

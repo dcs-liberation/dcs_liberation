@@ -1,3 +1,9 @@
+# 2.3.1
+
+## Fixes:
+
+* **[AI]** CAP flights will engage enemies again.
+
 # 2.3.0
 
 # Features/Improvements
