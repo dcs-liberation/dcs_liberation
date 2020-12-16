@@ -88,6 +88,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         if self.maximum_units > 0:
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
+                QMessageBox.warning(
+                    self, "No space for additional aircraft",
+                    f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
                 return
 
         super().buy(unit_type)
