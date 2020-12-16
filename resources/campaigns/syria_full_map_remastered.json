@@ -1,0 +1,7 @@
+{
+  "name": "Syria - Full Map",
+  "theater": "Syria",
+  "authors": "Hawkmoon",
+  "description": "<p>Full map of Syria</p><p><strong>Note:</strong>For a better early game experience is suggested to give the AI an high amount of starting money This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
+  "miz": "syria_full_map_remastered.miz"
+}

@@ -1,0 +1,100 @@
+{
+  "country": "Combined Joint Task Forces Blue",
+  "name": "NATO Desert Storm",
+  "authors": "Hawkmoon",
+  "description": "<p>A faction to recreate the actual unit lineup during Desert Storm as closely as possible</p>",
+  "aircrafts": [
+    "F_15C",
+    "F_14A",
+    "F_15E",
+    "F_16C_50",
+    "FA_18C_hornet",
+    "A_10A",
+    "AV8BNA",
+    "UH_1H",
+    "AH_64A",
+    "B_52H",
+    "B_1B",
+    "Tornado_IDS",
+    "F_111F",
+    "F_4E",
+    "F_117A",	
+    "M_2000C",
+    "S_3B",
+    "SA342M",
+    "SA342L",
+    "SA342Mistral",
+    "OH_58D"
+  ],
+  "awacs": [
+    "E_3A",
+    "E_2C"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC135MPRS"
+  ],
+  "frontline_units": [
+    "MBT_M1A2_Abrams",
+    "ATGM_M1134_Stryker",
+    "IFV_M2A2_Bradley",
+    "APC_M1126_Stryker_ICV",
+    "IFV_LAV_25",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW",
+    "TPz_Fuchs",
+    "IFV_MCV_80",
+    "MBT_Challenger_II",	
+    "MBT_M60A3_Patton",
+    "SPG_M1128_Stryker_MGS"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249",
+    "Stinger_MANPADS"
+  ],
+  "air_defenses": [
+    "AvengerGenerator",
+    "ChaparralGenerator",
+    "VulcanGenerator",
+    "RolandGenerator",
+    "HawkGenerator",
+    "PatriotGenerator",
+    "RapierGenerator"
+  ],
+  "ewrs": [
+    "PatriotEwrGenerator"
+  ],
+  "aircraft_carrier": [
+    "CVN_74_John_C__Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {},
+  "carrier_names": [
+    "CVN-71 Theodore Roosevelt"
+  ],
+  "helicopter_carrier_names": [
+    "LHA-1 Tarawa",
+    "LHA-4 Nassau"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}
