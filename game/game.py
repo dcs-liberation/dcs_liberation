@@ -1,3 +1,4 @@
+import itertools
 import logging
 import random
 import sys
@@ -19,6 +20,7 @@ from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
+from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
 from .debriefing import Debriefing
@@ -391,9 +393,16 @@ class Game:
             if cpoint is not None:
                 points.append(cpoint)
 
-        for package in self.blue_ato.packages:
-            points.append(package.target.position)
-        for package in self.red_ato.packages:
+        packages = itertools.chain(self.blue_ato.packages,
+                                   self.red_ato.packages)
+        for package in packages:
+            if package.primary_task is FlightType.BARCAP:
+                # BARCAPs will be planned at most locations on smaller theaters,
+                # rendering culling fairly useless. BARCAP packages don't really
+                # need the ground detail since they're defensive. SAMs nearby
+                # are only interesting if there are enemies in the area, and if
+                # there are they won't be culled because of the enemy's mission.
+                continue
             points.append(package.target.position)
 
         # Else 0,0, since we need a default value
