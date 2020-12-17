@@ -1,5 +1,6 @@
 """Radio frequency types and allocators."""
 import itertools
+import logging
 from dataclasses import dataclass
 from typing import Dict, Iterator, List, Set
 
@@ -71,12 +72,9 @@ class Radio:
             self.minimum.hertz, self.maximum.hertz, self.step.hertz
         ))
 
-
-class OutOfChannelsError(RuntimeError):
-    """Raised when all channels usable by this radio have been allocated."""
-
-    def __init__(self, radio: Radio) -> None:
-        super().__init__(f"No available channels for {radio}")
+    @property
+    def last_channel(self) -> RadioFrequency:
+        return RadioFrequency(self.maximum.hertz - self.step.hertz)
 
 
 class ChannelInUseError(RuntimeError):
@@ -215,7 +213,13 @@ class RadioRegistry:
             self.reserve(channel)
             return channel
         except StopIteration:
-            raise OutOfChannelsError(radio)
+            # In the event of too many channel users, fail gracefully by reusing
+            # the last channel.
+            # https://github.com/Khopa/dcs_liberation/issues/598
+            channel = radio.last_channel
+            logging.warning(
+                f"No more free channels for {radio.name}. Reusing {channel}.")
+            return channel
 
     def alloc_uhf(self) -> RadioFrequency:
         """Allocates a UHF radio channel suitable for inter-flight comms.
