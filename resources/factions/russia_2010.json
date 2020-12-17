@@ -31,9 +31,10 @@
     "IFV_BMP_2",
     "IFV_BMP_3",
     "APC_BTR_80",
+    "APC_BTR_82A",
     "MBT_T_90",
     "MBT_T_80U",
-    "MBT_T_72B"
+    "MBT_T_72B3"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",

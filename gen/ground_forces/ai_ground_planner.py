@@ -12,6 +12,7 @@ from gen.ground_forces.combat_stance import CombatStance
 TYPE_TANKS = [
     Armor.MBT_T_55,
     Armor.MBT_T_72B,
+    Armor.MBT_T_72B3,
     Armor.MBT_T_80U,
     Armor.MBT_T_90,
     Armor.MBT_Leopard_2,
@@ -96,6 +97,7 @@ TYPE_APC = [
     Armor.APC_M1126_Stryker_ICV,
     Armor.APC_M113,
     Armor.APC_BTR_80,
+    Armor.APC_BTR_82A,
     Armor.APC_MTLB,
     Armor.APC_M2A1,
     Armor.APC_Cobra,
