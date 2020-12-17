@@ -487,11 +487,11 @@ class ConflictTheater:
         for inclusion_zone in self.landmap[0]:
             nearest_pair = ops.nearest_points(point, inclusion_zone)
             nearest_points.append(nearest_pair[1])
-        min_distance = None # type: Optional[geometry.Point]
-        nearest_point = None # type: Optional[geometry.Point]
-        for pt in nearest_points:
+        min_distance = point.distance(nearest_points[0]) # type: geometry.Point
+        nearest_point = nearest_points[0] # type: geometry.Point
+        for pt in nearest_points[1:]:
             distance = point.distance(pt)
-            if not min_distance or distance < min_distance:
+            if distance < min_distance:
                 min_distance = distance
                 nearest_point = pt
         assert isinstance(nearest_point, geometry.Point)
