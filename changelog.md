@@ -1,12 +1,17 @@
 # 2.3.1
 
-## Fixes:
+## Features/Improvements
+* **[UX]** Added a warning message when the player is attempting to buy more planes at an already full airbase. 
+* **[Campaigns]** Migrated Syria full map to new format. (Thanks to Hawkmoon)
+* **[Faction]** Added NATO desert Storm faction (Thanks to Hawkmoon)
 
+## Fixes:
 * **[AI]** CAP flights will engage enemies again.
+* **[Campaigns]** Fixed a missing path on the Caucasus Full Map campaign
 
 # 2.3.0
 
-# Features/Improvements
+## Features/Improvements
 * **[Campaign Map]** Overhauled the campaign model
 * **[Campaign Map]** Possible to add FOB as control points
 * **[Campaign Map]** Added off-map spawn locations
@@ -17,6 +22,7 @@
 * **[Mission Generator]** Infantry squads on frontline can have manpads
 * **[Mission Generator]** Unused aircraft now spawned to allow for OCA strikes
 * **[Mission Generator]** Opfor now obeys parking limits
+* **[Mission Generator]** Support for Anubis C-130 Hercules mod
 * **[Flight Planner]** Added fighter sweep missions.
 * **[Flight Planner]** Added BAI missions.
 * **[Flight Planner]** Added anti-ship missions.
@@ -27,6 +33,7 @@
 * **[QOL]** On liberation startup, your latest save game is loaded automatically
 * **[Units]** Reduced starting fuel load for C101
 * **[UI]** Inform the user of the weather
+* **[UI]** Added toolbar buttons to change map display settings
 * **[Game]** Added new Economy options for adjusting income multipliers and starting budgets.
 
 ## Fixes :
@@ -40,7 +47,7 @@
 
 # 2.2.1
 
-# Features/Improvements
+## Features/Improvements
 * **[Factions]** Added factions : Georgia 2008, USN 1985, France 2005 Frenchpack by HerrTom
 * **[Factions]** Added map Persian Gulf full by Plob
 * **[Flight Planner]** Player flights with start delays under ten minutes will spawn immediately.

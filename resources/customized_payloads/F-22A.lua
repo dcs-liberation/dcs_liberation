@@ -282,7 +282,7 @@ local unitPayloads = {
 			},
 		},
 		[8] = {
-			["name"] = "RUNWAY STRIKE",
+			["name"] = "RUNWAY_ATTACK",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",

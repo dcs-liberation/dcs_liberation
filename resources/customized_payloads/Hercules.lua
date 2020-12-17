@@ -2,27 +2,15 @@ local unitPayloads = {
 	["name"] = "Hercules",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "DEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -33,24 +21,12 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 			},
 			["tasks"] = {
@@ -61,24 +37,12 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -86,27 +50,15 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "SEAD",
+			["name"] = "OCA",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 			},
 			["tasks"] = {
@@ -114,27 +66,15 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "DEAD",
+			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -142,27 +82,15 @@ local unitPayloads = {
 			},
 		},
 		[6] = {
-			["name"] = "OCA",
+			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_BattleStation",
-					["num"] = 9,
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 				[2] = {
-					["CLSID"] = "{Herc_105mm_Howitzer}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{Herc_GAU_23A_Chain_Gun}",
-					["num"] = 7,
-				},
-				[4] = {
-					["CLSID"] = "{Herc_M61_Vulcan_Rotary_Cannon}",
-					["num"] = 6,
-				},
-				[5] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -172,9 +100,21 @@ local unitPayloads = {
 		[7] = {
 			["name"] = "CAP",
 			["pylons"] = {
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[8] = {
+			["name"] = "RUNWAY_STRIKE",
+			["pylons"] = {
 				[1] = {
-					["CLSID"] = "Herc_JATO",
-					["num"] = 1,
+					["CLSID"] = "Herc_Soldier_Squad",
+					["num"] = 12,
+				},
+				[2] = {
+					["CLSID"] = "Herc_GBU-43/B(MOAB)",
+					["num"] = 11,
 				},
 			},
 			["tasks"] = {

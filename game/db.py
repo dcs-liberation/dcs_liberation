@@ -142,6 +142,7 @@ from dcs.task import (
     SEAD,
     Task,
     Transport,
+    RunwayAttack,
 )
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
@@ -823,6 +824,8 @@ UNIT_BY_TASK = {
         Armor.StuG_III_Ausf__G,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
+        Armor.Daimler_Armoured_Car,
+        Armor.LT_Mk_VII_Tetrarch,
 
         Artillery.MLRS_M270,
         Artillery.SPH_M109_Paladin,
@@ -986,6 +989,7 @@ COMMON_OVERRIDE = {
     AntishipStrike: "ANTISHIP",
     GroundAttack: "STRIKE",
     Escort: "CAP",
+    RunwayAttack: "RUNWAY_ATTACK"
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {

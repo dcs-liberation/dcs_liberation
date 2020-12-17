@@ -53,11 +53,6 @@ jobs:
       env:
         TAG_NAME: ${{ github.ref }}
       run: |
-        $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
-        (Get-Content .\installer\dcs_liberation.iss) -replace "{{version}}",$version | Out-File .\build\installer.iss
-        cd .\installer
-        iscc.exe ..\build\installer.iss
-        cd ..
         Copy-Item .\changelog.md .\dist
 
     - uses: actions/upload-artifact@v2
@@ -100,15 +95,7 @@ jobs:
         body_path: releasenotes.md
         draft: false
         prerelease: ${{ steps.version.outputs.prerelease }}
-    
-    - uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dcs_liberation.exe
-        asset_name: dcs_liberation.${{ steps.version.outputs.number }}.exe
-        asset_content_type: application/exe
+
 
     - uses: actions/upload-release-asset@v1
       env:
