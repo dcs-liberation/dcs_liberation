@@ -1,3 +1,8 @@
+# 2.3.2
+
+## Fixes:
+* **[Flight Planner]** Fix creation of custom waypoints.
+
 # 2.3.1
 
 ## Features/Improvements
