@@ -89,68 +89,23 @@ class TravelTime:
 
 # TODO: Most if not all of this should move into FlightPlan.
 class TotEstimator:
-    # An extra five minutes given as wiggle room. Expected to be spent at the
-    # hold point performing any last minute configuration.
-    HOLD_TIME = timedelta(minutes=5)
 
     def __init__(self, package: Package) -> None:
         self.package = package
 
-    def mission_start_time(self, flight: Flight) -> timedelta:
-        takeoff_time = self.takeoff_time_for_flight(flight)
-        if takeoff_time is None:
+    @staticmethod
+    def mission_start_time(flight: Flight) -> timedelta:
+        startup_time = flight.flight_plan.startup_time()
+        if startup_time is None:
             # Could not determine takeoff time, probably due to a custom flight
             # plan. Start immediately.
             return timedelta()
-
-        startup_time = self.estimate_startup(flight)
-        ground_ops_time = self.estimate_ground_ops(flight)
-        start_time = takeoff_time - startup_time - ground_ops_time
-        # In case FP math has given us some barely below zero time, round to
-        # zero.
-        if math.isclose(start_time.total_seconds(), 0):
-            return timedelta()
-        # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
-        # and they're not interesting from a mission planning perspective so we
-        # don't want them in the UI.
-        #
-        # Round down so *barely* above zero start times are just zero.
-        return timedelta(seconds=math.floor(start_time.total_seconds()))
-
-    def takeoff_time_for_flight(self, flight: Flight) -> Optional[timedelta]:
-        travel_time = self.travel_time_to_rendezvous_or_target(flight)
-        if travel_time is None:
-            from gen.flights.flightplan import CustomFlightPlan
-            if not isinstance(flight.flight_plan, CustomFlightPlan):
-                logging.warning(
-                    "Found no rendezvous or target point. Cannot estimate "
-                    f"takeoff time takeoff time for {flight}.")
-            return None
-
-        from gen.flights.flightplan import FormationFlightPlan
-        if isinstance(flight.flight_plan, FormationFlightPlan):
-            tot = flight.flight_plan.tot_for_waypoint(
-                flight.flight_plan.join)
-            if tot is None:
-                logging.warning(
-                    "Could not determine the TOT of the join point. Takeoff "
-                    f"time for {flight} will be immediate.")
-                return None
-        else:
-            tot_waypoint = flight.flight_plan.tot_waypoint
-            if tot_waypoint is None:
-                tot = self.package.time_over_target
-            else:
-                tot = flight.flight_plan.tot_for_waypoint(tot_waypoint)
-                if tot is None:
-                    logging.error(f"TOT waypoint for {flight} has no TOT")
-                    tot = self.package.time_over_target
-        return tot - travel_time - self.HOLD_TIME
+        return startup_time
 
     def earliest_tot(self) -> timedelta:
         earliest_tot = max((
             self.earliest_tot_for_flight(f) for f in self.package.flights
-        )) + self.HOLD_TIME
+        ))
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we
@@ -159,7 +114,8 @@ class TotEstimator:
         # Round up so we don't get negative start times.
         return timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
 
-    def earliest_tot_for_flight(self, flight: Flight) -> timedelta:
+    @staticmethod
+    def earliest_tot_for_flight(flight: Flight) -> timedelta:
         """Estimate fastest time from mission start to the target position.
 
         For BARCAP flights, this is time to race track start. This ensures that
@@ -175,51 +131,18 @@ class TotEstimator:
             The earliest possible TOT for the given flight in seconds. Returns 0
             if an ingress point cannot be found.
         """
-        time_to_target = self.travel_time_to_target(flight)
-        if time_to_target is None:
+        # Clear the TOT, calculate the startup time. Negating the result gives
+        # the earliest possible start time.
+        orig_tot = flight.package.time_over_target
+        try:
+            flight.package.time_over_target = timedelta()
+            time = flight.flight_plan.startup_time()
+        finally:
+            flight.package.time_over_target = orig_tot
+
+        if time is None:
             logging.warning(f"Cannot estimate TOT for {flight}")
             # Return 0 so this flight's travel time does not affect the rest
             # of the package.
             return timedelta()
-        # Account for TOT offsets for the flight plan. An offset of -2 minutes
-        # means the flight's TOT is 2 minutes ahead of the package's so it needs
-        # an extra two minutes.
-        offset = -flight.flight_plan.tot_offset
-        startup = self.estimate_startup(flight)
-        ground_ops = self.estimate_ground_ops(flight)
-        return startup + ground_ops + time_to_target + offset
-
-    @staticmethod
-    def estimate_startup(flight: Flight) -> timedelta:
-        if flight.start_type == "Cold":
-            if flight.client_count:
-                return timedelta(minutes=10)
-            else:
-                # The AI doesn't seem to have a real startup procedure.
-                return timedelta(minutes=2)
-        return timedelta()
-
-    @staticmethod
-    def estimate_ground_ops(flight: Flight) -> timedelta:
-        if flight.start_type in ("Runway", "In Flight"):
-            return timedelta()
-        if flight.from_cp.is_fleet:
-            return timedelta(minutes=2)
-        else:
-            return timedelta(minutes=5)
-
-    @staticmethod
-    def travel_time_to_target(flight: Flight) -> Optional[timedelta]:
-        if flight.flight_plan is None:
-            return None
-        return flight.flight_plan.travel_time_to_target
-
-    @staticmethod
-    def travel_time_to_rendezvous_or_target(
-            flight: Flight) -> Optional[timedelta]:
-        if flight.flight_plan is None:
-            return None
-        from gen.flights.flightplan import FormationFlightPlan
-        if isinstance(flight.flight_plan, FormationFlightPlan):
-            return flight.flight_plan.travel_time_to_rendezvous
-        return flight.flight_plan.travel_time_to_target
+        return -time

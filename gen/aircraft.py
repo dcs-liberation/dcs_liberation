@@ -20,20 +20,20 @@ from dcs.planes import (
     B_17G,
     B_52H,
     Bf_109K_4,
-    C_101EB,
     C_101CC,
+    C_101EB,
     FW_190A8,
     FW_190D9,
     F_14B,
     I_16,
     JF_17,
     Ju_88A4,
-    PlaneType,
     P_47D_30,
     P_47D_30bl1,
     P_47D_40,
     P_51D,
     P_51D_30_NA,
+    PlaneType,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_33,
@@ -59,16 +59,15 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
+    PinpointStrike,
     RunwayAttack,
     SEAD,
     StartCommand,
     Targets,
     Task,
     WeaponType,
-    PinpointStrike,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
-from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
@@ -99,7 +98,6 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from .conflictgen import Conflict
 from .flights.flightplan import (
     CasFlightPlan,
     LoiterFlightPlan,
@@ -108,7 +106,6 @@ from .flights.flightplan import (
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
 from .naming import namegen
-from .runways import RunwayAssigner
 
 if TYPE_CHECKING:
     from game import Game
@@ -1349,7 +1346,7 @@ class AircraftConflictGenerator:
 
         # And setting *our* waypoint TOT causes the takeoff time to show up in
         # the player's kneeboard.
-        waypoint.tot = estimator.takeoff_time_for_flight(flight)
+        waypoint.tot = flight.flight_plan.takeoff_time()
         # And finally assign it to the FlightData info so it shows correctly in
         # the briefing.
         self.flights[-1].departure_delay = start_time
