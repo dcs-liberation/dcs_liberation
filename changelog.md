@@ -3,6 +3,7 @@
 ## Features/Improvements
 * **[Units]** Support for newly added BTR-82A, T-72B3
 * **[Units]** Added ZSU-57 AAA sites
+* **[Culling]** BARCAP missions no longer create culling exclusion zones.
 
 ## Fixes:
 * **[Mission Generator]** Fix mission generation error when there are too many radio frequency to setup for the Mig-21
