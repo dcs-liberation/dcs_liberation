@@ -39,6 +39,7 @@
     "SA2Generator",
     "SA3Generator",
     "ZSU23Generator",
+    "ZSU57Generator",
     "ZU23Generator",
     "ZU23UralGenerator"
   ],

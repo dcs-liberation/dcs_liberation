@@ -1,6 +1,12 @@
 # 2.3.2
 
+## Features/Improvements
+* **[Units]** Support for newly added BTR-82A, T-72B3
+* **[Units]** Added ZSU-57 AAA sites
+
 ## Fixes:
+* **[Mission Generator]** Fix mission generation error when there are too many radio frequency to setup for the Mig-21
+* **[Mission Generator]** Fix ground units not moving forward
 * **[Flight Planner]** Fix creation of custom waypoints.
 
 # 2.3.1
@@ -21,7 +27,7 @@
 * **[Campaign Map]** Possible to add FOB as control points
 * **[Campaign Map]** Added off-map spawn locations
 * **[Campaign AI]** Overhauled AI recruiting behaviour
-* **[Campaign AI]** Added AI proucurement for Blue
+* **[Campaign AI]** Added AI procurement for Blue
 * **[Campaign]** New Campaign: "Black Sea"
 * **[Mission Planner]** Possible to move carrier and tarawa on the campaign map
 * **[Mission Generator]** Infantry squads on frontline can have manpads
