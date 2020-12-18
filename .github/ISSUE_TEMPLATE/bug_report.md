@@ -26,9 +26,9 @@ A clear and concise description of what you expected to happen.
 
 We will usually need more information for debugging. Include as much of the following as you are able:
 
-- [ ] DCS Liberation save file (the `.liberation` file you save from the DCS Liberation window). By default these are located in [your DCS saved games directory](file://%USERPROFILE%/Saved Games/DCS).
-- [ ] The generated mission file (the `.miz` file that you load in DCS to play the turn). By default these are located in [your missions directory](file://%USERPROFILE%/Saved Games/DCS/Missions).
-- [ ] A tacview track file, especially when demonstrating an issue with AI behavior. By default these are locaed in your [Tacview tracks directory](file://%USERPROFILE%/Documents/Tacview).
+- [ ] DCS Liberation save file (the `.liberation` file you save from the DCS Liberation window). By default these are located in your DCS saved games directory (`%USERPROFILE%/Saved Games/DCS`).
+- [ ] The generated mission file (the `.miz` file that you load in DCS to play the turn). By default these are located in your missions directory (`%USERPROFILE%/Saved Games/DCS/Missions`).
+- [ ] A tacview track file, especially when demonstrating an issue with AI behavior. By default these are locaed in your Tacview tracks directory (`%USERPROFILE%/Documents/Tacview`).
 
 **Version information (please complete the following information):**
  - DCS Liberation [e.g. 2.3.1]:
