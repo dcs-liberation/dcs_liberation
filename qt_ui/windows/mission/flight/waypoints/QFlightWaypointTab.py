@@ -116,7 +116,8 @@ class QFlightWaypointTab(QFrame):
         if not waypoints:
             return
         self.degrade_to_custom_flight_plan()
-        self.flight.flight_plan.waypoints.extend(waypoints)
+        assert isinstance(self.flight.flight_plan, CustomFlightPlan)
+        self.flight.flight_plan.custom_waypoints.extend(waypoints)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
@@ -124,7 +125,8 @@ class QFlightWaypointTab(QFrame):
         rtb = self.planner.generate_rtb_waypoint(self.flight,
                                                  self.flight.from_cp)
         self.degrade_to_custom_flight_plan()
-        self.flight.flight_plan.waypoints.append(rtb)
+        assert isinstance(self.flight.flight_plan, CustomFlightPlan)
+        self.flight.flight_plan.custom_waypoints.append(rtb)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
