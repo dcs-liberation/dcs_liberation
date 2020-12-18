@@ -42,6 +42,7 @@
     "SA3Generator",
     "ZSU23Generator",
     "ZU23Generator",
+    "ZSU57Generator",
     "ZU23UralGenerator"
   ],
   "ewrs": [

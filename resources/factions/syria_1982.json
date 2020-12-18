@@ -46,7 +46,8 @@
     "SA13Generator",
     "ZSU23Generator",
     "ZU23Generator",
-    "ZU23UralGenerator"
+    "ZU23UralGenerator",
+    "ZSU57Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator"
