@@ -73,10 +73,17 @@ class FlightPlan:
         """Iterates over all waypoints in the flight plan, in order."""
         raise NotImplementedError
 
-    @property
-    def edges(self) -> Iterator[Tuple[FlightWaypoint, FlightWaypoint]]:
+    def edges(
+            self, until: Optional[FlightWaypoint] = None
+    ) -> Iterator[Tuple[FlightWaypoint, FlightWaypoint]]:
         """A list of all paths between waypoints, in order."""
-        return zip(self.waypoints, self.waypoints[1:])
+        waypoints = self.waypoints
+        if until is None:
+            last_index = len(waypoints)
+        else:
+            last_index = waypoints.index(until) + 1
+
+        return zip(self.waypoints[:last_index], self.waypoints[1:last_index])
 
     def best_speed_between_waypoints(self, a: FlightWaypoint,
                                      b: FlightWaypoint) -> int:
@@ -137,7 +144,6 @@ class FlightPlan:
         """Joker fuel value for the FlightPlan
         """
         return self.bingo_fuel + 1000
-
    
     def max_distance_from(self, cp: ControlPoint) -> int:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
@@ -156,26 +162,18 @@ class FlightPlan:
         """
         return timedelta()
 
-    # Not cached because changes to the package might alter the formation speed.
-    @property
-    def travel_time_to_target(self) -> Optional[timedelta]:
-        """The estimated time between the first waypoint and the target."""
-        if self.tot_waypoint is None:
-            return None
-        return self._travel_time_to_waypoint(self.tot_waypoint)
-
     def _travel_time_to_waypoint(
             self, destination: FlightWaypoint) -> timedelta:
         total = timedelta()
-        for previous_waypoint, waypoint in self.edges:
-            total += self.travel_time_between_waypoints(previous_waypoint,
-                                                        waypoint)
-            if waypoint == destination:
-                break
-        else:
+
+        if destination not in self.waypoints:
             raise PlanningError(
                 f"Did not find destination waypoint {destination} in "
                 f"waypoints for {self.flight}")
+
+        for previous_waypoint, waypoint in self.edges(until=destination):
+            total += self.travel_time_between_waypoints(previous_waypoint,
+                                                        waypoint)
         return total
 
     def travel_time_between_waypoints(self, a: FlightWaypoint,
@@ -196,10 +194,59 @@ class FlightPlan:
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return None
 
+    def takeoff_time(self) -> Optional[timedelta]:
+        tot_waypoint = self.tot_waypoint
+        if tot_waypoint is None:
+            return None
+
+        time = self.tot_for_waypoint(tot_waypoint)
+        if time is None:
+            return None
+        time += self.tot_offset
+        return time - self._travel_time_to_waypoint(tot_waypoint)
+
+    def startup_time(self) -> Optional[timedelta]:
+        takeoff_time = self.takeoff_time()
+        if takeoff_time is None:
+            return None
+
+        start_time = (takeoff_time - self.estimate_startup() -
+                      self.estimate_ground_ops())
+
+        # In case FP math has given us some barely below zero time, round to
+        # zero.
+        if math.isclose(start_time.total_seconds(), 0):
+            return timedelta()
+
+        # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
+        # and they're not interesting from a mission planning perspective so we
+        # don't want them in the UI.
+        #
+        # Round down so *barely* above zero start times are just zero.
+        return timedelta(seconds=math.floor(start_time.total_seconds()))
+
+    def estimate_startup(self) -> timedelta:
+        if self.flight.start_type == "Cold":
+            if self.flight.client_count:
+                return timedelta(minutes=10)
+            else:
+                # The AI doesn't seem to have a real startup procedure.
+                return timedelta(minutes=2)
+        return timedelta()
+
+    def estimate_ground_ops(self) -> timedelta:
+        if self.flight.start_type in ("Runway", "In Flight"):
+            return timedelta()
+        if self.flight.from_cp.is_fleet:
+            return timedelta(minutes=2)
+        else:
+            return timedelta(minutes=5)
+
 
 @dataclass(frozen=True)
 class LoiterFlightPlan(FlightPlan):
     hold: FlightWaypoint
+    hold_duration: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         raise NotImplementedError
@@ -220,6 +267,17 @@ class LoiterFlightPlan(FlightPlan):
         if waypoint == self.hold:
             return self.push_time
         return None
+
+    def travel_time_between_waypoints(self, a: FlightWaypoint,
+                                      b: FlightWaypoint) -> timedelta:
+        travel_time = super().travel_time_between_waypoints(a, b)
+        if a != self.hold:
+            return travel_time
+        try:
+            return travel_time + self.hold_duration
+        except AttributeError:
+            # Save compat for 2.3.
+            return travel_time + timedelta(minutes=5)
 
 
 @dataclass(frozen=True)
@@ -254,7 +312,7 @@ class FormationFlightPlan(LoiterFlightPlan):
         all of its formation waypoints.
         """
         speeds = []
-        for previous_waypoint, waypoint in self.edges:
+        for previous_waypoint, waypoint in self.edges():
             if waypoint in self.package_speed_waypoints:
                 speeds.append(self.best_speed_between_waypoints(
                     previous_waypoint, waypoint))
@@ -486,7 +544,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         """The estimated time between the first waypoint and the target."""
         destination = self.tot_waypoint
         total = timedelta()
-        for previous_waypoint, waypoint in self.edges:
+        for previous_waypoint, waypoint in self.edges():
             if waypoint == self.tot_waypoint:
                 # For anything strike-like the TOT waypoint is the *flight's*
                 # mission target, but to synchronize with the rest of the
@@ -846,6 +904,7 @@ class FlightPlanBuilder:
             lead_time=timedelta(minutes=5),
             takeoff=builder.takeoff(flight.departure),
             hold=builder.hold(self._hold_point(flight)),
+            hold_duration=timedelta(minutes=5),
             sweep_start=start,
             sweep_end=end,
             land=builder.land(flight.arrival),
@@ -1050,6 +1109,7 @@ class FlightPlanBuilder:
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             hold=builder.hold(self._hold_point(flight)),
+            hold_duration=timedelta(minutes=5),
             join=builder.join(self.package.waypoints.join),
             ingress=ingress,
             targets=[target],
@@ -1196,6 +1256,7 @@ class FlightPlanBuilder:
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             hold=builder.hold(self._hold_point(flight)),
+            hold_duration=timedelta(minutes=5),
             join=builder.join(self.package.waypoints.join),
             ingress=builder.ingress(ingress_type,
                                     self.package.waypoints.ingress, location),

@@ -7,7 +7,6 @@ from PySide2.QtWidgets import QHeaderView, QTableView
 from game.utils import meter_to_feet
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
     QWaypointItem
 
@@ -74,9 +73,9 @@ class QFlightWaypointList(QTableView):
         time = timedelta(seconds=int(time.total_seconds()))
         return f"{prefix}T+{time}"
 
-    def takeoff_text(self, flight: Flight) -> str:
-        estimator = TotEstimator(self.package)
-        takeoff_time = estimator.takeoff_time_for_flight(flight)
+    @staticmethod
+    def takeoff_text(flight: Flight) -> str:
+        takeoff_time = flight.flight_plan.takeoff_time()
         # Handle custom flight plans where we can't estimate the takeoff time.
         if takeoff_time is None:
             takeoff_time = timedelta()
