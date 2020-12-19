@@ -1,1154 +1,1147 @@
 [
  {
-  "name": "",
+  "name": "Anapa-Vityazevo",
   "callsign": "AP",
   "beacon_type": 12,
   "hertz": 443000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Anapa-Vityazevo",
   "callsign": "P",
   "beacon_type": 13,
   "hertz": 215000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Anapa-Vityazevo",
   "callsign": "AN",
   "beacon_type": 12,
   "hertz": 443000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Anapa-Vityazevo",
   "callsign": "N",
   "beacon_type": 13,
   "hertz": 215000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Batumi",
   "callsign": "ILU",
   "beacon_type": 14,
   "hertz": 110300000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Batumi",
+  "callsign": "ILU",
   "beacon_type": 15,
   "hertz": 110300000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Batumi",
   "callsign": "BTM",
   "beacon_type": 5,
   "hertz": 977000000,
   "channel": 16
  },
  {
-  "name": "",
+  "name": "Batumi",
   "callsign": "LU",
   "beacon_type": 10,
   "hertz": 430000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Beslan",
   "callsign": "CX",
   "beacon_type": 12,
   "hertz": 1050000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Beslan",
   "callsign": "C",
   "beacon_type": 13,
   "hertz": 250000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Beslan",
   "callsign": "ICH",
   "beacon_type": 14,
   "hertz": 110500000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Beslan",
   "callsign": "",
   "beacon_type": 15,
   "hertz": 110500000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Gelendzhik",
   "callsign": "GN",
   "beacon_type": 10,
   "hertz": 1000000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Gelendzhik",
   "callsign": "GN",
   "beacon_type": 2,
   "hertz": 114300000,
   "channel": 90
  },
  {
-  "name": "",
+  "name": "Gudauta",
   "callsign": "XC",
   "beacon_type": 11,
   "hertz": 395000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kobuleti",
   "callsign": "KT",
   "beacon_type": 12,
   "hertz": 870000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kobuleti",
   "callsign": "T",
   "beacon_type": 13,
   "hertz": 490000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kobuleti",
   "callsign": "IKB",
   "beacon_type": 14,
   "hertz": 111500000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Kobuleti",
+  "callsign": "IKB",
   "beacon_type": 15,
   "hertz": 111500000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kobuleti",
   "callsign": "KBL",
   "beacon_type": 5,
   "hertz": 1154000000,
   "channel": 67
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "OC",
   "beacon_type": 12,
   "hertz": 625000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "O",
   "beacon_type": 13,
   "hertz": 303000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "MB",
   "beacon_type": 12,
   "hertz": 625000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "M",
   "beacon_type": 13,
   "hertz": 303000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "MB",
   "beacon_type": 16,
   "hertz": 838000000,
   "channel": 38
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "MB",
   "beacon_type": 17,
   "hertz": 838000000,
   "channel": 38
  },
  {
-  "name": "",
+  "name": "Krasnodar-Center",
   "callsign": "MB",
   "beacon_type": 7,
   "hertz": 840000000,
   "channel": 40
  },
  {
-  "name": "",
+  "name": "Krasnodar-Pashkovsky",
   "callsign": "KR",
   "beacon_type": 12,
   "hertz": 493000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Pashkovsky",
   "callsign": "K",
   "beacon_type": 13,
   "hertz": 240000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Pashkovsky",
   "callsign": "LD",
   "beacon_type": 12,
   "hertz": 493000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Pashkovsky",
   "callsign": "L",
   "beacon_type": 13,
   "hertz": 240000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasnodar-Pashkovsky",
   "callsign": "KN",
   "beacon_type": 2,
   "hertz": 115800000,
   "channel": 105
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "KW",
   "beacon_type": 12,
   "hertz": 408000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "K",
   "beacon_type": 13,
   "hertz": 803000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "OX",
   "beacon_type": 12,
   "hertz": 408000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "O",
   "beacon_type": 13,
   "hertz": 803000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Krymsk",
+  "callsign": "OX",
   "beacon_type": 17,
   "hertz": 826000000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Krymsk",
+  "callsign": "KW",
   "beacon_type": 17,
   "hertz": 826000000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "KW",
   "beacon_type": 16,
   "hertz": 826000000,
   "channel": 26
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "OX",
   "beacon_type": 16,
   "hertz": 826000000,
   "channel": 26
  },
  {
-  "name": "",
+  "name": "Krymsk",
   "callsign": "KW",
   "beacon_type": 7,
   "hertz": 828000000,
   "channel": 28
  },
  {
-  "name": "",
+  "name": "Kutaisi",
   "callsign": "IKS",
   "beacon_type": 14,
   "hertz": 109750000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Kutaisi",
+  "callsign": "IKS",
   "beacon_type": 15,
   "hertz": 109750000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kutaisi",
   "callsign": "TI",
   "beacon_type": 11,
   "hertz": 477000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kutaisi",
   "callsign": "KTS",
   "beacon_type": 5,
   "hertz": 1005000000,
   "channel": 44
  },
  {
-  "name": "KUTAISI",
+  "name": "Kutaisi",
   "callsign": "KT",
   "beacon_type": 2,
   "hertz": 113600000,
   "channel": 83
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "BP",
   "beacon_type": 12,
   "hertz": 342000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "B",
   "beacon_type": 13,
   "hertz": 923000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "INA",
+  "name": "Tbilisi-Lochini",
+  "callsign": "IVP",
   "beacon_type": 14,
   "hertz": 110300000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Tbilisi-Lochini",
+  "callsign": "IVP",
   "beacon_type": 15,
   "hertz": 110300000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "NA",
   "beacon_type": 12,
   "hertz": 211000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "N",
   "beacon_type": 13,
   "hertz": 435000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "INA",
   "beacon_type": 14,
   "hertz": 108900000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Tbilisi-Lochini",
+  "callsign": "INA",
   "beacon_type": 15,
   "hertz": 108900000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "TB",
   "beacon_type": 2,
   "hertz": 113700000,
   "channel": 84
  },
  {
-  "name": "",
+  "name": "Tbilisi-Lochini",
   "callsign": "GTB",
   "beacon_type": 5,
   "hertz": 986000000,
   "channel": 25
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "RK",
   "beacon_type": 12,
   "hertz": 289000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "R",
   "beacon_type": 13,
   "hertz": 591000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "DG",
   "beacon_type": 12,
   "hertz": 289000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "D",
   "beacon_type": 13,
   "hertz": 591000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "DG",
   "beacon_type": 16,
   "hertz": 836000000,
   "channel": 36
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "DG",
   "beacon_type": 17,
   "hertz": 836000000,
   "channel": 36
  },
  {
-  "name": "",
+  "name": "Maykop-Khanskaya",
   "callsign": "DG",
   "beacon_type": 7,
   "hertz": 834000000,
   "channel": 34
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "NR",
   "beacon_type": 12,
   "hertz": 583000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "N",
   "beacon_type": 13,
   "hertz": 283000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "IMW",
   "beacon_type": 14,
   "hertz": 109300000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "MineralnyeVody",
+  "callsign": "IMW",
   "beacon_type": 15,
   "hertz": 109300000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "MD",
   "beacon_type": 12,
   "hertz": 583000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "D",
   "beacon_type": 13,
   "hertz": 283000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "IMD",
   "beacon_type": 14,
   "hertz": 111700000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "MineralnyeVody",
+  "callsign": "IMD",
   "beacon_type": 15,
   "hertz": 111700000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "MineralnyeVody",
   "callsign": "MN",
   "beacon_type": 2,
   "hertz": 117100000,
   "channel": 118
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "DO",
   "beacon_type": 12,
   "hertz": 525000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "D",
   "beacon_type": 13,
   "hertz": 1065000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "RM",
   "beacon_type": 12,
   "hertz": 525000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "R",
   "beacon_type": 13,
   "hertz": 1065000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "MZ",
   "beacon_type": 16,
   "hertz": 822000000,
   "channel": 22
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Mozdok",
+  "callsign": "MZ",
   "beacon_type": 17,
   "hertz": 822000000,
   "channel": 22
  },
  {
-  "name": "",
-  "callsign": "MZ",
+  "name": "Mozdok",
+  "callsign": "MK",
   "beacon_type": 16,
   "hertz": 822000000,
   "channel": 22
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Mozdok",
+  "callsign": "MK",
   "beacon_type": 17,
   "hertz": 822000000,
   "channel": 22
  },
  {
-  "name": "",
+  "name": "Mozdok",
   "callsign": "MZ",
   "beacon_type": 7,
   "hertz": 820000000,
   "channel": 20
  },
  {
-  "name": "",
+  "name": "Nalchik",
   "callsign": "NL",
   "beacon_type": 12,
   "hertz": 718000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Nalchik",
   "callsign": "N",
   "beacon_type": 13,
   "hertz": 350000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Nalchik",
   "callsign": "INL",
   "beacon_type": 14,
   "hertz": 110500000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Nalchik",
+  "callsign": "INL",
   "beacon_type": 15,
   "hertz": 110500000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Senaki-Kolkhi",
   "callsign": "BI",
   "beacon_type": 12,
   "hertz": 335000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Senaki-Kolkhi",
   "callsign": "B",
   "beacon_type": 13,
   "hertz": 688000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Senaki-Kolkhi",
   "callsign": "ITS",
   "beacon_type": 14,
   "hertz": 108900000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Senaki-Kolkhi",
+  "callsign": "ITS",
   "beacon_type": 15,
   "hertz": 108900000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Senaki-Kolkhi",
   "callsign": "TSK",
   "beacon_type": 5,
   "hertz": 992000000,
   "channel": 31
  },
  {
-  "name": "",
+  "name": "Sochi-Adler",
   "callsign": "CO",
   "beacon_type": 11,
   "hertz": 761000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sochi-Adler",
   "callsign": "ISO",
   "beacon_type": 14,
   "hertz": 111100000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Sochi-Adler",
+  "callsign": "ISO",
   "beacon_type": 15,
   "hertz": 111100000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sukhumi-Babushara",
   "callsign": "AV",
   "beacon_type": 12,
   "hertz": 489000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sukhumi-Babushara",
   "callsign": "A",
   "beacon_type": 13,
   "hertz": 995000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Vaziani",
   "callsign": "IVZ",
   "beacon_type": 14,
   "hertz": 108750000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Vaziani",
+  "callsign": "IVZ",
   "beacon_type": 15,
   "hertz": 108750000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "IVZ",
+  "name": "Vaziani",
+  "callsign": "IVI",
   "beacon_type": 14,
   "hertz": 108750000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "",
+  "name": "Vaziani",
+  "callsign": "IVI",
   "beacon_type": 15,
   "hertz": 108750000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Vaziani",
   "callsign": "VAS",
   "beacon_type": 5,
   "hertz": 983000000,
   "channel": 22
  },
  {
-  "name": "",
+  "name": "Ust-Labinks",
   "callsign": "NZ",
   "beacon_type": 9,
   "hertz": 330000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Chervonoglinskoye",
   "callsign": "AR",
   "beacon_type": 9,
   "hertz": 440000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Dmitrovka",
   "callsign": "DM",
   "beacon_type": 9,
   "hertz": 690000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Agoy",
   "callsign": "AG",
   "beacon_type": 9,
   "hertz": 381000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Maykop",
   "callsign": "MA",
   "beacon_type": 9,
   "hertz": 682000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Herson",
   "callsign": "HS",
   "beacon_type": 9,
   "hertz": 1065000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Smolenkaya",
   "callsign": "SM",
   "beacon_type": 9,
   "hertz": 662000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kislovodsk",
   "callsign": "KW",
   "beacon_type": 9,
   "hertz": 995000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Taganrog",
   "callsign": "TC",
   "beacon_type": 9,
   "hertz": 470000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Feodosiya",
   "callsign": "IL",
   "beacon_type": 9,
   "hertz": 300500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Shyriaeve",
   "callsign": "SH",
   "beacon_type": 9,
   "hertz": 389000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Odessa",
   "callsign": "OD",
   "beacon_type": 9,
   "hertz": 348000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Yalta",
   "callsign": "BS",
   "beacon_type": 9,
   "hertz": 300500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Stavropol",
   "callsign": "KT",
   "beacon_type": 9,
   "hertz": 730000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Yegorlykskaya",
   "callsign": "ER",
   "beacon_type": 9,
   "hertz": 435000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Komisarivka",
   "callsign": "KM",
   "beacon_type": 9,
   "hertz": 950000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Skadovsk",
   "callsign": "SK",
   "beacon_type": 9,
   "hertz": 680000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Gali",
   "callsign": "DA",
   "beacon_type": 9,
   "hertz": 525000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mukhrani",
   "callsign": "DF",
   "beacon_type": 9,
   "hertz": 520000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Ladozhskaya",
   "callsign": "RF",
   "beacon_type": 9,
   "hertz": 324000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "TP",
+  "name": "Teplorechensky",
+  "callsign": "FM",
   "beacon_type": 9,
   "hertz": 1182000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kalaus",
   "callsign": "BJ",
   "beacon_type": 9,
   "hertz": 735000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Nikolaev-Kulbakino",
   "callsign": "NK",
   "beacon_type": 9,
   "hertz": 1030000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Manychsky",
   "callsign": "MN",
   "beacon_type": 9,
   "hertz": 705000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kerch",
   "callsign": "KC",
   "beacon_type": 9,
   "hertz": 1050000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "TaganrogYuzhny",
   "callsign": "TY",
   "beacon_type": 9,
   "hertz": 720000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Ali",
   "callsign": "AL",
   "beacon_type": 9,
   "hertz": 353000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "CA",
+  "name": "Elista",
+  "callsign": "SA",
   "beacon_type": 9,
   "hertz": 311000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Ryazanskaya",
   "callsign": "XT",
   "beacon_type": 9,
   "hertz": 312000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kakhovka",
   "callsign": "KH",
   "beacon_type": 9,
   "hertz": 485000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Vesely",
   "callsign": "WS",
   "beacon_type": 9,
   "hertz": 641000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Odessa",
   "callsign": "WR",
   "beacon_type": 9,
   "hertz": 309500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Armavir",
   "callsign": "VM",
   "beacon_type": 9,
   "hertz": 740000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Grozny",
   "callsign": "WK",
   "beacon_type": 9,
   "hertz": 830000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tiraspol",
   "callsign": "TH",
   "beacon_type": 9,
   "hertz": 515000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Simferopol",
   "callsign": "KC",
   "beacon_type": 9,
   "hertz": 580000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sultanskoye",
   "callsign": "SN",
   "beacon_type": 9,
   "hertz": 866000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Buyalyk",
   "callsign": "DW",
   "beacon_type": 9,
   "hertz": 625000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sarmakovo",
   "callsign": "SR",
   "beacon_type": 9,
   "hertz": 907000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tendrovskiy",
   "callsign": "TD",
   "beacon_type": 9,
   "hertz": 309500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Sukhoy",
   "callsign": "SH",
   "beacon_type": 9,
   "hertz": 862000,
   "channel": null
  },
  {
-  "name": "",
-  "callsign": "SH",
-  "beacon_type": 9,
-  "hertz": 396000,
-  "channel": null
- },
- {
-  "name": "",
+  "name": "Dzhubga",
   "callsign": "DV",
   "beacon_type": 9,
   "hertz": 420000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Genichesk",
   "callsign": "GE",
   "beacon_type": 9,
   "hertz": 300500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Primorsko-Akhtarsk",
   "callsign": "GW",
   "beacon_type": 9,
   "hertz": 920000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Yasnaya",
   "callsign": "QG",
   "beacon_type": 9,
   "hertz": 435000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Alushta",
   "callsign": "AL",
   "beacon_type": 9,
   "hertz": 384000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Dobrushyn",
   "callsign": "DO",
   "beacon_type": 9,
   "hertz": 1175000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Bolshevik",
   "callsign": "ND",
   "beacon_type": 9,
   "hertz": 507000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Peredovay",
   "callsign": "PR",
   "beacon_type": 9,
   "hertz": 1210000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Parutine",
   "callsign": "PA",
   "beacon_type": 9,
   "hertz": 905000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Gori",
   "callsign": "OE",
   "beacon_type": 9,
   "hertz": 462000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Liubymivka",
   "callsign": "LY",
   "beacon_type": 9,
   "hertz": 670000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Mariupol",
   "callsign": "MA",
   "beacon_type": 9,
   "hertz": 770000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Akhilleon",
   "callsign": "AH",
   "beacon_type": 9,
   "hertz": 300500,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Nikolaev-Matveyevka",
   "callsign": "NK",
   "beacon_type": 9,
   "hertz": 1030000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Melitopol",
   "callsign": "NE",
   "beacon_type": 9,
   "hertz": 740000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "TchervonoLissya",
   "callsign": "LE",
   "beacon_type": 9,
   "hertz": 395000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tikhoretsk",
   "callsign": "UH",
   "beacon_type": 9,
   "hertz": 528000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Rostov-Na-Donu",
   "callsign": "RE",
   "beacon_type": 9,
   "hertz": 320000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Lazarevskoye",
   "callsign": "LA",
   "beacon_type": 9,
   "hertz": 307000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Berdyansk",
   "callsign": "BD",
   "beacon_type": 9,
   "hertz": 342000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Kropotkin",
   "callsign": "KP",
   "beacon_type": 9,
   "hertz": 214000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Lymans-Ke",
   "callsign": "LA",
   "beacon_type": 9,
   "hertz": 750000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Krasny",
   "callsign": "KS",
   "beacon_type": 9,
   "hertz": 1025000,
