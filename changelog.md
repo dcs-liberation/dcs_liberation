@@ -1,3 +1,11 @@
+# 2.4.0
+
+Saves from 2.3 are not compatible with 2.4.
+
+## Features/Improvements
+
+## Fixes
+
 # 2.3.2
 
 ## Features/Improvements
