@@ -24,6 +24,7 @@ import argparse
 from contextlib import contextmanager
 import dataclasses
 import gettext
+import logging
 import os
 from pathlib import Path
 import textwrap
@@ -60,6 +61,7 @@ def convert_lua_frequency(raw: Union[float, int]) -> int:
 
 
 def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
+    logging.info(f"Loading terrain data from {path}")
     # TODO: Fix case-sensitive issues.
     # The beacons.lua file differs by case in some terrains. Will need to be
     # fixed if the tool is to be run on Linux, but presumably the server
@@ -84,13 +86,20 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
             end
             
         """))
-        translator = gettext.translation(
-            "messages", path / "l10n", languages=["en"])
 
-        def translate(message_name: str) -> str:
-            if not message_name:
+        try:
+            translator = gettext.translation(
+                "messages", path / "l10n", languages=["en"])
+
+            def translate(message_name: str) -> str:
+                if not message_name:
+                    return message_name
+                return translator.gettext(message_name)
+        except FileNotFoundError:
+            # TheChannel has no locale data for English.
+            def translate(message_name: str) -> str:
                 return message_name
-            return translator.gettext(message_name)
+
         bind_gettext(translate)
 
         src = beacons_lua.read_text()
@@ -148,7 +157,6 @@ class Importer:
         ], indent=True))
 
 
-
 def parse_args() -> argparse.Namespace:
     """Parses and returns command line arguments."""
     parser = argparse.ArgumentParser()
@@ -175,6 +183,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """Program entry point."""
+    logging.basicConfig(level=logging.DEBUG)
     args = parse_args()
     Importer(args.dcs_path, args.export_to).run()
 
