@@ -12,7 +12,7 @@
 * **[Mission Generator]** Fix ground units not moving forward
 * **[Mission Generator]** Fixed assigned radio channels overlapping with beacons.
 * **[Flight Planner]** Fix creation of custom waypoints.
-* **[Campaigns]** Fixed SAMs spawning on the runway at Incirlik in Syria Full.
+* **[Campaigns]** Fixed many cases of SAMs spawning on the runways/taxiways in Syria Full.
 
 # 2.3.1
 
