@@ -52,14 +52,14 @@
   "name": "",
   "callsign": "IBND",
   "beacon_type": 14,
-  "hertz": 333800000,
+  "hertz": 109900000,
   "channel": null
  },
  {
   "name": "",
   "callsign": "IBND",
   "beacon_type": 15,
-  "hertz": 333800000,
+  "hertz": 109900000,
   "channel": null
  },
  {
@@ -77,11 +77,18 @@
   "channel": null
  },
  {
-  "name": "BandarEJask",
+  "name": "JASK",
   "callsign": "JSK",
   "beacon_type": 9,
-  "hertz": 349000000,
+  "hertz": 349000,
   "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "JSK",
+  "beacon_type": 5,
+  "hertz": null,
+  "channel": 110
  },
  {
   "name": "BandarLengeh",
@@ -101,8 +108,8 @@
   "name": "",
   "callsign": "MMA",
   "beacon_type": 15,
-  "hertz": 111100000,
-  "channel": 48
+  "hertz": 109100000,
+  "channel": 28
  },
  {
   "name": "",
@@ -115,28 +122,28 @@
   "name": "",
   "callsign": "IMA",
   "beacon_type": 15,
-  "hertz": 109100000,
-  "channel": 28
+  "hertz": 111100000,
+  "channel": 48
  },
  {
   "name": "",
   "callsign": "RMA",
   "beacon_type": 15,
-  "hertz": 114900000,
+  "hertz": 108700000,
   "channel": 24
  },
  {
   "name": "",
   "callsign": "MMA",
   "beacon_type": 14,
-  "hertz": 111100000,
-  "channel": 48
+  "hertz": 109100000,
+  "channel": 28
  },
  {
   "name": "",
   "callsign": "RMA",
   "beacon_type": 14,
-  "hertz": 114900000,
+  "hertz": 108700000,
   "channel": 24
  },
  {
@@ -150,8 +157,8 @@
   "name": "",
   "callsign": "IMA",
   "beacon_type": 14,
-  "hertz": 109100000,
-  "channel": 28
+  "hertz": 111100000,
+  "channel": 48
  },
  {
   "name": "AlDhafra",
@@ -332,7 +339,7 @@
   "name": "KishIsland",
   "callsign": "KIH",
   "beacon_type": 9,
-  "hertz": 201000000,
+  "hertz": 201000,
   "channel": null
  },
  {
@@ -367,14 +374,14 @@
   "name": "LavanIsland",
   "callsign": "LVA",
   "beacon_type": 9,
-  "hertz": 310000000,
+  "hertz": 310000,
   "channel": 0
  },
  {
   "name": "LiwaAirbase",
-  "callsign": "\u00c4\u00bc",
-  "beacon_type": 7,
-  "hertz": null,
+  "callsign": "OMLW",
+  "beacon_type": 6,
+  "hertz": 117400000,
   "channel": 121
  },
  {
@@ -432,13 +439,6 @@
   "beacon_type": 4,
   "hertz": 113600000,
   "channel": 83
- },
- {
-  "name": "SasAlNakheelAirport",
-  "callsign": "SAS",
-  "beacon_type": 10,
-  "hertz": 128925,
-  "channel": null
  },
  {
   "name": "SasAlNakheel",
@@ -500,14 +500,14 @@
   "name": "",
   "callsign": "ISYZ",
   "beacon_type": 15,
-  "hertz": 109900000,
+  "hertz": 108500000,
   "channel": null
  },
  {
   "name": "",
   "callsign": "ISYZ",
   "beacon_type": 14,
-  "hertz": 109900000,
+  "hertz": 108500000,
   "channel": null
  },
  {
@@ -556,7 +556,7 @@
   "name": "DezfulAirport",
   "callsign": "DZF",
   "beacon_type": 9,
-  "hertz": 293000000,
+  "hertz": 293000,
   "channel": null
  },
  {
