@@ -199,9 +199,13 @@ class Operation:
 
     @classmethod
     def create_radio_registries(cls) -> None:
-        unique_map_frequencies = set()  # type: Set[RadioFrequency]
+        unique_map_frequencies: Set[RadioFrequency] = set()
         cls._create_tacan_registry(unique_map_frequencies)
         cls._create_radio_registry(unique_map_frequencies)
+
+        assert cls.radio_registry is not None
+        for frequency in unique_map_frequencies:
+            cls.radio_registry.reserve(frequency)
 
     @classmethod
     def assign_channels_to_flights(cls, flights: List[FlightData],
@@ -256,8 +260,8 @@ class Operation:
                 unique_map_frequencies.add(data.atc.vhf_fm)
                 unique_map_frequencies.add(data.atc.vhf_am)
                 unique_map_frequencies.add(data.atc.uhf)
-                    # No need to reserve ILS or TACAN because those are in the
-                    # beacon list.
+                # No need to reserve ILS or TACAN because those are in the
+                # beacon list.
 
     @classmethod
     def _generate_ground_units(cls):

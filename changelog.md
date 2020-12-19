@@ -4,11 +4,15 @@
 * **[Units]** Support for newly added BTR-82A, T-72B3
 * **[Units]** Added ZSU-57 AAA sites
 * **[Culling]** BARCAP missions no longer create culling exclusion zones.
+* **[Flight Planner]** Improved TOT planning. Negative start times no longer occur with TARCAPs and hold times no longer affect planning for flight plans without hold points.
+* **[Factions]** Added Iraq 1991 faction (thanks again to Hawkmoon!)
 
 ## Fixes:
 * **[Mission Generator]** Fix mission generation error when there are too many radio frequency to setup for the Mig-21
 * **[Mission Generator]** Fix ground units not moving forward
+* **[Mission Generator]** Fixed assigned radio channels overlapping with beacons.
 * **[Flight Planner]** Fix creation of custom waypoints.
+* **[Campaigns]** Fixed many cases of SAMs spawning on the runways/taxiways in Syria Full.
 
 # 2.3.1
 
