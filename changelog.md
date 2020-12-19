@@ -9,6 +9,7 @@
 ## Fixes:
 * **[Mission Generator]** Fix mission generation error when there are too many radio frequency to setup for the Mig-21
 * **[Mission Generator]** Fix ground units not moving forward
+* **[Mission Generator]** Fixed assigned radio channels overlapping with beacons.
 * **[Flight Planner]** Fix creation of custom waypoints.
 
 # 2.3.1
