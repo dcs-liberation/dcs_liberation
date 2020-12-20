@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-- [ ] I have searched the issue tracker to check if this feature has already been requested.
+Before filing, please search the issue tracker to see if this feature has already been requested.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
