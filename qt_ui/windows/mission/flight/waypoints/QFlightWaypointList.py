@@ -4,7 +4,6 @@ from PySide2.QtCore import QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QHeaderView, QTableView
 
-from game.utils import meter_to_feet
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \

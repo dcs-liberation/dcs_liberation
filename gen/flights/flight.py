@@ -106,7 +106,7 @@ class FlightWaypoint:
     def from_pydcs(cls, point: MovingPoint,
                    from_cp: ControlPoint) -> "FlightWaypoint":
         waypoint = FlightWaypoint(FlightWaypointType.NAV, point.position.x,
-                                  point.position.y, point.alt)
+                                  point.position.y, meters(point.alt))
         waypoint.alt_type = point.alt_type
         # Other actions exist... but none of them *should* be the first
         # waypoint for a flight.

@@ -55,7 +55,7 @@ from .controlpoint import (
     Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
-from ..utils import nm_to_meter
+from ..utils import Distance, meters, nautical_miles
 
 Numeric = Union[int, float]
 
@@ -115,7 +115,7 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_3_S_125_LN_5P73.id,
     }
 
-    BASE_DEFENSE_RADIUS = nm_to_meter(2)
+    BASE_DEFENSE_RADIUS = nautical_miles(2)
 
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
         self.theater = theater
@@ -317,9 +317,9 @@ class MizCampaignLoader:
                 self.control_points[origin.id])
         return front_lines
 
-    def objective_info(self, group: Group) -> Tuple[ControlPoint, int]:
+    def objective_info(self, group: Group) -> Tuple[ControlPoint, Distance]:
         closest = self.theater.closest_control_point(group.position)
-        distance = closest.position.distance_to_point(group.position)
+        distance = meters(closest.position.distance_to_point(group.position))
         return closest, distance
 
     def add_preset_locations(self) -> None:

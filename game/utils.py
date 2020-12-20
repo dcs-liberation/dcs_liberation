@@ -29,38 +29,6 @@ def opposite_heading(h):
     return heading_sum(h, 180)
 
 
-def meter_to_feet(value: float) -> int:
-    return int(meters(value).feet)
-
-
-def feet_to_meter(value: float) -> int:
-    return int(feet(value).meters)
-
-
-def meter_to_nm(value: float) -> int:
-    return int(meters(value).nautical_miles)
-
-
-def nm_to_meter(value: float) -> int:
-    return int(nautical_miles(value).meters)
-
-
-def knots_to_kph(value: float) -> int:
-    return int(knots(value).kph)
-
-
-def kph_to_mps(value: float) -> int:
-    return int(kph(value).meters_per_second)
-
-
-def mps_to_kph(value: float) -> int:
-    return int(mps(value).kph)
-
-
-def mps_to_knots(value: float) -> int:
-    return int(mps(value).knots)
-
-
 @dataclass(frozen=True, order=True)
 class Distance:
     distance_in_meters: float
@@ -89,14 +57,20 @@ class Distance:
     def from_nautical_miles(cls, value: float) -> Distance:
         return cls(value * NM_TO_METERS)
 
+    def __add__(self, other: Distance) -> Distance:
+        return meters(self.meters + other.meters)
+
+    def __sub__(self, other: Distance) -> Distance:
+        return meters(self.meters - other.meters)
+
     def __mul__(self, other: Union[float, int]) -> Distance:
-        return Distance(self.meters * other)
+        return meters(self.meters * other)
 
     def __truediv__(self, other: Union[float, int]) -> Distance:
-        return Distance(self.meters / other)
+        return meters(self.meters / other)
 
     def __floordiv__(self, other: Union[float, int]) -> Distance:
-        return Distance(self.meters // other)
+        return meters(self.meters // other)
 
 
 def feet(value: float) -> Distance:
@@ -165,14 +139,20 @@ class Speed:
         c_sound = math.sqrt(heat_capacity_ratio * gas_constant * temperature_k)
         return mps(c_sound) * value
 
+    def __add__(self, other: Speed) -> Speed:
+        return kph(self.kph + other.kph)
+
+    def __sub__(self, other: Speed) -> Speed:
+        return kph(self.kph - other.kph)
+
     def __mul__(self, other: Union[float, int]) -> Speed:
-        return Speed(self.kph * other)
+        return kph(self.kph * other)
 
     def __truediv__(self, other: Union[float, int]) -> Speed:
-        return Speed(self.kph / other)
+        return kph(self.kph / other)
 
     def __floordiv__(self, other: Union[float, int]) -> Speed:
-        return Speed(self.kph // other)
+        return kph(self.kph // other)
 
 
 def knots(value: float) -> Speed:

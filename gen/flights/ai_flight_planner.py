@@ -36,22 +36,12 @@ from game.theater.theatergroundobject import (
     EwrGroundObject,
     NavalGroundObject, VehicleGroupGroundObject,
 )
-from game.utils import nm_to_meter
+from game.utils import Distance, nautical_miles, nautical_miles
 from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
-    ANTISHIP_CAPABLE,
-    ANTISHIP_PREFERRED,
-    CAP_CAPABLE,
-    CAP_PREFERRED,
-    CAS_CAPABLE,
-    CAS_PREFERRED,
-    RUNWAY_ATTACK_CAPABLE,
-    RUNWAY_ATTACK_PREFERRED,
-    SEAD_CAPABLE,
-    SEAD_PREFERRED,
-    STRIKE_CAPABLE,
-    STRIKE_PREFERRED, capable_aircraft_for_task, preferred_aircraft_for_task,
+    capable_aircraft_for_task,
+    preferred_aircraft_for_task,
 )
 from gen.flights.closestairfields import (
     ClosestAirfields,
@@ -85,7 +75,7 @@ class ProposedFlight:
     num_aircraft: int
 
     #: The maximum distance between the objective and the departure airfield.
-    max_distance: int
+    max_distance: Distance
 
     def __str__(self) -> str:
         return f"{self.task} {self.num_aircraft} ship"
@@ -212,7 +202,7 @@ class PackageBuilder:
 
     def find_divert_field(self, aircraft: FlyingType,
                           arrival: ControlPoint) -> Optional[ControlPoint]:
-        divert_limit = nm_to_meter(150)
+        divert_limit = nautical_miles(150)
         for airfield in self.closest_airfields.airfields_within(divert_limit):
             if airfield.captured != self.is_player:
                 continue
@@ -241,8 +231,8 @@ class ObjectiveFinder:
     """Identifies potential objectives for the mission planner."""
 
     # TODO: Merge into doctrine.
-    AIRFIELD_THREAT_RANGE = nm_to_meter(150)
-    SAM_THREAT_RANGE = nm_to_meter(100)
+    AIRFIELD_THREAT_RANGE = nautical_miles(150)
+    SAM_THREAT_RANGE = nautical_miles(100)
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
@@ -467,13 +457,13 @@ class CoalitionMissionPlanner:
     """
 
     # TODO: Merge into doctrine, also limit by aircraft.
-    MAX_CAP_RANGE = nm_to_meter(100)
-    MAX_CAS_RANGE = nm_to_meter(50)
-    MAX_ANTISHIP_RANGE = nm_to_meter(150)
-    MAX_BAI_RANGE = nm_to_meter(150)
-    MAX_OCA_RANGE = nm_to_meter(150)
-    MAX_SEAD_RANGE = nm_to_meter(150)
-    MAX_STRIKE_RANGE = nm_to_meter(150)
+    MAX_CAP_RANGE = nautical_miles(100)
+    MAX_CAS_RANGE = nautical_miles(50)
+    MAX_ANTISHIP_RANGE = nautical_miles(150)
+    MAX_BAI_RANGE = nautical_miles(150)
+    MAX_OCA_RANGE = nautical_miles(150)
+    MAX_SEAD_RANGE = nautical_miles(150)
+    MAX_STRIKE_RANGE = nautical_miles(150)
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game

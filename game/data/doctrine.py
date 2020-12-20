@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import timedelta
 
-from game.utils import Distance, feet, nm_to_meter, feet_to_meter
+from game.utils import Distance, feet, nautical_miles
 
 
 @dataclass(frozen=True)
@@ -12,31 +12,28 @@ class Doctrine:
     strike: bool
     antiship: bool
 
-    strike_max_range: int
-    sead_max_range: int
-
     rendezvous_altitude: Distance
-    hold_distance: int
-    push_distance: int
-    join_distance: int
-    split_distance: int
-    ingress_egress_distance: int
+    hold_distance: Distance
+    push_distance: Distance
+    join_distance: Distance
+    split_distance: Distance
+    ingress_egress_distance: Distance
     ingress_altitude: Distance
-    egress_altitude: int
+    egress_altitude: Distance
 
-    min_patrol_altitude: int
-    max_patrol_altitude: int
-    pattern_altitude: int
+    min_patrol_altitude: Distance
+    max_patrol_altitude: Distance
+    pattern_altitude: Distance
 
     cap_duration: timedelta
-    cap_min_track_length: int
-    cap_max_track_length: int
-    cap_min_distance_from_cp: int
-    cap_max_distance_from_cp: int
+    cap_min_track_length: Distance
+    cap_max_track_length: Distance
+    cap_min_distance_from_cp: Distance
+    cap_max_distance_from_cp: Distance
 
     cas_duration: timedelta
 
-    sweep_distance: int
+    sweep_distance: Distance
 
 
 MODERN_DOCTRINE = Doctrine(
@@ -45,26 +42,24 @@ MODERN_DOCTRINE = Doctrine(
     sead=True,
     strike=True,
     antiship=True,
-    strike_max_range=1500000,
-    sead_max_range=1500000,
     rendezvous_altitude=feet(25000),
-    hold_distance=nm_to_meter(15),
-    push_distance=nm_to_meter(20),
-    join_distance=nm_to_meter(20),
-    split_distance=nm_to_meter(20),
-    ingress_egress_distance=nm_to_meter(45),
+    hold_distance=nautical_miles(15),
+    push_distance=nautical_miles(20),
+    join_distance=nautical_miles(20),
+    split_distance=nautical_miles(20),
+    ingress_egress_distance=nautical_miles(45),
     ingress_altitude=feet(20000),
-    egress_altitude=feet_to_meter(20000),
-    min_patrol_altitude=feet_to_meter(15000),
-    max_patrol_altitude=feet_to_meter(33000),
-    pattern_altitude=feet_to_meter(5000),
+    egress_altitude=feet(20000),
+    min_patrol_altitude=feet(15000),
+    max_patrol_altitude=feet(33000),
+    pattern_altitude=feet(5000),
     cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nm_to_meter(15),
-    cap_max_track_length=nm_to_meter(40),
-    cap_min_distance_from_cp=nm_to_meter(10),
-    cap_max_distance_from_cp=nm_to_meter(40),
+    cap_min_track_length=nautical_miles(15),
+    cap_max_track_length=nautical_miles(40),
+    cap_min_distance_from_cp=nautical_miles(10),
+    cap_max_distance_from_cp=nautical_miles(40),
     cas_duration=timedelta(minutes=30),
-    sweep_distance=nm_to_meter(60),
+    sweep_distance=nautical_miles(60),
 )
 
 COLDWAR_DOCTRINE = Doctrine(
@@ -73,26 +68,24 @@ COLDWAR_DOCTRINE = Doctrine(
     sead=True,
     strike=True,
     antiship=True,
-    strike_max_range=1500000,
-    sead_max_range=1500000,
     rendezvous_altitude=feet(22000),
-    hold_distance=nm_to_meter(10),
-    push_distance=nm_to_meter(10),
-    join_distance=nm_to_meter(10),
-    split_distance=nm_to_meter(10),
-    ingress_egress_distance=nm_to_meter(30),
+    hold_distance=nautical_miles(10),
+    push_distance=nautical_miles(10),
+    join_distance=nautical_miles(10),
+    split_distance=nautical_miles(10),
+    ingress_egress_distance=nautical_miles(30),
     ingress_altitude=feet(18000),
-    egress_altitude=feet_to_meter(18000),
-    min_patrol_altitude=feet_to_meter(10000),
-    max_patrol_altitude=feet_to_meter(24000),
-    pattern_altitude=feet_to_meter(5000),
+    egress_altitude=feet(18000),
+    min_patrol_altitude=feet(10000),
+    max_patrol_altitude=feet(24000),
+    pattern_altitude=feet(5000),
     cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nm_to_meter(12),
-    cap_max_track_length=nm_to_meter(24),
-    cap_min_distance_from_cp=nm_to_meter(8),
-    cap_max_distance_from_cp=nm_to_meter(25),
+    cap_min_track_length=nautical_miles(12),
+    cap_max_track_length=nautical_miles(24),
+    cap_min_distance_from_cp=nautical_miles(8),
+    cap_max_distance_from_cp=nautical_miles(25),
     cas_duration=timedelta(minutes=30),
-    sweep_distance=nm_to_meter(40),
+    sweep_distance=nautical_miles(40),
 )
 
 WWII_DOCTRINE = Doctrine(
@@ -101,24 +94,22 @@ WWII_DOCTRINE = Doctrine(
     sead=False,
     strike=True,
     antiship=True,
-    strike_max_range=1500000,
-    sead_max_range=1500000,
-    hold_distance=nm_to_meter(5),
-    push_distance=nm_to_meter(5),
-    join_distance=nm_to_meter(5),
-    split_distance=nm_to_meter(5),
+    hold_distance=nautical_miles(5),
+    push_distance=nautical_miles(5),
+    join_distance=nautical_miles(5),
+    split_distance=nautical_miles(5),
     rendezvous_altitude=feet(10000),
-    ingress_egress_distance=nm_to_meter(7),
+    ingress_egress_distance=nautical_miles(7),
     ingress_altitude=feet(8000),
-    egress_altitude=feet_to_meter(8000),
-    min_patrol_altitude=feet_to_meter(4000),
-    max_patrol_altitude=feet_to_meter(15000),
-    pattern_altitude=feet_to_meter(5000),
+    egress_altitude=feet(8000),
+    min_patrol_altitude=feet(4000),
+    max_patrol_altitude=feet(15000),
+    pattern_altitude=feet(5000),
     cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nm_to_meter(8),
-    cap_max_track_length=nm_to_meter(18),
-    cap_min_distance_from_cp=nm_to_meter(0),
-    cap_max_distance_from_cp=nm_to_meter(5),
+    cap_min_track_length=nautical_miles(8),
+    cap_max_track_length=nautical_miles(18),
+    cap_min_distance_from_cp=nautical_miles(0),
+    cap_max_distance_from_cp=nautical_miles(5),
     cas_duration=timedelta(minutes=30),
-    sweep_distance=nm_to_meter(10),
+    sweep_distance=nautical_miles(10),
 )

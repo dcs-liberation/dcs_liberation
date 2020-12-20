@@ -28,7 +28,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, meters, nm_to_meter, meter_to_nm
+from game.utils import Distance, Speed, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -86,7 +86,7 @@ class FlightPlan:
         return zip(self.waypoints[:last_index], self.waypoints[1:last_index])
 
     def best_speed_between_waypoints(self, a: FlightWaypoint,
-                                     b: FlightWaypoint) -> int:
+                                     b: FlightWaypoint) -> Speed:
         """Desired ground speed between points a and b."""
         factor = 1.0
         if b.waypoint_type == FlightWaypointType.ASCEND_POINT:
@@ -105,11 +105,10 @@ class FlightPlan:
         # We don't have an exact heightmap, but we should probably be performing
         # *some* adjustment for NTTR since the minimum altitude of the map is
         # near 2000 ft MSL.
-        return int(
-            GroundSpeed.for_flight(self.flight, min(a.alt, b.alt)) * factor)
+        return GroundSpeed.for_flight(self.flight, min(a.alt, b.alt)) * factor
 
     def speed_between_waypoints(self, a: FlightWaypoint,
-                                b: FlightWaypoint) -> int:
+                                b: FlightWaypoint) -> Speed:
         return self.best_speed_between_waypoints(a, b)
 
     @property
@@ -126,16 +125,17 @@ class FlightPlan:
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
         """
-        distance_to_arrival = meter_to_nm(self.max_distance_from(self.flight.arrival))
+        distance_to_arrival = self.max_distance_from(self.flight.arrival)
 
-        bingo = 1000 # Minimum Emergency Fuel
-        bingo += 500 # Visual Traffic
-        bingo += 15 * distance_to_arrival
+        bingo = 1000.0  # Minimum Emergency Fuel
+        bingo += 500  # Visual Traffic
+        bingo += 15 * distance_to_arrival.nautical_miles
 
         # TODO: Per aircraft tweaks.
 
         if self.flight.divert is not None:
-            bingo += 10 * meter_to_nm(self.max_distance_from(self.flight.divert))
+            max_divert_distance = self.max_distance_from(self.flight.divert)
+            bingo += 10 * max_divert_distance.nautical_miles
 
         return round(bingo / 100) * 100
 
@@ -145,13 +145,14 @@ class FlightPlan:
         """
         return self.bingo_fuel + 1000
    
-    def max_distance_from(self, cp: ControlPoint) -> int:
+    def max_distance_from(self, cp: ControlPoint) -> Distance:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
         :arg cp The ControlPoint to measure distance from.
         """
         if not self.waypoints:
-            return 0
-        return max([cp.position.distance_to_point(w.position) for w in self.waypoints])
+            return meters(0)
+        return max([meters(cp.position.distance_to_point(w.position)) for w in
+                    self.waypoints])
 
     @property
     def tot_offset(self) -> timedelta:
@@ -303,7 +304,7 @@ class FormationFlightPlan(LoiterFlightPlan):
         return self.split
 
     @cached_property
-    def best_flight_formation_speed(self) -> int:
+    def best_flight_formation_speed(self) -> Speed:
         """The best speed this flight is capable at all formation waypoints.
 
         To ease coordination with other flights, we aim to have a single mission
@@ -319,7 +320,7 @@ class FormationFlightPlan(LoiterFlightPlan):
         return min(speeds)
 
     def speed_between_waypoints(self, a: FlightWaypoint,
-                                b: FlightWaypoint) -> int:
+                                b: FlightWaypoint) -> Speed:
         if b in self.package_speed_waypoints:
             # Should be impossible, as any package with at least one
             # FormationFlightPlan flight needs a formation speed.
@@ -519,7 +520,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         } | set(self.targets)
 
     def speed_between_waypoints(self, a: FlightWaypoint,
-                                b: FlightWaypoint) -> int:
+                                b: FlightWaypoint) -> Speed:
         # FlightWaypoint is only comparable by identity, so adding
         # target_area_waypoint to package_speed_waypoints is useless.
         if b.waypoint_type == FlightWaypointType.TARGET_GROUP_LOC:
@@ -563,7 +564,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         return total
 
     @property
-    def mission_speed(self) -> int:
+    def mission_speed(self) -> Speed:
         return GroundSpeed.for_flight(self.flight, self.ingress.alt)
 
     @property
@@ -865,8 +866,8 @@ class FlightPlanBuilder:
 
         start, end = self.racetrack_for_objective(location)
         patrol_alt = meters(random.randint(
-            self.doctrine.min_patrol_altitude,
-            self.doctrine.max_patrol_altitude
+            int(self.doctrine.min_patrol_altitude.meters),
+            int(self.doctrine.max_patrol_altitude.meters)
         ))
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
@@ -893,7 +894,7 @@ class FlightPlanBuilder:
 
         heading = self._heading_to_package_airfield(target)
         start = target.point_from_heading(heading,
-                                          -self.doctrine.sweep_distance)
+                                          -self.doctrine.sweep_distance.meters)
 
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
         start, end = builder.sweep(start, target,
@@ -930,10 +931,11 @@ class FlightPlanBuilder:
             closest_airfield.position
         )
 
-        min_distance_from_enemy = nm_to_meter(20)
-        distance_to_airfield = int(closest_airfield.position.distance_to_point(
-            self.package.target.position
-        ))
+        min_distance_from_enemy = nautical_miles(20)
+        distance_to_airfield = meters(
+            closest_airfield.position.distance_to_point(
+                self.package.target.position
+            ))
         distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
         min_cap_distance = min(self.doctrine.cap_min_distance_from_cp,
                                distance_to_no_fly)
@@ -942,11 +944,12 @@ class FlightPlanBuilder:
 
         end = location.position.point_from_heading(
             heading,
-            random.randint(min_cap_distance, max_cap_distance)
+            random.randint(int(min_cap_distance.meters),
+                           int(max_cap_distance.meters))
         )
         diameter = random.randint(
-            self.doctrine.cap_min_track_length,
-            self.doctrine.cap_max_track_length
+            int(self.doctrine.cap_min_track_length.meters),
+            int(self.doctrine.cap_max_track_length.meters)
         )
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
@@ -961,7 +964,8 @@ class FlightPlanBuilder:
         )
         center = ingress.point_from_heading(heading, distance / 2)
         orbit_center = center.point_from_heading(
-            heading - 90, random.randint(nm_to_meter(6), nm_to_meter(15))
+            heading - 90, random.randint(int(nautical_miles(6).meters),
+                                         int(nautical_miles(15).meters))
         )
 
         combat_width = distance / 2
@@ -984,8 +988,9 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        patrol_alt = meters(random.randint(self.doctrine.min_patrol_altitude,
-                                           self.doctrine.max_patrol_altitude))
+        patrol_alt = meters(
+            random.randint(int(self.doctrine.min_patrol_altitude.meters),
+                           int(self.doctrine.max_patrol_altitude.meters)))
 
         # Create points
         builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
@@ -1189,12 +1194,13 @@ class FlightPlanBuilder:
             # point, plan the hold point such that it retreats from the origin
             # airfield.
             return join.point_from_heading(target.heading_between_point(origin),
-                                           self.doctrine.push_distance)
+                                           self.doctrine.push_distance.meters)
 
         heading_to_join = origin.heading_between_point(join)
-        hold_point = origin.point_from_heading(heading_to_join,
-                                               self.doctrine.push_distance)
-        if hold_point.distance_to_point(join) >= self.doctrine.push_distance:
+        hold_point = origin.point_from_heading(
+            heading_to_join, self.doctrine.push_distance.meters)
+        hold_distance = meters(hold_point.distance_to_point(join))
+        if hold_distance >= self.doctrine.push_distance:
             # Hold point is between the origin airfield and the join point and
             # spaced sufficiently.
             return hold_point
@@ -1206,10 +1212,10 @@ class FlightPlanBuilder:
         # properly.
         origin_to_join = origin.distance_to_point(join)
         cos_theta = (
-                (self.doctrine.hold_distance ** 2 +
+                (self.doctrine.hold_distance.meters ** 2 +
                  origin_to_join ** 2 -
-                 self.doctrine.join_distance ** 2) /
-                (2 * self.doctrine.hold_distance * origin_to_join)
+                 self.doctrine.join_distance.meters ** 2) /
+                (2 * self.doctrine.hold_distance.meters * origin_to_join)
         )
         try:
             theta = math.acos(cos_theta)
@@ -1218,10 +1224,10 @@ class FlightPlanBuilder:
             # hold point away from the target.
             return origin.point_from_heading(
                 target.heading_between_point(origin),
-                self.doctrine.hold_distance)
+                self.doctrine.hold_distance.meters)
 
         return origin.point_from_heading(heading_to_join - theta,
-                                         self.doctrine.hold_distance)
+                                         self.doctrine.hold_distance.meters)
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
     def generate_rtb_waypoint(self, flight: Flight,
@@ -1273,13 +1279,13 @@ class FlightPlanBuilder:
         return attack_transition.point_from_heading(
             self.package.target.position.heading_between_point(
                 self.package_airfield().position),
-            self.doctrine.join_distance)
+            self.doctrine.join_distance.meters)
 
     def _advancing_rendezvous_point(self, attack_transition: Point) -> Point:
         """Creates a rendezvous point that advances toward the target."""
         heading = self._heading_to_package_airfield(attack_transition)
         return attack_transition.point_from_heading(
-            heading, -self.doctrine.join_distance)
+            heading, -self.doctrine.join_distance.meters)
 
     def _rendezvous_should_retreat(self, attack_transition: Point) -> bool:
         transition_target_distance = attack_transition.distance_to_point(
@@ -1307,13 +1313,13 @@ class FlightPlanBuilder:
     def _ingress_point(self) -> Point:
         heading = self._target_heading_to_package_airfield()
         return self.package.target.position.point_from_heading(
-            heading - 180 + 25, self.doctrine.ingress_egress_distance
+            heading - 180 + 25, self.doctrine.ingress_egress_distance.meters
         )
 
     def _egress_point(self) -> Point:
         heading = self._target_heading_to_package_airfield()
         return self.package.target.position.point_from_heading(
-            heading - 180 - 25, self.doctrine.ingress_egress_distance
+            heading - 180 - 25, self.doctrine.ingress_egress_distance.meters
         )
 
     def _target_heading_to_package_airfield(self) -> int:

@@ -17,6 +17,7 @@ from typing import Dict, List, Optional
 from dcs.mapping import Point
 
 from game.theater.missiontarget import MissionTarget
+from game.utils import Speed
 from .flights.flight import Flight, FlightType
 from .flights.flightplan import FormationFlightPlan
 
@@ -59,7 +60,7 @@ class Package:
     waypoints: Optional[PackageWaypoints] = field(default=None)
 
     @property
-    def formation_speed(self) -> Optional[int]:
+    def formation_speed(self) -> Optional[Speed]:
         """The speed of the package when in formation.
 
         If none of the flights in the package will join a formation, this

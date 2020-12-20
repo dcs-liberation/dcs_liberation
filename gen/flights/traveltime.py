@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import math
 from datetime import timedelta
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.unittype import FlyingType
@@ -12,7 +12,8 @@ from game.utils import (
     Distance,
     SPEED_OF_SOUND_AT_SEA_LEVEL,
     Speed,
-    kph, mach, meter_to_nm,
+    kph,
+    mach,
     meters,
 )
 from gen.flights.flight import Flight
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 class GroundSpeed:
 
     @classmethod
-    def for_flight(cls, flight: Flight, altitude: Distance) -> int:
+    def for_flight(cls, flight: Flight, altitude: Distance) -> Speed:
         if not issubclass(flight.unit_type, FlyingType):
             raise TypeError("Flight has non-flying unit")
 
@@ -38,7 +39,7 @@ class GroundSpeed:
         if max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL:
             # Aircraft is supersonic. Limit to mach 0.8 to conserve fuel and
             # account for heavily loaded jets.
-            return int(mach(0.8, altitude).knots)
+            return mach(0.8, altitude)
 
         # For subsonic aircraft, assume the aircraft can reasonably perform at
         # 80% of its maximum, and that it can maintain the same mach at altitude
@@ -46,15 +47,16 @@ class GroundSpeed:
         # might. be sufficient given the wiggle room. We can come up with
         # another heuristic if needed.
         cruise_mach = max_speed.mach() * 0.8
-        return int(mach(cruise_mach, altitude).knots)
+        return mach(cruise_mach, altitude)
 
 
 class TravelTime:
     @staticmethod
-    def between_points(a: Point, b: Point, speed: float) -> timedelta:
+    def between_points(a: Point, b: Point, speed: Speed) -> timedelta:
         error_factor = 1.1
-        distance = meter_to_nm(a.distance_to_point(b))
-        return timedelta(hours=distance / speed * error_factor)
+        distance = meters(a.distance_to_point(b))
+        return timedelta(
+            hours=distance.nautical_miles / speed.knots * error_factor)
 
 
 # TODO: Most if not all of this should move into FlightPlan.

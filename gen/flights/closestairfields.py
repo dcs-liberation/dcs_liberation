@@ -2,6 +2,7 @@
 from typing import Dict, Iterator, List, Optional
 
 from game.theater import ConflictTheater, ControlPoint, MissionTarget
+from game.utils import Distance
 
 
 class ClosestAirfields:
@@ -14,14 +15,14 @@ class ClosestAirfields:
             all_control_points, key=lambda c: self.target.distance_to(c)
         )
 
-    def airfields_within(self, meters: int) -> Iterator[ControlPoint]:
+    def airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
         """Iterates over all airfields within the given range of the target.
 
         Note that this iterates over *all* airfields, not just friendly
         airfields.
         """
         for cp in self.closest_airfields:
-            if cp.distance_to(self.target) < meters:
+            if cp.distance_to(self.target) < distance.meters:
                 yield cp
             else:
                 break

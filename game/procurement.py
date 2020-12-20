@@ -6,11 +6,12 @@ import random
 from typing import Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.task import CAP, CAS
-from dcs.unittype import FlyingType, UnitType, VehicleType
+from dcs.unittype import FlyingType, VehicleType
 
 from game import db
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
+from game.utils import Distance
 from gen.flights.ai_flight_planner_db import (
     capable_aircraft_for_task,
     preferred_aircraft_for_task,
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class AircraftProcurementRequest:
     near: MissionTarget
-    range: int
+    range: Distance
     task_capability: FlightType
     number: int
 

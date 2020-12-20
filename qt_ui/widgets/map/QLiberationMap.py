@@ -5,8 +5,8 @@ import logging
 import math
 from typing import Iterable, Iterator, List, Optional, Tuple
 
-from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import QPointF, Qt, QLineF, QRectF
+from PySide2 import QtCore, QtWidgets
+from PySide2.QtCore import QLineF, QPointF, QRectF, Qt
 from PySide2.QtGui import (
     QBrush,
     QColor,
@@ -14,13 +14,15 @@ from PySide2.QtGui import (
     QPen,
     QPixmap,
     QPolygonF,
-    QWheelEvent, )
+    QWheelEvent,
+)
 from PySide2.QtWidgets import (
     QFrame,
     QGraphicsItem,
     QGraphicsOpacityEffect,
     QGraphicsScene,
-    QGraphicsView, QGraphicsSceneMouseEvent,
+    QGraphicsSceneMouseEvent,
+    QGraphicsView,
 )
 from dcs import Point
 from dcs.mapping import point_from_heading
@@ -32,7 +34,7 @@ from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
-from game.utils import meter_to_feet, nm_to_meter, meter_to_nm
+from game.utils import Distance, meters, nautical_miles
 from game.weather import TimeOfDay
 from gen import Conflict
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
@@ -45,7 +47,7 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
-MAX_SHIP_DISTANCE = 80
+MAX_SHIP_DISTANCE = nautical_miles(80)
 
 def binomial(i: int, n: int) -> float:
     """Binomial coefficient"""
@@ -171,7 +173,7 @@ class QLiberationMap(QGraphicsView):
         self.game = game
         if self.game is not None:
             logging.debug("Reloading Map Canvas")
-            self.nm_to_pixel_ratio = self.km_to_pixel(float(nm_to_meter(1)) / 1000.0)
+            self.nm_to_pixel_ratio = self.distance_to_pixels(nautical_miles(1))
             self.reload_scene()
 
     """
@@ -567,7 +569,7 @@ class QLiberationMap(QGraphicsView):
         BIG_LINE = 5
         SMALL_LINE = 2
 
-        dist = self.km_to_pixel(nm_to_meter(scale_distance_nm)/1000.0)
+        dist = self.distance_to_pixels(nautical_miles(scale_distance_nm))
         self.scene().addRect(POS_X, POS_Y-PADDING, PADDING*2 + dist, BIG_LINE*2+3*PADDING, pen=CONST.COLORS["black"], brush=CONST.COLORS["black"])
         l = self.scene().addLine(POS_X + PADDING, POS_Y + BIG_LINE*2, POS_X + PADDING + dist, POS_Y + BIG_LINE*2)
 
@@ -663,12 +665,12 @@ class QLiberationMap(QGraphicsView):
             Point(offset.x / scale.x, offset.y / scale.y))
         return point_a.world_coordinates - scaled
 
-    def km_to_pixel(self, km):
+    def distance_to_pixels(self, distance: Distance) -> int:
         p1 = Point(0, 0)
-        p2 = Point(0, 1000*km)
+        p2 = Point(0, distance.meters)
         p1a = Point(*self._transform_point(p1))
         p2a = Point(*self._transform_point(p2))
-        return p1a.distance_to_point(p2a)
+        return int(p1a.distance_to_point(p2a))
 
     def highlight_color(self, transparent: Optional[bool] = False) -> QColor:
         return QColor(255, 255, 0, 20 if transparent else 255)
@@ -820,7 +822,7 @@ class QLiberationMap(QGraphicsView):
         distance = self.selected_cp.control_point.position.distance_to_point(
             world_destination
         )
-        if meter_to_nm(distance) > MAX_SHIP_DISTANCE:
+        if meters(distance) > MAX_SHIP_DISTANCE:
             return False
         return self.game.theater.is_in_sea(world_destination)
 

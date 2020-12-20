@@ -1,12 +1,18 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QLabel, QHBoxLayout, QGroupBox, QVBoxLayout, QFrame, QGridLayout
 from PySide2.QtGui import QPixmap
-
-from game.weather import Conditions, TimeOfDay, Weather
-from game.utils import meter_to_nm, mps_to_knots
+from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QVBoxLayout,
+)
 from dcs.weather import Weather as PydcsWeather
 
 import qt_ui.uiconstants as CONST
+from game.utils import mps
+from game.weather import Conditions, TimeOfDay
+
 
 class QTimeTurnWidget(QGroupBox):
     """
@@ -163,20 +169,20 @@ class QWeatherWidget(QGroupBox):
     def updateWinds(self):
         """Updates the UI with the current conditions wind info.
         """
-        windGlSpeed = mps_to_knots(self.conditions.weather.wind.at_0m.speed or 0)
+        windGlSpeed = mps(self.conditions.weather.wind.at_0m.speed or 0)
         windGlDir = str(self.conditions.weather.wind.at_0m.direction or 0).rjust(3, '0')
-        self.windGLSpeedLabel.setText('{}kts'.format(windGlSpeed))
-        self.windGLDirLabel.setText('{}º'.format(windGlDir))
+        self.windGLSpeedLabel.setText(f'{int(windGlSpeed.knots)}kts')
+        self.windGLDirLabel.setText(f'{windGlDir}º')
 
-        windFL08Speed = mps_to_knots(self.conditions.weather.wind.at_2000m.speed or 0)
+        windFL08Speed = mps(self.conditions.weather.wind.at_2000m.speed or 0)
         windFL08Dir = str(self.conditions.weather.wind.at_2000m.direction or 0).rjust(3, '0')
-        self.windFL08SpeedLabel.setText('{}kts'.format(windFL08Speed))
-        self.windFL08DirLabel.setText('{}º'.format(windFL08Dir))
+        self.windFL08SpeedLabel.setText(f'{int(windFL08Speed.knots)}kts')
+        self.windFL08DirLabel.setText(f'{windFL08Dir}º')
 
-        windFL26Speed = mps_to_knots(self.conditions.weather.wind.at_8000m.speed or 0)
+        windFL26Speed = mps(self.conditions.weather.wind.at_8000m.speed or 0)
         windFL26Dir = str(self.conditions.weather.wind.at_8000m.direction or 0).rjust(3, '0')
-        self.windFL26SpeedLabel.setText('{}kts'.format(windFL26Speed))
-        self.windFL26DirLabel.setText('{}º'.format(windFL26Dir))
+        self.windFL26SpeedLabel.setText(f'{int(windFL26Speed.knots)}kts')
+        self.windFL26DirLabel.setText(f'{windFL26Dir}º')
 
     def updateForecast(self):
         """Updates the Forecast Text and icon with the current conditions wind info.
@@ -223,10 +229,9 @@ class QWeatherWidget(QGroupBox):
         if not fog:
             self.forecastFog.setText('No fog')
         else:       
-            visvibilityNm = round(meter_to_nm(fog.visibility), 1)
-            self.forecastFog.setText('Fog vis: {}nm'.format(visvibilityNm))
+            visibility = round(fog.visibility.nautical_miles, 1)
+            self.forecastFog.setText(f'Fog vis: {visibility}nm')
             icon = [time, ('cloudy' if cloudDensity > 1 else None), 'fog']
-
 
         icon_key = "Weather_{}".format('-'.join(filter(None.__ne__, icon)))
         icon = CONST.ICONS.get(icon_key) or CONST.ICONS['Weather_night-partly-cloudy']        

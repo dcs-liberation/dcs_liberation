@@ -10,6 +10,7 @@ from typing import Optional, TYPE_CHECKING
 from dcs.weather import Weather as PydcsWeather, Wind
 
 from game.settings import Settings
+from game.utils import Distance, meters
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
@@ -39,7 +40,7 @@ class Clouds:
 
 @dataclass(frozen=True)
 class Fog:
-    visibility: int
+    visibility: Distance
     thickness: int
 
 
@@ -56,7 +57,7 @@ class Weather:
         if random.randrange(5) != 0:
             return None
         return Fog(
-            visibility=random.randint(2500, 5000),
+            visibility=meters(random.randint(2500, 5000)),
             thickness=random.randint(100, 500)
         )
 

@@ -33,8 +33,7 @@ from dcs.mission import Mission
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
-from game.utils import meter_to_nm
-from . import units
+from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
@@ -170,10 +169,10 @@ class FlightPlanBuilder:
         if self.last_waypoint is None:
             return "-"
 
-        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+        distance = meters(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
-        return f"{distance} NM"
+        return f"{distance.nautical_miles:.1f} NM"
 
     def _ground_speed(self, waypoint: FlightWaypoint) -> str:
         if self.last_waypoint is None:
@@ -189,19 +188,11 @@ class FlightPlanBuilder:
         else:
             return "-"
 
-        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+        distance = meters(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
         duration = (waypoint.tot - last_time).total_seconds() / 3600
-        try:
-            return f"{int(distance / duration)} kt"
-        except ZeroDivisionError:
-            # TODO: Improve resolution of unit conversions.
-            # When waypoints are very close to each other they can end up with
-            # identical TOTs because our unit conversion functions truncate to
-            # int. When waypoints have the same TOT the duration will be zero.
-            # https://github.com/Khopa/dcs_liberation/issues/557
-            return "-"
+        return f"{int(distance.nautical_miles / duration)} kt"
 
     def build(self) -> List[List[str]]:
         return self.rows

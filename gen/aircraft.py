@@ -85,7 +85,7 @@ from game.theater.controlpoint import (
 )
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.unitmap import UnitMap
-from game.utils import Distance, Speed, knots_to_kph, kph, meters, nm_to_meter
+from game.utils import Distance, meters, nautical_miles
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -110,10 +110,8 @@ from .naming import namegen
 if TYPE_CHECKING:
     from game import Game
 
-WARM_START_HELI_AIRSPEED = kph(120)
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)
-WARM_START_AIRSPEED = kph(550)
 
 RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
@@ -832,11 +830,13 @@ class AircraftConflictGenerator:
         else:
             alt = WARM_START_ALTITUDE
 
-        speed = knots_to_kph(GroundSpeed.for_flight(flight, alt))
+        speed = GroundSpeed.for_flight(flight, alt)
 
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
 
-        logging.info("airgen: {} for {} at {} at {}".format(flight.unit_type, side.id, alt, speed))
+        logging.info(
+            "airgen: {} for {} at {} at {}".format(flight.unit_type, side.id,
+                                                   alt, int(speed.kph)))
         group = self.m.flight_group(
             country=side,
             name=name,
@@ -844,7 +844,7 @@ class AircraftConflictGenerator:
             airport=None,
             position=pos,
             altitude=alt,
-            speed=speed,
+            speed=speed.kph,
             maintask=None,
             group_size=flight.count)
 
@@ -1515,7 +1515,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
             logging.error(
                 "No CAS waypoint found. Falling back to search and engage")
             waypoint.add_task(EngageTargets(
-                max_distance=nm_to_meter(10),
+                max_distance=int(nautical_miles(10).meters),
                 targets=[
                     Targets.All.GroundUnits.GroundVehicles,
                     Targets.All.GroundUnits.AirDefence.AAA,
@@ -1564,7 +1564,7 @@ class OcaAircraftIngressBuilder(PydcsWaypointBuilder):
             position=target.position,
             # Al Dhafra is 4 nm across at most. Add a little wiggle room in case
             # the airport position from DCS is not centered.
-            radius=nm_to_meter(3),
+            radius=int(nautical_miles(3).meters),
             targets=[Targets.All.Air]
         )
         task.params["attackQtyLimit"] = False
@@ -1604,7 +1604,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
                                     position=tgroup.position,
-                                    radius=nm_to_meter(30),
+                                    radius=int(nautical_miles(30).meters),
                                     targets=[
                                         Targets.All.GroundUnits.AirDefence,
                                     ])
@@ -1686,7 +1686,7 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
             return waypoint
 
         waypoint.tasks.append(EngageTargets(
-            max_distance=nm_to_meter(50),
+            max_distance=int(nautical_miles(50).meters),
             targets=[Targets.All.Air.Planes.Fighters]))
 
         return waypoint
@@ -1729,7 +1729,7 @@ class JoinPointBuilder(PydcsWaypointBuilder):
         # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/250183-task-follow-and-escort-temporarily-aborted
         waypoint.add_task(ControlledTask(EngageTargets(
             # TODO: From doctrine.
-            max_distance=nm_to_meter(30),
+            max_distance=int(nautical_miles(30).meters),
             targets=[Targets.All.Air.Planes.Fighters]
         )))
 
@@ -1769,8 +1769,9 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # later.
         cap_types = {FlightType.BARCAP, FlightType.TARCAP}
         if self.flight.flight_type in cap_types:
-            waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
-                                                targets=[Targets.All.Air]))
+            waypoint.tasks.append(
+                EngageTargets(max_distance=int(nautical_miles(50).meters),
+                              targets=[Targets.All.Air]))
 
         racetrack = ControlledTask(OrbitAction(
             altitude=waypoint.alt,
