@@ -1,7 +1,7 @@
 {
-  "name": "Syria - Battle for Golan heights - Lite",
+  "name": "Syria - Battle for Golan Heights - Lite",
   "theater": "Syria",
   "authors": "Khopa",
-  "description": "<p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/>This scenario is designed to be performance friendly.</p>",
+  "description": "<p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance friendly.</p>",
   "miz": "golan_heights_lite.miz"
 }
