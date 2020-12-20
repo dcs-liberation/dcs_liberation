@@ -843,7 +843,7 @@ class AircraftConflictGenerator:
             aircraft_type=flight.unit_type,
             airport=None,
             position=pos,
-            altitude=alt,
+            altitude=alt.meters,
             speed=speed.kph,
             maintask=None,
             group_size=flight.count)
@@ -870,7 +870,7 @@ class AircraftConflictGenerator:
     def _add_radio_waypoint(self, group: FlyingGroup, position,
                             altitude: Distance,
                             airspeed: int = 600) -> MovingPoint:
-        point = group.add_waypoint(position, altitude, airspeed)
+        point = group.add_waypoint(position, altitude.meters, airspeed)
         point.alt_type = "RADIO"
         return point
 
