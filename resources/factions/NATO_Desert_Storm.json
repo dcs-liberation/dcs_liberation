@@ -5,7 +5,8 @@
   "description": "<p>A faction to recreate the actual unit lineup during Desert Storm as closely as possible</p>",
   "aircrafts": [
     "F_15C",
-    "F_14A",
+    "F_14A_135_GR",
+    "F_14B",
     "F_15E",
     "F_16C_50",
     "FA_18C_hornet",
@@ -32,7 +33,7 @@
   ],
   "tankers": [
     "KC_135",
-    "KC135MPRS"
+    "KC130"
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
