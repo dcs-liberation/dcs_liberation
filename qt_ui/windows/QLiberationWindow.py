@@ -257,8 +257,6 @@ class QLiberationWindow(QMainWindow):
 
     def setGame(self, game: Optional[Game]):
         try:
-            if game is not None:
-                game.on_load()
             self.game = game
             if self.info_panel is not None:
                 self.info_panel.setGame(game)

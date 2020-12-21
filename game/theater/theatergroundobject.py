@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import logging
 from typing import Iterator, List, TYPE_CHECKING
 
 from dcs.mapping import Point
@@ -9,6 +10,7 @@ from dcs.unitgroup import Group
 
 from .. import db
 from ..data.radar_db import UNITS_WITH_RADAR
+from ..utils import Distance, meters
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
@@ -155,6 +157,23 @@ class TheaterGroundObject(MissionTarget):
                 if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
                     return True
         return False
+
+    @property
+    def threat_range(self) -> Distance:
+        threat_range = meters(0)
+        for group in self.groups:
+            for u in group.units:
+                unit = db.unit_type_from_name(u.type)
+                if unit is None:
+                    logging.error(f"Unknown unit type {u.type}")
+                    continue
+
+                # Some units in pydcs have threat_range defined, but explicitly
+                # set to None.
+                unit_threat_range = getattr(unit, "threat_range", None)
+                if unit_threat_range is not None:
+                    threat_range = max(threat_range, meters(unit_threat_range))
+        return threat_range
 
 
 class BuildingGroundObject(TheaterGroundObject):

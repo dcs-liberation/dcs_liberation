@@ -26,6 +26,10 @@ from PySide2.QtWidgets import (
 )
 from dcs import Point
 from dcs.mapping import point_from_heading
+from shapely.geometry import (
+    MultiPolygon,
+    Polygon,
+)
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
@@ -275,6 +279,35 @@ class QLiberationMap(QGraphicsView):
             radius = distance_point[0] - transformed[0]
             scene.addEllipse(transformed[0]-radius, transformed[1]-radius, 2*radius, 2*radius, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
 
+    def draw_shapely_poly(self, scene: QGraphicsScene, poly: Polygon, pen: QPen,
+                          brush: QBrush) -> None:
+        if poly.is_empty:
+            return
+        points = []
+        for x, y in poly.exterior.coords:
+            x, y = self._transform_point(Point(x, y))
+            points.append(QPointF(x, y))
+        scene.addPolygon(QPolygonF(points), pen, brush)
+
+    def draw_threat_zone(self, scene: QGraphicsScene, poly: Polygon,
+                         player: bool) -> None:
+        if player:
+            brush = QColor(0, 132, 255, 100)
+        else:
+            brush = QColor(227, 32, 0, 100)
+        self.draw_shapely_poly(scene, poly, CONST.COLORS["transparent"], brush)
+
+    def display_threat_zones(self, scene: QGraphicsScene,
+                             player: bool) -> None:
+        """Draws the threat zones on the map."""
+        threat_poly = self.game.threat_zone_for(player).all
+        if isinstance(threat_poly, MultiPolygon):
+            polys = threat_poly.geoms
+        else:
+            polys = [threat_poly]
+        for poly in polys:
+            self.draw_threat_zone(scene, poly, player)
+
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
         return ((DisplayOptions.sam_ranges and cp.captured) or
@@ -330,6 +363,12 @@ class QLiberationMap(QGraphicsView):
         # Display Culling
         if DisplayOptions.culling and self.game.settings.perf_culling:
             self.display_culling(scene)
+
+        if DisplayOptions.blue_threat_zone:
+            self.display_threat_zones(scene, player=True)
+
+        if DisplayOptions.red_threat_zone:
+            self.display_threat_zones(scene, player=False)
 
         for cp in self.game.theater.controlpoints:
 

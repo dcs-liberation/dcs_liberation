@@ -59,6 +59,8 @@ class DisplayOptions:
     culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
     actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
+    blue_threat_zone = DisplayRule("Display Blue Threat Zones", False)
+    red_threat_zone = DisplayRule("Display Red Threat Zones", False)
 
     @classmethod
     def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:

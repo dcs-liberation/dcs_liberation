@@ -4,7 +4,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -31,6 +31,7 @@ from .infos.information import Information
 from .procurement import ProcurementAi
 from .settings import Settings
 from .theater import ConflictTheater, ControlPoint
+from .threatzones import ThreatZones
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -113,6 +114,9 @@ class Game:
 
         self.sanitize_sides()
 
+        self.blue_threat_zone: ThreatZones
+        self.red_threat_zone: ThreatZones
+
         self.on_load()
 
         # Turn 0 procurement. We don't actually have any missions to plan, but
@@ -125,6 +129,19 @@ class Game:
         red_planner.plan_missions()
 
         self.plan_procurement(blue_planner, red_planner)
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Avoid persisting any volatile types that can be deterministically
+        # recomputed on load for the sake of save compatibility.
+        del state["blue_threat_zone"]
+        del state["red_threat_zone"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Regenerate any state that was not persisted.
+        self.on_load()
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(self.theater, self.date,
@@ -150,6 +167,11 @@ class Game:
     @property
     def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
+
+    def faction_for(self, player: bool) -> Faction:
+        if player:
+            return self.player_faction
+        return self.enemy_faction
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -227,6 +249,7 @@ class Game:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
+        self.compute_threat_zones()
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
@@ -290,6 +313,7 @@ class Game:
 
         # Plan flights & combat for next turn
         self.compute_conflicts_position()
+        self.compute_threat_zones()
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
@@ -352,6 +376,15 @@ class Game:
         """
         self.current_group_id += 1
         return self.current_group_id
+
+    def compute_threat_zones(self) -> None:
+        self.blue_threat_zone = ThreatZones.for_faction(self, player=True)
+        self.red_threat_zone = ThreatZones.for_faction(self, player=False)
+
+    def threat_zone_for(self, player: bool) -> ThreatZones:
+        if player:
+            return self.blue_threat_zone
+        return self.red_threat_zone
 
     def compute_conflicts_position(self):
         """
