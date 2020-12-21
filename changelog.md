@@ -1,3 +1,16 @@
+# 2.3.3
+
+## Features/Improvements
+* **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
+* **[Campaigns]** Added a lite version of the Golan Heights campaign
+* **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
+* **[Factions]** Updated Nato Desert Storm to include F-14A
+* **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
+
+## Fixes:
+* **[Factions]** AI would never buy artillery units for the frontline - fixed
+* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
+
 # 2.3.2
 
 ## Features/Improvements
