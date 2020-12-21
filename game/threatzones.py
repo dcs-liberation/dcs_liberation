@@ -29,6 +29,13 @@ class ThreatZones:
         self.air_defenses = air_defenses
         self.all = unary_union([airbases, air_defenses])
 
+    def threatened(self, position: BaseGeometry) -> bool:
+        return self.all.intersects(position)
+
+    def path_threatened(self, a: DcsPoint, b: DcsPoint) -> bool:
+        return self.threatened(LineString(
+            [self.dcs_to_shapely_point(a), self.dcs_to_shapely_point(b)]))
+
     @singledispatchmethod
     def threatened_by_aircraft(self, target) -> bool:
         raise NotImplementedError

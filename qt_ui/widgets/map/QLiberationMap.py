@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import math
+from functools import singledispatchmethod
 from typing import Iterable, Iterator, List, Optional, Tuple
 
 from PySide2 import QtCore, QtWidgets
@@ -25,14 +26,18 @@ from PySide2.QtWidgets import (
     QGraphicsView,
 )
 from dcs import Point
+from dcs.planes import F_16C_50
 from dcs.mapping import point_from_heading
 from shapely.geometry import (
+    LineString,
     MultiPolygon,
+    Point as ShapelyPoint,
     Polygon,
 )
 
 import qt_ui.uiconstants as CONST
 from game import Game, db
+from game.navmesh import NavMesh
 from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
@@ -40,9 +45,14 @@ from game.theater.theatergroundobject import (
 )
 from game.utils import Distance, meters, nautical_miles
 from game.weather import TimeOfDay
-from gen import Conflict
-from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.flightplan import FlightPlan
+from gen import Conflict, Package
+from gen.flights.flight import (
+    Flight,
+    FlightType,
+    FlightWaypoint,
+    FlightWaypointType,
+)
+from gen.flights.flightplan import FlightPlan, FlightPlanBuilder
 from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
@@ -163,6 +173,9 @@ class QLiberationMap(QGraphicsView):
 
         self.nm_to_pixel_ratio: int = 0
 
+        self.navmesh_highlight: Optional[QPolygonF] = None
+        self.shortest_path_segments: List[QLineF] = []
+
 
     def init_scene(self):
         scene = QLiberationScene(self)
@@ -280,14 +293,14 @@ class QLiberationMap(QGraphicsView):
             scene.addEllipse(transformed[0]-radius, transformed[1]-radius, 2*radius, 2*radius, CONST.COLORS["transparent"], CONST.COLORS["light_green_transparent"])
 
     def draw_shapely_poly(self, scene: QGraphicsScene, poly: Polygon, pen: QPen,
-                          brush: QBrush) -> None:
+                          brush: QBrush) -> Optional[QPolygonF]:
         if poly.is_empty:
-            return
+            return None
         points = []
         for x, y in poly.exterior.coords:
             x, y = self._transform_point(Point(x, y))
             points.append(QPointF(x, y))
-        scene.addPolygon(QPolygonF(points), pen, brush)
+        return scene.addPolygon(QPolygonF(points), pen, brush)
 
     def draw_threat_zone(self, scene: QGraphicsScene, poly: Polygon,
                          player: bool) -> None:
@@ -316,6 +329,133 @@ class QLiberationMap(QGraphicsView):
             polys = [threat_poly]
         for poly in polys:
             self.draw_threat_zone(scene, poly, player)
+
+    def draw_navmesh_neighbor_line(self, scene: QGraphicsScene, poly: Polygon,
+                                   begin: ShapelyPoint) -> None:
+        vertex = Point(begin.x, begin.y)
+        centroid = poly.centroid
+        direction = Point(centroid.x, centroid.y)
+        end = vertex.point_from_heading(vertex.heading_between_point(direction),
+                                        nautical_miles(2).meters)
+
+        scene.addLine(QLineF(QPointF(*self._transform_point(vertex)),
+                             QPointF(*self._transform_point(end))),
+                      CONST.COLORS["yellow"])
+
+    @singledispatchmethod
+    def draw_navmesh_border(self, intersection, scene: QGraphicsScene,
+                            poly: Polygon) -> None:
+        raise NotImplementedError("draw_navmesh_border not implemented for %s",
+                                  intersection.__class__.__name__)
+
+    @draw_navmesh_border.register
+    def draw_navmesh_point_border(self, intersection: ShapelyPoint,
+                                  scene: QGraphicsScene, poly: Polygon) -> None:
+        # Draw a line from the vertex toward the center of the polygon.
+        self.draw_navmesh_neighbor_line(scene, poly, intersection)
+
+    @draw_navmesh_border.register
+    def draw_navmesh_edge_border(self, intersection: LineString,
+                                 scene: QGraphicsScene, poly: Polygon) -> None:
+        # Draw a line from the center of the edge toward the center of the
+        # polygon.
+        edge_center = intersection.interpolate(0.5, normalized=True)
+        self.draw_navmesh_neighbor_line(scene, poly, edge_center)
+
+    def display_navmesh(self, scene: QGraphicsScene, player: bool) -> None:
+        for navpoly in self.game.navmesh_for(player).polys:
+            self.draw_shapely_poly(scene, navpoly.poly, CONST.COLORS["black"],
+                                   CONST.COLORS["transparent"])
+
+            position = self._transform_point(
+                Point(navpoly.poly.centroid.x, navpoly.poly.centroid.y))
+            text = scene.addSimpleText(f"Navmesh {navpoly.ident}",
+                                       self.waypoint_info_font)
+            text.setBrush(QColor(255, 255, 255))
+            text.setPen(QColor(255, 255, 255))
+            text.moveBy(position[0] + 8, position[1])
+            text.setZValue(2)
+
+            for border in navpoly.neighbors.values():
+                self.draw_navmesh_border(border, scene, navpoly.poly)
+
+    def highlight_mouse_navmesh(self, scene: QGraphicsScene, navmesh: NavMesh,
+                                mouse_position: Point) -> None:
+        if self.navmesh_highlight is not None:
+            try:
+                scene.removeItem(self.navmesh_highlight)
+            except RuntimeError:
+                pass
+        navpoly = navmesh.localize(mouse_position)
+        if navpoly is None:
+            return
+        self.navmesh_highlight = self.draw_shapely_poly(
+            scene, navpoly.poly, CONST.COLORS["transparent"],
+            CONST.COLORS["light_green_transparent"])
+
+    def draw_shortest_path(self, scene: QGraphicsScene, navmesh: NavMesh,
+                           destination: Point, player: bool) -> None:
+        for line in self.shortest_path_segments:
+            try:
+                scene.removeItem(line)
+            except RuntimeError:
+                pass
+
+        if player:
+            origin = self.game.theater.player_points()[0]
+        else:
+            origin = self.game.theater.enemy_points()[0]
+
+        prev_pos = self._transform_point(origin.position)
+        try:
+            path = navmesh.shortest_path(origin.position, destination)
+        except ValueError:
+            return
+        for waypoint in path[1:]:
+            new_pos = self._transform_point(waypoint)
+            flight_path_pen = self.flight_path_pen(player, selected=True)
+            # Draw the line to the *middle* of the waypoint.
+            offset = self.WAYPOINT_SIZE // 2
+            self.shortest_path_segments.append(scene.addLine(
+                prev_pos[0] + offset, prev_pos[1] + offset,
+                new_pos[0] + offset, new_pos[1] + offset,
+                flight_path_pen
+            ))
+
+            self.shortest_path_segments.append(scene.addEllipse(
+                new_pos[0], new_pos[1], self.WAYPOINT_SIZE,
+                self.WAYPOINT_SIZE, flight_path_pen, flight_path_pen
+            ))
+
+            prev_pos = new_pos
+
+    def draw_tarcap_plan(self, scene: QGraphicsScene, point_near_target: Point,
+                         player: bool) -> None:
+        for line in self.shortest_path_segments:
+            try:
+                scene.removeItem(line)
+            except RuntimeError:
+                pass
+
+        self.clear_flight_paths(scene)
+
+        target = self.game.theater.closest_target(point_near_target)
+
+        if player:
+            origin = self.game.theater.player_points()[0]
+        else:
+            origin = self.game.theater.enemy_points()[0]
+
+        package = Package(target)
+        flight = Flight(package, F_16C_50, 2, FlightType.TARCAP,
+                        start_type="Warm", departure=origin, arrival=origin,
+                        divert=None)
+        package.add_flight(flight)
+        planner = FlightPlanBuilder(self.game, package, is_player=player)
+        planner.populate_flight_plan(flight)
+
+        self.draw_flight_plan(scene, flight, selected=True)
+
 
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
@@ -377,6 +517,11 @@ class QLiberationMap(QGraphicsView):
                                   player=True)
         self.display_threat_zones(scene, DisplayOptions.red_threat_zones,
                                   player=False)
+
+        if DisplayOptions.navmeshes.blue_navmesh:
+            self.display_navmesh(scene, player=True)
+        if DisplayOptions.navmeshes.red_navmesh:
+            self.display_navmesh(scene, player=False)
 
         for cp in self.game.theater.controlpoints:
 
@@ -477,8 +622,9 @@ class QLiberationMap(QGraphicsView):
                                         flight.flight_plan)
             prev_pos = tuple(new_pos)
 
-    def draw_waypoint(self, scene: QGraphicsScene, position: Tuple[int, int],
-                      player: bool, selected: bool) -> None:
+    def draw_waypoint(self, scene: QGraphicsScene,
+                      position: Tuple[float, float], player: bool,
+                      selected: bool) -> None:
         waypoint_pen = self.waypoint_pen(player, selected)
         waypoint_brush = self.waypoint_brush(player, selected)
         self.flight_path_items.append(scene.addEllipse(
@@ -521,8 +667,8 @@ class QLiberationMap(QGraphicsView):
         item.setZValue(2)
         self.flight_path_items.append(item)
 
-    def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[int, int],
-                         pos1: Tuple[int, int], player: bool,
+    def draw_flight_path(self, scene: QGraphicsScene, pos0: Tuple[float, float],
+                         pos1: Tuple[float, float], player: bool,
                          selected: bool) -> None:
         flight_path_pen = self.flight_path_pen(player, selected)
         # Draw the line to the *middle* of the waypoint.
@@ -874,16 +1020,40 @@ class QLiberationMap(QGraphicsView):
         return self.game.theater.is_in_sea(world_destination)
 
     def sceneMouseMovedEvent(self, event: QGraphicsSceneMouseEvent):
+        if self.game is None:
+            return
+
+        mouse_position = Point(event.scenePos().x(), event.scenePos().y())
         if self.state == QLiberationMapState.MOVING_UNIT:
             self.setCursor(Qt.PointingHandCursor)
             self.movement_line.setLine(
                 QLineF(self.movement_line.line().p1(), event.scenePos()))
 
-            pos = Point(event.scenePos().x(), event.scenePos().y())
-            if self.is_valid_ship_pos(pos):
+            if self.is_valid_ship_pos(mouse_position):
                 self.movement_line.setPen(CONST.COLORS["green"])
             else:
                 self.movement_line.setPen(CONST.COLORS["red"])
+
+        mouse_world_pos = self._scene_to_dcs_coords(mouse_position)
+        if DisplayOptions.navmeshes.blue_navmesh:
+            self.highlight_mouse_navmesh(
+                self.scene(), self.game.blue_navmesh,
+                self._scene_to_dcs_coords(mouse_position))
+            if DisplayOptions.path_debug.shortest_path:
+                self.draw_shortest_path(self.scene(), self.game.blue_navmesh,
+                                        mouse_world_pos, player=True)
+
+        if DisplayOptions.navmeshes.red_navmesh:
+            self.highlight_mouse_navmesh(
+                self.scene(), self.game.red_navmesh, mouse_world_pos)
+            if DisplayOptions.path_debug.shortest_path:
+                self.draw_shortest_path(self.scene(), self.game.red_navmesh,
+                                        mouse_world_pos, player=False)
+
+        if DisplayOptions.path_debug.blue_tarcap:
+            self.draw_tarcap_plan(self.scene(), mouse_world_pos, player=True)
+        if DisplayOptions.path_debug.red_tarcap:
+            self.draw_tarcap_plan(self.scene(), mouse_world_pos, player=False)
 
     def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:

@@ -1,5 +1,5 @@
 """Visibility options for the game map."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Iterator, Optional, Union
 
 
@@ -7,6 +7,7 @@ from typing import Iterator, Optional, Union
 class DisplayRule:
     name: str
     _value: bool
+    debug_only: bool = field(default=False)
 
     @property
     def menu_text(self) -> str:
@@ -29,8 +30,9 @@ class DisplayRule:
 
 
 class DisplayGroup:
-    def __init__(self, name: Optional[str]) -> None:
+    def __init__(self, name: Optional[str], debug_only: bool = False) -> None:
         self.name = name
+        self.debug_only = debug_only
 
     def __iter__(self) -> Iterator[DisplayRule]:
         # Python 3.6 enforces that __dict__ is order preserving by default.
@@ -60,6 +62,23 @@ class ThreatZoneOptions(DisplayGroup):
             f"Show {coalition_name.lower()} air defenses threat zones", False)
 
 
+class NavMeshOptions(DisplayGroup):
+    def __init__(self) -> None:
+        super().__init__("Navmeshes", debug_only=True)
+        self.hide = DisplayRule("DEBUG Hide Navmeshes", True)
+        self.blue_navmesh = DisplayRule("DEBUG Show blue navmesh", False)
+        self.red_navmesh = DisplayRule("DEBUG Show red navmesh", False)
+
+
+class PathDebugOptions(DisplayGroup):
+    def __init__(self) -> None:
+        super().__init__("Shortest paths", debug_only=True)
+        self.hide = DisplayRule("DEBUG Hide paths", True)
+        self.shortest_path = DisplayRule("DEBUG Show shortest path", False)
+        self.blue_tarcap = DisplayRule("DEBUG Show blue TARCAP plan", False)
+        self.red_tarcap = DisplayRule("DEBUG Show red TARCAP plan", False)
+
+
 class DisplayOptions:
     ground_objects = DisplayRule("Ground Objects", True)
     control_points = DisplayRule("Control Points", True)
@@ -71,15 +90,23 @@ class DisplayOptions:
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
-    actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
+    actual_frontline_pos = DisplayRule("Display Actual Frontline Location",
+                                       False)
     blue_threat_zones = ThreatZoneOptions("Blue")
     red_threat_zones = ThreatZoneOptions("Red")
+    navmeshes = NavMeshOptions()
+    path_debug = PathDebugOptions()
 
     @classmethod
     def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:
+        debug = False  # Set to True to enable debug options.
         # Python 3.6 enforces that __dict__ is order preserving by default.
         for value in cls.__dict__.values():
             if isinstance(value, DisplayRule):
+                if value.debug_only and not debug:
+                    continue
                 yield value
             elif isinstance(value, DisplayGroup):
+                if value.debug_only and not debug:
+                    continue
                 yield value

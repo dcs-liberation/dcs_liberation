@@ -28,6 +28,7 @@ from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
+from .navmesh import NavMesh
 from .procurement import ProcurementAi
 from .settings import Settings
 from .theater import ConflictTheater, ControlPoint
@@ -114,9 +115,6 @@ class Game:
 
         self.sanitize_sides()
 
-        self.blue_threat_zone: ThreatZones
-        self.red_threat_zone: ThreatZones
-
         self.on_load()
 
         # Turn 0 procurement. We don't actually have any missions to plan, but
@@ -136,6 +134,8 @@ class Game:
         # recomputed on load for the sake of save compatibility.
         del state["blue_threat_zone"]
         del state["red_threat_zone"]
+        del state["blue_navmesh"]
+        del state["red_navmesh"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
@@ -380,11 +380,20 @@ class Game:
     def compute_threat_zones(self) -> None:
         self.blue_threat_zone = ThreatZones.for_faction(self, player=True)
         self.red_threat_zone = ThreatZones.for_faction(self, player=False)
+        self.blue_navmesh = NavMesh.from_threat_zones(self.red_threat_zone,
+                                                      self.theater)
+        self.red_navmesh = NavMesh.from_threat_zones(self.blue_threat_zone,
+                                                     self.theater)
 
     def threat_zone_for(self, player: bool) -> ThreatZones:
         if player:
             return self.blue_threat_zone
         return self.red_threat_zone
+
+    def navmesh_for(self, player: bool) -> NavMesh:
+        if player:
+            return self.blue_navmesh
+        return self.red_navmesh
 
     def compute_conflicts_position(self):
         """

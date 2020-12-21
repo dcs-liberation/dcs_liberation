@@ -1,21 +1,31 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union
+from typing import (
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    Tuple,
+    Union,
+)
 
 from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import VehicleGroup
 
-from game.data.doctrine import Doctrine
+if TYPE_CHECKING:
+    from game import Game
+
 from game.theater import (
     ControlPoint,
     MissionTarget,
     OffMapSpawn,
     TheaterGroundObject,
 )
-from game.utils import Distance, meters
-from game.weather import Conditions
+from game.utils import Distance, meters, nautical_miles
 from .flight import Flight, FlightWaypoint, FlightWaypointType
 
 
@@ -26,12 +36,13 @@ class StrikeTarget:
 
 
 class WaypointBuilder:
-    def __init__(self, conditions: Conditions, flight: Flight,
-                 doctrine: Doctrine,
+    def __init__(self, flight: Flight, game: Game, player: bool,
                  targets: Optional[List[StrikeTarget]] = None) -> None:
-        self.conditions = conditions
         self.flight = flight
-        self.doctrine = doctrine
+        self.conditions = game.conditions
+        self.doctrine = game.faction_for(player).doctrine
+        self.threat_zones = game.threat_zone_for(not player)
+        self.navmesh = game.navmesh_for(player)
         self.targets = targets
 
     @property
@@ -429,3 +440,80 @@ class WaypointBuilder:
 
         egress = self.egress(egress, target)
         return ingress, waypoint, egress
+
+    @staticmethod
+    def nav(position: Point, altitude: Distance) -> FlightWaypoint:
+        """Creates a navigation point.
+
+        Args:
+            position: Position of the waypoint.
+            altitude: Altitude of the waypoint.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.NAV,
+            position.x,
+            position.y,
+            altitude
+        )
+        waypoint.name = "NAV"
+        waypoint.description = ""
+        waypoint.pretty_name = ""
+        return waypoint
+
+    def nav_path(self, a: Point, b: Point,
+                 altitude: Distance) -> List[FlightWaypoint]:
+        path = self.clean_nav_points(self.navmesh.shortest_path(a, b))
+        return [self.nav(self.perturb(p), altitude) for p in path]
+
+    def clean_nav_points(self, points: Iterable[Point]) -> Iterator[Point]:
+        # Examine a sliding window of three waypoints. `current` is the waypoint
+        # being checked for prunability. `previous` is the last emitted waypoint
+        # before `current`. `nxt` is the waypoint after `current`.
+        previous: Optional[Point] = None
+        current: Optional[Point] = None
+        for nxt in points:
+            if current is None:
+                current = nxt
+                continue
+            if previous is None:
+                previous = current
+                current = nxt
+                continue
+
+            if self.nav_point_prunable(previous, current, nxt):
+                current = nxt
+                continue
+
+            yield current
+            previous = current
+            current = nxt
+
+    def nav_point_prunable(self, previous: Point, current: Point,
+                           nxt: Point) -> bool:
+        previous_threatened = self.threat_zones.path_threatened(previous,
+                                                                current)
+        next_threatened = self.threat_zones.path_threatened(current, nxt)
+        pruned_threatened = self.threat_zones.path_threatened(previous, nxt)
+        previous_distance = meters(previous.distance_to_point(current))
+        distance = meters(current.distance_to_point(nxt))
+        distance_without = previous_distance + distance
+        if distance > distance_without:
+            # Don't prune paths to make them longer.
+            return False
+
+        # We could shorten the path by removing the intermediate
+        # waypoint. Do so if the new path isn't higher threat.
+        if not pruned_threatened:
+            # The new path is not threatened, so safe to prune.
+            return True
+
+        # The new path is threatened. Only allow if both paths were
+        # threatened anyway.
+        return previous_threatened and next_threatened
+
+    @staticmethod
+    def perturb(point: Point) -> Point:
+        deviation = nautical_miles(1)
+        x_adj = random.randint(int(-deviation.meters), int(deviation.meters))
+        y_adj = random.randint(int(-deviation.meters), int(deviation.meters))
+        return Point(point.x + x_adj, point.y + y_adj)

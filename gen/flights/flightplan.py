@@ -450,17 +450,21 @@ class CasFlightPlan(PatrollingFlightPlan):
 @dataclass(frozen=True)
 class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
+    nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
         yield from [
-            self.takeoff,
             self.patrol_start,
             self.patrol_end,
-            self.land,
         ]
+        yield from self.nav_from
+        yield self.land
         if self.divert is not None:
             yield self.divert
 
@@ -876,7 +880,7 @@ class FlightPlanBuilder:
             int(self.doctrine.max_patrol_altitude.meters)
         ))
 
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.race_track(start, end, patrol_alt)
 
         return BarCapFlightPlan(
@@ -903,7 +907,7 @@ class FlightPlanBuilder:
         start = target.point_from_heading(heading,
                                           -self.doctrine.sweep_distance.meters)
 
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.sweep(start, target,
                                    self.doctrine.ingress_altitude)
 
@@ -1000,7 +1004,7 @@ class FlightPlanBuilder:
                            int(self.doctrine.max_patrol_altitude.meters)))
 
         # Create points
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
 
         if isinstance(location, FrontLine):
             orbit0p, orbit1p = self.racetrack_for_frontline(location)
@@ -1019,6 +1023,10 @@ class FlightPlanBuilder:
             patrol_duration=self.doctrine.cap_duration,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(flight.departure.position, orbit0p,
+                                    patrol_alt),
+            nav_from=builder.nav_path(orbit1p, flight.arrival.position,
+                                      patrol_alt),
             patrol_start=start,
             patrol_end=end,
             land=builder.land(flight.arrival),
@@ -1113,7 +1121,7 @@ class FlightPlanBuilder:
     def generate_escort(self, flight: Flight) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
 
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
         ingress, target, egress = builder.escort(
             self.package.waypoints.ingress, self.package.target,
             self.package.waypoints.egress)
@@ -1151,7 +1159,7 @@ class FlightPlanBuilder:
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
 
         return CasFlightPlan(
             package=self.package,
@@ -1247,7 +1255,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the landing waypoint for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine)
+        builder = WaypointBuilder(flight, self.game, self.is_player)
         return builder.land(arrival)
 
     def strike_flightplan(
@@ -1255,8 +1263,7 @@ class FlightPlanBuilder:
             ingress_type: FlightWaypointType,
             targets: Optional[List[StrikeTarget]] = None) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
-        builder = WaypointBuilder(self.game.conditions, flight, self.doctrine,
-                                  targets)
+        builder = WaypointBuilder(flight, self.game, self.is_player, targets)
 
         target_waypoints: List[FlightWaypoint] = []
         if targets is not None:

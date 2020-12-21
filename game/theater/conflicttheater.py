@@ -523,6 +523,21 @@ class ConflictTheater:
                 closest = control_point
                 closest_distance = distance
         return closest
+
+    def closest_target(self, point: Point) -> MissionTarget:
+        closest: MissionTarget = self.controlpoints[0]
+        closest_distance = point.distance_to_point(closest.position)
+        for control_point in self.controlpoints[1:]:
+            distance = point.distance_to_point(control_point.position)
+            if distance < closest_distance:
+                closest = control_point
+                closest_distance = distance
+            for tgo in control_point.ground_objects:
+                distance = point.distance_to_point(tgo.position)
+                if distance < closest_distance:
+                    closest = tgo
+                    closest_distance = distance
+        return closest
     
     def closest_opposing_control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """
