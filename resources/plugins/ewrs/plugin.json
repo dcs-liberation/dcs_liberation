@@ -1,0 +1,12 @@
+{
+    "nameInUI": "EWRS",
+    "defaultValue": false,
+    "specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "ewrs.lua",
+            "mnemonic": "ewrs"
+        }
+    ],
+    "configurationWorkOrders": []
+}
