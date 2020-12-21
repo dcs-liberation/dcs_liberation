@@ -4,6 +4,8 @@ Saves from 2.3 are not compatible with 2.4.
 
 ## Features/Improvements
 
+* **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
+
 ## Fixes
 
 # 2.3.2
