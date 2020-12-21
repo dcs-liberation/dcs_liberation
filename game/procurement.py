@@ -75,14 +75,14 @@ class ProcurementAi:
 
     def random_affordable_ground_unit(
             self, budget: int) -> Optional[Type[VehicleType]]:
-        affordable_units = [u for u in self.faction.frontline_units if
+        affordable_units = [u for u in self.faction.frontline_units + self.faction.artillery_units if
                             db.PRICES[u] <= budget]
         if not affordable_units:
             return None
         return random.choice(affordable_units)
 
     def reinforce_front_line(self, budget: int) -> int:
-        if not self.faction.frontline_units:
+        if not self.faction.frontline_units and not self.faction.artillery_units:
             return budget
 
         while budget > 0:
