@@ -33,7 +33,7 @@ from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
-from ..conflictgen import Conflict
+from ..conflictgen import Conflict, FRONTLINE_LENGTH
 
 if TYPE_CHECKING:
     from game import Game
@@ -364,6 +364,12 @@ class PatrollingFlightPlan(FlightPlan):
 
     #: Maximum time to remain on station.
     patrol_duration: timedelta
+
+    #: The engagement range of any Search Then Engage task, or the radius of a
+    #: Search Then Engage in Zone task. Any enemies of the appropriate type for
+    #: this mission within this range of the flight's current position (or the
+    #: center of the zone) will be engaged by the flight.
+    engagement_distance: Distance
 
     @property
     def patrol_start_time(self) -> timedelta:
@@ -877,6 +883,7 @@ class FlightPlanBuilder:
             package=self.package,
             flight=flight,
             patrol_duration=self.doctrine.cap_duration,
+            engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             patrol_start=start,
             patrol_end=end,
@@ -1010,6 +1017,7 @@ class FlightPlanBuilder:
             # requests an escort the CAP flight will remain on station for the
             # duration of the escorted mission, or until it is winchester/bingo.
             patrol_duration=self.doctrine.cap_duration,
+            engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             patrol_start=start,
             patrol_end=end,
@@ -1152,6 +1160,7 @@ class FlightPlanBuilder:
             takeoff=builder.takeoff(flight.departure),
             patrol_start=builder.ingress(FlightWaypointType.INGRESS_CAS,
                                          ingress, location),
+            engagement_distance=meters(FRONTLINE_LENGTH) / 2,
             target=builder.cas(center),
             patrol_end=builder.egress(egress, location),
             land=builder.land(flight.arrival),

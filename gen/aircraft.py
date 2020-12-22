@@ -1504,7 +1504,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         if isinstance(self.flight.flight_plan, CasFlightPlan):
             waypoint.add_task(EngageTargetsInZone(
                 position=self.flight.flight_plan.target,
-                radius=FRONTLINE_LENGTH / 2,
+                radius=int(self.flight.flight_plan.engagement_distance.meters),
                 targets=[
                     Targets.All.GroundUnits.GroundVehicles,
                     Targets.All.GroundUnits.AirDefence.AAA,
@@ -1750,8 +1750,10 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
-        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
-            flight_plan_type = self.flight.flight_plan.__class__.__name__
+        flight_plan = self.flight.flight_plan
+
+        if not isinstance(flight_plan, PatrollingFlightPlan):
+            flight_plan_type = flight_plan.__class__.__name__
             logging.error(
                 f"Cannot create race track for {self.flight} because "
                 f"{flight_plan_type} does not define a patrol.")
@@ -1769,18 +1771,18 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # later.
         cap_types = {FlightType.BARCAP, FlightType.TARCAP}
         if self.flight.flight_type in cap_types:
+            engagement_distance = int(flight_plan.engagement_distance.meters)
             waypoint.tasks.append(
-                EngageTargets(max_distance=int(nautical_miles(50).meters),
+                EngageTargets(max_distance=engagement_distance,
                               targets=[Targets.All.Air]))
 
         racetrack = ControlledTask(OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
-        self.set_waypoint_tot(
-            waypoint, self.flight.flight_plan.patrol_start_time)
+        self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(
-            int(self.flight.flight_plan.patrol_end_time.total_seconds()))
+            int(flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
 
         return waypoint

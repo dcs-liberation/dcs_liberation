@@ -25,11 +25,26 @@ class Doctrine:
     max_patrol_altitude: Distance
     pattern_altitude: Distance
 
+    #: The duration that CAP flights will remain on-station.
     cap_duration: timedelta
+
+    #: The minimum length of the CAP race track.
     cap_min_track_length: Distance
+
+    #: The maximum length of the CAP race track.
     cap_max_track_length: Distance
+
+    #: The minimum distance between the defended position and the *end* of the
+    #: CAP race track.
     cap_min_distance_from_cp: Distance
+
+    #: The maximum distance between the defended position and the *end* of the
+    #: CAP race track.
     cap_max_distance_from_cp: Distance
+
+    #: The engagement range of CAP flights. Any enemy aircraft within this range
+    #: of the CAP's current position will be engaged by the CAP.
+    cap_engagement_range: Distance
 
     cas_duration: timedelta
 
@@ -58,6 +73,7 @@ MODERN_DOCTRINE = Doctrine(
     cap_max_track_length=nautical_miles(40),
     cap_min_distance_from_cp=nautical_miles(10),
     cap_max_distance_from_cp=nautical_miles(40),
+    cap_engagement_range=nautical_miles(50),
     cas_duration=timedelta(minutes=30),
     sweep_distance=nautical_miles(60),
 )
@@ -84,6 +100,7 @@ COLDWAR_DOCTRINE = Doctrine(
     cap_max_track_length=nautical_miles(24),
     cap_min_distance_from_cp=nautical_miles(8),
     cap_max_distance_from_cp=nautical_miles(25),
+    cap_engagement_range=nautical_miles(35),
     cas_duration=timedelta(minutes=30),
     sweep_distance=nautical_miles(40),
 )
@@ -110,6 +127,7 @@ WWII_DOCTRINE = Doctrine(
     cap_max_track_length=nautical_miles(18),
     cap_min_distance_from_cp=nautical_miles(0),
     cap_max_distance_from_cp=nautical_miles(5),
+    cap_engagement_range=nautical_miles(20),
     cas_duration=timedelta(minutes=30),
     sweep_distance=nautical_miles(10),
 )
