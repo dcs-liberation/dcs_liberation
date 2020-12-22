@@ -6,6 +6,7 @@
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
+* **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
 
 ## Fixes:
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
