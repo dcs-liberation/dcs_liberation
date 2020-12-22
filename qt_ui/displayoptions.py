@@ -47,6 +47,19 @@ class FlightPathOptions(DisplayGroup):
         self.all = DisplayRule("Show All Flight Paths", True)
 
 
+class ThreatZoneOptions(DisplayGroup):
+    def __init__(self, coalition_name: str) -> None:
+        super().__init__(f"{coalition_name} Threat Zones")
+        self.none = DisplayRule(
+            f"Hide {coalition_name.lower()} threat zones", True)
+        self.all = DisplayRule(
+            f"Show full {coalition_name.lower()} threat zones", False)
+        self.aircraft = DisplayRule(
+            f"Show {coalition_name.lower()} aircraft threat tones", False)
+        self.air_defenses = DisplayRule(
+            f"Show {coalition_name.lower()} air defenses threat zones", False)
+
+
 class DisplayOptions:
     ground_objects = DisplayRule("Ground Objects", True)
     control_points = DisplayRule("Control Points", True)
@@ -59,8 +72,8 @@ class DisplayOptions:
     culling = DisplayRule("Display Culling Zones", False)
     flight_paths = FlightPathOptions()
     actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
-    blue_threat_zone = DisplayRule("Display Blue Threat Zones", False)
-    red_threat_zone = DisplayRule("Display Red Threat Zones", False)
+    blue_threat_zones = ThreatZoneOptions("Blue")
+    red_threat_zones = ThreatZoneOptions("Red")
 
     @classmethod
     def menu_items(cls) -> Iterator[Union[DisplayGroup, DisplayRule]]:

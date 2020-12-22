@@ -43,7 +43,7 @@ from game.weather import TimeOfDay
 from gen import Conflict
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from gen.flights.flightplan import FlightPlan
-from qt_ui.displayoptions import DisplayOptions
+from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
@@ -298,9 +298,18 @@ class QLiberationMap(QGraphicsView):
         self.draw_shapely_poly(scene, poly, CONST.COLORS["transparent"], brush)
 
     def display_threat_zones(self, scene: QGraphicsScene,
-                             player: bool) -> None:
+                             options: ThreatZoneOptions, player: bool) -> None:
         """Draws the threat zones on the map."""
-        threat_poly = self.game.threat_zone_for(player).all
+        threat_zones = self.game.threat_zone_for(player)
+        if options.all:
+            threat_poly = threat_zones.all
+        elif options.aircraft:
+            threat_poly = threat_zones.airbases
+        elif options.air_defenses:
+            threat_poly = threat_zones.air_defenses
+        else:
+            return
+
         if isinstance(threat_poly, MultiPolygon):
             polys = threat_poly.geoms
         else:
@@ -364,11 +373,10 @@ class QLiberationMap(QGraphicsView):
         if DisplayOptions.culling and self.game.settings.perf_culling:
             self.display_culling(scene)
 
-        if DisplayOptions.blue_threat_zone:
-            self.display_threat_zones(scene, player=True)
-
-        if DisplayOptions.red_threat_zone:
-            self.display_threat_zones(scene, player=False)
+        self.display_threat_zones(scene, DisplayOptions.blue_threat_zones,
+                                  player=True)
+        self.display_threat_zones(scene, DisplayOptions.red_threat_zones,
+                                  player=False)
 
         for cp in self.game.theater.controlpoints:
 
