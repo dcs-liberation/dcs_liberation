@@ -18,6 +18,7 @@ from gen.flights.ai_flight_planner_db import (
 )
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
+from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 
 if TYPE_CHECKING:
     from game import Game
