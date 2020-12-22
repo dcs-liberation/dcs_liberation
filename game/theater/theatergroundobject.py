@@ -7,6 +7,9 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import Group
 
+from .. import db
+from ..data.radar_db import UNITS_WITH_RADAR
+
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
     from gen.flights.flight import FlightType
@@ -142,6 +145,15 @@ class TheaterGroundObject(MissionTarget):
 
     @property
     def might_have_aa(self) -> bool:
+        return False
+
+    @property
+    def has_radar(self) -> bool:
+        """Returns True if the ground object contains a unit with radar."""
+        for group in self.groups:
+            for unit in group.units:
+                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
+                    return True
         return False
 
 

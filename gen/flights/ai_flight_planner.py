@@ -18,8 +18,6 @@ from typing import (
 
 from dcs.unittype import FlyingType
 
-from game import db
-from game.data.radar_db import UNITS_WITH_RADAR
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
 from game.theater import (
@@ -36,7 +34,7 @@ from game.theater.theatergroundobject import (
     EwrGroundObject,
     NavalGroundObject, VehicleGroupGroundObject,
 )
-from game.utils import Distance, nautical_miles, nautical_miles
+from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import (
@@ -256,7 +254,7 @@ class ObjectiveFinder:
                 if ground_object.name in found_targets:
                     continue
 
-                if not self.object_has_radar(ground_object):
+                if not ground_object.has_radar:
                     continue
 
                 # TODO: Yield in order of most threatening.
@@ -357,15 +355,6 @@ class ObjectiveFinder:
         targets = sorted(targets, key=operator.itemgetter(1))
         for target, _range in targets:
             yield target
-
-    @staticmethod
-    def object_has_radar(ground_object: TheaterGroundObject) -> bool:
-        """Returns True if the ground object contains a unit with radar."""
-        for group in ground_object.groups:
-            for unit in group.units:
-                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
-                    return True
-        return False
 
     def front_lines(self) -> Iterator[FrontLine]:
         """Iterates over all active front lines in the theater."""
