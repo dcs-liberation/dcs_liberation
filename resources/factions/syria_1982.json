@@ -21,7 +21,9 @@
     "IFV_BMP_1",
     "APC_MTLB",
     "MBT_T_55",
-    "MBT_T_72B"
+    "MBT_T_72B",
+    "AAA_ZU_23_on_Ural_375",
+    "AAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"

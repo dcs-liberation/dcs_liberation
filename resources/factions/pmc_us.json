@@ -11,7 +11,9 @@
   ],
   "frontline_units": [
     "APC_M1043_HMMWV_Armament",
-    "IFV_MCV_80"
+    "IFV_MCV_80",
+    "IFV_LAV_25",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
   ],

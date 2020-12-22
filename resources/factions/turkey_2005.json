@@ -21,7 +21,8 @@
     "MBT_Leopard_1A3",
     "MBT_M60A3_Patton",
     "APC_Cobra",
-    "APC_BTR_80"
+    "APC_BTR_80",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
     "SPH_M109_Paladin"

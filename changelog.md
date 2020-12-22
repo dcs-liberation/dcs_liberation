@@ -5,9 +5,21 @@ Saves from 2.3 are not compatible with 2.4.
 ## Features/Improvements
 
 * **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
+
+# 2.3.3
+
+## Features/Improvements
+* **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
+* **[Campaigns]** Added a lite version of the Golan Heights campaign
+* **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
+* **[Factions]** Updated Nato Desert Storm to include F-14A
+* **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
 
-## Fixes
+## Fixes:
+* **[Factions]** AI would never buy artillery units for the frontline - fixed
+* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
+* **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
 
 # 2.3.2
 

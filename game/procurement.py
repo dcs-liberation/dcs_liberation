@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
 import random
+from dataclasses import dataclass
 from typing import Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.task import CAP, CAS
@@ -75,15 +75,25 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-            self, budget: int) -> Optional[Type[VehicleType]]:
-        affordable_units = [u for u in self.faction.frontline_units if
+            self, budget: int, cp: ControlPoint) -> Optional[Type[VehicleType]]:
+        affordable_units = [u for u in self.faction.frontline_units + self.faction.artillery_units if
                             db.PRICES[u] <= budget]
+
+        total_number_aa = cp.base.total_frontline_aa + cp.pending_frontline_aa_deliveries_count
+        total_non_aa = cp.base.total_armor + cp.pending_deliveries_count - total_number_aa
+        max_aa = math.ceil(total_non_aa/8)
+
+        # Limit the number of AA units the AI will buy
+        if not total_number_aa < max_aa:
+            for unit in [u for u in affordable_units if u in TYPE_SHORAD]:
+                affordable_units.remove(unit)
+
         if not affordable_units:
             return None
         return random.choice(affordable_units)
 
     def reinforce_front_line(self, budget: int) -> int:
-        if not self.faction.frontline_units:
+        if not self.faction.frontline_units and not self.faction.artillery_units:
             return budget
 
         while budget > 0:
@@ -92,7 +102,7 @@ class ProcurementAi:
                 break
 
             cp = random.choice(candidates)
-            unit = self.random_affordable_ground_unit(budget)
+            unit = self.random_affordable_ground_unit(budget, cp)
             if unit is None:
                 # Can't afford any more units.
                 break

@@ -13,7 +13,8 @@
   "frontline_units": [
     "APC_Cobra",
     "APC_BTR_80",
-    "ARV_BRDM_2"
+    "ARV_BRDM_2",
+    "SAM_SA_13_Strela_10M3_9A35M3"
   ],
   "artillery_units": [
     "SPH_2S19_Msta"

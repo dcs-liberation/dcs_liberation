@@ -23,7 +23,8 @@
     "APC_M113",
     "APC_M1043_HMMWV_Armament",
     "ATGM_M1045_HMMWV_TOW",
-    "MBT_Merkava_Mk__4"
+    "MBT_Merkava_Mk__4",
+    "AAA_Vulcan_M163"
   ],
   "artillery_units": [
     "SPH_M109_Paladin",

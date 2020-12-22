@@ -13,7 +13,8 @@
     "MT_Pz_Kpfw_IV_Ausf_H",
     "APC_Sd_Kfz_251",
     "AC_Sd_Kfz_234_2_Puma",
-    "TD_Jagdpanzer_IV"
+    "TD_Jagdpanzer_IV",
+    "AAA_8_8cm_Flak_18"
   ],
   "artillery_units": [
     "Sturmpanzer_IV_Brummbär"
