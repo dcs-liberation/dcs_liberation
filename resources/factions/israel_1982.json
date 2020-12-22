@@ -22,7 +22,8 @@
   "frontline_units": [
     "APC_M113",
     "MBT_M60A3_Patton",
-    "MBT_Merkava_Mk__4"
+    "MBT_Merkava_Mk__4",
+    "AAA_Vulcan_M163"
   ],
   "artillery_units": [
   ],

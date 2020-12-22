@@ -12,7 +12,8 @@
   "frontline_units": [
     "MT_M4_Sherman",
     "MBT_M60A3_Patton",
-    "APC_M2A1"
+    "APC_M2A1",
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "M12_GMC"

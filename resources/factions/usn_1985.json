@@ -20,7 +20,8 @@
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",
-    "APC_M1025_HMMWV"
+    "APC_M1025_HMMWV",
+    "AAA_Vulcan_M163"
   ],
   "artillery_units": [
     "SPH_M109_Paladin",

@@ -22,7 +22,8 @@
   "frontline_units": [
     "MBT_T_90",
     "MBT_T_72B",
-    "IFV_BMP_2"
+    "IFV_BMP_2",
+    "SAM_SA_19_Tunguska_2S6"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",

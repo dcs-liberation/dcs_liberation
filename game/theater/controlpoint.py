@@ -20,6 +20,7 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.runways import RunwayAssigner, RunwayData
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
@@ -456,6 +457,26 @@ class ControlPoint(MissionTarget, ABC):
                         for u in group.units:
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
+
+    @property
+    def pending_frontline_aa_deliveries_count(self):
+        """
+        Get number of pending frontline aa units
+        """
+        if self.pending_unit_deliveries:
+            return sum([v for k,v in self.pending_unit_deliveries.units.items() if k in TYPE_SHORAD])
+        else:
+            return 0
+
+    @property
+    def pending_deliveries_count(self):
+        """
+        Get number of pending units
+        """
+        if self.pending_unit_deliveries:
+            return sum([v for k, v in self.pending_unit_deliveries.units.items()])
+        else:
+            return 0
 
 
 class Airfield(ControlPoint):

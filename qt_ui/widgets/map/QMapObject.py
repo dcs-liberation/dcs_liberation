@@ -47,7 +47,7 @@ class QMapObject(QGraphicsRectItem):
         object_details_action.triggered.connect(self.on_click)
         menu.addAction(object_details_action)
 
-        # Not all locations have valid objetives. Off-map spawns, for example,
+        # Not all locations have valid objectives. Off-map spawns, for example,
         # have no mission types.
         if list(self.mission_target.mission_types(for_player=True)):
             new_package_action = QAction(f"New package")

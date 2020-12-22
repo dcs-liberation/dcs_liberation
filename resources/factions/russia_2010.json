@@ -34,7 +34,8 @@
     "APC_BTR_82A",
     "MBT_T_90",
     "MBT_T_80U",
-    "MBT_T_72B3"
+    "MBT_T_72B3",
+    "SAM_SA_19_Tunguska_2S6"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",

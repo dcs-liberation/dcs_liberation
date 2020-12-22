@@ -17,7 +17,8 @@
     "IFV_BMP_1",
     "IFV_BMP_2",
     "MBT_T_72B",
-    "MBT_T_55"
+    "MBT_T_55",
+    "SAM_SA_13_Strela_10M3_9A35M3"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad",

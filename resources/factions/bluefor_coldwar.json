@@ -25,7 +25,8 @@
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",
-    "APC_M113"
+    "APC_M113",
+    "SAM_Chaparral_M48"
   ],
   "artillery_units": [
     "SPH_M109_Paladin"

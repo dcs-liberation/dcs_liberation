@@ -23,7 +23,8 @@
     "IFV_Marder",
     "TPz_Fuchs",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament"
+    "APC_M1043_HMMWV_Armament",
+    "SPAAA_Gepard"
   ],
   "artillery_units": [
     "SPH_M109_Paladin",

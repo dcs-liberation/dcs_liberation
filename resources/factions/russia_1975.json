@@ -25,7 +25,8 @@
     "APC_BTR_80",
     "IFV_BMD_1",
     "IFV_BMP_1",
-    "MBT_T_55"
+    "MBT_T_55",
+    "SAM_SA_8_Osa_9A33"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad",

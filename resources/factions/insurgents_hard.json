@@ -1,0 +1,39 @@
+{
+  "country": "Insurgents",
+  "name": "Insurgents",
+  "authors": "Khopa",
+  "description": "<p>Insurgents faction.</p>",
+  "aircrafts": [
+  ],
+  "frontline_units": [
+    "ATGM_M1045_HMMWV_TOW",
+    "APC_M1043_HMMWV_Armament",
+    "ARV_BRDM_2",
+    "APC_BTR_80",
+    "ARV_BTR_RD",
+    "IFV_BMP_1",
+    "MBT_T_55",
+    "AAA_ZU_23_Insurgent_on_Ural_375",
+    "AAA_ZSU_57_2",
+    "AAA_ZSU_57_2"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Infantry_Soldier_Insurgents",
+    "Soldier_RPG",
+    "SAM_SA_18_Igla_MANPADS"
+  ],
+  "air_defenses": [
+    "SA9Generator",
+    "ZSU57Generator",
+    "ZU23Generator",
+    "ZU23UralInsurgentGenerator"
+  ]
+}

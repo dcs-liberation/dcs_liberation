@@ -27,7 +27,9 @@
     "APC_BTR_80",
     "MBT_M60A3_Patton",
     "IFV_BMP_1",
-    "MBT_T_72B"
+    "MBT_T_72B",
+    "SPAAA_ZSU_23_4_Shilka",
+    "AAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad",
