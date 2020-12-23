@@ -45,7 +45,8 @@
   "infantry_units": [
     "Infantry_M4",
     "Soldier_M249",
-    "Stinger_MANPADS"
+    "Stinger_MANPADS",
+    "_2B11_mortar"
   ],
   "air_defenses": [
     "AvengerGenerator",

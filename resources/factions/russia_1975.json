@@ -39,7 +39,8 @@
   ],
   "infantry_units": [
     "Infantry_Soldier_Rus",
-    "Soldier_RPG"
+    "Soldier_RPG",
+    "_2B11_mortar"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",
