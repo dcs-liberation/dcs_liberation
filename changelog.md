@@ -6,9 +6,11 @@
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
 * **[Campaigns]** AA units added to frontlines and updated all factions to include frontline AA units.
 * **[Mission Generator]** Infantry will only be generated for APC and IFV groups
-* **[Mission Generator]** Infantry group size is not randomized anymore
+* **[Mission Generator]** Infantry squads size is not randomized anymore
+* **[Mission Generator]** Infantry squads can have a mortar. 
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
+* **[Factions]** Germany 1944, added Stug III and Stug IV
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
 
 ## Fixes:

@@ -858,6 +858,13 @@ UNIT_BY_TASK = {
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Roland_ADS,
         AirDefence.HQ_7_Self_Propelled_LN,
+        AirDefence.AAA_8_8cm_Flak_18,
+        AirDefence.AAA_8_8cm_Flak_36,
+        AirDefence.AAA_8_8cm_Flak_37,
+        AirDefence.AAA_8_8cm_Flak_41,
+        AirDefence.AAA_Bofors_40mm,
+        AirDefence.AAA_M1_37mm,
+        AirDefence.AA_gun_QF_3_7,
 
         frenchpack.DIM__TOYOTA_BLUE,
         frenchpack.DIM__TOYOTA_DESERT,
