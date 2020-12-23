@@ -4,6 +4,9 @@
 * **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
 * **[Campaigns]** Added a lite version of the Golan Heights campaign
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
+* **[Campaigns]** AA units added to frontlines
+* **[Mission Generator]** Infantry will only be generated for APC and IFV groups
+* **[Mission Generator]** Infantry group size is not randomized anymore
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
