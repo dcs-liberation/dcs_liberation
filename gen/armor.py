@@ -50,6 +50,8 @@ FIGHT_DISTANCE = 3500
 
 RANDOM_OFFSET_ATTACK = 250
 
+INFANTRY_GROUP_SIZE = 5
+
 
 @dataclass(frozen=True)
 class JtacInfo:
@@ -226,7 +228,7 @@ class GroundConflictGenerator:
                 heading=forward_heading,
                 move_formation=PointAction.OffRoad)
 
-        for i in range(random.randint(3, 10)):
+        for i in range(INFANTRY_GROUP_SIZE):
             u = random.choice(possible_infantry_units)
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
