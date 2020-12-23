@@ -4,7 +4,7 @@
 * **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
 * **[Campaigns]** Added a lite version of the Golan Heights campaign
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
-* **[Campaigns]** AA units added to frontlines
+* **[Campaigns]** AA units added to frontlines and updated all factions to include frontline AA units.
 * **[Mission Generator]** Infantry will only be generated for APC and IFV groups
 * **[Mission Generator]** Infantry group size is not randomized anymore
 * **[Factions]** Updated Nato Desert Storm to include F-14A
@@ -15,6 +15,7 @@
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
 * **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
+* **[UI]** Fixed and added many missing ground units icons
 
 # 2.3.2
 
