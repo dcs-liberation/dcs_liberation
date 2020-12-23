@@ -81,7 +81,7 @@ class NewGameWizard(QtWidgets.QWizard):
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
-            midgame=self.field("midGame"),
+            midgame=False,
             inverted=self.field("invertMap"),
             no_carrier=self.field("no_carrier"),
             no_lha=self.field("no_lha"),
@@ -271,10 +271,10 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
 
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        midgame = QtWidgets.QCheckBox()
-        self.registerField('midGame', midgame)
-        mapSettingsLayout.addWidget(midgame, 1, 1)
+        #mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
+        #midgame = QtWidgets.QCheckBox()
+        #self.registerField('midGame', midgame)
+        #mapSettingsLayout.addWidget(midgame, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
