@@ -4,6 +4,7 @@
 * **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
 * **[Campaigns]** Added a lite version of the Golan Heights campaign
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
+* **[Campaigns]** Reworked Emirates campaign
 * **[Campaigns]** AA units added to frontlines and updated all factions to include frontline AA units.
 * **[Mission Generator]** Infantry will only be generated for APC and IFV groups
 * **[Mission Generator]** Infantry squads size is not randomized anymore
@@ -11,6 +12,7 @@
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
 * **[Factions]** Germany 1944, added Stug III and Stug IV
+* **[Factions]** Added factions Insurgents (Hard) with better and more weapons
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
 
 ## Fixes:
@@ -18,6 +20,7 @@
 * **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
 * **[UI]** Fixed and added many missing ground units icons
+* **[New Game Wizard]** Removed "mid game" campaign generator option which is currently broken
 
 # 2.3.2
 
