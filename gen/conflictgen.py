@@ -85,25 +85,38 @@ class Conflict:
         """Finds the first intersection with an exclusion zone in one heading from an initial point up to max_distance"""
         extended = initial.point_from_heading(heading, max_distance)
         if theater.landmap is None:
-            # TODO: Why is this possible?
+            logging.error(f"No landmap found for {theater.terrain.name}")
             return extended
 
         p0 = ShapelyPoint(initial.x, initial.y)
         p1 = ShapelyPoint(extended.x, extended.y)
         line = LineString([p0, p1])
+        intersections = (
+            line.intersection(
+                theater.landmap.exclusion_zones.boundary),
+            line.intersection(
+                theater.landmap.inclusion_zones.boundary),
+            line.intersection(
+                theater.landmap.sea_zones.boundary)
+        )
+        # Find the shortest distance to a landmap boundary
+        min_distance = max_distance
+        shortest_intersection = None
+        for intersection in intersections:
+            distance = p0.distance(intersection)
+            if not intersection.is_empty and distance < min_distance:
+                min_distance = distance
+                shortest_intersection = intersection
 
-        intersection = line.intersection(
-            theater.landmap.exclusion_zones.boundary)
-        if intersection.is_empty:
-            intersection = line.intersection(theater.landmap.sea_zones.boundary)
+        if shortest_intersection is None:
             # Max extent does not intersect with the boundary of the inclusion
             # zone, so the full front line is usable. This does assume that the
             # front line was centered on a valid location.
-        if intersection.is_empty:
             return extended
 
-        # Otherwise extend the front line only up to the intersection.
-        return initial.point_from_heading(heading, p0.distance(intersection))
+        # Otherwise extend the front line only up to the shortest intersection.
+        return initial.point_from_heading(
+            heading, p0.distance(shortest_intersection))
 
     @classmethod
     def find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater, coerce=True) -> Optional[Point]:
