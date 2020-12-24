@@ -57,6 +57,7 @@ from gen.flights.flightplan import (
     FlightPlanBuilder,
     InvalidObjectiveLocation,
 )
+from gen.flights.traveltime import TotEstimator
 from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
@@ -460,6 +461,7 @@ class QLiberationMap(QGraphicsView):
         except InvalidObjectiveLocation:
             return
 
+        package.time_over_target = TotEstimator(package).earliest_tot()
         self.draw_flight_plan(scene, flight, selected=True)
 
 
