@@ -1,9 +1,9 @@
 import logging
-import random
 from typing import Tuple, Optional
 
 from dcs.country import Country
 from dcs.mapping import Point
+from shapely.geometry import LineString, Point as ShapelyPoint
 
 from game.theater.conflicttheater import ConflictTheater, FrontLine
 from game.theater.controlpoint import ControlPoint
@@ -56,7 +56,7 @@ class Conflict:
         """
         center_position, heading = cls.frontline_position(from_cp, to_cp, theater)
         left_heading = heading_sum(heading, -90)
-        right_heading =  heading_sum(heading, 90)
+        right_heading = heading_sum(heading, 90)
         left_position = cls.extend_ground_position(center_position, int(FRONTLINE_LENGTH / 2), left_heading, theater)
         right_position = cls.extend_ground_position(center_position, int(FRONTLINE_LENGTH / 2), right_heading, theater)
         distance = int(left_position.distance_to_point(right_position))
@@ -83,12 +83,21 @@ class Conflict:
     @classmethod
     def extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         """Finds the first intersection with an exclusion zone in one heading from an initial point up to max_distance"""
-        pos = initial
-        for distance in range(0, int(max_distance), 100):
-            pos = initial.point_from_heading(heading, distance)
-            if not theater.is_on_land(pos):
-                return initial.point_from_heading(heading, distance - 100)
-        return pos
+        extended = initial.point_from_heading(heading, max_distance)
+        p0 = ShapelyPoint(initial.x, initial.y)
+        p1 = ShapelyPoint(extended.x, extended.y)
+        line = LineString([p0, p1])
+
+        intersection = line.intersection(
+            theater.landmap.inclusion_zones.boundary)
+        if intersection.is_empty:
+            # Max extent does not intersect with the boundary of the inclusion
+            # zone, so the full front line is usable. This does assume that the
+            # front line was centered on a valid location.
+            return extended
+
+        # Otherwise extend the front line only up to the intersection.
+        return initial.point_from_heading(heading, p0.distance(intersection))
 
     @classmethod
     def find_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater, coerce=True) -> Optional[Point]:

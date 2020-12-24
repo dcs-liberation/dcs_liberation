@@ -447,11 +447,11 @@ class ConflictTheater:
         if self.is_on_land(point):
             return False
 
-        for exclusion_zone in self.landmap[1]:
+        for exclusion_zone in self.landmap.exclusion_zones:
             if poly_contains(point.x, point.y, exclusion_zone):
                 return False
 
-        for sea in self.landmap[2]:
+        for sea in self.landmap.sea_zones:
             if poly_contains(point.x, point.y, sea):
                 return True
 
@@ -462,14 +462,13 @@ class ConflictTheater:
             return True
 
         is_point_included = False
-        for inclusion_zone in self.landmap[0]:
-            if poly_contains(point.x, point.y, inclusion_zone):
-                is_point_included = True
+        if poly_contains(point.x, point.y, self.landmap.inclusion_zones):
+            is_point_included = True
 
         if not is_point_included:
             return False
 
-        for exclusion_zone in self.landmap[1]:
+        for exclusion_zone in self.landmap.exclusion_zones:
             if poly_contains(point.x, point.y, exclusion_zone):
                 return False
 
@@ -484,7 +483,7 @@ class ConflictTheater:
         nearest_points = []
         if not self.landmap:
             raise RuntimeError("Landmap not initialized")
-        for inclusion_zone in self.landmap[0]:
+        for inclusion_zone in self.landmap.inclusion_zones:
             nearest_pair = ops.nearest_points(point, inclusion_zone)
             nearest_points.append(nearest_pair[1])
         min_distance = point.distance(nearest_points[0]) # type: geometry.Point

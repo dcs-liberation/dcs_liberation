@@ -2,6 +2,9 @@ import pickle
 
 from dcs.mission import Mission
 from shapely import geometry
+from shapely.geometry import MultiPolygon
+
+from game.theater.landmap import Landmap
 
 for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
     print("Terrain " + terrain)
@@ -29,4 +32,6 @@ for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
 
     with open("../{}landmap.p".format(terrain), "wb") as f:
         print(len(inclusion_zones), len(exclusion_zones), len(seas_zones))
-        pickle.dump((inclusion_zones, exclusion_zones, seas_zones), f)
+        pickle.dump(Landmap(MultiPolygon(inclusion_zones),
+                            MultiPolygon(exclusion_zones),
+                            MultiPolygon(seas_zones)), f)
