@@ -103,11 +103,11 @@ class Base:
         self.armor = {k: v for k, v in self.armor.items() if k in applicable_units}
 
     def commision_units(self, units: typing.Dict[typing.Any, int]):
-        for value in units.values():
-            assert value > 0
-            assert value == math.floor(value)
 
         for unit_type, unit_count in units.items():
+            if unit_count <= 0:
+                continue
+
             for_task = db.unit_task(unit_type)
 
             target_dict = None
