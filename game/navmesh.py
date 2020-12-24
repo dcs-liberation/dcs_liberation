@@ -50,6 +50,9 @@ class NavPoint:
         return hash(self.poly.ident)
 
     def __eq__(self, other: object) -> bool:
+        if id(self) == id(other):
+            return True
+
         if not isinstance(other, NavPoint):
             return False
 
