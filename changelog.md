@@ -5,7 +5,7 @@
 * **[Campaigns]** Added a lite version of the Golan Heights campaign
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
 * **[Campaigns]** Reworked Emirates campaign
-* **[Campaigns]** AA units added to frontlines and updated all factions to include frontline AA units.
+* **[Campaigns]** AA units added to frontlines and updated all factions to include some frontline AA units.
 * **[Mission Generator]** Infantry will only be generated for APC and IFV groups
 * **[Mission Generator]** Infantry squads size is not randomized anymore
 * **[Mission Generator]** Infantry squads can have a mortar. 
@@ -23,6 +23,7 @@
 * **[Mission Generator]** Artillery groups would retreat in the wrong direction - fixed
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
 * **[UI]** Fixed and added many missing ground units icons
+* **[UI]** Ship groups could be replaced by SAM sites in the UI, which would lead to broken mission being generated - fixed 
 * **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
 
 # 2.3.2
