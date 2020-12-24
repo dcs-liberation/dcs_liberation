@@ -11,9 +11,9 @@ from shapely.geometry import (
     Polygon,
 )
 from shapely.geometry.base import BaseGeometry
-from shapely.ops import unary_union
+from shapely.ops import nearest_points, unary_union
 
-from game.utils import nautical_miles
+from game.utils import Distance, meters, nautical_miles
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -29,8 +29,22 @@ class ThreatZones:
         self.air_defenses = air_defenses
         self.all = unary_union([airbases, air_defenses])
 
-    def threatened(self, position: BaseGeometry) -> bool:
+    def closest_boundary(self, point: DcsPoint) -> DcsPoint:
+        boundary, _ = nearest_points(self.all.boundary,
+                                     self.dcs_to_shapely_point(point))
+        return DcsPoint(boundary.x, boundary.y)
+
+    @singledispatchmethod
+    def threatened(self, position) -> bool:
+        raise NotImplementedError
+
+    @threatened.register
+    def _threatened_geometry(self, position: BaseGeometry) -> bool:
         return self.all.intersects(position)
+
+    @threatened.register
+    def _threatened_dcs_point(self, position: DcsPoint) -> bool:
+        return self.all.intersects(self.dcs_to_shapely_point(position))
 
     def path_threatened(self, a: DcsPoint, b: DcsPoint) -> bool:
         return self.threatened(LineString(

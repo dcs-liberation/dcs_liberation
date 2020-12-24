@@ -501,27 +501,27 @@ class TarCapFlightPlan(PatrollingFlightPlan):
 class StrikeFlightPlan(FormationFlightPlan):
     takeoff: FlightWaypoint
     hold: FlightWaypoint
+    nav_to: List[FlightWaypoint]
     join: FlightWaypoint
     ingress: FlightWaypoint
     targets: List[FlightWaypoint]
     egress: FlightWaypoint
     split: FlightWaypoint
+    nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield from [
-            self.takeoff,
-            self.hold,
-            self.join,
-            self.ingress
-        ]
+        yield self.takeoff
+        yield self.hold
+        yield from self.nav_to
+        yield self.join
+        yield self.ingress
         yield from self.targets
-        yield from [
-            self.egress,
-            self.split,
-            self.land,
-        ]
+        yield self.egress
+        yield self.split
+        yield from self.nav_from
+        yield self.land
         if self.divert is not None:
             yield self.divert
 
@@ -728,6 +728,7 @@ class FlightPlanBuilder:
         else:
             faction = self.game.enemy_faction
         self.doctrine: Doctrine = faction.doctrine
+        self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def populate_flight_plan(
             self, flight: Flight,
@@ -773,18 +774,93 @@ class FlightPlanBuilder:
             f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
-        ingress_point = self._ingress_point()
-        egress_point = self._egress_point()
+        # The simple case is where the target is greater than the ingress
+        # distance into the threat zone and the target is not near the departure
+        # airfield. In this case, we can plan the shortest route from the
+        # departure airfield to the target, use the last non-threatened point as
+        # the join point, and plan the IP inside the threatened area.
+        #
+        # When the target is near the edge of the threat zone the IP may need to
+        # be placed outside the zone.
+        #
+        # +--------------+            +---------------+
+        # |              |            |               |
+        # |              |       IP---+-T             |
+        # |              |            |               |
+        # |              |            |               |
+        # +--------------+            +---------------+
+        #
+        # Here we want to place the IP first and route the flight to the IP
+        # rather than routing to the target and placing the IP based on the join
+        # point.
+        #
+        # The other case that we need to handle is when the target is close to
+        # the origin airfield. In this case we also need to set up the IP first,
+        # but depending on the placement of the IP we may need to place the join
+        # point in a retreating position.
+        #
+        # A messy (and very unlikely) case that we can't do much about:
+        #
+        # +--------------+   +---------------+
+        # |              |   |               |
+        # |           IP-+---+-T             |
+        # |              |   |               |
+        # |              |   |               |
+        # +--------------+   +---------------+
+        from gen.ato import PackageWaypoints
+        target = self.package.target.position
+
+        join_point = self.preferred_join_point()
+        if join_point is None:
+            # The whole path from the origin airfield to the target is
+            # threatened. Need to retreat out of the threat area.
+            join_point = self.retreat_point(self.package_airfield().position)
+
+        attack_heading = join_point.heading_between_point(target)
+        ingress_point = self._ingress_point(attack_heading)
+        join_distance = meters(join_point.distance_to_point(target))
+        ingress_distance = meters(ingress_point.distance_to_point(target))
+        if join_distance < ingress_distance:
+            # The second case described above. The ingress point is farther from
+            # the target than the join point. Use the fallback behavior for now.
+            self.legacy_package_waypoints_impl()
+            return
+
+        # The first case described above. The ingress and join points are placed
+        # reasonably relative to each other.
+        egress_point = self._egress_point(attack_heading)
+        self.package.waypoints = PackageWaypoints(
+            WaypointBuilder.perturb(join_point),
+            ingress_point,
+            egress_point,
+            WaypointBuilder.perturb(join_point),
+        )
+
+    def retreat_point(self, origin: Point) -> Point:
+        return self.threat_zones.closest_boundary(origin)
+
+    def legacy_package_waypoints_impl(self) -> None:
+        from gen.ato import PackageWaypoints
+        ingress_point = self._ingress_point(
+            self._target_heading_to_package_airfield())
+        egress_point = self._egress_point(
+            self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
         split_point = self._rendezvous_point(egress_point)
-
-        from gen.ato import PackageWaypoints
         self.package.waypoints = PackageWaypoints(
             join_point,
             ingress_point,
             egress_point,
             split_point,
         )
+
+    def preferred_join_point(self) -> Optional[Point]:
+        path = self.game.navmesh_for(self.is_player).shortest_path(
+            self.package_airfield().position, self.package.target.position)
+        for point in reversed(path):
+            if not self.threat_zones.threatened(point):
+                return point
+        return None
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
@@ -1142,18 +1218,25 @@ class FlightPlanBuilder:
         ingress, target, egress = builder.escort(
             self.package.waypoints.ingress, self.package.target,
             self.package.waypoints.egress)
+        hold = builder.hold(self._hold_point(flight))
+        join = builder.join(self.package.waypoints.join)
+        split = builder.split(self.package.waypoints.split)
 
         return StrikeFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
-            hold=builder.hold(self._hold_point(flight)),
+            hold=hold,
             hold_duration=timedelta(minutes=5),
-            join=builder.join(self.package.waypoints.join),
+            nav_to=builder.nav_path(hold.position, join.position,
+                                    self.doctrine.ingress_altitude),
+            join=join,
             ingress=ingress,
             targets=[target],
             egress=egress,
-            split=builder.split(self.package.waypoints.split),
+            split=split,
+            nav_from=builder.nav_path(split.position, flight.arrival.position,
+                                      self.doctrine.ingress_altitude),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert)
         )
@@ -1295,18 +1378,26 @@ class FlightPlanBuilder:
             target_waypoints.append(
                 self.target_area_waypoint(flight, location, builder))
 
+        hold = builder.hold(self._hold_point(flight))
+        join = builder.join(self.package.waypoints.join)
+        split = builder.split(self.package.waypoints.split)
+
         return StrikeFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
-            hold=builder.hold(self._hold_point(flight)),
+            hold=hold,
             hold_duration=timedelta(minutes=5),
-            join=builder.join(self.package.waypoints.join),
+            nav_to=builder.nav_path(hold.position, join.position,
+                                    self.doctrine.ingress_altitude),
+            join=join,
             ingress=builder.ingress(ingress_type,
                                     self.package.waypoints.ingress, location),
             targets=target_waypoints,
             egress=builder.egress(self.package.waypoints.egress, location),
-            split=builder.split(self.package.waypoints.split),
+            split=split,
+            nav_from=builder.nav_path(split.position, flight.arrival.position,
+                                      self.doctrine.ingress_altitude),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert)
         )
@@ -1347,16 +1438,14 @@ class FlightPlanBuilder:
             return self._retreating_rendezvous_point(attack_transition)
         return self._advancing_rendezvous_point(attack_transition)
 
-    def _ingress_point(self) -> Point:
-        heading = self._target_heading_to_package_airfield()
+    def _ingress_point(self, heading: int) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180 + 25, self.doctrine.ingress_egress_distance.meters
+            heading - 180 + 15, self.doctrine.ingress_egress_distance.meters
         )
 
-    def _egress_point(self) -> Point:
-        heading = self._target_heading_to_package_airfield()
+    def _egress_point(self, heading: int) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180 - 25, self.doctrine.ingress_egress_distance.meters
+            heading - 180 - 15, self.doctrine.ingress_egress_distance.meters
         )
 
     def _target_heading_to_package_airfield(self) -> int:

@@ -208,8 +208,11 @@ class NavMesh:
             points.append(ShapelyPoint(cp.position.x, cp.position.y))
             for tgo in cp.ground_objects:
                 points.append(ShapelyPoint(tgo.position.x, tgo.position.y))
-        return box(*LineString(points).bounds).buffer(nautical_miles(60).meters,
-                                                      resolution=1)
+        # Needs to be a large enough boundary beyond the known points so that
+        # threatened airbases at the map edges have room to retreat from the
+        # threat without running off the navmesh.
+        return box(*LineString(points).bounds).buffer(
+            nautical_miles(100).meters, resolution=1)
 
     @staticmethod
     def create_navpolys(polys: List[Polygon],

@@ -5,7 +5,7 @@ Saves from 2.3 are not compatible with 2.4.
 ## Features/Improvements
 
 * **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
-* **[Flight Planner]** BARCAP, TARCAP, CAS, and Fighter Sweep flights will now navigate around threat areas en route to the target area when practical. More types coming soon.
+* **[Flight Planner]** Non-custom flight plans will now navigate around threat areas en route to the target area when practical.
 
 # 2.3.3
 
