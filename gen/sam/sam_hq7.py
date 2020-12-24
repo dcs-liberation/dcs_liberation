@@ -1,5 +1,6 @@
 import random
 
+from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
 from gen.sam.airdefensegroupgenerator import (
@@ -21,8 +22,13 @@ class HQ7Generator(AirDefenseGroupGenerator):
         self.add_unit(AirDefence.HQ_7_Self_Propelled_LN, "LN", self.position.x + 20, self.position.y, self.heading)
 
         # Triple A for close range defense
-        self.add_unit(AirDefence.AAA_ZU_23_on_Ural_375, "AAA1", self.position.x + 20, self.position.y+30, self.heading)
-        self.add_unit(AirDefence.AAA_ZU_23_on_Ural_375, "AAA2", self.position.x - 20, self.position.y-30, self.heading)
+        aa_group = self.add_auxiliary_group("AA")
+        self.add_unit_to_group(aa_group, AirDefence.AAA_ZU_23_on_Ural_375,
+                               "AAA1", self.position + Point(20, 30),
+                               self.heading)
+        self.add_unit_to_group(aa_group, AirDefence.AAA_ZU_23_on_Ural_375,
+                               "AAA2", self.position.x - Point(20, 30),
+                               self.heading)
 
         num_launchers = random.randint(0, 3)
         if num_launchers > 0:

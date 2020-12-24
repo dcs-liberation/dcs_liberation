@@ -91,7 +91,6 @@ class TheaterGroundObject(MissionTarget):
         self.airbase_group = airbase_group
         self.sea_object = sea_object
         self.is_dead = False
-        # TODO: There is never more than one group.
         self.groups: List[Group] = []
 
     @property

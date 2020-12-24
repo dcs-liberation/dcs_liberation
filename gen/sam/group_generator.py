@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 import math
 import random
 from typing import TYPE_CHECKING, Type
 
 from dcs import unitgroup
+from dcs.mapping import Point
 from dcs.point import PointAction
-from dcs.unit import Vehicle, Ship
+from dcs.unit import Ship, Vehicle
 from dcs.unittype import VehicleType
 
 from game.factions.faction import Faction
@@ -40,12 +42,17 @@ class GroupGenerator:
 
     def add_unit(self, unit_type: Type[VehicleType], name: str, pos_x: float,
                  pos_y: float, heading: int) -> Vehicle:
+        return self.add_unit_to_group(self.vg, unit_type, name,
+                                      Point(pos_x, pos_y), heading)
+
+    def add_unit_to_group(self, group: unitgroup.VehicleGroup,
+                          unit_type: Type[VehicleType], name: str,
+                          position: Point, heading: int) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(),
-                       f"{self.go.group_name}|{name}", unit_type.id)
-        unit.position.x = pos_x
-        unit.position.y = pos_y
+                       f"{group.name}|{name}", unit_type.id)
+        unit.position = position
         unit.heading = heading
-        self.vg.add_unit(unit)
+        group.add_unit(unit)
         return unit
 
     def get_circular_position(self, num_units, launcher_distance, coverage=90):

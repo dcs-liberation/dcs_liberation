@@ -171,19 +171,19 @@ def get_faction_possible_ewrs_generator(faction: Faction) -> List[Type[GroupGene
 
 def _generate_anti_air_from(
         generators: Sequence[Type[AirDefenseGroupGenerator]], game: Game,
-        ground_object: SamGroundObject) -> Optional[VehicleGroup]:
+        ground_object: SamGroundObject) -> List[VehicleGroup]:
     if not generators:
-        return None
+        return []
     sam_generator_class = random.choice(generators)
     generator = sam_generator_class(game, ground_object)
     generator.generate()
-    return generator.get_generated_group()
+    return list(generator.groups)
 
 
 def generate_anti_air_group(
         game: Game, ground_object: SamGroundObject, faction: Faction,
         ranges: Optional[Iterable[Set[AirDefenseRange]]] = None
-) -> Optional[VehicleGroup]:
+) -> List[VehicleGroup]:
     """
     This generate a SAM group
     :param game: The Game.
@@ -212,11 +212,11 @@ def generate_anti_air_group(
     for range_options in ranges:
         generators_for_range = [g for g in generators if
                                 g.range() in range_options]
-        group = _generate_anti_air_from(generators_for_range, game,
-                                        ground_object)
-        if group is not None:
-            return group
-    return None
+        groups = _generate_anti_air_from(generators_for_range, game,
+                                         ground_object)
+        if groups:
+            return groups
+    return []
 
 
 def generate_ewr_group(game: Game, ground_object: TheaterGroundObject,
