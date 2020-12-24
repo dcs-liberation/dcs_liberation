@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import timeit
+from datetime import timedelta
 
 from PySide2 import QtCore
 from PySide2.QtCore import QObject, Qt, Signal
@@ -184,11 +186,14 @@ class QWaitingForMissionResultWindow(QDialog):
             lambda d: self.on_debriefing_update(d), self.game, self.unit_map)
 
     def process_debriefing(self):
+        start = timeit.default_timer()
         self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
         self.game.pass_turn()
 
         GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
         GameUpdateSignal.get_instance().updateGame(self.game)
+        end = timeit.default_timer()
+        logging.info("Turn processing took %s", timedelta(seconds=end - start))
         self.close()
 
     def debriefing_directory_location(self) -> str:
