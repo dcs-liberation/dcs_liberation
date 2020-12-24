@@ -21,6 +21,7 @@ from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
 from game.theater import ControlPoint, TheaterGroundObject
+from game.theater.theatergroundobject import NavalGroundObject
 from gen.defenses.armor_group_generator import \
     generate_armor_group_of_type_and_size
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
@@ -81,9 +82,10 @@ class QGroundObjectMenu(QDialog):
         self.buy_replace.clicked.connect(self.buy_group)
         self.buy_replace.setProperty("style", "btn-success")
 
-        if self.total_value > 0:
-            self.actionLayout.addWidget(self.sell_all_button)
-        self.actionLayout.addWidget(self.buy_replace)
+        if not isinstance(self.ground_object, NavalGroundObject):
+            if self.total_value > 0:
+                self.actionLayout.addWidget(self.sell_all_button)
+            self.actionLayout.addWidget(self.buy_replace)
 
         if self.cp.captured and self.ground_object.dcs_identifier == "AA":
             self.mainLayout.addLayout(self.actionLayout)
