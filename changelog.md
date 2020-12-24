@@ -9,6 +9,7 @@
 * **[Mission Generator]** Infantry will only be generated for APC and IFV groups
 * **[Mission Generator]** Infantry squads size is not randomized anymore
 * **[Mission Generator]** Infantry squads can have a mortar. 
+* **[Mission Generator]** SCUD missiles sites will now fire on enemy controls points in range when possible
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
 * **[Factions]** Germany 1944, added Stug III and Stug IV
@@ -17,10 +18,12 @@
 
 ## Fixes:
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
-* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
+* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit)
+* **[Campaign]** Automatic redeployment of ground units would sometimes fail - fixed
+* **[Mission Generator]** Artillery groups would retreat in the wrong direction - fixed
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
 * **[UI]** Fixed and added many missing ground units icons
-* **[New Game Wizard]** Removed "mid game" campaign generator option which is currently broken
+* **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
 
 # 2.3.2
 
