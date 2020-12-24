@@ -283,7 +283,7 @@ class GroundConflictGenerator:
 
             # Hold position
             dcs_group.points[1].tasks.append(Hold())
-            retreat = self.find_retreat_point(dcs_group, heading_sum(forward_heading, 180), (int)(RETREAT_DISTANCE/3))
+            retreat = self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE/3))
             dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
             dcs_group.points[2].tasks.append(Hold())
             dcs_group.add_waypoint(retreat, PointAction.OffRoad)
