@@ -52,7 +52,11 @@ from gen.flights.flight import (
     FlightWaypoint,
     FlightWaypointType,
 )
-from gen.flights.flightplan import FlightPlan, FlightPlanBuilder
+from gen.flights.flightplan import (
+    FlightPlan,
+    FlightPlanBuilder,
+    InvalidObjectiveLocation,
+)
 from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
 from qt_ui.models import GameModel
 from qt_ui.widgets.map.QFrontLine import QFrontLine
@@ -429,8 +433,8 @@ class QLiberationMap(QGraphicsView):
 
             prev_pos = new_pos
 
-    def draw_tarcap_plan(self, scene: QGraphicsScene, point_near_target: Point,
-                         player: bool) -> None:
+    def draw_test_flight_plan(self, scene: QGraphicsScene, task: FlightType,
+                              point_near_target: Point, player: bool) -> None:
         for line in self.shortest_path_segments:
             try:
                 scene.removeItem(line)
@@ -447,12 +451,14 @@ class QLiberationMap(QGraphicsView):
             origin = self.game.theater.enemy_points()[0]
 
         package = Package(target)
-        flight = Flight(package, F_16C_50, 2, FlightType.TARCAP,
-                        start_type="Warm", departure=origin, arrival=origin,
-                        divert=None)
+        flight = Flight(package, F_16C_50, 2, task, start_type="Warm",
+                        departure=origin, arrival=origin, divert=None)
         package.add_flight(flight)
         planner = FlightPlanBuilder(self.game, package, is_player=player)
-        planner.populate_flight_plan(flight)
+        try:
+            planner.populate_flight_plan(flight)
+        except InvalidObjectiveLocation:
+            return
 
         self.draw_flight_plan(scene, flight, selected=True)
 
@@ -1052,10 +1058,22 @@ class QLiberationMap(QGraphicsView):
             self.draw_shortest_path(
                 self.scene(), self.game.navmesh_for(player=debug_blue),
                 mouse_world_pos, player=False)
-
-        if DisplayOptions.path_debug.tarcap:
-            self.draw_tarcap_plan(self.scene(), mouse_world_pos,
-                                  player=debug_blue)
+        elif not DisplayOptions.path_debug.hide:
+            if DisplayOptions.path_debug.barcap:
+                task = FlightType.BARCAP
+            elif DisplayOptions.path_debug.cas:
+                task = FlightType.CAS
+            elif DisplayOptions.path_debug.sweep:
+                task = FlightType.SWEEP
+            elif DisplayOptions.path_debug.strike:
+                task = FlightType.STRIKE
+            elif DisplayOptions.path_debug.tarcap:
+                task = FlightType.TARCAP
+            else:
+                raise ValueError(
+                    "Unexpected value for DisplayOptions.path_debug")
+            self.draw_test_flight_plan(self.scene(), task, mouse_world_pos,
+                                       player=debug_blue)
 
     def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:

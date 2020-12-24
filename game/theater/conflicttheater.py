@@ -537,6 +537,11 @@ class ConflictTheater:
                 if distance < closest_distance:
                     closest = tgo
                     closest_distance = distance
+        for conflict in self.conflicts():
+            distance = conflict.position.distance_to_point(point)
+            if distance < closest_distance:
+                closest = conflict
+                closest_distance = distance
         return closest
     
     def closest_opposing_control_points(self) -> Tuple[ControlPoint, ControlPoint]:

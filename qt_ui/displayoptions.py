@@ -82,6 +82,10 @@ class PathDebugOptions(DisplayGroup):
         super().__init__("Shortest paths", debug_only=True)
         self.hide = DisplayRule("DEBUG Hide paths", True)
         self.shortest_path = DisplayRule("DEBUG Show shortest path", False)
+        self.barcap = DisplayRule("DEBUG Show BARCAP plan", False)
+        self.cas = DisplayRule("DEBUG Show CAS plan", False)
+        self.sweep = DisplayRule("DEBUG Show fighter sweep plan", False)
+        self.strike = DisplayRule("DEBUG Show strike plan", False)
         self.tarcap = DisplayRule("DEBUG Show TARCAP plan", False)
 
 
