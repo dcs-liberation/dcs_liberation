@@ -11,18 +11,19 @@ import logging
 import random
 from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type
 
-from dcs import Mission
+from dcs import Mission, Point
 from dcs.country import Country
 from dcs.statics import fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
     EPLRS,
-    OptAlarmState,
+    OptAlarmState, FireAtPoint,
 )
 from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
+from dcs.vehicles import vehicle_map
 
 from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
@@ -31,7 +32,7 @@ from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject, CarrierGroundObject,
     GenericCarrierGroundObject,
-    LhaGroundObject, ShipGroundObject,
+    LhaGroundObject, ShipGroundObject, MissileSiteGroundObject,
 )
 from game.unitmap import UnitMap
 from game.utils import knots_to_kph, kph_to_mps, mps_to_kph
@@ -50,7 +51,7 @@ AA_CP_MIN_DISTANCE = 40000
 class GenericGroundObjectGenerator:
     """An unspecialized ground object generator.
 
-    Currently used only for SAM and missile (V1/V2) sites.
+    Currently used only for SAM
     """
     def __init__(self, ground_object: TheaterGroundObject, country: Country,
                  game: Game, mission: Mission, unit_map: UnitMap) -> None:
@@ -109,6 +110,55 @@ class GenericGroundObjectGenerator:
                              miz_group: Group) -> None:
         self.unit_map.add_ground_object_units(self.ground_object,
                                               persistence_group, miz_group)
+
+
+class MissileSiteGenerator(GenericGroundObjectGenerator):
+
+    def generate(self) -> None:
+        super(MissileSiteGenerator, self).generate()
+        # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
+        # TODO : Should be pre-planned ?
+        # TODO : Add delay to task to spread fire task over mission duration ?
+        for group in self.ground_object.groups:
+            vg = self.m.find_group(group.name)
+            targets = self.possible_missile_targets(vg)
+            if vg is not None and targets:
+                target = random.choice(targets)
+                real_target = target.point_from_heading(random.randint(0, 360), random.randint(0, 2500))
+                vg.points[0].add_task(FireAtPoint(real_target))
+                logging.info("Set up fire task for missile group.")
+            else:
+                logging.info("Couldn't setup missile site to fire, group was not generated.")
+
+    def possible_missile_targets(self, vg: Group) -> [Point]:
+        """
+        Find enemy control points in range
+        :param vg: Vehicle group we are searching a target for (There is always only oe group right now)
+        :return: List of possible missile targets
+        """
+        targets: [Point] = []
+        for cp in self.game.theater.controlpoints:
+            if cp.captured != self.ground_object.control_point.captured:
+                distance = cp.position.distance_to_point(vg.position)
+                if distance < self.missile_site_range:
+                    targets.append(cp.position)
+        return targets
+
+    @property
+    def missile_site_range(self) -> int:
+        """
+        Get the missile site range
+        :return: Missile site range
+        """
+        site_range = 0
+        for group in self.ground_object.groups:
+            vg = self.m.find_group(group.name)
+            if vg is not None:
+                for u in vg.units:
+                    if u.type in vehicle_map:
+                        if vehicle_map[u.type].threat_range > site_range:
+                            site_range = vehicle_map[u.type].threat_range
+        return site_range
 
 
 class BuildingSiteGenerator(GenericGroundObjectGenerator):
@@ -421,8 +471,11 @@ class GroundObjectsGenerator:
                     generator = ShipObjectGenerator(
                         ground_object, country, self.game, self.m,
                         self.unit_map)
+                elif isinstance(ground_object, MissileSiteGroundObject):
+                    generator = MissileSiteGenerator(
+                        ground_object, country, self.game, self.m,
+                        self.unit_map)
                 else:
-
                     generator = GenericGroundObjectGenerator(
                         ground_object, country, self.game, self.m,
                         self.unit_map)
