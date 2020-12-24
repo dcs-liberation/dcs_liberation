@@ -620,20 +620,22 @@ class StrikeFlightPlan(FormationFlightPlan):
 @dataclass(frozen=True)
 class SweepFlightPlan(LoiterFlightPlan):
     takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
     sweep_start: FlightWaypoint
     sweep_end: FlightWaypoint
+    nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield from [
-            self.takeoff,
-            self.hold,
-            self.sweep_start,
-            self.sweep_end,
-            self.land,
-        ]
+        yield self.takeoff
+        yield self.hold
+        yield from self.nav_to
+        yield self.sweep_start
+        yield self.sweep_end
+        yield from self.nav_from
+        yield self.land
         if self.divert is not None:
             yield self.divert
 
@@ -909,9 +911,10 @@ class FlightPlanBuilder:
         Args:
             flight: The flight to generate the flight plan for.
         """
+        assert self.package.waypoints is not None
         target = self.package.target.position
 
-        heading = self._heading_to_package_airfield(target)
+        heading = self.package.waypoints.join.heading_between_point(target)
         start = target.point_from_heading(heading,
                                           -self.doctrine.sweep_distance.meters)
 
@@ -919,13 +922,19 @@ class FlightPlanBuilder:
         start, end = builder.sweep(start, target,
                                    self.doctrine.ingress_altitude)
 
+        hold = builder.hold(self._hold_point(flight))
+
         return SweepFlightPlan(
             package=self.package,
             flight=flight,
             lead_time=timedelta(minutes=5),
             takeoff=builder.takeoff(flight.departure),
-            hold=builder.hold(self._hold_point(flight)),
+            hold=hold,
             hold_duration=timedelta(minutes=5),
+            nav_to=builder.nav_path(hold.position, start.position,
+                                    self.doctrine.ingress_altitude),
+            nav_from=builder.nav_path(end.position, flight.arrival.position,
+                                      self.doctrine.ingress_altitude),
             sweep_start=start,
             sweep_end=end,
             land=builder.land(flight.arrival),
