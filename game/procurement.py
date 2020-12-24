@@ -42,6 +42,7 @@ class ProcurementAi:
         self.manage_runways = manage_runways
         self.manage_front_line = manage_front_line
         self.manage_aircraft = manage_aircraft
+        self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def spend_budget(
             self, budget: int,
@@ -176,6 +177,7 @@ class ProcurementAi:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(
             request.near
         )
+        threatened = []
         for cp in distance_cache.airfields_within(request.range):
             if not cp.is_friendly(self.is_player):
                 continue
@@ -183,7 +185,10 @@ class ProcurementAi:
                 continue
             if cp.unclaimed_parking(self.game) < request.number:
                 continue
+            if self.threat_zones.threatened(cp.position):
+                threatened.append(cp)
             yield cp
+        yield from threatened
 
     def front_line_candidates(self) -> List[ControlPoint]:
         candidates = []
