@@ -359,6 +359,8 @@ class FormationFlightPlan(LoiterFlightPlan):
 
 @dataclass(frozen=True)
 class PatrollingFlightPlan(FlightPlan):
+    nav_to: List[FlightWaypoint]
+    nav_from: List[FlightWaypoint]
     patrol_start: FlightWaypoint
     patrol_end: FlightWaypoint
 
@@ -412,12 +414,14 @@ class BarCapFlightPlan(PatrollingFlightPlan):
     divert: Optional[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
         yield from [
-            self.takeoff,
             self.patrol_start,
             self.patrol_end,
-            self.land,
         ]
+        yield from self.nav_from
+        yield self.land
         if self.divert is not None:
             yield self.divert
 
@@ -430,13 +434,15 @@ class CasFlightPlan(PatrollingFlightPlan):
     divert: Optional[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
         yield from [
-            self.takeoff,
             self.patrol_start,
             self.target,
             self.patrol_end,
-            self.land,
         ]
+        yield from self.nav_from
+        yield self.land
         if self.divert is not None:
             yield self.divert
 
@@ -450,8 +456,6 @@ class CasFlightPlan(PatrollingFlightPlan):
 @dataclass(frozen=True)
 class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    nav_to: List[FlightWaypoint]
-    nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     lead_time: timedelta
@@ -889,6 +893,10 @@ class FlightPlanBuilder:
             patrol_duration=self.doctrine.cap_duration,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(flight.departure.position, start.position,
+                                    patrol_alt),
+            nav_from=builder.nav_path(end.position, flight.arrival.position,
+                                      patrol_alt),
             patrol_start=start,
             patrol_end=end,
             land=builder.land(flight.arrival),
@@ -1166,6 +1174,10 @@ class FlightPlanBuilder:
             flight=flight,
             patrol_duration=self.doctrine.cas_duration,
             takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(flight.departure.position, ingress,
+                                    self.doctrine.ingress_altitude),
+            nav_from=builder.nav_path(egress, flight.arrival.position,
+                                      self.doctrine.ingress_altitude),
             patrol_start=builder.ingress(FlightWaypointType.INGRESS_CAS,
                                          ingress, location),
             engagement_distance=meters(FRONTLINE_LENGTH) / 2,
