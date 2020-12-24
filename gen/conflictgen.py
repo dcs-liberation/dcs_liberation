@@ -84,6 +84,10 @@ class Conflict:
     def extend_ground_position(cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater) -> Point:
         """Finds the first intersection with an exclusion zone in one heading from an initial point up to max_distance"""
         extended = initial.point_from_heading(heading, max_distance)
+        if theater.landmap is None:
+            # TODO: Why is this possible?
+            return extended
+
         p0 = ShapelyPoint(initial.x, initial.y)
         p1 = ShapelyPoint(extended.x, extended.y)
         line = LineString([p0, p1])
