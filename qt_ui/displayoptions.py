@@ -70,13 +70,19 @@ class NavMeshOptions(DisplayGroup):
         self.red_navmesh = DisplayRule("DEBUG Show red navmesh", False)
 
 
+class PathDebugFactionOptions(DisplayGroup):
+    def __init__(self) -> None:
+        super().__init__("Faction for path debugging", debug_only=True)
+        self.blue = DisplayRule("Debug blue paths", True)
+        self.red = DisplayRule("Debug red paths", False)
+
+
 class PathDebugOptions(DisplayGroup):
     def __init__(self) -> None:
         super().__init__("Shortest paths", debug_only=True)
         self.hide = DisplayRule("DEBUG Hide paths", True)
         self.shortest_path = DisplayRule("DEBUG Show shortest path", False)
-        self.blue_tarcap = DisplayRule("DEBUG Show blue TARCAP plan", False)
-        self.red_tarcap = DisplayRule("DEBUG Show red TARCAP plan", False)
+        self.tarcap = DisplayRule("DEBUG Show TARCAP plan", False)
 
 
 class DisplayOptions:
@@ -95,6 +101,7 @@ class DisplayOptions:
     blue_threat_zones = ThreatZoneOptions("Blue")
     red_threat_zones = ThreatZoneOptions("Red")
     navmeshes = NavMeshOptions()
+    path_debug_faction = PathDebugFactionOptions()
     path_debug = PathDebugOptions()
 
     @classmethod

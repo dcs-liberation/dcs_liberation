@@ -1046,14 +1046,16 @@ class QLiberationMap(QGraphicsView):
         if DisplayOptions.navmeshes.red_navmesh:
             self.highlight_mouse_navmesh(
                 self.scene(), self.game.red_navmesh, mouse_world_pos)
-            if DisplayOptions.path_debug.shortest_path:
-                self.draw_shortest_path(self.scene(), self.game.red_navmesh,
-                                        mouse_world_pos, player=False)
 
-        if DisplayOptions.path_debug.blue_tarcap:
-            self.draw_tarcap_plan(self.scene(), mouse_world_pos, player=True)
-        if DisplayOptions.path_debug.red_tarcap:
-            self.draw_tarcap_plan(self.scene(), mouse_world_pos, player=False)
+        debug_blue = DisplayOptions.path_debug_faction.blue
+        if DisplayOptions.path_debug.shortest_path:
+            self.draw_shortest_path(
+                self.scene(), self.game.navmesh_for(player=debug_blue),
+                mouse_world_pos, player=False)
+
+        if DisplayOptions.path_debug.tarcap:
+            self.draw_tarcap_plan(self.scene(), mouse_world_pos,
+                                  player=debug_blue)
 
     def sceneMousePressEvent(self, event: QGraphicsSceneMouseEvent):
         if self.state == QLiberationMapState.MOVING_UNIT:
