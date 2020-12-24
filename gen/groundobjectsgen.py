@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 import random
-from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type
+from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 
 from dcs import Mission, Point
 from dcs.country import Country
@@ -130,13 +130,13 @@ class MissileSiteGenerator(GenericGroundObjectGenerator):
             else:
                 logging.info("Couldn't setup missile site to fire, group was not generated.")
 
-    def possible_missile_targets(self, vg: Group) -> [Point]:
+    def possible_missile_targets(self, vg: Group) -> List[Point]:
         """
         Find enemy control points in range
         :param vg: Vehicle group we are searching a target for (There is always only oe group right now)
         :return: List of possible missile targets
         """
-        targets: [Point] = []
+        targets: List[Point] = []
         for cp in self.game.theater.controlpoints:
             if cp.captured != self.ground_object.control_point.captured:
                 distance = cp.position.distance_to_point(vg.position)
