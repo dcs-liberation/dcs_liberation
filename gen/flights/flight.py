@@ -84,6 +84,9 @@ class FlightWaypoint:
         self.alt = alt
         self.alt_type = "BARO"
         self.name = ""
+        # TODO: Merge with pretty_name.
+        # Only used in the waypoint list in the flight edit page. No sense
+        # having three names. A short and long form is enough.
         self.description = ""
         self.targets: List[MissionTarget] = []
         self.obj_name = ""

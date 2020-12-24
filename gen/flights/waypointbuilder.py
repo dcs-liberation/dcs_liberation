@@ -456,8 +456,8 @@ class WaypointBuilder:
             altitude
         )
         waypoint.name = "NAV"
-        waypoint.description = ""
-        waypoint.pretty_name = ""
+        waypoint.description = "NAV"
+        waypoint.pretty_name = "Nav"
         return waypoint
 
     def nav_path(self, a: Point, b: Point,
