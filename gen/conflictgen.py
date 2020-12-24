@@ -93,11 +93,13 @@ class Conflict:
         line = LineString([p0, p1])
 
         intersection = line.intersection(
-            theater.landmap.inclusion_zones.boundary)
+            theater.landmap.exclusion_zones.boundary)
         if intersection.is_empty:
+            intersection = line.intersection(theater.landmap.sea_zones.boundary)
             # Max extent does not intersect with the boundary of the inclusion
             # zone, so the full front line is usable. This does assume that the
             # front line was centered on a valid location.
+        if intersection.is_empty:
             return extended
 
         # Otherwise extend the front line only up to the intersection.
