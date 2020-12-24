@@ -47,21 +47,15 @@ class NavPoint:
         return Point(self.point.x, self.point.y)
 
     def __hash__(self) -> int:
-        return hash((self.poly.ident, int(self.point.x), int(self.point.y)))
+        return hash(self.poly.ident)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NavPoint):
             return False
 
-        # The int comparisons here aren't really correct, but the units here are
-        # meters and even approximate floating point comparisons can cause
-        # issues when these are used in sets or maps. For our purposes, two
-        # waypoints within a meter of each other might as well be identical for
-        # the purposes of path finding, so not an issue.
-        if int(self.point.x) != int(other.point.x):
+        if not self.point.almost_equals(other.point):
             return False
-        if int(self.point.y) != int(other.point.y):
-            return False
+
         return self.poly == other.poly
 
     def __str__(self) -> str:
