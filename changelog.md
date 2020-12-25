@@ -25,6 +25,7 @@
 * **[UI]** Fixed and added many missing ground units icons
 * **[UI]** Ship groups could be replaced by SAM sites in the UI, which would lead to broken mission being generated - fixed 
 * **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
+* **[Mission Generator]** Empty navy groups will no longer be generated
 
 # 2.3.2
 
