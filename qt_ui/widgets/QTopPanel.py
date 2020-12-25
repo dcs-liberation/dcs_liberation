@@ -19,6 +19,7 @@ from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
+from qt_ui.widgets.QIntelBox import QIntelBox
 from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QWaitingForMissionResultWindow import \
@@ -74,6 +75,8 @@ class QTopPanel(QFrame):
         self.statistics.setProperty("style", "btn-primary")
         self.statistics.clicked.connect(self.openStatisticsWindow)
 
+        self.intel_box = QIntelBox(self.game)
+
         self.buttonBox = QGroupBox("Misc")
         self.buttonBoxLayout = QHBoxLayout()
         self.buttonBoxLayout.addWidget(self.settings)
@@ -93,6 +96,7 @@ class QTopPanel(QFrame):
         self.layout.addWidget(self.factionsInfos)
         self.layout.addWidget(self.conditionsWidget)
         self.layout.addWidget(self.budgetBox)
+        self.layout.addWidget(self.intel_box)
         self.layout.addWidget(self.buttonBox)
         self.layout.addStretch(1)
         self.layout.addWidget(self.proceedBox)
@@ -109,6 +113,7 @@ class QTopPanel(QFrame):
         self.statistics.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
+        self.intel_box.set_game(game)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
 
