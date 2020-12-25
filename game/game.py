@@ -4,7 +4,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterator, List, Tuple
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -27,6 +27,7 @@ from .debriefing import Debriefing
 from .event.event import Event, UnitsDeliveryEvent
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
+from .income import Income
 from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import ProcurementAi
@@ -189,30 +190,14 @@ class Game:
                                         front_line.control_point_a,
                                         front_line.control_point_b)
 
-    @property
-    def budget_reward_amount(self) -> int:
-        reward = PLAYER_BUDGET_BASE * len(self.theater.player_points())
-        for cp in self.theater.player_points():
-            for g in cp.ground_objects:
-                if g.category in REWARDS.keys() and not g.is_dead:
-                    reward += REWARDS[g.category]
-        return int(reward * self.settings.player_income_multiplier)
-
     def process_player_income(self):
-        self.budget += self.budget_reward_amount
+        self.budget += Income(self, player=True).total
 
     def process_enemy_income(self):
         # TODO: Clean up save compat.
         if not hasattr(self, "enemy_budget"):
             self.enemy_budget = 0
-
-        production = 0.0
-        for enemy_point in self.theater.enemy_points():
-            for g in enemy_point.ground_objects:
-                if g.category in REWARDS.keys() and not g.is_dead:
-                    production = production + REWARDS[g.category]
-
-        self.enemy_budget += production * self.settings.enemy_income_multiplier
+        self.enemy_budget += Income(self, player=False).total
 
     def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
         event = UnitsDeliveryEvent(attacker_name=self.player_name,
