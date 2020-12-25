@@ -1,7 +1,9 @@
 from PySide2.QtWidgets import (
     QDialog,
     QGroupBox,
-    QScrollArea, QVBoxLayout, QWidget,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
 
 from game.game import Game
@@ -36,9 +38,9 @@ class IntelWindow(QDialog):
         self.setModal(True)
         self.setWindowTitle("Intelligence")
         self.setWindowIcon(ICONS["Statistics"])
-        self.setMinimumSize(600, 250)
+        self.setMinimumSize(800, 600)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        layout.addWidget(EconomyIntelBox(game))
+        layout.addWidget(EconomyIntelBox(game), stretch=1)
