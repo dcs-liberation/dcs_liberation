@@ -24,6 +24,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
 * **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
+* **[Mission Generator]** Empty navy groups will no longer be generated
 
 # 2.3.2
 

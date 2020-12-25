@@ -35,6 +35,9 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
         else:
             include_cc = False
 
+        if not any([include_frigate, include_dd, include_cc]):
+            include_frigate = True
+
         if include_frigate:
             frigate_type = random.choice([FFL_1124_4_Grisha, FSG_1241_1MP_Molniya])
             self.add_unit(frigate_type, "FF1", self.position.x + 1200, self.position.y + 900, self.heading)

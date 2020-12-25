@@ -32,6 +32,9 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
         else:
             include_cc = False
 
+        if not any([include_frigate, include_dd, include_cc]):
+            include_frigate = True
+
         if include_frigate:
             self.add_unit(Type_054A_Frigate, "FF1", self.position.x + 1200, self.position.y + 900, self.heading)
             self.add_unit(Type_054A_Frigate, "FF2", self.position.x + 1200, self.position.y - 900, self.heading)
