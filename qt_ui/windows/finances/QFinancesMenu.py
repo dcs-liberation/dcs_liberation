@@ -62,6 +62,7 @@ class FinancesLayout(QGridLayout):
             budget = game.enemy_budget
         self.addWidget(QLabel(f"Balance"), row + 3, 1)
         self.addWidget(QLabel(f"<b>{budget}M</b>"), row + 3, 2)
+        self.setRowStretch(row + 4, 1)
 
 
 class QFinancesMenu(QDialog):
