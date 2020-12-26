@@ -12,10 +12,7 @@ from game import db
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
-from gen.flights.ai_flight_planner_db import (
-    capable_aircraft_for_task,
-    preferred_aircraft_for_task,
-)
+from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
@@ -124,25 +121,26 @@ class ProcurementAi:
     def _affordable_aircraft_of_types(
             self, types: List[Type[FlyingType]], airbase: ControlPoint,
             number: int, max_price: int) -> Optional[Type[FlyingType]]:
-        unit_pool = [u for u in self.faction.aircrafts if u in types]
-        affordable_units = [
-            u for u in unit_pool
-            if db.PRICES[u] * number <= max_price and airbase.can_operate(u)
-        ]
-        if not affordable_units:
-            return None
-        return random.choice(affordable_units)
+        best_choice: Optional[Type[FlyingType]] = None
+        for unit in [u for u in self.faction.aircrafts if u in types]:
+            if db.PRICES[unit] * number > max_price:
+                continue
+            if not airbase.can_operate(unit):
+                continue
+
+            # Affordable and compatible. To keep some variety, skip with a 50/50
+            # chance. Might be a good idea to have the chance to skip based on
+            # the price compared to the rest of the choices.
+            best_choice = unit
+            if random.choice([True, False]):
+                break
+        return best_choice
 
     def affordable_aircraft_for(
             self, request: AircraftProcurementRequest,
             airbase: ControlPoint, budget: int) -> Optional[Type[FlyingType]]:
-        aircraft = self._affordable_aircraft_of_types(
-            preferred_aircraft_for_task(request.task_capability),
-            airbase, request.number, budget)
-        if aircraft is not None:
-            return aircraft
         return self._affordable_aircraft_of_types(
-            capable_aircraft_for_task(request.task_capability),
+            aircraft_for_task(request.task_capability),
             airbase, request.number, budget)
 
     def purchase_aircraft(

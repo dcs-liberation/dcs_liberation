@@ -7,6 +7,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
 * **[Flight Planner]** Non-custom flight plans will now navigate around threat areas en route to the target area when practical.
 * **[Campaign AI]** Auto-purchase now prefers airfields that are not within range of the enemy.
+* **[Campaign AI]** Auto-purchase now prefers the best aircraft for the task, but will attempt to maintain some variety.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
 

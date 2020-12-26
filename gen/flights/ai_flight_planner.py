@@ -32,18 +32,15 @@ from game.theater import (
     SamGroundObject,
     TheaterGroundObject,
 )
-# Avoid importing some types that cause circular imports unless type checking.
 from game.theater.theatergroundobject import (
     EwrGroundObject,
-    NavalGroundObject, VehicleGroupGroundObject,
+    NavalGroundObject,
+    VehicleGroupGroundObject,
 )
 from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
-from gen.flights.ai_flight_planner_db import (
-    capable_aircraft_for_task,
-    preferred_aircraft_for_task,
-)
+from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import (
     ClosestAirfields,
     ObjectiveDistanceCache,
@@ -55,6 +52,7 @@ from gen.flights.flight import (
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.flights.traveltime import TotEstimator
 
+# Avoid importing some types that cause circular imports unless type checking.
 if TYPE_CHECKING:
     from game import Game
     from game.inventory import GlobalAircraftInventory
@@ -144,13 +142,8 @@ class AircraftAllocator:
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        result = self.find_aircraft_of_type(
-            flight, preferred_aircraft_for_task(flight.task)
-        )
-        if result is not None:
-            return result
         return self.find_aircraft_of_type(
-            flight, capable_aircraft_for_task(flight.task)
+            flight, aircraft_for_task(flight.task)
         )
 
     def find_aircraft_of_type(
