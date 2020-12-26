@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from game.db import PLAYER_BUDGET_BASE, REWARDS
+from game.db import REWARDS
 from game.theater import ControlPoint
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ class Income:
         self.control_points = []
         self.buildings = []
 
-        self.income_per_base = PLAYER_BUDGET_BASE if player else 0
+        self.income_per_base = 20
 
         names = set()
         for cp in game.theater.control_points_for(player):

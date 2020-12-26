@@ -1171,9 +1171,6 @@ REWARDS = {
     "derrick": 8
 }
 
-# Base post-turn bonus value
-PLAYER_BUDGET_BASE = 20
-
 CARRIER_CAPABLE = [
     FA_18C_hornet,
     F_14A_135_GR,
