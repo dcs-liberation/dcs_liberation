@@ -469,8 +469,16 @@ class CoalitionMissionPlanner:
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
         self.procurement_requests: List[AircraftProcurementRequest] = []
 
-    def propose_missions(self) -> Iterator[ProposedMission]:
-        """Identifies and iterates over potential mission in priority order."""
+    def critical_missions(self) -> Iterator[ProposedMission]:
+        """Identifies the most important missions to plan this turn.
+
+        Non-critical missions that cannot be fulfilled will create purchase
+        orders for the next turn. Critical missions will create a purchase order
+        unless the mission can be doubly fulfilled. In other words, the AI will
+        attempt to have *double* the aircraft it needs for these missions to
+        ensure that they can be planned again next turn even if all aircraft are
+        eliminated this turn.
+        """
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
             yield ProposedMission(cp, [
@@ -484,6 +492,10 @@ class CoalitionMissionPlanner:
                 ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE,
                                EscortType.AirToAir),
             ])
+
+    def propose_missions(self) -> Iterator[ProposedMission]:
+        """Identifies and iterates over potential mission in priority order."""
+        yield from self.critical_missions()
 
         # Find enemy SAM sites with ranges that cover friendly CPs, front lines,
         # or objects, plan DEAD.
@@ -542,6 +554,9 @@ class CoalitionMissionPlanner:
         for proposed_mission in self.propose_missions():
             self.plan_mission(proposed_mission)
 
+        for critical_mission in self.critical_missions():
+            self.plan_mission(critical_mission, reserves=True)
+
         self.stagger_missions()
 
         for cp in self.objective_finder.friendly_control_points():
@@ -551,32 +566,40 @@ class CoalitionMissionPlanner:
                              f"{available} {aircraft.id} from {cp}")
 
     def plan_flight(self, mission: ProposedMission, flight: ProposedFlight,
-                    builder: PackageBuilder,
-                    missing_types: Set[FlightType]) -> None:
+                    builder: PackageBuilder, missing_types: Set[FlightType],
+                    for_reserves: bool) -> None:
         if not builder.plan_flight(flight):
             missing_types.add(flight.task)
-            self.procurement_requests.append(AircraftProcurementRequest(
+            purchase_order = AircraftProcurementRequest(
                 near=mission.location,
                 range=flight.max_distance,
                 task_capability=flight.task,
                 number=flight.num_aircraft
-            ))
+            )
+            if for_reserves:
+                # Reserves are planned for critical missions, so prioritize
+                # those orders over aircraft needed for non-critical missions.
+                self.procurement_requests.insert(0, purchase_order)
+            else:
+                self.procurement_requests.append(purchase_order)
 
     def scrub_mission_missing_aircraft(
             self, mission: ProposedMission, builder: PackageBuilder,
             missing_types: Set[FlightType],
-            not_attempted: Iterable[ProposedFlight]) -> None:
+            not_attempted: Iterable[ProposedFlight],
+            reserves: bool) -> None:
         # Try to plan the rest of the mission just so we can count the missing
         # types to buy.
         for flight in not_attempted:
-            self.plan_flight(mission, flight, builder, missing_types)
+            self.plan_flight(mission, flight, builder, missing_types, reserves)
 
         missing_types_str = ", ".join(
             sorted([t.name for t in missing_types]))
         builder.release_planned_aircraft()
+        desc = "reserve aircraft" if reserves else "aircraft"
         self.message(
             "Insufficient aircraft",
-            f"Not enough aircraft in range for {mission.location.name} "
+            f"Not enough {desc} in range for {mission.location.name} "
             f"capable of: {missing_types_str}")
 
     def check_needed_escorts(
@@ -589,7 +612,8 @@ class CoalitionMissionPlanner:
                 threats[EscortType.Sead] = True
         return threats
 
-    def plan_mission(self, mission: ProposedMission) -> None:
+    def plan_mission(self, mission: ProposedMission,
+                     reserves: bool = False) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
 
         if self.game.settings.perf_ai_parking_start:
@@ -616,11 +640,12 @@ class CoalitionMissionPlanner:
                 # If the package does not need escorts they may be pruned.
                 escorts.append(proposed_flight)
                 continue
-            self.plan_flight(mission, proposed_flight, builder, missing_types)
+            self.plan_flight(mission, proposed_flight, builder, missing_types,
+                             reserves)
 
         if missing_types:
             self.scrub_mission_missing_aircraft(mission, builder, missing_types,
-                                                escorts)
+                                                escorts, reserves)
             return
 
         # Create flight plans for the main flights of the package so we can
@@ -640,14 +665,20 @@ class CoalitionMissionPlanner:
             # impossible.
             assert escort.escort_type is not None
             if needed_escorts[escort.escort_type]:
-                self.plan_flight(mission, escort, builder,
-                                 missing_types)
+                self.plan_flight(mission, escort, builder, missing_types,
+                                 reserves)
 
         # Check again for unavailable aircraft. If the escort was required and
         # none were found, scrub the mission.
         if missing_types:
             self.scrub_mission_missing_aircraft(mission, builder, missing_types,
-                                                escorts)
+                                                escorts, reserves)
+            return
+
+        if reserves:
+            # Mission is planned reserves which will not be used this turn.
+            # Return reserves to the inventory.
+            builder.release_planned_aircraft()
             return
 
         package = builder.build()

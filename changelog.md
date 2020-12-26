@@ -9,6 +9,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaign AI]** Auto-purchase now prefers airfields that are not within range of the enemy.
 * **[Campaign AI]** Auto-purchase now prefers the best aircraft for the task, but will attempt to maintain some variety.
 * **[Campaign AI]** Opfor now sells off odd aircraft since they're unlikely to be used.
+* **[Campaign AI]** Reserve aircraft will be ordered if needed to prioritize next turn's CAP/CAS over offensive missions.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
 
