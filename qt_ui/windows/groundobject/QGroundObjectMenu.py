@@ -355,7 +355,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         # Generate SAM
         generator = sam_generator(self.game, self.ground_object)
         generator.generate()
-        self.ground_object.groups = generator.groups
+        self.ground_object.groups = list(generator.groups)
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
 
