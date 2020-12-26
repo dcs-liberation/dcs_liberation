@@ -550,7 +550,6 @@ class NavalControlPoint(ControlPoint, ABC):
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        yield from super().mission_types(for_player)
         from gen.flights.flight import FlightType
         if self.is_friendly(for_player):
             yield from [
@@ -561,6 +560,7 @@ class NavalControlPoint(ControlPoint, ABC):
             ]
         else:
             yield FlightType.ANTISHIP
+        yield from super().mission_types(for_player)
 
     @property
     def heading(self) -> int:

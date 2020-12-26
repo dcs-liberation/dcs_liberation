@@ -4,7 +4,7 @@ from PySide2.QtGui import QColor, QPainter
 from PySide2.QtWidgets import QAction, QMenu
 
 import qt_ui.uiconstants as const
-from game.theater import ControlPoint
+from game.theater import ControlPoint, NavalControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from .QMapObject import QMapObject
@@ -108,7 +108,8 @@ class QMapControlPoint(QMapObject):
     
     def open_new_package_dialog(self) -> None:
         """Extends the default packagedialog to redirect to base menu for red air base."""
-        if not self.control_point.captured:
-            self.on_click()
-        else:
-            super(QMapControlPoint, self).open_new_package_dialog()
+        is_navy = isinstance(self.control_point, NavalControlPoint)
+        if self.control_point.captured or is_navy:
+            super().open_new_package_dialog()
+            return
+        self.on_click()
