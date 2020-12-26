@@ -182,6 +182,13 @@ class TheaterGroundObject(MissionTarget):
 
     @property
     def threat_range(self) -> Distance:
+        if not self.detection_range:
+            # For simple SAMs like shilkas, the unit has both a threat and
+            # detection range. For complex sites like SA-2s, the launcher has a
+            # threat range and the search/track radars have detection ranges. If
+            # the site has no detection range it has no radars and can't fire,
+            # so it's not actually a threat even if it still has launchers.
+            return meters(0)
         return self._max_range_of_type("threat_range")
 
 
