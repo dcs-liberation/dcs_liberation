@@ -56,9 +56,37 @@ class ProcurementAi:
             armor_budget = math.ceil(budget / 2)
             budget -= armor_budget
             budget += self.reinforce_front_line(armor_budget)
+
+        # Don't sell overstock aircraft until after we've bought runways and
+        # front lines. Any budget we free up should be earmarked for aircraft.
+        if not self.is_player:
+            budget += self.sell_incomplete_squadrons()
         if self.manage_aircraft:
             budget = self.purchase_aircraft(budget, aircraft_requests)
         return budget
+
+    def sell_incomplete_squadrons(self) -> int:
+        # Selling incomplete squadrons gives us more money to spend on the next
+        # turn. This serves as a short term fix for
+        # https://github.com/Khopa/dcs_liberation/issues/41.
+        #
+        # Only incomplete squadrons which are unlikely to get used will be sold
+        # rather than all unused aircraft because the unused aircraft are what
+        # make OCA strikes worthwhile.
+        #
+        # This option is only used by the AI since players cannot cancel sales
+        # (https://github.com/Khopa/dcs_liberation/issues/365).
+        total = 0
+        for cp in self.game.theater.control_points_for(self.is_player):
+            inventory = self.game.aircraft_inventory.for_control_point(cp)
+            for aircraft, available in inventory.all_aircraft:
+                # We only ever plan even groups, so the odd aircraft is unlikely
+                # to get used.
+                if available % 2 == 0:
+                    continue
+                inventory.remove_aircraft(aircraft, 1)
+                total += db.PRICES[aircraft]
+        return total
 
     def repair_runways(self, budget: int) -> int:
         for control_point in self.owned_points:

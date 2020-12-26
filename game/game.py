@@ -4,7 +4,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, Iterator, List, Tuple
+from typing import Any, Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -12,7 +12,6 @@ from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 
 from game import db
-from game.db import PLAYER_BUDGET_BASE, REWARDS
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
