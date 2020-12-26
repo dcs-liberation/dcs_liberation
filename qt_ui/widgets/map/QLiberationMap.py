@@ -263,29 +263,6 @@ class QLiberationMap(QGraphicsView):
     def update_reference_point(point: ReferencePoint, change: Point) -> None:
         point.image_coordinates += change
 
-    @staticmethod
-    def aa_ranges(ground_object: TheaterGroundObject) -> Tuple[int, int]:
-        detection_range = 0
-        threat_range = 0
-        for g in ground_object.groups:
-            for u in g.units:
-                unit = db.unit_type_from_name(u.type)
-                if unit is None:
-                    logging.error(f"Unknown unit type {u.type}")
-                    continue
-
-                # Some units in pydcs have detection_range and threat_range
-                # defined, but explicitly set to None.
-                unit_detection_range = getattr(unit, "detection_range", None)
-                if unit_detection_range is not None:
-                    detection_range = max(detection_range, unit_detection_range)
-
-                unit_threat_range = getattr(unit, "threat_range", None)
-                if unit_threat_range is not None:
-                    threat_range = max(threat_range, unit_threat_range)
-
-        return detection_range, threat_range
-
     def display_culling(self, scene: QGraphicsScene) -> None:
         """Draws the culling distance rings on the map"""
         culling_points = self.game_model.game.get_culling_points()
@@ -464,7 +441,6 @@ class QLiberationMap(QGraphicsView):
         package.time_over_target = TotEstimator(package).earliest_tot()
         self.draw_flight_plan(scene, flight, selected=True)
 
-
     @staticmethod
     def should_display_ground_objects_at(cp: ControlPoint) -> bool:
         return ((DisplayOptions.sam_ranges and cp.captured) or
@@ -472,12 +448,12 @@ class QLiberationMap(QGraphicsView):
 
     def draw_threat_range(self, scene: QGraphicsScene, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
         go_pos = self._transform_point(ground_object.position)
-        detection_range, threat_range = self.aa_ranges(
-            ground_object
-        )
+        detection_range = ground_object.detection_range
+        threat_range = ground_object.threat_range
         if threat_range:
-            threat_pos = self._transform_point(Point(ground_object.position.x+threat_range,
-                                                        ground_object.position.y+threat_range))
+            threat_pos = self._transform_point(
+                ground_object.position + Point(threat_range.meters,
+                                               threat_range.meters))
             threat_radius = Point(*go_pos).distance_to_point(Point(*threat_pos))
 
             # Add threat range circle
@@ -486,8 +462,9 @@ class QLiberationMap(QGraphicsView):
 
         if detection_range and DisplayOptions.detection_range:
             # Add detection range circle
-            detection_pos = self._transform_point(Point(ground_object.position.x+detection_range,
-                                                        ground_object.position.y+detection_range))
+            detection_pos = self._transform_point(
+                ground_object.position + Point(detection_range.meters,
+                                               detection_range.meters))
             detection_radius = Point(*go_pos).distance_to_point(Point(*detection_pos))
             scene.addEllipse(go_pos[0] - detection_radius/2 + 7, go_pos[1] - detection_radius/2 + 6,
                                 detection_radius, detection_radius, self.detection_pen(cp.captured))

@@ -72,6 +72,9 @@ class Distance:
     def __floordiv__(self, other: Union[float, int]) -> Distance:
         return meters(self.meters // other)
 
+    def __bool__(self) -> bool:
+        return not math.isclose(self.meters, 0.0)
+
 
 def feet(value: float) -> Distance:
     return Distance.from_feet(value)
@@ -153,6 +156,9 @@ class Speed:
 
     def __floordiv__(self, other: Union[float, int]) -> Speed:
         return kph(self.kph // other)
+
+    def __bool__(self) -> bool:
+        return not math.isclose(self.kph, 0.0)
 
 
 def knots(value: float) -> Speed:

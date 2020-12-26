@@ -157,12 +157,11 @@ class TheaterGroundObject(MissionTarget):
                     return True
         return False
 
-    @property
-    def threat_range(self) -> Distance:
+    def _max_range_of_type(self, range_type: str) -> Distance:
         if not self.might_have_aa:
             return meters(0)
 
-        threat_range = meters(0)
+        max_range = meters(0)
         for group in self.groups:
             for u in group.units:
                 unit = db.unit_type_from_name(u.type)
@@ -170,12 +169,20 @@ class TheaterGroundObject(MissionTarget):
                     logging.error(f"Unknown unit type {u.type}")
                     continue
 
-                # Some units in pydcs have threat_range defined, but explicitly
-                # set to None.
-                unit_threat_range = getattr(unit, "threat_range", None)
-                if unit_threat_range is not None:
-                    threat_range = max(threat_range, meters(unit_threat_range))
-        return threat_range
+                # Some units in pydcs have detection_range/threat_range defined,
+                # but explicitly set to None.
+                unit_range = getattr(unit, range_type, None)
+                if unit_range is not None:
+                    max_range = max(max_range, meters(unit_range))
+        return max_range
+
+    @property
+    def detection_range(self) -> Distance:
+        return self._max_range_of_type("detection_range")
+
+    @property
+    def threat_range(self) -> Distance:
+        return self._max_range_of_type("threat_range")
 
 
 class BuildingGroundObject(TheaterGroundObject):
