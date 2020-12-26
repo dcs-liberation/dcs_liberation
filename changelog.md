@@ -19,6 +19,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
+* **[UI]** Added enemy intelligence summary and details window.
 
 ## Fixes:
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
