@@ -31,6 +31,12 @@ class AircraftProcurementRequest:
     task_capability: FlightType
     number: int
 
+    def __str__(self) -> str:
+        task = self.task_capability.value
+        distance = self.range.nautical_miles
+        target = self.near.name
+        return f"{self.number} ship {task} within {distance} nm of {target}"
+
 
 class ProcurementAi:
     def __init__(self, game: Game, for_player: bool, faction: Faction,
