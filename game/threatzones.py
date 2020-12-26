@@ -95,13 +95,14 @@ class ThreatZones:
                 airbases.append(point.buffer(cap_threat_range.meters))
 
             for tgo in control_point.ground_objects:
-                threat_range = tgo.threat_range
-                # Any system with a shorter range than this is not worth even
-                # avoiding.
-                if threat_range > nautical_miles(3):
-                    point = ShapelyPoint(tgo.position.x, tgo.position.y)
-                    threat_zone = point.buffer(threat_range.meters)
-                    air_defenses.append(threat_zone)
+                for group in tgo.groups:
+                    threat_range = tgo.threat_range(group)
+                    # Any system with a shorter range than this is not worth
+                    # even avoiding.
+                    if threat_range > nautical_miles(3):
+                        point = ShapelyPoint(tgo.position.x, tgo.position.y)
+                        threat_zone = point.buffer(threat_range.meters)
+                        air_defenses.append(threat_zone)
 
         return cls(
             airbases=unary_union(airbases),

@@ -157,39 +157,36 @@ class TheaterGroundObject(MissionTarget):
                     return True
         return False
 
-    def _max_range_of_type(self, range_type: str) -> Distance:
+    def _max_range_of_type(self, group: Group, range_type: str) -> Distance:
         if not self.might_have_aa:
             return meters(0)
 
         max_range = meters(0)
-        for group in self.groups:
-            for u in group.units:
-                unit = db.unit_type_from_name(u.type)
-                if unit is None:
-                    logging.error(f"Unknown unit type {u.type}")
-                    continue
+        for u in group.units:
+            unit = db.unit_type_from_name(u.type)
+            if unit is None:
+                logging.error(f"Unknown unit type {u.type}")
+                continue
 
-                # Some units in pydcs have detection_range/threat_range defined,
-                # but explicitly set to None.
-                unit_range = getattr(unit, range_type, None)
-                if unit_range is not None:
-                    max_range = max(max_range, meters(unit_range))
+            # Some units in pydcs have detection_range/threat_range defined,
+            # but explicitly set to None.
+            unit_range = getattr(unit, range_type, None)
+            if unit_range is not None:
+                max_range = max(max_range, meters(unit_range))
         return max_range
 
-    @property
-    def detection_range(self) -> Distance:
-        return self._max_range_of_type("detection_range")
+    def detection_range(self, group: Group) -> Distance:
+        return self._max_range_of_type(group, "detection_range")
 
-    @property
-    def threat_range(self) -> Distance:
-        if not self.detection_range:
+    def threat_range(self, group: Group) -> Distance:
+        if not self.detection_range(group):
             # For simple SAMs like shilkas, the unit has both a threat and
             # detection range. For complex sites like SA-2s, the launcher has a
             # threat range and the search/track radars have detection ranges. If
             # the site has no detection range it has no radars and can't fire,
             # so it's not actually a threat even if it still has launchers.
             return meters(0)
-        return self._max_range_of_type("threat_range")
+        return self._max_range_of_type(group, "threat_range")
 
 
 class BuildingGroundObject(TheaterGroundObject):

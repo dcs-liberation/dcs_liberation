@@ -28,6 +28,7 @@ from PySide2.QtWidgets import (
 from dcs import Point
 from dcs.planes import F_16C_50
 from dcs.mapping import point_from_heading
+from dcs.unitgroup import Group
 from shapely.geometry import (
     LineString,
     MultiPolygon,
@@ -36,7 +37,7 @@ from shapely.geometry import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, db
+from game import Game
 from game.navmesh import NavMesh
 from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine, ReferencePoint
@@ -446,10 +447,10 @@ class QLiberationMap(QGraphicsView):
         return ((DisplayOptions.sam_ranges and cp.captured) or
                 (DisplayOptions.enemy_sam_ranges and not cp.captured))
 
-    def draw_threat_range(self, scene: QGraphicsScene, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
+    def draw_threat_range(self, scene: QGraphicsScene, group: Group, ground_object: TheaterGroundObject, cp: ControlPoint) -> None:
         go_pos = self._transform_point(ground_object.position)
-        detection_range = ground_object.detection_range
-        threat_range = ground_object.threat_range
+        detection_range = ground_object.detection_range(group)
+        threat_range = ground_object.threat_range(group)
         if threat_range:
             threat_pos = self._transform_point(
                 ground_object.position + Point(threat_range.meters,
@@ -482,7 +483,8 @@ class QLiberationMap(QGraphicsView):
 
             should_display = self.should_display_ground_objects_at(cp)
             if ground_object.might_have_aa and should_display:
-               self.draw_threat_range(scene, ground_object, cp)
+                for group in ground_object.groups:
+                    self.draw_threat_range(scene, group, ground_object, cp)
             added_objects.append(ground_object.obj_name)
 
     def reload_scene(self):
