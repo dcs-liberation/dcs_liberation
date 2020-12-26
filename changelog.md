@@ -15,6 +15,7 @@
 * **[Factions]** Germany 1944, added Stug III and Stug IV
 * **[Factions]** Added factions Insurgents (Hard) with better and more weapons
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
+* **[UI]** Added enemy intelligence summary and details window.
 
 ## Fixes:
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
