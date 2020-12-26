@@ -478,6 +478,10 @@ class ControlPoint(MissionTarget, ABC):
         else:
             return 0
 
+    @property
+    def income_per_turn(self) -> int:
+        return 0
+
 
 class Airfield(ControlPoint):
 
@@ -541,6 +545,10 @@ class Airfield(ControlPoint):
     @property
     def can_deploy_ground_units(self) -> bool:
         return True
+
+    @property
+    def income_per_turn(self) -> int:
+        return 20
 
 
 class NavalControlPoint(ControlPoint, ABC):
@@ -741,3 +749,7 @@ class Fob(ControlPoint):
     @property
     def can_deploy_ground_units(self) -> bool:
         return True
+
+    @property
+    def income_per_turn(self) -> int:
+        return 10

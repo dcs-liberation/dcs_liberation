@@ -13,6 +13,8 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
 * **[Balance]** Opfor now gains income using the same rules as the player, significantly increasing their income relative to the player for most campaigns.
+* **[Economy]** FOBs generate only $10M per turn (previously $20M like airbases).
+* **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
 
 # 2.3.3
 
