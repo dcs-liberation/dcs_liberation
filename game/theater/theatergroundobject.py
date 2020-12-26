@@ -159,6 +159,9 @@ class TheaterGroundObject(MissionTarget):
 
     @property
     def threat_range(self) -> Distance:
+        if not self.might_have_aa:
+            return meters(0)
+
         threat_range = meters(0)
         for group in self.groups:
             for u in group.units:
