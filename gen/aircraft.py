@@ -1474,10 +1474,7 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            # Match search is used due to TheaterGroundObject.name not matching
-            # the Mission group name because of SkyNet prefixes.
-            tgroup = self.mission.find_group(target_group.group_name,
-                                             search="match")
+            tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
                 task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
                 task.params["attackQtyLimit"] = False
@@ -1527,10 +1524,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            # Match search is used due to TheaterGroundObject.name not matching
-            # the Mission group name because of SkyNet prefixes.
-            tgroup = self.mission.find_group(target_group.group_name,
-                                             search="match")
+            tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
                 task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
                 task.params["expend"] = "All"
@@ -1593,10 +1587,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
 
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            # Match search is used due to TheaterGroundObject.name not matching
-            # the Mission group name because of SkyNet prefixes.
-            tgroup = self.mission.find_group(target_group.group_name,
-                                             search="match")
+            tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
                                     position=tgroup.position,
