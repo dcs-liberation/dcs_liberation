@@ -29,6 +29,7 @@
 * **[Mission Generator]** Empty navy groups will no longer be generated
 * **[Flight Planner]** Fixed not being able to plan packages against opfor carriers
 * **[UI]** Repaired SAMs no longer show as dead.
+* **[UI]** Fixed not being able to manage a disbanded site after disbanding and closing the base menu.
 
 # 2.3.2
 
