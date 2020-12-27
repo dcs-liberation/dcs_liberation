@@ -34,6 +34,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
 * **[Mission Generator]** Empty navy groups will no longer be generated
+* **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights ocassionally being assigned the wrong targets.
 * **[Flight Planner]** Fixed not being able to plan packages against opfor carriers
 * **[UI]** Repaired SAMs no longer show as dead.
 * **[UI]** Fixed not being able to manage a disbanded site after disbanding and closing the base menu.
