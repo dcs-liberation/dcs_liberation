@@ -243,6 +243,11 @@ class FlightPlan:
         else:
             return timedelta(minutes=5)
 
+    @property
+    def mission_departure_time(self) -> timedelta:
+        """The time that the mission is complete and the flight RTBs."""
+        raise NotImplementedError
+
 
 @dataclass(frozen=True)
 class LoiterFlightPlan(FlightPlan):
@@ -356,6 +361,10 @@ class FormationFlightPlan(LoiterFlightPlan):
             GroundSpeed.for_flight(self.flight, self.hold.alt)
         )
 
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.split_time
+
 
 @dataclass(frozen=True)
 class PatrollingFlightPlan(FlightPlan):
@@ -405,6 +414,10 @@ class PatrollingFlightPlan(FlightPlan):
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
         return self.patrol_start
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.patrol_end_time
 
 
 @dataclass(frozen=True)
@@ -678,6 +691,9 @@ class SweepFlightPlan(LoiterFlightPlan):
             GroundSpeed.for_flight(self.flight, self.hold.alt)
         )
 
+    def mission_departure_time(self) -> timedelta:
+        return self.sweep_end_time
+
 
 @dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
@@ -707,6 +723,10 @@ class CustomFlightPlan(FlightPlan):
     def depart_time_for_waypoint(
             self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         return None
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.package.time_over_target
 
 
 class FlightPlanBuilder:

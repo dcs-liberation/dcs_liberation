@@ -118,6 +118,15 @@ class Package:
             return max(times)
         return None
 
+    @property
+    def mission_departure_time(self) -> Optional[timedelta]:
+        times = []
+        for flight in self.flights:
+            times.append(flight.flight_plan.mission_departure_time)
+        if times:
+            return max(times)
+        return None
+
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""
         self.flights.append(flight)

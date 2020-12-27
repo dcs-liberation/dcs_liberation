@@ -38,13 +38,17 @@ class AircraftProcurementRequest:
 class ProcurementAi:
     def __init__(self, game: Game, for_player: bool, faction: Faction,
                  manage_runways: bool, manage_front_line: bool,
-                 manage_aircraft: bool) -> None:
+                 manage_aircraft: bool, front_line_budget_share: float) -> None:
+        if front_line_budget_share > 1.0:
+            raise ValueError
+
         self.game = game
         self.is_player = for_player
         self.faction = faction
         self.manage_runways = manage_runways
         self.manage_front_line = manage_front_line
         self.manage_aircraft = manage_aircraft
+        self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def spend_budget(
@@ -53,7 +57,7 @@ class ProcurementAi:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
-            armor_budget = math.ceil(budget / 2)
+            armor_budget = math.ceil(budget * self.front_line_budget_share)
             budget -= armor_budget
             budget += self.reinforce_front_line(armor_budget)
 

@@ -318,13 +318,18 @@ class Game:
 
     def plan_procurement(self, blue_planner: CoalitionMissionPlanner,
                          red_planner: CoalitionMissionPlanner) -> None:
+        # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
+        # gets much more of the budget that turn. Otherwise budget (after
+        # repairs) is split evenly between air and ground.
+        ground_portion = 0.1 if self.turn == 0 else 0.5
         self.budget = ProcurementAi(
             self,
             for_player=True,
             faction=self.player_faction,
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
-            manage_aircraft=self.settings.automate_aircraft_reinforcements
+            manage_aircraft=self.settings.automate_aircraft_reinforcements,
+            front_line_budget_share=ground_portion
         ).spend_budget(self.budget, blue_planner.procurement_requests)
 
         self.enemy_budget = ProcurementAi(
@@ -333,7 +338,8 @@ class Game:
             faction=self.enemy_faction,
             manage_runways=True,
             manage_front_line=True,
-            manage_aircraft=True
+            manage_aircraft=True,
+            front_line_budget_share=ground_portion
         ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
 
     def message(self, text: str) -> None:

@@ -481,6 +481,14 @@ class CoalitionMissionPlanner:
         """
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
+            # Plan three rounds of CAP to give ~90 minutes coverage. Spacing
+            # these out appropriately is done in stagger_missions.
+            yield ProposedMission(cp, [
+                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+            ])
+            yield ProposedMission(cp, [
+                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+            ])
             yield ProposedMission(cp, [
                 ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
             ])
@@ -698,10 +706,12 @@ class CoalitionMissionPlanner:
 
         dca_types = {
             FlightType.BARCAP,
-            FlightType.INTERCEPTION,
             FlightType.TARCAP,
         }
 
+        previous_cap_end_time: Dict[MissionTarget, timedelta] = defaultdict(
+            timedelta
+        )
         non_dca_packages = [p for p in self.ato.packages if
                             p.primary_task not in dca_types]
 
@@ -714,8 +724,22 @@ class CoalitionMissionPlanner:
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()
             if package.primary_task in dca_types:
-                # All CAP missions should be on station ASAP.
-                package.time_over_target = tot
+                previous_end_time = previous_cap_end_time[package.target]
+                if tot > previous_end_time:
+                    # Can't get there exactly on time, so get there ASAP. This
+                    # will typically only happen for the first CAP at each
+                    # target.
+                    package.time_over_target = tot
+                else:
+                    package.time_over_target = previous_end_time
+
+                departure_time = package.mission_departure_time
+                # Should be impossible for CAPs
+                if departure_time is None:
+                    logging.error(
+                        f"Could not determine mission end time for {package}")
+                    continue
+                previous_cap_end_time[package.target] = departure_time
             else:
                 # But other packages should be spread out a bit. Note that take
                 # times are delayed, but all aircraft will become active at

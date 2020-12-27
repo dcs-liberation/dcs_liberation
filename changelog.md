@@ -10,6 +10,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaign AI]** Auto-purchase now prefers the best aircraft for the task, but will attempt to maintain some variety.
 * **[Campaign AI]** Opfor now sells off odd aircraft since they're unlikely to be used.
 * **[Campaign AI]** Reserve aircraft will be ordered if needed to prioritize next turn's CAP/CAS over offensive missions.
+* **[Campaign AI]** Multiple rounds of CAP will be planned (roughly 90 minutes of coverage). Default starting budget has increased to account for the increased need for aircraft.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
 * **[Balance]** Opfor now gains income using the same rules as the player, significantly increasing their income relative to the player for most campaigns.
