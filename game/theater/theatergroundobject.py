@@ -90,8 +90,11 @@ class TheaterGroundObject(MissionTarget):
         self.dcs_identifier = dcs_identifier
         self.airbase_group = airbase_group
         self.sea_object = sea_object
-        self.is_dead = False
         self.groups: List[Group] = []
+
+    @property
+    def is_dead(self) -> bool:
+        return self.alive_unit_count == 0
 
     @property
     def units(self) -> List[Unit]:
@@ -205,6 +208,9 @@ class BuildingGroundObject(TheaterGroundObject):
             sea_object=False
         )
         self.object_id = object_id
+        # Other TGOs track deadness based on the number of alive units, but
+        # buildings don't have groups assigned to the TGO.
+        self._dead = False
 
     @property
     def group_name(self) -> str:
@@ -214,6 +220,15 @@ class BuildingGroundObject(TheaterGroundObject):
     @property
     def waypoint_name(self) -> str:
         return f"{super().waypoint_name} #{self.object_id}"
+
+    @property
+    def is_dead(self) -> bool:
+        if not hasattr(self, "_dead"):
+            self._dead = False
+        return self._dead
+
+    def kill(self) -> None:
+        self._dead = True
 
 
 class NavalGroundObject(TheaterGroundObject):
