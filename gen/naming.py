@@ -1,4 +1,5 @@
 from game import db
+from gen.flights.flight import Flight
 import random
 
 ALPHA_MILITARY = ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot",
@@ -50,6 +51,11 @@ class NameGenerator:
     def reset_numbers(self):
         self.number = 0
         self.infantry_number = 0
+
+    def next_aircraft_name(self, country: int, parent_base_id: int, flight: Flight):
+        self.number += 1
+        name_str = "{} {}".format(flight.package.target.name, flight.flight_type)
+        return "{}|{}|{}|{}|{}|".format(name_str, country.id, self.number, parent_base_id, db.unit_type_name(flight.unit_type))
 
     def next_unit_name(self, country, parent_base_id, unit_type):
         self.number += 1

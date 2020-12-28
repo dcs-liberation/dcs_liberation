@@ -1039,14 +1039,14 @@ class AircraftConflictGenerator:
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_aircraft_name(country, cp.id, flight),
                     side=country,
                     flight=flight,
                     origin=cp)
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=namegen.next_aircraft_name(country, cp.id, flight),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1057,8 +1057,8 @@ class AircraftConflictGenerator:
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}")
                 group = self._generate_at_airport(
-                    name=namegen.next_unit_name(country, cp.id,
-                                                flight.unit_type),
+                    name=namegen.next_aircraft_name(country, cp.id,
+                                                flight),
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1070,7 +1070,7 @@ class AircraftConflictGenerator:
             logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
             group = self._generate_inflight(
-                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                name=namegen.next_aircraft_name(country, cp.id, flight),
                 side=country,
                 flight=flight,
                 origin=cp)
