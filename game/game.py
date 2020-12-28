@@ -215,8 +215,6 @@ class Game:
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        self.budget += int(event.bonus() *
-                           self.settings.player_income_multiplier)
 
         if event in self.events:
             self.events.remove(event)

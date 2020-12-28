@@ -21,10 +21,6 @@ if TYPE_CHECKING:
     from ..game import Game
 
 
-DIFFICULTY_LOG_BASE = 1.1
-EVENT_DEPARTURE_MAX_DISTANCE = 340000
-
-
 MINOR_DEFEAT_INFLUENCE = 0.1
 DEFEAT_INFLUENCE = 0.3
 STRONG_DEFEAT_INFLUENCE = 0.5
@@ -39,7 +35,6 @@ class Event:
     from_cp = None  # type: ControlPoint
     to_cp = None  # type: ControlPoint
     difficulty = 1  # type: int
-    BONUS_BASE = 5
 
     def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
         self.game = game
@@ -56,9 +51,6 @@ class Event:
     @property
     def tasks(self) -> List[Type[Task]]:
         return []
-
-    def bonus(self) -> int:
-        return int(math.log(self.to_cp.importance + 1, DIFFICULTY_LOG_BASE) * self.BONUS_BASE)
 
     def generate(self) -> UnitMap:
         Operation.prepare(self.game)
