@@ -1,12 +1,18 @@
-from game import db
-from gen.flights.flight import Flight
 import random
 
-ALPHA_MILITARY = ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot",
-                  "Golf","Hotel","India","Juliet","Kilo","Lima","Mike",
-                  "November","Oscar","Papa","Quebec","Romeo","Sierra",
-                  "Tango","Uniform","Victor","Whisky","XRay","Yankee",
-                  "Zulu","Zero"]
+from dcs.country import Country
+from dcs.unittype import UnitType
+
+from game import db
+
+from gen.flights.flight import Flight
+
+ALPHA_MILITARY = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot",
+                  "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike",
+                  "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra",
+                  "Tango", "Uniform", "Victor", "Whisky", "XRay", "Yankee",
+                  "Zulu", "Zero"]
+
 
 class NameGenerator:
     number = 0
@@ -47,36 +53,44 @@ class NameGenerator:
     def reset(self):
         self.number = 0
         self.ANIMALS = NameGenerator.ANIMALS.copy()
-    
+
     def reset_numbers(self):
         self.number = 0
         self.infantry_number = 0
 
-    def next_aircraft_name(self, country: int, parent_base_id: int, flight: Flight):
+    def next_aircraft_name(self, country: Country, parent_base_id: int, flight: Flight):
         self.number += 1
-        name_str = "{} {}".format(flight.package.target.name, flight.flight_type)
+        try:
+            if flight.custom_name:
+                name_str = flight.custom_name
+            else:
+                name_str = "{} {}".format(
+                    flight.package.target.name, flight.flight_type)
+        except AttributeError:  # Here to maintain save compatibility with 2.3
+            name_str = "{} {}".format(
+                flight.package.target.name, flight.flight_type)
         return "{}|{}|{}|{}|{}|".format(name_str, country.id, self.number, parent_base_id, db.unit_type_name(flight.unit_type))
 
-    def next_unit_name(self, country, parent_base_id, unit_type):
+    def next_unit_name(self, country: Country, parent_base_id: int, unit_type: UnitType):
         self.number += 1
         return "unit|{}|{}|{}|{}|".format(country.id, self.number, parent_base_id, db.unit_type_name(unit_type))
 
-    def next_infantry_name(self, country, parent_base_id, unit_type):
+    def next_infantry_name(self, country: Country, parent_base_id: int, unit_type: UnitType):
         self.infantry_number += 1
         return "infantry|{}|{}|{}|{}|".format(country.id, self.infantry_number, parent_base_id, db.unit_type_name(unit_type))
 
     def next_basedefense_name(self):
         return "basedefense_aa|0|0|"
 
-    def next_awacs_name(self, country):
+    def next_awacs_name(self, country: Country):
         self.number += 1
         return "awacs|{}|{}|0|".format(country.id, self.number)
 
-    def next_tanker_name(self, country, unit_type):
+    def next_tanker_name(self, country: Country, unit_type: UnitType):
         self.number += 1
         return "tanker|{}|{}|0|{}".format(country.id, self.number, db.unit_type_name(unit_type))
 
-    def next_carrier_name(self, country):
+    def next_carrier_name(self, country: Country):
         self.number += 1
         return "carrier|{}|{}|0|".format(country.id, self.number)
 
@@ -90,6 +104,3 @@ class NameGenerator:
 
 
 namegen = NameGenerator()
-
-
-

@@ -137,7 +137,8 @@ class Flight:
     def __init__(self, package: Package, unit_type: Type[FlyingType],
                  count: int, flight_type: FlightType, start_type: str,
                  departure: ControlPoint, arrival: ControlPoint,
-                 divert: Optional[ControlPoint]) -> None:
+                 divert: Optional[ControlPoint],
+                 custom_name: Optional[str] = None) -> None:
         self.package = package
         self.unit_type = unit_type
         self.count = count
@@ -151,6 +152,7 @@ class Flight:
         self.start_type = start_type
         self.use_custom_loadout = False
         self.client_count = 0
+        self.custom_name = custom_name
 
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
@@ -172,4 +174,6 @@ class Flight:
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)
+        if self.custom_name:
+            return f"{self.custom_name} {self.count} x {name}"
         return f"[{self.flight_type}] {self.count} x {name}"
