@@ -9,6 +9,7 @@ ALPHA_MILITARY = ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot",
 
 class NameGenerator:
     number = 0
+    infantry_number = 0
 
     ANIMALS = [
         "SHARK", "TORTOISE", "BAT", "PANGOLIN", "AARDWOLF",
@@ -45,14 +46,18 @@ class NameGenerator:
     def reset(self):
         self.number = 0
         self.ANIMALS = NameGenerator.ANIMALS.copy()
+    
+    def reset_numbers(self):
+        self.number = 0
+        self.infantry_number = 0
 
     def next_unit_name(self, country, parent_base_id, unit_type):
         self.number += 1
         return "unit|{}|{}|{}|{}|".format(country.id, self.number, parent_base_id, db.unit_type_name(unit_type))
 
     def next_infantry_name(self, country, parent_base_id, unit_type):
-        self.number += 1
-        return "infantry|{}|{}|{}|{}|".format(country.id, self.number, parent_base_id, db.unit_type_name(unit_type))
+        self.infantry_number += 1
+        return "infantry|{}|{}|{}|{}|".format(country.id, self.infantry_number, parent_base_id, db.unit_type_name(unit_type))
 
     def next_basedefense_name(self):
         return "basedefense_aa|0|0|"

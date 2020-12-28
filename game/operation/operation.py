@@ -26,12 +26,12 @@ from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
+from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 
 from .. import db
-from ..debriefing import Debriefing
 from ..theater import Airfield
 from ..unitmap import UnitMap
 
@@ -69,6 +69,7 @@ class Operation:
             options_dict = loads(f.read())["options"]
         cls._set_mission(Mission(game.theater.terrain))
         cls.game = game
+        cls.reset_naming_ids()
         cls._setup_mission_coalitions()
         cls.current_mission.options.load_from_dict(options_dict)
 
@@ -86,7 +87,7 @@ class Operation:
                 cls.game.enemy_country,
                 frontline.position
             )
-    
+
     @classmethod
     def air_conflict(cls) -> Conflict:
         assert cls.game
@@ -103,7 +104,7 @@ class Operation:
             cls.game.enemy_name,
             cls.game.player_country,
             cls.game.enemy_country,
-            mid_point            
+            mid_point
         )
 
     @classmethod
@@ -295,7 +296,7 @@ class Operation:
                     heading=d["orientation"],
                     dead=True,
                 )
-    
+
     @classmethod
     def generate(cls) -> UnitMap:
         """Build the final Mission to be exported"""
@@ -349,7 +350,6 @@ class Operation:
             cls.jtacs,
             cls.airgen
         )
-
         return cls.unit_map
 
     @classmethod
@@ -410,6 +410,15 @@ class Operation:
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
+
+    @classmethod
+    def reset_naming_ids(cls):
+        if not cls.game:
+            logging.warning("Game object not initialized before resetting IDs")
+            return
+        cls.game.current_group_id = 0
+        cls.game.current_unit_id = 0
+        namegen.reset_numbers()
 
     @classmethod
     def generate_lua(cls, airgen: AircraftConflictGenerator,
