@@ -21,16 +21,17 @@ from dcs.unittype import FlyingType
 
 from game import db
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
-from gen.runways import RunwayAssigner, RunwayData
 from gen.ground_forces.combat_stance import CombatStance
+from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
+    GenericCarrierGroundObject,
     SamGroundObject,
     TheaterGroundObject,
-    VehicleGroupGroundObject, GenericCarrierGroundObject,
+    VehicleGroupGroundObject,
 )
 from ..weather import Conditions
 
@@ -366,6 +367,9 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
+        if self.pending_unit_deliveries is not None:
+            self.pending_unit_deliveries.refund_all()
+
         if for_player:
             self.captured = True
         else:

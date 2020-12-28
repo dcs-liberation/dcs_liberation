@@ -189,6 +189,12 @@ class Game:
                                         front_line.control_point_a,
                                         front_line.control_point_b)
 
+    def adjust_budget(self, amount: float, player: bool) -> None:
+        if player:
+            self.budget += amount
+        else:
+            self.enemy_budget += amount
+
     def process_player_income(self):
         self.budget += Income(self, player=True).total
 

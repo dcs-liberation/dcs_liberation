@@ -15,6 +15,7 @@ from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
+from ..db import PRICES
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -361,6 +362,19 @@ class UnitsDeliveryEvent(Event):
     def deliver(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
+
+    def refund_all(self) -> None:
+        while self.units:
+            unit_type, count = self.units.popitem()
+            try:
+                price = PRICES[unit_type]
+            except KeyError:
+                logging.error(f"Could not refund {unit_type.id}, price unknown")
+                continue
+
+            logging.info(
+                f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
+            self.game.adjust_budget(price * count, player=self.to_cp.captured)
 
     def skip(self) -> None:
         for k, v in self.units.items():
