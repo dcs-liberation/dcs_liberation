@@ -44,6 +44,7 @@ ANIMALS = [
 class NameGenerator:
     number = 0
     infantry_number = 0
+    aircraft_number = 0
 
     ANIMALS = ANIMALS
 
@@ -57,10 +58,11 @@ class NameGenerator:
     def reset_numbers(cls):
         cls.number = 0
         cls.infantry_number = 0
+        cls.aircraft_number = 0
 
     @classmethod
     def next_aircraft_name(cls, country: Country, parent_base_id: int, flight: Flight):
-        cls.number += 1
+        cls.aircraft_number += 1
         try:
             if flight.custom_name:
                 name_str = flight.custom_name
@@ -70,7 +72,7 @@ class NameGenerator:
         except AttributeError:  # Here to maintain save compatibility with 2.3
             name_str = "{} {}".format(
                 flight.package.target.name, flight.flight_type)
-        return "{}|{}|{}|{}|{}|".format(name_str, country.id, cls.number, parent_base_id, db.unit_type_name(flight.unit_type))
+        return "{}|{}|{}|{}|{}|".format(name_str, country.id, cls.aircraft_number, parent_base_id, db.unit_type_name(flight.unit_type))
 
     @classmethod
     def next_unit_name(cls, country: Country, parent_base_id: int, unit_type: UnitType):

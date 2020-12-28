@@ -971,8 +971,8 @@ class AircraftConflictGenerator:
                             arrival=control_point, divert=None)
 
             group = self._generate_at_airport(
-                name=namegen.next_unit_name(country, control_point.id,
-                                            aircraft),
+                name=namegen.next_aircraft_name(country, control_point.id,
+                                            flight),
                 side=country,
                 unit_type=aircraft,
                 count=1,
@@ -1036,17 +1036,18 @@ class AircraftConflictGenerator:
             CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
+        name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
-                    name=namegen.next_aircraft_name(country, cp.id, flight),
+                    name=name,
                     side=country,
                     flight=flight,
                     origin=cp)
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
-                    name=namegen.next_aircraft_name(country, cp.id, flight),
+                    name=name,
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1057,8 +1058,7 @@ class AircraftConflictGenerator:
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}")
                 group = self._generate_at_airport(
-                    name=namegen.next_aircraft_name(country, cp.id,
-                                                flight),
+                    name=name,
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1070,7 +1070,7 @@ class AircraftConflictGenerator:
             logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
             group = self._generate_inflight(
-                name=namegen.next_aircraft_name(country, cp.id, flight),
+                name=name,
                 side=country,
                 flight=flight,
                 origin=cp)

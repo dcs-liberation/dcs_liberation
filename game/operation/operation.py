@@ -69,7 +69,6 @@ class Operation:
             options_dict = loads(f.read())["options"]
         cls._set_mission(Mission(game.theater.terrain))
         cls.game = game
-        cls.reset_naming_ids()
         cls._setup_mission_coalitions()
         cls.current_mission.options.load_from_dict(options_dict)
 
@@ -350,6 +349,7 @@ class Operation:
             cls.jtacs,
             cls.airgen
         )
+        cls.reset_naming_ids()
         return cls.unit_map
 
     @classmethod
