@@ -1,3 +1,4 @@
+from re import L
 from typing import Optional
 
 from PySide2.QtCore import Qt, Signal
@@ -6,6 +7,7 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QPushButton,
     QVBoxLayout,
+    QLineEdit,
 )
 from dcs.planes import PlaneType
 
@@ -31,6 +33,7 @@ class QFlightCreator(QDialog):
 
         self.game = game
         self.package = package
+        self.custom_name_text = None
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -88,6 +91,12 @@ class QFlightCreator(QDialog):
         layout.addLayout(
             QLabeledWidget("Client Slots:", self.client_slots_spinner))
 
+        self.custom_name = QLineEdit()
+        self.custom_name.textChanged.connect(self.set_custom_name_text)
+        layout.addLayout(
+            QLabeledWidget("Custom Flight Name (Optional)", self.custom_name)
+        )
+
         layout.addStretch()
 
         self.create_button = QPushButton("Create")
@@ -95,6 +104,9 @@ class QFlightCreator(QDialog):
         layout.addWidget(self.create_button, alignment=Qt.AlignRight)
 
         self.setLayout(layout)
+
+    def set_custom_name_text(self, text: str):
+        self.custom_name_text = text
 
     def verify_form(self) -> Optional[str]:
         aircraft: PlaneType = self.aircraft_selector.currentData()
@@ -115,6 +127,8 @@ class QFlightCreator(QDialog):
             return f"{origin.name} has only {available} {aircraft.id} available."
         if size <= 0:
             return f"Flight must have at least one aircraft."
+        if self.custom_name_text and "|" in self.custom_name_text:
+            return f"Cannot include | in flight name"
         return None
 
     def create_flight(self) -> None:
@@ -141,7 +155,7 @@ class QFlightCreator(QDialog):
         else:
             start_type = "Warm"
         flight = Flight(self.package, aircraft, size, task, start_type, origin,
-                        arrival, divert)
+                        arrival, divert, custom_name=self.custom_name_text)
         flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences

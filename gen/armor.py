@@ -206,7 +206,7 @@ class GroundConflictGenerator:
                         u = random.choice(manpads)
                         self.mission.vehicle_group(
                             side,
-                            namegen.next_infantry_name(side, cp, u), u,
+                            namegen.next_infantry_name(side, cp.id, u), u,
                             position=infantry_position,
                             group_size=1,
                             heading=forward_heading,
@@ -220,7 +220,7 @@ class GroundConflictGenerator:
         u = random.choice(possible_infantry_units)
         self.mission.vehicle_group(
                 side,
-                namegen.next_infantry_name(side, cp, u), u,
+                namegen.next_infantry_name(side, cp.id, u), u,
                 position=infantry_position,
                 group_size=1,
                 heading=forward_heading,
@@ -231,7 +231,7 @@ class GroundConflictGenerator:
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
                 side,
-                namegen.next_infantry_name(side, cp, u), u,
+                namegen.next_infantry_name(side, cp.id, u), u,
                 position=position,
                 group_size=1,
                 heading=forward_heading,
