@@ -320,8 +320,10 @@ class Game:
                          red_planner: CoalitionMissionPlanner) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
         # gets much more of the budget that turn. Otherwise budget (after
-        # repairs) is split evenly between air and ground.
-        ground_portion = 0.1 if self.turn == 0 else 0.5
+        # repairs) is split evenly between air and ground. For the default
+        # starting budget of 2000 this gives 600 to ground forces and 1400 to
+        # aircraft.
+        ground_portion = 0.3 if self.turn == 0 else 0.5
         self.budget = ProcurementAi(
             self,
             for_player=True,

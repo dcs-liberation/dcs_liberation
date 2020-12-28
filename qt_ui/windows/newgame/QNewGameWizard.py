@@ -30,7 +30,7 @@ jinja_env = Environment(
 )
 
 
-DEFAULT_BUDGET = 1600
+DEFAULT_BUDGET = 2000
 
 
 class NewGameWizard(QtWidgets.QWizard):
