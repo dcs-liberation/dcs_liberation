@@ -51,7 +51,7 @@ class NameGenerator:
     def reset(cls):
         cls.number = 0
         cls.infantry_number = 0
-        cls.ANIMALS = NameGenerator.ANIMALS.copy()
+        cls.ANIMALS = ANIMALS
 
     @classmethod
     def reset_numbers(cls):
