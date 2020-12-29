@@ -178,11 +178,6 @@ class ProcurementAi:
     def purchase_aircraft(
             self, budget: int,
             aircraft_requests: List[AircraftProcurementRequest]) -> int:
-        unit_pool = [u for u in self.faction.aircrafts
-                     if u in db.UNIT_BY_TASK[CAS] or u in db.UNIT_BY_TASK[CAP]]
-        if not unit_pool:
-            return budget
-
         for request in aircraft_requests:
             for airbase in self.best_airbases_for(request):
                 unit = self.affordable_aircraft_for(request, airbase, budget)
