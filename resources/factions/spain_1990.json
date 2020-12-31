@@ -20,7 +20,8 @@
   "frontline_units": [
     "MBT_M60A3_Patton",
     "MBT_Leopard_2",
-    "APC_M113"
+    "APC_M113",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
   ],

@@ -3,179 +3,13 @@ from enum import Enum
 from typing import Dict, List
 
 from dcs.unittype import VehicleType
-from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 
-import pydcs_extensions.frenchpack.frenchpack as frenchpack
 from game.theater import ControlPoint
+from gen.ground_forces.ai_ground_planner_db import *
 from gen.ground_forces.combat_stance import CombatStance
 
-TYPE_TANKS = [
-    Armor.MBT_T_55,
-    Armor.MBT_T_72B,
-    Armor.MBT_T_72B3,
-    Armor.MBT_T_80U,
-    Armor.MBT_T_90,
-    Armor.MBT_Leopard_2,
-    Armor.MBT_Leopard_1A3,
-    Armor.MBT_Leclerc,
-    Armor.MBT_Challenger_II,
-    Armor.MBT_M1A2_Abrams,
-    Armor.MBT_M60A3_Patton,
-    Armor.MBT_Merkava_Mk__4,
-    Armor.ZTZ_96B,
-
-    # WW2
-    Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
-    Armor.MT_Pz_Kpfw_IV_Ausf_H,
-    Armor.HT_Pz_Kpfw_VI_Tiger_I,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
-    Armor.MT_M4_Sherman,
-    Armor.MT_M4A4_Sherman_Firefly,
-    Armor.StuG_IV,
-    Armor.CT_Centaur_IV,
-    Armor.CT_Cromwell_IV,
-    Armor.HIT_Churchill_VII,
-    Armor.LT_Mk_VII_Tetrarch,
-
-    # Mods
-    frenchpack.DIM__TOYOTA_BLUE,
-    frenchpack.DIM__TOYOTA_GREEN,
-    frenchpack.DIM__TOYOTA_DESERT,
-    frenchpack.DIM__KAMIKAZE,
-
-    frenchpack.AMX_10RCR,
-    frenchpack.AMX_10RCR_SEPAR,
-    frenchpack.AMX_30B2,
-    frenchpack.Leclerc_Serie_XXI,
-
-]
-
-TYPE_ATGM = [
-    Armor.ATGM_M1045_HMMWV_TOW,
-    Armor.ATGM_M1134_Stryker,
-    Armor.IFV_BMP_2,
-
-    # WW2 (Tank Destroyers)
-    Armor.M30_Cargo_Carrier,
-    Armor.TD_Jagdpanzer_IV,
-    Armor.TD_Jagdpanther_G1,
-    Armor.TD_M10_GMC,
-
-    # Mods
-    frenchpack.VBAE_CRAB_MMP,
-    frenchpack.VAB_MEPHISTO,
-    frenchpack.TRM_2000_PAMELA,
-
-]
-
-TYPE_IFV = [
-    Armor.IFV_BMP_3,
-    Armor.IFV_BMP_2,
-    Armor.IFV_BMP_1,
-    Armor.IFV_Marder,
-    Armor.IFV_MCV_80,
-    Armor.IFV_LAV_25,
-    Armor.AC_Sd_Kfz_234_2_Puma,
-    Armor.IFV_M2A2_Bradley,
-    Armor.IFV_BMD_1,
-    Armor.ZBD_04A,
-
-    # WW2
-    Armor.AC_Sd_Kfz_234_2_Puma,
-    Armor.LAC_M8_Greyhound,
-    Armor.Daimler_Armoured_Car,
-
-    # Mods
-    frenchpack.ERC_90,
-    frenchpack.VBAE_CRAB,
-    frenchpack.VAB_T20_13
-
-]
-
-TYPE_APC = [
-    Armor.APC_M1043_HMMWV_Armament,
-    Armor.APC_M1126_Stryker_ICV,
-    Armor.APC_M113,
-    Armor.APC_BTR_80,
-    Armor.APC_BTR_82A,
-    Armor.APC_MTLB,
-    Armor.APC_M2A1,
-    Armor.APC_Cobra,
-    Armor.APC_Sd_Kfz_251,
-    Armor.APC_AAV_7,
-    Armor.TPz_Fuchs,
-    Armor.ARV_BRDM_2,
-    Armor.ARV_BTR_RD,
-    Armor.FDDM_Grad,
-
-    # WW2
-    Armor.APC_M2A1,
-    Armor.APC_Sd_Kfz_251,
-
-    # Mods
-    frenchpack.VAB__50,
-    frenchpack.VBL__50,
-    frenchpack.VBL_AANF1,
-
-]
-
-TYPE_ARTILLERY = [
-    Artillery.MLRS_9A52_Smerch,
-    Artillery.SPH_2S1_Gvozdika,
-    Artillery.SPH_2S3_Akatsia,
-    Artillery.MLRS_BM_21_Grad,
-    Artillery.MLRS_9K57_Uragan_BM_27,
-    Artillery.SPH_M109_Paladin,
-    Artillery.MLRS_M270,
-    Artillery.SPH_2S9_Nona,
-    Artillery.SpGH_Dana,
-    Artillery.SPH_2S19_Msta,
-    Artillery.MLRS_FDDM,
-
-    # WW2
-    Artillery.Sturmpanzer_IV_Brummbär,
-    Artillery.M12_GMC
-]
-
-TYPE_LOGI = [
-    Unarmed.Transport_M818,
-    Unarmed.Transport_KAMAZ_43101,
-    Unarmed.Transport_Ural_375,
-    Unarmed.Transport_GAZ_66,
-    Unarmed.Transport_GAZ_3307,
-    Unarmed.Transport_GAZ_3308,
-    Unarmed.Transport_Ural_4320_31_Armored,
-    Unarmed.Transport_Ural_4320T,
-    Unarmed.Blitz_3_6_6700A,
-    Unarmed.Kübelwagen_82,
-    Unarmed.Sd_Kfz_7,
-    Unarmed.Sd_Kfz_2,
-    Unarmed.Willys_MB,
-    Unarmed.Land_Rover_109_S3,
-    Unarmed.Land_Rover_101_FC,
-
-    # Mods
-    frenchpack.VBL,
-    frenchpack.VAB,
-
-]
-
-TYPE_INFANTRY = [
-    Infantry.Infantry_Soldier_Insurgents,
-    Infantry.Soldier_AK,
-    Infantry.Infantry_M1_Garand,
-    Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_SMLE_No_4_Mk_1,
-    Infantry.Georgian_soldier_with_M4,
-    Infantry.Infantry_Soldier_Rus,
-    Infantry.Paratrooper_AKS,
-    Infantry.Paratrooper_RPG_16,
-    Infantry.Soldier_M249,
-    Infantry.Infantry_M4,
-    Infantry.Soldier_RPG,
-]
-
 MAX_COMBAT_GROUP_PER_CP = 10
+
 
 class CombatGroupRole(Enum):
     TANK = 1
@@ -224,6 +58,7 @@ class CombatGroup:
             s += "UNITS " + self.units[0].name + " * " + str(len(self.units))
         return s
 
+
 class GroundPlanner:
 
     def __init__(self, cp:ControlPoint, game):
@@ -242,7 +77,6 @@ class GroundPlanner:
         for cp in self.connected_enemy_cp:
             self.units_per_cp[cp.id] = []
         self.reserve: List[CombatGroup] = []
-
 
     def plan_groundwar(self):
 
@@ -275,6 +109,9 @@ class GroundPlanner:
             elif key in TYPE_ATGM:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
+            elif key in TYPE_SHORAD:
+                collection = self.shorad_groups
+                role = CombatGroupRole.SHORAD
             else:
                 print("Warning unit type not handled by ground generator")
                 print(key)
@@ -282,12 +119,16 @@ class GroundPlanner:
 
             available = self.cp.base.armor[key]
             while available > 0:
-                n = random.choice(group_size_choice)
-                if n > available:
-                    if available >= 2:
-                        n = 2
-                    else:
-                        n = 1
+
+                if role == CombatGroupRole.SHORAD:
+                    n = 1
+                else:
+                    n = random.choice(group_size_choice)
+                    if n > available:
+                        if available >= 2:
+                            n = 2
+                        else:
+                            n = 1
                 available -= n
 
                 group = CombatGroup(role)

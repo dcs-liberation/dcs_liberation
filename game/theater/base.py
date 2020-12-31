@@ -9,6 +9,7 @@ from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import AirDefence, Armor
 
 from game import db
+from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 2
@@ -35,6 +36,10 @@ class Base:
     @property
     def total_armor(self) -> int:
         return sum(self.armor.values())
+
+    @property
+    def total_frontline_aa(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_SHORAD])
 
     @property
     def total_aa(self) -> int:
@@ -98,11 +103,11 @@ class Base:
         self.armor = {k: v for k, v in self.armor.items() if k in applicable_units}
 
     def commision_units(self, units: typing.Dict[typing.Any, int]):
-        for value in units.values():
-            assert value > 0
-            assert value == math.floor(value)
 
         for unit_type, unit_count in units.items():
+            if unit_count <= 0:
+                continue
+
             for_task = db.unit_task(unit_type)
 
             target_dict = None

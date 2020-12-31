@@ -21,7 +21,8 @@
     "MBT_Challenger_II",
     "IFV_MCV_80",
     "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW"
+    "ATGM_M1045_HMMWV_TOW",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
     "MLRS_M270",
@@ -33,6 +34,7 @@
   "infantry_units": [
     "Infantry_M4",
     "Soldier_M249",
+    "_2B11_mortar",
     "Stinger_MANPADS"
   ],
   "air_defenses": [

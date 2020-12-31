@@ -16,7 +16,8 @@
     "Tu_22M3",
     "L_39C",
     "L_39ZA",
-    "Mi_24V"
+    "Mi_24V",
+    "MiG_29A"
   ],
   "awacs": [
     "A_50"
@@ -31,7 +32,9 @@
     "MBT_T_72B",
     "APC_BTR_80",
     "ARV_BRDM_2",
-    "SPH_2S1_Gvozdika"
+    "SPH_2S1_Gvozdika",
+    "AAA_ZSU_57_2",
+    "SPAAA_ZSU_23_4_Shilka"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"

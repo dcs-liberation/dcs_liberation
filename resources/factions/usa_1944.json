@@ -19,7 +19,8 @@
     "APC_M2A1",
     "M30_Cargo_Carrier",
     "LAC_M8_Greyhound",
-    "TD_M10_GMC"
+    "TD_M10_GMC",
+    "AA_gun_QF_3_7"
   ],
   "artillery_units": [
     "M12_GMC"

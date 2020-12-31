@@ -19,7 +19,8 @@
   ],
   "frontline_units": [
     "MBT_Leopard_1A3",
-    "APC_M113"
+    "APC_M113",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
     "SPH_M109_Paladin"

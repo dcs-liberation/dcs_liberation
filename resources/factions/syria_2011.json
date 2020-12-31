@@ -31,7 +31,8 @@
     "APC_Cobra",
     "MBT_T_55",
     "MBT_T_72B",
-    "MBT_T_90"
+    "MBT_T_90",
+    "AAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",

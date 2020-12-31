@@ -22,6 +22,7 @@
   "infantry_units": [
     "Infantry_Soldier_Insurgents",
     "Soldier_RPG",
+    "_2B11_mortar",
     "SAM_SA_18_Igla_MANPADS"
   ],
   "air_defenses": [

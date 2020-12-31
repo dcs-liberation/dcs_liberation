@@ -29,7 +29,8 @@
     "IFV_BMP_1",
     "IFV_BMP_2",
     "MBT_T_72B",
-    "MBT_T_80U"
+    "MBT_T_80U",
+    "SAM_SA_13_Strela_10M3_9A35M3"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",
@@ -43,6 +44,7 @@
     "Paratrooper_AKS",
     "Infantry_Soldier_Rus",
     "Paratrooper_RPG_16",
+    "_2B11_mortar",
     "SAM_SA_18_Igla_S_MANPADS"
   ],
   "air_defenses": [

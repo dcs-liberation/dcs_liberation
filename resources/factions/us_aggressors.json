@@ -33,7 +33,8 @@
     "ATGM_M1134_Stryker",
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament"
+    "APC_M1043_HMMWV_Armament",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
     "MLRS_M270",

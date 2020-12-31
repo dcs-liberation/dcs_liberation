@@ -19,7 +19,9 @@
   "frontline_units": [
     "ARV_BRDM_2",
     "MT_Pz_Kpfw_IV_Ausf_H",
-    "MBT_T_55"
+    "MBT_T_55",
+    "AAA_ZU_23_on_Ural_375",
+    "AAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"

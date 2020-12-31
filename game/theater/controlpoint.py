@@ -20,6 +20,7 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.runways import RunwayAssigner, RunwayData
 from gen.ground_forces.combat_stance import CombatStance
 from .base import Base
@@ -457,6 +458,26 @@ class ControlPoint(MissionTarget, ABC):
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
 
+    @property
+    def pending_frontline_aa_deliveries_count(self):
+        """
+        Get number of pending frontline aa units
+        """
+        if self.pending_unit_deliveries:
+            return sum([v for k,v in self.pending_unit_deliveries.units.items() if k in TYPE_SHORAD])
+        else:
+            return 0
+
+    @property
+    def pending_deliveries_count(self):
+        """
+        Get number of pending units
+        """
+        if self.pending_unit_deliveries:
+            return sum([v for k, v in self.pending_unit_deliveries.units.items()])
+        else:
+            return 0
+
 
 class Airfield(ControlPoint):
 
@@ -529,7 +550,6 @@ class NavalControlPoint(ControlPoint, ABC):
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        yield from super().mission_types(for_player)
         from gen.flights.flight import FlightType
         if self.is_friendly(for_player):
             yield from [
@@ -540,6 +560,7 @@ class NavalControlPoint(ControlPoint, ABC):
             ]
         else:
             yield FlightType.ANTISHIP
+        yield from super().mission_types(for_player)
 
     @property
     def heading(self) -> int:

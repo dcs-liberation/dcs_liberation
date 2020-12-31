@@ -22,7 +22,8 @@
     "MBT_T_55",
     "MT_Pz_Kpfw_IV_Ausf_H",
     "StuG_III_Ausf__G",
-    "TD_Jagdpanzer_IV"
+    "TD_Jagdpanzer_IV",
+    "AAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"

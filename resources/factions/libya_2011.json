@@ -20,7 +20,9 @@
     "IFV_BMP_1",
     "ARV_BRDM_2",
     "MBT_T_72B",
-    "MBT_T_55"
+    "MBT_T_55",
+    "SPAAA_ZSU_23_4_Shilka",
+    "SAM_SA_8_Osa_9A33"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"

@@ -32,7 +32,9 @@
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
     "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW"
+    "ATGM_M1045_HMMWV_TOW",
+    "SAM_Avenger_M1097",
+    "SAM_Linebacker_M6"
   ],
   "artillery_units": [
     "MLRS_M270",
@@ -44,7 +46,8 @@
   "infantry_units": [
     "Infantry_M4",
     "Soldier_M249",
-    "Stinger_MANPADS"
+    "Stinger_MANPADS",
+    "_2B11_mortar"
   ],
   "air_defenses": [
     "AvengerGenerator",

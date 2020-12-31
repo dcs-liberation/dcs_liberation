@@ -18,7 +18,11 @@
     "AC_Sd_Kfz_234_2_Puma",
     "Sd_Kfz_184_Elefant",
     "TD_Jagdpanther_G1",
-    "TD_Jagdpanzer_IV"
+    "TD_Jagdpanzer_IV",
+    "StuG_III_Ausf__G",
+    "StuG_IV",
+    "AAA_8_8cm_Flak_18",
+    "AAA_8_8cm_Flak_41"
   ],
   "artillery_units": [
     "Sturmpanzer_IV_Brummbär"

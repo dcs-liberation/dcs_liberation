@@ -152,12 +152,10 @@ class Event:
 
             loss.group.units.remove(loss.unit)
             loss.group.units_losts.append(loss.unit)
-            if not loss.ground_object.alive_unit_count:
-                loss.ground_object.is_dead = True
 
     def commit_building_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.building_losses:
-            loss.ground_object.is_dead = True
+            loss.ground_object.kill()
             self.game.informations.append(Information(
                 "Building destroyed",
                 f"{loss.ground_object.dcs_identifier} has been destroyed at "

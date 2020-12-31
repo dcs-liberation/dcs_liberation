@@ -546,11 +546,29 @@ QGroupBox[style="QWeatherWidget"] {
     padding: 0px;
     margin-left: 0px;
     margin-right: 5px;
-    margin-top: 1ex;
+    margin-top: 1px;
     margin-bottom: 5px;
 }
 
 QGroupBox[style="QWeatherWidget"] QLabel[style="text-sm"] {
+    padding: 0px;
+    margin: 0px;
+    font-size: 9px;
+    line-height: 9px;
+}
+
+QGroupBox[style="IntelSummary"] {
+    padding-left: 40px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 5px;
+    margin-top: 1px;
+    margin-bottom: 5px;
+}
+
+QGroupBox[style="IntelSummary"] QLabel {
     padding: 0px;
     margin: 0px;
     font-size: 9px;

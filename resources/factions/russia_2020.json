@@ -32,7 +32,8 @@
     "IFV_BMP_3",
     "MBT_T_90",
     "MBT_T_80U",
-    "MBT_T_72B"
+    "MBT_T_72B",
+    "SAM_SA_19_Tunguska_2S6"
   ],
   "artillery_units": [
     "MLRS_9K57_Uragan_BM_27",

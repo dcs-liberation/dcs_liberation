@@ -18,7 +18,8 @@
   "frontline_units": [
     "IFV_MCV_80",
     "MBT_Leopard_2",
-    "APC_M1126_Stryker_ICV"
+    "APC_M1126_Stryker_ICV",
+    "SAM_Chaparral_M48"
   ],
   "artillery_units": [
   ],
@@ -32,7 +33,6 @@
   "air_defenses": [
 	"ChaparralGenerator",
 	"EarlyColdWarFlakGenerator",
-    "AvengerGenerator",
     "HawkGenerator",
     "VulcanGenerator"
   ],

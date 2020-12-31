@@ -17,7 +17,8 @@
   "frontline_units": [
     "IFV_MCV_80",
     "MBT_Leopard_2",
-    "APC_M1126_Stryker_ICV"
+    "APC_M1126_Stryker_ICV",
+    "SAM_Avenger_M1097"
   ],
   "artillery_units": [
   ],

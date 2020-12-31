@@ -11,7 +11,8 @@
     "MT_M4_Sherman",
     "APC_M2A1",
     "Daimler_Armoured_Car",
-    "LT_Mk_VII_Tetrarch"
+    "LT_Mk_VII_Tetrarch",
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad"
