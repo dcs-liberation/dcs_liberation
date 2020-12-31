@@ -121,12 +121,15 @@ class MissileSiteGenerator(GenericGroundObjectGenerator):
         # TODO : Add delay to task to spread fire task over mission duration ?
         for group in self.ground_object.groups:
             vg = self.m.find_group(group.name)
-            targets = self.possible_missile_targets(vg)
-            if vg is not None and targets:
-                target = random.choice(targets)
-                real_target = target.point_from_heading(random.randint(0, 360), random.randint(0, 2500))
-                vg.points[0].add_task(FireAtPoint(real_target))
-                logging.info("Set up fire task for missile group.")
+            if vg is not None:
+                targets = self.possible_missile_targets(vg)
+                if targets:
+                    target = random.choice(targets)
+                    real_target = target.point_from_heading(random.randint(0, 360), random.randint(0, 2500))
+                    vg.points[0].add_task(FireAtPoint(real_target))
+                    logging.info("Set up fire task for missile group.")
+                else:
+                    logging.info("Couldn't setup missile site to fire, no valid target in range.")
             else:
                 logging.info("Couldn't setup missile site to fire, group was not generated.")
 
