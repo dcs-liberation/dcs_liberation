@@ -1,3 +1,8 @@
+# 2.3.4
+
+## Fixes:
+* **[Mission Generator]** Mission generator would crash when generating fire missions for destroyed SCUD sites - fixed
+
 # 2.3.3
 
 ## Features/Improvements
