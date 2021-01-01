@@ -5,7 +5,6 @@ import random
 from dataclasses import dataclass
 from typing import Iterator, List, Optional, TYPE_CHECKING, Type
 
-from dcs.task import CAP, CAS
 from dcs.unittype import FlyingType, VehicleType
 
 from game import db
@@ -52,8 +51,8 @@ class ProcurementAi:
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def spend_budget(
-            self, budget: int,
-            aircraft_requests: List[AircraftProcurementRequest]) -> int:
+            self, budget: float,
+            aircraft_requests: List[AircraftProcurementRequest]) -> float:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
@@ -69,7 +68,7 @@ class ProcurementAi:
             budget = self.purchase_aircraft(budget, aircraft_requests)
         return budget
 
-    def sell_incomplete_squadrons(self) -> int:
+    def sell_incomplete_squadrons(self) -> float:
         # Selling incomplete squadrons gives us more money to spend on the next
         # turn. This serves as a short term fix for
         # https://github.com/Khopa/dcs_liberation/issues/41.
@@ -80,7 +79,7 @@ class ProcurementAi:
         #
         # This option is only used by the AI since players cannot cancel sales
         # (https://github.com/Khopa/dcs_liberation/issues/365).
-        total = 0
+        total = 0.0
         for cp in self.game.theater.control_points_for(self.is_player):
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
@@ -92,7 +91,7 @@ class ProcurementAi:
                 total += db.PRICES[aircraft]
         return total
 
-    def repair_runways(self, budget: int) -> int:
+    def repair_runways(self, budget: float) -> float:
         for control_point in self.owned_points:
             if budget < db.RUNWAY_REPAIR_COST:
                 break
@@ -112,7 +111,8 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-            self, budget: int, cp: ControlPoint) -> Optional[Type[VehicleType]]:
+            self, budget: float,
+            cp: ControlPoint) -> Optional[Type[VehicleType]]:
         affordable_units = [u for u in self.faction.frontline_units + self.faction.artillery_units if
                             db.PRICES[u] <= budget]
 
@@ -129,7 +129,7 @@ class ProcurementAi:
             return None
         return random.choice(affordable_units)
 
-    def reinforce_front_line(self, budget: int) -> int:
+    def reinforce_front_line(self, budget: float) -> float:
         if not self.faction.frontline_units and not self.faction.artillery_units:
             return budget
 
@@ -151,7 +151,7 @@ class ProcurementAi:
 
     def _affordable_aircraft_of_types(
             self, types: List[Type[FlyingType]], airbase: ControlPoint,
-            number: int, max_price: int) -> Optional[Type[FlyingType]]:
+            number: int, max_price: float) -> Optional[Type[FlyingType]]:
         best_choice: Optional[Type[FlyingType]] = None
         for unit in [u for u in self.faction.aircrafts if u in types]:
             if db.PRICES[unit] * number > max_price:
@@ -169,14 +169,14 @@ class ProcurementAi:
 
     def affordable_aircraft_for(
             self, request: AircraftProcurementRequest,
-            airbase: ControlPoint, budget: int) -> Optional[Type[FlyingType]]:
+            airbase: ControlPoint, budget: float) -> Optional[Type[FlyingType]]:
         return self._affordable_aircraft_of_types(
             aircraft_for_task(request.task_capability),
             airbase, request.number, budget)
 
     def purchase_aircraft(
-            self, budget: int,
-            aircraft_requests: List[AircraftProcurementRequest]) -> int:
+            self, budget: float,
+            aircraft_requests: List[AircraftProcurementRequest]) -> float:
         for request in aircraft_requests:
             for airbase in self.best_airbases_for(request):
                 unit = self.affordable_aircraft_for(request, airbase, budget)

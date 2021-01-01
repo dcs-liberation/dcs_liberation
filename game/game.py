@@ -69,16 +69,18 @@ AWACS_BUDGET_COST = 4
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
+
 class TurnState(Enum):
     WIN = 0
     LOSS = 1
     CONTINUE = 2
 
+
 class Game:
     def __init__(self, player_name: str, enemy_name: str,
                  theater: ConflictTheater, start_date: datetime,
-                 settings: Settings, player_budget: int,
-                 enemy_budget: int) -> None:
+                 settings: Settings, player_budget: float,
+                 enemy_budget: float) -> None:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
