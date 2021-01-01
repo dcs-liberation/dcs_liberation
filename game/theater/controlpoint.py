@@ -22,6 +22,7 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
@@ -35,6 +36,8 @@ from .theatergroundobject import (
     TheaterGroundObject,
     VehicleGroupGroundObject,
 )
+from ..db import PRICES
+from ..utils import nautical_miles
 from ..weather import Conditions
 
 if TYPE_CHECKING:
@@ -416,10 +419,62 @@ class ControlPoint(MissionTarget, ABC):
                 destination.control_point.base.commision_units({unit_type: 1})
                 destination = heapq.heappushpop(destinations, destination)
 
+    def capture_aircraft(self, game: Game, airframe: Type[FlyingType],
+                         count: int) -> None:
+        try:
+            value = PRICES[airframe] * count
+        except KeyError:
+            logging.exception(f"Unknown price for {airframe.id}")
+            return
+
+        game.adjust_budget(value, player=not self.captured)
+        game.message(
+            f"No valid retreat destination in range of {self.name} for "
+            f"{airframe.id}. {count} aircraft have been captured and sold for "
+            f"${value}M.")
+
+    def aircraft_retreat_destination(
+            self, game: Game,
+            airframe: Type[FlyingType]) -> Optional[ControlPoint]:
+        closest = ObjectiveDistanceCache.get_closest_airfields(self)
+        # TODO: Should be airframe dependent.
+        max_retreat_distance = nautical_miles(200)
+        # Skip the first airbase because that's the airbase we're retreating
+        # from.
+        airfields = list(closest.airfields_within(max_retreat_distance))[1:]
+        for airbase in airfields:
+            if not airbase.can_operate(airframe):
+                continue
+            if airbase.captured != self.captured:
+                continue
+            if airbase.unclaimed_parking(game) > 0:
+                return airbase
+        return None
+
+    def _retreat_air_units(self, game: Game, airframe: Type[FlyingType],
+                           count: int) -> None:
+        while count:
+            logging.debug(f"Retreating {count} {airframe.id} from {self.name}")
+            destination = self.aircraft_retreat_destination(game, airframe)
+            if destination is None:
+                self.capture_aircraft(game, airframe, count)
+                return
+            parking = destination.unclaimed_parking(game)
+            transfer_amount = min([parking, count])
+            destination.base.commision_units({airframe: transfer_amount})
+            count -= transfer_amount
+
+    def retreat_air_units(self, game: Game) -> None:
+        # TODO: Capture in order of price to retain maximum value?
+        while self.base.aircraft:
+            airframe, count = self.base.aircraft.popitem()
+            self._retreat_air_units(game, airframe, count)
+
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
         self.pending_unit_deliveries.refund_all(game)
         self.retreat_ground_units(game)
+        self.retreat_air_units(game)
 
         if for_player:
             self.captured = True
@@ -427,8 +482,6 @@ class ControlPoint(MissionTarget, ABC):
             self.captured = False
 
         self.base.set_strength_to_minimum()
-
-        self.base.aircraft = {}
 
         self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
