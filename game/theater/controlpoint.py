@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import heapq
 import itertools
 import logging
 import random
@@ -7,7 +8,8 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
+from functools import total_ordering
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -192,6 +194,28 @@ class RunwayStatus:
         return f"Runway repairing, {turns_remaining} turns remaining"
 
 
+@total_ordering
+class GroundUnitDestination:
+    def __init__(self, control_point: ControlPoint) -> None:
+        self.control_point = control_point
+
+    @property
+    def total_value(self) -> float:
+        return self.control_point.base.total_armor_value
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, GroundUnitDestination):
+            raise TypeError
+
+        return self.total_value == other.total_value
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, GroundUnitDestination):
+            raise TypeError
+
+        return self.total_value < other.total_value
+
+
 class ControlPoint(MissionTarget, ABC):
 
     position = None  # type: Point
@@ -365,9 +389,37 @@ class ControlPoint(MissionTarget, ABC):
                     base_defense.position)
         self.base_defenses = []
 
+    def capture_equipment(self, game: Game) -> None:
+        total = self.base.total_armor_value
+        self.base.armor.clear()
+        game.adjust_budget(total, player=not self.captured)
+        game.message(
+            f"{self.name} is not connected to any friendly points. Ground "
+            f"vehicles have been captured and sold for ${total}M.")
+
+    def retreat_ground_units(self, game: Game):
+        # When there are multiple valid destinations, deliver units to whichever
+        # base is least defended first. The closest approximation of unit
+        # strength we have is price
+        destinations = [GroundUnitDestination(cp)
+                        for cp in self.connected_points
+                        if cp.captured == self.captured]
+        if not destinations:
+            self.capture_equipment(game)
+            return
+
+        heapq.heapify(destinations)
+        destination = heapq.heappop(destinations)
+        while self.base.armor:
+            unit_type, count = self.base.armor.popitem()
+            for _ in range(count):
+                destination.control_point.base.commision_units({unit_type: 1})
+                destination = heapq.heappushpop(destinations, destination)
+
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
         self.pending_unit_deliveries.refund_all(game)
+        self.retreat_ground_units(game)
 
         if for_player:
             self.captured = True
@@ -377,7 +429,6 @@ class ControlPoint(MissionTarget, ABC):
         self.base.set_strength_to_minimum()
 
         self.base.aircraft = {}
-        self.base.armor = {}
 
         self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
