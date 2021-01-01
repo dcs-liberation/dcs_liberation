@@ -19,6 +19,10 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
 * **[UI]** Multi-SAM objectives now show threat and detection rings per group.
 
+## Fixes
+
+* **[Economy]** Pending unit orders at captured bases will be refunded.
+
 # 2.3.3
 
 ## Features/Improvements
