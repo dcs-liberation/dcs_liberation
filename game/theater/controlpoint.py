@@ -230,7 +230,7 @@ class ControlPoint(MissionTarget, ABC):
         self.cptype = cptype
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
-        self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
+        self.pending_unit_deliveries = UnitsDeliveryEvent(self)
 
         self.target_position: Optional[Point] = None
     
@@ -367,8 +367,7 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        if self.pending_unit_deliveries is not None:
-            self.pending_unit_deliveries.refund_all()
+        self.pending_unit_deliveries.refund_all(game)
 
         if for_player:
             self.captured = True
@@ -406,7 +405,6 @@ class ControlPoint(MissionTarget, ABC):
         return total
 
     def expected_aircraft_next_turn(self, game: Game) -> PendingOccupancy:
-        assert self.pending_unit_deliveries
         on_order = 0
         for unit_bought in self.pending_unit_deliveries.units:
             if issubclass(unit_bought, FlyingType):
@@ -443,7 +441,9 @@ class ControlPoint(MissionTarget, ABC):
             return
         self.runway_status.begin_repair()
 
-    def process_turn(self) -> None:
+    def process_turn(self, game: Game) -> None:
+        self.pending_unit_deliveries.process(game)
+
         runway_status = self.runway_status
         if runway_status is not None:
             runway_status.process_turn()

@@ -36,7 +36,6 @@ class QRecruitBehaviour:
 
     @property
     def pending_deliveries(self) -> UnitsDeliveryEvent:
-        assert self.cp.pending_unit_deliveries
         return self.cp.pending_unit_deliveries
 
     @property
@@ -128,7 +127,7 @@ class QRecruitBehaviour:
     def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]
         if self.budget >= price:
-            self.pending_deliveries.deliver({unit_type: 1})
+            self.pending_deliveries.order({unit_type: 1})
             self.budget -= price
         else:
             # TODO : display modal warning

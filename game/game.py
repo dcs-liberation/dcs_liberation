@@ -110,9 +110,6 @@ class Game:
             self.theater.controlpoints
         )
 
-        for cp in self.theater.controlpoints:
-            cp.pending_unit_deliveries = self.units_delivery_event(cp)
-
         self.sanitize_sides()
 
         self.on_load()
@@ -204,15 +201,6 @@ class Game:
             self.enemy_budget = 0
         self.enemy_budget += Income(self, player=False).total
 
-    def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
-        event = UnitsDeliveryEvent(attacker_name=self.player_name,
-                                   defender_name=self.player_name,
-                                   from_cp=to_cp,
-                                   to_cp=to_cp,
-                                   game=self)
-        self.events.append(event)
-        return event
-
     def initiate_event(self, event: Event) -> UnitMap:
         #assert event in self.events
         logging.info("Generating {} (regular)".format(event))
@@ -244,16 +232,8 @@ class Game:
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn += 1
 
-        for event in self.events:
-            if self.settings.version == "dev":
-                # don't damage player CPs in by skipping in dev mode
-                if isinstance(event, UnitsDeliveryEvent):
-                    event.skip()
-            else:
-                event.skip()
-
         for control_point in self.theater.controlpoints:
-            control_point.process_turn()
+            control_point.process_turn(self)
 
         self.process_enemy_income()
 
@@ -291,7 +271,6 @@ class Game:
 
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
-            cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
 
         # Check for win or loss condition

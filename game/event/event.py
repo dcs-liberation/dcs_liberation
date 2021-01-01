@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Dict, List, TYPE_CHECKING, Type
+from typing import Dict, Iterator, List, TYPE_CHECKING, Tuple, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
@@ -296,9 +296,6 @@ class Event:
                                        self.game.turn)
                     self.game.informations.append(info)
 
-    def skip(self):
-        pass
-
     def redeploy_units(self, cp):
         """"
         Auto redeploy units to newly captured base
@@ -340,32 +337,25 @@ class Event:
                     logging.info(info.text)
 
 
-class UnitsDeliveryEvent(Event):
+class UnitsDeliveryEvent:
 
-    informational = True
-
-    def __init__(self, attacker_name: str, defender_name: str,
-                 from_cp: ControlPoint, to_cp: ControlPoint,
-                 game: Game) -> None:
-        super(UnitsDeliveryEvent, self).__init__(game=game,
-                                                 location=to_cp.position,
-                                                 from_cp=from_cp,
-                                                 target_cp=to_cp,
-                                                 attacker_name=attacker_name,
-                                                 defender_name=defender_name)
-
+    def __init__(self, control_point: ControlPoint) -> None:
+        self.to_cp = control_point
         self.units: Dict[Type[UnitType], int] = {}
 
     def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
 
-    def deliver(self, units: Dict[Type[UnitType], int]) -> None:
+    def order(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 
-    def refund_all(self) -> None:
+    def consume_each_order(self) -> Iterator[Tuple[Type[UnitType], int]]:
         while self.units:
-            unit_type, count = self.units.popitem()
+            yield self.units.popitem()
+
+    def refund_all(self, game: Game) -> None:
+        for unit_type, count in self.consume_each_order():
             try:
                 price = PRICES[unit_type]
             except KeyError:
@@ -374,15 +364,14 @@ class UnitsDeliveryEvent(Event):
 
             logging.info(
                 f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
-            self.game.adjust_budget(price * count, player=self.to_cp.captured)
+            game.adjust_budget(price * count, player=self.to_cp.captured)
 
-    def skip(self) -> None:
-        for k, v in self.units.items():
-            if self.to_cp.captured:
-                name = "Ally "
-            else:
-                name = "Enemy "
-            self.game.message(
-                f"{name} reinforcements: {k.id} x {v} at {self.to_cp.name}")
-
+    def process(self, game: Game) -> None:
+        for unit_type, count in self.units.items():
+            coalition = "Ally" if self.to_cp.captured else "Enemy"
+            aircraft = unit_type.id
+            name = self.to_cp.name
+            game.message(
+                f"{coalition} reinforcements: {aircraft} x {count} at {name}")
         self.to_cp.base.commision_units(self.units)
+        self.units = {}

@@ -145,8 +145,7 @@ class ProcurementAi:
                 break
 
             budget -= db.PRICES[unit]
-            assert cp.pending_unit_deliveries is not None
-            cp.pending_unit_deliveries.deliver({unit: 1})
+            cp.pending_unit_deliveries.order({unit: 1})
 
         return budget
 
@@ -190,8 +189,7 @@ class ProcurementAi:
                     continue
 
                 budget -= db.PRICES[unit] * request.number
-                assert airbase.pending_unit_deliveries is not None
-                airbase.pending_unit_deliveries.deliver({unit: request.number})
+                airbase.pending_unit_deliveries.order({unit: request.number})
 
         return budget
 
