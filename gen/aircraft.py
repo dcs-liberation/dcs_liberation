@@ -74,6 +74,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
+from game.data.weapons import Pylon
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -902,22 +903,20 @@ class AircraftConflictGenerator:
         else:
             assert False
 
-    def _setup_custom_payload(self, flight, group:FlyingGroup):
-        if flight.use_custom_loadout:
+    @staticmethod
+    def _setup_custom_payload(flight: Flight, group: FlyingGroup) -> None:
+        if not flight.use_custom_loadout:
+            return
 
-            logging.info("Custom loadout for flight : " + flight.__repr__())
-            for p in group.units:
-                p.pylons.clear()
+        logging.info("Custom loadout for flight : " + flight.__repr__())
+        for p in group.units:
+            p.pylons.clear()
 
-            for key in flight.loadout.keys():
-                if "Pylon" + key in flight.unit_type.__dict__.keys():
-                    print(flight.loadout)
-                    weapon_dict = flight.unit_type.__dict__["Pylon" + key].__dict__
-                    if flight.loadout[key] in weapon_dict.keys():
-                        weapon = weapon_dict[flight.loadout[key]]
-                        group.load_pylon(weapon, int(key))
-                else:
-                    logging.warning("Pylon not found ! => Pylon" + key + " on " + str(flight.unit_type))
+        for pylon_number, weapon in flight.loadout.items():
+            if weapon is None:
+                continue
+            pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
+            pylon.equip(group, weapon)
 
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:

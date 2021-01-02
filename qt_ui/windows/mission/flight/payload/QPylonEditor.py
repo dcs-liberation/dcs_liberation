@@ -1,38 +1,37 @@
 import logging
+import operator
+from typing import Optional
 
-from PySide2.QtWidgets import QWidget, QSpinBox, QComboBox
+from PySide2.QtWidgets import QComboBox
+
+from game.data.weapons import Pylon, Weapon
+from gen.flights.flight import Flight
 
 
 class QPylonEditor(QComboBox):
 
-    def __init__(self, flight, pylon, pylon_number):
-        super(QPylonEditor, self).__init__()
-        self.pylon = pylon
-        self.pylon_number = pylon_number
+    def __init__(self, flight: Flight, pylon: Pylon) -> None:
+        super().__init__()
         self.flight = flight
+        self.pylon = pylon
 
-        self.possible_loadout = [i for i in self.pylon.__dict__.keys() if i[:2] != '__']
+        current = self.flight.loadout.get(self.pylon.number)
 
-        if not str(self.pylon_number) in self.flight.loadout.keys():
-            self.flight.loadout[str(self.pylon_number)] = ""
-
-        self.addItem("None")
-        for i,k in enumerate(self.possible_loadout):
-            self.addItem(str(self.pylon.__dict__[k][1]["name"]))
-            if self.flight.loadout[str(self.pylon_number)] == str(k):
+        self.addItem("None", None)
+        allowed = sorted(pylon.allowed, key=operator.attrgetter("name"))
+        for i, weapon in enumerate(allowed):
+            self.addItem(weapon.name, weapon)
+            if current == weapon:
                 self.setCurrentIndex(i + 1)
 
-        self.currentTextChanged.connect(self.on_pylon_change)
+        self.currentIndexChanged.connect(self.on_pylon_change)
 
     def on_pylon_change(self):
-        selected = self.currentText()
-        if selected == "None":
-            logging.info("Pylon " + str(self.pylon_number) + " emptied")
-            self.flight.loadout[str(self.pylon_number)] = ""
-        else:
-            logging.info("Pylon " + str(self.pylon_number) + " changed to " + selected)
-            for i, k in enumerate(self.possible_loadout):
-                if selected == str(self.pylon.__dict__[k][1]["name"]):
-                    self.flight.loadout[str(self.pylon_number)] = str(k)
-                    break
+        selected: Optional[Weapon] = self.currentData()
+        self.flight.loadout[self.pylon.number] = selected
 
+        if selected is None:
+            logging.debug(f"Pylon {self.pylon.number} emptied")
+        else:
+            logging.debug(
+                f"Pylon {self.pylon.number} changed to {selected.name}")

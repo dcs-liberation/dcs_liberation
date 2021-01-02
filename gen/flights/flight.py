@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from datetime import timedelta
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING, Type
@@ -9,6 +10,7 @@ from dcs.point import MovingPoint, PointAction
 from dcs.unittype import FlyingType
 
 from game import db
+from game.data.weapons import Weapon
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 
@@ -148,7 +150,7 @@ class Flight:
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
-        self.loadout: Dict[str, str] = {}
+        self.loadout: Dict[int, Optional[Weapon]] = {}
         self.start_type = start_type
         self.use_custom_loadout = False
         self.client_count = 0
