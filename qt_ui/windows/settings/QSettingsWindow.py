@@ -248,6 +248,30 @@ class QSettingsWindow(QDialog):
         campaign_layout.setAlignment(Qt.AlignTop)
         self.campaign_management_page.setLayout(campaign_layout)
 
+        general = QGroupBox("General")
+        campaign_layout.addWidget(general)
+
+        general_layout = QGridLayout()
+        general.setLayout(general_layout)
+
+        def set_restict_weapons_by_date(value: bool) -> None:
+            self.game.settings.restrict_weapons_by_date = value
+
+        restrict_weapons = QCheckBox()
+        restrict_weapons.setChecked(self.game.settings.restrict_weapons_by_date)
+        restrict_weapons.toggled.connect(set_restict_weapons_by_date)
+
+        tooltip_text = (
+            "Restricts weapon availability based on the campaign date. Data is "
+            "extremely incomplete so does not affect all weapons."
+        )
+        restrict_weapons.setToolTip(tooltip_text)
+        restrict_weapons_label = QLabel("Restrict weapons by date (WIP)")
+        restrict_weapons_label.setToolTip(tooltip_text)
+
+        general_layout.addWidget(restrict_weapons_label, 0, 0)
+        general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
+
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 

@@ -74,7 +74,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
-from game.data.weapons import Pylon
+from game.data.weapons import Pylon, Weapon
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -918,6 +918,24 @@ class AircraftConflictGenerator:
             pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
             pylon.equip(group, weapon)
 
+    def _degrade_payload_to_era(self, flight: Flight,
+                                group: FlyingGroup) -> None:
+        loadout = dict(group.units[0].pylons)
+        for pylon_number, clsid in loadout.items():
+            weapon = Weapon.from_clsid(clsid["CLSID"])
+            if weapon is None:
+                logging.error(f"Could not find weapon for clsid {clsid}")
+                continue
+
+            if not weapon.available_on(self.game.date):
+                pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
+                for fallback in weapon.fallbacks:
+                    if not pylon.can_equip(fallback):
+                        continue
+                    if not fallback.available_on(self.game.date):
+                        continue
+                    pylon.equip(group, fallback)
+
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:
             for parking_slot in cp.parking_slots:
@@ -1314,6 +1332,8 @@ class AircraftConflictGenerator:
         # have their TOTs set.
         self.flights[-1].waypoints = [takeoff_point] + flight.points
         self._setup_custom_payload(flight, group)
+        if self.game.settings.restrict_weapons_by_date:
+            self._degrade_payload_to_era(flight, group)
 
     def should_delay_flight(self, flight: Flight,
                             start_time: timedelta) -> bool:

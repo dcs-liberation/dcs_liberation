@@ -28,6 +28,7 @@ class Settings:
     automate_runway_repair: bool = False
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
+    restrict_weapons_by_date: bool = False
 
     # Performance oriented
     perf_red_alert_state: bool = True

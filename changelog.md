@@ -18,6 +18,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Economy]** FOBs generate only $10M per turn (previously $20M like airbases).
 * **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
 * **[UI]** Multi-SAM objectives now show threat and detection rings per group.
+* **[Factions]** Initial implementation of date-based loadout restriction. Only a small number of weapons are currently handled.
 
 ## Fixes
 
