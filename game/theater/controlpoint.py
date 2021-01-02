@@ -43,7 +43,6 @@ from ..weather import Conditions
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
-    from ..event import UnitsDeliveryEvent
 
 
 class ControlPointType(Enum):
@@ -257,6 +256,7 @@ class ControlPoint(MissionTarget, ABC):
         self.cptype = cptype
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
+        from ..event import UnitsDeliveryEvent
         self.pending_unit_deliveries = UnitsDeliveryEvent(self)
 
         self.target_position: Optional[Point] = None
