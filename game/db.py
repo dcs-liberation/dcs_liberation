@@ -40,6 +40,7 @@ from dcs.planes import (
     C_101CC,
     C_130,
     E_3A,
+    E_2C,
     FA_18C_hornet,
     FW_190A8,
     FW_190D9,
@@ -343,6 +344,7 @@ PRICES = {
     A_50: 50,
     KJ_2000: 50,
     E_3A: 50,
+    E_2C: 50,
     C_130: 25,
     Hercules: 25,
 
@@ -691,7 +693,8 @@ UNIT_BY_TASK = {
         KC135MPRS,
     ],
     AWACS: [
-        E_3A, 
+        E_3A,
+        E_2C, 
         A_50, 
         KJ_2000
     ],
