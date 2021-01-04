@@ -135,6 +135,7 @@ ewrs.acCategories = { --Have I left anything out? Please let me know if I have
 [ "Su-33"		   ] = ewrs.FIGHTER ,
 [ "TF-51D"         ] = ewrs.ATTACK	,
 [ "UH-1H"          ] = ewrs.HELO	,
+[ "J-11A"          ] = ewrs.FIGHTER	,
 }
 
 ----END OF SCRIPT OPTIONS----
