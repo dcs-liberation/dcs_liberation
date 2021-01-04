@@ -413,11 +413,6 @@ class Operation:
 
     @classmethod
     def reset_naming_ids(cls):
-        if not cls.game:
-            logging.warning("Game object not initialized before resetting IDs")
-            return
-        cls.game.current_group_id = 0
-        cls.game.current_unit_id = 0
         namegen.reset_numbers()
 
     @classmethod
