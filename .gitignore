@@ -5,6 +5,7 @@ resources/payloads/*.lua
 venv
 logs.txt
 .DS_Store
+.vscode/settings.json
 dist/**
 a.py
 resources/tools/a.miz
