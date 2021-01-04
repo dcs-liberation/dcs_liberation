@@ -29,6 +29,7 @@ class Base:
         self.aa: Dict[AirDefence, int] = {}
         self.commision_points: Dict[Type, float] = {}
         self.strength = 1
+        self.sold_units = {}
 
     @property
     def total_aircraft(self) -> int:

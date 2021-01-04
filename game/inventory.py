@@ -98,6 +98,7 @@ class GlobalAircraftInventory:
         inventory = self.inventories[control_point]
         for aircraft, count in control_point.base.aircraft.items():
             inventory.add_aircraft(aircraft, count)
+            control_point.base.sold_units[aircraft] = 0
 
     def for_control_point(
             self,

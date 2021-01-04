@@ -85,6 +85,8 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def buy(self, unit_type):
+        global_inventory = self.game_model.game.aircraft_inventory
+        inventory = global_inventory.for_control_point(self.cp)
         if self.maximum_units > 0:
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
@@ -92,7 +94,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     self, "No space for additional aircraft",
                     f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
                 return
-
+        sold_count = self.cp.base.sold_units.get(unit_type)
+        if sold_count is None:
+            sold_count = 0
+        if sold_count > 0:
+            inventory.add_aircraft(unit_type, 1)
         super().buy(unit_type)
         self.hangar_status.update_label()
 

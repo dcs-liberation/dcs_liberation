@@ -117,6 +117,7 @@ class GroundPlanner:
                 print(key)
                 continue
 
+            self.cp.base.sold_units[key] = 0
             available = self.cp.base.armor[key]
             while available > 0:
 
