@@ -290,9 +290,9 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.AGM_84E): 1990,
 
     # CBU-97
-    Weapons.CBU_97: 1995,
-    Weapons.TER_9A___2_x_CBU_97: 1995,
-    Weapons.TER_9A___2_x_CBU_97_: 1995,
-    Weapons.TER_9A___3_x_CBU_97: 1995
+    Weapon.from_pydcs(Weapons.CBU_97): 1995,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97): 1995,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97_): 1995,
+    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_97): 1995
 
 }
