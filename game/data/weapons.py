@@ -112,34 +112,109 @@ class Pylon:
 
 
 _WEAPON_FALLBACKS = [
+    # AIM-120C
     (Weapons.AIM_120C, Weapons.AIM_120B),
+    (Weapons.LAU_115___AIM_120C, Weapons.LAU_115___AIM_120B),
+    (Weapons.LAU_115_2_LAU_127_AIM_120C, Weapons.LAU_115_2_LAU_127_AIM_120B),
+
+    # AIM-120B
     (Weapons.AIM_120B, Weapons.AIM_7MH),
+    (Weapons.LAU_115___AIM_120B, Weapons.LAU_115C_AIM_7MH),
+    (Weapons.LAU_115_2_LAU_127_AIM_120B, Weapons.LAU_115C_AIM_7MH),
+
+    # AIM-7MH
     (Weapons.AIM_7MH, Weapons.AIM_7M),
+    (Weapons.LAU_115C_AIM_7MH, Weapons.LAU_115___AIM_7M),
+
+    # AIM-7M
     (Weapons.AIM_7M, Weapons.AIM_7F),
+    (Weapons.LAU_115___AIM_7M, Weapons.LAU_115C_AIM_7F),
+
+    # AIM-7F
     (Weapons.AIM_7F, Weapons.AIM_7E),
-    (Weapons.AIM_7M, Weapons.AIM_9X_Sidewinder_IR_AAM),
+    (Weapons.LAU_115C_AIM_7F, Weapons.LAU_115C_AIM_7E),
+
+    # AIM-7E
+    (Weapons.AIM_7E, Weapons.AIM_9X_Sidewinder_IR_AAM),
+    (Weapons.LAU_115C_AIM_7E, Weapons.LAU_115_LAU_127_AIM_9X),
+
+    # AIM-9X
     (Weapons.AIM_9X_Sidewinder_IR_AAM, Weapons.AIM_9P5_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM),
+    (Weapons.LAU_115_LAU_127_AIM_9X, Weapons.LAU_115_LAU_127_AIM_9M),
+    (Weapons.LAU_115_2_LAU_127_AIM_9X, Weapons.LAU_115_2_LAU_127_AIM_9M),
+    (Weapons.LAU_127_AIM_9X, Weapons.LAU_127_AIM_9M),
+
+    # AIM-9P5
     (Weapons.AIM_9P5_Sidewinder_IR_AAM, Weapons.AIM_9P_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM),
+
+    # AIM-9P
     (Weapons.AIM_9P_Sidewinder_IR_AAM, Weapons.AIM_9M_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM),
+
+    # AIM-9M
     (Weapons.AIM_9M_Sidewinder_IR_AAM, Weapons.AIM_9L_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9L),
+
+    # AIM-9L
+    (Weapons.AIM_9L_Sidewinder_IR_AAM, None),
+    (Weapons.LAU_7_AIM_9L, None),
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
     lambda: cast(Optional[Weapon], None),
-    ((Weapon.from_pydcs(a), Weapon.from_pydcs(b))
+    ((Weapon.from_pydcs(a), b if b is  None else Weapon.from_pydcs(b))
      for a, b in _WEAPON_FALLBACKS))
 
 
 WEAPON_INTRODUCTION_YEARS = {
+    # AIM-120C
     Weapon.from_pydcs(Weapons.AIM_120C): 1996,
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_120C): 1996,
+    Weapon.from_pydcs(Weapons.LAU_115___AIM_120C): 1996,
+
+    # AIM-120B
     Weapon.from_pydcs(Weapons.AIM_120B): 1994,
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_120B): 1994,
+    Weapon.from_pydcs(Weapons.LAU_115___AIM_120B): 1994,
+
+    # AIM-7MH
     Weapon.from_pydcs(Weapons.AIM_7MH): 1987,
+    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7MH): 1987,
+
+    # AIM-7M
     Weapon.from_pydcs(Weapons.AIM_7M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_115___AIM_7M): 1982,
+
+    # AIM-7F
     Weapon.from_pydcs(Weapons.AIM_7F): 1976,
+    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7F): 1976,
+
+    # AIM-7E
     Weapon.from_pydcs(Weapons.AIM_7E): 1963,
+    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7E): 1963,
+
+    # AIM-9X
     Weapon.from_pydcs(Weapons.AIM_9X_Sidewinder_IR_AAM): 2003,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM): 2003,
+    Weapon.from_pydcs(Weapons.LAU_115_LAU_127_AIM_9X): 2003,
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_9X): 2003,
+    Weapon.from_pydcs(Weapons.LAU_127_AIM_9X): 2003,
+
+    # AIM-9P5
     Weapon.from_pydcs(Weapons.AIM_9P5_Sidewinder_IR_AAM): 1963,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM): 1963,
+
+    # AIM-9P
     Weapon.from_pydcs(Weapons.AIM_9P_Sidewinder_IR_AAM): 1978,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM): 1978,
+
+    # AIM-9M
     Weapon.from_pydcs(Weapons.AIM_9M_Sidewinder_IR_AAM): 1983,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM): 1983,
+
+    # AIM-9L
     Weapon.from_pydcs(Weapons.AIM_9L_Sidewinder_IR_AAM): 1977,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9L): 1977,
 }
