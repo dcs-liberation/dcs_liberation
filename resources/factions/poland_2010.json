@@ -1,0 +1,57 @@
+{
+  "country": "Combined Joint Task Forces Blue",
+  "name": "Poland 2010",
+  "authors": "SimonC6R",
+  "description": "<p>Polish army in the 2010s.</p>",
+  "aircrafts": [
+    "Su_17M4",
+    "MiG_29A",
+    "F_16C_50",
+    "Mi_8MT"
+  ],
+  "tankers": [
+    "KC130"
+  ],
+  "frontline_units": [
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW",
+    "APC_M1126_Stryker_ICV",
+    "ARV_BRDM_2",
+    "IFV_BMP_1",
+    "APC_MTLB",
+    "MBT_Leopard_2",
+    "MBT_T_72B3"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S1_Gvozdika",
+    "SpGH_Dana"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Rus",
+    "Soldier_RPG",
+    "SAM_SA_18_Igla_S_MANPADS"
+  ],
+  "air_defenses": [
+    "SA6Generator",
+    "SA8Generator",
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
+  ],
+  "ewrs": [
+    "BigBirdGenerator"
+  ],
+  "requirements": {},
+  "carrier_names": [],
+  "navy_generators": [
+    "MolniyaGroupGenerator",
+    "KiloSubGroupGenerator",
+    "OliverHazardPerryGroupGenerator"
+  ]
+}
