@@ -1,0 +1,257 @@
+{
+    "A-10A": [{
+        "default": "A-10A Thunderbolt II"
+    }],
+    "A-10C": [{
+        "default": "A-10C Thunderbolt II (Suite 3)"
+    }],
+    "A-10C_2": [{
+        "default": "A-10C Thunderbolt II (Suite 7)"
+    }],
+    "A-20G": [{
+        "default": "A-20G Havoc",
+        "UK": "Boston Mk.III"
+    }],
+    "A-4E-C": [{
+        "default": "A-4E Skyhawk"
+    }],
+    "AH-64A": [{
+        "default": "AH-64A Apache"
+    }],
+    "AH-64D": [{
+        "default": "AH-64D Apache Longbow"
+    }],
+    "AJS37": [{
+        "default": "AJS-37 Viggen"
+    }],
+    "AV8BNA": [{
+        "default": "AV-8B Harrier II Night Attack"
+    }],
+    "B-1B": [{
+        "default": "B-1B Lancer"
+    }],
+    "B-17G": [{
+        "default": "B-17G Flying Fortress",
+        "UK": "Fortress Mk.III"
+    }],
+    "B-52H": [{
+        "default": "B-52H Stratofortress"
+    }],
+    "Bf-109K-4": [{
+        "default": "Bf 109 K-4 Kurfürst"
+    }],
+    "C-101CC": [{
+        "default": "C-101CC Aviojet"
+    }],
+    "C-101EB": [{
+        "default": "C-101EB Aviojet"
+    }],
+    "F-4E": [{
+        "default": "F-4E Phantom II",
+        "Germany": "F-4F Phantom II",
+        "Japan": "F-4EJ Kai Phantom II",
+        "UK": "Phantom F.3"
+    }],
+    "F-5E-3": [{
+        "default": "F-5E Tiger II"
+    }],
+    "F-14A-135-GR": [{
+        "default": "F-14A Tomcat (Block 135-GR Late)"
+    }],
+    "F-14B": [{
+        "default": "F-14B Tomcat"
+    }],
+    "F-15C": [{
+        "default": "F-15C Eagle"
+    }],
+    "F-15E": [{
+        "default": "F-15E Strike Eagle"
+    }],
+    "F-16C_50": [{
+        "default": "F-16CM Fighting Falcon (Block 50)"
+    }],
+    "F-86F Sabre": [{
+        "default": "F-86F Sabre"
+    }],
+    "F-117A": [{
+        "default": "F-117A Nighthawk"
+    }],
+    "F-22A":[{
+        "default": "F-22A Raptor"
+    }],
+    "FA-18C_hornet": [{
+        "default": "F/A-18C Hornet (Lot 20)",
+        "Canada": "CF-188 Hornet",
+        "Spain": "EF-18A+ Hornet"
+    }],
+    "FW-190A8": [{
+        "default": "Fw 190 A-8 Anton"
+    }],
+    "FW-190D9": [{
+        "default": "Fw 190 D-9 Dora"
+    }],
+    "Hercules": [{
+        "default": "C-130J-30 Super Hercules"
+    }],
+    "I-16": [{
+        "default": "I-16 Ishak"
+    }],
+    "J-11A": [{
+        "default": "J-11A Flanker-L"
+    }],
+    "JF-17": [{
+        "default": "JF-17 Thunder",
+        "China": "FC-1 Fierce Dragon"
+    }],
+    "Ju-88A4": [{
+        "default": "Ju 88 A-4"
+    }],
+    "Ka-50": [{
+        "default": "Ka-50 Hokum"
+    }],
+    "L-39ZA": [{
+        "default": "L-39ZA Albatross"
+    }],
+    "M-2000C": [{
+        "default": "Mirage 2000C"
+    }],
+    "MB-339PAN":[{
+        "default": "MB-339PAN"
+    }],
+    "Mirage 2000-5": [{
+        "default": "Mirage 2000-5"
+    }],
+    "Mi-24V": [{
+        "default": "Mi-24V Hind-E"
+    }],
+    "Mi-28N": [{
+        "default": "Mi-28N Havoc"
+    }],
+    "Mi-8MT": [{
+        "default": "Mi-8MTV2 Hip"
+    }],
+    "MiG-15bis": [{
+        "default": "MiG-15bis Fagot"
+    }],
+    "MiG-19P": [{
+        "default": "MiG-19P Farmer-B",
+        "China": "J-6A"
+    }],
+    "MiG-21Bis": [{
+        "default": "MiG-21bis Fishbed-N",
+        "China": "J-7B"
+    }],
+    "MiG-23MLD": [{
+        "default": "MiG-23MLD Flogger-K"
+    }],
+    "MiG-25PD": [{
+        "default": "MiG-25PD Foxbat-E"
+    }],
+    "MiG-25RBT": [{
+        "default": "MiG-25RBT Foxbat-B"
+    }],
+    "MiG_27K": [{
+        "default": "MiG-27K Flogger-J2"
+    }],
+    "MiG-29A": [{
+        "default": "MiG-29A Fulcrum-A"
+    }],
+    "MiG-29G": [{
+        "default": "MiG-29G Fulcrum-A"
+    }],
+    "MiG-29S": [{
+        "default": "MiG-29S Fulcrum-C"
+    }],
+    "MiG-31": [{
+        "default": "MiG-31 Foxhound"
+    }],
+    "P-47D-30": [{
+        "default": "P-47D-30 Thunderbolt (Late)",
+        "UK": "Thunderbolt Mk.II (Mid)"
+    }],
+    "P-47D-30bl1": [{
+        "default": "P-47D-30 Thunderbolt (Early)",
+        "UK": "Thunderbolt Mk.II (Early)"
+    }],
+    "P-47D-40": [{
+        "default": "P-47D-40 Thunderbolt",
+        "UK": "Thunderbolt Mk.II (Late)"
+    }],
+    "P-51D": [{
+        "default": "P-51D-25-NA Mustang",
+        "UK": "Mustang Mk.IV (Early)"
+    }],
+    "P-51D-30-NA": [{
+        "default": "P-51D-30-NA Mustang",
+        "UK": "Mustang Mk.IV (Late)"
+    }],
+    "Rafale_A_S": [{
+        "default": "Rafale M (Air-to-Ground)"
+    }],
+    "Rafale_B": [{
+        "default": "Rafale B"
+    }],
+    "Rafale_M": [{
+        "default": "Rafale M (Air-to-Air)"
+    }],
+    "S-3B": [{
+        "default": "S-3B Viking"
+    }],
+    "SA342L": [{
+        "default": "SA 342L Gazelle"
+    }],
+    "SA342M": [{
+        "default": "SA 342M Gazelle",
+        "UK": "Gazelle AH.1"
+    }],
+    "SA342Mistral": [{
+        "default": "SA 342M Gazelle Mistral"
+    }],
+    "SpitfireLFMkIX": [{
+        "default": "Spitfire LF Mk IX"
+    }],
+    "SpitfireLFMkIXCW": [{
+        "default": "Spitfire LF Mk IX (Clipped Wings)"
+    }],
+    "Su-17M4": [{
+        "default": "Su-17M4 Fitter-K",
+        "Poland": "Su-22M4 Fitter-K"
+    }],
+    "Su-24M": [{
+        "default": "Su-24M Fencer-D"
+    }],
+    "Su-25": [{
+        "default": "Su-25 Frogfoot"
+    }],
+    "Su-25T": [{
+        "default": "Su-25T Frogfoot"
+    }],
+    "Su-27": [{
+        "default": "Su-27 Flanker-B"
+    }],
+    "Su-30": [{
+        "default": "Su-30 Flanker-C"
+    }],
+    "Su-33": [{
+        "default": "Su-33 Flanker-D"
+    }],
+    "Su-34": [{
+        "default": "Su-34 Fullback"
+    }],
+    "Su-57": [{
+        "default": "Su-57 Felon"
+    }],
+    "Tornado GR4": [{
+        "default": "Tornado GR4"
+    }],
+    "Tornado IDS": [{
+        "default": "Tornado IDS"
+    }],
+    "Tu-22M3": [{
+        "default": "Tu-22M3 Backfire-C"
+    }],
+    "UH-1H": [{
+        "default": "UH-1H Iroquois",
+        "Germany": "UH-1D Iroquois"
+    }]
+}

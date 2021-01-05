@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Type, Union
+import json
+from pathlib import Path
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -168,6 +170,8 @@ from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
+
+PRETTYNAMES_PATH = Path("./resources/units/pretty_unit_names.json")
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
@@ -1310,6 +1314,25 @@ def unit_type_name(unit_type) -> str:
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
+def unit_pretty_name(country_name: str, unit_type) -> str:
+    original_name = unit_type.name and unit_type.name or unit_type.id
+    default_name = None
+    faction_name = None
+    with PRETTYNAMES_PATH.open("r", encoding="utf-8") as fdata:
+        data = json.load(fdata, encoding="utf-8")
+    type_exists = data.get(original_name)
+    if type_exists is None:
+        return original_name
+    for faction in type_exists:
+        if default_name is None:
+            default_name = faction.get("default")
+        if faction_name is None:
+            faction_name = faction.get(country_name)
+    if default_name is None:
+        return original_name
+    if faction_name is None:
+        return default_name
+    return faction_name
 
 def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:

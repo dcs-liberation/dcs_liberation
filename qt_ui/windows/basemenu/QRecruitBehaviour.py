@@ -58,7 +58,8 @@ class QRecruitBehaviour:
         existing_units = self.cp.base.total_units_of_type(unit_type)
         scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
-        unitName = QLabel("<b>" + db.unit_type_name_2(unit_type) + "</b>")
+        #unitName = QLabel("<b>" + db.unit_type_name_2(unit_type) + "</b>")
+        unitName = QLabel("<b>" + db.unit_pretty_name(self.game_model.game.player_country, unit_type) + "</b>")
         unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
 
         existing_units = QLabel(str(existing_units))
