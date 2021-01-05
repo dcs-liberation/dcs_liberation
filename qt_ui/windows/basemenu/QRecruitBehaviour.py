@@ -61,13 +61,7 @@ class QRecruitBehaviour:
         unitName = QLabel("<b>" + db.unit_type_name_2(unit_type) + "</b>")
         unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
 
-        sold_count = self.cp.base.sold_units.get(unit_type)
-        if sold_count is None:
-            sold_count = 0
-        if sold_count > 0:
-            existing_units = QLabel("<b>{} (-{})</b>".format(existing_units, sold_count))
-        else:
-            existing_units = QLabel(str(existing_units))
+        existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         amount_bought = QLabel("<b>{}</b>".format(str(scheduled_units)))
@@ -123,17 +117,9 @@ class QRecruitBehaviour:
             unit_type in self.pending_deliveries.units and "{}".format(self.pending_deliveries.units[unit_type]) or "0"
         ))
 
-        sold_count = self.cp.base.sold_units.get(unit_type)
-        if sold_count is None:
-            sold_count = 0
-        if sold_count > 0:
-            self.existing_units_labels[unit_type].setText("<b>{} (-{})</b>".format(
-                self.cp.base.total_units_of_type(unit_type), self.cp.base.sold_units[unit_type]
-            ))
-        else: 
-            self.existing_units_labels[unit_type].setText("<b>{}</b>".format(
-                self.cp.base.total_units_of_type(unit_type)
-            ))
+        self.existing_units_labels[unit_type].setText("<b>{}</b>".format(
+            self.cp.base.total_units_of_type(unit_type)
+        ))
 
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
@@ -141,16 +127,8 @@ class QRecruitBehaviour:
     def buy(self, unit_type: Type[UnitType]):
         price = db.PRICES[unit_type]
         if self.budget >= price:
-            sold_count = self.cp.base.sold_units.get(unit_type)
-            if sold_count is None:
-                sold_count = 0
-            if sold_count > 0:
-                self.cp.base.sold_units[unit_type] -= 1
-                self.cp.base.commision_units({unit_type: 1})
-                self.budget -= price
-            else:
-                self.pending_deliveries.order({unit_type: 1})
-                self.budget -= price
+            self.pending_deliveries.order({unit_type: 1})
+            self.budget -= price
         else:
             # TODO : display modal warning
             logging.info("Not enough money !")
@@ -158,18 +136,12 @@ class QRecruitBehaviour:
         self.update_available_budget()
 
     def sell(self, unit_type):
-        if self.pending_deliveries.units.get(unit_type, 0) > 0:
+        if self.pending_deliveries.units.get(unit_type, 0) > 0 or self.cp.base.total_units_of_type(unit_type) > 0:
             price = db.PRICES[unit_type]
             self.budget += price
-            self.pending_deliveries.units[unit_type] = self.pending_deliveries.units[unit_type] - 1
+            self.pending_deliveries.sell({unit_type: 1})
             if self.pending_deliveries.units[unit_type] == 0:
                 del self.pending_deliveries.units[unit_type]
-        elif self.cp.base.total_units_of_type(unit_type) > 0:
-            price = db.PRICES[unit_type]
-            self.budget += price
-            self.cp.base.commit_losses({unit_type: 1})
-            self.cp.base.sold_units[unit_type] += 1
-
         self._update_count_label(unit_type)
         self.update_available_budget()
 

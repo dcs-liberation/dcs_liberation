@@ -342,6 +342,8 @@ class UnitsDeliveryEvent:
     def __init__(self, control_point: ControlPoint) -> None:
         self.to_cp = control_point
         self.units: Dict[Type[UnitType], int] = {}
+        self.bought_units = {}
+        self.sold_units = {}
 
     def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
@@ -349,6 +351,10 @@ class UnitsDeliveryEvent:
     def order(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
+
+    def sell(self, units: Dict[Type[UnitType], int]) -> None:
+        for k, v in units.items():
+            self.units[k] = self.units.get(k, 0) - v
 
     def consume_each_order(self) -> Iterator[Tuple[Type[UnitType], int]]:
         while self.units:
@@ -371,7 +377,16 @@ class UnitsDeliveryEvent:
             coalition = "Ally" if self.to_cp.captured else "Enemy"
             aircraft = unit_type.id
             name = self.to_cp.name
-            game.message(
-                f"{coalition} reinforcements: {aircraft} x {count} at {name}")
-        self.to_cp.base.commision_units(self.units)
+            if count >= 0:
+                self.bought_units[unit_type] = count 
+                game.message(
+                    f"{coalition} reinforcements: {aircraft} x {count} at {name}")
+            else:
+                self.sold_units[unit_type] = 0 - count
+                game.message(
+                    f"{coalition} sold: {aircraft} x {0 - count} at {name}")
+        self.to_cp.base.commision_units(self.bought_units)
+        self.to_cp.base.commit_losses(self.sold_units)
         self.units = {}
+        self.bought_units = {}
+        self.sold_units = {}
