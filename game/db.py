@@ -270,7 +270,7 @@ PRICES = {
     FW_190A8: 14,
     A_20G: 22,
     Ju_88A4: 24,
-   
+
     F_5E_3: 8,
     MiG_15bis: 4,
     MiG_19P: 6,
@@ -333,7 +333,7 @@ PRICES = {
     Tu_22M3: 40,
     Tu_95MS: 35,
     F_111F: 21,
-    
+
     # special
     IL_76MD: 30,
     An_26B: 25,
@@ -419,6 +419,7 @@ PRICES = {
     Artillery.MLRS_BM_21_Grad: 15,
     Artillery.MLRS_9K57_Uragan_BM_27: 50,
     Artillery.MLRS_9A52_Smerch: 40,
+    Artillery._2B11_mortar: 4,
     Artillery.SpGH_Dana: 26,
 
     Unarmed.Transport_UAZ_469: 3,
@@ -448,6 +449,7 @@ PRICES = {
     Armor.LAC_M8_Greyhound: 8,
     Armor.TD_M10_GMC: 14,
     Armor.StuG_III_Ausf__G: 12,
+    Armor.StuG_IV: 14,
     Artillery.M12_GMC: 10,
     Artillery.Sturmpanzer_IV_Brummbär: 10,
     Armor.Daimler_Armoured_Car: 8,
@@ -699,8 +701,8 @@ UNIT_BY_TASK = {
     ],
     AWACS: [
         E_3A,
-        E_2C, 
-        A_50, 
+        E_2C,
+        A_50,
         KJ_2000
     ],
     PinpointStrike: [
@@ -839,6 +841,7 @@ UNIT_BY_TASK = {
         Armor.TD_M10_GMC,
         Armor.TD_M10_GMC,
         Armor.StuG_III_Ausf__G,
+        Armor.StuG_IV,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
         Armor.Daimler_Armoured_Car,
@@ -874,6 +877,13 @@ UNIT_BY_TASK = {
         AirDefence.SAM_Avenger_M1097,
         AirDefence.SAM_Roland_ADS,
         AirDefence.HQ_7_Self_Propelled_LN,
+        AirDefence.AAA_8_8cm_Flak_18,
+        AirDefence.AAA_8_8cm_Flak_36,
+        AirDefence.AAA_8_8cm_Flak_37,
+        AirDefence.AAA_8_8cm_Flak_41,
+        AirDefence.AAA_Bofors_40mm,
+        AirDefence.AAA_M1_37mm,
+        AirDefence.AA_gun_QF_3_7,
 
         frenchpack.DIM__TOYOTA_BLUE,
         frenchpack.DIM__TOYOTA_DESERT,
@@ -1281,6 +1291,7 @@ INFANTRY: List[VehicleType] = [
     Infantry.Soldier_RPG,
     Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
     Infantry.Soldier_M249,
+    Artillery._2B11_mortar,
     Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
     Infantry.Paratrooper_RPG_16,
     Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
