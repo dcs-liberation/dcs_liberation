@@ -169,15 +169,43 @@ _WEAPON_FALLBACKS = [
     (Weapons.R_77, Weapons.R_27ER),
     (Weapons.R_77_, Weapons.R_27ER),
 
-    # R-73
+    # R-73 (AA-11)
     (Weapons.R_73, Weapons.R_60M),
     (Weapons.R_73_, Weapons.R_60M_),
+
+    # GBU-38 (JDAM)
+    (Weapons.GBU_38, Weapons.GBU_12),
+    (Weapons.GBU_38_16, Weapons.MK_82_28), # B1-B only
+    (Weapons._2_GBU_38_, Weapons._2_GBU_12),
+    (Weapons._2_GBU_38, Weapons._2_GBU_12),
+    (Weapons._3_GBU_38, Weapons._3_GBU_12),
+    (Weapons.BRU_55___2_x_GBU_38, Weapons.BRU_33___2_x_GBU_12),
+    (Weapons.BRU_57___2_x_GBU_38, Weapons.BRU_33___2_x_GBU_12),
+
+    # AGM-154A (JSOW)
+    (Weapons.AGM_154A, Weapons.GBU_12),
+    (Weapons.BRU_55___2_x_AGM_154A, Weapons.BRU_33___2_x_GBU_12),
+    (Weapons.BRU_57___2_x_AGM_154A, Weapons.BRU_33___2_x_GBU_12),
+
+    # AGM-154C (JSOW)
+    (Weapons.AGM_154C, Weapons.GBU_12),
+    (Weapons.AGM_154C_4, Weapons.MK_82_28), # B1-B only
+    (Weapons.BRU_55___2_x_AGM_154C, Weapons.BRU_33___2_x_GBU_12),
+
+    # AGM-84E (SLAM)
+    (Weapons.AGM_84E, Weapons.LAU_117_AGM_65F),
+
+    # CBU-97
+    (Weapons.CBU_97, Weapons.GBU_12),
+    (Weapons.TER_9A___2_x_CBU_97, Weapons.TER_9A___2_x_GBU_12),
+    (Weapons.TER_9A___2_x_CBU_97_, Weapons.TER_9A___2_x_GBU_12),
+    (Weapons.TER_9A___3_x_CBU_97, Weapons.TER_9A___2_x_GBU_12),
 
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
     lambda: cast(Optional[Weapon], None),
-    ((Weapon.from_pydcs(a), b if b is  None else Weapon.from_pydcs(b))
+    ((Weapon.from_pydcs(a), b if b is None else Weapon.from_pydcs(b))
      for a, b in _WEAPON_FALLBACKS))
 
 
@@ -235,8 +263,36 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.R_77): 2002,
     Weapon.from_pydcs(Weapons.R_77_): 2002,
 
-    # R-73
+    # R-73 (AA-11)
     Weapon.from_pydcs(Weapons.R_73): 1989,
     Weapon.from_pydcs(Weapons.R_73_): 1989,
+
+    # GBU-38 (JDAM)
+    Weapon.from_pydcs(Weapons.GBU_38): 1998,
+    Weapon.from_pydcs(Weapons.GBU_38_16): 1998,
+    Weapon.from_pydcs(Weapons._2_GBU_38_): 1998,
+    Weapon.from_pydcs(Weapons._2_GBU_38): 1998,
+    Weapon.from_pydcs(Weapons._3_GBU_38): 1998,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_GBU_38): 1998,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_GBU_38): 1998,
+
+    # AGM-154A (JSOW)
+    Weapon.from_pydcs(Weapons.AGM_154A): 1999,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154A): 1999,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_AGM_154A): 1999,
+
+    # AGM-154C (JSOW)
+    Weapon.from_pydcs(Weapons.AGM_154C): 2005,
+    Weapon.from_pydcs(Weapons.AGM_154C_4): 2005,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154C): 2005,
+
+    # AGM-84E
+    Weapon.from_pydcs(Weapons.AGM_84E): 1990,
+
+    # CBU-97
+    Weapons.CBU_97: 1995,
+    Weapons.TER_9A___2_x_CBU_97: 1995,
+    Weapons.TER_9A___2_x_CBU_97_: 1995,
+    Weapons.TER_9A___3_x_CBU_97: 1995
 
 }
