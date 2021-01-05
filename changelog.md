@@ -18,12 +18,18 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Balance]** Units now retreat from captured bases when able. Units with no retreat path will be captured and sold.
 * **[Economy]** FOBs generate only $10M per turn (previously $20M like airbases).
 * **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
+* **[Economy]** Sales of aircraft and ground vehicles can now be cancelled before the next turn begins.
 * **[UI]** Multi-SAM objectives now show threat and detection rings per group.
 * **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
+* **[Factions]** Added Poland 2010 faction.
+* **[Factions]** Added Greece 2005 faction.
+* **[Factions]** Updated the Israel, Japan and pre-1990 USA factions to use the period-correct E-2 Hawkeye.
+* **[Units]** Support for E-2 Hawkeye and SpGH Dana.
 
 ## Fixes
 
 * **[Economy]** Pending unit orders at captured bases will be refunded.
+* **[Units]** J-11A is no longer spawned with empty loadout.
 
 # 2.3.3
 
