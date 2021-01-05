@@ -48,7 +48,7 @@ class QFlightCreator(QDialog):
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.aircraft_inventory.available_types_for_player
+            self.game.aircraft_inventory.available_types_for_player, self.game.player_country
         )
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(

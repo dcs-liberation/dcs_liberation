@@ -176,6 +176,12 @@ class Flight:
         return self.flight_plan.waypoints[1:]
 
     def __repr__(self):
+        name = db.unit_type_name(self.unit_type)
+        if self.custom_name:
+            return f"{self.custom_name} {self.count} x {name}"
+        return f"[{self.flight_type}] {self.count} x {name}"
+
+    def __str__(self):
         name = db.unit_pretty_name(self.country, self.unit_type)
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {name}"
