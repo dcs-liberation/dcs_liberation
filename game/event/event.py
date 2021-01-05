@@ -342,8 +342,8 @@ class UnitsDeliveryEvent:
     def __init__(self, control_point: ControlPoint) -> None:
         self.to_cp = control_point
         self.units: Dict[Type[UnitType], int] = {}
-        self.bought_units = {}
-        self.sold_units = {}
+        self.bought_units: Dict[Type[UnitType], int] = {}
+        self.sold_units: Dict[Type[UnitType], int] = {}
 
     def __str__(self) -> str:
         return "Pending delivery to {}".format(self.to_cp)
