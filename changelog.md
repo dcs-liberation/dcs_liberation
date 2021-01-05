@@ -20,6 +20,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
 * **[Economy]** Sales of aircraft and ground vehicles can now be cancelled before the next turn begins.
 * **[UI]** Multi-SAM objectives now show threat and detection rings per group.
+* **[UI]** Unit names are now prettier and more accurate, and can now be set per-country for added historical flavour.
 * **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
 * **[Factions]** Added Poland 2010 faction.
 * **[Factions]** Added Greece 2005 faction.

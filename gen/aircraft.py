@@ -782,7 +782,7 @@ class AircraftConflictGenerator:
 
         self.flights.append(FlightData(
             package=package,
-            country=faction,
+            country=faction.country,
             flight_type=flight.flight_type,
             units=group.units,
             size=len(group.units),
@@ -989,7 +989,7 @@ class AircraftConflictGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(Package(control_point), faction, aircraft, 1,
+            flight = Flight(Package(control_point), faction.country, aircraft, 1,
                             FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
 
