@@ -415,6 +415,7 @@ PRICES = {
     Artillery.MLRS_BM_21_Grad: 15,
     Artillery.MLRS_9K57_Uragan_BM_27: 50,
     Artillery.MLRS_9A52_Smerch: 40,
+    Artillery.SpGH_Dana: 26,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -849,6 +850,7 @@ UNIT_BY_TASK = {
         Artillery.MLRS_BM_21_Grad,
         Artillery.MLRS_9K57_Uragan_BM_27,
         Artillery.MLRS_9A52_Smerch,
+        Artillery.SpGH_Dana,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
 
