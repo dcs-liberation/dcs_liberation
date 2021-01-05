@@ -13,6 +13,5 @@ class QAircraftTypeSelector(QComboBox):
     def __init__(self, aircraft_types: Iterable[Type[FlyingType]], country: str) -> None:
         super().__init__()
         for aircraft in aircraft_types:
-            #self.addItem(f"{aircraft.id}", userData=aircraft)
             self.addItem(f"{db.unit_pretty_name(country, aircraft)}", userData=aircraft)
         self.model().sort(0)
