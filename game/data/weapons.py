@@ -160,6 +160,13 @@ _WEAPON_FALLBACKS = [
     # AIM-9L
     (Weapons.AIM_9L_Sidewinder_IR_AAM, None),
     (Weapons.LAU_7_AIM_9L, None),
+
+    # R-27 (AA-10 Alamo)
+    (Weapons.R_27ER, Weapons.R_27R),
+    (Weapons.R_27ET, Weapons.R_27T),
+
+    # R-77 (AA-12)
+    (Weapons.R_77, Weapons.R_27ER),
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
@@ -217,4 +224,7 @@ WEAPON_INTRODUCTION_YEARS = {
     # AIM-9L
     Weapon.from_pydcs(Weapons.AIM_9L_Sidewinder_IR_AAM): 1977,
     Weapon.from_pydcs(Weapons.LAU_7_AIM_9L): 1977,
+
+    # R-77 (AA-12)
+    Weapon.from_pydcs(Weapons.R_77): 2002,
 }
