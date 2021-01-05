@@ -37,15 +37,28 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaigns]** Reworked Golan Heights campaign on Syria, (Added FOB and preset locations for SAMS)
 * **[Campaigns]** Added a lite version of the Golan Heights campaign
 * **[Campaigns]** Reworked Syrian Civil War campaign (Added FOB and preset locations for SAMS)
+* **[Campaigns]** Reworked Emirates campaign
+* **[Campaigns]** AA units added to frontlines and updated all factions to include some frontline AA units.
+* **[Mission Generator]** Infantry will only be generated for APC and IFV groups
+* **[Mission Generator]** Infantry squads size is not randomized anymore
+* **[Mission Generator]** Infantry squads can have a mortar. 
+* **[Mission Generator]** SCUD missiles sites will now fire on enemy controls points in range when possible
 * **[Factions]** Updated Nato Desert Storm to include F-14A
 * **[Factions]** Updated Iraq 1991 factions to include Zsu-57 and Mig-29A
+* **[Factions]** Germany 1944, added Stug III and Stug IV
+* **[Factions]** Added factions Insurgents (Hard) with better and more weapons
 * **[Plugins]** [The EWRS plugin](https://github.com/Bob7heBuilder/EWRS) is now included.
 * **[UI]** Added enemy intelligence summary and details window.
 
 ## Fixes:
 * **[Factions]** AI would never buy artillery units for the frontline - fixed
-* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit) 
+* **[Factions]** Removed the F-111 unit from the NATO desert storm faction. (Recruiting it would cause crashes in DCS, since it is not a valid unit)
+* **[Campaign]** Automatic redeployment of ground units would sometimes fail - fixed
+* **[Mission Generator]** Artillery groups would retreat in the wrong direction - fixed
 * **[Units]** Fixed SPG_Stryker_M1128_MGS not being in db
+* **[UI]** Fixed and added many missing ground units icons
+* **[UI]** Ship groups could be replaced by SAM sites in the UI, which would lead to broken mission being generated - fixed 
+* **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
 * **[Mission Generator]** Empty navy groups will no longer be generated
 * **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights ocassionally being assigned the wrong targets.
 * **[Flight Planner]** Fixed not being able to plan packages against opfor carriers

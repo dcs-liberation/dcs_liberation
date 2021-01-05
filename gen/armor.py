@@ -50,6 +50,8 @@ FIGHT_DISTANCE = 3500
 
 RANDOM_OFFSET_ATTACK = 250
 
+INFANTRY_GROUP_SIZE = 5
+
 
 @dataclass(frozen=True)
 class JtacInfo:
@@ -226,7 +228,7 @@ class GroundConflictGenerator:
                 heading=forward_heading,
                 move_formation=PointAction.OffRoad)
 
-        for i in range(random.randint(3, 10)):
+        for i in range(INFANTRY_GROUP_SIZE):
             u = random.choice(possible_infantry_units)
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
@@ -281,7 +283,7 @@ class GroundConflictGenerator:
 
             # Hold position
             dcs_group.points[1].tasks.append(Hold())
-            retreat = self.find_retreat_point(dcs_group, heading_sum(forward_heading, 180), (int)(RETREAT_DISTANCE/3))
+            retreat = self.find_retreat_point(dcs_group, forward_heading, (int)(RETREAT_DISTANCE/3))
             dcs_group.add_waypoint(dcs_group.position.point_from_heading(forward_heading, 1), PointAction.OffRoad)
             dcs_group.points[2].tasks.append(Hold())
             dcs_group.add_waypoint(retreat, PointAction.OffRoad)

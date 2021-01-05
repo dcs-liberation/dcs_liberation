@@ -1,6 +1,6 @@
 {
   "country": "Insurgents",
-  "name": "Insurgents",
+  "name": "Insurgents (Hard)",
   "authors": "Khopa",
   "description": "<p>Insurgents faction.</p>",
   "aircrafts": [
@@ -14,7 +14,6 @@
     "IFV_BMP_1",
     "MBT_T_55",
     "AAA_ZU_23_Insurgent_on_Ural_375",
-    "AAA_ZSU_57_2",
     "AAA_ZSU_57_2"
   ],
   "artillery_units": [
@@ -28,6 +27,7 @@
   "infantry_units": [
     "Infantry_Soldier_Insurgents",
     "Soldier_RPG",
+    "_2B11_mortar",
     "SAM_SA_18_Igla_MANPADS"
   ],
   "air_defenses": [
