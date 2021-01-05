@@ -136,7 +136,7 @@ class QRecruitBehaviour:
         self.update_available_budget()
 
     def sell(self, unit_type):
-        if self.pending_deliveries.units.get(unit_type, 0) > 0 or self.cp.base.total_units_of_type(unit_type) > 0:
+        if self.pending_deliveries.available_next_turn(unit_type) > 0:
             price = db.PRICES[unit_type]
             self.budget += price
             self.pending_deliveries.sell({unit_type: 1})

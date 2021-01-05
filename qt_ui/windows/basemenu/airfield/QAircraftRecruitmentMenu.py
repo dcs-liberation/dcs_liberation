@@ -92,6 +92,12 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     self, "No space for additional aircraft",
                     f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
                 return
+            # If we change our mind about selling, we want the aircraft to be put
+            # back in the inventory immediately.
+            elif self.pending_deliveries.units.get(unit_type, 0) < 0:
+                global_inventory = self.game_model.game.aircraft_inventory
+                inventory = global_inventory.for_control_point(self.cp)
+                inventory.add_aircraft(unit_type, 1)
                 
         super().buy(unit_type)
         self.hangar_status.update_label()
@@ -99,13 +105,18 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def sell(self, unit_type: UnitType):
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
-        if self.pending_deliveries.units.get(unit_type, 0) <= 0 - self.cp.base.total_units_of_type(unit_type):
-            QMessageBox.critical(
-                self, "Could not sell aircraft",
-                f"Attempted to sell one {unit_type.id} at {self.cp.name} "
-                "but none are available. Are all aircraft currently "
-                "assigned to a mission?", QMessageBox.Ok)
-            return
+        if self.pending_deliveries.units.get(unit_type, 0) <= 0:
+            global_inventory = self.game_model.game.aircraft_inventory
+            inventory = global_inventory.for_control_point(self.cp)
+            try:
+                inventory.remove_aircraft(unit_type, 1)
+            except ValueError:
+                QMessageBox.critical(
+                    self, "Could not sell aircraft",
+                    f"Attempted to sell one {unit_type.id} at {self.cp.name} "
+                    "but none are available. Are all aircraft currently "
+                    "assigned to a mission?", QMessageBox.Ok)
+                return
         super().sell(unit_type)
         self.hangar_status.update_label()
 

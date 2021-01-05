@@ -61,13 +61,10 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def sell(self, unit_type: UnitType):
-        # Don't need to remove aircraft from the inventory if we're canceling
-        # orders.
-        if self.pending_deliveries.units.get(unit_type, 0) <= 0 - self.cp.base.total_units_of_type(unit_type):
+        if self.pending_deliveries.available_next_turn(unit_type) <= 0:
             QMessageBox.critical(
                 self, "Could not sell ground unit",
                 f"Attempted to sell one {unit_type.id} at {self.cp.name} "
                 "but none are available.", QMessageBox.Ok)
             return
         super().sell(unit_type)
-        self.hangar_status.update_label()
