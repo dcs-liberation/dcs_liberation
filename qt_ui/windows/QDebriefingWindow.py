@@ -52,7 +52,7 @@ class QDebriefingWindow(QDialog):
         for unit_type, count in player_air_losses.items():
             try:
                 lostUnitsLayout.addWidget(
-                    QLabel(db.unit_type_name(unit_type)), row, 0)
+                    QLabel(db.unit_pretty_name(self.debriefing.player_country, unit_type)), row, 0)
                 lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
             except AttributeError:
@@ -94,7 +94,7 @@ class QDebriefingWindow(QDialog):
         for unit_type, count in enemy_air_losses.items():
             try:
                 enemylostUnitsLayout.addWidget(
-                    QLabel(db.unit_type_name(unit_type)), row, 0)
+                    QLabel(db.unit_pretty_name(self.debriefing.enemy_country, unit_type)), row, 0)
                 enemylostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
                 row += 1
             except AttributeError:

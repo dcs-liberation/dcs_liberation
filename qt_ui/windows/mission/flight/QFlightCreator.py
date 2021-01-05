@@ -34,6 +34,7 @@ class QFlightCreator(QDialog):
         self.game = game
         self.package = package
         self.custom_name_text = None
+        self.country = self.game.player_country
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -47,7 +48,7 @@ class QFlightCreator(QDialog):
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.aircraft_inventory.available_types_for_player
+            self.game.aircraft_inventory.available_types_for_player, self.game.player_country
         )
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(
@@ -154,7 +155,7 @@ class QFlightCreator(QDialog):
             start_type = "Cold"
         else:
             start_type = "Warm"
-        flight = Flight(self.package, aircraft, size, task, start_type, origin,
+        flight = Flight(self.package, self.country, aircraft, size, task, start_type, origin,
                         arrival, divert, custom_name=self.custom_name_text)
         flight.client_count = self.client_slots_spinner.value()
 
