@@ -167,6 +167,12 @@ _WEAPON_FALLBACKS = [
 
     # R-77 (AA-12)
     (Weapons.R_77, Weapons.R_27ER),
+    (Weapons.R_77_, Weapons.R_27ER),
+
+    # R-73
+    (Weapons.R_73, Weapons.R_60M),
+    (Weapons.R_73_, Weapons.R_60M_),
+
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
@@ -227,4 +233,10 @@ WEAPON_INTRODUCTION_YEARS = {
 
     # R-77 (AA-12)
     Weapon.from_pydcs(Weapons.R_77): 2002,
+    Weapon.from_pydcs(Weapons.R_77_): 2002,
+
+    # R-73
+    Weapon.from_pydcs(Weapons.R_73): 1989,
+    Weapon.from_pydcs(Weapons.R_73_): 1989,
+
 }
