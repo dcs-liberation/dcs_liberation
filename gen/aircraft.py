@@ -782,7 +782,7 @@ class AircraftConflictGenerator:
 
         self.flights.append(FlightData(
             package=package,
-            country=country,
+            country=faction,
             flight_type=flight.flight_type,
             units=group.units,
             size=len(group.units),
