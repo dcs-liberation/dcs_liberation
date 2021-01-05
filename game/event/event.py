@@ -350,6 +350,10 @@ class UnitsDeliveryEvent:
         for k, v in units.items():
             self.units[k] = self.units.get(k, 0) + v
 
+    def sell(self, units: Dict[Type[UnitType], int]) -> None:
+        for k, v in units.items():
+            self.units[k] = self.units.get(k, 0) - v
+
     def consume_each_order(self) -> Iterator[Tuple[Type[UnitType], int]]:
         while self.units:
             yield self.units.popitem()
@@ -366,12 +370,30 @@ class UnitsDeliveryEvent:
                 f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
             game.adjust_budget(price * count, player=self.to_cp.captured)
 
+    def available_next_turn(self, unit_type: Type[UnitType]) -> int:
+        pending_units = self.units.get(unit_type)
+        if pending_units is None:
+            pending_units = 0
+        current_units = self.to_cp.base.total_units_of_type(unit_type)
+        return pending_units + current_units
+
     def process(self, game: Game) -> None:
+        bought_units: Dict[Type[UnitType], int] = {}
+        sold_units: Dict[Type[UnitType], int] = {}
         for unit_type, count in self.units.items():
             coalition = "Ally" if self.to_cp.captured else "Enemy"
             aircraft = unit_type.id
             name = self.to_cp.name
-            game.message(
-                f"{coalition} reinforcements: {aircraft} x {count} at {name}")
-        self.to_cp.base.commision_units(self.units)
+            if count >= 0:
+                bought_units[unit_type] = count 
+                game.message(
+                    f"{coalition} reinforcements: {aircraft} x {count} at {name}")
+            else:
+                sold_units[unit_type] = -count
+                game.message(
+                    f"{coalition} sold: {aircraft} x {-count} at {name}")
+        self.to_cp.base.commision_units(bought_units)
+        self.to_cp.base.commit_losses(sold_units)
         self.units = {}
+        bought_units = {}
+        sold_units = {}
