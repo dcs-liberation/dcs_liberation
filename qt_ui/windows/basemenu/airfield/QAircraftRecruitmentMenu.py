@@ -92,6 +92,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     self, "No space for additional aircraft",
                     f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
                 return
+                
         super().buy(unit_type)
         self.hangar_status.update_label()
 
