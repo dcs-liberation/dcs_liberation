@@ -15,6 +15,9 @@
     "A-4E-C": [{
         "default": "A-4E Skyhawk"
     }],
+    "AH_1W": [{
+        "default": "AH-1W SuperCobra"
+    }],
     "AH-64A": [{
         "default": "AH-64A Apache"
     }],
@@ -62,22 +65,27 @@
         "default": "F-14B Tomcat"
     }],
     "F-15C": [{
-        "default": "F-15C Eagle"
+        "default": "F-15C Eagle",
+        "Japan": "F-15J Eagle"
     }],
     "F-15E": [{
         "default": "F-15E Strike Eagle"
     }],
     "F-16C_50": [{
-        "default": "F-16CM Fighting Falcon (Block 50)"
+        "default": "F-16CM Fighting Falcon (Block 50)",
+        "Japan": "F-2A"
+    }],
+    "F-22A":[{
+        "default": "F-22A Raptor"
     }],
     "F-86F Sabre": [{
         "default": "F-86F Sabre"
     }],
+    "F-111F": [{
+        "default": "F-111F Aardvark"
+    }],
     "F-117A": [{
         "default": "F-117A Nighthawk"
-    }],
-    "F-22A":[{
-        "default": "F-22A Raptor"
     }],
     "FA-18C_hornet": [{
         "default": "F/A-18C Hornet (Lot 20)",
@@ -249,6 +257,12 @@
     }],
     "Tu-22M3": [{
         "default": "Tu-22M3 Backfire-C"
+    }],
+    "Tu-95MS": [{
+        "default": "Tu-95MS Bear-H"
+    }],
+    "Tu-160": [{
+        "default": "Tu-160 Blackjack"
     }],
     "UH-1H": [{
         "default": "UH-1H Iroquois",
