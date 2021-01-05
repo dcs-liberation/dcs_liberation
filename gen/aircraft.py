@@ -935,6 +935,7 @@ class AircraftConflictGenerator:
                     if not fallback.available_on(self.game.date):
                         continue
                     pylon.equip(group, fallback)
+                    break
 
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:
