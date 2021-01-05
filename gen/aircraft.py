@@ -262,6 +262,9 @@ class FlightData:
     #: The package that the flight belongs to.
     package: Package
 
+    #: The country that the flight belongs to.
+    country: str
+
     flight_type: FlightType
 
     #: All units in the flight.
@@ -299,7 +302,7 @@ class FlightData:
 
     joker_fuel: Optional[int]
 
-    def __init__(self, package: Package, flight_type: FlightType,
+    def __init__(self, package: Package, country: str, flight_type: FlightType,
                  units: List[FlyingUnit], size: int, friendly: bool,
                  departure_delay: timedelta, departure: RunwayData,
                  arrival: RunwayData, divert: Optional[RunwayData],
@@ -308,6 +311,7 @@ class FlightData:
                  bingo_fuel: Optional[int],
                  joker_fuel: Optional[int]) -> None:
         self.package = package
+        self.country = country
         self.flight_type = flight_type
         self.units = units
         self.size = size
@@ -778,6 +782,7 @@ class AircraftConflictGenerator:
 
         self.flights.append(FlightData(
             package=package,
+            country=faction.country,
             flight_type=flight.flight_type,
             units=group.units,
             size=len(group.units),
@@ -984,7 +989,7 @@ class AircraftConflictGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(Package(control_point), aircraft, 1,
+            flight = Flight(Package(control_point), faction.country, aircraft, 1,
                             FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
 

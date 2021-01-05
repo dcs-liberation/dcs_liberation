@@ -173,9 +173,11 @@ class PackageBuilder:
                  closest_airfields: ClosestAirfields,
                  global_inventory: GlobalAircraftInventory,
                  is_player: bool,
+                 package_country: str,
                  start_type: str) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
+        self.package_country = package_country
         self.package = Package(location)
         self.allocator = AircraftAllocator(closest_airfields, global_inventory,
                                            is_player)
@@ -199,7 +201,7 @@ class PackageBuilder:
         else:
             start_type = self.start_type
 
-        flight = Flight(self.package, aircraft, plan.num_aircraft, plan.task,
+        flight = Flight(self.package, self.package_country, aircraft, plan.num_aircraft, plan.task,
                         start_type, departure=airfield, arrival=airfield,
                         divert=self.find_divert_field(aircraft, airfield))
         self.package.add_flight(flight)
@@ -629,11 +631,17 @@ class CoalitionMissionPlanner:
         else:
             start_type = "Warm"
 
+        if self.is_player:
+            package_country = self.game.player_country
+        else:
+            package_country = self.game.enemy_country
+
         builder = PackageBuilder(
             mission.location,
             self.objective_finder.closest_airfields_to(mission.location),
             self.game.aircraft_inventory,
             self.is_player,
+            package_country,
             start_type
         )
 

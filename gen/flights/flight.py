@@ -136,12 +136,13 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: Type[FlyingType],
+    def __init__(self, package: Package, country: str, unit_type: Type[FlyingType],
                  count: int, flight_type: FlightType, start_type: str,
                  departure: ControlPoint, arrival: ControlPoint,
                  divert: Optional[ControlPoint],
                  custom_name: Optional[str] = None) -> None:
         self.package = package
+        self.country = country
         self.unit_type = unit_type
         self.count = count
         self.departure = departure
@@ -176,6 +177,12 @@ class Flight:
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)
+        if self.custom_name:
+            return f"{self.custom_name} {self.count} x {name}"
+        return f"[{self.flight_type}] {self.count} x {name}"
+
+    def __str__(self):
+        name = db.unit_pretty_name(self.country, self.unit_type)
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {name}"
         return f"[{self.flight_type}] {self.count} x {name}"
