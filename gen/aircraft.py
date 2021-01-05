@@ -989,7 +989,7 @@ class AircraftConflictGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(Package(control_point), aircraft, 1,
+            flight = Flight(Package(control_point), faction, aircraft, 1,
                             FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
 
