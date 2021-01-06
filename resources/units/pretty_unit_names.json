@@ -261,6 +261,9 @@
     "Tu-95MS": [{
         "default": "Tu-95MS Bear-H"
     }],
+    "Tu-142": [{
+        "default": "Tu-142 Bear-F"
+    }],
     "Tu-160": [{
         "default": "Tu-160 Blackjack"
     }],
