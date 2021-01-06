@@ -31,6 +31,7 @@ Saves from 2.3 are not compatible with 2.4.
 
 * **[Economy]** Pending unit orders at captured bases will be refunded.
 * **[Units]** J-11A is no longer spawned with empty loadout.
+* **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
 
 # 2.3.3
 
