@@ -39,5 +39,14 @@ class QLoadoutEditor(QGroupBox):
 
     def on_toggle(self):
         self.flight.use_custom_loadout = self.isChecked()
-
-
+        if not self.isChecked():
+            for i in self.findChildren(QPylonEditor):
+                for j in enumerate(Pylon.iter_pylons(self.flight.unit_type)):
+                    # Only change the text in the pylon selector, not any actual data.
+                    i.default_loadout(j[0])
+        else:
+            for i in self.findChildren(QPylonEditor):
+                # Clear the loadout so that the user has select it themself.
+                # If we don't do this, the user may end up leaving an entry as the default,
+                # which is just text, not actual data, meaning they'd have an empty pylon.
+                i.clear_loadout()
