@@ -1020,6 +1020,29 @@ COMMON_OVERRIDE = {
     RunwayAttack: "RUNWAY_ATTACK"
 }
 
+"""
+This is a list of mappings from the FlightType of a Flight to the type of payload defined in the
+resources/payloads/UNIT_TYPE.lua file. A Flight has no concept of a PyDCS task, so COMMON_OVERRIDE cannot be
+used here. This is used in the payload editor, for setting the default loadout of an object.
+The left element is the FlightType name, and the right element is what is used in the lua file. 
+"""
+
+EXPANDED_TASK_PAYLOAD_OVERRIDE = {
+    "TARCAP": "CAP",
+    "BARCAP": "CAP",
+    "CAS": "CAS",
+    "INTERCEPTION": "CAP",
+    "STRIKE": "STRIKE",    
+    "ANTISHIP": "ANTISHIP",
+    "SEAD": "SEAD",
+    "DEAD": "SEAD",
+    "ESCORT": "CAP",
+    "BAI": "CAS",
+    "SWEEP": "CAP",
+    "OCA_RUNWAY": "STRIKE",
+    "OCA_AIRCRAFT": "CAS"
+}
+
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
 
     B_1B: COMMON_OVERRIDE,
