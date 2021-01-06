@@ -8,7 +8,6 @@ from dcs.ships import (
     Type_052C_Destroyer,
     Type_052B_Destroyer,
     Type_054A_Frigate,
-    CGN_1144_2_Pyotr_Velikiy,
 )
 
 from game.factions.faction import Faction
@@ -27,12 +26,7 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
         include_frigate = random.choice([True, True, False])
         include_dd = random.choice([True, False])
 
-        if include_dd:
-            include_cc = random.choice([True, False])
-        else:
-            include_cc = False
-
-        if not any([include_frigate, include_dd, include_cc]):
+        if not any([include_frigate, include_dd]):
             include_frigate = True
 
         if include_frigate:
@@ -43,10 +37,6 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
             dd_type = random.choice([Type_052C_Destroyer, Type_052B_Destroyer])
             self.add_unit(dd_type, "DD1", self.position.x + 2400, self.position.y + 900, self.heading)
             self.add_unit(dd_type, "DD2", self.position.x + 2400, self.position.y - 900, self.heading)
-
-        if include_cc:
-            cc_type = random.choice([CGN_1144_2_Pyotr_Velikiy])
-            self.add_unit(cc_type, "CC1", self.position.x, self.position.y, self.heading)
 
         self.get_generated_group().points[0].speed = 20
 
