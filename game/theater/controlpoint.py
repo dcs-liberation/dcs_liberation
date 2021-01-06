@@ -561,6 +561,8 @@ class ControlPoint(MissionTarget, ABC):
             # Move the linked unit groups
             for ground_object in self.ground_objects:
                 if isinstance(ground_object, GenericCarrierGroundObject):
+                    ground_object.position.x = ground_object.position.x + delta.x
+                    ground_object.position.y = ground_object.position.y + delta.y
                     for group in ground_object.groups:
                         for u in group.units:
                             u.position.x = u.position.x + delta.x

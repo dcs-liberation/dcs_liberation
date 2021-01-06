@@ -30,6 +30,7 @@ Saves from 2.3 are not compatible with 2.4.
 ## Fixes
 
 * **[Economy]** Pending unit orders at captured bases will be refunded.
+* **[UI]** Carrier group SAM threat rings now move with the carrier.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
 
