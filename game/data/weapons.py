@@ -124,14 +124,20 @@ _WEAPON_FALLBACKS = [
 
     # AIM-7MH
     (Weapons.AIM_7MH, Weapons.AIM_7M),
+    (Weapons.AIM_7MH_, Weapons.AIM_7M_),
+    (Weapons.AIM_7MH__, Weapons.AIM_7M__),
     (Weapons.LAU_115C_AIM_7MH, Weapons.LAU_115___AIM_7M),
 
     # AIM-7M
     (Weapons.AIM_7M, Weapons.AIM_7F),
+    (Weapons.AIM_7M_, None),
+    (Weapons.AIM_7M__, None),
     (Weapons.LAU_115___AIM_7M, Weapons.LAU_115C_AIM_7F),
 
     # AIM-7F
     (Weapons.AIM_7F, Weapons.AIM_7E),
+    (Weapons.AIM_7F_, Weapons.AIM_7E),
+    (Weapons.AIM_7F__, Weapons.AIM_7E),
     (Weapons.LAU_115C_AIM_7F, Weapons.LAU_115C_AIM_7E),
 
     # AIM-7E
@@ -160,6 +166,16 @@ _WEAPON_FALLBACKS = [
     # AIM-9L
     (Weapons.AIM_9L_Sidewinder_IR_AAM, None),
     (Weapons.LAU_7_AIM_9L, None),
+
+    # AIM-54C Mk47
+    (Weapons.AIM_54C_Mk47, Weapons.AIM_54A_Mk60),
+    (Weapons.AIM_54C_Mk47_, Weapons.AIM_54A_Mk60_),
+    (Weapons.AIM_54C_Mk47__, Weapons.AIM_54A_Mk60__),
+
+    # AIM-54A Mk60
+    (Weapons.AIM_54A_Mk60, Weapons.AIM_54A_Mk47),
+    (Weapons.AIM_54A_Mk60_, Weapons.AIM_54A_Mk47_),
+    (Weapons.AIM_54A_Mk60__, Weapons.AIM_54A_Mk47__),
 
     # R-27 (AA-10 Alamo)
     (Weapons.R_27ER, Weapons.R_27R),
@@ -222,14 +238,20 @@ WEAPON_INTRODUCTION_YEARS = {
 
     # AIM-7MH
     Weapon.from_pydcs(Weapons.AIM_7MH): 1987,
+    Weapon.from_pydcs(Weapons.AIM_7MH_): 1987,
+    Weapon.from_pydcs(Weapons.AIM_7MH__): 1987,
     Weapon.from_pydcs(Weapons.LAU_115C_AIM_7MH): 1987,
 
     # AIM-7M
     Weapon.from_pydcs(Weapons.AIM_7M): 1982,
+    Weapon.from_pydcs(Weapons.AIM_7M_): 1982,
+    Weapon.from_pydcs(Weapons.AIM_7M__): 1982,
     Weapon.from_pydcs(Weapons.LAU_115___AIM_7M): 1982,
 
     # AIM-7F
     Weapon.from_pydcs(Weapons.AIM_7F): 1976,
+    Weapon.from_pydcs(Weapons.AIM_7F_): 1976,
+    Weapon.from_pydcs(Weapons.AIM_7F__): 1976,
     Weapon.from_pydcs(Weapons.LAU_115C_AIM_7F): 1976,
 
     # AIM-7E
@@ -259,6 +281,12 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.AIM_9L_Sidewinder_IR_AAM): 1977,
     Weapon.from_pydcs(Weapons.LAU_7_AIM_9L): 1977,
 
+    # AIM-54C-Mk47
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47): 1986,
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47_): 1986,
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47__): 1986,
+    Weapon.from_pydcs(Weapons.AIM_54C): 1986,  # this weapon id is unused (legacy F-14A)
+
     # R-77 (AA-12)
     Weapon.from_pydcs(Weapons.R_77): 2002,
     Weapon.from_pydcs(Weapons.R_77_): 2002,
@@ -269,7 +297,7 @@ WEAPON_INTRODUCTION_YEARS = {
 
     # GBU-38 (JDAM)
     Weapon.from_pydcs(Weapons.GBU_38): 1998,
-    Weapon.from_pydcs(Weapons.GBU_38_16): 1998,
+    Weapon.from_pydcs(Weapons.GBU_38_16): 1998,  # B1-B only
     Weapon.from_pydcs(Weapons._2_GBU_38_): 1998,
     Weapon.from_pydcs(Weapons._2_GBU_38): 1998,
     Weapon.from_pydcs(Weapons._3_GBU_38): 1998,
@@ -283,7 +311,7 @@ WEAPON_INTRODUCTION_YEARS = {
 
     # AGM-154C (JSOW)
     Weapon.from_pydcs(Weapons.AGM_154C): 2005,
-    Weapon.from_pydcs(Weapons.AGM_154C_4): 2005,
+    Weapon.from_pydcs(Weapons.AGM_154C_4): 2005,  # B1-B only
     Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154C): 2005,
 
     # AGM-84E
