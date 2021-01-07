@@ -44,10 +44,16 @@ class CheatSettingsBox(QGroupBox):
         self.frontline_cheat_checkbox.setChecked(game.settings.enable_frontline_cheats)
         self.frontline_cheat_checkbox.toggled.connect(apply_settings)
 
+        self.base_capture_cheat_checkbox = QCheckBox()
+        self.base_capture_cheat_checkbox.setChecked(game.settings.enable_base_capture_cheat)
+        self.base_capture_cheat_checkbox.toggled.connect(apply_settings)
+
         self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
-        self.main_layout.addLayout(self.red_ato)        
+        self.main_layout.addLayout(self.red_ato)
         self.frontline_cheat = QLabeledWidget("Enable Frontline Cheats:", self.frontline_cheat_checkbox)
-        self.main_layout.addLayout(self.frontline_cheat)  
+        self.main_layout.addLayout(self.frontline_cheat)
+        self.base_capture_cheat = QLabeledWidget("Enable Base Capture Cheat:", self.base_capture_cheat_checkbox)
+        self.main_layout.addLayout(self.base_capture_cheat)
 
     @property
     def show_red_ato(self) -> bool:
@@ -56,6 +62,10 @@ class CheatSettingsBox(QGroupBox):
     @property
     def show_frontline_cheat(self) -> bool:
         return self.frontline_cheat_checkbox.isChecked()
+
+    @property
+    def show_base_capture_cheat(self) -> bool:
+        return self.base_capture_cheat_checkbox.isChecked()
 
 
 class QSettingsWindow(QDialog):
@@ -503,6 +513,7 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
         self.game.settings.enable_frontline_cheats = self.cheat_options.show_frontline_cheat
+        self.game.settings.enable_base_capture_cheat = self.cheat_options.show_base_capture_cheat
 
         self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)

@@ -50,6 +50,7 @@ class Settings:
     # Cheating
     show_red_ato: bool = False
     enable_frontline_cheats: bool = False
+    enable_base_capture_cheat: bool = False
 
     never_delay_player_flights: bool = False
 

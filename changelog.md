@@ -12,7 +12,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaign AI]** Reserve aircraft will be ordered if needed to prioritize next turn's CAP/CAS over offensive missions.
 * **[Campaign AI]** Multiple rounds of CAP will be planned (roughly 90 minutes of coverage). Default starting budget has increased to account for the increased need for aircraft.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
-* **[Cheat Menu]** Added ability to toggle frontline advance/retreat cheats.
+* **[Cheat Menu]** Added ability to toggle base capture and frontline advance/retreat cheats.
 * **[Skynet]** Updated to 2.0.1.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
 * **[Balance]** Opfor now gains income using the same rules as the player, significantly increasing their income relative to the player for most campaigns.
@@ -34,6 +34,7 @@ Saves from 2.3 are not compatible with 2.4.
 
 * **[Economy]** Pending unit orders at captured bases will be refunded.
 * **[UI]** Carrier group SAM threat rings now move with the carrier.
+* **[UI]** Base intel menu no longer compresses text, and is now scrollable.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
