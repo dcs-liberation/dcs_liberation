@@ -49,6 +49,7 @@ class Settings:
 
     # Cheating
     show_red_ato: bool = False
+    enable_frontline_cheats: bool = False
 
     never_delay_player_flights: bool = False
 

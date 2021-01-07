@@ -39,12 +39,23 @@ class CheatSettingsBox(QGroupBox):
         self.red_ato_checkbox = QCheckBox()
         self.red_ato_checkbox.setChecked(game.settings.show_red_ato)
         self.red_ato_checkbox.toggled.connect(apply_settings)
+
+        self.frontline_cheat_checkbox = QCheckBox()
+        self.frontline_cheat_checkbox.setChecked(game.settings.enable_frontline_cheats)
+        self.frontline_cheat_checkbox.toggled.connect(apply_settings)
+
         self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
-        self.main_layout.addLayout(self.red_ato)
+        self.main_layout.addLayout(self.red_ato)        
+        self.frontline_cheat = QLabeledWidget("Enable Frontline Cheats:", self.frontline_cheat_checkbox)
+        self.main_layout.addLayout(self.frontline_cheat)  
 
     @property
     def show_red_ato(self) -> bool:
         return self.red_ato_checkbox.isChecked()
+
+    @property
+    def show_frontline_cheat(self) -> bool:
+        return self.frontline_cheat_checkbox.isChecked()
 
 
 class QSettingsWindow(QDialog):
@@ -447,7 +458,7 @@ class QSettingsWindow(QDialog):
                 btn = QPushButton("Cheat " + str(amount) + "M")
                 btn.setProperty("style", "btn-danger")
             btn.clicked.connect(self.cheatLambda(amount))
-            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
+            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)  
         self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
 
     def cheatLambda(self, amount):
@@ -491,6 +502,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_do_not_cull_carrier = self.culling_do_not_cull_carrier.isChecked()
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
+        self.game.settings.enable_frontline_cheats = self.cheat_options.show_frontline_cheat
 
         self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)
