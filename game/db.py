@@ -135,6 +135,7 @@ from dcs.task import (
     CargoTransportation,
     Embarking,
     Escort,
+    FighterSweep,
     GroundAttack,
     Intercept,
     MainTask,
@@ -1083,7 +1084,9 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     C_101CC: COMMON_OVERRIDE,
     F_5E_3: COMMON_OVERRIDE,
     F_14A_135_GR: COMMON_OVERRIDE,
-    F_14B: COMMON_OVERRIDE,
+    F_14B: {
+        FighterSweep: "CAP",
+    },
     F_15C: COMMON_OVERRIDE,
     F_111F: COMMON_OVERRIDE,
     F_22A: COMMON_OVERRIDE,
