@@ -4,7 +4,10 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QLabel,
     QVBoxLayout,
+    QScrollArea,
+    QWidget,
 )
+from PySide2.QtCore import Qt
 from dcs.task import CAP, CAS, Embarking, PinpointStrike
 
 from game import Game, db
@@ -21,9 +24,10 @@ class QIntelInfo(QFrame):
 
     def init_ui(self):
         layout = QVBoxLayout()
-
-        intel = QGroupBox("Intel")
+        scroll_content = QWidget()
         intelLayout = QVBoxLayout()
+
+
 
         units = {
             CAP: db.find_unittype(CAP, self.game.enemy_name),
@@ -52,8 +56,13 @@ class QIntelInfo(QFrame):
 
                 intelLayout.addWidget(group)
 
-        intelLayout.addStretch()
-        intel.setLayout(intelLayout)
-        layout.addWidget(intel)
-        layout.addStretch()
+        scroll_content.setLayout(intelLayout)
+        scroll = QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+
+        layout.addWidget(scroll)
+        
         self.setLayout(layout)
