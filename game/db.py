@@ -1026,22 +1026,23 @@ resources/payloads/UNIT_TYPE.lua file. A Flight has no concept of a PyDCS task, 
 used here. This is used in the payload editor, for setting the default loadout of an object.
 The left element is the FlightType name, and the right element is a tuple containing what is used in the lua file.
 Some aircraft differ from the standard loadout names, so those have been included here too.
+The priority goes from first to last - the first element in the tuple will be tried first, then the second, etc.
 """
 
 EXPANDED_TASK_PAYLOAD_OVERRIDE = {
-    "TARCAP": ("CAP", "CAP HEAVY"),
-    "BARCAP": ("CAP", "CAP HEAVY"),
-    "CAS": ("CAS","CAS MAVERICK F"),
-    "INTERCEPTION": ("CAP", "CAP HEAVY"),
+    "TARCAP": ("CAP HEAVY", "CAP"),
+    "BARCAP": ("CAP HEAVY", "CAP"),
+    "CAS": ("CAS MAVERICK F", "CAS"),
+    "INTERCEPTION": ("CAP HEAVY", "CAP"),
     "STRIKE": ("STRIKE"),    
     "ANTISHIP": ("ANTISHIP"),
     "SEAD": ("SEAD"),
     "DEAD": ("SEAD"),
-    "ESCORT": ("CAP", "CAP HEAVY"),
-    "BAI": ("CAS","CAS MAVERICK F"),
-    "SWEEP": ("CAP", "CAP HEAVY"),
-    "OCA_RUNWAY": ("STRIKE"),
-    "OCA_AIRCRAFT": ("CAS","CAS MAVERICK F")
+    "ESCORT": ("CAP HEAVY", "CAP"),
+    "BAI": ( "BAI", "CAS MAVERICK F", "CAS"),
+    "SWEEP": ("CAP HEAVY", "CAP"),
+    "OCA_RUNWAY": ("OCA","RUNWAY_ATTACK","STRIKE"),
+    "OCA_AIRCRAFT": ("CAS MAVERICK F", "CAS")
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
