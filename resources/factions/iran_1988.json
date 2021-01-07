@@ -1,0 +1,78 @@
+{
+  "country": "Iran",
+  "name": "Iran 1988",
+  "authors": "SimonC6R",
+  "description": "<p>Iran at the end of the Iran-Iraq war</p>",
+  "aircrafts": [
+    "MiG_21Bis",
+    "F_4E",
+    "F_5E_3",
+    "F_14A_135_GR",
+    "AH_1W"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "APC_M113",
+    "APC_BTR_80",
+    "MBT_M60A3_Patton",
+    "IFV_BMP_1",
+    "SPAAA_ZSU_23_4_Shilka",
+    "AAA_ZSU_57_2"
+  ],
+  "artillery_units": [
+    "MLRS_BM_21_Grad",
+    "SPH_2S1_Gvozdika"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Insurgents",
+    "Soldier_RPG",
+    "SAM_SA_18_Igla_S_MANPADS"
+  ],
+  "air_defenses": [
+    "HawkGenerator",
+    "RapierGenerator",
+    "SA2Generator",
+    "ZSU57Generator",
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator"
+  ],
+  "ewrs": [
+    "TallRackGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "FF_1135M_Rezky"
+  ],
+  "cruisers": [
+    "FSG_1241_1MP_Molniya"
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 1,
+  "navy_generators": [
+    "GrishaGroupGenerator",
+    "MolniyaGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

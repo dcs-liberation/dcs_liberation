@@ -16,7 +16,8 @@
         "default": "A-4E Skyhawk"
     }],
     "AH_1W": [{
-        "default": "AH-1W SuperCobra"
+        "default": "AH-1W SuperCobra",
+        "Iran": "AH-1J SeaCobra"
     }],
     "AH-64A": [{
         "default": "AH-64A Apache"
@@ -147,10 +148,12 @@
     }],
     "MiG-21Bis": [{
         "default": "MiG-21bis Fishbed-N",
-        "China": "J-7B"
+        "China": "J-7B",
+        "Iran": "J-7B"
     }],
     "MiG-23MLD": [{
-        "default": "MiG-23MLD Flogger-K"
+        "default": "MiG-23MLD Flogger-K",
+        "Iraq": "MiG-23ML Flogger-G"
     }],
     "MiG-25PD": [{
         "default": "MiG-25PD Foxbat-E"
@@ -223,10 +226,13 @@
     }],
     "Su-17M4": [{
         "default": "Su-17M4 Fitter-K",
+        "Iran": "Su-22M4 Fitter-K",
+        "Iraq": "Su-22M4 Fitter-K",
         "Poland": "Su-22M4 Fitter-K"
     }],
     "Su-24M": [{
-        "default": "Su-24M Fencer-D"
+        "default": "Su-24M Fencer-D",
+        "Iran": "Su-24MK Fencer-D"
     }],
     "Su-25": [{
         "default": "Su-25 Frogfoot"
