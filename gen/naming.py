@@ -1,4 +1,6 @@
 import random
+import time
+from typing import List
 
 from dcs.country import Country
 from dcs.unittype import UnitType
@@ -47,12 +49,14 @@ class NameGenerator:
     aircraft_number = 0
 
     ANIMALS = ANIMALS
+    existing_alphas: List[str] = []
 
     @classmethod
     def reset(cls):
         cls.number = 0
         cls.infantry_number = 0
         cls.ANIMALS = ANIMALS
+        cls.existing_alphas = []
 
     @classmethod
     def reset_numbers(cls):
@@ -106,7 +110,21 @@ class NameGenerator:
     @classmethod
     def random_objective_name(cls):
         if len(cls.ANIMALS) == 0:
-            return random.choice(ALPHA_MILITARY).upper() + "#" + str(random.randint(0, 100))
+            for i in range(10):
+                new_name_generated = True
+                alpha_mil_name = random.choice(ALPHA_MILITARY).upper() + "#" + str(random.randint(0, 100))
+                for existing_name in cls.existing_alphas:
+                    if existing_name == alpha_mil_name:
+                        new_name_generated = False
+                if new_name_generated:
+                    cls.existing_alphas.append(alpha_mil_name)
+                    return alpha_mil_name
+
+            # At this point, give up trying - something has gone wrong and we haven't been able to make a new name in 10 tries.
+            # We'll just make a longer name using the current unix epoch in nanoseconds. That should be unique... right?
+            last_chance_name = alpha_mil_name + str(time.time_ns())
+            cls.existing_alphas.append(last_chance_name)
+            return last_chance_name
         else:
             animal = random.choice(cls.ANIMALS)
             cls.ANIMALS.remove(animal)
