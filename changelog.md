@@ -38,6 +38,11 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
 
+# 2.3.4
+
+## Fixes:
+[Mission Generator] Mission generator would crash when generating fire missions for destroyed SCUD sites - fixed
+
 # 2.3.3
 
 ## Features/Improvements
