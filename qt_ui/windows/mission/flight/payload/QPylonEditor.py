@@ -45,11 +45,16 @@ class QPylonEditor(QComboBox):
 
     def default_loadout(self, pylon: Pylon) -> None:
         self.flight.unit_type.load_payloads()
-        loadout = self.flight.unit_type.loadout_by_name(db.EXPANDED_TASK_PAYLOAD_OVERRIDE.get(self.flight.flight_type.name))
         pylon_default_weapon = None
-        for i in loadout:
-            if i[0] == self.pylon.number:
-                pylon_default_weapon = i[1]["clsid"]
+        # Iterate through each possible payload type for a given aircraft.
+        # Some aircraft have custom loadouts that in aren't the standard set.
+        for payload_override in db.EXPANDED_TASK_PAYLOAD_OVERRIDE.get(self.flight.flight_type.name):
+            if loadout is None:
+                loadout = self.flight.unit_type.loadout_by_name(payload_override)
+        if loadout is not None:
+            for i in loadout:
+                if i[0] == self.pylon.number:
+                    pylon_default_weapon = i[1]["clsid"]
         if pylon_default_weapon is not None:
             self.setCurrentText(weapons_data.weapon_ids.get(pylon_default_weapon).get("name"))
         else:
