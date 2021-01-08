@@ -29,8 +29,7 @@ class QPylonEditor(QComboBox):
             self.addItem(weapon.name, weapon)
             if current == weapon:
                 self.setCurrentIndex(i + 1)
-
-        self.default_loadout(self.pylon)
+                
         self.currentIndexChanged.connect(self.on_pylon_change)
 
     def on_pylon_change(self):

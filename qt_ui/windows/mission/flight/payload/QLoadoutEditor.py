@@ -37,9 +37,12 @@ class QLoadoutEditor(QGroupBox):
         hboxLayout.addStretch()
         self.setLayout(hboxLayout)
 
+        if not self.isChecked():
+            for i in self.findChildren(QPylonEditor):
+                i.default_loadout(i.pylon.number)
+
     def on_toggle(self):
         self.flight.use_custom_loadout = self.isChecked()
-        # When the toggle button is hit, reset the loadout to default.
-        # We need to do this regardless of whether we're toggling on or off.
-        for i in self.findChildren(QPylonEditor):
-            i.default_loadout(i.pylon.number)
+        if not self.isChecked():
+            for i in self.findChildren(QPylonEditor):
+                i.default_loadout(i.pylon.number)
