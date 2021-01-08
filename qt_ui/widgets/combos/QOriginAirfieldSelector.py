@@ -27,6 +27,7 @@ class QOriginAirfieldSelector(QComboBox):
         self.aircraft = aircraft
         self.rebuild_selector()
         self.currentIndexChanged.connect(self.index_changed)
+        self.setSizeAdjustPolicy(self.AdjustToContents)
 
     def change_aircraft(self, aircraft: FlyingType) -> None:
         if self.aircraft == aircraft:

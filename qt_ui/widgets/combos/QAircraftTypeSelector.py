@@ -15,3 +15,4 @@ class QAircraftTypeSelector(QComboBox):
         for aircraft in aircraft_types:
             self.addItem(f"{db.unit_pretty_name(country, aircraft)}", userData=aircraft)
         self.model().sort(0)
+        self.setSizeAdjustPolicy(self.AdjustToContents)
