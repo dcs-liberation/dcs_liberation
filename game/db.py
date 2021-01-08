@@ -1018,7 +1018,8 @@ COMMON_OVERRIDE = {
     AntishipStrike: "ANTISHIP",
     GroundAttack: "STRIKE",
     Escort: "CAP",
-    RunwayAttack: "RUNWAY_ATTACK"
+    RunwayAttack: "RUNWAY_ATTACK",
+    FighterSweep: "CAP"
 }
 
 """
@@ -1061,6 +1062,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         AntishipStrike: "ANTISHIP",
         GroundAttack: "STRIKE",
         Escort: "CAP HEAVY",
+        FighterSweep: "CAP HEAVY",
     },
     F_A_18C: {
         CAP: "CAP HEAVY",
@@ -1071,6 +1073,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         AntishipStrike: "ANTISHIP",
         GroundAttack: "STRIKE",
         Escort: "CAP HEAVY",
+        FighterSweep: "CAP HEAVY",
     },
     Tu_160: {
         PinpointStrike: "Kh-65*12",
@@ -1084,9 +1087,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     C_101CC: COMMON_OVERRIDE,
     F_5E_3: COMMON_OVERRIDE,
     F_14A_135_GR: COMMON_OVERRIDE,
-    F_14B: {
-        FighterSweep: "CAP",
-    },
+    F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
     F_111F: COMMON_OVERRIDE,
     F_22A: COMMON_OVERRIDE,
