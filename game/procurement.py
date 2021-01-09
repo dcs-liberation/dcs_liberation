@@ -225,7 +225,7 @@ class ProcurementAi:
         # Prefer to buy front line units at active front lines that are not
         # already overloaded.
         for cp in self.owned_points:
-            if cp.base.total_armor >= 30:
+            if cp.expected_ground_units_next_turn.total >= 30:
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:
@@ -233,8 +233,23 @@ class ProcurementAi:
                     candidates.append(cp)
 
         if not candidates:
-            # Otherwise buy them anywhere valid.
-            candidates = [p for p in self.owned_points
-                          if p.can_deploy_ground_units]
+            # Otherwise buy reserves, but don't exceed 10 reserve units per CP.
+            # These units do not exist in the world until the CP becomes
+            # connected to an active front line, at which point all these units
+            # will suddenly appear at the gates of the newly captured CP.
+            #
+            # To avoid sudden overwhelming numbers of units we avoid buying
+            # many.
+            #
+            # Also, do not bother buying units at bases that will never connect
+            # to a front line.
+            for cp in self.owned_points:
+                if not cp.can_deploy_ground_units:
+                    continue
+                if cp.expected_ground_units_next_turn.total >= 10:
+                    continue
+                if cp.is_global:
+                    continue
+                candidates.append(cp)
 
         return candidates

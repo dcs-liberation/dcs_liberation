@@ -589,6 +589,20 @@ class ControlPoint(MissionTarget, ABC):
             return 0
 
     @property
+    def expected_ground_units_next_turn(self) -> PendingOccupancy:
+        on_order = 0
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                continue
+            if unit_bought in TYPE_SHORAD:
+                continue
+            on_order += self.pending_unit_deliveries.units[unit_bought]
+
+        return PendingOccupancy(self.base.total_armor, on_order,
+                                # Ground unit transfers not yet implemented.
+                                transferring=0)
+
+    @property
     def income_per_turn(self) -> int:
         return 0
 
