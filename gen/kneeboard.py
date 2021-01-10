@@ -94,6 +94,23 @@ class KneeboardPageWriter:
     def write(self, path: Path) -> None:
         self.image.save(path)
 
+    @staticmethod
+    def wrap_line(inputstr: str, max_length: int) -> str:
+        if len(inputstr) <= max_length:
+            return inputstr
+        tokens = inputstr.split(" ")
+        output = ""
+        segments = []
+        for token in tokens:
+            combo = output + " " + token
+            if len(combo) > max_length:
+                combo = output + "\n" + token
+                segments.append(combo)
+                output = ""
+            else:
+                output = combo
+        return "".join(segments + [output]).strip()
+
 
 class KneeboardPage:
     """Base class for all kneeboard pages."""
@@ -110,6 +127,9 @@ class NumberedWaypoint:
 
 
 class FlightPlanBuilder:
+
+    WAYPOINT_DESC_MAX_LEN = 25
+
     def __init__(self, start_time: datetime.datetime) -> None:
         self.start_time = start_time
         self.rows: List[List[str]] = []
@@ -151,7 +171,9 @@ class FlightPlanBuilder:
     def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
         self.rows.append([
             str(waypoint.number),
-            waypoint.waypoint.pretty_name,
+            KneeboardPageWriter.wrap_line(
+                waypoint.waypoint.pretty_name,
+                FlightPlanBuilder.WAYPOINT_DESC_MAX_LEN),
             str(int(waypoint.waypoint.alt.feet)),
             self._waypoint_distance(waypoint.waypoint),
             self._ground_speed(waypoint.waypoint),
@@ -258,10 +280,8 @@ class BriefingPage(KneeboardPage):
                 str(tanker.tacan),
                 self.format_frequency(tanker.freq),
             ])        
-
         
         writer.table(comm_ladder, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
-
 
         writer.heading("JTAC")
         jtacs = []
