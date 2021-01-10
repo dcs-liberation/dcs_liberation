@@ -6,6 +6,7 @@ Saves from 2.3 are not compatible with 2.4.
 
 * **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
 * **[Flight Planner]** Non-custom flight plans will now navigate around threat areas en route to the target area when practical.
+* **[Flight Planner]** Flight plans along front lines now ensure that the race track start is closer to the departure airfield than the race track end.
 * **[Campaign AI]** Auto-purchase now prefers airfields that are not within range of the enemy.
 * **[Campaign AI]** Auto-purchase now prefers the best aircraft for the task, but will attempt to maintain some variety.
 * **[Campaign AI]** Opfor now sells off odd aircraft since they're unlikely to be used.

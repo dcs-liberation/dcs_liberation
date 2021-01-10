@@ -1078,7 +1078,7 @@ class FlightPlanBuilder:
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
 
-    def racetrack_for_frontline(self,
+    def racetrack_for_frontline(self, origin: Point,
                                 front_line: FrontLine) -> Tuple[Point, Point]:
         ally_cp, enemy_cp = front_line.control_points
 
@@ -1099,10 +1099,12 @@ class FlightPlanBuilder:
             combat_width = 35000
 
         radius = combat_width * 1.25
-        orbit0p = orbit_center.point_from_heading(heading, radius)
-        orbit1p = orbit_center.point_from_heading(heading + 180, radius)
+        start = orbit_center.point_from_heading(heading, radius)
+        end = orbit_center.point_from_heading(heading + 180, radius)
 
-        return orbit0p, orbit1p
+        if end.distance_to_point(origin) < start.distance_to_point(origin):
+            start, end = end, start
+        return start, end
 
     def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
         """Generate a CAP flight plan for the given front line.
@@ -1120,7 +1122,8 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
 
         if isinstance(location, FrontLine):
-            orbit0p, orbit1p = self.racetrack_for_frontline(location)
+            orbit0p, orbit1p = self.racetrack_for_frontline(
+                flight.departure.position, location)
         else:
             orbit0p, orbit1p = self.racetrack_for_objective(location)
 
@@ -1278,6 +1281,11 @@ class FlightPlanBuilder:
         )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
+
+        ingress_distance = ingress.distance_to_point(flight.departure.position)
+        egress_distance = egress.distance_to_point(flight.departure.position)
+        if egress_distance < ingress_distance:
+            ingress, egress = egress, ingress
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
 
