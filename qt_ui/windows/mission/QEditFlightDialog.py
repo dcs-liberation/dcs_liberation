@@ -20,7 +20,7 @@ class QEditFlightDialog(QDialog):
 
         self.game_model = game_model
 
-        self.setWindowTitle("Create flight")
+        self.setWindowTitle("Edit flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
 
         layout = QVBoxLayout()

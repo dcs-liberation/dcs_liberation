@@ -19,7 +19,6 @@ class QFlightWaypointList(QTableView):
 
         self.model = QStandardItemModel(self)
         self.setModel(self.model)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
 
         header = self.horizontalHeader()
@@ -41,6 +40,11 @@ class QFlightWaypointList(QTableView):
             self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
                                               QItemSelectionModel.Select)
+        self.resizeColumnsToContents()
+        total_column_width = self.verticalHeader().width() + self.lineWidth()
+        for i in range(0, self.model.columnCount()):
+            total_column_width += self.columnWidth(i) + self.lineWidth()
+        self.setFixedWidth(total_column_width)
 
     def add_waypoint_row(self, row: int, flight: Flight,
                          waypoint: FlightWaypoint) -> None:
