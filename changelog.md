@@ -35,6 +35,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Economy]** Pending unit orders at captured bases will be refunded.
 * **[UI]** Carrier group SAM threat rings now move with the carrier.
 * **[UI]** Base intel menu no longer compresses text, and is now scrollable.
+* **[UI]** Edit Flight window is now dynamically sized to adapt to the width of waypoint names, so they no longer get truncated.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
