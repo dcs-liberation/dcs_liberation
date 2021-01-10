@@ -27,7 +27,7 @@ class HQ7Generator(AirDefenseGroupGenerator):
                                "AAA1", self.position + Point(20, 30),
                                self.heading)
         self.add_unit_to_group(aa_group, AirDefence.AAA_ZU_23_on_Ural_375,
-                               "AAA2", self.position.x - Point(20, 30),
+                               "AAA2", self.position - Point(20, 30),
                                self.heading)
 
         num_launchers = random.randint(0, 3)
