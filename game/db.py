@@ -89,6 +89,7 @@ from dcs.planes import (
     P_51D_30_NA,
     PlaneType,
     RQ_1A_Predator,
+    S_3B,
     S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
@@ -334,6 +335,7 @@ PRICES = {
     Tu_22M3: 40,
     Tu_95MS: 35,
     F_111F: 21,
+    S_3B: 20,
 
     # special
     IL_76MD: 30,
@@ -668,6 +670,7 @@ UNIT_BY_TASK = {
         RQ_1A_Predator,
         Rafale_A_S,
         Rafale_B,
+        S_3B,
         SA342L,
         SA342M,
         SA342Minigun,
@@ -1153,6 +1156,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_64D: COMMON_OVERRIDE,
     AH_64A: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
+    S_3B: COMMON_OVERRIDE,
 
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
@@ -1227,6 +1231,7 @@ CARRIER_CAPABLE = [
     Su_33,
     A_4E_C,
     Rafale_M,
+    S_3B,
 
     UH_1H,
     Mi_8MT,

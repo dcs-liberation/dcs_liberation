@@ -63,6 +63,7 @@ from dcs.planes import (
     P_51D,
     P_51D_30_NA,
     RQ_1A_Predator,
+    S_3B,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_17M4,
@@ -209,6 +210,7 @@ CAS_CAPABLE = [
     WingLoong_I,
     MQ_9_Reaper,
     RQ_1A_Predator,
+    S_3B,
 ]
 
 
@@ -293,6 +295,7 @@ STRIKE_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
+    S_3B,
 ]
 
 
@@ -312,6 +315,7 @@ ANTISHIP_CAPABLE = [
     AV8BNA,
     Ju_88A4,
     C_101CC,
+    S_3B,
 ]
 
 
