@@ -13,7 +13,7 @@ from dcs.helicopters import (
     SA342L,
     SA342M,
     UH_1H,
-    SH_60B,
+    SH_60B
 )
 from dcs.planes import (
     AJS37,
@@ -64,6 +64,7 @@ from dcs.planes import (
     P_51D,
     P_51D_30_NA,
     RQ_1A_Predator,
+    S_3B,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_17M4,
@@ -172,6 +173,7 @@ CAS_CAPABLE = [
     Su_24M,
     Su_17M4,
     AV8BNA,
+    S_3B,
     Su_34,
     Su_30,
     MiG_29S,
@@ -272,6 +274,7 @@ STRIKE_CAPABLE = [
     A_10C_2,
     A_10C,
     AV8BNA,
+    S_3B,
     A_4E_C,
     M_2000C,
     MiG_27K,
@@ -311,6 +314,7 @@ ANTISHIP_CAPABLE = [
     Tornado_IDS,
     Tornado_GR4,
     AV8BNA,
+    S_3B,
     Ju_88A4,
     C_101CC,
     SH_60B,

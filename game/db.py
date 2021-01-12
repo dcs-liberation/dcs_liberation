@@ -90,6 +90,7 @@ from dcs.planes import (
     P_51D_30_NA,
     PlaneType,
     RQ_1A_Predator,
+    S_3B,
     S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
@@ -311,6 +312,7 @@ PRICES = {
     A_10A: 16,
     A_10C: 22,
     A_10C_2: 24,
+    S_3B: 10,
 
     # heli
     Ka_50: 13,
@@ -671,6 +673,7 @@ UNIT_BY_TASK = {
         RQ_1A_Predator,
         Rafale_A_S,
         Rafale_B,
+        S_3B,
         SA342L,
         SA342M,
         SA342Minigun,
@@ -685,7 +688,8 @@ UNIT_BY_TASK = {
         Tu_160,
         Tu_22M3,
         Tu_95MS,
-        UH_1H,
+        UH_1H,        
+        SH_60B,
         WingLoong_I,
         Hercules
     ],
@@ -708,9 +712,6 @@ UNIT_BY_TASK = {
         E_2C,
         A_50,
         KJ_2000
-    ],
-    AntishipStrike: [
-        SH_60B
     ],
     PinpointStrike: [
         Armor.APC_MTLB,
@@ -1049,7 +1050,7 @@ EXPANDED_TASK_PAYLOAD_OVERRIDE = {
     "ESCORT": ("CAP HEAVY", "CAP"),
     "BAI": ( "BAI", "CAS MAVERICK F", "CAS"),
     "SWEEP": ("CAP HEAVY", "CAP"),
-    "OCA_RUNWAY": ("RUNWAY_ATTACK","STRIKE"),
+    "OCA_RUNWAY": ("RUNWAY_ATTACK","RUNWAY_STRIKE","STRIKE"),
     "OCA_AIRCRAFT": ("OCA","CAS MAVERICK F", "CAS")
 }
 
@@ -1121,6 +1122,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     Tornado_IDS: COMMON_OVERRIDE,
     Mirage_2000_5: COMMON_OVERRIDE,
     MiG_31: COMMON_OVERRIDE,
+    S_3B: COMMON_OVERRIDE,
     SA342M: COMMON_OVERRIDE,
     SA342L: COMMON_OVERRIDE,
     SA342Mistral: COMMON_OVERRIDE,
@@ -1234,6 +1236,7 @@ CARRIER_CAPABLE = [
     Su_33,
     A_4E_C,
     Rafale_M,
+    S_3B,
 
     UH_1H,
     Mi_8MT,
