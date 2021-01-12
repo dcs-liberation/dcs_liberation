@@ -28,8 +28,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Factions]** Added Poland 2010 faction.
 * **[Factions]** Added Greece 2005 faction.
 * **[Factions]** Added Iran 1988 faction.
-* **[Factions]** Updated the Israel, Japan and pre-1990 USA factions to use the period-correct E-2 Hawkeye.
-* **[Units]** Support for E-2 Hawkeye and SpGH Dana.
+* **[Units]** Support for E-2 Hawkeye, SH-60B Seahawk, S-3B Viking (thanks to awinterquest) and SpGH Dana - these are now being used by appropriate factions.
 
 ## Fixes
 
