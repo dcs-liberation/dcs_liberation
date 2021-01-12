@@ -2,6 +2,7 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
 from game.theater import ControlPointType
+from game.utils import Distance
 from gen import BuildingGroundObject, Conflict, FlightWaypointType
 from gen.flights.flight import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
@@ -59,7 +60,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                             FlightWaypointType.CUSTOM,
                             pos.x,
                             pos.y,
-                            800)
+                            Distance.from_meters(800))
                         wpt.name = "Frontline " + cp.name + "/" + ecp.name + " [CAS]"
                         wpt.alt_type = "RADIO"
                         wpt.pretty_name = wpt.name
@@ -75,7 +76,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                 FlightWaypointType.CUSTOM,
                                 ground_object.position.x,
                                 ground_object.position.y,
-                                0
+                                Distance.from_meters(0)
                             )
                             wpt.alt_type = "RADIO"
                             wpt.name = ground_object.waypoint_name
@@ -99,7 +100,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                         FlightWaypointType.CUSTOM,
                                         u.position.x,
                                         u.position.y,
-                                        0
+                                        Distance.from_meters(0)
                                     )
                                     wpt.alt_type = "RADIO"
                                     wpt.name = wpt.name = "[" + str(ground_object.obj_name) + "] : " + u.type + " #" + str(j)
@@ -120,7 +121,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                         FlightWaypointType.CUSTOM,
                         cp.position.x,
                         cp.position.y,
-                        0
+                        Distance.from_meters(0)
                     )
                     wpt.alt_type = "RADIO"
                     wpt.name = cp.name
