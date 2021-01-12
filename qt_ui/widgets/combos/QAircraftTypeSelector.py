@@ -5,14 +5,41 @@ from PySide2.QtWidgets import QComboBox
 
 from dcs.unittype import FlyingType
 
+from gen.flights.flight import FlightType
+
+import gen.flights.ai_flight_planner_db
+
 from game import Game, db
 
 class QAircraftTypeSelector(QComboBox):
     """Combo box for selecting among the given aircraft types."""
 
-    def __init__(self, aircraft_types: Iterable[Type[FlyingType]], country: str) -> None:
+    def __init__(self, aircraft_types: Iterable[Type[FlyingType]], country: str, mission_type: str) -> None:
         super().__init__()
-        for aircraft in aircraft_types:
-            self.addItem(f"{db.unit_pretty_name(country, aircraft)}", userData=aircraft)
+
         self.model().sort(0)
         self.setSizeAdjustPolicy(self.AdjustToContents)
+        self.country = country
+        self.updateItems(mission_type, aircraft_types)
+
+    def updateItems(self, mission_type: str, aircraft_types):
+        self.clear()
+        for aircraft in aircraft_types:
+            if mission_type in [FlightType.BARCAP, FlightType.ESCORT, FlightType.INTERCEPTION, FlightType.SWEEP, FlightType.TARCAP]:
+                if aircraft in gen.flights.ai_flight_planner_db.CAP_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.CAS, FlightType.BAI, FlightType.OCA_AIRCRAFT]:
+                if aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.SEAD]:
+                if aircraft in gen.flights.ai_flight_planner_db.SEAD_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.STRIKE]:
+                if aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.ANTISHIP]:
+                if aircraft in gen.flights.ai_flight_planner_db.ANTISHIP_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.OCA_RUNWAY]:
+                if aircraft in gen.flights.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)

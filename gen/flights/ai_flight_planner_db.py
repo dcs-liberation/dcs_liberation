@@ -155,6 +155,9 @@ CAP_CAPABLE = [
 CAS_CAPABLE = [
     A_10C_2,
     A_10C,
+    B_1B,
+    F_14B,
+    F_14A_135_GR,
     Su_25TM,
     Su_25T,
     Su_25,
@@ -234,6 +237,19 @@ SEAD_CAPABLE = [
     Su_30,
     MiG_27K,
     Tornado_GR4,
+    F_117A,
+    B_17G,
+    A_20G,
+    P_47D_40,
+    P_47D_30bl1,
+    P_47D_30,
+    P_51D_30_NA,
+    P_51D,
+    SpitfireLFMkIXCW,
+    SpitfireLFMkIX,
+    Bf_109K_4,
+    FW_190D9,
+    FW_190A8,
 ]
 
 

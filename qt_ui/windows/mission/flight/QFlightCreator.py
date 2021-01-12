@@ -45,10 +45,12 @@ class QFlightCreator(QDialog):
             self.game.theater, package.target
         )
         self.task_selector.setCurrentIndex(0)
+        self.task_selector.currentTextChanged.connect(
+            self.on_task_changed)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.aircraft_inventory.available_types_for_player, self.game.player_country
+            self.game.aircraft_inventory.available_types_for_player, self.game.player_country, self.task_selector.currentData()
         )
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(
@@ -168,6 +170,9 @@ class QFlightCreator(QDialog):
         self.departure.change_aircraft(new_aircraft)
         self.arrival.change_aircraft(new_aircraft)
         self.divert.change_aircraft(new_aircraft)
+
+    def on_task_changed(self) -> None:
+        self.aircraft_selector.updateItems(self.task_selector.currentData(), self.game.aircraft_inventory.available_types_for_player)
 
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))
