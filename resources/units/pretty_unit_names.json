@@ -218,6 +218,9 @@
     "SA342Mistral": [{
         "default": "SA 342M Gazelle Mistral"
     }],
+    "SH-60B": [{
+        "default": "SH-60B Seahawk"
+    }],
     "SpitfireLFMkIX": [{
         "default": "Spitfire LF Mk IX"
     }],

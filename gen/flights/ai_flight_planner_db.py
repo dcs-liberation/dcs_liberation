@@ -13,6 +13,7 @@ from dcs.helicopters import (
     SA342L,
     SA342M,
     UH_1H,
+    SH_60B,
 )
 from dcs.planes import (
     AJS37,
@@ -312,6 +313,7 @@ ANTISHIP_CAPABLE = [
     AV8BNA,
     Ju_88A4,
     C_101CC,
+    SH_60B,
 ]
 
 

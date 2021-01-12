@@ -19,6 +19,7 @@ from dcs.helicopters import (
     SA342M,
     SA342Minigun,
     SA342Mistral,
+    SH_60B,
     UH_1H,
     UH_60A,
     helicopter_map,
@@ -325,6 +326,7 @@ PRICES = {
     AH_64A: 24,
     AH_64D: 30,
     OH_58D: 6,
+    SH_60B: 6,
 
     # Bombers
     B_52H: 35,
@@ -586,6 +588,7 @@ Following tasks are present:
 * CAS - CAS aircraft
 * Transport - transport aircraft (used as targets in intercept operations)
 * AWACS - awacs
+* AntishipStrike - units that will engage shipping
 * PinpointStrike - armor that will engage in ground war
 * AirDefense - AA units
 * Reconnaissance - units that will be used as targets in destroy insurgents operations
@@ -705,6 +708,9 @@ UNIT_BY_TASK = {
         E_2C,
         A_50,
         KJ_2000
+    ],
+    AntishipStrike: [
+        SH_60B
     ],
     PinpointStrike: [
         Armor.APC_MTLB,
@@ -1152,6 +1158,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_1W: COMMON_OVERRIDE,
     AH_64D: COMMON_OVERRIDE,
     AH_64A: COMMON_OVERRIDE,
+    SH_60B: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
 
     Su_25TM: {
@@ -1234,6 +1241,7 @@ CARRIER_CAPABLE = [
     AH_1W,
     OH_58D,
     UH_60A,
+    SH_60B,
 
     SA342L,
     SA342M,
@@ -1250,6 +1258,7 @@ LHA_CAPABLE = [
     AH_1W,
     OH_58D,
     UH_60A,
+    SH_60B,
 
     SA342L,
     SA342M,
