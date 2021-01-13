@@ -78,7 +78,7 @@
   "carrier_names": [
   ],
   "navy_generators": [
-    "KiloSubGroupGenerator", "MolniyaGroupGenerator"
+    "MolniyaGroupGenerator"
   ],
   "has_jtac": false,
   "doctrine": "coldwar"

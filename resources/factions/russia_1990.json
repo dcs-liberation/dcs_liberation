@@ -89,8 +89,7 @@
     "Admiral Gorshkov"
   ],
   "navy_generators": [
-    "RussianNavyGroupGenerator",
-    "KiloSubGroupGenerator"
+    "RussianNavyGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

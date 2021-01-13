@@ -51,7 +51,6 @@
   "carrier_names": [],
   "navy_generators": [
     "MolniyaGroupGenerator",
-    "KiloSubGroupGenerator",
     "OliverHazardPerryGroupGenerator"
   ]
 }
