@@ -23,6 +23,7 @@ class QAircraftTypeSelector(QComboBox):
         self.updateItems(mission_type, aircraft_types)
 
     def updateItems(self, mission_type: str, aircraft_types):
+        current_aircraft = self.currentData()
         self.clear()
         for aircraft in aircraft_types:
             if mission_type in [FlightType.BARCAP, FlightType.ESCORT, FlightType.INTERCEPTION, FlightType.SWEEP, FlightType.TARCAP]:
@@ -43,3 +44,8 @@ class QAircraftTypeSelector(QComboBox):
             elif mission_type in [FlightType.OCA_RUNWAY]:
                 if aircraft in gen.flights.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+        current_aircraft_index = self.findData(current_aircraft)
+        if current_aircraft_index != -1:
+            self.setCurrentIndex(current_aircraft_index)
+        if self.count() == 0:
+            self.addItem("No capable aircraft available", userData=None)

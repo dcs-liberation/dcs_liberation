@@ -117,6 +117,8 @@ class QFlightCreator(QDialog):
         arrival: ControlPoint = self.arrival.currentData()
         divert: ControlPoint = self.divert.currentData()
         size: int = self.flight_size_spinner.value()
+        if aircraft == None:
+            return "You must select an aircraft type."
         if not origin.captured:
             return f"{origin.name} is not owned by your coalition."
         if arrival is not None and not arrival.captured:
