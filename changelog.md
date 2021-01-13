@@ -40,6 +40,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
+* **[Units]** Submarines have been removed for now as they aren't wholly functional.
 
 # 2.3.4
 
