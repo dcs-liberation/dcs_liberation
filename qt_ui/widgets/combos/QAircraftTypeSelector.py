@@ -31,7 +31,7 @@ class QAircraftTypeSelector(QComboBox):
             elif mission_type in [FlightType.CAS, FlightType.BAI, FlightType.OCA_AIRCRAFT]:
                 if aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
-            elif mission_type in [FlightType.SEAD]:
+            elif mission_type in [FlightType.SEAD, FlightType.DEAD]:
                 if aircraft in gen.flights.ai_flight_planner_db.SEAD_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
             elif mission_type in [FlightType.STRIKE]:
