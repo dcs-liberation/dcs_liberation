@@ -53,9 +53,9 @@ class ThreatZoneOptions(DisplayGroup):
     def __init__(self, coalition_name: str) -> None:
         super().__init__(f"{coalition_name} Threat Zones")
         self.none = DisplayRule(
-            f"Hide {coalition_name.lower()} threat zones", False)
+            f"Hide {coalition_name.lower()} threat zones", True)
         self.all = DisplayRule(
-            f"Show full {coalition_name.lower()} threat zones", True)
+            f"Show full {coalition_name.lower()} threat zones", False)
         self.aircraft = DisplayRule(
             f"Show {coalition_name.lower()} aircraft threat tones", False)
         self.air_defenses = DisplayRule(
