@@ -53,9 +53,9 @@ class ThreatZoneOptions(DisplayGroup):
     def __init__(self, coalition_name: str) -> None:
         super().__init__(f"{coalition_name} Threat Zones")
         self.none = DisplayRule(
-            f"Hide {coalition_name.lower()} threat zones", True)
+            f"Hide {coalition_name.lower()} threat zones", False)
         self.all = DisplayRule(
-            f"Show full {coalition_name.lower()} threat zones", False)
+            f"Show full {coalition_name.lower()} threat zones", True)
         self.aircraft = DisplayRule(
             f"Show {coalition_name.lower()} aircraft threat tones", False)
         self.air_defenses = DisplayRule(
@@ -99,9 +99,11 @@ class DisplayOptions:
     map_poly = DisplayRule("Map Polygon Debug Mode", False)
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
-    flight_paths = FlightPathOptions()
     actual_frontline_pos = DisplayRule("Display Actual Frontline Location",
                                        False)
+    barcap_commit_range = DisplayRule("Display selected BARCAP commit range",
+                                      False)
+    flight_paths = FlightPathOptions()
     blue_threat_zones = ThreatZoneOptions("Blue")
     red_threat_zones = ThreatZoneOptions("Red")
     navmeshes = NavMeshOptions()

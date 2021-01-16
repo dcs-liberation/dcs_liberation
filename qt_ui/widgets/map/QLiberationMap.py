@@ -54,6 +54,7 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.flights.flightplan import (
+    BarCapFlightPlan,
     FlightPlan,
     FlightPlanBuilder,
     InvalidObjectiveLocation,
@@ -608,6 +609,27 @@ class QLiberationMap(QGraphicsView):
                 self.draw_waypoint_info(scene, idx + 1, point, new_pos,
                                         flight.flight_plan)
             prev_pos = tuple(new_pos)
+
+        if selected and DisplayOptions.barcap_commit_range:
+            self.draw_barcap_commit_range(scene, flight)
+
+    def draw_barcap_commit_range(self, scene: QGraphicsScene,
+                                 flight: Flight) -> None:
+        if flight.flight_type is not FlightType.BARCAP:
+            return
+        if not isinstance(flight.flight_plan, BarCapFlightPlan):
+            return
+        start = flight.flight_plan.patrol_start
+        end = flight.flight_plan.patrol_end
+        line = LineString([
+            ShapelyPoint(start.x, start.y),
+            ShapelyPoint(end.x, end.y),
+        ])
+        doctrine = self.game.faction_for(flight.departure.captured).doctrine
+        bubble = line.buffer(doctrine.cap_engagement_range.meters)
+        self.flight_path_items.append(self.draw_shapely_poly(
+            scene, bubble, CONST.COLORS["yellow"], CONST.COLORS["transparent"]
+        ))
 
     def draw_waypoint(self, scene: QGraphicsScene,
                       position: Tuple[float, float], player: bool,
