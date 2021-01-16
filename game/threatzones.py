@@ -13,7 +13,7 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.utils import Distance, meters, nautical_miles
+from game.utils import nautical_miles
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -80,7 +80,19 @@ class ThreatZones:
 
     @classmethod
     def for_faction(cls, game: Game, player: bool) -> ThreatZones:
-        opposing_doctrine = game.faction_for(not player).doctrine
+        """Generates the threat zones projected by the given coalition.
+
+        Args:
+            game: The game to generate the threat zone for.
+            player: True if the coalition projecting the threat zone belongs to
+            the player.
+
+        Returns:
+            The threat zones projected by the given coalition. If the threat
+            zone belongs to the player, it is the zone that will be avoided by
+            the enemy and vice versa.
+        """
+        doctrine = game.faction_for(player).doctrine
 
         airbases = []
         air_defenses = []
@@ -90,8 +102,8 @@ class ThreatZones:
             if control_point.runway_is_operational():
                 point = ShapelyPoint(control_point.position.x,
                                      control_point.position.y)
-                cap_threat_range = (opposing_doctrine.cap_max_distance_from_cp +
-                                    opposing_doctrine.cap_engagement_range)
+                cap_threat_range = (doctrine.cap_max_distance_from_cp +
+                                    doctrine.cap_engagement_range)
                 airbases.append(point.buffer(cap_threat_range.meters))
 
             for tgo in control_point.ground_objects:
