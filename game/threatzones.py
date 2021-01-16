@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-from typing import TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union
 
 from dcs.mapping import Point as DcsPoint
 from shapely.geometry import (
@@ -13,7 +13,9 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.utils import nautical_miles
+from game.theater import ControlPoint
+from game.utils import Distance, meters, nautical_miles
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -79,6 +81,39 @@ class ThreatZones:
         )))
 
     @classmethod
+    def closest_enemy_airbase(cls, location: ControlPoint,
+                              max_distance: Distance) -> Optional[ControlPoint]:
+        airfields = ObjectiveDistanceCache.get_closest_airfields(location)
+        for airfield in airfields.airfields_within(max_distance):
+            if airfield.captured != location.captured:
+                return airfield
+        return None
+
+    @classmethod
+    def barcap_threat_range(cls, game: Game,
+                            control_point: ControlPoint) -> Distance:
+        doctrine = game.faction_for(control_point.captured).doctrine
+        cap_threat_range = (doctrine.cap_max_distance_from_cp +
+                            doctrine.cap_engagement_range)
+        opposing_airfield = cls.closest_enemy_airbase(control_point,
+                                                      cap_threat_range * 2)
+        if opposing_airfield is None:
+            return cap_threat_range
+
+        airfield_distance = meters(
+            opposing_airfield.position.distance_to_point(control_point.position)
+        )
+
+        # BARCAPs should not commit further than halfway to the closest enemy
+        # airfield (with some breathing room) to avoid those missions becoming
+        # offensive. For dissimilar doctrines we could weight this so that, as
+        # an example, modern US goes no closer than 70% of the way to the WW2
+        # German base, and the Germans go no closer than 30% of the way to the
+        # US base, but for now equal weighting is fine.
+        max_distance = airfield_distance * 0.45
+        return min(cap_threat_range, max_distance)
+
+    @classmethod
     def for_faction(cls, game: Game, player: bool) -> ThreatZones:
         """Generates the threat zones projected by the given coalition.
 
@@ -92,8 +127,6 @@ class ThreatZones:
             zone belongs to the player, it is the zone that will be avoided by
             the enemy and vice versa.
         """
-        doctrine = game.faction_for(player).doctrine
-
         airbases = []
         air_defenses = []
         for control_point in game.theater.controlpoints:
@@ -102,8 +135,7 @@ class ThreatZones:
             if control_point.runway_is_operational():
                 point = ShapelyPoint(control_point.position.x,
                                      control_point.position.y)
-                cap_threat_range = (doctrine.cap_max_distance_from_cp +
-                                    doctrine.cap_engagement_range)
+                cap_threat_range = cls.barcap_threat_range(game, control_point)
                 airbases.append(point.buffer(cap_threat_range.meters))
 
             for tgo in control_point.ground_objects:

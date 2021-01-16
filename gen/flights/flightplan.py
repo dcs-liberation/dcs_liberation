@@ -17,6 +17,7 @@ from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
 from dcs.unit import Unit
+from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
 from game.theater import (
@@ -976,7 +977,7 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        start, end = self.racetrack_for_objective(location)
+        start, end = self.racetrack_for_objective(location, barcap=True)
         patrol_alt = meters(random.randint(
             int(self.doctrine.min_patrol_altitude.meters),
             int(self.doctrine.max_patrol_altitude.meters)
@@ -1037,8 +1038,8 @@ class FlightPlanBuilder:
             divert=builder.divert(flight.divert)
         )
 
-    def racetrack_for_objective(self,
-                                location: MissionTarget) -> Tuple[Point, Point]:
+    def racetrack_for_objective(self, location: MissionTarget,
+                                barcap: bool) -> Tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
         for airfield in closest_cache.closest_airfields:
             # If the mission is a BARCAP of an enemy airfield, find the *next*
@@ -1055,12 +1056,28 @@ class FlightPlanBuilder:
             closest_airfield.position
         )
 
-        min_distance_from_enemy = nautical_miles(20)
-        distance_to_airfield = meters(
-            closest_airfield.position.distance_to_point(
-                self.package.target.position
-            ))
-        distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
+        position = ShapelyPoint(self.package.target.position.x,
+                                self.package.target.position.y)
+
+        if barcap:
+            # BARCAPs should remain far enough back from the enemy that their
+            # commit range does not enter the enemy's threat zone. Include a 5nm
+            # buffer.
+            distance_to_no_fly = meters(
+                position.distance(self.threat_zones.all)
+            ) - self.doctrine.cap_engagement_range - nautical_miles(5)
+        else:
+            # Other race tracks (TARCAPs, currently) just try to keep some
+            # distance from the nearest enemy airbase, but since they are by
+            # definition in enemy territory they can't avoid the threat zone
+            # without being useless.
+            min_distance_from_enemy = nautical_miles(20)
+            distance_to_airfield = meters(
+                closest_airfield.position.distance_to_point(
+                    self.package.target.position
+                ))
+            distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
+
         min_cap_distance = min(self.doctrine.cap_min_distance_from_cp,
                                distance_to_no_fly)
         max_cap_distance = min(self.doctrine.cap_max_distance_from_cp,
@@ -1125,7 +1142,8 @@ class FlightPlanBuilder:
             orbit0p, orbit1p = self.racetrack_for_frontline(
                 flight.departure.position, location)
         else:
-            orbit0p, orbit1p = self.racetrack_for_objective(location)
+            orbit0p, orbit1p = self.racetrack_for_objective(location,
+                                                            barcap=False)
 
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
         return TarCapFlightPlan(
