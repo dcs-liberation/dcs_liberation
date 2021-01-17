@@ -15,8 +15,9 @@ class ClosestAirfields:
     def __init__(self, target: MissionTarget,
                  all_control_points: List[ControlPoint]) -> None:
         self.target = target
+        airfields = (c for c in all_control_points if c.runway_is_operational())
         self.closest_airfields: List[ControlPoint] = sorted(
-            all_control_points, key=lambda c: self.target.distance_to(c)
+            airfields, key=lambda c: self.target.distance_to(c)
         )
 
     def airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
