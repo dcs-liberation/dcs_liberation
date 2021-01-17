@@ -94,6 +94,7 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
+from pydcs_extensions.hercules.hercules import Hercules
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
@@ -345,6 +346,13 @@ RUNWAY_ATTACK_CAPABLE = [
     Tornado_IDS,
 ] + STRIKE_CAPABLE
 
+# For any aircraft that isn't necessarily directly involved in strike
+# missions in a direct combat sense, but can transport objects and infantry.
+TRANSPORT_CAPABLE = [
+    Hercules,
+    Mi_8MT,
+    UH_1H,
+]
 
 DRONES = [
     MQ_9_Reaper,
