@@ -65,7 +65,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     continue
                 unit_types.add(unit)
 
-        sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
+        sorted_units = sorted(unit_types, key=lambda u: db.unit_pretty_name(self.game_model.game.player_country, u))
         for unit_type in sorted_units:
             row = self.add_purchase_row(
                 unit_type, task_box_layout, row,

@@ -219,7 +219,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD / DEAD tasks
+# Aircraft used for SEAD tasks
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -252,6 +252,12 @@ SEAD_CAPABLE = [
     FW_190D9,
     FW_190A8,
 ]
+
+
+# Aircraft used for DEAD tasks
+DEAD_CAPABLE = [
+    AJS37,
+] + SEAD_CAPABLE
 
 
 # Aircraft used for Strike mission
@@ -371,8 +377,10 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAS_CAPABLE
     elif task == FlightType.CAS:
         return CAS_CAPABLE
-    elif task in (FlightType.DEAD, FlightType.SEAD):
+    elif task == FlightType.SEAD:
         return SEAD_CAPABLE
+    elif task == FlightType.DEAD:
+        return DEAD_CAPABLE
     elif task == FlightType.OCA_AIRCRAFT:
         return CAS_CAPABLE
     elif task == FlightType.OCA_RUNWAY:

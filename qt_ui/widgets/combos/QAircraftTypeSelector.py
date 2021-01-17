@@ -30,13 +30,16 @@ class QAircraftTypeSelector(QComboBox):
                 if aircraft in gen.flights.ai_flight_planner_db.CAP_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
             elif mission_type in [FlightType.CAS, FlightType.BAI, FlightType.OCA_AIRCRAFT]:
-                if aircraft in [gen.flights.ai_flight_planner_db.CAS_CAPABLE, gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE]:
+                if aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
-            elif mission_type in [FlightType.SEAD, FlightType.DEAD]:
+            elif mission_type in [FlightType.SEAD]:
                 if aircraft in gen.flights.ai_flight_planner_db.SEAD_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
+            elif mission_type in [FlightType.DEAD]:
+                if aircraft in gen.flights.ai_flight_planner_db.DEAD_CAPABLE:
+                    self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
             elif mission_type in [FlightType.STRIKE]:
-                if aircraft in [gen.flights.ai_flight_planner_db.STRIKE_CAPABLE, gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE]:
+                if aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE:
                     self.addItem(f"{db.unit_pretty_name(self.country, aircraft)}", userData=aircraft)
             elif mission_type in [FlightType.ANTISHIP]:
                 if aircraft in gen.flights.ai_flight_planner_db.ANTISHIP_CAPABLE:
