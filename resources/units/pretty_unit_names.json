@@ -118,6 +118,9 @@
     "Ka-50": [{
         "default": "Ka-50 Hokum"
     }],
+    "L-39C": [{
+        "default": "L-39C Albatross"
+    }],
     "L-39ZA": [{
         "default": "L-39ZA Albatross"
     }],
@@ -175,6 +178,9 @@
     }],
     "MiG-31": [{
         "default": "MiG-31 Foxhound"
+    }],
+    "OH_58D": [{
+        "default": "OH-58D Kiowa Warrior"
     }],
     "P-47D-30": [{
         "default": "P-47D-30 Thunderbolt (Late)",
