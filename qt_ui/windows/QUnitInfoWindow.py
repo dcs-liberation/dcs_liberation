@@ -33,6 +33,7 @@ class QUnitInfoWindow(QDialog):
         self.setWindowTitle(f"Unit Info: {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'name')}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
+        self.setMaximumWidth(640)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
 
         self.initUi()
