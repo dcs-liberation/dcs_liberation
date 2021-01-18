@@ -4,6 +4,8 @@
             "name": "A-10A Thunderbolt II",
             "text": "The A-10A Thunderbolt II, also known as the Warthog, is a 'flying gun'. The aircraft was used extensively during Operation Desert Storm, in support of NATO operations in response to the Kosovo crisis, in Operation Enduring Freedom in Afghanistan and in Operation Iraqi Freedom. The A-10A is a high-survivability and versatile aircraft, popular with pilots for the 'get home' effectiveness.The mission of the aircraft is ground attack against tanks, armored vehicles and installations, and close air support of ground forces. The Warthog is famous for its massive 30mm cannon, but it can also be armed with Maverick guided missiles and several types of bombs and rockets.",
             "country-of-origin": "USA",
+            "manufacturer": "Fairchild Republic",
+            "role": "Close Air Support/Attack",
             "year-of-variant-introduction": "1977"
         }
     }],
@@ -11,6 +13,8 @@
         "default": {
             "name": "A-10C Thunderbolt II (Suite 3)",
             "country-of-origin": "USA",
+            "manufacturer": "Fairchild Republic",
+            "role": "Close Air Support/Attack",
             "year-of-variant-introduction": "2005"
         }
     }],
@@ -18,6 +22,8 @@
         "default": {
             "name": "A-10C Thunderbolt II (Suite 7)",
             "country-of-origin": "USA",
+            "manufacturer": "Fairchild Republic",
+            "role": "Close Air Support/Attack",
             "year-of-variant-introduction": "2012"
         }
     }],
@@ -25,6 +31,8 @@
         "default": {
             "name": "A-20G Havoc",
             "country-of-origin": "USA",
+            "manufacturer": "Douglas",
+            "role": "Medium Bomber/Attack",
             "year-of-variant-introduction": "1943"
         },
         "UK": {
@@ -35,6 +43,8 @@
         "default": {
             "name": "A-4E Skyhawk",
             "country-of-origin": "USA",
+            "manufacturer": "Douglas",
+            "role": "Carrier-based Attack/Light Fighter",
             "year-of-variant-introduction": "1962"
         }
     }],
@@ -42,6 +52,8 @@
         "default": {
             "name": "AH-1W SuperCobra",
             "country-of-origin": "USA",
+            "manufacturer": "Bell",
+            "role": "Attack",
             "year-of-variant-introduction": "1986"
         },
         "Iran": {
@@ -52,6 +64,8 @@
         "default": {
             "name": "AH-64A Apache",
             "country-of-origin": "USA",
+            "manufacturer": "Boeing",
+            "role": "Attack",
             "year-of-variant-introduction": "1986"
         }
     }],
@@ -59,6 +73,8 @@
         "default": {
             "name": "AH-64D Apache Longbow",
             "country-of-origin": "USA",
+            "manufacturer": "Boeing",
+            "role": "Attack",
             "year-of-variant-introduction": "2003"
         }
     }],
@@ -67,6 +83,8 @@
             "name": "AJS-37 Viggen",
             "text": "The AJS-37 Viggen is a Swedish double-delta supersonic attack aircraft from the late Cold War. It was the backbone of the Swedish Air Force during the Cold war, serving as the main attack and anti-ship platform. The AJS is the 90’s upgrade of this 70's era aircraft, adding several advanced weapons and systems functionalities. The aircraft was designed around the pilot, with an excellent man-machine interface, supporting the pilot through the smart use of autopilot systems, radar and HUD symbology in order to deliver the ordnance onto targets from treetop level with high speed attack runs.\n\nThe aircraft is armed with multiple weapon systems ranging from programmable stand-off weapons such as the RB-15F antiship missile to the BK90 Cluster munitions dispenser to various bombs, rockets and missiles for a wide range of target types. The aircraft can also carry gun pods and the Sidewinder series of infrared-guided missiles for air defence and self-protection purposes.",
             "country-of-origin": "Sweden",
+            "manufacturer": "Saab",
+            "role": "Attack/Reconnaissance",
             "year-of-variant-introduction": "1993"
         }
     }],
@@ -75,6 +93,8 @@
             "name": "AV-8B Harrier II Night Attack",
             "text": "The AV-8B project was born in the early 1970's as an effort to address the operational inadequacies of the AV-8A first generation Harrier, aimed to dramatically improve the capabilities and performance of the early AV-8A's. The AV-8B made its maiden flight in November 1981 and entered service with the United States Marine Corps in January 1985. It later evolved into the AV-8B N/A (Night Attack) and AV-8B Harrier II Plus.\n\nFirst flight of a modified AV-8B in the night attack configuration was on June 26th, 1987. Deliveries to the USMC began in September of 1989 to VMA-214 at Yuma, Arizona. Follow-up units based out of Yuma received their Night Attack AV-8Bs by the end of 1992.The AV-8B N/A variant (originally known as the AV-8D) had its first operational development in 1984 and included use of the NAVFLIR (Navigation Forward-Looking Infrared camera, consisting of a GEC-Marconi FLIR system mounted in the nose) for night operations. Additionally, GEC Cat's Eyes night vision goggles were provided to the pilot as well as a revised cockpit with color MFDs, a wider field-of-view HUD display, a color CRT digital moving map, and a complete \"heads-down\" operation capability. The AV-8B N/A also sports four Tracor ALE-39 countermeasures dispensers along the top of the rear fuselage, in addition to two ALE-39 dispensers along the lower rear of the fuselage. The AV-8B N/A also fields an updated version of the Rolls-Royce Pegasus 11-61 (F402-RR-408) vectored-thrust turbofan engine.",
             "country-of-origin": "USA/UK",
+            "manufacturer": "McDonnell Douglas",
+            "role": "V/STOL Attack",
             "year-of-variant-introduction": "1989"
         }
     }],
@@ -82,6 +102,8 @@
         "default": {
             "name": "B-1B Lancer",
             "country-of-origin": "USA",
+            "manufacturer": "Rockwell",
+            "role": "Supersonic Strategic Bomber",
             "year-of-variant-introduction": "1986"
         }
     }],
@@ -89,6 +111,8 @@
         "default": {
             "name": "B-17G Flying Fortress",
             "country-of-origin": "USA",
+            "manufacturer": "Boeing",
+            "role": "Heavy Bomber",
             "year-of-variant-introduction": "1943"
         },
         "UK": {
@@ -99,12 +123,16 @@
         "default": {
             "name": "B-52H Stratofortress",
             "country-of-origin": "USA",
+            "manufacturer": "Boeing",
+            "role": "Strategic Bomber",
             "year-of-variant-introduction": "1961"
         }
     }],
     "Bf-109K-4": [{
         "default": {
             "name": "Bf 109 K-4 Kurfürst",
+            "manufacturer": "Messerschmitt",
+            "role": "Fighter",
             "year-of-variant-introduction": "1944"
         }
     }],
@@ -113,6 +141,8 @@
             "name": "C-101CC Aviojet",
             "text": "The C-101CC Aviojet, with its 7 hard-points and uprated engine, is a versatile light attack aircraft that has seen combat with the Honduras Air Force against drug traffickers. It is also in service with the Jordanian and Chilean air forces.",
             "country-of-origin": "Spain",
+            "manufacturer": "CASA",
+            "role": "Light Attack",
             "year-of-variant-introduction": "1980"
         }
     }],
@@ -121,6 +151,8 @@
             "name": "C-101EB Aviojet",
             "text": "The C-101EB Aviojet is the primary jet trainer and aerobatic display aircraft of the Spanish Air Force.",
             "country-of-origin": "Spain",
+            "manufacturer": "CASA",
+            "role": "Trainer",
             "year-of-variant-introduction": "1980"
         }
     }],
@@ -128,6 +160,8 @@
         "default": {
             "name": "F-4E Phantom II",
             "country-of-origin": "USA",
+            "manufacturer": "McDonnell Douglas",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1968"
         },
         "Germany": {
@@ -145,6 +179,8 @@
             "name": "F-5E Tiger II",
             "text": "The F-5E was developed by Northrop Corporation in early 1970s. The light tactical fighter is an upgraded version based on previous F-5A developments. The F-5s' combat role encompasses air superiority, ground support, and ground attack. Given its mission flexibility, ease of operation, and low cost, the Tiger II has, and continues to serve, air forces across the globe.\n\nThe F-5Е is armed with two 20-mm М39-А3 cannons with 280 rounds per each cannon. The cannons are located in the nose section, forward of the cockpit. Special deflectors are used to avoid compressor stall conditions caused by hot gas ingestion as a bi-product of operating the M-39-A3. Each cannon is capable of firing at a rate of 1500 to 1700 rounds per minute.\n\nEach wingtip incorporates a launcher rail capable of firing AIM-9 infrared-guided missiles.\n\nFive hard points (one centerline pylon and four underwing pylons) allow the aircraft to carry different types of air-to-ground weapons (bombs, cluster munitions, and rockets) 6,400 pounds (about 3000 kg) in total. In addition, illumination ammunition and cargo containers can be attached. To increase flight duration and range, external fuel tanks can be attached to three hard points (a centerline pylon and two inboard pylons). Maneuverability and speed can be maximized in combat by jettisoning all external stores.",
             "country-of-origin": "USA",
+            "manufacturer": "Northrop",
+            "role": "Light Fighter",
             "year-of-variant-introduction": "1975"
         }
     }],
@@ -153,6 +189,8 @@
             "name": "F-14A Tomcat (Block 135-GR Late)",
             "text": "The Grumman F-14 Tomcat is a two-crew, variable wing-geometry, maritime air superiority fighter that served with the US Navy for 32 years and continues to serve with the IRIAF in Iran. The F-14 was the US Navy's frontline fighter from the 1970s to the mid-2000s. Over the course of its long service it also became one of the US Navy’s premier precision ground-attack platform and its lone airborne reconnaissance asset.\n\nNoteworthy features of the Tomcat are its swing-wing configuration, two-man crew, and the powerful AN/AWG-9 Weapons Control System (WCS) and radar. The AWG-9 allows employment of the long-range AIM-54 Phoenix air-to-air missile, and the LANTIRN targeting pod allows precision ground strikes using laser-guided bombs. The F-14 Tomcat was present in several historic events that include the two Gulf of Sidra incidents, Operations Desert Storm Iraqi Freedom, the Yugoslavian conflict, and Operation Enduring Freedom over Afghanistan. It was also immortalized in the iconic motion picture, Top Gun, and starred in several other feature films including The Final Countdown, Executive Decision, and others.\n\nThe Tomcat was also played a vital role in the Iran-Iraq war of the 1980s, where is flew for the Islamic Republic of Iran Air Force.",
             "country-of-origin": "USA",
+            "manufacturer": "Grumman",
+            "role": "Carrier-based Air-Superiority Fighter/Fighter Bomber",
             "year-of-variant-introduction": "1984"
         }
     }],
@@ -161,6 +199,8 @@
             "name": "F-14B Tomcat",
             "text": "The Grumman F-14 Tomcat is a two-crew, variable wing-geometry, maritime air superiority fighter that served with the US Navy for 32 years and continues to serve with the IRIAF in Iran. The F-14 was the US Navy's frontline fighter from the 1970s to the mid-2000s. Over the course of its long service it also became one of the US Navy’s premier precision ground-attack platform and its lone airborne reconnaissance asset.\n\nNoteworthy features of the Tomcat are its swing-wing configuration, two-man crew, and the powerful AN/AWG-9 Weapons Control System (WCS) and radar. The AWG-9 allows employment of the long-range AIM-54 Phoenix air-to-air missile, and the LANTIRN targeting pod allows precision ground strikes using laser-guided bombs. The F-14 Tomcat was present in several historic events that include the two Gulf of Sidra incidents, Operations Desert Storm Iraqi Freedom, the Yugoslavian conflict, and Operation Enduring Freedom over Afghanistan. It was also immortalized in the iconic motion picture, Top Gun, and starred in several other feature films including The Final Countdown, Executive Decision, and others.\n\nThe Tomcat was also played a vital role in the Iran-Iraq war of the 1980s, where is flew for the Islamic Republic of Iran Air Force.",
             "country-of-origin": "USA",
+            "manufacturer": "Grumman",
+            "role": "Carrier-based Air-Superiority Fighter/Fighter Bomber",
             "year-of-variant-introduction": "1987"
         }
     }],
@@ -169,6 +209,8 @@
             "name": "F-15C Eagle",
             "text": "The F-15 has often been labeled as the greatest U.S. fighter aircraft from the 1970s until the early 21st century. The F-15C is a pure fighter with outstanding performance and has scored over 100 air-to-air victories without suffering any confirmed losses.",
             "country-of-origin": "USA",
+            "manufacturer": "McDonnell Douglas",
+            "role": "Air-Superiority Fighter",
             "year-of-variant-introduction": "1978"
         },
         "Japan": {
@@ -179,6 +221,8 @@
         "default": {
             "name": "F-15E Strike Eagle",
             "country-of-origin": "USA",
+            "manufacturer": "McDonnell Douglas",
+            "role": "Multirole Strike Fighter",
             "year-of-variant-introduction": "1988"
         }
     }],
@@ -187,6 +231,8 @@
             "name": "F-16CM Fighting Falcon (Block 50)",
             "text": "The F-16C is a single seat, single engine multirole fighter that was developed in the 1970s. More than 4,500 units were manufactured and are operated today by 26 countries where the aircraft performs numerous missions that include air superiority, close air support, precision bombing, air defense suppression, reconnaissance and more. Few other aircraft can match its versatility, maneuverability, firepower, and huge production numbers.\n\nNicknamed the Viper by its pilots, the F-16 was designed with a reclined seating position for high G tolerance and a single-piece bubble canopy for exceptional visibility and comfort. Its lightweight and powerful F-110-GE-129 engines provide a greater than 1:1 thrust ratio.\n\nHoused in the nose of the Viper is a multifunction APG-68(V)5 radar. The aircraft can also be equipped with multiple sensors such as the LITENING targeting pod and HARM Targeting System (HTS).\n\nThe Viper is armed for air-to-air combat with Sidewinders, AMRAAMs, and an internal 20mm 6-barrel Gatling gun. It can also be loaded with a wide range of air-to-ground weapons that include general purpose bombs, rockets, canister munition, Mavericks, laser- and GPS-guided bombs, and more",
             "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1991"
         },
         "Japan": {
@@ -197,6 +243,8 @@
         "default": {
             "name": "F-22A Raptor",
             "country-of-origin": "USA",
+            "manufacturer": "Lockheed Martin",
+            "role": "Stealth Air-Superiority Fighter",
             "year-of-variant-introduction": "2005"
         }
     }],
@@ -205,6 +253,8 @@
             "name": "F-86F Sabre",
             "text": "The North American F-86F Sabre was the most capable western fighter of the early- to mid-1950s. This swept wing, single engine jet was the most important western aircraft of the Korean War and often tangled with Russian-made MiG-15s over the infamous “MiG Alley”. It was a hard struggle not only for the Korean sky, but also between two excellent aircraft builders of the East and West. In addition to its primary role as an air-to-air fighter, the Sabre could also carry bombs and air-to-ground rockets to attack ground targets.",
             "country-of-origin": "USA",
+            "manufacturer": "North American",
+            "role": "Fighter",
             "year-of-variant-introduction": "1953"
         }
     }],
@@ -212,6 +262,8 @@
         "default": {
             "name": "F-111F Aardvark",
             "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1970"
         }
     }],
@@ -219,6 +271,8 @@
         "default": {
             "name": "F-117A Nighthawk",
             "country-of-origin": "USA",
+            "manufacturer": "Lockheed",
+            "role": "Stealth Attack",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -227,6 +281,8 @@
             "name": "F/A-18C Hornet (Lot 20)",
             "text": "The F/A-18C Hornet is twin engine, supersonic fighter that is flown by a single pilot in a \"glass cockpit\". It combines extreme maneuverability , a deadly arsenal of weapons, and the ability to operate from an aircraft carrier. Operated by several nations, this multi-role fighter has been instrumental in conflicts from 1986 to today.\n\nThe Hornet is equipped with a large suite of sensors that includes a radar, targeting pod, and a helmet mounted sight. In addition to its internal 20mm cannon, the Hornet can be armed with a large assortment of unguided bombs and rockets, laser and GPS-guided bombs, air-to-surface missiles of all sorts, and both radar and infrared-guided air-to-air missiles.\n\nThe Hornet is also known for its extreme, slow-speed maneuverability in a dogfight. Although incredibly deadly, the Hornet is also a very easy aircraft to fly.",
             "country-of-origin": "USA",
+            "manufacturer": "McDonnell Douglas",
+            "role": "Carrier-based Multirole Fighter",
             "year-of-variant-introduction": "1987"
         },
         "Canada": {
@@ -241,6 +297,8 @@
             "name": "Fw 190 A-8 Anton",
             "text": "Designed for the German Luftwaffe by famed aircraft designer Kurt Tank in the late-1930s, the Fw 190 was the backbone of the Luftwaffe in both fighter and attack bomber roles. Powered by a large radial engine, the A version of the Focke-Wulf 190 was superior in many ways to the Bf 109s and Spitfires at the time of its introduction. In fact, this led to the development of the Mk.IX version of the Spitfire.\n\nMany of the Luftwaffe's aces racked up their impressive kill counts in the Fw 190 A due to its impressive fire power, excellent low to medium altitude performance, durability, and ease of flying. It saw action on both the eastern and western fronts where it was both respected and feared by allied pilots. Armament included two fuselage-mounted 13-mm MG 131 machine guns and four wing-mounted MG 151/20E 20mm cannons. The Anton could also be loaded with unguided rockets and bombs.\n\nThe A-8 version of the Fw 190 entered production in February 1944, and it was powered by a BMW 801 D-2 radial engine. In addition to excellent low- and medium-altitude performance, the engine was also very rugged. Along with the F-8 version, it also had thicker armor around the engine. The engine also received the C3 injection system that provided an emergency boost of 1,980 PS in short durations.",
             "country-of-origin": "Germany",
+            "manufacturer": "Focke-Wulf",
+            "role": "Fighter",
             "year-of-variant-introduction": "1944"
         }
     }],
@@ -249,6 +307,8 @@
             "name": "Fw 190 D-9 Dora",
             "text": "The Focke-Wulf Fw 190 is widely regarded as Germany's best fighter aircraft of World War II. Its appearance in the skies over France in August 1941 was a rude shock to the Allies, as it was clearly superior to any other plane. For nearly a year, the Fw 190 was the unmatched champion of the air war in Europe. The Fw 190 had speed and high altitude performance as its two great assets.\n\nThe development of advanced allied fighters resulted in the Fw 190 D–9 variant which first saw service in September 1944. This variant had a larger nose that housed a more powerful Junkers Jumo engine that produced 2,100 hp with the MW-50 boost system. The D-9 was designed for high altitude aerial combat and is a worthy adversary to the P-51D Mustang.",
             "country-of-origin": "Germany",
+            "manufacturer": "Focke-Wulf",
+            "role": "Fighter",
             "year-of-variant-introduction": "1944"
         }
     }],
@@ -256,6 +316,8 @@
         "default": {
             "name": "C-130J-30 Super Hercules",
             "country-of-origin": "USA",
+            "manufacturer": "Lockheed",
+            "role": "Transport",
             "year-of-variant-introduction": "1999"
         }
     }],
@@ -264,6 +326,8 @@
             "name": "I-16 Ishak",
             "text": "I-16 - Soviet single-engine monoplane fighter of 1930s created by aircraft designer Nikolai Polikarpov’s design bureau. It was the one of the world’s first fighters with landing gear retraction system. It was I-16 which stood the air fighting against famous Messerschmitt Bf 109.\n\nOver a period of its history I-16 was upgraded a lot. New modifications of aircraft were created and adopted almost every year. I-16 type 24 was further development of I-16 type 18.\n\nIt is one of the most famous fighters taking part in World War II. It was different from all its “contemporaries” in configuration and flight characteristics. Its uniqueness and distinction were defined by minimum size, dome-shaped fuselage, small wing, dorsal spine.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Polikarpov",
+            "role": "Fighter",
             "year-of-variant-introduction": "1935"
         }
     }],
@@ -271,6 +335,8 @@
         "default": {
             "name": "J-11A Flanker-L",
             "country-of-origin": "China",
+            "manufacturer": "Shenyang",
+            "role": "Air-Superiority Fighter",
             "year-of-variant-introduction": "1998"
         }
     }],
@@ -279,6 +345,8 @@
             "name": "JF-17 Thunder",
             "text": "JF-17 is a single seat, single engine, multirole light fighter that was joint developed by AVIC Chengdu and Pakistan Aeronautical Complex (PAC). The design phase of JF-17 \"Thunder\" finished at May 31st, 2002, and the maiden flight was made on August 25th, 2003. The first plane delivered to PAF (Pakistan Air Force) in 2007. Currently several different blocks of JF-17s are in service in Pakistan and Myanmar air forces. There are also several countries interested in purchasing this fighter jet. On February 27th, 2019, \"Thunder\" has withstood the test of actual combat and helped PAF win an appreciable victory.\n\n\"Thunder\" is a type of fighter that specifically tailored for PAF. The development plan of her predecessor can even be traced back to 1985. At first, PAF was only looking for a fighter that can replace Shenyang J-6 (Chinese version of Mig-19), but they were not satisfied with Chengdu’s J-7M. After more than 20 years of development, the final product \"Thunder\" becomes completely different from J-7M.\n\n\"Thunder\" has a bubble canopy of great view, pretty strake-wing layout and advanced avionics. KLJ-7 radar provides excellent air to ground capability. WMD-7 targeting pod can help \"Thunder\" searching for targets in combat.",
             "country-of-origin": "Pakistan/China",
+            "manufacturer": "PAC/CAC",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "2007"
         },
         "China": {
@@ -290,6 +358,8 @@
         "default": {
             "name": "Ju 88 A-4",
             "country-of-origin": "Germany",
+            "manufacturer": "Junkers",
+            "role": "Tactical/Torpedo Bomber",
             "year-of-variant-introduction": "1940"
         }
     }],
@@ -298,6 +368,8 @@
             "name": "Ka-50 Hokum",
             "text": "The Ka-50 Black Shark (NATO reporting name: Hokum) is a unique and deadly single-seat, Russian attack helicopter that has seen combat in the Northern Caucasus. It combines a high performance dual rotor system with a deadly weapons payload of guided missiles, rockets, bombs, and a 30mm cannon. The Ka-50 is also unique in that it has an ejection seat.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kamov",
+            "role": "Attack",
             "year-of-variant-introduction": "1995"
         }
     }],
@@ -306,6 +378,8 @@
             "name": "L-39C Albatros",
             "text": "Two seat Jet trainer aircraft L-39C is intended for basic and advanced pilot training in visual and instrument flight rules weather conditions, day and night and also for combat use against air and ground targets. Its development started in the middle 60s of the last century by the Czech “Aero Vodochody”. In the 70s the aircraft has entered service and is still in the operational use in over 30 countries worldwide.",
             "country-of-origin": "Czechoslovakia",
+            "manufacturer": "Aero",
+            "role": "Trainer",
             "year-of-variant-introduction": "1972"
         }
     }],
@@ -314,6 +388,8 @@
             "name": "L-39ZA Albatros",
             "text": "Two seat Jet trainer aircraft L-39C is intended for basic and advanced pilot training in visual and instrument flight rules weather conditions, day and night and also for combat use against air and ground targets. Its development started in the middle 60s of the last century by the Czech “Aero Vodochody”. In the 70s the aircraft has entered service and is still in the operational use in over 30 countries worldwide.",
             "country-of-origin": "Czechoslovakia",
+            "manufacturer": "Aero",
+            "role": "Light Attack",
             "year-of-variant-introduction": "1977"
         }
     }],
@@ -322,6 +398,8 @@
             "name": "Mirage 2000C",
             "text": "The M-2000C is a multi-role, French-designed, 4th generation fighter. It was designed in the 1970s as a lightweight fighter and in excess of 600 M-2000C aircraft have been built. The M2000C is a single-engine fighter will a low-set delta wing with no horizontal tail. It has excellent maneuverability given its relaxed stability and fly-by-wire flight control system. The M2000C also includes a multi-mode RDI radar that is capable tracking and engaging targets at beyond visual ranges. In addition to engaging other aircraft with cannon and missiles, the M2000C can also engage ground targets with cannon, rockets and bombs.",
             "country-of-origin": "France",
+            "manufacturer": "Dassault",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -329,6 +407,8 @@
         "default": {
             "name": "MB-339PAN",
             "country-of-origin": "Italy",
+            "manufacturer": "Aermacchi",
+            "role": "Aerobatic",
             "year-of-variant-introduction": "1982"
         }
     }],
@@ -336,6 +416,8 @@
         "default": {
             "name": "Mirage 2000-5",
             "country-of-origin": "France",
+            "manufacturer": "Dassault",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1997"
         }
     }],
@@ -343,6 +425,8 @@
         "default": {
             "name": "Mi-24V Hind-E",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mil",
+            "role": "Attack/Transport",
             "year-of-variant-introduction": "1976"
         }
     }],
@@ -350,6 +434,8 @@
         "default": {
             "name": "Mi-28N Havoc",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mil",
+            "role": "Attack",
             "year-of-variant-introduction": "2009"
         }
     }],
@@ -358,6 +444,8 @@
             "name": "Mi-8MTV2 Hip",
             "text": "The Mil Mi-8MTV2 is an upgraded version of one of the most widely produced helicopters in history and a combat transport and fire support veteran of countless operations around the world.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mil",
+            "role": "Transport/Light Attack",
             "year-of-variant-introduction": "1981"
         }
     }],
@@ -366,6 +454,8 @@
             "name": "MiG-15bis Fagot",
             "text": "Developed in the years immediately following World War II, the MiG-15bis was a first-generation jet fighter designed by the Mikoyan-Gurevich design bureau of the Soviet Union. The MiG-15bis is a single engine, swept-wing jet that saw over 15,000 copies produced. The MiG-15 gained fame in the skies over Korea where it battled the F-86 Sabre and other allied aircraft. It proved an excellent match to the Sabre, and it often came down to the skill of the pilot that determined who made it home and who was left dangling from a parachute. Having an excellent thrust-to-weight ratio and good climbing characteristics, the MiG-15bis was also armed with two NR-23 23mm cannons and a single, powerful N-37 37mm cannon. Not surprisingly, it is considered by many as one of the deadliest fighters of the era.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Fighter",
             "year-of-variant-introduction": "1950"
         }
     }],
@@ -374,11 +464,14 @@
             "name": "MiG-19P Farmer-B",
             "text": "The MiG-19P Farmer was designed by the legendary Mikoyan Design Bureau in the Early 1950’s. The MiG-19 fighter was the Soviet Union’s first true supersonic Interceptor that could exceed Mach 1 in level flight.\n\nDesigned to take on enemy fighters and bombers at any time of day or night and in any weather condition, the Farmer was equipped with the RP-5 lzumrud radar in the nose and armed with two NR-30 30mm cannons in the wing roots. The Farmer is also able to carry an array of ground attack weapons that includes S-5M rockets and various general-purpose bombs. It is a lethal interceptor with conventional ground attack capabilities.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Fighter",
             "year-of-variant-introduction": "1955"
         },
         "China": {
             "name": "J-6A",
             "country-of-origin": "China",
+            "manufacturer": "Shenyang",
             "year-of-variant-introduction": "1962"
         }
     }],
@@ -387,11 +480,14 @@
             "name": "MiG-21bis Fishbed-N",
             "text": "The MiG-21bis is a delta wing, supersonic, fighter-interceptor jet aircraft. Much like the AK-47 became the everyman's rifle, the MiG-21 has been operated by more than 40 countries worldwide, and has enjoyed the longest production run of any modern jet fighter to date. The MiG-21, in all of its variants, has fought in wars stretching all the way from the Vietnam War in the 1960's to the modern day Syrian Civil War. Owing to its unique blend of versatility, ruggedness and maintainability, the MiG-21 remains in active service to this very day.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Fighter",
             "year-of-variant-introduction": "1972"
         },
         "China": {
             "name": "J-7B",
             "country-of-origin": "China",
+            "manufacturer": "Chengdu",
             "year-of-variant-introduction": "1992"
         }
     }],
@@ -399,6 +495,8 @@
         "default": {
             "name": "MiG-23MLD Flogger-K",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Fighter",
             "year-of-variant-introduction": "1982"
         },
         "Iraq": {
@@ -410,6 +508,8 @@
         "default": {
             "name": "MiG-25PD Foxbat-E",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Interceptor",
             "year-of-variant-introduction": "1979"
         }
     }],
@@ -417,6 +517,8 @@
         "default": {
             "name": "MiG-25RBT Foxbat-B",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan-Gurevich",
+            "role": "Strike Fighter",
             "year-of-variant-introduction": "1970"
         }
     }],
@@ -424,6 +526,8 @@
         "default": {
             "name": "MiG-27K Flogger-J2",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan",
+            "role": "Attack",
             "year-of-variant-introduction": "1975"
         }
     }],
@@ -432,6 +536,8 @@
             "name": "MiG-29A Fulcrum-A",
             "text": "The MiG-29 \"Fulcrum\" is a Russian-designed, twin-engine, supersonic fighter. First operational in the early 1980s, the Fulcrum is a \"light weight\" fighter, comparable to the American F/A-18 Hornet and F-16. Designed to work in conjunction with the larger Su-27 Flanker, the MiG-29 is armed with an internal 30mm cannon and both infrared and radar guided air-to-air missiles. For air-to-ground tasks, the MiG-29 can be armed with a large array of unguided bombs and rockets.\n\nIn addition to a sophisticated pulse doppler radar, the MiG-29 is also equipped with a passive Infrared Search and Track (IRST) sensor that allows the Fulcrum to detect and target enemy aircraft just based on target infrared emissions. This allows the MiG-29 to make stealthy attacks with no warning!\n\nThe Fulcrum is a highly-maneuverable fighter in a dogfight, and when paired with the helmet mounted sight and the AA-11 \"Archer\" air-to-air missile, it is a very lethal adversary.\n\nThe MiG-29 has also been widely exported and has served in many countries that include Germany, Iran, Ukraine, and Poland.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -440,6 +546,8 @@
             "name": "MiG-29G Fulcrum-A",
             "text": "The MiG-29 \"Fulcrum\" is a Russian-designed, twin-engine, supersonic fighter. First operational in the early 1980s, the Fulcrum is a \"light weight\" fighter, comparable to the American F/A-18 Hornet and F-16. Designed to work in conjunction with the larger Su-27 Flanker, the MiG-29 is armed with an internal 30mm cannon and both infrared and radar guided air-to-air missiles. For air-to-ground tasks, the MiG-29 can be armed with a large array of unguided bombs and rockets.\n\nIn addition to a sophisticated pulse doppler radar, the MiG-29 is also equipped with a passive Infrared Search and Track (IRST) sensor that allows the Fulcrum to detect and target enemy aircraft just based on target infrared emissions. This allows the MiG-29 to make stealthy attacks with no warning!\n\nThe Fulcrum is a highly-maneuverable fighter in a dogfight, and when paired with the helmet mounted sight and the AA-11 \"Archer\" air-to-air missile, it is a very lethal adversary.\n\nThe MiG-29 has also been widely exported and has served in many countries that include Germany, Iran, Ukraine, and Poland.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1993"
         }
     }],
@@ -448,6 +556,8 @@
             "name": "MiG-29S Fulcrum-C",
             "text": "The MiG-29 \"Fulcrum\" is a Russian-designed, twin-engine, supersonic fighter. First operational in the early 1980s, the Fulcrum is a \"light weight\" fighter, comparable to the American F/A-18 Hornet and F-16. Designed to work in conjunction with the larger Su-27 Flanker, the MiG-29 is armed with an internal 30mm cannon and both infrared and radar guided air-to-air missiles. For air-to-ground tasks, the MiG-29 can be armed with a large array of unguided bombs and rockets.\n\nIn addition to a sophisticated pulse doppler radar, the MiG-29 is also equipped with a passive Infrared Search and Track (IRST) sensor that allows the Fulcrum to detect and target enemy aircraft just based on target infrared emissions. This allows the MiG-29 to make stealthy attacks with no warning!\n\nThe Fulcrum is a highly-maneuverable fighter in a dogfight, and when paired with the helmet mounted sight and the AA-11 \"Archer\" air-to-air missile, it is a very lethal adversary.\n\nThe MiG-29 has also been widely exported and has served in many countries that include Germany, Iran, Ukraine, and Poland.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -455,6 +565,8 @@
         "default": {
             "name": "MiG-31 Foxhound",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Mikoyan",
+            "role": "Interceptor",
             "year-of-variant-introduction": "1981"
         }
     }],
@@ -462,6 +574,8 @@
         "default": {
             "name": "OH-58D Kiowa Warrior",
             "country-of-origin": "USA",
+            "manufacturer": "Bell",
+            "role": "Light Attack/Forward Air Control",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -470,6 +584,8 @@
             "name": "P-47D-30 Thunderbolt (Late)",
             "text": "The P-47 Thunderbolt, nicknamed the Jug, served the United States Army Air Forces (USAAF) in World War II with distinction. In total 15,636 were built between 1941 and 1945. France, the United Kingdom, the Soviet Union, Mexico and Brazil also operated the P-47. It was armed with an impressive eight .50-caliber machine guns with 425 rounds per gun. In addition the Jug was armed with bombs and rockets and it excelled in the ground attack role. The P-47 also served in the bomber escort role before the introduction of the P-51 Mustang which had longer range.\n\nPowered by an R-2800-59 Double Wasp turbocharged radial engine, the aircraft enjoyed exceptional power and durability. The Jug substantial weight gave it tremendous dive speed acceleration but the aircraft suffered from quite low Mach limits and hence the aircraft was equipped with dive flaps to avoid dangerous effects of compressibility. The bubble canopy of the D version of the P-47 provided excellent all round visibility.",
             "country-of-origin": "USA",
+            "manufacturer": "Republic",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1944"
         },
         "UK": {
@@ -481,6 +597,8 @@
             "name": "P-47D-30 Thunderbolt (Early)",
             "text": "The P-47 Thunderbolt, nicknamed the Jug, served the United States Army Air Forces (USAAF) in World War II with distinction. In total 15,636 were built between 1941 and 1945. France, the United Kingdom, the Soviet Union, Mexico and Brazil also operated the P-47. It was armed with an impressive eight .50-caliber machine guns with 425 rounds per gun. In addition the Jug was armed with bombs and rockets and it excelled in the ground attack role. The P-47 also served in the bomber escort role before the introduction of the P-51 Mustang which had longer range.\n\nPowered by an R-2800-59 Double Wasp turbocharged radial engine, the aircraft enjoyed exceptional power and durability. The Jug substantial weight gave it tremendous dive speed acceleration but the aircraft suffered from quite low Mach limits and hence the aircraft was equipped with dive flaps to avoid dangerous effects of compressibility. The bubble canopy of the D version of the P-47 provided excellent all round visibility.",
             "country-of-origin": "USA",
+            "manufacturer": "Republic",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1944"
         },
         "UK": {
@@ -492,6 +610,8 @@
             "name": "P-47D-40 Thunderbolt",
             "text": "The P-47 Thunderbolt, nicknamed the Jug, served the United States Army Air Forces (USAAF) in World War II with distinction. In total 15,636 were built between 1941 and 1945. France, the United Kingdom, the Soviet Union, Mexico and Brazil also operated the P-47. It was armed with an impressive eight .50-caliber machine guns with 425 rounds per gun. In addition the Jug was armed with bombs and rockets and it excelled in the ground attack role. The P-47 also served in the bomber escort role before the introduction of the P-51 Mustang which had longer range.\n\nPowered by an R-2800-59 Double Wasp turbocharged radial engine, the aircraft enjoyed exceptional power and durability. The Jug substantial weight gave it tremendous dive speed acceleration but the aircraft suffered from quite low Mach limits and hence the aircraft was equipped with dive flaps to avoid dangerous effects of compressibility. The bubble canopy of the D version of the P-47 provided excellent all round visibility.",
             "country-of-origin": "USA",
+            "manufacturer": "Republic",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1944"
         },
         "UK": {
@@ -502,6 +622,8 @@
         "default": {
             "name": "P-51D-25-NA Mustang",
             "country-of-origin": "USA",
+            "manufacturer": "North American",
+            "role": "Fighter",
             "year-of-variant-introduction": "1944"
         },
         "UK": {
@@ -512,6 +634,8 @@
         "default": {
             "name": "P-51D-30-NA Mustang",
             "country-of-origin": "USA",
+            "manufacturer": "North American",
+            "role": "Fighter",
             "year-of-variant-introduction": "1944"
         },
         "UK": {
@@ -522,6 +646,8 @@
         "default": {
             "name": "Rafale M (Air-to-Ground)",
             "country-of-origin": "France",
+            "manufacturer": "Dassault",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "2001"
         }
     }],
@@ -529,6 +655,8 @@
         "default": {
             "name": "Rafale B",
             "country-of-origin": "France",
+            "manufacturer": "Dassault",
+            "role": "Carrier-based Multirole Fighter",
             "year-of-variant-introduction": "2006"
         }
     }],
@@ -536,6 +664,8 @@
         "default": {
             "name": "Rafale M (Air-to-Air)",
             "country-of-origin": "France",
+            "manufacturer": "Dassault",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "2001"
         }
     }],
@@ -543,6 +673,8 @@
         "default": {
             "name": "S-3B Viking",
             "country-of-origin": "USA",
+            "manufacturer": "Lockheed",
+            "role": "Carrier-based Attack",
             "year-of-variant-introduction": "1984"
         }
     }],
@@ -551,6 +683,8 @@
             "name": "SA 342L Gazelle",
             "text": "The SA342 Gazelle is a light scout/attack and transport helicopter. It was introduced in 1968 as a result of cooperation between Aérospatiale and Westland Aircraft. Operated by 23 countries, the Gazelle has served in combat operations across the world including the 1991 Gulf War, 1982 Lebanon War, Syria, and other conflicts.\n\nThe Gazelle is powered by a single turbine engine that is connected to three glass-fiber reinforced plastic main rotor blades with a bearingless main rotor developed by Bölkow GmbH. It is also the first helicopter which features the famous Fenestron tail rotor.",
             "country-of-origin": "France",
+            "manufacturer": "Aérospatiale",
+            "role": "Light Attack",
             "year-of-variant-introduction": "1977"
         }
     }],
@@ -559,10 +693,14 @@
             "name": "SA 342M Gazelle",
             "text": "The SA342 Gazelle is a light scout/attack and transport helicopter. It was introduced in 1968 as a result of cooperation between Aérospatiale and Westland Aircraft. Operated by 23 countries, the Gazelle has served in combat operations across the world including the 1991 Gulf War, 1982 Lebanon War, Syria, and other conflicts.\n\nThe Gazelle is powered by a single turbine engine that is connected to three glass-fiber reinforced plastic main rotor blades with a bearingless main rotor developed by Bölkow GmbH. It is also the first helicopter which features the famous Fenestron tail rotor.",
             "country-of-origin": "France",
+            "manufacturer": "Aérospatiale",
+            "role": "Light Attack",
             "year-of-variant-introduction": "1977"
         },
         "UK": {
-            "name": "Gazelle AH.1"
+            "name": "Gazelle AH.1",
+            "manufacturer": "Westland",
+            "year-of-variant-introduction": "1974"
         }
     }],
     "SA342Mistral": [{
@@ -570,6 +708,8 @@
             "name": "SA 342M Gazelle Mistral",
             "text": "The SA342 Gazelle is a light scout/attack and transport helicopter. It was introduced in 1968 as a result of cooperation between Aérospatiale and Westland Aircraft. Operated by 23 countries, the Gazelle has served in combat operations across the world including the 1991 Gulf War, 1982 Lebanon War, Syria, and other conflicts.\n\nThe Gazelle is powered by a single turbine engine that is connected to three glass-fiber reinforced plastic main rotor blades with a bearingless main rotor developed by Bölkow GmbH. It is also the first helicopter which features the famous Fenestron tail rotor.",
             "country-of-origin": "France",
+            "manufacturer": "Aérospatiale",
+            "role": "Light Attack",
             "year-of-variant-introduction": "1977"
         }
     }],
@@ -577,6 +717,8 @@
         "default": {
             "name": "SH-60B Seahawk",
             "country-of-origin": "USA",
+            "manufacturer": "Sikorsky",
+            "role": "Transport/Anti-Ship",
             "year-of-variant-introduction": "1984"
         }
     }],
@@ -585,6 +727,8 @@
             "name": "Spitfire LF Mk IX",
             "text": "The British Spitfire is one of the most iconic fighter aircraft of World War II. Most famous for its role in the Battle of Britain, the Spitfire served as Britain's primary fighter during the entirety of the war. The Spitfire combines graceful lines, eye-watering dogfight performance, and heavy firepower in its later variants.\n\nThe Spitfire Mk IX was originally developed as a stopgap measure as a response to the appearance of the Focke-Wulf FW 190A.\n\nThe Spitfire IX is powered by the Merlin 66. This engine produces its best performance at slightly lower altitudes than the older Merlin 61. Spitfires equipped with this engine were designated LF Mk IX. This was the most numerous version of the Mk IX, with 4,010 produced. The majority of Mk IXs of all types used the standard \"c\" wing, which would often carry two 20mm cannon and four .303in machine guns.\n\nThe Mk IX was a significant improvement on the Mk V. It had a top speed of 409 mph at 28,000 feet, an increase of 40 miles per hour. Its service ceiling rose from 36,200 feet to 43,000 feet. It could climb at 4,000 feet per minute. In July 1942, an early Mk IX was flown against a captured Fw 190A, and the two aircraft were discovered to have very similar capabilities. The RAF had its answer to the Fw 190 problem.\n\nThe Mk IX replaced the Mk V from June 1942. It allowed the RAF to go back onto the offensive in occupied Europe, and resume the \"circus\", \"ramrod\" and \"rodeo\" raids. Its first combat success came on 30 July 1942, when a Spitfire Mk IX shot down a Fw 190. Amongst other notable achievements, the Mk IX took part in the highest altitude combat of the Second World War, when it intercepted a Ju 86R at 43,000 feet over Southampton on 12 September 1942. On 5 October 1944 Spitfire Mk IXs of 401 Squadron were the first allied aircraft to shoot down an Me 262 Jet. The Mk IX remained in service until the end of the war, even after the appearance of the Griffon powered Mk XIV.",
             "country-of-origin": "UK",
+            "manufacturer": "Supermarine",
+            "role": "Fighter",
             "year-of-variant-introduction": "1943"
         }
     }],
@@ -593,6 +737,8 @@
             "name": "Spitfire LF Mk IX (Clipped Wings)",
             "text": "The British Spitfire is one of the most iconic fighter aircraft of World War II. Most famous for its role in the Battle of Britain, the Spitfire served as Britain's primary fighter during the entirety of the war. The Spitfire combines graceful lines, eye-watering dogfight performance, and heavy firepower in its later variants.\n\nThe Spitfire Mk IX was originally developed as a stopgap measure as a response to the appearance of the Focke-Wulf FW 190A.\n\nThe Spitfire IX is powered by the Merlin 66. This engine produces its best performance at slightly lower altitudes than the older Merlin 61. Spitfires equipped with this engine were designated LF Mk IX. This was the most numerous version of the Mk IX, with 4,010 produced. The majority of Mk IXs of all types used the standard \"c\" wing, which would often carry two 20mm cannon and four .303in machine guns.\n\nThe Mk IX was a significant improvement on the Mk V. It had a top speed of 409 mph at 28,000 feet, an increase of 40 miles per hour. Its service ceiling rose from 36,200 feet to 43,000 feet. It could climb at 4,000 feet per minute. In July 1942, an early Mk IX was flown against a captured Fw 190A, and the two aircraft were discovered to have very similar capabilities. The RAF had its answer to the Fw 190 problem.\n\nThe Mk IX replaced the Mk V from June 1942. It allowed the RAF to go back onto the offensive in occupied Europe, and resume the \"circus\", \"ramrod\" and \"rodeo\" raids. Its first combat success came on 30 July 1942, when a Spitfire Mk IX shot down a Fw 190. Amongst other notable achievements, the Mk IX took part in the highest altitude combat of the Second World War, when it intercepted a Ju 86R at 43,000 feet over Southampton on 12 September 1942. On 5 October 1944 Spitfire Mk IXs of 401 Squadron were the first allied aircraft to shoot down an Me 262 Jet. The Mk IX remained in service until the end of the war, even after the appearance of the Griffon powered Mk XIV.",
             "country-of-origin": "UK",
+            "manufacturer": "Supermarine",
+            "role": "Fighter",
             "year-of-variant-introduction": "1943"
         }
     }],
@@ -600,6 +746,8 @@
         "default": {
             "name": "Su-17M4 Fitter-K",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Fighter-Bomber",
             "year-of-variant-introduction": "1981"
         },
         "Iran": {
@@ -619,6 +767,8 @@
         "default": {
             "name": "Su-24M Fencer-D",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Attack",
             "year-of-variant-introduction": "1983"
         },
         "Iran": {
@@ -631,6 +781,8 @@
             "name": "Su-25 Frogfoot",
             "text": "The Su-25 'Grach' (Rook), NATO callsigned 'Frogfoot', is a dedicated strike attack aircraft designed for the close air support and anti-tank roles. The Su-25 has seen combat in several conflicts during its more than 30 years in service. The Su-25 combines excellent pilot protection and high speed compared to most dedicated attack aircraft. It can be armed with a variety of weapon systems including guided missiles, bombs, rockets, and its internal 30mm cannon.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Close Air Support/Attack",
             "year-of-variant-introduction": "1981"
         }
     }],
@@ -639,6 +791,8 @@
             "name": "Su-25T Frogfoot",
             "text": "The Su-25 'Grach' (Rook), NATO callsigned 'Frogfoot', is a dedicated strike attack aircraft designed for the close air support and anti-tank roles. The Su-25 has seen combat in several conflicts during its more than 30 years in service. The Su-25 combines excellent pilot protection and high speed compared to most dedicated attack aircraft. It can be armed with a variety of weapon systems including guided missiles, bombs, rockets, and its internal 30mm cannon.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Close Air Support/Attack",
             "year-of-variant-introduction": "1990"
         }
     }],
@@ -647,6 +801,8 @@
             "name": "Su-27 Flanker-B",
             "text": "The Su-27, NATO codename Flanker, is one of the pillars of modern-day Russian combat aviation. Built to counter the American F-15 Eagle, the Flanker is a twin-engine, supersonic, highly manoeuvrable air superiority fighter. The Flanker is equally capable of engaging targets well beyond visual range as it is in a dogfight given its amazing slow speed and high angle attack manoeuvrability. Using its radar and stealthy infrared search and track system, the Flanker can employ a wide array of radar and infrared guided missiles. The Flanker also includes a helmet-mounted sight that allows you to simply look at a target to lock it up! In addition to its powerful air-to-air capabilities, the Flanker can also be armed with bombs and unguided rockets to fulfil a secondary ground attack role.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Air-Superiority Fighter",
             "year-of-variant-introduction": "1985"
         }
     }],
@@ -654,6 +810,8 @@
         "default": {
             "name": "Su-30 Flanker-C",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1996"
         }
     }],
@@ -662,6 +820,8 @@
             "name": "Su-33 Flanker-D",
             "text": "The Su-33 has been the backbone of Russian aircraft carrier aviation since the late 1990s and is an all-weather fighter capable of engaging both air and surface targets. Based on the powerful Su-27 \"Flanker\", the Su-33 is a navalized version suited for operations aboard the Admiral Kuznetsov aircraft carrier. Changes to the Su-33 include strengthened landing gear, folding wings, more powerful engines, and the very visible canards.\n\nThe Su-33 is equipped with a powerful pulse doppler radar and an Infrared Search and Track (IRST) for engaging aerial targets with a wide range of radar- and infrared-guided missiles and its internal cannon. For air-to-surface attack, the Su-33 can be armed with many types of unguided bombs, rockets, and cluster munitions.\n\nDespite its large size, the Su-33 is very capable in a dogfight when combined with its integral helmet-mounted sight and off-boresight missiles.",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Multirole Fighter",
             "year-of-variant-introduction": "1998"
         }
     }],
@@ -669,6 +829,8 @@
         "default": {
             "name": "Su-34 Fullback",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Fighter-Bomber/Strike Fighter",
             "year-of-variant-introduction": "2014"
         }
     }],
@@ -676,6 +838,8 @@
         "default": {
             "name": "Su-57 Felon",
             "country-of-origin": "Russia",
+            "manufacturer": "Sukhoi",
+            "role": "Stealth Air-Superiority Fighter",
             "year-of-variant-introduction": "2020"
         }
     }],
@@ -683,6 +847,8 @@
         "default": {
             "name": "Tornado GR4",
             "country-of-origin": "UK/Italy/West Germany",
+            "manufacturer": "Panavia",
+            "role": "Strike Fighter",
             "year-of-variant-introduction": "1996"
         }
     }],
@@ -690,6 +856,8 @@
         "default": {
             "name": "Tornado IDS",
             "country-of-origin": "UK/Italy/West Germany",
+            "manufacturer": "Panavia",
+            "role": "Strike Fighter",
             "year-of-variant-introduction": "1979"
         }
     }],
@@ -697,6 +865,8 @@
         "default": {
             "name": "Tu-22M3 Backfire-C",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Tupolev",
+            "role": "Strategic/Maritime Strike Bomber",
             "year-of-variant-introduction": "1983"
         }
     }],
@@ -704,6 +874,8 @@
         "default": {
             "name": "Tu-95MS Bear-H",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Tupolev",
+            "role": "Strategic Bomber",
             "year-of-variant-introduction": "1981"
         }
     }],
@@ -711,6 +883,8 @@
         "default": {
             "name": "Tu-142 Bear-F",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Tupolev",
+            "role": "Maritime Patrol/Anti-Ship",
             "year-of-variant-introduction": "1972"
         }
     }],
@@ -718,6 +892,8 @@
         "default": {
             "name": "Tu-160 Blackjack",
             "country-of-origin": "USSR/Russia",
+            "manufacturer": "Tupolev",
+            "role": "Supersonic Strategic Bomber",
             "year-of-variant-introduction": "1987"
         }
     }],
@@ -726,6 +902,8 @@
             "name": "UH-1H Iroquois",
             "text": "The UH-1 Iroquois, better known as the Huey, is one of the most iconic helicopters in the world. Indispensable in the Vietnam War, the Huey continues to serve in both military and civilian roles around the globe today.",
             "country-of-origin": "USA",
+            "manufacturer": "Bell",
+            "role": "Transport/Light Attack",
             "year-of-variant-introduction": "1967"
         },
         "Germany": {

@@ -53,18 +53,22 @@ class QUnitInfoWindow(QDialog):
         self.details_grid = QFrame()
         self.details_grid_layout = QGridLayout()
 
-        self.name_box = QLabel(f"<b>Name:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'name')}")
+        self.name_box = QLabel(f"<b>Name:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'manufacturer')} {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'name')}")
         self.name_box.setProperty("style", "info-element")
         
         self.country_box = QLabel(f"<b>Country of Origin:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'country-of-origin')}")
         self.country_box.setProperty("style", "info-element")
         
+        self.role_box = QLabel(f"<b>Role:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'role')}")
+        self.role_box.setProperty("style", "info-element")
+        
         self.year_box = QLabel(f"<b>Variant Introduction:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'year-of-variant-introduction')}")
         self.year_box.setProperty("style", "info-element")
         
         self.details_grid_layout.addWidget(self.name_box, 0, 0)
-        self.details_grid_layout.addWidget(self.country_box, 1, 0)
-        self.details_grid_layout.addWidget(self.year_box, 2, 0)
+        self.details_grid_layout.addWidget(self.country_box, 0, 1)
+        self.details_grid_layout.addWidget(self.role_box, 1, 0)
+        self.details_grid_layout.addWidget(self.year_box, 1, 1)
 
         self.details_grid.setLayout(self.details_grid_layout)
 
