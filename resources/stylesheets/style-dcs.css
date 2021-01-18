@@ -179,6 +179,21 @@ QPushButton[style="btn-sell"]:hover{
     background:#D84545;
 }
 
+/* Info button */
+QPushButton[style="btn-info"]{
+    background-color:#329E9E;
+    color: white;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:lowercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-info"]:hover{
+    background:#45D8D8;
+}
+
 
 
 QPushButton[style="btn-danger"]{
@@ -296,6 +311,18 @@ QLabel[style="DEAD"]{
 QLabel[style="SEAD"]{
     border: 1px solid black;
     background-color: #aa7744;
+    color:white;
+    padding:2px 6px;
+}
+
+QLabel[style="info-element"]{
+    border: 1px solid #435466;
+    color:white;
+    padding:2px 6px;
+}
+
+QTextBrowser[style="info-desc"]{
+    border: 1px solid #435466;
     color:white;
     padding:2px 6px;
 }

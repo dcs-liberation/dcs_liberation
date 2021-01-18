@@ -17,6 +17,7 @@ class QAirfieldCommand(QFrame):
 
     def init_ui(self):
         layout = QGridLayout()
+        layout.setHorizontalSpacing(1)
         layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game_model), 0, 0)
 
         planned = QGroupBox("Planned Flights")

@@ -182,7 +182,7 @@ class Flight:
         return f"[{self.flight_type}] {self.count} x {name}"
 
     def __str__(self):
-        name = db.unit_pretty_name(self.country, self.unit_type)
+        name = db.unit_get_expanded_info(self.country, self.unit_type, 'name')
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {name}"
         return f"[{self.flight_type}] {self.count} x {name}"

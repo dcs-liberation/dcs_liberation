@@ -50,7 +50,7 @@ class QIntelInfo(QFrame):
                     existing_units = self.cp.base.total_units_of_type(unit_type)
                     if existing_units == 0:
                         continue
-                    groupLayout.addWidget(QLabel("<b>" + db.unit_pretty_name(self.game.enemy_country, unit_type) + "</b>"), row, 0)
+                    groupLayout.addWidget(QLabel("<b>" + db.unit_get_expanded_info(self.game.enemy_country, unit_type, 'name') + "</b>"), row, 0)
                     groupLayout.addWidget(QLabel(str(existing_units)), row, 1)
                     row += 1
 

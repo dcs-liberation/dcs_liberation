@@ -1,6 +1,7 @@
 import logging
 from typing import Type
 
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -17,6 +18,7 @@ from game.event import UnitsDeliveryEvent
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
 
 
 class QRecruitBehaviour:
@@ -58,7 +60,7 @@ class QRecruitBehaviour:
         existing_units = self.cp.base.total_units_of_type(unit_type)
         scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
-        unitName = QLabel("<b>" + db.unit_pretty_name(self.game_model.game.player_country, unit_type) + "</b>")
+        unitName = QLabel("<b>" + db.unit_get_expanded_info(self.game_model.game.player_country, unit_type, 'name') + "</b>")
         unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
 
         existing_units = QLabel(str(existing_units))
@@ -96,6 +98,21 @@ class QRecruitBehaviour:
         sell.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         sell.clicked.connect(lambda: self.sell(unit_type))
 
+        info = QGroupBox()
+        info.setProperty("style", "buy-box")
+        info.setMaximumHeight(36)
+        info.setMinimumHeight(36)
+        infolayout = QHBoxLayout()
+        info.setLayout(infolayout)
+        
+        unitInfo = QPushButton("i")
+        unitInfo.setProperty("style", "btn-info")
+        unitInfo.setDisabled(disabled)
+        unitInfo.setMinimumSize(16, 16)
+        unitInfo.setMaximumSize(16, 16)
+        unitInfo.clicked.connect(lambda: self.info(unit_type))
+        unitInfo.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+
         existLayout.addWidget(unitName)
         existLayout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum))
         existLayout.addWidget(existing_units)
@@ -106,8 +123,11 @@ class QRecruitBehaviour:
         buysellayout.addWidget(amount_bought)
         buysellayout.addWidget(buy)
 
+        infolayout.addWidget(unitInfo)
+
         layout.addWidget(exist, row, 1)
         layout.addWidget(buysell, row, 2)
+        layout.addWidget(info, row, 3)
 
         return row + 1
 
@@ -144,6 +164,10 @@ class QRecruitBehaviour:
                 del self.pending_deliveries.units[unit_type]
         self._update_count_label(unit_type)
         self.update_available_budget()
+
+    def info(self, unit_type):
+        self.info_window = QUnitInfoWindow(self.game_model.game, unit_type)
+        self.info_window.show()
 
     def set_maximum_units(self, maximum_units):
         """

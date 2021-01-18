@@ -72,6 +72,7 @@ COLORS: Dict[str, QColor] = {
 
 CP_SIZE = 12
 
+AIRCRAFT_BANNERS: Dict[str, QPixmap] = {}
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}
 ICONS: Dict[str, QPixmap] = {}
@@ -171,9 +172,9 @@ def load_event_icons():
             EVENT_ICONS[image[:-4]] = QPixmap(os.path.join("./resources/ui/events/", image))
 
 def load_aircraft_icons():
-    for aircraft in os.listdir("./resources/ui/units/aircrafts/"):
+    for aircraft in os.listdir("./resources/ui/units/aircrafts/icons/"):
         if aircraft.endswith(".jpg"):
-            AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/", aircraft))
+            AIRCRAFT_ICONS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/icons/", aircraft))
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
     AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
     AIRCRAFT_ICONS["A-10C_2"] = AIRCRAFT_ICONS["A-10C"]
@@ -183,3 +184,8 @@ def load_vehicle_icons():
     for vehicle in os.listdir("./resources/ui/units/vehicles/"):
         if vehicle.endswith(".jpg"):
             VEHICLES_ICONS[vehicle[:-7]] = QPixmap(os.path.join("./resources/ui/units/vehicles/", vehicle))
+
+def load_aircraft_banners():
+    for aircraft in os.listdir("./resources/ui/units/aircrafts/banners/"):
+        if aircraft.endswith(".jpg"):
+            AIRCRAFT_BANNERS[aircraft[:-7]] = QPixmap(os.path.join("./resources/ui/units/aircrafts/banners/", aircraft))

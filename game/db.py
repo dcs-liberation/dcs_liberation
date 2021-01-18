@@ -174,7 +174,7 @@ from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 
-PRETTYNAMES_PATH = Path("./resources/units/pretty_unit_names.json")
+UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
@@ -1366,25 +1366,33 @@ def unit_type_name(unit_type) -> str:
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
-def unit_pretty_name(country_name: str, unit_type) -> str:
+def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
     original_name = unit_type.name and unit_type.name or unit_type.id
-    default_name = None
-    faction_name = None
-    with PRETTYNAMES_PATH.open("r", encoding="utf-8") as fdata:
+    default_value = None
+    faction_value = None
+    with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
         data = json.load(fdata, encoding="utf-8")
     type_exists = data.get(original_name)
-    if type_exists is None:
-        return original_name
-    for faction in type_exists:
-        if default_name is None:
-            default_name = faction.get("default")
-        if faction_name is None:
-            faction_name = faction.get(country_name)
-    if default_name is None:
-        return original_name
-    if faction_name is None:
-        return default_name
-    return faction_name
+    if type_exists is not None:
+        for faction in type_exists:
+            if default_value is None:
+                default_exists = faction.get("default")
+                if default_exists is not None:
+                    default_value = default_exists.get(request_type)
+            if faction_value is None:
+                faction_exists = faction.get(country_name)
+                if faction_exists is not None:
+                    faction_value = faction_exists.get(request_type)
+    if default_value is None:
+        if request_type == "text":
+            return "I hate to say it, but it looks like the unit you're searching for doesn't exist. Perhaps the archives are incomplete..."
+        if request_type == "name":
+            return original_name
+        else:
+            return "Unknown"
+    if faction_value is None:
+        return default_value
+    return faction_value
 
 def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:
