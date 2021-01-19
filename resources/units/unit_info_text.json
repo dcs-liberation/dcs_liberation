@@ -910,6 +910,213 @@
             "name": "UH-1D Iroquois"
         }
     }],
+    "AAA Vulcan M163": [{
+        "default": {
+            "name": "M163 Vulcan Air Defense System",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "General Electric",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1989"
+        }
+    }],
+    "AAA ZSU-57-2": [{
+        "default": {
+            "name": "ZSU-57-2 'Sparka'",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Omsk Works",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1955"
+        }
+    }],
+    "AAA ZU-23 on Ural-375": [{
+        "default": {
+            "name": "ZU-23 on Ural-375",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "KBP/Ural",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1961"
+        }
+    }],
+    "AAA ZU-23 Insurgent on Ural-375": [{
+        "default": {
+            "name": "ZU-23 on Ural-375",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "KBP/Ural",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1961"
+        }
+    }],
+    "APC AAV-7": [{
+        "default": {
+            "name": "AAVP-7A1 'Amtrac'",
+            "country-of-origin": "USA",
+            "manufacturer": "United Defense",
+            "role": "Amphibious Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1971"
+        }
+    }],
+    "APC BTR-80": [{
+        "default": {
+            "name": "BTR-80",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Arzamas",
+            "role": "Amphibious Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1986"
+        }
+    }],
+    "APC Cobra": [{
+        "default": {
+            "name": "Cobra",
+            "country-of-origin": "Turkey",
+            "manufacturer": "Otokar",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "1997"
+        }
+    }],
+    "APC M113": [{
+        "default": {
+            "name": "M113",
+            "country-of-origin": "USA",
+            "manufacturer": "Food Machinery Corp",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1960"
+        }
+    }],
+    "APC M1043 HMMWV Armament": [{
+        "default": {
+            "name": "M1043 HMMWV (M2 HMG)",
+            "country-of-origin": "USA",
+            "manufacturer": "AM General",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "1983"
+        }
+    }],
+    "APC M1126 Stryker ICV": [{
+        "default": {
+            "name": "M1126 Stryker ICV (M2 HMG)",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "2002"
+        }
+    }],
+    "APC MTLB": [{
+        "default": {
+            "name": "MT-LB",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kharkiv",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1958"
+        }
+    }],
+    "ARV BRDM-2": [{
+        "default": {
+            "name": "BRDM-2",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "GAZ",
+            "role": "Amphibious Armoured Car",
+            "year-of-variant-introduction": "1962"
+        }
+    }],
+    "ARV BTR-RD": [{
+        "default": {
+            "name": "BTR-D",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Volgograd",
+            "role": "Airborne Amphibious Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1974"
+        }
+    }],
+    "ATGM M1045 HMMWV TOW": [{
+        "default": {
+            "name": "M1045 HMMWV (BGM-71 TOW)",
+            "country-of-origin": "USA",
+            "manufacturer": "AM General",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "1983"
+        }
+    }],
+    "ATGM M1134 Stryker ATGM": [{
+        "default": {
+            "name": "M1134 Stryker ATGM (BGM-71 TOW)",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "2002"
+        }
+    }],
+    "IFV BMD-1": [{
+        "default": {
+            "name": "BMD-1",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Volgograd",
+            "role": "Airborne Amphibious Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1969"
+        }
+    }],
+    "IFV BMP-1": [{
+        "default": {
+            "name": "BMP-1",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kurganmashzavod",
+            "role": "Amphibious Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1966"
+        }
+    }],
+    "IFV BMP-2": [{
+        "default": {
+            "name": "BMP-2",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kurganmashzavod",
+            "role": "Amphibious Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1980"
+        }
+    }],
+    "IFV BMP-3": [{
+        "default": {
+            "name": "BMP-3",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kurganmashzavod",
+            "role": "Amphibious Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1987"
+        }
+    }],
+    "IFV LAV-25": [{
+        "default": {
+            "name": "LAV-25",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Amphibious Armoured Car",
+            "year-of-variant-introduction": "1983"
+        }
+    }],
+    "IFV M2A2 Bradley": [{
+        "default": {
+            "name": "M2A2 Bradley",
+            "country-of-origin": "USA",
+            "manufacturer": "United Defense",
+            "role": "Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1988"
+        }
+    }],
+    "IFV Marder": [{
+        "default": {
+            "name": "Marder 1A3",
+            "country-of-origin": "Germany",
+            "manufacturer": "Rheinmetall Landsysteme",
+            "role": "Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1988"
+        }
+    }],
+    "IFV MCV-80": [{
+        "default": {
+            "name": "FV510 Warrior",
+            "country-of-origin": "UK",
+            "manufacturer": "GKN Sankey",
+            "role": "Infantry Fighting Vehicle",
+            "year-of-variant-introduction": "1984"
+        }
+    }],
     "MLRS 9A52 Smerch": [{
         "default": {
             "name": "BM-30 Smerch (9M55K Cluster Rockets)",
@@ -970,6 +1177,78 @@
             "manufacturer": "Pressed Steel Car Company",
             "role": "Self-Propelled Gun",
             "year-of-variant-introduction": "1942"
+        }
+    }],
+    "SAM Avenger M1097": [{
+        "default": {
+            "name": "M1097 Heavy HMMWV Avenger",
+            "country-of-origin": "USA",
+            "manufacturer": "Boeing",
+            "role": "Self-Propelled Surface-to-Air Missile Launcher",
+            "year-of-variant-introduction": "1990"
+        }
+    }],
+    "SAM Chaparral M48": [{
+        "default": {
+            "name": "M48 Chaparral",
+            "country-of-origin": "USA",
+            "manufacturer": "Ford",
+            "role": "Self-Propelled Surface-to-Air Missile Launcher",
+            "year-of-variant-introduction": "1969"
+        }
+    }],
+    "SAM Linebacker M6": [{
+        "default": {
+            "name": "M6 Linebacker",
+            "country-of-origin": "USA",
+            "manufacturer": "United Defense",
+            "role": "Self-Propelled Anti-Aircraft System",
+            "year-of-variant-introduction": "1997"
+        }
+    }],
+    "SAM Roland ADS": [{
+        "default": {
+            "name": "Roland 2 (Marder Chassis)",
+            "country-of-origin": "France/Germany",
+            "manufacturer": "Euromissile",
+            "role": "Self-Propelled Surface-to-Air Missile Launcher",
+            "year-of-variant-introduction": "1981"
+        }
+    }],
+    "SAM SA-13 Strela-10M3 9A35M3": [{
+        "default": {
+            "name": "SA-13 Gopher (9K35 Strela-10M3)",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Ulyanovsk",
+            "role": "Self-Propelled Surface-to-Air Missile Launcher",
+            "year-of-variant-introduction": "1981"
+        }
+    }],
+    "SAM SA-19 Tunguska 2S6": [{
+        "default": {
+            "name": "SA-19 Grison (2K22 Tunguska)",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Ulyanovsk",
+            "role": "Self-Propelled Anti-Aircraft System",
+            "year-of-variant-introduction": "1982"
+        }
+    }],
+    "SPAAA Gepard": [{
+        "default": {
+            "name": "Flakpanzer Gepard",
+            "country-of-origin": "West Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1976"
+        }
+    }],
+    "SPAAA ZSU-23-4 Shilka": [{
+        "default": {
+            "name": "ZSU-23-4 Shilka",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "MMZ",
+            "role": "Self-Propelled Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1960"
         }
     }],
     "SpGH Dana": [{
