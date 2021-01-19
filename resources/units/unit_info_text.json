@@ -570,7 +570,7 @@
             "year-of-variant-introduction": "1981"
         }
     }],
-    "OH_58D": [{
+    "OH-58D": [{
         "default": {
             "name": "OH-58D Kiowa Warrior",
             "country-of-origin": "USA",
@@ -908,6 +908,131 @@
         },
         "Germany": {
             "name": "UH-1D Iroquois"
+        }
+    }],
+    "MLRS 9A52 Smerch": [{
+        "default": {
+            "name": "BM-30 Smerch (9M55K Cluster Rockets)",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Splav",
+            "role": "Multiple-Launch Rocket System",
+            "year-of-variant-introduction": "1989"
+        }
+    }],
+    "MLRS 9A52 Smerch HE": [{
+        "default": {
+            "name": "BM-30 Smerch (9M55K5 HE Rockets)",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Splav",
+            "role": "Multiple-Launch Rocket System",
+            "year-of-variant-introduction": "1989"
+        }
+    }],
+    "MLRS 9K57 Uragan BM-27": [{
+        "default": {
+            "name": "BM-27 Uragan",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Splav",
+            "role": "Multiple-Launch Rocket System",
+            "year-of-variant-introduction": "1975"
+        }
+    }],
+    "MLRS BM-21 Grad": [{
+        "default": {
+            "name": "BM-21 Grad",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Splav",
+            "role": "Multiple-Launch Rocket System",
+            "year-of-variant-introduction": "1963"
+        }
+    }],
+    "MLRS FDDM": [{
+        "default": {
+            "name": "M1043 HMMWV with Fire Direction Data Manager",
+            "country-of-origin": "USA",
+            "role": "Fire Control Vehicle",
+            "year-of-variant-introduction": "1993"
+        }
+    }],
+    "MLRS M270": [{
+        "default": {
+            "name": "M270 Multiple Launch Rocket System",
+            "country-of-origin": "USA",
+            "manufacturer": "Vought",
+            "role": "Multiple-Launch Rocket System",
+            "year-of-variant-introduction": "1983"
+        }
+    }],
+    "M12 GMC": [{
+        "default": {
+            "name": "M12 Gun Motor Carriage",
+            "country-of-origin": "USA",
+            "manufacturer": "Pressed Steel Car Company",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1942"
+        }
+    }],
+    "SpGH Dana": [{
+        "default": {
+            "name": "SpGH DANA",
+            "country-of-origin": "Czechoslovakia",
+            "manufacturer": "ZTS",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1980"
+        }
+    }],
+    "SPH 2S9 Nona": [{
+        "default": {
+            "name": "2S9 Nona-S",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Motovilikha",
+            "role": "Self-Propelled Mortar",
+            "year-of-variant-introduction": "1981"
+        }
+    }],
+    "SPH 2S3 Akatsia": [{
+        "default": {
+            "name": "2S3 Akatsiya",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Uraltransmash",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1971"
+        }
+    }],
+    "SPH 2S1 Gvozdika": [{
+        "default": {
+            "name": "2S1 Gvozdika",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kharkiv",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1972"
+        }
+    }],
+    "SPH 2S19 Msta": [{
+        "default": {
+            "name": "2S19 Msta-S",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Uraltransmash",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1989"
+        }
+    }],
+    "SPH M109 Paladin": [{
+        "default": {
+            "name": "M109A6 Paladin",
+            "country-of-origin": "USA",
+            "manufacturer": "United Defense",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1994"
+        }
+    }],
+    "Sturmpanzer IV Brummbär": [{
+        "default": {
+            "name": "Sturmpanzer IV Brummbär",
+            "country-of-origin": "Germany",
+            "manufacturer": "Vienna Arsenal",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1943"
         }
     }]
 }

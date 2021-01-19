@@ -75,6 +75,7 @@ def run_ui(game: Optional[Game] = None) -> None:
     uiconstants.load_aircraft_icons()
     uiconstants.load_vehicle_icons()
     uiconstants.load_aircraft_banners()
+    uiconstants.load_vehicle_banners()
 
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
