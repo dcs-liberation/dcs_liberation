@@ -913,7 +913,7 @@
     "AAA Vulcan M163": [{
         "default": {
             "name": "M163 Vulcan Air Defense System",
-            "country-of-origin": "USSR/Russia",
+            "country-of-origin": "USA",
             "manufacturer": "General Electric",
             "role": "Self-Propelled Anti-Aircraft Gun",
             "year-of-variant-introduction": "1989"
@@ -1312,6 +1312,15 @@
             "manufacturer": "Vienna Arsenal",
             "role": "Self-Propelled Gun",
             "year-of-variant-introduction": "1943"
+        }
+    }],
+    "TPz Fuchs": [{
+        "default": {
+            "name": "TPz Fuchs",
+            "country-of-origin": "Germany",
+            "manufacturer": "Rheinstahl Wehrtechnik",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1979"
         }
     }]
 }
