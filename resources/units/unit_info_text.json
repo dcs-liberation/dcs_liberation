@@ -1117,6 +1117,15 @@
             "year-of-variant-introduction": "1984"
         }
     }],
+    "MBT Challenger II": [{
+        "default": {
+            "name": "FV4034 Challenger 2",
+            "country-of-origin": "UK",
+            "manufacturer": "Vickers Defence Systems",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1998"
+        }
+    }],
     "MLRS 9A52 Smerch": [{
         "default": {
             "name": "BM-30 Smerch (9M55K Cluster Rockets)",
