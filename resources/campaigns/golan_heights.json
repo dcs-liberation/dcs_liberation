@@ -2,6 +2,8 @@
   "name": "Syria - Battle for Golan Heights",
   "theater": "Syria",
   "authors": "Khopa",
+  "recommended_player_faction": "Israel 2000",
+  "recommended_enemy_faction": "Syria 2011",
   "description": "<p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>You can use the inverted configuration to start on the Syrian side.<br/><br/>If this scenario is too heavy, try the lite version.</p>",
   "miz": "golan_heights.miz"
 }

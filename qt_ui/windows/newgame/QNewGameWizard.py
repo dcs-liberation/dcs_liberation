@@ -39,9 +39,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.campaigns = load_campaigns()
 
+        self.faction_selection_page = FactionSelection()
         self.addPage(IntroPage())
-        self.addPage(FactionSelection())
-        self.addPage(TheaterConfiguration(self.campaigns))
+        self.addPage(TheaterConfiguration(self.campaigns, self.faction_selection_page))
+        self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions())
         self.addPage(DifficultyAndAutomationOptions())
         self.addPage(ConclusionPage())
@@ -195,6 +196,24 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.blueFactionSelect.activated.connect(self.updateUnitRecap)
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
 
+
+    def setDefaultFactions(self, campaign:Campaign):
+        """ Set default faction for selected campaign """
+
+        self.blueFactionSelect.clear()
+        self.redFactionSelect.clear()
+
+        for f in db.FACTIONS:
+            self.blueFactionSelect.addItem(f)
+
+        for i, r in enumerate(db.FACTIONS):
+            self.redFactionSelect.addItem(r)
+            if r == campaign.recommended_enemy_faction:
+                self.redFactionSelect.setCurrentIndex(i)
+            if r == campaign.recommended_player_faction:
+                self.blueFactionSelect.setCurrentIndex(i)
+
+
     def updateUnitRecap(self):
 
         red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
@@ -233,8 +252,10 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, campaigns: List[Campaign], parent=None) -> None:
+    def __init__(self, campaigns: List[Campaign], faction_selection: FactionSelection, parent=None) -> None:
         super().__init__(parent)
+
+        self.faction_selection = faction_selection
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
@@ -258,6 +279,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
+            self.faction_selection.setDefaultFactions(campaign)
 
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)

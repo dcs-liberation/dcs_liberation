@@ -2,6 +2,8 @@
   "name": "Persian Gulf - Invasion of Iran",
   "theater": "Persian Gulf",
   "authors": "Khopa",
+  "recommended_player_faction": "USA 2005",
+  "recommended_enemy_faction": "Iran 2015",
   "description": "<p>In this scenario, you start in Bandar Abbas, and must invade Iran.</p>",
   "miz": "invasion_of_iran.miz"
 }
