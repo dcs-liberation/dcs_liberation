@@ -5,5 +5,6 @@
   "recommended_player_faction": "Russia 2010",
   "recommended_enemy_faction": "Insurgents (Hard)",
   "description": "<p>This scenario can be used to simulate parts of the Syrian Civil War.<br/><br/>You start on the coast with an airbase in Latakia, and ground forces in Tartus.<br/><br/>This scenario can also be used to simulate a western invasion of Syria.<br/><br/>In inverted configuration you start in Aleppo.</p>",
-  "miz": "syrian_civil_war.miz"
+  "miz": "syrian_civil_war.miz",
+  "performance": 2
 }

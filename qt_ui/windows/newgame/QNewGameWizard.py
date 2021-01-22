@@ -10,13 +10,13 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.settings import Settings
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
     load_campaigns,
 )
-from game.theater.start_generator import GameGenerator, GeneratorSettings
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),
@@ -272,14 +272,21 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Faction description
         self.campaignMapDescription = QTextEdit("")
         self.campaignMapDescription.setReadOnly(True)
+        self.campaignMapDescription.setMaximumHeight(150)
+
+        self.performanceText = QTextEdit("")
+        self.performanceText.setReadOnly(True)
+        self.performanceText.setMaximumHeight(150)
 
         def on_campaign_selected():
             template = jinja_env.get_template("campaigntemplate_EN.j2")
+            template_perf = jinja_env.get_template("campaign_performance_template_EN.j2")
             index = campaignList.selectionModel().currentIndex().row()
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
             self.faction_selection.setDefaultFactions(campaign)
+            self.performanceText.setText(template_perf.render({"performance": campaign.performance}))
 
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
@@ -292,11 +299,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout = QtWidgets.QGridLayout()
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
-
-        #mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        #midgame = QtWidgets.QCheckBox()
-        #self.registerField('midGame', midgame)
-        #mapSettingsLayout.addWidget(midgame, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -310,7 +312,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Register fields
         self.registerField('timePeriod', timePeriodSelect)
-        self.registerField('timePeriod', timePeriodSelect)
 
         timeGroupLayout = QtWidgets.QGridLayout()
         timeGroupLayout.addWidget(timePeriod, 0, 0)
@@ -319,10 +320,11 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
-        layout.addWidget(campaignList, 0, 0, 3, 1)
+        layout.addWidget(campaignList, 0, 0, 4, 1)
         layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
-        layout.addWidget(mapSettingsGroup, 1, 1, 1, 1)
-        layout.addWidget(timeGroup, 2, 1, 1, 1)
+        layout.addWidget(self.performanceText, 1, 1, 1, 1)
+        layout.addWidget(mapSettingsGroup, 2, 1, 1, 1)
+        layout.addWidget(timeGroup, 3, 1, 1, 1)
         self.setLayout(layout)
 
 
