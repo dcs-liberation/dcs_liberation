@@ -257,6 +257,8 @@ SEAD_CAPABLE = [
 # Aircraft used for DEAD tasks
 DEAD_CAPABLE = [
     AJS37,
+    F_14B,
+    F_14A_135_GR,
 ] + SEAD_CAPABLE
 
 
