@@ -213,6 +213,7 @@ class FactionSelection(QtWidgets.QWizardPage):
             if r == campaign.recommended_player_faction:
                 self.blueFactionSelect.setCurrentIndex(i)
 
+        self.updateUnitRecap()
 
     def updateUnitRecap(self):
 
