@@ -33,8 +33,8 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Units]** Support for E-2 Hawkeye, SH-60B Seahawk, S-3B Viking (thanks to awinterquest) and SpGH Dana - these are now being used by appropriate factions.
 * **[Campaigns]** Added campaign "Black Sea Lite" by Starfire
 * **[Campaigns]** Added campaign "Exercise Vegas Nerve" by Starfire 
-* **[New game wizard ]** The theater page is now the first page of the campaign wizard, recommended factions will be selected automatically on the faction selection page
-* **[New game wizard ]** Added information text about the selected campaign performance.
+* **[New game Wizard]** The theater page is now the first page of the campaign wizard, recommended factions will be selected automatically on the faction selection page
+* **[New game Wizard]** Added information text about the selected campaign performance.
 
 ## Fixes
 
