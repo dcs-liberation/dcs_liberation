@@ -48,6 +48,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
 * **[Units]** Submarines have been removed for now as they aren't wholly functional.
 * **[Units]** Fixed "FACTION ERROR : Unable to find OliverHazardPerryGroupGenerator in pydcs" error at startup.
+* **[Flight Planner]** Fixed not being able to create custom waypoints for buildings.
 
 # 2.3.4
 
