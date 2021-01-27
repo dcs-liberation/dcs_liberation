@@ -1385,7 +1385,7 @@ def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> s
                     faction_value = faction_exists.get(request_type)
     if default_value is None:
         if request_type == "text":
-            return "I hate to say it, but it looks like the unit you're searching for doesn't exist. Perhaps the archives are incomplete..."
+            return "WIP - This unit doesn't have any description text yet."
         if request_type == "name":
             return original_name
         else:

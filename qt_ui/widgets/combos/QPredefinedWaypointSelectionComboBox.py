@@ -71,7 +71,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
             for cp in self.game.theater.controlpoints:
                 if (self.include_enemy and not cp.captured) or (self.include_friendly and cp.captured):
                     for ground_object in cp.ground_objects:
-                        if not ground_object.is_dead and not isinstance(ground_object, BuildingGroundObject):
+                        if not ground_object.is_dead and isinstance(ground_object, BuildingGroundObject):
                             wpt = FlightWaypoint(
                                 FlightWaypointType.CUSTOM,
                                 ground_object.position.x,

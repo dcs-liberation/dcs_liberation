@@ -26,6 +26,7 @@ from game.procurement import AircraftProcurementRequest
 from game.theater import (
     Airfield,
     ControlPoint,
+    Fob,
     FrontLine,
     MissionTarget,
     OffMapSpawn,
@@ -33,6 +34,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import (
+    BuildingGroundObject,
     EwrGroundObject,
     NavalGroundObject,
     VehicleGroupGroundObject,
@@ -346,12 +348,35 @@ class ObjectiveFinder:
         found_targets: Set[str] = set()
         for enemy_cp in self.enemy_control_points():
             for ground_object in enemy_cp.ground_objects:
+                # TODO: Reuse ground_object.mission_types.
+                # The mission types for ground objects are currently not
+                # accurate because we include things like strike and BAI for all
+                # targets since they have different planning behavior (waypoint
+                # generation is better for players with strike when the targets
+                # are stationary, AI behavior against weaker air defenses is
+                # better with BAI), so that's not a useful filter. Once we have
+                # better control over planning profiles and target dependent
+                # loadouts we can clean this up.
                 if isinstance(ground_object, VehicleGroupGroundObject):
                     # BAI target, not strike target.
                     continue
+
                 if isinstance(ground_object, NavalGroundObject):
                     # Anti-ship target, not strike target.
                     continue
+
+                if isinstance(ground_object, SamGroundObject):
+                    # SAMs are targeted by DEAD. No need to double plan.
+                    continue
+
+                is_building = isinstance(ground_object, BuildingGroundObject)
+                is_fob = isinstance(enemy_cp, Fob)
+                if is_building and is_fob and ground_object.airbase_group:
+                    # This is the FOB structure itself. Can't be repaired or
+                    # targeted by the player, so shouldn't be targetable by the
+                    # AI.
+                    continue
+
                 if ground_object.is_dead:
                     continue
                 if ground_object.name in found_targets:
