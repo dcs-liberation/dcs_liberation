@@ -16,6 +16,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Cheat Menu]** Added ability to toggle base capture and frontline advance/retreat cheats.
 * **[Skynet]** Updated to 2.0.1.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
+* **[Hercules]** Updated the Hercules Cargo list file.
 * **[Balance]** Opfor now gains income using the same rules as the player, significantly increasing their income relative to the player for most campaigns.
 * **[Balance]** Units now retreat from captured bases when able. Units with no retreat path will be captured and sold.
 * **[Economy]** FOBs generate only $10M per turn (previously $20M like airbases).
@@ -38,11 +39,13 @@ Saves from 2.3 are not compatible with 2.4.
 
 ## Fixes
 
+* **[Hercules]** Updated the default Hercules radio frequency.
 * **[Economy]** Pending unit orders at captured bases will be refunded.
 * **[UI]** Carrier group SAM threat rings now move with the carrier.
 * **[UI]** Base intel menu no longer compresses text, and is now scrollable.
 * **[UI]** Edit Flight window is now dynamically sized to adapt to the width of waypoint names, so they no longer get truncated.
 * **[UI]** Create Flight comboboxes now stretch to adjust to the size of their contents.
+* **[Factions]** USA with C-130 faction now links to the required mod.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
