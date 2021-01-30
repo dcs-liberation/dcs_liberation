@@ -23,6 +23,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
 * **[Economy]** Sales of aircraft and ground vehicles can now be cancelled before the next turn begins.
 * **[UI]** Multi-SAM objectives now show threat and detection rings per group.
+* **[UI]** New icon for AA sites with no active threat.
 * **[UI]** Unit names are now prettier and more accurate, and can now be set per-country for added historical flavour.
 * **[UI]** Default loadout is now shown for flights with no custom loadout selected.
 * **[UI]** Aircraft for a new flight are now only selectable if they match the task type for that flight.
