@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
-from PySide2.QtWidgets import QVBoxLayout, QTextEdit
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
@@ -178,9 +178,15 @@ class FactionSelection(QtWidgets.QWizardPage):
         # Create required mod layout
         self.requiredModsGroup = QtWidgets.QGroupBox("Required Mods")
         self.requiredModsGroupLayout = QtWidgets.QHBoxLayout()
-        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")
+        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")        
+        self.requiredMods.setOpenExternalLinks(True)
         self.requiredModsGroupLayout.addWidget(self.requiredMods)
         self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
+
+        # Docs Link
+        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Factions\"><span style=\"color:#FFFFFF;\">How to create your own faction</span></a>")
+        docsText.setAlignment(Qt.AlignCenter)
+        docsText.setOpenExternalLinks(True)
 
         # Link form fields
         self.registerField('blueFaction', self.blueFactionSelect)
@@ -190,6 +196,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.factionsGroup)
         layout.addWidget(self.requiredModsGroup)
+        layout.addWidget(docsText)
         self.setLayout(layout)
         self.updateUnitRecap()
 
@@ -311,6 +318,11 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         timePeriod.setBuddy(timePeriodSelect)
         timePeriodSelect.setCurrentIndex(21)
 
+        # Docs Link
+        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns\"><span style=\"color:#FFFFFF;\">How to create your own theater</span></a>")
+        docsText.setAlignment(Qt.AlignCenter)
+        docsText.setOpenExternalLinks(True)
+
         # Register fields
         self.registerField('timePeriod', timePeriodSelect)
 
@@ -321,11 +333,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
-        layout.addWidget(campaignList, 0, 0, 4, 1)
+        layout.addWidget(campaignList, 0, 0, 5, 1)
+        layout.addWidget(docsText, 5, 0, 1, 1)
         layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
         layout.addWidget(self.performanceText, 1, 1, 1, 1)
         layout.addWidget(mapSettingsGroup, 2, 1, 1, 1)
-        layout.addWidget(timeGroup, 3, 1, 1, 1)
+        layout.addWidget(timeGroup, 3, 1, 3, 1)
         self.setLayout(layout)
 
 
