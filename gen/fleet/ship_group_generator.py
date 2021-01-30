@@ -11,7 +11,7 @@ from gen.fleet.ru_dd_group import RussianNavyGroupGenerator, GrishaGroupGenerato
 from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
-
+from gen.fleet.cc_group import TiconderogaGroupGenerator
 
 SHIP_MAP = {
     "SchnellbootGroupGenerator": SchnellbootGroupGenerator,
@@ -19,6 +19,7 @@ SHIP_MAP = {
     "UBoatGroupGenerator": UBoatGroupGenerator,
     "OliverHazardPerryGroupGenerator": OliverHazardPerryGroupGenerator,
     "ArleighBurkeGroupGenerator": ArleighBurkeGroupGenerator,
+    "TiconderogaGroupGenerator": TiconderogaGroupGenerator,
     "RussianNavyGroupGenerator": RussianNavyGroupGenerator,
     "ChineseNavyGroupGenerator": ChineseNavyGroupGenerator,
     "GrishaGroupGenerator": GrishaGroupGenerator,
