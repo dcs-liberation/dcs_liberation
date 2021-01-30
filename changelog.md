@@ -31,6 +31,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** WIP - There is now a unit info button for each unit in the recruitment list, that should help newer players learn what each unit does.
 * **[UI]** Docs for time-on-target and creating new theaters/factions/loadouts are now linked in the UI at the appropriate places.
 * **[UI]** ASAP is now a checkbox rather than a button. Enabling this will disable the TOT selector but changes to the package structure will automatically re-ASAP the package.
+* **[UI]** Arrival airfield is now shown in the flight list if it differs from the departure airfield.
 * **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
 * **[Factions]** Added Poland 2010 faction.
 * **[Factions]** Added Greece 2005 faction.
