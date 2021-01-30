@@ -27,6 +27,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** Default loadout is now shown for flights with no custom loadout selected.
 * **[UI]** Aircraft for a new flight are now only selectable if they match the task type for that flight.
 * **[UI]** WIP - There is now a unit info button for each unit in the recruitment list, that should help newer players learn what each unit does.
+* **[UI]** Docs for creating new theaters/factions/loadouts are now linked in the UI at the appropriate places.
 * **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
 * **[Factions]** Added Poland 2010 faction.
 * **[Factions]** Added Greece 2005 faction.
