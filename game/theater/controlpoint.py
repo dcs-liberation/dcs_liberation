@@ -235,7 +235,7 @@ class ControlPoint(MissionTarget, ABC):
                  at: db.StartingPosition, size: int,
                  importance: float, has_frontline=True,
                  cptype=ControlPointType.AIRBASE):
-        super().__init__(" ".join(re.split(r"[ \-]", name)[:2]), position)
+        super().__init__(name, position)
         # TODO: Should be Airbase specific.
         self.id = cp_id
         self.full_name = name
