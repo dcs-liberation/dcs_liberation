@@ -16,12 +16,13 @@ class QPylonEditor(QComboBox):
         super().__init__()
         self.flight = flight
         self.pylon = pylon
+        self.game = game
 
         current = self.flight.loadout.get(self.pylon.number)
 
         self.addItem("None", None)
-        if game.settings.restrict_weapons_by_date:
-            weapons = pylon.available_on(game.date)
+        if self.game.settings.restrict_weapons_by_date:
+            weapons = pylon.available_on(self.game.date)
         else:
             weapons = pylon.allowed
         allowed = sorted(weapons, key=operator.attrgetter("name"))
@@ -42,10 +43,11 @@ class QPylonEditor(QComboBox):
             logging.debug(
                 f"Pylon {self.pylon.number} changed to {selected.name}")
 
-    def default_loadout(self, pylon: Pylon) -> None:
+    def default_loadout(self) -> None:
         self.flight.unit_type.load_payloads()
         self.setCurrentText("None")
         pylon_default_weapon = None
+        historical_weapon = None
         loadout = None
         # Iterate through each possible payload type for a given aircraft.
         # Some aircraft have custom loadouts that in aren't the standard set.
@@ -60,5 +62,19 @@ class QPylonEditor(QComboBox):
                     if pylon_default_weapon == "<CLEAN>":
                         pylon_default_weapon = None
         if pylon_default_weapon is not None:
-            #self.setCurrentIndex(self.findText(weapons_data.weapon_ids.get(pylon_default_weapon).get("name")))
-            self.setCurrentText(weapons_data.weapon_ids.get(pylon_default_weapon).get("name"))
+            if self.game.settings.restrict_weapons_by_date:
+                orig_weapon = Weapon.from_clsid(pylon_default_weapon)
+                if not orig_weapon.available_on(self.game.date):
+                    for fallback in orig_weapon.fallbacks:
+                        if historical_weapon is None:
+                            if not self.pylon.can_equip(fallback):
+                                continue
+                            if not fallback.available_on(self.game.date):
+                                continue
+                            historical_weapon = fallback
+                else:
+                    historical_weapon = orig_weapon
+                if historical_weapon is not None:
+                    self.setCurrentText(weapons_data.weapon_ids.get(historical_weapon.cls_id).get("name"))        
+            else:
+                self.setCurrentText(weapons_data.weapon_ids.get(pylon_default_weapon).get("name"))
