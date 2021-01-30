@@ -20,6 +20,7 @@ from game.theater.missiontarget import MissionTarget
 from game.utils import Speed
 from .flights.flight import Flight, FlightType
 from .flights.flightplan import FormationFlightPlan
+from .flights.traveltime import TotEstimator
 
 
 @dataclass(frozen=True)
@@ -53,6 +54,11 @@ class Package:
     flights: List[Flight] = field(default_factory=list)
 
     delay: int = field(default=0)
+
+    #: True if the package ToT should be reset to ASAP whenever the player makes
+    #: a change. This is really a UI property rather than a game property, but
+    #: we want it to persist in the save.
+    auto_asap: bool = field(default=False)
 
     #: Desired TOT as an offset from mission start.
     time_over_target: timedelta = field(default=timedelta())
@@ -126,6 +132,9 @@ class Package:
         if times:
             return max(times)
         return None
+
+    def set_tot_asap(self) -> None:
+        self.time_over_target = TotEstimator(self).earliest_tot()
 
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""

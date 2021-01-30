@@ -1,9 +1,10 @@
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout, QLabel
+from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout
 
 from game import Game
 from gen.ato import Package
 from gen.flights.flight import Flight
+from qt_ui.models import PackageModel
 from qt_ui.windows.mission.flight.settings.QFlightDepartureDisplay import \
     QFlightDepartureDisplay
 from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import \
@@ -19,14 +20,14 @@ from qt_ui.windows.mission.flight.settings.QCustomName import \
 class QGeneralFlightSettingsTab(QFrame):
     on_flight_settings_changed = Signal()
 
-    def __init__(self, game: Game, package: Package, flight: Flight):
+    def __init__(self, game: Game, package_model: PackageModel, flight: Flight):
         super().__init__()
 
         layout = QGridLayout()
         flight_info = QFlightTypeTaskInfo(flight)
-        flight_departure = QFlightDepartureDisplay(package, flight)
-        flight_slots = QFlightSlotEditor(flight, game)
-        flight_start_type = QFlightStartType(flight)
+        flight_departure = QFlightDepartureDisplay(package_model, flight)
+        flight_slots = QFlightSlotEditor(package_model, flight, game)
+        flight_start_type = QFlightStartType(package_model, flight)
         flight_custom_name = QFlightCustomName(flight)
         layout.addWidget(flight_info, 0, 0)
         layout.addWidget(flight_departure, 1, 0)

@@ -1,14 +1,14 @@
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QComboBox, QLabel
-from dcs.mission import StartType
+from PySide2.QtWidgets import QComboBox, QGroupBox, QHBoxLayout, QLabel
 
 from gen.flights.flight import Flight
+from qt_ui.models import PackageModel
 
 
 class QFlightStartType(QGroupBox):
 
-    def __init__(self, flight:Flight):
-        super(QFlightStartType, self).__init__()
-
+    def __init__(self, package_model: PackageModel, flight: Flight):
+        super().__init__()
+        self.package_model = package_model
         self.flight = flight
 
         self.layout = QHBoxLayout()
@@ -28,6 +28,4 @@ class QFlightStartType(QGroupBox):
     def _on_start_type_selected(self):
         selected = self.start_type.currentData()
         self.flight.start_type = selected
-
-
-
+        self.package_model.update_tot()

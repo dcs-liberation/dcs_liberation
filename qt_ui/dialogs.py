@@ -60,7 +60,7 @@ class Dialog:
         """Opens the dialog to edit the given flight."""
         cls.edit_flight_dialog = QEditFlightDialog(
             cls.game_model,
-            package_model.package,
+            package_model,
             flight,
             parent=parent
         )
