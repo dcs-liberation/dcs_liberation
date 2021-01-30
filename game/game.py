@@ -31,7 +31,8 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import ProcurementAi
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint
+from .theater import ConflictTheater, ControlPoint, TheaterGroundObject
+from game.theater.theatergroundobject import MissileSiteGroundObject
 from .threatzones import ThreatZones
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
@@ -388,9 +389,14 @@ class Game:
             points.append(front_line.control_point_a.position)
             points.append(front_line.control_point_b.position)
 
-        # If do_not_cull_carrier is enabled, add carriers as culling point
-        if self.settings.perf_do_not_cull_carrier:
-            for cp in self.theater.controlpoints:
+        for cp in self.theater.controlpoints:
+            # Don't cull missile sites - their range is long enough to make them
+            # easily culled despite being a threat.
+            for tgo in cp.ground_objects:
+                if isinstance(tgo, MissileSiteGroundObject):
+                    points.append(cp.position)
+            # If do_not_cull_carrier is enabled, add carriers as culling point
+            if self.settings.perf_do_not_cull_carrier:
                 if cp.is_carrier or cp.is_lha:
                     points.append(cp.position)
 
