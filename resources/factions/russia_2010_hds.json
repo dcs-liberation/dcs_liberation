@@ -1,0 +1,95 @@
+{
+  "country": "Russia",
+  "name": "Russia 2010 (High Digit SAMs)",
+  "authors": "Khopa",
+  "description": "<p>Russian army in the early 2010s, featuring the High Digit SAMs mod units. </p>",
+  "aircrafts": [
+    "MiG_29S",
+    "MiG_31",
+    "Su_24M",
+    "Su_25",
+    "Su_25T",
+    "Su_27",
+    "Su_30",
+    "Su_33",
+    "Su_34",
+    "L_39ZA",
+    "Mi_8MT",
+    "Mi_24V",
+    "Mi_28N",
+    "Ka_50",
+    "Tu_22M3",
+    "Tu_95MS",
+    "Tu_142",
+    "Tu_160"
+  ],
+  "awacs": [
+    "A_50"
+  ],
+  "tankers": [
+    "IL_78M"
+  ],
+  "frontline_units": [
+    "IFV_BMP_1",
+    "IFV_BMP_2",
+    "IFV_BMP_3",
+    "APC_BTR_80",
+    "APC_BTR_82A",
+    "MBT_T_90",
+    "MBT_T_80U",
+    "MBT_T_72B3",
+    "SAM_SA_19_Tunguska_2S6"
+  ],
+  "artillery_units": [
+    "MLRS_9K57_Uragan_BM_27",
+    "SPH_2S19_Msta"
+  ],
+  "logistics_units": [
+    "Transport_Ural_375",
+    "Transport_UAZ_469"
+  ],
+  "infantry_units": [
+    "Paratrooper_AKS",
+    "Infantry_Soldier_Rus",
+    "Paratrooper_RPG_16",
+    "_2B11_mortar",
+    "SAM_SA_18_Igla_MANPADS"
+  ],
+  "air_defenses": [
+    "SA17Generator",
+    "SA13Generator",
+    "SA15Generator",
+    "SA19Generator",
+    "SA10BGenerator",
+    "SA12Generator",
+    "SA20Generator",
+    "SA20BGenerator",
+    "SA23Generator"
+  ],
+  "ewrs": [
+    "BoxSpringGenerator",
+    "TallRackGenerator"
+  ],
+  "aircraft_carrier": [
+    "CV_1143_5_Admiral_Kuznetsov"
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "FF_1135M_Rezky"
+  ],
+  "cruisers": [
+    "FSG_1241_1MP_Molniya"
+  ],
+  "requirements": { "High Digit SAMs":  "https://github.com/Auranis/HighDigitSAMs/releases"},
+  "carrier_names": [
+    "Admiral Kuznetov"
+  ],
+  "navy_generators": [
+    "RussianNavyGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

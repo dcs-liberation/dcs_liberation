@@ -165,6 +165,7 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
@@ -218,6 +219,49 @@ vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
 vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
 vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
 vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
+
+vehicle_map[highdigitsams.AAA_SON_9_Fire_Can.id] = highdigitsams.AAA_SON_9_Fire_Can
+vehicle_map[highdigitsams.AAA_100mm_KS_19.id] = highdigitsams.AAA_100mm_KS_19
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_54K6_CP.id] = highdigitsams.SAM_SA_10B_S_300PS_54K6_CP
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN
+vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE
+vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_30N6_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_30N6_TR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6.id] = highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck.id] = highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S457_CP.id] = highdigitsams.SAM_SA_12_S_300V_9S457_CP
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A82_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A82_LN
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A83_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A83_LN
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S15_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S15_SR
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S19_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S19_SR
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S32_TR.id] = highdigitsams.SAM_SA_12_S_300V_9S32_TR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP.id] = highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR.id] = highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN
+vehicle_map[highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2.id] = highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2
+vehicle_map[highdigitsams.SAM_SA_2__V759__LN_SM_90.id] = highdigitsams.SAM_SA_2__V759__LN_SM_90
+vehicle_map[highdigitsams.SAM_HQ_2_LN_SM_90.id] = highdigitsams.SAM_HQ_2_LN_SM_90
+vehicle_map[highdigitsams.SAM_SA_3__V_601P__LN_5P73.id] = highdigitsams.SAM_SA_3__V_601P__LN_5P73
+vehicle_map[highdigitsams.SAM_SA_24_Igla_S_manpad.id] = highdigitsams.SAM_SA_24_Igla_S_manpad
+vehicle_map[highdigitsams.SAM_SA_14_Strela_3_manpad.id] = highdigitsams.SAM_SA_14_Strela_3_manpad
+vehicle_map[highdigitsams.Polyana_D4M1_C2_node.id] = highdigitsams.Polyana_D4M1_C2_node
+vehicle_map[highdigitsams._34Ya6E_Gazetchik_E_decoy.id] = highdigitsams._34Ya6E_Gazetchik_E_decoy
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -475,14 +519,14 @@ PRICES = {
     AirDefence.SAM_SA_19_Tunguska_2S6: 30,
     AirDefence.SAM_SA_6_Kub_LN_2P25: 20,
     AirDefence.SAM_SA_3_S_125_LN_5P73: 6,
-    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 22,
-    AirDefence.SAM_SA_10_S_300PS_LN_5P85D: 22,
+
     AirDefence.SAM_SA_11_Buk_LN_9A310M1: 30,
+    AirDefence.SAM_SA_11_Buk_CC_9S470M1: 25,
+    AirDefence.SAM_SA_11_Buk_SR_9S18M1: 28,
     AirDefence.SAM_SA_8_Osa_9A33: 28,
     AirDefence.SAM_SA_15_Tor_9A331: 40,
     AirDefence.SAM_SA_13_Strela_10M3_9A35M3: 16,
     AirDefence.SAM_SA_9_Strela_1_9P31: 12,
-    AirDefence.SAM_SA_11_Buk_CC_9S470M1: 25,
     AirDefence.SAM_SA_8_Osa_LD_9T217: 22,
     AirDefence.SAM_Patriot_AMG_AN_MRC_137: 35,
     AirDefence.SAM_Patriot_ECS_AN_MSQ_104: 30,
@@ -497,7 +541,6 @@ PRICES = {
     AirDefence.SAM_Patriot_EPP_III: 15,
     AirDefence.SAM_Patriot_ICC: 18,
     AirDefence.SAM_Roland_ADS: 12,
-    AirDefence.SAM_SA_10_S_300PS_CP_54K6: 18,
     AirDefence.Stinger_MANPADS: 6,
     AirDefence.SAM_Stinger_comm_dsr: 4,
     AirDefence.SAM_Stinger_comm: 4,
@@ -515,11 +558,8 @@ PRICES = {
     AirDefence.SAM_SA_18_Igla_S_comm: 8,
     AirDefence.EWR_1L13: 30,
     AirDefence.SAM_SA_6_Kub_STR_9S91: 22,
-    AirDefence.SAM_SA_10_S_300PS_TR_30N6: 24,
-    AirDefence.SAM_SA_10_S_300PS_SR_5N66M: 30,
+
     AirDefence.EWR_55G6: 30,
-    AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 30,
-    AirDefence.SAM_SA_11_Buk_SR_9S18M1: 28,
     AirDefence.CP_9S80M1_Sborka: 10,
     AirDefence.SAM_Hawk_TR_AN_MPQ_46: 14,
     AirDefence.SAM_Hawk_SR_AN_MPQ_50: 18,
@@ -579,6 +619,57 @@ PRICES = {
     frenchpack.DIM__TOYOTA_GREEN: 2,
     frenchpack.DIM__TOYOTA_DESERT: 2,
     frenchpack.DIM__KAMIKAZE: 6,
+
+    # SA-10
+    AirDefence.SAM_SA_10_S_300PS_CP_54K6: 18,
+    AirDefence.SAM_SA_10_S_300PS_TR_30N6: 24,
+    AirDefence.SAM_SA_10_S_300PS_SR_5N66M: 30,
+    AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 30,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 22,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85D: 22,
+
+    # High digit sams mod
+    highdigitsams.AAA_SON_9_Fire_Can: 8,
+    highdigitsams.AAA_100mm_KS_19: 10,
+
+    highdigitsams.SAM_SA_10B_S_300PS_54K6_CP: 20,
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN: 24,
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN: 24,
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE: 24,
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE: 24,
+    highdigitsams.SAM_SA_10B_S_300PS_30N6_TR: 26,
+    highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR: 26,
+    highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR: 32,
+    highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR: 32,
+
+    highdigitsams.SAM_SA_12_S_300V_9S457_CP: 22,
+    highdigitsams.SAM_SA_12_S_300V_9A82_LN: 26,
+    highdigitsams.SAM_SA_12_S_300V_9A83_LN: 26,
+    highdigitsams.SAM_SA_12_S_300V_9S15_SR: 34,
+    highdigitsams.SAM_SA_12_S_300V_9S19_SR: 34,
+    highdigitsams.SAM_SA_12_S_300V_9S32_TR: 28,
+
+    highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6: 26,
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E: 30,
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck: 32,
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E: 38,
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E: 38,
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE: 28,
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE: 28,
+
+    highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2: 27,
+    highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck: 33,
+    highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2: 40,
+    highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2: 30,
+
+    highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP: 30,
+    highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR: 45,
+    highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR: 45,
+    highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR: 35,
+    highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN: 32,
+    highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN: 32,
+
+    highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2: 40,
 
 }
 

@@ -11,6 +11,7 @@ from game.theater.theatergroundobject import SamGroundObject
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
 from gen.sam.aaa_flak18 import Flak18Generator
+from gen.sam.aaa_ks19 import KS19Generator
 from gen.sam.aaa_ww2_ally_flak import AllyWW2FlakGenerator
 from gen.sam.aaa_zsu57 import ZSU57Generator
 from gen.sam.aaa_zu23_insurgent import ZU23InsurgentGenerator
@@ -48,11 +49,12 @@ from gen.sam.sam_roland import RolandGenerator
 from gen.sam.sam_sa10 import (
     SA10Generator,
     Tier2SA10Generator,
-    Tier3SA10Generator,
+    Tier3SA10Generator, SA10BGenerator, SA12Generator, SA20Generator, SA20BGenerator, SA23Generator,
 )
 from gen.sam.sam_sa11 import SA11Generator
 from gen.sam.sam_sa13 import SA13Generator
 from gen.sam.sam_sa15 import SA15Generator
+from gen.sam.sam_sa17 import SA17Generator
 from gen.sam.sam_sa19 import SA19Generator
 from gen.sam.sam_sa2 import SA2Generator
 from gen.sam.sam_sa3 import SA3Generator
@@ -100,7 +102,15 @@ SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
     "EarlyColdWarFlakGenerator": EarlyColdWarFlakGenerator,
     "FreyaGenerator": FreyaGenerator,
     "AllyWW2FlakGenerator": AllyWW2FlakGenerator,
-    "ZSU57Generator": ZSU57Generator
+    "ZSU57Generator": ZSU57Generator,
+
+    "KS19Generator": KS19Generator,
+    "SA10BGenerator": SA10BGenerator,
+    "SA12Generator": SA12Generator,
+    "SA17Generator": SA17Generator,
+    "SA20Generator": SA20Generator,
+    "SA20BGenerator": SA20BGenerator,
+    "SA23Generator": SA23Generator,
 }
 
 
