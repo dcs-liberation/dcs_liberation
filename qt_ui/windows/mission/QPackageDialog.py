@@ -3,7 +3,7 @@ import logging
 from datetime import timedelta
 from typing import Optional
 
-from PySide2.QtCore import QItemSelection, QTime, Signal
+from PySide2.QtCore import QItemSelection, QTime, Signal, Qt
 from PySide2.QtWidgets import (
     QDialog,
     QHBoxLayout,
@@ -78,6 +78,7 @@ class QPackageDialog(QDialog):
         self.tot_spinner.setMinimumTime(QTime(0, 0))
         self.tot_spinner.setDisplayFormat("T+hh:mm:ss")
         self.tot_spinner.timeChanged.connect(self.save_tot)
+        self.tot_spinner.setToolTip("Package TOT relative to mission TOT")
         self.tot_column.addWidget(self.tot_spinner)
 
         self.reset_tot_button = QPushButton("ASAP")
@@ -86,7 +87,12 @@ class QPackageDialog(QDialog):
             "arrive at the target."
         )
         self.reset_tot_button.clicked.connect(self.reset_tot)
-        self.tot_column.addWidget(self.reset_tot_button)
+        self.tot_column.addWidget(self.reset_tot_button)    
+
+        self.tot_help_label = QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Mission-planning\"><span style=\"color:#FFFFFF;\">Help</span></a>")
+        self.tot_help_label.setAlignment(Qt.AlignCenter)
+        self.tot_help_label.setOpenExternalLinks(True)
+        self.tot_column.addWidget(self.tot_help_label)
 
         self.package_view = QFlightList(self.game_model, self.package_model)
         self.package_view.selectionModel().selectionChanged.connect(
