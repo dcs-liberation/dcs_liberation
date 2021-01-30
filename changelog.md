@@ -49,6 +49,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** Edit Flight window is now dynamically sized to adapt to the width of waypoint names, so they no longer get truncated.
 * **[UI]** Create Flight comboboxes now stretch to adjust to the size of their contents.
 * **[Factions]** USA with C-130 faction now links to the required mod.
+* **[Campaign]** Fixed issue where destroyed buildings would sometimes not count as destroyed and thus respawn.
 * **[Units]** J-11A is no longer spawned with empty loadout.
 * **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
 * **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
