@@ -37,6 +37,8 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaigns]** Added campaign "Exercise Vegas Nerve" by Starfire 
 * **[New game Wizard]** The theater page is now the first page of the campaign wizard, recommended factions will be selected automatically on the faction selection page
 * **[New game Wizard]** Added information text about the selected campaign performance.
+* **[Mod Support]** Added support for High Digit SAMs mod 1.4.0
+* **[Mod Support]** Added SAMs sites generator : KS19Generator, SA10BGenerator, SA12Generator, SA17Generator, SA20Generator, SA20BGenerator, SA23Generator    
 
 ## Fixes
 
