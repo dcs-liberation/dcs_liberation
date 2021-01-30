@@ -27,14 +27,14 @@ class QFlightSlotEditor(QGroupBox):
 
         layout = QGridLayout()
 
-        self.aircraft_count = QLabel("Aircraft count :")
+        self.aircraft_count = QLabel("Aircraft count:")
         self.aircraft_count_spinner = QSpinBox()
         self.aircraft_count_spinner.setMinimum(1)
         self.aircraft_count_spinner.setMaximum(max_count)
         self.aircraft_count_spinner.setValue(flight.count)
         self.aircraft_count_spinner.valueChanged.connect(self._changed_aircraft_count)
 
-        self.client_count = QLabel("Client slots count :")
+        self.client_count = QLabel("Client slots count:")
         self.client_count_spinner = QSpinBox()
         self.client_count_spinner.setMinimum(0)
         self.client_count_spinner.setMaximum(max_count)

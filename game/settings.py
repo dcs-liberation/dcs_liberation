@@ -19,10 +19,11 @@ class Settings:
     supercarrier: bool = False
     generate_marks: bool = True
     manpads: bool = True
-    cold_start: bool = False  # Legacy parameter do not use
     version: Optional[str] = None
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
+
+    default_start_type: str = "Cold"
 
     # Campaign management
     automate_runway_repair: bool = False
@@ -36,7 +37,6 @@ class Settings:
     perf_artillery: bool = True
     perf_moving_units: bool = True
     perf_infantry: bool = True
-    perf_ai_parking_start: bool = True
     perf_destroyed_units: bool = True
 
     # Performance culling

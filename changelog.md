@@ -13,6 +13,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Campaign AI]** Reserve aircraft will be ordered if needed to prioritize next turn's CAP/CAS over offensive missions.
 * **[Campaign AI]** Multiple rounds of CAP will be planned (roughly 90 minutes of coverage). Default starting budget has increased to account for the increased need for aircraft.
 * **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
+* **[Mission Generator]** Default start type can now be chosen in the settings. This replaces the non-functional "AI Parking Start" option. **Selecting any type other than cold will break OCA/Aircraft missions.**
 * **[Cheat Menu]** Added ability to toggle base capture and frontline advance/retreat cheats.
 * **[Skynet]** Updated to 2.0.1.
 * **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.

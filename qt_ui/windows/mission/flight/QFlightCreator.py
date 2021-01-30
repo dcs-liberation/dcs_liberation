@@ -155,12 +155,11 @@ class QFlightCreator(QDialog):
 
         if isinstance(origin, OffMapSpawn):
             start_type = "In Flight"
-        elif self.game.settings.perf_ai_parking_start:
-            start_type = "Cold"
         else:
-            start_type = "Warm"
-        flight = Flight(self.package, self.country, aircraft, size, task, start_type, origin,
-                        arrival, divert, custom_name=self.custom_name_text)
+            start_type = self.game.settings.default_start_type
+        flight = Flight(self.package, self.country, aircraft, size, task,
+                        start_type, origin, arrival, divert,
+                        custom_name=self.custom_name_text)
         flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
