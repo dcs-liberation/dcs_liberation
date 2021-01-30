@@ -352,9 +352,14 @@ class GroundConflictGenerator:
                     to_cp.position.random_point_within(500, 0)
                 )
             else:
+                # We use an offset heading here because DCS doesn't always
+                # force vehicles to move if there's no heading change.
+                offset_heading = forward_heading - 1
+                if offset_heading < 0:
+                    offset_heading = 359
                 attack_point = self.find_offensive_point(
                     dcs_group,
-                    forward_heading,
+                    offset_heading,
                     AGGRESIVE_MOVE_DISTANCE
                 )
             dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
@@ -367,7 +372,12 @@ class GroundConflictGenerator:
                     to_cp.position.random_point_within(500, 0)
                 )
             else:
-                attack_point = self.find_offensive_point(dcs_group, forward_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
+                # We use an offset heading here because DCS doesn't always
+                # force vehicles to move if there's no heading change.
+                offset_heading = forward_heading - 1
+                if offset_heading < 0:
+                    offset_heading = 359
+                attack_point = self.find_offensive_point(dcs_group, offset_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE)
             dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
         elif stance == CombatStance.ELIMINATION:
             # In elimination mode, the units focus on destroying as much enemy groups as possible
