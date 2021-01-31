@@ -2,7 +2,7 @@ local unitPayloads = {
 	["name"] = "AV8BNA",
 	["payloads"] = {
 		[1] = {
-			["name"] = "ANTISHIP",
+			["name"] = "INTERCEPT",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
@@ -13,24 +13,16 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "LAU_117_AGM_65F",
+					["CLSID"] = "{AIM-9M-ON-ADAPTER}",
 					["num"] = 2,
 				},
 				[4] = {
-					["CLSID"] = "LAU_117_AGM_65F",
+					["CLSID"] = "{AIM-9M-ON-ADAPTER}",
 					["num"] = 7,
 				},
 				[5] = {
-					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
-					["num"] = 5,
-				},
-				[6] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 6,
-				},
-				[7] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 3,
+					["CLSID"] = "{GAU_12_Equalizer}",
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -61,11 +53,11 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[6] = {
-					["CLSID"] = "LAU_117_AGM_65G",
+					["CLSID"] = "LAU_117_AGM_65F",
 					["num"] = 6,
 				},
 				[7] = {
-					["CLSID"] = "LAU_117_AGM_65G",
+					["CLSID"] = "LAU_117_AGM_65F",
 					["num"] = 3,
 				},
 			},
@@ -114,6 +106,42 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
+			["name"] = "ANTISHIP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
+					["num"] = 8,
+				},
+				[2] = {
+					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
+					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 6,
+				},
+				[7] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[5] = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
@@ -133,36 +161,8 @@ local unitPayloads = {
 				[1] = 31,
 			},
 		},
-		[5] = {
-			["name"] = "CAP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
-					["num"] = 8,
-				},
-				[2] = {
-					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{AIM-9M-ON-ADAPTER}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{AIM-9M-ON-ADAPTER}",
-					["num"] = 7,
-				},
-				[5] = {
-					["CLSID"] = "{GAU_12_Equalizer}",
-					["num"] = 4,
-				},
-			},
-			["tasks"] = {
-				[1] = 31,
-			},
-		},
 		[6] = {
-			["name"] = "INTERCEPT",
+			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
