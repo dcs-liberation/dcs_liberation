@@ -326,10 +326,6 @@ STRIKE_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-    B_1B,
-    B_52H,
-    Tu_160,
-    Tu_95MS,
 ]
 
 
