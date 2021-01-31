@@ -960,12 +960,25 @@
             "year-of-variant-introduction": "1943"
         }
     }],
+    "AAA Bofors 40mm": [{
+        "default": {
+            "name": "Bofors 40 mm gun",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Bofors",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1934"
+        },
+        "UK": {
+            "name": "QF 40 mm Mark III",
+            "year-of-variant-introduction": "1939"
+        }
+    }],
     "AAA Flak 38": [{
         "default": {
             "name": "2 cm Flak 38",
             "country-of-origin": "Germany",
             "manufacturer": "Mauser",
-            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "role": "Anti-Aircraft Gun",
             "year-of-variant-introduction": "1934"
         }
     }],
@@ -974,7 +987,7 @@
             "name": "2 cm Flakvierling 38",
             "country-of-origin": "Germany",
             "manufacturer": "Mauser",
-            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "role": "Anti-Aircraft Gun",
             "year-of-variant-introduction": "1934"
         }
     }],
