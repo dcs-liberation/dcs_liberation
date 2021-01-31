@@ -35,7 +35,8 @@ class QBudgetBox(QGroupBox):
         :param budget: Current money available
         :param reward: Planned reward for next turn
         """
-        self.money_amount.setText(str(budget) + "M (+" + str(reward) + "M)")
+        #self.money_amount.setText(str(budget) + "M (+" + str(reward) + "M)")
+        self.money_amount.setText(str(budget) + "M (+" + str(round(reward,2)) + "M)")
 
     def setGame(self, game):
         if game is None:
