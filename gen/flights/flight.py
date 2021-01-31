@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from gen.flights.flightplan import FlightPlan
 
 
+#Hier werden nur die Namen gezogen
 class FlightType(Enum):
     TARCAP = "TARCAP"
     BARCAP = "BARCAP"
@@ -33,6 +34,7 @@ class FlightType(Enum):
     SWEEP = "Fighter sweep"
     OCA_RUNWAY = "OCA/Runway"
     OCA_AIRCRAFT = "OCA/Aircraft"
+    AWACS = "AWACS"
 
     def __str__(self) -> str:
         return self.value
