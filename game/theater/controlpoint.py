@@ -857,6 +857,7 @@ class Fob(ControlPoint):
         else:
             yield from [
                 FlightType.STRIKE,
+                FlightType.AWACS,
                 FlightType.SWEEP,
                 FlightType.ESCORT,
                 FlightType.SEAD,
