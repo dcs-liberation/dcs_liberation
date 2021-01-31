@@ -63,6 +63,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Units]** Submarines have been removed for now as they aren't wholly functional.
 * **[Units]** Fixed "FACTION ERROR : Unable to find OliverHazardPerryGroupGenerator in pydcs" error at startup.
 * **[Mission Generator]** Fixed a bug where units set to Aggressive stance sometimes did not move.
+* **[Mission Generator]** Flyover points for OCA/Aircraft missions are now generated correctly.
 * **[Flight Planner]** Fixed not being able to create custom waypoints for buildings.
 * **[Flight Planner]** Strike missions will no longer be automatically planned against SAMs.
 * **[Flight Planner]** Strike missions will no longer be automatically planned against FOB structures.

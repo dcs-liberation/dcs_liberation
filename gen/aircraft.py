@@ -1413,7 +1413,10 @@ class PydcsWaypointBuilder:
             name=self.mission.string(self.waypoint.name))
 
         if self.waypoint.flyover:
-            waypoint.type = PointAction.FlyOverPoint.value
+            waypoint.action = PointAction.FlyOverPoint
+            # It seems we need to leave waypoint.type exactly as it is even
+            # though it's set to "Turning Point". If I set this to "Fly Over
+            # Point" and then save the mission in the ME DCS resets it.
 
         waypoint.alt_type = self.waypoint.alt_type
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
