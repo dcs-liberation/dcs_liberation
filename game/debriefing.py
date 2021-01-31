@@ -199,7 +199,9 @@ class Debriefing:
             building = self.unit_map.building_or_fortification(unit_name)
             # Try appending object to the name, because we do this for building statics.
             if building is None:
-                building = self.unit_map.building_or_fortification(unit_name + " object")
+                building = self.unit_map.building_or_fortification(
+                    f"{unit_name} object"
+                )
             if building is not None:
                 if building.ground_object.control_point.captured:
                     losses.player_buildings.append(building)
