@@ -168,6 +168,8 @@ class PackageModel(QAbstractListModel):
     def set_tot(self, tot: datetime.timedelta) -> None:
         self.package.time_over_target = tot
         self.update_tot()
+        # For some reason this is needed to make the UI update quickly.
+        self.layoutChanged.emit()
 
     def set_asap(self, asap: bool) -> None:
         self.package.auto_asap = asap
