@@ -59,6 +59,8 @@ class QMapGroundObject(QMapObject):
     def production_per_turn(self) -> int:
         production = 0
         for building in self.buildings:
+            if building.is_dead:
+                continue
             if building.category in REWARDS.keys():
                 production += REWARDS[building.category]
         return production
