@@ -798,7 +798,9 @@ UNIT_BY_TASK = {
         S_3B_Tanker,
         KC135MPRS,
     ],
+    #todo B1B RAUS HIER
     AWACS: [
+        B_1B,
         E_3A,
         E_2C,
         A_50,
@@ -1117,7 +1119,8 @@ COMMON_OVERRIDE = {
     GroundAttack: "STRIKE",
     Escort: "CAP",
     RunwayAttack: "RUNWAY_ATTACK",
-    FighterSweep: "CAP"
+    FighterSweep: "CAP",
+    AWACS: "AWACS"
 }
 
 """
@@ -1328,6 +1331,7 @@ CARRIER_CAPABLE = [
     A_4E_C,
     Rafale_M,
     S_3B,
+    E_2C,
 
     UH_1H,
     Mi_8MT,
