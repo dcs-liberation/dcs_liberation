@@ -57,6 +57,7 @@ from dcs.planes import (
     MiG_29K,
     MiG_29S,
     MiG_31,
+    E_2C,
     Mirage_2000_5,
     P_47D_30,
     P_47D_30bl1,
@@ -88,6 +89,7 @@ from dcs.planes import (
 from dcs.unittype import FlyingType
 
 from gen.flights.flight import FlightType
+from pydcs.dcs.planes import E_2C
 
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
@@ -368,6 +370,11 @@ DRONES = [
     WingLoong_I
 ]
 
+AWACS_CAPABLE = [
+    E_2C,
+    B_1B
+]
+
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
@@ -391,6 +398,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return STRIKE_CAPABLE
     elif task == FlightType.ESCORT:
         return CAP_CAPABLE
+    elif task == FlightType.AWACS:
+        return AWACS_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
