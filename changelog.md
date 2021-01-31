@@ -2,6 +2,14 @@
 
 Saves from 2.3 are not compatible with 2.4.
 
+## Highlights
+
+* Improved flight plan generation to avoid loitering in or traveling through threatened areas when practical.
+* Improved AI aircraft purchasing behavior.
+* Era-restricted weapons (work in progress).
+* Tons of UI polish.
+* Rebalanced economy to keep opfor competitive over the course of the game.
+
 ## Features/Improvements
 
 * **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
