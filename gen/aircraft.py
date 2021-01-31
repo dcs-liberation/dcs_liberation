@@ -38,6 +38,10 @@ from dcs.planes import (
     SpitfireLFMkIXCW,
     Su_33,
     Tu_22M3,
+    E_3A,
+    E_2C,
+    A_50,
+    KJ_2000
 )
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
@@ -66,6 +70,7 @@ from dcs.task import (
     Targets,
     Task,
     WeaponType,
+    AWACS,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -1249,6 +1254,17 @@ class AircraftConflictGenerator:
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True)
 
+    def configure_awacs(
+            self, group: FlyingGroup, package: Package, flight: Flight,
+            dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = AWACS.name
+        self._setup_group(group, AWACS, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True)
+
     def configure_escort(self, group: FlyingGroup, package: Package,
                          flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -1274,6 +1290,8 @@ class AircraftConflictGenerator:
             self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.SWEEP:
             self.configure_sweep(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.AWACS:
+            self.configure_awacs(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.DEAD:
