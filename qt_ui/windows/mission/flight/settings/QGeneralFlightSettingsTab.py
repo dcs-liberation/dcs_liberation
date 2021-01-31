@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout
 from game import Game
 from gen.flights.flight import Flight
 from qt_ui.models import PackageModel
-from qt_ui.windows.mission.flight.settings.QFlightDepartureDisplay import \
-    QFlightDepartureDisplay
+from qt_ui.windows.mission.flight.settings.FlightAirfieldDisplay import \
+    FlightAirfieldDisplay
 from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import \
     QFlightSlotEditor
 from qt_ui.windows.mission.flight.settings.QFlightStartType import \
@@ -24,7 +24,8 @@ class QGeneralFlightSettingsTab(QFrame):
 
         layout = QGridLayout()
         layout.addWidget(QFlightTypeTaskInfo(flight), 0, 0)
-        layout.addWidget(QFlightDepartureDisplay(package_model, flight), 1, 0)
+        layout.addWidget(FlightAirfieldDisplay(game, package_model, flight), 1,
+                         0)
         layout.addWidget(QFlightSlotEditor(package_model, flight, game), 2, 0)
         layout.addWidget(QFlightStartType(package_model, flight), 3, 0)
         layout.addWidget(QFlightCustomName(flight), 4, 0)

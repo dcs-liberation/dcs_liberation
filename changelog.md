@@ -32,6 +32,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** ASAP is now a checkbox rather than a button. Enabling this will disable the TOT selector but changes to the package structure will automatically re-ASAP the package.
 * **[UI]** Arrival airfield is now shown in the flight list if it differs from the departure airfield.
 * **[UI]** Start type can now be selected when creating a flight.
+* **[UI]** Arrival and divert airfields can be edited after the flight is created.
 * **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
 * **[Factions]** Added Poland 2010 faction.
 * **[Factions]** Added Greece 2005 faction.
