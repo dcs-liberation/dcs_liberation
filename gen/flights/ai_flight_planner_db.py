@@ -344,6 +344,7 @@ ANTISHIP_CAPABLE = [
     Tornado_GR4,
     AV8BNA,
     S_3B,
+    A_20G,
     Ju_88A4,
     C_101CC,
     SH_60B,
