@@ -631,6 +631,7 @@ class Airfield(ControlPoint):
             yield from [
                 # TODO: FlightType.INTERCEPTION
                 # TODO: FlightType.LOGISTICS
+                FlightType.AWACS,
             ]
         else:
             yield from [
@@ -689,6 +690,7 @@ class NavalControlPoint(ControlPoint, ABC):
                 # TODO: Buddy tanking for the A-4?
                 # TODO: Rescue chopper?
                 # TODO: Inter-ship logistics?
+                FlightType.AWACS,
             ]
         else:
             yield FlightType.ANTISHIP
@@ -849,6 +851,7 @@ class Fob(ControlPoint):
         if self.is_friendly(for_player):
             yield from [
                 FlightType.BARCAP,
+                FlightType.AWACS,
                 # TODO: FlightType.LOGISTICS
             ]
         else:
