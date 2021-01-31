@@ -41,11 +41,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{LAU_7_AGM_122_SIDEARM}",
+					["CLSID"] = "LAU_117_AGM_65F",
 					["num"] = 2,
 				},
 				[4] = {
-					["CLSID"] = "{LAU_7_AGM_122_SIDEARM}",
+					["CLSID"] = "LAU_117_AGM_65F",
 					["num"] = 7,
 				},
 				[5] = {
