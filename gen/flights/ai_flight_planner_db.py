@@ -75,6 +75,10 @@ from dcs.planes import (
     Su_25T,
     Su_25TM,
     Su_27,
+    E_3A,
+    E_2C,
+    A_50,
+    KJ_2000,
     Su_30,
     Su_33,
     Su_34,
@@ -89,7 +93,6 @@ from dcs.planes import (
 from dcs.unittype import FlyingType
 
 from gen.flights.flight import FlightType
-from pydcs.dcs.planes import E_2C
 
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
@@ -157,8 +160,9 @@ CAP_CAPABLE = [
 # Used for CAS (Close air support) and BAI (Battlefield Interdiction)
 CAS_CAPABLE = [
     A_10C_2,
-    A_10C,
+    E_2C,
     B_1B,
+    A_10C,
     F_14B,
     F_14A_135_GR,
     Su_25TM,
@@ -371,8 +375,10 @@ DRONES = [
 ]
 
 AWACS_CAPABLE = [
+    E_3A,
     E_2C,
-    B_1B
+    A_50,
+    KJ_2000,
 ]
 
 
