@@ -30,10 +30,14 @@ class MissionTarget:
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
         if self.is_friendly(for_player):
-            yield FlightType.BARCAP
+            yield from [
+                FlightType.BARCAP,
+                FlightType.AWACS,
+            ]
         else:
             yield from [
                 FlightType.ESCORT,
+                FlightType.AWACS,
                 FlightType.TARCAP,
                 FlightType.SEAD,
                 FlightType.SWEEP,
