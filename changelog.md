@@ -52,7 +52,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** Carrier group SAM threat rings now move with the carrier.
 * **[UI]** Base intel menu no longer compresses text, and is now scrollable.
 * **[UI]** Edit Flight window is now dynamically sized to adapt to the width of waypoint names, so they no longer get truncated.
-* **[UI]** Create Flight comboboxes now stretch to adjust to the size of their contents.
+* **[UI]** Budget income display is now rounded to 2 decimal places.
 * **[Factions]** USA with C-130 faction now links to the required mod.
 * **[Campaign]** Fixed issue where destroyed buildings would sometimes not count as destroyed and thus respawn.
 * **[Campaign]** Fixed issue where destroyed runways were not registered.
