@@ -160,7 +160,6 @@ CAP_CAPABLE = [
 # Used for CAS (Close air support) and BAI (Battlefield Interdiction)
 CAS_CAPABLE = [
     A_10C_2,
-    E_2C,
     B_1B,
     A_10C,
     F_14B,
