@@ -798,9 +798,7 @@ UNIT_BY_TASK = {
         S_3B_Tanker,
         KC135MPRS,
     ],
-    #todo B1B RAUS HIER
     AWACS: [
-        B_1B,
         E_3A,
         E_2C,
         A_50,
