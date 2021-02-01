@@ -121,7 +121,7 @@ class FlightPlan:
         failed to generate. Nevertheless, we have to defend against it.
         """
         raise NotImplementedError
-    
+
     @cached_property
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
@@ -145,7 +145,7 @@ class FlightPlan:
         """Joker fuel value for the FlightPlan
         """
         return self.bingo_fuel + 1000
-   
+
     def max_distance_from(self, cp: ControlPoint) -> Distance:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
         :arg cp The ControlPoint to measure distance from.
@@ -439,7 +439,6 @@ class BarCapFlightPlan(PatrollingFlightPlan):
         if self.divert is not None:
             yield self.divert
 
-
 @dataclass(frozen=True)
 class CasFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
@@ -465,7 +464,6 @@ class CasFlightPlan(PatrollingFlightPlan):
 
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_end
-
 
 @dataclass(frozen=True)
 class TarCapFlightPlan(PatrollingFlightPlan):
@@ -510,7 +508,6 @@ class TarCapFlightPlan(PatrollingFlightPlan):
             return end
         return super().patrol_end_time
 
-
 @dataclass(frozen=True)
 class StrikeFlightPlan(FormationFlightPlan):
     takeoff: FlightWaypoint
@@ -542,10 +539,10 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
         return {
-           self.ingress,
-           self.egress,
-           self.split,
-        } | set(self.targets)
+                   self.ingress,
+                   self.egress,
+                   self.split,
+               } | set(self.targets)
 
     def speed_between_waypoints(self, a: FlightWaypoint,
                                 b: FlightWaypoint) -> Speed:
@@ -629,7 +626,6 @@ class StrikeFlightPlan(FormationFlightPlan):
         elif waypoint in self.targets:
             return self.package.time_over_target
         return super().tot_for_waypoint(waypoint)
-
 
 @dataclass(frozen=True)
 class SweepFlightPlan(LoiterFlightPlan):
@@ -791,6 +787,8 @@ class FlightPlanBuilder:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
+        elif task == FlightType.AWACS:
+            return self.generate_awacs(flight)
         raise PlanningError(
             f"{task} flight plan generation not implemented")
 
@@ -920,6 +918,42 @@ class FlightPlanBuilder:
         return self.strike_flightplan(flight, location,
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
+
+    def generate_awacs(self, flight: Flight) -> BarCapFlightPlan:
+        """Generate a BARCAP flight at a given location.
+
+       Args:
+           flight: The flight to generate the flight plan for.
+       """
+        location = self.package.target
+
+        if isinstance(location, FrontLine):
+            raise InvalidObjectiveLocation(flight.flight_type, location)
+
+        start, end = self.racetrack_for_objective(location, barcap=True)
+        patrol_alt = meters(random.randint(
+            int(self.doctrine.min_patrol_altitude.meters),
+            int(self.doctrine.max_patrol_altitude.meters)
+        ))
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+        start, end = builder.race_track(start, end, patrol_alt)
+
+        return BarCapFlightPlan(
+            package=self.package,
+            flight=flight,
+            patrol_duration=self.doctrine.cap_duration,
+            engagement_distance=self.doctrine.cap_engagement_range,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(flight.departure.position, start.position,
+                                    patrol_alt),
+            nav_from=builder.nav_path(end.position, flight.arrival.position,
+                                      patrol_alt),
+            patrol_start=start,
+            patrol_end=end,
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert)
+        )
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.
