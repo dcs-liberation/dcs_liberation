@@ -439,6 +439,7 @@ class BarCapFlightPlan(PatrollingFlightPlan):
         if self.divert is not None:
             yield self.divert
 
+
 @dataclass(frozen=True)
 class CasFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
@@ -464,6 +465,7 @@ class CasFlightPlan(PatrollingFlightPlan):
 
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_end
+
 
 @dataclass(frozen=True)
 class TarCapFlightPlan(PatrollingFlightPlan):
@@ -507,6 +509,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         if end is not None:
             return end
         return super().patrol_end_time
+
 
 @dataclass(frozen=True)
 class StrikeFlightPlan(FormationFlightPlan):
@@ -627,8 +630,74 @@ class StrikeFlightPlan(FormationFlightPlan):
             return self.package.time_over_target
         return super().tot_for_waypoint(waypoint)
 
+
 @dataclass(frozen=True)
 class SweepFlightPlan(LoiterFlightPlan):
+    takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
+    sweep_start: FlightWaypoint
+    sweep_end: FlightWaypoint
+    nav_from: List[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    lead_time: timedelta
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield self.hold
+        yield from self.nav_to
+        yield self.sweep_start
+        yield self.sweep_end
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.sweep_end
+
+    @property
+    def tot_offset(self) -> timedelta:
+        return -self.lead_time
+
+    @property
+    def sweep_start_time(self) -> timedelta:
+        travel_time = self.travel_time_between_waypoints(
+            self.sweep_start, self.sweep_end)
+        return self.sweep_end_time - travel_time
+
+    @property
+    def sweep_end_time(self) -> timedelta:
+        return self.package.time_over_target + self.tot_offset
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.sweep_start:
+            return self.sweep_start_time
+        if waypoint == self.sweep_end:
+            return self.sweep_end_time
+        return None
+
+    def depart_time_for_waypoint(
+            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.push_time
+        return None
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.sweep_end_time - TravelTime.between_points(
+            self.hold.position,
+            self.sweep_end.position,
+            GroundSpeed.for_flight(self.flight, self.hold.alt)
+        )
+
+    def mission_departure_time(self) -> timedelta:
+        return self.sweep_end_time
+
+
+@dataclass(frozen=True)
+class AwacsFlightPlan(LoiterFlightPlan):
     takeoff: FlightWaypoint
     nav_to: List[FlightWaypoint]
     sweep_start: FlightWaypoint
@@ -919,41 +988,41 @@ class FlightPlanBuilder:
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
 
-    def generate_awacs(self, flight: Flight) -> BarCapFlightPlan:
-        """Generate a BARCAP flight at a given location.
+    def generate_awacs(self, flight: Flight) -> AwacsFlightPlan:
+        """Generate a AWACS flight at a given location.
 
        Args:
            flight: The flight to generate the flight plan for.
        """
         location = self.package.target
 
-        if isinstance(location, FrontLine):
-            raise InvalidObjectiveLocation(flight.flight_type, location)
+        start, end = self.loiter_for_support(location)
 
-        start, end = self.racetrack_for_objective(location, barcap=True)
-        patrol_alt = meters(random.randint(
-            int(self.doctrine.min_patrol_altitude.meters),
-            int(self.doctrine.max_patrol_altitude.meters)
-        ))
+        # todo nach plane
+        patrol_alt = meters(800)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.race_track(start, end, patrol_alt)
 
-        return BarCapFlightPlan(
+        AwacsFlight = AwacsFlightPlan(
             package=self.package,
             flight=flight,
-            patrol_duration=self.doctrine.cap_duration,
-            engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(flight.departure.position, start.position,
                                     patrol_alt),
             nav_from=builder.nav_path(end.position, flight.arrival.position,
                                       patrol_alt),
-            patrol_start=start,
-            patrol_end=end,
+            sweep_start=start,
+            sweep_end=end,
             land=builder.land(flight.arrival),
-            divert=builder.divert(flight.divert)
+            divert=builder.divert(flight.divert),
+            hold=start,
+            hold_duration=self.doctrine.cap_duration,
+            lead_time=timedelta(minutes=5),
         )
+
+        logging.critical(AwacsFlight)
+        return AwacsFlight
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.
@@ -1126,6 +1195,23 @@ class FlightPlanBuilder:
             int(self.doctrine.cap_min_track_length.meters),
             int(self.doctrine.cap_max_track_length.meters)
         )
+        start = end.point_from_heading(heading - 180, diameter)
+        return start, end
+
+    def loiter_for_support(self, location: MissionTarget) -> Tuple[Point, Point]:
+
+        closest_airfield = location
+        heading = location.position.heading_between_point(closest_airfield.position)
+
+        # todo random fickt deine mutter
+        end = location.position.point_from_heading(
+            heading,
+            nautical_miles(15)
+        )
+
+        # todo plane abhängig
+        diameter = nautical_miles(30)
+
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
 
