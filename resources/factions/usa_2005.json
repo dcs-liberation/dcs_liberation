@@ -36,7 +36,8 @@
     "APC_M1043_HMMWV_Armament",
     "ATGM_M1045_HMMWV_TOW",
     "SAM_Avenger_M1097",
-    "SAM_Linebacker_M6"
+    "SAM_Linebacker_M6",
+    "SPG_M1128_Stryker_MGS"
   ],
   "artillery_units": [
     "MLRS_M270",

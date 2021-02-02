@@ -1157,7 +1157,7 @@ class FlightPlanBuilder:
     def racetrack_for_objective(self, location: MissionTarget,
                                 barcap: bool) -> Tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
-        for airfield in closest_cache.closest_airfields:
+        for airfield in closest_cache.operational_airfields:
             # If the mission is a BARCAP of an enemy airfield, find the *next*
             # closest enemy airfield.
             if airfield == self.package.target:
@@ -1648,7 +1648,7 @@ class FlightPlanBuilder:
         cache = ObjectiveDistanceCache.get_closest_airfields(
             self.package.target
         )
-        for airfield in cache.closest_airfields:
+        for airfield in cache.operational_airfields:
             for flight in self.package.flights:
                 if flight.departure == airfield:
                     return airfield

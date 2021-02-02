@@ -264,6 +264,10 @@ DEAD_CAPABLE = [
     AJS37,
     F_14B,
     F_14A_135_GR,
+    B_1B,
+    B_52H,
+    Tu_160,
+    Tu_95MS,
 ] + SEAD_CAPABLE
 
 
@@ -345,6 +349,7 @@ ANTISHIP_CAPABLE = [
     Tornado_GR4,
     AV8BNA,
     S_3B,
+    A_20G,
     Ju_88A4,
     C_101CC,
     SH_60B,

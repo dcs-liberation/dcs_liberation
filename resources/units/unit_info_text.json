@@ -924,6 +924,91 @@
             "name": "UH-1D Iroquois"
         }
     }],
+    "AAA 8,8cm Flak 18": [{
+        "default": {
+            "name": "8.8 cm Flak 18",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp/Rheinmetall",
+            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "year-of-variant-introduction": "1936"
+        }
+    }],
+    "AAA 8,8cm Flak 36": [{
+        "default": {
+            "name": "8.8 cm Flak 36",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp/Rheinmetall",
+            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "year-of-variant-introduction": "1936"
+        }
+    }],
+    "AAA 8,8cm Flak 37": [{
+        "default": {
+            "name": "8.8 cm Flak 37",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp/Rheinmetall",
+            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "year-of-variant-introduction": "1936"
+        }
+    }],
+    "AAA 8,8cm Flak 41": [{
+        "default": {
+            "name": "8.8 cm Flak 41",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp/Rheinmetall",
+            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
+    "AAA Bofors 40mm": [{
+        "default": {
+            "name": "Bofors 40 mm gun",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Bofors",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1934"
+        },
+        "UK": {
+            "name": "QF 40 mm Mark III",
+            "year-of-variant-introduction": "1939"
+        }
+    }],
+    "AAA Flak 38": [{
+        "default": {
+            "name": "2 cm Flak 38",
+            "country-of-origin": "Germany",
+            "manufacturer": "Mauser",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1934"
+        }
+    }],
+    "AAA Flak-Vierling 38": [{
+        "default": {
+            "name": "2 cm Flakvierling 38",
+            "country-of-origin": "Germany",
+            "manufacturer": "Mauser",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1934"
+        }
+    }],
+    "AAA M45 Quadmount": [{
+        "default": {
+            "name": "M45 Quadmount",
+            "country-of-origin": "USA",
+            "manufacturer": "W. L. Maxson Corporation",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
+    "AAA M1 37mm": [{
+        "default": {
+            "name": "M1 37mm Gun",
+            "country-of-origin": "USA",
+            "manufacturer": "Colt",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1939"
+        }
+    }],
     "AAA Vulcan M163": [{
         "default": {
             "name": "M163 Vulcan Air Defense System",
@@ -960,6 +1045,24 @@
             "year-of-variant-introduction": "1961"
         }
     }],
+    "AA gun QF 3,7\"": [{
+        "default": {
+            "name": "QF 3.7-inch AA Gun",
+            "country-of-origin": "UK",
+            "manufacturer": "Vickers",
+            "role": "Anti-Aircraft Gun",
+            "year-of-variant-introduction": "1937"
+        }
+    }],
+    "AC Sd.Kfz.234/2 Puma": [{
+        "default": {
+            "name": "Sd.Kfz.234/2 Puma",
+            "country-of-origin": "Germany",
+            "manufacturer": "Tatra/Büssing/Daimler-Benz/Schichau",
+            "role": "Amphibious Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
     "APC AAV-7": [{
         "default": {
             "name": "AAVP-7A1 'Amtrac'",
@@ -978,6 +1081,15 @@
             "year-of-variant-introduction": "1986"
         }
     }],
+    "APC BTR-82A": [{
+        "default": {
+            "name": "BTR-82A",
+            "country-of-origin": "Russia",
+            "manufacturer": "Arzamas",
+            "role": "Amphibious Armoured Personnel Carrier",
+            "year-of-variant-introduction": "2013"
+        }
+    }],
     "APC Cobra": [{
         "default": {
             "name": "Cobra",
@@ -985,6 +1097,15 @@
             "manufacturer": "Otokar",
             "role": "Armoured Car",
             "year-of-variant-introduction": "1997"
+        }
+    }],
+    "APC M2A1": [{
+        "default": {
+            "name": "M2A1 Half-track",
+            "country-of-origin": "USA",
+            "manufacturer": "White Motor Company",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1940"
         }
     }],
     "APC M113": [{
@@ -1023,6 +1144,15 @@
             "year-of-variant-introduction": "1958"
         }
     }],
+    "APC Sd.Kfz.251": [{
+        "default": {
+            "name": "Sd.Kfz.251 \"Hanomag\"",
+            "country-of-origin": "Germany",
+            "manufacturer": "Hanomag",
+            "role": "Armoured Personnel Carrier",
+            "year-of-variant-introduction": "1939"
+        }
+    }],
     "ARV BRDM-2": [{
         "default": {
             "name": "BRDM-2",
@@ -1050,13 +1180,67 @@
             "year-of-variant-introduction": "1983"
         }
     }],
-    "ATGM M1134 Stryker ATGM": [{
+    "ATGM M1134 Stryker": [{
         "default": {
             "name": "M1134 Stryker ATGM (BGM-71 TOW)",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Armoured Car",
             "year-of-variant-introduction": "2002"
+        }
+    }],
+    "CT Centaur IV": [{
+        "default": {
+            "name": "A27L Cruiser Tank MK VIII Centaur IV",
+            "country-of-origin": "UK",
+            "manufacturer": "Leyland",
+            "role": "Cruiser Tank",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
+    "CT Cromwell IV": [{
+        "default": {
+            "name": "A27M Cruiser Tank MK VIII Cromwell IV",
+            "country-of-origin": "UK",
+            "manufacturer": "Birmingham Railway Carriage and Wagon Company",
+            "role": "Cruiser Tank",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
+    "Daimler Armoured Car": [{
+        "default": {
+            "name": "Daimler Armoured Car Mk I",
+            "country-of-origin": "UK",
+            "manufacturer": "Daimler",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "1941"
+        }
+    }],
+    "HIT Churchill_VII": [{
+        "default": {
+            "name": "A22 Infantry Tank MK IV Churchill VII",
+            "country-of-origin": "UK",
+            "manufacturer": "Vauxhall Motors",
+            "role": "Infantry Tank",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
+    "HT Pz.Kpfw.VI Tiger I": [{
+        "default": {
+            "name": "Panzerkampfwagen VI Tiger Ausf. E",
+            "country-of-origin": "Germany",
+            "manufacturer": "Henschel",
+            "role": "Heavy Tank",
+            "year-of-variant-introduction": "1942"
+        }
+    }],
+    "HT Pz.Kpfw.VI Ausf. B Tiger II": [{
+        "default": {
+            "name": "Panzerkampfwagen Tiger Ausf. B Tiger II",
+            "country-of-origin": "Germany",
+            "manufacturer": "Henschel/Krupp",
+            "role": "Heavy Tank",
+            "year-of-variant-introduction": "1944"
         }
     }],
     "IFV BMD-1": [{
@@ -1131,6 +1315,42 @@
             "year-of-variant-introduction": "1984"
         }
     }],
+    "LAC M8 Greyhound": [{
+        "default": {
+            "name": "M8 Greyhound Light Armored Car",
+            "country-of-origin": "USA",
+            "manufacturer": "Ford Motor Company",
+            "role": "Light Armoured Car",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
+    "LT Mk VII Tetrarch": [{
+        "default": {
+            "name": "A17 Light Tank Mk VII Tetrarch",
+            "country-of-origin": "UK",
+            "manufacturer": "Vickers-Armstrongs",
+            "role": "Airborne Light Tank",
+            "year-of-variant-introduction": "1938"
+        }
+    }],
+    "M4 Tractor": [{
+        "default": {
+            "name": "M4 High-Speed Tractor",
+            "country-of-origin": "USA",
+            "manufacturer": "Allis-Chalmers",
+            "role": "Tracked Cargo Transporter",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
+    "M30 Cargo Carrier": [{
+        "default": {
+            "name": "M30 Cargo Carrier",
+            "country-of-origin": "USA",
+            "manufacturer": "Pressed Steel Car Company",
+            "role": "Tracked Cargo Transporter",
+            "year-of-variant-introduction": "1942"
+        }
+    }],
     "MBT Challenger II": [{
         "default": {
             "name": "FV4034 Challenger 2",
@@ -1138,6 +1358,114 @@
             "manufacturer": "Vickers Defence Systems",
             "role": "Main Battle Tank",
             "year-of-variant-introduction": "1998"
+        }
+    }],
+    "M12 GMC": [{
+        "default": {
+            "name": "M12 Gun Motor Carriage",
+            "country-of-origin": "USA",
+            "manufacturer": "Pressed Steel Car Company",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1942"
+        }
+    }],
+    "MBT Leclerc": [{
+        "default": {
+            "name": "Leclerc Séries 2",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1993"
+        }
+    }],
+    "MBT Leopard 1A3": [{
+        "default": {
+            "name": "Leopard 1A3",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1974"
+        }
+    }],
+    "MBT Leopard-2": [{
+        "default": {
+            "name": "Leopard 2A6",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "2001"
+        }
+    }],
+    "MBT M1A2 Abrams": [{
+        "default": {
+            "name": "M1A2 Abrams",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1992"
+        }
+    }],
+    "MBT M60A3 Patton": [{
+        "default": {
+            "name": "M60A3 \"Patton\"",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1960"
+        }
+    }],
+    "MBT Merkava Mk. 4": [{
+        "default": {
+            "name": "Merkava Mk IV",
+            "country-of-origin": "Israel",
+            "manufacturer": "MANTAK",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "2004"
+        }
+    }],
+    "MBT T-55": [{
+        "default": {
+            "name": "T-55A",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Kharkiv/UralVagonZavod",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1963"
+        }
+    }],
+    "MBT T-72B": [{
+        "default": {
+            "name": "T-72B with Kontakt-1 ERA",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "UralVagonZavod",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1985"
+        }
+    }],
+    "MBT T-72B3": [{
+        "default": {
+            "name": "T-72B3 model 2011",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "UralVagonZavod",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "2010"
+        }
+    }],
+    "MBT T-80U": [{
+        "default": {
+            "name": "T-80U",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Omsk Transmash",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1985"
+        }
+    }],
+    "MBT T-90": [{
+        "default": {
+            "name": "T-90A",
+            "country-of-origin": "Russia",
+            "manufacturer": "UralVagonZavod",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "2004"
         }
     }],
     "MLRS 9A52 Smerch": [{
@@ -1193,13 +1521,46 @@
             "year-of-variant-introduction": "1983"
         }
     }],
-    "M12 GMC": [{
+    "MT M4 Sherman": [{
         "default": {
-            "name": "M12 Gun Motor Carriage",
+            "name": "M4A2(75) Sherman",
             "country-of-origin": "USA",
-            "manufacturer": "Pressed Steel Car Company",
-            "role": "Self-Propelled Gun",
+            "manufacturer": "Fisher",
+            "role": "Medium Tank",
             "year-of-variant-introduction": "1942"
+        },
+        "UK": {
+            "name": "Sherman III"
+        }
+    }],
+    "MT M4A4 Sherman Firefly": [{
+        "default": {
+            "name": "M4A4 Sherman Firefly",
+            "country-of-origin": "USA/UK",
+            "manufacturer": "Chrysler",
+            "role": "Medium Tank",
+            "year-of-variant-introduction": "1943"
+        },
+        "UK": {
+            "name": "Sherman Firefly VC"
+        }
+    }],
+    "MT Pz.Kpfw.IV Ausf.H": [{
+        "default": {
+            "name": "Panzerkampfwagen IV Ausf. H",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp-Gruson/Vomag/Nibelungenwerke",
+            "role": "Medium Tank",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
+    "MT Pz.Kpfw.V Panther Ausf.G": [{
+        "default": {
+            "name": "Panzerkampfwagen V Panther Ausf. G",
+            "country-of-origin": "Germany",
+            "manufacturer": "MAN/Daimler-Benz/MNH",
+            "role": "Medium Tank",
+            "year-of-variant-introduction": "1944"
         }
     }],
     "SAM Avenger M1097": [{
@@ -1215,7 +1576,7 @@
         "default": {
             "name": "M48 Chaparral",
             "country-of-origin": "USA",
-            "manufacturer": "Ford",
+            "manufacturer": "Ford Motor Company",
             "role": "Self-Propelled Surface-to-Air Missile Launcher",
             "year-of-variant-introduction": "1969"
         }
@@ -1256,6 +1617,15 @@
             "year-of-variant-introduction": "1982"
         }
     }],
+    "Sd.Kfz.184 Elefant": [{
+        "default": {
+            "name": "Sd.Kfz.184 Elefant",
+            "country-of-origin": "Germany",
+            "manufacturer": "Porsche/Nibelungenwerk",
+            "role": "Tank Destroyer",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
     "SPAAA Gepard": [{
         "default": {
             "name": "Flakpanzer Gepard",
@@ -1272,6 +1642,15 @@
             "manufacturer": "MMZ",
             "role": "Self-Propelled Anti-Aircraft Gun",
             "year-of-variant-introduction": "1960"
+        }
+    }],
+    "SPG M1128 Stryker MGS": [{
+        "default": {
+            "name": "M1128 Stryker Mobile Gun System",
+            "country-of-origin": "USA",
+            "manufacturer": "General Dynamics",
+            "role": "Armoured Car",
+            "year-of-variant-introduction": "2006"
         }
     }],
     "SpGH Dana": [{
@@ -1328,6 +1707,24 @@
             "year-of-variant-introduction": "1994"
         }
     }],
+    "StuG III Ausf. G": [{
+        "default": {
+            "name": "Sturmgeschütz III Ausf. G",
+            "country-of-origin": "Germany",
+            "manufacturer": "Alkett/MIAG",
+            "role": "Assault Gun/Tank Destroyer",
+            "year-of-variant-introduction": "1942"
+        }
+    }],
+    "StuG IV": [{
+        "default": {
+            "name": "Sturmgeschütz IV",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krupp",
+            "role": "Assault Gun/Tank Destroyer",
+            "year-of-variant-introduction": "1943"
+        }
+    }],
     "Sturmpanzer IV Brummbär": [{
         "default": {
             "name": "Sturmpanzer IV Brummbär",
@@ -1337,6 +1734,36 @@
             "year-of-variant-introduction": "1943"
         }
     }],
+    "TD Jagdpanther G1": [{
+        "default": {
+            "name": "Jagdpanther G1",
+            "country-of-origin": "Germany",
+            "manufacturer": "MIAG/MNH/MBA",
+            "role": "Tank Destroyer",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
+    "TD Jagdpanzer IV": [{
+        "default": {
+            "name": "Jagdpanzer IV",
+            "country-of-origin": "Germany",
+            "manufacturer": "Vomag",
+            "role": "Tank Destroyer",
+            "year-of-variant-introduction": "1944"
+        }
+    }],
+    "TD M10 GMC": [{
+        "default": {
+            "name": "M10 3-inch Gun Motor Carriage",
+            "country-of-origin": "USA",
+            "manufacturer": "Fisher/Ford Motor Company",
+            "role": "Tank Destroyer",
+            "year-of-variant-introduction": "1942"
+        },
+        "UK": {
+            "name": "3in SPM M10 Achilles Mk II"
+        }
+    }],
     "TPz Fuchs": [{
         "default": {
             "name": "TPz Fuchs",
@@ -1344,6 +1771,24 @@
             "manufacturer": "Rheinstahl Wehrtechnik",
             "role": "Armoured Personnel Carrier",
             "year-of-variant-introduction": "1979"
+        }
+    }],
+    "ZTZ-96B": [{
+        "default": {
+            "name": "Type 96B (ZTZ-96B)",
+            "country-of-origin": "China",
+            "manufacturer": "First Inner Mongolia Machinery Factory",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1979"
+        }
+    }],
+    "ZBD-04A": [{
+        "default": {
+            "name": "Type 04A (ZBD-04A)",
+            "country-of-origin": "China",
+            "manufacturer": "Norinco",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1999"
         }
     }]
 }

@@ -1,9 +1,10 @@
-from re import L
 from typing import Optional
 
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
+    QComboBox,
     QDialog,
+    QLabel,
     QMessageBox,
     QPushButton,
     QVBoxLayout,
@@ -63,6 +64,7 @@ class QFlightCreator(QDialog):
             self.aircraft_selector.currentData()
         )
         self.departure.availability_changed.connect(self.update_max_size)
+        self.departure.currentIndexChanged.connect(self.on_departure_changed)
         layout.addLayout(QLabeledWidget("Departure:", self.departure))
 
         self.arrival = QArrivalAirfieldSelector(
@@ -94,6 +96,22 @@ class QFlightCreator(QDialog):
         layout.addLayout(
             QLabeledWidget("Client Slots:", self.client_slots_spinner))
 
+        # When an off-map spawn overrides the start type to in-flight, we save
+        # the selected type into this value. If a non-off-map spawn is selected
+        # we restore the previous choice.
+        self.restore_start_type: Optional[str] = None
+        self.start_type = QComboBox()
+        self.start_type.addItems(["Cold", "Warm", "Runway", "In Flight"])
+        self.start_type.setCurrentText(self.game.settings.default_start_type)
+        layout.addLayout(QLabeledWidget(
+            "Start type:", self.start_type,
+            tooltip="Selects the start type for this flight."))
+        layout.addWidget(QLabel(
+            "Any option other than Cold will make this flight " +
+            "non-targetable<br />by OCA/Aircraft missions. This will affect " +
+            "game balance."
+        ))
+
         self.custom_name = QLineEdit()
         self.custom_name.textChanged.connect(self.set_custom_name_text)
         layout.addLayout(
@@ -108,6 +126,8 @@ class QFlightCreator(QDialog):
 
         self.setLayout(layout)
 
+        self.on_departure_changed(self.departure.currentIndex())
+
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
 
@@ -117,7 +137,7 @@ class QFlightCreator(QDialog):
         arrival: ControlPoint = self.arrival.currentData()
         divert: ControlPoint = self.divert.currentData()
         size: int = self.flight_size_spinner.value()
-        if aircraft == None:
+        if aircraft is None:
             return "You must select an aircraft type."
         if not origin.captured:
             return f"{origin.name} is not owned by your coalition."
@@ -153,14 +173,9 @@ class QFlightCreator(QDialog):
         if arrival is None:
             arrival = origin
 
-        if isinstance(origin, OffMapSpawn):
-            start_type = "In Flight"
-        elif self.game.settings.perf_ai_parking_start:
-            start_type = "Cold"
-        else:
-            start_type = "Warm"
-        flight = Flight(self.package, self.country, aircraft, size, task, start_type, origin,
-                        arrival, divert, custom_name=self.custom_name_text)
+        flight = Flight(self.package, self.country, aircraft, size, task,
+                        self.start_type.currentText(), origin, arrival, divert,
+                        custom_name=self.custom_name_text)
         flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
@@ -172,6 +187,20 @@ class QFlightCreator(QDialog):
         self.departure.change_aircraft(new_aircraft)
         self.arrival.change_aircraft(new_aircraft)
         self.divert.change_aircraft(new_aircraft)
+
+    def on_departure_changed(self, index: int) -> None:
+        departure = self.departure.itemData(index)
+        if isinstance(departure, OffMapSpawn):
+            previous_type = self.start_type.currentText()
+            if previous_type != "In Flight":
+                self.restore_start_type = previous_type
+            self.start_type.setCurrentText("In Flight")
+            self.start_type.setEnabled(False)
+        else:
+            self.start_type.setEnabled(True)
+            if self.restore_start_type is not None:
+                self.start_type.setCurrentText(self.restore_start_type)
+                self.restore_start_type = None
 
     def on_task_changed(self) -> None:
         self.aircraft_selector.updateItems(self.task_selector.currentData(), self.game.aircraft_inventory.available_types_for_player)

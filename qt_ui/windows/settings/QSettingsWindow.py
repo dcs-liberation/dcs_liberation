@@ -23,6 +23,7 @@ from dcs.forcedoptions import ForcedOptions
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
+from game.settings import Settings
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -66,6 +67,21 @@ class CheatSettingsBox(QGroupBox):
     @property
     def show_base_capture_cheat(self) -> bool:
         return self.base_capture_cheat_checkbox.isChecked()
+
+
+START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
+
+
+class StartTypeComboBox(QComboBox):
+    def __init__(self, settings: Settings) -> None:
+        super().__init__()
+        self.settings = settings
+        self.addItems(["Cold", "Warm", "Runway", "In Flight"])
+        self.currentTextChanged.connect(self.on_change)
+        self.setToolTip(START_TYPE_TOOLTIP)
+
+    def on_change(self, value: str) -> None:
+        self.settings.default_start_type = value
 
 
 class QSettingsWindow(QDialog):
@@ -370,6 +386,17 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.never_delay_players, 2, 1,
                                       Qt.AlignRight)
 
+        start_type_label = QLabel(
+            "Default start type for AI aircraft:<br /><strong>Warning: " +
+            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+        )
+        start_type_label.setToolTip(START_TYPE_TOOLTIP)
+        start_type = StartTypeComboBox(self.game.settings)
+        start_type.setCurrentText(self.game.settings.default_start_type)
+
+        self.gameplayLayout.addWidget(start_type_label, 3, 0)
+        self.gameplayLayout.addWidget(start_type, 3, 1)
+
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
         self.performanceLayout.setAlignment(Qt.AlignTop)
@@ -394,10 +421,6 @@ class QSettingsWindow(QDialog):
         self.infantry = QCheckBox()
         self.infantry.setChecked(self.game.settings.perf_infantry)
         self.infantry.toggled.connect(self.applySettings)
-
-        self.ai_parking_start = QCheckBox()
-        self.ai_parking_start.setChecked(self.game.settings.perf_ai_parking_start)
-        self.ai_parking_start.toggled.connect(self.applySettings)
 
         self.destroyed_units = QCheckBox()
         self.destroyed_units.setChecked(self.game.settings.perf_destroyed_units)
@@ -427,8 +450,6 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.moving_units, 3, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Generate infantry squads along vehicles"), 4, 0)
         self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("AI planes parking start (AI starts in flight if disabled)"), 5, 0)
-        self.performanceLayout.addWidget(self.ai_parking_start, 5, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Include destroyed units carcass"), 6, 0)
         self.performanceLayout.addWidget(self.destroyed_units, 6, 1, alignment=Qt.AlignRight)
 
@@ -504,7 +525,6 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_artillery = self.arti.isChecked()
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
-        self.game.settings.perf_ai_parking_start = self.ai_parking_start.isChecked()
         self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
 
         self.game.settings.perf_culling = self.culling.isChecked()

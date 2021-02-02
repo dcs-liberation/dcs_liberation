@@ -15,10 +15,16 @@ class ClosestAirfields:
     def __init__(self, target: MissionTarget,
                  all_control_points: List[ControlPoint]) -> None:
         self.target = target
-        airfields = (c for c in all_control_points if c.runway_is_operational())
+        # This cache is configured once on load, so it's important that it is
+        # complete and deterministic to avoid different behaviors across loads.
+        # E.g. https://github.com/Khopa/dcs_liberation/issues/819
         self.closest_airfields: List[ControlPoint] = sorted(
-            airfields, key=lambda c: self.target.distance_to(c)
+            all_control_points, key=lambda c: self.target.distance_to(c)
         )
+
+    @property
+    def operational_airfields(self) -> Iterator[ControlPoint]:
+        return (c for c in self.closest_airfields if c.runway_is_operational())
 
     def airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
         """Iterates over all airfields within the given range of the target.

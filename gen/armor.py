@@ -354,9 +354,9 @@ class GroundConflictGenerator:
             else:
                 # We use an offset heading here because DCS doesn't always
                 # force vehicles to move if there's no heading change.
-                offset_heading = forward_heading - 1
+                offset_heading = forward_heading - 2
                 if offset_heading < 0:
-                    offset_heading = 359
+                    offset_heading = 358
                 attack_point = self.find_offensive_point(
                     dcs_group,
                     offset_heading,

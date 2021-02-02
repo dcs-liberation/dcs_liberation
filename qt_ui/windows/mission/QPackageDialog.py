@@ -3,8 +3,9 @@ import logging
 from datetime import timedelta
 from typing import Optional
 
-from PySide2.QtCore import QItemSelection, QTime, Signal, Qt
+from PySide2.QtCore import QItemSelection, QTime, Qt, Signal
 from PySide2.QtWidgets import (
+    QCheckBox,
     QDialog,
     QHBoxLayout,
     QLabel,
@@ -15,16 +16,15 @@ from PySide2.QtWidgets import (
 )
 
 from game.game import Game
+from game.theater.missiontarget import MissionTarget
 from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder, PlanningError
-from gen.flights.traveltime import TotEstimator
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.flight.QFlightCreator import QFlightCreator
-from game.theater.missiontarget import MissionTarget
 
 
 class QPackageDialog(QDialog):
@@ -79,15 +79,17 @@ class QPackageDialog(QDialog):
         self.tot_spinner.setDisplayFormat("T+hh:mm:ss")
         self.tot_spinner.timeChanged.connect(self.save_tot)
         self.tot_spinner.setToolTip("Package TOT relative to mission TOT")
+        self.tot_spinner.setEnabled(not self.package_model.package.auto_asap)
         self.tot_column.addWidget(self.tot_spinner)
 
-        self.reset_tot_button = QPushButton("ASAP")
-        self.reset_tot_button.setToolTip(
+        self.auto_asap = QCheckBox("ASAP")
+        self.auto_asap.setToolTip(
             "Sets the package TOT to the earliest time that all flights can "
             "arrive at the target."
         )
-        self.reset_tot_button.clicked.connect(self.reset_tot)
-        self.tot_column.addWidget(self.reset_tot_button)    
+        self.auto_asap.setChecked(self.package_model.package.auto_asap)
+        self.auto_asap.toggled.connect(self.set_asap)
+        self.tot_column.addWidget(self.auto_asap)
 
         self.tot_help_label = QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Mission-planning\"><span style=\"color:#FFFFFF;\">Help</span></a>")
         self.tot_help_label.setAlignment(Qt.AlignCenter)
@@ -112,6 +114,8 @@ class QPackageDialog(QDialog):
         self.delete_flight_button.clicked.connect(self.on_delete_flight)
         self.delete_flight_button.setEnabled(model.rowCount() > 0)
         self.button_layout.addWidget(self.delete_flight_button)
+
+        self.package_model.tot_changed.connect(self.update_tot)
 
         self.button_layout.addStretch()
 
@@ -145,14 +149,14 @@ class QPackageDialog(QDialog):
     def save_tot(self) -> None:
         time = self.tot_spinner.time()
         seconds = time.hour() * 3600 + time.minute() * 60 + time.second()
-        self.package_model.update_tot(timedelta(seconds=seconds))
+        self.package_model.set_tot(timedelta(seconds=seconds))
 
-    def reset_tot(self) -> None:
-        if not list(self.package_model.flights):
-            self.package_model.update_tot(timedelta())
-        else:
-            self.package_model.update_tot(
-                TotEstimator(self.package_model.package).earliest_tot())
+    def set_asap(self, checked: bool) -> None:
+        self.package_model.set_asap(checked)
+        self.tot_spinner.setEnabled(not self.package_model.package.auto_asap)
+        self.update_tot()
+
+    def update_tot(self) -> None:
         self.tot_spinner.setTime(self.tot_qtime())
 
     def on_selection_changed(self, selected: QItemSelection,
@@ -183,6 +187,7 @@ class QPackageDialog(QDialog):
             QMessageBox.critical(
                 self, "Could not create flight", str(ex), QMessageBox.Ok
             )
+        self.package_model.update_tot()
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
 

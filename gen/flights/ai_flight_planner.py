@@ -563,15 +563,22 @@ class CoalitionMissionPlanner:
             ])
 
         for target in self.objective_finder.oca_targets(min_aircraft=20):
-            yield ProposedMission(target, [
-                ProposedFlight(FlightType.OCA_AIRCRAFT, 2, self.MAX_OCA_RANGE),
+            flights = [
                 ProposedFlight(FlightType.OCA_RUNWAY, 2, self.MAX_OCA_RANGE),
+            ]
+            if self.game.settings.default_start_type == "Cold":
+                # Only schedule if the default start type is Cold. If the player
+                # has set anything else there are no targets to hit.
+                flights.append(ProposedFlight(FlightType.OCA_AIRCRAFT, 2,
+                                              self.MAX_OCA_RANGE))
+            flights.extend([
                 # TODO: Max escort range.
                 ProposedFlight(FlightType.ESCORT, 2, self.MAX_OCA_RANGE,
                                EscortType.AirToAir),
                 ProposedFlight(FlightType.SEAD, 2, self.MAX_OCA_RANGE,
                                EscortType.Sead),
             ])
+            yield ProposedMission(target, flights)
 
         # Plan strike missions.
         for target in self.objective_finder.strike_targets():
@@ -651,11 +658,6 @@ class CoalitionMissionPlanner:
                      reserves: bool = False) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
 
-        if self.game.settings.perf_ai_parking_start:
-            start_type = "Cold"
-        else:
-            start_type = "Warm"
-
         if self.is_player:
             package_country = self.game.player_country
         else:
@@ -667,7 +669,7 @@ class CoalitionMissionPlanner:
             self.game.aircraft_inventory,
             self.is_player,
             package_country,
-            start_type
+            self.game.settings.default_start_type
         )
 
         # Attempt to plan all the main elements of the mission first. Escorts
