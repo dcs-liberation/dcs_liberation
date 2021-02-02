@@ -709,7 +709,7 @@ class SupportFlightPlan(FlightPlan):
     nav_from: List[FlightWaypoint]
     patrol_start: FlightWaypoint
     patrol_end: FlightWaypoint
-
+    engagement_distance: Distance
     #: Maximum time to remain on station.
     patrol_duration: timedelta
 
@@ -1021,6 +1021,7 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.race_track(start, end, patrol_alt)
 
+        #todo i dont want tne engagement_distance here
         AwacsFlight = SupporterFlightPlan(
             package=self.package,
             flight=flight,
@@ -1034,6 +1035,7 @@ class FlightPlanBuilder:
             patrol_duration=timedelta(hours=4),
             patrol_start=start,
             patrol_end=end,
+            engagement_distance=meters(0),
         )
         return AwacsFlight
 
