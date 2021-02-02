@@ -15,6 +15,13 @@ from datetime import timedelta
 from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
+from dcs.planes import (
+    E_3A,
+    E_2C,
+    A_50,
+    KJ_2000
+)
+
 from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
@@ -697,68 +704,70 @@ class SweepFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
-class AwacsFlightPlan(LoiterFlightPlan):
-    takeoff: FlightWaypoint
+class SupportFlightPlan(FlightPlan):
     nav_to: List[FlightWaypoint]
-    sweep_start: FlightWaypoint
-    sweep_end: FlightWaypoint
     nav_from: List[FlightWaypoint]
-    land: FlightWaypoint
-    divert: Optional[FlightWaypoint]
-    lead_time: timedelta
+    patrol_start: FlightWaypoint
+    patrol_end: FlightWaypoint
 
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.takeoff
-        yield self.hold
-        yield from self.nav_to
-        yield self.sweep_start
-        yield self.sweep_end
-        yield from self.nav_from
-        yield self.land
-        if self.divert is not None:
-            yield self.divert
+    #: Maximum time to remain on station.
+    patrol_duration: timedelta
 
     @property
-    def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        return self.sweep_end
+    def patrol_start_time(self) -> timedelta:
+        return self.package.time_over_target
 
     @property
-    def tot_offset(self) -> timedelta:
-        return -self.lead_time
-
-    @property
-    def sweep_start_time(self) -> timedelta:
-        travel_time = self.travel_time_between_waypoints(
-            self.sweep_start, self.sweep_end)
-        return self.sweep_end_time - travel_time
-
-    @property
-    def sweep_end_time(self) -> timedelta:
-        return self.package.time_over_target + self.tot_offset
+    def patrol_end_time(self) -> timedelta:
+        # TODO: This is currently wrong for CAS.
+        # CAS missions end when they're winchester or bingo. We need to
+        # configure push tasks for the escorts rather than relying on timing.
+        return self.patrol_start_time + self.patrol_duration
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.sweep_start:
-            return self.sweep_start_time
-        if waypoint == self.sweep_end:
-            return self.sweep_end_time
+        if waypoint == self.patrol_start:
+            return self.patrol_start_time
         return None
 
     def depart_time_for_waypoint(
             self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.hold:
-            return self.push_time
+        if waypoint == self.patrol_end:
+            return self.patrol_end_time
         return None
 
-    @property
-    def push_time(self) -> timedelta:
-        return self.sweep_end_time - TravelTime.between_points(
-            self.hold.position,
-            self.sweep_end.position,
-            GroundSpeed.for_flight(self.flight, self.hold.alt)
-        )
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        raise NotImplementedError
 
+    @property
+    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
+        return {self.patrol_start, self.patrol_end}
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.patrol_start
+
+    @property
     def mission_departure_time(self) -> timedelta:
-        return self.sweep_end_time
+        return self.patrol_end_time
+
+
+@dataclass(frozen=True)
+class SupporterFlightPlan(SupportFlightPlan):
+    takeoff: FlightWaypoint
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield from [
+            self.patrol_start,
+            self.patrol_end,
+        ]
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
 
 
 @dataclass(frozen=True)
@@ -988,7 +997,7 @@ class FlightPlanBuilder:
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
 
-    def generate_awacs(self, flight: Flight) -> AwacsFlightPlan:
+    def generate_awacs(self, flight: Flight) -> SupporterFlightPlan:
         """Generate a AWACS flight at a given location.
 
        Args:
@@ -998,13 +1007,21 @@ class FlightPlanBuilder:
 
         start, end = self.loiter_for_support(location)
 
-        # todo nach plane
-        patrol_alt = meters(800)
+        if flight.unit_type == E_2C:
+            patrol_alt = meters(9000)
+        elif flight.unit_type == E_3A:
+            patrol_alt = meters(10670)
+        elif flight.unit_type == A_50:
+            patrol_alt = meters(10200)
+        elif flight.unit_type == KJ_2000:
+            patrol_alt = meters(12250)
+        else:
+            patrol_alt = meters(7000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.race_track(start, end, patrol_alt)
 
-        AwacsFlight = AwacsFlightPlan(
+        AwacsFlight = SupporterFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
@@ -1012,16 +1029,12 @@ class FlightPlanBuilder:
                                     patrol_alt),
             nav_from=builder.nav_path(end.position, flight.arrival.position,
                                       patrol_alt),
-            sweep_start=start,
-            sweep_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
-            hold=start,
-            hold_duration=self.doctrine.cap_duration,
-            lead_time=timedelta(minutes=5),
+            patrol_duration=timedelta(hours=4),
+            patrol_start=start,
+            patrol_end=end,
         )
-
-        logging.critical(AwacsFlight)
         return AwacsFlight
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
@@ -1203,14 +1216,12 @@ class FlightPlanBuilder:
         closest_airfield = location
         heading = location.position.heading_between_point(closest_airfield.position)
 
-        # todo random fickt deine mutter
         end = location.position.point_from_heading(
             heading,
-            nautical_miles(15)
+            5000
         )
 
-        # todo plane abhängig
-        diameter = nautical_miles(30)
+        diameter = -9000
 
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
