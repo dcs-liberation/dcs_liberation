@@ -55,6 +55,7 @@ from .controlpoint import (
     Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
+from ..point_with_heading import PointWithHeading
 from ..utils import Distance, meters, nautical_miles
 
 Numeric = Union[int, float]
@@ -70,6 +71,7 @@ IMPORTANCE_MEDIUM = 1.2
 IMPORTANCE_HIGH = 1.4
 
 FRONTLINE_MIN_CP_DISTANCE = 5000
+
 
 def pairwise(iterable):
     """
@@ -183,7 +185,7 @@ class MizCampaignLoader:
         for group in self.country(blue).ship_group:
             if group.units[0].type == self.LHA_UNIT_TYPE:
                 yield group
-    
+
     def fobs(self, blue: bool) -> Iterator[VehicleGroup]:
         for group in self.country(blue).vehicle_group:
             if group.units[0].type == self.FOB_UNIT_TYPE:
@@ -297,7 +299,7 @@ class MizCampaignLoader:
             # final waypoint at the destination CP. Intermediate waypoints
             # define the curve of the front line.
             waypoints = [p.position for p in group.points]
-            origin =  self.theater.closest_control_point(waypoints[0])
+            origin = self.theater.closest_control_point(waypoints[0])
             if origin is None:
                 raise RuntimeError(
                     f"No control point near the first waypoint of {group.name}")
@@ -326,7 +328,8 @@ class MizCampaignLoader:
         for group in self.garrisons:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_garrisons.append(group.position)
+                closest.preset_locations.base_garrisons.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading))
             else:
                 logging.warning(
                     f"Found garrison unit too far from base: {group.name}")
@@ -334,42 +337,44 @@ class MizCampaignLoader:
         for group in self.sams:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_air_defense.append(group.position)
+                closest.preset_locations.base_air_defense.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading))
             else:
-                closest.preset_locations.strike_locations.append(group.position)
+                closest.preset_locations.strike_locations.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(group.position)
+            closest.preset_locations.ewrs.append(PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.offshore_strike_targets:
             closest, distance = self.objective_info(group)
             closest.preset_locations.offshore_strike_locations.append(
-                group.position)
+                PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.ships:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ships.append(group.position)
+            closest.preset_locations.ships.append(PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.missile_sites.append(group.position)
+            closest.preset_locations.missile_sites.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.coastal_defenses.append(group.position)
+            closest.preset_locations.coastal_defenses.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.required_long_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_long_range_sams.append(
-                group.position
-            )
+                PointWithHeading.from_point(group.position, group.units[0].heading))
 
         for group in self.required_medium_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_medium_range_sams.append(
-                group.position
-            )
+                PointWithHeading.from_point(group.position, group.units[0].heading))
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
@@ -486,8 +491,8 @@ class ConflictTheater:
         for inclusion_zone in self.landmap.inclusion_zones:
             nearest_pair = ops.nearest_points(point, inclusion_zone)
             nearest_points.append(nearest_pair[1])
-        min_distance = point.distance(nearest_points[0]) # type: geometry.Point
-        nearest_point = nearest_points[0] # type: geometry.Point
+        min_distance = point.distance(nearest_points[0])  # type: geometry.Point
+        nearest_point = nearest_points[0]  # type: geometry.Point
         for pt in nearest_points[1:]:
             distance = point.distance(pt)
             if distance < min_distance:
@@ -547,7 +552,7 @@ class ConflictTheater:
                 closest = conflict
                 closest_distance = distance
         return closest
-    
+
     def closest_opposing_control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """
         Returns a tuple of the two nearest opposing ControlPoints in theater.
@@ -572,7 +577,7 @@ class ConflictTheater:
             self.find_control_point_by_id(i)
             for i
             in min(all_cp_min_distances, key=all_cp_min_distances.get)  # type: ignore
-          ]  # type: List[ControlPoint]
+        ]  # type: List[ControlPoint]
         assert len(closest_opposing_cps) == 2
         if closest_opposing_cps[0].captured:
             return cast(Tuple[ControlPoint, ControlPoint], tuple(closest_opposing_cps))
@@ -613,7 +618,7 @@ class ConflictTheater:
             cp.captured_invert = False
 
         return cp
-        
+
     @staticmethod
     def from_json(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
         theaters = {
@@ -649,7 +654,7 @@ class ConflictTheater:
             cps[l[1]].connect(cps[l[0]])
 
         return t
-    
+
 
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
@@ -788,10 +793,10 @@ class FrontLine(MissionTarget):
     """
 
     def __init__(
-        self,
-        control_point_a: ControlPoint,
-        control_point_b: ControlPoint,
-        theater: ConflictTheater
+            self,
+            control_point_a: ControlPoint,
+            control_point_b: ControlPoint,
+            theater: ConflictTheater
     ) -> None:
         self.control_point_a = control_point_a
         self.control_point_b = control_point_b
@@ -876,7 +881,7 @@ class FrontLine(MissionTarget):
         according to the current strength of each control point
         """
         total_strength = (
-            self.control_point_a.base.strength + self.control_point_b.base.strength
+                self.control_point_a.base.strength + self.control_point_b.base.strength
         )
         if self.control_point_a.base.strength == 0:
             return self._adjust_for_min_dist(0)
@@ -891,11 +896,11 @@ class FrontLine(MissionTarget):
         constant of either end control point.
         """
         if (distance > self.attack_distance / 2) and (
-            distance + FRONTLINE_MIN_CP_DISTANCE > self.attack_distance
+                distance + FRONTLINE_MIN_CP_DISTANCE > self.attack_distance
         ):
             distance = self.attack_distance - FRONTLINE_MIN_CP_DISTANCE
         elif (distance < self.attack_distance / 2) and (
-            distance < FRONTLINE_MIN_CP_DISTANCE
+                distance < FRONTLINE_MIN_CP_DISTANCE
         ):
             distance = FRONTLINE_MIN_CP_DISTANCE
         return distance
@@ -910,8 +915,8 @@ class FrontLine(MissionTarget):
         )
         complex_frontlines = self.theater.frontline_data
         if (complex_frontlines) and (
-            (control_point_ids in complex_frontlines)
-            or (reversed_cp_ids in complex_frontlines)
+                (control_point_ids in complex_frontlines)
+                or (reversed_cp_ids in complex_frontlines)
         ):
             # The frontline segments must be stored in the correct order for the distance algorithms to work.
             # The points in the frontline are ordered from the id before the | to the id after.
@@ -935,10 +940,9 @@ class FrontLine(MissionTarget):
                 )
             )
 
-
     @staticmethod
     def load_json_frontlines(
-        theater: ConflictTheater
+            theater: ConflictTheater
     ) -> Optional[Dict[str, ComplexFrontLine]]:
         """Load complex frontlines from json"""
         try:
