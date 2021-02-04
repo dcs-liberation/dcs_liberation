@@ -57,6 +57,10 @@
     "BoxSpringGenerator",
     "TallRackGenerator"
   ],
+  "coastal_defenses": [
+    "SilkwormGenerator"
+  ],
+  "coastal_group_count": 2,
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
   ],

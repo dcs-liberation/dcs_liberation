@@ -1,27 +1,25 @@
 import logging
 import random
 from game import db
-from gen.missiles.scud_site import ScudGenerator
-from gen.missiles.v1_group import V1GroupGenerator
+from gen.coastal.silkworm import SilkwormGenerator
 
-MISSILES_MAP = {
-    "V1GroupGenerator": V1GroupGenerator,
-    "ScudGenerator": ScudGenerator
+COASTAL_MAP = {
+    "SilkwormGenerator": SilkwormGenerator,
 }
 
 
-def generate_missile_group(game, ground_object, faction_name: str):
+def generate_coastal_group(game, ground_object, faction_name: str):
     """
-    This generate a missiles group
+    This generate a coastal defenses group
     :return: Nothing, but put the group reference inside the ground object
     """
     faction = db.FACTIONS[faction_name]
-    if len(faction.missiles) > 0:
-        generators = faction.missiles
+    if len(faction.coastal_defenses) > 0:
+        generators = faction.coastal_defenses
         if len(generators) > 0:
             gen = random.choice(generators)
-            if gen in MISSILES_MAP.keys():
-                generator = MISSILES_MAP[gen](game, ground_object, faction)
+            if gen in COASTAL_MAP.keys():
+                generator = COASTAL_MAP[gen](game, ground_object, faction)
                 generator.generate()
                 return generator.get_generated_group()
             else:

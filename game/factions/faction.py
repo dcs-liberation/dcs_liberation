@@ -60,6 +60,9 @@ class Faction:
     # Possible Missile site generators for this faction
     missiles: List[str] = field(default_factory=list)
 
+    # Possible costal site generators for this faction
+    coastal_defenses: List[str] = field(default_factory=list)
+
     # Required mods or asset packs
     requirements: Dict[str, str] = field(default_factory=dict)
 
@@ -89,6 +92,9 @@ class Faction:
 
     # How many missiles group should we try to generate per CP on startup for this faction
     missiles_group_count: int = field(default=1)
+
+    # How many coastal group should we try to generate per CP on startup for this faction
+    coastal_group_count: int = field(default=1)
 
     # Whether this faction has JTAC access
     has_jtac: bool = field(default=False)
@@ -153,6 +159,7 @@ class Faction:
         faction.air_defenses.extend(json.get("shorads", []))
 
         faction.missiles = json.get("missiles", [])
+        faction.coastal_defenses = json.get("coastal_defenses", [])
         faction.requirements = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
@@ -173,6 +180,7 @@ class Faction:
             faction.jtac_unit = None
         faction.navy_group_count = int(json.get("navy_group_count", 1))
         faction.missiles_group_count = int(json.get("missiles_group_count", 0))
+        faction.coastal_group_count = int(json.get("coastal_group_count", 0))
 
         # Load doctrine
         doctrine = json.get("doctrine", "modern")

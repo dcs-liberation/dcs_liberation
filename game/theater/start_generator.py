@@ -13,7 +13,7 @@ from dcs.vehicles import AirDefence
 
 from game import Game, db
 from game.factions.faction import Faction
-from game.theater import Carrier, Lha, LocationType
+from game.theater import Carrier, Lha, LocationType, PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
@@ -22,10 +22,11 @@ from game.theater.theatergroundobject import (
     MissileSiteGroundObject,
     SamGroundObject,
     ShipGroundObject,
-    VehicleGroupGroundObject,
+    VehicleGroupGroundObject, CoastalSiteGroundObject,
 )
 from game.version import VERSION
 from gen import namegen
+from gen.coastal.coastal_group_generator import generate_coastal_group
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import (
     generate_carrier_group,
@@ -142,12 +143,12 @@ class LocationFinder:
         self.miz_data = MizDataLocationFinder.compute_possible_locations(
             game.theater.terrain.name, control_point.full_name)
 
-    def location_for(self, location_type: LocationType) -> Optional[Point]:
+    def location_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
         position = self.control_point.preset_locations.random_for(location_type)
         if position is not None:
             return position
 
-        logging.warning(f"No campaign location for %s at %s",
+        logging.warning(f"No campaign location for %s Mat %s",
                         location_type.value, self.control_point)
         position = self.random_from_miz_data(
             location_type == LocationType.OffshoreStrikeTarget)
@@ -164,7 +165,7 @@ class LocationFinder:
                       location_type.value, self.control_point)
         return None
 
-    def random_from_miz_data(self, offshore: bool) -> Optional[Point]:
+    def random_from_miz_data(self, offshore: bool) -> Optional[PointWithHeading]:
         if offshore:
             locations = self.miz_data.offshore_locations
         else:
@@ -172,11 +173,16 @@ class LocationFinder:
         if self.miz_data.offshore_locations:
             preset = random.choice(locations)
             locations.remove(preset)
-            return preset.position
+            return PointWithHeading.from_point(preset.position, preset.heading)
         return None
 
-    def random_position(self, location_type: LocationType) -> Optional[Point]:
+    def random_position(self, location_type: LocationType) -> Optional[PointWithHeading]:
         # TODO: Flesh out preset locations so we never hit this case.
+
+        if location_type == LocationType.Coastal:
+            # No coastal locations generated randomly
+            return None
+
         logging.warning("Falling back to random location for %s at %s",
                         location_type.value, self.control_point)
 
@@ -228,7 +234,7 @@ class LocationFinder:
 
     def _find_random_position(self, min_range: int, max_range: int,
                               on_ground: bool, is_base_defense: bool,
-                              avoid_others: bool) -> Optional[Point]:
+                              avoid_others: bool) -> Optional[PointWithHeading]:
         """
         Find a valid ground object location
         :param on_ground: Whether it should be on ground or on sea (True = on
@@ -241,7 +247,7 @@ class LocationFinder:
         near = self.control_point.position
         others = self.control_point.ground_objects
 
-        def is_valid(point: Optional[Point]) -> bool:
+        def is_valid(point: Optional[PointWithHeading]) -> bool:
             if point is None:
                 return False
 
@@ -272,9 +278,9 @@ class LocationFinder:
 
         for _ in range(300):
             # Check if on land or sea
-            p = near.random_point_within(max_range, min_range)
+            p = PointWithHeading.from_point(near.random_point_within(max_range, min_range), random.randint(0, 360))
             if is_valid(p):
-                return p
+                return
         return None
 
 
@@ -544,6 +550,9 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         if self.faction.missiles:
             self.generate_missile_sites()
 
+        if self.faction.coastal_defenses:
+            self.generate_coastal_sites()
+
         return True
 
     def generate_ground_points(self) -> None:
@@ -662,6 +671,26 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g = MissileSiteGroundObject(namegen.random_objective_name(), group_id,
                                     position, self.control_point)
         group = generate_missile_group(self.game, g, self.faction_name)
+        g.groups = []
+        if group is not None:
+            g.groups.append(group)
+            self.control_point.connected_objectives.append(g)
+        return
+
+    def generate_coastal_sites(self) -> None:
+        for i in range(self.faction.coastal_group_count):
+            self.generate_coastal_site()
+
+    def generate_coastal_site(self) -> None:
+        position = self.location_finder.location_for(LocationType.Coastal)
+        if position is None:
+            return
+
+        group_id = self.game.next_group_id()
+
+        g = CoastalSiteGroundObject(namegen.random_objective_name(), group_id,
+                                    position, self.control_point, position.heading)
+        group = generate_coastal_group(self.game, g, self.faction_name)
         g.groups = []
         if group is not None:
             g.groups.append(group)

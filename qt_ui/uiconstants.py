@@ -134,6 +134,8 @@ def load_icons():
     ICONS["missile_blue"] = QPixmap("./resources/ui/ground_assets/missile_blue.png")
     ICONS["nothreat"] = QPixmap("./resources/ui/ground_assets/nothreat.png")
     ICONS["nothreat_blue"] = QPixmap("./resources/ui/ground_assets/nothreat_blue.png")
+    ICONS["coastal"] = QPixmap("./resources/ui/ground_assets/coastal.png")
+    ICONS["coastal_blue"] = QPixmap("./resources/ui/ground_assets/coastal_blue.png")
 
     ICONS["Generator"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/generator.png")
     ICONS["Missile"] = QPixmap("./resources/ui/misc/"+get_theme_icons()+"/missile.png")
