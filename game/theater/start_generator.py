@@ -280,7 +280,7 @@ class LocationFinder:
             # Check if on land or sea
             p = PointWithHeading.from_point(near.random_point_within(max_range, min_range), random.randint(0, 360))
             if is_valid(p):
-                return
+                return p
         return None
 
 
