@@ -67,6 +67,7 @@ class FlightWaypointType(Enum):
     DIVERT = 23
     INGRESS_OCA_RUNWAY = 24
     INGRESS_OCA_AIRCRAFT = 25
+    SUPPORT_CIRCLE = 26
 
 
 class FlightWaypoint:

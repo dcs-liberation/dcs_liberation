@@ -135,10 +135,11 @@ HELICOPTER_CHANNEL = MHz(127)
 UHF_FALLBACK_CHANNEL = MHz(251)
 
 TARGET_WAYPOINTS = (
-                FlightWaypointType.TARGET_GROUP_LOC,
-                FlightWaypointType.TARGET_POINT,
-                FlightWaypointType.TARGET_SHIP,
-            )
+    FlightWaypointType.TARGET_GROUP_LOC,
+    FlightWaypointType.TARGET_POINT,
+    FlightWaypointType.TARGET_SHIP,
+)
+
 
 # TODO: Get radio information for all the special cases.
 def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
@@ -737,11 +738,14 @@ class AircraftConflictGenerator:
                 group.load_loadout(payload_name)
                 if not group.units[0].pylons and for_task == RunwayAttack:
                     if PinpointStrike in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                        logging.warning("No loadout for \"Runway Attack\" for the {}, defaulting to Strike loadout".format(str(unit_type)))
+                        logging.warning(
+                            "No loadout for \"Runway Attack\" for the {}, defaulting to Strike loadout".format(
+                                str(unit_type)))
                         payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][PinpointStrike]
                         group.load_loadout(payload_name)
                 did_load_loadout = True
-                logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
+                logging.info(
+                    "Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
 
         if not did_load_loadout:
             group.load_task_default_loadout(for_task)
@@ -1001,7 +1005,7 @@ class AircraftConflictGenerator:
 
             group = self._generate_at_airport(
                 name=namegen.next_aircraft_name(country, control_point.id,
-                                            flight),
+                                                flight),
                 side=country,
                 unit_type=aircraft,
                 count=1,
@@ -1064,7 +1068,7 @@ class AircraftConflictGenerator:
         trigger.add_condition(
             CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
-    def generate_planned_flight(self, cp, country, flight:Flight):
+    def generate_planned_flight(self, cp, country, flight: Flight):
         name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":
@@ -1345,8 +1349,8 @@ class AircraftConflictGenerator:
                 filtered_points = [
                     point for idx, point in enumerate(filtered_points) if (
                             point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
-                        )
-                    ]
+                    )
+                ]
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
@@ -1468,6 +1472,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
+            FlightWaypointType.SUPPORT_CIRCLE: SupportCicleBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
@@ -1477,8 +1482,8 @@ class PydcsWaypointBuilder:
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
         if (
-            (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and
-            (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
+                (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and
+                (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
         ):
             return True
         else:
@@ -1491,6 +1496,32 @@ class PydcsWaypointBuilder:
                 self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
             if self.group.units[0].unit_type == F_14B and i == 0:
                 self.group.add_nav_target_point(t.position, "ST")
+
+#todo beide punkte sind circle?
+class SupportCicleBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        flight_plan = self.flight.flight_plan
+
+        if not isinstance(flight_plan, SupporterFlightPlan):
+            flight_plan_type = flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create circle track for {self.flight} because "
+                f"{flight_plan_type} does not define a circle.")
+            return waypoint
+
+        racetrack = ControlledTask(OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.Circle
+        ))
+
+        self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
+        racetrack.stop_after_time(
+            int(flight_plan.patrol_end_time.total_seconds()))
+        waypoint.add_task(racetrack)
+
+        return waypoint
 
 
 class DefaultWaypointBuilder(PydcsWaypointBuilder):
@@ -1641,12 +1672,12 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
-                                    position=tgroup.position,
-                                    radius=int(nautical_miles(30).meters),
-                                    targets=[
-                                        Targets.All.GroundUnits.AirDefence,
-                                    ])
-                                )
+                    position=tgroup.position,
+                    radius=int(nautical_miles(30).meters),
+                    targets=[
+                        Targets.All.GroundUnits.AirDefence,
+                    ])
+                )
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
         self.register_special_waypoints(self.waypoint.targets)
@@ -1789,7 +1820,6 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
 
         flight_plan = self.flight.flight_plan
-
 
         if not isinstance(flight_plan, (PatrollingFlightPlan, SupporterFlightPlan)):
             flight_plan_type = flight_plan.__class__.__name__

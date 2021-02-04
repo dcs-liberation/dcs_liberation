@@ -1019,7 +1019,7 @@ class FlightPlanBuilder:
             patrol_alt = meters(7000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.race_track(start, end, patrol_alt)
+        start, end = builder.circle_point(start, end, patrol_alt)
 
         #todo i dont want tne engagement_distance here
         AwacsFlight = SupporterFlightPlan(
