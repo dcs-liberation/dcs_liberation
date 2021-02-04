@@ -11,7 +11,7 @@ class SilkwormGenerator(GroupGenerator):
 
     def generate(self):
 
-        positions = self.get_circular_position(3, launcher_distance=120, coverage=180)
+        positions = self.get_circular_position(5, launcher_distance=120, coverage=180)
 
         self.add_unit(MissilesSS.Silkworm_Radar, "SR#0", self.position.x, self.position.y, self.heading)
 
@@ -20,7 +20,7 @@ class SilkwormGenerator(GroupGenerator):
             self.add_unit(MissilesSS.SS_N_2_Silkworm, "Missile#" + str(i), p[0], p[1], self.heading)
 
         # Commander
-        self.add_unit(Unarmed.Transport_UAZ_469, "UAZ#0", self.position.x - 35, self.position.y - 20,
+        self.add_unit(Unarmed.Transport_KAMAZ_43101, "KAMAZ#0", self.position.x - 35, self.position.y - 20,
                       self.heading)
 
         # Shorad
