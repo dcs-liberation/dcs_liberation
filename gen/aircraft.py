@@ -108,7 +108,6 @@ from .flights.flightplan import (
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
-    SupporterFlightPlan,
     SweepFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
@@ -1472,7 +1471,6 @@ class PydcsWaypointBuilder:
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
-            FlightWaypointType.SUPPORT_CIRCLE: SupportCicleBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
@@ -1496,32 +1494,6 @@ class PydcsWaypointBuilder:
                 self.group.add_nav_target_point(t.position, "PP" + str(i + 1))
             if self.group.units[0].unit_type == F_14B and i == 0:
                 self.group.add_nav_target_point(t.position, "ST")
-
-#todo beide punkte sind circle?
-class SupportCicleBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
-        flight_plan = self.flight.flight_plan
-
-        if not isinstance(flight_plan, SupporterFlightPlan):
-            flight_plan_type = flight_plan.__class__.__name__
-            logging.error(
-                f"Cannot create circle track for {self.flight} because "
-                f"{flight_plan_type} does not define a circle.")
-            return waypoint
-
-        racetrack = ControlledTask(OrbitAction(
-            altitude=waypoint.alt,
-            pattern=OrbitAction.OrbitPattern.Circle
-        ))
-
-        self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
-        racetrack.stop_after_time(
-            int(flight_plan.patrol_end_time.total_seconds()))
-        waypoint.add_task(racetrack)
-
-        return waypoint
 
 
 class DefaultWaypointBuilder(PydcsWaypointBuilder):
@@ -1821,7 +1793,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
 
         flight_plan = self.flight.flight_plan
 
-        if not isinstance(flight_plan, (PatrollingFlightPlan, SupporterFlightPlan)):
+        if not isinstance(flight_plan, PatrollingFlightPlan):
             flight_plan_type = flight_plan.__class__.__name__
             logging.error(
                 f"Cannot create race track for {self.flight} because "
@@ -1839,23 +1811,16 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # be good to make this usable for things like BAI when we add that
         # later.
         cap_types = {FlightType.BARCAP, FlightType.TARCAP}
-        support_types = {FlightType.AWACS}
         if self.flight.flight_type in cap_types:
             engagement_distance = int(flight_plan.engagement_distance.meters)
             waypoint.tasks.append(
                 EngageTargets(max_distance=engagement_distance,
                               targets=[Targets.All.Air]))
 
-        if self.flight.flight_type in support_types:
-            racetrack = ControlledTask(OrbitAction(
-                altitude=waypoint.alt,
-                pattern=OrbitAction.OrbitPattern.Circle
-            ))
-        else:
-            racetrack = ControlledTask(OrbitAction(
-                altitude=waypoint.alt,
-                pattern=OrbitAction.OrbitPattern.RaceTrack
-            ))
+        racetrack = ControlledTask(OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.RaceTrack
+        ))
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(
             int(flight_plan.patrol_end_time.total_seconds()))
@@ -1868,7 +1833,7 @@ class RaceTrackEndBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
-        if not isinstance(self.flight.flight_plan, (PatrollingFlightPlan, SupporterFlightPlan)):
+        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
             flight_plan_type = self.flight.flight_plan.__class__.__name__
             logging.error(
                 f"Cannot create race track for {self.flight} because "
