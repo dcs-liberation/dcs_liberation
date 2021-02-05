@@ -367,7 +367,7 @@ class WaypointBuilder:
         """
 
         waypoint = FlightWaypoint(
-            FlightWaypointType.SUPPORT_CIRCLE,
+            FlightWaypointType.LOITER,
             start.x,
             start.y,
             altitude
