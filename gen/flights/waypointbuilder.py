@@ -359,9 +359,8 @@ class WaypointBuilder:
                 self.race_track_end(end, altitude))
 
 
-    @staticmethod
-    def circle_point_start(position: Point, altitude: Distance) -> FlightWaypoint:
-        """Creates a racetrack start waypoint.
+    def circle_point(self, start: Point, altitude: Distance) -> FlightWaypoint:
+        """Creates a circle point
 
         Args:
             position: Position of the waypoint.
@@ -370,37 +369,14 @@ class WaypointBuilder:
 
         waypoint = FlightWaypoint(
             FlightWaypointType.SUPPORT_CIRCLE,
-            position.x,
-            position.y,
+            start.x,
+            start.y,
             altitude
         )
-        waypoint.name = "CIRCLE START"
-        waypoint.description = "Head home"
-        waypoint.pretty_name = "CIRCLE start"
+        waypoint.name = "CIRCLE AROUND"
+        waypoint.description = "Circle around this WP"
+        waypoint.pretty_name = "CIRCLE AROUND"
         return waypoint
-
-    @staticmethod
-    def circle_point_end(position: Point, altitude: Distance) -> FlightWaypoint:
-        """Creates a racetrack end waypoint.
-
-        Args:
-            position: Position of the waypoint.
-            altitude: Altitude of the racetrack.
-        """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.SUPPORT_CIRCLE,
-            position.x,
-            position.y,
-            altitude
-        )
-        waypoint.name = "CIRCLE END"
-        waypoint.description = "Circle on the Inbound point"
-        waypoint.pretty_name = "CIRCLE end"
-        return waypoint
-
-    def circle_point(self, start: Point, end: Point, altitude: Distance) -> Tuple[FlightWaypoint, FlightWaypoint]:
-        return (self.circle_point_start(start, altitude),
-                self.circle_point_end(end, altitude))
 
     @staticmethod
     def sweep_start(position: Point, altitude: Distance) -> FlightWaypoint:
