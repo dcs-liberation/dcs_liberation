@@ -100,6 +100,8 @@ class PackageModel(QAbstractListModel):
     #: Emitted when this package is being deleted from the ATO.
     deleted = Signal()
 
+    tot_changed = Signal()
+
     def __init__(self, package: Package) -> None:
         super().__init__()
         self.package = package
@@ -139,6 +141,8 @@ class PackageModel(QAbstractListModel):
         """Adds the given flight to the package."""
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.package.add_flight(flight)
+        # update_tot is not called here because the new flight does not have a
+        # flight plan yet. Will be called manually by the caller.
         self.endInsertRows()
 
     def delete_flight_at_index(self, index: QModelIndex) -> None:
@@ -155,14 +159,26 @@ class PackageModel(QAbstractListModel):
         self.beginRemoveRows(QModelIndex(), index, index)
         self.package.remove_flight(flight)
         self.endRemoveRows()
+        self.update_tot()
 
     def flight_at_index(self, index: QModelIndex) -> Flight:
         """Returns the flight located at the given index."""
         return self.package.flights[index.row()]
 
-    def update_tot(self, tot: datetime.timedelta) -> None:
+    def set_tot(self, tot: datetime.timedelta) -> None:
         self.package.time_over_target = tot
+        self.update_tot()
+        # For some reason this is needed to make the UI update quickly.
         self.layoutChanged.emit()
+
+    def set_asap(self, asap: bool) -> None:
+        self.package.auto_asap = asap
+        self.update_tot()
+
+    def update_tot(self) -> None:
+        if self.package.auto_asap:
+            self.package.set_tot_asap()
+        self.tot_changed.emit()
 
     @property
     def mission_target(self) -> MissionTarget:

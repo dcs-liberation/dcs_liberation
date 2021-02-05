@@ -2,6 +2,9 @@
   "name": "The Channel - Dunkirk",
   "theater": "The Channel",
   "authors": "Khopa",
+  "recommended_player_faction": "Allies 1944",
+  "recommended_enemy_faction": "Germany 1942",
   "description": "<p>In this scenario, your forces starts in Dunkirk and can be supported by the airfields on the other side of the Channel.</p><p>If you select the inverted configuration, you can play a German invasion of England.</p><p><strong>Note:</strong> B-17 should be operated from Manston airfield</p>",
-  "miz": "dunkirk.miz"
+  "miz": "dunkirk.miz",
+  "performance": 1
 }

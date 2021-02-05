@@ -410,7 +410,10 @@ AIRFIELD_DATA = {
         icao="OMLW",
         elevation=400,
         runway_length=10768,
-        atc=AtcData(MHz(4, 175), MHz(39, 250), MHz(119, 300), MHz(250, 850)),
+        tacan=TacanChannel(121, TacanBand.X),
+        tacan_callsign="OMLW",
+        vor=("OMLW", MHz(117,400)),
+        atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(119, 300), MHz(250, 950)),
     ),
 
     "Al Dhafra AB": AirfieldData(

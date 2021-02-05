@@ -7,8 +7,12 @@
     "F_5E_3",
     "F_4E",
     "F_14A_135_GR",
+    "S_3B",
     "B_52H",
     "UH_1H"
+  ],
+  "awacs": [
+    "E_2C"
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",

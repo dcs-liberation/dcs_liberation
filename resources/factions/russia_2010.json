@@ -18,7 +18,10 @@
     "Mi_24V",
     "Mi_28N",
     "Ka_50",
-    "Tu_22M3"
+    "Tu_22M3",
+    "Tu_95MS",
+    "Tu_142",
+    "Tu_160"
   ],
   "awacs": [
     "A_50"
@@ -88,8 +91,7 @@
     "Admiral Kuznetov"
   ],
   "navy_generators": [
-    "RussianNavyGroupGenerator",
-    "KiloSubGroupGenerator"
+    "RussianNavyGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

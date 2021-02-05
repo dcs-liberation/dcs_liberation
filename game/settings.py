@@ -19,15 +19,17 @@ class Settings:
     supercarrier: bool = False
     generate_marks: bool = True
     manpads: bool = True
-    cold_start: bool = False  # Legacy parameter do not use
     version: Optional[str] = None
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
+
+    default_start_type: str = "Cold"
 
     # Campaign management
     automate_runway_repair: bool = False
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
+    restrict_weapons_by_date: bool = False
 
     # Performance oriented
     perf_red_alert_state: bool = True
@@ -35,7 +37,6 @@ class Settings:
     perf_artillery: bool = True
     perf_moving_units: bool = True
     perf_infantry: bool = True
-    perf_ai_parking_start: bool = True
     perf_destroyed_units: bool = True
 
     # Performance culling
@@ -48,6 +49,8 @@ class Settings:
 
     # Cheating
     show_red_ato: bool = False
+    enable_frontline_cheats: bool = False
+    enable_base_capture_cheat: bool = False
 
     never_delay_player_flights: bool = False
 

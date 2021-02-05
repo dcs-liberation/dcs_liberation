@@ -1,5 +1,6 @@
 import random
 
+from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
 from gen.sam.airdefensegroupgenerator import (
@@ -30,10 +31,12 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             self.add_unit(AirDefence.SAM_Patriot_LN_M901, "LN#" + str(i), position[0], position[1], position[2])
 
         # Short range protection for high value site
+        aa_group = self.add_auxiliary_group("AA")
         num_launchers = random.randint(3, 4)
         positions = self.get_circular_position(num_launchers, launcher_distance=200, coverage=360)
-        for i, position in enumerate(positions):
-            self.add_unit(AirDefence.AAA_Vulcan_M163, "SPAAA#" + str(i), position[0], position[1], position[2])
+        for i, (x, y, heading) in enumerate(positions):
+            self.add_unit_to_group(aa_group, AirDefence.AAA_Vulcan_M163,
+                                   f"SPAAA#{i}", Point(x, y), heading)
 
     @classmethod
     def range(cls) -> AirDefenseRange:

@@ -74,6 +74,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
+from game.data.weapons import Pylon, Weapon
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -85,7 +86,7 @@ from game.theater.controlpoint import (
 )
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.unitmap import UnitMap
-from game.utils import knots_to_kph, nm_to_meter
+from game.utils import Distance, meters, nautical_miles
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
@@ -110,12 +111,10 @@ from .naming import namegen
 if TYPE_CHECKING:
     from game import Game
 
-WARM_START_HELI_AIRSPEED = 120
-WARM_START_HELI_ALT = 500
-WARM_START_ALTITUDE = 3000
-WARM_START_AIRSPEED = 550
+WARM_START_HELI_ALT = meters(500)
+WARM_START_ALTITUDE = meters(3000)
 
-RTB_ALTITUDE = 800
+RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
 HELI_ALT = 500
 
@@ -263,6 +262,9 @@ class FlightData:
     #: The package that the flight belongs to.
     package: Package
 
+    #: The country that the flight belongs to.
+    country: str
+
     flight_type: FlightType
 
     #: All units in the flight.
@@ -300,7 +302,7 @@ class FlightData:
 
     joker_fuel: Optional[int]
 
-    def __init__(self, package: Package, flight_type: FlightType,
+    def __init__(self, package: Package, country: str, flight_type: FlightType,
                  units: List[FlyingUnit], size: int, friendly: bool,
                  departure_delay: timedelta, departure: RunwayData,
                  arrival: RunwayData, divert: Optional[RunwayData],
@@ -309,6 +311,7 @@ class FlightData:
                  bingo_fuel: Optional[int],
                  joker_fuel: Optional[int]) -> None:
         self.package = package
+        self.country = country
         self.flight_type = flight_type
         self.units = units
         self.size = size
@@ -779,6 +782,7 @@ class AircraftConflictGenerator:
 
         self.flights.append(FlightData(
             package=package,
+            country=faction.country,
             flight_type=flight.flight_type,
             units=group.units,
             size=len(group.units),
@@ -832,19 +836,21 @@ class AircraftConflictGenerator:
         else:
             alt = WARM_START_ALTITUDE
 
-        speed = knots_to_kph(GroundSpeed.for_flight(flight, alt))
+        speed = GroundSpeed.for_flight(flight, alt)
 
         pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
 
-        logging.info("airgen: {} for {} at {} at {}".format(flight.unit_type, side.id, alt, speed))
+        logging.info(
+            "airgen: {} for {} at {} at {}".format(flight.unit_type, side.id,
+                                                   alt, int(speed.kph)))
         group = self.m.flight_group(
             country=side,
             name=name,
             aircraft_type=flight.unit_type,
             airport=None,
             position=pos,
-            altitude=alt,
-            speed=speed,
+            altitude=alt.meters,
+            speed=speed.kph,
             maintask=None,
             group_size=flight.count)
 
@@ -867,8 +873,10 @@ class AircraftConflictGenerator:
             start_type=self._start_type(start_type),
             group_size=count)
 
-    def _add_radio_waypoint(self, group: FlyingGroup, position, altitude: int, airspeed: int = 600):
-        point = group.add_waypoint(position, altitude, airspeed)
+    def _add_radio_waypoint(self, group: FlyingGroup, position,
+                            altitude: Distance,
+                            airspeed: int = 600) -> MovingPoint:
+        point = group.add_waypoint(position, altitude.meters, airspeed)
         point.alt_type = "RADIO"
         return point
 
@@ -884,7 +892,8 @@ class AircraftConflictGenerator:
             tod_location = position.point_from_heading(heading, RTB_DISTANCE)
             self._add_radio_waypoint(group, tod_location, last_waypoint.alt)
 
-        destination_waypoint = self._add_radio_waypoint(group, position, RTB_ALTITUDE)
+        destination_waypoint = self._add_radio_waypoint(group, position,
+                                                        RTB_ALTITUDE)
         if isinstance(at, Airport):
             group.land_at(at)
         return destination_waypoint
@@ -899,22 +908,39 @@ class AircraftConflictGenerator:
         else:
             assert False
 
-    def _setup_custom_payload(self, flight, group:FlyingGroup):
-        if flight.use_custom_loadout:
+    @staticmethod
+    def _setup_custom_payload(flight: Flight, group: FlyingGroup) -> None:
+        if not flight.use_custom_loadout:
+            return
 
-            logging.info("Custom loadout for flight : " + flight.__repr__())
-            for p in group.units:
-                p.pylons.clear()
+        logging.info("Custom loadout for flight : " + flight.__repr__())
+        for p in group.units:
+            p.pylons.clear()
 
-            for key in flight.loadout.keys():
-                if "Pylon" + key in flight.unit_type.__dict__.keys():
-                    print(flight.loadout)
-                    weapon_dict = flight.unit_type.__dict__["Pylon" + key].__dict__
-                    if flight.loadout[key] in weapon_dict.keys():
-                        weapon = weapon_dict[flight.loadout[key]]
-                        group.load_pylon(weapon, int(key))
-                else:
-                    logging.warning("Pylon not found ! => Pylon" + key + " on " + str(flight.unit_type))
+        for pylon_number, weapon in flight.loadout.items():
+            if weapon is None:
+                continue
+            pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
+            pylon.equip(group, weapon)
+
+    def _degrade_payload_to_era(self, flight: Flight,
+                                group: FlyingGroup) -> None:
+        loadout = dict(group.units[0].pylons)
+        for pylon_number, clsid in loadout.items():
+            weapon = Weapon.from_clsid(clsid["CLSID"])
+            if weapon is None:
+                logging.error(f"Could not find weapon for clsid {clsid}")
+                continue
+
+            if not weapon.available_on(self.game.date):
+                pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
+                for fallback in weapon.fallbacks:
+                    if not pylon.can_equip(fallback):
+                        continue
+                    if not fallback.available_on(self.game.date):
+                        continue
+                    pylon.equip(group, fallback)
+                    break
 
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:
@@ -963,13 +989,13 @@ class AircraftConflictGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(Package(control_point), aircraft, 1,
+            flight = Flight(Package(control_point), faction.country, aircraft, 1,
                             FlightType.BARCAP, "Cold", departure=control_point,
                             arrival=control_point, divert=None)
 
             group = self._generate_at_airport(
-                name=namegen.next_unit_name(country, control_point.id,
-                                            aircraft),
+                name=namegen.next_aircraft_name(country, control_point.id,
+                                            flight),
                 side=country,
                 unit_type=aircraft,
                 count=1,
@@ -1033,17 +1059,18 @@ class AircraftConflictGenerator:
             CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
     def generate_planned_flight(self, cp, country, flight:Flight):
+        name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=name,
                     side=country,
                     flight=flight,
                     origin=cp)
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 group = self._generate_at_group(
-                    name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                    name=name,
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1054,8 +1081,7 @@ class AircraftConflictGenerator:
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}")
                 group = self._generate_at_airport(
-                    name=namegen.next_unit_name(country, cp.id,
-                                                flight.unit_type),
+                    name=name,
                     side=country,
                     unit_type=flight.unit_type,
                     count=flight.count,
@@ -1067,7 +1093,7 @@ class AircraftConflictGenerator:
             logging.warning("No room on runway or parking slots. Starting from the air.")
             flight.start_type = "In Flight"
             group = self._generate_inflight(
-                name=namegen.next_unit_name(country, cp.id, flight.unit_type),
+                name=name,
                 side=country,
                 flight=flight,
                 origin=cp)
@@ -1312,6 +1338,8 @@ class AircraftConflictGenerator:
         # have their TOTs set.
         self.flights[-1].waypoints = [takeoff_point] + flight.points
         self._setup_custom_payload(flight, group)
+        if self.game.settings.restrict_weapons_by_date:
+            self._degrade_payload_to_era(flight, group)
 
     def should_delay_flight(self, flight: Flight,
                             start_time: timedelta) -> bool:
@@ -1380,11 +1408,15 @@ class PydcsWaypointBuilder:
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
-            Point(self.waypoint.x, self.waypoint.y), self.waypoint.alt,
+            Point(self.waypoint.x, self.waypoint.y),
+            self.waypoint.alt.meters,
             name=self.mission.string(self.waypoint.name))
 
         if self.waypoint.flyover:
-            waypoint.type = PointAction.FlyOverPoint.value
+            waypoint.action = PointAction.FlyOverPoint
+            # It seems we need to leave waypoint.type exactly as it is even
+            # though it's set to "Turning Point". If I set this to "Fly Over
+            # Point" and then save the mission in the ME DCS resets it.
 
         waypoint.alt_type = self.waypoint.alt_type
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
@@ -1497,7 +1529,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         if isinstance(self.flight.flight_plan, CasFlightPlan):
             waypoint.add_task(EngageTargetsInZone(
                 position=self.flight.flight_plan.target,
-                radius=FRONTLINE_LENGTH / 2,
+                radius=int(self.flight.flight_plan.engagement_distance.meters),
                 targets=[
                     Targets.All.GroundUnits.GroundVehicles,
                     Targets.All.GroundUnits.AirDefence.AAA,
@@ -1508,7 +1540,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
             logging.error(
                 "No CAS waypoint found. Falling back to search and engage")
             waypoint.add_task(EngageTargets(
-                max_distance=nm_to_meter(10),
+                max_distance=int(nautical_miles(10).meters),
                 targets=[
                     Targets.All.GroundUnits.GroundVehicles,
                     Targets.All.GroundUnits.AirDefence.AAA,
@@ -1554,7 +1586,7 @@ class OcaAircraftIngressBuilder(PydcsWaypointBuilder):
             position=target.position,
             # Al Dhafra is 4 nm across at most. Add a little wiggle room in case
             # the airport position from DCS is not centered.
-            radius=nm_to_meter(3),
+            radius=int(nautical_miles(3).meters),
             targets=[Targets.All.Air]
         )
         task.params["attackQtyLimit"] = False
@@ -1591,7 +1623,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
                                     position=tgroup.position,
-                                    radius=nm_to_meter(30),
+                                    radius=int(nautical_miles(30).meters),
                                     targets=[
                                         Targets.All.GroundUnits.AirDefence,
                                     ])
@@ -1673,7 +1705,7 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
             return waypoint
 
         waypoint.tasks.append(EngageTargets(
-            max_distance=nm_to_meter(50),
+            max_distance=int(nautical_miles(50).meters),
             targets=[Targets.All.Air.Planes.Fighters]))
 
         return waypoint
@@ -1716,7 +1748,7 @@ class JoinPointBuilder(PydcsWaypointBuilder):
         # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/250183-task-follow-and-escort-temporarily-aborted
         waypoint.add_task(ControlledTask(EngageTargets(
             # TODO: From doctrine.
-            max_distance=nm_to_meter(30),
+            max_distance=int(nautical_miles(30).meters),
             targets=[Targets.All.Air.Planes.Fighters]
         )))
 
@@ -1737,8 +1769,10 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
-        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
-            flight_plan_type = self.flight.flight_plan.__class__.__name__
+        flight_plan = self.flight.flight_plan
+
+        if not isinstance(flight_plan, PatrollingFlightPlan):
+            flight_plan_type = flight_plan.__class__.__name__
             logging.error(
                 f"Cannot create race track for {self.flight} because "
                 f"{flight_plan_type} does not define a patrol.")
@@ -1756,17 +1790,18 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # later.
         cap_types = {FlightType.BARCAP, FlightType.TARCAP}
         if self.flight.flight_type in cap_types:
-            waypoint.tasks.append(EngageTargets(max_distance=nm_to_meter(50),
-                                                targets=[Targets.All.Air]))
+            engagement_distance = int(flight_plan.engagement_distance.meters)
+            waypoint.tasks.append(
+                EngageTargets(max_distance=engagement_distance,
+                              targets=[Targets.All.Air]))
 
         racetrack = ControlledTask(OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack
         ))
-        self.set_waypoint_tot(
-            waypoint, self.flight.flight_plan.patrol_start_time)
+        self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(
-            int(self.flight.flight_plan.patrol_end_time.total_seconds()))
+            int(flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
 
         return waypoint

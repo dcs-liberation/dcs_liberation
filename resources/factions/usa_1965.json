@@ -9,6 +9,9 @@
     "B_52H",
     "UH_1H"
   ],
+  "awacs": [
+    "E_2C"
+  ],
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",

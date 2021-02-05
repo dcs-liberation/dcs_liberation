@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from datetime import timedelta
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING, Type
@@ -9,7 +10,9 @@ from dcs.point import MovingPoint, PointAction
 from dcs.unittype import FlyingType
 
 from game import db
+from game.data.weapons import Weapon
 from game.theater.controlpoint import ControlPoint, MissionTarget
+from game.utils import Distance, meters
 
 if TYPE_CHECKING:
     from gen.ato import Package
@@ -67,7 +70,7 @@ class FlightWaypointType(Enum):
 class FlightWaypoint:
 
     def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
-                 alt: int = 0) -> None:
+                 alt: Distance = meters(0)) -> None:
         """Creates a flight waypoint.
 
         Args:
@@ -83,6 +86,9 @@ class FlightWaypoint:
         self.alt = alt
         self.alt_type = "BARO"
         self.name = ""
+        # TODO: Merge with pretty_name.
+        # Only used in the waypoint list in the flight edit page. No sense
+        # having three names. A short and long form is enough.
         self.description = ""
         self.targets: List[MissionTarget] = []
         self.obj_name = ""
@@ -105,7 +111,7 @@ class FlightWaypoint:
     def from_pydcs(cls, point: MovingPoint,
                    from_cp: ControlPoint) -> "FlightWaypoint":
         waypoint = FlightWaypoint(FlightWaypointType.NAV, point.position.x,
-                                  point.position.y, point.alt)
+                                  point.position.y, meters(point.alt))
         waypoint.alt_type = point.alt_type
         # Other actions exist... but none of them *should* be the first
         # waypoint for a flight.
@@ -130,11 +136,13 @@ class FlightWaypoint:
 
 class Flight:
 
-    def __init__(self, package: Package, unit_type: Type[FlyingType],
+    def __init__(self, package: Package, country: str, unit_type: Type[FlyingType],
                  count: int, flight_type: FlightType, start_type: str,
                  departure: ControlPoint, arrival: ControlPoint,
-                 divert: Optional[ControlPoint]) -> None:
+                 divert: Optional[ControlPoint],
+                 custom_name: Optional[str] = None) -> None:
         self.package = package
+        self.country = country
         self.unit_type = unit_type
         self.count = count
         self.departure = departure
@@ -143,10 +151,11 @@ class Flight:
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
-        self.loadout: Dict[str, str] = {}
+        self.loadout: Dict[int, Optional[Weapon]] = {}
         self.start_type = start_type
         self.use_custom_loadout = False
         self.client_count = 0
+        self.custom_name = custom_name
 
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
@@ -168,4 +177,12 @@ class Flight:
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)
+        if self.custom_name:
+            return f"{self.custom_name} {self.count} x {name}"
+        return f"[{self.flight_type}] {self.count} x {name}"
+
+    def __str__(self):
+        name = db.unit_get_expanded_info(self.country, self.unit_type, 'name')
+        if self.custom_name:
+            return f"{self.custom_name} {self.count} x {name}"
         return f"[{self.flight_type}] {self.count} x {name}"

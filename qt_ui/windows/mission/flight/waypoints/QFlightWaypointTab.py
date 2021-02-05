@@ -29,8 +29,6 @@ from qt_ui.windows.mission.flight.waypoints \
 
 class QFlightWaypointTab(QFrame):
 
-    on_flight_changed = Signal()
-
     def __init__(self, game: Game, package: Package, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
         self.game = game
@@ -163,4 +161,3 @@ class QFlightWaypointTab(QFrame):
 
     def on_change(self):
         self.flight_waypoint_list.update_list()
-        self.on_flight_changed.emit()

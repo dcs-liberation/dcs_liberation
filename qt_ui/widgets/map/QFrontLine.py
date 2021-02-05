@@ -58,13 +58,14 @@ class QFrontLine(QGraphicsLineItem):
         new_package_action.triggered.connect(self.open_new_package_dialog)
         menu.addAction(new_package_action)
 
-        cheat_forward = QAction(f"CHEAT: Advance Frontline")
-        cheat_forward.triggered.connect(self.cheat_forward)
-        menu.addAction(cheat_forward)
+        if self.game_model.game.settings.enable_frontline_cheats:
+            cheat_forward = QAction(f"CHEAT: Advance Frontline")
+            cheat_forward.triggered.connect(self.cheat_forward)
+            menu.addAction(cheat_forward)
 
-        cheat_backward = QAction(f"CHEAT: Retreat Frontline")
-        cheat_backward.triggered.connect(self.cheat_backward)
-        menu.addAction(cheat_backward)
+            cheat_backward = QAction(f"CHEAT: Retreat Frontline")
+            cheat_backward.triggered.connect(self.cheat_backward)
+            menu.addAction(cheat_backward)
 
         menu.exec_(event.screenPos())
 

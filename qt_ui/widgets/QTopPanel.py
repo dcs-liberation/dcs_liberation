@@ -1,3 +1,6 @@
+import logging
+import timeit
+from datetime import timedelta
 from typing import List, Optional
 
 from PySide2.QtWidgets import (
@@ -130,9 +133,12 @@ class QTopPanel(QFrame):
         self.subwindow.show()
 
     def passTurn(self):
+        start = timeit.default_timer()
         self.game.pass_turn(no_action=True)
         GameUpdateSignal.get_instance().updateGame(self.game)
         self.proceedButton.setEnabled(True)
+        end = timeit.default_timer()
+        logging.info("Skipping turn took %s", timedelta(seconds=end - start))
 
     def negative_start_packages(self) -> List[Package]:
         packages = []

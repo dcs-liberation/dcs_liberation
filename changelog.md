@@ -1,7 +1,86 @@
+# 2.4.0
+
+Saves from 2.3 are not compatible with 2.4.
+
+## Highlights
+
+* Improved flight plan generation to avoid loitering in or traveling through threatened areas when practical.
+* Improved AI aircraft purchasing behavior.
+* Era-restricted weapons (work in progress).
+* Tons of UI polish.
+* Rebalanced economy to keep opfor competitive over the course of the game.
+
+## Features/Improvements
+
+* **[Flight Planner]** Air-to-air and SEAD escorts will no longer be automatically planned for packages that are not in range of threats.
+* **[Flight Planner]** Non-custom flight plans will now navigate around threat areas en route to the target area when practical.
+* **[Flight Planner]** Flight plans along front lines now ensure that the race track start is closer to the departure airfield than the race track end.
+* **[Campaign AI]** Auto-purchase now prefers airfields that are not within range of the enemy.
+* **[Campaign AI]** Auto-purchase now prefers the best aircraft for the task, but will attempt to maintain some variety.
+* **[Campaign AI]** Opfor now sells off odd aircraft since they're unlikely to be used.
+* **[Campaign AI]** Multiple rounds of CAP will be planned (roughly 90 minutes of coverage). Default starting budget has increased to account for the increased need for aircraft.
+* **[Mission Generator]** Multiple groups are created for complex SAM sites (SAMs with additional point defense or SHORADS), improving Skynet behavior.
+* **[Mission Generator]** Default start type can now be chosen in the settings. This replaces the non-functional "AI Parking Start" option. **Selecting any type other than cold will break OCA/Aircraft missions.**
+* **[Cheat Menu]** Added ability to toggle base capture and frontline advance/retreat cheats.
+* **[Skynet]** Updated to 2.0.1.
+* **[Skynet]** Point defenses are now configured to remain on to protect the site they accompany.
+* **[Hercules]** Updated the Hercules Cargo list file.
+* **[Balance]** Opfor now gains income using the same rules as the player, significantly increasing their income relative to the player for most campaigns.
+* **[Balance]** Units now retreat from captured bases when able. Units with no retreat path will be captured and sold.
+* **[Economy]** FOBs generate only $10M per turn (previously $20M like airbases).
+* **[Economy]** Carriers and off-map spawns generate no income (previously $20M like airbases).
+* **[Economy]** Sales of aircraft and ground vehicles can now be cancelled before the next turn begins.
+* **[UI]** Multi-SAM objectives now show threat and detection rings per group.
+* **[UI]** New icon for AA sites with no active threat.
+* **[UI]** Unit names are now prettier and more accurate, and can now be set per-country for added historical flavour.
+* **[UI]** Default loadout is now shown for flights with no custom loadout selected.
+* **[UI]** Aircraft for a new flight are now only selectable if they match the task type for that flight.
+* **[UI]** WIP - There is now a unit info button for each unit in the recruitment list, that should help newer players learn what each unit does.
+* **[UI]** Docs for time-on-target and creating new theaters/factions/loadouts are now linked in the UI at the appropriate places.
+* **[UI]** ASAP is now a checkbox rather than a button. Enabling this will disable the TOT selector but changes to the package structure will automatically re-ASAP the package.
+* **[UI]** Arrival airfield is now shown in the flight list if it differs from the departure airfield.
+* **[UI]** Start type can now be selected when creating a flight.
+* **[UI]** Arrival and divert airfields can be edited after the flight is created.
+* **[Factions]** Added option for date-based loadout restriction. Active radar homing missiles are handled, patches welcome for the other thousand weapons.
+* **[Factions]** Added Poland 2010 faction.
+* **[Factions]** Added Greece 2005 faction.
+* **[Factions]** Added Iran 1988 faction.
+* **[Units]** Support for E-2 Hawkeye, SH-60B Seahawk, S-3B Viking (thanks to awinterquest) and SpGH Dana - these are now being used by appropriate factions.
+* **[Culling]** Missile sites are no longer culled.
+* **[Campaigns]** Added campaign "Black Sea Lite" by Starfire
+* **[Campaigns]** Added campaign "Exercise Vegas Nerve" by Starfire 
+* **[New game Wizard]** The theater page is now the first page of the campaign wizard, recommended factions will be selected automatically on the faction selection page
+* **[New game Wizard]** Added information text about the selected campaign performance.
+* **[Mod Support]** Added support for High Digit SAMs mod 1.4.0
+* **[Mod Support]** Added SAMs sites generator : KS19Generator, SA10BGenerator, SA12Generator, SA17Generator, SA20Generator, SA20BGenerator, SA23Generator    
+
+## Fixes
+
+* **[Hercules]** Updated the default Hercules radio frequency.
+* **[Economy]** Pending unit orders at captured bases will be refunded.
+* **[UI]** Carrier group SAM threat rings now move with the carrier.
+* **[UI]** Base intel menu no longer compresses text, and is now scrollable.
+* **[UI]** Edit Flight window is now dynamically sized to adapt to the width of waypoint names, so they no longer get truncated.
+* **[UI]** Budget income display is now rounded to 2 decimal places.
+* **[UI]** Fixed incorrect income per turn displayed for strike target tooltip.
+* **[Factions]** USA with C-130 faction now links to the required mod.
+* **[Campaign]** Fixed issue where destroyed buildings would sometimes not count as destroyed and thus respawn.
+* **[Campaign]** Fixed issue where destroyed runways were not registered.
+* **[Units]** J-11A is no longer spawned with empty loadout.
+* **[Units]** F-14B is no longer spawned with empty loadout for fighter sweep tasks.
+* **[Units]** Pyotr Velikiy cruiser has been removed for now as it's nearly unkillable.
+* **[Units]** Submarines have been removed for now as they aren't wholly functional.
+* **[Units]** Fixed "FACTION ERROR : Unable to find OliverHazardPerryGroupGenerator in pydcs" error at startup.
+* **[Mission Generator]** Fixed a bug where units set to Aggressive stance sometimes did not move.
+* **[Mission Generator]** Flyover points for OCA/Aircraft missions are now generated correctly.
+* **[Flight Planner]** Fixed not being able to create custom waypoints for buildings.
+* **[Flight Planner]** Strike missions will no longer be automatically planned against SAMs.
+* **[Flight Planner]** Strike missions will no longer be automatically planned against FOB structures.
+
 # 2.3.4
 
 ## Fixes:
-* **[Mission Generator]** Mission generator would crash when generating fire missions for destroyed SCUD sites - fixed
+[Mission Generator] Mission generator would crash when generating fire missions for destroyed SCUD sites - fixed
 
 # 2.3.3
 

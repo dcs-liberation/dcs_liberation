@@ -1,65 +1,18 @@
-def meter_to_feet(value_in_meter: float) -> int:
-    """Converts meters to feets
+from __future__ import annotations
 
-    :arg value_in_meter Value in meters
-    """
-    return int(3.28084 * value_in_meter)
+import math
+from dataclasses import dataclass
+from typing import Union
 
+METERS_TO_FEET = 3.28084
+FEET_TO_METERS = 1 / METERS_TO_FEET
+NM_TO_METERS = 1852
+METERS_TO_NM = 1 / NM_TO_METERS
 
-def feet_to_meter(value_in_feet: float) -> int:
-    """Converts feets to meters
-
-    :arg value_in_feet Value in feets
-    """
-    return int(value_in_feet / 3.28084)
-
-
-def meter_to_nm(value_in_meter: float) -> int:
-    """Converts meters to nautic miles
-
-    :arg value_in_meter Value in meters
-    """
-    return int(value_in_meter / 1852)
-
-
-def nm_to_meter(value_in_nm: float) -> int:
-    """Converts nautic miles to meters
-
-    :arg value_in_nm Value in nautic miles
-    """
-    return int(value_in_nm * 1852)
-
-
-def knots_to_kph(value_in_knots: float) -> int:
-    """Converts Knots to Kilometer Per Hour
-
-    :arg value_in_knots Knots 
-    """
-    return int(value_in_knots * 1.852)
-
-
-def mps_to_knots(value_in_mps: float) -> int:
-    """Converts Meters Per Second To Knots
-
-    :arg value_in_mps Meters Per Second
-    """
-    return int(value_in_mps * 1.943)
-
-
-def mps_to_kph(speed: float) -> int:
-    """Converts meters per second to kilometers per hour.
-
-    :arg speed Speed in m/s.
-    """
-    return int(speed * 3.6)
-
-
-def kph_to_mps(speed: float) -> int:
-    """Converts kilometers per hour to meters per second.
-
-    :arg speed Speed in KPH.
-    """
-    return int(speed / 3.6)
+KNOTS_TO_KPH = 1.852
+KPH_TO_KNOTS = 1 / KNOTS_TO_KPH
+MS_TO_KPH = 3.6
+KPH_TO_MS = 1 / MS_TO_KPH
 
 
 def heading_sum(h, a) -> int:
@@ -71,5 +24,157 @@ def heading_sum(h, a) -> int:
     else:
         return h
 
+
 def opposite_heading(h):
     return heading_sum(h, 180)
+
+
+@dataclass(frozen=True, order=True)
+class Distance:
+    distance_in_meters: float
+
+    @property
+    def feet(self) -> float:
+        return self.distance_in_meters * METERS_TO_FEET
+
+    @property
+    def meters(self) -> float:
+        return self.distance_in_meters
+
+    @property
+    def nautical_miles(self) -> float:
+        return self.distance_in_meters * METERS_TO_NM
+
+    @classmethod
+    def from_feet(cls, value: float) -> Distance:
+        return cls(value * FEET_TO_METERS)
+
+    @classmethod
+    def from_meters(cls, value: float) -> Distance:
+        return cls(value)
+
+    @classmethod
+    def from_nautical_miles(cls, value: float) -> Distance:
+        return cls(value * NM_TO_METERS)
+
+    def __add__(self, other: Distance) -> Distance:
+        return meters(self.meters + other.meters)
+
+    def __sub__(self, other: Distance) -> Distance:
+        return meters(self.meters - other.meters)
+
+    def __mul__(self, other: Union[float, int]) -> Distance:
+        return meters(self.meters * other)
+
+    def __truediv__(self, other: Union[float, int]) -> Distance:
+        return meters(self.meters / other)
+
+    def __floordiv__(self, other: Union[float, int]) -> Distance:
+        return meters(self.meters // other)
+
+    def __bool__(self) -> bool:
+        return not math.isclose(self.meters, 0.0)
+
+
+def feet(value: float) -> Distance:
+    return Distance.from_feet(value)
+
+
+def meters(value: float) -> Distance:
+    return Distance.from_meters(value)
+
+
+def nautical_miles(value: float) -> Distance:
+    return Distance.from_nautical_miles(value)
+
+
+@dataclass(frozen=True, order=True)
+class Speed:
+    speed_in_kph: float
+
+    @property
+    def knots(self) -> float:
+        return self.speed_in_kph * KPH_TO_KNOTS
+
+    @property
+    def kph(self) -> float:
+        return self.speed_in_kph
+
+    @property
+    def meters_per_second(self) -> float:
+        return self.speed_in_kph * KPH_TO_MS
+
+    def mach(self, altitude: Distance = meters(0)) -> float:
+        c_sound = mach(1, altitude)
+        return self.speed_in_kph / c_sound.kph
+
+    @classmethod
+    def from_knots(cls, value: float) -> Speed:
+        return cls(value * KNOTS_TO_KPH)
+
+    @classmethod
+    def from_kph(cls, value: float) -> Speed:
+        return cls(value)
+
+    @classmethod
+    def from_meters_per_second(cls, value: float) -> Speed:
+        return cls(value * MS_TO_KPH)
+
+    @classmethod
+    def from_mach(cls, value: float, altitude: Distance) -> Speed:
+        # https://www.grc.nasa.gov/WWW/K-12/airplane/atmos.html
+        if altitude <= feet(36152):
+            temperature_f = 59 - 0.00356 * altitude.feet
+        else:
+            # There's another formula for altitudes over 82k feet, but we better
+            # not be planning waypoints that high...
+            temperature_f = -70
+
+        temperature_k = (temperature_f + 459.67) * (5 / 9)
+
+        # https://www.engineeringtoolbox.com/specific-heat-ratio-d_602.html
+        # Dependent on temperature, but varies very little (+/-0.001)
+        # between -40F and 180F.
+        heat_capacity_ratio = 1.4
+
+        # https://www.grc.nasa.gov/WWW/K-12/airplane/sound.html
+        gas_constant = 286  # m^2/s^2/K
+        c_sound = math.sqrt(heat_capacity_ratio * gas_constant * temperature_k)
+        return mps(c_sound) * value
+
+    def __add__(self, other: Speed) -> Speed:
+        return kph(self.kph + other.kph)
+
+    def __sub__(self, other: Speed) -> Speed:
+        return kph(self.kph - other.kph)
+
+    def __mul__(self, other: Union[float, int]) -> Speed:
+        return kph(self.kph * other)
+
+    def __truediv__(self, other: Union[float, int]) -> Speed:
+        return kph(self.kph / other)
+
+    def __floordiv__(self, other: Union[float, int]) -> Speed:
+        return kph(self.kph // other)
+
+    def __bool__(self) -> bool:
+        return not math.isclose(self.kph, 0.0)
+
+
+def knots(value: float) -> Speed:
+    return Speed.from_knots(value)
+
+
+def kph(value: float) -> Speed:
+    return Speed.from_kph(value)
+
+
+def mps(value: float) -> Speed:
+    return Speed.from_meters_per_second(value)
+
+
+def mach(value: float, altitude: Distance) -> Speed:
+    return Speed.from_mach(value, altitude)
+
+
+SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)

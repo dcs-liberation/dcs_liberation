@@ -40,7 +40,70 @@ local Cargo_Drop_Position = {}
 local SoldierUnitID = 12000
 local SoldierGroupID = 12000
 local GroupSpacing = 0
-
+--added by wrench
+Hercules_Cargo.types = {
+	["ATGM M1045 HMMWV TOW Air [7183lb]"] = {['name'] = "M1045 HMMWV TOW", ['container'] = true},
+	["ATGM M1045 HMMWV TOW Skid [7073lb]"] = {['name'] = "M1045 HMMWV TOW", ['container'] = false},
+	["APC M1043 HMMWV Armament Air [7023lb]"] = {['name'] = "M1043 HMMWV Armament", ['container'] = true},
+	["APC M1043 HMMWV Armament Skid [6912lb]"] = {['name'] = "M1043 HMMWV Armament", ['container'] = false},
+	["SAM Avenger M1097 Air [7200lb]"] = {['name'] = "M1097 Avenger", ['container'] = true},
+	["SAM Avenger M1097 Skid [7090lb]"] = {['name'] = "M1097 Avenger", ['container'] = false},
+	["APC Cobra Air [10912lb]"] = {['name'] = "Cobra", ['container'] = true},
+	["APC Cobra Skid [10802lb]"] = {['name'] = "Cobra", ['container'] = false},
+	["APC M113 Air [21624lb]"] = {['name'] = "M-113", ['container'] = true},
+	["APC M113 Skid [21494lb]"] = {['name'] = "M-113", ['container'] = false},
+	["Tanker M978 HEMTT [34000lb]"] = {['name'] = "M978 HEMTT Tanker", ['container'] = false},
+	["HEMTT TFFT [34400lb]"] = {['name'] = "HEMTT TFFT", ['container'] = false},
+	["SPG M1128 Stryker MGS [33036lb]"] = {['name'] = "M1128 Stryker MGS", ['container'] = false},
+	["AAA Vulcan M163 Air [21666lb]"] = {['name'] = "Vulcan", ['container'] = true},
+	["AAA Vulcan M163 Skid [21577lb]"] = {['name'] = "Vulcan", ['container'] = false},
+	["APC M1126 Stryker ICV [29542lb]"] = {['name'] = "M1126 Stryker ICV", ['container'] = false},
+	["ATGM M1134 Stryker [30337lb]"] = {['name'] = "M1134 Stryker ATGM", ['container'] = false},
+	["APC LAV-25 Air [22520lb]"] = {['name'] = "LAV-25", ['container'] = true},
+	["APC LAV-25 Skid [22514lb]"] = {['name'] = "LAV-25", ['container'] = false},
+	["M1025 HMMWV Air [6160lb]"] = {['name'] = "Hummer", ['container'] = true},
+	["M1025 HMMWV Skid [6050lb]"] = {['name'] = "Hummer", ['container'] = false},
+	["IFV M2A2 Bradley [34720lb]"] = {['name'] = "M-2 Bradley", ['container'] = false},
+	["IFV MCV-80 [34720lb]"] = {['name'] = "MCV-80", ['container'] = false},
+	["IFV BMP-1 [23232lb]"] = {['name'] = "BMP-1", ['container'] = false},
+	["IFV BMP-2 [25168lb]"] = {['name'] = "BMP-2", ['container'] = false},
+	["IFV BMP-3 [32912lb]"] = {['name'] = "BMP-3", ['container'] = false},
+	["ARV BRDM-2 Air [12320lb]"] = {['name'] = "BRDM-2", ['container'] = true},
+	["ARV BRDM-2 Skid [12210lb]"] = {['name'] = "BRDM-2", ['container'] = false},
+	["APC BTR-80 Air [23936lb]"] = {['name'] = "BTR-80", ['container'] = true},
+	["APC BTR-80 Skid [23826lb]"] = {['name'] = "BTR-80", ['container'] = false},
+	["APC BTR-82A Air [24998lb]"] = {['name'] = "BTR-82A", ['container'] = true},
+	["APC BTR-82A Skid [24888lb]"] = {['name'] = "BTR-82A", ['container'] = false},
+	["SAM ROLAND ADS [34720lb]"] = {['name'] = "Roland Radar", ['container'] = false},
+	["SAM ROLAND LN [34720b]"] = {['name'] = "Roland ADS", ['container'] = false},
+	["SAM SA-13 STRELA [21624lb]"] = {['name'] = "Strela-10M3", ['container'] = false},
+	["AAA ZSU-23-4 Shilka [32912lb]"] = {['name'] = "ZSU-23-4 Shilka", ['container'] = false},
+	["SAM SA-19 Tunguska 2S6 [34720lb]"] = {['name'] = "2S6 Tunguska", ['container'] = false},
+	["Transport UAZ-469 Air [3747lb]"] = {['name'] = "UAZ-469", ['container'] = true},
+	["Transport UAZ-469 Skid [3630lb]"] = {['name'] = "UAZ-469", ['container'] = false},
+	["AAA GEPARD [34720lb]"] = {['name'] = "Gepard", ['container'] = false},
+	["SAM CHAPARRAL Air [21624lb]"] = {['name'] = "M48 Chaparral", ['container'] = true},
+	["SAM CHAPARRAL Skid [21516lb]"] = {['name'] = "M48 Chaparral", ['container'] = false},
+	["SAM LINEBACKER [34720lb]"] = {['name'] = "M6 Linebacker", ['container'] = false},
+	["Transport URAL-375 [14815lb]"] = {['name'] = "Ural-375", ['container'] = false},
+	["Transport M818 [16000lb]"] = {['name'] = "M 818", ['container'] = false},
+	["IFV MARDER [34720lb]"] = {['name'] = "Marder", ['container'] = false},
+	["Transport Tigr Air [15900lb]"] = {['name'] = "Tigr_233036", ['container'] = true},
+	["Transport Tigr Skid [15730lb]"] = {['name'] = "Tigr_233036", ['container'] = false},
+	["IFV TPZ FUCH [33440lb]"] = {['name'] = "TPZ", ['container'] = false},
+	["IFV BMD-1 Air [18040lb]"] = {['name'] = "BMD-1", ['container'] = true},
+	["IFV BMD-1 Skid [17930lb]"] = {['name'] = "BMD-1", ['container'] = false},
+	["IFV BTR-D Air [18040lb]"] = {['name'] = "BTR_D", ['container'] = true},
+	["IFV BTR-D Skid [17930lb]"] = {['name'] = "BTR_D", ['container'] = false},
+	["EWR SBORKA Air [21624lb]"] = {['name'] = "Dog Ear radar", ['container'] = true},
+	["EWR SBORKA Skid [21624lb]"] = {['name'] = "Dog Ear radar", ['container'] = false},
+	["ART 2S9 NONA Air [19140lb]"] = {['name'] = "SAU 2-C9", ['container'] = true},
+	["ART 2S9 NONA Skid [19030lb]"] = {['name'] = "SAU 2-C9", ['container'] = false},
+	["ART GVOZDIKA [34720lb]"] = {['name'] = "SAU Gvozdika", ['container'] = false},
+	["APC MTLB Air [26400lb]"] = {['name'] = "MTLB", ['container'] = true},
+	["APC MTLB Skid [26290lb]"] = {['name'] = "MTLB", ['container'] = false},
+	--["Generic Crate [20000lb]"] = {['name'] =  "Hercules_Container_Parachute", ['container'] = true}
+}
 function Hercules_Cargo.Soldier_SpawnGroup(Cargo_Drop_Position, Cargo_Type_name, CargoHeading, Cargo_Country, GroupSpacing)
 	SoldierUnitID = SoldierUnitID + 30
 	SoldierGroupID = SoldierGroupID + 1
@@ -488,265 +551,24 @@ end
 	-- EventHandlers
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function Hercules_Cargo.Hercules_Cargo_Drop_Events:onEvent(Cargo_Drop_Event)
-		if Cargo_Drop_Event.id == world.event.S_EVENT_SHOT then
-			GT_DisplayName = Weapon.getDesc(Cargo_Drop_Event.weapon).typeName:sub(15, -1)--Remove "weapons.bombs." from string
-			 -- trigger.action.outTextForCoalition(coalition.side.BLUE, string.format("Cargo_Drop_Event: %s", Weapon.getDesc(Cargo_Drop_Event.weapon).typeName), 10)
-			 -- trigger.action.outTextForCoalition(coalition.side.RED, string.format("Cargo_Drop_Event: %s", Weapon.getDesc(Cargo_Drop_Event.weapon).typeName), 10)
-			 	---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Squad 30 x Soldier [7950lb]") then
-					GT_Name = "Soldier M4 GRG"
-					SoldierGroup = true
-					ParatrooperGroupSpawnInit = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, SoldierGroup)
-				end
-			 	---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "ATGM M1045 HMMWV TOW [7183lb]") then
-					GT_Name = "M1045 HMMWV TOW"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC M1043 HMMWV Armament [7023lb]") then
-					GT_Name = "M1043 HMMWV Armament"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM Avenger M1097 [7200lb]") then
-					GT_Name = "M1097 Avenger"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC Cobra [10912lb]") then
-					GT_Name = "Cobra"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC M113 [21624lb]") then
-					GT_Name = "M-113"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Tanker M978 HEMTT [34000lb]") then
-					GT_Name = "M978 HEMTT Tanker"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "HEMTT TFFT [34400lb]") then
-					GT_Name = "HEMTT TFFT"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SPG M1128 Stryker MGS [33036lb]") then
-					GT_Name = "M1128 Stryker MGS"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "AAA Vulcan M163 [21666lb]") then
-					GT_Name = "Vulcan"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC M1126 Stryker ICV [29542lb]") then
-					GT_Name = "M1126 Stryker ICV"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "ATGM M1134 Stryker [30337lb]") then
-					GT_Name = "M1134 Stryker ATGM"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC LAV-25 [22514lb]") then
-					GT_Name = "LAV-25"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "M1025 HMMWV [6160lb]") then
-					GT_Name = "Hummer"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV M2A2 Bradley [34720lb]") then
-					GT_Name = "M-2 Bradley"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-					if (GT_DisplayName == "IFV MCV-80 [34720lb]") then
-					GT_Name = "MCV-80"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-					if (GT_DisplayName == "IFV BMP-1 [23232lb]") then
-					GT_Name = "BMP-1"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV BMP-2 [25168lb]") then
-					GT_Name = "BMP-2"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV BMP-3 [32912lb]") then
-					GT_Name = "BMP-3"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "ARV BRDM-2 [12320lb]") then
-					GT_Name = "BRDM-2"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC BTR-80 [23936lb]") then
-					GT_Name = "BTR-80"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM ROLAND ADS [34720lb]") then
-					GT_Name = "Roland Radar"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM ROLAND LN [34720b]") then
-					GT_Name = "Roland ADS"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM SA-13 STRELA [21624lb]") then
-					GT_Name = "Strela-10M3"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "AAA ZSU-23-4 Shilka [32912lb]") then
-					GT_Name = "ZSU-23-4 Shilka"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM SA-19 Tunguska 2S6 [34720lb]") then
-					GT_Name = "2S6 Tunguska"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Transport UAZ-469 [3747lb]") then
-					GT_Name = "UAZ-469"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Armed speedboat [2000lb]") then
-					GT_Name = "speedboat"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "AAA GEPARD [34720lb]") then
-					GT_Name = "Gepard"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM CHAPARRAL [21624lb]") then
-					GT_Name = "M48 Chaparral"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "SAM LINEBACKER [34720lb]") then
-					GT_Name = "M6 Linebacker"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Transport URAL-375 [14815lb]") then
-					GT_Name = "Ural-375"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Transport M818 [16000lb]") then
-					GT_Name = "M 818"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV MARDER [34720lb]") then
-					GT_Name = "Marder"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "Transport Tigr [15900lb]") then
-					GT_Name = "Tigr_233036"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV TPZ FUCH [33440lb]") then
-					GT_Name = "TPZ"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV BMD-1 [18040lb]") then
-					GT_Name = "BMD-1"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "IFV BTR-D [18040lb]") then
-					GT_Name = "BTR_D"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "EWR SBORKA [21624lb]") then
-					GT_Name = "Dog Ear radar"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "ART 2S9 NONA [19140lb]") then
-					GT_Name = "SAU 2-C9"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "ART GVOZDIKA [34720lb]") then
-					GT_Name = "SAU Gvozdika"
-					Cargo_Container_Enclosed = false
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-				if (GT_DisplayName == "APC MTLB [26000lb]") then
-					GT_Name = "MTLB"
-					Cargo_Container_Enclosed = true
-					Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
-				end
-				---------------------------------------------------------------------------------------------------------------------------------
-	end
+	if Cargo_Drop_Event.id == world.event.S_EVENT_SHOT then
+		GT_DisplayName = Weapon.getDesc(Cargo_Drop_Event.weapon).typeName:sub(15, -1)--Remove "weapons.bombs." from string
+		 -- trigger.action.outTextForCoalition(coalition.side.BLUE, string.format("Cargo_Drop_Event: %s", Weapon.getDesc(Cargo_Drop_Event.weapon).typeName), 10)
+		 -- trigger.action.outTextForCoalition(coalition.side.RED, string.format("Cargo_Drop_Event: %s", Weapon.getDesc(Cargo_Drop_Event.weapon).typeName), 10)
+			 ---------------------------------------------------------------------------------------------------------------------------------
+			if (GT_DisplayName == "Squad 30 x Soldier [7950lb]") then
+				GT_Name = "Soldier M4 GRG"
+				SoldierGroup = true
+				ParatrooperGroupSpawnInit = true
+				Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, SoldierGroup)
+			end
+			 ---------------------------------------------------------------------------------------------------------------------------------
+			if Hercules_Cargo.types[GT_DisplayName] then
+				local GT_Name = Hercules_Cargo.types[GT_DisplayName]['name']
+				local Cargo_Container_Enclosed = Hercules_Cargo.types[GT_DisplayName]['container']
+				Hercules_Cargo.Cargo_Initialize(Cargo_Drop_Event.initiator, Cargo_Drop_Event.weapon, GT_Name, Cargo_Container_Enclosed)
+			end
+end
 end
 world.addEventHandler(Hercules_Cargo.Hercules_Cargo_Drop_Events)
 

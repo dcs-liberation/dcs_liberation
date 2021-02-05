@@ -23,6 +23,7 @@ from dcs.forcedoptions import ForcedOptions
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
+from game.settings import Settings
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -39,12 +40,48 @@ class CheatSettingsBox(QGroupBox):
         self.red_ato_checkbox = QCheckBox()
         self.red_ato_checkbox.setChecked(game.settings.show_red_ato)
         self.red_ato_checkbox.toggled.connect(apply_settings)
+
+        self.frontline_cheat_checkbox = QCheckBox()
+        self.frontline_cheat_checkbox.setChecked(game.settings.enable_frontline_cheats)
+        self.frontline_cheat_checkbox.toggled.connect(apply_settings)
+
+        self.base_capture_cheat_checkbox = QCheckBox()
+        self.base_capture_cheat_checkbox.setChecked(game.settings.enable_base_capture_cheat)
+        self.base_capture_cheat_checkbox.toggled.connect(apply_settings)
+
         self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
         self.main_layout.addLayout(self.red_ato)
+        self.frontline_cheat = QLabeledWidget("Enable Frontline Cheats:", self.frontline_cheat_checkbox)
+        self.main_layout.addLayout(self.frontline_cheat)
+        self.base_capture_cheat = QLabeledWidget("Enable Base Capture Cheat:", self.base_capture_cheat_checkbox)
+        self.main_layout.addLayout(self.base_capture_cheat)
 
     @property
     def show_red_ato(self) -> bool:
         return self.red_ato_checkbox.isChecked()
+
+    @property
+    def show_frontline_cheat(self) -> bool:
+        return self.frontline_cheat_checkbox.isChecked()
+
+    @property
+    def show_base_capture_cheat(self) -> bool:
+        return self.base_capture_cheat_checkbox.isChecked()
+
+
+START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
+
+
+class StartTypeComboBox(QComboBox):
+    def __init__(self, settings: Settings) -> None:
+        super().__init__()
+        self.settings = settings
+        self.addItems(["Cold", "Warm", "Runway", "In Flight"])
+        self.currentTextChanged.connect(self.on_change)
+        self.setToolTip(START_TYPE_TOOLTIP)
+
+    def on_change(self, value: str) -> None:
+        self.settings.default_start_type = value
 
 
 class QSettingsWindow(QDialog):
@@ -248,6 +285,30 @@ class QSettingsWindow(QDialog):
         campaign_layout.setAlignment(Qt.AlignTop)
         self.campaign_management_page.setLayout(campaign_layout)
 
+        general = QGroupBox("General")
+        campaign_layout.addWidget(general)
+
+        general_layout = QGridLayout()
+        general.setLayout(general_layout)
+
+        def set_restict_weapons_by_date(value: bool) -> None:
+            self.game.settings.restrict_weapons_by_date = value
+
+        restrict_weapons = QCheckBox()
+        restrict_weapons.setChecked(self.game.settings.restrict_weapons_by_date)
+        restrict_weapons.toggled.connect(set_restict_weapons_by_date)
+
+        tooltip_text = (
+            "Restricts weapon availability based on the campaign date. Data is "
+            "extremely incomplete so does not affect all weapons."
+        )
+        restrict_weapons.setToolTip(tooltip_text)
+        restrict_weapons_label = QLabel("Restrict weapons by date (WIP)")
+        restrict_weapons_label.setToolTip(tooltip_text)
+
+        general_layout.addWidget(restrict_weapons_label, 0, 0)
+        general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
+
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 
@@ -325,6 +386,17 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.never_delay_players, 2, 1,
                                       Qt.AlignRight)
 
+        start_type_label = QLabel(
+            "Default start type for AI aircraft:<br /><strong>Warning: " +
+            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+        )
+        start_type_label.setToolTip(START_TYPE_TOOLTIP)
+        start_type = StartTypeComboBox(self.game.settings)
+        start_type.setCurrentText(self.game.settings.default_start_type)
+
+        self.gameplayLayout.addWidget(start_type_label, 3, 0)
+        self.gameplayLayout.addWidget(start_type, 3, 1)
+
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
         self.performanceLayout.setAlignment(Qt.AlignTop)
@@ -349,10 +421,6 @@ class QSettingsWindow(QDialog):
         self.infantry = QCheckBox()
         self.infantry.setChecked(self.game.settings.perf_infantry)
         self.infantry.toggled.connect(self.applySettings)
-
-        self.ai_parking_start = QCheckBox()
-        self.ai_parking_start.setChecked(self.game.settings.perf_ai_parking_start)
-        self.ai_parking_start.toggled.connect(self.applySettings)
 
         self.destroyed_units = QCheckBox()
         self.destroyed_units.setChecked(self.game.settings.perf_destroyed_units)
@@ -382,8 +450,6 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(self.moving_units, 3, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Generate infantry squads along vehicles"), 4, 0)
         self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("AI planes parking start (AI starts in flight if disabled)"), 5, 0)
-        self.performanceLayout.addWidget(self.ai_parking_start, 5, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Include destroyed units carcass"), 6, 0)
         self.performanceLayout.addWidget(self.destroyed_units, 6, 1, alignment=Qt.AlignRight)
 
@@ -423,7 +489,7 @@ class QSettingsWindow(QDialog):
                 btn = QPushButton("Cheat " + str(amount) + "M")
                 btn.setProperty("style", "btn-danger")
             btn.clicked.connect(self.cheatLambda(amount))
-            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)
+            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)  
         self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
 
     def cheatLambda(self, amount):
@@ -459,7 +525,6 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_artillery = self.arti.isChecked()
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
-        self.game.settings.perf_ai_parking_start = self.ai_parking_start.isChecked()
         self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
 
         self.game.settings.perf_culling = self.culling.isChecked()
@@ -467,6 +532,8 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_do_not_cull_carrier = self.culling_do_not_cull_carrier.isChecked()
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
+        self.game.settings.enable_frontline_cheats = self.cheat_options.show_frontline_cheat
+        self.game.settings.enable_base_capture_cheat = self.cheat_options.show_base_capture_cheat
 
         self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)

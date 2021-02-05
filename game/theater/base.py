@@ -9,6 +9,7 @@ from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import AirDefence, Armor
 
 from game import db
+from game.db import PRICES
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
@@ -36,6 +37,16 @@ class Base:
     @property
     def total_armor(self) -> int:
         return sum(self.armor.values())
+
+    @property
+    def total_armor_value(self) -> int:
+        total = 0
+        for unit_type, count in self.armor.items():
+            try:
+                total += PRICES[unit_type] * count
+            except KeyError:
+                logging.exception(f"No price found for {unit_type.id}")
+        return total
 
     @property
     def total_frontline_aa(self) -> int:

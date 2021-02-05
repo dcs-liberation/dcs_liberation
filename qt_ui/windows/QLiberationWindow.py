@@ -168,18 +168,21 @@ class QLiberationWindow(QMainWindow):
 
         displayMenu = self.menu.addMenu("&Display")
 
-        last_was_group = True
+
+        last_was_group = False
         for item in DisplayOptions.menu_items():
             if isinstance(item, DisplayRule):
+                if last_was_group:
+                    displayMenu.addSeparator()
+                    self.display_bar.addSeparator()
                 action = self.make_display_rule_action(item)
                 displayMenu.addAction(action)
                 if action.icon():
                     self.display_bar.addAction(action)
                 last_was_group = False
             elif isinstance(item, DisplayGroup):
-                if not last_was_group:
-                    displayMenu.addSeparator()
-                    self.display_bar.addSeparator()
+                displayMenu.addSeparator()
+                self.display_bar.addSeparator()
                 group = QActionGroup(displayMenu)
                 for display_rule in item:
                     action = self.make_display_rule_action(display_rule, group)
@@ -257,8 +260,6 @@ class QLiberationWindow(QMainWindow):
 
     def setGame(self, game: Optional[Game]):
         try:
-            if game is not None:
-                game.on_load()
             self.game = game
             if self.info_panel is not None:
                 self.info_panel.setGame(game)

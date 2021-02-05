@@ -7,11 +7,18 @@ from pathlib import Path
 from typing import Optional
 
 import dcs
+from dcs.weapons_data import weapon_ids
+
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 
 from game import Game, db, persistency, VERSION
+from game.data.weapons import (
+    WEAPON_FALLBACK_MAP,
+    WEAPON_INTRODUCTION_YEARS,
+    Weapon,
+)
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
@@ -67,6 +74,8 @@ def run_ui(game: Optional[Game] = None) -> None:
     uiconstants.load_event_icons()
     uiconstants.load_aircraft_icons()
     uiconstants.load_vehicle_icons()
+    uiconstants.load_aircraft_banners()
+    uiconstants.load_vehicle_banners()
 
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
@@ -102,6 +111,11 @@ def parse_args() -> argparse.Namespace:
         if not path.exists():
             raise argparse.ArgumentTypeError("path does not exist")
         return path
+
+    parser.add_argument(
+        "--warn-missing-weapon-data", action="store_true",
+        help="Emits a warning for weapons without date or fallback information."
+    )
 
     new_game = subparsers.add_parser("new-game")
 
@@ -163,6 +177,15 @@ def create_game(campaign_path: Path, blue: str, red: str,
     return generator.generate()
 
 
+def lint_weapon_data() -> None:
+    for clsid in weapon_ids:
+        weapon = Weapon.from_clsid(clsid)
+        if weapon not in WEAPON_INTRODUCTION_YEARS:
+            logging.warning(f"{weapon} has no introduction date")
+        if weapon not in WEAPON_FALLBACK_MAP:
+            logging.warning(f"{weapon} has no fallback")
+
+
 def main():
     logging_config.init_logging(VERSION)
 
@@ -172,6 +195,11 @@ def main():
     game: Optional[Game] = None
 
     args = parse_args()
+
+    # TODO: Flesh out data and then make unconditional.
+    if args.warn_missing_weapon_data:
+        lint_weapon_data()
+
     if args.subcommand == "new-game":
         game = create_game(args.campaign, args.blue, args.red,
                            args.supercarrier, args.auto_procurement,

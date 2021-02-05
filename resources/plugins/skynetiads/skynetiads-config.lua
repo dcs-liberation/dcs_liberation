@@ -12,108 +12,122 @@ env.info("DCSLiberation|Skynet-IADS plugin - configuration")
 if dcsLiberation and SkynetIADS then
 
     -- specific options
-	local createRedIADS = false
-	local createBlueIADS = false
-	local includeRedInRadio = false
-	local includeBlueInRadio = false
-	local debugRED = false
-	local debugBLUE = false
-	
+    local createRedIADS = false
+    local createBlueIADS = false
+    local includeRedInRadio = false
+    local includeBlueInRadio = false
+    local debugRED = false
+    local debugBLUE = false
+
     -- retrieve specific options values
     if dcsLiberation.plugins then
         if dcsLiberation.plugins.skynetiads then
-			createRedIADS = dcsLiberation.plugins.skynetiads.createRedIADS
-			createBlueIADS = dcsLiberation.plugins.skynetiads.createBlueIADS
-			includeRedInRadio = dcsLiberation.plugins.skynetiads.includeRedInRadio
-			includeBlueInRadio = dcsLiberation.plugins.skynetiads.includeBlueInRadio
-			debugRED = dcsLiberation.plugins.skynetiads.debugRED
-			debugBLUE = dcsLiberation.plugins.skynetiads.debugBLUE
-		end
+            createRedIADS = dcsLiberation.plugins.skynetiads.createRedIADS
+            createBlueIADS = dcsLiberation.plugins.skynetiads.createBlueIADS
+            includeRedInRadio = dcsLiberation.plugins.skynetiads.includeRedInRadio
+            includeBlueInRadio = dcsLiberation.plugins.skynetiads.includeBlueInRadio
+            debugRED = dcsLiberation.plugins.skynetiads.debugRED
+            debugBLUE = dcsLiberation.plugins.skynetiads.debugBLUE
+        end
     end
-	
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - createRedIADS=%s",tostring(createRedIADS)))
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - createBlueIADS=%s",tostring(createBlueIADS)))
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeRedInRadio=%s",tostring(includeRedInRadio)))
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeBlueInRadio=%s",tostring(includeBlueInRadio)))
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugRED=%s",tostring(debugRED)))
-	env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugBLUE=%s",tostring(debugBLUE)))
 
-    -- actual configuration code    
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createRedIADS=%s",tostring(createRedIADS)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createBlueIADS=%s",tostring(createBlueIADS)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeRedInRadio=%s",tostring(includeRedInRadio)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeBlueInRadio=%s",tostring(includeBlueInRadio)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugRED=%s",tostring(debugRED)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugBLUE=%s",tostring(debugBLUE)))
 
-	local function initializeIADS(iads, coalition, inRadio, debug)
+    -- actual configuration code
 
-		local coalitionPrefix = "BLUE"
-		if coalition == 1 then 
-			coalitionPrefix = "RED"
-		end
+    local function initializeIADS(iads, coalition, inRadio, debug)
 
-		if debug then
-			env.info("adding debug information")
-			local iadsDebug = iads:getDebugSettings()
-			iadsDebug.IADSStatus = true
-			iadsDebug.samWentDark = true
-			iadsDebug.contacts = true
-			iadsDebug.radarWentLive = true
-			iadsDebug.noWorkingCommmandCenter = true
-			iadsDebug.ewRadarNoConnection = true
-			iadsDebug.samNoConnection = true
-			iadsDebug.jammerProbability = true
-			iadsDebug.addedEWRadar = true
-			iadsDebug.hasNoPower = true
-			iadsDebug.harmDefence = true
-			iadsDebug.samSiteStatusEnvOutput = true
-			iadsDebug.earlyWarningRadarStatusEnvOutput = true
-		end
+        local coalitionPrefix = "BLUE"
+        if coalition == 1 then
+            coalitionPrefix = "RED"
+        end
 
-		--add EW units to the IADS:
-		iads:addEarlyWarningRadarsByPrefix(coalitionPrefix .. "|EWR|")
+        if debug then
+            env.info("adding debug information")
+            local iadsDebug = iads:getDebugSettings()
+            iadsDebug.IADSStatus = true
+            iadsDebug.samWentDark = true
+            iadsDebug.contacts = true
+            iadsDebug.radarWentLive = true
+            iadsDebug.noWorkingCommmandCenter = true
+            iadsDebug.ewRadarNoConnection = true
+            iadsDebug.samNoConnection = true
+            iadsDebug.jammerProbability = true
+            iadsDebug.addedEWRadar = true
+            iadsDebug.hasNoPower = true
+            iadsDebug.harmDefence = true
+            iadsDebug.samSiteStatusEnvOutput = true
+            iadsDebug.earlyWarningRadarStatusEnvOutput = true
+        end
 
-		--add SAM groups to the IADS:
-		iads:addSAMSitesByPrefix(coalitionPrefix .. "|SAM|")
+        --add EW units to the IADS:
+        iads:addEarlyWarningRadarsByPrefix(coalitionPrefix .. "|EWR|")
 
-		-- add the AWACS
-		if dcsLiberation.AWACs then
-			for _, data in pairs(dcsLiberation.AWACs) do
-				env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing AWACS %s", data.dcsGroupName))
-				local group = Group.getByName(data.dcsGroupName)
-				if group then
-					if group:getCoalition() == coalition then
-						local unit = group:getUnit(1)
-						if unit then 
-							local unitName = unit:getName()
-							env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding AWACS %s", unitName))
-							iads:addEarlyWarningRadar(unitName)
-						end
-					end
-				end
-			end
-		end
+        --add SAM groups to the IADS:
+        iads:addSAMSitesByPrefix(coalitionPrefix .. "|SAM|")
 
-		-- TODO: Add ships.
+        -- add the AWACS
+        if dcsLiberation.AWACs then
+            for _, data in pairs(dcsLiberation.AWACs) do
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing AWACS %s", data.dcsGroupName))
+                local group = Group.getByName(data.dcsGroupName)
+                if group then
+                    if group:getCoalition() == coalition then
+                        local unit = group:getUnit(1)
+                        if unit then
+                            local unitName = unit:getName()
+                            env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding AWACS %s", unitName))
+                            iads:addEarlyWarningRadar(unitName)
+                        end
+                    end
+                end
+            end
+        end
 
-		if inRadio then
-			--activate the radio menu to toggle IADS Status output
-			env.info("DCSLiberation|Skynet-IADS plugin - adding in radio menu")
-			iads:addRadioMenu()
-		end
+        local sites = iads:getSAMSites()
+        for i = 1, #sites do
+            local site = sites[i]
+            local name = site:getDCSName()
+            if not string.match(name, "|PD") then
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - Checking %s for PD", name))
+                local pds = iads:getSAMSitesByPrefix(name .. "|PD")
+                for j = 1, #pds do
+                    pd = pds[j]
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - Adding %s as PD for %s", pd:getDCSName(), name))
+                    site:addPointDefence(pd)
+                    site:setIgnoreHARMSWhilePointDefencesHaveAmmo(true)
+                end
+            end
+        end
 
-		--activate the IADS
-		iads:setupSAMSitesAndThenActivate()
-	end
+        if inRadio then
+            --activate the radio menu to toggle IADS Status output
+            env.info("DCSLiberation|Skynet-IADS plugin - adding in radio menu")
+            iads:addRadioMenu()
+        end
 
-	------------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- create the IADS networks
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------
-	if createRedIADS then
-		env.info("DCSLiberation|Skynet-IADS plugin - creating red IADS")
-		redIADS = SkynetIADS:create("IADS")
-		initializeIADS(redIADS, 1, includeRedInRadio, debugRED) -- RED
-	end
+        --activate the IADS
+        iads:setupSAMSitesAndThenActivate()
+    end
 
-	if createBlueIADS then
-		env.info("DCSLiberation|Skynet-IADS plugin - creating blue IADS")
-		blueIADS = SkynetIADS:create("IADS")
-		initializeIADS(blueIADS, 2, includeBlueInRadio, debugBLUE) -- BLUE
-	end
-	
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -- create the IADS networks
+    -------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if createRedIADS then
+        env.info("DCSLiberation|Skynet-IADS plugin - creating red IADS")
+        redIADS = SkynetIADS:create("IADS")
+        initializeIADS(redIADS, 1, includeRedInRadio, debugRED) -- RED
+    end
+
+    if createBlueIADS then
+        env.info("DCSLiberation|Skynet-IADS plugin - creating blue IADS")
+        blueIADS = SkynetIADS:create("IADS")
+        initializeIADS(blueIADS, 2, includeBlueInRadio, debugBLUE) -- BLUE
+    end
+
 end

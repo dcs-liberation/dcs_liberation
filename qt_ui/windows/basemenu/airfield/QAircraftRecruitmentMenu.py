@@ -65,7 +65,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     continue
                 unit_types.add(unit)
 
-        sorted_units = sorted(unit_types, key=lambda u: db.unit_type_name_2(u))
+        sorted_units = sorted(unit_types, key=lambda u: db.unit_get_expanded_info(self.game_model.game.player_country, u, 'name'))
         for unit_type in sorted_units:
             row = self.add_purchase_row(
                 unit_type, task_box_layout, row,
@@ -92,7 +92,13 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     self, "No space for additional aircraft",
                     f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
                 return
-
+            # If we change our mind about selling, we want the aircraft to be put
+            # back in the inventory immediately.
+            elif self.pending_deliveries.units.get(unit_type, 0) < 0:
+                global_inventory = self.game_model.game.aircraft_inventory
+                inventory = global_inventory.for_control_point(self.cp)
+                inventory.add_aircraft(unit_type, 1)
+                
         super().buy(unit_type)
         self.hangar_status.update_label()
 

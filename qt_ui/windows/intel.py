@@ -14,7 +14,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game.game import Game
+from game.game import Game, db
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.finances.QFinancesMenu import FinancesLayout
 
@@ -81,7 +81,7 @@ class AircraftIntelLayout(IntelTableLayout):
             for airframe, count in base.aircraft.items():
                 if not count:
                     continue
-                self.add_row(airframe.id, count)
+                self.add_row(db.unit_get_expanded_info(game.enemy_country, airframe, 'name'), count)
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)

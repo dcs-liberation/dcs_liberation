@@ -60,16 +60,15 @@ class FlightDelegate(QStyledItemDelegate):
 
     def first_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)
-        task = flight.flight_type
-        count = flight.count
-        name = db.unit_type_name(flight.unit_type)
         estimator = TotEstimator(self.package)
         delay = estimator.mission_start_time(flight)
-        return f"[{task}] {count} x {name} in {delay}"
+        return f"{flight} in {delay}"
 
     def second_row_text(self, index: QModelIndex) -> str:
         flight = self.flight(index)
         origin = flight.from_cp.name
+        if flight.arrival != flight.departure:
+            return f"From {origin} to {flight.arrival.name}"
         return f"From {origin}"
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem,

@@ -5,18 +5,18 @@ from typing import List, Optional
 
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
-from PySide2.QtWidgets import QVBoxLayout, QTextEdit
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.settings import Settings
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
     load_campaigns,
 )
-from game.theater.start_generator import GameGenerator, GeneratorSettings
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),
@@ -30,7 +30,7 @@ jinja_env = Environment(
 )
 
 
-DEFAULT_BUDGET = 650
+DEFAULT_BUDGET = 2000
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -39,9 +39,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.campaigns = load_campaigns()
 
+        self.faction_selection_page = FactionSelection()
         self.addPage(IntroPage())
-        self.addPage(FactionSelection())
-        self.addPage(TheaterConfiguration(self.campaigns))
+        self.addPage(TheaterConfiguration(self.campaigns, self.faction_selection_page))
+        self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions())
         self.addPage(DifficultyAndAutomationOptions())
         self.addPage(ConclusionPage())
@@ -177,9 +178,15 @@ class FactionSelection(QtWidgets.QWizardPage):
         # Create required mod layout
         self.requiredModsGroup = QtWidgets.QGroupBox("Required Mods")
         self.requiredModsGroupLayout = QtWidgets.QHBoxLayout()
-        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")
+        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")        
+        self.requiredMods.setOpenExternalLinks(True)
         self.requiredModsGroupLayout.addWidget(self.requiredMods)
         self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
+
+        # Docs Link
+        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Factions\"><span style=\"color:#FFFFFF;\">How to create your own faction</span></a>")
+        docsText.setAlignment(Qt.AlignCenter)
+        docsText.setOpenExternalLinks(True)
 
         # Link form fields
         self.registerField('blueFaction', self.blueFactionSelect)
@@ -189,11 +196,31 @@ class FactionSelection(QtWidgets.QWizardPage):
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.factionsGroup)
         layout.addWidget(self.requiredModsGroup)
+        layout.addWidget(docsText)
         self.setLayout(layout)
         self.updateUnitRecap()
 
         self.blueFactionSelect.activated.connect(self.updateUnitRecap)
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
+
+
+    def setDefaultFactions(self, campaign:Campaign):
+        """ Set default faction for selected campaign """
+
+        self.blueFactionSelect.clear()
+        self.redFactionSelect.clear()
+
+        for f in db.FACTIONS:
+            self.blueFactionSelect.addItem(f)
+
+        for i, r in enumerate(db.FACTIONS):
+            self.redFactionSelect.addItem(r)
+            if r == campaign.recommended_enemy_faction:
+                self.redFactionSelect.setCurrentIndex(i)
+            if r == campaign.recommended_player_faction:
+                self.blueFactionSelect.setCurrentIndex(i)
+
+        self.updateUnitRecap()
 
     def updateUnitRecap(self):
 
@@ -233,8 +260,10 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, campaigns: List[Campaign], parent=None) -> None:
+    def __init__(self, campaigns: List[Campaign], faction_selection: FactionSelection, parent=None) -> None:
         super().__init__(parent)
+
+        self.faction_selection = faction_selection
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
@@ -251,13 +280,21 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Faction description
         self.campaignMapDescription = QTextEdit("")
         self.campaignMapDescription.setReadOnly(True)
+        self.campaignMapDescription.setMaximumHeight(150)
+
+        self.performanceText = QTextEdit("")
+        self.performanceText.setReadOnly(True)
+        self.performanceText.setMaximumHeight(150)
 
         def on_campaign_selected():
             template = jinja_env.get_template("campaigntemplate_EN.j2")
+            template_perf = jinja_env.get_template("campaign_performance_template_EN.j2")
             index = campaignList.selectionModel().currentIndex().row()
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
+            self.faction_selection.setDefaultFactions(campaign)
+            self.performanceText.setText(template_perf.render({"performance": campaign.performance}))
 
         campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
@@ -270,11 +307,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout = QtWidgets.QGridLayout()
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
-
-        #mapSettingsLayout.addWidget(QtWidgets.QLabel("Start at mid game"), 1, 0)
-        #midgame = QtWidgets.QCheckBox()
-        #self.registerField('midGame', midgame)
-        #mapSettingsLayout.addWidget(midgame, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -286,8 +318,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         timePeriod.setBuddy(timePeriodSelect)
         timePeriodSelect.setCurrentIndex(21)
 
+        # Docs Link
+        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns\"><span style=\"color:#FFFFFF;\">How to create your own theater</span></a>")
+        docsText.setAlignment(Qt.AlignCenter)
+        docsText.setOpenExternalLinks(True)
+
         # Register fields
-        self.registerField('timePeriod', timePeriodSelect)
         self.registerField('timePeriod', timePeriodSelect)
 
         timeGroupLayout = QtWidgets.QGridLayout()
@@ -297,10 +333,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
-        layout.addWidget(campaignList, 0, 0, 3, 1)
+        layout.addWidget(campaignList, 0, 0, 5, 1)
+        layout.addWidget(docsText, 5, 0, 1, 1)
         layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
-        layout.addWidget(mapSettingsGroup, 1, 1, 1, 1)
-        layout.addWidget(timeGroup, 2, 1, 1, 1)
+        layout.addWidget(self.performanceText, 1, 1, 1, 1)
+        layout.addWidget(mapSettingsGroup, 2, 1, 1, 1)
+        layout.addWidget(timeGroup, 3, 1, 3, 1)
         self.setLayout(layout)
 
 

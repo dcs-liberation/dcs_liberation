@@ -112,7 +112,9 @@ class UnitMap:
                      group: Group) -> None:
         # The actual name is a String (the pydcs translatable string), which
         # doesn't define __eq__.
-        name = str(group.name)
+        # The name of the initiator in the DCS dead event will have " object"
+        # appended for statics.
+        name = f"{group.name} object"
         if name in self.buildings:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
         self.buildings[name] = Building(ground_object)

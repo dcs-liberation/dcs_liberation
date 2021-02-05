@@ -89,7 +89,7 @@ class QMapControlPoint(QMapObject):
             return
 
         for connected in self.control_point.connected_points:
-            if connected.captured:
+            if connected.captured and self.game_model.game.settings.enable_base_capture_cheat:
                 menu.addAction(self.capture_action)
                 break
 

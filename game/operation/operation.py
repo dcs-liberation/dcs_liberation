@@ -26,12 +26,12 @@ from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
+from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 
 from .. import db
-from ..debriefing import Debriefing
 from ..theater import Airfield
 from ..unitmap import UnitMap
 
@@ -86,7 +86,7 @@ class Operation:
                 cls.game.enemy_country,
                 frontline.position
             )
-    
+
     @classmethod
     def air_conflict(cls) -> Conflict:
         assert cls.game
@@ -103,7 +103,7 @@ class Operation:
             cls.game.enemy_name,
             cls.game.player_country,
             cls.game.enemy_country,
-            mid_point            
+            mid_point
         )
 
     @classmethod
@@ -295,7 +295,7 @@ class Operation:
                     heading=d["orientation"],
                     dead=True,
                 )
-    
+
     @classmethod
     def generate(cls) -> UnitMap:
         """Build the final Mission to be exported"""
@@ -349,7 +349,7 @@ class Operation:
             cls.jtacs,
             cls.airgen
         )
-
+        cls.reset_naming_ids()
         return cls.unit_map
 
     @classmethod
@@ -410,6 +410,10 @@ class Operation:
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
+
+    @classmethod
+    def reset_naming_ids(cls):
+        namegen.reset_numbers()
 
     @classmethod
     def generate_lua(cls, airgen: AircraftConflictGenerator,

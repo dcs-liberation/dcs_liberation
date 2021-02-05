@@ -8,7 +8,6 @@ from dcs.ships import (
     FFG_11540_Neustrashimy,
     FF_1135M_Rezky,
     CG_1164_Moskva,
-    CGN_1144_2_Pyotr_Velikiy,
     SSK_877,
     SSK_641B
 )
@@ -49,8 +48,9 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             self.add_unit(dd_type, "DD2", self.position.x + 2400, self.position.y - 900, self.heading)
 
         if include_cc:
-            cc_type = random.choice([CG_1164_Moskva, CGN_1144_2_Pyotr_Velikiy])
-            self.add_unit(cc_type, "CC1", self.position.x, self.position.y, self.heading)
+            # Only include the Moskva for now, the Pyotry Velikiy is an unkillable monster.
+            # See https://github.com/Khopa/dcs_liberation/issues/567
+            self.add_unit(CG_1164_Moskva, "CC1", self.position.x, self.position.y, self.heading)
 
         self.get_generated_group().points[0].speed = 20
 

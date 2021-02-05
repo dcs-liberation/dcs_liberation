@@ -1,11 +1,30 @@
+from dataclasses import dataclass
 import pickle
-from typing import Collection, Optional, Tuple
+from functools import cached_property
+from typing import Optional, Tuple, Union
 import logging
 
 from shapely import geometry
+from shapely.geometry import MultiPolygon, Polygon
 
-Zone = Collection[Tuple[float, float]]
-Landmap = Tuple[Collection[geometry.Polygon], Collection[geometry.Polygon], Collection[geometry.Polygon]]
+
+@dataclass(frozen=True)
+class Landmap:
+    inclusion_zones: MultiPolygon
+    exclusion_zones: MultiPolygon
+    sea_zones: MultiPolygon
+
+    def __post_init__(self):
+        if not self.inclusion_zones.is_valid:
+            raise RuntimeError("Inclusion zones not valid")
+        if not self.exclusion_zones.is_valid:
+            raise RuntimeError("Exclusion zones not valid")
+        if not self.sea_zones.is_valid:
+            raise RuntimeError("Sea zones not valid")
+
+    @cached_property
+    def inclusion_zone_only(self) -> MultiPolygon:
+        return self.inclusion_zones - self.exclusion_zones - self.sea_zones
 
 
 def load_landmap(filename: str) -> Optional[Landmap]:
@@ -17,7 +36,7 @@ def load_landmap(filename: str) -> Optional[Landmap]:
         return None
 
 
-def poly_contains(x, y, poly:geometry.Polygon):
+def poly_contains(x, y, poly: Union[MultiPolygon, Polygon]):
     return poly.contains(geometry.Point(x, y))
 
 

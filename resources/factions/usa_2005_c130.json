@@ -13,6 +13,8 @@
     "A_10C_2",
     "AV8BNA",
     "UH_1H",
+    "S_3B",
+    "SH_60B",
     "AH_64D",
     "B_52H",
     "B_1B",
@@ -70,7 +72,9 @@
   "cruisers": [
     "Ticonderoga_class"
   ],
-  "requirements": {},
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",

@@ -4,7 +4,6 @@ from PySide2.QtCore import QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QHeaderView, QTableView
 
-from game.utils import meter_to_feet
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
@@ -20,7 +19,6 @@ class QFlightWaypointList(QTableView):
 
         self.model = QStandardItemModel(self)
         self.setModel(self.model)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
 
         header = self.horizontalHeader()
@@ -42,6 +40,11 @@ class QFlightWaypointList(QTableView):
             self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
                                               QItemSelectionModel.Select)
+        self.resizeColumnsToContents()
+        total_column_width = self.verticalHeader().width() + self.lineWidth()
+        for i in range(0, self.model.columnCount()):
+            total_column_width += self.columnWidth(i) + self.lineWidth()
+        self.setFixedWidth(total_column_width)
 
     def add_waypoint_row(self, row: int, flight: Flight,
                          waypoint: FlightWaypoint) -> None:
@@ -49,7 +52,7 @@ class QFlightWaypointList(QTableView):
 
         self.model.setItem(row, 0, QWaypointItem(waypoint, row))
 
-        altitude = meter_to_feet(waypoint.alt)
+        altitude = int(waypoint.alt.feet)
         altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
         altitude_item = QStandardItem(f"{altitude} ft {altitude_type}")
         altitude_item.setEditable(False)

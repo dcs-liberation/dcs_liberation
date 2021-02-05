@@ -55,7 +55,7 @@ from .controlpoint import (
     Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
-from ..utils import nm_to_meter
+from ..utils import Distance, meters, nautical_miles
 
 Numeric = Union[int, float]
 
@@ -115,7 +115,7 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_3_S_125_LN_5P73.id,
     }
 
-    BASE_DEFENSE_RADIUS = nm_to_meter(2)
+    BASE_DEFENSE_RADIUS = nautical_miles(2)
 
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
         self.theater = theater
@@ -317,9 +317,9 @@ class MizCampaignLoader:
                 self.control_points[origin.id])
         return front_lines
 
-    def objective_info(self, group: Group) -> Tuple[ControlPoint, int]:
+    def objective_info(self, group: Group) -> Tuple[ControlPoint, Distance]:
         closest = self.theater.closest_control_point(group.position)
-        distance = closest.position.distance_to_point(group.position)
+        distance = meters(closest.position.distance_to_point(group.position))
         return closest, distance
 
     def add_preset_locations(self) -> None:
@@ -447,11 +447,11 @@ class ConflictTheater:
         if self.is_on_land(point):
             return False
 
-        for exclusion_zone in self.landmap[1]:
+        for exclusion_zone in self.landmap.exclusion_zones:
             if poly_contains(point.x, point.y, exclusion_zone):
                 return False
 
-        for sea in self.landmap[2]:
+        for sea in self.landmap.sea_zones:
             if poly_contains(point.x, point.y, sea):
                 return True
 
@@ -462,14 +462,13 @@ class ConflictTheater:
             return True
 
         is_point_included = False
-        for inclusion_zone in self.landmap[0]:
-            if poly_contains(point.x, point.y, inclusion_zone):
-                is_point_included = True
+        if poly_contains(point.x, point.y, self.landmap.inclusion_zones):
+            is_point_included = True
 
         if not is_point_included:
             return False
 
-        for exclusion_zone in self.landmap[1]:
+        for exclusion_zone in self.landmap.exclusion_zones:
             if poly_contains(point.x, point.y, exclusion_zone):
                 return False
 
@@ -484,7 +483,7 @@ class ConflictTheater:
         nearest_points = []
         if not self.landmap:
             raise RuntimeError("Landmap not initialized")
-        for inclusion_zone in self.landmap[0]:
+        for inclusion_zone in self.landmap.inclusion_zones:
             nearest_pair = ops.nearest_points(point, inclusion_zone)
             nearest_points.append(nearest_pair[1])
         min_distance = point.distance(nearest_points[0]) # type: geometry.Point
@@ -526,6 +525,26 @@ class ConflictTheater:
             distance = point.distance_to_point(control_point.position)
             if distance < closest_distance:
                 closest = control_point
+                closest_distance = distance
+        return closest
+
+    def closest_target(self, point: Point) -> MissionTarget:
+        closest: MissionTarget = self.controlpoints[0]
+        closest_distance = point.distance_to_point(closest.position)
+        for control_point in self.controlpoints[1:]:
+            distance = point.distance_to_point(control_point.position)
+            if distance < closest_distance:
+                closest = control_point
+                closest_distance = distance
+            for tgo in control_point.ground_objects:
+                distance = point.distance_to_point(tgo.position)
+                if distance < closest_distance:
+                    closest = tgo
+                    closest_distance = distance
+        for conflict in self.conflicts():
+            distance = conflict.position.distance_to_point(point)
+            if distance < closest_distance:
+                closest = conflict
                 closest_distance = distance
         return closest
     

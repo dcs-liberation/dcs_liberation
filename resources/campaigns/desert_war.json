@@ -2,6 +2,9 @@
   "name": "Persian Gulf - Desert War",
   "theater": "Persian Gulf",
   "authors": "Khopa",
+  "recommended_player_faction": "USA 2005",
+  "recommended_enemy_faction": "Iran 2015",
   "description": "<p>This is a simple scenario in the Desert near Dubai and Abu-Dhabi. Progress from Liwa airbase to Al-Minhad.</p><p>This scenario shouldn't require too much performance.</p>",
-  "miz": "desert_war.miz"
+  "miz": "desert_war.miz",
+  "performance": 1
 }

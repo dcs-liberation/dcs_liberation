@@ -3,8 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from game.db import PLAYER_BUDGET_BASE, REWARDS
-from game.theater import ControlPoint
+from game.db import REWARDS
 
 if TYPE_CHECKING:
     from game import Game
@@ -22,12 +21,6 @@ class BuildingIncome:
         return self.number * self.income_per_building
 
 
-@dataclass(frozen=True)
-class ControlPointIncome:
-    control_point: ControlPoint
-    income: int
-
-
 class Income:
     def __init__(self, game: Game, player: bool) -> None:
         if player:
@@ -37,12 +30,10 @@ class Income:
         self.control_points = []
         self.buildings = []
 
-        self.income_per_base = PLAYER_BUDGET_BASE if player else 0
-
         names = set()
         for cp in game.theater.control_points_for(player):
-            self.control_points.append(
-                ControlPointIncome(cp, self.income_per_base))
+            if cp.income_per_turn:
+                self.control_points.append(cp)
             for tgo in cp.ground_objects:
                 names.add(tgo.obj_name)
 
@@ -58,7 +49,7 @@ class Income:
             self.buildings.append(BuildingIncome(name, category, count,
                                                  REWARDS[category]))
 
-        self.from_bases = sum(cp.income for cp in self.control_points)
+        self.from_bases = sum(cp.income_per_turn for cp in self.control_points)
         self.total_buildings = sum(b.income for b in self.buildings)
         self.total = ((self.total_buildings + self.from_bases) *
                       self.multiplier)

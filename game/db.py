@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Type, Union
+import json
+from pathlib import Path
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -17,6 +19,7 @@ from dcs.helicopters import (
     SA342M,
     SA342Minigun,
     SA342Mistral,
+    SH_60B,
     UH_1H,
     UH_60A,
     helicopter_map,
@@ -40,12 +43,14 @@ from dcs.planes import (
     C_101CC,
     C_130,
     E_3A,
+    E_2C,
     FA_18C_hornet,
     FW_190A8,
     FW_190D9,
     F_117A,
     F_14A_135_GR,
     F_14B,
+    F_111F,
     F_15C,
     F_15E,
     F_16A,
@@ -61,6 +66,7 @@ from dcs.planes import (
     Ju_88A4,
     KC130,
     KC_135,
+    KC135MPRS,
     KJ_2000,
     L_39C,
     L_39ZA,
@@ -84,6 +90,7 @@ from dcs.planes import (
     P_51D_30_NA,
     PlaneType,
     RQ_1A_Predator,
+    S_3B,
     S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
@@ -130,6 +137,7 @@ from dcs.task import (
     CargoTransportation,
     Embarking,
     Escort,
+    FighterSweep,
     GroundAttack,
     Intercept,
     MainTask,
@@ -157,6 +165,7 @@ from dcs.vehicles import (
 )
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
+import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
@@ -165,6 +174,8 @@ from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
+
+UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["MB-339PAN"] = MB_339PAN
@@ -208,6 +219,49 @@ vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
 vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
 vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
 vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
+
+vehicle_map[highdigitsams.AAA_SON_9_Fire_Can.id] = highdigitsams.AAA_SON_9_Fire_Can
+vehicle_map[highdigitsams.AAA_100mm_KS_19.id] = highdigitsams.AAA_100mm_KS_19
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_54K6_CP.id] = highdigitsams.SAM_SA_10B_S_300PS_54K6_CP
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN
+vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE
+vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_30N6_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_30N6_TR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR
+vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6.id] = highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE
+vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck.id] = highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2
+vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S457_CP.id] = highdigitsams.SAM_SA_12_S_300V_9S457_CP
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A82_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A82_LN
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A83_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A83_LN
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S15_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S15_SR
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S19_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S19_SR
+vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S32_TR.id] = highdigitsams.SAM_SA_12_S_300V_9S32_TR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP.id] = highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR.id] = highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN
+vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN
+vehicle_map[highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2.id] = highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2
+vehicle_map[highdigitsams.SAM_SA_2__V759__LN_SM_90.id] = highdigitsams.SAM_SA_2__V759__LN_SM_90
+vehicle_map[highdigitsams.SAM_HQ_2_LN_SM_90.id] = highdigitsams.SAM_HQ_2_LN_SM_90
+vehicle_map[highdigitsams.SAM_SA_3__V_601P__LN_5P73.id] = highdigitsams.SAM_SA_3__V_601P__LN_5P73
+vehicle_map[highdigitsams.SAM_SA_24_Igla_S_manpad.id] = highdigitsams.SAM_SA_24_Igla_S_manpad
+vehicle_map[highdigitsams.SAM_SA_14_Strela_3_manpad.id] = highdigitsams.SAM_SA_14_Strela_3_manpad
+vehicle_map[highdigitsams.Polyana_D4M1_C2_node.id] = highdigitsams.Polyana_D4M1_C2_node
+vehicle_map[highdigitsams._34Ya6E_Gazetchik_E_decoy.id] = highdigitsams._34Ya6E_Gazetchik_E_decoy
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -302,6 +356,7 @@ PRICES = {
     A_10A: 16,
     A_10C: 22,
     A_10C_2: 24,
+    S_3B: 10,
 
     # heli
     Ka_50: 13,
@@ -317,6 +372,7 @@ PRICES = {
     AH_64A: 24,
     AH_64D: 30,
     OH_58D: 6,
+    SH_60B: 6,
 
     # Bombers
     B_52H: 35,
@@ -325,6 +381,7 @@ PRICES = {
     Tu_160: 50,
     Tu_22M3: 40,
     Tu_95MS: 35,
+    F_111F: 21,
 
     # special
     IL_76MD: 30,
@@ -335,10 +392,12 @@ PRICES = {
     IL_78M: 25,
     KC_135: 25,
     KC130: 25,
+    KC135MPRS: 25,
 
     A_50: 50,
     KJ_2000: 50,
     E_3A: 50,
+    E_2C: 50,
     C_130: 25,
     Hercules: 25,
 
@@ -410,6 +469,7 @@ PRICES = {
     Artillery.MLRS_9K57_Uragan_BM_27: 50,
     Artillery.MLRS_9A52_Smerch: 40,
     Artillery._2B11_mortar: 4,
+    Artillery.SpGH_Dana: 26,
 
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
@@ -459,14 +519,14 @@ PRICES = {
     AirDefence.SAM_SA_19_Tunguska_2S6: 30,
     AirDefence.SAM_SA_6_Kub_LN_2P25: 20,
     AirDefence.SAM_SA_3_S_125_LN_5P73: 6,
-    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 22,
-    AirDefence.SAM_SA_10_S_300PS_LN_5P85D: 22,
+
     AirDefence.SAM_SA_11_Buk_LN_9A310M1: 30,
+    AirDefence.SAM_SA_11_Buk_CC_9S470M1: 25,
+    AirDefence.SAM_SA_11_Buk_SR_9S18M1: 28,
     AirDefence.SAM_SA_8_Osa_9A33: 28,
     AirDefence.SAM_SA_15_Tor_9A331: 40,
     AirDefence.SAM_SA_13_Strela_10M3_9A35M3: 16,
     AirDefence.SAM_SA_9_Strela_1_9P31: 12,
-    AirDefence.SAM_SA_11_Buk_CC_9S470M1: 25,
     AirDefence.SAM_SA_8_Osa_LD_9T217: 22,
     AirDefence.SAM_Patriot_AMG_AN_MRC_137: 35,
     AirDefence.SAM_Patriot_ECS_AN_MSQ_104: 30,
@@ -481,7 +541,6 @@ PRICES = {
     AirDefence.SAM_Patriot_EPP_III: 15,
     AirDefence.SAM_Patriot_ICC: 18,
     AirDefence.SAM_Roland_ADS: 12,
-    AirDefence.SAM_SA_10_S_300PS_CP_54K6: 18,
     AirDefence.Stinger_MANPADS: 6,
     AirDefence.SAM_Stinger_comm_dsr: 4,
     AirDefence.SAM_Stinger_comm: 4,
@@ -499,11 +558,8 @@ PRICES = {
     AirDefence.SAM_SA_18_Igla_S_comm: 8,
     AirDefence.EWR_1L13: 30,
     AirDefence.SAM_SA_6_Kub_STR_9S91: 22,
-    AirDefence.SAM_SA_10_S_300PS_TR_30N6: 24,
-    AirDefence.SAM_SA_10_S_300PS_SR_5N66M: 30,
+
     AirDefence.EWR_55G6: 30,
-    AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 30,
-    AirDefence.SAM_SA_11_Buk_SR_9S18M1: 28,
     AirDefence.CP_9S80M1_Sborka: 10,
     AirDefence.SAM_Hawk_TR_AN_MPQ_46: 14,
     AirDefence.SAM_Hawk_SR_AN_MPQ_50: 18,
@@ -564,6 +620,57 @@ PRICES = {
     frenchpack.DIM__TOYOTA_DESERT: 2,
     frenchpack.DIM__KAMIKAZE: 6,
 
+    # SA-10
+    AirDefence.SAM_SA_10_S_300PS_CP_54K6: 18,
+    AirDefence.SAM_SA_10_S_300PS_TR_30N6: 24,
+    AirDefence.SAM_SA_10_S_300PS_SR_5N66M: 30,
+    AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 30,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 22,
+    AirDefence.SAM_SA_10_S_300PS_LN_5P85D: 22,
+
+    # High digit sams mod
+    highdigitsams.AAA_SON_9_Fire_Can: 8,
+    highdigitsams.AAA_100mm_KS_19: 10,
+
+    highdigitsams.SAM_SA_10B_S_300PS_54K6_CP: 20,
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN: 24,
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN: 24,
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE: 24,
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE: 24,
+    highdigitsams.SAM_SA_10B_S_300PS_30N6_TR: 26,
+    highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR: 26,
+    highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR: 32,
+    highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR: 32,
+
+    highdigitsams.SAM_SA_12_S_300V_9S457_CP: 22,
+    highdigitsams.SAM_SA_12_S_300V_9A82_LN: 26,
+    highdigitsams.SAM_SA_12_S_300V_9A83_LN: 26,
+    highdigitsams.SAM_SA_12_S_300V_9S15_SR: 34,
+    highdigitsams.SAM_SA_12_S_300V_9S19_SR: 34,
+    highdigitsams.SAM_SA_12_S_300V_9S32_TR: 28,
+
+    highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6: 26,
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E: 30,
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck: 32,
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E: 38,
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E: 38,
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE: 28,
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE: 28,
+
+    highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2: 27,
+    highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck: 33,
+    highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2: 40,
+    highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2: 30,
+
+    highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP: 30,
+    highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR: 45,
+    highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR: 45,
+    highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR: 35,
+    highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN: 32,
+    highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN: 32,
+
+    highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2: 40,
+
 }
 
 """
@@ -574,6 +681,7 @@ Following tasks are present:
 * CAS - CAS aircraft
 * Transport - transport aircraft (used as targets in intercept operations)
 * AWACS - awacs
+* AntishipStrike - units that will engage shipping
 * PinpointStrike - armor that will engage in ground war
 * AirDefense - AA units
 * Reconnaissance - units that will be used as targets in destroy insurgents operations
@@ -633,6 +741,7 @@ UNIT_BY_TASK = {
         A_10C_2,
         A_20G,
         B_17G,
+        F_111F,
         B_1B,
         B_52H,
         F_117A,
@@ -655,6 +764,7 @@ UNIT_BY_TASK = {
         RQ_1A_Predator,
         Rafale_A_S,
         Rafale_B,
+        S_3B,
         SA342L,
         SA342M,
         SA342Minigun,
@@ -669,7 +779,8 @@ UNIT_BY_TASK = {
         Tu_160,
         Tu_22M3,
         Tu_95MS,
-        UH_1H,
+        UH_1H,        
+        SH_60B,
         WingLoong_I,
         Hercules
     ],
@@ -685,8 +796,14 @@ UNIT_BY_TASK = {
         KC_135,
         KC130,
         S_3B_Tanker,
+        KC135MPRS,
     ],
-    AWACS: [E_3A, A_50, KJ_2000],
+    AWACS: [
+        E_3A,
+        E_2C,
+        A_50,
+        KJ_2000
+    ],
     PinpointStrike: [
         Armor.APC_MTLB,
         Armor.APC_MTLB,
@@ -839,6 +956,7 @@ UNIT_BY_TASK = {
         Artillery.MLRS_BM_21_Grad,
         Artillery.MLRS_9K57_Uragan_BM_27,
         Artillery.MLRS_9A52_Smerch,
+        Artillery.SpGH_Dana,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
 
@@ -998,7 +1116,33 @@ COMMON_OVERRIDE = {
     AntishipStrike: "ANTISHIP",
     GroundAttack: "STRIKE",
     Escort: "CAP",
-    RunwayAttack: "RUNWAY_ATTACK"
+    RunwayAttack: "RUNWAY_ATTACK",
+    FighterSweep: "CAP"
+}
+
+"""
+This is a list of mappings from the FlightType of a Flight to the type of payload defined in the
+resources/payloads/UNIT_TYPE.lua file. A Flight has no concept of a PyDCS task, so COMMON_OVERRIDE cannot be
+used here. This is used in the payload editor, for setting the default loadout of an object.
+The left element is the FlightType name, and the right element is a tuple containing what is used in the lua file.
+Some aircraft differ from the standard loadout names, so those have been included here too.
+The priority goes from first to last - the first element in the tuple will be tried first, then the second, etc.
+"""
+
+EXPANDED_TASK_PAYLOAD_OVERRIDE = {
+    "TARCAP": ("CAP HEAVY", "CAP"),
+    "BARCAP": ("CAP HEAVY", "CAP"),
+    "CAS": ("CAS MAVERICK F", "CAS"),
+    "INTERCEPTION": ("CAP HEAVY", "CAP"),
+    "STRIKE": ("STRIKE",),    
+    "ANTISHIP": ("ANTISHIP",),
+    "SEAD": ("SEAD",),
+    "DEAD": ("SEAD",),
+    "ESCORT": ("CAP HEAVY", "CAP"),
+    "BAI": ( "BAI", "CAS MAVERICK F", "CAS"),
+    "SWEEP": ("CAP HEAVY", "CAP"),
+    "OCA_RUNWAY": ("RUNWAY_ATTACK","RUNWAY_STRIKE","STRIKE"),
+    "OCA_AIRCRAFT": ("OCA","CAS MAVERICK F", "CAS")
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
@@ -1016,6 +1160,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         AntishipStrike: "ANTISHIP",
         GroundAttack: "STRIKE",
         Escort: "CAP HEAVY",
+        FighterSweep: "CAP HEAVY",
     },
     F_A_18C: {
         CAP: "CAP HEAVY",
@@ -1026,6 +1171,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
         AntishipStrike: "ANTISHIP",
         GroundAttack: "STRIKE",
         Escort: "CAP HEAVY",
+        FighterSweep: "CAP HEAVY",
     },
     Tu_160: {
         PinpointStrike: "Kh-65*12",
@@ -1041,6 +1187,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     F_14A_135_GR: COMMON_OVERRIDE,
     F_14B: COMMON_OVERRIDE,
     F_15C: COMMON_OVERRIDE,
+    F_111F: COMMON_OVERRIDE,
     F_22A: COMMON_OVERRIDE,
     F_16C_50: COMMON_OVERRIDE,
     JF_17: COMMON_OVERRIDE,
@@ -1066,6 +1213,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     Tornado_IDS: COMMON_OVERRIDE,
     Mirage_2000_5: COMMON_OVERRIDE,
     MiG_31: COMMON_OVERRIDE,
+    S_3B: COMMON_OVERRIDE,
     SA342M: COMMON_OVERRIDE,
     SA342L: COMMON_OVERRIDE,
     SA342Mistral: COMMON_OVERRIDE,
@@ -1103,6 +1251,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_1W: COMMON_OVERRIDE,
     AH_64D: COMMON_OVERRIDE,
     AH_64A: COMMON_OVERRIDE,
+    SH_60B: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
 
     Su_25TM: {
@@ -1170,9 +1319,6 @@ REWARDS = {
     "derrick": 8
 }
 
-# Base post-turn bonus value
-PLAYER_BUDGET_BASE = 20
-
 CARRIER_CAPABLE = [
     FA_18C_hornet,
     F_14A_135_GR,
@@ -1181,6 +1327,7 @@ CARRIER_CAPABLE = [
     Su_33,
     A_4E_C,
     Rafale_M,
+    S_3B,
 
     UH_1H,
     Mi_8MT,
@@ -1188,6 +1335,7 @@ CARRIER_CAPABLE = [
     AH_1W,
     OH_58D,
     UH_60A,
+    SH_60B,
 
     SA342L,
     SA342M,
@@ -1204,6 +1352,7 @@ LHA_CAPABLE = [
     AH_1W,
     OH_58D,
     UH_60A,
+    SH_60B,
 
     SA342L,
     SA342M,
@@ -1308,6 +1457,33 @@ def unit_type_name(unit_type) -> str:
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
+def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
+    original_name = unit_type.name and unit_type.name or unit_type.id
+    default_value = None
+    faction_value = None
+    with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
+        data = json.load(fdata, encoding="utf-8")
+    type_exists = data.get(original_name)
+    if type_exists is not None:
+        for faction in type_exists:
+            if default_value is None:
+                default_exists = faction.get("default")
+                if default_exists is not None:
+                    default_value = default_exists.get(request_type)
+            if faction_value is None:
+                faction_exists = faction.get(country_name)
+                if faction_exists is not None:
+                    faction_value = faction_exists.get(request_type)
+    if default_value is None:
+        if request_type == "text":
+            return "WIP - This unit doesn't have any description text yet."
+        if request_type == "name":
+            return original_name
+        else:
+            return "Unknown"
+    if faction_value is None:
+        return default_value
+    return faction_value
 
 def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:

@@ -4,15 +4,16 @@
   "authors": "HerrTom",
   "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
   "aircrafts": [
+    "AH_1W",
     "F_4E",
     "F_14A_135_GR",
     "F_14B",
     "S_3B",
-    "UH_1H",
-    "AH_1W"
+    "SH_60B",
+    "UH_1H"
   ],
   "awacs": [
-    "E_3A"
+    "E_2C"
   ],
   "tankers": [
     "S_3B_Tanker"

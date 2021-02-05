@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import math
 import pickle
 import random
 from dataclasses import dataclass
@@ -15,7 +14,6 @@ from dcs.vehicles import AirDefence
 from game import Game, db
 from game.factions.faction import Faction
 from game.theater import Carrier, Lha, LocationType
-from game.theater.conflicttheater import IMPORTANCE_HIGH, IMPORTANCE_LOW
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
@@ -479,11 +477,11 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        group = generate_anti_air_group(self.game, g, self.faction)
-        if group is None:
+        groups = generate_anti_air_group(self.game, g, self.faction)
+        if not groups:
             logging.error(f"Could not generate SAM at {self.control_point}")
             return
-        g.groups.append(group)
+        g.groups = groups
         self.control_point.base_defenses.append(g)
 
     def generate_shorad(self) -> None:
@@ -497,13 +495,13 @@ class BaseDefenseGenerator:
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=True)
 
-        group = generate_anti_air_group(self.game, g, self.faction,
-                                        ranges=[{AirDefenseRange.Short}])
-        if group is None:
+        groups = generate_anti_air_group(self.game, g, self.faction,
+                                         ranges=[{AirDefenseRange.Short}])
+        if not groups:
             logging.error(
                 f"Could not generate SHORAD group at {self.control_point}")
             return
-        g.groups.append(group)
+        g.groups = groups
         self.control_point.base_defenses.append(g)
 
 
@@ -642,12 +640,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
         g = SamGroundObject(namegen.random_objective_name(), group_id,
                             position, self.control_point, for_airbase=False)
-        group = generate_anti_air_group(self.game, g, self.faction, ranges)
-        if group is None:
+        groups = generate_anti_air_group(self.game, g, self.faction, ranges)
+        if not groups:
             logging.error("Could not generate air defense group for %s at %s",
                           g.name, self.control_point)
             return
-        g.groups = [group]
+        g.groups = groups
         self.control_point.connected_objectives.append(g)
 
     def generate_missile_sites(self) -> None:

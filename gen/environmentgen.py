@@ -21,7 +21,7 @@ class EnvironmentGenerator:
     def set_fog(self, fog: Optional[Fog]) -> None:
         if fog is None:
             return
-        self.mission.weather.fog_visibility = fog.visibility
+        self.mission.weather.fog_visibility = fog.visibility.meters
         self.mission.weather.fog_thickness = fog.thickness
 
     def set_wind(self, wind: WindConditions) -> None:

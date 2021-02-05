@@ -1,3 +1,6 @@
+import itertools
+from typing import Optional
+
 from PySide2.QtWidgets import (
     QDialog,
     QFrame,
@@ -8,7 +11,8 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
-from game.income import Income
+from game.income import BuildingIncome, Income
+from game.theater import ControlPoint
 
 
 class QHorizontalSeparationLine(QFrame):
@@ -25,44 +29,65 @@ class QHorizontalSeparationLine(QFrame):
 class FinancesLayout(QGridLayout):
     def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
+        self.row = itertools.count(0)
 
         income = Income(game, player)
 
-        self.addWidget(QLabel("<b>Control Points</b>"), 0, 0)
-        self.addWidget(QLabel(
-            f"{len(income.control_points)} bases x {income.income_per_base}M"),
-            0, 1)
-        self.addWidget(QLabel(f"{income.from_bases}M"), 0, 2)
+        control_points = reversed(
+            sorted(income.control_points, key=lambda c: c.income_per_turn))
+        for control_point in control_points:
+            self.add_control_point(control_point)
 
-        self.addWidget(QHorizontalSeparationLine(), 1, 0, 1, 3)
+        self.add_line()
 
         buildings = reversed(sorted(income.buildings, key=lambda b: b.income))
-        row = 2
-        for row, building in enumerate(buildings, row):
-            self.addWidget(
-                QLabel(f"<b>{building.category.upper()} [{building.name}]</b>"),
-                row, 0)
-            self.addWidget(QLabel(
-                f"{building.number} buildings x {building.income_per_building}M"),
-                row, 1)
-            rlabel = QLabel(f"{building.income}M")
-            rlabel.setProperty("style", "green")
-            self.addWidget(rlabel, row, 2)
+        for building in buildings:
+            self.add_building(building)
 
-        self.addWidget(QHorizontalSeparationLine(), row + 1, 0, 1, 3)
-        self.addWidget(QLabel(
-            f"Income multiplier: {income.multiplier:.1f}"),
-            row + 2, 1
-        )
-        self.addWidget(QLabel(f"<b>{income.total}M</b>"), row + 2, 2)
+        self.add_line()
+
+        self.add_row(middle=f"Income multiplier: {income.multiplier:.1f}",
+                     right=f"<b>{income.total}M</b>")
 
         if player:
             budget = game.budget
         else:
             budget = game.enemy_budget
-        self.addWidget(QLabel(f"Balance"), row + 3, 1)
-        self.addWidget(QLabel(f"<b>{budget}M</b>"), row + 3, 2)
-        self.setRowStretch(row + 4, 1)
+
+        self.add_row(middle="Balance", right=f"<b>{budget}M</b>")
+        self.setRowStretch(next(self.row), 1)
+
+    def add_row(self, left: Optional[str] = None, middle: Optional[str] = None,
+                right: Optional[str] = None) -> None:
+        if not any([left, middle, right]):
+            raise ValueError
+
+        row = next(self.row)
+        if left is not None:
+            self.addWidget(QLabel(left), row, 0)
+        if middle is not None:
+            self.addWidget(QLabel(middle), row, 1)
+        if right is not None:
+            self.addWidget(QLabel(right), row, 2)
+
+    def add_control_point(self, control_point: ControlPoint) -> None:
+        self.add_row(left=f"<b>{control_point.name}</b>",
+                     right=f"{control_point.income_per_turn}M")
+
+    def add_building(self, building: BuildingIncome) -> None:
+        row = next(self.row)
+        self.addWidget(
+            QLabel(f"<b>{building.category.upper()} [{building.name}]</b>"),
+            row, 0)
+        self.addWidget(QLabel(
+            f"{building.number} buildings x {building.income_per_building}M"),
+            row, 1)
+        rlabel = QLabel(f"{building.income}M")
+        rlabel.setProperty("style", "green")
+        self.addWidget(rlabel, row, 2)
+
+    def add_line(self) -> None:
+        self.addWidget(QHorizontalSeparationLine(), next(self.row), 0, 1, 3)
 
 
 class QFinancesMenu(QDialog):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import heapq
 import itertools
 import logging
 import random
@@ -7,7 +8,8 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
+from functools import total_ordering
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -20,24 +22,27 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
-from gen.runways import RunwayAssigner, RunwayData
 from gen.ground_forces.combat_stance import CombatStance
+from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
+    GenericCarrierGroundObject,
     SamGroundObject,
     TheaterGroundObject,
-    VehicleGroupGroundObject, GenericCarrierGroundObject,
+    VehicleGroupGroundObject,
 )
+from ..db import PRICES
+from ..utils import nautical_miles
 from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
-    from ..event import UnitsDeliveryEvent
 
 
 class ControlPointType(Enum):
@@ -191,6 +196,28 @@ class RunwayStatus:
         return f"Runway repairing, {turns_remaining} turns remaining"
 
 
+@total_ordering
+class GroundUnitDestination:
+    def __init__(self, control_point: ControlPoint) -> None:
+        self.control_point = control_point
+
+    @property
+    def total_value(self) -> float:
+        return self.control_point.base.total_armor_value
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, GroundUnitDestination):
+            raise TypeError
+
+        return self.total_value == other.total_value
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, GroundUnitDestination):
+            raise TypeError
+
+        return self.total_value < other.total_value
+
+
 class ControlPoint(MissionTarget, ABC):
 
     position = None  # type: Point
@@ -208,7 +235,7 @@ class ControlPoint(MissionTarget, ABC):
                  at: db.StartingPosition, size: int,
                  importance: float, has_frontline=True,
                  cptype=ControlPointType.AIRBASE):
-        super().__init__(" ".join(re.split(r"[ \-]", name)[:2]), position)
+        super().__init__(name, position)
         # TODO: Should be Airbase specific.
         self.id = cp_id
         self.full_name = name
@@ -229,7 +256,8 @@ class ControlPoint(MissionTarget, ABC):
         self.cptype = cptype
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
-        self.pending_unit_deliveries: Optional[UnitsDeliveryEvent] = None
+        from ..event import UnitsDeliveryEvent
+        self.pending_unit_deliveries = UnitsDeliveryEvent(self)
 
         self.target_position: Optional[Point] = None
     
@@ -364,17 +392,96 @@ class ControlPoint(MissionTarget, ABC):
                     base_defense.position)
         self.base_defenses = []
 
+    def capture_equipment(self, game: Game) -> None:
+        total = self.base.total_armor_value
+        self.base.armor.clear()
+        game.adjust_budget(total, player=not self.captured)
+        game.message(
+            f"{self.name} is not connected to any friendly points. Ground "
+            f"vehicles have been captured and sold for ${total}M.")
+
+    def retreat_ground_units(self, game: Game):
+        # When there are multiple valid destinations, deliver units to whichever
+        # base is least defended first. The closest approximation of unit
+        # strength we have is price
+        destinations = [GroundUnitDestination(cp)
+                        for cp in self.connected_points
+                        if cp.captured == self.captured]
+        if not destinations:
+            self.capture_equipment(game)
+            return
+
+        heapq.heapify(destinations)
+        destination = heapq.heappop(destinations)
+        while self.base.armor:
+            unit_type, count = self.base.armor.popitem()
+            for _ in range(count):
+                destination.control_point.base.commision_units({unit_type: 1})
+                destination = heapq.heappushpop(destinations, destination)
+
+    def capture_aircraft(self, game: Game, airframe: Type[FlyingType],
+                         count: int) -> None:
+        try:
+            value = PRICES[airframe] * count
+        except KeyError:
+            logging.exception(f"Unknown price for {airframe.id}")
+            return
+
+        game.adjust_budget(value, player=not self.captured)
+        game.message(
+            f"No valid retreat destination in range of {self.name} for "
+            f"{airframe.id}. {count} aircraft have been captured and sold for "
+            f"${value}M.")
+
+    def aircraft_retreat_destination(
+            self, game: Game,
+            airframe: Type[FlyingType]) -> Optional[ControlPoint]:
+        closest = ObjectiveDistanceCache.get_closest_airfields(self)
+        # TODO: Should be airframe dependent.
+        max_retreat_distance = nautical_miles(200)
+        # Skip the first airbase because that's the airbase we're retreating
+        # from.
+        airfields = list(closest.airfields_within(max_retreat_distance))[1:]
+        for airbase in airfields:
+            if not airbase.can_operate(airframe):
+                continue
+            if airbase.captured != self.captured:
+                continue
+            if airbase.unclaimed_parking(game) > 0:
+                return airbase
+        return None
+
+    def _retreat_air_units(self, game: Game, airframe: Type[FlyingType],
+                           count: int) -> None:
+        while count:
+            logging.debug(f"Retreating {count} {airframe.id} from {self.name}")
+            destination = self.aircraft_retreat_destination(game, airframe)
+            if destination is None:
+                self.capture_aircraft(game, airframe, count)
+                return
+            parking = destination.unclaimed_parking(game)
+            transfer_amount = min([parking, count])
+            destination.base.commision_units({airframe: transfer_amount})
+            count -= transfer_amount
+
+    def retreat_air_units(self, game: Game) -> None:
+        # TODO: Capture in order of price to retain maximum value?
+        while self.base.aircraft:
+            airframe, count = self.base.aircraft.popitem()
+            self._retreat_air_units(game, airframe, count)
+
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
+        self.pending_unit_deliveries.refund_all(game)
+        self.retreat_ground_units(game)
+        self.retreat_air_units(game)
+
         if for_player:
             self.captured = True
         else:
             self.captured = False
 
         self.base.set_strength_to_minimum()
-
-        self.base.aircraft = {}
-        self.base.armor = {}
 
         self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
@@ -402,7 +509,6 @@ class ControlPoint(MissionTarget, ABC):
         return total
 
     def expected_aircraft_next_turn(self, game: Game) -> PendingOccupancy:
-        assert self.pending_unit_deliveries
         on_order = 0
         for unit_bought in self.pending_unit_deliveries.units:
             if issubclass(unit_bought, FlyingType):
@@ -439,7 +545,9 @@ class ControlPoint(MissionTarget, ABC):
             return
         self.runway_status.begin_repair()
 
-    def process_turn(self) -> None:
+    def process_turn(self, game: Game) -> None:
+        self.pending_unit_deliveries.process(game)
+
         runway_status = self.runway_status
         if runway_status is not None:
             runway_status.process_turn()
@@ -453,6 +561,8 @@ class ControlPoint(MissionTarget, ABC):
             # Move the linked unit groups
             for ground_object in self.ground_objects:
                 if isinstance(ground_object, GenericCarrierGroundObject):
+                    ground_object.position.x = ground_object.position.x + delta.x
+                    ground_object.position.y = ground_object.position.y + delta.y
                     for group in ground_object.groups:
                         for u in group.units:
                             u.position.x = u.position.x + delta.x
@@ -477,6 +587,24 @@ class ControlPoint(MissionTarget, ABC):
             return sum([v for k, v in self.pending_unit_deliveries.units.items()])
         else:
             return 0
+
+    @property
+    def expected_ground_units_next_turn(self) -> PendingOccupancy:
+        on_order = 0
+        for unit_bought in self.pending_unit_deliveries.units:
+            if issubclass(unit_bought, FlyingType):
+                continue
+            if unit_bought in TYPE_SHORAD:
+                continue
+            on_order += self.pending_unit_deliveries.units[unit_bought]
+
+        return PendingOccupancy(self.base.total_armor, on_order,
+                                # Ground unit transfers not yet implemented.
+                                transferring=0)
+
+    @property
+    def income_per_turn(self) -> int:
+        return 0
 
 
 class Airfield(ControlPoint):
@@ -541,6 +669,10 @@ class Airfield(ControlPoint):
     @property
     def can_deploy_ground_units(self) -> bool:
         return True
+
+    @property
+    def income_per_turn(self) -> int:
+        return 20
 
 
 class NavalControlPoint(ControlPoint, ABC):
@@ -741,3 +873,7 @@ class Fob(ControlPoint):
     @property
     def can_deploy_ground_units(self) -> bool:
         return True
+
+    @property
+    def income_per_turn(self) -> int:
+        return 10

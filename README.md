@@ -21,6 +21,16 @@ It is an external program that generates full and complex DCS missions and manag
 
 Latest release is available here : https://github.com/Khopa/dcs_liberation/releases
 
+To download preview builds of the next version of DCS Liberation, see https://github.com/Khopa/dcs_liberation/wiki/Preview-builds.
+
+## Bugs and feature requests
+
+If you need to report a bug or want to suggest a new feature, you can do this on our [bug tracker](https://github.com/Khopa/dcs_liberation/issues). In either case, please use the search bar at the top of the page to see if it has already been reported. Note that you may need to remove the filter for open bugs if it's something we've recently fixed.
+
+## Roadmap
+
+Our plans for future releases can be found on our [Projects page](https://github.com/Khopa/dcs_liberation/projects). Each planned release has a Project, and the page for that project has columns for to do, in progress, and done. Items in the Done column are in the [preview build](https://github.com/Khopa/dcs_liberation/wiki/Preview-builds) for that release. Items in the To do column are planned to be added to that release.
+
 ## Resources
 
 Tutorials, contributors and developer's guides are available in the project's [Wiki](https://github.com/Khopa/dcs_liberation/wiki/)

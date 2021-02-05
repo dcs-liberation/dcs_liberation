@@ -2,6 +2,9 @@
   "name": "Syria - Invasion from Turkey",
   "theater": "Syria",
   "authors": "Khopa",
+  "recommended_player_faction": "Turkey 2005",
+  "recommended_enemy_faction": "Insurgents (Hard)",
   "description": "<p>In this scenario, you start from Turkey and have to invade territories in northern Syria.</p>",
-  "miz": "invasion_from_turkey.miz"
+  "miz": "invasion_from_turkey.miz",
+  "performance": 1
 }

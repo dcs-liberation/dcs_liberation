@@ -12,7 +12,9 @@
     "Su_24M",
     "Su_25",
     "Mi_8MT",
-    "Mi_24V"
+    "Mi_24V",
+    "Tu_95MS",
+    "Tu_142"
   ],
   "awacs": [
     "A_50"
@@ -76,7 +78,7 @@
   "carrier_names": [
   ],
   "navy_generators": [
-    "KiloSubGroupGenerator", "MolniyaGroupGenerator"
+    "MolniyaGroupGenerator"
   ],
   "has_jtac": false,
   "doctrine": "coldwar"

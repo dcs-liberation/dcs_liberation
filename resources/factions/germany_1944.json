@@ -56,7 +56,6 @@
   "helicopter_carrier_names": [
   ],
   "navy_generators": [
-    "UBoatGroupGenerator",
     "SchnellbootGroupGenerator"
   ],
   "navy_group_count": 2,

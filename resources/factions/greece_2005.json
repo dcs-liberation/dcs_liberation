@@ -1,0 +1,51 @@
+{
+  "country": "Greece",
+  "name": "Greece 2005",
+  "authors": "Malakhit",
+  "description": "<p>Hellenic army in the mid/late 2000s.</p>",
+  "aircrafts": [
+    "F_16C_50",
+    "F_4E",
+    "M_2000C",
+    "Mirage_2000_5",
+    "UH_1H",
+    "AH_64A"
+  ],
+  "tankers": [
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leopard_2",
+    "MBT_Leopard_1A3",
+    "MBT_M60A3_Patton",
+    "APC_M1043_HMMWV_Armament",
+    "ATGM_M1045_HMMWV_TOW",
+    "APC_M113",
+    "IFV_BMP_1"
+  ],
+  "artillery_units": [
+    "SPH_M109_Paladin",
+    "MLRS_M270"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249",
+    "Stinger_MANPADS"
+  ],
+  "air_defenses": [
+    "HawkGenerator",
+    "SA8Generator",
+    "SA10Generator",
+    "SA15Generator",
+    "ZU23Generator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator",
+    "FlatFaceGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

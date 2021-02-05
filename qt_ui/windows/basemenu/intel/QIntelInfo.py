@@ -4,7 +4,10 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QLabel,
     QVBoxLayout,
+    QScrollArea,
+    QWidget,
 )
+from PySide2.QtCore import Qt
 from dcs.task import CAP, CAS, Embarking, PinpointStrike
 
 from game import Game, db
@@ -21,9 +24,10 @@ class QIntelInfo(QFrame):
 
     def init_ui(self):
         layout = QVBoxLayout()
-
-        intel = QGroupBox("Intel")
+        scroll_content = QWidget()
         intelLayout = QVBoxLayout()
+
+
 
         units = {
             CAP: db.find_unittype(CAP, self.game.enemy_name),
@@ -46,14 +50,19 @@ class QIntelInfo(QFrame):
                     existing_units = self.cp.base.total_units_of_type(unit_type)
                     if existing_units == 0:
                         continue
-                    groupLayout.addWidget(QLabel("<b>" + db.unit_type_name(unit_type) + "</b>"), row, 0)
+                    groupLayout.addWidget(QLabel("<b>" + db.unit_get_expanded_info(self.game.enemy_country, unit_type, 'name') + "</b>"), row, 0)
                     groupLayout.addWidget(QLabel(str(existing_units)), row, 1)
                     row += 1
 
                 intelLayout.addWidget(group)
 
-        intelLayout.addStretch()
-        intel.setLayout(intelLayout)
-        layout.addWidget(intel)
-        layout.addStretch()
+        scroll_content.setLayout(intelLayout)
+        scroll = QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+
+        layout.addWidget(scroll)
+        
         self.setLayout(layout)

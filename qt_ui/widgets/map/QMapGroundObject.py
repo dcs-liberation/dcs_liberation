@@ -58,9 +58,11 @@ class QMapGroundObject(QMapObject):
     @property
     def production_per_turn(self) -> int:
         production = 0
-        for g in self.control_point.ground_objects:
-            if g.category in REWARDS.keys():
-                production += REWARDS[g.category]
+        for building in self.buildings:
+            if building.is_dead:
+                continue
+            if building.category in REWARDS.keys():
+                production += REWARDS[building.category]
         return production
 
     def paint(self, painter, option, widget=None) -> None:
@@ -85,10 +87,22 @@ class QMapGroundObject(QMapObject):
                     is_dead = False
                     break
 
+            if cat == "aa":
+                has_threat = False
+                for group in self.ground_object.groups:
+                    if self.ground_object.threat_range(group).distance_in_meters > 0:
+                        has_threat = True
+
             if not is_dead and not self.control_point.captured:
-                painter.drawPixmap(rect, const.ICONS[cat + enemy_icons])
+                if cat == "aa" and not has_threat:
+                    painter.drawPixmap(rect, const.ICONS["nothreat" + enemy_icons])
+                else:    
+                    painter.drawPixmap(rect, const.ICONS[cat + enemy_icons])
             elif not is_dead:
-                painter.drawPixmap(rect, const.ICONS[cat + player_icons])
+                if cat == "aa" and not has_threat:
+                    painter.drawPixmap(rect, const.ICONS["nothreat" + player_icons])
+                else:
+                    painter.drawPixmap(rect, const.ICONS[cat + player_icons])
             else:
                 painter.drawPixmap(rect, const.ICONS["destroyed"])
 

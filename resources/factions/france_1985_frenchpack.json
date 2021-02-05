@@ -1,0 +1,79 @@
+{
+  "country": "France",
+  "name": "France 1985 (Frenchpack)",
+  "authors": "Colonel Panic",
+  "description": "<p>1980s French equipment using FrenchPack.</p>",
+  "doctrine": "coldwar",
+  "aircrafts": [
+    "M_2000C",
+    "SA342M",
+    "SA342L",
+    "SA342Mistral"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "AMX_10RCR",
+    "AMX_10RCR_SEPAR",
+    "ERC_90",
+    "TRM_2000_PAMELA",
+    "VAB__50",
+    "VAB_MEPHISTO",
+    "VAB_T20_13",
+    "VAB_T20_13",
+    "VBL__50",
+    "VBL_AANF1",
+    "VBAE_CRAB",
+    "VBAE_CRAB_MMP",
+    "AMX_30B2",
+    "SAM_Roland_ADS"
+  ],
+  "artillery_units": [
+    "MLRS_M270",
+    "SPH_M109_Paladin"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Soldier_M249",
+    "Stinger_MANPADS"
+  ],
+  "air_defenses": [
+    "RolandGenerator",
+    "HawkGenerator"
+  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "Ticonderoga_class"
+  ],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  },
+  "carrier_names": [
+    "R91 Charles de Gaulle"
+  ],
+  "helicopter_carrier_names": [
+    "R97 Jeanne d'Arc",
+    "L9013 Mistral",
+    "L9014 Tonerre",
+    "L9015 Dixmude"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "SA342L"
+}

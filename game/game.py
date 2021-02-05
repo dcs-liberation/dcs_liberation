@@ -4,7 +4,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -28,9 +28,12 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .income import Income
 from .infos.information import Information
+from .navmesh import NavMesh
 from .procurement import ProcurementAi
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint
+from .theater import ConflictTheater, ControlPoint, TheaterGroundObject
+from game.theater.theatergroundobject import MissileSiteGroundObject
+from .threatzones import ThreatZones
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -67,16 +70,18 @@ AWACS_BUDGET_COST = 4
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
 
+
 class TurnState(Enum):
     WIN = 0
     LOSS = 1
     CONTINUE = 2
 
+
 class Game:
     def __init__(self, player_name: str, enemy_name: str,
                  theater: ConflictTheater, start_date: datetime,
-                 settings: Settings, player_budget: int,
-                 enemy_budget: int) -> None:
+                 settings: Settings, player_budget: float,
+                 enemy_budget: float) -> None:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
@@ -108,9 +113,6 @@ class Game:
             self.theater.controlpoints
         )
 
-        for cp in self.theater.controlpoints:
-            cp.pending_unit_deliveries = self.units_delivery_event(cp)
-
         self.sanitize_sides()
 
         self.on_load()
@@ -125,6 +127,21 @@ class Game:
         red_planner.plan_missions()
 
         self.plan_procurement(blue_planner, red_planner)
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Avoid persisting any volatile types that can be deterministically
+        # recomputed on load for the sake of save compatibility.
+        del state["blue_threat_zone"]
+        del state["red_threat_zone"]
+        del state["blue_navmesh"]
+        del state["red_navmesh"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Regenerate any state that was not persisted.
+        self.on_load()
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(self.theater, self.date,
@@ -151,6 +168,11 @@ class Game:
     def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
 
+    def faction_for(self, player: bool) -> Faction:
+        if player:
+            return self.player_faction
+        return self.enemy_faction
+
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
             # always generate all events for dev
@@ -167,6 +189,12 @@ class Game:
                                         front_line.control_point_a,
                                         front_line.control_point_b)
 
+    def adjust_budget(self, amount: float, player: bool) -> None:
+        if player:
+            self.budget += amount
+        else:
+            self.enemy_budget += amount
+
     def process_player_income(self):
         self.budget += Income(self, player=True).total
 
@@ -176,15 +204,6 @@ class Game:
             self.enemy_budget = 0
         self.enemy_budget += Income(self, player=False).total
 
-    def units_delivery_event(self, to_cp: ControlPoint) -> UnitsDeliveryEvent:
-        event = UnitsDeliveryEvent(attacker_name=self.player_name,
-                                   defender_name=self.player_name,
-                                   from_cp=to_cp,
-                                   to_cp=to_cp,
-                                   game=self)
-        self.events.append(event)
-        return event
-
     def initiate_event(self, event: Event) -> UnitMap:
         #assert event in self.events
         logging.info("Generating {} (regular)".format(event))
@@ -193,8 +212,6 @@ class Game:
     def finish_event(self, event: Event, debriefing: Debriefing):
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
-        self.budget += int(event.bonus() *
-                           self.settings.player_income_multiplier)
 
         if event in self.events:
             self.events.remove(event)
@@ -211,22 +228,15 @@ class Game:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
+        self.compute_threat_zones()
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn += 1
 
-        for event in self.events:
-            if self.settings.version == "dev":
-                # don't damage player CPs in by skipping in dev mode
-                if isinstance(event, UnitsDeliveryEvent):
-                    event.skip()
-            else:
-                event.skip()
-
         for control_point in self.theater.controlpoints:
-            control_point.process_turn()
+            control_point.process_turn(self)
 
         self.process_enemy_income()
 
@@ -264,7 +274,6 @@ class Game:
 
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
-            cp.pending_unit_deliveries = self.units_delivery_event(cp)
             self.aircraft_inventory.set_from_control_point(cp)
 
         # Check for win or loss condition
@@ -274,6 +283,7 @@ class Game:
 
         # Plan flights & combat for next turn
         self.compute_conflicts_position()
+        self.compute_threat_zones()
         self.ground_planners = {}
         self.blue_ato.clear()
         self.red_ato.clear()
@@ -294,13 +304,20 @@ class Game:
 
     def plan_procurement(self, blue_planner: CoalitionMissionPlanner,
                          red_planner: CoalitionMissionPlanner) -> None:
+        # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
+        # gets much more of the budget that turn. Otherwise budget (after
+        # repairs) is split evenly between air and ground. For the default
+        # starting budget of 2000 this gives 600 to ground forces and 1400 to
+        # aircraft.
+        ground_portion = 0.3 if self.turn == 0 else 0.5
         self.budget = ProcurementAi(
             self,
             for_player=True,
             faction=self.player_faction,
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
-            manage_aircraft=self.settings.automate_aircraft_reinforcements
+            manage_aircraft=self.settings.automate_aircraft_reinforcements,
+            front_line_budget_share=ground_portion
         ).spend_budget(self.budget, blue_planner.procurement_requests)
 
         self.enemy_budget = ProcurementAi(
@@ -309,7 +326,8 @@ class Game:
             faction=self.enemy_faction,
             manage_runways=True,
             manage_front_line=True,
-            manage_aircraft=True
+            manage_aircraft=True,
+            front_line_budget_share=ground_portion
         ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
 
     def message(self, text: str) -> None:
@@ -337,6 +355,24 @@ class Game:
         self.current_group_id += 1
         return self.current_group_id
 
+    def compute_threat_zones(self) -> None:
+        self.blue_threat_zone = ThreatZones.for_faction(self, player=True)
+        self.red_threat_zone = ThreatZones.for_faction(self, player=False)
+        self.blue_navmesh = NavMesh.from_threat_zones(self.red_threat_zone,
+                                                      self.theater)
+        self.red_navmesh = NavMesh.from_threat_zones(self.blue_threat_zone,
+                                                     self.theater)
+
+    def threat_zone_for(self, player: bool) -> ThreatZones:
+        if player:
+            return self.blue_threat_zone
+        return self.red_threat_zone
+
+    def navmesh_for(self, player: bool) -> NavMesh:
+        if player:
+            return self.blue_navmesh
+        return self.red_navmesh
+
     def compute_conflicts_position(self):
         """
         Compute the current conflict center position(s), mainly used for culling calculation
@@ -353,9 +389,14 @@ class Game:
             points.append(front_line.control_point_a.position)
             points.append(front_line.control_point_b.position)
 
-        # If do_not_cull_carrier is enabled, add carriers as culling point
-        if self.settings.perf_do_not_cull_carrier:
-            for cp in self.theater.controlpoints:
+        for cp in self.theater.controlpoints:
+            # Don't cull missile sites - their range is long enough to make them
+            # easily culled despite being a threat.
+            for tgo in cp.ground_objects:
+                if isinstance(tgo, MissileSiteGroundObject):
+                    points.append(cp.position)
+            # If do_not_cull_carrier is enabled, add carriers as culling point
+            if self.settings.perf_do_not_cull_carrier:
                 if cp.is_carrier or cp.is_lha:
                     points.append(cp.position)
 

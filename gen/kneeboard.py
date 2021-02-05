@@ -33,8 +33,7 @@ from dcs.mission import Mission
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
-from game.utils import meter_to_nm
-from . import units
+from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
@@ -95,6 +94,23 @@ class KneeboardPageWriter:
     def write(self, path: Path) -> None:
         self.image.save(path)
 
+    @staticmethod
+    def wrap_line(inputstr: str, max_length: int) -> str:
+        if len(inputstr) <= max_length:
+            return inputstr
+        tokens = inputstr.split(" ")
+        output = ""
+        segments = []
+        for token in tokens:
+            combo = output + " " + token
+            if len(combo) > max_length:
+                combo = output + "\n" + token
+                segments.append(combo)
+                output = ""
+            else:
+                output = combo
+        return "".join(segments + [output]).strip()
+
 
 class KneeboardPage:
     """Base class for all kneeboard pages."""
@@ -111,6 +127,9 @@ class NumberedWaypoint:
 
 
 class FlightPlanBuilder:
+
+    WAYPOINT_DESC_MAX_LEN = 25
+
     def __init__(self, start_time: datetime.datetime) -> None:
         self.start_time = start_time
         self.rows: List[List[str]] = []
@@ -152,8 +171,10 @@ class FlightPlanBuilder:
     def add_waypoint_row(self, waypoint: NumberedWaypoint) -> None:
         self.rows.append([
             str(waypoint.number),
-            waypoint.waypoint.pretty_name,
-            str(int(units.meters_to_feet(waypoint.waypoint.alt))),
+            KneeboardPageWriter.wrap_line(
+                waypoint.waypoint.pretty_name,
+                FlightPlanBuilder.WAYPOINT_DESC_MAX_LEN),
+            str(int(waypoint.waypoint.alt.feet)),
             self._waypoint_distance(waypoint.waypoint),
             self._ground_speed(waypoint.waypoint),
             self._format_time(waypoint.waypoint.tot),
@@ -170,10 +191,10 @@ class FlightPlanBuilder:
         if self.last_waypoint is None:
             return "-"
 
-        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+        distance = meters(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
-        return f"{distance} NM"
+        return f"{distance.nautical_miles:.1f} NM"
 
     def _ground_speed(self, waypoint: FlightWaypoint) -> str:
         if self.last_waypoint is None:
@@ -189,19 +210,11 @@ class FlightPlanBuilder:
         else:
             return "-"
 
-        distance = meter_to_nm(self.last_waypoint.position.distance_to_point(
+        distance = meters(self.last_waypoint.position.distance_to_point(
             waypoint.position
         ))
         duration = (waypoint.tot - last_time).total_seconds() / 3600
-        try:
-            return f"{int(distance / duration)} kt"
-        except ZeroDivisionError:
-            # TODO: Improve resolution of unit conversions.
-            # When waypoints are very close to each other they can end up with
-            # identical TOTs because our unit conversion functions truncate to
-            # int. When waypoints have the same TOT the duration will be zero.
-            # https://github.com/Khopa/dcs_liberation/issues/557
-            return "-"
+        return f"{int(distance.nautical_miles / duration)} kt"
 
     def build(self) -> List[List[str]]:
         return self.rows
@@ -267,10 +280,8 @@ class BriefingPage(KneeboardPage):
                 str(tanker.tacan),
                 self.format_frequency(tanker.freq),
             ])        
-
         
         writer.table(comm_ladder, headers=["Callsign","Task", "Type", "TACAN", "FREQ"])
-
 
         writer.heading("JTAC")
         jtacs = []

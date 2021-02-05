@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import itertools
+import logging
 from typing import Iterator, List, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import Group
+
+from .. import db
+from ..data.radar_db import UNITS_WITH_RADAR
+from ..utils import Distance, meters
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
@@ -85,7 +90,6 @@ class TheaterGroundObject(MissionTarget):
         self.dcs_identifier = dcs_identifier
         self.airbase_group = airbase_group
         self.sea_object = sea_object
-        # TODO: There is never more than one group.
         self.groups: List[Group] = []
 
     @property
@@ -146,6 +150,46 @@ class TheaterGroundObject(MissionTarget):
     @property
     def might_have_aa(self) -> bool:
         return False
+
+    @property
+    def has_radar(self) -> bool:
+        """Returns True if the ground object contains a unit with radar."""
+        for group in self.groups:
+            for unit in group.units:
+                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
+                    return True
+        return False
+
+    def _max_range_of_type(self, group: Group, range_type: str) -> Distance:
+        if not self.might_have_aa:
+            return meters(0)
+
+        max_range = meters(0)
+        for u in group.units:
+            unit = db.unit_type_from_name(u.type)
+            if unit is None:
+                logging.error(f"Unknown unit type {u.type}")
+                continue
+
+            # Some units in pydcs have detection_range/threat_range defined,
+            # but explicitly set to None.
+            unit_range = getattr(unit, range_type, None)
+            if unit_range is not None:
+                max_range = max(max_range, meters(unit_range))
+        return max_range
+
+    def detection_range(self, group: Group) -> Distance:
+        return self._max_range_of_type(group, "detection_range")
+
+    def threat_range(self, group: Group) -> Distance:
+        if not self.detection_range(group):
+            # For simple SAMs like shilkas, the unit has both a threat and
+            # detection range. For complex sites like SA-2s, the launcher has a
+            # threat range and the search/track radars have detection ranges. If
+            # the site has no detection range it has no radars and can't fire,
+            # so it's not actually a threat even if it still has launchers.
+            return meters(0)
+        return self._max_range_of_type(group, "threat_range")
 
 
 class BuildingGroundObject(TheaterGroundObject):
