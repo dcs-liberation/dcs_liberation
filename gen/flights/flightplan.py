@@ -36,7 +36,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, Speed, meters, nautical_miles
+from game.utils import Distance, Speed, feet, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -269,6 +269,9 @@ class LoiterFlightPlan(FlightPlan):
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
         raise NotImplementedError
 
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        raise NotImplementedError
+
     @property
     def push_time(self) -> timedelta:
         raise NotImplementedError
@@ -284,11 +287,11 @@ class LoiterFlightPlan(FlightPlan):
         travel_time = super().travel_time_between_waypoints(a, b)
         if a != self.hold:
             return travel_time
-        try:
-            return travel_time + self.hold_duration
-        except AttributeError:
-            # Save compat for 2.3.
-            return travel_time + timedelta(minutes=5)
+        return travel_time + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -699,9 +702,9 @@ class SweepFlightPlan(LoiterFlightPlan):
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
 
+
 @dataclass(frozen=True)
 class AwacsFlightPlan(LoiterFlightPlan):
-
     takeoff: FlightWaypoint
     nav_to: List[FlightWaypoint]
     nav_from: List[FlightWaypoint]
@@ -717,10 +720,6 @@ class AwacsFlightPlan(LoiterFlightPlan):
         if self.divert is not None:
             yield self.divert
 
-    @property
-    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
-        raise NotImplementedError
-
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.hold:
             return self.package.time_over_target
@@ -732,7 +731,12 @@ class AwacsFlightPlan(LoiterFlightPlan):
 
     @property
     def push_time(self) -> timedelta:
-        return self.hold_duration
+        return self.package.time_over_target + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.push_time
+
 
 @dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
@@ -971,21 +975,22 @@ class FlightPlanBuilder:
 
         start = self.awacs_loiter(location)
 
+        # As high as possible to maximize detection and on-station time.
         if flight.unit_type == E_2C:
-            patrol_alt = meters(9000)
+            patrol_alt = feet(30000)
         elif flight.unit_type == E_3A:
-            patrol_alt = meters(10670)
+            patrol_alt = feet(35000)
         elif flight.unit_type == A_50:
-            patrol_alt = meters(10200)
+            patrol_alt = feet(33000)
         elif flight.unit_type == KJ_2000:
-            patrol_alt = meters(12250)
+            patrol_alt = feet(40000)
         else:
-            patrol_alt = meters(7000)
+            patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
         start = builder.circle_point(start, patrol_alt)
 
-        AwacsFlight = AwacsFlightPlan(
+        return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
@@ -998,7 +1003,6 @@ class FlightPlanBuilder:
             hold=start,
             hold_duration=timedelta(hours=4),
         )
-        return AwacsFlight
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.

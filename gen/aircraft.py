@@ -38,13 +38,10 @@ from dcs.planes import (
     SpitfireLFMkIXCW,
     Su_33,
     Tu_22M3,
-    E_3A,
-    E_2C,
-    A_50,
-    KJ_2000
 )
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
+    AWACS,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -70,7 +67,6 @@ from dcs.task import (
     Targets,
     Task,
     WeaponType,
-    AWACS,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -95,7 +91,6 @@ from game.utils import Distance, meters, nautical_miles
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
-from gen.conflictgen import FRONTLINE_LENGTH
 from gen.flights.flight import (
     Flight,
     FlightType,

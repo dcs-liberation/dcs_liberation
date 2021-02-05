@@ -174,8 +174,8 @@ class Package:
             FlightType.TARCAP,
             FlightType.BARCAP,
             FlightType.SWEEP,
-            FlightType.ESCORT,
             FlightType.AWACS,
+            FlightType.ESCORT,
         ]
         for task in task_priorities:
             if flight_counts[task]:

@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
-from dcs.task import CAP, CAS, PinpointStrike, AWACS
+from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 
 from game import db
@@ -232,17 +232,15 @@ class Game:
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
-        #############################
         self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
         self.turn += 1
 
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
-        ########################
+
         self.process_enemy_income()
 
         self.process_player_income()
-
 
         if not no_action and self.turn > 1:
             for cp in self.theater.player_points():
@@ -255,6 +253,7 @@ class Game:
         self.conditions = self.generate_conditions()
 
         self.initialize_turn()
+
         # Autosave progress
         persistency.autosave(self)
 

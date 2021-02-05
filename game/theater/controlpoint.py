@@ -606,6 +606,14 @@ class ControlPoint(MissionTarget, ABC):
     def income_per_turn(self) -> int:
         return 0
 
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.AWACS,
+            ]
+        yield from super().mission_types(for_player)
+
 
 class Airfield(ControlPoint):
 
@@ -631,7 +639,6 @@ class Airfield(ControlPoint):
             yield from [
                 # TODO: FlightType.INTERCEPTION
                 # TODO: FlightType.LOGISTICS
-                FlightType.AWACS,
             ]
         else:
             yield from [
@@ -690,7 +697,6 @@ class NavalControlPoint(ControlPoint, ABC):
                 # TODO: Buddy tanking for the A-4?
                 # TODO: Rescue chopper?
                 # TODO: Inter-ship logistics?
-                FlightType.AWACS,
             ]
         else:
             yield FlightType.ANTISHIP
@@ -851,7 +857,6 @@ class Fob(ControlPoint):
         if self.is_friendly(for_player):
             yield from [
                 FlightType.BARCAP,
-                FlightType.AWACS,
                 # TODO: FlightType.LOGISTICS
             ]
         else:

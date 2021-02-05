@@ -359,7 +359,7 @@ class WaypointBuilder:
                 self.race_track_end(end, altitude))
 
     def circle_point(self, start: Point, altitude: Distance) -> FlightWaypoint:
-        """Creates a circle point
+        """Creates an circular orbit point.
 
         Args:
             start: Position of the waypoint.

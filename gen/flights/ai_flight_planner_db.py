@@ -12,8 +12,8 @@ from dcs.helicopters import (
     OH_58D,
     SA342L,
     SA342M,
+    SH_60B,
     UH_1H,
-    SH_60B
 )
 from dcs.planes import (
     AJS37,
@@ -22,11 +22,14 @@ from dcs.planes import (
     A_10C,
     A_10C_2,
     A_20G,
+    A_50,
     B_17G,
     B_1B,
     B_52H,
     Bf_109K_4,
     C_101CC,
+    E_2C,
+    E_3A,
     FA_18C_hornet,
     FW_190A8,
     FW_190D9,
@@ -40,9 +43,11 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
+    I_16,
     JF_17,
     J_11A,
     Ju_88A4,
+    KJ_2000,
     L_39ZA,
     MQ_9_Reaper,
     M_2000C,
@@ -57,7 +62,6 @@ from dcs.planes import (
     MiG_29K,
     MiG_29S,
     MiG_31,
-    E_2C,
     Mirage_2000_5,
     P_47D_30,
     P_47D_30bl1,
@@ -75,10 +79,6 @@ from dcs.planes import (
     Su_25T,
     Su_25TM,
     Su_27,
-    E_3A,
-    E_2C,
-    A_50,
-    KJ_2000,
     Su_30,
     Su_33,
     Su_34,
@@ -88,18 +88,16 @@ from dcs.planes import (
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
-    I_16
 )
 from dcs.unittype import FlyingType
 
 from gen.flights.flight import FlightType
-
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
-from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
-from pydcs_extensions.su57.su57 import Su_57
 from pydcs_extensions.hercules.hercules import Hercules
+from pydcs_extensions.mb339.mb339 import MB_339PAN
+from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_B, Rafale_M
+from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
