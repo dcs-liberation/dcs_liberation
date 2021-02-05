@@ -269,9 +269,6 @@ class LoiterFlightPlan(FlightPlan):
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
         raise NotImplementedError
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        raise NotImplementedError
-
     @property
     def push_time(self) -> timedelta:
         raise NotImplementedError
@@ -702,73 +699,40 @@ class SweepFlightPlan(LoiterFlightPlan):
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
 
-
 @dataclass(frozen=True)
-class SupportFlightPlan(FlightPlan):
+class AwacsFlightPlan(LoiterFlightPlan):
+
+    takeoff: FlightWaypoint
     nav_to: List[FlightWaypoint]
     nav_from: List[FlightWaypoint]
-    patrol_start: FlightWaypoint
-    patrol_end: FlightWaypoint
-    engagement_distance: Distance
-    #: Maximum time to remain on station.
-    patrol_duration: timedelta
-
-    @property
-    def patrol_start_time(self) -> timedelta:
-        return self.package.time_over_target
-
-    @property
-    def patrol_end_time(self) -> timedelta:
-        # TODO: This is currently wrong for CAS.
-        # CAS missions end when they're winchester or bingo. We need to
-        # configure push tasks for the escorts rather than relying on timing.
-        return self.patrol_start_time + self.patrol_duration
-
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.patrol_start:
-            return self.patrol_start_time
-        return None
-
-    def depart_time_for_waypoint(
-            self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.patrol_end:
-            return self.patrol_end_time
-        return None
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        raise NotImplementedError
-
-    @property
-    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
-        return {self.patrol_start, self.patrol_end}
-
-    @property
-    def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        return self.patrol_start
-
-    @property
-    def mission_departure_time(self) -> timedelta:
-        return self.patrol_end_time
-
-
-@dataclass(frozen=True)
-class SupporterFlightPlan(SupportFlightPlan):
-    takeoff: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
         yield from self.nav_to
-        yield from [
-            self.patrol_start,
-            self.patrol_end,
-        ]
+        yield self.hold
         yield from self.nav_from
         yield self.land
         if self.divert is not None:
             yield self.divert
 
+    @property
+    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
+        raise NotImplementedError
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.package.time_over_target
+        return None
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.hold
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.hold_duration
 
 @dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
@@ -997,7 +961,7 @@ class FlightPlanBuilder:
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
 
-    def generate_awacs(self, flight: Flight) -> SupporterFlightPlan:
+    def generate_awacs(self, flight: Flight) -> AwacsFlightPlan:
         """Generate a AWACS flight at a given location.
 
        Args:
@@ -1005,7 +969,7 @@ class FlightPlanBuilder:
        """
         location = self.package.target
 
-        start, end = self.loiter_for_support(location)
+        start = self.awacs_loiter(location)
 
         if flight.unit_type == E_2C:
             patrol_alt = meters(9000)
@@ -1019,23 +983,20 @@ class FlightPlanBuilder:
             patrol_alt = meters(7000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.circle_point(start, end, patrol_alt)
+        start = builder.circle_point(start, patrol_alt)
 
-        #todo i dont want tne engagement_distance here
-        AwacsFlight = SupporterFlightPlan(
+        AwacsFlight = AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(flight.departure.position, start.position,
                                     patrol_alt),
-            nav_from=builder.nav_path(end.position, flight.arrival.position,
+            nav_from=builder.nav_path(start.position, flight.arrival.position,
                                       patrol_alt),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
-            patrol_duration=timedelta(hours=4),
-            patrol_start=start,
-            patrol_end=end,
-            engagement_distance=meters(0),
+            hold=start,
+            hold_duration=timedelta(hours=4),
         )
         return AwacsFlight
 
@@ -1213,20 +1174,17 @@ class FlightPlanBuilder:
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
 
-    def loiter_for_support(self, location: MissionTarget) -> Tuple[Point, Point]:
+    def awacs_loiter(self, location: MissionTarget) -> Point:
 
         closest_airfield = location
         heading = location.position.heading_between_point(closest_airfield.position)
 
-        end = location.position.point_from_heading(
+        start = location.position.point_from_heading(
             heading,
             5000
         )
 
-        diameter = -9000
-
-        start = end.point_from_heading(heading - 180, diameter)
-        return start, end
+        return start
 
     def racetrack_for_frontline(self, origin: Point,
                                 front_line: FrontLine) -> Tuple[Point, Point]:
