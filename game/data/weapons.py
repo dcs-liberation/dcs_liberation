@@ -226,101 +226,306 @@ WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
 
 
 WEAPON_INTRODUCTION_YEARS = {
-    # AIM-120C
-    Weapon.from_pydcs(Weapons.AIM_120C): 1996,
-    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_120C): 1996,
-    Weapon.from_pydcs(Weapons.LAU_115___AIM_120C): 1996,
-
-    # AIM-120B
+    # ADM-141 TALD
+    Weapon.from_pydcs(Weapons.ADM_141A): 1987,
+    Weapon.from_pydcs(Weapons.ADM_141A_): 1987,
+    Weapon.from_pydcs(Weapons.ADM_141A__): 1987,
+    Weapon.from_pydcs(Weapons.ADM_141B): 1987,
+    
+    # AGM-114K Hellfire
+    Weapon.from_pydcs(Weapons.AGM114x2_OH_58): 1993,
+    Weapon.from_pydcs(Weapons.AGM_114K): 1993,
+    Weapon.from_pydcs(Weapons.AGM_114K___4): 1993,
+    
+    # AGM-119 Penguin
+    Weapon.from_pydcs(Weapons.AGM_119B_Penguin): 1972,
+    
+    # AGM-122 Sidearm
+    Weapon.from_pydcs(Weapons.AGM_122): 1986,
+    Weapon.from_pydcs(Weapons.AGM_122_Sidearm): 1986,
+    Weapon.from_pydcs(Weapons.AGM_122_Sidearm_): 1986,
+    
+    # AGM-154 JSOW
+    Weapon.from_pydcs(Weapons.AGM_154A): 1998,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154A): 1998,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_AGM_154A): 1998,
+    
+    Weapon.from_pydcs(Weapons.AGM_154B): 2005,
+    
+    Weapon.from_pydcs(Weapons.AGM_154C): 2005,
+    Weapon.from_pydcs(Weapons.AGM_154C_4): 2005,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154C): 2005,
+    
+    # AGM-45 Shrike
+    Weapon.from_pydcs(Weapons.AGM_45A): 1965,
+    Weapon.from_pydcs(Weapons.AGM_45B): 1970,
+    Weapon.from_pydcs(Weapons.AGM_45B_): 1970,
+    
+    # AGM-62 Walleye
+    Weapon.from_pydcs(Weapons.AGM_62): 1967,
+    
+    # AGM-65 Maverick
+    Weapon.from_pydcs(Weapons.AGM_65D): 1983,
+    Weapon.from_pydcs(Weapons.AGM_65E): 1985,
+    Weapon.from_pydcs(Weapons.AGM_65K): 2007,
+    
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65A): 1972,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65B): 1972,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65D): 1983,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65E): 1985,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65F): 1989,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65G): 1989,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65H): 2007,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65K): 2007,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65L): 1985,
+    
+    # AGM-84 Harpoon
+    Weapon.from_pydcs(Weapons.AGM_84): 1979,
+    Weapon.from_pydcs(Weapons.AGM_84A): 1979,
+    Weapon.from_pydcs(Weapons.AGM_84A_8): 1979,
+    Weapon.from_pydcs(Weapons.AGM_84D): 1979,
+    Weapon.from_pydcs(Weapons.AGM_84E): 1990,
+    Weapon.from_pydcs(Weapons.AGM_84E_SLAM): 1990,
+    Weapon.from_pydcs(Weapons.AGM_84H): 1998,
+    
+    # AGM-86 ALCM
+    Weapon.from_pydcs(Weapons.AGM_86C): 1986,
+    Weapon.from_pydcs(Weapons.AGM_86C_20): 1986,
+    Weapon.from_pydcs(Weapons.AGM_86C_8): 1986,
+    Weapon.from_pydcs(Weapons.MER_6_AGM_86C): 1986,
+    
+    # AGM-88 HARM
+    Weapon.from_pydcs(Weapons.AGM_88C): 1985,
+    Weapon.from_pydcs(Weapons.AGM_88C_): 1985,
+    
+    # AIM-120 AMRAAM
     Weapon.from_pydcs(Weapons.AIM_120B): 1994,
+    Weapon.from_pydcs(Weapons.AIM_120C): 1996,
+    
     Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_120B): 1994,
     Weapon.from_pydcs(Weapons.LAU_115___AIM_120B): 1994,
-
-    # AIM-7MH
-    Weapon.from_pydcs(Weapons.AIM_7MH): 1987,
-    Weapon.from_pydcs(Weapons.AIM_7MH_): 1987,
-    Weapon.from_pydcs(Weapons.AIM_7MH__): 1987,
-    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7MH): 1987,
-
-    # AIM-7M
-    Weapon.from_pydcs(Weapons.AIM_7M): 1982,
-    Weapon.from_pydcs(Weapons.AIM_7M_): 1982,
-    Weapon.from_pydcs(Weapons.AIM_7M__): 1982,
-    Weapon.from_pydcs(Weapons.LAU_115___AIM_7M): 1982,
-
-    # AIM-7F
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_120C): 1996,
+    Weapon.from_pydcs(Weapons.LAU_115___AIM_120C): 1996,
+    
+    # AIM-54 Phoenix
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk47): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk47_): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk47__): 1974,
+    
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk60): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk60_): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54A_Mk60__): 1974,
+    
+    Weapon.from_pydcs(Weapons.AIM_54C): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47_): 1974,
+    Weapon.from_pydcs(Weapons.AIM_54C_Mk47__): 1974,
+    
+    # AIM-7 Sparrow
+    Weapon.from_pydcs(Weapons.AIM_7E): 1963,
     Weapon.from_pydcs(Weapons.AIM_7F): 1976,
     Weapon.from_pydcs(Weapons.AIM_7F_): 1976,
     Weapon.from_pydcs(Weapons.AIM_7F__): 1976,
-    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7F): 1976,
-
-    # AIM-7E
-    Weapon.from_pydcs(Weapons.AIM_7E): 1963,
+    Weapon.from_pydcs(Weapons.AIM_7M): 1982,
+    Weapon.from_pydcs(Weapons.AIM_7M_): 1982,
+    Weapon.from_pydcs(Weapons.AIM_7M__): 1982,
+    Weapon.from_pydcs(Weapons.AIM_7MH): 1987,
+    Weapon.from_pydcs(Weapons.AIM_7MH_): 1987,
+    Weapon.from_pydcs(Weapons.AIM_7MH__): 1987,
+    
     Weapon.from_pydcs(Weapons.LAU_115C_AIM_7E): 1963,
-
-    # AIM-9X
-    Weapon.from_pydcs(Weapons.AIM_9X_Sidewinder_IR_AAM): 2003,
-    Weapon.from_pydcs(Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM): 2003,
-    Weapon.from_pydcs(Weapons.LAU_115_LAU_127_AIM_9X): 2003,
-    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_9X): 2003,
-    Weapon.from_pydcs(Weapons.LAU_127_AIM_9X): 2003,
-
-    # AIM-9P5
-    Weapon.from_pydcs(Weapons.AIM_9P5_Sidewinder_IR_AAM): 1963,
-    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM): 1963,
-
-    # AIM-9P
-    Weapon.from_pydcs(Weapons.AIM_9P_Sidewinder_IR_AAM): 1978,
-    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM): 1978,
-
-    # AIM-9M
-    Weapon.from_pydcs(Weapons.AIM_9M_Sidewinder_IR_AAM): 1983,
-    Weapon.from_pydcs(Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM): 1983,
-
-    # AIM-9L
+    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7F): 1976,
+    Weapon.from_pydcs(Weapons.LAU_115___AIM_7M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_115C_AIM_7MH): 1987,
+    
+    # AIM-9 Sidewinder
     Weapon.from_pydcs(Weapons.AIM_9L_Sidewinder_IR_AAM): 1977,
+    Weapon.from_pydcs(Weapons.AIM_9M_Sidewinder_IR_AAM): 1982,
+    Weapon.from_pydcs(Weapons.AIM_9P5_Sidewinder_IR_AAM): 1980,
+    Weapon.from_pydcs(Weapons.AIM_9P_Sidewinder_IR_AAM): 1978,
+    Weapon.from_pydcs(Weapons.AIM_9X_Sidewinder_IR_AAM): 2003,
+    
+    Weapon.from_pydcs(Weapons.LAU_105_1_AIM_9L_L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_105_1_AIM_9L_R): 1977,
+    Weapon.from_pydcs(Weapons.LAU_105_1_AIM_9M_L): 1982,
+    Weapon.from_pydcs(Weapons.LAU_105_1_AIM_9M_R): 1982,
+    
+    Weapon.from_pydcs(Weapons.LAU_105_2_AIM_9L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_105_2_AIM_9P5): 1980,
+    
+    Weapon.from_pydcs(Weapons.LAU_105___2_AIM_9M_Sidewinder_IR_AAM): 1982,
+    Weapon.from_pydcs(Weapons.LAU_105___2_AIM_9P_Sidewinder_IR_AAM): 1978,
+    
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_9L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_9M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_115_2_LAU_127_AIM_9X): 2003,
+    
+    Weapon.from_pydcs(Weapons.LAU_115_LAU_127_AIM_9L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_115_LAU_127_AIM_9M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_115_LAU_127_AIM_9X): 2003,
+    
+    Weapon.from_pydcs(Weapons.LAU_127_AIM_9L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_127_AIM_9M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_127_AIM_9X): 2003,
+    
+    Weapon.from_pydcs(Weapons.LAU_138_AIM_9L): 1977,
+    Weapon.from_pydcs(Weapons.LAU_138_AIM_9M): 1982,
+    
     Weapon.from_pydcs(Weapons.LAU_7_AIM_9L): 1977,
-
-    # AIM-54C-Mk47
-    Weapon.from_pydcs(Weapons.AIM_54C_Mk47): 1986,
-    Weapon.from_pydcs(Weapons.AIM_54C_Mk47_): 1986,
-    Weapon.from_pydcs(Weapons.AIM_54C_Mk47__): 1986,
-    Weapon.from_pydcs(Weapons.AIM_54C): 1986,  # this weapon id is unused (legacy F-14A)
-
-    # R-77 (AA-12)
-    Weapon.from_pydcs(Weapons.R_77): 2002,
-    Weapon.from_pydcs(Weapons.R_77_): 2002,
-
-    # R-73 (AA-11)
-    Weapon.from_pydcs(Weapons.R_73): 1989,
-    Weapon.from_pydcs(Weapons.R_73_): 1989,
-
-    # GBU-38 (JDAM)
-    Weapon.from_pydcs(Weapons.GBU_38): 1998,
-    Weapon.from_pydcs(Weapons.GBU_38_16): 1998,  # B1-B only
-    Weapon.from_pydcs(Weapons._2_GBU_38_): 1998,
-    Weapon.from_pydcs(Weapons._2_GBU_38): 1998,
-    Weapon.from_pydcs(Weapons._3_GBU_38): 1998,
-    Weapon.from_pydcs(Weapons.BRU_55___2_x_GBU_38): 1998,
-    Weapon.from_pydcs(Weapons.BRU_57___2_x_GBU_38): 1998,
-
-    # AGM-154A (JSOW)
-    Weapon.from_pydcs(Weapons.AGM_154A): 1999,
-    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154A): 1999,
-    Weapon.from_pydcs(Weapons.BRU_57___2_x_AGM_154A): 1999,
-
-    # AGM-154C (JSOW)
-    Weapon.from_pydcs(Weapons.AGM_154C): 2005,
-    Weapon.from_pydcs(Weapons.AGM_154C_4): 2005,  # B1-B only
-    Weapon.from_pydcs(Weapons.BRU_55___2_x_AGM_154C): 2005,
-
-    # AGM-84E
-    Weapon.from_pydcs(Weapons.AGM_84E): 1990,
-
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9M): 1982,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM): 1982,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM): 1980,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM): 1978,
+    Weapon.from_pydcs(Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM): 2003,
+    
+    Weapon.from_pydcs(Weapons.LAU_7___2_AIM_9L_Sidewinder_IR_AAM): 1977,
+    Weapon.from_pydcs(Weapons.LAU_7___2_AIM_9M_Sidewinder_IR_AAM): 1982,
+    Weapon.from_pydcs(Weapons.LAU_7___2_AIM_9P5_Sidewinder_IR_AAM): 1980,
+    Weapon.from_pydcs(Weapons.LAU_7___2_AIM_9P_Sidewinder_IR_AAM): 1978,
+    
+    # ALQ ECM Pods
+    Weapon.from_pydcs(Weapons.ALQ_131): 1970,
+    Weapon.from_pydcs(Weapons.ALQ_184): 1989,
+    Weapon.from_pydcs(Weapons.AN_ALQ_164_DECM_Pod): 1984,
+    
+    # TGP Pods
+    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING): 1995,
+    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING_): 1995,
+    Weapon.from_pydcs(Weapons.AN_AAS_38_FLIR): 1993,
+    Weapon.from_pydcs(Weapons.AN_ASQ_173_LST_SCAM): 1993,
+    Weapon.from_pydcs(Weapons.AWW_13_DATALINK_POD): 1967,
+    Weapon.from_pydcs(Weapons.LANTIRN_Targeting_Pod): 1985,
+    Weapon.from_pydcs(Weapons.Lantirn_F_16): 1985,
+    Weapon.from_pydcs(Weapons.Lantirn_Target_Pod): 1985,
+    
+    # BLU-107
+    Weapon.from_pydcs(Weapons.BLU_107): 1983,
+    Weapon.from_pydcs(Weapons.MER_6_BLU_107): 1983,
+    
+    # Zuni
+    Weapon.from_pydcs(Weapons.BRU_33_LAU_10___4_ZUNI_MK_71): 1957,
+    Weapon.from_pydcs(Weapons.BRU_33___2_LAU_10___4_ZUNI_MK_71): 1957,
+    Weapon.from_pydcs(Weapons.LAU_10R___4_ZUNI_MK_71): 1957,
+    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71): 1957,
+    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71_): 1957,
+    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71__): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71__): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71___): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71____): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_____): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71______): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_______): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71________): 1957,
+    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_________): 1957,
+    
+    # GBU-10 LGB
+    Weapon.from_pydcs(Weapons.DIS_GBU_10): 1976,
+    Weapon.from_pydcs(Weapons.GBU_10): 1976,
+    Weapon.from_pydcs(Weapons.GBU_10_): 1976,
+    Weapon.from_pydcs(Weapons.GBU_10_2): 1976,
+    
+    # GBU-12 LGB
+    Weapon.from_pydcs(Weapons.AUF2_GBU_12_x_2): 1976,
+    Weapon.from_pydcs(Weapons.BRU_33___2_x_GBU_12): 1976,
+    Weapon.from_pydcs(Weapons.BRU_42_3_GBU_12): 1976,
+    Weapon.from_pydcs(Weapons.DIS_GBU_12): 1976,
+    Weapon.from_pydcs(Weapons.DIS_GBU_12_DUAL): 1976,
+    Weapon.from_pydcs(Weapons.DIS_GBU_12_DUAL_L): 1976,
+    Weapon.from_pydcs(Weapons.DIS_GBU_12_DUAL_R): 1976,
+    Weapon.from_pydcs(Weapons.GBU_12): 1976,
+    Weapon.from_pydcs(Weapons.GBU_12_): 1976,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_GBU_12): 1976,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_GBU_12_): 1976,
+    Weapon.from_pydcs(Weapons._2xGBU_12): 1976,
+    Weapon.from_pydcs(Weapons._2xGBU_12_): 1976,
+    Weapon.from_pydcs(Weapons._2_GBU_12): 1976,
+    Weapon.from_pydcs(Weapons._2_GBU_12_): 1976,
+    Weapon.from_pydcs(Weapons._3_GBU_12): 1976,
+    
+    # GBU-15 LGB
+    Weapon.from_pydcs(Weapons.GBU_15): 1975,
+    
+    # GBU-16 LGB
+    Weapon.from_pydcs(Weapons.BRU_33___2_x_GBU_16): 1976,
+    Weapon.from_pydcs(Weapons.DIS_GBU_16): 1976,
+    Weapon.from_pydcs(Weapons.GBU_16): 1976,
+    Weapon.from_pydcs(Weapons.GBU_16_): 1976,
+    Weapon.from_pydcs(Weapons._2_GBU_16): 1976,
+    Weapon.from_pydcs(Weapons._2_GBU_16_): 1976,
+    Weapon.from_pydcs(Weapons._3_GBU_16): 1976,
+    Weapon.from_pydcs(Weapons._3_GBU_16_): 1976,
+    
+    # GBU-24 LGB
+    Weapon.from_pydcs(Weapons.GBU_24): 1983,
+    Weapon.from_pydcs(Weapons.GBU_24_): 1983,
+    Weapon.from_pydcs(Weapons.GBU_24__): 1983,
+    
+    # GBU-27 LGB
+    Weapon.from_pydcs(Weapons.GBU_27): 1991,
+    Weapon.from_pydcs(Weapons.GBU_27_2): 1991,
+    Weapon.from_pydcs(Weapons.GBU_27_4): 1991,
+    
+    # GBU-28
+    Weapon.from_pydcs(Weapons.GBU_28): 1991,
+    
+    # GBU-31 JDAM
+    Weapon.from_pydcs(Weapons.GBU_31V3B_8): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31_8): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31_V_1_B): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31_V_2_B): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31_V_3_B): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31_V_4_B): 1997,
+    
+    # GBU-32 JDAM
+    Weapon.from_pydcs(Weapons.GBU_32_V_2_B): 1997,
+    
+    # GBU-38 JDAM
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_GBU_38): 2002,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_GBU_38): 2002,
+    Weapon.from_pydcs(Weapons.GBU_38): 2002,
+    Weapon.from_pydcs(Weapons.GBU_38_16): 2002,
+    Weapon.from_pydcs(Weapons._2_GBU_38): 2002,
+    Weapon.from_pydcs(Weapons._2_GBU_38_): 2002,
+    Weapon.from_pydcs(Weapons._3_GBU_38): 2002,
+    
+    # GBU-54 LJDAM
+    Weapon.from_pydcs(Weapons.GBU_54_V_1_B): 2008,
+    Weapon.from_pydcs(Weapons._2_GBU_54_V_1_B): 2008,
+    Weapon.from_pydcs(Weapons._2_GBU_54_V_1_B_): 2008,
+    Weapon.from_pydcs(Weapons._3_GBU_54_V_1_B): 2008,
+    
+    # CBU-52
+    Weapon.from_pydcs(Weapons.CBU_52B): 1970,
+    
+    # CBU-87 CEM
+    Weapon.from_pydcs(Weapons.CBU_87): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_87): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_87_): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_87): 1986,
+    
     # CBU-97
-    Weapon.from_pydcs(Weapons.CBU_97): 1995,
-    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97): 1995,
-    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97_): 1995,
-    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_97): 1995
-
+    Weapon.from_pydcs(Weapons.CBU_97): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97_): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_97): 1986,
+    
+    # CBU-99
+    Weapon.from_pydcs(Weapons.BRU_33___2_x_CBU_99): 1968,
+    Weapon.from_pydcs(Weapons.CBU_99): 1968,
+    
+    # CBU-103
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_103): 1997,
+    Weapon.from_pydcs(Weapons.CBU_103): 1997,
+    
+    # CBU-105
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_105): 1997,
+    Weapon.from_pydcs(Weapons.CBU_105): 1997,
+    
+    # APKWS
+    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M151___HE_APKWS): 2012,
+    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS): 2012,
+    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS): 2012,
+    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS): 2012,
 }
