@@ -4,6 +4,8 @@ Saves from 2.4 are not compatible with 2.5.
 
 ## Features/Improvements
 
+* **[Flight Planner]** (WIP) Added AEW&C missions.
+
 ## Fixes
 
 # 2.4.1

@@ -812,6 +812,7 @@ class FrontLine(MissionTarget):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         yield from [
             FlightType.CAS,
+            FlightType.AEWC,
             # TODO: FlightType.TROOP_TRANSPORT
             # TODO: FlightType.EVAC
         ]
