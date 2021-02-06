@@ -174,6 +174,7 @@ class Package:
             FlightType.TARCAP,
             FlightType.BARCAP,
             FlightType.SWEEP,
+            FlightType.AEWC,
             FlightType.ESCORT,
         ]
         for task in task_priorities:

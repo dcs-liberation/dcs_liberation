@@ -1117,7 +1117,8 @@ COMMON_OVERRIDE = {
     GroundAttack: "STRIKE",
     Escort: "CAP",
     RunwayAttack: "RUNWAY_ATTACK",
-    FighterSweep: "CAP"
+    FighterSweep: "CAP",
+    AWACS: "AEW&C",
 }
 
 """
@@ -1328,6 +1329,7 @@ CARRIER_CAPABLE = [
     A_4E_C,
     Rafale_M,
     S_3B,
+    E_2C,
 
     UH_1H,
     Mi_8MT,

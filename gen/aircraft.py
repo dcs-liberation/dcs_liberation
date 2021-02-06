@@ -41,6 +41,7 @@ from dcs.planes import (
 )
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
+    AWACS,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -90,7 +91,6 @@ from game.utils import Distance, meters, nautical_miles
 from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
-from gen.conflictgen import FRONTLINE_LENGTH
 from gen.flights.flight import (
     Flight,
     FlightType,
@@ -129,10 +129,11 @@ HELICOPTER_CHANNEL = MHz(127)
 UHF_FALLBACK_CHANNEL = MHz(251)
 
 TARGET_WAYPOINTS = (
-                FlightWaypointType.TARGET_GROUP_LOC,
-                FlightWaypointType.TARGET_POINT,
-                FlightWaypointType.TARGET_SHIP,
-            )
+    FlightWaypointType.TARGET_GROUP_LOC,
+    FlightWaypointType.TARGET_POINT,
+    FlightWaypointType.TARGET_SHIP,
+)
+
 
 # TODO: Get radio information for all the special cases.
 def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
@@ -731,11 +732,14 @@ class AircraftConflictGenerator:
                 group.load_loadout(payload_name)
                 if not group.units[0].pylons and for_task == RunwayAttack:
                     if PinpointStrike in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                        logging.warning("No loadout for \"Runway Attack\" for the {}, defaulting to Strike loadout".format(str(unit_type)))
+                        logging.warning(
+                            "No loadout for \"Runway Attack\" for the {}, defaulting to Strike loadout".format(
+                                str(unit_type)))
                         payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][PinpointStrike]
                         group.load_loadout(payload_name)
                 did_load_loadout = True
-                logging.info("Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
+                logging.info(
+                    "Loaded overridden payload for {} - {} for task {}".format(unit_type, payload_name, for_task))
 
         if not did_load_loadout:
             group.load_task_default_loadout(for_task)
@@ -995,7 +999,7 @@ class AircraftConflictGenerator:
 
             group = self._generate_at_airport(
                 name=namegen.next_aircraft_name(country, control_point.id,
-                                            flight),
+                                                flight),
                 side=country,
                 unit_type=aircraft,
                 count=1,
@@ -1058,7 +1062,7 @@ class AircraftConflictGenerator:
         trigger.add_condition(
             CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
-    def generate_planned_flight(self, cp, country, flight:Flight):
+    def generate_planned_flight(self, cp, country, flight: Flight):
         name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":
@@ -1249,6 +1253,17 @@ class AircraftConflictGenerator:
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True)
 
+    def configure_awacs(
+            self, group: FlyingGroup, package: Package, flight: Flight,
+            dynamic_runways: Dict[str, RunwayData]) -> None:
+        group.task = AWACS.name
+        self._setup_group(group, AWACS, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True)
+
     def configure_escort(self, group: FlyingGroup, package: Package,
                          flight: Flight,
                          dynamic_runways: Dict[str, RunwayData]) -> None:
@@ -1274,6 +1289,8 @@ class AircraftConflictGenerator:
             self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.SWEEP:
             self.configure_sweep(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.AEWC:
+            self.configure_awacs(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.DEAD:
@@ -1326,8 +1343,8 @@ class AircraftConflictGenerator:
                 filtered_points = [
                     point for idx, point in enumerate(filtered_points) if (
                             point.waypoint_type not in TARGET_WAYPOINTS or idx == keep_target[0]
-                        )
-                    ]
+                    )
+                ]
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
@@ -1458,8 +1475,8 @@ class PydcsWaypointBuilder:
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
         if (
-            (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and
-            (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
+                (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and
+                (self.waypoint.waypoint_type not in TARGET_WAYPOINTS)
         ):
             return True
         else:
@@ -1622,12 +1639,12 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
                 waypoint.add_task(EngageTargetsInZone(
-                                    position=tgroup.position,
-                                    radius=int(nautical_miles(30).meters),
-                                    targets=[
-                                        Targets.All.GroundUnits.AirDefence,
-                                    ])
-                                )
+                    position=tgroup.position,
+                    radius=int(nautical_miles(30).meters),
+                    targets=[
+                        Targets.All.GroundUnits.AirDefence,
+                    ])
+                )
             else:
                 logging.error(f"Could not find group for DEAD mission {target_group.group_name}")
         self.register_special_waypoints(self.waypoint.targets)

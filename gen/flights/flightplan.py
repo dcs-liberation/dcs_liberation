@@ -15,6 +15,13 @@ from datetime import timedelta
 from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
+from dcs.planes import (
+    E_3A,
+    E_2C,
+    A_50,
+    KJ_2000
+)
+
 from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
@@ -29,7 +36,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, Speed, meters, nautical_miles
+from game.utils import Distance, Speed, feet, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -121,7 +128,7 @@ class FlightPlan:
         failed to generate. Nevertheless, we have to defend against it.
         """
         raise NotImplementedError
-    
+
     @cached_property
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan
@@ -145,7 +152,7 @@ class FlightPlan:
         """Joker fuel value for the FlightPlan
         """
         return self.bingo_fuel + 1000
-   
+
     def max_distance_from(self, cp: ControlPoint) -> Distance:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
         :arg cp The ControlPoint to measure distance from.
@@ -280,11 +287,11 @@ class LoiterFlightPlan(FlightPlan):
         travel_time = super().travel_time_between_waypoints(a, b)
         if a != self.hold:
             return travel_time
-        try:
-            return travel_time + self.hold_duration
-        except AttributeError:
-            # Save compat for 2.3.
-            return travel_time + timedelta(minutes=5)
+        return travel_time + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -542,10 +549,10 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
         return {
-           self.ingress,
-           self.egress,
-           self.split,
-        } | set(self.targets)
+                   self.ingress,
+                   self.egress,
+                   self.split,
+               } | set(self.targets)
 
     def speed_between_waypoints(self, a: FlightWaypoint,
                                 b: FlightWaypoint) -> Speed:
@@ -697,6 +704,41 @@ class SweepFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
+class AwacsFlightPlan(LoiterFlightPlan):
+    takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
+    nav_from: List[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield self.hold
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.package.time_over_target
+        return None
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.hold
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.package.time_over_target + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.push_time
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -791,6 +833,8 @@ class FlightPlanBuilder:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
+        elif task == FlightType.AEWC:
+            return self.generate_aewc(flight)
         raise PlanningError(
             f"{task} flight plan generation not implemented")
 
@@ -920,6 +964,45 @@ class FlightPlanBuilder:
         return self.strike_flightplan(flight, location,
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
+
+    def generate_aewc(self, flight: Flight) -> AwacsFlightPlan:
+        """Generate a AWACS flight at a given location.
+
+       Args:
+           flight: The flight to generate the flight plan for.
+       """
+        location = self.package.target
+
+        start = self.aewc_orbit(location)
+
+        # As high as possible to maximize detection and on-station time.
+        if flight.unit_type == E_2C:
+            patrol_alt = feet(30000)
+        elif flight.unit_type == E_3A:
+            patrol_alt = feet(35000)
+        elif flight.unit_type == A_50:
+            patrol_alt = feet(33000)
+        elif flight.unit_type == KJ_2000:
+            patrol_alt = feet(40000)
+        else:
+            patrol_alt = feet(25000)
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+        start = builder.orbit(start, patrol_alt)
+
+        return AwacsFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(flight.departure.position, start.position,
+                                    patrol_alt),
+            nav_from=builder.nav_path(start.position, flight.arrival.position,
+                                      patrol_alt),
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            hold=start,
+            hold_duration=timedelta(hours=4),
+        )
 
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.
@@ -1094,6 +1177,18 @@ class FlightPlanBuilder:
         )
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
+
+    @staticmethod
+    def aewc_orbit(location: MissionTarget) -> Point:
+        closest_airfield = location
+        # TODO: This is a heading to itself.
+        # Place this either over the target or as close as possible outside the
+        # threat zone: https://github.com/Khopa/dcs_liberation/issues/842.
+        heading = location.position.heading_between_point(closest_airfield.position)
+        return location.position.point_from_heading(
+            heading,
+            5000
+        )
 
     def racetrack_for_frontline(self, origin: Point,
                                 front_line: FrontLine) -> Tuple[Point, Point]:

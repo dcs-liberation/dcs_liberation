@@ -367,6 +367,26 @@ class WaypointBuilder:
                 self.race_track_end(end, altitude))
 
     @staticmethod
+    def orbit(start: Point, altitude: Distance) -> FlightWaypoint:
+        """Creates an circular orbit point.
+
+        Args:
+            start: Position of the waypoint.
+            altitude: Altitude of the racetrack.
+        """
+
+        waypoint = FlightWaypoint(
+            FlightWaypointType.LOITER,
+            start.x,
+            start.y,
+            altitude
+        )
+        waypoint.name = "ORBIT"
+        waypoint.description = "Anchor and hold at this point"
+        waypoint.pretty_name = "Orbit"
+        return waypoint
+
+    @staticmethod
     def sweep_start(position: Point, altitude: Distance) -> FlightWaypoint:
         """Creates a sweep start waypoint.
 
