@@ -226,6 +226,7 @@ WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
 
 
 WEAPON_INTRODUCTION_YEARS = {
+    # USA
     # ADM-141 TALD
     Weapon.from_pydcs(Weapons.ADM_141A): 1987,
     Weapon.from_pydcs(Weapons.ADM_141A_): 1987,
@@ -528,4 +529,150 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS): 2012,
     Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS): 2012,
     Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS): 2012,
+    
+    # Russia
+    # 9A1472 Vikhr-1
+    Weapon.from_pydcs(Weapons.APU_6___6_9A4172_Vikhr): 1985,
+    Weapon.from_pydcs(Weapons.APU_8___8_9A4172_Vikhr): 1985,
+    Weapon.from_pydcs(Weapons.APU_8___8_9A4172_Vikhr): 1985,
+    
+    # KAB-1500
+    Weapon.from_pydcs(Weapons.KAB_1500Kr): 1985,
+    Weapon.from_pydcs(Weapons.KAB_1500L): 1995,
+    Weapon.from_pydcs(Weapons.KAB_1500LG_Pr): 1990,
+    
+    # KAB-500
+    Weapon.from_pydcs(Weapons.KAB_500kr): 1980,
+    Weapon.from_pydcs(Weapons.KAB_500L): 1995,
+    Weapon.from_pydcs(Weapons.KAB_500S): 2000,
+    
+    # Kh Series
+    Weapon.from_pydcs(Weapons.Kh_22N): 1962,
+    Weapon.from_pydcs(Weapons.Kh_23L): 1975,
+    
+    Weapon.from_pydcs(Weapons.Kh_25ML): 1975,
+    Weapon.from_pydcs(Weapons.Kh_25ML_): 1975,
+    Weapon.from_pydcs(Weapons.Kh_25ML__): 1975,
+    
+    Weapon.from_pydcs(Weapons.Kh_25MP): 1975,
+    
+    Weapon.from_pydcs(Weapons.Kh_25MPU): 1980,
+    Weapon.from_pydcs(Weapons.Kh_25MPU_): 1980,
+    Weapon.from_pydcs(Weapons.Kh_25MPU__): 1980,
+    
+    Weapon.from_pydcs(Weapons.Kh_25MR): 1975,
+    Weapon.from_pydcs(Weapons.Kh_25MR_): 1975,
+    
+    Weapon.from_pydcs(Weapons.Kh_28__AS_9_Kyle_): 1973,
+    
+    Weapon.from_pydcs(Weapons.Kh_29L): 1980,
+    Weapon.from_pydcs(Weapons.Kh_29L_): 1980,
+    Weapon.from_pydcs(Weapons.Kh_29L__): 1980,
+    Weapon.from_pydcs(Weapons.Kh_29T): 1980,
+    Weapon.from_pydcs(Weapons.Kh_29T_): 1980,
+    Weapon.from_pydcs(Weapons.Kh_29T__): 1980,
+    
+    Weapon.from_pydcs(Weapons.Kh_31A): 1980,
+    Weapon.from_pydcs(Weapons.Kh_31A_): 1980,
+    Weapon.from_pydcs(Weapons.Kh_31A__): 1980,
+    Weapon.from_pydcs(Weapons.Kh_31P): 1980,
+    Weapon.from_pydcs(Weapons.Kh_31P_): 1980,
+    Weapon.from_pydcs(Weapons.Kh_31P__): 1980,
+    
+    Weapon.from_pydcs(Weapons.Kh_35): 2003,
+    Weapon.from_pydcs(Weapons.Kh_35_): 2003,
+    Weapon.from_pydcs(Weapons.Kh_35_6): 2003,
+    
+    Weapon.from_pydcs(Weapons.Kh_41): 1984,
+    
+    Weapon.from_pydcs(Weapons.Kh_58U): 1985,
+    Weapon.from_pydcs(Weapons.Kh_58U_): 1985,
+    
+    Weapon.from_pydcs(Weapons.Kh_59M): 1990,
+    
+    Weapon.from_pydcs(Weapons.Kh_65): 1992,
+    Weapon.from_pydcs(Weapons.Kh_65_6): 1992,
+    Weapon.from_pydcs(Weapons.Kh_65_8): 1992,
+    
+    Weapon.from_pydcs(Weapons.Kh_66_Grom__21__APU_68): 1968,
+    
+    # ECM
+    Weapon.from_pydcs(Weapons.L175V_Khibiny_ECM_pod): 1982,
+    
+    # R-13
+    Weapon.from_pydcs(Weapons.R_13M): 1961,
+    Weapon.from_pydcs(Weapons.R_13M1): 1965,
+    
+    # R-24
+    Weapon.from_pydcs(Weapons.R_24R): 1981,
+    Weapon.from_pydcs(Weapons.R_24T): 1981,
+    
+    # R-27
+    Weapon.from_pydcs(Weapons.R_27ER): 1983,
+    Weapon.from_pydcs(Weapons.R_27ET): 1986,
+    Weapon.from_pydcs(Weapons.R_27R): 1983,
+    Weapon.from_pydcs(Weapons.R_27T): 1983,
+    
+    # R-33
+    Weapon.from_pydcs(Weapons.R_33): 1981,
+    
+    # R-3
+    Weapon.from_pydcs(Weapons.R_3R): 1961,
+    Weapon.from_pydcs(Weapons.R_3S): 1963,
+    
+    # R-40
+    Weapon.from_pydcs(Weapons.R_40R): 1976,
+    Weapon.from_pydcs(Weapons.R_40T): 1976,
+    
+    # R-55
+    Weapon.from_pydcs(Weapons.R_55): 1967,
+    
+    # R-60
+    Weapon.from_pydcs(Weapons.R_60): 1973,
+    Weapon.from_pydcs(Weapons.R_60_x_2): 1973,
+    Weapon.from_pydcs(Weapons.R_60_x_2_): 1973,
+    
+    Weapon.from_pydcs(Weapons.APU_60_1_R_60M): 1982,
+    Weapon.from_pydcs(Weapons.R_60M): 1982,
+    Weapon.from_pydcs(Weapons.R_60M_): 1982,
+    Weapon.from_pydcs(Weapons.R_60M_2): 1982,
+    Weapon.from_pydcs(Weapons.R_60M_2_): 1982,
+    Weapon.from_pydcs(Weapons.R_60M_x_2): 1982,
+    Weapon.from_pydcs(Weapons.R_60M_x_2_): 1982,
+    
+    # R-73
+    Weapon.from_pydcs(Weapons.R_73): 1984,
+    Weapon.from_pydcs(Weapons.R_73_): 1984,
+    
+    # R-77
+    Weapon.from_pydcs(Weapons.R_77): 2002,
+    Weapon.from_pydcs(Weapons.R_77_): 2002,
+    
+    # UK
+    # ALARM
+    Weapon.from_pydcs(Weapons.ALARM): 1990,
+    Weapon.from_pydcs(Weapons.ALARM_2): 1990,
+    
+    # BL-755
+    Weapon.from_pydcs(Weapons.BL755): 1973,
+    Weapon.from_pydcs(Weapons.BL_755_2): 1973,
+    
+    # France
+    # BLG-66 Belouga
+    Weapon.from_pydcs(Weapons.AUF2_BLG_66_AC_x_2): 1979,
+    Weapon.from_pydcs(Weapons.BLG_66_AC_Belouga): 1979,
+    Weapon.from_pydcs(Weapons.BLG_66_AC_Belouga_): 1979,
+    
+    # HOT-3
+    Weapon.from_pydcs(Weapons.HOT3): 1998,
+    Weapon.from_pydcs(Weapons.HOT3_): 1998,
+    
+    # Magic 2
+    Weapon.from_pydcs(Weapons.Matra_Magic_II): 1986,
+    Weapon.from_pydcs(Weapons.R_550_Magic_2): 1986,
+    
+    # Super 530D
+    Weapon.from_pydcs(Weapons.Matra_Super_530D): 1988,
+    Weapon.from_pydcs(Weapons.Super_530D): 1988,
+    
 }
