@@ -1,3 +1,9 @@
+# 2.4.1
+
+## Fixes
+
+* **[UI]** Budget display is also now rounded to 2 decimal places.
+
 # 2.4.0
 
 Saves from 2.3 are not compatible with 2.4.
