@@ -47,8 +47,8 @@ class QAircraftTypeSelector(QComboBox):
             elif mission_type in [FlightType.OCA_RUNWAY]:
                 if aircraft in gen.flights.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
                     self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
-            elif mission_type in [FlightType.AWACS]:
-                if aircraft in gen.flights.ai_flight_planner_db.AWACS_CAPABLE:
+            elif mission_type in [FlightType.AEWC]:
+                if aircraft in gen.flights.ai_flight_planner_db.AEWC_CAPABLE:
                     self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
         current_aircraft_index = self.findData(current_aircraft)
         if current_aircraft_index != -1:

@@ -1289,7 +1289,7 @@ class AircraftConflictGenerator:
             self.configure_cap(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.SWEEP:
             self.configure_sweep(group, package, flight, dynamic_runways)
-        elif flight_type == FlightType.AWACS:
+        elif flight_type == FlightType.AEWC:
             self.configure_awacs(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)

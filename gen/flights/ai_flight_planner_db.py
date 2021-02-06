@@ -376,7 +376,7 @@ DRONES = [
     WingLoong_I
 ]
 
-AWACS_CAPABLE = [
+AEWC_CAPABLE = [
     E_3A,
     E_2C,
     A_50,
@@ -406,8 +406,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return STRIKE_CAPABLE
     elif task == FlightType.ESCORT:
         return CAP_CAPABLE
-    elif task == FlightType.AWACS:
-        return AWACS_CAPABLE
+    elif task == FlightType.AEWC:
+        return AEWC_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []

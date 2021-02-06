@@ -358,7 +358,8 @@ class WaypointBuilder:
         return (self.race_track_start(start, altitude),
                 self.race_track_end(end, altitude))
 
-    def circle_point(self, start: Point, altitude: Distance) -> FlightWaypoint:
+    @staticmethod
+    def orbit(start: Point, altitude: Distance) -> FlightWaypoint:
         """Creates an circular orbit point.
 
         Args:
@@ -372,9 +373,9 @@ class WaypointBuilder:
             start.y,
             altitude
         )
-        waypoint.name = "CIRCLE AROUND"
-        waypoint.description = "Circle around this WP"
-        waypoint.pretty_name = "CIRCLE AROUND"
+        waypoint.name = "ORBIT"
+        waypoint.description = "Anchor and hold at this point"
+        waypoint.pretty_name = "Orbit"
         return waypoint
 
     @staticmethod

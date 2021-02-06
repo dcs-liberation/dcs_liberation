@@ -833,8 +833,8 @@ class FlightPlanBuilder:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
-        elif task == FlightType.AWACS:
-            return self.generate_awacs(flight)
+        elif task == FlightType.AEWC:
+            return self.generate_aewc(flight)
         raise PlanningError(
             f"{task} flight plan generation not implemented")
 
@@ -965,7 +965,7 @@ class FlightPlanBuilder:
                                       FlightWaypointType.INGRESS_STRIKE,
                                       targets)
 
-    def generate_awacs(self, flight: Flight) -> AwacsFlightPlan:
+    def generate_aewc(self, flight: Flight) -> AwacsFlightPlan:
         """Generate a AWACS flight at a given location.
 
        Args:
@@ -973,7 +973,7 @@ class FlightPlanBuilder:
        """
         location = self.package.target
 
-        start = self.awacs_loiter(location)
+        start = self.aewc_orbit(location)
 
         # As high as possible to maximize detection and on-station time.
         if flight.unit_type == E_2C:
@@ -988,7 +988,7 @@ class FlightPlanBuilder:
             patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start = builder.circle_point(start, patrol_alt)
+        start = builder.orbit(start, patrol_alt)
 
         return AwacsFlightPlan(
             package=self.package,
@@ -1178,17 +1178,17 @@ class FlightPlanBuilder:
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
 
-    def awacs_loiter(self, location: MissionTarget) -> Point:
-
+    @staticmethod
+    def aewc_orbit(location: MissionTarget) -> Point:
         closest_airfield = location
+        # TODO: This is a heading to itself.
+        # Place this either over the target or as close as possible outside the
+        # threat zone: https://github.com/Khopa/dcs_liberation/issues/842.
         heading = location.position.heading_between_point(closest_airfield.position)
-
-        start = location.position.point_from_heading(
+        return location.position.point_from_heading(
             heading,
             5000
         )
-
-        return start
 
     def racetrack_for_frontline(self, origin: Point,
                                 front_line: FrontLine) -> Tuple[Point, Point]:

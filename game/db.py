@@ -1118,7 +1118,7 @@ COMMON_OVERRIDE = {
     Escort: "CAP",
     RunwayAttack: "RUNWAY_ATTACK",
     FighterSweep: "CAP",
-    AWACS: "AWACS"
+    AWACS: "AEW&C",
 }
 
 """

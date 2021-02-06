@@ -610,7 +610,7 @@ class ControlPoint(MissionTarget, ABC):
         from gen.flights.flight import FlightType
         if self.is_friendly(for_player):
             yield from [
-                FlightType.AWACS,
+                FlightType.AEWC,
             ]
         yield from super().mission_types(for_player)
 
@@ -862,7 +862,6 @@ class Fob(ControlPoint):
         else:
             yield from [
                 FlightType.STRIKE,
-                FlightType.AWACS,
                 FlightType.SWEEP,
                 FlightType.ESCORT,
                 FlightType.SEAD,
