@@ -96,6 +96,9 @@ class Game:
         self.ground_planners: Dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
+        # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
+        self.__culling_zones: List[Point] = []
+        # Culling Points are for individual theater ground objects that we don't wish to cull.
         self.__culling_points: List[Point] = []
         self.__destroyed_units: List[str] = []
         self.savepath = ""
@@ -378,6 +381,7 @@ class Game:
         Compute the current conflict center position(s), mainly used for culling calculation
         :return: List of points of interests
         """
+        zones = []
         points = []
 
         # By default, use the existing frontline conflict position
@@ -385,23 +389,23 @@ class Game:
             position = Conflict.frontline_position(front_line.control_point_a,
                                                    front_line.control_point_b,
                                                    self.theater)
-            points.append(position[0])
-            points.append(front_line.control_point_a.position)
-            points.append(front_line.control_point_b.position)
+            zones.append(position[0])
+            zones.append(front_line.control_point_a.position)
+            zones.append(front_line.control_point_b.position)
 
         for cp in self.theater.controlpoints:
             # Don't cull missile sites - their range is long enough to make them
             # easily culled despite being a threat.
             for tgo in cp.ground_objects:
                 if isinstance(tgo, MissileSiteGroundObject):
-                    points.append(cp.position)
+                    points.append(tgo.position)
             # If do_not_cull_carrier is enabled, add carriers as culling point
             if self.settings.perf_do_not_cull_carrier:
                 if cp.is_carrier or cp.is_lha:
-                    points.append(cp.position)
+                    zones.append(cp.position)
 
         # If there is no conflict take the center point between the two nearest opposing bases
-        if len(points) == 0:
+        if len(zones) == 0:
             cpoint = None
             min_distance = sys.maxsize
             for cp in self.theater.player_points():
@@ -410,13 +414,13 @@ class Game:
                     if d < min_distance:
                         min_distance = d
                         cpoint = Point((cp.position.x + cp2.position.x) / 2, (cp.position.y + cp2.position.y) / 2)
-                        points.append(cp.position)
-                        points.append(cp2.position)
+                        zones.append(cp.position)
+                        zones.append(cp2.position)
                         break
                 if cpoint is not None:
                     break
             if cpoint is not None:
-                points.append(cpoint)
+                zones.append(cpoint)
 
         packages = itertools.chain(self.blue_ato.packages,
                                    self.red_ato.packages)
@@ -428,13 +432,14 @@ class Game:
                 # are only interesting if there are enemies in the area, and if
                 # there are they won't be culled because of the enemy's mission.
                 continue
-            points.append(package.target.position)
+            zones.append(package.target.position)
 
         # Else 0,0, since we need a default value
         # (in this case this means the whole map is owned by the same player, so it is not an issue)
-        if len(points) == 0:
-            points.append(Point(0, 0))
+        if len(zones) == 0:
+            zones.append(Point(0, 0))
 
+        self.__culling_zones = zones
         self.__culling_points = points
 
     def add_destroyed_units(self, data):
@@ -454,10 +459,20 @@ class Game:
         if self.settings.perf_culling == False:
             return False
         else:
-            for c in self.__culling_points:
-                if c.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
+            for z in self.__culling_zones:
+                if z.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
+                    return False
+            for p in self.__culling_points:
+                if p.distance_to_point(pos) < 2500:
                     return False
             return True
+
+    def get_culling_zones(self):
+        """
+        Check culling points
+        :return: List of culling zones
+        """
+        return self.__culling_zones
 
     def get_culling_points(self):
         """

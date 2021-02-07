@@ -1,3 +1,12 @@
+# 2.4.1
+
+## Fixes
+
+* **[Units]** Fixed syntax error with the SH-60B payload file.
+* **[Culling]** Missile sites generate reasonably sized non-cull zones rather than 100km ones.
+* **[UI]** Budget display is also now rounded to 2 decimal places.
+* **[UI]** Fixed some areas where the old, non-pretty name was displayed to users.
+
 # 2.4.0
 
 Saves from 2.3 are not compatible with 2.4.

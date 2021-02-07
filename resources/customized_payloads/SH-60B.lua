@@ -13,6 +13,7 @@ local unitPayloads = {
 				[1] = 30,
 			},
 		},
+	},
 	["unitType"] = "SH-60B",
 }
 return unitPayloads

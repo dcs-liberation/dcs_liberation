@@ -962,7 +962,7 @@
     }],
     "AAA Bofors 40mm": [{
         "default": {
-            "name": "Bofors 40 mm gun",
+            "name": "Bofors 40 mm Gun",
             "country-of-origin": "Sweden",
             "manufacturer": "Bofors",
             "role": "Anti-Aircraft Gun",
@@ -1101,7 +1101,7 @@
     }],
     "APC M2A1": [{
         "default": {
-            "name": "M2A1 Half-track",
+            "name": "M2A1 Half-Track",
             "country-of-origin": "USA",
             "manufacturer": "White Motor Company",
             "role": "Armoured Personnel Carrier",

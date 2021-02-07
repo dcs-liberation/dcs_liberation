@@ -11,6 +11,8 @@ from game.theater import ControlPoint, TheaterGroundObject
 from qt_ui.dialogs import Dialog
 from qt_ui.uiconstants import VEHICLES_ICONS
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
+from game import db
+from dcs import vehicles
 
 
 class QBaseDefenseGroupInfo(QGroupBox):
@@ -71,7 +73,11 @@ class QBaseDefenseGroupInfo(QGroupBox):
                 icon.setText("<b>" + k[:8] + "</b>")
             icon.setProperty("style", "icon-armor")
             self.unit_layout.addWidget(icon, i, 0)
-            self.unit_layout.addWidget(QLabel(str(v) + " x " + "<strong>" + k + "</strong>"), i, 1)
+            unit_display_name = k
+            unit_type = vehicles.vehicle_map.get(k)
+            if unit_type is not None:
+                unit_display_name = db.unit_get_expanded_info(self.game.enemy_country, unit_type, 'name')
+            self.unit_layout.addWidget(QLabel(str(v) + " x " + "<strong>" + unit_display_name + "</strong>"), i, 1)
             i = i + 1
 
         if len(unit_dict.items()) == 0:
