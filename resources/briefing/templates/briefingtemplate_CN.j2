@@ -73,6 +73,7 @@ DCS Liberation 第 {{ game.turn }} 回合
 --------------------------------------------------{% endfor %}
 
 
+{%- if allied_flights_by_departure|length > 0 %}
 其他友军单位飞行计划：
 ====================
 {% for dep in allied_flights_by_departure %}
@@ -82,7 +83,9 @@ DCS Liberation 第 {{ game.turn }} 回合
 {{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
 {% endfor %}
 {% endfor %}
+{% endif %}
 
+{%- if dynamic_runways|length > 0 %}
 航母及FARPs：
 ====================
 {% for runway in dynamic_runways %}
@@ -94,12 +97,17 @@ TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
 {% endif %}
 
 {% endfor %}
+{% endif %}
+{%- if awacs|length > 0 %}
 AWACS:
 ====================
 {% for i in awacs %}{{ i.callsign }} -- 频率 : {{i.freq.mhz}}
 {% endfor %}
+{% endif %}
 
+{%- if jtacs|length > 0 %}
 JTACS [F-10 菜单] :
 ====================
 {% for jtac in jtacs %}前线 {{ jtac.region }} -- 激光编码 : {{ jtac.code }}
 {% endfor %}
+{% endif %}
