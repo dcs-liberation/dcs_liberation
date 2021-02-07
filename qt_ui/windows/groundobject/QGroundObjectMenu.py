@@ -29,6 +29,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
+from dcs import vehicles
 
 
 class QGroundObjectMenu(QDialog):
@@ -101,7 +102,11 @@ class QGroundObjectMenu(QDialog):
             if not hasattr(g, "units_losts"):
                 g.units_losts = []
             for u in g.units:
-                self.intelLayout.addWidget(QLabel("<b>Unit #" + str(u.id) + " - " + str(u.type) + "</b>"), i, 0)
+                unit_display_name = u.type
+                unit_type = vehicles.vehicle_map.get(u.type)
+                if unit_type is not None:
+                    unit_display_name = db.unit_get_expanded_info(self.game.enemy_country, unit_type, 'name')
+                self.intelLayout.addWidget(QLabel("<b>Unit #" + str(u.id) + " - " + str(unit_display_name) + "</b>"), i, 0)
                 i = i + 1
 
             for u in g.units_losts:
