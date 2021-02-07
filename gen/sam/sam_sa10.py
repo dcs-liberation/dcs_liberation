@@ -18,7 +18,7 @@ class SA10Generator(AirDefenseGroupGenerator):
     This generate a SA-10 group
     """
 
-    name = "SA-10/S-300PS Battery"
+    name = "SA-10/S-300PS Battery - With ZSU-23"
     price = 550
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
@@ -51,7 +51,7 @@ class SA10Generator(AirDefenseGroupGenerator):
         num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(num_launchers, launcher_distance=100, coverage=360)
         for i, position in enumerate(positions):
-            if i%2 == 0:
+            if i % 2 == 0:
                 self.add_unit(self.ln1, "LN#" + str(i), position[0], position[1], position[2])
             else:
                 self.add_unit(self.ln2, "LN#" + str(i), position[0], position[1], position[2])
@@ -74,6 +74,10 @@ class SA10Generator(AirDefenseGroupGenerator):
 
 
 class Tier2SA10Generator(SA10Generator):
+
+    name = "SA-10/S-300PS Battery - With SA-15 PD"
+    price = 650
+
     def generate_defensive_groups(self) -> None:
         # Create AAA the way the main group does.
         super().generate_defensive_groups()
@@ -89,6 +93,10 @@ class Tier2SA10Generator(SA10Generator):
 
 
 class Tier3SA10Generator(SA10Generator):
+
+    name = "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD"
+    price = 750
+
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
         aa_group = self.add_auxiliary_group("AA")
