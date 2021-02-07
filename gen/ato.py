@@ -168,13 +168,13 @@ class Package:
             FlightType.ANTISHIP,
             FlightType.OCA_AIRCRAFT,
             FlightType.OCA_RUNWAY,
+            FlightType.AEWC,
             FlightType.BAI,
             FlightType.DEAD,
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,
             FlightType.SWEEP,
-            FlightType.AEWC,
             FlightType.ESCORT,
         ]
         for task in task_priorities:
