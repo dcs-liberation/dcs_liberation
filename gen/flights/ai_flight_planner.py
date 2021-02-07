@@ -434,11 +434,16 @@ class ObjectiveFinder:
                 c.is_friendly(self.is_player))
 
     def farthest_friendly_control_point(self) -> ControlPoint:
-        """Iterates over all friendly control points and find the one farthest away from the frontline"""
+        """
+        Iterates over all friendly control points and find the one farthest away from the frontline
+        BUT! prefer Cvs. Everybody likes CVs!
+        """
         fromFrontline = 0
 
         for c in self.game.theater.controlpoints:
-            if c.is_friendly(True) & c.has_frontline:
+            if c.is_carrier:
+                return c
+            if c.is_friendly(self.is_player) & c.has_frontline:
                 if c.distance_to(self.front_lines().__next__()) > fromFrontline:
                     fromFrontline = c.distance_to(self.front_lines().__next__())
                     cp = c
