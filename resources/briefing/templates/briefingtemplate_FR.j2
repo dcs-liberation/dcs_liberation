@@ -73,6 +73,7 @@ Vols :
 --------------------------------------------------{% endfor %}
 
 
+{%- if allied_flights_by_departure|length > 0 %}
 Vols alliés prévus :
 ====================
 {% for dep in allied_flights_by_departure %}
@@ -82,7 +83,9 @@ Vols alliés prévus :
 {{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, départ dans {{ flight.departure_delay }}, {{ flight.package.target.name}}
 {% endfor %}
 {% endfor %}
+{% endif %}
 
+{%- if dynamic_runways|length > 0 %}
 Porte-avions et FARPS :
 =======================
 {% for runway in dynamic_runways %}
@@ -92,14 +95,19 @@ RADIO : {{ runway.atc }}
 TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
 {% if runway.icls %}Channel ICLS : {{ runway.icls }}
 {% endif %}
+{% endif %}
 
 {% endfor %}
+{%- if awacs|length > 0 %}
 AWACS:
 ====================
 {% for i in awacs %}{{ i.callsign }} -- Fréq : {{i.freq.mhz}}
 {% endfor %}
+{% endif %}
 
+{%- if jtacs|length > 0 %}
 JTACS [Menu F-10] :
 ====================
 {% for jtac in jtacs %}Ligne de front {{ jtac.region }} -- Code : {{ jtac.code }}
 {% endfor %}
+{% endif %}
