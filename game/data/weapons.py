@@ -112,111 +112,296 @@ class Pylon:
 
 
 _WEAPON_FALLBACKS = [
-    # AIM-120C
-    (Weapons.AIM_120C, Weapons.AIM_120B),
-    (Weapons.LAU_115___AIM_120C, Weapons.LAU_115___AIM_120B),
-    (Weapons.LAU_115_2_LAU_127_AIM_120C, Weapons.LAU_115_2_LAU_127_AIM_120B),
-
-    # AIM-120B
+    # ADM-141 TALD
+    (Weapons.ADM_141A, None),
+    (Weapons.ADM_141A_, None),
+    (Weapons.ADM_141A__, None),
+    (Weapons.ADM_141B, None),
+    
+    # AGM-114K Hellfire
+    (Weapons.AGM114x2_OH_58, Weapons.M260_HYDRA), # assuming OH-58 and not MQ-9
+    (Weapons.AGM_114K, None), # Only for RQ-1
+    (Weapons.AGM_114K___4, Weapons.LAU_61___19_2_75__rockets_MK151_HE),
+    
+    # AGM-119 Penguin
+    (Weapons.AGM_119B_Penguin, Weapons.Mk_82),
+    
+    # AGM-122 Sidearm
+    (Weapons.AGM_122, None), # No known aircraft carries this
+    (Weapons.AGM_122_Sidearm, Weapons.GBU_12), # outer pylons harrier
+    (Weapons.AGM_122_Sidearm_, Weapons.LAU_117_AGM_65E), # internal pylons harrier
+    
+    # AGM-154 JSOW
+    (Weapons.AGM_154A, Weapons.GBU_12),
+    (Weapons.BRU_55___2_x_AGM_154A, Weapons.BRU_33___2_x_GBU_12),
+    (Weapons.BRU_57___2_x_AGM_154A, None), # doesn't exist on any aircraft yet
+    
+    (Weapons.AGM_154B, Weapons.CBU_105),
+    
+    (Weapons.AGM_154C, Weapons.GBU_12),
+    (Weapons.AGM_154C_4, Weapons.GBU_31_8),
+    (Weapons.BRU_55___2_x_AGM_154C, Weapons.BRU_33___2_x_GBU_12),
+    
+    # AGM-45 Shrike
+    (Weapons.AGM_45A, None),
+    (Weapons.AGM_45B, Weapons.AGM_45A),
+    (Weapons.AGM_45B_, Weapons.AGM_45A),
+    
+    # AGM-62 Walleye
+    (Weapons.AGM_62, Weapons.Mk_84),
+    
+    # AGM-65 Maverick
+    (Weapons.AGM_65D, None), # doesn't exist
+    (Weapons.AGM_65E, None), # doesn't exist
+    (Weapons.AGM_65F, None), # doesn't exist
+    (Weapons.LAU_117_AGM_65A, None), # doesn't exist
+    (Weapons.LAU_117_AGM_65B, None), # doesn't exist
+    
+    (Weapons.LAU_117_AGM_65D, Weapons.AGM_62), # Walleye is the predecessor to the maverick
+    (Weapons.LAU_117_AGM_65E, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65F, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65G, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65H, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65K, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65L, Weapons.LAU_117_AGM_65D),
+    
+    (Weapons.LAU_88_AGM_65D_2, None),
+    (Weapons.LAU_88_AGM_65D_2_, None),
+    (Weapons.LAU_88_AGM_65D_3, None),
+    (Weapons.LAU_88_AGM_65D_ONE, None),
+    
+    (Weapons.LAU_88_AGM_65E_2, Weapons.LAU_88_AGM_65D_2),
+    (Weapons.LAU_88_AGM_65E_2_, Weapons.LAU_88_AGM_65D_2_),
+    (Weapons.LAU_88_AGM_65E_3, Weapons.LAU_88_AGM_65D_3),
+    
+    (Weapons.LAU_88_AGM_65H, Weapons.LAU_88_AGM_65D_2),
+    (Weapons.LAU_88_AGM_65H_2_L, Weapons.LAU_88_AGM_65D_2_),
+    (Weapons.LAU_88_AGM_65H_2_R, Weapons.LAU_88_AGM_65D_2_),
+    (Weapons.LAU_88_AGM_65H_3, Weapons.LAU_88_AGM_65D_3),
+    
+    (Weapons.LAU_88_AGM_65K_2, Weapons.LAU_88_AGM_65D_2),
+    (Weapons.LAU_88_AGM_65K_2_, Weapons.LAU_88_AGM_65D_2_),
+    (Weapons.LAU_88_AGM_65K_3, Weapons.LAU_88_AGM_65D_3),
+    
+    # AGM-84 Harpoon
+    (Weapons.AGM_84, None), # doesn't exist
+    (Weapons.AGM_84A, Weapons.Mk_82),
+    (Weapons.AGM_84A_8, Weapons._27_Mk_82),
+    (Weapons.AGM_84D, Weapons.AGM_62),
+    (Weapons.AGM_84E, Weapons.LAU_117_AGM_65F),
+    (Weapons.AGM_84H, Weapons.AGM_84E),
+    
+    # AGM-86 ALCM
+    (Weapons.AGM_86C, Weapons._27_Mk_82),
+    (Weapons.AGM_86C_20, Weapons._27_Mk_82),
+    (Weapons.AGM_86C_8, Weapons._27_Mk_82),
+    (Weapons.MER_6_AGM_86C, Weapons.MER_12_Mk_82),
+    
+    # AGM-88 HARM
+    (Weapons.AGM_88C, Weapons.AGM_65D),
+    (Weapons.AGM_88C_, Weapons.AGM_65D),
+    
+    # AIM-120 AMRAAM    
     (Weapons.AIM_120B, Weapons.AIM_7MH),
     (Weapons.LAU_115___AIM_120B, Weapons.LAU_115C_AIM_7MH),
     (Weapons.LAU_115_2_LAU_127_AIM_120B, Weapons.LAU_115C_AIM_7MH),
-
-    # AIM-7MH
-    (Weapons.AIM_7MH, Weapons.AIM_7M),
-    (Weapons.AIM_7MH_, Weapons.AIM_7M_),
-    (Weapons.AIM_7MH__, Weapons.AIM_7M__),
-    (Weapons.LAU_115C_AIM_7MH, Weapons.LAU_115___AIM_7M),
-
-    # AIM-7M
-    (Weapons.AIM_7M, Weapons.AIM_7F),
-    (Weapons.AIM_7M_, None),
-    (Weapons.AIM_7M__, None),
-    (Weapons.LAU_115___AIM_7M, Weapons.LAU_115C_AIM_7F),
-
-    # AIM-7F
-    (Weapons.AIM_7F, Weapons.AIM_7E),
-    (Weapons.AIM_7F_, Weapons.AIM_7E),
-    (Weapons.AIM_7F__, Weapons.AIM_7E),
-    (Weapons.LAU_115C_AIM_7F, Weapons.LAU_115C_AIM_7E),
-
-    # AIM-7E
-    (Weapons.AIM_7E, Weapons.AIM_9X_Sidewinder_IR_AAM),
-    (Weapons.LAU_115C_AIM_7E, Weapons.LAU_115_LAU_127_AIM_9X),
-
-    # AIM-9X
-    (Weapons.AIM_9X_Sidewinder_IR_AAM, Weapons.AIM_9P5_Sidewinder_IR_AAM),
-    (Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM),
-    (Weapons.LAU_115_LAU_127_AIM_9X, Weapons.LAU_115_LAU_127_AIM_9M),
-    (Weapons.LAU_115_2_LAU_127_AIM_9X, Weapons.LAU_115_2_LAU_127_AIM_9M),
-    (Weapons.LAU_127_AIM_9X, Weapons.LAU_127_AIM_9M),
-
-    # AIM-9P5
-    (Weapons.AIM_9P5_Sidewinder_IR_AAM, Weapons.AIM_9P_Sidewinder_IR_AAM),
-    (Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM),
-
-    # AIM-9P
-    (Weapons.AIM_9P_Sidewinder_IR_AAM, Weapons.AIM_9M_Sidewinder_IR_AAM),
-    (Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM),
-
-    # AIM-9M
-    (Weapons.AIM_9M_Sidewinder_IR_AAM, Weapons.AIM_9L_Sidewinder_IR_AAM),
-    (Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9L),
-
-    # AIM-9L
-    (Weapons.AIM_9L_Sidewinder_IR_AAM, None),
-    (Weapons.LAU_7_AIM_9L, None),
-
-    # AIM-54C Mk47
-    (Weapons.AIM_54C_Mk47, Weapons.AIM_54A_Mk60),
-    (Weapons.AIM_54C_Mk47_, Weapons.AIM_54A_Mk60_),
-    (Weapons.AIM_54C_Mk47__, Weapons.AIM_54A_Mk60__),
-
-    # AIM-54A Mk60
+    
+    (Weapons.AIM_120C, Weapons.AIM_120B),
+    (Weapons.LAU_115___AIM_120C, Weapons.LAU_115___AIM_120B),
+    (Weapons.LAU_115_2_LAU_127_AIM_120C, Weapons.LAU_115_2_LAU_127_AIM_120B),
+    
+    # AIM-54 Phoenix
+    (Weapons.AIM_54A_Mk47, None),
+    (Weapons.AIM_54A_Mk47_, None),
+    (Weapons.AIM_54A_Mk47__, None),
+    
     (Weapons.AIM_54A_Mk60, Weapons.AIM_54A_Mk47),
     (Weapons.AIM_54A_Mk60_, Weapons.AIM_54A_Mk47_),
     (Weapons.AIM_54A_Mk60__, Weapons.AIM_54A_Mk47__),
+    
+    (Weapons.AIM_54C_Mk47, Weapons.AIM_54A_Mk60),
+    (Weapons.AIM_54C_Mk47_, Weapons.AIM_54A_Mk60_),
+    (Weapons.AIM_54C_Mk47__, Weapons.AIM_54A_Mk60__),
+    
+    # AIM-7 Sparrow
+    (Weapons.AIM_7E),
+    (Weapons.AIM_7F, Weapons.AIM_7E),
+    (Weapons.AIM_7F_, None),
+    (Weapons.AIM_7F__, None),
+    (Weapons.AIM_7M, Weapons.AIM_7F),
+    (Weapons.AIM_7M_, Weapons.AIM_7F_),
+    (Weapons.AIM_7M__, Weapons.AIM_7F__),
+    (Weapons.AIM_7MH, AIM_7M),
+    (Weapons.AIM_7MH_, AIM_7M_),
+    (Weapons.AIM_7MH__, AIM_7M__),
+    
+    (Weapons.LAU_115C_AIM_7E, None),
+    (Weapons.LAU_115C_AIM_7F, Weapons.LAU_115C_AIM_7E),
+    (Weapons.LAU_115___AIM_7M, Weapons.LAU_115C_AIM_7F),
+    (Weapons.LAU_115C_AIM_7MH, Weapons.LAU_115___AIM_7M),
+    
+    # AIM-9 Sidewinder
+    (Weapons.AIM_9L_Sidewinder_IR_AAM, None),
+    (Weapons.AIM_9M_Sidewinder_IR_AAM, Weapons.AIM_9P5_Sidewinder_IR_AAM),
+    (Weapons.AIM_9P5_Sidewinder_IR_AAM, Weapons.AIM_9P_Sidewinder_IR_AAM),
+    (Weapons.AIM_9P_Sidewinder_IR_AAM, Weapons.AIM_9L_Sidewinder_IR_AAM),
+    (Weapons.AIM_9X_Sidewinder_IR_AAM, Weapons.AIM_9P_Sidewinder_IR_AAM),
+    
+    (Weapons.LAU_105_1_AIM_9L_L, None),
+    (Weapons.LAU_105_1_AIM_9L_R, None),
+    (Weapons.LAU_105_1_AIM_9M_L, Weapons.LAU_105_1_AIM_9L_L),
+    (Weapons.LAU_105_1_AIM_9M_R, Weapons.LAU_105_1_AIM_9L_R),
+    
+    (Weapons.LAU_105_2_AIM_9L, None),
+    (Weapons.LAU_105_2_AIM_9P5, LAU_105___2_AIM_9P_Sidewinder_IR_AAM),
+    
+    (Weapons.LAU_105___2_AIM_9M_Sidewinder_IR_AAM, LAU_105_2_AIM_9L),
+    (Weapons.LAU_105___2_AIM_9P_Sidewinder_IR_AAM, LAU_105___2_AIM_9M_Sidewinder_IR_AAM),
+    
+    (Weapons.LAU_115_2_LAU_127_AIM_9L, None),
+    (Weapons.LAU_115_2_LAU_127_AIM_9M, Weapons.LAU_115_2_LAU_127_AIM_9L),
+    (Weapons.LAU_115_2_LAU_127_AIM_9X, Weapons.LAU_115_2_LAU_127_AIM_9M),
+    
+    (Weapons.LAU_115_LAU_127_AIM_9L, None),
+    (Weapons.LAU_115_LAU_127_AIM_9M, Weapons.LAU_115_LAU_127_AIM_9L),
+    (Weapons.LAU_115_LAU_127_AIM_9X, Weapons.LAU_115_LAU_127_AIM_9M),
+    
+    (Weapons.LAU_127_AIM_9L, None),
+    (Weapons.LAU_127_AIM_9M, Weapons.LAU_127_AIM_9L),
+    (Weapons.LAU_127_AIM_9X, Weapons.LAU_127_AIM_9M),
+    
+    (Weapons.LAU_138_AIM_9L, None),
+    (Weapons.LAU_138_AIM_9M, Weapons.LAU_138_AIM_9L),
+    
+    (Weapons.LAU_7_AIM_9L, None),
+    (Weapons.LAU_7_AIM_9M, Weapons.LAU_7_AIM_9L),
+    (Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9P5_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM),
+    (Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9L),
+    (Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM),
+    
+    (Weapons.LAU_7___2_AIM_9L_Sidewinder_IR_AAM, None),
+    (Weapons.LAU_7___2_AIM_9M_Sidewinder_IR_AAM, Weapons.LAU_7___2_AIM_9P5_Sidewinder_IR_AAM),
+    (Weapons.LAU_7___2_AIM_9P5_Sidewinder_IR_AAM, Weapons.LAU_7___2_AIM_9P_Sidewinder_IR_AAM),
+    (Weapons.LAU_7___2_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_7___2_AIM_9L_Sidewinder_IR_AAM),
+    
+    # ALQ ECM Pods
+    (Weapons.ALQ_131, None),
+    (Weapons.ALQ_184, Weapons.ALQ_131),
+    (Weapons.AN_ALQ_164_DECM_Pod, None),
+    
+    # TGP Pods
+    (Weapons.AN_AAQ_28_LITENING_, None),
+    (Weapons.AN_AAQ_28_LITENING, Weapons.Lantirn_F_16),
+    (Weapons.AN_AAS_38_FLIR, None),
+    (Weapons.AN_ASQ_173_LST_SCAM, None),
+    (Weapons.AWW_13_DATALINK_POD, None),
+    (Weapons.LANTIRN_Targeting_Pod, None),
+    (Weapons.Lantirn_F_16, None),
+    (Weapons.Lantirn_Target_Pod, None),
+    (Weapons.Pavetack_F_111, None),
+    
+    # BLU-107
+    (Weapons.BLU_107, None),
+    (Weapons.MER_6_BLU_107, Weapons.MER_6_Mk_82),
 
-    # R-27 (AA-10 Alamo)
-    (Weapons.R_27ER, Weapons.R_27R),
-    (Weapons.R_27ET, Weapons.R_27T),
-
-    # R-77 (AA-12)
-    (Weapons.R_77, Weapons.R_27ER),
-    (Weapons.R_77_, Weapons.R_27ER),
-
-    # R-73 (AA-11)
-    (Weapons.R_73, Weapons.R_60M),
-    (Weapons.R_73_, Weapons.R_60M_),
-
-    # GBU-38 (JDAM)
-    (Weapons.GBU_38, Weapons.GBU_12),
-    (Weapons.GBU_38_16, Weapons.MK_82_28), # B1-B only
-    (Weapons._2_GBU_38_, Weapons._2_GBU_12),
-    (Weapons._2_GBU_38, Weapons._2_GBU_12),
-    (Weapons._3_GBU_38, Weapons._3_GBU_12),
-    (Weapons.BRU_55___2_x_GBU_38, Weapons.BRU_33___2_x_GBU_12),
-    (Weapons.BRU_57___2_x_GBU_38, Weapons.BRU_33___2_x_GBU_12),
-
-    # AGM-154A (JSOW)
-    (Weapons.AGM_154A, Weapons.GBU_12),
-    (Weapons.BRU_55___2_x_AGM_154A, Weapons.BRU_33___2_x_GBU_12),
-    (Weapons.BRU_57___2_x_AGM_154A, Weapons.BRU_33___2_x_GBU_12),
-
-    # AGM-154C (JSOW)
-    (Weapons.AGM_154C, Weapons.GBU_12),
-    (Weapons.AGM_154C_4, Weapons.MK_82_28), # B1-B only
-    (Weapons.BRU_55___2_x_AGM_154C, Weapons.BRU_33___2_x_GBU_12),
-
-    # AGM-84E (SLAM)
-    (Weapons.AGM_84E, Weapons.LAU_117_AGM_65F),
-
+    # GBU-10 LGB
+    (Weapons.DIS_GBU_10, Weapons.Mk_84),
+    (Weapons.GBU_10, Weapons.Mk_84),
+    (Weapons.GBU_10_, Weapons.Mk_84),
+    (Weapons.GBU_10_2, Weapons.Mk_84),
+    
+    # GBU-12 LGB
+    (Weapons.AUF2_GBU_12_x_2, None),
+    (Weapons.BRU_33___2_x_GBU_12, Weapons.BRU_33___2_x_Mk_82_),
+    (Weapons.BRU_42_3_GBU_12, Weapons._3_Mk_82),
+    (Weapons.DIS_GBU_12, Weapons.Mk_82),
+    (Weapons.DIS_GBU_12_DUAL, Weapons.BRU_33___2_x_Mk_82_),
+    (Weapons.DIS_GBU_12_DUAL_L, Weapons.BRU_33___2_x_Mk_82_),
+    (Weapons.DIS_GBU_12_DUAL_R, Weapons.BRU_33___2_x_Mk_82_),
+    (Weapons.GBU_12, Weapons.Mk_82),
+    (Weapons.GBU_12_, Weapons.Mk_82_),
+    (Weapons.TER_9A___2_x_GBU_12, Weapons.TER_9A___2_x_Mk_82),
+    (Weapons.TER_9A___2_x_GBU_12_, Weapons.TER_9A___2_x_Mk_82_),
+    (Weapons._2xGBU_12, Weapons.Mk_82),
+    (Weapons._2xGBU_12_, Weapons.Mk_82_),
+    (Weapons._2_GBU_12, Weapons._2_Mk_82),
+    (Weapons._2_GBU_12_, Weapons._2_Mk_82_),
+    (Weapons._3_GBU_12, Weapons._3_Mk_82_),
+    
+    # GBU-15 LGB
+    (Weapons.GBU_15, Weapons.Mk_84),
+    
+    # GBU-16 LGB
+    (Weapons.BRU_33___2_x_GBU_16, None),
+    (Weapons.DIS_GBU_16,  Weapons.Mk_83),
+    (Weapons.GBU_16,  Weapons.Mk_83),
+    (Weapons.GBU_16_,  Weapons.Mk_83_),
+    
+    # GBU-24 LGB
+    (Weapons.GBU_24, Weapons.GBU_10),
+    (Weapons.GBU_24_, Weapons.GBU_10_),
+    (Weapons.GBU_24__, Weapons.GBU_10_),
+    
+    # GBU-27 LGB
+    (Weapons.GBU_24, Weapons.GBU_10),
+    (Weapons.GBU_24_, Weapons.GBU_10_),
+    (Weapons.GBU_24__, Weapons.GBU_10_),
+    
+    # GBU-28 LGB
+    (Weapons.GBU_28, Weapons.GBU_15),
+    
+    # GBU-31 JDAM
+    (Weapons.GBU_31V3B_8, Weapons.B_1B_Mk_84_8),
+    (Weapons.GBU_31_8, Weapons.B_1B_Mk_84_8),
+    (Weapons.GBU_31_V_1_B, Weapons.Mk_84),
+    (Weapons.GBU_31_V_2_B, Weapons.Mk_84),
+    (Weapons.GBU_31_V_3_B, Weapons.Mk_84),
+    (Weapons.GBU_31_V_4_B, Weapons.Mk_84),
+    
+    # GBU-32 JDAM
+    (Weapons.GBU_32_V_2_B, Weapons.Mk_83),
+    
+    # GBU-32 JDAM
+    (Weapons.BRU_55___2_x_GBU_38, Weapons.BRU_33___2_x_Mk_82_),
+    (Weapons.BRU_57___2_x_GBU_38, None), # Doesn't exist
+    (Weapons.GBU_38, Weapons.Mk_82),
+    (Weapons.GBU_38_16, Weapons.MK_82_28),
+    (Weapons._2_GBU_38, Weapons._2_Mk_82),
+    (Weapons._2_GBU_38_, Weapons._2_Mk_82_),
+    (Weapons._3_GBU_38, Weapons._3_Mk_82_),
+    
+    # GBU-54 LJDAM
+    (Weapons.GBU_54_V_1_B, Weapons.GBU_38),
+    (Weapons._2_GBU_54_V_1_B, Weapons._2_GBU_38),
+    (Weapons._2_GBU_54_V_1_B_, Weapons._2_GBU_38_),
+    (Weapons._3_GBU_54_V_1_B, Weapons._3_GBU_38),
+    
+    # CBU-52
+    (Weapons.CBU_52B, None),
+    
+    # CBU-87 CEM
+    (Weapons.CBU_87, Weapons.Mk_82),
+    (Weapons.TER_9A___2_x_CBU_87, Weapons.TER_9A___2_x_Mk_82),
+    (Weapons.TER_9A___2_x_CBU_87_, Weapons.TER_9A___2_x_Mk_82_),
+    (Weapons.TER_9A___3_x_CBU_87, Weapons.TER_9A___3_x_Mk_82),
+    
     # CBU-97
-    (Weapons.CBU_97, Weapons.GBU_12),
-    (Weapons.TER_9A___2_x_CBU_97, Weapons.TER_9A___2_x_GBU_12),
-    (Weapons.TER_9A___2_x_CBU_97_, Weapons.TER_9A___2_x_GBU_12),
-    (Weapons.TER_9A___3_x_CBU_97, Weapons.TER_9A___2_x_GBU_12),
-
+    (Weapons.CBU_97, Weapons.Mk_82),
+    (Weapons.TER_9A___2_x_CBU_97, Weapons.TER_9A___2_x_Mk_82),
+    (Weapons.TER_9A___2_x_CBU_97_, Weapons.TER_9A___2_x_Mk_82_),
+    (Weapons.TER_9A___3_x_CBU_97, Weapons.TER_9A___3_x_Mk_82),
+    
+    # CBU-99 (It's a bomb made in 1968, I'm not bothering right now with backups)
+    
+    # CBU-103
+    (Weapons.BRU_57___2_x_CBU_103, None), # doesn't exist...
+    (Weapons.CBU_103, Weapons.CBU_87),
+    
+    # CBU-105
+    (Weapons.BRU_57___2_x_CBU_105, None), # doesn't exist...
+    (Weapons.CBU_105, Weapons.CBU_97),
+    
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
@@ -279,6 +464,24 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65H): 2007,
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65K): 2007,
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65L): 1985,
+    
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65D_2): 1983,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65D_2_): 1983,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65D_3): 1983,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65D_ONE): 1983,
+    
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65E_2): 1985,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65E_2_): 1985,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65E_3): 1985,
+    
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65H): 2007,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65H_2_L): 2007,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65H_2_R): 2007,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65H_3): 2007,
+    
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65K_2): 2007,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65K_2_): 2007,
+    Weapon.from_pydcs(Weapons.LAU_88_AGM_65K_3): 2007,
     
     # AGM-84 Harpoon
     Weapon.from_pydcs(Weapons.AGM_84): 1979,
@@ -398,29 +601,12 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.LANTIRN_Targeting_Pod): 1985,
     Weapon.from_pydcs(Weapons.Lantirn_F_16): 1985,
     Weapon.from_pydcs(Weapons.Lantirn_Target_Pod): 1985,
+    Weapon.from_pydcs(Weapons.Pavetack_F_111): 1982,
     
     # BLU-107
     Weapon.from_pydcs(Weapons.BLU_107): 1983,
     Weapon.from_pydcs(Weapons.MER_6_BLU_107): 1983,
-    
-    # Zuni
-    Weapon.from_pydcs(Weapons.BRU_33_LAU_10___4_ZUNI_MK_71): 1957,
-    Weapon.from_pydcs(Weapons.BRU_33___2_LAU_10___4_ZUNI_MK_71): 1957,
-    Weapon.from_pydcs(Weapons.LAU_10R___4_ZUNI_MK_71): 1957,
-    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71): 1957,
-    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71_): 1957,
-    Weapon.from_pydcs(Weapons.LAU_10___4_ZUNI_MK_71__): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71__): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71___): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71____): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_____): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71______): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_______): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71________): 1957,
-    Weapon.from_pydcs(Weapons._2_LAU_10___4_ZUNI_MK_71_________): 1957,
-    
+
     # GBU-10 LGB
     Weapon.from_pydcs(Weapons.DIS_GBU_10): 1976,
     Weapon.from_pydcs(Weapons.GBU_10): 1976,
@@ -515,6 +701,40 @@ WEAPON_INTRODUCTION_YEARS = {
     # CBU-99
     Weapon.from_pydcs(Weapons.BRU_33___2_x_CBU_99): 1968,
     Weapon.from_pydcs(Weapons.CBU_99): 1968,
+    
+    Weapon.from_pydcs(Weapons.BRU_33___2_x_Mk_20_Rockeye): 1968,
+    
+    Weapon.from_pydcs(Weapons.DIS_MK_20): 1968,
+    Weapon.from_pydcs(Weapons.DIS_MK_20_DUAL_L): 1968,
+    Weapon.from_pydcs(Weapons.DIS_MK_20_DUAL_R): 1968,
+    
+    Weapon.from_pydcs(Weapons.HSAB_9_Mk_20_Rockeye): 1968,
+    
+    Weapon.from_pydcs(Weapons.MAK79_2_MK_20): 1968,
+    Weapon.from_pydcs(Weapons.MAK79_2_MK_20_): 1968,
+    
+    Weapon.from_pydcs(Weapons.MAK79_MK_20): 1968,
+    Weapon.from_pydcs(Weapons.MAK79_MK_20_): 1968,
+    
+    Weapon.from_pydcs(Weapons.MER_6_Mk_20_Rockeye): 1968,
+    
+    Weapon.from_pydcs(Weapons.Mk_20): 1968,
+    Weapon.from_pydcs(Weapons.Mk_20_): 1968,
+    Weapon.from_pydcs(Weapons.Mk_20_18): 1968,
+    Weapon.from_pydcs(Weapons.Mk_20_Rockeye__6): 1968,
+    
+    Weapon.from_pydcs(Weapons._2_MK_20): 1968,
+    Weapon.from_pydcs(Weapons._2_MK_20_): 1968,
+    Weapon.from_pydcs(Weapons._2_MK_20__): 1968,
+    Weapon.from_pydcs(Weapons._2_MK_20___): 1968,
+    Weapon.from_pydcs(Weapons._2_MK_20____): 1968,
+    Weapon.from_pydcs(Weapons._2_MK_20_____): 1968,
+    Weapon.from_pydcs(Weapons._2_Mk_20_Rockeye): 1968,
+    Weapon.from_pydcs(Weapons._2_Mk_20_Rockeye_): 1968,
+    Weapon.from_pydcs(Weapons._2_Mk_20_Rockeye__): 1968,
+    
+    Weapon.from_pydcs(Weapons._3_Mk_20_Rockeye): 1968,
+    Weapon.from_pydcs(Weapons._3_Mk_20_Rockeye_): 1968,
     
     # CBU-103
     Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_103): 1997,
