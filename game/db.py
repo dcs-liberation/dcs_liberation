@@ -1389,6 +1389,8 @@ def upgrade_to_supercarrier(unit, name: str):
             return CVN_73_George_Washington
         elif name == "CVN-75 Harry S. Truman":
             return CVN_75_Harry_S__Truman
+        elif name == "Carrier Strike Group 8":
+            return CVN_75_Harry_S__Truman
         else:
             return CVN_71_Theodore_Roosevelt
     elif unit == CV_1143_5_Admiral_Kuznetsov:
