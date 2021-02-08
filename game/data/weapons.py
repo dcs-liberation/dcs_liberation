@@ -231,9 +231,9 @@ _WEAPON_FALLBACKS = [
     (Weapons.AIM_7M, Weapons.AIM_7F),
     (Weapons.AIM_7M_, Weapons.AIM_7F_),
     (Weapons.AIM_7M__, Weapons.AIM_7F__),
-    (Weapons.AIM_7MH, AIM_7M),
-    (Weapons.AIM_7MH_, AIM_7M_),
-    (Weapons.AIM_7MH__, AIM_7M__),
+    (Weapons.AIM_7MH, Weapons.AIM_7M),
+    (Weapons.AIM_7MH_, Weapons.AIM_7M_),
+    (Weapons.AIM_7MH__, Weapons.AIM_7M__),
     
     (Weapons.LAU_115C_AIM_7E, None),
     (Weapons.LAU_115C_AIM_7F, Weapons.LAU_115C_AIM_7E),
@@ -253,10 +253,10 @@ _WEAPON_FALLBACKS = [
     (Weapons.LAU_105_1_AIM_9M_R, Weapons.LAU_105_1_AIM_9L_R),
     
     (Weapons.LAU_105_2_AIM_9L, None),
-    (Weapons.LAU_105_2_AIM_9P5, LAU_105___2_AIM_9P_Sidewinder_IR_AAM),
+    (Weapons.LAU_105_2_AIM_9P5, Weapons.LAU_105___2_AIM_9P_Sidewinder_IR_AAM),
     
-    (Weapons.LAU_105___2_AIM_9M_Sidewinder_IR_AAM, LAU_105_2_AIM_9L),
-    (Weapons.LAU_105___2_AIM_9P_Sidewinder_IR_AAM, LAU_105___2_AIM_9M_Sidewinder_IR_AAM),
+    (Weapons.LAU_105___2_AIM_9M_Sidewinder_IR_AAM, Weapons.LAU_105_2_AIM_9L),
+    (Weapons.LAU_105___2_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_105___2_AIM_9M_Sidewinder_IR_AAM),
     
     (Weapons.LAU_115_2_LAU_127_AIM_9L, None),
     (Weapons.LAU_115_2_LAU_127_AIM_9M, Weapons.LAU_115_2_LAU_127_AIM_9L),
