@@ -171,9 +171,9 @@ class Package:
             FlightType.BAI,
             FlightType.DEAD,
             FlightType.SEAD,
-            FlightType.AEWC,
             FlightType.TARCAP,
             FlightType.BARCAP,
+            FlightType.AEWC,
             FlightType.SWEEP,
             FlightType.ESCORT,
         ]
