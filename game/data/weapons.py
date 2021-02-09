@@ -403,10 +403,120 @@ _WEAPON_FALLBACKS = [
     (Weapons.CBU_105, Weapons.CBU_97),
     
     (Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M151___HE_APKWS, Weapons.LAU_131___7_2_75__rockets_M151__HE_),
-    (Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS, LAU_131___7_2_75__rockets_M151__HE_),
+    (Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS, WEapons.LAU_131___7_2_75__rockets_M151__HE_),
     (Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS, Weapons.LAU_68_3___7_2_75__rockets_M151__HE_),
     (Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS, Weapons.LAU_68_3___7_2_75__rockets_M151__HE_),
     
+    # Russia
+    # KAB-1500
+    (Weapons.KAB_1500Kr, None),
+    (Weapons.KAB_1500LG_Pr, Weapons.KAB_1500Kr),
+    (Weapons.KAB_1500L, Weapons.KAB_1500LG_Pr),
+    
+    # KAB-500
+    (Weapons.KAB_500kr, Weapons.FAB_500_M62),
+    (Weapons.KAB_500L, Weapons.KAB_500kr),
+    (Weapons.KAB_500S, Weapons.KAB_500L),
+    
+    # KH Series
+    (Weapons.Kh_22N, None),
+    (Weapons.Kh_23L, None),
+    
+    (Weapons.Kh_25ML, None),
+    (Weapons.Kh_25ML_, None),
+    (Weapons.Kh_25ML__, None),
+    
+    (Weapons.Kh_25MP, None),
+    (Weapons.Kh_25MPU, Weapons.Kh_25MP),
+    
+    (Weapons.Kh_25MR, None),
+    (Weapons.Kh_25MR_, None),
+    
+    (Weapons.Kh_28__AS_9_Kyle_, None),
+    
+    (Weapons.Kh_29L, Weapons.Kh_25ML),
+    (Weapons.Kh_29L_, Weapons.Kh_25ML_),
+    (Weapons.Kh_29L__, Weapons.Kh_25ML__),
+    (Weapons.Kh_29T, Weapons.Kh_25MR),
+    (Weapons.Kh_29T_, Weapons.Kh_25MR_),
+    (Weapons.Kh_29T_, Weapons.Kh_25MR_),
+    
+    (Weapons.Kh_31A, None),
+    (Weapons.Kh_31A_, None),
+    (Weapons.Kh_31A__, None),
+    (Weapons.Kh_31P, Weapons.Kh_25MP),
+    (Weapons.Kh_31P_, Weapons.Kh_25MP),
+    (Weapons.Kh_31P__, Weapons.Kh_25MP),
+    
+    (Weapons.Kh_35, Weapons.Kh_31A),
+    (Weapons.Kh_35_, Weapons.Kh_31A_),
+    (Weapons.Kh_35_6, None),
+    
+    (Weapons.Kh_41, None),
+    
+    (Weapons.Kh_58U, Weapons.Kh_31P),
+    (Weapons.Kh_58U_, Weapons.Kh_31P_),
+    
+    (Weapons.Kh_59M, Weapons.Kh_31A),
+    
+    (Weapons.Kh_65, None),
+    (Weapons.Kh_65_6, None),
+    (Weapons.Kh_65_8, None),
+    
+    (Weapons.Kh_66_Grom__21__APU_68, None),
+    
+    # ECM
+    (Weapons.L175V_Khibiny_ECM_pod, None),
+    
+    # R-13
+    (Weapons.R_13M, None),
+    (Weapons.R_13M1, Weapons.R_13M),
+    
+    # R-24
+    (Weapons.R_24R, None),
+    (Weapons.R_24T, None),
+    
+    # R-27
+    (Weapons.R_27T, Weapons.R_24T),
+    (Weapons.R_27R, Weapons.R_24R),
+    (Weapons.R_27ER, Weapons.R_27R),
+    (Weapons.R_27ET, Weapons.R_27T),
+    
+    # R-33
+    (Weapons.R_33, None),
+    
+    # R-3
+    (Weapons.R_3S, Weapons.R_13M),
+    (Weapons.R_3R, Weapons.R_3S),
+    
+    # R-40
+    (Weapons.R_40R, None),
+    (Weapons.R_40T, None),
+    
+    # R-55
+    (Weapons.R_55, None),
+    (Weapons.RS2US, None),
+    
+    # R-60
+    (Weapons.R_60, Weapons.R_13M1),
+    (Weapons.R_60_x_2, Weapons.R_13M1),
+    (Weapons.R_60_x_2_, Weapons.R_13M1),
+    
+    (Weapons.APU_60_1_R_60M, Weapons.R_3S),
+    (Weapons.R_60M, Weapons.R_60),
+    (Weapons.Weapons.R_60M_, Weapons.R_60),
+    (Weapons.R_60M_2, Weapons.R_60M),
+    (Weapons.R_60M_2_, Weapons.R_60M),
+    (Weapons.R_60M_x_2, Weapons.R_60M),
+    (Weapons.R_60M_x_2_, Weapons.R_60M),
+    
+    # R-73
+    (Weapons.R_73, Weapons.R_60M),
+    (Weapons.R_73_, None),
+    
+    # R-77
+    (Weapons.R_77, Weapons.R_27ER),
+    (Weapons.R_77_, None),
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
@@ -756,11 +866,7 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS): 2012,
     
     # Russia
-    # 9A1472 Vikhr-1
-    Weapon.from_pydcs(Weapons.APU_6___6_9A4172_Vikhr): 1985,
-    Weapon.from_pydcs(Weapons.APU_8___8_9A4172_Vikhr): 1985,
-    Weapon.from_pydcs(Weapons.APU_8___8_9A4172_Vikhr): 1985,
-    
+
     # KAB-1500
     Weapon.from_pydcs(Weapons.KAB_1500Kr): 1985,
     Weapon.from_pydcs(Weapons.KAB_1500L): 1995,
@@ -842,15 +948,16 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.R_33): 1981,
     
     # R-3
-    Weapon.from_pydcs(Weapons.R_3R): 1961,
-    Weapon.from_pydcs(Weapons.R_3S): 1963,
+    Weapon.from_pydcs(Weapons.R_3R): 1966,
+    Weapon.from_pydcs(Weapons.R_3S): 1962,
     
     # R-40
     Weapon.from_pydcs(Weapons.R_40R): 1976,
     Weapon.from_pydcs(Weapons.R_40T): 1976,
     
     # R-55
-    Weapon.from_pydcs(Weapons.R_55): 1967,
+    Weapon.from_pydcs(Weapons.R_55): 1957,
+    Weapon.from_pydcs(Weapons.RS2US): 1957,
     
     # R-60
     Weapon.from_pydcs(Weapons.R_60): 1973,
