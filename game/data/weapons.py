@@ -517,6 +517,30 @@ _WEAPON_FALLBACKS = [
     # R-77
     (Weapons.R_77, Weapons.R_27ER),
     (Weapons.R_77_, None),
+    
+    # UK
+    # ALARM
+    (Weapons.ALARM, None),
+    (Weapons.ALARM_2, None),
+    
+    # France
+    # BLG-66 Belouga
+    (Weapons.AUF2_BLG_66_AC_x_2, Weapons.AUF2_MK_82_x_2),
+    (Weapons.BLG_66_AC_Belouga, Weapons.Mk_82),
+    (Weapons.BLG_66_AC_Belouga_, Weapons.Mk_82),
+    
+    # HOT-3
+    (Weapons.HOT3, None),
+    (Weapons.HOT3_. None),
+    
+    # Magic 2
+    (Weapons.Matra_Magic_II, None),
+    (Weapons.R_550_Magic_2, None),
+    
+    # Super 530D
+    (Weapons.Matra_Super_530D, Weapons.Matra_Magic_II),
+    (Weapons.Super_530D, None)
+    
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
@@ -984,10 +1008,6 @@ WEAPON_INTRODUCTION_YEARS = {
     # ALARM
     Weapon.from_pydcs(Weapons.ALARM): 1990,
     Weapon.from_pydcs(Weapons.ALARM_2): 1990,
-    
-    # BL-755
-    Weapon.from_pydcs(Weapons.BL755): 1973,
-    Weapon.from_pydcs(Weapons.BL_755_2): 1973,
     
     # France
     # BLG-66 Belouga
