@@ -402,6 +402,11 @@ _WEAPON_FALLBACKS = [
     (Weapons.BRU_57___2_x_CBU_105, None), # doesn't exist...
     (Weapons.CBU_105, Weapons.CBU_97),
     
+    (Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M151___HE_APKWS, Weapons.LAU_131___7_2_75__rockets_M151__HE_),
+    (Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS, LAU_131___7_2_75__rockets_M151__HE_),
+    (Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS, Weapons.LAU_68_3___7_2_75__rockets_M151__HE_),
+    (Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS, Weapons.LAU_68_3___7_2_75__rockets_M151__HE_),
+    
 ]
 
 WEAPON_FALLBACK_MAP: Dict[Weapon, Optional[Weapon]] = defaultdict(
