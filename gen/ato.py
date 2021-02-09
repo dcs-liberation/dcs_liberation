@@ -173,8 +173,8 @@ class Package:
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,
-            FlightType.SWEEP,
             FlightType.AEWC,
+            FlightType.SWEEP,
             FlightType.ESCORT,
         ]
         for task in task_priorities:
