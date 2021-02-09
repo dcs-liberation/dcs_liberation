@@ -1,8 +1,11 @@
 import random
 
 from gen.sam.group_generator import ShipGroupGenerator
-from pydcs.dcs.ships import USS_Arleigh_Burke_IIa, Ticonderoga_class
 
+from dcs.ships import (
+    USS_Arleigh_Burke_IIa,
+    Ticonderoga_class
+)
 
 class CarrierGroupGenerator(ShipGroupGenerator):
 
