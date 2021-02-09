@@ -531,7 +531,7 @@ _WEAPON_FALLBACKS = [
     
     # HOT-3
     (Weapons.HOT3, None),
-    (Weapons.HOT3_. None),
+    (Weapons.HOT3_, None),
     
     # Magic 2
     (Weapons.Matra_Magic_II, None),
