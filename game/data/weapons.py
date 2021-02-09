@@ -158,12 +158,12 @@ _WEAPON_FALLBACKS = [
     (Weapons.LAU_117_AGM_65B, None), # doesn't exist
     
     (Weapons.LAU_117_AGM_65D, Weapons.AGM_62), # Walleye is the predecessor to the maverick
-    (Weapons.LAU_117_AGM_65E, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65E, None),
     (Weapons.LAU_117_AGM_65F, Weapons.LAU_117_AGM_65D),
     (Weapons.LAU_117_AGM_65G, Weapons.LAU_117_AGM_65D),
     (Weapons.LAU_117_AGM_65H, Weapons.LAU_117_AGM_65D),
     (Weapons.LAU_117_AGM_65K, Weapons.LAU_117_AGM_65D),
-    (Weapons.LAU_117_AGM_65L, Weapons.LAU_117_AGM_65D),
+    (Weapons.LAU_117_AGM_65L, None),
     
     (Weapons.LAU_88_AGM_65D_2, None),
     (Weapons.LAU_88_AGM_65D_2_, None),
@@ -354,13 +354,13 @@ _WEAPON_FALLBACKS = [
     # GBU-31 JDAM
     (Weapons.GBU_31V3B_8, Weapons.B_1B_Mk_84_8),
     (Weapons.GBU_31_8, Weapons.B_1B_Mk_84_8),
-    (Weapons.GBU_31_V_1_B, Weapons.Mk_84),
-    (Weapons.GBU_31_V_2_B, Weapons.Mk_84),
-    (Weapons.GBU_31_V_3_B, Weapons.Mk_84),
-    (Weapons.GBU_31_V_4_B, Weapons.Mk_84),
+    (Weapons.GBU_31_V_1_B, Weapons.GBU_24_),
+    (Weapons.GBU_31_V_2_B, Weapons.GBU_24_),
+    (Weapons.GBU_31_V_3_B, Weapons.GBU_24_),
+    (Weapons.GBU_31_V_4_B, Weapons.GBU_24_),
     
     # GBU-32 JDAM
-    (Weapons.GBU_32_V_2_B, Weapons.Mk_83),
+    (Weapons.GBU_32_V_2_B, Weapons.GBU_16),
     
     # GBU-32 JDAM
     (Weapons.BRU_55___2_x_GBU_38, Weapons.BRU_33___2_x_Mk_82_),
@@ -587,7 +587,7 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.AGM_45B_): 1970,
     
     # AGM-62 Walleye
-    Weapon.from_pydcs(Weapons.AGM_62): 1967,
+    Weapon.from_pydcs(Weapons.AGM_62): 1972,
     
     # AGM-65 Maverick
     Weapon.from_pydcs(Weapons.AGM_65D): 1983,
@@ -596,12 +596,12 @@ WEAPON_INTRODUCTION_YEARS = {
     
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65A): 1972,
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65B): 1972,
-    Weapon.from_pydcs(Weapons.LAU_117_AGM_65D): 1983,
-    Weapon.from_pydcs(Weapons.LAU_117_AGM_65E): 1985,
-    Weapon.from_pydcs(Weapons.LAU_117_AGM_65F): 1989,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65D): 1986,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65E): 1990,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65F): 1991,
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65G): 1989,
-    Weapon.from_pydcs(Weapons.LAU_117_AGM_65H): 2007,
-    Weapon.from_pydcs(Weapons.LAU_117_AGM_65K): 2007,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65H): 2002,
+    Weapon.from_pydcs(Weapons.LAU_117_AGM_65K): 2002,
     Weapon.from_pydcs(Weapons.LAU_117_AGM_65L): 1985,
     
     Weapon.from_pydcs(Weapons.LAU_88_AGM_65D_2): 1983,
@@ -784,9 +784,9 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons._3_GBU_16_): 1976,
     
     # GBU-24 LGB
-    Weapon.from_pydcs(Weapons.GBU_24): 1983,
-    Weapon.from_pydcs(Weapons.GBU_24_): 1983,
-    Weapon.from_pydcs(Weapons.GBU_24__): 1983,
+    Weapon.from_pydcs(Weapons.GBU_24): 1986,
+    Weapon.from_pydcs(Weapons.GBU_24_): 1986,
+    Weapon.from_pydcs(Weapons.GBU_24__): 1986,
     
     # GBU-27 LGB
     Weapon.from_pydcs(Weapons.GBU_27): 1991,
@@ -797,24 +797,24 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.GBU_28): 1991,
     
     # GBU-31 JDAM
-    Weapon.from_pydcs(Weapons.GBU_31V3B_8): 1997,
-    Weapon.from_pydcs(Weapons.GBU_31_8): 1997,
-    Weapon.from_pydcs(Weapons.GBU_31_V_1_B): 1997,
-    Weapon.from_pydcs(Weapons.GBU_31_V_2_B): 1997,
-    Weapon.from_pydcs(Weapons.GBU_31_V_3_B): 1997,
-    Weapon.from_pydcs(Weapons.GBU_31_V_4_B): 1997,
+    Weapon.from_pydcs(Weapons.GBU_31V3B_8): 2001,
+    Weapon.from_pydcs(Weapons.GBU_31_8): 2001,
+    Weapon.from_pydcs(Weapons.GBU_31_V_1_B): 2001,
+    Weapon.from_pydcs(Weapons.GBU_31_V_2_B): 2001,
+    Weapon.from_pydcs(Weapons.GBU_31_V_3_B): 2001,
+    Weapon.from_pydcs(Weapons.GBU_31_V_4_B): 2001,
     
     # GBU-32 JDAM
-    Weapon.from_pydcs(Weapons.GBU_32_V_2_B): 1997,
+    Weapon.from_pydcs(Weapons.GBU_32_V_2_B): 2002,
     
     # GBU-38 JDAM
-    Weapon.from_pydcs(Weapons.BRU_55___2_x_GBU_38): 2002,
-    Weapon.from_pydcs(Weapons.BRU_57___2_x_GBU_38): 2002,
-    Weapon.from_pydcs(Weapons.GBU_38): 2002,
-    Weapon.from_pydcs(Weapons.GBU_38_16): 2002,
-    Weapon.from_pydcs(Weapons._2_GBU_38): 2002,
-    Weapon.from_pydcs(Weapons._2_GBU_38_): 2002,
-    Weapon.from_pydcs(Weapons._3_GBU_38): 2002,
+    Weapon.from_pydcs(Weapons.BRU_55___2_x_GBU_38): 2005,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_GBU_38): 2005,
+    Weapon.from_pydcs(Weapons.GBU_38): 2005,
+    Weapon.from_pydcs(Weapons.GBU_38_16): 2005,
+    Weapon.from_pydcs(Weapons._2_GBU_38): 2005,
+    Weapon.from_pydcs(Weapons._2_GBU_38_): 2005,
+    Weapon.from_pydcs(Weapons._3_GBU_38): 2005,
     
     # GBU-54 LJDAM
     Weapon.from_pydcs(Weapons.GBU_54_V_1_B): 2008,
@@ -832,10 +832,10 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_87): 1986,
     
     # CBU-97
-    Weapon.from_pydcs(Weapons.CBU_97): 1986,
-    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97): 1986,
-    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97_): 1986,
-    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_97): 1986,
+    Weapon.from_pydcs(Weapons.CBU_97): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A___2_x_CBU_97_): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A___3_x_CBU_97): 1992,
     
     # CBU-99
     Weapon.from_pydcs(Weapons.BRU_33___2_x_CBU_99): 1968,
@@ -876,18 +876,18 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons._3_Mk_20_Rockeye_): 1968,
     
     # CBU-103
-    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_103): 1997,
-    Weapon.from_pydcs(Weapons.CBU_103): 1997,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_103): 2000,
+    Weapon.from_pydcs(Weapons.CBU_103): 2000,
     
     # CBU-105
-    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_105): 1997,
-    Weapon.from_pydcs(Weapons.CBU_105): 1997,
+    Weapon.from_pydcs(Weapons.BRU_57___2_x_CBU_105): 2000,
+    Weapon.from_pydcs(Weapons.CBU_105): 2000,
     
     # APKWS
-    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M151___HE_APKWS): 2012,
-    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS): 2012,
-    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS): 2012,
-    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS): 2012,
+    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M151___HE_APKWS): 2016,
+    Weapon.from_pydcs(Weapons.LAU_131_pod___7_x_2_75__Hydra___Laser_Guided_Rkts_M282___MPP_APKWS): 2016,
+    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M151___HE_APKWS): 2016,
+    Weapon.from_pydcs(Weapons._3_x_LAU_131_pods___21_x_2_75__Hydra___Laser_Guided_M282___MPP_APKWS): 2016,
     
     # Russia
 
