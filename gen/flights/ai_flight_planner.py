@@ -441,7 +441,7 @@ class ObjectiveFinder:
         from_frontline = 0
 
         for c in self.game.theater.controlpoints:
-            if c.is_carrier:
+            if c.is_carrier & c.is_friendly(self.is_player):
                 return c
             if c.is_friendly(self.is_player) & c.has_frontline:
                 if c.distance_to(self.front_lines().__next__()) > from_frontline:
