@@ -153,7 +153,7 @@ _WEAPON_FALLBACKS = [
     # AGM-65 Maverick
     (Weapons.AGM_65D, None), # doesn't exist
     (Weapons.AGM_65E, None), # doesn't exist
-    (Weapons.AGM_65F, None), # doesn't exist
+    (Weapons.AGM_65K, None), # doesn't exist
     (Weapons.LAU_117_AGM_65A, None), # doesn't exist
     (Weapons.LAU_117_AGM_65B, None), # doesn't exist
     
@@ -224,7 +224,7 @@ _WEAPON_FALLBACKS = [
     (Weapons.AIM_54C_Mk47__, Weapons.AIM_54A_Mk60__),
     
     # AIM-7 Sparrow
-    (Weapons.AIM_7E),
+    (Weapons.AIM_7E, None),
     (Weapons.AIM_7F, Weapons.AIM_7E),
     (Weapons.AIM_7F_, None),
     (Weapons.AIM_7F__, None),
@@ -504,7 +504,7 @@ _WEAPON_FALLBACKS = [
     
     (Weapons.APU_60_1_R_60M, Weapons.R_3S),
     (Weapons.R_60M, Weapons.R_60),
-    (Weapons.Weapons.R_60M_, Weapons.R_60),
+    (Weapons.R_60M_, Weapons.R_60),
     (Weapons.R_60M_2, Weapons.R_60M),
     (Weapons.R_60M_2_, Weapons.R_60M),
     (Weapons.R_60M_x_2, Weapons.R_60M),
