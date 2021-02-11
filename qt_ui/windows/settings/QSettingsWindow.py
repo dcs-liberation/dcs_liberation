@@ -309,6 +309,24 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(restrict_weapons_label, 0, 0)
         general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
 
+        def set_old_awec(value: bool) -> None:
+            self.game.settings.invulnerable_aewc = value
+
+        old_awac = QCheckBox()
+        old_awac.setChecked(self.game.settings.invulnerable_aewc)
+        old_awac.toggled.connect(set_old_awec)
+
+        old_awec_info = (
+            "Disables the invulnerable AEW&C"
+        )
+
+        old_awac.setToolTip(old_awec_info)
+        old_awac_label = QLabel("Disable invulnerable AEW&C")
+        old_awac_label.setToolTip(old_awec_info)
+
+        general_layout.addWidget(old_awac_label, 1, 0)
+        general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
+
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 

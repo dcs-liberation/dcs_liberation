@@ -30,6 +30,7 @@ class Settings:
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
     restrict_weapons_by_date: bool = False
+    invulnerable_aewc: bool = True
 
     # Performance oriented
     perf_red_alert_state: bool = True
