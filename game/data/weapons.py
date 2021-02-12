@@ -638,8 +638,9 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.MER_6_AGM_86C): 1986,
     
     # AGM-88 HARM
-    Weapon.from_pydcs(Weapons.AGM_88C): 1985,
-    Weapon.from_pydcs(Weapons.AGM_88C_): 1985,
+    Weapon.from_pydcs(Weapons.AGM_88C): 1983,
+    Weapon.from_pydcs(Weapons.AGM_88C_): 1983,
+    # for future reference: 1983 is the A model IOC. B model in 1986 and C model in 1994.
     
     # AIM-120 AMRAAM
     Weapon.from_pydcs(Weapons.AIM_120B): 1994,
