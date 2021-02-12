@@ -1,5 +1,9 @@
 # 2.4.2
 
+## Features/Improvements
+
+* **[Factions]** Introduction dates and fallback weapons added for US, Russian, UK, and French weapons. Huge thanks to @TheCandianVendingMachine for the massive amount of data entry!
+
 ## Fixes
 
 * **[Economy]** Pending ground unit purchases will also be transferred when a connected base is captured.
