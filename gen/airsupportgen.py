@@ -136,7 +136,7 @@ class AirSupportConflictGenerator:
 
             self.air_support.tankers.append(TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan))
 
-        if not self.game.settings.invulnerable_aewc:
+        if not self.game.settings.disable_legacy_aewc:
             possible_awacs = db.find_unittype(AWACS, self.conflict.attackers_side)
 
             if len(possible_awacs) > 0:
