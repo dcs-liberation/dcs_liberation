@@ -72,9 +72,9 @@ class AirSupportConflictGenerator:
     @staticmethod
     def _get_tanker_params(unit_type: Type[UnitType]) -> Tuple[int, int]:
         if unit_type is KC130:
-            return (TANKER_ALT - 500, 596)
+            return (TANKER_ALT - 1000, 596)
         elif unit_type is KC_135:
-            return (TANKER_ALT, 770)
+            return (TANKER_ALT, 702)
         elif unit_type is KC135MPRS:
             return (TANKER_ALT + 500, 596)
         return (TANKER_ALT, 574)
