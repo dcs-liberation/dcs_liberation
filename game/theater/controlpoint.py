@@ -611,6 +611,11 @@ class ControlPoint(MissionTarget, ABC):
             ]
         yield from super().mission_types(for_player)
 
+    @property
+    def has_active_frontline(self) -> bool:
+        return any(
+            not c.is_friendly(self.captured) for c in self.connected_points)
+
 
 class Airfield(ControlPoint):
 
