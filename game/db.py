@@ -1301,6 +1301,10 @@ TIME_PERIODS = {
     "Gulf War - Winter [1990]": datetime(1990, 1, 1),
     "Gulf War - Spring [1990]": datetime(1990, 4, 1),
     "Gulf War - Summer [1990]": datetime(1990, 6, 1),
+    "Mid-90s - Winter [1995]": datetime(1995, 1, 1),
+    "Mid-90s - Spring [1995]": datetime(1995, 4, 1),
+    "Mid-90s - Summer [1995]": datetime(1995, 6, 1),
+    "Mid-90s - Fall [1995]": datetime(1995, 10, 1),
     "Gulf War - Fall [1990]": datetime(1990, 10, 1),
     "Modern - Winter [2010]": datetime(2010, 1, 1),
     "Modern - Spring [2010]": datetime(2010, 4, 1),
@@ -1310,7 +1314,7 @@ TIME_PERIODS = {
     "Syrian War [2011]": datetime(2011, 3, 15),
     "6 days war [1967]": datetime(1967, 6, 5),
     "Yom Kippour War [1973]": datetime(1973, 10, 6),
-    "Lebanon War [1982]": datetime(1982, 6, 6),
+    "First Lebanon War [1982]": datetime(1982, 6, 6),
     "Arab-Israeli War [1948]": datetime(1948, 5, 15),
 }
 
