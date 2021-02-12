@@ -17,6 +17,7 @@ Saves from 2.4 are not compatible with 2.5.
 ## Fixes
 
 * **[Economy]** Pending ground unit purchases will also be transferred when a connected base is captured.
+* **[UI]** Fixed rounding of budget in recruitment menu.
 
 # 2.4.1
 
