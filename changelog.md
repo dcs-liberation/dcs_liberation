@@ -1,3 +1,9 @@
+# 2.4.2
+
+## Fixes
+
+* **[Economy]** Pending ground unit purchases will also be transferred when a connected base is captured.
+
 # 2.4.1
 
 ## Fixes
@@ -6,7 +12,6 @@
 * **[Culling]** Missile sites generate reasonably sized non-cull zones rather than 100km ones.
 * **[UI]** Budget display is also now rounded to 2 decimal places.
 * **[UI]** Fixed some areas where the old, non-pretty name was displayed to users.
-* **[Economy]** Pending ground unit purchases will also be transferred when a connected base is captured. 
 
 # 2.4.0
 
