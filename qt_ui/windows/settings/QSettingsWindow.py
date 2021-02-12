@@ -309,6 +309,28 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(restrict_weapons_label, 0, 0)
         general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
 
+        def set_old_awec(value: bool) -> None:
+            self.game.settings.disable_legacy_aewc = value
+
+        old_awac = QCheckBox()
+        old_awac.setChecked(self.game.settings.disable_legacy_aewc)
+        old_awac.toggled.connect(set_old_awec)
+
+        old_awec_info = (
+            "If checked, the invulnerable friendly AEW&C aircraft that begins "
+            "the mission in the air will not be spawned. AEW&C missions must "
+            "be planned in the ATO and will take time to arrive on-station."
+        )
+
+        old_awac.setToolTip(old_awec_info)
+        old_awac_label = QLabel(
+            "Disable invulnerable, always-available AEW&C (WIP)"
+        )
+        old_awac_label.setToolTip(old_awec_info)
+
+        general_layout.addWidget(old_awac_label, 1, 0)
+        general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
+
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 
