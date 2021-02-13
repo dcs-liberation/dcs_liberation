@@ -13,6 +13,7 @@ Saves from 2.4 are not compatible with 2.5.
 ## Features/Improvements
 
 * **[Factions]** Introduction dates and fallback weapons added for US, Russian, UK, and French weapons. Huge thanks to @TheCandianVendingMachine for the massive amount of data entry!
+* **[Campaigns]** Added 1995 start dates.
 
 ## Fixes
 
