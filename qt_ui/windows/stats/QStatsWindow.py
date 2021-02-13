@@ -7,7 +7,6 @@ from qt_ui.windows.stats.QArmorChart import QArmorChart
 
 
 class QStatsWindow(QDialog):
-
     def __init__(self, game: Game):
         super(QStatsWindow, self).__init__()
 

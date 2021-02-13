@@ -71,34 +71,38 @@ class FlightDelegate(QStyledItemDelegate):
             return f"From {origin} to {flight.arrival.name}"
         return f"From {origin}"
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem,
-              index: QModelIndex) -> None:
+    def paint(
+        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> None:
         # Draw the list item with all the default selection styling, but with an
         # invalid index so text formatting is left to us.
         super().paint(painter, option, QModelIndex())
 
-        rect = option.rect.adjusted(self.HMARGIN, self.VMARGIN, -self.HMARGIN,
-                                    -self.VMARGIN)
+        rect = option.rect.adjusted(
+            self.HMARGIN, self.VMARGIN, -self.HMARGIN, -self.VMARGIN
+        )
 
         with painter_context(painter):
             painter.setFont(self.get_font(option))
 
             icon: Optional[QIcon] = index.data(Qt.DecorationRole)
             if icon is not None:
-                icon.paint(painter, rect, Qt.AlignLeft | Qt.AlignVCenter,
-                           self.icon_mode(option),
-                           self.icon_state(option))
+                icon.paint(
+                    painter,
+                    rect,
+                    Qt.AlignLeft | Qt.AlignVCenter,
+                    self.icon_mode(option),
+                    self.icon_state(option),
+                )
 
-            rect = rect.adjusted(self.icon_size(option).width() + self.HMARGIN,
-                                 0, 0, 0)
+            rect = rect.adjusted(self.icon_size(option).width() + self.HMARGIN, 0, 0, 0)
             painter.drawText(rect, Qt.AlignLeft, self.first_row_text(index))
             line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
             painter.drawText(line2, Qt.AlignLeft, self.second_row_text(index))
 
             clients = self.num_clients(index)
             if clients:
-                painter.drawText(rect, Qt.AlignRight,
-                                 f"Player Slots: {clients}")
+                painter.drawText(rect, Qt.AlignRight, f"Player Slots: {clients}")
 
     def num_clients(self, index: QModelIndex) -> int:
         flight = self.flight(index)
@@ -126,22 +130,24 @@ class FlightDelegate(QStyledItemDelegate):
         else:
             return icon_size
 
-    def sizeHint(self, option: QStyleOptionViewItem,
-                 index: QModelIndex) -> QSize:
+    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
         left = self.icon_size(option).width() + self.HMARGIN
         metrics = QFontMetrics(self.get_font(option))
         first = metrics.size(0, self.first_row_text(index))
         second = metrics.size(0, self.second_row_text(index))
         text_width = max(first.width(), second.width())
-        return QSize(left + text_width + 2 * self.HMARGIN,
-                     first.height() + second.height() + 2 * self.VMARGIN)
+        return QSize(
+            left + text_width + 2 * self.HMARGIN,
+            first.height() + second.height() + 2 * self.VMARGIN,
+        )
 
 
 class QFlightList(QListView):
     """List view for displaying the flights of a package."""
 
-    def __init__(self, game_model: GameModel,
-                 package_model: Optional[PackageModel]) -> None:
+    def __init__(
+        self, game_model: GameModel, package_model: Optional[PackageModel]
+    ) -> None:
         super().__init__()
         self.game_model = game_model
         self.package_model = package_model
@@ -163,8 +169,7 @@ class QFlightList(QListView):
             # noinspection PyUnresolvedReferences
             model.deleted.connect(self.disconnect_model)
             self.selectionModel().setCurrentIndex(
-                model.index(0, 0, QModelIndex()),
-                QItemSelectionModel.Select
+                model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
             )
 
     def disconnect_model(self) -> None:
@@ -192,14 +197,15 @@ class QFlightList(QListView):
 
     def edit_flight(self, index: QModelIndex) -> None:
         from qt_ui.dialogs import Dialog
+
         Dialog.open_edit_flight_dialog(
-            self.package_model, self.package_model.flight_at_index(index),
-            parent=self.window()
+            self.package_model,
+            self.package_model.flight_at_index(index),
+            parent=self.window(),
         )
 
     def delete_flight(self, index: QModelIndex) -> None:
-        self.game_model.game.aircraft_inventory.return_from_flight(
-            self.selected_item)
+        self.game_model.game.aircraft_inventory.return_from_flight(self.selected_item)
         self.package_model.delete_flight_at_index(index)
         GameUpdateSignal.get_instance().redraw_flight_paths()
 
@@ -226,8 +232,9 @@ class QFlightPanel(QGroupBox):
     delete buttons for flight management.
     """
 
-    def __init__(self, game_model: GameModel,
-                 package_model: Optional[PackageModel] = None) -> None:
+    def __init__(
+        self, game_model: GameModel, package_model: Optional[PackageModel] = None
+    ) -> None:
         super().__init__("Flights")
         self.game_model = game_model
         self.package_model = package_model
@@ -336,14 +343,16 @@ class PackageDelegate(QStyledItemDelegate):
         package = self.package(index)
         return f"TOT T+{package.time_over_target}"
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem,
-              index: QModelIndex) -> None:
+    def paint(
+        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> None:
         # Draw the list item with all the default selection styling, but with an
         # invalid index so text formatting is left to us.
         super().paint(painter, option, QModelIndex())
 
-        rect = option.rect.adjusted(self.HMARGIN, self.VMARGIN, -self.HMARGIN,
-                                    -self.VMARGIN)
+        rect = option.rect.adjusted(
+            self.HMARGIN, self.VMARGIN, -self.HMARGIN, -self.VMARGIN
+        )
 
         with painter_context(painter):
             painter.setFont(self.get_font(option))
@@ -354,20 +363,20 @@ class PackageDelegate(QStyledItemDelegate):
 
             clients = self.num_clients(index)
             if clients:
-                painter.drawText(rect, Qt.AlignRight,
-                                 f"Player Slots: {clients}")
+                painter.drawText(rect, Qt.AlignRight, f"Player Slots: {clients}")
 
     def num_clients(self, index: QModelIndex) -> int:
         package = self.package(index)
         return sum(f.client_count for f in package.flights)
 
-    def sizeHint(self, option: QStyleOptionViewItem,
-                 index: QModelIndex) -> QSize:
+    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
         metrics = QFontMetrics(self.get_font(option))
         left = metrics.size(0, self.left_text(index))
         right = metrics.size(0, self.right_text(index))
-        return QSize(max(left.width(), right.width()) + 2 * self.HMARGIN,
-                     left.height() + right.height() + 2 * self.VMARGIN)
+        return QSize(
+            max(left.width(), right.width()) + 2 * self.HMARGIN,
+            left.height() + right.height() + 2 * self.VMARGIN,
+        )
 
 
 class QPackageList(QListView):
@@ -393,19 +402,20 @@ class QPackageList(QListView):
 
     def edit_package(self, index: QModelIndex) -> None:
         from qt_ui.dialogs import Dialog
+
         Dialog.open_edit_package_dialog(self.ato_model.get_package_model(index))
 
     def delete_package(self, index: QModelIndex) -> None:
         self.ato_model.delete_package_at_index(index)
         GameUpdateSignal.get_instance().redraw_flight_paths()
 
-    def on_new_packages(self, _parent: QModelIndex, first: int,
-                        _last: int) -> None:
+    def on_new_packages(self, _parent: QModelIndex, first: int, _last: int) -> None:
         # Select the newly created pacakges. This should only ever happen due to
         # the player saving a new package, so selecting it helps them view/edit
         # it faster.
-        self.selectionModel().setCurrentIndex(self.model().index(first, 0),
-                                              QItemSelectionModel.Select)
+        self.selectionModel().setCurrentIndex(
+            self.model().index(first, 0), QItemSelectionModel.Select
+        )
 
     def on_double_click(self, index: QModelIndex) -> None:
         if not index.isValid():
@@ -533,8 +543,6 @@ class QAirTaskingOrderPanel(QSplitter):
         """Sets the newly selected flight for display in the bottom panel."""
         index = self.package_panel.package_list.currentIndex()
         if index.isValid():
-            self.flight_panel.set_package(
-                self.ato_model.get_package_model(index)
-            )
+            self.flight_panel.set_package(self.ato_model.get_package_model(index))
         else:
             self.flight_panel.set_package(None)

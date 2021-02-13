@@ -41,6 +41,7 @@ if TYPE_CHECKING:
 
 class Operation:
     """Static class for managing the final Mission generation"""
+
     current_mission = None  # type: Mission
     airgen = None  # type: AircraftConflictGenerator
     triggersgen = None  # type: TriggersGenerator
@@ -84,7 +85,7 @@ class Operation:
                 cls.game.enemy_name,
                 cls.game.player_country,
                 cls.game.enemy_country,
-                frontline.position
+                frontline.position,
             )
 
     @classmethod
@@ -93,7 +94,7 @@ class Operation:
         player_cp, enemy_cp = cls.game.theater.closest_opposing_control_points()
         mid_point = player_cp.position.point_from_heading(
             player_cp.position.heading_between_point(enemy_cp.position),
-            player_cp.position.distance_to_point(enemy_cp.position) / 2
+            player_cp.position.distance_to_point(enemy_cp.position) / 2,
         )
         return Conflict(
             cls.game.theater,
@@ -103,7 +104,7 @@ class Operation:
             cls.game.enemy_name,
             cls.game.player_country,
             cls.game.enemy_country,
-            mid_point
+            mid_point,
         )
 
     @classmethod
@@ -118,9 +119,11 @@ class Operation:
         p_country = cls.game.player_country
         e_country = cls.game.enemy_country
         cls.current_mission.coalition["blue"].add_country(
-            country_dict[db.country_id_from_name(p_country)]())
+            country_dict[db.country_id_from_name(p_country)]()
+        )
         cls.current_mission.coalition["red"].add_country(
-            country_dict[db.country_id_from_name(e_country)]())
+            country_dict[db.country_id_from_name(e_country)]()
+        )
 
     @classmethod
     def inject_lua_trigger(cls, contents: str, comment: str) -> None:
@@ -133,12 +136,11 @@ class Operation:
         cls.plugin_scripts.append(mnemonic)
 
     @classmethod
-    def inject_plugin_script(cls, plugin_mnemonic: str, script: str,
-                             script_mnemonic: str) -> None:
+    def inject_plugin_script(
+        cls, plugin_mnemonic: str, script: str, script_mnemonic: str
+    ) -> None:
         if script_mnemonic in cls.plugin_scripts:
-            logging.debug(
-                f"Skipping already loaded {script} for {plugin_mnemonic}"
-            )
+            logging.debug(f"Skipping already loaded {script} for {plugin_mnemonic}")
         else:
             cls.plugin_scripts.append(script_mnemonic)
 
@@ -146,15 +148,12 @@ class Operation:
 
             script_path = Path(plugin_path, script)
             if not script_path.exists():
-                logging.error(
-                    f"Cannot find {script_path} for plugin {plugin_mnemonic}"
-                )
+                logging.error(f"Cannot find {script_path} for plugin {plugin_mnemonic}")
                 return
 
             trigger = TriggerStart(comment=f"Load {script_mnemonic}")
             filename = script_path.resolve()
-            fileref = cls.current_mission.map_resource.add_resource_file(
-                filename)
+            fileref = cls.current_mission.map_resource.add_resource_file(filename)
             trigger.add_action(DoScriptFile(fileref))
             cls.current_mission.triggerrules.triggers.append(trigger)
 
@@ -166,11 +165,10 @@ class Operation:
         jtacs: List[JtacInfo],
         airgen: AircraftConflictGenerator,
     ):
-        """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)
-        """
+        """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)"""
         gens: List[MissionInfoGenerator] = [
             KneeboardGenerator(cls.current_mission, cls.game),
-            BriefingGenerator(cls.current_mission, cls.game)
+            BriefingGenerator(cls.current_mission, cls.game),
         ]
         for gen in gens:
             for dynamic_runway in groundobjectgen.runways.values():
@@ -208,8 +206,9 @@ class Operation:
             cls.radio_registry.reserve(frequency)
 
     @classmethod
-    def assign_channels_to_flights(cls, flights: List[FlightData],
-                                   air_support: AirSupport) -> None:
+    def assign_channels_to_flights(
+        cls, flights: List[FlightData], air_support: AirSupport
+    ) -> None:
         """Assigns preset radio channels for client flights."""
         for flight in flights:
             if not flight.client_units:
@@ -217,8 +216,7 @@ class Operation:
             cls.assign_channels_to_flight(flight, air_support)
 
     @staticmethod
-    def assign_channels_to_flight(flight: FlightData,
-                                  air_support: AirSupport) -> None:
+    def assign_channels_to_flight(flight: FlightData, air_support: AirSupport) -> None:
         """Assigns preset radio channels for a client flight."""
         airframe = flight.aircraft_type
 
@@ -234,7 +232,9 @@ class Operation:
             )
 
     @classmethod
-    def _create_tacan_registry(cls, unique_map_frequencies: Set[RadioFrequency]) -> None:
+    def _create_tacan_registry(
+        cls, unique_map_frequencies: Set[RadioFrequency]
+    ) -> None:
         """
         Dedup beacon/radio frequencies, since some maps have some frequencies
         used multiple times.
@@ -246,13 +246,14 @@ class Operation:
             unique_map_frequencies.add(beacon.frequency)
             if beacon.is_tacan:
                 if beacon.channel is None:
-                    logging.error(
-                        f"TACAN beacon has no channel: {beacon.callsign}")
+                    logging.error(f"TACAN beacon has no channel: {beacon.callsign}")
                 else:
                     cls.tacan_registry.reserve(beacon.tacan_channel)
 
     @classmethod
-    def _create_radio_registry(cls, unique_map_frequencies: Set[RadioFrequency]) -> None:
+    def _create_radio_registry(
+        cls, unique_map_frequencies: Set[RadioFrequency]
+    ) -> None:
         cls.radio_registry = RadioRegistry()
         for data in AIRFIELD_DATA.values():
             if data.theater == cls.game.theater.terrain.name and data.atc:
@@ -270,7 +271,7 @@ class Operation:
             cls.game,
             cls.radio_registry,
             cls.tacan_registry,
-            cls.unit_map
+            cls.unit_map,
         )
         cls.groundobjectgen.generate()
 
@@ -284,10 +285,13 @@ class Operation:
                 continue
 
             pos = Point(d["x"], d["z"])
-            if utype is not None and not cls.game.position_culled(pos) and cls.game.settings.perf_destroyed_units:
+            if (
+                utype is not None
+                and not cls.game.position_culled(pos)
+                and cls.game.settings.perf_destroyed_units
+            ):
                 cls.current_mission.static_group(
-                    country=cls.current_mission.country(
-                        cls.game.player_country),
+                    country=cls.current_mission.country(cls.game.player_country),
                     name="",
                     _type=utype,
                     hidden=True,
@@ -302,13 +306,13 @@ class Operation:
         cls.create_unit_map()
         cls.create_radio_registries()
         # Set mission time and weather conditions.
-        EnvironmentGenerator(cls.current_mission,
-                             cls.game.conditions).generate()
+        EnvironmentGenerator(cls.current_mission, cls.game.conditions).generate()
         cls._generate_ground_units()
         cls._generate_destroyed_units()
         cls._generate_air_units()
-        cls.assign_channels_to_flights(cls.airgen.flights,
-                                        cls.airsupportgen.air_support)
+        cls.assign_channels_to_flights(
+            cls.airgen.flights, cls.airsupportgen.air_support
+        )
         cls._generate_ground_conflicts()
 
         # Triggers
@@ -317,14 +321,16 @@ class Operation:
 
         # Setup combined arms parameters
         cls.current_mission.groundControl.pilot_can_control_vehicles = cls.ca_slots > 0
-        if cls.game.player_country in [country.name for country in cls.current_mission.coalition["blue"].countries.values()]:
+        if cls.game.player_country in [
+            country.name
+            for country in cls.current_mission.coalition["blue"].countries.values()
+        ]:
             cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
         else:
             cls.current_mission.groundControl.red_tactical_commander = cls.ca_slots
 
         # Options
-        forcedoptionsgen = ForcedOptionsGenerator(
-            cls.current_mission, cls.game)
+        forcedoptionsgen = ForcedOptionsGenerator(cls.current_mission, cls.game)
         forcedoptionsgen.generate()
 
         # Generate Visuals Smoke Effects
@@ -341,13 +347,11 @@ class Operation:
                 plugin.inject_scripts(cls)
                 plugin.inject_configuration(cls)
 
-        cls.assign_channels_to_flights(cls.airgen.flights,
-                                        cls.airsupportgen.air_support)
+        cls.assign_channels_to_flights(
+            cls.airgen.flights, cls.airsupportgen.air_support
+        )
         cls.notify_info_generators(
-            cls.groundobjectgen,
-            cls.airsupportgen,
-            cls.jtacs,
-            cls.airgen
+            cls.groundobjectgen, cls.airsupportgen, cls.jtacs, cls.airgen
         )
         cls.reset_naming_ids()
         return cls.unit_map
@@ -359,29 +363,38 @@ class Operation:
         # Air Support (Tanker & Awacs)
         assert cls.radio_registry and cls.tacan_registry
         cls.airsupportgen = AirSupportConflictGenerator(
-            cls.current_mission, cls.air_conflict(), cls.game, cls.radio_registry,
-            cls.tacan_registry)
+            cls.current_mission,
+            cls.air_conflict(),
+            cls.game,
+            cls.radio_registry,
+            cls.tacan_registry,
+        )
         cls.airsupportgen.generate()
 
         # Generate Aircraft Activity on the map
         cls.airgen = AircraftConflictGenerator(
-            cls.current_mission, cls.game.settings, cls.game,
-            cls.radio_registry, cls.unit_map)
+            cls.current_mission,
+            cls.game.settings,
+            cls.game,
+            cls.radio_registry,
+            cls.unit_map,
+        )
         cls.airgen.clear_parking_slots()
 
         cls.airgen.generate_flights(
             cls.current_mission.country(cls.game.player_country),
             cls.game.blue_ato,
-            cls.groundobjectgen.runways
+            cls.groundobjectgen.runways,
         )
         cls.airgen.generate_flights(
             cls.current_mission.country(cls.game.enemy_country),
             cls.game.red_ato,
-            cls.groundobjectgen.runways
+            cls.groundobjectgen.runways,
         )
         cls.airgen.spawn_unused_aircraft(
             cls.current_mission.country(cls.game.player_country),
-            cls.current_mission.country(cls.game.enemy_country))
+            cls.current_mission.country(cls.game.enemy_country),
+        )
 
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
@@ -396,17 +409,19 @@ class Operation:
                 cls.current_mission.country(cls.game.enemy_country),
                 player_cp,
                 enemy_cp,
-                cls.game.theater
+                cls.game.theater,
             )
             # Generate frontline ops
             player_gp = cls.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
             enemy_gp = cls.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             ground_conflict_gen = GroundConflictGenerator(
                 cls.current_mission,
-                conflict, cls.game,
-                player_gp, enemy_gp,
+                conflict,
+                cls.game,
+                player_gp,
+                enemy_gp,
                 player_cp.stances[enemy_cp.id],
-                cls.unit_map
+                cls.unit_map,
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
@@ -416,9 +431,12 @@ class Operation:
         namegen.reset_numbers()
 
     @classmethod
-    def generate_lua(cls, airgen: AircraftConflictGenerator,
-                     airsupportgen: AirSupportConflictGenerator,
-                     jtacs: List[JtacInfo]) -> None:
+    def generate_lua(
+        cls,
+        airgen: AircraftConflictGenerator,
+        airsupportgen: AirSupportConflictGenerator,
+        jtacs: List[JtacInfo],
+    ) -> None:
         #  TODO: Refactor this
         luaData = {
             "AircraftCarriers": {},
@@ -434,7 +452,7 @@ class Operation:
                 "callsign": tanker.callsign,
                 "variant": tanker.variant,
                 "radio": tanker.freq.mhz,
-                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name
+                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
             }
 
         if airsupportgen.air_support.awacs:
@@ -442,7 +460,7 @@ class Operation:
                 luaData["AWACs"][awacs.callsign] = {
                     "dcsGroupName": awacs.dcsGroupName,
                     "callsign": awacs.callsign,
-                    "radio": awacs.freq.mhz
+                    "radio": awacs.freq.mhz,
                 }
 
         for jtac in jtacs:
@@ -451,14 +469,16 @@ class Operation:
                 "callsign": jtac.callsign,
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,
-                "laserCode": jtac.code
+                "laserCode": jtac.code,
             }
 
         for flight in airgen.flights:
-            if flight.friendly and flight.flight_type in [FlightType.ANTISHIP,
-                                                          FlightType.DEAD,
-                                                          FlightType.SEAD,
-                                                          FlightType.STRIKE]:
+            if flight.friendly and flight.flight_type in [
+                FlightType.ANTISHIP,
+                FlightType.DEAD,
+                FlightType.SEAD,
+                FlightType.STRIKE,
+            ]:
                 flightType = str(flight.flight_type)
                 flightTarget = flight.package.target
                 if flightTarget:
@@ -466,23 +486,27 @@ class Operation:
                     flightTargetType = None
                     if isinstance(flightTarget, TheaterGroundObject):
                         flightTargetName = flightTarget.obj_name
-                        flightTargetType = flightType + \
-                            f" TGT ({flightTarget.category})"
-                    elif hasattr(flightTarget, 'name'):
+                        flightTargetType = (
+                            flightType + f" TGT ({flightTarget.category})"
+                        )
+                    elif hasattr(flightTarget, "name"):
                         flightTargetName = flightTarget.name
                         flightTargetType = flightType + " TGT (Airbase)"
                     luaData["TargetPoints"][flightTargetName] = {
                         "name": flightTargetName,
                         "type": flightTargetType,
-                        "position": {"x": flightTarget.position.x,
-                                     "y": flightTarget.position.y}
+                        "position": {
+                            "x": flightTarget.position.x,
+                            "y": flightTarget.position.y,
+                        },
                     }
 
         # set a LUA table with data from Liberation that we want to set
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath(".") + "]]"
-        lua = """
+        lua = (
+            """
         -- setting configuration table
         env.info("DCSLiberation|: setting configuration table")
 
@@ -490,9 +514,12 @@ class Operation:
         dcsLiberation = {}
 
         -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-        dcsLiberation.installPath=""" + state_location + """
+        dcsLiberation.installPath="""
+            + state_location
+            + """
 
         """
+        )
         # Process the tankers
         lua += """
 

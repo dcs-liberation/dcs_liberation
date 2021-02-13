@@ -3,10 +3,31 @@ from pathlib import Path
 import unittest
 
 from dcs.helicopters import UH_1H, AH_64A
-from dcs.planes import F_15C, F_15E, F_14B, FA_18C_hornet, F_16C_50, A_10A, AV8BNA, B_52H, B_1B, F_117A, MQ_9_Reaper, \
-    E_3A, KC130, KC_135, A_10C, A_10C_2
-from dcs.ships import CVN_74_John_C__Stennis, LHA_1_Tarawa, Oliver_Hazzard_Perry_class, USS_Arleigh_Burke_IIa, \
-    Ticonderoga_class
+from dcs.planes import (
+    F_15C,
+    F_15E,
+    F_14B,
+    FA_18C_hornet,
+    F_16C_50,
+    A_10A,
+    AV8BNA,
+    B_52H,
+    B_1B,
+    F_117A,
+    MQ_9_Reaper,
+    E_3A,
+    KC130,
+    KC_135,
+    A_10C,
+    A_10C_2,
+)
+from dcs.ships import (
+    CVN_74_John_C__Stennis,
+    LHA_1_Tarawa,
+    Oliver_Hazzard_Perry_class,
+    USS_Arleigh_Burke_IIa,
+    Ticonderoga_class,
+)
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
 
 from game.factions.faction import Faction
@@ -17,12 +38,11 @@ RESOURCES_DIR = THIS_DIR / "resources"
 
 
 class TestFactionLoader(unittest.TestCase):
-
     def setUp(self):
         pass
 
     def test_load_valid_faction(self):
-        with (RESOURCES_DIR / "valid_faction.json").open('r') as data:
+        with (RESOURCES_DIR / "valid_faction.json").open("r") as data:
             faction = Faction.from_json(json.load(data))
 
             self.assertEqual(faction.country, "USA")

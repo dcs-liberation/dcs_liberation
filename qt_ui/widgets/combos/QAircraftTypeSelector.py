@@ -11,10 +11,16 @@ import gen.flights.ai_flight_planner_db
 
 from game import Game, db
 
+
 class QAircraftTypeSelector(QComboBox):
     """Combo box for selecting among the given aircraft types."""
 
-    def __init__(self, aircraft_types: Iterable[Type[FlyingType]], country: str, mission_type: str) -> None:
+    def __init__(
+        self,
+        aircraft_types: Iterable[Type[FlyingType]],
+        country: str,
+        mission_type: str,
+    ) -> None:
         super().__init__()
 
         self.model().sort(0)
@@ -26,30 +32,70 @@ class QAircraftTypeSelector(QComboBox):
         current_aircraft = self.currentData()
         self.clear()
         for aircraft in aircraft_types:
-            if mission_type in [FlightType.BARCAP, FlightType.ESCORT, FlightType.INTERCEPTION, FlightType.SWEEP, FlightType.TARCAP]:
+            if mission_type in [
+                FlightType.BARCAP,
+                FlightType.ESCORT,
+                FlightType.INTERCEPTION,
+                FlightType.SWEEP,
+                FlightType.TARCAP,
+            ]:
                 if aircraft in gen.flights.ai_flight_planner_db.CAP_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
-            elif mission_type in [FlightType.CAS, FlightType.BAI, FlightType.OCA_AIRCRAFT]:
-                if aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
+            elif mission_type in [
+                FlightType.CAS,
+                FlightType.BAI,
+                FlightType.OCA_AIRCRAFT,
+            ]:
+                if (
+                    aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE
+                    or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
+                ):
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.SEAD]:
                 if aircraft in gen.flights.ai_flight_planner_db.SEAD_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.DEAD]:
                 if aircraft in gen.flights.ai_flight_planner_db.DEAD_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.STRIKE]:
-                if aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                if (
+                    aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE
+                    or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
+                ):
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.ANTISHIP]:
                 if aircraft in gen.flights.ai_flight_planner_db.ANTISHIP_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.OCA_RUNWAY]:
                 if aircraft in gen.flights.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
             elif mission_type in [FlightType.AEWC]:
                 if aircraft in gen.flights.ai_flight_planner_db.AEWC_CAPABLE:
-                    self.addItem(f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}", userData=aircraft)
+                    self.addItem(
+                        f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
+                        userData=aircraft,
+                    )
         current_aircraft_index = self.findData(current_aircraft)
         if current_aircraft_index != -1:
             self.setCurrentIndex(current_aircraft_index)

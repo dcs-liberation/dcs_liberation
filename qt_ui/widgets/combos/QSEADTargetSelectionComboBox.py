@@ -7,7 +7,6 @@ from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 
 class SEADTargetInfo:
-
     def __init__(self):
         self.name = ""
         self.location = None
@@ -15,8 +14,8 @@ class SEADTargetInfo:
         self.threat_range = 0
         self.detection_range = 0
 
-class QSEADTargetSelectionComboBox(QFilteredComboBox):
 
+class QSEADTargetSelectionComboBox(QFilteredComboBox):
     def __init__(self, game: Game, parent=None):
         super(QSEADTargetSelectionComboBox, self).__init__(parent)
         self.game = game
@@ -41,7 +40,8 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
             return i + 1
 
         for cp in self.game.theater.controlpoints:
-            if cp.captured: continue
+            if cp.captured:
+                continue
             for g in cp.ground_objects:
 
                 radars = []
@@ -53,7 +53,10 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
                             utype = db.unit_type_from_name(u.type)
 
                             if utype in UNITS_WITH_RADAR:
-                                if hasattr(utype, "detection_range") and utype.detection_range > 1000:
+                                if (
+                                    hasattr(utype, "detection_range")
+                                    and utype.detection_range > 1000
+                                ):
                                     if utype.detection_range > detection_range:
                                         detection_range = utype.detection_range
                                 radars.append(u)
@@ -63,9 +66,18 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
                                     threat_range = utype.threat_range
                     if len(radars) > 0:
                         tgt_info = SEADTargetInfo()
-                        tgt_info.name = g.obj_name + " [" + ",".join([db.unit_type_from_name(u.type).id for u in radars]) + " ]"
+                        tgt_info.name = (
+                            g.obj_name
+                            + " ["
+                            + ",".join(
+                                [db.unit_type_from_name(u.type).id for u in radars]
+                            )
+                            + " ]"
+                        )
                         if len(tgt_info.name) > 25:
-                            tgt_info.name = g.obj_name + " [" + str(len(radars)) + " units]"
+                            tgt_info.name = (
+                                g.obj_name + " [" + str(len(radars)) + " units]"
+                            )
                         tgt_info.radars = radars
                         tgt_info.location = g
                         tgt_info.threat_range = threat_range
@@ -73,5 +85,3 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
                         i = add_model_item(i, model, tgt_info)
 
         self.setModel(model)
-
-

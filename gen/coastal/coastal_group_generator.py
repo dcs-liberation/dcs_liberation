@@ -23,5 +23,9 @@ def generate_coastal_group(game, ground_object, faction_name: str):
                 generator.generate()
                 return generator.get_generated_group()
             else:
-                logging.info("Unable to generate missile group, generator : " + str(gen) + "does not exists")
+                logging.info(
+                    "Unable to generate missile group, generator : "
+                    + str(gen)
+                    + "does not exists"
+                )
     return None

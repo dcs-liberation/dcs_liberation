@@ -6,12 +6,10 @@ from PySide2.QtWidgets import QHeaderView, QTableView
 
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import \
-    QWaypointItem
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
 
 
 class QFlightWaypointList(QTableView):
-
     def __init__(self, package: Package, flight: Flight):
         super().__init__()
         self.package = package
@@ -28,7 +26,9 @@ class QFlightWaypointList(QTableView):
             self.selectedPoint = self.flight.points[0]
         self.update_list()
 
-        self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select)
+        self.selectionModel().setCurrentIndex(
+            self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
+        )
 
     def update_list(self):
         self.model.clear()
@@ -38,16 +38,18 @@ class QFlightWaypointList(QTableView):
         waypoints = self.flight.flight_plan.waypoints
         for row, waypoint in enumerate(waypoints):
             self.add_waypoint_row(row, self.flight, waypoint)
-        self.selectionModel().setCurrentIndex(self.indexAt(QPoint(1, 1)),
-                                              QItemSelectionModel.Select)
+        self.selectionModel().setCurrentIndex(
+            self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
+        )
         self.resizeColumnsToContents()
         total_column_width = self.verticalHeader().width() + self.lineWidth()
         for i in range(0, self.model.columnCount()):
             total_column_width += self.columnWidth(i) + self.lineWidth()
         self.setFixedWidth(total_column_width)
 
-    def add_waypoint_row(self, row: int, flight: Flight,
-                         waypoint: FlightWaypoint) -> None:
+    def add_waypoint_row(
+        self, row: int, flight: Flight, waypoint: FlightWaypoint
+    ) -> None:
         self.model.insertRow(self.model.rowCount())
 
         self.model.setItem(row, 0, QWaypointItem(waypoint, row))

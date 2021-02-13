@@ -78,10 +78,16 @@ class TurnState(Enum):
 
 
 class Game:
-    def __init__(self, player_name: str, enemy_name: str,
-                 theater: ConflictTheater, start_date: datetime,
-                 settings: Settings, player_budget: float,
-                 enemy_budget: float) -> None:
+    def __init__(
+        self,
+        player_name: str,
+        enemy_name: str,
+        theater: ConflictTheater,
+        start_date: datetime,
+        settings: Settings,
+        player_budget: float,
+        enemy_budget: float,
+    ) -> None:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
@@ -112,9 +118,7 @@ class Game:
         self.blue_ato = AirTaskingOrder()
         self.red_ato = AirTaskingOrder()
 
-        self.aircraft_inventory = GlobalAircraftInventory(
-            self.theater.controlpoints
-        )
+        self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
         self.sanitize_sides()
 
@@ -147,8 +151,9 @@ class Game:
         self.on_load()
 
     def generate_conditions(self) -> Conditions:
-        return Conditions.generate(self.theater, self.date,
-                                   self.current_turn_time_of_day, self.settings)
+        return Conditions.generate(
+            self.theater, self.date, self.current_turn_time_of_day, self.settings
+        )
 
     def sanitize_sides(self):
         """
@@ -184,13 +189,24 @@ class Game:
             return random.randint(1, 100) <= prob * mult
 
     def _generate_player_event(self, event_class, player_cp, enemy_cp):
-        self.events.append(event_class(self, player_cp, enemy_cp, enemy_cp.position, self.player_name, self.enemy_name))
+        self.events.append(
+            event_class(
+                self,
+                player_cp,
+                enemy_cp,
+                enemy_cp.position,
+                self.player_name,
+                self.enemy_name,
+            )
+        )
 
     def _generate_events(self):
         for front_line in self.theater.conflicts(True):
-            self._generate_player_event(FrontlineAttackEvent,
-                                        front_line.control_point_a,
-                                        front_line.control_point_b)
+            self._generate_player_event(
+                FrontlineAttackEvent,
+                front_line.control_point_a,
+                front_line.control_point_b,
+            )
 
     def adjust_budget(self, amount: float, player: bool) -> None:
         if player:
@@ -208,7 +224,7 @@ class Game:
         self.enemy_budget += Income(self, player=False).total
 
     def initiate_event(self, event: Event) -> UnitMap:
-        #assert event in self.events
+        # assert event in self.events
         logging.info("Generating {} (regular)".format(event))
         return event.generate()
 
@@ -223,7 +239,11 @@ class Game:
 
     def is_player_attack(self, event):
         if isinstance(event, Event):
-            return event and event.attacker_name and event.attacker_name == self.player_name
+            return (
+                event
+                and event.attacker_name
+                and event.attacker_name == self.player_name
+            )
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
@@ -235,7 +255,9 @@ class Game:
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
-        self.informations.append(Information("End of turn #" + str(self.turn), "-" * 40, 0))
+        self.informations.append(
+            Information("End of turn #" + str(self.turn), "-" * 40, 0)
+        )
         self.turn += 1
 
         for control_point in self.theater.controlpoints:
@@ -281,7 +303,7 @@ class Game:
 
         # Check for win or loss condition
         turn_state = self.check_win_loss()
-        if turn_state in (TurnState.LOSS,TurnState.WIN):
+        if turn_state in (TurnState.LOSS, TurnState.WIN):
             return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
@@ -305,8 +327,11 @@ class Game:
 
         self.plan_procurement(blue_planner, red_planner)
 
-    def plan_procurement(self, blue_planner: CoalitionMissionPlanner,
-                         red_planner: CoalitionMissionPlanner) -> None:
+    def plan_procurement(
+        self,
+        blue_planner: CoalitionMissionPlanner,
+        red_planner: CoalitionMissionPlanner,
+    ) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
@@ -320,7 +345,7 @@ class Game:
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
-            front_line_budget_share=ground_portion
+            front_line_budget_share=ground_portion,
         ).spend_budget(self.budget, blue_planner.procurement_requests)
 
         self.enemy_budget = ProcurementAi(
@@ -330,7 +355,7 @@ class Game:
             manage_runways=True,
             manage_front_line=True,
             manage_aircraft=True,
-            front_line_budget_share=ground_portion
+            front_line_budget_share=ground_portion,
         ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
 
     def message(self, text: str) -> None:
@@ -361,10 +386,12 @@ class Game:
     def compute_threat_zones(self) -> None:
         self.blue_threat_zone = ThreatZones.for_faction(self, player=True)
         self.red_threat_zone = ThreatZones.for_faction(self, player=False)
-        self.blue_navmesh = NavMesh.from_threat_zones(self.red_threat_zone,
-                                                      self.theater)
-        self.red_navmesh = NavMesh.from_threat_zones(self.blue_threat_zone,
-                                                     self.theater)
+        self.blue_navmesh = NavMesh.from_threat_zones(
+            self.red_threat_zone, self.theater
+        )
+        self.red_navmesh = NavMesh.from_threat_zones(
+            self.blue_threat_zone, self.theater
+        )
 
     def threat_zone_for(self, player: bool) -> ThreatZones:
         if player:
@@ -386,9 +413,9 @@ class Game:
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
-            position = Conflict.frontline_position(front_line.control_point_a,
-                                                   front_line.control_point_b,
-                                                   self.theater)
+            position = Conflict.frontline_position(
+                front_line.control_point_a, front_line.control_point_b, self.theater
+            )
             zones.append(position[0])
             zones.append(front_line.control_point_a.position)
             zones.append(front_line.control_point_b.position)
@@ -413,7 +440,10 @@ class Game:
                     d = cp.position.distance_to_point(cp2.position)
                     if d < min_distance:
                         min_distance = d
-                        cpoint = Point((cp.position.x + cp2.position.x) / 2, (cp.position.y + cp2.position.y) / 2)
+                        cpoint = Point(
+                            (cp.position.x + cp2.position.x) / 2,
+                            (cp.position.y + cp2.position.y) / 2,
+                        )
                         zones.append(cp.position)
                         zones.append(cp2.position)
                         break
@@ -422,8 +452,7 @@ class Game:
             if cpoint is not None:
                 zones.append(cpoint)
 
-        packages = itertools.chain(self.blue_ato.packages,
-                                   self.red_ato.packages)
+        packages = itertools.chain(self.blue_ato.packages, self.red_ato.packages)
         for package in packages:
             if package.primary_task is FlightType.BARCAP:
                 # BARCAPs will be planned at most locations on smaller theaters,
@@ -460,7 +489,10 @@ class Game:
             return False
         else:
             for z in self.__culling_zones:
-                if z.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
+                if (
+                    z.distance_to_point(pos)
+                    < self.settings.perf_culling_distance * 1000
+                ):
                     return False
             for p in self.__culling_points:
                 if p.distance_to_point(pos) < 2500:
@@ -502,6 +534,10 @@ class Game:
 
     def process_win_loss(self, turn_state: TurnState):
         if turn_state is TurnState.WIN:
-            return self.message("Congratulations, you are victorious!  Start a new campaign to continue.")
+            return self.message(
+                "Congratulations, you are victorious!  Start a new campaign to continue."
+            )
         elif turn_state is TurnState.LOSS:
-            return self.message("Game Over, you lose. Start a new campaign to continue.")
+            return self.message(
+                "Game Over, you lose. Start a new campaign to continue."
+            )

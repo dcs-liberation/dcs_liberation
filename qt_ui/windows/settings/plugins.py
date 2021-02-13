@@ -3,7 +3,8 @@ from PySide2.QtWidgets import (
     QCheckBox,
     QGridLayout,
     QGroupBox,
-    QLabel, QVBoxLayout,
+    QLabel,
+    QVBoxLayout,
     QWidget,
 )
 

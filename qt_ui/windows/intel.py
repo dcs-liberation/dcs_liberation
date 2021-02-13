@@ -58,7 +58,9 @@ class IntelTableLayout(QGridLayout):
     def add_spacer(self) -> None:
         self.addItem(
             QSpacerItem(0, 0, QSizePolicy.Preferred, QSizePolicy.Expanding),
-            next(self.row), 0)
+            next(self.row),
+            0,
+        )
 
     def add_row(self, text: str, count: int) -> None:
         row = next(self.row)
@@ -81,7 +83,10 @@ class AircraftIntelLayout(IntelTableLayout):
             for airframe, count in base.aircraft.items():
                 if not count:
                     continue
-                self.add_row(db.unit_get_expanded_info(game.enemy_country, airframe, 'name'), count)
+                self.add_row(
+                    db.unit_get_expanded_info(game.enemy_country, airframe, "name"),
+                    count,
+                )
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)
@@ -121,7 +126,6 @@ class ArmyIntelTab(ScrollingFrame):
 
 
 class IntelTabs(QTabWidget):
-
     def __init__(self, game: Game):
         super().__init__()
 
@@ -131,7 +135,6 @@ class IntelTabs(QTabWidget):
 
 
 class IntelWindow(QDialog):
-
     def __init__(self, game: Game):
         super().__init__()
 

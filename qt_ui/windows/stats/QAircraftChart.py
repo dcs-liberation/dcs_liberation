@@ -6,7 +6,6 @@ from game import Game
 
 
 class QAircraftChart(QFrame):
-
     def __init__(self, game: Game):
         super(QAircraftChart, self).__init__()
         self.game = game
@@ -19,8 +18,12 @@ class QAircraftChart(QFrame):
 
     def generateUnitCharts(self):
 
-        self.alliedAircraft = [d.allied_units.aircraft_count for d in self.game.game_stats.data_per_turn]
-        self.enemyAircraft = [d.enemy_units.aircraft_count for d in self.game.game_stats.data_per_turn]
+        self.alliedAircraft = [
+            d.allied_units.aircraft_count for d in self.game.game_stats.data_per_turn
+        ]
+        self.enemyAircraft = [
+            d.enemy_units.aircraft_count for d in self.game.game_stats.data_per_turn
+        ]
 
         self.alliedAircraftSerie = QtCharts.QLineSeries()
         self.alliedAircraftSerie.setName("Allied aircraft count")
@@ -40,7 +43,9 @@ class QAircraftChart(QFrame):
 
         self.chart.createDefaultAxes()
         self.chart.axisX().setRange(0, len(self.alliedAircraft))
-        self.chart.axisY().setRange(0, max(max(self.alliedAircraft), max(self.enemyAircraft)) + 10)
+        self.chart.axisY().setRange(
+            0, max(max(self.alliedAircraft), max(self.enemyAircraft)) + 10
+        )
 
         self.chartView = QtCharts.QChartView(self.chart)
         self.chartView.setRenderHint(QPainter.Antialiasing)

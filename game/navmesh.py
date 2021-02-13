@@ -114,9 +114,11 @@ class NavMesh:
         return self.travel_cost(a, b)
 
     @staticmethod
-    def reconstruct_path(came_from: Dict[NavPoint, Optional[NavPoint]],
-                         origin: NavPoint,
-                         destination: NavPoint) -> List[Point]:
+    def reconstruct_path(
+        came_from: Dict[NavPoint, Optional[NavPoint]],
+        origin: NavPoint,
+        destination: NavPoint,
+    ) -> List[Point]:
         current = destination
         path: List[Point] = []
         while current != origin:
@@ -141,16 +143,14 @@ class NavMesh:
             raise ValueError(f"Origin point {origin} is outside the navmesh")
         destination_poly = self.localize(destination)
         if destination_poly is None:
-            raise ValueError(
-                f"Origin point {destination} is outside the navmesh")
+            raise ValueError(f"Origin point {destination} is outside the navmesh")
 
         return self._shortest_path(
             NavPoint(self.dcs_to_shapely_point(origin), origin_poly),
-            NavPoint(self.dcs_to_shapely_point(destination), destination_poly)
+            NavPoint(self.dcs_to_shapely_point(destination), destination_poly),
         )
 
-    def _shortest_path(self, origin: NavPoint,
-                       destination: NavPoint) -> List[Point]:
+    def _shortest_path(self, origin: NavPoint, destination: NavPoint) -> List[Point]:
         # Adapted from
         # https://www.redblobgames.com/pathfinding/a-star/implementation.py.
         frontier = NavFrontier()
@@ -167,9 +167,7 @@ class NavMesh:
             if current.poly == destination.poly:
                 # Made it to the correct nav poly. Add the leg from the border
                 # to the target.
-                cost = best_known[current] + self.travel_cost(
-                    current, destination
-                )
+                cost = best_known[current] + self.travel_cost(current, destination)
                 if cost < best_known[destination]:
                     best_known[destination] = cost
                     estimated = cost
@@ -185,14 +183,10 @@ class NavMesh:
                     raise RuntimeError
                 _, neighbor_point = nearest_points(current.point, boundary)
                 neighbor_nav = NavPoint(neighbor_point, neighbor)
-                cost = best_known[current] + self.travel_cost(
-                    current, neighbor_nav
-                )
+                cost = best_known[current] + self.travel_cost(current, neighbor_nav)
                 if cost < best_known[neighbor_nav]:
                     best_known[neighbor_nav] = cost
-                    estimated = cost + self.travel_heuristic(
-                        neighbor_nav, destination
-                    )
+                    estimated = cost + self.travel_heuristic(neighbor_nav, destination)
                     frontier.push(neighbor_nav, estimated)
                     came_from[neighbor_nav] = current
 
@@ -209,13 +203,16 @@ class NavMesh:
         # threatened airbases at the map edges have room to retreat from the
         # threat without running off the navmesh.
         return box(*LineString(points).bounds).buffer(
-            nautical_miles(100).meters, resolution=1)
+            nautical_miles(100).meters, resolution=1
+        )
 
     @staticmethod
-    def create_navpolys(polys: List[Polygon],
-                        threat_zones: ThreatZones) -> List[NavMeshPoly]:
-        return [NavMeshPoly(i, p, threat_zones.threatened(p))
-                for i, p in enumerate(polys)]
+    def create_navpolys(
+        polys: List[Polygon], threat_zones: ThreatZones
+    ) -> List[NavMeshPoly]:
+        return [
+            NavMeshPoly(i, p, threat_zones.threatened(p)) for i, p in enumerate(polys)
+        ]
 
     @staticmethod
     def associate_neighbors(polys: List[NavMeshPoly]) -> None:
@@ -234,8 +231,7 @@ class NavMesh:
                 point = (int(x), int(y))
                 neighbors = {}
                 for potential_neighbor in points_map[point]:
-                    intersection = navpoly.poly.intersection(
-                        potential_neighbor.poly)
+                    intersection = navpoly.poly.intersection(potential_neighbor.poly)
                     if not intersection.is_empty:
                         potential_neighbor.neighbors[navpoly] = intersection
                         neighbors[potential_neighbor] = intersection
@@ -243,8 +239,9 @@ class NavMesh:
                 points_map[point].add(navpoly)
 
     @classmethod
-    def from_threat_zones(cls, threat_zones: ThreatZones,
-                          theater: ConflictTheater) -> NavMesh:
+    def from_threat_zones(
+        cls, threat_zones: ThreatZones, theater: ConflictTheater
+    ) -> NavMesh:
         # Simplify the threat poly to reduce the number of nav zones. Increase
         # the size of the zone and then simplify it with the buffer size as the
         # error margin. This will create a simpler poly around the threat zone.

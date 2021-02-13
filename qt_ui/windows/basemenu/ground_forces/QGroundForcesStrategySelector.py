@@ -4,8 +4,7 @@ from game.theater import CombatStance, ControlPoint
 
 
 class QGroundForcesStrategySelector(QComboBox):
-
-    def __init__(self, cp:ControlPoint, enemy_cp:ControlPoint):
+    def __init__(self, cp: ControlPoint, enemy_cp: ControlPoint):
         super(QGroundForcesStrategySelector, self).__init__()
         self.cp = cp
         self.enemy_cp = enemy_cp

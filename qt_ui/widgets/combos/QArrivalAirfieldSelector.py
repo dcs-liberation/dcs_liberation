@@ -14,8 +14,12 @@ class QArrivalAirfieldSelector(QComboBox):
     aircraft type is able to land at.
     """
 
-    def __init__(self, destinations: Iterable[ControlPoint],
-                 aircraft: Type[FlyingType], optional_text: str) -> None:
+    def __init__(
+        self,
+        destinations: Iterable[ControlPoint],
+        aircraft: Type[FlyingType],
+        optional_text: str,
+    ) -> None:
         super().__init__()
         self.destinations = list(destinations)
         self.aircraft = aircraft

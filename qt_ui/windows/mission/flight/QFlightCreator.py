@@ -20,8 +20,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
-from qt_ui.widgets.combos.QArrivalAirfieldSelector import \
-    QArrivalAirfieldSelector
+from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
 
@@ -42,26 +41,24 @@ class QFlightCreator(QDialog):
 
         layout = QVBoxLayout()
 
-        self.task_selector = QFlightTypeComboBox(
-            self.game.theater, package.target
-        )
+        self.task_selector = QFlightTypeComboBox(self.game.theater, package.target)
         self.task_selector.setCurrentIndex(0)
-        self.task_selector.currentTextChanged.connect(
-            self.on_task_changed)
+        self.task_selector.currentTextChanged.connect(self.on_task_changed)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.aircraft_inventory.available_types_for_player, self.game.player_country, self.task_selector.currentData()
+            self.game.aircraft_inventory.available_types_for_player,
+            self.game.player_country,
+            self.task_selector.currentData(),
         )
         self.aircraft_selector.setCurrentIndex(0)
-        self.aircraft_selector.currentIndexChanged.connect(
-            self.on_aircraft_changed)
+        self.aircraft_selector.currentIndexChanged.connect(self.on_aircraft_changed)
         layout.addLayout(QLabeledWidget("Aircraft:", self.aircraft_selector))
 
         self.departure = QOriginAirfieldSelector(
             self.game.aircraft_inventory,
             [cp for cp in game.theater.controlpoints if cp.captured],
-            self.aircraft_selector.currentData()
+            self.aircraft_selector.currentData(),
         )
         self.departure.availability_changed.connect(self.update_max_size)
         self.departure.currentIndexChanged.connect(self.on_departure_changed)
@@ -70,14 +67,14 @@ class QFlightCreator(QDialog):
         self.arrival = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData(),
-            "Same as departure"
+            "Same as departure",
         )
         layout.addLayout(QLabeledWidget("Arrival:", self.arrival))
 
         self.divert = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
             self.aircraft_selector.currentData(),
-            "None"
+            "None",
         )
         layout.addLayout(QLabeledWidget("Divert:", self.divert))
 
@@ -86,15 +83,12 @@ class QFlightCreator(QDialog):
         layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
 
         self.client_slots_spinner = QFlightSizeSpinner(
-            min_size=0,
-            max_size=self.flight_size_spinner.value(),
-            default_size=0
+            min_size=0, max_size=self.flight_size_spinner.value(), default_size=0
         )
         self.flight_size_spinner.valueChanged.connect(
             lambda v: self.client_slots_spinner.setMaximum(v)
         )
-        layout.addLayout(
-            QLabeledWidget("Client Slots:", self.client_slots_spinner))
+        layout.addLayout(QLabeledWidget("Client Slots:", self.client_slots_spinner))
 
         # When an off-map spawn overrides the start type to in-flight, we save
         # the selected type into this value. If a non-off-map spawn is selected
@@ -103,14 +97,20 @@ class QFlightCreator(QDialog):
         self.start_type = QComboBox()
         self.start_type.addItems(["Cold", "Warm", "Runway", "In Flight"])
         self.start_type.setCurrentText(self.game.settings.default_start_type)
-        layout.addLayout(QLabeledWidget(
-            "Start type:", self.start_type,
-            tooltip="Selects the start type for this flight."))
-        layout.addWidget(QLabel(
-            "Any option other than Cold will make this flight " +
-            "non-targetable<br />by OCA/Aircraft missions. This will affect " +
-            "game balance."
-        ))
+        layout.addLayout(
+            QLabeledWidget(
+                "Start type:",
+                self.start_type,
+                tooltip="Selects the start type for this flight.",
+            )
+        )
+        layout.addWidget(
+            QLabel(
+                "Any option other than Cold will make this flight "
+                + "non-targetable<br />by OCA/Aircraft missions. This will affect "
+                + "game balance."
+            )
+        )
 
         self.custom_name = QLineEdit()
         self.custom_name.textChanged.connect(self.set_custom_name_text)
@@ -159,8 +159,7 @@ class QFlightCreator(QDialog):
     def create_flight(self) -> None:
         error = self.verify_form()
         if error is not None:
-            QMessageBox.critical(self, "Could not create flight", error,
-                                 QMessageBox.Ok)
+            QMessageBox.critical(self, "Could not create flight", error, QMessageBox.Ok)
             return
 
         task = self.task_selector.currentData()
@@ -173,9 +172,18 @@ class QFlightCreator(QDialog):
         if arrival is None:
             arrival = origin
 
-        flight = Flight(self.package, self.country, aircraft, size, task,
-                        self.start_type.currentText(), origin, arrival, divert,
-                        custom_name=self.custom_name_text)
+        flight = Flight(
+            self.package,
+            self.country,
+            aircraft,
+            size,
+            task,
+            self.start_type.currentText(),
+            origin,
+            arrival,
+            divert,
+            custom_name=self.custom_name_text,
+        )
         flight.client_count = self.client_slots_spinner.value()
 
         # noinspection PyUnresolvedReferences
@@ -203,7 +211,10 @@ class QFlightCreator(QDialog):
                 self.restore_start_type = None
 
     def on_task_changed(self) -> None:
-        self.aircraft_selector.updateItems(self.task_selector.currentData(), self.game.aircraft_inventory.available_types_for_player)
+        self.aircraft_selector.updateItems(
+            self.task_selector.currentData(),
+            self.game.aircraft_inventory.available_types_for_player,
+        )
 
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))

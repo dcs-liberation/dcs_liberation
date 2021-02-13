@@ -11,7 +11,6 @@ from qt_ui.models import PackageModel
 
 
 class QFlightStartType(QGroupBox):
-
     def __init__(self, package_model: PackageModel, flight: Flight):
         super().__init__()
         self.package_model = package_model
@@ -32,10 +31,12 @@ class QFlightStartType(QGroupBox):
         self.main_row.addWidget(self.start_type)
 
         self.layout.addLayout(self.main_row)
-        self.layout.addWidget(QLabel(
-            "Any option other than Cold will make this flight non-targetable " +
-            "by OCA/Aircraft missions. This will affect game balance."
-        ))
+        self.layout.addWidget(
+            QLabel(
+                "Any option other than Cold will make this flight non-targetable "
+                + "by OCA/Aircraft missions. This will affect game balance."
+            )
+        )
         self.setLayout(self.layout)
 
     def _on_start_type_selected(self):

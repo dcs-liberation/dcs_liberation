@@ -59,8 +59,7 @@ class Settings:
     def plugin_settings_key(identifier: str) -> str:
         return f"plugins.{identifier}"
 
-    def initialize_plugin_option(self, identifier: str,
-                                 default_value: bool) -> None:
+    def initialize_plugin_option(self, identifier: str, default_value: bool) -> None:
         try:
             self.plugin_option(identifier)
         except KeyError:

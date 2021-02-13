@@ -37,7 +37,15 @@ class Event:
     to_cp = None  # type: ControlPoint
     difficulty = 1  # type: int
 
-    def __init__(self, game, from_cp: ControlPoint, target_cp: ControlPoint, location: Point, attacker_name: str, defender_name: str):
+    def __init__(
+        self,
+        game,
+        from_cp: ControlPoint,
+        target_cp: ControlPoint,
+        location: Point,
+        attacker_name: str,
+        defender_name: str,
+    ):
         self.game = game
         self.from_cp = from_cp
         self.to_cp = target_cp
@@ -57,12 +65,14 @@ class Event:
         Operation.prepare(self.game)
         unit_map = Operation.generate()
         Operation.current_mission.save(
-            persistency.mission_path_for("liberation_nextturn.miz"))
+            persistency.mission_path_for("liberation_nextturn.miz")
+        )
         return unit_map
 
     @staticmethod
-    def _transfer_aircraft(ato: AirTaskingOrder, losses: AirLosses,
-                           for_player: bool) -> None:
+    def _transfer_aircraft(
+        ato: AirTaskingOrder, losses: AirLosses, for_player: bool
+    ) -> None:
         for package in ato.packages:
             for flight in package.flights:
                 # No need to transfer to the same location.
@@ -77,13 +87,16 @@ class Event:
                 if flight.arrival.captured != for_player:
                     logging.info(
                         f"Not transferring {flight} because {flight.arrival} "
-                        "was captured")
+                        "was captured"
+                    )
                     continue
 
                 transfer_count = losses.surviving_flight_members(flight)
                 if transfer_count < 0:
-                    logging.error(f"{flight} had {flight.count} aircraft but "
-                                  f"{transfer_count} losses were recorded.")
+                    logging.error(
+                        f"{flight} had {flight.count} aircraft but "
+                        f"{transfer_count} losses were recorded."
+                    )
                     continue
 
                 aircraft = flight.unit_type
@@ -91,7 +104,8 @@ class Event:
                 if available < transfer_count:
                     logging.error(
                         f"Found killed {aircraft} from {flight.departure} but "
-                        f"that airbase has only {available} available.")
+                        f"that airbase has only {available} available."
+                    )
                     continue
 
                 flight.departure.base.aircraft[aircraft] -= transfer_count
@@ -101,10 +115,12 @@ class Event:
                 flight.arrival.base.aircraft[aircraft] += transfer_count
 
     def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
-        self._transfer_aircraft(self.game.blue_ato, debriefing.air_losses,
-                                for_player=True)
-        self._transfer_aircraft(self.game.red_ato, debriefing.air_losses,
-                                for_player=False)
+        self._transfer_aircraft(
+            self.game.blue_ato, debriefing.air_losses, for_player=True
+        )
+        self._transfer_aircraft(
+            self.game.red_ato, debriefing.air_losses, for_player=False
+        )
 
     @staticmethod
     def commit_air_losses(debriefing: Debriefing) -> None:
@@ -115,7 +131,8 @@ class Event:
             if available <= 0:
                 logging.error(
                     f"Found killed {aircraft} from {cp} but that airbase has "
-                    "none available.")
+                    "none available."
+                )
                 continue
 
             logging.info(f"{aircraft} destroyed from {cp}")
@@ -130,7 +147,8 @@ class Event:
             if available <= 0:
                 logging.error(
                     f"Found killed {unit_type} from {control_point} but that "
-                    "airbase has none available.")
+                    "airbase has none available."
+                )
                 continue
 
             logging.info(f"{unit_type} destroyed from {control_point}")
@@ -149,11 +167,14 @@ class Event:
     def commit_building_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.building_losses:
             loss.ground_object.kill()
-            self.game.informations.append(Information(
-                "Building destroyed",
-                f"{loss.ground_object.dcs_identifier} has been destroyed at "
-                f"location {loss.ground_object.obj_name}", self.game.turn
-            ))
+            self.game.informations.append(
+                Information(
+                    "Building destroyed",
+                    f"{loss.ground_object.dcs_identifier} has been destroyed at "
+                    f"location {loss.ground_object.obj_name}",
+                    self.game.turn,
+                )
+            )
 
     @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:
@@ -171,9 +192,9 @@ class Event:
 
         # ------------------------------
         # Captured bases
-        #if self.game.player_country in db.BLUEFOR_FACTIONS:
-        coalition = 2 # Value in DCS mission event for BLUE
-        #else:
+        # if self.game.player_country in db.BLUEFOR_FACTIONS:
+        coalition = 2  # Value in DCS mission event for BLUE
+        # else:
         #    coalition = 1 # Value in DCS mission event for RED
 
         for captured in debriefing.base_capture_events:
@@ -187,12 +208,22 @@ class Event:
 
                         if cp.captured and new_owner_coalition != coalition:
                             for_player = False
-                            info = Information(cp.name + " lost !", "The ennemy took control of " + cp.name + "\nShame on us !", self.game.turn)
+                            info = Information(
+                                cp.name + " lost !",
+                                "The ennemy took control of "
+                                + cp.name
+                                + "\nShame on us !",
+                                self.game.turn,
+                            )
                             self.game.informations.append(info)
                             captured_cps.append(cp)
-                        elif not(cp.captured) and new_owner_coalition == coalition:
+                        elif not (cp.captured) and new_owner_coalition == coalition:
                             for_player = True
-                            info = Information(cp.name + " captured !", "We took control of " + cp.name + "! Great job !", self.game.turn)
+                            info = Information(
+                                cp.name + " captured !",
+                                "We took control of " + cp.name + "! Great job !",
+                                self.game.turn,
+                            )
                             self.game.informations.append(info)
                             captured_cps.append(cp)
                         else:
@@ -218,7 +249,12 @@ class Event:
         for cp in self.game.theater.player_points():
             enemy_cps = [e for e in cp.connected_points if not e.captured]
             for enemy_cp in enemy_cps:
-                print("Compute frontline progression for : " + cp.name + " to " + enemy_cp.name)
+                print(
+                    "Compute frontline progression for : "
+                    + cp.name
+                    + " to "
+                    + enemy_cp.name
+                )
 
                 delta = 0.0
                 player_won = True
@@ -234,7 +270,11 @@ class Event:
 
                 ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
 
-                player_aggresive = cp.stances[enemy_cp.id] in [CombatStance.AGGRESSIVE, CombatStance.ELIMINATION, CombatStance.BREAKTHROUGH]
+                player_aggresive = cp.stances[enemy_cp.id] in [
+                    CombatStance.AGGRESSIVE,
+                    CombatStance.ELIMINATION,
+                    CombatStance.BREAKTHROUGH,
+                ]
 
                 if ally_units_alive == 0:
                     player_won = False
@@ -259,11 +299,17 @@ class Event:
                                 delta = DEFEAT_INFLUENCE
                     elif ally_casualties > enemy_casualties:
 
-                        if ally_units_alive > 2*enemy_units_alive and player_aggresive:
+                        if (
+                            ally_units_alive > 2 * enemy_units_alive
+                            and player_aggresive
+                        ):
                             # Even with casualties if the enemy is overwhelmed, they are going to lose ground
                             player_won = True
                             delta = MINOR_DEFEAT_INFLUENCE
-                        elif ally_units_alive > 3*enemy_units_alive and player_aggresive:
+                        elif (
+                            ally_units_alive > 3 * enemy_units_alive
+                            and player_aggresive
+                        ):
                             player_won = True
                             delta = STRONG_DEFEAT_INFLUENCE
                         else:
@@ -275,7 +321,10 @@ class Event:
                                 delta = STRONG_DEFEAT_INFLUENCE
 
                     # No progress with defensive strategies
-                    if player_won and cp.stances[enemy_cp.id] in [CombatStance.DEFENSIVE, CombatStance.AMBUSH]:
+                    if player_won and cp.stances[enemy_cp.id] in [
+                        CombatStance.DEFENSIVE,
+                        CombatStance.AMBUSH,
+                    ]:
                         print("Defensive stance, progress is limited")
                         delta = MINOR_DEFEAT_INFLUENCE
 
@@ -283,28 +332,40 @@ class Event:
                     print(cp.name + " won !  factor > " + str(delta))
                     cp.base.affect_strength(delta)
                     enemy_cp.base.affect_strength(-delta)
-                    info = Information("Frontline Report",
-                                       "Our ground forces from " + cp.name + " are making progress toward " + enemy_cp.name,
-                                       self.game.turn)
+                    info = Information(
+                        "Frontline Report",
+                        "Our ground forces from "
+                        + cp.name
+                        + " are making progress toward "
+                        + enemy_cp.name,
+                        self.game.turn,
+                    )
                     self.game.informations.append(info)
                 else:
                     print(cp.name + " lost !  factor > " + str(delta))
                     enemy_cp.base.affect_strength(delta)
                     cp.base.affect_strength(-delta)
-                    info = Information("Frontline Report",
-                                       "Our ground forces from " + cp.name + " are losing ground against the enemy forces from " + enemy_cp.name,
-                                       self.game.turn)
+                    info = Information(
+                        "Frontline Report",
+                        "Our ground forces from "
+                        + cp.name
+                        + " are losing ground against the enemy forces from "
+                        + enemy_cp.name,
+                        self.game.turn,
+                    )
                     self.game.informations.append(info)
 
     def redeploy_units(self, cp: ControlPoint) -> None:
-        """"
+        """ "
         Auto redeploy units to newly captured base
         """
 
-        ally_connected_cps = [ocp for ocp in cp.connected_points if
-                              cp.captured == ocp.captured]
-        enemy_connected_cps = [ocp for ocp in cp.connected_points if
-                               cp.captured != ocp.captured]
+        ally_connected_cps = [
+            ocp for ocp in cp.connected_points if cp.captured == ocp.captured
+        ]
+        enemy_connected_cps = [
+            ocp for ocp in cp.connected_points if cp.captured != ocp.captured
+        ]
 
         # If the newly captured cp does not have enemy connected cp,
         # then it is not necessary to redeploy frontline units there.
@@ -315,8 +376,7 @@ class Event:
         for ally_cp in ally_connected_cps:
             self.redeploy_between(cp, ally_cp)
 
-    def redeploy_between(self, destination: ControlPoint,
-                         source: ControlPoint) -> None:
+    def redeploy_between(self, destination: ControlPoint, source: ControlPoint) -> None:
         total_units_redeployed = 0
         moved_units = {}
 
@@ -333,8 +393,7 @@ class Event:
 
         for frontline_unit, count in source.base.armor.items():
             moved_units[frontline_unit] = int(count * move_factor)
-            total_units_redeployed = total_units_redeployed + int(
-                count * move_factor)
+            total_units_redeployed = total_units_redeployed + int(count * move_factor)
 
         destination.base.commision_units(moved_units)
         source.base.commit_losses(moved_units)
@@ -362,7 +421,6 @@ class Event:
 
 
 class UnitsDeliveryEvent:
-
     def __init__(self, control_point: ControlPoint) -> None:
         self.to_cp = control_point
         self.units: Dict[Type[UnitType], int] = {}
@@ -390,8 +448,7 @@ class UnitsDeliveryEvent:
                 logging.error(f"Could not refund {unit_type.id}, price unknown")
                 continue
 
-            logging.info(
-                f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
+            logging.info(f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
             game.adjust_budget(price * count, player=self.to_cp.captured)
 
     def available_next_turn(self, unit_type: Type[UnitType]) -> int:
@@ -409,13 +466,13 @@ class UnitsDeliveryEvent:
             aircraft = unit_type.id
             name = self.to_cp.name
             if count >= 0:
-                bought_units[unit_type] = count 
+                bought_units[unit_type] = count
                 game.message(
-                    f"{coalition} reinforcements: {aircraft} x {count} at {name}")
+                    f"{coalition} reinforcements: {aircraft} x {count} at {name}"
+                )
             else:
                 sold_units[unit_type] = -count
-                game.message(
-                    f"{coalition} sold: {aircraft} x {-count} at {name}")
+                game.message(f"{coalition} sold: {aircraft} x {-count} at {name}")
         self.to_cp.base.commision_units(bought_units)
         self.to_cp.base.commit_losses(sold_units)
         self.units = {}

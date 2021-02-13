@@ -109,22 +109,25 @@ class ProposedMission:
     flights: List[ProposedFlight]
 
     def __str__(self) -> str:
-        flights = ', '.join([str(f) for f in self.flights])
+        flights = ", ".join([str(f) for f in self.flights])
         return f"{self.location.name}: {flights}"
 
 
 class AircraftAllocator:
     """Finds suitable aircraft for proposed missions."""
 
-    def __init__(self, closest_airfields: ClosestAirfields,
-                 global_inventory: GlobalAircraftInventory,
-                 is_player: bool) -> None:
+    def __init__(
+        self,
+        closest_airfields: ClosestAirfields,
+        global_inventory: GlobalAircraftInventory,
+        is_player: bool,
+    ) -> None:
         self.closest_airfields = closest_airfields
         self.global_inventory = global_inventory
         self.is_player = is_player
 
     def find_aircraft_for_flight(
-            self, flight: ProposedFlight
+        self, flight: ProposedFlight
     ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
         """Finds aircraft suitable for the given mission.
 
@@ -144,12 +147,12 @@ class AircraftAllocator:
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        return self.find_aircraft_of_type(
-            flight, aircraft_for_task(flight.task)
-        )
+        return self.find_aircraft_of_type(flight, aircraft_for_task(flight.task))
 
     def find_aircraft_of_type(
-            self, flight: ProposedFlight, types: List[Type[FlyingType]],
+        self,
+        flight: ProposedFlight,
+        types: List[Type[FlyingType]],
     ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
@@ -171,18 +174,22 @@ class AircraftAllocator:
 class PackageBuilder:
     """Builds a Package for the flights it receives."""
 
-    def __init__(self, location: MissionTarget,
-                 closest_airfields: ClosestAirfields,
-                 global_inventory: GlobalAircraftInventory,
-                 is_player: bool,
-                 package_country: str,
-                 start_type: str) -> None:
+    def __init__(
+        self,
+        location: MissionTarget,
+        closest_airfields: ClosestAirfields,
+        global_inventory: GlobalAircraftInventory,
+        is_player: bool,
+        package_country: str,
+        start_type: str,
+    ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
         self.package_country = package_country
         self.package = Package(location)
-        self.allocator = AircraftAllocator(closest_airfields, global_inventory,
-                                           is_player)
+        self.allocator = AircraftAllocator(
+            closest_airfields, global_inventory, is_player
+        )
         self.global_inventory = global_inventory
         self.start_type = start_type
 
@@ -203,14 +210,23 @@ class PackageBuilder:
         else:
             start_type = self.start_type
 
-        flight = Flight(self.package, self.package_country, aircraft, plan.num_aircraft, plan.task,
-                        start_type, departure=airfield, arrival=airfield,
-                        divert=self.find_divert_field(aircraft, airfield))
+        flight = Flight(
+            self.package,
+            self.package_country,
+            aircraft,
+            plan.num_aircraft,
+            plan.task,
+            start_type,
+            departure=airfield,
+            arrival=airfield,
+            divert=self.find_divert_field(aircraft, airfield),
+        )
         self.package.add_flight(flight)
         return True
 
-    def find_divert_field(self, aircraft: Type[FlyingType],
-                          arrival: ControlPoint) -> Optional[ControlPoint]:
+    def find_divert_field(
+        self, aircraft: Type[FlyingType], arrival: ControlPoint
+    ) -> Optional[ControlPoint]:
         divert_limit = nautical_miles(150)
         for airfield in self.closest_airfields.airfields_within(divert_limit):
             if airfield.captured != self.is_player:
@@ -323,8 +339,8 @@ class ObjectiveFinder:
         return self._targets_by_range(self.enemy_ships())
 
     def _targets_by_range(
-            self,
-            targets: Iterable[MissionTarget]) -> Iterator[MissionTarget]:
+        self, targets: Iterable[MissionTarget]
+    ) -> Iterator[MissionTarget]:
         target_ranges: List[Tuple[MissionTarget, int]] = []
         for target in targets:
             ranges: List[int] = []
@@ -430,8 +446,9 @@ class ObjectiveFinder:
 
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
-        return (c for c in self.game.theater.controlpoints if
-                c.is_friendly(self.is_player))
+        return (
+            c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
+        )
 
     def farthest_friendly_control_point(self) -> ControlPoint:
         """
@@ -451,8 +468,11 @@ class ObjectiveFinder:
 
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
-        return (c for c in self.game.theater.controlpoints if
-                not c.is_friendly(self.is_player))
+        return (
+            c
+            for c in self.game.theater.controlpoints
+            if not c.is_friendly(self.is_player)
+        )
 
     def all_possible_targets(self) -> Iterator[MissionTarget]:
         """Iterates over all possible mission targets in the theater.
@@ -524,33 +544,46 @@ class CoalitionMissionPlanner:
         eliminated this turn.
         """
 
-        #Find farthest, friendly CP for AEWC
+        # Find farthest, friendly CP for AEWC
         cp = self.objective_finder.farthest_friendly_control_point()
-        yield ProposedMission(cp, [
-            ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)
-        ])
+        yield ProposedMission(
+            cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+        )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
             # Plan three rounds of CAP to give ~90 minutes coverage. Spacing
             # these out appropriately is done in stagger_missions.
-            yield ProposedMission(cp, [
-                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-            ])
-            yield ProposedMission(cp, [
-                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-            ])
-            yield ProposedMission(cp, [
-                ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-            ])
+            yield ProposedMission(
+                cp,
+                [
+                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                ],
+            )
+            yield ProposedMission(
+                cp,
+                [
+                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                ],
+            )
+            yield ProposedMission(
+                cp,
+                [
+                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                ],
+            )
 
         # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():
-            yield ProposedMission(front_line, [
-                ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
-                ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE,
-                               EscortType.AirToAir),
-            ])
+            yield ProposedMission(
+                front_line,
+                [
+                    ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
+                    ProposedFlight(
+                        FlightType.TARCAP, 2, self.MAX_CAP_RANGE, EscortType.AirToAir
+                    ),
+                ],
+            )
 
     def propose_missions(self) -> Iterator[ProposedMission]:
         """Identifies and iterates over potential mission in priority order."""
@@ -561,30 +594,46 @@ class CoalitionMissionPlanner:
         # Find enemy SAM sites with ranges that extend to within 50 nmi of
         # friendly CPs, front, lines, or objects, plan DEAD.
         for sam in self.objective_finder.threatening_sams():
-            yield ProposedMission(sam, [
-                ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
-                # TODO: Max escort range.
-                ProposedFlight(FlightType.ESCORT, 2, self.MAX_SEAD_RANGE,
-                               EscortType.AirToAir),
-            ])
+            yield ProposedMission(
+                sam,
+                [
+                    ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
+                    ),
+                ],
+            )
 
         for group in self.objective_finder.threatening_ships():
-            yield ProposedMission(group, [
-                ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
-                # TODO: Max escort range.
-                ProposedFlight(FlightType.ESCORT, 2, self.MAX_ANTISHIP_RANGE,
-                               EscortType.AirToAir),
-            ])
+            yield ProposedMission(
+                group,
+                [
+                    ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT,
+                        2,
+                        self.MAX_ANTISHIP_RANGE,
+                        EscortType.AirToAir,
+                    ),
+                ],
+            )
 
         for group in self.objective_finder.threatening_vehicle_groups():
-            yield ProposedMission(group, [
-                ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
-                # TODO: Max escort range.
-                ProposedFlight(FlightType.ESCORT, 2, self.MAX_BAI_RANGE,
-                               EscortType.AirToAir),
-                ProposedFlight(FlightType.SEAD, 2, self.MAX_OCA_RANGE,
-                               EscortType.Sead),
-            ])
+            yield ProposedMission(
+                group,
+                [
+                    ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
+                    ),
+                    ProposedFlight(
+                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                    ),
+                ],
+            )
 
         for target in self.objective_finder.oca_targets(min_aircraft=20):
             flights = [
@@ -593,27 +642,37 @@ class CoalitionMissionPlanner:
             if self.game.settings.default_start_type == "Cold":
                 # Only schedule if the default start type is Cold. If the player
                 # has set anything else there are no targets to hit.
-                flights.append(ProposedFlight(FlightType.OCA_AIRCRAFT, 2,
-                                              self.MAX_OCA_RANGE))
-            flights.extend([
-                # TODO: Max escort range.
-                ProposedFlight(FlightType.ESCORT, 2, self.MAX_OCA_RANGE,
-                               EscortType.AirToAir),
-                ProposedFlight(FlightType.SEAD, 2, self.MAX_OCA_RANGE,
-                               EscortType.Sead),
-            ])
+                flights.append(
+                    ProposedFlight(FlightType.OCA_AIRCRAFT, 2, self.MAX_OCA_RANGE)
+                )
+            flights.extend(
+                [
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_OCA_RANGE, EscortType.AirToAir
+                    ),
+                    ProposedFlight(
+                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                    ),
+                ]
+            )
             yield ProposedMission(target, flights)
 
         # Plan strike missions.
         for target in self.objective_finder.strike_targets():
-            yield ProposedMission(target, [
-                ProposedFlight(FlightType.STRIKE, 2, self.MAX_STRIKE_RANGE),
-                # TODO: Max escort range.
-                ProposedFlight(FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE,
-                               EscortType.AirToAir),
-                ProposedFlight(FlightType.SEAD, 2, self.MAX_STRIKE_RANGE,
-                               EscortType.Sead),
-            ])
+            yield ProposedMission(
+                target,
+                [
+                    ProposedFlight(FlightType.STRIKE, 2, self.MAX_STRIKE_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE, EscortType.AirToAir
+                    ),
+                    ProposedFlight(
+                        FlightType.SEAD, 2, self.MAX_STRIKE_RANGE, EscortType.Sead
+                    ),
+                ],
+            )
 
     def plan_missions(self) -> None:
         """Identifies and plans mission for the turn."""
@@ -628,19 +687,23 @@ class CoalitionMissionPlanner:
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
-                self.message("Unused aircraft",
-                             f"{available} {aircraft.id} from {cp}")
+                self.message("Unused aircraft", f"{available} {aircraft.id} from {cp}")
 
-    def plan_flight(self, mission: ProposedMission, flight: ProposedFlight,
-                    builder: PackageBuilder, missing_types: Set[FlightType],
-                    for_reserves: bool) -> None:
+    def plan_flight(
+        self,
+        mission: ProposedMission,
+        flight: ProposedFlight,
+        builder: PackageBuilder,
+        missing_types: Set[FlightType],
+        for_reserves: bool,
+    ) -> None:
         if not builder.plan_flight(flight):
             missing_types.add(flight.task)
             purchase_order = AircraftProcurementRequest(
                 near=mission.location,
                 range=flight.max_distance,
                 task_capability=flight.task,
-                number=flight.num_aircraft
+                number=flight.num_aircraft,
             )
             if for_reserves:
                 # Reserves are planned for critical missions, so prioritize
@@ -650,26 +713,28 @@ class CoalitionMissionPlanner:
                 self.procurement_requests.append(purchase_order)
 
     def scrub_mission_missing_aircraft(
-            self, mission: ProposedMission, builder: PackageBuilder,
-            missing_types: Set[FlightType],
-            not_attempted: Iterable[ProposedFlight],
-            reserves: bool) -> None:
+        self,
+        mission: ProposedMission,
+        builder: PackageBuilder,
+        missing_types: Set[FlightType],
+        not_attempted: Iterable[ProposedFlight],
+        reserves: bool,
+    ) -> None:
         # Try to plan the rest of the mission just so we can count the missing
         # types to buy.
         for flight in not_attempted:
             self.plan_flight(mission, flight, builder, missing_types, reserves)
 
-        missing_types_str = ", ".join(
-            sorted([t.name for t in missing_types]))
+        missing_types_str = ", ".join(sorted([t.name for t in missing_types]))
         builder.release_planned_aircraft()
         desc = "reserve aircraft" if reserves else "aircraft"
         self.message(
             "Insufficient aircraft",
             f"Not enough {desc} in range for {mission.location.name} "
-            f"capable of: {missing_types_str}")
+            f"capable of: {missing_types_str}",
+        )
 
-    def check_needed_escorts(
-            self, builder: PackageBuilder) -> Dict[EscortType, bool]:
+    def check_needed_escorts(self, builder: PackageBuilder) -> Dict[EscortType, bool]:
         threats = defaultdict(bool)
         for flight in builder.package.flights:
             if self.threat_zones.threatened_by_aircraft(flight):
@@ -678,8 +743,7 @@ class CoalitionMissionPlanner:
                 threats[EscortType.Sead] = True
         return threats
 
-    def plan_mission(self, mission: ProposedMission,
-                     reserves: bool = False) -> None:
+    def plan_mission(self, mission: ProposedMission, reserves: bool = False) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
 
         if self.is_player:
@@ -693,7 +757,7 @@ class CoalitionMissionPlanner:
             self.game.aircraft_inventory,
             self.is_player,
             package_country,
-            self.game.settings.default_start_type
+            self.game.settings.default_start_type,
         )
 
         # Attempt to plan all the main elements of the mission first. Escorts
@@ -707,12 +771,12 @@ class CoalitionMissionPlanner:
                 # If the package does not need escorts they may be pruned.
                 escorts.append(proposed_flight)
                 continue
-            self.plan_flight(mission, proposed_flight, builder, missing_types,
-                             reserves)
+            self.plan_flight(mission, proposed_flight, builder, missing_types, reserves)
 
         if missing_types:
-            self.scrub_mission_missing_aircraft(mission, builder, missing_types,
-                                                escorts, reserves)
+            self.scrub_mission_missing_aircraft(
+                mission, builder, missing_types, escorts, reserves
+            )
             return
 
         # Create flight plans for the main flights of the package so we can
@@ -721,8 +785,9 @@ class CoalitionMissionPlanner:
         # flights that will rendezvous with their package will be affected by
         # the other flights in the package. Escorts will not be able to
         # contribute to this.
-        flight_plan_builder = FlightPlanBuilder(self.game, builder.package,
-                                                self.is_player)
+        flight_plan_builder = FlightPlanBuilder(
+            self.game, builder.package, self.is_player
+        )
         for flight in builder.package.flights:
             flight_plan_builder.populate_flight_plan(flight)
 
@@ -732,14 +797,14 @@ class CoalitionMissionPlanner:
             # impossible.
             assert escort.escort_type is not None
             if needed_escorts[escort.escort_type]:
-                self.plan_flight(mission, escort, builder, missing_types,
-                                 reserves)
+                self.plan_flight(mission, escort, builder, missing_types, reserves)
 
         # Check again for unavailable aircraft. If the escort was required and
         # none were found, scrub the mission.
         if missing_types:
-            self.scrub_mission_missing_aircraft(mission, builder, missing_types,
-                                                escorts, reserves)
+            self.scrub_mission_missing_aircraft(
+                mission, builder, missing_types, escorts, reserves
+            )
             return
 
         if reserves:
@@ -756,8 +821,9 @@ class CoalitionMissionPlanner:
         self.ato.add_package(package)
 
     def stagger_missions(self) -> None:
-        def start_time_generator(count: int, earliest: int, latest: int,
-                                 margin: int) -> Iterator[timedelta]:
+        def start_time_generator(
+            count: int, earliest: int, latest: int, margin: int
+        ) -> Iterator[timedelta]:
             interval = (latest - earliest) // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
@@ -768,17 +834,13 @@ class CoalitionMissionPlanner:
             FlightType.TARCAP,
         }
 
-        previous_cap_end_time: Dict[MissionTarget, timedelta] = defaultdict(
-            timedelta
-        )
-        non_dca_packages = [p for p in self.ato.packages if
-                            p.primary_task not in dca_types]
+        previous_cap_end_time: Dict[MissionTarget, timedelta] = defaultdict(timedelta)
+        non_dca_packages = [
+            p for p in self.ato.packages if p.primary_task not in dca_types
+        ]
 
         start_time = start_time_generator(
-            count=len(non_dca_packages),
-            earliest=5,
-            latest=90,
-            margin=5
+            count=len(non_dca_packages), earliest=5, latest=90, margin=5
         )
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()
@@ -795,8 +857,7 @@ class CoalitionMissionPlanner:
                 departure_time = package.mission_departure_time
                 # Should be impossible for CAPs
                 if departure_time is None:
-                    logging.error(
-                        f"Could not determine mission end time for {package}")
+                    logging.error(f"Could not determine mission end time for {package}")
                     continue
                 previous_cap_end_time[package.target] = departure_time
             else:
@@ -815,8 +876,6 @@ class CoalitionMissionPlanner:
         message to the info panel.
         """
         if self.is_player:
-            self.game.informations.append(
-                Information(title, text, self.game.turn)
-            )
+            self.game.informations.append(Information(title, text, self.game.turn))
         else:
             logging.info(f"{title}: {text}")
