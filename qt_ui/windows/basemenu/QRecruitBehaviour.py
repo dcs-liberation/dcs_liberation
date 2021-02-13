@@ -28,7 +28,7 @@ class QRecruitBehaviour:
     bought_amount_labels = None
     maximum_units = -1
     recruitable_types = []
-    BUDGET_FORMAT = "Available Budget: <b>${}M</b>"
+    BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
     def __init__(self) -> None:
         self.bought_amount_labels = {}

@@ -6,7 +6,7 @@ from typing import Dict, Iterator, List, TYPE_CHECKING, Tuple, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
-from dcs.unittype import UnitType
+from dcs.unittype import UnitType, VehicleType
 
 from game import persistency
 from game.debriefing import AirLosses, Debriefing
@@ -296,45 +296,69 @@ class Event:
                                        self.game.turn)
                     self.game.informations.append(info)
 
-    def redeploy_units(self, cp):
+    def redeploy_units(self, cp: ControlPoint) -> None:
         """"
         Auto redeploy units to newly captured base
         """
 
-        ally_connected_cps = [ocp for ocp in cp.connected_points if cp.captured == ocp.captured]
-        enemy_connected_cps = [ocp for ocp in cp.connected_points if cp.captured != ocp.captured]
+        ally_connected_cps = [ocp for ocp in cp.connected_points if
+                              cp.captured == ocp.captured]
+        enemy_connected_cps = [ocp for ocp in cp.connected_points if
+                               cp.captured != ocp.captured]
 
         # If the newly captured cp does not have enemy connected cp,
         # then it is not necessary to redeploy frontline units there.
         if len(enemy_connected_cps) == 0:
             return
+
+        # From each ally cp, send reinforcements
+        for ally_cp in ally_connected_cps:
+            self.redeploy_between(cp, ally_cp)
+
+    def redeploy_between(self, destination: ControlPoint,
+                         source: ControlPoint) -> None:
+        total_units_redeployed = 0
+        moved_units = {}
+
+        if source.has_active_frontline or not destination.captured:
+            # If there are still active front lines to defend at the
+            # transferring CP we should not transfer all units.
+            #
+            # Opfor also does not transfer all of their units.
+            # TODO: Balance the CPs rather than moving half from everywhere.
+            move_factor = 0.5
         else:
-            # From each ally cp, send reinforcements
-            for ally_cp in ally_connected_cps:
-                total_units_redeployed = 0
-                own_enemy_cp = [ocp for ocp in ally_cp.connected_points if ally_cp.captured != ocp.captured]
+            # Otherwise we can move everything.
+            move_factor = 1
 
-                moved_units = {}
+        for frontline_unit, count in source.base.armor.items():
+            moved_units[frontline_unit] = int(count * move_factor)
+            total_units_redeployed = total_units_redeployed + int(
+                count * move_factor)
 
-                # If the connected base, does not have any more enemy cp connected.
-                # Or if it is not the opponent redeploying forces there (enemy AI will never redeploy all their forces at once)
-                if len(own_enemy_cp) > 0 or not cp.captured:
-                    for frontline_unit, count in ally_cp.base.armor.items():
-                        moved_units[frontline_unit] = int(count/2)
-                        total_units_redeployed = total_units_redeployed + int(count/2)
-                else: # So if the old base, does not have any more enemy cp connected, or if it is an enemy base
-                    for frontline_unit, count in ally_cp.base.armor.items():
-                        moved_units[frontline_unit] = count
-                        total_units_redeployed = total_units_redeployed + count
+        destination.base.commision_units(moved_units)
+        source.base.commit_losses(moved_units)
 
-                cp.base.commision_units(moved_units)
-                ally_cp.base.commit_losses(moved_units)
+        # Also transfer pending deliveries.
+        for unit_type, count in source.pending_unit_deliveries.units.items():
+            if not issubclass(unit_type, VehicleType):
+                continue
+            if count <= 0:
+                # Don't transfer *sales*...
+                continue
+            move_count = int(count * move_factor)
+            source.pending_unit_deliveries.sell({unit_type: move_count})
+            destination.pending_unit_deliveries.order({unit_type: move_count})
+            total_units_redeployed += move_count
 
-                if total_units_redeployed > 0:
-                    info = Information("Units redeployed", "", self.game.turn)
-                    info.text = str(total_units_redeployed) + " units have been redeployed from " + ally_cp.name + " to " + cp.name
-                    self.game.informations.append(info)
-                    logging.info(info.text)
+        if total_units_redeployed > 0:
+            text = (
+                f"{total_units_redeployed}  units have been redeployed from "
+                f"{source.name} to {destination.name}"
+            )
+            info = Information("Units redeployed", text, self.game.turn)
+            self.game.informations.append(info)
+            logging.info(text)
 
 
 class UnitsDeliveryEvent:

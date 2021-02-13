@@ -606,6 +606,10 @@ class ControlPoint(MissionTarget, ABC):
     def income_per_turn(self) -> int:
         return 0
 
+    @property
+    def has_active_frontline(self) -> bool:
+        return any(
+            not c.is_friendly(self.captured) for c in self.connected_points)
 
 class Airfield(ControlPoint):
 
