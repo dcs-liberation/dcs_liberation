@@ -3,6 +3,7 @@
 #
 from dcs import unittype
 
+
 class AMX_10RCR(unittype.VehicleType):
     id = "AMX10RCR"
     name = "AMX-10RCR"
@@ -150,7 +151,9 @@ class DIM__KAMIKAZE(unittype.VehicleType):
     air_weapon_dist = 50
     eplrs = True
 
+
 ## FORTIFICATION
+
 
 class _FIELD_HIDE(unittype.VehicleType):
     id = "FieldHL"
@@ -159,6 +162,7 @@ class _FIELD_HIDE(unittype.VehicleType):
     threat_range = 0
     air_weapon_dist = 0
 
+
 class _FIELD_HIDE_SMALL(unittype.VehicleType):
     id = "HARRIERH"
     name = "*FIELD HIDE SMALL"
@@ -166,12 +170,14 @@ class _FIELD_HIDE_SMALL(unittype.VehicleType):
     threat_range = 0
     air_weapon_dist = 0
 
+
 class SmokeD1(unittype.VehicleType):
     id = "SmokeD1"
     name = "SmokeD1"
     detection_range = 0
     threat_range = 0
     air_weapon_dist = 0
+
 
 class SmokeD3(unittype.VehicleType):
     id = "SmokeD3"
@@ -189,6 +195,7 @@ class TRM_2000(unittype.VehicleType):
     air_weapon_dist = 0
     eplrs = True
 
+
 class TRM_2000_Fuel(unittype.VehicleType):
     id = "TRM2000_Citerne"
     name = "TRM-2000 Fuel"
@@ -196,6 +203,7 @@ class TRM_2000_Fuel(unittype.VehicleType):
     threat_range = 0
     air_weapon_dist = 0
     eplrs = True
+
 
 class VAB_MEDICAL(unittype.VehicleType):
     id = "VABH"
@@ -205,6 +213,7 @@ class VAB_MEDICAL(unittype.VehicleType):
     air_weapon_dist = 0
     eplrs = True
 
+
 class VAB(unittype.VehicleType):
     id = "VAB_RADIO"
     name = "VAB"
@@ -212,6 +221,7 @@ class VAB(unittype.VehicleType):
     threat_range = 0
     air_weapon_dist = 0
     eplrs = True
+
 
 class VBL(unittype.VehicleType):
     id = "VBL-Radio"
@@ -221,6 +231,7 @@ class VBL(unittype.VehicleType):
     air_weapon_dist = 0
     eplrs = True
 
+
 class Tracma_TD_1500(unittype.VehicleType):
     id = "Tracma"
     name = "Tracma TD 1500"
@@ -228,7 +239,9 @@ class Tracma_TD_1500(unittype.VehicleType):
     threat_range = 0
     air_weapon_dist = 0
 
+
 ## AIRDEFENCE
+
 
 class SMOKE_SAM_IR(unittype.VehicleType):
     id = "SMOKESAM"
@@ -238,12 +251,14 @@ class SMOKE_SAM_IR(unittype.VehicleType):
     air_weapon_dist = 20000
     eplrs = True
 
+
 class _53T2(unittype.VehicleType):
     id = "AA20"
     name = "53T2"
     detection_range = 5000
     threat_range = 2000
     air_weapon_dist = 2000
+
 
 class TRM_2000_53T2(unittype.VehicleType):
     id = "TRM2000_AA20"
@@ -253,6 +268,7 @@ class TRM_2000_53T2(unittype.VehicleType):
     air_weapon_dist = 2000
     eplrs = True
 
+
 class TRM_2000_PAMELA(unittype.VehicleType):
     id = "TRMMISTRAL"
     name = "TRM-2000 PAMELA"
@@ -261,7 +277,9 @@ class TRM_2000_PAMELA(unittype.VehicleType):
     air_weapon_dist = 10000
     eplrs = True
 
+
 ## INFANTRY
+
 
 class Infantry_Soldier_JTAC(unittype.VehicleType):
     id = "JTACFP"
@@ -270,7 +288,9 @@ class Infantry_Soldier_JTAC(unittype.VehicleType):
     threat_range = 500
     air_weapon_dist = 500
 
+
 ## ARTILERY
+
 
 class MO_120_RT(unittype.VehicleType):
     id = "M120"
@@ -278,6 +298,7 @@ class MO_120_RT(unittype.VehicleType):
     detection_range = 0
     threat_range = 15000
     air_weapon_dist = 15000
+
 
 class VAB_MORTIER(unittype.VehicleType):
     id = "VAB_MORTIER"

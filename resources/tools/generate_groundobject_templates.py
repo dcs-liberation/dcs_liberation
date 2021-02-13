@@ -13,7 +13,10 @@ def load_templates():
 
     groups = {}  # type: typing.Dict[str, typing.Dict[int, typing.List[Static]]]
 
-    for static_group in temp_mis.country("USA").static_group + temp_mis.country("USAF Aggressors").static_group:
+    for static_group in (
+        temp_mis.country("USA").static_group
+        + temp_mis.country("USAF Aggressors").static_group
+    ):
         for static in static_group.units:
             static_name = str(static.name).split()[0]
             tpl_name, tpl_idx = static_name[:-1], int(static_name[-1])
@@ -34,13 +37,19 @@ def load_templates():
                         a = aa
                         b = bb
 
-            center = a.position.point_from_heading(a.position.heading_between_point(b.position), dist / 2)
+            center = a.position.point_from_heading(
+                a.position.heading_between_point(b.position), dist / 2
+            )
             for static in static_groups:
-                tpls[category_name][idx].append({
-                    "type": static.type,
-                    "offset": Point(center.x - static.position.x, center.y - static.position.y),
-                    "heading": static.heading,
-                })
+                tpls[category_name][idx].append(
+                    {
+                        "type": static.type,
+                        "offset": Point(
+                            center.x - static.position.x, center.y - static.position.y
+                        ),
+                        "heading": static.heading,
+                    }
+                )
 
     tpls["aa"] = {0: [{"type": "AA", "offset": Point(0, 0), "heading": 0}]}
     return tpls

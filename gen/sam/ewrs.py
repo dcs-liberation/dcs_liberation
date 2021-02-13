@@ -10,8 +10,9 @@ class EwrGenerator(GroupGenerator):
         raise NotImplementedError
 
     def generate(self) -> None:
-        self.add_unit(self.unit_type, "EWR", self.position.x, self.position.y,
-                      self.heading)
+        self.add_unit(
+            self.unit_type, "EWR", self.position.x, self.position.y, self.heading
+        )
 
 
 class BoxSpringGenerator(EwrGenerator):

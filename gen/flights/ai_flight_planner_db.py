@@ -370,11 +370,7 @@ TRANSPORT_CAPABLE = [
     UH_1H,
 ]
 
-DRONES = [
-    MQ_9_Reaper,
-    RQ_1A_Predator,
-    WingLoong_I
-]
+DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
 
 AEWC_CAPABLE = [
     E_3A,

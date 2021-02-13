@@ -17,9 +17,7 @@ class QFlightSlotEditor(QGroupBox):
         self.package_model = package_model
         self.flight = flight
         self.game = game
-        self.inventory = self.game.aircraft_inventory.for_control_point(
-            flight.from_cp
-        )
+        self.inventory = self.game.aircraft_inventory.for_control_point(flight.from_cp)
         available = self.inventory.available(self.flight.unit_type)
         max_count = self.flight.count + available
         if max_count > 4:
@@ -67,7 +65,8 @@ class QFlightSlotEditor(QGroupBox):
             logging.error(
                 f"Could not add {difference} additional aircraft to "
                 f"{self.flight} because {self.flight.from_cp} has only "
-                f"{available} {self.flight.unit_type} remaining")
+                f"{available} {self.flight.unit_type} remaining"
+            )
             self.flight.count = old_count
             self.game.aircraft_inventory.claim_for_flight(self.flight)
         self.changed.emit()

@@ -5,7 +5,6 @@ from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 
 class QFlightTypeTaskInfo(QGroupBox):
-
     def __init__(self, flight):
         super(QFlightTypeTaskInfo, self).__init__("Flight")
         self.flight = flight
@@ -14,7 +13,9 @@ class QFlightTypeTaskInfo(QGroupBox):
 
         self.aircraft_icon = QLabel()
         if db.unit_type_name(self.flight.unit_type) in AIRCRAFT_ICONS:
-            self.aircraft_icon.setPixmap(AIRCRAFT_ICONS[db.unit_type_name(self.flight.unit_type)])
+            self.aircraft_icon.setPixmap(
+                AIRCRAFT_ICONS[db.unit_type_name(self.flight.unit_type)]
+            )
 
         self.task = QLabel("Task:")
         self.task_type = QLabel(str(flight.flight_type))

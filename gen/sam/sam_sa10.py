@@ -33,28 +33,41 @@ class SA10Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         # Search Radar
-        self.add_unit(self.sr1, "SR1", self.position.x, self.position.y + 40, self.heading)
+        self.add_unit(
+            self.sr1, "SR1", self.position.x, self.position.y + 40, self.heading
+        )
 
         # Search radar for missiles (optionnal)
-        self.add_unit(self.sr2, "SR2", self.position.x - 40, self.position.y, self.heading)
+        self.add_unit(
+            self.sr2, "SR2", self.position.x - 40, self.position.y, self.heading
+        )
 
         # Command Post
         self.add_unit(self.cp, "CP", self.position.x, self.position.y, self.heading)
 
         # 2 Tracking radars
-        self.add_unit(self.tr1, "TR1", self.position.x - 40, self.position.y - 40, self.heading)
+        self.add_unit(
+            self.tr1, "TR1", self.position.x - 40, self.position.y - 40, self.heading
+        )
 
-        self.add_unit(self.tr2, "TR2", self.position.x + 40, self.position.y - 40,
-                      self.heading)
+        self.add_unit(
+            self.tr2, "TR2", self.position.x + 40, self.position.y - 40, self.heading
+        )
 
         # 2 different launcher type (C & D)
         num_launchers = random.randint(6, 8)
-        positions = self.get_circular_position(num_launchers, launcher_distance=100, coverage=360)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=100, coverage=360
+        )
         for i, position in enumerate(positions):
             if i % 2 == 0:
-                self.add_unit(self.ln1, "LN#" + str(i), position[0], position[1], position[2])
+                self.add_unit(
+                    self.ln1, "LN#" + str(i), position[0], position[1], position[2]
+                )
             else:
-                self.add_unit(self.ln2, "LN#" + str(i), position[0], position[1], position[2])
+                self.add_unit(
+                    self.ln2, "LN#" + str(i), position[0], position[1], position[2]
+                )
 
         self.generate_defensive_groups()
 
@@ -67,10 +80,16 @@ class SA10Generator(AirDefenseGroupGenerator):
         aa_group = self.add_auxiliary_group("AA")
         num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(
-            num_launchers, launcher_distance=210, coverage=360)
+            num_launchers, launcher_distance=210, coverage=360
+        )
         for i, (x, y, heading) in enumerate(positions):
-            self.add_unit_to_group(aa_group, AirDefence.SPAAA_ZSU_23_4_Shilka,
-                                   f"AA#{i}", Point(x, y), heading)
+            self.add_unit_to_group(
+                aa_group,
+                AirDefence.SPAAA_ZSU_23_4_Shilka,
+                f"AA#{i}",
+                Point(x, y),
+                heading,
+            )
 
 
 class Tier2SA10Generator(SA10Generator):
@@ -86,10 +105,16 @@ class Tier2SA10Generator(SA10Generator):
         pd_group = self.add_auxiliary_group("PD")
         num_launchers = random.randint(2, 4)
         positions = self.get_circular_position(
-            num_launchers, launcher_distance=140, coverage=360)
+            num_launchers, launcher_distance=140, coverage=360
+        )
         for i, (x, y, heading) in enumerate(positions):
-            self.add_unit_to_group(pd_group, AirDefence.SAM_SA_15_Tor_9A331,
-                                   f"PD#{i}", Point(x, y), heading)
+            self.add_unit_to_group(
+                pd_group,
+                AirDefence.SAM_SA_15_Tor_9A331,
+                f"PD#{i}",
+                Point(x, y),
+                heading,
+            )
 
 
 class Tier3SA10Generator(SA10Generator):
@@ -102,19 +127,31 @@ class Tier3SA10Generator(SA10Generator):
         aa_group = self.add_auxiliary_group("AA")
         num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(
-            num_launchers, launcher_distance=210, coverage=360)
+            num_launchers, launcher_distance=210, coverage=360
+        )
         for i, (x, y, heading) in enumerate(positions):
-            self.add_unit_to_group(aa_group, AirDefence.SAM_SA_19_Tunguska_2S6,
-                                   f"AA#{i}", Point(x, y), heading)
+            self.add_unit_to_group(
+                aa_group,
+                AirDefence.SAM_SA_19_Tunguska_2S6,
+                f"AA#{i}",
+                Point(x, y),
+                heading,
+            )
 
         # SA-15 for both shorter range targets and point defense.
         pd_group = self.add_auxiliary_group("PD")
         num_launchers = random.randint(2, 4)
         positions = self.get_circular_position(
-            num_launchers, launcher_distance=140, coverage=360)
+            num_launchers, launcher_distance=140, coverage=360
+        )
         for i, (x, y, heading) in enumerate(positions):
-            self.add_unit_to_group(pd_group, AirDefence.SAM_SA_15_Tor_9A331,
-                                   f"PD#{i}", Point(x, y), heading)
+            self.add_unit_to_group(
+                pd_group,
+                AirDefence.SAM_SA_15_Tor_9A331,
+                f"PD#{i}",
+                Point(x, y),
+                heading,
+            )
 
 
 class SA10BGenerator(Tier3SA10Generator):

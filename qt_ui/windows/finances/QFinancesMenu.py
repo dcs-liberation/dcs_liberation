@@ -16,7 +16,6 @@ from game.theater import ControlPoint
 
 
 class QHorizontalSeparationLine(QFrame):
-
     def __init__(self):
         super().__init__()
         self.setMinimumWidth(1)
@@ -34,7 +33,8 @@ class FinancesLayout(QGridLayout):
         income = Income(game, player)
 
         control_points = reversed(
-            sorted(income.control_points, key=lambda c: c.income_per_turn))
+            sorted(income.control_points, key=lambda c: c.income_per_turn)
+        )
         for control_point in control_points:
             self.add_control_point(control_point)
 
@@ -46,8 +46,10 @@ class FinancesLayout(QGridLayout):
 
         self.add_line()
 
-        self.add_row(middle=f"Income multiplier: {income.multiplier:.1f}",
-                     right=f"<b>{income.total}M</b>")
+        self.add_row(
+            middle=f"Income multiplier: {income.multiplier:.1f}",
+            right=f"<b>{income.total}M</b>",
+        )
 
         if player:
             budget = game.budget
@@ -57,8 +59,12 @@ class FinancesLayout(QGridLayout):
         self.add_row(middle="Balance", right=f"<b>{budget}M</b>")
         self.setRowStretch(next(self.row), 1)
 
-    def add_row(self, left: Optional[str] = None, middle: Optional[str] = None,
-                right: Optional[str] = None) -> None:
+    def add_row(
+        self,
+        left: Optional[str] = None,
+        middle: Optional[str] = None,
+        right: Optional[str] = None,
+    ) -> None:
         if not any([left, middle, right]):
             raise ValueError
 
@@ -71,17 +77,21 @@ class FinancesLayout(QGridLayout):
             self.addWidget(QLabel(right), row, 2)
 
     def add_control_point(self, control_point: ControlPoint) -> None:
-        self.add_row(left=f"<b>{control_point.name}</b>",
-                     right=f"{control_point.income_per_turn}M")
+        self.add_row(
+            left=f"<b>{control_point.name}</b>",
+            right=f"{control_point.income_per_turn}M",
+        )
 
     def add_building(self, building: BuildingIncome) -> None:
         row = next(self.row)
         self.addWidget(
-            QLabel(f"<b>{building.category.upper()} [{building.name}]</b>"),
-            row, 0)
-        self.addWidget(QLabel(
-            f"{building.number} buildings x {building.income_per_building}M"),
-            row, 1)
+            QLabel(f"<b>{building.category.upper()} [{building.name}]</b>"), row, 0
+        )
+        self.addWidget(
+            QLabel(f"{building.number} buildings x {building.income_per_building}M"),
+            row,
+            1,
+        )
         rlabel = QLabel(f"{building.income}M")
         rlabel.setProperty("style", "green")
         self.addWidget(rlabel, row, 2)
@@ -91,7 +101,6 @@ class FinancesLayout(QGridLayout):
 
 
 class QFinancesMenu(QDialog):
-
     def __init__(self, game: Game):
         super(QFinancesMenu, self).__init__()
 

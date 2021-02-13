@@ -3,9 +3,16 @@ from PySide2.QtWidgets import QComboBox, QCompleter
 
 
 class QFilteredComboBox(QComboBox):
-
-    def __init__(self, parent=None, include_targets=True, include_airbases=True,
-                 include_frontlines=True, include_units=True, include_enemy=True, include_friendly=True):
+    def __init__(
+        self,
+        parent=None,
+        include_targets=True,
+        include_airbases=True,
+        include_frontlines=True,
+        include_units=True,
+        include_enemy=True,
+        include_friendly=True,
+    ):
         super(QFilteredComboBox, self).__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)

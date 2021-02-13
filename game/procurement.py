@@ -35,9 +35,16 @@ class AircraftProcurementRequest:
 
 
 class ProcurementAi:
-    def __init__(self, game: Game, for_player: bool, faction: Faction,
-                 manage_runways: bool, manage_front_line: bool,
-                 manage_aircraft: bool, front_line_budget_share: float) -> None:
+    def __init__(
+        self,
+        game: Game,
+        for_player: bool,
+        faction: Faction,
+        manage_runways: bool,
+        manage_front_line: bool,
+        manage_aircraft: bool,
+        front_line_budget_share: float,
+    ) -> None:
         if front_line_budget_share > 1.0:
             raise ValueError
 
@@ -51,8 +58,8 @@ class ProcurementAi:
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def spend_budget(
-            self, budget: float,
-            aircraft_requests: List[AircraftProcurementRequest]) -> float:
+        self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
+    ) -> float:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
@@ -100,25 +107,30 @@ class ProcurementAi:
                 budget -= db.RUNWAY_REPAIR_COST
                 if self.is_player:
                     self.game.message(
-                        "OPFOR has begun repairing the runway at "
-                        f"{control_point}"
+                        "OPFOR has begun repairing the runway at " f"{control_point}"
                     )
                 else:
                     self.game.message(
-                        "We have begun repairing the runway at "
-                        f"{control_point}"
+                        "We have begun repairing the runway at " f"{control_point}"
                     )
         return budget
 
     def random_affordable_ground_unit(
-            self, budget: float,
-            cp: ControlPoint) -> Optional[Type[VehicleType]]:
-        affordable_units = [u for u in self.faction.frontline_units + self.faction.artillery_units if
-                            db.PRICES[u] <= budget]
+        self, budget: float, cp: ControlPoint
+    ) -> Optional[Type[VehicleType]]:
+        affordable_units = [
+            u
+            for u in self.faction.frontline_units + self.faction.artillery_units
+            if db.PRICES[u] <= budget
+        ]
 
-        total_number_aa = cp.base.total_frontline_aa + cp.pending_frontline_aa_deliveries_count
-        total_non_aa = cp.base.total_armor + cp.pending_deliveries_count - total_number_aa
-        max_aa = math.ceil(total_non_aa/8)
+        total_number_aa = (
+            cp.base.total_frontline_aa + cp.pending_frontline_aa_deliveries_count
+        )
+        total_non_aa = (
+            cp.base.total_armor + cp.pending_deliveries_count - total_number_aa
+        )
+        max_aa = math.ceil(total_non_aa / 8)
 
         # Limit the number of AA units the AI will buy
         if not total_number_aa < max_aa:
@@ -150,8 +162,12 @@ class ProcurementAi:
         return budget
 
     def _affordable_aircraft_of_types(
-            self, types: List[Type[FlyingType]], airbase: ControlPoint,
-            number: int, max_price: float) -> Optional[Type[FlyingType]]:
+        self,
+        types: List[Type[FlyingType]],
+        airbase: ControlPoint,
+        number: int,
+        max_price: float,
+    ) -> Optional[Type[FlyingType]]:
         best_choice: Optional[Type[FlyingType]] = None
         for unit in [u for u in self.faction.aircrafts if u in types]:
             if db.PRICES[unit] * number > max_price:
@@ -168,15 +184,15 @@ class ProcurementAi:
         return best_choice
 
     def affordable_aircraft_for(
-            self, request: AircraftProcurementRequest,
-            airbase: ControlPoint, budget: float) -> Optional[Type[FlyingType]]:
+        self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
+    ) -> Optional[Type[FlyingType]]:
         return self._affordable_aircraft_of_types(
-            aircraft_for_task(request.task_capability),
-            airbase, request.number, budget)
+            aircraft_for_task(request.task_capability), airbase, request.number, budget
+        )
 
     def purchase_aircraft(
-            self, budget: float,
-            aircraft_requests: List[AircraftProcurementRequest]) -> float:
+        self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
+    ) -> float:
         for request in aircraft_requests:
             for airbase in self.best_airbases_for(request):
                 unit = self.affordable_aircraft_for(request, airbase, budget)
@@ -201,11 +217,9 @@ class ProcurementAi:
             return self.game.theater.enemy_points()
 
     def best_airbases_for(
-            self,
-            request: AircraftProcurementRequest) -> Iterator[ControlPoint]:
-        distance_cache = ObjectiveDistanceCache.get_closest_airfields(
-            request.near
-        )
+        self, request: AircraftProcurementRequest
+    ) -> Iterator[ControlPoint]:
+        distance_cache = ObjectiveDistanceCache.get_closest_airfields(request.near)
         threatened = []
         for cp in distance_cache.airfields_within(request.range):
             if not cp.is_friendly(self.is_player):

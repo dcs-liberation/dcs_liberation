@@ -11,16 +11,18 @@ from PySide2.QtWidgets import (
 from game import Game
 from gen.flights.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import \
-    QPredefinedWaypointSelectionComboBox
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import \
-    QFlightWaypointInfoBox
+from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import (
+    QPredefinedWaypointSelectionComboBox,
+)
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointInfoBox import (
+    QFlightWaypointInfoBox,
+)
 
 PREDEFINED_WAYPOINT_CATEGORIES = [
     "Frontline (CAS AREA)",
     "Building",
     "Units",
-    "Airbase"
+    "Airbase",
 ]
 
 
@@ -56,7 +58,6 @@ class QPredefinedWaypointSelectionWindow(QDialog):
         self.init_ui()
         self.on_select_wpt_changed()
 
-
     def init_ui(self):
         layout = QVBoxLayout()
 
@@ -79,7 +80,9 @@ class QPredefinedWaypointSelectionWindow(QDialog):
         self.setLayout(layout)
 
     def on_select_wpt_changed(self):
-        self.selected_waypoints = self.wpt_selection_box.get_selected_waypoints(self.include_all.isChecked())
+        self.selected_waypoints = self.wpt_selection_box.get_selected_waypoints(
+            self.include_all.isChecked()
+        )
         if self.selected_waypoints is None or len(self.selected_waypoints) <= 0:
             self.add_button.setDisabled(True)
         else:

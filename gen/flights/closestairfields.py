@@ -12,8 +12,9 @@ if TYPE_CHECKING:
 class ClosestAirfields:
     """Precalculates which control points are closes to the given target."""
 
-    def __init__(self, target: MissionTarget,
-                 all_control_points: List[ControlPoint]) -> None:
+    def __init__(
+        self, target: MissionTarget, all_control_points: List[ControlPoint]
+    ) -> None:
         self.target = target
         # This cache is configured once on load, so it's important that it is
         # complete and deterministic to avoid different behaviors across loads.
@@ -52,9 +53,7 @@ class ObjectiveDistanceCache:
     @classmethod
     def get_closest_airfields(cls, location: MissionTarget) -> ClosestAirfields:
         if cls.theater is None:
-            raise RuntimeError(
-                "Call ObjectiveDistanceCache.set_theater before using"
-            )
+            raise RuntimeError("Call ObjectiveDistanceCache.set_theater before using")
 
         if location.name not in cls.closest_airfields:
             cls.closest_airfields[location.name] = ClosestAirfields(

@@ -28,8 +28,9 @@ class AirDefenseGroupGenerator(GroupGenerator, ABC):
         self.auxiliary_groups: List[VehicleGroup] = []
 
     def add_auxiliary_group(self, name_suffix: str) -> VehicleGroup:
-        group = VehicleGroup(self.game.next_group_id(),
-                             "|".join([self.go.group_name, name_suffix]))
+        group = VehicleGroup(
+            self.game.next_group_id(), "|".join([self.go.group_name, name_suffix])
+        )
         self.auxiliary_groups.append(group)
         return group
 
@@ -37,7 +38,8 @@ class AirDefenseGroupGenerator(GroupGenerator, ABC):
         raise RuntimeError(
             "Deprecated call to AirDefenseGroupGenerator.get_generated_group "
             "misses auxiliary groups. Use AirDefenseGroupGenerator.groups "
-            "instead.")
+            "instead."
+        )
 
     @property
     def groups(self) -> Iterator[VehicleGroup]:

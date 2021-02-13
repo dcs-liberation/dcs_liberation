@@ -19,15 +19,25 @@ class KS19Generator(AirDefenseGroupGenerator):
 
         spacing = random.randint(10, 40)
 
-        self.add_unit(highdigitsams.AAA_SON_9_Fire_Can, "TR", self.position.x - 20, self.position.y - 20, self.heading)
+        self.add_unit(
+            highdigitsams.AAA_SON_9_Fire_Can,
+            "TR",
+            self.position.x - 20,
+            self.position.y - 20,
+            self.heading,
+        )
 
         index = 0
         for i in range(3):
             for j in range(3):
                 index = index + 1
-                self.add_unit(highdigitsams.AAA_100mm_KS_19, "AAA#" + str(index),
-                              self.position.x + spacing * i,
-                              self.position.y + spacing * j, self.heading)
+                self.add_unit(
+                    highdigitsams.AAA_100mm_KS_19,
+                    "AAA#" + str(index),
+                    self.position.x + spacing * i,
+                    self.position.y + spacing * j,
+                    self.heading,
+                )
 
     @classmethod
     def range(cls) -> AirDefenseRange:

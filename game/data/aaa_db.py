@@ -17,5 +17,5 @@ AAA_UNITS = [
     AirDefence.AAA_Flak_Vierling_38,
     AirDefence.AAA_Kdo_G_40,
     AirDefence.AAA_8_8cm_Flak_41,
-    AirDefence.AAA_Bofors_40mm
+    AirDefence.AAA_Bofors_40mm,
 ]

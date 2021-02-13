@@ -7,7 +7,8 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
-    QActionGroup, QDesktopWidget,
+    QActionGroup,
+    QDesktopWidget,
     QFileDialog,
     QMainWindow,
     QMessageBox,
@@ -31,12 +32,12 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
-from qt_ui.windows.preferences.QLiberationPreferencesWindow import \
-    QLiberationPreferencesWindow
+from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
+    QLiberationPreferencesWindow,
+)
 
 
 class QLiberationWindow(QMainWindow):
-
     def __init__(self, game: Optional[Game]) -> None:
         super(QLiberationWindow, self).__init__()
 
@@ -50,7 +51,7 @@ class QLiberationWindow(QMainWindow):
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
-        self.statusBar().showMessage('Ready')
+        self.statusBar().showMessage("Ready")
 
         self.initUi()
         self.initActions()
@@ -106,22 +107,22 @@ class QLiberationWindow(QMainWindow):
         self.newGameAction = QAction("&New Game", self)
         self.newGameAction.setIcon(QIcon(CONST.ICONS["New"]))
         self.newGameAction.triggered.connect(self.newGame)
-        self.newGameAction.setShortcut('CTRL+N')
+        self.newGameAction.setShortcut("CTRL+N")
 
         self.openAction = QAction("&Open", self)
         self.openAction.setIcon(QIcon(CONST.ICONS["Open"]))
         self.openAction.triggered.connect(self.openFile)
-        self.openAction.setShortcut('CTRL+O')
+        self.openAction.setShortcut("CTRL+O")
 
         self.saveGameAction = QAction("&Save", self)
         self.saveGameAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveGameAction.triggered.connect(self.saveGame)
-        self.saveGameAction.setShortcut('CTRL+S')
+        self.saveGameAction.setShortcut("CTRL+S")
 
         self.saveAsAction = QAction("Save &As", self)
         self.saveAsAction.setIcon(QIcon(CONST.ICONS["Save"]))
         self.saveAsAction.triggered.connect(self.saveGameAs)
-        self.saveAsAction.setShortcut('CTRL+A')
+        self.saveAsAction.setShortcut("CTRL+A")
 
         self.showAboutDialogAction = QAction("&About DCS Liberation", self)
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
@@ -133,11 +134,17 @@ class QLiberationWindow(QMainWindow):
 
         self.openDiscordAction = QAction("&Discord Server", self)
         self.openDiscordAction.setIcon(CONST.ICONS["Discord"])
-        self.openDiscordAction.triggered.connect(lambda: webbrowser.open_new_tab("https://" + "discord.gg" + "/" + "bKrt" + "rkJ"))
+        self.openDiscordAction.triggered.connect(
+            lambda: webbrowser.open_new_tab(
+                "https://" + "discord.gg" + "/" + "bKrt" + "rkJ"
+            )
+        )
 
         self.openGithubAction = QAction("&Github Repo", self)
         self.openGithubAction.setIcon(CONST.ICONS["Github"])
-        self.openGithubAction.triggered.connect(lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation"))
+        self.openGithubAction.triggered.connect(
+            lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation")
+        )
 
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
@@ -150,7 +157,6 @@ class QLiberationWindow(QMainWindow):
         self.links_bar.addAction(self.openGithubAction)
 
         self.display_bar = self.addToolBar("Display")
-
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -167,7 +173,6 @@ class QLiberationWindow(QMainWindow):
         file_menu.addAction("E&xit", self.close)
 
         displayMenu = self.menu.addMenu("&Display")
-
 
         last_was_group = False
         for item in DisplayOptions.menu_items():
@@ -194,17 +199,29 @@ class QLiberationWindow(QMainWindow):
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
         help_menu.addAction(self.openGithubAction)
-        help_menu.addAction("&Releases", lambda: webbrowser.open_new_tab("https://github.com/Khopa/dcs_liberation/releases"))
-        help_menu.addAction("&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"]))
-        help_menu.addAction("&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"]))
-        help_menu.addAction("Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"]))
+        help_menu.addAction(
+            "&Releases",
+            lambda: webbrowser.open_new_tab(
+                "https://github.com/Khopa/dcs_liberation/releases"
+            ),
+        )
+        help_menu.addAction(
+            "&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"])
+        )
+        help_menu.addAction(
+            "&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"])
+        )
+        help_menu.addAction(
+            "Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"])
+        )
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
 
     @staticmethod
     def make_display_rule_action(
-            display_rule, group: Optional[QActionGroup] = None) -> QAction:
+        display_rule, group: Optional[QActionGroup] = None
+    ) -> QAction:
         def make_check_closure():
             def closure():
                 display_rule.value = action.isChecked()
@@ -227,9 +244,12 @@ class QLiberationWindow(QMainWindow):
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
-        file = QFileDialog.getOpenFileName(self, "Select game file to open",
-                                               dir=persistency._dcs_saved_game_folder,
-                                               filter="*.liberation")
+        file = QFileDialog.getOpenFileName(
+            self,
+            "Select game file to open",
+            dir=persistency._dcs_saved_game_folder,
+            filter="*.liberation",
+        )
         if file is not None:
             game = persistency.load_game(file[0])
             GameUpdateSignal.get_instance().updateGame(game)
@@ -246,7 +266,12 @@ class QLiberationWindow(QMainWindow):
             self.saveGameAs()
 
     def saveGameAs(self):
-        file = QFileDialog.getSaveFileName(self, "Save As", dir=persistency._dcs_saved_game_folder, filter="*.liberation")
+        file = QFileDialog.getSaveFileName(
+            self,
+            "Save As",
+            dir=persistency._dcs_saved_game_folder,
+            filter="*.liberation",
+        )
         if file is not None:
             self.game.savepath = file[0]
             persistency.save_game(self.game)
@@ -275,23 +300,27 @@ class QLiberationWindow(QMainWindow):
                 "version of DCS Liberation.\n"
                 "\n"
                 f"{traceback.format_exc()}",
-                QMessageBox.Ok
+                QMessageBox.Ok,
             )
             GameUpdateSignal.get_instance().updateGame(None)
 
     def showAboutDialog(self):
-        text = "<h3>DCS Liberation " + VERSION + "</h3>" + \
-               "<b>Source code :</b> https://github.com/khopa/dcs_liberation" + \
-               "<h4>Authors</h4>" + \
-               "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>." \
-               "<h4>Contributors</h4>" + \
-               "shdwp, Khopa, ColonelPanic, Roach, Wrycu, calvinmorrow, JohanAberg, Deus, root0fall, Captain Cody, steveveepee, pedromagueija, parithon, bwRavencl, davidp57, Plob, Hawkmoon" + \
-               "<h4>Special Thanks  :</h4>" \
-               "<b>rp-</b> <i>for the pydcs framework</i><br/>"\
-               "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"\
-               "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"\
-               "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"\
-               "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
+        text = (
+            "<h3>DCS Liberation "
+            + VERSION
+            + "</h3>"
+            + "<b>Source code :</b> https://github.com/khopa/dcs_liberation"
+            + "<h4>Authors</h4>"
+            + "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>."
+            "<h4>Contributors</h4>"
+            + "shdwp, Khopa, ColonelPanic, Roach, Wrycu, calvinmorrow, JohanAberg, Deus, root0fall, Captain Cody, steveveepee, pedromagueija, parithon, bwRavencl, davidp57, Plob, Hawkmoon"
+            + "<h4>Special Thanks  :</h4>"
+            "<b>rp-</b> <i>for the pydcs framework</i><br/>"
+            "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"
+            "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
+            "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
+            "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
+        )
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
         about.setIcon(QMessageBox.Icon.Information)
@@ -310,9 +339,10 @@ class QLiberationWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         result = QMessageBox.question(
-            self, "Quit Liberation?",
+            self,
+            "Quit Liberation?",
             "Are you sure you want to quit? All unsaved progress will be lost.",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.Yes | QMessageBox.No,
         )
         if result == QMessageBox.Yes:
             super().closeEvent(event)

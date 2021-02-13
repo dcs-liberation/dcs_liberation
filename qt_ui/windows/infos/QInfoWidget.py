@@ -4,7 +4,6 @@ from game.infos.information import Information
 
 
 class QInfoWidget(QFrame):
-
     def __init__(self, info: Information):
         super(QInfoWidget, self).__init__()
         self.info = info
@@ -14,8 +13,6 @@ class QInfoWidget(QFrame):
 
     def init_ui(self):
         layout = QGridLayout()
-        layout.addWidget(self.titleLabel,0,0)
-        layout.addWidget(self.textLabel,1,0)
+        layout.addWidget(self.titleLabel, 0, 0)
+        layout.addWidget(self.textLabel, 1, 0)
         self.setLayout(layout)
-
-

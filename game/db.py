@@ -25,6 +25,7 @@ from dcs.helicopters import (
     helicopter_map,
 )
 from dcs.mapping import Point
+
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.planes import (
     AJS37,
@@ -112,7 +113,7 @@ from dcs.planes import (
     WingLoong_I,
     Yak_40,
     plane_map,
-    I_16
+    I_16,
 )
 from dcs.ships import (
     Armed_speedboat,
@@ -166,6 +167,7 @@ from dcs.vehicles import (
 
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
+
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
@@ -222,46 +224,122 @@ vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
 
 vehicle_map[highdigitsams.AAA_SON_9_Fire_Can.id] = highdigitsams.AAA_SON_9_Fire_Can
 vehicle_map[highdigitsams.AAA_100mm_KS_19.id] = highdigitsams.AAA_100mm_KS_19
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_54K6_CP.id] = highdigitsams.SAM_SA_10B_S_300PS_54K6_CP
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN.id] = highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN
-vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE
-vehicle_map[highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE.id] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_30N6_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_30N6_TR
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR
-vehicle_map[highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR.id] = highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6.id] = highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck.id] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E.id] = highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE
-vehicle_map[highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE.id] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE
-vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2
-vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck.id] = highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck
-vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2
-vehicle_map[highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2.id] = highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S457_CP.id] = highdigitsams.SAM_SA_12_S_300V_9S457_CP
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A82_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A82_LN
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9A83_LN.id] = highdigitsams.SAM_SA_12_S_300V_9A83_LN
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S15_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S15_SR
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S19_SR.id] = highdigitsams.SAM_SA_12_S_300V_9S19_SR
-vehicle_map[highdigitsams.SAM_SA_12_S_300V_9S32_TR.id] = highdigitsams.SAM_SA_12_S_300V_9S32_TR
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP.id] = highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR.id] = highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR.id] = highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN
-vehicle_map[highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN.id] = highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN
-vehicle_map[highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2.id] = highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2
-vehicle_map[highdigitsams.SAM_SA_2__V759__LN_SM_90.id] = highdigitsams.SAM_SA_2__V759__LN_SM_90
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_54K6_CP.id
+] = highdigitsams.SAM_SA_10B_S_300PS_54K6_CP
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN.id
+] = highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN.id
+] = highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN
+vehicle_map[
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE.id
+] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE
+vehicle_map[
+    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE.id
+] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_30N6_TR.id
+] = highdigitsams.SAM_SA_10B_S_300PS_30N6_TR
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR.id
+] = highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR.id
+] = highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR
+vehicle_map[
+    highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR.id
+] = highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE
+vehicle_map[
+    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE.id
+] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE
+vehicle_map[
+    highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2.id
+] = highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2
+vehicle_map[
+    highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck.id
+] = highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck
+vehicle_map[
+    highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2.id
+] = highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2
+vehicle_map[
+    highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2.id
+] = highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9S457_CP.id
+] = highdigitsams.SAM_SA_12_S_300V_9S457_CP
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9A82_LN.id
+] = highdigitsams.SAM_SA_12_S_300V_9A82_LN
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9A83_LN.id
+] = highdigitsams.SAM_SA_12_S_300V_9A83_LN
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9S15_SR.id
+] = highdigitsams.SAM_SA_12_S_300V_9S15_SR
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9S19_SR.id
+] = highdigitsams.SAM_SA_12_S_300V_9S19_SR
+vehicle_map[
+    highdigitsams.SAM_SA_12_S_300V_9S32_TR.id
+] = highdigitsams.SAM_SA_12_S_300V_9S32_TR
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP.id
+] = highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR.id
+] = highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR.id
+] = highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR.id
+] = highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN.id
+] = highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN
+vehicle_map[
+    highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN.id
+] = highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN
+vehicle_map[
+    highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2.id
+] = highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2
+vehicle_map[
+    highdigitsams.SAM_SA_2__V759__LN_SM_90.id
+] = highdigitsams.SAM_SA_2__V759__LN_SM_90
 vehicle_map[highdigitsams.SAM_HQ_2_LN_SM_90.id] = highdigitsams.SAM_HQ_2_LN_SM_90
-vehicle_map[highdigitsams.SAM_SA_3__V_601P__LN_5P73.id] = highdigitsams.SAM_SA_3__V_601P__LN_5P73
-vehicle_map[highdigitsams.SAM_SA_24_Igla_S_manpad.id] = highdigitsams.SAM_SA_24_Igla_S_manpad
-vehicle_map[highdigitsams.SAM_SA_14_Strela_3_manpad.id] = highdigitsams.SAM_SA_14_Strela_3_manpad
+vehicle_map[
+    highdigitsams.SAM_SA_3__V_601P__LN_5P73.id
+] = highdigitsams.SAM_SA_3__V_601P__LN_5P73
+vehicle_map[
+    highdigitsams.SAM_SA_24_Igla_S_manpad.id
+] = highdigitsams.SAM_SA_24_Igla_S_manpad
+vehicle_map[
+    highdigitsams.SAM_SA_14_Strela_3_manpad.id
+] = highdigitsams.SAM_SA_14_Strela_3_manpad
 vehicle_map[highdigitsams.Polyana_D4M1_C2_node.id] = highdigitsams.Polyana_D4M1_C2_node
-vehicle_map[highdigitsams._34Ya6E_Gazetchik_E_decoy.id] = highdigitsams._34Ya6E_Gazetchik_E_decoy
+vehicle_map[
+    highdigitsams._34Ya6E_Gazetchik_E_decoy.id
+] = highdigitsams._34Ya6E_Gazetchik_E_decoy
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -308,7 +386,6 @@ PRICES = {
     JF_17: 20,
     Su_30: 24,
     Su_57: 40,
-
     SpitfireLFMkIX: 14,
     SpitfireLFMkIXCW: 14,
     I_16: 10,
@@ -317,7 +394,6 @@ PRICES = {
     FW_190A8: 14,
     A_20G: 22,
     Ju_88A4: 24,
-
     F_5E_3: 8,
     MiG_15bis: 4,
     MiG_19P: 6,
@@ -328,7 +404,6 @@ PRICES = {
     C_101CC: 6,
     A_4E_C: 8,
     MB_339PAN: 6,
-
     AV8BNA: 14,
     M_2000C: 16,
     Mirage_2000_5: 20,
@@ -342,7 +417,6 @@ PRICES = {
     F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
-
     # bomber
     Su_17M4: 10,
     Su_25: 15,
@@ -352,12 +426,10 @@ PRICES = {
     Su_24M: 20,
     Su_24MR: 24,
     MiG_27K: 20,
-
     A_10A: 16,
     A_10C: 22,
     A_10C_2: 24,
     S_3B: 10,
-
     # heli
     Ka_50: 13,
     SA342M: 8,
@@ -373,7 +445,6 @@ PRICES = {
     AH_64D: 30,
     OH_58D: 6,
     SH_60B: 6,
-
     # Bombers
     B_52H: 35,
     B_1B: 50,
@@ -382,7 +453,6 @@ PRICES = {
     Tu_22M3: 40,
     Tu_95MS: 35,
     F_111F: 21,
-
     # special
     IL_76MD: 30,
     An_26B: 25,
@@ -393,14 +463,12 @@ PRICES = {
     KC_135: 25,
     KC130: 25,
     KC135MPRS: 25,
-
     A_50: 50,
     KJ_2000: 50,
     E_3A: 50,
     E_2C: 50,
     C_130: 25,
     Hercules: 25,
-
     # WW2
     P_51D_30_NA: 18,
     P_51D: 16,
@@ -408,17 +476,14 @@ PRICES = {
     P_47D_30bl1: 16,
     P_47D_40: 18,
     B_17G: 30,
-
     # Drones
     MQ_9_Reaper: 12,
     RQ_1A_Predator: 6,
     WingLoong_I: 6,
-
     # Modded
     Rafale_M: 26,
     Rafale_A_S: 26,
     Rafale_B: 26,
-
     # armor
     Armor.APC_MTLB: 4,
     Armor.FDDM_Grad: 4,
@@ -437,7 +502,6 @@ PRICES = {
     Armor.IFV_BMP_3: 18,
     Armor.ZBD_04A: 12,
     Armor.ZTZ_96B: 30,
-
     Armor.APC_Cobra: 4,
     Armor.APC_M113: 6,
     Armor.APC_M1043_HMMWV_Armament: 2,
@@ -457,10 +521,8 @@ PRICES = {
     Armor.IFV_Marder: 10,
     Armor.IFV_MCV_80: 10,
     Armor.IFV_LAV_25: 7,
-
     Artillery.MLRS_M270: 55,
     Artillery.SPH_M109_Paladin: 25,
-
     Artillery.SPH_2S9_Nona: 12,
     Artillery.SPH_2S1_Gvozdika: 18,
     Artillery.SPH_2S3_Akatsia: 24,
@@ -470,14 +532,11 @@ PRICES = {
     Artillery.MLRS_9A52_Smerch: 40,
     Artillery._2B11_mortar: 4,
     Artillery.SpGH_Dana: 26,
-
     Unarmed.Transport_UAZ_469: 3,
     Unarmed.Transport_Ural_375: 3,
     Infantry.Infantry_M4: 1,
     Infantry.Soldier_AK: 1,
-
     Unarmed.Transport_M818: 3,
-
     # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G: 24,
     Armor.MT_Pz_Kpfw_IV_Ausf_H: 16,
@@ -504,22 +563,18 @@ PRICES = {
     Armor.Daimler_Armoured_Car: 8,
     Armor.LT_Mk_VII_Tetrarch: 8,
     Armor.M4_Tractor: 2,
-
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
     LHA_1_Tarawa: 50,
-
     Bulk_cargo_ship_Yakushev: 10,
     Armed_speedboat: 10,
     Dry_cargo_ship_Ivanov: 10,
     Tanker_Elnya_160: 10,
-
     # Air Defence units
     AirDefence.SAM_SA_19_Tunguska_2S6: 30,
     AirDefence.SAM_SA_6_Kub_LN_2P25: 20,
     AirDefence.SAM_SA_3_S_125_LN_5P73: 6,
-
     AirDefence.SAM_SA_11_Buk_LN_9A310M1: 30,
     AirDefence.SAM_SA_11_Buk_CC_9S470M1: 25,
     AirDefence.SAM_SA_11_Buk_SR_9S18M1: 28,
@@ -558,7 +613,6 @@ PRICES = {
     AirDefence.SAM_SA_18_Igla_S_comm: 8,
     AirDefence.EWR_1L13: 30,
     AirDefence.SAM_SA_6_Kub_STR_9S91: 22,
-
     AirDefence.EWR_55G6: 30,
     AirDefence.CP_9S80M1_Sborka: 10,
     AirDefence.SAM_Hawk_TR_AN_MPQ_46: 14,
@@ -589,7 +643,6 @@ PRICES = {
     AirDefence.AAA_M1_37mm: 7,
     AirDefence.AAA_M45_Quadmount: 4,
     AirDefence.AA_gun_QF_3_7: 10,
-
     # FRENCH PACK MOD
     frenchpack.AMX_10RCR: 10,
     frenchpack.AMX_10RCR_SEPAR: 12,
@@ -619,7 +672,6 @@ PRICES = {
     frenchpack.DIM__TOYOTA_GREEN: 2,
     frenchpack.DIM__TOYOTA_DESERT: 2,
     frenchpack.DIM__KAMIKAZE: 6,
-
     # SA-10
     AirDefence.SAM_SA_10_S_300PS_CP_54K6: 18,
     AirDefence.SAM_SA_10_S_300PS_TR_30N6: 24,
@@ -627,11 +679,9 @@ PRICES = {
     AirDefence.SAM_SA_10_S_300PS_SR_64H6E: 30,
     AirDefence.SAM_SA_10_S_300PS_LN_5P85C: 22,
     AirDefence.SAM_SA_10_S_300PS_LN_5P85D: 22,
-
     # High digit sams mod
     highdigitsams.AAA_SON_9_Fire_Can: 8,
     highdigitsams.AAA_100mm_KS_19: 10,
-
     highdigitsams.SAM_SA_10B_S_300PS_54K6_CP: 20,
     highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN: 24,
     highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN: 24,
@@ -641,14 +691,12 @@ PRICES = {
     highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR: 26,
     highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR: 32,
     highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR: 32,
-
     highdigitsams.SAM_SA_12_S_300V_9S457_CP: 22,
     highdigitsams.SAM_SA_12_S_300V_9A82_LN: 26,
     highdigitsams.SAM_SA_12_S_300V_9A83_LN: 26,
     highdigitsams.SAM_SA_12_S_300V_9S15_SR: 34,
     highdigitsams.SAM_SA_12_S_300V_9S19_SR: 34,
     highdigitsams.SAM_SA_12_S_300V_9S32_TR: 28,
-
     highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6: 26,
     highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E: 30,
     highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck: 32,
@@ -656,21 +704,17 @@ PRICES = {
     highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E: 38,
     highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE: 28,
     highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE: 28,
-
     highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2: 27,
     highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck: 33,
     highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2: 40,
     highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2: 30,
-
     highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP: 30,
     highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR: 45,
     highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR: 45,
     highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR: 35,
     highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN: 32,
     highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN: 32,
-
     highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2: 40,
-
 }
 
 """
@@ -728,7 +772,7 @@ UNIT_BY_TASK = {
         SpitfireLFMkIX,
         A_4E_C,
         Rafale_M,
-        SA342Mistral
+        SA342Mistral,
     ],
     CAS: [
         AH_1W,
@@ -779,18 +823,12 @@ UNIT_BY_TASK = {
         Tu_160,
         Tu_22M3,
         Tu_95MS,
-        UH_1H,        
+        UH_1H,
         SH_60B,
         WingLoong_I,
-        Hercules
+        Hercules,
     ],
-    Transport: [
-        IL_76MD,
-        An_26B,
-        An_30M,
-        Yak_40,
-        C_130
-    ],
+    Transport: [IL_76MD, An_26B, An_30M, Yak_40, C_130],
     Refueling: [
         IL_78M,
         KC_135,
@@ -798,12 +836,7 @@ UNIT_BY_TASK = {
         S_3B_Tanker,
         KC135MPRS,
     ],
-    AWACS: [
-        E_3A,
-        E_2C,
-        A_50,
-        KJ_2000
-    ],
+    AWACS: [E_3A, E_2C, A_50, KJ_2000],
     PinpointStrike: [
         Armor.APC_MTLB,
         Armor.APC_MTLB,
@@ -851,7 +884,6 @@ UNIT_BY_TASK = {
         Armor.MBT_T_80U,
         Armor.MBT_T_90,
         Armor.ZTZ_96B,
-
         Armor.APC_Cobra,
         Armor.APC_Cobra,
         Armor.APC_Cobra,
@@ -895,7 +927,6 @@ UNIT_BY_TASK = {
         Armor.MBT_Leopard_2,
         Armor.MBT_Challenger_II,
         Armor.MBT_Merkava_Mk__4,
-
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
         Armor.MT_Pz_Kpfw_IV_Ausf_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
@@ -945,7 +976,6 @@ UNIT_BY_TASK = {
         Artillery.Sturmpanzer_IV_Brummbär,
         Armor.Daimler_Armoured_Car,
         Armor.LT_Mk_VII_Tetrarch,
-
         Artillery.MLRS_M270,
         Artillery.SPH_M109_Paladin,
         Artillery.SPH_2S9_Nona,
@@ -959,7 +989,6 @@ UNIT_BY_TASK = {
         Artillery.SpGH_Dana,
         Artillery.M12_GMC,
         Artillery.Sturmpanzer_IV_Brummbär,
-
         AirDefence.AAA_ZU_23_on_Ural_375,
         AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
         AirDefence.AAA_ZSU_57_2,
@@ -983,12 +1012,10 @@ UNIT_BY_TASK = {
         AirDefence.AAA_Bofors_40mm,
         AirDefence.AAA_M1_37mm,
         AirDefence.AA_gun_QF_3_7,
-
         frenchpack.DIM__TOYOTA_BLUE,
         frenchpack.DIM__TOYOTA_DESERT,
         frenchpack.DIM__TOYOTA_GREEN,
         frenchpack.DIM__KAMIKAZE,
-
         frenchpack.AMX_10RCR,
         frenchpack.AMX_10RCR_SEPAR,
         frenchpack.ERC_90,
@@ -1006,15 +1033,29 @@ UNIT_BY_TASK = {
         frenchpack.DIM__TOYOTA_GREEN,
         frenchpack.DIM__TOYOTA_DESERT,
         frenchpack.DIM__KAMIKAZE,
-
     ],
-    AirDefence: [
+    AirDefence: [],
+    Reconnaissance: [
+        Unarmed.Transport_M818,
+        Unarmed.Transport_Ural_375,
+        Unarmed.Transport_UAZ_469,
     ],
-    Reconnaissance: [Unarmed.Transport_M818, Unarmed.Transport_Ural_375, Unarmed.Transport_UAZ_469],
-    Nothing: [Infantry.Infantry_M4, Infantry.Soldier_AK, ],
+    Nothing: [
+        Infantry.Infantry_M4,
+        Infantry.Soldier_AK,
+    ],
     Embarking: [],
-    Carriage: [CVN_74_John_C__Stennis, LHA_1_Tarawa, CV_1143_5_Admiral_Kuznetsov, ],
-    CargoTransportation: [Dry_cargo_ship_Ivanov, Bulk_cargo_ship_Yakushev, Tanker_Elnya_160, Armed_speedboat, ]
+    Carriage: [
+        CVN_74_John_C__Stennis,
+        LHA_1_Tarawa,
+        CV_1143_5_Admiral_Kuznetsov,
+    ],
+    CargoTransportation: [
+        Dry_cargo_ship_Ivanov,
+        Bulk_cargo_ship_Yakushev,
+        Tanker_Elnya_160,
+        Armed_speedboat,
+    ],
 }
 
 """
@@ -1022,7 +1063,6 @@ Units from AirDefense category of UNIT_BY_TASK that will be removed from use if 
 """
 SAM_BAN = [
     AirDefence.SAM_Linebacker_M6,
-
     AirDefence.SAM_SA_9_Strela_1_9P31,
     AirDefence.SAM_SA_8_Osa_9A33,
     AirDefence.SAM_SA_19_Tunguska_2S6,
@@ -1051,20 +1091,19 @@ SAM_CONVERT = {
     AirDefence.SAM_Hawk_TR_AN_MPQ_46: AirDefence.SAM_Hawk_PCP,
     AirDefence.SAM_Hawk_SR_AN_MPQ_50: AirDefence.SAM_Hawk_PCP,
     AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_PCP,
-    'except': {
+    "except": {
         # this radar is shared between the two S300's. if we attempt to find a SAM site at a base and can't find one
         #  model, we can safely assume the other was deployed
         # well, perhaps not safely, but we'll make the assumption anyway :p
         AirDefence.SAM_SA_10_S_300PS_TR_30N6: AirDefence.SAM_SA_10_S_300PS_CP_54K6,
-        AirDefence.SAM_SR_P_19: AirDefence.SAM_SA_2_LN_SM_90
-    }
+        AirDefence.SAM_SR_P_19: AirDefence.SAM_SA_2_LN_SM_90,
+    },
 }
 
 """
 Units that will always be spawned in the air
 """
-TAKEOFF_BAN: List[Type[FlyingType]] = [
-]
+TAKEOFF_BAN: List[Type[FlyingType]] = []
 
 """
 Units that will be always spawned in the air if launched from the carrier
@@ -1135,19 +1174,18 @@ EXPANDED_TASK_PAYLOAD_OVERRIDE = {
     "BARCAP": ("CAP HEAVY", "CAP"),
     "CAS": ("CAS MAVERICK F", "CAS"),
     "INTERCEPTION": ("CAP HEAVY", "CAP"),
-    "STRIKE": ("STRIKE",),    
+    "STRIKE": ("STRIKE",),
     "ANTISHIP": ("ANTISHIP",),
     "SEAD": ("SEAD",),
     "DEAD": ("SEAD",),
     "ESCORT": ("CAP HEAVY", "CAP"),
-    "BAI": ( "BAI", "CAS MAVERICK F", "CAS"),
+    "BAI": ("BAI", "CAS MAVERICK F", "CAS"),
     "SWEEP": ("CAP HEAVY", "CAP"),
-    "OCA_RUNWAY": ("RUNWAY_ATTACK","RUNWAY_STRIKE","STRIKE"),
-    "OCA_AIRCRAFT": ("OCA","CAS MAVERICK F", "CAS")
+    "OCA_RUNWAY": ("RUNWAY_ATTACK", "RUNWAY_STRIKE", "STRIKE"),
+    "OCA_AIRCRAFT": ("OCA", "CAS MAVERICK F", "CAS"),
 }
 
 PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
-
     B_1B: COMMON_OVERRIDE,
     B_52H: COMMON_OVERRIDE,
     F_117A: COMMON_OVERRIDE,
@@ -1254,11 +1292,9 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_64A: COMMON_OVERRIDE,
     SH_60B: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
-
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
     },
-
 }
 
 """
@@ -1319,9 +1355,17 @@ TIME_PERIODS = {
 }
 
 REWARDS = {
-    "power": 4, "warehouse": 2, "ware": 2, "fuel": 2, "ammo": 2,
-    "farp": 1, "fob": 1, "factory": 10, "comms": 10, "oil": 10,
-    "derrick": 8
+    "power": 4,
+    "warehouse": 2,
+    "ware": 2,
+    "fuel": 2,
+    "ammo": 2,
+    "farp": 1,
+    "fob": 1,
+    "factory": 10,
+    "comms": 10,
+    "oil": 10,
+    "derrick": 8,
 }
 
 CARRIER_CAPABLE = [
@@ -1334,7 +1378,6 @@ CARRIER_CAPABLE = [
     Rafale_M,
     S_3B,
     E_2C,
-
     UH_1H,
     Mi_8MT,
     Ka_50,
@@ -1342,7 +1385,6 @@ CARRIER_CAPABLE = [
     OH_58D,
     UH_60A,
     SH_60B,
-
     SA342L,
     SA342M,
     SA342Minigun,
@@ -1351,7 +1393,6 @@ CARRIER_CAPABLE = [
 
 LHA_CAPABLE = [
     AV8BNA,
-
     UH_1H,
     Mi_8MT,
     Ka_50,
@@ -1359,11 +1400,10 @@ LHA_CAPABLE = [
     OH_58D,
     UH_60A,
     SH_60B,
-
     SA342L,
     SA342M,
     SA342Minigun,
-    SA342Mistral
+    SA342Mistral,
 ]
 
 """
@@ -1422,27 +1462,50 @@ def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
 MANPADS: List[VehicleType] = [
     AirDefence.SAM_SA_18_Igla_MANPADS,
     AirDefence.SAM_SA_18_Igla_S_MANPADS,
-    AirDefence.Stinger_MANPADS
+    AirDefence.Stinger_MANPADS,
 ]
 
 INFANTRY: List[VehicleType] = [
-    Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS, Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
+    Infantry.Paratrooper_AKS,
     Infantry.Paratrooper_AKS,
     Infantry.Soldier_RPG,
-    Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4, Infantry.Infantry_M4,
+    Infantry.Infantry_M4,
+    Infantry.Infantry_M4,
+    Infantry.Infantry_M4,
+    Infantry.Infantry_M4,
+    Infantry.Infantry_M4,
     Infantry.Soldier_M249,
     Artillery._2B11_mortar,
-    Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK, Infantry.Soldier_AK,
+    Infantry.Soldier_AK,
+    Infantry.Soldier_AK,
+    Infantry.Soldier_AK,
+    Infantry.Soldier_AK,
+    Infantry.Soldier_AK,
     Infantry.Paratrooper_RPG_16,
-    Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4, Infantry.Georgian_soldier_with_M4,
     Infantry.Georgian_soldier_with_M4,
-    Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus, Infantry.Infantry_Soldier_Rus,
+    Infantry.Georgian_soldier_with_M4,
+    Infantry.Georgian_soldier_with_M4,
+    Infantry.Georgian_soldier_with_M4,
     Infantry.Infantry_Soldier_Rus,
-    Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1, Infantry.Infantry_SMLE_No_4_Mk_1,
-    Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98, Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_Soldier_Rus,
+    Infantry.Infantry_SMLE_No_4_Mk_1,
+    Infantry.Infantry_SMLE_No_4_Mk_1,
+    Infantry.Infantry_SMLE_No_4_Mk_1,
     Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand, Infantry.Infantry_M1_Garand,
-    Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents, Infantry.Infantry_Soldier_Insurgents
+    Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_Mauser_98,
+    Infantry.Infantry_M1_Garand,
+    Infantry.Infantry_M1_Garand,
+    Infantry.Infantry_M1_Garand,
+    Infantry.Infantry_Soldier_Insurgents,
+    Infantry.Infantry_Soldier_Insurgents,
+    Infantry.Infantry_Soldier_Insurgents,
 ]
 
 
@@ -1464,6 +1527,7 @@ def unit_type_name(unit_type) -> str:
 
 def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
+
 
 def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
     original_name = unit_type.name and unit_type.name or unit_type.id
@@ -1492,6 +1556,7 @@ def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> s
     if faction_value is None:
         return default_value
     return faction_value
+
 
 def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
     if name in vehicle_map:
@@ -1526,9 +1591,13 @@ def task_name(task) -> str:
         return task.name
 
 
-def choose_units(for_task: Task, factor: float, count: int, country: str) -> List[UnitType]:
+def choose_units(
+    for_task: Task, factor: float, count: int, country: str
+) -> List[UnitType]:
     suitable_unittypes = find_unittype(for_task, country)
-    suitable_unittypes = [x for x in suitable_unittypes if x not in helicopter_map.values()]
+    suitable_unittypes = [
+        x for x in suitable_unittypes if x not in helicopter_map.values()
+    ]
     suitable_unittypes.sort(key=lambda x: PRICES[x])
 
     idx = int(len(suitable_unittypes) * factor)
@@ -1576,7 +1645,10 @@ def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict
 
 
 def assigned_units_split(fd: AssignedUnitsDict) -> Tuple[PlaneDict, PlaneDict]:
-    return {k: v1 for k, (v1, v2) in fd.items()}, {k: v2 for k, (v1, v2) in fd.items()},
+    return (
+        {k: v1 for k, (v1, v2) in fd.items()},
+        {k: v2 for k, (v1, v2) in fd.items()},
+    )
 
 
 def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
@@ -1620,7 +1692,9 @@ def _validate_db():
     total_set = set()
     for t, unit_collection in UNIT_BY_TASK.items():
         for unit_type in set(unit_collection):
-            assert unit_type not in total_set, "{} is duplicate for task {}".format(unit_type, t)
+            assert unit_type not in total_set, "{} is duplicate for task {}".format(
+                unit_type, t
+            )
             total_set.add(unit_type)
 
     # check prices

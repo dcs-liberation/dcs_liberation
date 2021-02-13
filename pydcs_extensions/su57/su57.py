@@ -11,7 +11,11 @@ class Su57Weapons:
     RVV_BD = {"clsid": "{RVV-BD}", "name": "RVV-BD", "weight": 600}
     RVV_L = {"clsid": "{RVV-L}", "name": "RVV-L", "weight": 748}
     RVV_M = {"clsid": "{RVV-M}", "name": "RVV-M", "weight": 190}
-    Su_57_Fuel_Tank = {"clsid": "{SU_57Tank}", "name": "Su-57 Fuel Tank", "weight": 1561.421}
+    Su_57_Fuel_Tank = {
+        "clsid": "{SU_57Tank}",
+        "name": "Su-57 Fuel Tank",
+        "weight": 1561.421,
+    }
 
 
 class Su_57(PlaneType):
@@ -27,10 +31,9 @@ class Su_57(PlaneType):
     charge_total = 200
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     class Liveries:
-
         class USSR(Enum):
             _22 = "22"
             _20 = "20"
@@ -1703,8 +1706,8 @@ class Su_57(PlaneType):
         FAB_1500_M54 = (11, Weapons.FAB_1500_M54)
         KAB_1500L = (11, Weapons.KAB_1500L)
         MER_6_FAB_250 = (11, Weapons.MER_6_FAB_250)
-#ERRR {R-33}
-        RVV_BD = (11,Su57Weapons.RVV_BD)
+        # ERRR {R-33}
+        RVV_BD = (11, Su57Weapons.RVV_BD)
         RVV_AE = (11, Su57Weapons.RVV_AE)
         RVV_M = (11, Su57Weapons.RVV_M)
         RVV_L = (11, Su57Weapons.RVV_L)
@@ -1732,5 +1735,15 @@ class Su_57(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
-    tasks = [task.CAP, task.Intercept, task.Escort, task.FighterSweep, task.AFAC, task.GroundAttack, task.RunwayAttack, task.AntishipStrike, task.CAS]
+    tasks = [
+        task.CAP,
+        task.Intercept,
+        task.Escort,
+        task.FighterSweep,
+        task.AFAC,
+        task.GroundAttack,
+        task.RunwayAttack,
+        task.AntishipStrike,
+        task.CAS,
+    ]
     task_default = task.CAP

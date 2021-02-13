@@ -67,4 +67,3 @@ def autosave(game) -> bool:
     except Exception:
         logging.exception("Could not save game")
         return False
-

@@ -20,6 +20,7 @@ class DisplayRule:
     @value.setter
     def value(self, value: bool) -> None:
         from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+
         self._value = value
         if QLiberationMap.instance is not None:
             QLiberationMap.instance.reload_scene()
@@ -52,14 +53,16 @@ class FlightPathOptions(DisplayGroup):
 class ThreatZoneOptions(DisplayGroup):
     def __init__(self, coalition_name: str) -> None:
         super().__init__(f"{coalition_name} Threat Zones")
-        self.none = DisplayRule(
-            f"Hide {coalition_name.lower()} threat zones", True)
+        self.none = DisplayRule(f"Hide {coalition_name.lower()} threat zones", True)
         self.all = DisplayRule(
-            f"Show full {coalition_name.lower()} threat zones", False)
+            f"Show full {coalition_name.lower()} threat zones", False
+        )
         self.aircraft = DisplayRule(
-            f"Show {coalition_name.lower()} aircraft threat tones", False)
+            f"Show {coalition_name.lower()} aircraft threat tones", False
+        )
         self.air_defenses = DisplayRule(
-            f"Show {coalition_name.lower()} air defenses threat zones", False)
+            f"Show {coalition_name.lower()} air defenses threat zones", False
+        )
 
 
 class NavMeshOptions(DisplayGroup):
@@ -99,10 +102,8 @@ class DisplayOptions:
     map_poly = DisplayRule("Map Polygon Debug Mode", False)
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
-    actual_frontline_pos = DisplayRule("Display Actual Frontline Location",
-                                       False)
-    barcap_commit_range = DisplayRule("Display selected BARCAP commit range",
-                                      False)
+    actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
+    barcap_commit_range = DisplayRule("Display selected BARCAP commit range", False)
     flight_paths = FlightPathOptions()
     blue_threat_zones = ThreatZoneOptions("Blue")
     red_threat_zones = ThreatZoneOptions("Red")

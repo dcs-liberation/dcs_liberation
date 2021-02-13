@@ -39,12 +39,11 @@ GROUP_SIZES_BY_COMBAT_STANCE = {
     CombatStance.RETREAT: [2, 4, 6, 8],
     CombatStance.BREAKTHROUGH: [4, 6, 6, 8],
     CombatStance.ELIMINATION: [2, 4, 4, 4, 6],
-    CombatStance.AMBUSH: [1, 1, 2, 2, 2, 2, 4]
+    CombatStance.AMBUSH: [1, 1, 2, 2, 2, 2, 4],
 }
 
 
 class CombatGroup:
-
     def __init__(self, role: CombatGroupRole):
         self.units: List[VehicleType] = []
         self.role = role
@@ -60,11 +59,12 @@ class CombatGroup:
 
 
 class GroundPlanner:
-
-    def __init__(self, cp:ControlPoint, game):
+    def __init__(self, cp: ControlPoint, game):
         self.cp = cp
         self.game = game
-        self.connected_enemy_cp = [cp for cp in self.cp.connected_points if cp.captured != self.cp.captured]
+        self.connected_enemy_cp = [
+            cp for cp in self.cp.connected_points if cp.captured != self.cp.captured
+        ]
         self.tank_groups: List[CombatGroup] = []
         self.apc_group: List[CombatGroup] = []
         self.ifv_group: List[CombatGroup] = []
@@ -80,7 +80,7 @@ class GroundPlanner:
 
     def plan_groundwar(self):
 
-        if hasattr(self.cp, 'stance'):
+        if hasattr(self.cp, "stance"):
             group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[self.cp.stance]
         else:
             self.cp.stance = CombatStance.DEFENSIVE
@@ -152,12 +152,3 @@ class GroundPlanner:
             print("For : #" + str(key))
             for group in self.units_per_cp[key]:
                 print(str(group))
-
-
-
-
-
-
-
-
-

@@ -4,7 +4,6 @@ from gen.flights.flight import Flight
 
 
 class QFlightCustomName(QGroupBox):
-
     def __init__(self, flight: Flight):
         super(QFlightCustomName, self).__init__()
 

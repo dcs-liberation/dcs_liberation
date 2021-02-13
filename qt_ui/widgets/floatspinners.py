@@ -4,9 +4,12 @@ from PySide2.QtWidgets import QSpinBox
 
 
 class TenthsSpinner(QSpinBox):
-    def __init__(self, minimum: Optional[int] = None,
-                 maximum: Optional[int] = None,
-                 initial: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        minimum: Optional[int] = None,
+        maximum: Optional[int] = None,
+        initial: Optional[int] = None,
+    ) -> None:
         super().__init__()
 
         if minimum is not None:

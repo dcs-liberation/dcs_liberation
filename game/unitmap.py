@@ -70,15 +70,19 @@ class UnitMap:
                 raise RuntimeError(f"Unknown unit type: {unit.type}")
             if not issubclass(unit_type, VehicleType):
                 raise RuntimeError(
-                    f"{name} is a {unit_type.__name__}, expected a VehicleType")
+                    f"{name} is a {unit_type.__name__}, expected a VehicleType"
+                )
             self.front_line_units[name] = FrontLineUnit(unit_type, origin)
 
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
         return self.front_line_units.get(name, None)
 
-    def add_ground_object_units(self, ground_object: TheaterGroundObject,
-                                persistence_group: Group,
-                                miz_group: Group) -> None:
+    def add_ground_object_units(
+        self,
+        ground_object: TheaterGroundObject,
+        persistence_group: Group,
+        miz_group: Group,
+    ) -> None:
         """Adds a group associated with a TGO to the unit map.
 
         Args:
@@ -103,13 +107,13 @@ class UnitMap:
             if name in self.ground_object_units:
                 raise RuntimeError(f"Duplicate TGO unit: {name}")
             self.ground_object_units[name] = GroundObjectUnit(
-                ground_object, persistence_group, persistent_unit)
+                ground_object, persistence_group, persistent_unit
+            )
 
     def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
         return self.ground_object_units.get(name, None)
 
-    def add_building(self, ground_object: BuildingGroundObject,
-                     group: Group) -> None:
+    def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
         # The actual name is a String (the pydcs translatable string), which
         # doesn't define __eq__.
         # The name of the initiator in the DCS dead event will have " object"
@@ -119,8 +123,9 @@ class UnitMap:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
         self.buildings[name] = Building(ground_object)
 
-    def add_fortification(self, ground_object: BuildingGroundObject,
-                          group: VehicleGroup) -> None:
+    def add_fortification(
+        self, ground_object: BuildingGroundObject, group: VehicleGroup
+    ) -> None:
         if len(group.units) != 1:
             raise ValueError("Fortification groups must have exactly one unit.")
         unit = group.units[0]

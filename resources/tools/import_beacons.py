@@ -70,13 +70,19 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
     with cd(dcs_path):
         lua = lupa.LuaRuntime()
 
-        lua.execute(textwrap.dedent("""\
+        lua.execute(
+            textwrap.dedent(
+                """\
             function module(name)
             end
             
-        """))
+        """
+            )
+        )
 
-        bind_gettext = lua.eval(textwrap.dedent("""\
+        bind_gettext = lua.eval(
+            textwrap.dedent(
+                """\
             function(py_gettext)
                 package.preload["i_18n"] = function()
                     return {
@@ -85,16 +91,20 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
                 end
             end
             
-        """))
+        """
+            )
+        )
 
         try:
             translator = gettext.translation(
-                "messages", path / "l10n", languages=["en"])
+                "messages", path / "l10n", languages=["en"]
+            )
 
             def translate(message_name: str) -> str:
                 if not message_name:
                     return message_name
                 return translator.gettext(message_name)
+
         except FileNotFoundError:
             # TheChannel has no locale data for English.
             def translate(message_name: str) -> str:
@@ -126,7 +136,7 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
                 beacon["callsign"],
                 beacon_type,
                 convert_lua_frequency(beacon["frequency"]),
-                getattr(beacon, "channel", None)
+                getattr(beacon, "channel", None),
             )
 
 
@@ -152,9 +162,10 @@ class Importer:
     def export_beacons(self, terrain: str, beacons: Iterable[Beacon]) -> None:
         terrain_py_path = self.export_dir / f"{terrain.lower()}.json"
         import json
-        terrain_py_path.write_text(json.dumps([
-            dataclasses.asdict(b) for b in beacons
-        ], indent=True))
+
+        terrain_py_path.write_text(
+            json.dumps([dataclasses.asdict(b) for b in beacons], indent=True)
+        )
 
 
 def parse_args() -> argparse.Namespace:
@@ -169,13 +180,14 @@ def parse_args() -> argparse.Namespace:
         "--export-to",
         type=resolved_path,
         default=EXPORT_DIR,
-        help="Output directory for generated JSON files.")
+        help="Output directory for generated JSON files.",
+    )
 
     parser.add_argument(
         "dcs_path",
         metavar="DCS_PATH",
         type=resolved_path,
-        help="Path to DCS installation."
+        help="Path to DCS installation.",
     )
 
     return parser.parse_args()

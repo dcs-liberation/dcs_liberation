@@ -11,7 +11,6 @@ from dcs import weapons_data
 
 
 class QPylonEditor(QComboBox):
-
     def __init__(self, game: Game, flight: Flight, pylon: Pylon) -> None:
         super().__init__()
         self.flight = flight
@@ -30,7 +29,7 @@ class QPylonEditor(QComboBox):
             self.addItem(weapon.name, weapon)
             if current == weapon:
                 self.setCurrentIndex(i + 1)
-                
+
         self.currentIndexChanged.connect(self.on_pylon_change)
 
     def on_pylon_change(self):
@@ -40,8 +39,7 @@ class QPylonEditor(QComboBox):
         if selected is None:
             logging.debug(f"Pylon {self.pylon.number} emptied")
         else:
-            logging.debug(
-                f"Pylon {self.pylon.number} changed to {selected.name}")
+            logging.debug(f"Pylon {self.pylon.number} changed to {selected.name}")
 
     def default_loadout(self) -> None:
         self.flight.unit_type.load_payloads()
@@ -51,7 +49,9 @@ class QPylonEditor(QComboBox):
         loadout = None
         # Iterate through each possible payload type for a given aircraft.
         # Some aircraft have custom loadouts that in aren't the standard set.
-        for payload_override in db.EXPANDED_TASK_PAYLOAD_OVERRIDE.get(self.flight.flight_type.name):
+        for payload_override in db.EXPANDED_TASK_PAYLOAD_OVERRIDE.get(
+            self.flight.flight_type.name
+        ):
             if loadout is None:
                 loadout = self.flight.unit_type.loadout_by_name(payload_override)
         if loadout is not None:
@@ -75,6 +75,12 @@ class QPylonEditor(QComboBox):
                 else:
                     historical_weapon = orig_weapon
                 if historical_weapon is not None:
-                    self.setCurrentText(weapons_data.weapon_ids.get(historical_weapon.cls_id).get("name"))        
+                    self.setCurrentText(
+                        weapons_data.weapon_ids.get(historical_weapon.cls_id).get(
+                            "name"
+                        )
+                    )
             else:
-                self.setCurrentText(weapons_data.weapon_ids.get(pylon_default_weapon).get("name"))
+                self.setCurrentText(
+                    weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
+                )

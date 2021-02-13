@@ -13,7 +13,6 @@ from qt_ui.windows.mission.flight.payload.QPylonEditor import QPylonEditor
 
 
 class QLoadoutEditor(QGroupBox):
-
     def __init__(self, flight: Flight, game: Game) -> None:
         super().__init__("Use custom loadout")
         self.flight = flight
@@ -28,8 +27,7 @@ class QLoadoutEditor(QGroupBox):
 
         for i, pylon in enumerate(Pylon.iter_pylons(self.flight.unit_type)):
             label = QLabel(f"<b>{pylon.number}</b>")
-            label.setSizePolicy(
-                QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+            label.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
             layout.addWidget(label, i, 0)
             layout.addWidget(QPylonEditor(game, flight, pylon), i, 1)
 

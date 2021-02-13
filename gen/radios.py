@@ -68,9 +68,10 @@ class Radio:
 
     def range(self) -> Iterator[RadioFrequency]:
         """Returns an iterator over the usable frequencies of this radio."""
-        return (RadioFrequency(x) for x in range(
-            self.minimum.hertz, self.maximum.hertz, self.step.hertz
-        ))
+        return (
+            RadioFrequency(x)
+            for x in range(self.minimum.hertz, self.maximum.hertz, self.step.hertz)
+        )
 
     @property
     def last_channel(self) -> RadioFrequency:
@@ -99,14 +100,12 @@ RADIOS: List[Radio] = [
     Radio("SCR-522", MHz(100), MHz(156), step=MHz(1)),
     Radio("A.R.I. 1063", MHz(100), MHz(156), step=MHz(1)),
     Radio("BC-1206", kHz(200), kHz(400), step=kHz(10)),
-
     # Note: The M2000C V/UHF can operate in both ranges, but has a gap between
     # 150 MHz and 225 MHz. We can't allocate in that gap, and the current
     # system doesn't model gaps, so just pretend it ends at 150 MHz for now. We
     # can model gaps later if needed.
     Radio("TRT ERA 7000 V/UHF", MHz(118), MHz(150), step=MHz(1)),
     Radio("TRT ERA 7200 UHF", MHz(225), MHz(400), step=MHz(1)),
-
     # Tomcat radios
     # # https://www.heatblur.se/F-14Manual/general.html#an-arc-159-uhf-1-radio
     Radio("AN/ARC-159", MHz(225), MHz(400), step=MHz(1)),
@@ -114,31 +113,23 @@ RADIOS: List[Radio] = [
     # to 400 MHz range, but we can't model gaps with the current implementation.
     # https://www.heatblur.se/F-14Manual/general.html#an-arc-182-v-uhf-2-radio
     Radio("AN/ARC-182", MHz(108), MHz(174), step=MHz(1)),
-
     # Also capable of [103, 156) at 25 kHz intervals, but we can't do gaps.
     Radio("FR 22", MHz(225), MHz(400), step=kHz(50)),
-
     # P-51 / P-47 Radio
     # 4 preset channels (A/B/C/D)
     Radio("SCR522", MHz(100), MHz(156), step=kHz(25)),
-
     Radio("R&S M3AR VHF", MHz(120), MHz(174), step=MHz(1)),
     Radio("R&S M3AR UHF", MHz(225), MHz(400), step=MHz(1)),
-
     # MiG-15bis
     Radio("RSI-6K HF", MHz(3, 750), MHz(5), step=kHz(25)),
-
     # MiG-19P
     Radio("RSIU-4V", MHz(100), MHz(150), step=MHz(1)),
-
     # MiG-21bis
     Radio("RSIU-5V", MHz(118), MHz(140), step=MHz(1)),
-
     # Ka-50
     # Note: Also capable of 100MHz-150MHz, but we can't model gaps.
     Radio("R-800L1", MHz(220), MHz(400), step=kHz(25)),
     Radio("R-828", MHz(20), MHz(60), step=kHz(25)),
-
     # UH-1H
     Radio("AN/ARC-51BX", MHz(225), MHz(400), step=kHz(50)),
     Radio("AN/ARC-131", MHz(30), MHz(76), step=kHz(50)),
@@ -218,7 +209,8 @@ class RadioRegistry:
             # https://github.com/Khopa/dcs_liberation/issues/598
             channel = radio.last_channel
             logging.warning(
-                f"No more free channels for {radio.name}. Reusing {channel}.")
+                f"No more free channels for {radio.name}. Reusing {channel}."
+            )
             return channel
 
     def alloc_uhf(self) -> RadioFrequency:
