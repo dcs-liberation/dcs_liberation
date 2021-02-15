@@ -19,6 +19,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
+from qt_ui.windows.basemenu.NewUnitTransferDialog import NewUnitTransferDialog
 
 
 class QBaseMenu2(QDialog):
@@ -87,6 +88,11 @@ class QBaseMenu2(QDialog):
 
             runway_attack_button.setProperty("style", "btn-danger")
             runway_attack_button.clicked.connect(self.new_package)
+
+        if self.cp.captured and not self.cp.is_global:
+            transfer_button = QPushButton("Transfer Units")
+            bottom_row.addWidget(transfer_button)
+            transfer_button.clicked.connect(self.open_transfer_dialog)
 
         self.budget_display = QLabel(
             QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
@@ -179,6 +185,9 @@ class QBaseMenu2(QDialog):
 
     def new_package(self) -> None:
         Dialog.open_new_package_dialog(self.cp, parent=self.window())
+
+    def open_transfer_dialog(self) -> None:
+        NewUnitTransferDialog(self.game_model, self.cp, parent=self.window()).show()
 
     def update_budget(self, game: Game) -> None:
         self.budget_display.setText(QRecruitBehaviour.BUDGET_FORMAT.format(game.budget))

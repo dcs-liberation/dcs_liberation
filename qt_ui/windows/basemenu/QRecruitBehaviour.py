@@ -1,17 +1,22 @@
 import logging
-from typing import Type
+from typing import Callable, Set, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
+    QFrame,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLayout,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QSpacerItem,
+    QVBoxLayout,
+    QWidget,
 )
-from dcs.unittype import UnitType
+from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.event import UnitsDeliveryEvent
@@ -27,13 +32,11 @@ class QRecruitBehaviour:
     existing_units_labels = None
     bought_amount_labels = None
     maximum_units = -1
-    recruitable_types = []
     BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
     def __init__(self) -> None:
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
-        self.recruitable_types = []
         self.update_available_budget()
 
     @property
@@ -195,9 +198,3 @@ class QRecruitBehaviour:
         Set the maximum number of units that can be bought
         """
         self.maximum_units = maximum_units
-
-    def set_recruitable_types(self, recruitables_types):
-        """
-        Set the maximum number of units that can be bought
-        """
-        self.recruitables_types = recruitables_types

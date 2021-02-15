@@ -1,7 +1,6 @@
 """Widgets for displaying air tasking orders."""
 import logging
-from contextlib import contextmanager
-from typing import ContextManager, Optional
+from typing import Optional
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -32,11 +31,11 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game import db
 from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from ..delegate_helpers import painter_context
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
 
@@ -310,15 +309,6 @@ class QFlightPanel(QGroupBox):
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
         self.flight_list.delete_flight(index)
-
-
-@contextmanager
-def painter_context(painter: QPainter) -> ContextManager[None]:
-    try:
-        painter.save()
-        yield
-    finally:
-        painter.restore()
 
 
 class PackageDelegate(QStyledItemDelegate):

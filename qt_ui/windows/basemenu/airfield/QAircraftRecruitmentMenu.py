@@ -34,7 +34,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         # Determine maximum number of aircrafts that can be bought
         self.set_maximum_units(self.cp.total_aircraft_parking)
-        self.set_recruitable_types([CAP, CAS])
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}

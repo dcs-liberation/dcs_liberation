@@ -34,6 +34,7 @@ from .settings import Settings
 from .theater import ConflictTheater, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import MissileSiteGroundObject
 from .threatzones import ThreatZones
+from .transfers import PendingTransfers
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -121,6 +122,8 @@ class Game:
 
         self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
+        self._transfers = PendingTransfers()
+
         self.sanitize_sides()
 
         self.on_load()
@@ -150,6 +153,14 @@ class Game:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
+
+    @property
+    def transfers(self) -> PendingTransfers:
+        try:
+            return self._transfers
+        except AttributeError:
+            self._transfers = PendingTransfers()
+            return self._transfers
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
@@ -263,6 +274,8 @@ class Game:
 
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
+
+        self.transfers.complete_transfers()
 
         self.process_enemy_income()
 

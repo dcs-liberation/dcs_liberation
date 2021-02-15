@@ -1442,11 +1442,11 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     return None
 
 
-def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
+def find_unittype(for_task: Type[MainTask], country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
-MANPADS: List[VehicleType] = [
+MANPADS: List[Type[VehicleType]] = [
     AirDefence.MANPADS_SA_18_Igla_Grouse,
     AirDefence.MANPADS_SA_18_Igla_S_Grouse,
     AirDefence.MANPADS_Stinger,

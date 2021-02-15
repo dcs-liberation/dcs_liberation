@@ -1,4 +1,6 @@
 """Qt data models for game objects."""
+from __future__ import annotations
+
 import datetime
 from typing import Any, Callable, Dict, Iterator, Optional, TypeVar
 
@@ -12,11 +14,12 @@ from PySide2.QtGui import QIcon
 
 from game import db
 from game.game import Game
+from game.theater.missiontarget import MissionTarget
+from game.transfers import RoadTransferOrder
 from gen.ato import AirTaskingOrder, Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
-from game.theater.missiontarget import MissionTarget
 
 
 class DeletableChildModelManager:
@@ -285,6 +288,63 @@ class AtoModel(QAbstractListModel):
             yield self.package_models.acquire(package)
 
 
+class TransferModel(QAbstractListModel):
+    """The model for a ground unit transfer."""
+
+    TransferRole = Qt.UserRole
+
+    def __init__(self, game_model: GameModel) -> None:
+        super().__init__()
+        self.game_model = game_model
+
+    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
+        return self.game_model.game.transfers.pending_transfer_count
+
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
+        if not index.isValid():
+            return None
+        transfer = self.transfer_at_index(index)
+        if role == Qt.DisplayRole:
+            return self.text_for_transfer(transfer)
+        if role == Qt.DecorationRole:
+            return self.icon_for_transfer(transfer)
+        elif role == TransferModel.TransferRole:
+            return transfer
+        return None
+
+    @staticmethod
+    def text_for_transfer(transfer: RoadTransferOrder) -> str:
+        """Returns the text that should be displayed for the transfer."""
+        count = sum(transfer.units.values())
+        origin = transfer.origin.name
+        destination = transfer.destination.name
+        return f"Transfer of {count} units from {origin} to {destination}"
+
+    @staticmethod
+    def icon_for_transfer(_transfer: RoadTransferOrder) -> Optional[QIcon]:
+        """Returns the icon that should be displayed for the transfer."""
+        return None
+
+    def new_transfer(self, transfer: RoadTransferOrder) -> None:
+        """Updates the game with the new unit transfer."""
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        # TODO: Needs to regenerate base inventory tab.
+        self.game_model.game.transfers.new_transfer(transfer)
+        self.endInsertRows()
+
+    def cancel_transfer_at_index(self, index: QModelIndex) -> None:
+        """Cancels the planned unit transfer at the given index."""
+        transfer = self.transfer_at_index(index)
+        self.beginRemoveRows(QModelIndex(), index.row(), index.row())
+        # TODO: Needs to regenerate base inventory tab.
+        self.game_model.game.transfers.cancel_transfer(transfer)
+        self.endRemoveRows()
+
+    def transfer_at_index(self, index: QModelIndex) -> RoadTransferOrder:
+        """Returns the transfer located at the given index."""
+        return self.game_model.game.transfers.transfer_at_index(index.row())
+
+
 class GameModel:
     """A model for the Game object.
 
@@ -294,6 +354,7 @@ class GameModel:
 
     def __init__(self, game: Optional[Game]) -> None:
         self.game: Optional[Game] = game
+        self.transfer_model = TransferModel(self)
         if self.game is None:
             self.ato_model = AtoModel(self.game, AirTaskingOrder())
             self.red_ato_model = AtoModel(self.game, AirTaskingOrder())

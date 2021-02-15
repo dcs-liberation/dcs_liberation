@@ -4,6 +4,7 @@ from datetime import timedelta
 from typing import List, Optional
 
 from PySide2.QtWidgets import (
+    QDialog,
     QFrame,
     QGroupBox,
     QHBoxLayout,
@@ -22,6 +23,7 @@ from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QIntelBox import QIntelBox
 from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
@@ -32,6 +34,8 @@ class QTopPanel(QFrame):
     def __init__(self, game_model: GameModel):
         super(QTopPanel, self).__init__()
         self.game_model = game_model
+        self.dialog: Optional[QDialog] = None
+
         self.setMaximumHeight(70)
         self.init_ui()
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
@@ -61,6 +65,11 @@ class QTopPanel(QFrame):
 
         self.factionsInfos = QFactionsInfos(self.game)
 
+        self.transfers = QPushButton("Transfers")
+        self.transfers.setDisabled(True)
+        self.transfers.setProperty("style", "btn-primary")
+        self.transfers.clicked.connect(self.open_transfers)
+
         self.settings = QPushButton("Settings")
         self.settings.setDisabled(True)
         self.settings.setIcon(CONST.ICONS["Settings"])
@@ -77,6 +86,7 @@ class QTopPanel(QFrame):
 
         self.buttonBox = QGroupBox("Misc")
         self.buttonBoxLayout = QHBoxLayout()
+        self.buttonBoxLayout.addWidget(self.transfers)
         self.buttonBoxLayout.addWidget(self.settings)
         self.buttonBoxLayout.addWidget(self.statistics)
         self.buttonBox.setLayout(self.buttonBoxLayout)
@@ -106,6 +116,7 @@ class QTopPanel(QFrame):
         if game is None:
             return
 
+        self.transfers.setEnabled(True)
         self.settings.setEnabled(True)
         self.statistics.setEnabled(True)
 
@@ -121,13 +132,17 @@ class QTopPanel(QFrame):
         else:
             self.proceedButton.setEnabled(True)
 
+    def open_transfers(self):
+        self.dialog = PendingTransfersDialog(self.game_model)
+        self.dialog.show()
+
     def openSettings(self):
-        self.subwindow = QSettingsWindow(self.game)
-        self.subwindow.show()
+        self.dialog = QSettingsWindow(self.game)
+        self.dialog.show()
 
     def openStatisticsWindow(self):
-        self.subwindow = QStatsWindow(self.game)
-        self.subwindow.show()
+        self.dialog = QStatsWindow(self.game)
+        self.dialog.show()
 
     def passTurn(self):
         start = timeit.default_timer()
