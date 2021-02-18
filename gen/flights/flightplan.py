@@ -1183,23 +1183,29 @@ class FlightPlanBuilder:
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
-        closest_airfield = location
-        heading = location.position.heading_between_point(closest_airfield.position)
+        heading = 0
+        distance = 0
 
-        position = ShapelyPoint(
-            self.package.target.position.x, self.package.target.position.y
-        )
-
-        if meters(position.distance(self.threat_zones.all)) == meters(0):
-            distance_to_no_fly = (
-                    meters(position.distance(self.threat_zones.all))
-                    - self.doctrine.cap_engagement_range
-                    - nautical_miles(5)
+        while True:
+            # Generate our Orbit point
+            orbit_point = location.position.point_from_heading(heading, distance)
+            # Check if our generated point is in a threat zone
+            test_pos = ShapelyPoint(
+                orbit_point.x, orbit_point.y
             )
-        else:
-            distance_to_no_fly = meters(0)
 
-        return location.position.point_from_heading(heading, int(distance_to_no_fly.meters))
+            if heading > 360:
+                if meters(test_pos.distance(self.threat_zones.all)) == meters(0):
+                    distance += int(nautical_miles(50).meters)
+                else:
+                    break
+                heading = 0
+            elif meters(test_pos.distance(self.threat_zones.all)) == meters(0):
+                heading += 60
+            else:
+                break
+
+        return orbit_point
 
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
