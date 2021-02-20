@@ -13,8 +13,8 @@ def init_logging(version: str) -> None:
     logging.basicConfig(level=logging.DEBUG, format=fmt)
     logger = logging.getLogger()
 
-    handler = RotatingFileHandler('./logs/liberation.log', 'a', 5000000, 1)
-    handler.setLevel(logging.INFO)
+    handler = RotatingFileHandler("./logs/liberation.log", "a", 5000000, 1)
+    handler.setLevel(logging.DEBUG)
     handler.setFormatter(logging.Formatter(fmt))
 
     logger.addHandler(handler)
