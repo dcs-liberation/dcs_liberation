@@ -319,6 +319,7 @@ class FlightData:
         intra_flight_channel: RadioFrequency,
         bingo_fuel: Optional[int],
         joker_fuel: Optional[int],
+        custom_name: Optional[str],
     ) -> None:
         self.package = package
         self.country = country
@@ -336,6 +337,7 @@ class FlightData:
         self.bingo_fuel = bingo_fuel
         self.joker_fuel = joker_fuel
         self.callsign = create_group_callsign_from_unit(self.units[0])
+        self.custom_name = custom_name
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -814,6 +816,7 @@ class AircraftConflictGenerator:
                 intra_flight_channel=channel,
                 bingo_fuel=flight.flight_plan.bingo_fuel,
                 joker_fuel=flight.flight_plan.joker_fuel,
+                custom_name=flight.custom_name,
             )
         )
 
