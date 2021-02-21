@@ -8,6 +8,17 @@ Saves from 2.4 are not compatible with 2.5.
 
 ## Fixes
 
+# 2.4.3
+
+## Features/Improvements
+
+* **[New Game Wizard]** Added the possibility to setup custom start date
+
+## Fixes
+
+* **[Mods]** Updated C-130J mod data to version 6.4
+* **[Mods]** Updated F-22A mod to latest version
+
 # 2.4.2
 
 ## Features/Improvements

@@ -601,3 +601,25 @@ QGroupBox[style="IntelSummary"] QLabel {
     font-size: 9px;
     line-height: 9px;
 }
+
+QCalendarWidget
+{
+    background-color:#ff0000;
+    border: 1px solid black;
+}
+
+QCalendarWidget QAbstractItemView
+{
+    background-color:#699245;
+    border: 1px solid black;
+}
+
+QCalendarWidget QWidget {
+  color: #B7C0C6;
+}
+
+QCalendarWidget QTableView{
+    border-width: 2px;
+    background-color:lightgrey;
+    border: 1px solid black;
+}
