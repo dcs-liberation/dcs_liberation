@@ -438,7 +438,7 @@ function Hercules_Cargo.Cargo_Track(Arg, time)
 		end
 	end) -- pcall
 	if not status then
-		env.error(string.format("Cargo_Spawn: %s", result))
+		-- env.error(string.format("Cargo_Spawn: %s", result))
 	else
 		return result
 	end
@@ -541,7 +541,7 @@ function Hercules_Cargo.Cargo_Initialize(initiator, Cargo_Contents, Cargo_Type_n
 		end
 	end) -- pcall
 	if not status then
-		env.error(string.format("Cargo_Initialize: %s", result))
+		-- env.error(string.format("Cargo_Initialize: %s", result))
 	else
 		return result
 	end
