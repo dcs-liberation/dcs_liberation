@@ -248,7 +248,11 @@ class BriefingPage(KneeboardPage):
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter()
-        writer.title(f"{self.flight.callsign} Mission Info")
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Mission Info{custom_name_title}")
 
         # TODO: Handle carriers.
         writer.heading("Airfield Info")
