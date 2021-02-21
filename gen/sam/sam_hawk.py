@@ -18,20 +18,51 @@ class HawkGenerator(AirDefenseGroupGenerator):
     price = 115
 
     def generate(self):
-        self.add_unit(AirDefence.SAM_Hawk_SR_AN_MPQ_50, "SR", self.position.x + 20, self.position.y, self.heading)
-        self.add_unit(AirDefence.SAM_Hawk_PCP, "PCP", self.position.x, self.position.y, self.heading)
-        self.add_unit(AirDefence.SAM_Hawk_TR_AN_MPQ_46, "TR", self.position.x + 40, self.position.y, self.heading)
+        self.add_unit(
+            AirDefence.SAM_Hawk_SR_AN_MPQ_50,
+            "SR",
+            self.position.x + 20,
+            self.position.y,
+            self.heading,
+        )
+        self.add_unit(
+            AirDefence.SAM_Hawk_PCP,
+            "PCP",
+            self.position.x,
+            self.position.y,
+            self.heading,
+        )
+        self.add_unit(
+            AirDefence.SAM_Hawk_TR_AN_MPQ_46,
+            "TR",
+            self.position.x + 40,
+            self.position.y,
+            self.heading,
+        )
 
         # Triple A for close range defense
         aa_group = self.add_auxiliary_group("AA")
-        self.add_unit_to_group(aa_group, AirDefence.AAA_Vulcan_M163, "AAA",
-                               self.position + Point(20, 30), self.heading)
+        self.add_unit_to_group(
+            aa_group,
+            AirDefence.AAA_Vulcan_M163,
+            "AAA",
+            self.position + Point(20, 30),
+            self.heading,
+        )
 
         num_launchers = random.randint(3, 6)
-        positions = self.get_circular_position(num_launchers, launcher_distance=120, coverage=180)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=120, coverage=180
+        )
 
         for i, position in enumerate(positions):
-            self.add_unit(AirDefence.SAM_Hawk_LN_M192, "LN#" + str(i), position[0], position[1], position[2])
+            self.add_unit(
+                AirDefence.SAM_Hawk_LN_M192,
+                "LN#" + str(i),
+                position[0],
+                position[1],
+                position[2],
+            )
 
     @classmethod
     def range(cls) -> AirDefenseRange:

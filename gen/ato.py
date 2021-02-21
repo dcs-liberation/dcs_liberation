@@ -96,7 +96,8 @@ class Package:
             if tot is None:
                 logging.error(
                     f"{flight} requested escort at {waypoint} but that "
-                    "waypoint has no TOT. It may not be escorted.")
+                    "waypoint has no TOT. It may not be escorted."
+                )
                 continue
             times.append(tot)
         if times:
@@ -117,7 +118,8 @@ class Package:
                 logging.error(
                     f"{flight} dismissed escort at {waypoint} but that "
                     "waypoint has no TOT or departure time. It may not be "
-                    "escorted.")
+                    "escorted."
+                )
                 continue
             times.append(tot)
         if times:
@@ -173,8 +175,8 @@ class Package:
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,
-            FlightType.SWEEP,
             FlightType.AEWC,
+            FlightType.SWEEP,
             FlightType.ESCORT,
         ]
         for task in task_priorities:

@@ -10,8 +10,18 @@ from dcs.planes import plane_map
 from dcs.unittype import FlyingType, ShipType, VehicleType, UnitType
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
 
-from game.data.building_data import WW2_ALLIES_BUILDINGS, DEFAULT_AVAILABLE_BUILDINGS, WW2_GERMANY_BUILDINGS, WW2_FREE
-from game.data.doctrine import Doctrine, MODERN_DOCTRINE, COLDWAR_DOCTRINE, WWII_DOCTRINE
+from game.data.building_data import (
+    WW2_ALLIES_BUILDINGS,
+    DEFAULT_AVAILABLE_BUILDINGS,
+    WW2_GERMANY_BUILDINGS,
+    WW2_FREE,
+)
+from game.data.doctrine import (
+    Doctrine,
+    MODERN_DOCTRINE,
+    COLDWAR_DOCTRINE,
+    WWII_DOCTRINE,
+)
 from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 
 
@@ -109,8 +119,7 @@ class Faction:
     building_set: List[str] = field(default_factory=list)
 
     # List of default livery overrides
-    liveries_overrides: Dict[Type[UnitType], List[str]] = field(
-        default_factory=dict)
+    liveries_overrides: Dict[Type[UnitType], List[str]] = field(default_factory=dict)
 
     #: Set to True if the faction should force the "Unrestricted satnav" option
     #: for the mission. This option enables GPS for capable aircraft regardless
@@ -128,7 +137,11 @@ class Faction:
 
         faction.country = json.get("country", "/")
         if faction.country not in [c.name for c in country_dict.values()]:
-            raise AssertionError("Faction's country (\"{}\") is not a valid DCS country ID".format(faction.country))
+            raise AssertionError(
+                'Faction\'s country ("{}") is not a valid DCS country ID'.format(
+                    faction.country
+                )
+            )
 
         faction.name = json.get("name", "")
         if not faction.name:
@@ -141,14 +154,10 @@ class Faction:
         faction.awacs = load_all_aircraft(json.get("awacs", []))
         faction.tankers = load_all_aircraft(json.get("tankers", []))
 
-        faction.frontline_units = load_all_vehicles(
-            json.get("frontline_units", []))
-        faction.artillery_units = load_all_vehicles(
-            json.get("artillery_units", []))
-        faction.infantry_units = load_all_vehicles(
-            json.get("infantry_units", []))
-        faction.logistics_units = load_all_vehicles(
-            json.get("logistics_units", []))
+        faction.frontline_units = load_all_vehicles(json.get("frontline_units", []))
+        faction.artillery_units = load_all_vehicles(json.get("artillery_units", []))
+        faction.infantry_units = load_all_vehicles(json.get("infantry_units", []))
+        faction.logistics_units = load_all_vehicles(json.get("logistics_units", []))
 
         faction.ewrs = json.get("ewrs", [])
 
@@ -163,13 +172,10 @@ class Faction:
         faction.requirements = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
-        faction.helicopter_carrier_names = json.get(
-            "helicopter_carrier_names", [])
+        faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
         faction.navy_generators = json.get("navy_generators", [])
-        faction.aircraft_carrier = load_all_ships(
-            json.get("aircraft_carrier", []))
-        faction.helicopter_carrier = load_all_ships(
-            json.get("helicopter_carrier", []))
+        faction.aircraft_carrier = load_all_ships(json.get("aircraft_carrier", []))
+        faction.helicopter_carrier = load_all_ships(json.get("helicopter_carrier", []))
         faction.destroyers = load_all_ships(json.get("destroyers", []))
         faction.cruisers = load_all_ships(json.get("cruisers", []))
         faction.has_jtac = json.get("has_jtac", False)
@@ -220,13 +226,18 @@ class Faction:
 
     @property
     def units(self) -> List[Type[UnitType]]:
-        return (self.infantry_units + self.aircrafts + self.awacs +
-                self.artillery_units + self.frontline_units +
-                self.tankers + self.logistics_units)
+        return (
+            self.infantry_units
+            + self.aircrafts
+            + self.awacs
+            + self.artillery_units
+            + self.frontline_units
+            + self.tankers
+            + self.logistics_units
+        )
 
 
-def unit_loader(
-        unit: str, class_repository: List[Any]) -> Optional[Type[UnitType]]:
+def unit_loader(unit: str, class_repository: List[Any]) -> Optional[Type[UnitType]]:
     """
     Find unit by name
     :param unit: Unit name as string
@@ -250,9 +261,10 @@ def unit_loader(
 
 
 def load_aircraft(name: str) -> Optional[Type[FlyingType]]:
-    return cast(Optional[FlyingType], unit_loader(
-        name, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES]
-    ))
+    return cast(
+        Optional[FlyingType],
+        unit_loader(name, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES]),
+    )
 
 
 def load_all_aircraft(data) -> List[Type[FlyingType]]:
@@ -265,9 +277,12 @@ def load_all_aircraft(data) -> List[Type[FlyingType]]:
 
 
 def load_vehicle(name: str) -> Optional[Type[VehicleType]]:
-    return cast(Optional[FlyingType], unit_loader(
-        name, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES]
-    ))
+    return cast(
+        Optional[FlyingType],
+        unit_loader(
+            name, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES]
+        ),
+    )
 
 
 def load_all_vehicles(data) -> List[Type[VehicleType]]:

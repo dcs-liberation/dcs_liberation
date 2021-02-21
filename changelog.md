@@ -8,6 +8,18 @@ Saves from 2.4 are not compatible with 2.5.
 
 ## Fixes
 
+# 2.4.2
+
+## Features/Improvements
+
+* **[Factions]** Introduction dates and fallback weapons added for US, Russian, UK, and French weapons. Huge thanks to @TheCandianVendingMachine for the massive amount of data entry!
+* **[Campaigns]** Added 1995 start dates.
+
+## Fixes
+
+* **[Economy]** Pending ground unit purchases will also be transferred when a connected base is captured.
+* **[UI]** Fixed rounding of budget in recruitment menu.
+
 # 2.4.1
 
 ## Fixes

@@ -2,7 +2,6 @@ from dcs import Point
 
 
 class PointWithHeading(Point):
-
     def __init__(self):
         super(PointWithHeading, self).__init__(0, 0)
         self.heading = 0

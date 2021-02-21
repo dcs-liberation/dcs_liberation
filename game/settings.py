@@ -30,6 +30,7 @@ class Settings:
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
     restrict_weapons_by_date: bool = False
+    disable_legacy_aewc: bool = False
 
     # Performance oriented
     perf_red_alert_state: bool = True
@@ -58,8 +59,7 @@ class Settings:
     def plugin_settings_key(identifier: str) -> str:
         return f"plugins.{identifier}"
 
-    def initialize_plugin_option(self, identifier: str,
-                                 default_value: bool) -> None:
+    def initialize_plugin_option(self, identifier: str, default_value: bool) -> None:
         try:
             self.plugin_option(identifier)
         except KeyError:

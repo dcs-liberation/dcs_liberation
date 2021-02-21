@@ -28,7 +28,7 @@ class QRecruitBehaviour:
     bought_amount_labels = None
     maximum_units = -1
     recruitable_types = []
-    BUDGET_FORMAT = "Available Budget: <b>${}M</b>"
+    BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
     def __init__(self) -> None:
         self.bought_amount_labels = {}
@@ -48,8 +48,13 @@ class QRecruitBehaviour:
     def budget(self, value: int) -> None:
         self.game_model.game.budget = value
 
-    def add_purchase_row(self, unit_type: Type[UnitType], layout: QLayout,
-                         row: int, disabled: bool = False) -> int:
+    def add_purchase_row(
+        self,
+        unit_type: Type[UnitType],
+        layout: QLayout,
+        row: int,
+        disabled: bool = False,
+    ) -> int:
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
         exist.setMaximumHeight(36)
@@ -60,8 +65,16 @@ class QRecruitBehaviour:
         existing_units = self.cp.base.total_units_of_type(unit_type)
         scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
-        unitName = QLabel("<b>" + db.unit_get_expanded_info(self.game_model.game.player_country, unit_type, 'name') + "</b>")
-        unitName.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+        unitName = QLabel(
+            "<b>"
+            + db.unit_get_expanded_info(
+                self.game_model.game.player_country, unit_type, "name"
+            )
+            + "</b>"
+        )
+        unitName.setSizePolicy(
+            QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        )
 
         existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
@@ -104,7 +117,7 @@ class QRecruitBehaviour:
         info.setMinimumHeight(36)
         infolayout = QHBoxLayout()
         info.setLayout(infolayout)
-        
+
         unitInfo = QPushButton("i")
         unitInfo.setProperty("style", "btn-info")
         unitInfo.setDisabled(disabled)
@@ -114,9 +127,13 @@ class QRecruitBehaviour:
         unitInfo.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         existLayout.addWidget(unitName)
-        existLayout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum))
+        existLayout.addItem(
+            QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        )
         existLayout.addWidget(existing_units)
-        existLayout.addItem(QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum))
+        existLayout.addItem(
+            QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        )
         existLayout.addWidget(price)
 
         buysellayout.addWidget(sell)
@@ -133,13 +150,17 @@ class QRecruitBehaviour:
 
     def _update_count_label(self, unit_type: Type[UnitType]):
 
-        self.bought_amount_labels[unit_type].setText("<b>{}</b>".format(
-            unit_type in self.pending_deliveries.units and "{}".format(self.pending_deliveries.units[unit_type]) or "0"
-        ))
+        self.bought_amount_labels[unit_type].setText(
+            "<b>{}</b>".format(
+                unit_type in self.pending_deliveries.units
+                and "{}".format(self.pending_deliveries.units[unit_type])
+                or "0"
+            )
+        )
 
-        self.existing_units_labels[unit_type].setText("<b>{}</b>".format(
-            self.cp.base.total_units_of_type(unit_type)
-        ))
+        self.existing_units_labels[unit_type].setText(
+            "<b>{}</b>".format(self.cp.base.total_units_of_type(unit_type))
+        )
 
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)

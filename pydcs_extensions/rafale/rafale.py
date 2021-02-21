@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+
 class RafaleWeapons:
     SCALP = {"clsid": "{SCALP}", "name": "SCALP", "weight": None}
     AS_30L = {"clsid": "{AS_30L}", "name": "AS_30L", "weight": 292}
@@ -25,16 +26,36 @@ class RafaleWeapons:
     RPL751_ = {"clsid": "{RPL751}", "name": "RPL751", "weight": 70}
     RPL751__ = {"clsid": "{RPL751}", "name": "RPL751", "weight": 70}
     METEOR = {"clsid": "{RAFALE_MBDA_METEOR}", "name": "METEOR", "weight": 199}
-    METEOR_x2 = {"clsid": "{LAU-115_2xLAU-127_MBDA_METEOR}", "name": "METEOR x2", "weight": 445}
+    METEOR_x2 = {
+        "clsid": "{LAU-115_2xLAU-127_MBDA_METEOR}",
+        "name": "METEOR x2",
+        "weight": 445,
+    }
     GBU_49 = {"clsid": "{GBU_49}", "name": "GBU_49", "weight": 525}
     GBU12PII = {"clsid": "{GBU12PII}", "name": "GBU12PII", "weight": 525}
     AASM_250 = {"clsid": "{AASM_250}", "name": "AASM_250", "weight": 250}
     AASM_250_L = {"clsid": "{AASM_250_L}", "name": "AASM_250_L", "weight": 500}
     AASM_250_R = {"clsid": "{AASM_250_R}", "name": "AASM_250_R", "weight": 500}
-    AASM_250_RIGHT = {"clsid": "{AASM_250_RIGHT}", "name": "AASM_250_RIGHT", "weight": 250}
-    _2_GBU_54_V_1_B = {"clsid": "{BRU-70A_2*GBU-54_LEFT}", "name": "2 GBU-54(V)1/B", "weight": 566}
-    _2_GBU_54_V_1_B_ = {"clsid": "{BRU-70A_2*GBU-54_RIGHT}", "name": "2 GBU-54(V)1/B", "weight": 566}
-    _3_GBU_54_V_1_B = {"clsid": "{BRU-70A_3*GBU-54}", "name": "3 GBU-54(V)1/B", "weight": 819}
+    AASM_250_RIGHT = {
+        "clsid": "{AASM_250_RIGHT}",
+        "name": "AASM_250_RIGHT",
+        "weight": 250,
+    }
+    _2_GBU_54_V_1_B = {
+        "clsid": "{BRU-70A_2*GBU-54_LEFT}",
+        "name": "2 GBU-54(V)1/B",
+        "weight": 566,
+    }
+    _2_GBU_54_V_1_B_ = {
+        "clsid": "{BRU-70A_2*GBU-54_RIGHT}",
+        "name": "2 GBU-54(V)1/B",
+        "weight": 566,
+    }
+    _3_GBU_54_V_1_B = {
+        "clsid": "{BRU-70A_3*GBU-54}",
+        "name": "3 GBU-54(V)1/B",
+        "weight": 819,
+    }
 
 
 class Rafale_A_S(PlaneType):
@@ -50,11 +71,10 @@ class Rafale_A_S(PlaneType):
     charge_total = 96
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
 
     class Liveries:
-
         class USSR(Enum):
             _01_marine_12_f = "01 marine 12 f"
             _02_rafale_export = "02 rafale export"
@@ -896,7 +916,10 @@ class Rafale_A_S(PlaneType):
         _3_Mk_20_Rockeye = (2, Weapons._3_Mk_20_Rockeye)
         Mk_84 = (2, Weapons.Mk_84)
         GBU_24 = (2, Weapons.GBU_24)
-        LAU_131___7_2_75__rockets_M151__HE_ = (2, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            2,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (2, Weapons.LAU3_HE151)
         LAU3_WP156 = (2, Weapons.LAU3_WP156)
         LAU3_HE5 = (2, Weapons.LAU3_HE5)
@@ -923,7 +946,10 @@ class Rafale_A_S(PlaneType):
         AIM_9P_Sidewinder_IR_AAM = (4, Weapons.AIM_9P_Sidewinder_IR_AAM)
         MICA_IR = (4, Weapons.MICA_IR)
         LAU_10___4_ZUNI_MK_71 = (4, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (4, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            4,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         LAU3_HE151 = (4, Weapons.LAU3_HE151)
 
     class Pylon5:
@@ -937,7 +963,10 @@ class Rafale_A_S(PlaneType):
 
     class Pylon6:
         LAU_10___4_ZUNI_MK_71 = (6, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (6, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            6,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         AIM_9M_Sidewinder_IR_AAM = (6, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9P_Sidewinder_IR_AAM = (6, Weapons.AIM_9P_Sidewinder_IR_AAM)
         MICA_IR = (6, Weapons.MICA_IR)
@@ -973,7 +1002,10 @@ class Rafale_A_S(PlaneType):
         Mk_84 = (9, Weapons.Mk_84)
         _3_Mk_82 = (9, Weapons._3_Mk_82)
         AGM_88C_ = (9, Weapons.AGM_88C_)
-        LAU_131___7_2_75__rockets_M151__HE_ = (9, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            9,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (9, Weapons.LAU3_HE151)
         LAU3_WP156 = (9, Weapons.LAU3_WP156)
         LAU3_HE5 = (9, Weapons.LAU3_HE5)
@@ -993,7 +1025,18 @@ class Rafale_A_S(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-    tasks = [task.CAP, task.Escort, task.FighterSweep, task.GroundAttack, task.CAS, task.AFAC, task.RunwayAttack, task.AntishipStrike, task.SEAD, task.PinpointStrike]
+    tasks = [
+        task.CAP,
+        task.Escort,
+        task.FighterSweep,
+        task.GroundAttack,
+        task.CAS,
+        task.AFAC,
+        task.RunwayAttack,
+        task.AntishipStrike,
+        task.SEAD,
+        task.PinpointStrike,
+    ]
     task_default = task.CAP
 
 
@@ -1010,11 +1053,10 @@ class Rafale_M(PlaneType):
     charge_total = 96
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
 
     class Liveries:
-
         class USSR(Enum):
             _01_marine_12_f = "01 marine 12 f"
             _02_rafale_export = "02 rafale export"
@@ -1851,7 +1893,10 @@ class Rafale_M(PlaneType):
         MER_2_MK_83 = (2, Weapons.MER_2_MK_83)
         MER_2_MK_82 = (2, Weapons.MER_2_MK_82)
         _3_Mk_82 = (2, Weapons._3_Mk_82)
-        LAU_131___7_2_75__rockets_M151__HE_ = (2, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            2,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (2, Weapons.LAU3_HE151)
         LAU3_WP156 = (2, Weapons.LAU3_WP156)
         LAU3_HE5 = (2, Weapons.LAU3_HE5)
@@ -1887,7 +1932,10 @@ class Rafale_M(PlaneType):
         AIM_9P_Sidewinder_IR_AAM = (4, Weapons.AIM_9P_Sidewinder_IR_AAM)
         LAU3_WP156 = (4, Weapons.LAU3_WP156)
         LAU_10___4_ZUNI_MK_71 = (4, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (4, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            4,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         Mk_82 = (4, Weapons.Mk_82)
 
     class Pylon5:
@@ -1906,7 +1954,10 @@ class Rafale_M(PlaneType):
         AIM_9P_Sidewinder_IR_AAM = (6, Weapons.AIM_9P_Sidewinder_IR_AAM)
         LAU3_WP156 = (6, Weapons.LAU3_WP156)
         LAU_10___4_ZUNI_MK_71 = (6, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (6, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            6,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         Mk_82 = (6, Weapons.Mk_82)
 
     class Pylon7:
@@ -1936,7 +1987,10 @@ class Rafale_M(PlaneType):
         MER_2_MK_83 = (9, Weapons.MER_2_MK_83)
         MER_2_MK_82 = (9, Weapons.MER_2_MK_82)
         _3_Mk_82 = (9, Weapons._3_Mk_82)
-        LAU_131___7_2_75__rockets_M151__HE_ = (9, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            9,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (9, Weapons.LAU3_HE151)
         LAU3_WP156 = (9, Weapons.LAU3_WP156)
         LAU3_HE5 = (9, Weapons.LAU3_HE5)
@@ -1961,7 +2015,18 @@ class Rafale_M(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-    tasks = [task.CAP, task.Escort, task.FighterSweep, task.GroundAttack, task.CAS, task.AFAC, task.RunwayAttack, task.AntishipStrike, task.Reconnaissance, task.Intercept]
+    tasks = [
+        task.CAP,
+        task.Escort,
+        task.FighterSweep,
+        task.GroundAttack,
+        task.CAS,
+        task.AFAC,
+        task.RunwayAttack,
+        task.AntishipStrike,
+        task.Reconnaissance,
+        task.Intercept,
+    ]
     task_default = task.CAP
 
 
@@ -1978,11 +2043,10 @@ class Rafale_B(PlaneType):
     charge_total = 96
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
 
     class Liveries:
-
         class USSR(Enum):
             _01_rafale_b_lafayette = "01 rafale b lafayette"
             _02_rafale_b_mt_de_marsan = "02 rafale b mt de marsan"
@@ -2414,7 +2478,10 @@ class Rafale_B(PlaneType):
         _3_Mk_20_Rockeye = (2, Weapons._3_Mk_20_Rockeye)
         Mk_84 = (2, Weapons.Mk_84)
         GBU_24 = (2, Weapons.GBU_24)
-        LAU_131___7_2_75__rockets_M151__HE_ = (2, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            2,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (2, Weapons.LAU3_HE151)
         LAU3_WP156 = (2, Weapons.LAU3_WP156)
         LAU3_HE5 = (2, Weapons.LAU3_HE5)
@@ -2442,7 +2509,10 @@ class Rafale_B(PlaneType):
         AIM_9P_Sidewinder_IR_AAM = (4, Weapons.AIM_9P_Sidewinder_IR_AAM)
         MICA_IR = (4, Weapons.MICA_IR)
         LAU_10___4_ZUNI_MK_71 = (4, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (4, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            4,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         LAU3_HE151 = (4, Weapons.LAU3_HE151)
 
     class Pylon5:
@@ -2459,7 +2529,10 @@ class Rafale_B(PlaneType):
 
     class Pylon6:
         LAU_10___4_ZUNI_MK_71 = (6, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_61___19_2_75__rockets_MK151_HE = (6, Weapons.LAU_61___19_2_75__rockets_MK151_HE)
+        LAU_61___19_2_75__rockets_MK151_HE = (
+            6,
+            Weapons.LAU_61___19_2_75__rockets_MK151_HE,
+        )
         AIM_9M_Sidewinder_IR_AAM = (6, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9P_Sidewinder_IR_AAM = (6, Weapons.AIM_9P_Sidewinder_IR_AAM)
         MICA_IR = (6, Weapons.MICA_IR)
@@ -2496,7 +2569,10 @@ class Rafale_B(PlaneType):
         Mk_84 = (9, Weapons.Mk_84)
         _3_Mk_82 = (9, Weapons._3_Mk_82)
         AGM_88C_ = (9, Weapons.AGM_88C_)
-        LAU_131___7_2_75__rockets_M151__HE_ = (9, Weapons.LAU_131___7_2_75__rockets_M151__HE_)
+        LAU_131___7_2_75__rockets_M151__HE_ = (
+            9,
+            Weapons.LAU_131___7_2_75__rockets_M151__HE_,
+        )
         LAU3_HE151 = (9, Weapons.LAU3_HE151)
         LAU3_WP156 = (9, Weapons.LAU3_WP156)
         LAU3_HE5 = (9, Weapons.LAU3_HE5)
@@ -2516,7 +2592,18 @@ class Rafale_B(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-    tasks = [task.CAP, task.Escort, task.FighterSweep, task.GroundAttack, task.CAS, task.AFAC, task.RunwayAttack, task.AntishipStrike, task.SEAD, task.PinpointStrike]
+    tasks = [
+        task.CAP,
+        task.Escort,
+        task.FighterSweep,
+        task.GroundAttack,
+        task.CAS,
+        task.AFAC,
+        task.RunwayAttack,
+        task.AntishipStrike,
+        task.SEAD,
+        task.PinpointStrike,
+    ]
     task_default = task.GroundAttack
 
 
@@ -2534,11 +2621,10 @@ class Rafale_M_NOUNOU(PlaneType):
     chaff_charge_size = 1
     flare_charge_size = 1
     tacan = True
-    category = "Tankers"  #{8A302789-A55D-4897-B647-66493FA6826F}
+    category = "Tankers"  # {8A302789-A55D-4897-B647-66493FA6826F}
     radio_frequency = 127.5
 
     class Liveries:
-
         class USSR(Enum):
             _01_marine_12_f = "01 marine 12 f"
             _02_rafale_export = "02 rafale export"
@@ -2977,4 +3063,3 @@ class Rafale_M_NOUNOU(PlaneType):
 
     tasks = [task.Refueling]
     task_default = task.Refueling
-

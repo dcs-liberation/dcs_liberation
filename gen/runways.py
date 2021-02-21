@@ -25,8 +25,9 @@ class RunwayData:
     icls: Optional[int] = None
 
     @classmethod
-    def for_airfield(cls, airport: Airport, runway_heading: int,
-                     runway_name: str) -> RunwayData:
+    def for_airfield(
+        cls, airport: Airport, runway_heading: int, runway_name: str
+    ) -> RunwayData:
         """Creates RunwayData for the given runway of an airfield.
 
         Args:
@@ -56,7 +57,7 @@ class RunwayData:
             atc=atc,
             tacan=tacan,
             tacan_callsign=tacan_callsign,
-            ils=ils
+            ils=ils,
         )
 
     @classmethod

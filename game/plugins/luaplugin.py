@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 
 
 class LuaPluginWorkOrder:
-
-    def __init__(self, parent_mnemonic: str, filename: str, mnemonic: str,
-                 disable: bool) -> None:
+    def __init__(
+        self, parent_mnemonic: str, filename: str, mnemonic: str, disable: bool
+    ) -> None:
         self.parent_mnemonic = parent_mnemonic
         self.filename = filename
         self.mnemonic = mnemonic
@@ -26,8 +26,9 @@ class LuaPluginWorkOrder:
         if self.disable:
             operation.bypass_plugin_script(self.mnemonic)
         else:
-            operation.inject_plugin_script(self.parent_mnemonic, self.filename,
-                                           self.mnemonic)
+            operation.inject_plugin_script(
+                self.parent_mnemonic, self.filename, self.mnemonic
+            )
 
 
 class PluginSettings:
@@ -45,8 +46,7 @@ class PluginSettings:
         # Plugin options are saved in the game's Settings, but it's possible for
         # plugins to change across loads. If new plugins are added or new
         # options added to those plugins, initialize the new settings.
-        self.settings.initialize_plugin_option(self.identifier,
-                                               self.enabled_by_default)
+        self.settings.initialize_plugin_option(self.identifier, self.enabled_by_default)
 
     @property
     def enabled(self) -> bool:
@@ -57,8 +57,7 @@ class PluginSettings:
 
 
 class LuaPluginOption(PluginSettings):
-    def __init__(self, identifier: str, name: str,
-                 enabled_by_default: bool) -> None:
+    def __init__(self, identifier: str, name: str, enabled_by_default: bool) -> None:
         super().__init__(identifier, enabled_by_default)
         self.name = name
 
@@ -80,24 +79,34 @@ class LuaPluginDefinition:
         options = []
         for option in data.get("specificOptions"):
             option_id = option["mnemonic"]
-            options.append(LuaPluginOption(
-                identifier=f"{name}.{option_id}",
-                name=option.get("nameInUI", name),
-                enabled_by_default=option.get("defaultValue")
-            ))
+            options.append(
+                LuaPluginOption(
+                    identifier=f"{name}.{option_id}",
+                    name=option.get("nameInUI", name),
+                    enabled_by_default=option.get("defaultValue"),
+                )
+            )
 
         work_orders = []
         for work_order in data.get("scriptsWorkOrders"):
-            work_orders.append(LuaPluginWorkOrder(
-                name, work_order.get("file"), work_order["mnemonic"],
-                work_order.get("disable", False)
-            ))
+            work_orders.append(
+                LuaPluginWorkOrder(
+                    name,
+                    work_order.get("file"),
+                    work_order["mnemonic"],
+                    work_order.get("disable", False),
+                )
+            )
         config_work_orders = []
         for work_order in data.get("configurationWorkOrders"):
-            config_work_orders.append(LuaPluginWorkOrder(
-                name, work_order.get("file"), work_order["mnemonic"],
-                work_order.get("disable", False)
-            ))
+            config_work_orders.append(
+                LuaPluginWorkOrder(
+                    name,
+                    work_order.get("file"),
+                    work_order["mnemonic"],
+                    work_order.get("disable", False),
+                )
+            )
 
         return cls(
             identifier=name,
@@ -106,16 +115,14 @@ class LuaPluginDefinition:
             enabled_by_default=data.get("defaultValue", False),
             options=options,
             work_orders=work_orders,
-            config_work_orders=config_work_orders
+            config_work_orders=config_work_orders,
         )
 
 
 class LuaPlugin(PluginSettings):
-
     def __init__(self, definition: LuaPluginDefinition) -> None:
         self.definition = definition
-        super().__init__(self.definition.identifier,
-                         self.definition.enabled_by_default)
+        super().__init__(self.definition.identifier, self.definition.enabled_by_default)
 
     @property
     def name(self) -> str:
@@ -155,12 +162,12 @@ class LuaPlugin(PluginSettings):
             for option in self.options:
                 enabled = str(option.enabled).lower()
                 name = option.identifier
-                option_decls.append(
-                    f"    dcsLiberation.plugins.{name} = {enabled}")
+                option_decls.append(f"    dcsLiberation.plugins.{name} = {enabled}")
 
             joined_options = "\n".join(option_decls)
 
-            lua = textwrap.dedent(f"""\
+            lua = textwrap.dedent(
+                f"""\
                 -- {self.identifier} plugin configuration.
 
                 if dcsLiberation then
@@ -171,10 +178,10 @@ class LuaPlugin(PluginSettings):
                     {joined_options}
                 end
 
-            """)
+            """
+            )
 
-            operation.inject_lua_trigger(
-                lua, f"{self.identifier} plugin configuration")
+            operation.inject_lua_trigger(lua, f"{self.identifier} plugin configuration")
 
         for work_order in self.definition.config_work_orders:
             work_order.work(operation)

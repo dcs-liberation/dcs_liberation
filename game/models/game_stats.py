@@ -1,5 +1,6 @@
 from typing import List
 
+
 class FactionTurnMetadata:
     """
     Store metadata about a faction
@@ -20,8 +21,8 @@ class GameTurnMetadata:
     Store metadata about a game turn
     """
 
-    allied_units:FactionTurnMetadata
-    enemy_units:FactionTurnMetadata
+    allied_units: FactionTurnMetadata
+    enemy_units: FactionTurnMetadata
 
     def __init__(self):
         self.allied_units = FactionTurnMetadata()
@@ -53,4 +54,3 @@ class GameStats:
                 turn_data.enemy_units.vehicles_count += sum(cp.base.armor.values())
 
         self.data_per_turn.append(turn_data)
-

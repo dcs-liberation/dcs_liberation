@@ -27,8 +27,15 @@ class QFrontLine(QGraphicsLineItem):
     change the mouse cursor on hover.
     """
 
-    def __init__(self, x1: float, y1: float, x2: float, y2: float,
-                 mission_target: FrontLine, game_model: GameModel) -> None:
+    def __init__(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        mission_target: FrontLine,
+        game_model: GameModel,
+    ) -> None:
         super().__init__(x1, y1, x2, y2)
         self.mission_target = mission_target
         self.game_model = game_model
@@ -98,10 +105,9 @@ class QFrontLine(QGraphicsLineItem):
         self.mission_target.control_point_b.base.affect_strength(-0.1)
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
-    
+
     def cheat_backward(self) -> None:
         self.mission_target.control_point_a.base.affect_strength(-0.1)
         self.mission_target.control_point_b.base.affect_strength(0.1)
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
-        

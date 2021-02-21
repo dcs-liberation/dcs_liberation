@@ -60,9 +60,9 @@ class QPackageDialog(QDialog):
         self.package_type_label = QLabel("Package Type:")
         self.package_type_text = QLabel(self.package_model.description)
         # noinspection PyUnresolvedReferences
-        self.package_changed.connect(lambda: self.package_type_text.setText(
-            self.package_model.description
-        ))
+        self.package_changed.connect(
+            lambda: self.package_type_text.setText(self.package_model.description)
+        )
         self.package_type_column.addWidget(self.package_type_label)
         self.package_type_column.addWidget(self.package_type_text)
 
@@ -91,7 +91,9 @@ class QPackageDialog(QDialog):
         self.auto_asap.toggled.connect(self.set_asap)
         self.tot_column.addWidget(self.auto_asap)
 
-        self.tot_help_label = QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Mission-planning\"><span style=\"color:#FFFFFF;\">Help</span></a>")
+        self.tot_help_label = QLabel(
+            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Mission-planning"><span style="color:#FFFFFF;">Help</span></a>'
+        )
         self.tot_help_label.setAlignment(Qt.AlignCenter)
         self.tot_help_label.setOpenExternalLinks(True)
         self.tot_column.addWidget(self.tot_help_label)
@@ -159,16 +161,17 @@ class QPackageDialog(QDialog):
     def update_tot(self) -> None:
         self.tot_spinner.setTime(self.tot_qtime())
 
-    def on_selection_changed(self, selected: QItemSelection,
-                             _deselected: QItemSelection) -> None:
+    def on_selection_changed(
+        self, selected: QItemSelection, _deselected: QItemSelection
+    ) -> None:
         """Updates the state of the delete button."""
         self.delete_flight_button.setEnabled(not selected.empty())
 
     def on_add_flight(self) -> None:
         """Opens the new flight dialog."""
-        self.add_flight_dialog = QFlightCreator(self.game,
-                                                self.package_model.package,
-                                                parent=self.window())
+        self.add_flight_dialog = QFlightCreator(
+            self.game, self.package_model.package, parent=self.window()
+        )
         self.add_flight_dialog.created.connect(self.add_flight)
         self.add_flight_dialog.show()
 
@@ -176,8 +179,9 @@ class QPackageDialog(QDialog):
         """Adds the new flight to the package."""
         self.game.aircraft_inventory.claim_for_flight(flight)
         self.package_model.add_flight(flight)
-        planner = FlightPlanBuilder(self.game, self.package_model.package,
-                                    is_player=True)
+        planner = FlightPlanBuilder(
+            self.game, self.package_model.package, is_player=True
+        )
         try:
             planner.populate_flight_plan(flight)
         except PlanningError as ex:
@@ -209,8 +213,9 @@ class QNewPackageDialog(QPackageDialog):
     New packages do not affect the ATO model until they are saved.
     """
 
-    def __init__(self, game_model: GameModel, model: AtoModel,
-                 target: MissionTarget, parent=None) -> None:
+    def __init__(
+        self, game_model: GameModel, model: AtoModel, target: MissionTarget, parent=None
+    ) -> None:
         super().__init__(game_model, PackageModel(Package(target)), parent=parent)
         self.ato_model = model
 
@@ -240,8 +245,9 @@ class QEditPackageDialog(QPackageDialog):
     Changes to existing packages occur immediately.
     """
 
-    def __init__(self, game_model: GameModel, model: AtoModel,
-                 package: PackageModel) -> None:
+    def __init__(
+        self, game_model: GameModel, model: AtoModel, package: PackageModel
+    ) -> None:
         super().__init__(game_model, package)
         self.ato_model = model
 

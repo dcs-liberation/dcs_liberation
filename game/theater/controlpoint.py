@@ -71,6 +71,7 @@ class LocationType(Enum):
     Shorad = "SHORAD"
     StrikeTarget = "strike target"
 
+
 @dataclass
 class PresetLocations:
     """Defines the preset locations loaded from the campaign mission file."""
@@ -230,10 +231,17 @@ class ControlPoint(MissionTarget, ABC):
     # TODO: Only airbases have IDs.
     # TODO: has_frontline is only reasonable for airbases.
     # TODO: cptype is obsolete.
-    def __init__(self, cp_id: int, name: str, position: Point,
-                 at: db.StartingPosition, size: int,
-                 importance: float, has_frontline=True,
-                 cptype=ControlPointType.AIRBASE):
+    def __init__(
+        self,
+        cp_id: int,
+        name: str,
+        position: Point,
+        at: db.StartingPosition,
+        size: int,
+        importance: float,
+        has_frontline=True,
+        cptype=ControlPointType.AIRBASE,
+    ):
         super().__init__(name, position)
         # TODO: Should be Airbase specific.
         self.id = cp_id
@@ -256,17 +264,17 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
         from ..event import UnitsDeliveryEvent
+
         self.pending_unit_deliveries = UnitsDeliveryEvent(self)
 
         self.target_position: Optional[Point] = None
-    
+
     def __repr__(self):
         return f"<{__class__}: {self.name}>"
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
-        return list(
-            itertools.chain(self.connected_objectives, self.base_defenses))
+        return list(itertools.chain(self.connected_objectives, self.base_defenses))
 
     @property
     @abstractmethod
@@ -341,15 +349,18 @@ class ControlPoint(MissionTarget, ABC):
         Get the carrier group name if the airbase is a carrier
         :return: Carrier group name
         """
-        if self.cptype in [ControlPointType.AIRCRAFT_CARRIER_GROUP,
-                           ControlPointType.LHA_GROUP]:
+        if self.cptype in [
+            ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            ControlPointType.LHA_GROUP,
+        ]:
             for g in self.ground_objects:
                 if g.dcs_identifier == "CARRIER":
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
-                                    CVN_74_John_C__Stennis,
-                                    CV_1143_5_Admiral_Kuznetsov]:
+                                CVN_74_John_C__Stennis,
+                                CV_1143_5_Admiral_Kuznetsov,
+                            ]:
                                 return group.name
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
@@ -385,7 +396,8 @@ class ControlPoint(MissionTarget, ABC):
             else:
                 logging.error(
                     "Could not determine preset location type for "
-                    f"{base_defense}. Assuming garrison type.")
+                    f"{base_defense}. Assuming garrison type."
+                )
                 self.preset_locations.base_garrisons.append(p)
         self.base_defenses = []
 
@@ -395,15 +407,18 @@ class ControlPoint(MissionTarget, ABC):
         game.adjust_budget(total, player=not self.captured)
         game.message(
             f"{self.name} is not connected to any friendly points. Ground "
-            f"vehicles have been captured and sold for ${total}M.")
+            f"vehicles have been captured and sold for ${total}M."
+        )
 
     def retreat_ground_units(self, game: Game):
         # When there are multiple valid destinations, deliver units to whichever
         # base is least defended first. The closest approximation of unit
         # strength we have is price
-        destinations = [GroundUnitDestination(cp)
-                        for cp in self.connected_points
-                        if cp.captured == self.captured]
+        destinations = [
+            GroundUnitDestination(cp)
+            for cp in self.connected_points
+            if cp.captured == self.captured
+        ]
         if not destinations:
             self.capture_equipment(game)
             return
@@ -416,8 +431,9 @@ class ControlPoint(MissionTarget, ABC):
                 destination.control_point.base.commision_units({unit_type: 1})
                 destination = heapq.heappushpop(destinations, destination)
 
-    def capture_aircraft(self, game: Game, airframe: Type[FlyingType],
-                         count: int) -> None:
+    def capture_aircraft(
+        self, game: Game, airframe: Type[FlyingType], count: int
+    ) -> None:
         try:
             value = PRICES[airframe] * count
         except KeyError:
@@ -428,11 +444,12 @@ class ControlPoint(MissionTarget, ABC):
         game.message(
             f"No valid retreat destination in range of {self.name} for "
             f"{airframe.id}. {count} aircraft have been captured and sold for "
-            f"${value}M.")
+            f"${value}M."
+        )
 
     def aircraft_retreat_destination(
-            self, game: Game,
-            airframe: Type[FlyingType]) -> Optional[ControlPoint]:
+        self, game: Game, airframe: Type[FlyingType]
+    ) -> Optional[ControlPoint]:
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
         # TODO: Should be airframe dependent.
         max_retreat_distance = nautical_miles(200)
@@ -448,8 +465,9 @@ class ControlPoint(MissionTarget, ABC):
                 return airbase
         return None
 
-    def _retreat_air_units(self, game: Game, airframe: Type[FlyingType],
-                           count: int) -> None:
+    def _retreat_air_units(
+        self, game: Game, airframe: Type[FlyingType], count: int
+    ) -> None:
         while count:
             logging.debug(f"Retreating {count} {airframe.id} from {self.name}")
             destination = self.aircraft_retreat_destination(game, airframe)
@@ -482,6 +500,7 @@ class ControlPoint(MissionTarget, ABC):
 
         self.clear_base_defenses()
         from .start_generator import BaseDefenseGenerator
+
         BaseDefenseGenerator(game, self).generate()
 
     @abstractmethod
@@ -511,16 +530,19 @@ class ControlPoint(MissionTarget, ABC):
             if issubclass(unit_bought, FlyingType):
                 on_order += self.pending_unit_deliveries.units[unit_bought]
 
-        return PendingOccupancy(self.base.total_aircraft, on_order,
-                                self.aircraft_transferring(game))
+        return PendingOccupancy(
+            self.base.total_aircraft, on_order, self.aircraft_transferring(game)
+        )
 
     def unclaimed_parking(self, game: Game) -> int:
-        return (self.total_aircraft_parking -
-                self.expected_aircraft_next_turn(game).total)
+        return (
+            self.total_aircraft_parking - self.expected_aircraft_next_turn(game).total
+        )
 
     @abstractmethod
-    def active_runway(self, conditions: Conditions,
-                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+    def active_runway(
+        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+    ) -> RunwayData:
         ...
 
     @property
@@ -571,7 +593,13 @@ class ControlPoint(MissionTarget, ABC):
         Get number of pending frontline aa units
         """
         if self.pending_unit_deliveries:
-            return sum([v for k,v in self.pending_unit_deliveries.units.items() if k in TYPE_SHORAD])
+            return sum(
+                [
+                    v
+                    for k, v in self.pending_unit_deliveries.units.items()
+                    if k in TYPE_SHORAD
+                ]
+            )
         else:
             return 0
 
@@ -595,9 +623,12 @@ class ControlPoint(MissionTarget, ABC):
                 continue
             on_order += self.pending_unit_deliveries.units[unit_bought]
 
-        return PendingOccupancy(self.base.total_armor, on_order,
-                                # Ground unit transfers not yet implemented.
-                                transferring=0)
+        return PendingOccupancy(
+            self.base.total_armor,
+            on_order,
+            # Ground unit transfers not yet implemented.
+            transferring=0,
+        )
 
     @property
     def income_per_turn(self) -> int:
@@ -605,20 +636,32 @@ class ControlPoint(MissionTarget, ABC):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if self.is_friendly(for_player):
             yield from [
                 FlightType.AEWC,
             ]
         yield from super().mission_types(for_player)
 
+    @property
+    def has_active_frontline(self) -> bool:
+        return any(not c.is_friendly(self.captured) for c in self.connected_points)
+
 
 class Airfield(ControlPoint):
-
-    def __init__(self, airport: Airport, size: int,
-                 importance: float, has_frontline=True):
-        super().__init__(airport.id, airport.name, airport.position, airport,
-                         size, importance, has_frontline,
-                         cptype=ControlPointType.AIRBASE)
+    def __init__(
+        self, airport: Airport, size: int, importance: float, has_frontline=True
+    ):
+        super().__init__(
+            airport.id,
+            airport.name,
+            airport.position,
+            airport,
+            size,
+            importance,
+            has_frontline,
+            cptype=ControlPointType.AIRBASE,
+        )
         self.airport = airport
         self._runway_status = RunwayStatus()
 
@@ -632,6 +675,7 @@ class Airfield(ControlPoint):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if self.is_friendly(for_player):
             yield from [
                 # TODO: FlightType.INTERCEPTION
@@ -662,8 +706,9 @@ class Airfield(ControlPoint):
     def damage_runway(self) -> None:
         self.runway_status.damage()
 
-    def active_runway(self, conditions: Conditions,
-                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+    def active_runway(
+        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+    ) -> RunwayData:
         assigner = RunwayAssigner(conditions)
         return assigner.get_preferred_runway(self.airport)
 
@@ -681,13 +726,13 @@ class Airfield(ControlPoint):
 
 
 class NavalControlPoint(ControlPoint, ABC):
-
     @property
     def is_fleet(self) -> bool:
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if self.is_friendly(for_player):
             yield from [
                 # TODO: FlightType.INTERCEPTION
@@ -711,14 +756,17 @@ class NavalControlPoint(ControlPoint, ABC):
                 for group in g.groups:
                     for u in group.units:
                         if db.unit_type_from_name(u.type) in [
-                                CVN_74_John_C__Stennis, LHA_1_Tarawa,
-                                CV_1143_5_Admiral_Kuznetsov,
-                                Type_071_Amphibious_Transport_Dock]:
+                            CVN_74_John_C__Stennis,
+                            LHA_1_Tarawa,
+                            CV_1143_5_Admiral_Kuznetsov,
+                            Type_071_Amphibious_Transport_Dock,
+                        ]:
                             return True
         return False
 
-    def active_runway(self, conditions: Conditions,
-                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+    def active_runway(
+        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+    ) -> RunwayData:
         # TODO: Assign TACAN and ICLS earlier so we don't need this.
         fallback = RunwayData(self.full_name, runway_heading=0, runway_name="")
         return dynamic_runways.get(self.name, fallback)
@@ -741,12 +789,19 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-
     def __init__(self, name: str, at: Point, cp_id: int):
         import game.theater.conflicttheater
-        super().__init__(cp_id, name, at, at,
-                         game.theater.conflicttheater.SIZE_SMALL, 1,
-                         has_frontline=False, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP)
+
+        super().__init__(
+            cp_id,
+            name,
+            at,
+            at,
+            game.theater.conflicttheater.SIZE_SMALL,
+            1,
+            has_frontline=False,
+            cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
+        )
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")
@@ -764,12 +819,19 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-
     def __init__(self, name: str, at: Point, cp_id: int):
         import game.theater.conflicttheater
-        super().__init__(cp_id, name, at, at,
-                         game.theater.conflicttheater.SIZE_SMALL, 1,
-                         has_frontline=False, cptype=ControlPointType.LHA_GROUP)
+
+        super().__init__(
+            cp_id,
+            name,
+            at,
+            at,
+            game.theater.conflicttheater.SIZE_SMALL,
+            1,
+            has_frontline=False,
+            cptype=ControlPointType.LHA_GROUP,
+        )
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("LHAs cannot be captured")
@@ -787,15 +849,22 @@ class Lha(NavalControlPoint):
 
 
 class OffMapSpawn(ControlPoint):
-
     def runway_is_operational(self) -> bool:
         return True
 
     def __init__(self, cp_id: int, name: str, position: Point):
         from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
-        super().__init__(cp_id, name, position, at=position,
-                         size=SIZE_REGULAR, importance=IMPORTANCE_MEDIUM,
-                         has_frontline=False, cptype=ControlPointType.OFF_MAP)
+
+        super().__init__(
+            cp_id,
+            name,
+            position,
+            at=position,
+            size=SIZE_REGULAR,
+            importance=IMPORTANCE_MEDIUM,
+            has_frontline=False,
+            cptype=ControlPointType.OFF_MAP,
+        )
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Off map control points cannot be captured")
@@ -814,8 +883,9 @@ class OffMapSpawn(ControlPoint):
     def heading(self) -> int:
         return 0
 
-    def active_runway(self, conditions: Conditions,
-                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+    def active_runway(
+        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+    ) -> RunwayData:
         logging.warning("TODO: Off map spawns have no runways.")
         return RunwayData(self.full_name, runway_heading=0, runway_name="")
 
@@ -829,19 +899,27 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-
     def __init__(self, name: str, at: Point, cp_id: int):
         import game.theater.conflicttheater
-        super().__init__(cp_id, name, at, at,
-                         game.theater.conflicttheater.SIZE_SMALL, 1,
-                         has_frontline=True, cptype=ControlPointType.FOB)
+
+        super().__init__(
+            cp_id,
+            name,
+            at,
+            at,
+            game.theater.conflicttheater.SIZE_SMALL,
+            1,
+            has_frontline=True,
+            cptype=ControlPointType.FOB,
+        )
         self.name = name
-    
+
     def runway_is_operational(self) -> bool:
         return False
-    
-    def active_runway(self, conditions: Conditions,
-                      dynamic_runways: Dict[str, RunwayData]) -> RunwayData:
+
+    def active_runway(
+        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+    ) -> RunwayData:
         logging.warning("TODO: FOBs have no runways.")
         return RunwayData(self.full_name, runway_heading=0, runway_name="")
 
@@ -851,6 +929,7 @@ class Fob(ControlPoint):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if self.is_friendly(for_player):
             yield from [
                 FlightType.BARCAP,

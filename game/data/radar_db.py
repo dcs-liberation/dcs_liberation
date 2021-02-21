@@ -23,7 +23,6 @@ from dcs.ships import (
 from dcs.vehicles import AirDefence
 
 UNITS_WITH_RADAR = [
-
     # Radars
     AirDefence.SAM_SA_15_Tor_9A331,
     AirDefence.SAM_SA_11_Buk_CC_9S470M1,
@@ -49,7 +48,6 @@ UNITS_WITH_RADAR = [
     AirDefence.SAM_SA_3_S_125_TR_SNR,
     AirDefence.SAM_SA_2_TR_SNR_75_Fan_Song,
     AirDefence.HQ_7_Self_Propelled_STR,
-
     # Ships
     CVN_70_Carl_Vinson,
     Oliver_Hazzard_Perry_class,
@@ -70,5 +68,5 @@ UNITS_WITH_RADAR = [
     LHA_1_Tarawa,
     Type_052B_Destroyer,
     Type_054A_Frigate,
-    Type_052C_Destroyer
+    Type_052C_Destroyer,
 ]

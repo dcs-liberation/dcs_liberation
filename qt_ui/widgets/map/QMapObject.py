@@ -23,8 +23,9 @@ class QMapObject(QGraphicsRectItem):
     change the mouse cursor on hover.
     """
 
-    def __init__(self, x: float, y: float, w: float, h: float,
-                 mission_target: MissionTarget) -> None:
+    def __init__(
+        self, x: float, y: float, w: float, h: float, mission_target: MissionTarget
+    ) -> None:
         super().__init__(x, y, w, h)
         self.mission_target = mission_target
         self.new_package_dialog: Optional[QNewPackageDialog] = None

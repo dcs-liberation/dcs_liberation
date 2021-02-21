@@ -5,8 +5,7 @@ from qt_ui.widgets.floatspinners import TenthsSpinner
 
 
 class TenthsSpinSlider(QGridLayout):
-    def __init__(self, label: str, minimum: int, maximum: int,
-                 initial: int) -> None:
+    def __init__(self, label: str, minimum: int, maximum: int, initial: int) -> None:
         super().__init__()
         self.addWidget(QLabel(label), 0, 0)
 

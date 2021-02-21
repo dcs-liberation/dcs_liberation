@@ -12,16 +12,16 @@ DEFAULT_THEME_INDEX = 1
 
 # new themes can be added here
 THEMES: Dict[int, Dict[str, str]] = {
-    0: {'themeName': 'Vanilla',
-        'themeFile': 'windows-style.css',
-        'themeIcons': 'medium',
-        },
-
-    1: {'themeName': 'DCS World',
-        'themeFile': 'style-dcs.css',
-        'themeIcons': 'light',
-        },
-
+    0: {
+        "themeName": "Vanilla",
+        "themeFile": "windows-style.css",
+        "themeIcons": "medium",
+    },
+    1: {
+        "themeName": "DCS World",
+        "themeFile": "style-dcs.css",
+        "themeIcons": "light",
+    },
 }
 
 
@@ -32,7 +32,7 @@ def init():
 
     if os.path.isfile(THEME_PREFERENCES_FILE_PATH):
         try:
-            with(open(THEME_PREFERENCES_FILE_PATH)) as prefs:
+            with (open(THEME_PREFERENCES_FILE_PATH)) as prefs:
                 pref_data = json.loads(prefs.read())
                 __theme_index = pref_data["theme_index"]
                 set_theme_index(__theme_index)
@@ -64,26 +64,24 @@ def get_theme_index():
 
 # get theme name based on current index
 def get_theme_name():
-    theme_name = THEMES[get_theme_index()]['themeName']
+    theme_name = THEMES[get_theme_index()]["themeName"]
     return theme_name
 
 
 # get theme icon sub-folder name based on current index
 def get_theme_icons():
-    theme_icons = THEMES[get_theme_index()]['themeIcons']
+    theme_icons = THEMES[get_theme_index()]["themeIcons"]
     return str(theme_icons)
 
 
 # get theme stylesheet css based on current index
 def get_theme_css_file():
-    theme_file = THEMES[get_theme_index()]['themeFile']
+    theme_file = THEMES[get_theme_index()]["themeFile"]
     return str(theme_file)
 
 
 # save current theme index to json file
 def save_theme_config():
-    pref_data = {
-        "theme_index": get_theme_index()
-    }
-    with(open(THEME_PREFERENCES_FILE_PATH, "w")) as prefs:
+    pref_data = {"theme_index": get_theme_index()}
+    with (open(THEME_PREFERENCES_FILE_PATH, "w")) as prefs:
         prefs.write(json.dumps(pref_data))

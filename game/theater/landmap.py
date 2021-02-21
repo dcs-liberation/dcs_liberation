@@ -46,4 +46,3 @@ def poly_centroid(poly) -> Tuple[float, float]:
     x = sum(x_list) / len(poly)
     y = sum(y_list) / len(poly)
     return (x, y)
-

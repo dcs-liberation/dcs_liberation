@@ -103,7 +103,9 @@ class VisualGenerator:
             if from_cp.is_global or to_cp.is_global:
                 continue
 
-            plane_start, heading, distance = Conflict.frontline_vector(from_cp, to_cp, self.game.theater)
+            plane_start, heading, distance = Conflict.frontline_vector(
+                from_cp, to_cp, self.game.theater
+            )
             if not plane_start:
                 continue
 
@@ -112,7 +114,9 @@ class VisualGenerator:
 
                 for k, v in FRONT_SMOKE_TYPE_CHANCES.items():
                     if random.randint(0, 100) <= k:
-                        pos = position.random_point_within(FRONT_SMOKE_RANDOM_SPREAD, FRONT_SMOKE_RANDOM_SPREAD)
+                        pos = position.random_point_within(
+                            FRONT_SMOKE_RANDOM_SPREAD, FRONT_SMOKE_RANDOM_SPREAD
+                        )
                         if not self.game.theater.is_on_land(pos):
                             break
 
@@ -120,7 +124,8 @@ class VisualGenerator:
                             self.mission.country(self.game.enemy_country),
                             "",
                             _type=v,
-                            position=pos)
+                            position=pos,
+                        )
                         break
 
     def _generate_stub_planes(self):
@@ -138,7 +143,14 @@ class VisualGenerator:
 
     def generate_target_smokes(self, target):
         spread = target.size * DESTINATION_SMOKE_DISTANCE_FACTOR
-        for _ in range(0, int(target.size * DESTINATION_SMOKE_AMOUNT_FACTOR * (1.1 - target.base.strength))):
+        for _ in range(
+            0,
+            int(
+                target.size
+                * DESTINATION_SMOKE_AMOUNT_FACTOR
+                * (1.1 - target.base.strength)
+            ),
+        ):
             for k, v in DESTINATION_SMOKE_TYPE_CHANCES.items():
                 if random.randint(0, 100) <= k:
                     position = target.position.random_point_within(0, spread)
@@ -149,7 +161,8 @@ class VisualGenerator:
                         self.mission.country(self.game.enemy_country),
                         "",
                         _type=v,
-                        position=position)
+                        position=position,
+                    )
                     break
 
     def generate_transportation_marker(self, at: Point):
@@ -157,7 +170,7 @@ class VisualGenerator:
             self.mission.country(self.game.player_country),
             "",
             _type=MarkerSmoke,
-            position=at
+            position=at,
         )
 
     def generate_transportation_destination(self, at: Point):
@@ -166,7 +179,7 @@ class VisualGenerator:
             self.mission.country(self.game.player_country),
             "",
             _type=Outpost,
-            position=at
+            position=at,
         )
 
     def generate(self):
