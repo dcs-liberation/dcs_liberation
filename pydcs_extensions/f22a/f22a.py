@@ -32,7 +32,6 @@ class F_22A(PlaneType):
     }
 
     class Properties:
-
         class BAY_DOOR_OPTION:
             id = "BAY_DOOR_OPTION"
 
@@ -45,7 +44,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -64,7 +65,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -83,7 +86,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -102,7 +107,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -121,7 +128,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -140,7 +149,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -159,7 +170,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -178,7 +191,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -197,7 +212,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -216,7 +233,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -235,7 +254,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -254,7 +275,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -273,7 +296,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -292,7 +317,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -311,7 +338,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -330,7 +359,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -349,7 +380,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -368,7 +401,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -387,7 +422,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -406,7 +443,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -425,7 +464,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -444,7 +485,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -463,7 +506,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -482,7 +527,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -501,7 +548,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -520,7 +569,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -539,7 +590,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -558,7 +611,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -577,7 +632,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -596,7 +653,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -615,7 +674,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -634,7 +695,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -653,7 +716,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -672,7 +737,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -691,7 +758,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -710,7 +779,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -729,7 +800,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -748,7 +821,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -767,7 +842,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -786,7 +863,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -805,7 +884,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -824,7 +905,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -843,7 +926,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -862,7 +947,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -881,7 +968,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -900,7 +989,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -919,7 +1010,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -938,7 +1031,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -957,7 +1052,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -976,7 +1073,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -995,7 +1094,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1014,7 +1115,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1033,7 +1136,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1052,7 +1157,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1071,7 +1178,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1090,7 +1199,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1109,7 +1220,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1128,7 +1241,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1147,7 +1262,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1166,7 +1283,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1185,7 +1304,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1204,7 +1325,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1223,7 +1346,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1242,7 +1367,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1261,7 +1388,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1280,7 +1409,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1299,7 +1430,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1318,7 +1451,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1337,7 +1472,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1356,7 +1493,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1375,7 +1514,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1394,7 +1535,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1413,7 +1556,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1432,7 +1577,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1451,7 +1598,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1470,7 +1619,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1489,7 +1640,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1508,7 +1661,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1527,7 +1682,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1546,7 +1703,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1565,7 +1724,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
@@ -1584,7 +1745,9 @@ class F_22A(PlaneType):
             _18th_aggressor_sq_blue_foxes_red_43 = "18th aggressor sq blue foxes red 43"
             af045 = "af045"
             af172 = "af172"
-            _302nd_tactical_fighter_squadron__jasdf = "302nd tactical fighter squadron (jasdf)"
+            _302nd_tactical_fighter_squadron__jasdf = (
+                "302nd tactical fighter squadron (jasdf)"
+            )
             af188 = "af188"
             af116 = "af116"
             _53rd_fighter_sq_haveglass = "53rd fighter sq haveglass"
