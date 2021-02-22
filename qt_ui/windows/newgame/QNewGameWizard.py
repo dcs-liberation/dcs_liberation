@@ -4,13 +4,14 @@ import logging
 from typing import List, Optional
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QItemSelectionModel, QPoint, Qt
+from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
 from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
+from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
@@ -41,7 +42,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.faction_selection_page = FactionSelection()
         self.addPage(IntroPage())
-        self.addPage(TheaterConfiguration(self.campaigns, self.faction_selection_page))
+        self.theater_page = TheaterConfiguration(
+            self.campaigns, self.faction_selection_page
+        )
+        self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions())
         self.addPage(DifficultyAndAutomationOptions())
@@ -64,6 +68,13 @@ class NewGameWizard(QtWidgets.QWizard):
         if campaign is None:
             campaign = self.campaigns[0]
 
+        if self.field("usePreset"):
+            start_date = db.TIME_PERIODS[
+                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]
+            ]
+        else:
+            start_date = self.theater_page.calendar.selectedDate().toPython()
+
         settings = Settings(
             player_income_multiplier=self.field("player_income_multiplier") / 10,
             enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
@@ -75,9 +86,7 @@ class NewGameWizard(QtWidgets.QWizard):
             supercarrier=self.field("supercarrier"),
         )
         generator_settings = GeneratorSettings(
-            start_date=db.TIME_PERIODS[
-                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]
-            ],
+            start_date=start_date,
             player_budget=int(self.field("starting_money")),
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
@@ -312,12 +321,56 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Faction description
         self.campaignMapDescription = QTextEdit("")
         self.campaignMapDescription.setReadOnly(True)
-        self.campaignMapDescription.setMaximumHeight(150)
+        self.campaignMapDescription.setMaximumHeight(100)
 
         self.performanceText = QTextEdit("")
         self.performanceText.setReadOnly(True)
-        self.performanceText.setMaximumHeight(150)
+        self.performanceText.setMaximumHeight(90)
 
+        # Campaign settings
+        mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
+        invertMap = QtWidgets.QCheckBox()
+        self.registerField("invertMap", invertMap)
+        mapSettingsLayout = QtWidgets.QGridLayout()
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
+        mapSettingsLayout.addWidget(invertMap, 0, 1)
+        mapSettingsGroup.setLayout(mapSettingsLayout)
+
+        # Time Period
+        timeGroup = QtWidgets.QGroupBox("Time Period")
+        timePeriod = QtWidgets.QLabel("Start date :")
+        timePeriodSelect = QtWidgets.QComboBox()
+        timePeriodPresetLabel = QLabel("Use preset :")
+        timePeriodPreset = QtWidgets.QCheckBox()
+        timePeriodPreset.setChecked(True)
+        self.calendar = QLiberationCalendar()
+        self.calendar.setSelectedDate(QDate())
+        self.calendar.setDisabled(True)
+
+        def onTimePeriodChanged():
+            self.calendar.setSelectedDate(
+                list(db.TIME_PERIODS.values())[timePeriodSelect.currentIndex()]
+            )
+
+        timePeriodSelect.currentTextChanged.connect(onTimePeriodChanged)
+
+        for r in db.TIME_PERIODS:
+            timePeriodSelect.addItem(r)
+        timePeriod.setBuddy(timePeriodSelect)
+        timePeriodSelect.setCurrentIndex(21)
+
+        def onTimePeriodCheckboxChanged():
+            if timePeriodPreset.isChecked():
+                self.calendar.setDisabled(True)
+                timePeriodSelect.setDisabled(False)
+                onTimePeriodChanged()
+            else:
+                self.calendar.setDisabled(False)
+                timePeriodSelect.setDisabled(True)
+
+        timePeriodPreset.stateChanged.connect(onTimePeriodCheckboxChanged)
+
+        # Bind selection method for campaign selection
         def on_campaign_selected():
             template = jinja_env.get_template("campaigntemplate_EN.j2")
             template_perf = jinja_env.get_template(
@@ -335,26 +388,9 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         campaignList.selectionModel().setCurrentIndex(
             campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
         )
+
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
-
-        # Campaign settings
-        mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
-        invertMap = QtWidgets.QCheckBox()
-        self.registerField("invertMap", invertMap)
-        mapSettingsLayout = QtWidgets.QGridLayout()
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
-        mapSettingsLayout.addWidget(invertMap, 0, 1)
-        mapSettingsGroup.setLayout(mapSettingsLayout)
-
-        # Time Period
-        timeGroup = QtWidgets.QGroupBox("Time Period")
-        timePeriod = QtWidgets.QLabel("Start date :")
-        timePeriodSelect = QtWidgets.QComboBox()
-        for r in db.TIME_PERIODS:
-            timePeriodSelect.addItem(r)
-        timePeriod.setBuddy(timePeriodSelect)
-        timePeriodSelect.setCurrentIndex(21)
 
         # Docs Link
         docsText = QtWidgets.QLabel(
@@ -365,10 +401,14 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Register fields
         self.registerField("timePeriod", timePeriodSelect)
+        self.registerField("usePreset", timePeriodPreset)
 
         timeGroupLayout = QtWidgets.QGridLayout()
-        timeGroupLayout.addWidget(timePeriod, 0, 0)
-        timeGroupLayout.addWidget(timePeriodSelect, 0, 1)
+        timeGroupLayout.addWidget(timePeriodPresetLabel, 0, 0)
+        timeGroupLayout.addWidget(timePeriodPreset, 0, 1)
+        timeGroupLayout.addWidget(timePeriod, 1, 0)
+        timeGroupLayout.addWidget(timePeriodSelect, 1, 1)
+        timeGroupLayout.addWidget(self.calendar, 0, 2, 3, 1)
         timeGroup.setLayout(timeGroupLayout)
 
         layout = QtWidgets.QGridLayout()
