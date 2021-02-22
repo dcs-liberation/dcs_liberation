@@ -22,7 +22,6 @@ BASE_MIN_STRENGTH = 0
 
 
 class Base:
-
     def __init__(self):
         self.aircraft: Dict[Type[FlyingType], int] = {}
         self.armor: Dict[Type[VehicleType], int] = {}
@@ -57,23 +56,43 @@ class Base:
         return sum(self.aa.values())
 
     def total_units(self, task: Task) -> int:
-        return sum([c for t, c in itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items()) if t in db.UNIT_BY_TASK[task]])
+        return sum(
+            [
+                c
+                for t, c in itertools.chain(
+                    self.aircraft.items(), self.armor.items(), self.aa.items()
+                )
+                if t in db.UNIT_BY_TASK[task]
+            ]
+        )
 
     def total_units_of_type(self, unit_type) -> int:
-        return sum([c for t, c in itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items()) if t == unit_type])
+        return sum(
+            [
+                c
+                for t, c in itertools.chain(
+                    self.aircraft.items(), self.armor.items(), self.aa.items()
+                )
+                if t == unit_type
+            ]
+        )
 
     @property
     def all_units(self):
-        return itertools.chain(self.aircraft.items(), self.armor.items(), self.aa.items())
+        return itertools.chain(
+            self.aircraft.items(), self.armor.items(), self.aa.items()
+        )
 
-    def _find_best_unit(self, available_units: Dict[UnitType, int],
-                        for_type: Task, count: int) -> Dict[UnitType, int]:
+    def _find_best_unit(
+        self, available_units: Dict[UnitType, int], for_type: Task, count: int
+    ) -> Dict[UnitType, int]:
         if count <= 0:
             logging.warning("{}: no units for {}".format(self, for_type))
             return {}
 
-        sorted_units = [key for key in available_units if
-                        key in db.UNIT_BY_TASK[for_type]]
+        sorted_units = [
+            key for key in available_units if key in db.UNIT_BY_TASK[for_type]
+        ]
         sorted_units.sort(key=lambda x: db.PRICES[x], reverse=True)
 
         result: Dict[UnitType, int] = {}
@@ -94,14 +113,18 @@ class Base:
         logging.info("{} for {} ({}): {}".format(self, for_type, count, result))
         return result
 
-    def _find_best_planes(self, for_type: Task, count: int) -> typing.Dict[FlyingType, int]:
+    def _find_best_planes(
+        self, for_type: Task, count: int
+    ) -> typing.Dict[FlyingType, int]:
         return self._find_best_unit(self.aircraft, for_type, count)
 
     def _find_best_armor(self, for_type: Task, count: int) -> typing.Dict[Armor, int]:
         return self._find_best_unit(self.armor, for_type, count)
 
     def append_commision_points(self, for_type, points: float) -> int:
-        self.commision_points[for_type] = self.commision_points.get(for_type, 0) + points
+        self.commision_points[for_type] = (
+            self.commision_points.get(for_type, 0) + points
+        )
         points = self.commision_points[for_type]
         if points >= 1:
             self.commision_points[for_type] = points - math.floor(points)
@@ -110,7 +133,9 @@ class Base:
         return 0
 
     def filter_units(self, applicable_units: typing.Collection):
-        self.aircraft = {k: v for k, v in self.aircraft.items() if k in applicable_units}
+        self.aircraft = {
+            k: v for k, v in self.aircraft.items() if k in applicable_units
+        }
         self.armor = {k: v for k, v in self.armor.items() if k in applicable_units}
 
     def commision_units(self, units: typing.Dict[typing.Any, int]):
@@ -149,7 +174,7 @@ class Base:
             if unit_type not in target_array:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
-                
+
             target_array[unit_type] = max(target_array[unit_type] - count, 0)
             if target_array[unit_type] == 0:
                 del target_array[unit_type]
@@ -166,12 +191,20 @@ class Base:
 
     def scramble_count(self, multiplier: float, task: Task = None) -> int:
         if task:
-            count = sum([v for k, v in self.aircraft.items() if db.unit_task(k) == task])
+            count = sum(
+                [v for k, v in self.aircraft.items() if db.unit_task(k) == task]
+            )
         else:
             count = self.total_aircraft
 
         count = int(math.ceil(count * PLANES_SCRAMBLE_FACTOR * self.strength))
-        return min(min(max(count, PLANES_SCRAMBLE_MIN_BASE), int(PLANES_SCRAMBLE_MAX_BASE * multiplier)), count)
+        return min(
+            min(
+                max(count, PLANES_SCRAMBLE_MIN_BASE),
+                int(PLANES_SCRAMBLE_MAX_BASE * multiplier),
+            ),
+            count,
+        )
 
     def assemble_count(self):
         return int(self.total_armor * 0.5)
@@ -202,4 +235,8 @@ class Base:
         return self._find_best_armor(PinpointStrike, count)
 
     def assemble_aa(self, count=None) -> typing.Dict[AirDefence, int]:
-        return self._find_best_unit(self.aa, AirDefence, count and min(count, self.total_aa) or self.assemble_aa_count())
+        return self._find_best_unit(
+            self.aa,
+            AirDefence,
+            count and min(count, self.total_aa) or self.assemble_aa_count(),
+        )

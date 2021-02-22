@@ -79,6 +79,7 @@ class ControlPointAircraftInventory:
 
 class GlobalAircraftInventory:
     """Game-wide aircraft inventory."""
+
     def __init__(self, control_points: Iterable[ControlPoint]) -> None:
         self.inventories: Dict[ControlPoint, ControlPointAircraftInventory] = {
             cp: ControlPointAircraftInventory(cp) for cp in control_points
@@ -100,8 +101,8 @@ class GlobalAircraftInventory:
             inventory.add_aircraft(aircraft, count)
 
     def for_control_point(
-            self,
-            control_point: ControlPoint) -> ControlPointAircraftInventory:
+        self, control_point: ControlPoint
+    ) -> ControlPointAircraftInventory:
         """Returns the inventory specific to the given control point."""
         return self.inventories[control_point]
 

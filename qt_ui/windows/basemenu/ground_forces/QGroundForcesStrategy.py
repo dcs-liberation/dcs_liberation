@@ -2,13 +2,13 @@ from PySide2.QtWidgets import QGroupBox, QLabel, QVBoxLayout
 
 from game import Game
 from game.theater import ControlPoint
-from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import \
-    QGroundForcesStrategySelector
+from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import (
+    QGroundForcesStrategySelector,
+)
 
 
 class QGroundForcesStrategy(QGroupBox):
-
-    def __init__(self, cp:ControlPoint, game:Game):
+    def __init__(self, cp: ControlPoint, game: Game):
         super(QGroundForcesStrategy, self).__init__("Frontline operations :")
         self.cp = cp
         self.game = game

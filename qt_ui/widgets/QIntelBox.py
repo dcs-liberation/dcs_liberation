@@ -94,12 +94,16 @@ class QIntelBox(QGroupBox):
 
         data = self.game.game_stats.data_per_turn[-1]
 
-        self.air_strength.setText(self.forces_strength_text(
-            data.allied_units.aircraft_count,
-            data.enemy_units.aircraft_count))
-        self.ground_strength.setText(self.forces_strength_text(
-            data.allied_units.vehicles_count,
-            data.enemy_units.vehicles_count))
+        self.air_strength.setText(
+            self.forces_strength_text(
+                data.allied_units.aircraft_count, data.enemy_units.aircraft_count
+            )
+        )
+        self.ground_strength.setText(
+            self.forces_strength_text(
+                data.allied_units.vehicles_count, data.enemy_units.vehicles_count
+            )
+        )
         self.economic_strength.setText(self.economic_strength_text())
 
     def open_details_window(self) -> None:

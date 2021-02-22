@@ -23,6 +23,7 @@ class AtcData:
 @dataclass
 class AirfieldData:
     """Additional airfield data not included in pydcs."""
+
     #: Name of the theater the airport is in.
     theater: str
 
@@ -73,7 +74,6 @@ class AirfieldData:
 # TODO: Add more airfields.
 AIRFIELD_DATA = {
     # Caucasus
-
     "Batumi": AirfieldData(
         theater="Caucasus",
         icao="UGSB",
@@ -86,7 +86,6 @@ AIRFIELD_DATA = {
             "13": ("ILU", MHz(110, 300)),
         },
     ),
-
     "Kobuleti": AirfieldData(
         theater="Caucasus",
         icao="UG5X",
@@ -105,7 +104,6 @@ AIRFIELD_DATA = {
             "07": ("T", MHz(490, 0)),
         },
     ),
-
     "Senaki-Kolkhi": AirfieldData(
         theater="Caucasus",
         icao="UGKS",
@@ -124,7 +122,6 @@ AIRFIELD_DATA = {
             "09": ("I", MHz(688, 0)),
         },
     ),
-
     "Kutaisi": AirfieldData(
         theater="Caucasus",
         icao="UGKO",
@@ -137,7 +134,6 @@ AIRFIELD_DATA = {
             "08": ("IKS", MHz(109, 750)),
         },
     ),
-
     "Sukhumi-Babushara": AirfieldData(
         theater="Caucasus",
         icao="UGSS",
@@ -151,7 +147,6 @@ AIRFIELD_DATA = {
             "30": ("A", MHz(995, 0)),
         },
     ),
-
     "Gudauta": AirfieldData(
         theater="Caucasus",
         icao="UG23",
@@ -159,7 +154,6 @@ AIRFIELD_DATA = {
         runway_length=7839,
         atc=AtcData(MHz(4, 200), MHz(120, 0), MHz(40, 200), MHz(259, 0)),
     ),
-
     "Sochi-Adler": AirfieldData(
         theater="Caucasus",
         icao="URSS",
@@ -170,7 +164,6 @@ AIRFIELD_DATA = {
             "06": ("ISO", MHz(111, 100)),
         },
     ),
-
     "Gelendzhik": AirfieldData(
         theater="Caucasus",
         icao="URKG",
@@ -179,7 +172,6 @@ AIRFIELD_DATA = {
         vor=("GN", MHz(114, 30)),
         atc=AtcData(MHz(4, 0), MHz(126, 0), MHz(39, 400), MHz(255, 0)),
     ),
-
     "Novorossiysk": AirfieldData(
         theater="Caucasus",
         icao="URKN",
@@ -187,7 +179,6 @@ AIRFIELD_DATA = {
         runway_length=5639,
         atc=AtcData(MHz(3, 850), MHz(123, 0), MHz(38, 800), MHz(252, 0)),
     ),
-
     "Anapa-Vityazevo": AirfieldData(
         theater="Caucasus",
         icao="URKA",
@@ -203,7 +194,6 @@ AIRFIELD_DATA = {
             "04": ("N", MHz(215)),
         },
     ),
-
     "Krymsk": AirfieldData(
         theater="Caucasus",
         icao="URKW",
@@ -224,7 +214,6 @@ AIRFIELD_DATA = {
             "22": ("K", MHz(803, 0)),
         },
     ),
-
     "Krasnodar-Center": AirfieldData(
         theater="Caucasus",
         icao="URKL",
@@ -244,7 +233,6 @@ AIRFIELD_DATA = {
             "27": ("C", MHz(303, 0)),
         },
     ),
-
     "Krasnodar-Pashkovsky": AirfieldData(
         theater="Caucasus",
         icao="URKK",
@@ -261,7 +249,6 @@ AIRFIELD_DATA = {
             "05": ("K", MHz(240, 0)),
         },
     ),
-
     "Maykop-Khanskaya": AirfieldData(
         theater="Caucasus",
         icao="URKH",
@@ -281,7 +268,6 @@ AIRFIELD_DATA = {
             "22": ("R", MHz(591, 0)),
         },
     ),
-
     "Mineralnye Vody": AirfieldData(
         theater="Caucasus",
         icao="URMM",
@@ -302,7 +288,6 @@ AIRFIELD_DATA = {
             "12": ("D", MHz(283, 0)),
         },
     ),
-
     "Nalchik": AirfieldData(
         theater="Caucasus",
         icao="URMN",
@@ -319,7 +304,6 @@ AIRFIELD_DATA = {
             "24": ("N", MHz(350, 0)),
         },
     ),
-
     "Mozdok": AirfieldData(
         theater="Caucasus",
         icao="XRMF",
@@ -338,9 +322,8 @@ AIRFIELD_DATA = {
         inner_ndb={
             "26": ("R", MHz(1, 6)),
             "8": ("D", MHz(1, 6)),
-        }
+        },
     ),
-
     "Beslan": AirfieldData(
         theater="Caucasus",
         icao="URMO",
@@ -355,9 +338,8 @@ AIRFIELD_DATA = {
         },
         inner_ndb={
             "10": ("C", MHz(250, 0)),
-        }
+        },
     ),
-
     "Tbilisi-Lochini": AirfieldData(
         theater="Caucasus",
         icao="UGTB",
@@ -379,7 +361,6 @@ AIRFIELD_DATA = {
             "30": ("N", MHz(435, 0)),
         },
     ),
-
     "Soganlung": AirfieldData(
         theater="Caucasus",
         icao="UG24",
@@ -389,7 +370,6 @@ AIRFIELD_DATA = {
         tacan_callsign="GTB",
         atc=AtcData(MHz(4, 650), MHz(139, 0), MHz(42, 0), MHz(268, 0)),
     ),
-
     "Vaziani": AirfieldData(
         theater="Caucasus",
         icao="UG27",
@@ -403,7 +383,6 @@ AIRFIELD_DATA = {
             "31": ("IVZ", MHz(108, 750)),
         },
     ),
-
     # TODO : PERSIAN GULF MAP
     "Liwa Airbase": AirfieldData(
         theater="Persian Gulf",
@@ -412,10 +391,9 @@ AIRFIELD_DATA = {
         runway_length=10768,
         tacan=TacanChannel(121, TacanBand.X),
         tacan_callsign="OMLW",
-        vor=("OMLW", MHz(117,400)),
+        vor=("OMLW", MHz(117, 400)),
         atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(119, 300), MHz(250, 950)),
     ),
-
     "Al Dhafra AB": AirfieldData(
         theater="Persian Gulf",
         icao="OMAM",
@@ -430,7 +408,6 @@ AIRFIELD_DATA = {
             "31": ("IMA", MHz(109, 100)),
         },
     ),
-
     "Al-Bateen Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OMAD",
@@ -439,7 +416,6 @@ AIRFIELD_DATA = {
         vor=("ALB", MHz(114, 0)),
         atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(119, 900), MHz(250, 550)),
     ),
-
     "Sas Al Nakheel Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OMNK",
@@ -448,7 +424,6 @@ AIRFIELD_DATA = {
         vor=("SAS", MHz(128, 930)),
         atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(128, 900), MHz(250, 450)),
     ),
-
     "Abu Dhabi International Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OMAA",
@@ -457,7 +432,6 @@ AIRFIELD_DATA = {
         vor=("ADV", MHz(114, 250)),
         atc=AtcData(MHz(4, 000), MHz(38, 900), MHz(119, 200), MHz(250, 500)),
     ),
-
     "Al Ain International Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OMAL",
@@ -466,7 +440,6 @@ AIRFIELD_DATA = {
         vor=("ALN", MHz(112, 600)),
         atc=AtcData(MHz(4, 75), MHz(39, 50), MHz(119, 850), MHz(250, 650)),
     ),
-
     "Al Maktoum Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMDW",
@@ -478,7 +451,6 @@ AIRFIELD_DATA = {
             "12": ("IMA", MHz(111, 750)),
         },
     ),
-
     "Al Minhad Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMDM",
@@ -492,7 +464,6 @@ AIRFIELD_DATA = {
             "9": ("IMNW", MHz(110, 700)),
         },
     ),
-
     "Dubai Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMDB",
@@ -504,7 +475,6 @@ AIRFIELD_DATA = {
             "12": ("IDBR", MHz(110, 100)),
         },
     ),
-
     "Sharjah Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMSJ",
@@ -516,7 +486,6 @@ AIRFIELD_DATA = {
             "12": ("ISRE", MHz(108, 550)),
         },
     ),
-
     "Fujairah Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMFJ",
@@ -528,7 +497,6 @@ AIRFIELD_DATA = {
             "29": ("IFJR", MHz(111, 500)),
         },
     ),
-
     "Ras AL Khaimah": AirfieldData(
         theater="Persian Gulf",
         icao="OMRK",
@@ -537,7 +505,6 @@ AIRFIELD_DATA = {
         vor=("OMRK", MHz(113, 600)),
         atc=AtcData(MHz(4, 150), MHz(39, 200), MHz(121, 600), MHz(250, 800)),
     ),
-
     "Khasab": AirfieldData(
         theater="Persian Gulf",
         icao="OOKB",
@@ -548,14 +515,9 @@ AIRFIELD_DATA = {
             "19": ("IBKS", MHz(110, 300)),
         },
     ),
-
     "Sir Abu Nuayr": AirfieldData(
-        theater="Persian Gulf",
-        icao="OMSN",
-        elevation=25,
-        runway_length=2229
+        theater="Persian Gulf", icao="OMSN", elevation=25, runway_length=2229
     ),
-
     "Sirri Island": AirfieldData(
         theater="Persian Gulf",
         icao="OIBS",
@@ -564,7 +526,6 @@ AIRFIELD_DATA = {
         vor=("SIR", MHz(113, 750)),
         atc=AtcData(MHz(3, 875), MHz(38, 650), MHz(135, 50), MHz(250, 250)),
     ),
-
     "Abu Musa Island Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OIBA",
@@ -572,7 +533,6 @@ AIRFIELD_DATA = {
         runway_length=7616,
         atc=AtcData(MHz(3, 950), MHz(38, 800), MHz(122, 900), MHz(250, 400)),
     ),
-
     "Tunb Kochak": AirfieldData(
         theater="Persian Gulf",
         icao="OITK",
@@ -581,14 +541,12 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(89, TacanBand.X),
         tacan_callsign="KCK",
     ),
-
     "Tunb Island AFB": AirfieldData(
         theater="Persian Gulf",
         icao="OIGI",
         elevation=42,
         runway_length=6099,
     ),
-
     "Qeshm Island": AirfieldData(
         theater="Persian Gulf",
         icao="OIKQ",
@@ -597,7 +555,6 @@ AIRFIELD_DATA = {
         vor=("KHM", MHz(117, 100)),
         atc=AtcData(MHz(3, 825), MHz(38, 550), MHz(118, 50), MHz(250, 150)),
     ),
-
     "Bandar-e-Jask airfield": AirfieldData(
         theater="Persian Gulf",
         icao="OIZJ",
@@ -606,7 +563,6 @@ AIRFIELD_DATA = {
         vor=("KHM", MHz(116, 300)),
         atc=AtcData(MHz(3, 825), MHz(38, 550), MHz(118, 50), MHz(250, 150)),
     ),
-
     "Bandar Lengeh": AirfieldData(
         theater="Persian Gulf",
         icao="OIBL",
@@ -615,7 +571,6 @@ AIRFIELD_DATA = {
         vor=("LEN", MHz(114, 800)),
         atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(121, 700), MHz(250, 950)),
     ),
-
     "Kish International Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OIBK",
@@ -625,7 +580,6 @@ AIRFIELD_DATA = {
         tacan_callsign="KIH",
         atc=AtcData(MHz(4, 50), MHz(39, 000), MHz(121, 650), MHz(250, 600)),
     ),
-
     "Lavan Island Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OIBV",
@@ -634,7 +588,6 @@ AIRFIELD_DATA = {
         vor=("LVA", MHz(116, 850)),
         atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(128, 550), MHz(250, 700)),
     ),
-
     "Lar Airbase": AirfieldData(
         theater="Persian Gulf",
         icao="OISL",
@@ -643,7 +596,6 @@ AIRFIELD_DATA = {
         vor=("LAR", MHz(117, 900)),
         atc=AtcData(MHz(3, 775), MHz(38, 450), MHz(127, 350), MHz(250, 50)),
     ),
-
     "Havadarya": AirfieldData(
         theater="Persian Gulf",
         icao="OIKP",
@@ -656,7 +608,6 @@ AIRFIELD_DATA = {
             "8": ("IBHD", MHz(108, 900)),
         },
     ),
-
     "Bandar Abbas Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OIKB",
@@ -670,7 +621,6 @@ AIRFIELD_DATA = {
             "21": ("IBND", MHz(333, 800)),
         },
     ),
-
     "Jiroft Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OIKJ",
@@ -678,7 +628,6 @@ AIRFIELD_DATA = {
         runway_length=9160,
         atc=AtcData(MHz(4, 125), MHz(39, 120), MHz(136, 0), MHz(250, 750)),
     ),
-
     "Kerman Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OIKK",
@@ -689,7 +638,6 @@ AIRFIELD_DATA = {
         vor=("KER", MHz(112, 0)),
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(118, 250), MHz(250, 300)),
     ),
-
     "Shiraz International Airport": AirfieldData(
         theater="Persian Gulf",
         icao="OISS",
@@ -700,7 +648,6 @@ AIRFIELD_DATA = {
         vor=("SYZ", MHz(112, 0)),
         atc=AtcData(MHz(3, 925), MHz(38, 750), MHz(121, 900), MHz(250, 350)),
     ),
-
     # Syria Map
     "Adana Sakirpasa": AirfieldData(
         theater="Syria",
@@ -713,7 +660,6 @@ AIRFIELD_DATA = {
             "05": ("IADA", MHz(108, 700)),
         },
     ),
-
     "Incirlik": AirfieldData(
         theater="Syria",
         icao="LTAG",
@@ -728,7 +674,6 @@ AIRFIELD_DATA = {
             "23": ("DANM", MHz(111, 700)),
         },
     ),
-
     "Minakh": AirfieldData(
         theater="Syria",
         icao="OS71",
@@ -736,7 +681,6 @@ AIRFIELD_DATA = {
         runway_length=4648,
         atc=AtcData(MHz(4, 125), MHz(39, 150), MHz(120, 600), MHz(250, 700)),
     ),
-
     "Hatay": AirfieldData(
         theater="Syria",
         icao="LTDA",
@@ -749,7 +693,6 @@ AIRFIELD_DATA = {
             "04": ("IHAT", MHz(108, 900)),
         },
     ),
-
     "Kuweires": AirfieldData(
         theater="Syria",
         icao="OS66",
@@ -757,7 +700,6 @@ AIRFIELD_DATA = {
         runway_length=6662,
         atc=AtcData(MHz(4, 275), MHz(39, 450), MHz(120, 500), MHz(251)),
     ),
-
     "Aleppo": AirfieldData(
         theater="Syria",
         icao="OSAP",
@@ -769,7 +711,6 @@ AIRFIELD_DATA = {
             "23": ("DANM", MHz(111, 700)),
         },
     ),
-
     "Jirah": AirfieldData(
         theater="Syria",
         icao="OS62",
@@ -777,14 +718,12 @@ AIRFIELD_DATA = {
         runway_length=9090,
         atc=AtcData(MHz(3, 875), MHz(38, 650), MHz(118, 100), MHz(250, 200)),
     ),
-
     "Taftanaz": AirfieldData(
         theater="Syria",
         elevation=1020,
         runway_length=2705,
         atc=AtcData(MHz(4, 375), MHz(39, 650), MHz(122, 800), MHz(251, 200)),
     ),
-
     "Tabqa": AirfieldData(
         theater="Syria",
         icao="OS59",
@@ -792,7 +731,6 @@ AIRFIELD_DATA = {
         runway_length=9036,
         atc=AtcData(MHz(4, 350), MHz(39, 600), MHz(118, 500), MHz(251, 150)),
     ),
-
     "Abu al-Dahur": AirfieldData(
         theater="Syria",
         icao="OS57",
@@ -800,7 +738,6 @@ AIRFIELD_DATA = {
         runway_length=8728,
         atc=AtcData(MHz(3, 950), MHz(38, 800), MHz(122, 200), MHz(250, 350)),
     ),
-
     "Bassel Al-Assad": AirfieldData(
         theater="Syria",
         icao="OSLK",
@@ -812,7 +749,6 @@ AIRFIELD_DATA = {
             "17": ("IBA", MHz(109, 100)),
         },
     ),
-
     "Hama": AirfieldData(
         theater="Syria",
         icao="OS58",
@@ -820,7 +756,6 @@ AIRFIELD_DATA = {
         runway_length=7957,
         atc=AtcData(MHz(3, 800), MHz(38, 500), MHz(118, 50), MHz(250, 100)),
     ),
-
     "Rene Mouawad": AirfieldData(
         theater="Syria",
         icao="OLKA",
@@ -828,7 +763,6 @@ AIRFIELD_DATA = {
         runway_length=8614,
         atc=AtcData(MHz(4, 325), MHz(39, 550), MHz(129, 500), MHz(251, 100)),
     ),
-
     "Al Quasayr": AirfieldData(
         theater="Syria",
         icao="OS70",
@@ -836,7 +770,6 @@ AIRFIELD_DATA = {
         runway_length=8585,
         atc=AtcData(MHz(4, 400), MHz(39, 700), MHz(119, 200), MHz(251, 250)),
     ),
-
     "Palmyra": AirfieldData(
         theater="Syria",
         icao="OSPR",
@@ -844,7 +777,6 @@ AIRFIELD_DATA = {
         runway_length=8704,
         atc=AtcData(MHz(4, 175), MHz(39, 250), MHz(121, 900), MHz(250, 800)),
     ),
-
     "Wujah Al Hajar": AirfieldData(
         theater="Syria",
         icao="Z19O",
@@ -853,7 +785,6 @@ AIRFIELD_DATA = {
         vor=("CAK", MHz(116, 200)),
         atc=AtcData(MHz(4, 425), MHz(39, 750), MHz(121, 500), MHz(251, 300)),
     ),
-
     "An Nasiriyah": AirfieldData(
         theater="Syria",
         icao="OS64",
@@ -861,7 +792,6 @@ AIRFIELD_DATA = {
         runway_length=8172,
         atc=AtcData(MHz(4, 450), MHz(39, 800), MHz(122, 300), MHz(251, 350)),
     ),
-
     "Rayak": AirfieldData(
         theater="Syria",
         icao="OLRA",
@@ -870,7 +800,6 @@ AIRFIELD_DATA = {
         vor=("HTY", MHz(124, 400)),
         atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(124, 400), MHz(251, 50)),
     ),
-
     "Beirut-Rafic Hariri": AirfieldData(
         theater="Syria",
         icao="OLBA",
@@ -882,7 +811,6 @@ AIRFIELD_DATA = {
             "17": ("BIL", MHz(109, 500)),
         },
     ),
-
     "Al-Dumayr": AirfieldData(
         theater="Syria",
         icao="OS61",
@@ -890,21 +818,18 @@ AIRFIELD_DATA = {
         runway_length=8902,
         atc=AtcData(MHz(4, 550), MHz(40), MHz(120, 300), MHz(251, 550)),
     ),
-
     "Marj as Sultan North": AirfieldData(
         theater="Syria",
         elevation=2007,
         runway_length=268,
         atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(122, 700), MHz(250, 500)),
     ),
-
     "Marj as Sultan South": AirfieldData(
         theater="Syria",
         elevation=2007,
         runway_length=166,
         atc=AtcData(MHz(4, 525), MHz(39, 950), MHz(122, 900), MHz(251, 500)),
     ),
-
     "Mezzeh": AirfieldData(
         theater="Syria",
         icao="OS67",
@@ -912,14 +837,12 @@ AIRFIELD_DATA = {
         runway_length=7522,
         atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(120, 700), MHz(250, 650)),
     ),
-
     "Qabr as Sitt": AirfieldData(
         theater="Syria",
         elevation=2134,
         runway_length=489,
         atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(122, 600), MHz(250, 850)),
     ),
-
     "Damascus": AirfieldData(
         theater="Syria",
         icao="OSDI",
@@ -931,7 +854,6 @@ AIRFIELD_DATA = {
             "24": ("IDA", MHz(109, 900)),
         },
     ),
-
     "Marj Ruhayyil": AirfieldData(
         theater="Syria",
         icao="OS63",
@@ -939,7 +861,6 @@ AIRFIELD_DATA = {
         runway_length=7576,
         atc=AtcData(MHz(4, 50), MHz(39), MHz(120, 800), MHz(250, 550)),
     ),
-
     "Kiryat Shmona": AirfieldData(
         theater="Syria",
         icao="LLKS",
@@ -947,7 +868,6 @@ AIRFIELD_DATA = {
         runway_length=3258,
         atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(118, 400), MHz(250, 400)),
     ),
-
     "Khalkhalah": AirfieldData(
         theater="Syria",
         icao="OS69",
@@ -955,7 +875,6 @@ AIRFIELD_DATA = {
         runway_length=8248,
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(122, 500), MHz(250, 250)),
     ),
-
     "Haifa": AirfieldData(
         theater="Syria",
         icao="LLHA",
@@ -963,7 +882,6 @@ AIRFIELD_DATA = {
         runway_length=3253,
         atc=AtcData(MHz(3, 775), MHz(38, 450), MHz(127, 800), MHz(250, 50)),
     ),
-
     "Ramat David": AirfieldData(
         theater="Syria",
         icao="LLRD",
@@ -971,7 +889,6 @@ AIRFIELD_DATA = {
         runway_length=7037,
         atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(118, 600), MHz(250, 950)),
     ),
-
     "Megiddo": AirfieldData(
         theater="Syria",
         icao="LLMG",
@@ -979,7 +896,6 @@ AIRFIELD_DATA = {
         runway_length=6098,
         atc=AtcData(MHz(4, 75), MHz(39, 50), MHz(119, 900), MHz(250, 600)),
     ),
-
     "Eyn Shemer": AirfieldData(
         theater="Syria",
         icao="LLES",
@@ -987,7 +903,6 @@ AIRFIELD_DATA = {
         runway_length=3562,
         atc=AtcData(MHz(3, 750), MHz(38, 400), MHz(123, 400), MHz(250)),
     ),
-
     "King Hussein Air College": AirfieldData(
         theater="Syria",
         icao="OJMF",
@@ -995,21 +910,18 @@ AIRFIELD_DATA = {
         runway_length=8595,
         atc=AtcData(MHz(3, 925), MHz(38, 750), MHz(118, 300), MHz(250, 300)),
     ),
-
     # NTTR
     "Mina Airport 3Q0": AirfieldData(
         theater="NTTR",
         elevation=4562,
         runway_length=4222,
     ),
-
     "Tonopah Airport": AirfieldData(
         theater="NTTR",
         icao="KTPH",
         elevation=5394,
         runway_length=6715,
     ),
-
     "Tonopah Test Range Airfield": AirfieldData(
         theater="NTTR",
         icao="KTNX",
@@ -1023,20 +935,17 @@ AIRFIELD_DATA = {
             "14": ("I-RVP", MHz(108, 300)),
         },
     ),
-
     "Beatty Airport": AirfieldData(
         theater="NTTR",
         icao="KBTY",
         elevation=3173,
         runway_length=5380,
     ),
-
     "Pahute Mesa Airstrip": AirfieldData(
         theater="NTTR",
         elevation=5056,
         runway_length=5420,
     ),
-
     "Groom Lake AFB": AirfieldData(
         theater="NTTR",
         icao="KXTA",
@@ -1049,20 +958,17 @@ AIRFIELD_DATA = {
             "32": ("GLRI", MHz(109, 300)),
         },
     ),
-
     "Lincoln County": AirfieldData(
         theater="NTTR",
         elevation=4815,
         runway_length=4408,
     ),
-
     "Mesquite": AirfieldData(
         theater="NTTR",
         icao="67L",
         elevation=1858,
         runway_length=4937,
     ),
-
     "Creech AFB": AirfieldData(
         theater="NTTR",
         icao="KINS",
@@ -1075,7 +981,6 @@ AIRFIELD_DATA = {
             "8": ("ICRR", MHz(108, 700)),
         },
     ),
-
     "Echo Bay": AirfieldData(
         theater="NTTR",
         icao="OL9",
@@ -1085,7 +990,6 @@ AIRFIELD_DATA = {
         tacan_callsign="INS",
         atc=AtcData(MHz(3, 825), MHz(118, 300), MHz(38, 550), MHz(360, 600)),
     ),
-
     "Nellis AFB": AirfieldData(
         theater="NTTR",
         icao="KLSV",
@@ -1098,7 +1002,6 @@ AIRFIELD_DATA = {
             "21": ("IDIQ", MHz(109, 100)),
         },
     ),
-
     "North Las Vegas": AirfieldData(
         theater="NTTR",
         icao="KVGT",
@@ -1106,7 +1009,6 @@ AIRFIELD_DATA = {
         runway_length=4734,
         atc=AtcData(MHz(3, 775), MHz(125, 700), MHz(38, 450), MHz(360, 750)),
     ),
-
     "McCarran International Airport": AirfieldData(
         theater="NTTR",
         icao="KLAS",
@@ -1119,7 +1021,6 @@ AIRFIELD_DATA = {
             "25": ("I-LAS", MHz(110, 300)),
         },
     ),
-
     "Henderson Executive Airport": AirfieldData(
         theater="NTTR",
         icao="KHND",
@@ -1127,20 +1028,17 @@ AIRFIELD_DATA = {
         runway_length=5999,
         atc=AtcData(MHz(3, 925), MHz(125, 100), MHz(38, 750), MHz(250, 100)),
     ),
-
     "Boulder City Airport": AirfieldData(
         theater="NTTR",
         icao="KBVU",
         elevation=2121,
         runway_length=4612,
     ),
-
     "Jean Airport": AirfieldData(
         theater="NTTR",
         elevation=2824,
         runway_length=4053,
     ),
-
     "Laughlin Airport": AirfieldData(
         theater="NTTR",
         icao="KIFP",
@@ -1148,44 +1046,37 @@ AIRFIELD_DATA = {
         runway_length=7139,
         atc=AtcData(MHz(3, 750), MHz(123, 900), MHz(38, 400), MHz(250, 0)),
     ),
-
     # Normandy
-
     "Needs Oar Point": AirfieldData(
         theater="Normandy",
         elevation=30,
         runway_length=5259,
         atc=AtcData(MHz(4, 225), MHz(118, 950), MHz(39, 350), MHz(250, 950)),
     ),
-
     "Funtington": AirfieldData(
         theater="Normandy",
         elevation=164,
         runway_length=5080,
         atc=AtcData(MHz(4, 250), MHz(119, 000), MHz(39, 400), MHz(251, 000)),
     ),
-
     "Tangmere": AirfieldData(
         theater="Normandy",
         elevation=47,
         runway_length=4296,
         atc=AtcData(MHz(4, 300), MHz(119, 100), MHz(39, 500), MHz(251, 100)),
     ),
-
     "Ford_AF": AirfieldData(
         theater="Normandy",
         elevation=29,
         runway_length=4296,
         atc=AtcData(MHz(4, 325), MHz(119, 150), MHz(39, 550), MHz(251, 150)),
     ),
-
     "Chailey": AirfieldData(
         theater="Normandy",
         elevation=134,
         runway_length=5080,
         atc=AtcData(MHz(4, 200), MHz(118, 900), MHz(39, 300), MHz(250, 900)),
     ),
-
     "Maupertus": AirfieldData(
         theater="Normandy",
         icao="A-15",
@@ -1193,7 +1084,6 @@ AIRFIELD_DATA = {
         runway_length=4666,
         atc=AtcData(MHz(4, 550), MHz(119, 600), MHz(40, 000), MHz(251, 600)),
     ),
-
     "Azeville": AirfieldData(
         theater="Normandy",
         icao="A-7",
@@ -1201,7 +1091,6 @@ AIRFIELD_DATA = {
         runway_length=3357,
         atc=AtcData(MHz(3, 875), MHz(118, 250), MHz(38, 650), MHz(250, 250)),
     ),
-
     "Biniville": AirfieldData(
         theater="Normandy",
         icao="A-24",
@@ -1209,7 +1098,6 @@ AIRFIELD_DATA = {
         runway_length=3283,
         atc=AtcData(MHz(3, 750), MHz(118, 000), MHz(38, 400), MHz(250, 000)),
     ),
-
     "Beuzeville": AirfieldData(
         theater="Normandy",
         icao="A-6",
@@ -1217,7 +1105,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(3, 850), MHz(118, 200), MHz(38, 600), MHz(250, 200)),
     ),
-
     "Picauville": AirfieldData(
         theater="Normandy",
         icao="A-8",
@@ -1225,7 +1112,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(3, 900), MHz(118, 300), MHz(38, 700), MHz(250, 300)),
     ),
-
     "Brucheville": AirfieldData(
         theater="Normandy",
         icao="A-16",
@@ -1233,7 +1119,6 @@ AIRFIELD_DATA = {
         runway_length=3413,
         atc=AtcData(MHz(4, 575), MHz(119, 650), MHz(40, 50), MHz(251, 650)),
     ),
-
     "Cretteville": AirfieldData(
         theater="Normandy",
         icao="A-14",
@@ -1241,7 +1126,6 @@ AIRFIELD_DATA = {
         runway_length=4594,
         atc=AtcData(MHz(4, 500), MHz(119, 500), MHz(39, 900), MHz(251, 500)),
     ),
-
     "Meautis": AirfieldData(
         theater="Normandy",
         icao="A-17",
@@ -1249,7 +1133,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(4, 600), MHz(119, 700), MHz(40, 100), MHz(251, 700)),
     ),
-
     "Lessay": AirfieldData(
         theater="Normandy",
         icao="A-20",
@@ -1257,7 +1140,6 @@ AIRFIELD_DATA = {
         runway_length=5080,
         atc=AtcData(MHz(4, 650), MHz(119, 800), MHz(40, 200), MHz(251, 800)),
     ),
-
     "Cardonville": AirfieldData(
         theater="Normandy",
         icao="A-3",
@@ -1265,7 +1147,6 @@ AIRFIELD_DATA = {
         runway_length=4541,
         atc=AtcData(MHz(3, 775), MHz(118, 50), MHz(38, 450), MHz(250, 50)),
     ),
-
     "Cricqueville-en-Bessin": AirfieldData(
         theater="Normandy",
         icao="A-2",
@@ -1273,7 +1154,6 @@ AIRFIELD_DATA = {
         runway_length=3459,
         atc=AtcData(MHz(4, 625), MHz(119, 750), MHz(40, 150), MHz(251, 750)),
     ),
-
     "Deux Jumeaux": AirfieldData(
         theater="Normandy",
         icao="A-4",
@@ -1281,7 +1161,6 @@ AIRFIELD_DATA = {
         runway_length=4628,
         atc=AtcData(MHz(3, 800), MHz(118, 100), MHz(38, 500), MHz(250, 100)),
     ),
-
     "Saint Pierre du Mont": AirfieldData(
         theater="Normandy",
         icao="A-1",
@@ -1289,7 +1168,6 @@ AIRFIELD_DATA = {
         runway_length=4737,
         atc=AtcData(MHz(4, 000), MHz(118, 500), MHz(38, 900), MHz(250, 500)),
     ),
-
     "Sainte-Laurent-sur-Mer": AirfieldData(
         theater="Normandy",
         icao="A-21",
@@ -1297,7 +1175,6 @@ AIRFIELD_DATA = {
         runway_length=4561,
         atc=AtcData(MHz(4, 675), MHz(119, 850), MHz(40, 250), MHz(251, 850)),
     ),
-
     "Longues-sur-Mer": AirfieldData(
         theater="Normandy",
         icao="B-11",
@@ -1305,7 +1182,6 @@ AIRFIELD_DATA = {
         runway_length=3155,
         atc=AtcData(MHz(3, 950), MHz(118, 400), MHz(38, 800), MHz(250, 400)),
     ),
-
     "Chippelle": AirfieldData(
         theater="Normandy",
         icao="A-5",
@@ -1313,7 +1189,6 @@ AIRFIELD_DATA = {
         runway_length=4643,
         atc=AtcData(MHz(3, 825), MHz(118, 150), MHz(38, 550), MHz(250, 150)),
     ),
-
     "Le Molay": AirfieldData(
         theater="Normandy",
         icao="A-9",
@@ -1321,7 +1196,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(3, 925), MHz(118, 350), MHz(38, 750), MHz(250, 350)),
     ),
-
     "Lignerolles": AirfieldData(
         theater="Normandy",
         icao="A-12",
@@ -1329,7 +1203,6 @@ AIRFIELD_DATA = {
         runway_length=3436,
         atc=AtcData(MHz(4, 275), MHz(119, 50), MHz(39, 450), MHz(251, 50)),
     ),
-
     "Sommervieu": AirfieldData(
         theater="Normandy",
         icao="B-8",
@@ -1337,7 +1210,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(4, 125), MHz(118, 750), MHz(39, 150), MHz(250, 750)),
     ),
-
     "Bazenville": AirfieldData(
         theater="Normandy",
         icao="B-2",
@@ -1345,7 +1217,6 @@ AIRFIELD_DATA = {
         runway_length=3800,
         atc=AtcData(MHz(4, 25), MHz(118, 550), MHz(38, 950), MHz(250, 550)),
     ),
-
     "Rucqueville": AirfieldData(
         theater="Normandy",
         icao="B-7",
@@ -1353,7 +1224,6 @@ AIRFIELD_DATA = {
         runway_length=4561,
         atc=AtcData(MHz(4, 100), MHz(118, 700), MHz(39, 100), MHz(250, 700)),
     ),
-
     "Lantheuil": AirfieldData(
         theater="Normandy",
         icao="B-9",
@@ -1361,7 +1231,6 @@ AIRFIELD_DATA = {
         runway_length=3597,
         atc=AtcData(MHz(4, 150), MHz(118, 800), MHz(39, 200), MHz(250, 800)),
     ),
-
     "Sainte-Croix-sur-Mer": AirfieldData(
         theater="Normandy",
         icao="B-3",
@@ -1369,7 +1238,6 @@ AIRFIELD_DATA = {
         runway_length=3840,
         atc=AtcData(MHz(4, 50), MHz(118, 600), MHz(39, 000), MHz(250, 600)),
     ),
-
     "Beny-sur-Mer": AirfieldData(
         theater="Normandy",
         icao="B-4",
@@ -1377,7 +1245,6 @@ AIRFIELD_DATA = {
         runway_length=3155,
         atc=AtcData(MHz(4, 75), MHz(118, 650), MHz(39, 50), MHz(250, 650)),
     ),
-
     "Carpiquet": AirfieldData(
         theater="Normandy",
         icao="B-17",
@@ -1385,63 +1252,54 @@ AIRFIELD_DATA = {
         runway_length=3799,
         atc=AtcData(MHz(3, 975), MHz(118, 450), MHz(38, 850), MHz(250, 450)),
     ),
-
     "Goulet": AirfieldData(
         theater="Normandy",
         elevation=616,
         runway_length=3283,
         atc=AtcData(MHz(4, 375), MHz(119, 250), MHz(39, 650), MHz(251, 250)),
     ),
-
     "Argentan": AirfieldData(
         theater="Normandy",
         elevation=639,
         runway_length=3283,
         atc=AtcData(MHz(4, 350), MHz(119, 200), MHz(39, 600), MHz(251, 200)),
     ),
-
     "Vrigny": AirfieldData(
         theater="Normandy",
         elevation=590,
         runway_length=3283,
         atc=AtcData(MHz(4, 475), MHz(119, 450), MHz(39, 850), MHz(251, 450)),
     ),
-
     "Hauterive": AirfieldData(
         theater="Normandy",
         elevation=476,
         runway_length=3283,
         atc=AtcData(MHz(4, 450), MHz(119, 400), MHz(39, 800), MHz(251, 400)),
     ),
-
     "Essay": AirfieldData(
         theater="Normandy",
         elevation=507,
         runway_length=3283,
         atc=AtcData(MHz(4, 425), MHz(119, 350), MHz(39, 750), MHz(251, 350)),
     ),
-
     "Barville": AirfieldData(
         theater="Normandy",
         elevation=462,
         runway_length=3493,
         atc=AtcData(MHz(4, 400), MHz(119, 300), MHz(39, 700), MHz(251, 300)),
     ),
-
     "Conches": AirfieldData(
         theater="Normandy",
         elevation=541,
         runway_length=4199,
         atc=AtcData(MHz(4, 525), MHz(119, 550), MHz(39, 950), MHz(251, 550)),
     ),
-
     "Evreux": AirfieldData(
         theater="Normandy",
         elevation=423,
         runway_length=4296,
         atc=AtcData(MHz(4, 175), MHz(118, 850), MHz(39, 250), MHz(250, 850)),
     ),
-
     # Channel Map
     "Detling": AirfieldData(
         theater="Channel",
@@ -1449,56 +1307,48 @@ AIRFIELD_DATA = {
         runway_length=2557,
         atc=AtcData(MHz(3, 950), MHz(118, 400), MHz(38, 800), MHz(250, 400)),
     ),
-
     "High Halden": AirfieldData(
         theater="Channel",
         elevation=104,
         runway_length=3296,
         atc=AtcData(MHz(3, 750), MHz(118, 800), MHz(38, 400), MHz(250, 0)),
     ),
-
     "Lympne": AirfieldData(
         theater="Channel",
         elevation=351,
         runway_length=2548,
         atc=AtcData(MHz(3, 925), MHz(118, 350), MHz(38, 750), MHz(250, 350)),
     ),
-
     "Hawkinge": AirfieldData(
         theater="Channel",
         elevation=524,
         runway_length=3013,
         atc=AtcData(MHz(3, 900), MHz(118, 300), MHz(38, 700), MHz(250, 300)),
     ),
-
     "Manston": AirfieldData(
         theater="Channel",
         elevation=160,
         runway_length=8626,
         atc=AtcData(MHz(3, 875), MHz(118, 250), MHz(38, 650), MHz(250, 250)),
     ),
-
     "Dunkirk Mardyck": AirfieldData(
         theater="Channel",
         elevation=16,
         runway_length=1737,
         atc=AtcData(MHz(3, 850), MHz(118, 200), MHz(38, 600), MHz(250, 200)),
     ),
-
     "Saint Omer Longuenesse": AirfieldData(
         theater="Channel",
         elevation=219,
         runway_length=1929,
         atc=AtcData(MHz(3, 825), MHz(118, 150), MHz(38, 550), MHz(250, 150)),
     ),
-
     "Merville Calonne": AirfieldData(
         theater="Channel",
         elevation=52,
         runway_length=7580,
         atc=AtcData(MHz(3, 800), MHz(118, 100), MHz(38, 500), MHz(250, 100)),
     ),
-
     "Abbeville Drucat": AirfieldData(
         theater="Channel",
         elevation=183,

@@ -32,8 +32,9 @@ class ThreatZones:
         self.all = unary_union([airbases, air_defenses])
 
     def closest_boundary(self, point: DcsPoint) -> DcsPoint:
-        boundary, _ = nearest_points(self.all.boundary,
-                                     self.dcs_to_shapely_point(point))
+        boundary, _ = nearest_points(
+            self.all.boundary, self.dcs_to_shapely_point(point)
+        )
         return DcsPoint(boundary.x, boundary.y)
 
     @singledispatchmethod
@@ -49,8 +50,9 @@ class ThreatZones:
         return self.all.intersects(self.dcs_to_shapely_point(position))
 
     def path_threatened(self, a: DcsPoint, b: DcsPoint) -> bool:
-        return self.threatened(LineString(
-            [self.dcs_to_shapely_point(a), self.dcs_to_shapely_point(b)]))
+        return self.threatened(
+            LineString([self.dcs_to_shapely_point(a), self.dcs_to_shapely_point(b)])
+        )
 
     @singledispatchmethod
     def threatened_by_aircraft(self, target) -> bool:
@@ -62,9 +64,9 @@ class ThreatZones:
 
     @threatened_by_aircraft.register
     def _threatened_by_aircraft_flight(self, flight: Flight) -> bool:
-        return self.threatened_by_aircraft(LineString((
-            self.dcs_to_shapely_point(p.position) for p in flight.points
-        )))
+        return self.threatened_by_aircraft(
+            LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
+        )
 
     @singledispatchmethod
     def threatened_by_air_defense(self, target) -> bool:
@@ -76,13 +78,14 @@ class ThreatZones:
 
     @threatened_by_air_defense.register
     def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:
-        return self.threatened_by_air_defense(LineString((
-            self.dcs_to_shapely_point(p.position) for p in flight.points
-        )))
+        return self.threatened_by_air_defense(
+            LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
+        )
 
     @classmethod
-    def closest_enemy_airbase(cls, location: ControlPoint,
-                              max_distance: Distance) -> Optional[ControlPoint]:
+    def closest_enemy_airbase(
+        cls, location: ControlPoint, max_distance: Distance
+    ) -> Optional[ControlPoint]:
         airfields = ObjectiveDistanceCache.get_closest_airfields(location)
         for airfield in airfields.airfields_within(max_distance):
             if airfield.captured != location.captured:
@@ -90,13 +93,14 @@ class ThreatZones:
         return None
 
     @classmethod
-    def barcap_threat_range(cls, game: Game,
-                            control_point: ControlPoint) -> Distance:
+    def barcap_threat_range(cls, game: Game, control_point: ControlPoint) -> Distance:
         doctrine = game.faction_for(control_point.captured).doctrine
-        cap_threat_range = (doctrine.cap_max_distance_from_cp +
-                            doctrine.cap_engagement_range)
-        opposing_airfield = cls.closest_enemy_airbase(control_point,
-                                                      cap_threat_range * 2)
+        cap_threat_range = (
+            doctrine.cap_max_distance_from_cp + doctrine.cap_engagement_range
+        )
+        opposing_airfield = cls.closest_enemy_airbase(
+            control_point, cap_threat_range * 2
+        )
         if opposing_airfield is None:
             return cap_threat_range
 
@@ -133,8 +137,7 @@ class ThreatZones:
             if control_point.captured != player:
                 continue
             if control_point.runway_is_operational():
-                point = ShapelyPoint(control_point.position.x,
-                                     control_point.position.y)
+                point = ShapelyPoint(control_point.position.x, control_point.position.y)
                 cap_threat_range = cls.barcap_threat_range(game, control_point)
                 airbases.append(point.buffer(cap_threat_range.meters))
 
@@ -149,8 +152,7 @@ class ThreatZones:
                         air_defenses.append(threat_zone)
 
         return cls(
-            airbases=unary_union(airbases),
-            air_defenses=unary_union(air_defenses)
+            airbases=unary_union(airbases), air_defenses=unary_union(air_defenses)
         )
 
     @staticmethod

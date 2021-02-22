@@ -125,7 +125,8 @@ class PackageModel(QAbstractListModel):
         """Returns the text that should be displayed for the flight."""
         estimator = TotEstimator(self.package)
         delay = datetime.timedelta(
-            seconds=int(estimator.mission_start_time(flight).total_seconds()))
+            seconds=int(estimator.mission_start_time(flight).total_seconds())
+        )
         origin = flight.from_cp.name
         return f"{flight} from {origin} in {delay}"
 
@@ -290,6 +291,7 @@ class GameModel:
     This isn't a real Qt data model, but simplifies management of the game and
     its ATO objects.
     """
+
     def __init__(self, game: Optional[Game]) -> None:
         self.game: Optional[Game] = game
         if self.game is None:

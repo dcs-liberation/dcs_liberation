@@ -65,11 +65,19 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     continue
                 unit_types.add(unit)
 
-        sorted_units = sorted(unit_types, key=lambda u: db.unit_get_expanded_info(self.game_model.game.player_country, u, 'name'))
+        sorted_units = sorted(
+            unit_types,
+            key=lambda u: db.unit_get_expanded_info(
+                self.game_model.game.player_country, u, "name"
+            ),
+        )
         for unit_type in sorted_units:
             row = self.add_purchase_row(
-                unit_type, task_box_layout, row,
-                disabled=not self.cp.can_operate(unit_type))
+                unit_type,
+                task_box_layout,
+                row,
+                disabled=not self.cp.can_operate(unit_type),
+            )
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
@@ -89,8 +97,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
                 QMessageBox.warning(
-                    self, "No space for additional aircraft",
-                    f"There is no parking space left at {self.cp.name} to accommodate another plane.", QMessageBox.Ok)
+                    self,
+                    "No space for additional aircraft",
+                    f"There is no parking space left at {self.cp.name} to accommodate another plane.",
+                    QMessageBox.Ok,
+                )
                 return
             # If we change our mind about selling, we want the aircraft to be put
             # back in the inventory immediately.
@@ -98,7 +109,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                 global_inventory = self.game_model.game.aircraft_inventory
                 inventory = global_inventory.for_control_point(self.cp)
                 inventory.add_aircraft(unit_type, 1)
-                
+
         super().buy(unit_type)
         self.hangar_status.update_label()
 
@@ -112,19 +123,20 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                 inventory.remove_aircraft(unit_type, 1)
             except ValueError:
                 QMessageBox.critical(
-                    self, "Could not sell aircraft",
+                    self,
+                    "Could not sell aircraft",
                     f"Attempted to sell one {unit_type.id} at {self.cp.name} "
                     "but none are available. Are all aircraft currently "
-                    "assigned to a mission?", QMessageBox.Ok)
+                    "assigned to a mission?",
+                    QMessageBox.Ok,
+                )
                 return
         super().sell(unit_type)
         self.hangar_status.update_label()
 
 
 class QHangarStatus(QHBoxLayout):
-
-    def __init__(self, game_model: GameModel,
-                 control_point: ControlPoint) -> None:
+    def __init__(self, game_model: GameModel, control_point: ControlPoint) -> None:
         super().__init__()
         self.game_model = game_model
         self.control_point = control_point
@@ -140,8 +152,7 @@ class QHangarStatus(QHBoxLayout):
         self.setAlignment(Qt.AlignLeft)
 
     def update_label(self) -> None:
-        next_turn = self.control_point.expected_aircraft_next_turn(
-            self.game_model.game)
+        next_turn = self.control_point.expected_aircraft_next_turn(self.game_model.game)
         max_amount = self.control_point.total_aircraft_parking
 
         components = [f"{next_turn.present} present"]
@@ -158,4 +169,5 @@ class QHangarStatus(QHBoxLayout):
 
         details = ", ".join(components)
         self.text.setText(
-            f"<strong>{next_turn.total}/{max_amount}</strong> ({details})")
+            f"<strong>{next_turn.total}/{max_amount}</strong> ({details})"
+        )

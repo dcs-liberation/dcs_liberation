@@ -2,13 +2,11 @@ from PySide2.QtWidgets import QFrame, QGridLayout
 
 from game import Game
 from game.theater import ControlPoint
-from qt_ui.windows.basemenu.base_defenses.QBaseInformation import \
-    QBaseInformation
+from qt_ui.windows.basemenu.base_defenses.QBaseInformation import QBaseInformation
 
 
 class QBaseDefensesHQ(QFrame):
-
-    def __init__(self, cp:ControlPoint, game:Game):
+    def __init__(self, cp: ControlPoint, game: Game):
         super(QBaseDefensesHQ, self).__init__()
         self.cp = cp
         self.game = game
@@ -19,4 +17,3 @@ class QBaseDefensesHQ(QFrame):
         layout = QGridLayout()
         layout.addWidget(QBaseInformation(self.cp, airport, self.game))
         self.setLayout(layout)
-

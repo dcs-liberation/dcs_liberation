@@ -9,13 +9,13 @@ from PySide2.QtWidgets import (
 
 from game.theater import Airport, ControlPoint, Fob
 from game.theater.theatergroundobject import BuildingGroundObject
-from qt_ui.windows.basemenu.base_defenses.QBaseDefenseGroupInfo import \
-    QBaseDefenseGroupInfo
+from qt_ui.windows.basemenu.base_defenses.QBaseDefenseGroupInfo import (
+    QBaseDefenseGroupInfo,
+)
 
 
 class QBaseInformation(QFrame):
-
-    def __init__(self, cp:ControlPoint, airport:Airport, game):
+    def __init__(self, cp: ControlPoint, airport: Airport, game):
         super(QBaseInformation, self).__init__()
         self.cp = cp
         self.airport = airport

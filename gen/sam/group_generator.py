@@ -23,14 +23,12 @@ if TYPE_CHECKING:
 # care about in the format we want if we just generate our own group description
 # types rather than pydcs groups.
 class GroupGenerator:
-
     def __init__(self, game: Game, ground_object: TheaterGroundObject) -> None:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(),
-                                         self.go.group_name)
+        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
 
@@ -40,16 +38,27 @@ class GroupGenerator:
     def get_generated_group(self) -> unitgroup.VehicleGroup:
         return self.vg
 
-    def add_unit(self, unit_type: Type[VehicleType], name: str, pos_x: float,
-                 pos_y: float, heading: int) -> Vehicle:
-        return self.add_unit_to_group(self.vg, unit_type, name,
-                                      Point(pos_x, pos_y), heading)
+    def add_unit(
+        self,
+        unit_type: Type[VehicleType],
+        name: str,
+        pos_x: float,
+        pos_y: float,
+        heading: int,
+    ) -> Vehicle:
+        return self.add_unit_to_group(
+            self.vg, unit_type, name, Point(pos_x, pos_y), heading
+        )
 
-    def add_unit_to_group(self, group: unitgroup.VehicleGroup,
-                          unit_type: Type[VehicleType], name: str,
-                          position: Point, heading: int) -> Vehicle:
-        unit = Vehicle(self.game.next_unit_id(),
-                       f"{group.name}|{name}", unit_type.id)
+    def add_unit_to_group(
+        self,
+        group: unitgroup.VehicleGroup,
+        unit_type: Type[VehicleType],
+        name: str,
+        position: Point,
+        heading: int,
+    ) -> Vehicle:
+        unit = Vehicle(self.game.next_unit_id(), f"{group.name}|{name}", unit_type.id)
         unit.position = position
         unit.heading = heading
         group.add_unit(unit)
@@ -82,31 +91,36 @@ class GroupGenerator:
             current_offset = self.heading
         current_offset -= outer_offset * (math.ceil(num_units / 2) - 1)
         for x in range(1, num_units + 1):
-            positions.append((
-                self.position.x + launcher_distance * math.cos(math.radians(current_offset)),
-                self.position.y + launcher_distance * math.sin(math.radians(current_offset)),
-                current_offset,
-            ))
+            positions.append(
+                (
+                    self.position.x
+                    + launcher_distance * math.cos(math.radians(current_offset)),
+                    self.position.y
+                    + launcher_distance * math.sin(math.radians(current_offset)),
+                    current_offset,
+                )
+            )
             current_offset += outer_offset
         return positions
 
 
 class ShipGroupGenerator(GroupGenerator):
     """Abstract class for other ship generator classes"""
-    def __init__(self, game: Game, ground_object: TheaterGroundObject, faction: Faction):
+
+    def __init__(
+        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
+    ):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
         self.faction = faction
-        self.vg = unitgroup.ShipGroup(self.game.next_group_id(),
-                                      self.go.group_name)
+        self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
-    
+
     def add_unit(self, unit_type, name, pos_x, pos_y, heading) -> Ship:
-        unit = Ship(self.game.next_unit_id(),
-                    f"{self.go.group_name}|{name}", unit_type)
+        unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
         unit.position.x = pos_x
         unit.position.y = pos_y
         unit.heading = heading

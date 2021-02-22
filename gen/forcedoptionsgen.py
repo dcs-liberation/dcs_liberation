@@ -15,11 +15,15 @@ class ForcedOptionsGenerator:
         self.game = game
 
     def _set_options_view(self) -> None:
-        self.mission.forced_options.options_view = self.game.settings.map_coalition_visibility
+        self.mission.forced_options.options_view = (
+            self.game.settings.map_coalition_visibility
+        )
 
     def _set_external_views(self) -> None:
         if not self.game.settings.external_views_allowed:
-            self.mission.forced_options.external_views = self.game.settings.external_views_allowed
+            self.mission.forced_options.external_views = (
+                self.game.settings.external_views_allowed
+            )
 
     def _set_labels(self) -> None:
         # TODO: Fix settings to use the real type.

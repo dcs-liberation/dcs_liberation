@@ -19,11 +19,18 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     def generate(self):
         num_launchers = random.randint(2, 8)
 
-        positions = self.get_circular_position(num_launchers, launcher_distance=80, coverage=360)
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=80, coverage=360
+        )
         for i, position in enumerate(positions):
-            self.add_unit(AirDefence.AAA_ZU_23_Insurgent_on_Ural_375, "SPAA#" + str(i), position[0], position[1], position[2])
+            self.add_unit(
+                AirDefence.AAA_ZU_23_Insurgent_on_Ural_375,
+                "SPAA#" + str(i),
+                position[0],
+                position[1],
+                position[2],
+            )
 
     @classmethod
     def range(cls) -> AirDefenseRange:
         return AirDefenseRange.Short
-

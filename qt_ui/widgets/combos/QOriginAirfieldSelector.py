@@ -18,9 +18,12 @@ class QOriginAirfieldSelector(QComboBox):
 
     availability_changed = Signal(int)
 
-    def __init__(self, global_inventory: GlobalAircraftInventory,
-                 origins: Iterable[ControlPoint],
-                 aircraft: Type[FlyingType]) -> None:
+    def __init__(
+        self,
+        global_inventory: GlobalAircraftInventory,
+        origins: Iterable[ControlPoint],
+        aircraft: Type[FlyingType],
+    ) -> None:
         super().__init__()
         self.global_inventory = global_inventory
         self.origins = list(origins)

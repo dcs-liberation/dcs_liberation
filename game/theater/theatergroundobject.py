@@ -33,7 +33,7 @@ NAME_BY_CATEGORY = {
     "ww2bunker": "Bunker",
     "village": "Village",
     "allycamp": "Camp",
-    "EWR":"EWR",
+    "EWR": "EWR",
 }
 
 ABBREV_NAME = {
@@ -54,34 +54,59 @@ ABBREV_NAME = {
 }
 
 CATEGORY_MAP = {
-
     # Special cases
     "CARRIER": ["CARRIER"],
     "LHA": ["LHA"],
     "aa": ["AA"],
-
     # Buildings
-    "power": ["Workshop A", "Electric power box", "Garage small A", "Farm B", "Repair workshop", "Garage B"],
+    "power": [
+        "Workshop A",
+        "Electric power box",
+        "Garage small A",
+        "Farm B",
+        "Repair workshop",
+        "Garage B",
+    ],
     "ware": ["Warehouse", "Hangar A"],
     "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
     "ammo": [".Ammunition depot", "Hangar B"],
-    "farp": ["FARP Tent", "FARP Ammo Dump Coating", "FARP Fuel Depot", "FARP Command Post", "FARP CP Blindage"],
+    "farp": [
+        "FARP Tent",
+        "FARP Ammo Dump Coating",
+        "FARP Fuel Depot",
+        "FARP Command Post",
+        "FARP CP Blindage",
+    ],
     "fob": ["Bunker 2", "Bunker 1", "Garage small B", ".Command Center", "Barracks 2"],
     "factory": ["Tech combine", "Tech hangar A"],
     "comms": ["TV tower", "Comms tower M"],
     "oil": ["Oil platform"],
     "derrick": ["Oil derrick", "Pump station", "Subsidiary structure 2"],
-    "ww2bunker": ["Siegfried Line", "Fire Control Bunker", "SK_C_28_naval_gun", "Concertina Wire", "Czech hedgehogs 1"],
+    "ww2bunker": [
+        "Siegfried Line",
+        "Fire Control Bunker",
+        "SK_C_28_naval_gun",
+        "Concertina Wire",
+        "Czech hedgehogs 1",
+    ],
     "village": ["Small house 1B", "Small House 1A", "Small warehouse 1"],
     "allycamp": [],
 }
 
 
 class TheaterGroundObject(MissionTarget):
-
-    def __init__(self, name: str, category: str, group_id: int, position: Point,
-                 heading: int, control_point: ControlPoint, dcs_identifier: str,
-                 airbase_group: bool, sea_object: bool) -> None:
+    def __init__(
+        self,
+        name: str,
+        category: str,
+        group_id: int,
+        position: Point,
+        heading: int,
+        control_point: ControlPoint,
+        dcs_identifier: str,
+        airbase_group: bool,
+        sea_object: bool,
+    ) -> None:
         super().__init__(name, position)
         self.category = category
         self.group_id = group_id
@@ -131,6 +156,7 @@ class TheaterGroundObject(MissionTarget):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if self.is_friendly(for_player):
             yield from [
                 # TODO: FlightType.LOGISTICS
@@ -193,9 +219,18 @@ class TheaterGroundObject(MissionTarget):
 
 
 class BuildingGroundObject(TheaterGroundObject):
-    def __init__(self, name: str, category: str, group_id: int, object_id: int,
-                 position: Point, heading: int, control_point: ControlPoint,
-                 dcs_identifier: str, airbase_group=False) -> None:
+    def __init__(
+        self,
+        name: str,
+        category: str,
+        group_id: int,
+        object_id: int,
+        position: Point,
+        heading: int,
+        control_point: ControlPoint,
+        dcs_identifier: str,
+        airbase_group=False,
+    ) -> None:
         super().__init__(
             name=name,
             category=category,
@@ -205,7 +240,7 @@ class BuildingGroundObject(TheaterGroundObject):
             control_point=control_point,
             dcs_identifier=dcs_identifier,
             airbase_group=airbase_group,
-            sea_object=False
+            sea_object=False,
         )
         self.object_id = object_id
         # Other TGOs track deadness based on the number of alive units, but
@@ -234,6 +269,7 @@ class BuildingGroundObject(TheaterGroundObject):
 class NavalGroundObject(TheaterGroundObject):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if not self.is_friendly(for_player):
             yield FlightType.ANTISHIP
         yield from super().mission_types(for_player)
@@ -249,8 +285,7 @@ class GenericCarrierGroundObject(NavalGroundObject):
 
 # TODO: Why is this both a CP and a TGO?
 class CarrierGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, group_id: int,
-                 control_point: ControlPoint) -> None:
+    def __init__(self, name: str, group_id: int, control_point: ControlPoint) -> None:
         super().__init__(
             name=name,
             category="CARRIER",
@@ -260,7 +295,7 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             control_point=control_point,
             dcs_identifier="CARRIER",
             airbase_group=True,
-            sea_object=True
+            sea_object=True,
         )
 
     @property
@@ -272,8 +307,7 @@ class CarrierGroundObject(GenericCarrierGroundObject):
 
 # TODO: Why is this both a CP and a TGO?
 class LhaGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, group_id: int,
-                 control_point: ControlPoint) -> None:
+    def __init__(self, name: str, group_id: int, control_point: ControlPoint) -> None:
         super().__init__(
             name=name,
             category="LHA",
@@ -283,7 +317,7 @@ class LhaGroundObject(GenericCarrierGroundObject):
             control_point=control_point,
             dcs_identifier="LHA",
             airbase_group=True,
-            sea_object=True
+            sea_object=True,
         )
 
     @property
@@ -294,8 +328,9 @@ class LhaGroundObject(GenericCarrierGroundObject):
 
 
 class MissileSiteGroundObject(TheaterGroundObject):
-    def __init__(self, name: str, group_id: int, position: Point,
-                 control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, group_id: int, position: Point, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="aa",
@@ -305,7 +340,7 @@ class MissileSiteGroundObject(TheaterGroundObject):
             control_point=control_point,
             dcs_identifier="AA",
             airbase_group=False,
-            sea_object=False
+            sea_object=False,
         )
 
 
@@ -317,8 +352,14 @@ class BaseDefenseGroundObject(TheaterGroundObject):
 # This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
 # be split into their own types.
 class SamGroundObject(BaseDefenseGroundObject):
-    def __init__(self, name: str, group_id: int, position: Point,
-                 control_point: ControlPoint, for_airbase: bool) -> None:
+    def __init__(
+        self,
+        name: str,
+        group_id: int,
+        position: Point,
+        control_point: ControlPoint,
+        for_airbase: bool,
+    ) -> None:
         super().__init__(
             name=name,
             category="aa",
@@ -328,7 +369,7 @@ class SamGroundObject(BaseDefenseGroundObject):
             control_point=control_point,
             dcs_identifier="AA",
             airbase_group=for_airbase,
-            sea_object=False
+            sea_object=False,
         )
         # Set by the SAM unit generator if the generated group is compatible
         # with Skynet.
@@ -345,6 +386,7 @@ class SamGroundObject(BaseDefenseGroundObject):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
@@ -355,8 +397,14 @@ class SamGroundObject(BaseDefenseGroundObject):
 
 
 class VehicleGroupGroundObject(BaseDefenseGroundObject):
-    def __init__(self, name: str, group_id: int, position: Point,
-                 control_point: ControlPoint, for_airbase: bool) -> None:
+    def __init__(
+        self,
+        name: str,
+        group_id: int,
+        position: Point,
+        control_point: ControlPoint,
+        for_airbase: bool,
+    ) -> None:
         super().__init__(
             name=name,
             category="aa",
@@ -366,13 +414,14 @@ class VehicleGroupGroundObject(BaseDefenseGroundObject):
             control_point=control_point,
             dcs_identifier="AA",
             airbase_group=for_airbase,
-            sea_object=False
+            sea_object=False,
         )
 
 
 class EwrGroundObject(BaseDefenseGroundObject):
-    def __init__(self, name: str, group_id: int, position: Point,
-                 control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, group_id: int, position: Point, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="EWR",
@@ -382,7 +431,7 @@ class EwrGroundObject(BaseDefenseGroundObject):
             control_point=control_point,
             dcs_identifier="EWR",
             airbase_group=True,
-            sea_object=False
+            sea_object=False,
         )
 
     @property
@@ -392,6 +441,7 @@ class EwrGroundObject(BaseDefenseGroundObject):
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
+
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
@@ -402,8 +452,9 @@ class EwrGroundObject(BaseDefenseGroundObject):
 
 
 class ShipGroundObject(NavalGroundObject):
-    def __init__(self, name: str, group_id: int, position: Point,
-                 control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, group_id: int, position: Point, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="aa",
@@ -413,7 +464,7 @@ class ShipGroundObject(NavalGroundObject):
             control_point=control_point,
             dcs_identifier="AA",
             airbase_group=False,
-            sea_object=True
+            sea_object=True,
         )
 
     @property

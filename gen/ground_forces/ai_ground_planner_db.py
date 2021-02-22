@@ -16,7 +16,6 @@ TYPE_TANKS = [
     Armor.MBT_M60A3_Patton,
     Armor.MBT_Merkava_Mk__4,
     Armor.ZTZ_96B,
-
     # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
     Armor.MT_Pz_Kpfw_IV_Ausf_H,
@@ -29,36 +28,30 @@ TYPE_TANKS = [
     Armor.CT_Cromwell_IV,
     Armor.HIT_Churchill_VII,
     Armor.LT_Mk_VII_Tetrarch,
-
     # Mods
     frenchpack.DIM__TOYOTA_BLUE,
     frenchpack.DIM__TOYOTA_GREEN,
     frenchpack.DIM__TOYOTA_DESERT,
     frenchpack.DIM__KAMIKAZE,
-
     frenchpack.AMX_10RCR,
     frenchpack.AMX_10RCR_SEPAR,
     frenchpack.AMX_30B2,
     frenchpack.Leclerc_Serie_XXI,
-
 ]
 
 TYPE_ATGM = [
     Armor.ATGM_M1045_HMMWV_TOW,
     Armor.ATGM_M1134_Stryker,
     Armor.IFV_BMP_2,
-
     # WW2 (Tank Destroyers)
     Armor.M30_Cargo_Carrier,
     Armor.TD_Jagdpanzer_IV,
     Armor.TD_Jagdpanther_G1,
     Armor.TD_M10_GMC,
-
     # Mods
     frenchpack.VBAE_CRAB_MMP,
     frenchpack.VAB_MEPHISTO,
     frenchpack.TRM_2000_PAMELA,
-
 ]
 
 TYPE_IFV = [
@@ -73,17 +66,14 @@ TYPE_IFV = [
     Armor.IFV_M2A2_Bradley,
     Armor.IFV_BMD_1,
     Armor.ZBD_04A,
-
     # WW2
     Armor.AC_Sd_Kfz_234_2_Puma,
     Armor.LAC_M8_Greyhound,
     Armor.Daimler_Armoured_Car,
-
     # Mods
     frenchpack.ERC_90,
     frenchpack.VBAE_CRAB,
-    frenchpack.VAB_T20_13
-
+    frenchpack.VAB_T20_13,
 ]
 
 TYPE_APC = [
@@ -101,16 +91,13 @@ TYPE_APC = [
     Armor.ARV_BRDM_2,
     Armor.ARV_BTR_RD,
     Armor.FDDM_Grad,
-
     # WW2
     Armor.APC_M2A1,
     Armor.APC_Sd_Kfz_251,
-
     # Mods
     frenchpack.VAB__50,
     frenchpack.VBL__50,
     frenchpack.VBL_AANF1,
-
 ]
 
 TYPE_ARTILLERY = [
@@ -125,10 +112,9 @@ TYPE_ARTILLERY = [
     Artillery.SpGH_Dana,
     Artillery.SPH_2S19_Msta,
     Artillery.MLRS_FDDM,
-
     # WW2
     Artillery.Sturmpanzer_IV_Brummbär,
-    Artillery.M12_GMC
+    Artillery.M12_GMC,
 ]
 
 TYPE_LOGI = [
@@ -147,11 +133,9 @@ TYPE_LOGI = [
     Unarmed.Willys_MB,
     Unarmed.Land_Rover_109_S3,
     Unarmed.Land_Rover_101_FC,
-
     # Mods
     frenchpack.VBL,
     frenchpack.VAB,
-
 ]
 
 TYPE_INFANTRY = [
@@ -179,7 +163,6 @@ TYPE_SHORAD = [
     AirDefence.SAM_SA_13_Strela_10M3_9A35M3,
     AirDefence.SAM_SA_15_Tor_9A331,
     AirDefence.SAM_SA_19_Tunguska_2S6,
-
     AirDefence.SPAAA_Gepard,
     AirDefence.AAA_Vulcan_M163,
     AirDefence.SAM_Linebacker_M6,
@@ -187,7 +170,6 @@ TYPE_SHORAD = [
     AirDefence.SAM_Avenger_M1097,
     AirDefence.SAM_Roland_ADS,
     AirDefence.HQ_7_Self_Propelled_LN,
-
     AirDefence.AAA_8_8cm_Flak_18,
     AirDefence.AAA_8_8cm_Flak_36,
     AirDefence.AAA_8_8cm_Flak_37,
@@ -195,5 +177,4 @@ TYPE_SHORAD = [
     AirDefence.AAA_Bofors_40mm,
     AirDefence.AAA_M1_37mm,
     AirDefence.AA_gun_QF_3_7,
-
 ]

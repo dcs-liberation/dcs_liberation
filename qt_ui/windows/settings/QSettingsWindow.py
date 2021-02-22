@@ -46,14 +46,20 @@ class CheatSettingsBox(QGroupBox):
         self.frontline_cheat_checkbox.toggled.connect(apply_settings)
 
         self.base_capture_cheat_checkbox = QCheckBox()
-        self.base_capture_cheat_checkbox.setChecked(game.settings.enable_base_capture_cheat)
+        self.base_capture_cheat_checkbox.setChecked(
+            game.settings.enable_base_capture_cheat
+        )
         self.base_capture_cheat_checkbox.toggled.connect(apply_settings)
 
         self.red_ato = QLabeledWidget("Show Red ATO:", self.red_ato_checkbox)
         self.main_layout.addLayout(self.red_ato)
-        self.frontline_cheat = QLabeledWidget("Enable Frontline Cheats:", self.frontline_cheat_checkbox)
+        self.frontline_cheat = QLabeledWidget(
+            "Enable Frontline Cheats:", self.frontline_cheat_checkbox
+        )
         self.main_layout.addLayout(self.frontline_cheat)
-        self.base_capture_cheat = QLabeledWidget("Enable Base Capture Cheat:", self.base_capture_cheat_checkbox)
+        self.base_capture_cheat = QLabeledWidget(
+            "Enable Base Capture Cheat:", self.base_capture_cheat_checkbox
+        )
         self.main_layout.addLayout(self.base_capture_cheat)
 
     @property
@@ -85,7 +91,6 @@ class StartTypeComboBox(QComboBox):
 
 
 class QSettingsWindow(QDialog):
-
     def __init__(self, game: Game):
         super(QSettingsWindow, self).__init__()
 
@@ -163,9 +168,12 @@ class QSettingsWindow(QDialog):
 
         self.categoryList.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.categoryList.setModel(self.categoryModel)
-        self.categoryList.selectionModel().setCurrentIndex(self.categoryList.indexAt(QPoint(1,1)), QItemSelectionModel.Select)
-        self.categoryList.selectionModel().selectionChanged.connect(self.onSelectionChanged)
-
+        self.categoryList.selectionModel().setCurrentIndex(
+            self.categoryList.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
+        )
+        self.categoryList.selectionModel().selectionChanged.connect(
+            self.onSelectionChanged
+        )
 
         self.layout.addWidget(self.categoryList, 0, 0, 1, 1)
         self.layout.addLayout(self.right_layout, 0, 1, 5, 1)
@@ -193,17 +201,29 @@ class QSettingsWindow(QDialog):
             self.enemyCoalitionSkill.addItem(skill)
             self.enemyAASkill.addItem(skill)
 
-        self.playerCoalitionSkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.player_skill))
-        self.enemyCoalitionSkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_skill))
-        self.enemyAASkill.setCurrentIndex(CONST.SKILL_OPTIONS.index(self.game.settings.enemy_vehicle_skill))
+        self.playerCoalitionSkill.setCurrentIndex(
+            CONST.SKILL_OPTIONS.index(self.game.settings.player_skill)
+        )
+        self.enemyCoalitionSkill.setCurrentIndex(
+            CONST.SKILL_OPTIONS.index(self.game.settings.enemy_skill)
+        )
+        self.enemyAASkill.setCurrentIndex(
+            CONST.SKILL_OPTIONS.index(self.game.settings.enemy_vehicle_skill)
+        )
 
         self.player_income = TenthsSpinSlider(
-            "Player income multiplier", 1, 50,
-            int(self.game.settings.player_income_multiplier * 10))
+            "Player income multiplier",
+            1,
+            50,
+            int(self.game.settings.player_income_multiplier * 10),
+        )
         self.player_income.spinner.valueChanged.connect(self.applySettings)
         self.enemy_income = TenthsSpinSlider(
-            "Enemy income multiplier", 1, 50,
-            int(self.game.settings.enemy_income_multiplier * 10))
+            "Enemy income multiplier",
+            1,
+            50,
+            int(self.game.settings.enemy_income_multiplier * 10),
+        )
         self.enemy_income.spinner.valueChanged.connect(self.applySettings)
 
         self.playerCoalitionSkill.currentIndexChanged.connect(self.applySettings)
@@ -228,7 +248,9 @@ class QSettingsWindow(QDialog):
 
         self.difficultyLabel = QComboBox()
         [self.difficultyLabel.addItem(t) for t in CONST.LABELS_OPTIONS]
-        self.difficultyLabel.setCurrentIndex(CONST.LABELS_OPTIONS.index(self.game.settings.labels))
+        self.difficultyLabel.setCurrentIndex(
+            CONST.LABELS_OPTIONS.index(self.game.settings.labels)
+        )
         self.difficultyLabel.currentIndexChanged.connect(self.applySettings)
 
         self.mapVisibiitySelection = QComboBox()
@@ -238,11 +260,21 @@ class QSettingsWindow(QDialog):
         self.mapVisibiitySelection.addItem("Fog of War", ForcedOptions.Views.Allies)
         if self.game.settings.map_coalition_visibility == ForcedOptions.Views.Allies:
             self.mapVisibiitySelection.setCurrentIndex(1)
-        self.mapVisibiitySelection.addItem("Allies Only", ForcedOptions.Views.OnlyAllies)
-        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyAllies:
+        self.mapVisibiitySelection.addItem(
+            "Allies Only", ForcedOptions.Views.OnlyAllies
+        )
+        if (
+            self.game.settings.map_coalition_visibility
+            == ForcedOptions.Views.OnlyAllies
+        ):
             self.mapVisibiitySelection.setCurrentIndex(2)
-        self.mapVisibiitySelection.addItem("Own Aircraft Only", ForcedOptions.Views.MyAircraft)
-        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.MyAircraft:
+        self.mapVisibiitySelection.addItem(
+            "Own Aircraft Only", ForcedOptions.Views.MyAircraft
+        )
+        if (
+            self.game.settings.map_coalition_visibility
+            == ForcedOptions.Views.MyAircraft
+        ):
             self.mapVisibiitySelection.setCurrentIndex(3)
         self.mapVisibiitySelection.addItem("Map Only", ForcedOptions.Views.OnlyMap)
         if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
@@ -254,7 +286,9 @@ class QSettingsWindow(QDialog):
         self.ext_views.toggled.connect(self.applySettings)
 
         self.aiDifficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
-        self.aiDifficultyLayout.addWidget(self.playerCoalitionSkill, 0, 1, Qt.AlignRight)
+        self.aiDifficultyLayout.addWidget(
+            self.playerCoalitionSkill, 0, 1, Qt.AlignRight
+        )
         self.aiDifficultyLayout.addWidget(QLabel("Enemy coalition skill"), 1, 0)
         self.aiDifficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
         self.aiDifficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
@@ -272,9 +306,13 @@ class QSettingsWindow(QDialog):
         self.difficultyLayout.addWidget(self.missionSettings)
 
         self.missionRestrictionsLayout.addWidget(QLabel("In Game Labels"), 0, 0)
-        self.missionRestrictionsLayout.addWidget(self.difficultyLabel, 0, 1, Qt.AlignRight)
+        self.missionRestrictionsLayout.addWidget(
+            self.difficultyLabel, 0, 1, Qt.AlignRight
+        )
         self.missionRestrictionsLayout.addWidget(QLabel("Map visibility options"), 1, 0)
-        self.missionRestrictionsLayout.addWidget(self.mapVisibiitySelection, 1, 1, Qt.AlignRight)
+        self.missionRestrictionsLayout.addWidget(
+            self.mapVisibiitySelection, 1, 1, Qt.AlignRight
+        )
         self.missionRestrictionsLayout.addWidget(QLabel("Allow external views"), 2, 0)
         self.missionRestrictionsLayout.addWidget(self.ext_views, 2, 1, Qt.AlignRight)
         self.missionRestrictionsSettings.setLayout(self.missionRestrictionsLayout)
@@ -325,25 +363,21 @@ class QSettingsWindow(QDialog):
             self.game.settings.automate_aircraft_reinforcements = value
 
         runway_repair = QCheckBox()
-        runway_repair.setChecked(
-            self.game.settings.automate_runway_repair)
+        runway_repair.setChecked(self.game.settings.automate_runway_repair)
         runway_repair.toggled.connect(set_runway_automation)
 
         automation_layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
         automation_layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
 
         front_line = QCheckBox()
-        front_line.setChecked(
-            self.game.settings.automate_front_line_reinforcements)
+        front_line.setChecked(self.game.settings.automate_front_line_reinforcements)
         front_line.toggled.connect(set_front_line_automation)
 
-        automation_layout.addWidget(
-            QLabel("Automate front-line purchases"), 1, 0)
+        automation_layout.addWidget(QLabel("Automate front-line purchases"), 1, 0)
         automation_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
 
         aircraft = QCheckBox()
-        aircraft.setChecked(
-            self.game.settings.automate_aircraft_reinforcements)
+        aircraft.setChecked(self.game.settings.automate_aircraft_reinforcements)
         aircraft.toggled.connect(set_aircraft_automation)
 
         automation_layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
@@ -370,7 +404,8 @@ class QSettingsWindow(QDialog):
 
         self.never_delay_players = QCheckBox()
         self.never_delay_players.setChecked(
-            self.game.settings.never_delay_player_flights)
+            self.game.settings.never_delay_player_flights
+        )
         self.never_delay_players.toggled.connect(self.applySettings)
         self.never_delay_players.setToolTip(
             "When checked, player flights with a delayed start time will be "
@@ -381,14 +416,12 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(
-            QLabel("Never delay player flights"), 2, 0)
-        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1,
-                                      Qt.AlignRight)
+        self.gameplayLayout.addWidget(QLabel("Never delay player flights"), 2, 0)
+        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1, Qt.AlignRight)
 
         start_type_label = QLabel(
-            "Default start type for AI aircraft:<br /><strong>Warning: " +
-            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+            "Default start type for AI aircraft:<br /><strong>Warning: "
+            + "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
         )
         start_type_label.setToolTip(START_TYPE_TOOLTIP)
         start_type = StartTypeComboBox(self.game.settings)
@@ -437,34 +470,57 @@ class QSettingsWindow(QDialog):
         self.culling_distance.valueChanged.connect(self.applySettings)
 
         self.culling_do_not_cull_carrier = QCheckBox()
-        self.culling_do_not_cull_carrier.setChecked(self.game.settings.perf_do_not_cull_carrier)
+        self.culling_do_not_cull_carrier.setChecked(
+            self.game.settings.perf_do_not_cull_carrier
+        )
         self.culling_do_not_cull_carrier.toggled.connect(self.applySettings)
 
-        self.performanceLayout.addWidget(QLabel("Smoke visual effect on frontline"), 0, 0)
+        self.performanceLayout.addWidget(
+            QLabel("Smoke visual effect on frontline"), 0, 0
+        )
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
         self.performanceLayout.addWidget(self.red_alert, 1, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Artillery strikes"), 2, 0)
         self.performanceLayout.addWidget(self.arti, 2, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Moving ground units"), 3, 0)
-        self.performanceLayout.addWidget(self.moving_units, 3, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Generate infantry squads along vehicles"), 4, 0)
+        self.performanceLayout.addWidget(
+            self.moving_units, 3, 1, alignment=Qt.AlignRight
+        )
+        self.performanceLayout.addWidget(
+            QLabel("Generate infantry squads along vehicles"), 4, 0
+        )
         self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Include destroyed units carcass"), 6, 0)
-        self.performanceLayout.addWidget(self.destroyed_units, 6, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(
+            QLabel("Include destroyed units carcass"), 6, 0
+        )
+        self.performanceLayout.addWidget(
+            self.destroyed_units, 6, 1, alignment=Qt.AlignRight
+        )
 
         self.performanceLayout.addWidget(QHorizontalSeparationLine(), 7, 0, 1, 2)
-        self.performanceLayout.addWidget(QLabel("Culling of distant units enabled"), 8, 0)
+        self.performanceLayout.addWidget(
+            QLabel("Culling of distant units enabled"), 8, 0
+        )
         self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
-        self.performanceLayout.addWidget(self.culling_distance, 9, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Do not cull carrier's surroundings"), 10, 0)
-        self.performanceLayout.addWidget(self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(
+            self.culling_distance, 9, 1, alignment=Qt.AlignRight
+        )
+        self.performanceLayout.addWidget(
+            QLabel("Do not cull carrier's surroundings"), 10, 0
+        )
+        self.performanceLayout.addWidget(
+            self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight
+        )
 
         self.generatorLayout.addWidget(self.gameplay)
-        self.generatorLayout.addWidget(QLabel("Disabling settings below may improve performance, but will impact the overall quality of the experience."))
+        self.generatorLayout.addWidget(
+            QLabel(
+                "Disabling settings below may improve performance, but will impact the overall quality of the experience."
+            )
+        )
         self.generatorLayout.addWidget(self.performance)
-
 
     def initCheatLayout(self):
 
@@ -489,7 +545,7 @@ class QSettingsWindow(QDialog):
                 btn = QPushButton("Cheat " + str(amount) + "M")
                 btn.setProperty("style", "btn-danger")
             btn.clicked.connect(self.cheatLambda(amount))
-            self.moneyCheatBoxLayout.addWidget(btn, i/2, i%2)  
+            self.moneyCheatBoxLayout.addWidget(btn, i / 2, i % 2)
         self.cheatLayout.addWidget(self.moneyCheatBox, stretch=1)
 
     def cheatLambda(self, amount):
@@ -499,24 +555,44 @@ class QSettingsWindow(QDialog):
         logging.info("CHEATING FOR AMOUNT : " + str(amount) + "M")
         self.game.budget += amount
         if amount > 0:
-            self.game.informations.append(Information("CHEATER", "You are a cheater and you should feel bad", self.game.turn))
+            self.game.informations.append(
+                Information(
+                    "CHEATER",
+                    "You are a cheater and you should feel bad",
+                    self.game.turn,
+                )
+            )
         else:
-            self.game.informations.append(Information("CHEATER", "You are still a cheater !", self.game.turn))
+            self.game.informations.append(
+                Information("CHEATER", "You are still a cheater !", self.game.turn)
+            )
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def applySettings(self):
-        self.game.settings.player_skill = CONST.SKILL_OPTIONS[self.playerCoalitionSkill.currentIndex()]
-        self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[self.enemyCoalitionSkill.currentIndex()]
-        self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[self.enemyAASkill.currentIndex()]
+        self.game.settings.player_skill = CONST.SKILL_OPTIONS[
+            self.playerCoalitionSkill.currentIndex()
+        ]
+        self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[
+            self.enemyCoalitionSkill.currentIndex()
+        ]
+        self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[
+            self.enemyAASkill.currentIndex()
+        ]
         self.game.settings.player_income_multiplier = self.player_income.value
         self.game.settings.enemy_income_multiplier = self.enemy_income.value
         self.game.settings.manpads = self.manpads.isChecked()
-        self.game.settings.labels = CONST.LABELS_OPTIONS[self.difficultyLabel.currentIndex()]
+        self.game.settings.labels = CONST.LABELS_OPTIONS[
+            self.difficultyLabel.currentIndex()
+        ]
         self.game.settings.night_disabled = self.noNightMission.isChecked()
-        self.game.settings.map_coalition_visibility = self.mapVisibiitySelection.currentData()
+        self.game.settings.map_coalition_visibility = (
+            self.mapVisibiitySelection.currentData()
+        )
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
         self.game.settings.generate_marks = self.generate_marks.isChecked()
-        self.game.settings.never_delay_player_flights = self.never_delay_players.isChecked()
+        self.game.settings.never_delay_player_flights = (
+            self.never_delay_players.isChecked()
+        )
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
 
@@ -529,11 +605,17 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
-        self.game.settings.perf_do_not_cull_carrier = self.culling_do_not_cull_carrier.isChecked()
+        self.game.settings.perf_do_not_cull_carrier = (
+            self.culling_do_not_cull_carrier.isChecked()
+        )
 
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
-        self.game.settings.enable_frontline_cheats = self.cheat_options.show_frontline_cheat
-        self.game.settings.enable_base_capture_cheat = self.cheat_options.show_base_capture_cheat
+        self.game.settings.enable_frontline_cheats = (
+            self.cheat_options.show_frontline_cheat
+        )
+        self.game.settings.enable_base_capture_cheat = (
+            self.cheat_options.show_base_capture_cheat
+        )
 
         self.game.compute_conflicts_position()
         GameUpdateSignal.get_instance().updateGame(self.game)

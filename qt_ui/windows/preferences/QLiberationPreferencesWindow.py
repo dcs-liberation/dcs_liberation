@@ -5,7 +5,6 @@ from qt_ui.windows.preferences.QLiberationPreferences import QLiberationPreferen
 
 
 class QLiberationPreferencesWindow(QDialog):
-
     def __init__(self):
         super(QLiberationPreferencesWindow, self).__init__()
 
@@ -15,7 +14,7 @@ class QLiberationPreferencesWindow(QDialog):
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.preferences = QLiberationPreferences()
         self.apply_button = QPushButton("Apply")
-        self.apply_button.clicked.connect(lambda : self.apply())
+        self.apply_button.clicked.connect(lambda: self.apply())
         self.initUI()
 
     def initUI(self):
@@ -34,4 +33,3 @@ class QLiberationPreferencesWindow(QDialog):
             self.close()
         else:
             print("Not Closing")
-

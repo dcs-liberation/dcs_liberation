@@ -2,18 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcs.action import (
-    MarkToAll,
-    SetFlag,
-    DoScript,
-    ClearFlag
-)
+from dcs.action import MarkToAll, SetFlag, DoScript, ClearFlag
 from dcs.condition import (
     TimeAfter,
     AllOfCoalitionOutsideZone,
     PartOfCoalitionInZone,
     FlagIsFalse,
-    FlagIsTrue
+    FlagIsTrue,
 )
 from dcs.unitgroup import FlyingGroup
 from dcs.mission import Mission
@@ -56,7 +51,7 @@ class Silence(Option):
 
 
 class TriggersGenerator:
-    capture_zone_types = (Fob, )
+    capture_zone_types = (Fob,)
     capture_zone_flag = 600
 
     def __init__(self, mission: Mission, game: Game):
@@ -82,16 +77,18 @@ class TriggersGenerator:
                 airport.operating_level_air = 0
                 airport.operating_level_equipment = 0
                 airport.operating_level_fuel = 0
-        
+
         for airport in self.mission.terrain.airport_list():
             if airport.id not in cp_ids:
                 airport.unlimited_fuel = True
                 airport.unlimited_munitions = True
                 airport.unlimited_aircrafts = True
-        
+
         for cp in self.game.theater.controlpoints:
             if isinstance(cp, Airfield):
-                self.mission.terrain.airport_by_id(cp.at.id).set_coalition(cp.captured and player_coalition or enemy_coalition)
+                self.mission.terrain.airport_by_id(cp.at.id).set_coalition(
+                    cp.captured and player_coalition or enemy_coalition
+                )
 
     def _set_skill(self, player_coalition: str, enemy_coalition: str):
         """
@@ -99,17 +96,28 @@ class TriggersGenerator:
         """
         for coalition_name, coalition in self.mission.coalition.items():
             if coalition_name == player_coalition:
-                skill_level = self.game.settings.player_skill, self.game.settings.player_skill
+                skill_level = (
+                    self.game.settings.player_skill,
+                    self.game.settings.player_skill,
+                )
             elif coalition_name == enemy_coalition:
-                skill_level = self.game.settings.enemy_skill, self.game.settings.enemy_vehicle_skill
+                skill_level = (
+                    self.game.settings.enemy_skill,
+                    self.game.settings.enemy_vehicle_skill,
+                )
             else:
                 continue
 
             for country in coalition.countries.values():
-                flying_groups = country.plane_group + country.helicopter_group  # type: FlyingGroup
+                flying_groups = (
+                    country.plane_group + country.helicopter_group
+                )  # type: FlyingGroup
                 for flying_group in flying_groups:
                     for plane_unit in flying_group.units:
-                        if plane_unit.skill != Skill.Client and plane_unit.skill != Skill.Player:
+                        if (
+                            plane_unit.skill != Skill.Client
+                            and plane_unit.skill != Skill.Player
+                        ):
                             plane_unit.skill = Skill(skill_level[0])
 
                 for vehicle_group in country.vehicle_group:
@@ -127,7 +135,9 @@ class TriggersGenerator:
                 added = []
                 for ground_object in cp.ground_objects:
                     if ground_object.obj_name not in added:
-                        zone = self.mission.triggers.add_triggerzone(ground_object.position, radius=10, hidden=True, name="MARK")
+                        zone = self.mission.triggers.add_triggerzone(
+                            ground_object.position, radius=10, hidden=True, name="MARK"
+                        )
                         if cp.captured:
                             name = ground_object.obj_name + " [ALLY]"
                         else:
@@ -137,7 +147,9 @@ class TriggersGenerator:
                     added.append(ground_object.obj_name)
             self.mission.triggerrules.triggers.append(mark_trigger)
 
-    def _generate_capture_triggers(self, player_coalition: str, enemy_coalition: str) -> None:
+    def _generate_capture_triggers(
+        self, player_coalition: str, enemy_coalition: str
+    ) -> None:
         """Creates a pair of triggers for each control point of `cls.capture_zone_types`.
         One for the initial capture of a control point, and one if it is recaptured.
         Directly appends to the global `base_capture_events` var declared by `dcs_libaration.lua`
@@ -155,33 +167,41 @@ class TriggersGenerator:
                     defending_coalition = enemy_coalition
                     defend_coalition_int = 1
 
-                trigger_zone = self.mission.triggers.add_triggerzone(cp.position, radius=3000, hidden=False, name="CAPTURE")
+                trigger_zone = self.mission.triggers.add_triggerzone(
+                    cp.position, radius=3000, hidden=False, name="CAPTURE"
+                )
                 flag = self.get_capture_zone_flag()
                 capture_trigger = TriggerCondition(Event.NoEvent, "Capture Trigger")
-                capture_trigger.add_condition(AllOfCoalitionOutsideZone(defending_coalition, trigger_zone.id))
-                capture_trigger.add_condition(PartOfCoalitionInZone(attacking_coalition, trigger_zone.id, unit_type="GROUND"))
+                capture_trigger.add_condition(
+                    AllOfCoalitionOutsideZone(defending_coalition, trigger_zone.id)
+                )
+                capture_trigger.add_condition(
+                    PartOfCoalitionInZone(
+                        attacking_coalition, trigger_zone.id, unit_type="GROUND"
+                    )
+                )
                 capture_trigger.add_condition(FlagIsFalse(flag=flag))
                 script_string = String(
                     f'base_capture_events[#base_capture_events + 1] = "{cp.id}||{attack_coalition_int}||{cp.full_name}"'
                 )
-                capture_trigger.add_action(DoScript(
-                    script_string
-                    )
-                )
+                capture_trigger.add_action(DoScript(script_string))
                 capture_trigger.add_action(SetFlag(flag=flag))
                 self.mission.triggerrules.triggers.append(capture_trigger)
 
                 recapture_trigger = TriggerCondition(Event.NoEvent, "Capture Trigger")
-                recapture_trigger.add_condition(AllOfCoalitionOutsideZone(attacking_coalition, trigger_zone.id))
-                recapture_trigger.add_condition(PartOfCoalitionInZone(defending_coalition, trigger_zone.id, unit_type="GROUND"))
+                recapture_trigger.add_condition(
+                    AllOfCoalitionOutsideZone(attacking_coalition, trigger_zone.id)
+                )
+                recapture_trigger.add_condition(
+                    PartOfCoalitionInZone(
+                        defending_coalition, trigger_zone.id, unit_type="GROUND"
+                    )
+                )
                 recapture_trigger.add_condition(FlagIsTrue(flag=flag))
                 script_string = String(
                     f'base_capture_events[#base_capture_events + 1] = "{cp.id}||{defend_coalition_int}||{cp.full_name}"'
                 )
-                recapture_trigger.add_action(DoScript(
-                    script_string
-                    )
-                )
+                recapture_trigger.add_action(DoScript(script_string))
                 recapture_trigger.add_action(ClearFlag(flag=flag))
                 self.mission.triggerrules.triggers.append(recapture_trigger)
 
@@ -190,10 +210,14 @@ class TriggersGenerator:
         enemy_coalition = "red"
 
         player_cp, enemy_cp = self.game.theater.closest_opposing_control_points()
-        self.mission.coalition["blue"].bullseye = {"x": enemy_cp.position.x,
-                                                   "y": enemy_cp.position.y}
-        self.mission.coalition["red"].bullseye = {"x": player_cp.position.x,
-                                                  "y": player_cp.position.y}
+        self.mission.coalition["blue"].bullseye = {
+            "x": enemy_cp.position.x,
+            "y": enemy_cp.position.y,
+        }
+        self.mission.coalition["red"].bullseye = {
+            "x": player_cp.position.x,
+            "y": player_cp.position.y,
+        }
 
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)

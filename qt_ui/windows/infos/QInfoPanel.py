@@ -5,7 +5,6 @@ from qt_ui.windows.infos.QInfoList import QInfoList
 
 
 class QInfoPanel(QGroupBox):
-
     def __init__(self, game: Game):
         super(QInfoPanel, self).__init__("Info Panel")
         self.informations_list = QInfoList(game)
@@ -24,5 +23,3 @@ class QInfoPanel(QGroupBox):
         layout.setSpacing(0)
         layout.setContentsMargins(0, 20, 0, 0)
         self.setLayout(layout)
-
-

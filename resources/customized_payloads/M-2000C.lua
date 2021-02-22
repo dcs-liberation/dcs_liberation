@@ -24,6 +24,10 @@ local unitPayloads = {
 					["CLSID"] = "{M2KC_RPL_522}",
 					["num"] = 5,
 				},
+				[6] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -51,6 +55,10 @@ local unitPayloads = {
 				[5] = {
 					["CLSID"] = "{M2KC_RPL_522}",
 					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
 				},
 			},
 			["tasks"] = {
@@ -96,6 +104,10 @@ local unitPayloads = {
 					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
 					["num"] = 7,
 				},
+				[10] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -140,6 +152,10 @@ local unitPayloads = {
 					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
 					["num"] = 7,
 				},
+				[10] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -183,6 +199,10 @@ local unitPayloads = {
 				[9] = {
 					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
 					["num"] = 7,
+				},
+				[10] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
 				},
 			},
 			["tasks"] = {

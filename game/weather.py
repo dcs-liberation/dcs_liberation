@@ -58,7 +58,7 @@ class Weather:
             return None
         return Fog(
             visibility=meters(random.randint(2500, 5000)),
-            thickness=random.randint(100, 500)
+            thickness=random.randint(100, 500),
         )
 
     def generate_wind(self) -> WindConditions:
@@ -76,7 +76,7 @@ class Weather:
             # Always some wind to make the smoke move a bit.
             at_0m=Wind(wind_direction, max(1, base_wind * at_0m_factor)),
             at_2000m=Wind(wind_direction, base_wind * at_2000m_factor),
-            at_8000m=Wind(wind_direction, base_wind * at_8000m_factor)
+            at_8000m=Wind(wind_direction, base_wind * at_8000m_factor),
         )
 
     @staticmethod
@@ -105,7 +105,7 @@ class Cloudy(Weather):
             base=self.random_cloud_base(),
             density=random.randint(1, 8),
             thickness=self.random_cloud_thickness(),
-            precipitation=PydcsWeather.Preceptions.None_
+            precipitation=PydcsWeather.Preceptions.None_,
         )
 
     def generate_wind(self) -> WindConditions:
@@ -118,7 +118,7 @@ class Raining(Weather):
             base=self.random_cloud_base(),
             density=random.randint(5, 8),
             thickness=self.random_cloud_thickness(),
-            precipitation=PydcsWeather.Preceptions.Rain
+            precipitation=PydcsWeather.Preceptions.Rain,
         )
 
     def generate_wind(self) -> WindConditions:
@@ -131,7 +131,7 @@ class Thunderstorm(Weather):
             base=self.random_cloud_base(),
             density=random.randint(9, 10),
             thickness=self.random_cloud_thickness(),
-            precipitation=PydcsWeather.Preceptions.Thunderstorm
+            precipitation=PydcsWeather.Preceptions.Thunderstorm,
         )
 
     def generate_wind(self) -> WindConditions:
@@ -145,20 +145,29 @@ class Conditions:
     weather: Weather
 
     @classmethod
-    def generate(cls, theater: ConflictTheater, day: datetime.date,
-                 time_of_day: TimeOfDay, settings: Settings) -> Conditions:
+    def generate(
+        cls,
+        theater: ConflictTheater,
+        day: datetime.date,
+        time_of_day: TimeOfDay,
+        settings: Settings,
+    ) -> Conditions:
         return cls(
             time_of_day=time_of_day,
             start_time=cls.generate_start_time(
                 theater, day, time_of_day, settings.night_disabled
             ),
-            weather=cls.generate_weather()
+            weather=cls.generate_weather(),
         )
 
     @classmethod
-    def generate_start_time(cls, theater: ConflictTheater, day: datetime.date,
-                            time_of_day: TimeOfDay,
-                            night_disabled: bool) -> datetime.datetime:
+    def generate_start_time(
+        cls,
+        theater: ConflictTheater,
+        day: datetime.date,
+        time_of_day: TimeOfDay,
+        night_disabled: bool,
+    ) -> datetime.datetime:
         if night_disabled:
             logging.info("Skip Night mission due to user settings")
             time_range = {
@@ -181,6 +190,7 @@ class Conditions:
             Cloudy: 60,
             ClearSkies: 20,
         }
-        weather_type = random.choices(list(chances.keys()),
-                                      weights=list(chances.values()))[0]
+        weather_type = random.choices(
+            list(chances.keys()), weights=list(chances.values())
+        )[0]
         return weather_type()

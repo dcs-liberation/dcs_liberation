@@ -5,7 +5,6 @@ from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 
 class StrikeTargetInfo:
-
     def __init__(self):
         self.name = ""
         self.location = None
@@ -14,16 +13,13 @@ class StrikeTargetInfo:
 
 
 class QStrikeTargetSelectionComboBox(QFilteredComboBox):
-
     def __init__(self, game: Game, parent=None):
         super(QStrikeTargetSelectionComboBox, self).__init__(parent)
         self.game = game
         self.find_possible_strike_targets()
 
-
         for t in self.targets:
             print(t.name + " - " + str(len(t.units)) + " " + str(len(t.buildings)))
-
 
     def get_selected_target(self) -> StrikeTargetInfo:
         n = self.currentText()
@@ -44,12 +40,14 @@ class QStrikeTargetSelectionComboBox(QFilteredComboBox):
             return i + 1
 
         for cp in self.game.theater.controlpoints:
-            if cp.captured: continue
+            if cp.captured:
+                continue
 
             added_obj_names = []
 
             for g in cp.ground_objects:
-                if g.obj_name in added_obj_names: continue
+                if g.obj_name in added_obj_names:
+                    continue
 
                 target = StrikeTargetInfo()
                 target.location = g
@@ -70,5 +68,3 @@ class QStrikeTargetSelectionComboBox(QFilteredComboBox):
                 added_obj_names.append(g.obj_name)
 
         self.setModel(model)
-
-

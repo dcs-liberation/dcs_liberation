@@ -1,6 +1,6 @@
 import logging
 
-from PySide2.QtWidgets import (QGroupBox, QLabel, QMessageBox, QVBoxLayout)
+from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
 from game import Game
 from gen.flights.flight import Flight
@@ -8,14 +8,11 @@ from gen.flights.flightplan import FlightPlanBuilder, PlanningError
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import PackageModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
-from qt_ui.widgets.combos.QArrivalAirfieldSelector import \
-    QArrivalAirfieldSelector
+from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelector
 
 
 class FlightAirfieldDisplay(QGroupBox):
-
-    def __init__(self, game: Game, package_model: PackageModel,
-                 flight: Flight) -> None:
+    def __init__(self, game: Game, package_model: PackageModel, flight: Flight) -> None:
         super().__init__("Departure/Arrival")
         self.game = game
         self.package_model = package_model
@@ -24,18 +21,25 @@ class FlightAirfieldDisplay(QGroupBox):
         layout = QVBoxLayout()
 
         self.departure_time = QLabel()
-        layout.addLayout(QLabeledWidget(
-            f"Departing from <b>{flight.from_cp.name}</b>",
-            self.departure_time))
+        layout.addLayout(
+            QLabeledWidget(
+                f"Departing from <b>{flight.from_cp.name}</b>", self.departure_time
+            )
+        )
         self.package_model.tot_changed.connect(self.update_departure_time)
         self.update_departure_time()
 
-        layout.addWidget(QLabel("Determined based on the package TOT. Edit the "
-                                "package to adjust the TOT."))
+        layout.addWidget(
+            QLabel(
+                "Determined based on the package TOT. Edit the "
+                "package to adjust the TOT."
+            )
+        )
 
         self.arrival = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
-            flight.unit_type, "Same as departure"
+            flight.unit_type,
+            "Same as departure",
         )
         self.arrival.currentIndexChanged.connect(self.set_arrival)
         if flight.arrival != flight.departure:
@@ -44,7 +48,8 @@ class FlightAirfieldDisplay(QGroupBox):
 
         self.divert = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
-            flight.unit_type, "None"
+            flight.unit_type,
+            "None",
         )
         self.divert.currentIndexChanged.connect(self.set_divert)
         if flight.divert is not None:
@@ -94,6 +99,7 @@ class FlightAirfieldDisplay(QGroupBox):
             )
 
     def update_flight_plan(self) -> None:
-        planner = FlightPlanBuilder(self.game, self.package_model.package,
-                                    is_player=True)
+        planner = FlightPlanBuilder(
+            self.game, self.package_model.package, is_player=True
+        )
         planner.populate_flight_plan(self.flight)

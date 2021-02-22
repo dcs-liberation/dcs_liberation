@@ -46,10 +46,10 @@ class Income:
             for tgo in tgos:
                 if not tgo.is_dead:
                     count += 1
-            self.buildings.append(BuildingIncome(name, category, count,
-                                                 REWARDS[category]))
+            self.buildings.append(
+                BuildingIncome(name, category, count, REWARDS[category])
+            )
 
         self.from_bases = sum(cp.income_per_turn for cp in self.control_points)
         self.total_buildings = sum(b.income for b in self.buildings)
-        self.total = ((self.total_buildings + self.from_bases) *
-                      self.multiplier)
+        self.total = (self.total_buildings + self.from_bases) * self.multiplier

@@ -96,13 +96,14 @@ class StateData:
             # them when they've already dead. Dedup.
             killed_ground_units=list(set(data["killed_ground_units"])),
             destroyed_statics=data["destroyed_objects_positions"],
-            base_capture_events=data["base_capture_events"]
+            base_capture_events=data["base_capture_events"],
         )
 
 
 class Debriefing:
-    def __init__(self, state_data: Dict[str, Any], game: Game,
-                 unit_map: UnitMap) -> None:
+    def __init__(
+        self, state_data: Dict[str, Any], game: Game, unit_map: UnitMap
+    ) -> None:
         self.state_data = StateData.from_json(state_data)
         self.unit_map = unit_map
 
@@ -135,12 +136,9 @@ class Debriefing:
         yield from self.ground_losses.enemy_airfields
 
     def casualty_count(self, control_point: ControlPoint) -> int:
-        return len(
-            [x for x in self.front_line_losses if x.origin == control_point]
-        )
+        return len([x for x in self.front_line_losses if x.origin == control_point])
 
-    def front_line_losses_by_type(
-            self, player: bool) -> Dict[Type[UnitType], int]:
+    def front_line_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
         losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
         if player:
             losses = self.ground_losses.player_front_line
@@ -221,8 +219,10 @@ class Debriefing:
             # deaths, so we expect to see quite a few unclaimed dead ground
             # units. We should start tracking those and covert this to a
             # warning.
-            logging.debug(f"Death of untracked ground unit {unit_name} will "
-                          "have no effect. This may be normal behavior.")
+            logging.debug(
+                f"Death of untracked ground unit {unit_name} will "
+                "have no effect. This may be normal behavior."
+            )
 
         return losses
 
@@ -234,15 +234,16 @@ class Debriefing:
         for idx, base in enumerate(i.split("||")[0] for i in reversed_captures):
             if base not in [x[1] for x in last_base_cap_indexes]:
                 last_base_cap_indexes.append((idx, base))
-        return [reversed_captures[idx[0]] for idx in last_base_cap_indexes]        
+        return [reversed_captures[idx[0]] for idx in last_base_cap_indexes]
 
 
 class PollDebriefingFileThread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
     regularly for the stopped() condition."""
 
-    def __init__(self, callback: Callable[[Debriefing], None],
-                 game: Game, unit_map: UnitMap) -> None:
+    def __init__(
+        self, callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
+    ) -> None:
         super().__init__()
         self._stop_event = threading.Event()
         self.callback = callback
@@ -261,7 +262,10 @@ class PollDebriefingFileThread(threading.Thread):
         else:
             last_modified = 0
         while not self.stopped():
-            if os.path.isfile("state.json") and os.path.getmtime("state.json") > last_modified:
+            if (
+                os.path.isfile("state.json")
+                and os.path.getmtime("state.json") > last_modified
+            ):
                 with open("state.json", "r") as json_file:
                     json_data = json.load(json_file)
                     debriefing = Debriefing(json_data, self.game, self.unit_map)
@@ -270,8 +274,9 @@ class PollDebriefingFileThread(threading.Thread):
             time.sleep(5)
 
 
-def wait_for_debriefing(callback: Callable[[Debriefing], None],
-                        game: Game, unit_map) -> PollDebriefingFileThread:
+def wait_for_debriefing(
+    callback: Callable[[Debriefing], None], game: Game, unit_map
+) -> PollDebriefingFileThread:
     thread = PollDebriefingFileThread(callback, game, unit_map)
     thread.start()
     return thread

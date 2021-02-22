@@ -27,7 +27,8 @@ class LuaPluginManager:
             if not plugin_path.exists():
                 raise RuntimeError(
                     f"Invalid plugin configuration: required plugin {name} "
-                    f"does not exist at {plugin_path}")
+                    f"does not exist at {plugin_path}"
+                )
             logging.info(f"Loading plugin {name} from {plugin_path}")
             plugin = LuaPlugin.from_json(name, plugin_path)
             if plugin is not None:
