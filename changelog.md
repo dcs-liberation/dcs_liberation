@@ -4,6 +4,7 @@
 
 * **[New Game Wizard]** Added the possibility to setup custom start date
 
+
 ## Fixes
 
 * **[Mods]** Updated C-130J mod data to version 6.4
