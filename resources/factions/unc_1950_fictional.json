@@ -1,0 +1,41 @@
+{
+  "country": "USA",
+  "name": "United Nations Command 1950, fictional",
+  "authors": "BenBenBeartrax",
+  "description": "<p>Fictional United Nations Command around 1955 during the Korean War, with some WW2 planes added in place of their post-war counterparts.</p>",
+  "aircrafts": [
+    "F_86F_Sabre",
+    "P_51D",
+    "P_51D_30_NA",
+    "B_17G",
+    "A_20G",
+    "P_47D_40"
+  ],
+  "frontline_units": [
+    "MT_M4_Sherman",
+    "MBT_M60A3_Patton",
+    "APC_M2A1",
+    "LAC_M8_Greyhound",
+    "AAA_Bofors_40mm"
+  ],
+  "artillery_units": [
+    "M12_GMC"
+  ],
+  "logistics_units": [
+    "Transport_M818"
+  ],
+  "infantry_units": [
+    "Infantry_M4"
+  ],
+  "air_defenses": [
+    "AllyWW2FlakGenerator",
+    "BoforsGenerator",
+    "EarlyColdWarFlakGenerator"
+  ],
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2ally",
+  "requirements": {
+      "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  }
+}
