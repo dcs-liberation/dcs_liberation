@@ -1,3 +1,15 @@
+# 2.4.3
+
+## Features/Improvements
+
+* **[New Game Wizard]** Added the possibility to setup custom start date
+
+## Fixes
+
+* **[Mods]** Updated C-130J mod data to version 6.4
+* **[Mods]** Updated F-22A mod to latest version
+* **[Payload]** Mirage-2000C : Added Eclair counter measures pod to all default loadouts
+
 # 2.4.2
 
 ## Features/Improvements
