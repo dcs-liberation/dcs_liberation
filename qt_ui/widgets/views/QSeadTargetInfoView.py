@@ -31,12 +31,3 @@ class QSeadTargetInfoView(QGroupBox):
         for r in self.sead_target_infos.radars:
             radar_list_model.appendRow(QStandardItem(r.type))
         self.radar_list.setModel(radar_list_model)
-
-
-
-
-
-
-
-
-

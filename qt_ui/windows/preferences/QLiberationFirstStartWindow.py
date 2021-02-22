@@ -1,11 +1,17 @@
 from PySide2.QtGui import QIcon, Qt
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QPushButton, QHBoxLayout, QPlainTextEdit, QTextEdit
+from PySide2.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QPushButton,
+    QHBoxLayout,
+    QPlainTextEdit,
+    QTextEdit,
+)
 
 from qt_ui.windows.preferences.QLiberationPreferences import QLiberationPreferences
 
 
 class QLiberationFirstStartWindow(QDialog):
-
     def __init__(self):
         super(QLiberationFirstStartWindow, self).__init__()
 
@@ -59,7 +65,7 @@ class QLiberationFirstStartWindow(QDialog):
         self.warning_text = QTextEdit(WARN_TEXT)
         self.warning_text.setReadOnly(True)
         self.apply_button = QPushButton("I have read everything and I Accept")
-        self.apply_button.clicked.connect(lambda : self.apply())
+        self.apply_button.clicked.connect(lambda: self.apply())
         self.initUI()
 
     def initUI(self):
@@ -77,4 +83,3 @@ class QLiberationFirstStartWindow(QDialog):
         print("Applying changes")
         if self.preferences.apply():
             self.close()
-

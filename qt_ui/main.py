@@ -31,28 +31,36 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.newgame.QCampaignList import Campaign
 from qt_ui.windows.newgame.QNewGameWizard import DEFAULT_BUDGET
-from qt_ui.windows.preferences.QLiberationFirstStartWindow import \
-    QLiberationFirstStartWindow
+from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
+    QLiberationFirstStartWindow,
+)
 
 
 def run_ui(game: Optional[Game] = None) -> None:
-    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1" # Potential fix for 4K screens
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
-    with open("./resources/stylesheets/"+liberation_theme.get_theme_css_file()) as stylesheet:
-        logging.info('Loading stylesheet: %s', liberation_theme.get_theme_css_file())
+    with open(
+        "./resources/stylesheets/" + liberation_theme.get_theme_css_file()
+    ) as stylesheet:
+        logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
 
     # Inject custom payload in pydcs framework
-    custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..\\resources\\customized_payloads")
+    custom_payloads = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "..\\resources\\customized_payloads",
+    )
     if os.path.exists(custom_payloads):
         dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
     else:
         # For release version the path is different.
-        custom_payloads = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                       "resources\\customized_payloads")
+        custom_payloads = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "resources\\customized_payloads",
+        )
         if os.path.exists(custom_payloads):
             dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
 
@@ -62,7 +70,11 @@ def run_ui(game: Optional[Game] = None) -> None:
         window.exec_()
 
     logging.info("Using {} as 'Saved Game Folder'".format(persistency.base_path()))
-    logging.info("Using {} as 'DCS installation folder'".format(liberation_install.get_dcs_install_directory()))
+    logging.info(
+        "Using {} as 'DCS installation folder'".format(
+            liberation_install.get_dcs_install_directory()
+        )
+    )
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -83,7 +95,9 @@ def run_ui(game: Optional[Game] = None) -> None:
     except:
         error_dialog = QtWidgets.QErrorMessage()
         error_dialog.setWindowTitle("Wrong DCS installation directory.")
-        error_dialog.showMessage("Unable to modify Mission Scripting file. Possible issues with rights. Try running as admin, or please perform the modification of the MissionScripting file manually.")
+        error_dialog.showMessage(
+            "Unable to modify Mission Scripting file. Possible issues with rights. Try running as admin, or please perform the modification of the MissionScripting file manually."
+        )
         error_dialog.exec_()
 
     # Apply CSS (need works)
@@ -113,15 +127,15 @@ def parse_args() -> argparse.Namespace:
         return path
 
     parser.add_argument(
-        "--warn-missing-weapon-data", action="store_true",
-        help="Emits a warning for weapons without date or fallback information."
+        "--warn-missing-weapon-data",
+        action="store_true",
+        help="Emits a warning for weapons without date or fallback information.",
     )
 
     new_game = subparsers.add_parser("new-game")
 
     new_game.add_argument(
-        "campaign", type=path_arg,
-        help="Path to the campaign to start."
+        "campaign", type=path_arg, help="Path to the campaign to start."
     )
 
     new_game.add_argument(
@@ -133,34 +147,38 @@ def parse_args() -> argparse.Namespace:
     )
 
     new_game.add_argument(
-        "--supercarrier", action="store_true",
-        help="Use the supercarrier module."
+        "--supercarrier", action="store_true", help="Use the supercarrier module."
     )
 
     new_game.add_argument(
-        "--auto-procurement", action="store_true",
-        help="Automate bluefor procurement."
+        "--auto-procurement", action="store_true", help="Automate bluefor procurement."
     )
 
     new_game.add_argument(
-        "--inverted", action="store_true",
-        help="Invert the campaign."
+        "--inverted", action="store_true", help="Invert the campaign."
     )
 
     return parser.parse_args()
 
 
-def create_game(campaign_path: Path, blue: str, red: str,
-                supercarrier: bool, auto_procurement: bool,
-                inverted: bool) -> Game:
+def create_game(
+    campaign_path: Path,
+    blue: str,
+    red: str,
+    supercarrier: bool,
+    auto_procurement: bool,
+    inverted: bool,
+) -> Game:
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
-        blue, red, campaign.load_theater(),
+        blue,
+        red,
+        campaign.load_theater(),
         Settings(
             supercarrier=supercarrier,
             automate_runway_repair=auto_procurement,
             automate_front_line_reinforcements=auto_procurement,
-            automate_aircraft_reinforcements=auto_procurement
+            automate_aircraft_reinforcements=auto_procurement,
         ),
         GeneratorSettings(
             start_date=datetime.today(),
@@ -171,8 +189,8 @@ def create_game(campaign_path: Path, blue: str, red: str,
             no_carrier=False,
             no_lha=False,
             no_player_navy=False,
-            no_enemy_navy=False
-        )
+            no_enemy_navy=False,
+        ),
     )
     return generator.generate()
 
@@ -201,9 +219,14 @@ def main():
         lint_weapon_data()
 
     if args.subcommand == "new-game":
-        game = create_game(args.campaign, args.blue, args.red,
-                           args.supercarrier, args.auto_procurement,
-                           args.inverted)
+        game = create_game(
+            args.campaign,
+            args.blue,
+            args.red,
+            args.supercarrier,
+            args.auto_procurement,
+            args.inverted,
+        )
 
     run_ui(game)
 

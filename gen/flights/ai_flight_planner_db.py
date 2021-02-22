@@ -13,7 +13,7 @@ from dcs.helicopters import (
     SA342L,
     SA342M,
     UH_1H,
-    SH_60B
+    SH_60B,
 )
 from dcs.planes import (
     AJS37,
@@ -83,7 +83,7 @@ from dcs.planes import (
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
-    I_16
+    I_16,
 )
 from dcs.unittype import FlyingType
 
@@ -367,11 +367,7 @@ TRANSPORT_CAPABLE = [
     UH_1H,
 ]
 
-DRONES = [
-    MQ_9_Reaper,
-    RQ_1A_Predator,
-    WingLoong_I
-]
+DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
 
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:

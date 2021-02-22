@@ -20,15 +20,15 @@ from gen.flights.flightplan import (
     PlanningError,
     StrikeFlightPlan,
 )
-from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import \
-    QFlightWaypointList
-from qt_ui.windows.mission.flight.waypoints \
-    .QPredefinedWaypointSelectionWindow import \
-    QPredefinedWaypointSelectionWindow
+from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import (
+    QFlightWaypointList,
+)
+from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow import (
+    QPredefinedWaypointSelectionWindow,
+)
 
 
 class QFlightWaypointTab(QFrame):
-
     def __init__(self, game: Game, package: Package, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
         self.game = game
@@ -46,8 +46,7 @@ class QFlightWaypointTab(QFrame):
     def init_ui(self):
         layout = QGridLayout()
 
-        self.flight_waypoint_list = QFlightWaypointList(self.package,
-                                                        self.flight)
+        self.flight_waypoint_list = QFlightWaypointList(self.package, self.flight)
         layout.addWidget(self.flight_waypoint_list, 0, 0)
 
         rlayout = QVBoxLayout()
@@ -58,10 +57,13 @@ class QFlightWaypointTab(QFrame):
 
         self.recreate_buttons.clear()
         for task in self.package.target.mission_types(for_player=True):
+
             def make_closure(arg):
                 def closure():
                     return self.confirm_recreate(arg)
+
                 return closure
+
             button = QPushButton(f"Recreate as {task}")
             button.clicked.connect(make_closure(task))
             rlayout.addWidget(button)
@@ -106,7 +108,9 @@ class QFlightWaypointTab(QFrame):
         self.flight.flight_plan.custom_waypoints.remove(waypoint)
 
     def on_fast_waypoint(self):
-        self.subwindow = QPredefinedWaypointSelectionWindow(self.game, self.flight, self.flight_waypoint_list)
+        self.subwindow = QPredefinedWaypointSelectionWindow(
+            self.game, self.flight, self.flight_waypoint_list
+        )
         self.subwindow.waypoints_added.connect(self.on_waypoints_added)
         self.subwindow.show()
 
@@ -120,8 +124,7 @@ class QFlightWaypointTab(QFrame):
         self.on_change()
 
     def on_rtb_waypoint(self):
-        rtb = self.planner.generate_rtb_waypoint(self.flight,
-                                                 self.flight.from_cp)
+        rtb = self.planner.generate_rtb_waypoint(self.flight, self.flight.from_cp)
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
         self.flight.flight_plan.custom_waypoints.append(rtb)
@@ -133,17 +136,19 @@ class QFlightWaypointTab(QFrame):
             self.flight.flight_plan = CustomFlightPlan(
                 package=self.flight.package,
                 flight=self.flight,
-                custom_waypoints=self.flight.flight_plan.waypoints
+                custom_waypoints=self.flight.flight_plan.waypoints,
             )
 
     def confirm_recreate(self, task: FlightType) -> None:
         result = QMessageBox.question(
             self,
             "Regenerate flight?",
-            ("Changing the flight type will reset its flight plan. Do you want "
-             "to continue?"),
+            (
+                "Changing the flight type will reset its flight plan. Do you want "
+                "to continue?"
+            ),
             QMessageBox.No,
-            QMessageBox.Yes
+            QMessageBox.Yes,
         )
         original_task = self.flight.flight_type
         if result == QMessageBox.Yes:

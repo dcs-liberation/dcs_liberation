@@ -20,7 +20,7 @@ def init():
 
     if os.path.isfile(PREFERENCES_FILE_PATH):
         try:
-            with(open(PREFERENCES_FILE_PATH)) as prefs:
+            with (open(PREFERENCES_FILE_PATH)) as prefs:
                 pref_data = json.loads(prefs.read())
                 __dcs_saved_game_directory = pref_data["saved_game_dir"]
                 __dcs_installation_directory = pref_data["dcs_install_dir"]
@@ -37,9 +37,13 @@ def init():
     else:
         __last_save_file = ""
         try:
-            __dcs_saved_game_directory = dcs.installation.get_dcs_saved_games_directory()
+            __dcs_saved_game_directory = (
+                dcs.installation.get_dcs_saved_games_directory()
+            )
             if os.path.exists(__dcs_saved_game_directory + ".openbeta"):
-                __dcs_saved_game_directory = dcs.installation.get_dcs_saved_games_directory() + ".openbeta"
+                __dcs_saved_game_directory = (
+                    dcs.installation.get_dcs_saved_games_directory() + ".openbeta"
+                )
         except:
             __dcs_saved_game_directory = ""
         try:
@@ -69,10 +73,12 @@ def save_config():
     global __dcs_saved_game_directory
     global __dcs_installation_directory
     global __last_save_file
-    pref_data = {"saved_game_dir": __dcs_saved_game_directory,
-                 "dcs_install_dir": __dcs_installation_directory,
-                 "last_save_file": __last_save_file}
-    with(open(PREFERENCES_FILE_PATH, "w")) as prefs:
+    pref_data = {
+        "saved_game_dir": __dcs_saved_game_directory,
+        "dcs_install_dir": __dcs_installation_directory,
+        "last_save_file": __last_save_file,
+    }
+    with (open(PREFERENCES_FILE_PATH, "w")) as prefs:
         prefs.write(json.dumps(pref_data))
 
 
@@ -97,7 +103,9 @@ def get_last_save_file():
 
 def replace_mission_scripting_file():
     install_dir = get_dcs_install_directory()
-    mission_scripting_path = os.path.join(install_dir, "Scripts", "MissionScripting.lua")
+    mission_scripting_path = os.path.join(
+        install_dir, "Scripts", "MissionScripting.lua"
+    )
     liberation_scripting_path = "./resources/scripts/MissionScripting.lua"
     backup_scripting_path = "./resources/scripts/MissionScripting.original.lua"
     if os.path.isfile(mission_scripting_path):
@@ -116,9 +124,10 @@ def replace_mission_scripting_file():
 
 def restore_original_mission_scripting():
     install_dir = get_dcs_install_directory()
-    mission_scripting_path = os.path.join(install_dir, "Scripts", "MissionScripting.lua")
+    mission_scripting_path = os.path.join(
+        install_dir, "Scripts", "MissionScripting.lua"
+    )
     backup_scripting_path = "./resources/scripts/MissionScripting.original.lua"
 
     if os.path.isfile(backup_scripting_path) and os.path.isfile(mission_scripting_path):
         copyfile(backup_scripting_path, mission_scripting_path)
-

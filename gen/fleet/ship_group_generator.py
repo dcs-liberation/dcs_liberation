@@ -4,10 +4,18 @@ import random
 from game import db
 from gen.fleet.carrier_group import CarrierGroupGenerator
 from gen.fleet.cn_dd_group import ChineseNavyGroupGenerator, Type54GroupGenerator
-from gen.fleet.dd_group import ArleighBurkeGroupGenerator, OliverHazardPerryGroupGenerator
+from gen.fleet.dd_group import (
+    ArleighBurkeGroupGenerator,
+    OliverHazardPerryGroupGenerator,
+)
 from gen.fleet.lha_group import LHAGroupGenerator
-from gen.fleet.ru_dd_group import RussianNavyGroupGenerator, GrishaGroupGenerator, MolniyaGroupGenerator, \
-    KiloSubGroupGenerator, TangoSubGroupGenerator
+from gen.fleet.ru_dd_group import (
+    RussianNavyGroupGenerator,
+    GrishaGroupGenerator,
+    MolniyaGroupGenerator,
+    KiloSubGroupGenerator,
+    TangoSubGroupGenerator,
+)
 from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
@@ -25,7 +33,7 @@ SHIP_MAP = {
     "MolniyaGroupGenerator": MolniyaGroupGenerator,
     "KiloSubGroupGenerator": KiloSubGroupGenerator,
     "TangoSubGroupGenerator": TangoSubGroupGenerator,
-    "Type54GroupGenerator": Type54GroupGenerator
+    "Type54GroupGenerator": Type54GroupGenerator,
 }
 
 
@@ -42,7 +50,11 @@ def generate_ship_group(game, ground_object, faction_name: str):
             generator.generate()
             return generator.get_generated_group()
         else:
-            logging.info("Unable to generate ship group, generator : " + str(gen) + "does not exists")
+            logging.info(
+                "Unable to generate ship group, generator : "
+                + str(gen)
+                + "does not exists"
+            )
     return None
 
 

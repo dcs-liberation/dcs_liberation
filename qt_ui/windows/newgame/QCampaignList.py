@@ -19,6 +19,7 @@ PERF_MEDIUM = 1
 PERF_HARD = 2
 PERF_NASA = 3
 
+
 @dataclass(frozen=True)
 class Campaign:
     name: str
@@ -46,7 +47,7 @@ class Campaign:
             data.get("recommended_enemy_faction", "Russia 1990"),
             data.get("performance", 0),
             data,
-            path
+            path,
         )
 
     def load_theater(self) -> ConflictTheater:
@@ -68,7 +69,6 @@ def load_campaigns() -> List[Campaign]:
 
 
 class QCampaignItem(QStandardItem):
-
     def __init__(self, campaign: Campaign) -> None:
         super(QCampaignItem, self).__init__()
         self.setIcon(QtGui.QIcon(CONST.ICONS[campaign.icon_name]))
@@ -77,7 +77,6 @@ class QCampaignItem(QStandardItem):
 
 
 class QCampaignList(QListView):
-
     def __init__(self, campaigns: List[Campaign]) -> None:
         super(QCampaignList, self).__init__()
         self.model = QStandardItemModel(self)

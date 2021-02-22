@@ -4,10 +4,7 @@ from game import db
 from gen.missiles.scud_site import ScudGenerator
 from gen.missiles.v1_group import V1GroupGenerator
 
-MISSILES_MAP = {
-    "V1GroupGenerator": V1GroupGenerator,
-    "ScudGenerator": ScudGenerator
-}
+MISSILES_MAP = {"V1GroupGenerator": V1GroupGenerator, "ScudGenerator": ScudGenerator}
 
 
 def generate_missile_group(game, ground_object, faction_name: str):
@@ -25,5 +22,9 @@ def generate_missile_group(game, ground_object, faction_name: str):
                 generator.generate()
                 return generator.get_generated_group()
             else:
-                logging.info("Unable to generate missile group, generator : " + str(gen) + "does not exists")
+                logging.info(
+                    "Unable to generate missile group, generator : "
+                    + str(gen)
+                    + "does not exists"
+                )
     return None

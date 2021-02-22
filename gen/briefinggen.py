@@ -23,9 +23,11 @@ from .runways import RunwayData
 if TYPE_CHECKING:
     from game import Game
 
+
 @dataclass
 class CommInfo:
     """Communications information for the kneeboard."""
+
     name: str
     freq: RadioFrequency
 
@@ -37,9 +39,12 @@ class FrontLineInfo:
         self.enemy_base: ControlPoint = front_line.control_point_b
         self.player_zero: bool = self.player_base.base.total_armor == 0
         self.enemy_zero: bool = self.enemy_base.base.total_armor == 0
-        self.advantage: bool = self.player_base.base.total_armor > self.enemy_base.base.total_armor
+        self.advantage: bool = (
+            self.player_base.base.total_armor > self.enemy_base.base.total_armor
+        )
         self.stance: CombatStance = self.player_base.stances[self.enemy_base.id]
         self.combat_stances = CombatStance
+
 
 class MissionInfoGenerator:
     """Base type for generators of mission information for the player.
@@ -131,7 +136,6 @@ def format_waypoint_time(waypoint: FlightWaypoint, depart_prefix: str) -> str:
 
 
 class BriefingGenerator(MissionInfoGenerator):
-
     def __init__(self, mission: Mission, game: Game):
         super().__init__(mission, game)
         self.allied_flights_by_departure: Dict[str, List[FlightData]] = {}
@@ -141,36 +145,36 @@ class BriefingGenerator(MissionInfoGenerator):
                 disabled_extensions=("",),
                 default_for_string=True,
                 default=True,
-                ),
+            ),
             trim_blocks=True,
             lstrip_blocks=True,
-            )
+        )
         env.filters["waypoint_timing"] = format_waypoint_time
         self.template = env.get_template("briefingtemplate_EN.j2")
 
     def generate(self) -> None:
-        """Generate the mission briefing
-        """
+        """Generate the mission briefing"""
         self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
         self.mission.set_description_text(self.template.render(vars(self)))
-        self.mission.add_picture_blue(os.path.abspath(
-            "./resources/ui/splash_screen.png"))
+        self.mission.add_picture_blue(
+            os.path.abspath("./resources/ui/splash_screen.png")
+        )
 
     def _generate_frontline_info(self) -> None:
-        """Build FrontLineInfo objects from FrontLine type and append to briefing.
-        """
+        """Build FrontLineInfo objects from FrontLine type and append to briefing."""
         for front_line in self.game.theater.conflicts(from_player=True):
             self.add_frontline(FrontLineInfo(front_line))
 
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
-        """Create iterable to display allied flights grouped by departure airfield.
-        """
+        """Create iterable to display allied flights grouped by departure airfield."""
         for flight in self.flights:
             if not flight.client_units and flight.friendly:
                 name = flight.departure.airfield_name
-                if name in self.allied_flights_by_departure:  # where else can we get this?
+                if (
+                    name in self.allied_flights_by_departure
+                ):  # where else can we get this?
                     self.allied_flights_by_departure[name].append(flight)
                 else:
                     self.allied_flights_by_departure[name] = [flight]

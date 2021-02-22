@@ -15,8 +15,7 @@ from game.theater import ControlPoint
 
 
 class QIntelInfo(QFrame):
-
-    def __init__(self, cp:ControlPoint, game:Game):
+    def __init__(self, cp: ControlPoint, game: Game):
         super(QIntelInfo, self).__init__()
         self.cp = cp
         self.game = game
@@ -26,8 +25,6 @@ class QIntelInfo(QFrame):
         layout = QVBoxLayout()
         scroll_content = QWidget()
         intelLayout = QVBoxLayout()
-
-
 
         units = {
             CAP: db.find_unittype(CAP, self.game.enemy_name),
@@ -50,7 +47,17 @@ class QIntelInfo(QFrame):
                     existing_units = self.cp.base.total_units_of_type(unit_type)
                     if existing_units == 0:
                         continue
-                    groupLayout.addWidget(QLabel("<b>" + db.unit_get_expanded_info(self.game.enemy_country, unit_type, 'name') + "</b>"), row, 0)
+                    groupLayout.addWidget(
+                        QLabel(
+                            "<b>"
+                            + db.unit_get_expanded_info(
+                                self.game.enemy_country, unit_type, "name"
+                            )
+                            + "</b>"
+                        ),
+                        row,
+                        0,
+                    )
                     groupLayout.addWidget(QLabel(str(existing_units)), row, 1)
                     row += 1
 
@@ -64,5 +71,5 @@ class QIntelInfo(QFrame):
         scroll.setWidget(scroll_content)
 
         layout.addWidget(scroll)
-        
+
         self.setLayout(layout)

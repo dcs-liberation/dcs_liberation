@@ -23,7 +23,6 @@ if TYPE_CHECKING:
 
 
 class GroundSpeed:
-
     @classmethod
     def for_flight(cls, flight: Flight, altitude: Distance) -> Speed:
         if not issubclass(flight.unit_type, FlyingType):
@@ -55,13 +54,11 @@ class TravelTime:
     def between_points(a: Point, b: Point, speed: Speed) -> timedelta:
         error_factor = 1.1
         distance = meters(a.distance_to_point(b))
-        return timedelta(
-            hours=distance.nautical_miles / speed.knots * error_factor)
+        return timedelta(hours=distance.nautical_miles / speed.knots * error_factor)
 
 
 # TODO: Most if not all of this should move into FlightPlan.
 class TotEstimator:
-
     def __init__(self, package: Package) -> None:
         self.package = package
 
@@ -75,9 +72,9 @@ class TotEstimator:
         return startup_time
 
     def earliest_tot(self) -> timedelta:
-        earliest_tot = max((
-            self.earliest_tot_for_flight(f) for f in self.package.flights
-        ))
+        earliest_tot = max(
+            (self.earliest_tot_for_flight(f) for f in self.package.flights)
+        )
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we

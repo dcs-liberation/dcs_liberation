@@ -39,22 +39,22 @@ class FlightType(Enum):
 
 
 class FlightWaypointType(Enum):
-    TAKEOFF = 0             # Take off point
-    ASCEND_POINT = 1        # Ascension point after take off
-    PATROL = 2              # Patrol point
-    PATROL_TRACK = 3        # Patrol race track
-    NAV = 4                 # Nav point
-    INGRESS_STRIKE = 5      # Ingress strike (For generator, means that this should have bombing on next TARGET_POINT points)
-    INGRESS_SEAD = 6        # Ingress sead (For generator, means that this should attack groups on TARGET_GROUP_LOC points)
-    INGRESS_CAS = 7         # Ingress cas (should start CAS task)
-    CAS = 8                 # Should do CAS there
-    EGRESS = 9              # Should stop attack
-    DESCENT_POINT = 10       # Should start descending to pattern alt
-    LANDING_POINT = 11      # Should land there
-    TARGET_POINT = 12       # A target building or static object, position
-    TARGET_GROUP_LOC = 13   # A target group approximate location
-    TARGET_SHIP = 14        # A target ship known location
-    CUSTOM = 15             # User waypoint (no specific behaviour)
+    TAKEOFF = 0  # Take off point
+    ASCEND_POINT = 1  # Ascension point after take off
+    PATROL = 2  # Patrol point
+    PATROL_TRACK = 3  # Patrol race track
+    NAV = 4  # Nav point
+    INGRESS_STRIKE = 5  # Ingress strike (For generator, means that this should have bombing on next TARGET_POINT points)
+    INGRESS_SEAD = 6  # Ingress sead (For generator, means that this should attack groups on TARGET_GROUP_LOC points)
+    INGRESS_CAS = 7  # Ingress cas (should start CAS task)
+    CAS = 8  # Should do CAS there
+    EGRESS = 9  # Should stop attack
+    DESCENT_POINT = 10  # Should start descending to pattern alt
+    LANDING_POINT = 11  # Should land there
+    TARGET_POINT = 12  # A target building or static object, position
+    TARGET_GROUP_LOC = 13  # A target group approximate location
+    TARGET_SHIP = 14  # A target ship known location
+    CUSTOM = 15  # User waypoint (no specific behaviour)
     JOIN = 16
     SPLIT = 17
     LOITER = 18
@@ -68,9 +68,13 @@ class FlightWaypointType(Enum):
 
 
 class FlightWaypoint:
-
-    def __init__(self, waypoint_type: FlightWaypointType, x: float, y: float,
-                 alt: Distance = meters(0)) -> None:
+    def __init__(
+        self,
+        waypoint_type: FlightWaypointType,
+        x: float,
+        y: float,
+        alt: Distance = meters(0),
+    ) -> None:
         """Creates a flight waypoint.
 
         Args:
@@ -108,10 +112,13 @@ class FlightWaypoint:
         return Point(self.x, self.y)
 
     @classmethod
-    def from_pydcs(cls, point: MovingPoint,
-                   from_cp: ControlPoint) -> "FlightWaypoint":
-        waypoint = FlightWaypoint(FlightWaypointType.NAV, point.position.x,
-                                  point.position.y, meters(point.alt))
+    def from_pydcs(cls, point: MovingPoint, from_cp: ControlPoint) -> "FlightWaypoint":
+        waypoint = FlightWaypoint(
+            FlightWaypointType.NAV,
+            point.position.x,
+            point.position.y,
+            meters(point.alt),
+        )
         waypoint.alt_type = point.alt_type
         # Other actions exist... but none of them *should* be the first
         # waypoint for a flight.
@@ -135,12 +142,19 @@ class FlightWaypoint:
 
 
 class Flight:
-
-    def __init__(self, package: Package, country: str, unit_type: Type[FlyingType],
-                 count: int, flight_type: FlightType, start_type: str,
-                 departure: ControlPoint, arrival: ControlPoint,
-                 divert: Optional[ControlPoint],
-                 custom_name: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        package: Package,
+        country: str,
+        unit_type: Type[FlyingType],
+        count: int,
+        flight_type: FlightType,
+        start_type: str,
+        departure: ControlPoint,
+        arrival: ControlPoint,
+        divert: Optional[ControlPoint],
+        custom_name: Optional[str] = None,
+    ) -> None:
         self.package = package
         self.country = country
         self.unit_type = unit_type
@@ -161,10 +175,9 @@ class Flight:
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
         # empty flight plan.
         from gen.flights.flightplan import CustomFlightPlan
+
         self.flight_plan: FlightPlan = CustomFlightPlan(
-            package=package,
-            flight=self,
-            custom_waypoints=[]
+            package=package, flight=self, custom_waypoints=[]
         )
 
     @property
@@ -182,7 +195,7 @@ class Flight:
         return f"[{self.flight_type}] {self.count} x {name}"
 
     def __str__(self):
-        name = db.unit_get_expanded_info(self.country, self.unit_type, 'name')
+        name = db.unit_get_expanded_info(self.country, self.unit_type, "name")
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {name}"
         return f"[{self.flight_type}] {self.count} x {name}"

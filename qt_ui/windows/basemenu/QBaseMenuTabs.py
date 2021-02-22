@@ -9,7 +9,6 @@ from qt_ui.windows.basemenu.intel.QIntelInfo import QIntelInfo
 
 
 class QBaseMenuTabs(QTabWidget):
-
     def __init__(self, cp: ControlPoint, game_model: GameModel):
         super(QBaseMenuTabs, self).__init__()
 

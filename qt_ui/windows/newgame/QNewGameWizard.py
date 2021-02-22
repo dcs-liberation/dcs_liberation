@@ -47,8 +47,10 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(DifficultyAndAutomationOptions())
         self.addPage(ConclusionPage())
 
-        self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/watermark1.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.WatermarkPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/watermark1.png"),
+        )
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
 
         self.setWindowTitle("New Game")
@@ -63,21 +65,19 @@ class NewGameWizard(QtWidgets.QWizard):
             campaign = self.campaigns[0]
 
         settings = Settings(
-            player_income_multiplier=self.field(
-                "player_income_multiplier") / 10,
+            player_income_multiplier=self.field("player_income_multiplier") / 10,
             enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
             automate_runway_repair=self.field("automate_runway_repairs"),
             automate_front_line_reinforcements=self.field(
                 "automate_front_line_purchases"
             ),
-            automate_aircraft_reinforcements=self.field(
-                "automate_aircraft_purchases"
-            ),
-            supercarrier=self.field("supercarrier")
+            automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
+            supercarrier=self.field("supercarrier"),
         )
         generator_settings = GeneratorSettings(
             start_date=db.TIME_PERIODS[
-                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]],
+                list(db.TIME_PERIODS.keys())[self.field("timePeriod")]
+            ],
             player_budget=int(self.field("starting_money")),
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
@@ -87,7 +87,7 @@ class NewGameWizard(QtWidgets.QWizard):
             no_carrier=self.field("no_carrier"),
             no_lha=self.field("no_lha"),
             no_player_navy=self.field("no_player_navy"),
-            no_enemy_navy=self.field("no_enemy_navy")
+            no_enemy_navy=self.field("no_enemy_navy"),
         )
 
         blue_faction = [c for c in db.FACTIONS][self.field("blueFaction")]
@@ -97,7 +97,7 @@ class NewGameWizard(QtWidgets.QWizard):
             red_faction,
             campaign.load_theater(),
             settings,
-            generator_settings
+            generator_settings,
         )
         self.generatedGame = generator.generate()
 
@@ -109,11 +109,15 @@ class IntroPage(QtWidgets.QWizardPage):
         super(IntroPage, self).__init__(parent)
 
         self.setTitle("Introduction")
-        self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/watermark1.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.WatermarkPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/watermark1.png"),
+        )
 
-        label = QtWidgets.QLabel("This wizard will help you setup a new game.\n\n"
-                                 "Please make sure you saved and backed up your previous game before going through.")
+        label = QtWidgets.QLabel(
+            "This wizard will help you setup a new game.\n\n"
+            "Please make sure you saved and backed up your previous game before going through."
+        )
         label.setWordWrap(True)
 
         layout = QtWidgets.QVBoxLayout()
@@ -126,9 +130,13 @@ class FactionSelection(QtWidgets.QWizardPage):
         super(FactionSelection, self).__init__(parent)
 
         self.setTitle("Faction selection")
-        self.setSubTitle("\nChoose the two opposing factions and select the player side.")
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
-                       QtGui.QPixmap('./resources/ui/misc/generator.png'))
+        self.setSubTitle(
+            "\nChoose the two opposing factions and select the player side."
+        )
+        self.setPixmap(
+            QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap("./resources/ui/misc/generator.png"),
+        )
 
         self.setMinimumHeight(250)
 
@@ -178,19 +186,21 @@ class FactionSelection(QtWidgets.QWizardPage):
         # Create required mod layout
         self.requiredModsGroup = QtWidgets.QGroupBox("Required Mods")
         self.requiredModsGroupLayout = QtWidgets.QHBoxLayout()
-        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")        
+        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")
         self.requiredMods.setOpenExternalLinks(True)
         self.requiredModsGroupLayout.addWidget(self.requiredMods)
         self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
 
         # Docs Link
-        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Factions\"><span style=\"color:#FFFFFF;\">How to create your own faction</span></a>")
+        docsText = QtWidgets.QLabel(
+            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Custom-Factions"><span style="color:#FFFFFF;">How to create your own faction</span></a>'
+        )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
 
         # Link form fields
-        self.registerField('blueFaction', self.blueFactionSelect)
-        self.registerField('redFaction', self.redFactionSelect)
+        self.registerField("blueFaction", self.blueFactionSelect)
+        self.registerField("redFaction", self.redFactionSelect)
 
         # Build layout
         layout = QtWidgets.QVBoxLayout()
@@ -203,8 +213,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.blueFactionSelect.activated.connect(self.updateUnitRecap)
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
 
-
-    def setDefaultFactions(self, campaign:Campaign):
+    def setDefaultFactions(self, campaign: Campaign):
         """ Set default faction for selected campaign """
 
         self.blueFactionSelect.clear()
@@ -242,16 +251,30 @@ class FactionSelection(QtWidgets.QWizardPage):
             has_mod = True
             for mod in red_faction.requirements.keys():
                 self.requiredMods.setText(
-                    self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + red_faction.requirements[mod] + "\">" +
-                    red_faction.requirements[mod] + "</a></li>")
+                    self.requiredMods.text()
+                    + "\n<li>"
+                    + mod
+                    + ': <a href="'
+                    + red_faction.requirements[mod]
+                    + '">'
+                    + red_faction.requirements[mod]
+                    + "</a></li>"
+                )
 
         if len(blue_faction.requirements.keys()) > 0:
             has_mod = True
             for mod in blue_faction.requirements.keys():
                 if mod not in red_faction.requirements.keys():
                     self.requiredMods.setText(
-                        self.requiredMods.text() + "\n<li>" + mod + ": <a href=\"" + blue_faction.requirements[
-                            mod] + "\">" + blue_faction.requirements[mod] + "</a></li>")
+                        self.requiredMods.text()
+                        + "\n<li>"
+                        + mod
+                        + ': <a href="'
+                        + blue_faction.requirements[mod]
+                        + '">'
+                        + blue_faction.requirements[mod]
+                        + "</a></li>"
+                    )
 
         if has_mod:
             self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")
@@ -260,18 +283,27 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
-    def __init__(self, campaigns: List[Campaign], faction_selection: FactionSelection, parent=None) -> None:
+    def __init__(
+        self,
+        campaigns: List[Campaign],
+        faction_selection: FactionSelection,
+        parent=None,
+    ) -> None:
         super().__init__(parent)
 
         self.faction_selection = faction_selection
 
         self.setTitle("Theater configuration")
         self.setSubTitle("\nChoose a terrain and time period for this game.")
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/logo1.png"),
+        )
 
-        self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/watermark3.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.WatermarkPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/watermark3.png"),
+        )
 
         # List of campaigns
         campaignList = QCampaignList(campaigns)
@@ -288,22 +320,28 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         def on_campaign_selected():
             template = jinja_env.get_template("campaigntemplate_EN.j2")
-            template_perf = jinja_env.get_template("campaign_performance_template_EN.j2")
+            template_perf = jinja_env.get_template(
+                "campaign_performance_template_EN.j2"
+            )
             index = campaignList.selectionModel().currentIndex().row()
             campaign = campaignList.campaigns[index]
             self.setField("selectedCampaign", campaign)
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
             self.faction_selection.setDefaultFactions(campaign)
-            self.performanceText.setText(template_perf.render({"performance": campaign.performance}))
+            self.performanceText.setText(
+                template_perf.render({"performance": campaign.performance})
+            )
 
-        campaignList.selectionModel().setCurrentIndex(campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows)
+        campaignList.selectionModel().setCurrentIndex(
+            campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
+        )
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
         invertMap = QtWidgets.QCheckBox()
-        self.registerField('invertMap', invertMap)
+        self.registerField("invertMap", invertMap)
         mapSettingsLayout = QtWidgets.QGridLayout()
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
@@ -319,12 +357,14 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         timePeriodSelect.setCurrentIndex(21)
 
         # Docs Link
-        docsText = QtWidgets.QLabel("<a href=\"https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns\"><span style=\"color:#FFFFFF;\">How to create your own theater</span></a>")
+        docsText = QtWidgets.QLabel(
+            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns"><span style="color:#FFFFFF;">How to create your own theater</span></a>'
+        )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
 
         # Register fields
-        self.registerField('timePeriod', timePeriodSelect)
+        self.registerField("timePeriod", timePeriodSelect)
 
         timeGroupLayout = QtWidgets.QGridLayout()
         timeGroupLayout.addWidget(timePeriod, 0, 0)
@@ -343,9 +383,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
 
 class CurrencySpinner(QtWidgets.QSpinBox):
-    def __init__(self, minimum: Optional[int] = None,
-                 maximum: Optional[int] = None,
-                 initial: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        minimum: Optional[int] = None,
+        maximum: Optional[int] = None,
+        initial: Optional[int] = None,
+    ) -> None:
         super().__init__()
 
         if minimum is not None:
@@ -385,10 +428,13 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         super().__init__(parent)
 
         self.setTitle("Difficulty and automation options")
-        self.setSubTitle("\nOptions controlling game difficulty and level of "
-                         "player involvement.")
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
+        self.setSubTitle(
+            "\nOptions controlling game difficulty and level of " "player involvement."
+        )
+        self.setPixmap(
+            QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/logo1.png"),
+        )
 
         layout = QtWidgets.QVBoxLayout()
 
@@ -406,7 +452,7 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_layout.addLayout(enemy_income)
 
         player_budget = BudgetInputs("Player starting budget")
-        self.registerField('starting_money', player_budget.starting_money)
+        self.registerField("starting_money", player_budget.starting_money)
         economy_layout.addLayout(player_budget)
 
         enemy_budget = BudgetInputs("Enemy starting budget")
@@ -418,20 +464,17 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         assist_layout = QtWidgets.QGridLayout()
         assist_group.setLayout(assist_layout)
 
-        assist_layout.addWidget(
-            QtWidgets.QLabel("Automate runway repairs"), 0, 0)
+        assist_layout.addWidget(QtWidgets.QLabel("Automate runway repairs"), 0, 0)
         runway_repairs = QtWidgets.QCheckBox()
         self.registerField("automate_runway_repairs", runway_repairs)
         assist_layout.addWidget(runway_repairs, 0, 1, Qt.AlignRight)
 
-        assist_layout.addWidget(
-            QtWidgets.QLabel("Automate front-line purchases"), 1, 0)
+        assist_layout.addWidget(QtWidgets.QLabel("Automate front-line purchases"), 1, 0)
         front_line = QtWidgets.QCheckBox()
         self.registerField("automate_front_line_purchases", front_line)
         assist_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
 
-        assist_layout.addWidget(
-            QtWidgets.QLabel("Automate aircraft purchases"), 2, 0)
+        assist_layout.addWidget(QtWidgets.QLabel("Automate aircraft purchases"), 2, 0)
         aircraft = QtWidgets.QCheckBox()
         self.registerField("automate_aircraft_purchases", aircraft)
         assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
@@ -444,21 +487,23 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         super().__init__(parent)
         self.setTitle("Generator settings")
         self.setSubTitle("\nOptions affecting the generation of the game.")
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/logo1.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/logo1.png"),
+        )
 
         # Campaign settings
         generatorSettingsGroup = QtWidgets.QGroupBox("Generator Settings")
         no_carrier = QtWidgets.QCheckBox()
-        self.registerField('no_carrier', no_carrier)
+        self.registerField("no_carrier", no_carrier)
         no_lha = QtWidgets.QCheckBox()
-        self.registerField('no_lha', no_lha)
+        self.registerField("no_lha", no_lha)
         supercarrier = QtWidgets.QCheckBox()
-        self.registerField('supercarrier', supercarrier)
+        self.registerField("supercarrier", supercarrier)
         no_player_navy = QtWidgets.QCheckBox()
-        self.registerField('no_player_navy', no_player_navy)
+        self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
-        self.registerField('no_enemy_navy', no_enemy_navy)
+        self.registerField("no_enemy_navy", no_enemy_navy)
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -484,10 +529,14 @@ class ConclusionPage(QtWidgets.QWizardPage):
 
         self.setTitle("Conclusion")
         self.setSubTitle("\n\n")
-        self.setPixmap(QtWidgets.QWizard.WatermarkPixmap,
-                       QtGui.QPixmap('./resources/ui/wizard/watermark2.png'))
+        self.setPixmap(
+            QtWidgets.QWizard.WatermarkPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/watermark2.png"),
+        )
 
-        self.label = QtWidgets.QLabel("Click 'Finish' to generate and start the new game.")
+        self.label = QtWidgets.QLabel(
+            "Click 'Finish' to generate and start the new game."
+        )
         self.label.setWordWrap(True)
 
         layout = QtWidgets.QVBoxLayout()

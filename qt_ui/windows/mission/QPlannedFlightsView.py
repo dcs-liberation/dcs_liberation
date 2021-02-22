@@ -8,7 +8,6 @@ from game.theater.controlpoint import ControlPoint
 
 
 class QPlannedFlightsView(QListView):
-
     def __init__(self, game_model: GameModel, cp: ControlPoint) -> None:
         super(QPlannedFlightsView, self).__init__()
         self.game_model = game_model

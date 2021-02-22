@@ -16,10 +16,10 @@ class QFactionsInfos(QGroupBox):
 
         self.layout = QGridLayout()
         self.layout.setSpacing(0)
-        self.layout.addWidget(QLabel("<b>Player : </b>"),0,0)
-        self.layout.addWidget(self.player_name,0,1)
-        self.layout.addWidget(QLabel("<b>Enemy : </b>"),1,0)
-        self.layout.addWidget(self.enemy_name,1,1)
+        self.layout.addWidget(QLabel("<b>Player : </b>"), 0, 0)
+        self.layout.addWidget(self.player_name, 0, 1)
+        self.layout.addWidget(QLabel("<b>Enemy : </b>"), 1, 0)
+        self.layout.addWidget(self.enemy_name, 1, 1)
         self.setLayout(self.layout)
 
     def setGame(self, game: Game):
@@ -29,4 +29,3 @@ class QFactionsInfos(QGroupBox):
         else:
             self.player_name.setText("")
             self.enemy_name.setText("")
-

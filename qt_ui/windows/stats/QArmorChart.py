@@ -6,7 +6,6 @@ from game import Game
 
 
 class QArmorChart(QFrame):
-
     def __init__(self, game: Game):
         super(QArmorChart, self).__init__()
         self.game = game
@@ -19,8 +18,12 @@ class QArmorChart(QFrame):
 
     def generateUnitCharts(self):
 
-        self.alliedArmor = [d.allied_units.vehicles_count for d in self.game.game_stats.data_per_turn]
-        self.enemyArmor = [d.enemy_units.vehicles_count for d in self.game.game_stats.data_per_turn]
+        self.alliedArmor = [
+            d.allied_units.vehicles_count for d in self.game.game_stats.data_per_turn
+        ]
+        self.enemyArmor = [
+            d.enemy_units.vehicles_count for d in self.game.game_stats.data_per_turn
+        ]
 
         self.alliedArmorSerie = QtCharts.QLineSeries()
         self.alliedArmorSerie.setName("Allied vehicle count")
@@ -40,7 +43,9 @@ class QArmorChart(QFrame):
 
         self.chart.createDefaultAxes()
         self.chart.axisX().setRange(0, len(self.alliedArmor))
-        self.chart.axisY().setRange(0, max(max(self.alliedArmor), max(self.enemyArmor)) + 10)
+        self.chart.axisY().setRange(
+            0, max(max(self.alliedArmor), max(self.enemyArmor)) + 10
+        )
 
         self.chartView = QtCharts.QChartView(self.chart)
         self.chartView.setRenderHint(QPainter.Antialiasing)
