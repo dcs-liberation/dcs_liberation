@@ -68,6 +68,7 @@ from dcs.task import (
     Task,
     WeaponType,
     AWACSTaskAction,
+    SetFrequencyCommand,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -1180,6 +1181,7 @@ class AircraftConflictGenerator:
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
         do_aewc: Optional[bool] = None,
+        freq: Optional[RadioFrequency] = None,
     ) -> None:
         group.points[0].tasks.clear()
         if react_on_threat is not None:
@@ -1192,6 +1194,8 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
         if do_aewc is not None:
             group.points[0].tasks.append(AWACSTaskAction())
+        if freq is not None:
+            group.points[0].tasks.append(SetFrequencyCommand(freq.mhz))
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         # Do not restrict afterburner.
@@ -1361,12 +1365,16 @@ class AircraftConflictGenerator:
     ) -> None:
         group.task = AWACS.name
         self._setup_group(group, AWACS, package, flight, dynamic_runways)
+
+        freq = self.radio_registry.alloc_uhf()
+
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
             restrict_jettison=True,
             do_aewc=True,
+            freq=freq
         )
 
     def configure_escort(
