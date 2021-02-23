@@ -67,6 +67,7 @@ from dcs.task import (
     Targets,
     Task,
     WeaponType,
+    AWACSTaskAction,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -1178,6 +1179,7 @@ class AircraftConflictGenerator:
         roe: Optional[OptROE.Values] = None,
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
+        do_aewc: Optional[bool] = None,
     ) -> None:
         group.points[0].tasks.clear()
         if react_on_threat is not None:
@@ -1188,6 +1190,8 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(restrict_jettison))
         if rtb_winchester is not None:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
+        if do_aewc is not None:
+            group.points[0].tasks.append(AWACSTaskAction())
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         # Do not restrict afterburner.
@@ -1362,6 +1366,7 @@ class AircraftConflictGenerator:
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
             restrict_jettison=True,
+            do_aewc=True,
         )
 
     def configure_escort(
