@@ -40,6 +40,7 @@ from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType
 from .radios import RadioFrequency
 from .runways import RunwayData
+from .aircraft import AewcInfo
 
 if TYPE_CHECKING:
     from game import Game
@@ -237,6 +238,7 @@ class BriefingPage(KneeboardPage):
         tankers: List[TankerInfo],
         jtacs: List[JtacInfo],
         start_time: datetime.datetime,
+        aewc: List[AewcInfo],
     ) -> None:
         self.flight = flight
         self.comms = list(comms)
@@ -245,6 +247,7 @@ class BriefingPage(KneeboardPage):
         self.jtacs = jtacs
         self.start_time = start_time
         self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
+        self.aewc = aewc
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter()
@@ -283,6 +286,21 @@ class BriefingPage(KneeboardPage):
                 ]
             ],
             ["Bingo", "Joker"],
+        )
+
+        # AEW&C
+        writer.heading("AEW&C")
+        aewc_ladder = []
+        for single_aewc in self.aewc:
+            dep = self._format_time(single_aewc.depature_time)
+            arr = self._format_time(single_aewc.arrival_time)
+
+            aewc_ladder.append(
+                [str(single_aewc.freq), str(single_aewc.depature_location), str(dep), str(arr)]
+            )
+        writer.table(
+            aewc_ladder,
+            headers=["FREQ", "Depature", "ETD", "ETA"],
         )
 
         # Package Section
@@ -365,6 +383,12 @@ class BriefingPage(KneeboardPage):
         channel_name = namer.channel_name(channel.radio_id, channel.channel)
         return f"{channel_name} {frequency}"
 
+    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
+        if time is None:
+            return ""
+        local_time = self.start_time + time
+        return local_time.strftime(f"%H:%M:%S")
+
 
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
@@ -414,5 +438,6 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.tankers,
                 self.jtacs,
                 self.mission.start_time,
+                self.aewc,
             ),
         ]

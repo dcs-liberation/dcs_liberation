@@ -19,6 +19,7 @@ from .flights.flight import FlightWaypoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
+from .aircraft import AewcInfo
 
 if TYPE_CHECKING:
     from game import Game
@@ -62,6 +63,15 @@ class MissionInfoGenerator:
         self.tankers: List[TankerInfo] = []
         self.frontlines: List[FrontLineInfo] = []
         self.dynamic_runways: List[RunwayData] = []
+        self.aewc: List[AewcInfo] = []
+
+    def add_aewc(self, aewc: AewcInfo) -> None:
+        """Adds our AEWC info.
+
+        Args:
+            aewc: AEW&C information.
+        """
+        self.aewc.append(aewc)
 
     def add_awacs(self, awacs: AwacsInfo) -> None:
         """Adds an AWACS/GCI to the mission.

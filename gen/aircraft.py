@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
 from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union
@@ -535,6 +535,17 @@ class AircraftData:
     #: Defines how channels should be named when printed in the kneeboard.
     channel_namer: Type[ChannelNamer] = ChannelNamer
 
+@dataclass
+class AewcInfo:
+    """AEW&C information for the kneeboard."""
+    freq: RadioFrequency
+    depature_location: str
+    depature_time: Optional[timedelta]
+    arrival_time: Optional[timedelta]
+
+@dataclass
+class CustomAirSupport:
+    aewc: List[AewcInfo] = field(default_factory=list)
 
 # Indexed by the id field of the pydcs PlaneType.
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
@@ -675,6 +686,7 @@ class AircraftConflictGenerator:
         self.radio_registry = radio_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
+        self.CustomAirSupport = CustomAirSupport()
 
     @cached_property
     def use_client(self) -> bool:
@@ -1375,6 +1387,17 @@ class AircraftConflictGenerator:
             restrict_jettison=True,
             do_aewc=True,
             freq=freq
+        )
+
+        arrival = package.time_over_target + timedelta(hours=4.5)
+
+        self.CustomAirSupport.aewc.append(
+            AewcInfo(
+                freq,
+                flight.departure.name,
+                flight.flight_plan.takeoff_time(),
+                arrival
+            )
         )
 
     def configure_escort(

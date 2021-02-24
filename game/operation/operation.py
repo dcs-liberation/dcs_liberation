@@ -181,6 +181,9 @@ class Operation:
                 for awacs in airsupportgen.air_support.awacs:
                     gen.add_awacs(awacs)
 
+            for aewc in airgen.CustomAirSupport.aewc:
+                gen.add_aewc(aewc)
+
             for jtac in jtacs:
                 gen.add_jtac(jtac)
 
