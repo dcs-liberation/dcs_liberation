@@ -1182,14 +1182,21 @@ class FlightPlanBuilder:
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
 
-    @staticmethod
-    def aewc_orbit(location: MissionTarget) -> Point:
-        closest_airfield = location
-        # TODO: This is a heading to itself.
-        # Place this either over the target or as close as possible outside the
-        # threat zone: https://github.com/Khopa/dcs_liberation/issues/842.
-        heading = location.position.heading_between_point(closest_airfield.position)
-        return location.position.point_from_heading(heading, 5000)
+    def aewc_orbit(self, location: MissionTarget) -> Point:
+        # in threat zone
+        if self.threat_zones.threatened(location.position):
+            # Borderpoint
+            closest_boundary = self.threat_zones.closest_boundary(location.position)
+
+            # Heading + Distance to border point
+            heading = location.position.heading_between_point(closest_boundary)
+            distance = location.position.distance_to_point(closest_boundary)
+
+            return location.position.point_from_heading(heading, distance)
+
+        # this Part is fine. No threat zone, just use our point
+        else:
+            return location.position
 
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
