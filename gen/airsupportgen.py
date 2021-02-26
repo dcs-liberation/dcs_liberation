@@ -1,6 +1,7 @@
 import logging
 from dataclasses import dataclass, field
-from typing import List, Type, Tuple
+from datetime import timedelta
+from typing import List, Type, Tuple, Optional
 
 from dcs.mission import Mission, StartType
 from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135
@@ -37,6 +38,9 @@ class AwacsInfo:
     dcsGroupName: str
     callsign: str
     freq: RadioFrequency
+    depature_location: Optional[str]
+    start_time: Optional[timedelta]
+    end_time: Optional[timedelta]
 
 
 @dataclass
@@ -192,9 +196,12 @@ class AirSupportConflictGenerator:
 
                 self.air_support.awacs.append(
                     AwacsInfo(
-                        str(awacs_flight.name),
-                        callsign_for_support_unit(awacs_flight),
-                        freq,
+                        dcsGroupName=str(awacs_flight.name),
+                        callsign=callsign_for_support_unit(awacs_flight),
+                        freq=freq,
+                        depature_location="-",
+                        start_time=timedelta(),
+                        end_time=timedelta(),
                     )
                 )
             else:

@@ -90,7 +90,6 @@ from game.theater.controlpoint import (
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles
-from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -105,10 +104,12 @@ from .flights.flightplan import (
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
-    SweepFlightPlan,
+    SweepFlightPlan, AwacsFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
 from .naming import namegen
+from .airsupportgen import AirSupport, AwacsInfo
+from .callsigns import callsign_for_support_unit
 
 if TYPE_CHECKING:
     from game import Game
@@ -305,6 +306,7 @@ class FlightData:
 
     joker_fuel: Optional[int]
 
+
     def __init__(
         self,
         package: Package,
@@ -322,6 +324,7 @@ class FlightData:
         bingo_fuel: Optional[int],
         joker_fuel: Optional[int],
         custom_name: Optional[str],
+        channel: Optional[RadioFrequency],
     ) -> None:
         self.package = package
         self.country = country
@@ -340,6 +343,7 @@ class FlightData:
         self.joker_fuel = joker_fuel
         self.callsign = create_group_callsign_from_unit(self.units[0])
         self.custom_name = custom_name
+        self.channel = channel
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -535,18 +539,6 @@ class AircraftData:
     #: Defines how channels should be named when printed in the kneeboard.
     channel_namer: Type[ChannelNamer] = ChannelNamer
 
-@dataclass
-class AewcInfo:
-    """AEW&C information for the kneeboard."""
-    freq: RadioFrequency
-    depature_location: str
-    depature_time: Optional[timedelta]
-    arrival_time: Optional[timedelta]
-
-@dataclass
-class CustomAirSupport:
-    aewc: List[AewcInfo] = field(default_factory=list)
-
 # Indexed by the id field of the pydcs PlaneType.
 AIRCRAFT_DATA: Dict[str, AircraftData] = {
     "A-10C": AircraftData(
@@ -679,6 +671,7 @@ class AircraftConflictGenerator:
         game: Game,
         radio_registry: RadioRegistry,
         unit_map: UnitMap,
+        air_support: AirSupport
     ) -> None:
         self.m = mission
         self.game = game
@@ -686,7 +679,8 @@ class AircraftConflictGenerator:
         self.radio_registry = radio_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
-        self.CustomAirSupport = CustomAirSupport()
+        self.channel: RadioFrequency
+        self.air_support = air_support
 
     @cached_property
     def use_client(self) -> bool:
@@ -801,8 +795,12 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        channel = self.get_intra_flight_channel(unit_type)
+        if flight.flight_type == FlightType.AEWC:
+            channel = self.radio_registry.alloc_uhf()
+        else:
+            channel = self.get_intra_flight_channel(unit_type)
         group.set_frequency(channel.mhz)
+        self.channel = channel
 
         divert = None
         if flight.divert is not None:
@@ -831,6 +829,7 @@ class AircraftConflictGenerator:
                 bingo_fuel=flight.flight_plan.bingo_fuel,
                 joker_fuel=flight.flight_plan.joker_fuel,
                 custom_name=flight.custom_name,
+                channel=channel
             )
         )
 
@@ -1192,8 +1191,6 @@ class AircraftConflictGenerator:
         roe: Optional[OptROE.Values] = None,
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
-        do_aewc: Optional[bool] = None,
-        freq: Optional[RadioFrequency] = None,
     ) -> None:
         group.points[0].tasks.clear()
         if react_on_threat is not None:
@@ -1204,10 +1201,6 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(restrict_jettison))
         if rtb_winchester is not None:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
-        if do_aewc is not None:
-            group.points[0].tasks.append(AWACSTaskAction())
-        if freq is not None:
-            group.points[0].tasks.append(SetFrequencyCommand(freq.mhz))
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         # Do not restrict afterburner.
@@ -1377,26 +1370,29 @@ class AircraftConflictGenerator:
     ) -> None:
         group.task = AWACS.name
         self._setup_group(group, AWACS, package, flight, dynamic_runways)
+        if not isinstance(flight.flight_plan, AwacsFlightPlan):
+            logging.error(f"Cannot configure AEW&C tasks for {flight} because it does not have an AEW&C flight plan.")
+            return
 
-        freq = self.radio_registry.alloc_uhf()
-
+        # Awacs task action
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
             restrict_jettison=True,
-            do_aewc=True,
-            freq=freq
         )
 
-        arrival = package.time_over_target + timedelta(hours=4.5)
+        group.points[0].tasks.append(AWACSTaskAction())
+        callsign = callsign_for_support_unit(group)
 
-        self.CustomAirSupport.aewc.append(
-            AewcInfo(
-                freq,
-                flight.departure.name,
-                flight.flight_plan.takeoff_time(),
-                arrival
+        self.air_support.awacs.append(
+            AwacsInfo(
+                dcsGroupName=str(group.name),
+                callsign=callsign,
+                freq=self.channel,
+                depature_location=flight.departure.name,
+                start_time=flight.flight_plan.start_time,
+                end_time=flight.flight_plan.end_time,
             )
         )
 
