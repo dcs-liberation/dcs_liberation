@@ -180,6 +180,7 @@ from pydcs_extensions.su57.su57 import Su_57
 UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
+plane_map["F-22A"] = F_22A
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
