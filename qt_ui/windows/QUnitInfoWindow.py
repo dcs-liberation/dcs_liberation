@@ -48,6 +48,8 @@ class QUnitInfoWindow(QDialog):
 
         header = QLabel(self)
         header.setGeometry(0, 0, 720, 360)
+        pixmap = None
+
         if (
             dcs.planes.plane_map.get(self.unit_type.id) is not None
             or dcs.helicopters.helicopter_map.get(self.unit_type.id) is not None
