@@ -64,23 +64,26 @@ class QPylonEditor(QComboBox):
         if pylon_default_weapon is not None:
             if self.game.settings.restrict_weapons_by_date:
                 orig_weapon = Weapon.from_clsid(pylon_default_weapon)
-                if not orig_weapon.available_on(self.game.date):
-                    for fallback in orig_weapon.fallbacks:
-                        if historical_weapon is None:
-                            if not self.pylon.can_equip(fallback):
-                                continue
-                            if not fallback.available_on(self.game.date):
-                                continue
-                            historical_weapon = fallback
+                if orig_weapon is not None:
+                    if not orig_weapon.available_on(self.game.date):
+                        for fallback in orig_weapon.fallbacks:
+                            if historical_weapon is None:
+                                if not self.pylon.can_equip(fallback):
+                                    continue
+                                if not fallback.available_on(self.game.date):
+                                    continue
+                                historical_weapon = fallback
+                    else:
+                        historical_weapon = orig_weapon
+                    if historical_weapon is not None:
+                        self.setCurrentText(historical_weapon.cls_id)
                 else:
-                    historical_weapon = orig_weapon
-                if historical_weapon is not None:
-                    self.setCurrentText(
-                        weapons_data.weapon_ids.get(historical_weapon.cls_id).get(
-                            "name"
-                        )
-                    )
+                    self.setCurrentText(pylon_default_weapon)
             else:
-                self.setCurrentText(
-                    weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
-                )
+                weapon = weapons_data.weapon_ids.get(pylon_default_weapon)
+                if weapon is not None:
+                    self.setCurrentText(
+                        weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
+                    )
+                else:
+                    self.setCurrentText(pylon_default_weapon)
