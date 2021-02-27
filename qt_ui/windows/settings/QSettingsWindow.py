@@ -436,12 +436,25 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Never delay player flights"), 2, 0)
+
+        spawn_players_immediately_tooltip = (
+            "Always spawns player aircraft immediately, even if their start time is "
+            "more than 10 minutes after the start of the mission. <strong>This does "
+            "not alter the timing of your mission. Your TOT will not change. This "
+            "option only allows the player to wait on the ground.</strong>"
+        )
+        spawn_immediately_label = QLabel(
+            "Player flights ignore TOT and spawn immediately<br />"
+            "<strong>Does not adjust package waypoint times.<br />"
+            "Should not be used if players have runway or in-air starts.</strong>"
+        )
+        spawn_immediately_label.setToolTip(spawn_players_immediately_tooltip)
+        self.gameplayLayout.addWidget(spawn_immediately_label, 2, 0)
         self.gameplayLayout.addWidget(self.never_delay_players, 2, 1, Qt.AlignRight)
 
         start_type_label = QLabel(
-            "Default start type for AI aircraft:<br /><strong>Warning: "
-            + "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+            "Default start type for AI aircraft<br /><strong>Warning: "
+            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
         )
         start_type_label.setToolTip(START_TYPE_TOOLTIP)
         start_type = StartTypeComboBox(self.game.settings)
