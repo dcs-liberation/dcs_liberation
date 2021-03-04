@@ -178,10 +178,6 @@ class Operation:
             for tanker in airsupportgen.air_support.tankers:
                 gen.add_tanker(tanker)
 
-            if cls.player_awacs_enabled:
-                for awacs in airsupportgen.air_support.awacs:
-                    gen.add_awacs(awacs)
-
             for aewc in airsupportgen.air_support.awacs:
                 gen.add_awacs(aewc)
 
