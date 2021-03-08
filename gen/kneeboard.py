@@ -286,19 +286,13 @@ class BriefingPage(KneeboardPage):
             ["Bingo", "Joker"],
         )
 
-        # Otherwise the list is doubled...
-        unique_awacs = []
-        for x in self.awacs:
-            if x not in unique_awacs:
-                unique_awacs.append(x)
-
         # AEW&C
         writer.heading("AEW&C")
         aewc_ladder = []
 
-        for single_aewc in unique_awacs:
+        for single_aewc in self.awacs:
 
-            if single_aewc.depature_location == "-":
+            if single_aewc.depature_location is None:
                 dep = "-"
                 arr = "-"
             else:
@@ -306,7 +300,13 @@ class BriefingPage(KneeboardPage):
                 arr = self._format_time(single_aewc.end_time)
 
             aewc_ladder.append(
-                [str(single_aewc.callsign), str(single_aewc.freq), str(single_aewc.depature_location), str(dep), str(arr)]
+                [
+                    str(single_aewc.callsign),
+                    str(single_aewc.freq),
+                    str(single_aewc.depature_location),
+                    str(dep),
+                    str(arr),
+                ]
             )
 
         writer.table(
@@ -322,10 +322,6 @@ class BriefingPage(KneeboardPage):
                 [comm.name, "", "", "", self.format_frequency(comm.freq)]
             )
 
-        for a in unique_awacs:
-            comm_ladder.append(
-                [a.callsign, "AWACS", "", "", self.format_frequency(a.freq)]
-            )
         for tanker in self.tankers:
             comm_ladder.append(
                 [

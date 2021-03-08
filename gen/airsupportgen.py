@@ -199,9 +199,9 @@ class AirSupportConflictGenerator:
                         dcsGroupName=str(awacs_flight.name),
                         callsign=callsign_for_support_unit(awacs_flight),
                         freq=freq,
-                        depature_location="-",
-                        start_time=timedelta(),
-                        end_time=timedelta(),
+                        depature_location=None,
+                        start_time=None,
+                        end_time=None,
                     )
                 )
             else:

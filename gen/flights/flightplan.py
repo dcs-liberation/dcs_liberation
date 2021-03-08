@@ -703,8 +703,6 @@ class AwacsFlightPlan(LoiterFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
-    start_time: timedelta
-    end_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -714,6 +712,10 @@ class AwacsFlightPlan(LoiterFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+
+    @property
+    def mission_start_time(self) -> timedelta:
+        return self.takeoff_time()
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.hold:
@@ -987,8 +989,6 @@ class FlightPlanBuilder:
         start = builder.orbit(start, patrol_alt)
 
         return AwacsFlightPlan(
-            start_time=flight.flight_plan.mission_departure_time,
-            end_time=flight.flight_plan.mission_departure_time + timedelta(hours=4),
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
