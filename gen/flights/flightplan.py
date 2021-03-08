@@ -714,7 +714,7 @@ class AwacsFlightPlan(LoiterFlightPlan):
             yield self.divert
 
     @property
-    def mission_start_time(self) -> timedelta:
+    def mission_start_time(self) -> Optional[timedelta]:
         return self.takeoff_time()
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
