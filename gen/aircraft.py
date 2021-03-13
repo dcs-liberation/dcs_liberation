@@ -678,7 +678,6 @@ class AircraftConflictGenerator:
         self.radio_registry = radio_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
-        self.channel: RadioFrequency
         self.air_support = air_support
 
     @cached_property
