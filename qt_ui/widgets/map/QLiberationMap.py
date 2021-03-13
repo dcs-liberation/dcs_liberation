@@ -495,6 +495,7 @@ class QLiberationMap(QGraphicsView):
         package = Package(target)
         flight = Flight(
             package,
+            self.game.player_country if player else self.game.enemy_country,
             F_16C_50,
             2,
             task,
