@@ -41,6 +41,7 @@ from .flights.flight import FlightWaypoint, FlightWaypointType
 from .radios import RadioFrequency
 from .runways import RunwayData
 
+
 if TYPE_CHECKING:
     from game import Game
 
@@ -285,6 +286,34 @@ class BriefingPage(KneeboardPage):
             ["Bingo", "Joker"],
         )
 
+        # AEW&C
+        writer.heading("AEW&C")
+        aewc_ladder = []
+
+        for single_aewc in self.awacs:
+
+            if single_aewc.depature_location is None:
+                dep = "-"
+                arr = "-"
+            else:
+                dep = self._format_time(single_aewc.start_time)
+                arr = self._format_time(single_aewc.end_time)
+
+            aewc_ladder.append(
+                [
+                    str(single_aewc.callsign),
+                    str(single_aewc.freq),
+                    str(single_aewc.depature_location),
+                    str(dep),
+                    str(arr),
+                ]
+            )
+
+        writer.table(
+            aewc_ladder,
+            headers=["Callsign", "FREQ", "Depature", "ETD", "ETA"],
+        )
+
         # Package Section
         writer.heading("Comm ladder")
         comm_ladder = []
@@ -293,10 +322,6 @@ class BriefingPage(KneeboardPage):
                 [comm.name, "", "", "", self.format_frequency(comm.freq)]
             )
 
-        for a in self.awacs:
-            comm_ladder.append(
-                [a.callsign, "AWACS", "", "", self.format_frequency(a.freq)]
-            )
         for tanker in self.tankers:
             comm_ladder.append(
                 [
@@ -364,6 +389,12 @@ class BriefingPage(KneeboardPage):
         namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
         channel_name = namer.channel_name(channel.radio_id, channel.channel)
         return f"{channel_name} {frequency}"
+
+    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
+        if time is None:
+            return ""
+        local_time = self.start_time + time
+        return local_time.strftime(f"%H:%M:%S")
 
 
 class KneeboardGenerator(MissionInfoGenerator):
