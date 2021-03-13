@@ -796,7 +796,17 @@ class FlightPlanBuilder:
             raise RuntimeError("Flight must be a part of the package")
         if self.package.waypoints is None:
             self.regenerate_package_waypoints()
-        flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+
+        from game.navmesh import NavMeshError
+
+        try:
+            flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+        except NavMeshError as ex:
+            color = "blue" if self.is_player else "red"
+            raise PlanningError(
+                f"Could not plan {color} {flight.flight_type.value} from "
+                f"{flight.departure} to {flight.package.target}"
+            ) from ex
 
     def generate_flight_plan(
         self, flight: Flight, custom_targets: Optional[List[Unit]]
