@@ -9,6 +9,7 @@ Saves from 2.4 are not compatible with 2.5.
 ## Fixes
 
 * **[Flight Planner]** Front lines now project threat zones, so TARCAP/escorts will not be pruned for flights near the front. Packages may also route around the front line when practical.
+* **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
 
 # 2.4.3
 

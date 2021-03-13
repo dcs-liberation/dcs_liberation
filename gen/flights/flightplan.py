@@ -1013,7 +1013,8 @@ class FlightPlanBuilder:
 
         targets: List[StrikeTarget] = []
         for group in location.groups:
-            targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
+            if group.units:
+                targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
