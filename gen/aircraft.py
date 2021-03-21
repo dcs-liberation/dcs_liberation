@@ -656,6 +656,12 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         ),
         channel_namer=HueyChannelNamer,
     ),
+    "F-22A": AircraftData(
+        inter_flight_radio=get_radio("SCR-522"),
+        intra_flight_radio=get_radio("SCR-522"),
+        channel_allocator=None,
+        channel_namer=SCR522ChannelNamer,
+    ),
 }
 AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
 AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]

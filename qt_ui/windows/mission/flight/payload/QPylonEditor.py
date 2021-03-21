@@ -81,6 +81,10 @@ class QPylonEditor(QComboBox):
                         )
                     )
             else:
-                self.setCurrentText(
-                    weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
-                )
+                weapon = weapons_data.weapon_ids.get(pylon_default_weapon)
+                if weapon is not None:
+                    self.setCurrentText(
+                        weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
+                    )
+                else:
+                    self.setCurrentText(pylon_default_weapon)
