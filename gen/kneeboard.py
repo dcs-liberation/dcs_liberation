@@ -49,7 +49,9 @@ if TYPE_CHECKING:
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
-    def __init__(self, page_margin: int = 24, line_spacing: int = 12, dark_theme: bool = False) -> None:
+    def __init__(
+        self, page_margin: int = 24, line_spacing: int = 12, dark_theme: bool = False
+    ) -> None:
         if dark_theme:
             self.foreground_fill = (215, 200, 200)
             self.background_fill = (10, 5, 5)
