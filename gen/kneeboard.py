@@ -56,8 +56,8 @@ class KneeboardPageWriter:
             self.foreground_fill = (215, 200, 200)
             self.background_fill = (10, 5, 5)
         else:
-            self.foreground_fill = (27, 25, 25)
-            self.background_fill = (225, 220, 220)
+            self.foreground_fill = (15, 15, 15)
+            self.background_fill = (255, 252, 252)
         self.image = Image.new("RGB", (768, 1024), self.background_fill)
         # These font sizes create a relatively full page for current sorties. If
         # we start generating more complicated flight plans, or start including
@@ -413,7 +413,7 @@ class KneeboardGenerator(MissionInfoGenerator):
     def __init__(self, mission: Mission, game: "Game") -> None:
         super().__init__(mission, game)
         self.dark_kneeboard = self.game.settings.generate_dark_kneeboard and (
-            self.mission.start_time > 19 or self.mission.start_time < 7
+            self.mission.start_time.hour > 19 or self.mission.start_time.hour < 7
         )
 
     def generate(self) -> None:
