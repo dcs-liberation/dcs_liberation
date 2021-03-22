@@ -422,6 +422,17 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+        self.generate_dark_kneeboard = QCheckBox()
+        self.generate_dark_kneeboard.setChecked(
+            self.game.settings.generate_dark_kneeboard
+        )
+        self.generate_dark_kneeboard.setToolTip(
+            "When checked, kneeboard will be generated with a dark background "
+            "for night missions (mission time between 19 and 7). Be aware that this "
+            "could make the kneeboard on the pilot model difficult to read."
+        )
+        self.generate_dark_kneeboard.connect(self.applySettings)
+
         self.never_delay_players = QCheckBox()
         self.never_delay_players.setChecked(
             self.game.settings.never_delay_player_flights
@@ -628,6 +639,10 @@ class QSettingsWindow(QDialog):
         )
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
+
+        self.game.settings.generate_dark_kneeboard = (
+            self.generate_dark_kneeboard.isChecked()
+        )
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()

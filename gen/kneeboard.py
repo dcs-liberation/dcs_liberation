@@ -246,6 +246,7 @@ class BriefingPage(KneeboardPage):
         tankers: List[TankerInfo],
         jtacs: List[JtacInfo],
         start_time: datetime.datetime,
+        dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
         self.comms = list(comms)
@@ -253,11 +254,11 @@ class BriefingPage(KneeboardPage):
         self.tankers = tankers
         self.jtacs = jtacs
         self.start_time = start_time
+        self.dark_kneeboard = dark_kneeboard
         self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
-        is_night_mission = self.start_time.hour > 19 or self.start_time.hour < 7
-        writer = KneeboardPageWriter(dark_theme=is_night_mission)
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         if self.flight.custom_name is not None:
             custom_name_title = ' ("{}")'.format(self.flight.custom_name)
         else:
@@ -411,6 +412,9 @@ class KneeboardGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, game: "Game") -> None:
         super().__init__(mission, game)
+        self.dark_kneeboard = self.game.settings.generate_dark_kneeboard and (
+            self.mission.start_time > 19 or self.mission.start_time < 7
+        )
 
     def generate(self) -> None:
         """Generates a kneeboard per client flight."""
@@ -454,5 +458,6 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.tankers,
                 self.jtacs,
                 self.mission.start_time,
+                self.dark_kneeboard,
             ),
         ]
