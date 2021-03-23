@@ -49,8 +49,16 @@ if TYPE_CHECKING:
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
-    def __init__(self, page_margin: int = 24, line_spacing: int = 12) -> None:
-        self.image = Image.new("RGB", (768, 1024), (0xFF, 0xFF, 0xFF))
+    def __init__(
+        self, page_margin: int = 24, line_spacing: int = 12, dark_theme: bool = False
+    ) -> None:
+        if dark_theme:
+            self.foreground_fill = (215, 200, 200)
+            self.background_fill = (10, 5, 5)
+        else:
+            self.foreground_fill = (15, 15, 15)
+            self.background_fill = (255, 252, 252)
+        self.image = Image.new("RGB", (768, 1024), self.background_fill)
         # These font sizes create a relatively full page for current sorties. If
         # we start generating more complicated flight plans, or start including
         # more information in the comm ladder (the latter of which we should
@@ -80,10 +88,10 @@ class KneeboardPageWriter:
         self.y += height + self.line_spacing
 
     def title(self, title: str) -> None:
-        self.text(title, font=self.title_font)
+        self.text(title, font=self.title_font, fill=self.foreground_fill)
 
     def heading(self, text: str) -> None:
-        self.text(text, font=self.heading_font)
+        self.text(text, font=self.heading_font, fill=self.foreground_fill)
 
     def table(
         self, cells: List[List[str]], headers: Optional[List[str]] = None
@@ -91,7 +99,7 @@ class KneeboardPageWriter:
         if headers is None:
             headers = []
         table = tabulate(cells, headers=headers, numalign="right")
-        self.text(table, font=self.table_font)
+        self.text(table, font=self.table_font, fill=self.foreground_fill)
 
     def write(self, path: Path) -> None:
         self.image.save(path)
@@ -238,6 +246,7 @@ class BriefingPage(KneeboardPage):
         tankers: List[TankerInfo],
         jtacs: List[JtacInfo],
         start_time: datetime.datetime,
+        dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
         self.comms = list(comms)
@@ -245,10 +254,11 @@ class BriefingPage(KneeboardPage):
         self.tankers = tankers
         self.jtacs = jtacs
         self.start_time = start_time
+        self.dark_kneeboard = dark_kneeboard
         self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
-        writer = KneeboardPageWriter()
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         if self.flight.custom_name is not None:
             custom_name_title = ' ("{}")'.format(self.flight.custom_name)
         else:
@@ -402,6 +412,9 @@ class KneeboardGenerator(MissionInfoGenerator):
 
     def __init__(self, mission: Mission, game: "Game") -> None:
         super().__init__(mission, game)
+        self.dark_kneeboard = self.game.settings.generate_dark_kneeboard and (
+            self.mission.start_time.hour > 19 or self.mission.start_time.hour < 7
+        )
 
     def generate(self) -> None:
         """Generates a kneeboard per client flight."""
@@ -445,5 +458,6 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.tankers,
                 self.jtacs,
                 self.mission.start_time,
+                self.dark_kneeboard,
             ),
         ]
