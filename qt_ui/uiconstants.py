@@ -74,6 +74,7 @@ def load_icons():
     ICONS["New"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/new.png")
     ICONS["Open"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/open.png")
     ICONS["Save"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/save.png")
+    ICONS["LotAtc"] = QPixmap("./resources/ui/misc/lotatc.png")
     ICONS["Discord"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/discord.png"
     )
