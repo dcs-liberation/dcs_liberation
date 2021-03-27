@@ -675,13 +675,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """
         presets = self.control_point.preset_locations
         for position in presets.required_ewrs:
-            self.generate_ewr_at(
-                position,
-                ranges=[
-                    {AirDefenseRange.Medium},
-                    {AirDefenseRange.Short},
-                ],
-            )
+            self.generate_ewr_at(position)
         return len(presets.required_ewrs)
 
     def generate_ground_point(self) -> None:
