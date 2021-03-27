@@ -117,7 +117,7 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_3_S_125_LN_5P73.id,
     }
 
-    REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13
+    REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
 
     BASE_DEFENSE_RADIUS = nautical_miles(2)
 
