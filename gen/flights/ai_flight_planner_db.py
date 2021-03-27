@@ -88,6 +88,7 @@ from dcs.planes import (
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
+    I_16,
 )
 from dcs.unittype import FlyingType
 

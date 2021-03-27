@@ -20,6 +20,7 @@ from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
 
+
 if TYPE_CHECKING:
     from game import Game
 

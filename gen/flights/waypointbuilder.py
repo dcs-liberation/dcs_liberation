@@ -14,7 +14,7 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.unit import Unit
-from dcs.unitgroup import VehicleGroup
+from dcs.unitgroup import Group, VehicleGroup
 
 if TYPE_CHECKING:
     from game import Game
@@ -32,7 +32,7 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[VehicleGroup, TheaterGroundObject, Unit]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group]
 
 
 class WaypointBuilder:

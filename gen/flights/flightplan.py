@@ -713,6 +713,10 @@ class AwacsFlightPlan(LoiterFlightPlan):
         if self.divert is not None:
             yield self.divert
 
+    @property
+    def mission_start_time(self) -> Optional[timedelta]:
+        return self.takeoff_time()
+
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.hold:
             return self.package.time_over_target
@@ -796,7 +800,17 @@ class FlightPlanBuilder:
             raise RuntimeError("Flight must be a part of the package")
         if self.package.waypoints is None:
             self.regenerate_package_waypoints()
-        flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+
+        from game.navmesh import NavMeshError
+
+        try:
+            flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+        except NavMeshError as ex:
+            color = "blue" if self.is_player else "red"
+            raise PlanningError(
+                f"Could not plan {color} {flight.flight_type.value} from "
+                f"{flight.departure} to {flight.package.target}"
+            ) from ex
 
     def generate_flight_plan(
         self, flight: Flight, custom_targets: Optional[List[Unit]]
@@ -1013,7 +1027,8 @@ class FlightPlanBuilder:
 
         targets: List[StrikeTarget] = []
         for group in location.groups:
-            targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
+            if group.units:
+                targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets

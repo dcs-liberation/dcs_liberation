@@ -41,6 +41,7 @@ from .flights.flight import FlightWaypoint, FlightWaypointType
 from .radios import RadioFrequency
 from .runways import RunwayData
 
+
 if TYPE_CHECKING:
     from game import Game
 
@@ -48,8 +49,16 @@ if TYPE_CHECKING:
 class KneeboardPageWriter:
     """Creates kneeboard images."""
 
-    def __init__(self, page_margin: int = 24, line_spacing: int = 12) -> None:
-        self.image = Image.new("RGB", (768, 1024), (0xFF, 0xFF, 0xFF))
+    def __init__(
+        self, page_margin: int = 24, line_spacing: int = 12, dark_theme: bool = False
+    ) -> None:
+        if dark_theme:
+            self.foreground_fill = (215, 200, 200)
+            self.background_fill = (10, 5, 5)
+        else:
+            self.foreground_fill = (15, 15, 15)
+            self.background_fill = (255, 252, 252)
+        self.image = Image.new("RGB", (768, 1024), self.background_fill)
         # These font sizes create a relatively full page for current sorties. If
         # we start generating more complicated flight plans, or start including
         # more information in the comm ladder (the latter of which we should
@@ -79,10 +88,10 @@ class KneeboardPageWriter:
         self.y += height + self.line_spacing
 
     def title(self, title: str) -> None:
-        self.text(title, font=self.title_font)
+        self.text(title, font=self.title_font, fill=self.foreground_fill)
 
     def heading(self, text: str) -> None:
-        self.text(text, font=self.heading_font)
+        self.text(text, font=self.heading_font, fill=self.foreground_fill)
 
     def table(
         self, cells: List[List[str]], headers: Optional[List[str]] = None
@@ -90,7 +99,7 @@ class KneeboardPageWriter:
         if headers is None:
             headers = []
         table = tabulate(cells, headers=headers, numalign="right")
-        self.text(table, font=self.table_font)
+        self.text(table, font=self.table_font, fill=self.foreground_fill)
 
     def write(self, path: Path) -> None:
         self.image.save(path)
@@ -237,6 +246,7 @@ class BriefingPage(KneeboardPage):
         tankers: List[TankerInfo],
         jtacs: List[JtacInfo],
         start_time: datetime.datetime,
+        dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
         self.comms = list(comms)
@@ -244,10 +254,11 @@ class BriefingPage(KneeboardPage):
         self.tankers = tankers
         self.jtacs = jtacs
         self.start_time = start_time
+        self.dark_kneeboard = dark_kneeboard
         self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
-        writer = KneeboardPageWriter()
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         if self.flight.custom_name is not None:
             custom_name_title = ' ("{}")'.format(self.flight.custom_name)
         else:
@@ -285,6 +296,34 @@ class BriefingPage(KneeboardPage):
             ["Bingo", "Joker"],
         )
 
+        # AEW&C
+        writer.heading("AEW&C")
+        aewc_ladder = []
+
+        for single_aewc in self.awacs:
+
+            if single_aewc.depature_location is None:
+                dep = "-"
+                arr = "-"
+            else:
+                dep = self._format_time(single_aewc.start_time)
+                arr = self._format_time(single_aewc.end_time)
+
+            aewc_ladder.append(
+                [
+                    str(single_aewc.callsign),
+                    str(single_aewc.freq),
+                    str(single_aewc.depature_location),
+                    str(dep),
+                    str(arr),
+                ]
+            )
+
+        writer.table(
+            aewc_ladder,
+            headers=["Callsign", "FREQ", "Depature", "ETD", "ETA"],
+        )
+
         # Package Section
         writer.heading("Comm ladder")
         comm_ladder = []
@@ -293,10 +332,6 @@ class BriefingPage(KneeboardPage):
                 [comm.name, "", "", "", self.format_frequency(comm.freq)]
             )
 
-        for a in self.awacs:
-            comm_ladder.append(
-                [a.callsign, "AWACS", "", "", self.format_frequency(a.freq)]
-            )
         for tanker in self.tankers:
             comm_ladder.append(
                 [
@@ -365,12 +400,21 @@ class BriefingPage(KneeboardPage):
         channel_name = namer.channel_name(channel.radio_id, channel.channel)
         return f"{channel_name} {frequency}"
 
+    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
+        if time is None:
+            return ""
+        local_time = self.start_time + time
+        return local_time.strftime(f"%H:%M:%S")
+
 
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
     def __init__(self, mission: Mission, game: "Game") -> None:
         super().__init__(mission, game)
+        self.dark_kneeboard = self.game.settings.generate_dark_kneeboard and (
+            self.mission.start_time.hour > 19 or self.mission.start_time.hour < 7
+        )
 
     def generate(self) -> None:
         """Generates a kneeboard per client flight."""
@@ -414,5 +458,6 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.tankers,
                 self.jtacs,
                 self.mission.start_time,
+                self.dark_kneeboard,
             ),
         ]

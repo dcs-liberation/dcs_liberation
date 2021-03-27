@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
 from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union
@@ -67,6 +67,8 @@ from dcs.task import (
     Targets,
     Task,
     WeaponType,
+    AWACSTaskAction,
+    SetFrequencyCommand,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -88,7 +90,6 @@ from game.theater.controlpoint import (
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles
-from gen.airsupportgen import AirSupport
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -104,9 +105,12 @@ from .flights.flightplan import (
     LoiterFlightPlan,
     PatrollingFlightPlan,
     SweepFlightPlan,
+    AwacsFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
 from .naming import namegen
+from .airsupportgen import AirSupport, AwacsInfo
+from .callsigns import callsign_for_support_unit
 
 if TYPE_CHECKING:
     from game import Game
@@ -652,6 +656,12 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         ),
         channel_namer=HueyChannelNamer,
     ),
+    "F-22A": AircraftData(
+        inter_flight_radio=get_radio("SCR-522"),
+        intra_flight_radio=get_radio("SCR-522"),
+        channel_allocator=None,
+        channel_namer=SCR522ChannelNamer,
+    ),
 }
 AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
 AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
@@ -666,6 +676,7 @@ class AircraftConflictGenerator:
         game: Game,
         radio_registry: RadioRegistry,
         unit_map: UnitMap,
+        air_support: AirSupport,
     ) -> None:
         self.m = mission
         self.game = game
@@ -673,6 +684,7 @@ class AircraftConflictGenerator:
         self.radio_registry = radio_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
+        self.air_support = air_support
 
     @cached_property
     def use_client(self) -> bool:
@@ -787,7 +799,10 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        channel = self.get_intra_flight_channel(unit_type)
+        if flight.flight_type == FlightType.AEWC:
+            channel = self.radio_registry.alloc_uhf()
+        else:
+            channel = self.get_intra_flight_channel(unit_type)
         group.set_frequency(channel.mhz)
 
         divert = None
@@ -823,6 +838,20 @@ class AircraftConflictGenerator:
         # Special case so Su 33 and C101 can take off
         if unit_type in [Su_33, C_101EB, C_101CC]:
             self.set_reduced_fuel(flight, group, unit_type)
+
+        if isinstance(flight.flight_plan, AwacsFlightPlan):
+            callsign = callsign_for_support_unit(group)
+
+            self.air_support.awacs.append(
+                AwacsInfo(
+                    dcsGroupName=str(group.name),
+                    callsign=callsign,
+                    freq=channel,
+                    depature_location=flight.departure.name,
+                    end_time=flight.flight_plan.mission_departure_time,
+                    start_time=flight.flight_plan.mission_start_time,
+                )
+            )
 
     def _generate_at_airport(
         self,
@@ -1356,13 +1385,24 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = AWACS.name
+
+        if not isinstance(flight.flight_plan, AwacsFlightPlan):
+            logging.error(
+                f"Cannot configure AEW&C tasks for {flight} because it does not have an AEW&C flight plan."
+            )
+            return
+
         self._setup_group(group, AWACS, package, flight, dynamic_runways)
+
+        # Awacs task action
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
             restrict_jettison=True,
         )
+
+        group.points[0].tasks.append(AWACSTaskAction())
 
     def configure_escort(
         self,

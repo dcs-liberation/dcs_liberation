@@ -15,6 +15,7 @@ from shapely.ops import nearest_points, unary_union
 
 from game.theater import ControlPoint
 from game.utils import Distance, meters, nautical_miles
+from gen import Conflict
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight
 
@@ -131,7 +132,7 @@ class ThreatZones:
             zone belongs to the player, it is the zone that will be avoided by
             the enemy and vice versa.
         """
-        airbases = []
+        air_threats = []
         air_defenses = []
         for control_point in game.theater.controlpoints:
             if control_point.captured != player:
@@ -139,7 +140,7 @@ class ThreatZones:
             if control_point.runway_is_operational():
                 point = ShapelyPoint(control_point.position.x, control_point.position.y)
                 cap_threat_range = cls.barcap_threat_range(game, control_point)
-                airbases.append(point.buffer(cap_threat_range.meters))
+                air_threats.append(point.buffer(cap_threat_range.meters))
 
             for tgo in control_point.ground_objects:
                 for group in tgo.groups:
@@ -151,8 +152,25 @@ class ThreatZones:
                         threat_zone = point.buffer(threat_range.meters)
                         air_defenses.append(threat_zone)
 
+        for front_line in game.theater.conflicts(player):
+            vector = Conflict.frontline_vector(
+                front_line.control_point_a, front_line.control_point_b, game.theater
+            )
+
+            start = vector[0]
+            end = vector[0].point_from_heading(vector[1], vector[2])
+
+            line = LineString(
+                [
+                    ShapelyPoint(start.x, start.y),
+                    ShapelyPoint(end.x, end.y),
+                ]
+            )
+            doctrine = game.faction_for(player).doctrine
+            air_threats.append(line.buffer(doctrine.cap_engagement_range.meters))
+
         return cls(
-            airbases=unary_union(airbases), air_defenses=unary_union(air_defenses)
+            airbases=unary_union(air_threats), air_defenses=unary_union(air_defenses)
         )
 
     @staticmethod

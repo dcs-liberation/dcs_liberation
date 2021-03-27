@@ -422,6 +422,12 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+        self.generate_dark_kneeboard = QCheckBox()
+        self.generate_dark_kneeboard.setChecked(
+            self.game.settings.generate_dark_kneeboard
+        )
+        self.generate_dark_kneeboard.toggled.connect(self.applySettings)
+
         self.never_delay_players = QCheckBox()
         self.never_delay_players.setChecked(
             self.game.settings.never_delay_player_flights
@@ -437,6 +443,14 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
 
+        dark_kneeboard_label = QLabel(
+            "Generate Dark Kneeboard <br />"
+            "<strong>Dark kneeboard for night missions.<br />"
+            "This will likely make the kneeboard on the pilot leg unreadable.</strong>"
+        )
+        self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
+        self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
+
         spawn_players_immediately_tooltip = (
             "Always spawns player aircraft immediately, even if their start time is "
             "more than 10 minutes after the start of the mission. <strong>This does "
@@ -449,8 +463,8 @@ class QSettingsWindow(QDialog):
             "Should not be used if players have runway or in-air starts.</strong>"
         )
         spawn_immediately_label.setToolTip(spawn_players_immediately_tooltip)
-        self.gameplayLayout.addWidget(spawn_immediately_label, 2, 0)
-        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1, Qt.AlignRight)
+        self.gameplayLayout.addWidget(spawn_immediately_label, 3, 0)
+        self.gameplayLayout.addWidget(self.never_delay_players, 3, 1, Qt.AlignRight)
 
         start_type_label = QLabel(
             "Default start type for AI aircraft<br /><strong>Warning: "
@@ -460,8 +474,8 @@ class QSettingsWindow(QDialog):
         start_type = StartTypeComboBox(self.game.settings)
         start_type.setCurrentText(self.game.settings.default_start_type)
 
-        self.gameplayLayout.addWidget(start_type_label, 3, 0)
-        self.gameplayLayout.addWidget(start_type, 3, 1)
+        self.gameplayLayout.addWidget(start_type_label, 4, 0)
+        self.gameplayLayout.addWidget(start_type, 4, 1)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -628,6 +642,10 @@ class QSettingsWindow(QDialog):
         )
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
+
+        self.game.settings.generate_dark_kneeboard = (
+            self.generate_dark_kneeboard.isChecked()
+        )
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()
