@@ -765,18 +765,9 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         position = self.location_finder.location_for(LocationType.Ewr)
         if position is None:
             return
-        self.generate_ewr_at(
-            position,
-            ranges=[
-                # Protect with SHORADs if needed.
-                {AirDefenseRange.Medium},
-                {AirDefenseRange.Short},
-            ],
-        )
+        self.generate_ewr_at(position)
 
-    def generate_ewr_at(
-        self, position: Point, ranges: Iterable[Set[AirDefenseRange]]
-    ) -> None:
+    def generate_ewr_at(self, position: Point) -> None:
         group_id = self.game.next_group_id()
 
         g = EwrGroundObject(
@@ -786,10 +777,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
             for_airbase=False,
         )
-        groups = generate_anti_air_group(self.game, g, self.faction, ranges)
+        groups = generate_ewr_group(self.game, g, self.faction)
         if not groups:
             logging.error(
-                "Could not generate air defense group for %s at %s",
+                "Could not generate ewr group for %s at %s",
                 g.name,
                 self.control_point,
             )
