@@ -240,7 +240,7 @@ def generate_anti_air_group(
 
 def generate_ewr_group(
     game: Game, ground_object: TheaterGroundObject, faction: Faction
-) -> Optional[VehicleGroup]:
+) -> List[VehicleGroup]:
     """Generates an early warning radar group.
 
     :param game: The Game.
