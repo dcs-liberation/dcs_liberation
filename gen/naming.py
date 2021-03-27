@@ -61,7 +61,7 @@ ANIMALS = [
     "MAMBA",
     "DOLPHIN",
     "PHEASANT",
-    "ARMADILLLO",
+    "ARMADILLO",
     "RACOON",
     "ZEBRA",
     "COW",
