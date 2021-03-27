@@ -254,4 +254,4 @@ def generate_ewr_group(
         generator = generator_class(game, ground_object)
         generator.generate()
         return generator.get_generated_group()
-    return None
+    return []

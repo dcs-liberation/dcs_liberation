@@ -471,12 +471,12 @@ class BaseDefenseGenerator:
             True,
         )
 
-        group = generate_ewr_group(self.game, g, self.faction)
-        if group is None:
+        groups = generate_ewr_group(self.game, g, self.faction)
+        if not groups:
             logging.error(f"Could not generate EWR at {self.control_point}")
             return
 
-        g.groups = [group]
+        g.groups = groups
         self.control_point.base_defenses.append(g)
 
     def generate_base_defenses(self) -> None:
