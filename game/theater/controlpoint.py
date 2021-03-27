@@ -107,6 +107,9 @@ class PresetLocations:
     #: Locations of medium range SAMs which should always be spawned.
     required_medium_range_sams: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations of EWRs which should always be spawned.
+    required_ewrs: List[PointWithHeading] = field(default_factory=list)
+
     @staticmethod
     def _random_from(points: List[PointWithHeading]) -> Optional[PointWithHeading]:
         """Finds, removes, and returns a random position from the given list."""

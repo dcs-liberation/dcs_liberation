@@ -117,6 +117,8 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_3_S_125_LN_5P73.id,
     }
 
+    REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13
+
     BASE_DEFENSE_RADIUS = nautical_miles(2)
 
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
@@ -246,6 +248,12 @@ class MizCampaignLoader:
             if group.units[0].type in self.REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES:
                 yield group
 
+    @property
+    def required_ewrs(self) -> Iterator[VehicleGroup]:
+        for group in self.blue.vehicle_group:
+            if group.units[0].type in self.REQUIRED_EWR_UNIT_TYPE:
+                yield group
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -349,9 +357,14 @@ class MizCampaignLoader:
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
-            )
+            if distance < self.BASE_DEFENSE_RADIUS:
+                closest.preset_locations.ewrs.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
+            else:
+                closest.preset_locations.strike_locations.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
 
         for group in self.offshore_strike_targets:
             closest, distance = self.objective_info(group)
@@ -386,6 +399,12 @@ class MizCampaignLoader:
         for group in self.required_medium_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_medium_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_ewrs:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_ewrs.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
