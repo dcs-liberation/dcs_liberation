@@ -20,6 +20,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
+from game.export import lotatc_export
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
@@ -293,10 +294,8 @@ class QLiberationWindow(QMainWindow):
             filter="*.json",
         )
         if file is not None:
-            self.game.savepath = file[0]
-            persistency.save_game(self.game)
-            liberation_install.setup_last_save_file(self.game.savepath)
-            liberation_install.save_config()
+            exportpath = file[0]
+            lotatc_export.export_threat_circles(self.game, exportpath)
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")
