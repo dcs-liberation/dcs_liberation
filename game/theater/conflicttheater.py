@@ -250,7 +250,7 @@ class MizCampaignLoader:
 
     @property
     def required_ewrs(self) -> Iterator[VehicleGroup]:
-        for group in self.blue.vehicle_group:
+        for group in self.red.vehicle_group:
             if group.units[0].type in self.REQUIRED_EWR_UNIT_TYPE:
                 yield group
 
