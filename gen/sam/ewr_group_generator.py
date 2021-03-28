@@ -39,7 +39,7 @@ EWR_MAP = {
 
 def get_faction_possible_ewrs_generator(
     faction: Faction,
-) -> List[Type[AirDefenseGroupGenerator]]:
+) -> List[Type[GroupGenerator]]:
     """
     Return the list of possible EWR generators for the given faction
     :param faction: Faction name to search units for
