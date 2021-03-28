@@ -1,0 +1,12 @@
+{
+    "nameInUI": "LotATC Threatzone Export",
+    "defaultValue": true,
+    "specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "LotAtcExport.lua",
+            "mnemonic": "LotAtcExport-script"
+        }
+    ],
+    "configurationWorkOrders": []
+}
