@@ -8,26 +8,53 @@ in LotATC.
 ]]
 
 LotAtcExportConfig = {
-    ["exportRedAA"] = true,
-    ["exportBlueAA"] = false
+    ["exportRedAA"] = false,
+    ["exportBlueAA"] = false,
+    ["exportSymbols"] = false,
+    ["exportVersion"] = "2.2.0",
+    ["basePath"] = dcsLiberation.savedGamesPath..[[\Mods\services\LotAtc\userdb\drawings\]],
+    ["redColor"] = "#7FE32000",
+    ["blueColor"] = "#7F0084FF"
 }
 
-function lotatcExport_for_faction(faction, color)
+local function uuid()
     local random = math.random
-    local function uuid()
-        local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-        return string.gsub(template, '[xy]', function (c)
-            local v = (c == 'x') and random(0, 0xf) or random(8, 0xb)
-            return string.format('%x', v)
-        end)
-    end
+    local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+    return string.gsub(template, '[xy]', function (c)
+        local v = (c == 'x') and random(0, 0xf) or random(8, 0xb)
+        return string.format('%x', v)
+    end)
+end
 
-    drawings = {}
+local function lotatcExport_get_name(unit)
+    local classification = "SAM"
+
+    if string.find(unit.dcsGroupName, "|EWR|", 1, true) then
+        classification = "EWR"
+    end
+    local name = string.format("%s|%s", unit.name, classification)
+
+    return name, classification
+end
+
+local function lotatc_write_json(filename, json)
+    env.info(string.format("DCSLiberation|LotATC Export plugin - writing %s", filename))
+    local fp = io.open(filename, 'w')
+    if fp then
+        fp:write(json)
+        fp:close()
+    end
+end
+
+local function lotatcExport_threat_circles_for_faction(faction, color)
+    local drawings = {}
 
     for _,aa in pairs(faction) do
-        env.info(string.format("DCSLiberation|LotATC Export plugin - exporting %s", aa.dcsGroupName))
+        env.info(string.format("DCSLiberation|LotATC Export plugin - exporting threat circle for %s", aa.dcsGroupName))
 
         local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
+
+        local name = lotatcExport_get_name(aa)
 
         table.insert(drawings,
         {
@@ -40,11 +67,11 @@ function lotatcExport_for_faction(faction, color)
             ["latitude"] = convLat,
             ["radius"] = tonumber(aa.range),
             ["lineWidth"] = 2,
-            ["name"] = string.format("%s|%s", aa.name, aa.dcsGroupName),
-            ["shared"] = True,
+            ["name"] = name,
+            ["shared"] = true,
             ["timestamp"] = "",
             ["type"] = "circle",
-            ["text"] = string.format("%s|%s", aa.name, aa.dcsGroupName),
+            ["text"] = name,
             ["font"] = {
                 ["color"] = color,
                 ["font"] = "Lato"
@@ -52,9 +79,67 @@ function lotatcExport_for_faction(faction, color)
         })
     end
 
-    lotatcData = {
+    local lotatcData = {
         ["enabled"] = "true",
-        ["version"] = "2.2.0",
+        ["version"] = LotAtcExportConfig.exportVersion,
+        ["drawings"] = drawings
+    }
+
+    local drawings_json = json:encode(lotatcData)
+    return drawings_json
+end
+
+local function lotatcExport_symbols_for_faction(faction, color, isFriend)
+    local drawings = {}
+
+    for _,aa in pairs(faction) do
+        env.info(string.format("DCSLiberation|LotATC Export plugin - exporting AA symbol for %s", aa.dcsGroupName))
+
+        local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
+
+        local name = lotatcExport_get_name(aa)
+
+        local classification = "hostile"
+        if isFriend then
+            classification = "friend"
+        end
+
+        local sub_dimension = "none"
+
+        if string.find(aa.dcsGroupName, "|EWR|", 1, true) then
+            sub_dimension = "ew"
+        end
+
+        table.insert(drawings,
+        {
+            ["author"] = "DCSLiberation",
+            ["brushStyle"] = 1,
+            ["classification"] = {
+                ["classification"] = classification,
+                ["dimension"] = "land_unit",
+                ["sub_dimension"] = sub_dimension
+            },
+            ["color"] = color,
+            ["colorBg"] = "#33FF0000",
+            ["font"] = {
+                ["color"] = color,
+                ["font"] = "Lato"
+            },
+            ["id"] = string.format("{%s}", uuid()),
+            ["longitude"] = convLon,
+            ["latitude"] = convLat,
+            ["lineWidth"] = 2,
+            ["name"] = name,
+            ["shared"] = true,
+            ["timestamp"] = "",
+            ["type"] = "symbol",
+            ["text"] = name
+        })
+    end
+
+    local lotatcData = {
+        ["enabled"] = "true",
+        ["version"] = LotAtcExportConfig.exportVersion,
         ["drawings"] = drawings
     }
     
@@ -62,7 +147,22 @@ function lotatcExport_for_faction(faction, color)
     return drawings_json
 end
 
-function lotatcExport()
+local function lotatc_export_faction(faction, color, faction_path, isFriend)
+    local exportBasePathFaction = LotAtcExportConfig.basePath..faction_path
+    lfs.mkdir(exportBasePathFaction)
+
+    local exportFileName = exportBasePathFaction.."threatZones.json"
+    local json = lotatcExport_threat_circles_for_faction(faction, color);
+    lotatc_write_json(exportFileName, json)
+
+    if LotAtcExportConfig.exportSymbols then
+        exportFileName = exportBasePathFaction.."threatSymbols.json"
+        json = lotatcExport_symbols_for_faction(faction, color, isFriend);
+        lotatc_write_json(exportFileName, json)
+    end
+end
+
+function LotatcExport()
 
     if not json then
         local message = "Unable to export LotATC drawings, JSON library is not loaded!"
@@ -70,41 +170,11 @@ function lotatcExport()
         messageAll(message)
     end
 
-    local exportBasePath = dcsLiberation.savedGamesPath..[[\Mods\services\LotAtc\userdb\drawings\]]
-    local drawings_json = nil
-
     if LotAtcExportConfig.exportRedAA then
-        drawings_json = lotatcExport_for_faction(dcsLiberation.RedAA, "#7FE32000");
-
-        local exportBasePathRed = exportBasePath..[[red\]]
-        lfs.mkdir(exportBasePathRed)
-
-        local exportFileName = exportBasePathRed.."threatZones.json"
-
-        env.info(string.format("DCSLiberation|LotATC Export plugin - writing %s", exportFileName))
-
-        local fp = io.open(exportFileName, 'w')
-        if fp then
-            fp:write(drawings_json)
-            fp:close()
-        end
+        lotatc_export_faction(dcsLiberation.RedAA, LotAtcExportConfig.redColor, [[red\]], false)
     end
 
     if LotAtcExportConfig.exportBlueAA then
-        drawings_json = lotatcExport_for_faction(dcsLiberation.BlueAA, "#7F0084FF");
-
-        local exportBasePathBlue = exportBasePath..[[blue\]]
-        lfs.mkdir(exportBasePathBlue)
-
-        local exportFileName = exportBasePathBlue.."threatZones.json"
-
-        env.info(string.format("DCSLiberation|LotATC Export plugin - writing %s", exportFileName))
-
-        local fp = io.open(exportFileName, 'w')
-        if fp then
-            fp:write(drawings_json)
-            fp:close()
-        end
+        lotatc_export_faction(dcsLiberation.BlueAA, LotAtcExportConfig.blueColor, [[blue\]], true)
     end
 end
-

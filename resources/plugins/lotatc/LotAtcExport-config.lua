@@ -11,8 +11,9 @@ env.info("DCSLiberation|LotATC Export plugin - configuration")
 if dcsLiberation then
     env.info("DCSLiberation|LotATC Export plugin - configuration dcsLiberation")
 
-    exportRedAA = true
-    exportBlueAA = false
+    local exportRedAA = true
+    local exportBlueAA = false
+    local exportSymbols = true
 
     -- retrieve specific options values
     if dcsLiberation.plugins then
@@ -20,10 +21,15 @@ if dcsLiberation then
     
         if dcsLiberation.plugins.lotatc then
             env.info("DCSLiberation|LotATC Export plugin - dcsLiberation.plugins.lotatcExport")
+
             exportRedAA = dcsLiberation.plugins.lotatc.exportRedAA
             env.info(string.format("DCSLiberation|LotATC Export plugin - exportRedAA = %s",tostring(exportRedAA)))
+
             exportBlueAA = dcsLiberation.plugins.lotatc.exportBlueAA
             env.info(string.format("DCSLiberation|LotATC Export plugin - exportBlueAA = %s",tostring(exportBlueAA)))
+
+            exportBlueAA = dcsLiberation.plugins.lotatc.exportSymbols
+            env.info(string.format("DCSLiberation|LotATC Export plugin - exportSymbols = %s",tostring(exportSymbols)))
         end
     end
     
@@ -31,8 +37,9 @@ if dcsLiberation then
     if LotAtcExportConfig then 
         LotAtcExportConfig.exportRedAA = exportRedAA
         LotAtcExportConfig.exportBlueAA = exportBlueAA
+        LotAtcExportConfig.exportSymbols = exportSymbols
 
-        lotatcExport()
+        LotatcExport()
     end
 
 end

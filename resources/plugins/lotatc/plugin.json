@@ -11,6 +11,11 @@
             "nameInUI": "Export BLUE AA",
             "mnemonic": "exportBlueAA",
             "defaultValue": false
+        },
+        {
+            "nameInUI": "Export AA Symbols",
+            "mnemonic": "exportSymbols",
+            "defaultValue": true
         }
     ],
     "scriptsWorkOrders": [
