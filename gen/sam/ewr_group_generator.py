@@ -8,6 +8,8 @@ from game.theater.theatergroundobject import EwrGroundObject
 
 from gen.sam.airdefensegroupgenerator import AirDefenseGroupGenerator
 
+from gen.sam.group_generator import GroupGenerator
+
 from dcs.unitgroup import VehicleGroup
 
 from gen.sam.ewrs import (
