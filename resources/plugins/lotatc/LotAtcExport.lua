@@ -26,13 +26,42 @@ local function uuid()
     end)
 end
 
-local function lotatcExport_get_name(unit)
+local function lotatcExport_get_aa_nato_name(unit, isFriend)
+    if not redIADS or not blueIADS then
+        return nil
+    end
+
+    env.info(string.format("DCSLiberation|LotATC Export plugin - try get NATO name for unit %s", unit.dcsGroupName))
+
+    local iads = redIADS
+    if isFriend then
+        iads = blueIADS
+    end
+
+    local samSite = iads:getSAMSiteByGroupName(unit.dcsGroupName)
+    if samSite and samSite.natoName then
+        env.info(string.format("DCSLiberation|LotATC Export plugin - NATO name is %s", samSite.natoName))
+        return samSite.natoName
+    else
+        return nil
+    end
+end
+
+local function lotatcExport_get_name(unit, isFriend)
     local classification = "SAM"
 
     if string.find(unit.dcsGroupName, "|EWR|", 1, true) then
         classification = "EWR"
     end
-    local name = string.format("%s|%s", unit.name, classification)
+
+    local natoName = lotatcExport_get_aa_nato_name(unit, isFriend)
+
+    local name = nil
+    if not natoName then
+        name = string.format("%s|%s", unit.name, classification)
+    else
+        name = string.format("%s|%s|%s", unit.name, classification, natoName)
+    end
 
     return name, classification
 end
@@ -46,7 +75,7 @@ local function lotatc_write_json(filename, json)
     end
 end
 
-local function lotatcExport_threat_circles_for_faction(faction, color)
+local function lotatcExport_threat_circles_for_faction(faction, color, isFriend)
     local drawings = {}
 
     for _,aa in pairs(faction) do
@@ -54,7 +83,7 @@ local function lotatcExport_threat_circles_for_faction(faction, color)
 
         local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
 
-        local name = lotatcExport_get_name(aa)
+        local name = lotatcExport_get_name(aa, isFriend)
 
         table.insert(drawings,
         {
@@ -97,7 +126,7 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
 
         local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
 
-        local name = lotatcExport_get_name(aa)
+        local name = lotatcExport_get_name(aa, isFriend)
 
         local classification = "hostile"
         if isFriend then
@@ -142,7 +171,7 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
         ["version"] = LotAtcExportConfig.exportVersion,
         ["drawings"] = drawings
     }
-    
+
     local drawings_json = json:encode(lotatcData)
     return drawings_json
 end
@@ -152,7 +181,7 @@ local function lotatc_export_faction(faction, color, faction_path, isFriend)
     lfs.mkdir(exportBasePathFaction)
 
     local exportFileName = exportBasePathFaction.."threatZones.json"
-    local json = lotatcExport_threat_circles_for_faction(faction, color);
+    local json = lotatcExport_threat_circles_for_faction(faction, color, isFriend);
     lotatc_write_json(exportFileName, json)
 
     if LotAtcExportConfig.exportSymbols then
