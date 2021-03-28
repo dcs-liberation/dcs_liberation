@@ -1,12 +1,28 @@
 {
-    "nameInUI": "LotATC Threatzone Export",
+    "nameInUI": "LotATC Export",
     "defaultValue": true,
-    "specificOptions": [],
+    "specificOptions": [
+        {
+            "nameInUI": "Export RED AA",
+            "mnemonic": "exportRedAA",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Export BLUE AA",
+            "mnemonic": "exportBlueAA",
+            "defaultValue": false
+        }
+    ],
     "scriptsWorkOrders": [
         {
             "file": "LotAtcExport.lua",
             "mnemonic": "LotAtcExport-script"
         }
     ],
-    "configurationWorkOrders": []
+    "configurationWorkOrders": [
+        {
+            "file": "LotAtcExport-config.lua",
+            "mnemonic": "LotAtcExport-config"
+        }
+    ]
 }
