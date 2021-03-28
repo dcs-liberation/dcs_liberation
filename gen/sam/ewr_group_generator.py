@@ -1,6 +1,11 @@
 import random
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Type
 
+from game import Game
+from game.factions.faction import Faction
+from game.theater import TheaterGroundObject
+from game.theater.theatergroundobject import EwrGroundObject
+
 from dcs.unitgroup import VehicleGroup
 
 from gen.sam.ewrs import (
@@ -41,7 +46,7 @@ def get_faction_possible_ewrs_generator(
 
 
 def generate_ewr_group(
-    game: Game, ground_object: TheaterGroundObject, faction: Faction
+    game: Game, ground_object: EwrGroundObject, faction: Faction
 ) -> List[VehicleGroup]:
     """Generates an early warning radar group.
 
