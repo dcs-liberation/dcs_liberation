@@ -23,18 +23,7 @@ from gen.sam.cold_war_flak import (
     ColdWarFlakGenerator,
     EarlyColdWarFlakGenerator,
 )
-from gen.sam.ewrs import (
-    BigBirdGenerator,
-    BoxSpringGenerator,
-    DogEarGenerator,
-    FlatFaceGenerator,
-    HawkEwrGenerator,
-    PatriotEwrGenerator,
-    RolandEwrGenerator,
-    SnowDriftGenerator,
-    StraightFlushGenerator,
-    TallRackGenerator,
-)
+
 from gen.sam.freya_ewr import FreyaGenerator
 from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
@@ -152,19 +141,6 @@ SAM_PRICES = {
     AirDefence.HQ_7_Self_Propelled_LN: 35,
 }
 
-EWR_MAP = {
-    "BoxSpringGenerator": BoxSpringGenerator,
-    "TallRackGenerator": TallRackGenerator,
-    "DogEarGenerator": DogEarGenerator,
-    "RolandEwrGenerator": RolandEwrGenerator,
-    "FlatFaceGenerator": FlatFaceGenerator,
-    "PatriotEwrGenerator": PatriotEwrGenerator,
-    "BigBirdGenerator": BigBirdGenerator,
-    "SnowDriftGenerator": SnowDriftGenerator,
-    "StraightFlushGenerator": StraightFlushGenerator,
-    "HawkEwrGenerator": HawkEwrGenerator,
-}
-
 
 def get_faction_possible_sams_generator(
     faction: Faction,
@@ -174,14 +150,6 @@ def get_faction_possible_sams_generator(
     :param faction: Faction name to search units for
     """
     return [SAM_MAP[s] for s in faction.air_defenses]
-
-
-def get_faction_possible_ewrs_generator(faction: Faction) -> List[Type[GroupGenerator]]:
-    """
-    Return the list of possible SAM generator for the given faction
-    :param faction: Faction name to search units for
-    """
-    return [EWR_MAP[s] for s in faction.ewrs]
 
 
 def _generate_anti_air_from(
@@ -235,23 +203,4 @@ def generate_anti_air_group(
         groups = _generate_anti_air_from(generators_for_range, game, ground_object)
         if groups:
             return groups
-    return []
-
-
-def generate_ewr_group(
-    game: Game, ground_object: TheaterGroundObject, faction: Faction
-) -> List[VehicleGroup]:
-    """Generates an early warning radar group.
-
-    :param game: The Game.
-    :param ground_object: The ground object which will own the EWR group.
-    :param faction: Owner faction.
-    :return: The generated group, or None if one could not be generated.
-    """
-    generators = get_faction_possible_ewrs_generator(faction)
-    if len(generators) > 0:
-        generator_class = random.choice(generators)
-        generator = generator_class(game, ground_object)
-        generator.generate()
-        return generator.get_generated_group()
     return []

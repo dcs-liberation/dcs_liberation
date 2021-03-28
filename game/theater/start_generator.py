@@ -37,10 +37,8 @@ from gen.fleet.ship_group_generator import (
 from gen.locations.preset_location_finder import MizDataLocationFinder
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.airdefensegroupgenerator import AirDefenseRange
-from gen.sam.sam_group_generator import (
-    generate_anti_air_group,
-    generate_ewr_group,
-)
+from gen.sam.sam_group_generator import generate_anti_air_group
+from gen.sam.ewr_group_generator import generate_ewr_group
 from . import (
     ConflictTheater,
     ControlPoint,
