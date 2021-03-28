@@ -6,6 +6,8 @@ from game.factions.faction import Faction
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import EwrGroundObject
 
+from gen.sam.airdefensegroupgenerator import AirDefenseGroupGenerator
+
 from dcs.unitgroup import VehicleGroup
 
 from gen.sam.ewrs import (
