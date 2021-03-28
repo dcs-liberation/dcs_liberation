@@ -19,8 +19,3 @@ do
 	require = nil
 	loadlib = nil
 end
-
-witchcraft = {}
-witchcraft.host = "localhost"
-witchcraft.port = 3001
-dofile(lfs.writedir()..[[Scripts\witchcraft.lua]])
