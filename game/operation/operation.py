@@ -510,14 +510,14 @@ class Operation:
                     for g in ground_object.groups:
                         threat_range = ground_object.threat_range(g)
 
-                        if threat_range.distance_in_meters == 0.0:
+                        if not threat_range or threat_range.distance_in_meters == 0.0:
                             continue
 
                         faction = "RedAA"
                         if cp.captured == True:
                             faction = "BlueAA"
 
-                        luaData[faction][ground_object.group_name] = {
+                        luaData[faction][g.name] = {
                             "name": ground_object.name,
                             "range": threat_range.meters,
                             "position": {

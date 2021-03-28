@@ -52,6 +52,8 @@ local function lotatcExport_get_name(unit, isFriend)
 
     if string.find(unit.dcsGroupName, "|EWR|", 1, true) then
         classification = "EWR"
+    elseif string.find(unit.dcsGroupName, "|AA", 1, true) then
+        classification = "AAA"
     end
 
     local natoName = lotatcExport_get_aa_nato_name(unit, isFriend)
