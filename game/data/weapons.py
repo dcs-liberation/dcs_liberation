@@ -259,7 +259,10 @@ _WEAPON_FALLBACKS = [
     (Weapons.LAU_7_AIM_9P_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9L),
     (Weapons.LAU_7_AIM_9X_Sidewinder_IR_AAM, Weapons.LAU_7_AIM_9M_Sidewinder_IR_AAM),
     (Weapons.LAU_7___2_GAR_8_Sidewinder_IR_AAM, None),
-    (Weapons.LAU_7___2_AIM_9L_Sidewinder_IR_AAM, Weapons.LAU_7___2_GAR_8_Sidewinder_IR_AAM),
+    (
+        Weapons.LAU_7___2_AIM_9L_Sidewinder_IR_AAM,
+        Weapons.LAU_7___2_GAR_8_Sidewinder_IR_AAM,
+    ),
     (
         Weapons.LAU_7___2_AIM_9M_Sidewinder_IR_AAM,
         Weapons.LAU_7___2_AIM_9P5_Sidewinder_IR_AAM,
