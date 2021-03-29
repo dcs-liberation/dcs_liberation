@@ -6,10 +6,23 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- LotATC Export plugin - configuration
-env.info("DCSLiberation|LotATC Export plugin - configuration")
+logger:info("DCSLiberation|LotATC Export plugin - configuration")
+
+local function discoverLotAtcDrawingsPath()
+    -- establish a search pattern into the following modes
+    -- 1. Environment variable LOTATC_DRAWINGS_DIR, to support server exporting with auto load from LotATC
+    -- 2. DCS saved games folder as configured in DCS Liberation
+
+    local drawingEnvDir = os.getenv("LOTATC_DRAWINGS_DIR")
+    if drawingEnvDir then
+        return drawingEnvDir
+    else
+        return dcsLiberation.savedGamesPath..[[\Mods\services\LotAtc\userdb\drawings\]]
+    end
+end
 
 if dcsLiberation then
-    env.info("DCSLiberation|LotATC Export plugin - configuration dcsLiberation")
+    logger:info("DCSLiberation|LotATC Export plugin - configuration dcsLiberation")
 
     local exportRedAA = true
     local exportBlueAA = false
@@ -17,29 +30,29 @@ if dcsLiberation then
 
     -- retrieve specific options values
     if dcsLiberation.plugins then
-        env.info("DCSLiberation|LotATC Export plugin - configuration dcsLiberation.plugins")
-    
+        logger:info("DCSLiberation|LotATC Export plugin - configuration dcsLiberation.plugins")
+
         if dcsLiberation.plugins.lotatc then
-            env.info("DCSLiberation|LotATC Export plugin - dcsLiberation.plugins.lotatcExport")
+            logger:info("DCSLiberation|LotATC Export plugin - dcsLiberation.plugins.lotatcExport")
 
             exportRedAA = dcsLiberation.plugins.lotatc.exportRedAA
-            env.info(string.format("DCSLiberation|LotATC Export plugin - exportRedAA = %s",tostring(exportRedAA)))
+            logger:info(string.format("DCSLiberation|LotATC Export plugin - exportRedAA = %s",tostring(exportRedAA)))
 
             exportBlueAA = dcsLiberation.plugins.lotatc.exportBlueAA
-            env.info(string.format("DCSLiberation|LotATC Export plugin - exportBlueAA = %s",tostring(exportBlueAA)))
+            logger:info(string.format("DCSLiberation|LotATC Export plugin - exportBlueAA = %s",tostring(exportBlueAA)))
 
             exportBlueAA = dcsLiberation.plugins.lotatc.exportSymbols
-            env.info(string.format("DCSLiberation|LotATC Export plugin - exportSymbols = %s",tostring(exportSymbols)))
+            logger:info(string.format("DCSLiberation|LotATC Export plugin - exportSymbols = %s",tostring(exportSymbols)))
         end
     end
-    
+
     -- actual configuration code
-    if LotAtcExportConfig then 
+    if LotAtcExportConfig then
         LotAtcExportConfig.exportRedAA = exportRedAA
         LotAtcExportConfig.exportBlueAA = exportBlueAA
         LotAtcExportConfig.exportSymbols = exportSymbols
+        LotAtcExportConfig.drawingBasePath = discoverLotAtcDrawingsPath()
 
         LotatcExport()
     end
-
 end

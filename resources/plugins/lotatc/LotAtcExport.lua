@@ -12,7 +12,7 @@ LotAtcExportConfig = {
     ["exportBlueAA"] = false,
     ["exportSymbols"] = false,
     ["exportVersion"] = "2.2.0",
-    ["basePath"] = dcsLiberation.savedGamesPath..[[\Mods\services\LotAtc\userdb\drawings\]],
+    ["drawingBasePath"] = nil,
     ["redColor"] = "#7FE32000",
     ["blueColor"] = "#7F0084FF"
 }
@@ -31,7 +31,7 @@ local function lotatcExport_get_aa_nato_name(unit, isFriend)
         return nil
     end
 
-    env.info(string.format("DCSLiberation|LotATC Export plugin - try get NATO name for unit %s", unit.dcsGroupName))
+    -- logger:info(string.format("DCSLiberation|LotATC Export plugin - try get NATO name for unit %s", unit.dcsGroupName))
 
     local iads = redIADS
     if isFriend then
@@ -40,7 +40,7 @@ local function lotatcExport_get_aa_nato_name(unit, isFriend)
 
     local samSite = iads:getSAMSiteByGroupName(unit.dcsGroupName)
     if samSite and samSite.natoName then
-        env.info(string.format("DCSLiberation|LotATC Export plugin - NATO name is %s", samSite.natoName))
+        -- logger:info(string.format("DCSLiberation|LotATC Export plugin - NATO name is %s", samSite.natoName))
         return samSite.natoName
     else
         return nil
@@ -69,11 +69,19 @@ local function lotatcExport_get_name(unit, isFriend)
 end
 
 local function lotatc_write_json(filename, json)
-    env.info(string.format("DCSLiberation|LotATC Export plugin - writing %s", filename))
-    local fp = io.open(filename, 'w')
-    if fp then
-        fp:write(json)
-        fp:close()
+    logger:info(string.format("DCSLiberation|LotATC Export plugin - writing %s", filename))
+
+    local function Write()
+        local fp = io.open(filename, 'w')
+        if fp then
+            fp:write(json)
+            fp:close()
+        end
+    end
+
+    if pcall(Write) then
+    else
+        logger:error("Unable to write LotATC export file to %s", filename)
     end
 end
 
@@ -81,7 +89,7 @@ local function lotatcExport_threat_circles_for_faction(faction, color, isFriend)
     local drawings = {}
 
     for _,aa in pairs(faction) do
-        env.info(string.format("DCSLiberation|LotATC Export plugin - exporting threat circle for %s", aa.dcsGroupName))
+        logger:info(string.format("DCSLiberation|LotATC Export plugin - exporting threat circle for %s", aa.dcsGroupName))
 
         local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
 
@@ -124,7 +132,7 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
     local drawings = {}
 
     for _,aa in pairs(faction) do
-        env.info(string.format("DCSLiberation|LotATC Export plugin - exporting AA symbol for %s", aa.dcsGroupName))
+        logger:info(string.format("DCSLiberation|LotATC Export plugin - exporting AA symbol for %s", aa.dcsGroupName))
 
         local convLat, convLon = coord.LOtoLL({x = aa.positionX, y = 0, z = aa.positionY})
 
@@ -178,8 +186,8 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
     return drawings_json
 end
 
-local function lotatc_export_faction(faction, color, faction_path, isFriend)
-    local exportBasePathFaction = LotAtcExportConfig.basePath..faction_path
+local function lotatc_export_faction(faction, color, factionPath, isFriend)
+    local exportBasePathFaction = LotAtcExportConfig.drawingBasePath..factionPath
     lfs.mkdir(exportBasePathFaction)
 
     local exportFileName = exportBasePathFaction.."threatZones.json"
@@ -198,7 +206,16 @@ function LotatcExport()
     if not json then
         local message = "Unable to export LotATC drawings, JSON library is not loaded!"
         logger:error(message)
-        messageAll(message)
+        return
+    end
+
+    if not LotAtcExportConfig.drawingBasePath then
+        local message = "No writable export path for LotATC drawings. Set environment variable LOTATC_DRAWINGS_DIR pointing to your export path."
+        logger:error(message)
+        return
+    else
+        local message = "Export LotATC drawings to "..LotAtcExportConfig.drawingBasePath
+        logger:info(message)
     end
 
     if LotAtcExportConfig.exportRedAA then
