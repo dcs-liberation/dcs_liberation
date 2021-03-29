@@ -5,11 +5,13 @@ Saves from 2.4 are not compatible with 2.5.
 ## Features/Improvements
 
 * **[Flight Planner]** (WIP) Added AEW&C missions.
+* **[Kneeboard]** Added dark kneeboard option (GvonH) 
 
 ## Fixes
 
 * **[Flight Planner]** Front lines now project threat zones, so TARCAP/escorts will not be pruned for flights near the front. Packages may also route around the front line when practical.
 * **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
+* **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO
 
 # 2.4.3
 
