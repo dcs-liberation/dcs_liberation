@@ -1,6 +1,6 @@
 {
     "nameInUI": "LotATC Export",
-    "defaultValue": true,
+    "defaultValue": false,
     "specificOptions": [
         {
             "nameInUI": "Export RED AA",
