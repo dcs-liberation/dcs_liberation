@@ -522,8 +522,8 @@ class Operation:
                             "range": threat_range.meters,
                             "position": {
                                 "x": ground_object.position.x,
-                                "y": ground_object.position.y
-                            }
+                                "y": ground_object.position.y,
+                            },
                         }
 
         # set a LUA table with data from Liberation that we want to set
