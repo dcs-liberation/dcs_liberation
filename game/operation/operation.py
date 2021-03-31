@@ -422,7 +422,6 @@ class Operation:
                         gplanner = GroundPlanner(cp, cls.game)
                         gplanner.plan_groundwar()
                         cls.game.ground_planners[cp.id] = gplanner
-
             player_gp = cls.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
             enemy_gp = cls.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             ground_conflict_gen = GroundConflictGenerator(
