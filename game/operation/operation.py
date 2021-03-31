@@ -24,6 +24,7 @@ from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
 from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
+from gen.ground_forces.ai_ground_planner import GroundPlanner
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
 from gen.naming import namegen
@@ -414,6 +415,14 @@ class Operation:
                 cls.game.theater,
             )
             # Generate frontline ops
+            if len(cls.game.ground_planners) == 0:
+                logging.debug("Error: Ground planners are empty for control points")
+                for cp in cls.game.theater.controlpoints:
+                    if cp.has_frontline:
+                        gplanner = GroundPlanner(cp, cls.game)
+                        gplanner.plan_groundwar()
+                        cls.game.ground_planners[cp.id] = gplanner
+
             player_gp = cls.game.ground_planners[player_cp.id].units_per_cp[enemy_cp.id]
             enemy_gp = cls.game.ground_planners[enemy_cp.id].units_per_cp[player_cp.id]
             ground_conflict_gen = GroundConflictGenerator(
