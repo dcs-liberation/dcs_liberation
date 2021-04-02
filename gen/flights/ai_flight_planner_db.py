@@ -184,6 +184,7 @@ CAS_CAPABLE = [
     S_3B,
     Su_34,
     Su_30,
+    MiG_19P,
     MiG_29S,
     MiG_27K,
     MiG_29A,

@@ -1293,6 +1293,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_64A: COMMON_OVERRIDE,
     SH_60B: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
+    F_86F_Sabre: COMMON_OVERRIDE,
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
     },
