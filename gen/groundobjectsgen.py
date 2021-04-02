@@ -402,20 +402,23 @@ class CarrierGenerator(GenericCarrierGenerator):
 
     def tacan_callsign(self) -> str:
         # TODO: Assign these properly.
-        return random.choice(
-            [
-                "STE",
-                "CVN",
-                "CVH",
-                "CCV",
-                "ACC",
-                "ARC",
-                "GER",
-                "ABR",
-                "LIN",
-                "TRU",
-            ]
-        )
+        if self.control_point.name == "Carrier Strike Group 8":
+            return "TRU"
+        else:
+            return random.choice(
+                [
+                    "STE",
+                    "CVN",
+                    "CVH",
+                    "CCV",
+                    "ACC",
+                    "ARC",
+                    "GER",
+                    "ABR",
+                    "LIN",
+                    "TRU",
+                ]
+            )
 
 
 class LhaGenerator(GenericCarrierGenerator):

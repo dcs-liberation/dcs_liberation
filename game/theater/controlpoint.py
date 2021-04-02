@@ -4,7 +4,6 @@ import heapq
 import itertools
 import logging
 import random
-import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -28,6 +27,7 @@ from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
+from game.point_with_heading import PointWithHeading
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
@@ -77,38 +77,38 @@ class PresetLocations:
     """Defines the preset locations loaded from the campaign mission file."""
 
     #: Locations used for spawning ground defenses for bases.
-    base_garrisons: List[Point] = field(default_factory=list)
+    base_garrisons: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used for spawning air defenses for bases. Used by SAMs, AAA,
     #: and SHORADs.
-    base_air_defense: List[Point] = field(default_factory=list)
+    base_air_defense: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by EWRs.
-    ewrs: List[Point] = field(default_factory=list)
+    ewrs: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
-    ships: List[Point] = field(default_factory=list)
+    ships: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by coastal defenses.
-    coastal_defenses: List[Point] = field(default_factory=list)
+    coastal_defenses: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
-    strike_locations: List[Point] = field(default_factory=list)
+    strike_locations: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by offshore strike objectives.
-    offshore_strike_locations: List[Point] = field(default_factory=list)
+    offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by missile sites like scuds and V-2s.
-    missile_sites: List[Point] = field(default_factory=list)
+    missile_sites: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of long range SAMs which should always be spawned.
-    required_long_range_sams: List[Point] = field(default_factory=list)
+    required_long_range_sams: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of medium range SAMs which should always be spawned.
-    required_medium_range_sams: List[Point] = field(default_factory=list)
+    required_medium_range_sams: List[PointWithHeading] = field(default_factory=list)
 
     @staticmethod
-    def _random_from(points: List[Point]) -> Optional[Point]:
+    def _random_from(points: List[PointWithHeading]) -> Optional[PointWithHeading]:
         """Finds, removes, and returns a random position from the given list."""
         if not points:
             return None
@@ -116,7 +116,7 @@ class PresetLocations:
         points.remove(point)
         return point
 
-    def random_for(self, location_type: LocationType) -> Optional[Point]:
+    def random_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
         """Returns a position suitable for the given location type.
 
         The location, if found, will be claimed by the caller and not available
@@ -386,18 +386,19 @@ class ControlPoint(MissionTarget, ABC):
     # TODO: Should be Airbase specific.
     def clear_base_defenses(self) -> None:
         for base_defense in self.base_defenses:
+            p = PointWithHeading.from_point(base_defense.position, base_defense.heading)
             if isinstance(base_defense, EwrGroundObject):
-                self.preset_locations.ewrs.append(base_defense.position)
+                self.preset_locations.ewrs.append(p)
             elif isinstance(base_defense, SamGroundObject):
-                self.preset_locations.base_air_defense.append(base_defense.position)
+                self.preset_locations.base_air_defense.append(p)
             elif isinstance(base_defense, VehicleGroupGroundObject):
-                self.preset_locations.base_garrisons.append(base_defense.position)
+                self.preset_locations.base_garrisons.append(p)
             else:
                 logging.error(
                     "Could not determine preset location type for "
                     f"{base_defense}. Assuming garrison type."
                 )
-                self.preset_locations.base_garrisons.append(base_defense.position)
+                self.preset_locations.base_garrisons.append(p)
         self.base_defenses = []
 
     def capture_equipment(self, game: Game) -> None:
@@ -632,6 +633,15 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def income_per_turn(self) -> int:
         return 0
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.AEWC,
+            ]
+        yield from super().mission_types(for_player)
 
     @property
     def has_active_frontline(self) -> bool:

@@ -20,6 +20,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
+from game.export import lotatc_export
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
@@ -124,6 +125,10 @@ class QLiberationWindow(QMainWindow):
         self.saveAsAction.triggered.connect(self.saveGameAs)
         self.saveAsAction.setShortcut("CTRL+A")
 
+        self.exportLotAtcAction = QAction("Export LotAtc", self)
+        self.exportLotAtcAction.setIcon(QIcon(CONST.ICONS["LotAtc"]))
+        self.exportLotAtcAction.triggered.connect(self.exportLotAtc)
+
         self.showAboutDialogAction = QAction("&About DCS Liberation", self)
         self.showAboutDialogAction.setIcon(QIcon.fromTheme("help-about"))
         self.showAboutDialogAction.triggered.connect(self.showAboutDialog)
@@ -151,6 +156,7 @@ class QLiberationWindow(QMainWindow):
         self.tool_bar.addAction(self.newGameAction)
         self.tool_bar.addAction(self.openAction)
         self.tool_bar.addAction(self.saveGameAction)
+        self.tool_bar.addAction(self.exportLotAtcAction)
 
         self.links_bar = self.addToolBar("Links")
         self.links_bar.addAction(self.openDiscordAction)
@@ -167,6 +173,8 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(self.saveGameAction)
         file_menu.addAction(self.saveAsAction)
+        file_menu.addSeparator()
+        file_menu.addAction(self.exportLotAtcAction)
         file_menu.addSeparator()
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
@@ -277,6 +285,17 @@ class QLiberationWindow(QMainWindow):
             persistency.save_game(self.game)
             liberation_install.setup_last_save_file(self.game.savepath)
             liberation_install.save_config()
+
+    def exportLotAtc(self):
+        file = QFileDialog.getSaveFileName(
+            self,
+            "Export Threat Circles as LotAtc drawings",
+            dir=persistency._dcs_saved_game_folder,
+            filter="*.json",
+        )
+        if file is not None:
+            exportpath = file[0]
+            lotatc_export.export_threat_circles(self.game, exportpath)
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")

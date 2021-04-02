@@ -7,32 +7,104 @@ from dcs.weapons_data import Weapons
 
 class MB_339PAN_Weapons:
     ARF8M3_TP = {"clsid": "{ARF8M3_TP}", "name": "ARF8M3 TP", "weight": None}
-    BRD_4_250_4_MK_76_2_ARF_8M3TP_ = {"clsid": "{BRD-4-250}", "name": "BRD-4-250(4*MK.76+2*ARF-8M3TP)", "weight": 137.6}
+    BRD_4_250_4_MK_76_2_ARF_8M3TP_ = {
+        "clsid": "{BRD-4-250}",
+        "name": "BRD-4-250(4*MK.76+2*ARF-8M3TP)",
+        "weight": 137.6,
+    }
     Color_Oil_Tank = {"clsid": "{COLOR-TANK}", "name": "Color Oil Tank", "weight": 183}
     Empty_Pylon = {"clsid": "{VOID-PYLON-MB339A}", "name": "Empty Pylon", "weight": 20}
-    Fuel_Tank_330lt = {"clsid": "{FUEL-SUBAL_TANK-330}", "name": "Fuel Tank 330lt", "weight": 315}
+    Fuel_Tank_330lt = {
+        "clsid": "{FUEL-SUBAL_TANK-330}",
+        "name": "Fuel Tank 330lt",
+        "weight": 315,
+    }
     GunPod_AN_M3 = {"clsid": "{MB339-AN-M3_L}", "name": "GunPod AN/M3", "weight": 75}
     GunPod_AN_M3_ = {"clsid": "{MB339-AN-M3_R}", "name": "GunPod AN/M3", "weight": 75}
-    GunPod_DEFA553 = {"clsid": "{MB339-DEFA553_L}", "name": "GunPod DEFA553", "weight": 190}
-    GunPod_DEFA553_ = {"clsid": "{MB339-DEFA553_R}", "name": "GunPod DEFA553", "weight": 190}
-    LAU_10___4_ZUNI_MK_71___ = {"clsid": "{LAU-10}", "name": "LAU-10 - 4 ZUNI MK 71", "weight": 308}
-    LR_25___25_ARF_8M3_API_ = {"clsid": "{LR-25API}", "name": "LR-25 - 25 ARF/8M3(API)", "weight": 141}
-    LR_25___25_ARF_8M3_HEI_ = {"clsid": "{LR-25HEI}", "name": "LR-25 - 25 ARF/8M3(HEI)", "weight": 161}
+    GunPod_DEFA553 = {
+        "clsid": "{MB339-DEFA553_L}",
+        "name": "GunPod DEFA553",
+        "weight": 190,
+    }
+    GunPod_DEFA553_ = {
+        "clsid": "{MB339-DEFA553_R}",
+        "name": "GunPod DEFA553",
+        "weight": 190,
+    }
+    LAU_10___4_ZUNI_MK_71___ = {
+        "clsid": "{LAU-10}",
+        "name": "LAU-10 - 4 ZUNI MK 71",
+        "weight": 308,
+    }
+    LR_25___25_ARF_8M3_API_ = {
+        "clsid": "{LR-25API}",
+        "name": "LR-25 - 25 ARF/8M3(API)",
+        "weight": 141,
+    }
+    LR_25___25_ARF_8M3_HEI_ = {
+        "clsid": "{LR-25HEI}",
+        "name": "LR-25 - 25 ARF/8M3(HEI)",
+        "weight": 161,
+    }
     MAK79_2_MK_20 = {"clsid": "{MAK79_MK20 2L}", "name": "MAK79 2 MK-20", "weight": 464}
-    MAK79_2_MK_20_ = {"clsid": "{MAK79_MK20 2R}", "name": "MAK79 2 MK-20", "weight": 464}
+    MAK79_2_MK_20_ = {
+        "clsid": "{MAK79_MK20 2R}",
+        "name": "MAK79 2 MK-20",
+        "weight": 464,
+    }
     MAK79_MK_20 = {"clsid": "{MAK79_MK20 1R}", "name": "MAK79 MK-20", "weight": 232}
     MAK79_MK_20_ = {"clsid": "{MAK79_MK20 1L}", "name": "MAK79 MK-20", "weight": 232}
-    MB339_Black_Smoke = {"clsid": "{SMOKE-BLACK-MB339}", "name": "MB339 Black Smoke", "weight": 1}
-    MB339_Green_Smoke = {"clsid": "{SMOKE-GREEN-MB339}", "name": "MB339 Green Smoke", "weight": 1}
-    MB339_ORANGE_Smoke = {"clsid": "{SMOKE-ORANGE-MB339}", "name": "MB339 ORANGE Smoke", "weight": 1}
-    MB339_Red_Smoke = {"clsid": "{SMOKE-RED-MB339}", "name": "MB339 Red Smoke", "weight": 1}
-    MB339_White_Smoke = {"clsid": "{SMOKE-WHITE-MB339}", "name": "MB339 White Smoke", "weight": 1}
-    MB339_YELLOW_Smoke = {"clsid": "{SMOKE-YELLOW-MB339}", "name": "MB339 YELLOW Smoke", "weight": 1}
+    MB339_Black_Smoke = {
+        "clsid": "{SMOKE-BLACK-MB339}",
+        "name": "MB339 Black Smoke",
+        "weight": 1,
+    }
+    MB339_Green_Smoke = {
+        "clsid": "{SMOKE-GREEN-MB339}",
+        "name": "MB339 Green Smoke",
+        "weight": 1,
+    }
+    MB339_ORANGE_Smoke = {
+        "clsid": "{SMOKE-ORANGE-MB339}",
+        "name": "MB339 ORANGE Smoke",
+        "weight": 1,
+    }
+    MB339_Red_Smoke = {
+        "clsid": "{SMOKE-RED-MB339}",
+        "name": "MB339 Red Smoke",
+        "weight": 1,
+    }
+    MB339_White_Smoke = {
+        "clsid": "{SMOKE-WHITE-MB339}",
+        "name": "MB339 White Smoke",
+        "weight": 1,
+    }
+    MB339_YELLOW_Smoke = {
+        "clsid": "{SMOKE-YELLOW-MB339}",
+        "name": "MB339 YELLOW Smoke",
+        "weight": 1,
+    }
     MK76 = {"clsid": "{MK76}", "name": "MK76", "weight": 11.3}
-    Tip_Fuel_Tank_500lt = {"clsid": "{FUEL-TIP-TANK-500-L}", "name": "Tip Fuel Tank 500lt", "weight": 471}
-    Tip_Fuel_Tank_500lt_ = {"clsid": "{FUEL-TIP-TANK-500-R}", "name": "Tip Fuel Tank 500lt", "weight": 471}
-    Tip_Fuel_Tank_Ellittici_320lt = {"clsid": "{FUEL-TIP-ELLITTIC-L}", "name": "Tip Fuel Tank Ellittici 320lt", "weight": 314.2}
-    Tip_Fuel_Tank_Ellittici_320lt_ = {"clsid": "{FUEL-TIP-ELLITTIC-R}", "name": "Tip Fuel Tank Ellittici 320lt", "weight": 314.2}
+    Tip_Fuel_Tank_500lt = {
+        "clsid": "{FUEL-TIP-TANK-500-L}",
+        "name": "Tip Fuel Tank 500lt",
+        "weight": 471,
+    }
+    Tip_Fuel_Tank_500lt_ = {
+        "clsid": "{FUEL-TIP-TANK-500-R}",
+        "name": "Tip Fuel Tank 500lt",
+        "weight": 471,
+    }
+    Tip_Fuel_Tank_Ellittici_320lt = {
+        "clsid": "{FUEL-TIP-ELLITTIC-L}",
+        "name": "Tip Fuel Tank Ellittici 320lt",
+        "weight": 314.2,
+    }
+    Tip_Fuel_Tank_Ellittici_320lt_ = {
+        "clsid": "{FUEL-TIP-ELLITTIC-R}",
+        "name": "Tip Fuel Tank Ellittici 320lt",
+        "weight": 314.2,
+    }
 
 
 class MB_339PAN(PlaneType):
@@ -43,7 +115,7 @@ class MB_339PAN(PlaneType):
     length = 12.13
     fuel_max = 626
     max_speed = 763.2
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 124
 
     panel_radio = {
@@ -68,7 +140,7 @@ class MB_339PAN(PlaneType):
                 7: 262,
                 14: 266,
                 19: 268,
-                15: 265
+                15: 265,
             },
         },
         2: {
@@ -102,7 +174,7 @@ class MB_339PAN(PlaneType):
                 28: 257,
                 23: 260,
                 29: 253,
-                15: 265
+                15: 265,
             },
         },
     }
@@ -113,7 +185,6 @@ class MB_339PAN(PlaneType):
     }
 
     class Properties:
-
         class SoloFlight:
             id = "SoloFlight"
 
@@ -127,7 +198,6 @@ class MB_339PAN(PlaneType):
                 Equally_Responsible = -2
 
     class Liveries:
-
         class Georgia(Enum):
             MB339AA__ARMADA____Crippa = "MB339AA 'ARMADA' - Crippa"
             MB339AA__ARMADA____Yellow_Band = "MB339AA 'ARMADA' - Yellow Band"
@@ -370,7 +440,10 @@ class MB_339PAN(PlaneType):
 
     class Pylon1:
         Tip_Fuel_Tank_500lt = (1, MB_339PAN_Weapons.Tip_Fuel_Tank_500lt)
-        Tip_Fuel_Tank_Ellittici_320lt = (1, MB_339PAN_Weapons.Tip_Fuel_Tank_Ellittici_320lt)
+        Tip_Fuel_Tank_Ellittici_320lt = (
+            1,
+            MB_339PAN_Weapons.Tip_Fuel_Tank_Ellittici_320lt,
+        )
 
     class Pylon2:
         Empty_Pylon = (2, MB_339PAN_Weapons.Empty_Pylon)
@@ -386,7 +459,10 @@ class MB_339PAN(PlaneType):
         LR_25___25_ARF_8M3_API_ = (3, MB_339PAN_Weapons.LR_25___25_ARF_8M3_API_)
         Mk_82 = (3, Weapons.Mk_82)
         LAU_10___4_ZUNI_MK_71___ = (3, MB_339PAN_Weapons.LAU_10___4_ZUNI_MK_71___)
-        BRD_4_250_4_MK_76_2_ARF_8M3TP_ = (3, MB_339PAN_Weapons.BRD_4_250_4_MK_76_2_ARF_8M3TP_)
+        BRD_4_250_4_MK_76_2_ARF_8M3TP_ = (
+            3,
+            MB_339PAN_Weapons.BRD_4_250_4_MK_76_2_ARF_8M3TP_,
+        )
         Matra_Type_155_Rocket_Pod = (3, Weapons.Matra_Type_155_Rocket_Pod)
 
     class Pylon4:
@@ -427,7 +503,10 @@ class MB_339PAN(PlaneType):
         Mk_82 = (8, Weapons.Mk_82)
         LAU_10___4_ZUNI_MK_71___ = (8, MB_339PAN_Weapons.LAU_10___4_ZUNI_MK_71___)
         Matra_Type_155_Rocket_Pod = (8, Weapons.Matra_Type_155_Rocket_Pod)
-        BRD_4_250_4_MK_76_2_ARF_8M3TP_ = (8, MB_339PAN_Weapons.BRD_4_250_4_MK_76_2_ARF_8M3TP_)
+        BRD_4_250_4_MK_76_2_ARF_8M3TP_ = (
+            8,
+            MB_339PAN_Weapons.BRD_4_250_4_MK_76_2_ARF_8M3TP_,
+        )
 
     class Pylon9:
         Empty_Pylon = (9, MB_339PAN_Weapons.Empty_Pylon)
@@ -438,9 +517,18 @@ class MB_339PAN(PlaneType):
 
     class Pylon10:
         Tip_Fuel_Tank_500lt_ = (10, MB_339PAN_Weapons.Tip_Fuel_Tank_500lt_)
-        Tip_Fuel_Tank_Ellittici_320lt_ = (10, MB_339PAN_Weapons.Tip_Fuel_Tank_Ellittici_320lt_)
+        Tip_Fuel_Tank_Ellittici_320lt_ = (
+            10,
+            MB_339PAN_Weapons.Tip_Fuel_Tank_Ellittici_320lt_,
+        )
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-    tasks = [task.GroundAttack, task.RunwayAttack, task.CAS, task.AntishipStrike, task.Reconnaissance]
+    tasks = [
+        task.GroundAttack,
+        task.RunwayAttack,
+        task.CAS,
+        task.AntishipStrike,
+        task.Reconnaissance,
+    ]
     task_default = task.Nothing

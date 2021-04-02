@@ -15,6 +15,8 @@ from datetime import timedelta
 from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
+from dcs.planes import E_3A, E_2C, A_50, KJ_2000
+
 from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
@@ -29,7 +31,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, Speed, meters, nautical_miles
+from game.utils import Distance, Speed, feet, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -278,11 +280,11 @@ class LoiterFlightPlan(FlightPlan):
         travel_time = super().travel_time_between_waypoints(a, b)
         if a != self.hold:
             return travel_time
-        try:
-            return travel_time + self.hold_duration
-        except AttributeError:
-            # Save compat for 2.3.
-            return travel_time + timedelta(minutes=5)
+        return travel_time + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -695,6 +697,45 @@ class SweepFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
+class AwacsFlightPlan(LoiterFlightPlan):
+    takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
+    nav_from: List[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield self.hold
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+
+    @property
+    def mission_start_time(self) -> Optional[timedelta]:
+        return self.takeoff_time()
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.hold:
+            return self.package.time_over_target
+        return None
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.hold
+
+    @property
+    def push_time(self) -> timedelta:
+        return self.package.time_over_target + self.hold_duration
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.push_time
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -759,7 +800,17 @@ class FlightPlanBuilder:
             raise RuntimeError("Flight must be a part of the package")
         if self.package.waypoints is None:
             self.regenerate_package_waypoints()
-        flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+
+        from game.navmesh import NavMeshError
+
+        try:
+            flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
+        except NavMeshError as ex:
+            color = "blue" if self.is_player else "red"
+            raise PlanningError(
+                f"Could not plan {color} {flight.flight_type.value} from "
+                f"{flight.departure} to {flight.package.target}"
+            ) from ex
 
     def generate_flight_plan(
         self, flight: Flight, custom_targets: Optional[List[Unit]]
@@ -790,6 +841,8 @@ class FlightPlanBuilder:
             return self.generate_sweep(flight)
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
+        elif task == FlightType.AEWC:
+            return self.generate_aewc(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -920,6 +973,47 @@ class FlightPlanBuilder:
             flight, location, FlightWaypointType.INGRESS_STRIKE, targets
         )
 
+    def generate_aewc(self, flight: Flight) -> AwacsFlightPlan:
+        """Generate a AWACS flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        location = self.package.target
+
+        start = self.aewc_orbit(location)
+
+        # As high as possible to maximize detection and on-station time.
+        if flight.unit_type == E_2C:
+            patrol_alt = feet(30000)
+        elif flight.unit_type == E_3A:
+            patrol_alt = feet(35000)
+        elif flight.unit_type == A_50:
+            patrol_alt = feet(33000)
+        elif flight.unit_type == KJ_2000:
+            patrol_alt = feet(40000)
+        else:
+            patrol_alt = feet(25000)
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+        start = builder.orbit(start, patrol_alt)
+
+        return AwacsFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(
+                flight.departure.position, start.position, patrol_alt
+            ),
+            nav_from=builder.nav_path(
+                start.position, flight.arrival.position, patrol_alt
+            ),
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            hold=start,
+            hold_duration=timedelta(hours=4),
+        )
+
     def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a BAI flight plan.
 
@@ -933,7 +1027,8 @@ class FlightPlanBuilder:
 
         targets: List[StrikeTarget] = []
         for group in location.groups:
-            targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
+            if group.units:
+                targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
@@ -1101,6 +1196,22 @@ class FlightPlanBuilder:
         )
         start = end.point_from_heading(heading - 180, diameter)
         return start, end
+
+    def aewc_orbit(self, location: MissionTarget) -> Point:
+        # in threat zone
+        if self.threat_zones.threatened(location.position):
+            # Borderpoint
+            closest_boundary = self.threat_zones.closest_boundary(location.position)
+
+            # Heading + Distance to border point
+            heading = location.position.heading_between_point(closest_boundary)
+            distance = location.position.distance_to_point(closest_boundary)
+
+            return location.position.point_from_heading(heading, distance)
+
+        # this Part is fine. No threat zone, just use our point
+        else:
+            return location.position
 
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine

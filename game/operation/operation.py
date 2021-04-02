@@ -167,6 +167,7 @@ class Operation:
         airgen: AircraftConflictGenerator,
     ):
         """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)"""
+
         gens: List[MissionInfoGenerator] = [
             KneeboardGenerator(cls.current_mission, cls.game),
             BriefingGenerator(cls.current_mission, cls.game),
@@ -178,9 +179,8 @@ class Operation:
             for tanker in airsupportgen.air_support.tankers:
                 gen.add_tanker(tanker)
 
-            if cls.player_awacs_enabled:
-                for awacs in airsupportgen.air_support.awacs:
-                    gen.add_awacs(awacs)
+            for aewc in airsupportgen.air_support.awacs:
+                gen.add_awacs(aewc)
 
             for jtac in jtacs:
                 gen.add_jtac(jtac)
@@ -379,7 +379,9 @@ class Operation:
             cls.game,
             cls.radio_registry,
             cls.unit_map,
+            air_support=cls.airsupportgen.air_support,
         )
+
         cls.airgen.clear_parking_slots()
 
         cls.airgen.generate_flights(

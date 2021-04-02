@@ -20,6 +20,15 @@ if TYPE_CHECKING:
 
 
 class FlightType(Enum):
+    """Enumeration of mission types.
+
+    The value of each enumeration is the name that will be shown in the UI.
+
+    These values are persisted to the save game as well since they are a part of
+    each flight and thus a part of the ATO, so changing these values will break
+    save compat.
+    """
+
     TARCAP = "TARCAP"
     BARCAP = "BARCAP"
     CAS = "CAS"
@@ -33,6 +42,7 @@ class FlightType(Enum):
     SWEEP = "Fighter sweep"
     OCA_RUNWAY = "OCA/Runway"
     OCA_AIRCRAFT = "OCA/Aircraft"
+    AEWC = "AEW&C"
 
     def __str__(self) -> str:
         return self.value

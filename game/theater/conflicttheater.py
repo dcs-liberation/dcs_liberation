@@ -55,6 +55,7 @@ from .controlpoint import (
     Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
+from ..point_with_heading import PointWithHeading
 from ..utils import Distance, meters, nautical_miles
 
 Numeric = Union[int, float]
@@ -329,44 +330,64 @@ class MizCampaignLoader:
         for group in self.garrisons:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_garrisons.append(group.position)
+                closest.preset_locations.base_garrisons.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
             else:
                 logging.warning(f"Found garrison unit too far from base: {group.name}")
 
         for group in self.sams:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_air_defense.append(group.position)
+                closest.preset_locations.base_air_defense.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
             else:
-                closest.preset_locations.strike_locations.append(group.position)
+                closest.preset_locations.strike_locations.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(group.position)
+            closest.preset_locations.ewrs.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.offshore_strike_targets:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.offshore_strike_locations.append(group.position)
+            closest.preset_locations.offshore_strike_locations.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.ships:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ships.append(group.position)
+            closest.preset_locations.ships.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.missile_sites.append(group.position)
+            closest.preset_locations.missile_sites.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.coastal_defenses.append(group.position)
+            closest.preset_locations.coastal_defenses.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.required_long_range_sams:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.required_long_range_sams.append(group.position)
+            closest.preset_locations.required_long_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.required_medium_range_sams:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.required_medium_range_sams.append(group.position)
+            closest.preset_locations.required_medium_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
@@ -811,6 +832,7 @@ class FrontLine(MissionTarget):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         yield from [
             FlightType.CAS,
+            FlightType.AEWC,
             # TODO: FlightType.TROOP_TRANSPORT
             # TODO: FlightType.EVAC
         ]

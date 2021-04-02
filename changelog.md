@@ -1,3 +1,22 @@
+# 2.5.0
+
+Saves from 2.4 are not compatible with 2.5.
+
+## Features/Improvements
+
+* **[Flight Planner]** (WIP) Added AEW&C missions. (by siKruger)
+* **[Kneeboard]** Added dark kneeboard option (by GvonH) 
+
+## Fixes
+
+* **[Flight Planner]** Front lines now project threat zones, so TARCAP/escorts will not be pruned for flights near the front. Packages may also route around the front line when practical.
+* **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
+* **[Flight Planner]** Mig-19 was not allowed for CAS roles fixed
+* **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO (by SnappyComebacks)
+* **[Payloads]** F-86 Sabre was missing a custom payload
+* **[Payloads]** Added GAR-8 period restrictions (by Mustang-25)
+
+
 # 2.4.3
 
 ## Features/Improvements
@@ -8,7 +27,6 @@
 
 * **[Mods]** Updated C-130J mod data to version 6.4
 * **[Mods]** Updated F-22A mod to latest version
-* **[Payload]** Mirage-2000C : Added Eclair counter measures pod to all default loadouts
 
 # 2.4.2
 

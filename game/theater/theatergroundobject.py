@@ -344,6 +344,28 @@ class MissileSiteGroundObject(TheaterGroundObject):
         )
 
 
+class CoastalSiteGroundObject(TheaterGroundObject):
+    def __init__(
+        self,
+        name: str,
+        group_id: int,
+        position: Point,
+        control_point: ControlPoint,
+        heading,
+    ) -> None:
+        super().__init__(
+            name=name,
+            category="aa",
+            group_id=group_id,
+            position=position,
+            heading=heading,
+            control_point=control_point,
+            dcs_identifier="AA",
+            airbase_group=False,
+            sea_object=False,
+        )
+
+
 class BaseDefenseGroundObject(TheaterGroundObject):
     """Base type for all base defenses."""
 

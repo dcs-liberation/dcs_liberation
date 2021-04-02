@@ -495,6 +495,7 @@ class QLiberationMap(QGraphicsView):
         package = Package(target)
         flight = Flight(
             package,
+            self.game.player_country if player else self.game.enemy_country,
             F_16C_50,
             2,
             task,
@@ -914,35 +915,48 @@ class QLiberationMap(QGraphicsView):
         SMALL_LINE = 2
 
         dist = self.distance_to_pixels(nautical_miles(scale_distance_nm))
-        self.scene().addRect(
-            POS_X,
-            POS_Y - PADDING,
-            PADDING * 2 + dist,
-            BIG_LINE * 2 + 3 * PADDING,
-            pen=CONST.COLORS["black"],
-            brush=CONST.COLORS["black"],
-        )
         l = self.scene().addLine(
             POS_X + PADDING,
             POS_Y + BIG_LINE * 2,
             POS_X + PADDING + dist,
             POS_Y + BIG_LINE * 2,
         )
+        l.setPen(CONST.COLORS["black"])
+
+        lw = self.scene().addLine(
+            POS_X + PADDING + 1,
+            POS_Y + BIG_LINE * 2 + 1,
+            POS_X + PADDING + dist + 1,
+            POS_Y + BIG_LINE * 2 + 1,
+        )
+        lw.setPen(CONST.COLORS["white"])
 
         text = self.scene().addText(
             "0nm", font=QFont("Trebuchet MS", 6, weight=5, italic=False)
         )
         text.setPos(POS_X, POS_Y + BIG_LINE * 2)
-        text.setDefaultTextColor(Qt.white)
+        text.setDefaultTextColor(Qt.black)
+
+        text_white = self.scene().addText(
+            "0nm", font=QFont("Trebuchet MS", 6, weight=5, italic=False)
+        )
+        text_white.setPos(POS_X + 1, POS_Y + BIG_LINE * 2)
+        text_white.setDefaultTextColor(Qt.white)
 
         text2 = self.scene().addText(
             str(scale_distance_nm) + "nm",
             font=QFont("Trebuchet MS", 6, weight=5, italic=False),
         )
         text2.setPos(POS_X + dist, POS_Y + BIG_LINE * 2)
-        text2.setDefaultTextColor(Qt.white)
+        text2.setDefaultTextColor(Qt.black)
 
-        l.setPen(CONST.COLORS["white"])
+        text2_white = self.scene().addText(
+            str(scale_distance_nm) + "nm",
+            font=QFont("Trebuchet MS", 6, weight=5, italic=False),
+        )
+        text2_white.setPos(POS_X + dist + 1, POS_Y + BIG_LINE * 2)
+        text2_white.setDefaultTextColor(Qt.white)
+
         for i in range(number_of_points + 1):
             d = float(i) / float(number_of_points)
             if i == 0 or i == number_of_points:
@@ -956,7 +970,15 @@ class QLiberationMap(QGraphicsView):
                 POS_X + PADDING + d * dist,
                 POS_Y + BIG_LINE - h,
             )
-            l.setPen(CONST.COLORS["white"])
+            l.setPen(CONST.COLORS["black"])
+
+            lw = self.scene().addLine(
+                POS_X + PADDING + d * dist + 1,
+                POS_Y + BIG_LINE * 2,
+                POS_X + PADDING + d * dist + 1,
+                POS_Y + BIG_LINE - h,
+            )
+            lw.setPen(CONST.COLORS["white"])
 
     def wheelEvent(self, event: QWheelEvent):
         if event.angleDelta().y() > 0:

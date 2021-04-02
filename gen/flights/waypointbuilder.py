@@ -14,7 +14,7 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.unit import Unit
-from dcs.unitgroup import VehicleGroup
+from dcs.unitgroup import Group, VehicleGroup
 
 if TYPE_CHECKING:
     from game import Game
@@ -32,7 +32,7 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[VehicleGroup, TheaterGroundObject, Unit]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group]
 
 
 class WaypointBuilder:
@@ -161,8 +161,10 @@ class WaypointBuilder:
             FlightWaypointType.JOIN,
             position.x,
             position.y,
-            meters(500) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "Join"
         waypoint.description = "Rendezvous with package"
         waypoint.name = "JOIN"
@@ -173,8 +175,10 @@ class WaypointBuilder:
             FlightWaypointType.SPLIT,
             position.x,
             position.y,
-            meters(500) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "Split"
         waypoint.description = "Depart from package"
         waypoint.name = "SPLIT"
@@ -190,8 +194,10 @@ class WaypointBuilder:
             ingress_type,
             position.x,
             position.y,
-            meters(500) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
         waypoint.name = "INGRESS"
@@ -204,8 +210,10 @@ class WaypointBuilder:
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
-            meters(500) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "EGRESS from " + target.name
         waypoint.description = "EGRESS from " + target.name
         waypoint.name = "EGRESS"
@@ -286,7 +294,7 @@ class WaypointBuilder:
             FlightWaypointType.CAS,
             position.x,
             position.y,
-            meters(500) if self.is_helo else meters(1000),
+            meters(50) if self.is_helo else meters(1000),
         )
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
@@ -340,6 +348,21 @@ class WaypointBuilder:
             self.race_track_start(start, altitude),
             self.race_track_end(end, altitude),
         )
+
+    @staticmethod
+    def orbit(start: Point, altitude: Distance) -> FlightWaypoint:
+        """Creates an circular orbit point.
+
+        Args:
+            start: Position of the waypoint.
+            altitude: Altitude of the racetrack.
+        """
+
+        waypoint = FlightWaypoint(FlightWaypointType.LOITER, start.x, start.y, altitude)
+        waypoint.name = "ORBIT"
+        waypoint.description = "Anchor and hold at this point"
+        waypoint.pretty_name = "Orbit"
+        return waypoint
 
     @staticmethod
     def sweep_start(position: Point, altitude: Distance) -> FlightWaypoint:
@@ -407,8 +430,10 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
-            meters(500) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"
         waypoint.pretty_name = "Target area"

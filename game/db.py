@@ -180,6 +180,7 @@ from pydcs_extensions.su57.su57 import Su_57
 UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
+plane_map["F-22A"] = F_22A
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Rafale_M"] = Rafale_M
 plane_map["Rafale_A_S"] = Rafale_A_S
@@ -1157,6 +1158,7 @@ COMMON_OVERRIDE = {
     Escort: "CAP",
     RunwayAttack: "RUNWAY_ATTACK",
     FighterSweep: "CAP",
+    AWACS: "AEW&C",
 }
 
 """
@@ -1291,6 +1293,7 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     AH_64A: COMMON_OVERRIDE,
     SH_60B: COMMON_OVERRIDE,
     Hercules: COMMON_OVERRIDE,
+    F_86F_Sabre: COMMON_OVERRIDE,
     Su_25TM: {
         SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
     },
@@ -1376,6 +1379,7 @@ CARRIER_CAPABLE = [
     A_4E_C,
     Rafale_M,
     S_3B,
+    E_2C,
     UH_1H,
     Mi_8MT,
     Ka_50,
@@ -1430,6 +1434,8 @@ def upgrade_to_supercarrier(unit, name: str):
         elif name == "CVN-73 George Washington":
             return CVN_73_George_Washington
         elif name == "CVN-75 Harry S. Truman":
+            return CVN_75_Harry_S__Truman
+        elif name == "Carrier Strike Group 8":
             return CVN_75_Harry_S__Truman
         else:
             return CVN_71_Theodore_Roosevelt

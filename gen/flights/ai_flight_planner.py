@@ -450,6 +450,22 @@ class ObjectiveFinder:
             c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
         )
 
+    def farthest_friendly_control_point(self) -> ControlPoint:
+        """
+        Iterates over all friendly control points and find the one farthest away from the frontline
+        BUT! prefer Cvs. Everybody likes CVs!
+        """
+        from_frontline = 0
+
+        for c in self.game.theater.controlpoints:
+            if c.is_carrier and c.is_friendly(self.is_player):
+                return c
+            if c.is_friendly(self.is_player) and c.has_frontline:
+                if c.distance_to(self.front_lines().__next__()) > from_frontline:
+                    from_frontline = c.distance_to(self.front_lines().__next__())
+                    cp = c
+        return cp
+
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
         return (
@@ -507,6 +523,7 @@ class CoalitionMissionPlanner:
     MAX_OCA_RANGE = nautical_miles(150)
     MAX_SEAD_RANGE = nautical_miles(150)
     MAX_STRIKE_RANGE = nautical_miles(150)
+    MAX_AWEC_RANGE = nautical_miles(200)
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
@@ -526,6 +543,13 @@ class CoalitionMissionPlanner:
         ensure that they can be planned again next turn even if all aircraft are
         eliminated this turn.
         """
+
+        # Find farthest, friendly CP for AEWC
+        cp = self.objective_finder.farthest_friendly_control_point()
+        yield ProposedMission(
+            cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+        )
+
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
             # Plan three rounds of CAP to give ~90 minutes coverage. Spacing

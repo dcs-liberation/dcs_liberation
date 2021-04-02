@@ -175,6 +175,7 @@ class Package:
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,
+            FlightType.AEWC,
             FlightType.SWEEP,
             FlightType.ESCORT,
         ]

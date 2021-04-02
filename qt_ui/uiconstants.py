@@ -74,6 +74,7 @@ def load_icons():
     ICONS["New"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/new.png")
     ICONS["Open"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/open.png")
     ICONS["Save"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/save.png")
+    ICONS["LotAtc"] = QPixmap("./resources/ui/misc/lotatc.png")
     ICONS["Discord"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/discord.png"
     )
@@ -153,6 +154,8 @@ def load_icons():
     ICONS["missile_blue"] = QPixmap("./resources/ui/ground_assets/missile_blue.png")
     ICONS["nothreat"] = QPixmap("./resources/ui/ground_assets/nothreat.png")
     ICONS["nothreat_blue"] = QPixmap("./resources/ui/ground_assets/nothreat_blue.png")
+    ICONS["coastal"] = QPixmap("./resources/ui/ground_assets/coastal.png")
+    ICONS["coastal_blue"] = QPixmap("./resources/ui/ground_assets/coastal_blue.png")
 
     ICONS["Generator"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/generator.png"

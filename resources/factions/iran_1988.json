@@ -69,6 +69,10 @@
     "ScudGenerator"
   ],
   "missiles_group_count": 1,
+  "coastal_defenses": [
+    "SilkwormGenerator"
+  ],
+  "coastal_group_count": 2,
   "navy_generators": [
     "GrishaGroupGenerator",
     "MolniyaGroupGenerator"
