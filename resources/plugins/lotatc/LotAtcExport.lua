@@ -17,6 +17,14 @@ LotAtcExportConfig = {
     ["blueColor"] = "#7F0084FF"
 }
 
+local function factionName(isFriend)
+    if isFriend then
+        return "BLUE"
+    else
+        return "RED"
+    end
+end
+
 local function uuid()
     local random = math.random
     local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
@@ -24,6 +32,18 @@ local function uuid()
         local v = (c == 'x') and random(0, 0xf) or random(8, 0xb)
         return string.format('%x', v)
     end)
+end
+
+local function ends_with(str, ending)
+    return ending == "" or str:sub(-#ending) == ending
+ end
+
+local function combine(path1, path2)
+    if not ends_with(path1, "\\") then
+        path1 = path1 .. "\\"
+    end
+
+    return path1 .. path2
 end
 
 local function lotatcExport_get_aa_nato_name(unit, isFriend)
@@ -119,7 +139,8 @@ local function lotatcExport_threat_circles_for_faction(faction, color, isFriend)
     end
 
     local lotatcData = {
-        ["enabled"] = "true",
+        ["name"] = "Threat Circles " .. factionName(isFriend),
+        ["enable"] = "true",
         ["version"] = LotAtcExportConfig.exportVersion,
         ["drawings"] = drawings
     }
@@ -177,9 +198,10 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
     end
 
     local lotatcData = {
-        ["enabled"] = "true",
+        ["name"] = "Threat Symbols " .. factionName(isFriend),
+        ["enable"] = "true",
         ["version"] = LotAtcExportConfig.exportVersion,
-        ["drawings"] = drawings
+        ["drawings"] = drawings,
     }
 
     local drawings_json = json:encode(lotatcData)
@@ -187,15 +209,15 @@ local function lotatcExport_symbols_for_faction(faction, color, isFriend)
 end
 
 local function lotatc_export_faction(faction, color, factionPath, isFriend)
-    local exportBasePathFaction = LotAtcExportConfig.drawingBasePath..factionPath
+    local exportBasePathFaction = combine(LotAtcExportConfig.drawingBasePath, factionPath)
     lfs.mkdir(exportBasePathFaction)
 
-    local exportFileName = exportBasePathFaction.."threatZones.json"
-    local json = lotatcExport_threat_circles_for_faction(faction, color, isFriend);
+    local exportFileName = combine(exportBasePathFaction, "threatZones.json")
+    local json = lotatcExport_threat_circles_for_faction(faction, color, isFriend)
     lotatc_write_json(exportFileName, json)
 
     if LotAtcExportConfig.exportSymbols then
-        exportFileName = exportBasePathFaction.."threatSymbols.json"
+        exportFileName = combine(exportBasePathFaction, "threatSymbols.json")
         json = lotatcExport_symbols_for_faction(faction, color, isFriend);
         lotatc_write_json(exportFileName, json)
     end
@@ -213,16 +235,19 @@ function LotatcExport()
         local message = "No writable export path for LotATC drawings. Set environment variable LOTATC_DRAWINGS_DIR pointing to your export path."
         logger:error(message)
         return
-    else
-        local message = "Export LotATC drawings to "..LotAtcExportConfig.drawingBasePath
-        logger:info(message)
     end
 
+    local message = "Export LotATC drawings to "..LotAtcExportConfig.drawingBasePath
+    logger:info(message)
+
+    -- The RED AA is exported to the blue folder and vice versa. If a BLUE GCI connects he/she
+    -- wants to see the RED AA.
+
     if LotAtcExportConfig.exportRedAA then
-        lotatc_export_faction(dcsLiberation.RedAA, LotAtcExportConfig.redColor, [[red\]], false)
+        lotatc_export_faction(dcsLiberation.RedAA, LotAtcExportConfig.redColor, [[blue\]], false)
     end
 
     if LotAtcExportConfig.exportBlueAA then
-        lotatc_export_faction(dcsLiberation.BlueAA, LotAtcExportConfig.blueColor, [[blue\]], true)
+        lotatc_export_faction(dcsLiberation.BlueAA, LotAtcExportConfig.blueColor, [[red\]], true)
     end
 end
