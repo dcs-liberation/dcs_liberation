@@ -64,10 +64,18 @@ class KneeboardPageWriter:
         # more information in the comm ladder (the latter of which we should
         # probably do), we'll need to split some of this information off into a
         # second page.
-        self.title_font = ImageFont.truetype("arial.ttf", 32, layout_engine=ImageFont.LAYOUT_BASIC)
-        self.heading_font = ImageFont.truetype("arial.ttf", 24, layout_engine=ImageFont.LAYOUT_BASIC)
-        self.content_font = ImageFont.truetype("arial.ttf", 20, layout_engine=ImageFont.LAYOUT_BASIC)
-        self.table_font = ImageFont.truetype("resources/fonts/Inconsolata.otf", 20, layout_engine=ImageFont.LAYOUT_BASIC)
+        self.title_font = ImageFont.truetype(
+            "arial.ttf", 32, layout_engine=ImageFont.LAYOUT_BASIC
+        )
+        self.heading_font = ImageFont.truetype(
+            "arial.ttf", 24, layout_engine=ImageFont.LAYOUT_BASIC
+        )
+        self.content_font = ImageFont.truetype(
+            "arial.ttf", 20, layout_engine=ImageFont.LAYOUT_BASIC
+        )
+         self.table_font = ImageFont.truetype(
+            "resources/fonts/Inconsolata.otf", 20, layout_engine=ImageFont.LAYOUT_BASIC
+        )
         self.draw = ImageDraw.Draw(self.image)
         self.x = page_margin
         self.y = page_margin
