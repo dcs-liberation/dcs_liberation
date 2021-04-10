@@ -96,6 +96,7 @@ class Game:
         self.enemy_name = enemy_name
         self.enemy_country = db.FACTIONS[enemy_name].country
         self.turn = 0
+        # NB: This is the *start* date. It is never updated.
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
@@ -152,7 +153,7 @@ class Game:
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
-            self.theater, self.date, self.current_turn_time_of_day, self.settings
+            self.theater, self.current_day, self.current_turn_time_of_day, self.settings
         )
 
     def sanitize_sides(self):
