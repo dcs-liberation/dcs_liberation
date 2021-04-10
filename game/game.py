@@ -284,11 +284,18 @@ class Game:
         persistency.autosave(self)
 
     def check_win_loss(self):
-        captured_states = {i.captured for i in self.theater.controlpoints}
-        if True not in captured_states:
+        player_airbases = {
+            cp for cp in self.theater.player_points() if cp.runway_is_operational()
+        }
+        if not player_airbases:
             return TurnState.LOSS
-        if False not in captured_states:
+
+        enemy_airbases = {
+            cp for cp in self.theater.enemy_points() if cp.runway_is_operational()
+        }
+        if not enemy_airbases:
             return TurnState.WIN
+
         return TurnState.CONTINUE
 
     def initialize_turn(self) -> None:
