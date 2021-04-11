@@ -15,6 +15,7 @@ Saves from 2.4 are not compatible with 2.5.
 * **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO (by SnappyComebacks)
 * **[Payloads]** F-86 Sabre was missing a custom payload
 * **[Payloads]** Added GAR-8 period restrictions (by Mustang-25)
+* **[Campaign]** Date now progresses.
 
 
 # 2.4.3

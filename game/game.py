@@ -96,6 +96,7 @@ class Game:
         self.enemy_name = enemy_name
         self.enemy_country = db.FACTIONS[enemy_name].country
         self.turn = 0
+        # NB: This is the *start* date. It is never updated.
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
@@ -152,7 +153,7 @@ class Game:
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
-            self.theater, self.date, self.current_turn_time_of_day, self.settings
+            self.theater, self.current_day, self.current_turn_time_of_day, self.settings
         )
 
     def sanitize_sides(self):
@@ -283,11 +284,18 @@ class Game:
         persistency.autosave(self)
 
     def check_win_loss(self):
-        captured_states = {i.captured for i in self.theater.controlpoints}
-        if True not in captured_states:
+        player_airbases = {
+            cp for cp in self.theater.player_points() if cp.runway_is_operational()
+        }
+        if not player_airbases:
             return TurnState.LOSS
-        if False not in captured_states:
+
+        enemy_airbases = {
+            cp for cp in self.theater.enemy_points() if cp.runway_is_operational()
+        }
+        if not enemy_airbases:
             return TurnState.WIN
+
         return TurnState.CONTINUE
 
     def initialize_turn(self) -> None:
