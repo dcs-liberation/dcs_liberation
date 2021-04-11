@@ -11,7 +11,8 @@ from game.theater.landmap import Landmap
 @singledispatch
 def to_multipoly(obj) -> MultiPolygon:
     raise NotImplementedError(
-        f"to_multipoly not implemented for {obj.__class__.__name__}")
+        f"to_multipoly not implemented for {obj.__class__.__name__}"
+    )
 
 
 @to_multipoly.register
@@ -28,8 +29,7 @@ def _multipoly_to_multipoly(obj: MultiPolygon) -> MultiPolygon:
 def _geometry_collection_to_multipoly(obj: GeometryCollection) -> MultiPolygon:
     if obj.is_empty:
         return MultiPolygon()
-    raise RuntimeError(
-        f"Not sure how to convert collection to multipoly: {obj.wkt}")
+    raise RuntimeError(f"Not sure how to convert collection to multipoly: {obj.wkt}")
 
 
 for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
@@ -61,6 +61,11 @@ for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
 
     with open("../{}landmap.p".format(terrain), "wb") as f:
         print(len(inclusion_zones), len(exclusion_zones), len(seas_zones))
-        pickle.dump(Landmap(to_multipoly(unary_union(inclusion_zones)),
-                            to_multipoly(unary_union(exclusion_zones)),
-                            to_multipoly(unary_union(seas_zones))), f)
+        pickle.dump(
+            Landmap(
+                to_multipoly(unary_union(inclusion_zones)),
+                to_multipoly(unary_union(exclusion_zones)),
+                to_multipoly(unary_union(seas_zones)),
+            ),
+            f,
+        )
