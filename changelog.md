@@ -1,3 +1,9 @@
+# 2.4.4
+
+## Fixes
+
+* **[Mission Generation]** Fixed "invalid face handle" error in kneeboard generation that occurred on some machines.
+
 # 2.4.3
 
 ## Features/Improvements
