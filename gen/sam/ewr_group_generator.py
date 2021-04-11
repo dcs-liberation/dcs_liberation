@@ -1,17 +1,11 @@
 import random
-from typing import Dict, Iterable, List, Optional, Sequence, Set, Type
-
-from game import Game
-from game.factions.faction import Faction
-from game.theater import TheaterGroundObject
-from game.theater.theatergroundobject import EwrGroundObject
-
-from gen.sam.airdefensegroupgenerator import AirDefenseGroupGenerator
-
-from gen.sam.group_generator import GroupGenerator
+from typing import List, Optional, Type
 
 from dcs.unitgroup import VehicleGroup
 
+from game import Game
+from game.factions.faction import Faction
+from game.theater.theatergroundobject import EwrGroundObject
 from gen.sam.ewrs import (
     BigBirdGenerator,
     BoxSpringGenerator,
@@ -24,6 +18,7 @@ from gen.sam.ewrs import (
     StraightFlushGenerator,
     TallRackGenerator,
 )
+from gen.sam.group_generator import GroupGenerator
 
 EWR_MAP = {
     "BoxSpringGenerator": BoxSpringGenerator,

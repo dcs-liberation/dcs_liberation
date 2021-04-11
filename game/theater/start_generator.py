@@ -469,12 +469,12 @@ class BaseDefenseGenerator:
             True,
         )
 
-        groups = generate_ewr_group(self.game, g, self.faction)
-        if not groups:
+        group = generate_ewr_group(self.game, g, self.faction)
+        if group is None:
             logging.error(f"Could not generate EWR at {self.control_point}")
             return
 
-        g.groups = groups
+        g.groups = [group]
         self.control_point.base_defenses.append(g)
 
     def generate_base_defenses(self) -> None:
@@ -769,15 +769,15 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
             for_airbase=False,
         )
-        groups = generate_ewr_group(self.game, g, self.faction)
-        if not groups:
+        group = generate_ewr_group(self.game, g, self.faction)
+        if group is None:
             logging.error(
                 "Could not generate ewr group for %s at %s",
                 g.name,
                 self.control_point,
             )
             return
-        g.groups = groups
+        g.groups = [group]
         self.control_point.connected_objectives.append(g)
 
     def generate_missile_sites(self) -> None:
