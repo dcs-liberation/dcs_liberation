@@ -335,4 +335,3 @@ class _34Ya6E_Gazetchik_E_decoy(unittype.VehicleType):
     detection_range = 20000
     threat_range = 0
     air_weapon_dist = 0
-
