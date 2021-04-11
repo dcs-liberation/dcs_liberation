@@ -64,5 +64,5 @@ def generate_ewr_group(
         generator_class = random.choice(generators)
         generator = generator_class(game, ground_object)
         generator.generate()
-        return [generator.get_generated_group()]
+        return generator.get_generated_group()
     return None
