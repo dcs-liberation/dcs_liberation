@@ -51,7 +51,7 @@ def get_faction_possible_ewrs_generator(
 
 def generate_ewr_group(
     game: Game, ground_object: EwrGroundObject, faction: Faction
-) -> List[VehicleGroup]:
+) -> Optional[VehicleGroup]:
     """Generates an early warning radar group.
 
     :param game: The Game.
@@ -64,5 +64,5 @@ def generate_ewr_group(
         generator_class = random.choice(generators)
         generator = generator_class(game, ground_object)
         generator.generate()
-        return list(generator.get_generated_group())
-    return []
+        return [generator.get_generated_group()]
+    return None
