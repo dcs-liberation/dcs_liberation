@@ -629,7 +629,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 else:
                     self.generate_aa_site()
             # 1 in 4 additional objectives are EWR.
-            if random.randint(0, 3) == 0:
+            elif random.randint(0, 3) == 0:
                 if skip_ewrs > 0:
                     skip_ewrs -= 1
                 else:
