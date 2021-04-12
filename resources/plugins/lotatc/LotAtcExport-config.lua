@@ -17,7 +17,7 @@ local function discoverLotAtcDrawingsPath()
     if drawingEnvDir then
         return drawingEnvDir
     else
-        return dcsLiberation.savedGamesPath..[[\Mods\services\LotAtc\userdb\drawings\]]
+        return lfs.writedir()..[[\Mods\services\LotAtc\userdb\drawings\]]
     end
 end
 

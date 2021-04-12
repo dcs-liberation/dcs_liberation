@@ -14,7 +14,6 @@ from dcs.lua.parse import loads
 from dcs.mapping import Point
 from dcs.translation import String
 from dcs.triggers import TriggerStart
-from game import persistency
 from game.plugins import LuaPluginManager
 from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
@@ -512,12 +511,10 @@ class Operation:
                     for g in ground_object.groups:
                         threat_range = ground_object.threat_range(g)
 
-                        if not threat_range or threat_range.distance_in_meters == 0.0:
+                        if not threat_range:
                             continue
 
-                        faction = "RedAA"
-                        if cp.captured == True:
-                            faction = "BlueAA"
+                        faction = "BlueAA" if cp.captured else "RedAA"
 
                         luaData[faction][g.name] = {
                             "name": ground_object.name,
@@ -532,7 +529,6 @@ class Operation:
         # at the moment it contains Liberation's install path, and an overridable definition for the JTACAutoLase function
         # later, we'll add data about the units and points having been generated, in order to facilitate the configuration of the plugin lua scripts
         state_location = "[[" + os.path.abspath(".") + "]]"
-        dcs_saved_game_folder = "[[" + os.path.abspath(persistency.base_path()) + "]]"
         lua = (
             """
         -- setting configuration table
@@ -544,11 +540,6 @@ class Operation:
         -- the base location for state.json; if non-existent, it'll be replaced with LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
         dcsLiberation.installPath="""
             + state_location
-            + """
-
-        -- the DCS saved games folder configured in DCS Liberation
-        dcsLiberation.savedGamesPath="""
-            + dcs_saved_game_folder
             + """
 
         """
