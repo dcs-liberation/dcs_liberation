@@ -451,7 +451,7 @@ class EwrGroundObject(BaseDefenseGroundObject):
     ) -> None:
         super().__init__(
             name=name,
-            category="EWR",
+            category="ewr",
             group_id=group_id,
             position=position,
             heading=0,
