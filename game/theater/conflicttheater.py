@@ -369,7 +369,7 @@ class MizCampaignLoader:
                     PointWithHeading.from_point(group.position, group.units[0].heading)
                 )
             else:
-                closest.preset_locations.strike_locations.append(
+                closest.preset_locations.ewrs.append(
                     PointWithHeading.from_point(group.position, group.units[0].heading)
                 )
 
