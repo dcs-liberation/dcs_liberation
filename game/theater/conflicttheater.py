@@ -94,6 +94,7 @@ class MizCampaignLoader:
     FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
 
     FOB_UNIT_TYPE = Unarmed.CP_SKP_11_ATC_Mobile_Command_Post.id
+    FARP_HELIPAD = "SINGLE_HELIPAD"
 
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
@@ -254,6 +255,12 @@ class MizCampaignLoader:
             if group.units[0].type in self.REQUIRED_EWR_UNIT_TYPE:
                 yield group
 
+    @property
+    def helipads(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.FARP_HELIPAD:
+                yield group
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -405,6 +412,12 @@ class MizCampaignLoader:
         for group in self.required_ewrs:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_ewrs.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.helipads:
+            closest, distance = self.objective_info(group)
+            closest.helipads.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 

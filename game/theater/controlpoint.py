@@ -253,6 +253,7 @@ class ControlPoint(MissionTarget, ABC):
         self.connected_objectives: List[TheaterGroundObject] = []
         self.base_defenses: List[BaseDefenseGroundObject] = []
         self.preset_locations = PresetLocations()
+        self.helipads: List[PointWithHeading] = []
 
         # TODO: Should be Airbase specific.
         self.size = size

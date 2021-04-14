@@ -156,6 +156,16 @@
             "year-of-variant-introduction": "1980"
         }
     }],
+    "E-2C": [{
+        "default": {
+            "name": "E-2C Hawkeye",
+            "text": "The Northrop Grumman E-2 Hawkeye is an American all-weather, carrier-capable tactical airborne early warning (AEW) aircraft.",
+            "country-of-origin": "USA",
+            "manufacturer": "Northrop Grumman",
+            "role": "AEW&C",
+            "year-of-variant-introduction": "1973"
+        }
+    }],
     "F-4E": [{
         "default": {
             "name": "F-4E Phantom II",

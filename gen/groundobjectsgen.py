@@ -11,9 +11,10 @@ import logging
 import random
 from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 
-from dcs import Mission, Point
+from dcs import Mission, Point, unitgroup
 from dcs.country import Country
-from dcs.statics import fortification_map, warehouse_map
+from dcs.point import StaticPoint
+from dcs.statics import fortification_map, warehouse_map, Warehouse
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
@@ -21,7 +22,7 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
-from dcs.unit import Ship, Unit, Vehicle
+from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
 from dcs.vehicles import vehicle_map
@@ -46,7 +47,6 @@ from .tacan import TacanBand, TacanChannel, TacanRegistry
 
 if TYPE_CHECKING:
     from game import Game
-
 
 FARP_FRONTLINE_DISTANCE = 10000
 AA_CP_MIN_DISTANCE = 40000
@@ -477,6 +477,48 @@ class ShipObjectGenerator(GenericGroundObjectGenerator):
         self._register_unit_group(group_def, group)
 
 
+class HelipadGenerator:
+    """
+    Generates helipads for given control point
+    """
+
+    def __init__(
+        self,
+        mission: Mission,
+        cp: ControlPoint,
+        game: Game,
+        radio_registry: RadioRegistry,
+        tacan_registry: TacanRegistry,
+    ):
+        self.m = mission
+        self.cp = cp
+        self.game = game
+        self.radio_registry = radio_registry
+        self.tacan_registry = tacan_registry
+
+    def generate(self) -> None:
+
+        if self.cp.captured:
+            country_name = self.game.player_country
+        else:
+            country_name = self.game.enemy_country
+        country = self.m.country(country_name)
+
+        for i, helipad in enumerate(self.cp.helipads):
+            name = self.cp.name + "_helipad_" + str(i)
+            logging.info("Generating helipad : " + name)
+            pad = SingleHeliPad(name=self.m.string(name + "_unit"))
+            pad.position = Point(helipad.x, helipad.y)
+            pad.heading = helipad.heading
+            # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
+            sg = unitgroup.StaticGroup(self.m.next_group_id(), self.m.string(name))
+            sg.add_unit(pad)
+            sp = StaticPoint()
+            sp.position = pad.position
+            sg.add_point(sp)
+            country.add_static_group(sg)
+
+
 class GroundObjectsGenerator:
     """Creates DCS groups and statics for the theater during mission generation.
 
@@ -509,6 +551,10 @@ class GroundObjectsGenerator:
             else:
                 country_name = self.game.enemy_country
             country = self.m.country(country_name)
+
+            HelipadGenerator(
+                self.m, cp, self.game, self.radio_registry, self.tacan_registry
+            ).generate()
 
             for ground_object in cp.ground_objects:
                 if isinstance(ground_object, BuildingGroundObject):

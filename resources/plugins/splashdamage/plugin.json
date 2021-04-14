@@ -1,0 +1,12 @@
+{
+    "nameInUI": "Splash Damage",
+    "defaultValue": false,
+    "specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "SplashDamage.lua",
+            "mnemonic": "Splash Damage"
+        }
+    ],
+    "configurationWorkOrders": []
+}
