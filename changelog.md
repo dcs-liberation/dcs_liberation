@@ -7,6 +7,7 @@ Saves from 2.4 are not compatible with 2.5.
 * **[Flight Planner]** Added AEW&C missions. (by siKruger)
 * **[Kneeboard]** Added dark kneeboard option (by GvonH)
 * **[Campaigns]** Multiple EWR sites may now be generated, and EWR sites may be generated outside bases (by SnappyComebacks)
+* **[Mission Generation]** Cloudy and rainy (but not thunderstorm) weather will use the cloud presets from DCS 2.7.
 
 ## Fixes
 

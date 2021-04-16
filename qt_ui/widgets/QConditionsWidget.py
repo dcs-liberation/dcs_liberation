@@ -7,7 +7,7 @@ from PySide2.QtWidgets import (
     QLabel,
     QVBoxLayout,
 )
-from dcs.weather import Weather as PydcsWeather
+from dcs.weather import CloudPreset, Weather as PydcsWeather
 
 import qt_ui.uiconstants as CONST
 from game.utils import mps
@@ -162,7 +162,7 @@ class QWeatherWidget(QGroupBox):
         self.turn = turn
         self.conditions = conditions
 
-        self.updateForecast()
+        self.update_forecast()
         self.updateWinds()
 
     def updateWinds(self):
@@ -186,55 +186,76 @@ class QWeatherWidget(QGroupBox):
         self.windFL26SpeedLabel.setText(f"{int(windFL26Speed.knots)}kts")
         self.windFL26DirLabel.setText(f"{windFL26Dir}º")
 
-    def updateForecast(self):
+    def update_forecast_from_preset(self, preset: CloudPreset) -> None:
+        self.forecastFog.setText("No fog")
+        if "Rain" in preset.name:
+            self.forecastRain.setText("Rain")
+            self.update_forecast_icons("rain")
+        else:
+            self.forecastRain.setText("No rain")
+            self.update_forecast_icons("partly-cloudy")
+
+        # We get a description like the following for the cloud preset.
+        #
+        # 09 ##Two Layer Broken/Scattered \nMETAR:BKN 7.5/10 SCT 20/22 FEW41
+        #
+        # The second line is probably interesting but doesn't fit into the widget
+        # currently, so for now just extract the first line.
+        self.forecastClouds.setText(preset.description.splitlines()[0].split("##")[1])
+
+    def update_forecast(self):
         """Updates the Forecast Text and icon with the current conditions wind info."""
-        icon = []
+        if (
+            self.conditions.weather.clouds
+            and self.conditions.weather.clouds.preset is not None
+        ):
+            self.update_forecast_from_preset(self.conditions.weather.clouds.preset)
+            return
+
         if self.conditions.weather.clouds is None:
-            cloudDensity = 0
+            cloud_density = 0
             precipitation = None
         else:
-            cloudDensity = self.conditions.weather.clouds.density
+            cloud_density = self.conditions.weather.clouds.density
             precipitation = self.conditions.weather.clouds.precipitation
 
-        fog = self.conditions.weather.fog or None
-        is_night = self.conditions.time_of_day == TimeOfDay.Night
-        time = "night" if is_night else "day"
-
-        if cloudDensity <= 0:
+        if not cloud_density:
             self.forecastClouds.setText("Sunny")
-            icon = [time, "clear"]
-
-        if cloudDensity > 0 and cloudDensity < 3:
+            weather_type = "clear"
+        elif cloud_density < 3:
             self.forecastClouds.setText("Partly Cloudy")
-            icon = [time, "partly-cloudy"]
-
-        if cloudDensity >= 3 and cloudDensity < 5:
+            weather_type = "partly-cloudy"
+        elif cloud_density < 5:
             self.forecastClouds.setText("Mostly Cloudy")
-            icon = [time, "partly-cloudy"]
-
-        if cloudDensity >= 5:
+            weather_type = "partly-cloudy"
+        else:
             self.forecastClouds.setText("Totally Cloudy")
-            icon = [time, "partly-cloudy"]
+            weather_type = "partly-cloudy"
 
         if precipitation == PydcsWeather.Preceptions.Rain:
             self.forecastRain.setText("Rain")
-            icon = [time, "rain"]
-
+            weather_type = "rain"
         elif precipitation == PydcsWeather.Preceptions.Thunderstorm:
             self.forecastRain.setText("Thunderstorm")
-            icon = [time, "thunderstorm"]
-
+            weather_type = "thunderstorm"
         else:
-            self.forecastRain.setText("No Rain")
+            self.forecastRain.setText("No rain")
 
-        if not fog:
+        if not self.conditions.weather.fog is not None:
             self.forecastFog.setText("No fog")
         else:
-            visibility = round(fog.visibility.nautical_miles, 1)
+            visibility = round(self.conditions.weather.fog.visibility.nautical_miles, 1)
             self.forecastFog.setText(f"Fog vis: {visibility}nm")
-            icon = [time, ("cloudy" if cloudDensity > 1 else None), "fog"]
+            if cloud_density > 1:
+                weather_type = "cloudy-fog"
+            else:
+                weather_type = "fog"
 
-        icon_key = "Weather_{}".format("-".join(filter(None.__ne__, icon)))
+        self.update_forecast_icons(weather_type)
+
+    def update_forecast_icons(self, weather_type: str) -> None:
+        time = "night" if self.conditions.time_of_day == TimeOfDay.Night else "day"
+        icon_key = f"Weather_{time}-{weather_type}"
         icon = CONST.ICONS.get(icon_key) or CONST.ICONS["Weather_night-partly-cloudy"]
         self.weather_icon.setPixmap(icon)
 
