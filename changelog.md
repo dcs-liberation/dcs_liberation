@@ -4,7 +4,7 @@ Saves from 2.4 are not compatible with 2.5.
 
 ## Features/Improvements
 
-* **[Flight Planner]** (WIP) Added AEW&C missions. (by siKruger)
+* **[Flight Planner]** Added AEW&C missions. (by siKruger)
 * **[Kneeboard]** Added dark kneeboard option (by GvonH)
 * **[Campaigns]** Multiple EWR sites may now be generated, and EWR sites may be generated outside bases (by SnappyComebacks)
 
