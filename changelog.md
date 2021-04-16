@@ -5,22 +5,20 @@ Saves from 2.4 are not compatible with 2.5.
 ## Features/Improvements
 
 * **[Flight Planner]** (WIP) Added AEW&C missions. (by siKruger)
-* **[Kneeboard]** Added dark kneeboard option (by GvonH) 
+* **[Kneeboard]** Added dark kneeboard option (by GvonH)
+* **[Campaigns]** Multiple EWR sites may now be generated, and EWR sites may be generated outside bases (by SnappyComebacks)
 
 ## Fixes
 
 * **[Flight Planner]** Front lines now project threat zones, so TARCAP/escorts will not be pruned for flights near the front. Packages may also route around the front line when practical.
 * **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
 * **[Flight Planner]** Mig-19 was not allowed for CAS roles fixed
+* **[Flight Planner]** Increased size of navigation planning area to avoid plannign failures with distant waypoints.
 * **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO (by SnappyComebacks)
 * **[Payloads]** F-86 Sabre was missing a custom payload
 * **[Payloads]** Added GAR-8 period restrictions (by Mustang-25)
 * **[Campaign]** Date now progresses.
-
-# 2.4.4
-
-## Fixes
-
+* **[Campaign]** Added game over message when a coalition runs out of functioning airbases.
 * **[Mission Generation]** Fixed "invalid face handle" error in kneeboard generation that occurred on some machines.
 
 # 2.4.3
