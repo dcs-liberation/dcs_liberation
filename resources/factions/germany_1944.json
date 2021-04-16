@@ -11,21 +11,21 @@
   ],
   "frontline_units": [
     "MT_Pz_Kpfw_V_Panther_Ausf_G",
-    "MT_Pz_Kpfw_IV_Ausf_H",
+    "MT_PzIV_H",
     "HT_Pz_Kpfw_VI_Tiger_I",
     "HT_Pz_Kpfw_VI_Ausf__B_Tiger_II",
-    "APC_Sd_Kfz_251",
-    "AC_Sd_Kfz_234_2_Puma",
-    "Sd_Kfz_184_Elefant",
-    "TD_Jagdpanther_G1",
-    "TD_Jagdpanzer_IV",
-    "StuG_III_Ausf__G",
-    "StuG_IV",
+    "APC_Sd_Kfz_251_Halftrack",
+    "IFV_Sd_Kfz_234_2_Puma",
+    "SPG_Sd_Kfz_184_Elefant",
+    "SPG_Jagdpanther_G1",
+    "SPG_Jagdpanzer_IV",
+    "SPG_StuG_III_Ausf__G",
+    "SPG_StuG_IV",
     "AAA_8_8cm_Flak_18",
     "AAA_8_8cm_Flak_41"
   ],
   "artillery_units": [
-    "Sturmpanzer_IV_Brummbär"
+    "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "logistics_units": [
     "Blitz_3_6_6700A",

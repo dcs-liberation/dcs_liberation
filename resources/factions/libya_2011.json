@@ -18,23 +18,23 @@
   ],
   "frontline_units": [
     "IFV_BMP_1",
-    "ARV_BRDM_2",
+    "IFV_BRDM_2",
     "MBT_T_72B",
     "MBT_T_55",
-    "SPAAA_ZSU_23_4_Shilka",
-    "SAM_SA_8_Osa_9A33"
+    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
+    "SAM_SA_8_Osa_Gecko_TEL"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad"
+    "MLRS_BM_21_Grad_122mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Insurgents",
+    "Insurgent_AK_74",
     "Paratrooper_RPG_16",
-    "SAM_SA_18_Igla_MANPADS"
+    "MANPADS_SA_18_Igla_Grouse"
   ],
   "air_defenses": [
     "HQ7Generator",

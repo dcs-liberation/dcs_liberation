@@ -30,26 +30,26 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
-    "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
+    "ATGM_Stryker",
+    "IFV_M1126_Stryker_ICV",
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW",
-    "SAM_Avenger_M1097"
+    "APC_HMMWV__Scout",
+    "ATGM_HMMWV",
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "Stinger_MANPADS",
-    "_2B11_mortar"
+    "Infantry_M249",
+    "MANPADS_Stinger",
+    "Mortar_2B11_120mm"
   ],
   "air_defenses": [
     "AvengerGenerator",

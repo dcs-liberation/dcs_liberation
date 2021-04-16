@@ -28,7 +28,7 @@ class FreyaGenerator(AirDefenseGroupGenerator):
         positions = self.get_circular_position(4, launcher_distance=50, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.AAA_Flak_Vierling_38,
+                AirDefence.AAA_Flak_Vierling_38_Quad_20mm,
                 "AA#" + str(i),
                 position[0],
                 position[1],
@@ -68,16 +68,16 @@ class FreyaGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        # Maschinensatz_33 and Kdo.g 40 Telemeter
+        # PU_Maschinensatz_33 and Kdo.g 40 Telemeter
         self.add_unit(
-            AirDefence.Maschinensatz_33,
+            AirDefence.PU_Maschinensatz_33,
             "Energy#1",
             self.position.x + 20,
             self.position.y - 20,
             self.heading,
         )
         self.add_unit(
-            AirDefence.AAA_Kdo_G_40,
+            AirDefence.AAA_SP_Kdo_G_40,
             "Telemeter#1",
             self.position.x + 20,
             self.position.y - 10,

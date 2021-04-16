@@ -97,8 +97,8 @@ class MizCampaignLoader:
     FARP_HELIPAD = "SINGLE_HELIPAD"
 
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
-    SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
-    GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
+    SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR.id
+    GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_Grison.id
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
     MISSILE_SITE_UNIT_TYPE = MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M.id
@@ -107,15 +107,15 @@ class MizCampaignLoader:
     # Multiple options for the required SAMs so campaign designers can more
     # accurately see the coverage of their IADS for the expected type.
     REQUIRED_LONG_RANGE_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Patriot_LN_M901.id,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85C.id,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85D.id,
+        AirDefence.SAM_Patriot_LN.id,
+        AirDefence.SAM_SA_10_S_300_Grumble_TEL_C.id,
+        AirDefence.SAM_SA_10_S_300_Grumble_TEL_D.id,
     }
 
     REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES = {
         AirDefence.SAM_Hawk_LN_M192.id,
-        AirDefence.SAM_SA_2_LN_SM_90.id,
-        AirDefence.SAM_SA_3_S_125_LN_5P73.id,
+        AirDefence.SAM_SA_2_S_75_Guideline_LN.id,
+        AirDefence.SAM_SA_3_S_125_Goa_LN.id,
     }
 
     BASE_DEFENSE_RADIUS = nautical_miles(2)
@@ -278,7 +278,7 @@ class MizCampaignLoader:
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for group in self.lhas(blue):
-                # TODO: Name the LHA.
+                # TODO: Name the LHA.db
                 control_point = Lha("lha", group.position, next(self.control_point_id))
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation

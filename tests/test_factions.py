@@ -78,20 +78,20 @@ class TestFactionLoader(unittest.TestCase):
             self.assertEqual(faction.jtac_unit, MQ_9_Reaper)
 
             self.assertIn(Armor.MBT_M1A2_Abrams, faction.frontline_units)
-            self.assertIn(Armor.ATGM_M1134_Stryker, faction.frontline_units)
-            self.assertIn(Armor.APC_M1126_Stryker_ICV, faction.frontline_units)
+            self.assertIn(Armor.ATGM_Stryker, faction.frontline_units)
+            self.assertIn(Armor.IFV_M1126_Stryker_ICV, faction.frontline_units)
             self.assertIn(Armor.IFV_M2A2_Bradley, faction.frontline_units)
             self.assertIn(Armor.IFV_LAV_25, faction.frontline_units)
-            self.assertIn(Armor.APC_M1043_HMMWV_Armament, faction.frontline_units)
-            self.assertIn(Armor.ATGM_M1045_HMMWV_TOW, faction.frontline_units)
+            self.assertIn(Armor.APC_HMMWV__Scout, faction.frontline_units)
+            self.assertIn(Armor.ATGM_HMMWV, faction.frontline_units)
 
-            self.assertIn(Artillery.MLRS_M270, faction.artillery_units)
-            self.assertIn(Artillery.SPH_M109_Paladin, faction.artillery_units)
+            self.assertIn(Artillery.MLRS_M270_227mm, faction.artillery_units)
+            self.assertIn(Artillery.SPH_M109_Paladin_155mm, faction.artillery_units)
 
-            self.assertIn(Unarmed.Transport_M818, faction.logistics_units)
+            self.assertIn(Unarmed.Truck_M818_6x6, faction.logistics_units)
 
             self.assertIn(Infantry.Infantry_M4, faction.infantry_units)
-            self.assertIn(Infantry.Soldier_M249, faction.infantry_units)
+            self.assertIn(Infantry.Infantry_M249, faction.infantry_units)
 
             self.assertIn("AvengerGenerator", faction.air_defenses)
 

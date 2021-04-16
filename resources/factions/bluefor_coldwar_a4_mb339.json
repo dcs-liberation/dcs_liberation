@@ -32,14 +32,14 @@
     "SAM_Chaparral_M48"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin"
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Infantry_M249"
   ],
   "air_defenses": [
     "ChaparralGenerator",

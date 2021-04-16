@@ -21,7 +21,7 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
         positions = self.get_circular_position(4, launcher_distance=30, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.AA_gun_QF_3_7,
+                AirDefence.AAA_QF_3_7,
                 "AA#" + str(i),
                 position[0],
                 position[1],
@@ -41,7 +41,7 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
         positions = self.get_circular_position(8, launcher_distance=90, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.AAA_M45_Quadmount,
+                AirDefence.AAA_M45_Quadmount_HB_12_7mm,
                 "AA#" + str(12 + i),
                 position[0],
                 position[1],
@@ -57,14 +57,14 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
             random.randint(0, 360),
         )
         self.add_unit(
-            Armor.M30_Cargo_Carrier,
+            Unarmed.Carrier_M30_Cargo,
             "LOG#1",
             self.position.x,
             self.position.y + 20,
             random.randint(0, 360),
         )
         self.add_unit(
-            Armor.M4_Tractor,
+            Unarmed.Tractor_M4_Hi_Speed,
             "LOG#2",
             self.position.x + 20,
             self.position.y,

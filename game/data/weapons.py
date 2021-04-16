@@ -119,8 +119,8 @@ _WEAPON_FALLBACKS = [
     # ADM-141 TALD
     (Weapons.ADM_141A, None),
     (Weapons.ADM_141A_, None),
-    (Weapons.ADM_141A__, None),
-    (Weapons.ADM_141B, None),
+    (Weapons.ADM_141A_TALD, None),
+    (Weapons.ADM_141B_TALD, None),
     # AGM-114K Hellfire
     (Weapons.AGM114x2_OH_58, Weapons.M260_HYDRA),  # assuming OH-58 and not MQ-9
     (Weapons.AGM_114K, None),  # Only for RQ-1

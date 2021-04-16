@@ -9,13 +9,13 @@
   ],
   "frontline_units": [
     "MT_M4_Sherman",
-    "APC_M2A1",
-    "Daimler_Armoured_Car",
+    "APC_M2A1_Halftrack",
+    "Car_Daimler_Armored",
     "LT_Mk_VII_Tetrarch",
-    "AAA_Bofors_40mm"
+    "AAA_40mm_Bofors"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad"
+    "MLRS_BM_21_Grad_122mm"
   ],
   "logistics_units": [
     "Bedford_MWD",

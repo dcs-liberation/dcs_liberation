@@ -20,21 +20,21 @@
     "MBT_Leopard_2",
     "MBT_Leopard_1A3",
     "MBT_M60A3_Patton",
-    "APC_Cobra",
+    "APC_Cobra__Scout",
     "APC_BTR_80",
-    "SAM_Avenger_M1097"
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin"
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
+    "Infantry_M249",
     "Paratrooper_AKS",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "AvengerGenerator",

@@ -33,7 +33,7 @@ class DogEarGenerator(EwrGenerator):
     This is the SA-8 search radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.CP_9S80M1_Sborka
+    unit_type = AirDefence.MCC_SR_Sborka_Dog_Ear_SR
 
 
 class RolandEwrGenerator(EwrGenerator):
@@ -51,7 +51,7 @@ class FlatFaceGenerator(EwrGenerator):
     This is the SA-3 search radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SR_P_19
+    unit_type = AirDefence.SAM_P19_Flat_Face_SR__SA_2_3
 
 
 class PatriotEwrGenerator(EwrGenerator):
@@ -60,7 +60,7 @@ class PatriotEwrGenerator(EwrGenerator):
     This is the Patriot search/track radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_Patriot_STR_AN_MPQ_53
+    unit_type = AirDefence.SAM_Patriot_STR
 
 
 class BigBirdGenerator(EwrGenerator):
@@ -69,7 +69,7 @@ class BigBirdGenerator(EwrGenerator):
     This is the SA-10 track radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SA_10_S_300PS_SR_64H6E
+    unit_type = AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR
 
 
 class SnowDriftGenerator(EwrGenerator):
@@ -78,7 +78,7 @@ class SnowDriftGenerator(EwrGenerator):
     This is the SA-11 search radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SA_11_Buk_SR_9S18M1
+    unit_type = AirDefence.SAM_SA_11_Buk_Gadfly_Snow_Drift_SR
 
 
 class StraightFlushGenerator(EwrGenerator):
@@ -87,7 +87,7 @@ class StraightFlushGenerator(EwrGenerator):
     This is the SA-6 search/track radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SA_6_Kub_STR_9S91
+    unit_type = AirDefence.SAM_SA_6_Kub_Long_Track_STR
 
 
 class HawkEwrGenerator(EwrGenerator):
@@ -96,4 +96,4 @@ class HawkEwrGenerator(EwrGenerator):
     This is the Hawk search radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_Hawk_SR_AN_MPQ_50
+    unit_type = AirDefence.SAM_Hawk_SR__AN_MPQ_50

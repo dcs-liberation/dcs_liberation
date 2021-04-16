@@ -21,16 +21,16 @@
     "MBT_M60A3_Patton",
     "MBT_Leopard_2",
     "APC_M113",
-    "SAM_Avenger_M1097"
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Infantry_M249"
   ],
   "air_defenses": [
     "AvengerGenerator",

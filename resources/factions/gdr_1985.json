@@ -17,23 +17,23 @@
   "frontline_units": [
     "IFV_BMP_1",
     "IFV_BMP_2",
-    "ARV_BRDM_2",
+    "IFV_BRDM_2",
     "APC_MTLB",
     "MBT_T_55",
     "MBT_T_72B"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S1_Gvozdika"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Rus",
-    "Soldier_RPG",
-    "_2B11_mortar"
+    "Infantry_AK_74_Rus",
+    "Infantry_RPG",
+    "Mortar_2B11_120mm"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",

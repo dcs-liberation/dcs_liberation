@@ -13,29 +13,29 @@
     "KC130"
   ],
   "frontline_units": [
-    "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW",
-    "APC_M1126_Stryker_ICV",
-    "ARV_BRDM_2",
+    "APC_HMMWV__Scout",
+    "ATGM_HMMWV",
+    "IFV_M1126_Stryker_ICV",
+    "IFV_BRDM_2",
     "IFV_BMP_1",
     "APC_MTLB",
     "MBT_Leopard_2",
     "MBT_T_72B3"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S1_Gvozdika",
-    "SpGH_Dana"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S1_Gvozdika_122mm",
+    "SPH_Dana_vz77_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",
-    "Infantry_Soldier_Rus",
-    "Soldier_RPG",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "Infantry_AK_74_Rus",
+    "Infantry_RPG",
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "SA6Generator",

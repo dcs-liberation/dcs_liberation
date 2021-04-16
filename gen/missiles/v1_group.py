@@ -46,7 +46,7 @@ class V1GroupGenerator(GroupGenerator):
 
         # Self defense flak
         flak_unit = random.choice(
-            [AirDefence.AAA_Flak_Vierling_38, AirDefence.AAA_Flak_38]
+            [AirDefence.AAA_Flak_Vierling_38_Quad_20mm, AirDefence.AAA_Flak_38_20mm]
         )
 
         self.add_unit(

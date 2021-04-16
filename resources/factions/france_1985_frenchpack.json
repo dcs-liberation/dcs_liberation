@@ -34,16 +34,16 @@
     "SAM_Roland_ADS"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "Stinger_MANPADS"
+    "Infantry_M249",
+    "MANPADS_Stinger"
   ],
   "air_defenses": [
     "RolandGenerator",

@@ -30,7 +30,7 @@ class RolandGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
         self.add_unit(
-            Unarmed.Transport_M818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x + 80,
             self.position.y,

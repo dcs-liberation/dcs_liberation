@@ -38,22 +38,22 @@
     "MBT_T_90",
     "MBT_T_80U",
     "MBT_T_72B3",
-    "SAM_SA_19_Tunguska_2S6"
+    "SAM_SA_19_Tunguska_Grison"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27",
-    "SPH_2S19_Msta"
+    "MLRS_BM_27_Uragan_220mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",
-    "Infantry_Soldier_Rus",
+    "Infantry_AK_74_Rus",
     "Paratrooper_RPG_16",
-    "_2B11_mortar",
-    "SAM_SA_18_Igla_MANPADS"
+    "Mortar_2B11_120mm",
+    "MANPADS_SA_18_Igla_Grouse"
   ],
   "air_defenses": [
     "SA8Generator",

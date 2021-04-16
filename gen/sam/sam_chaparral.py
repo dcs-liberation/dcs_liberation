@@ -20,7 +20,7 @@ class ChaparralGenerator(AirDefenseGroupGenerator):
         num_launchers = random.randint(2, 4)
 
         self.add_unit(
-            Unarmed.Transport_M818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x,
             self.position.y,

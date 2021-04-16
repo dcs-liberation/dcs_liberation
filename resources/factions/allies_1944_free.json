@@ -15,8 +15,8 @@
   ],
   "frontline_units": [
     "MT_M4_Sherman",
-    "APC_M2A1",
-    "AAA_Bofors_40mm"
+    "APC_M2A1_Halftrack",
+    "AAA_40mm_Bofors"
   ],
   "artillery_units": [
   ],

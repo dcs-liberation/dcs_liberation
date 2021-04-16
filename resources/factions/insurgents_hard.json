@@ -6,29 +6,29 @@
   "aircrafts": [
   ],
   "frontline_units": [
-    "ATGM_M1045_HMMWV_TOW",
-    "APC_M1043_HMMWV_Armament",
-    "ARV_BRDM_2",
+    "ATGM_HMMWV",
+    "APC_HMMWV__Scout",
+    "IFV_BRDM_2",
     "APC_BTR_80",
-    "ARV_BTR_RD",
+    "APC_BTR_RD",
     "IFV_BMP_1",
     "MBT_T_55",
-    "AAA_ZU_23_Insurgent_on_Ural_375",
-    "AAA_ZSU_57_2"
+    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375",
+    "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S19_Msta"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Insurgents",
-    "Soldier_RPG",
-    "_2B11_mortar",
-    "SAM_SA_18_Igla_MANPADS"
+    "Insurgent_AK_74",
+    "Infantry_RPG",
+    "Mortar_2B11_120mm",
+    "MANPADS_SA_18_Igla_Grouse"
   ],
   "air_defenses": [
     "SA9Generator",

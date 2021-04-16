@@ -832,7 +832,7 @@ class A_4E_C(PlaneType):
 
     class Pylon1:
         LAU_10___4_ZUNI_MK_71 = (1, Weapons.LAU_10___4_ZUNI_MK_71)
-        LAU_3___19_FFAR_M156_WP = (1, Weapons.LAU_3___19_FFAR_M156_WP)
+        LAU_3___19_FFAR_M156_WP = (1, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
         LAU_3___19_FFAR_Mk1_HE = (1, Weapons.LAU_3___19_FFAR_Mk1_HE)
         LAU_3___19_FFAR_Mk5_HEAT = (1, Weapons.LAU_3___19_FFAR_Mk5_HEAT)
         LAU_68___7_FFAR_M156_WP = (1, Weapons.LAU_68___7_FFAR_M156_WP)
@@ -841,7 +841,7 @@ class A_4E_C(PlaneType):
         AGM_45A = (1, Weapons.AGM_45A)
         # ERRR {AGM12_B}
         Mk_20 = (1, Weapons.Mk_20)
-        Mk_81 = (1, Weapons.Mk_81)
+        Mk_81 = (1, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (1, WeaponsA4EC.Mk_81SE)
         Mk_82 = (1, Weapons.Mk_82)
         Mk_82_SnakeEye = (1, Weapons.Mk_82_SnakeEye)
@@ -889,7 +889,7 @@ class A_4E_C(PlaneType):
         # ERRR {AGM12_B}
         AGM_62 = (2, Weapons.AGM_62)
         Mk_20 = (2, Weapons.Mk_20)
-        Mk_81 = (2, Weapons.Mk_81)
+        Mk_81 = (2, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (2, WeaponsA4EC.Mk_81SE)
         Mk_82 = (2, Weapons.Mk_82)
         Mk_82_SnakeEye = (2, Weapons.Mk_82_SnakeEye)
@@ -963,7 +963,7 @@ class A_4E_C(PlaneType):
         # ERRR {AGM12_B}
         AGM_62 = (3, Weapons.AGM_62)
         Mk_20 = (3, Weapons.Mk_20)
-        Mk_81 = (3, Weapons.Mk_81)
+        Mk_81 = (3, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (3, WeaponsA4EC.Mk_81SE)
         Mk_82 = (3, Weapons.Mk_82)
         Mk_82_SnakeEye = (3, Weapons.Mk_82_SnakeEye)
@@ -1031,7 +1031,7 @@ class A_4E_C(PlaneType):
         # ERRR {AGM12_B}
         AGM_62 = (4, Weapons.AGM_62)
         Mk_20 = (4, Weapons.Mk_20)
-        Mk_81 = (4, Weapons.Mk_81)
+        Mk_81 = (4, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (4, WeaponsA4EC.Mk_81SE)
         Mk_82 = (4, Weapons.Mk_82)
         Mk_82_SnakeEye = (4, Weapons.Mk_82_SnakeEye)
@@ -1082,7 +1082,7 @@ class A_4E_C(PlaneType):
         AGM_45A = (5, Weapons.AGM_45A)
         # ERRR {AGM12_B}
         Mk_20 = (5, Weapons.Mk_20)
-        Mk_81 = (5, Weapons.Mk_81)
+        Mk_81 = (5, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (5, WeaponsA4EC.Mk_81SE)
         Mk_82 = (5, Weapons.Mk_82)
         Mk_82_SnakeEye = (5, Weapons.Mk_82_SnakeEye)

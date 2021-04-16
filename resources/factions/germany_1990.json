@@ -19,7 +19,7 @@
     "KC130"
   ],
   "frontline_units": [
-    "TPz_Fuchs",
+    "APC_TPz_Fuchs",
     "MBT_Leopard_1A3",
     "MBT_Leopard_2",
     "IFV_Marder",
@@ -28,13 +28,13 @@
   "artillery_units": [
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "_2B11_mortar",
-    "Stinger_MANPADS"
+    "Infantry_M249",
+    "Mortar_2B11_120mm",
+    "MANPADS_Stinger"
   ],
   "air_defenses": [
     "GepardGenerator",

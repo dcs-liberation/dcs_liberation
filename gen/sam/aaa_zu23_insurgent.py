@@ -27,7 +27,7 @@ class ZU23InsurgentGenerator(AirDefenseGroupGenerator):
             for j in range(grid_y):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_ZU_23_Insurgent_Closed,
+                    AirDefence.AAA_ZU_23_Closed_Emplacement_Insurgent,
                     "AAA#" + str(index),
                     self.position.x + spacing * i,
                     self.position.y + spacing * j,
