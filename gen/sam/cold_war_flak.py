@@ -12,13 +12,13 @@ from gen.sam.group_generator import GroupGenerator
 class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic an early cold-war era flak AAA site.
-    The Flak 18 88mm is used as the main long range gun and 2 Bofors 40mm guns provide short range protection.
+    The Flak 18 88mm is used as the main long range gun, S-60 is used as a mid range gun and 2 Bofors 40mm guns provide short range protection.
 
     This does not include search lights and telemeter computer (Kdo.G 40) because these are paid units only available in WW2 asset pack
     """
 
     name = "Early Cold War Flak Site"
-    price = 58
+    price = 74
 
     def generate(self):
 
@@ -37,18 +37,34 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
                     self.heading,
                 )
 
-        # Short range guns
+        # Medium range guns
         self.add_unit(
-            AirDefence.AAA_40mm_Bofors,
+            AirDefence.AAA_S_60_57mm,
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_40mm_Bofors,
+            AirDefence.AAA_S_60_57mm,
             "SHO#2",
             self.position.x + spacing * 2 + 40,
+            self.position.y + spacing + 40,
+            self.heading,
+        ),
+
+        # Short range guns
+        self.add_unit(
+            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            "SHO#3",
+            self.position.x - 80,
+            self.position.y - 40,
+            self.heading + 180,
+        ),
+        self.add_unit(
+            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            "SHO#4",
+            self.position.x + spacing * 2 + 80,
             self.position.y + spacing + 40,
             self.heading,
         ),
@@ -70,7 +86,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 class ColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
     This generator attempt to mimic a cold-war era flak AAA site.
-    The Flak 18 88mm is used as the main long range gun while 2 Zu-23 guns provide short range protection.
+    The Flak 18 88mm is used as the main long range gun, 2 S-60 57mm gun improve mid range firepower, while 2 Zu-23 guns even provide short range protection.
     The site is also fitted with a P-19 radar for early detection.
     """
 
@@ -94,18 +110,34 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
                     self.heading,
                 )
 
-        # Short range guns
+        # Medium range guns
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.AAA_S_60_57mm,
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.AAA_S_60_57mm,
             "SHO#2",
             self.position.x + spacing * 2 + 40,
+            self.position.y + spacing + 40,
+            self.heading,
+        ),
+
+        # Short range guns
+        self.add_unit(
+            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            "SHO#1",
+            self.position.x - 80,
+            self.position.y - 40,
+            self.heading + 180,
+        ),
+        self.add_unit(
+            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            "SHO#2",
+            self.position.x + spacing * 2 + 80,
             self.position.y + spacing + 40,
             self.heading,
         ),

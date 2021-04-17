@@ -6,7 +6,6 @@ from dcs.vehicles import AirDefence
 
 from game import Game
 from game.factions.faction import Faction
-from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import SamGroundObject
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
@@ -23,9 +22,7 @@ from gen.sam.cold_war_flak import (
     ColdWarFlakGenerator,
     EarlyColdWarFlakGenerator,
 )
-
 from gen.sam.freya_ewr import FreyaGenerator
-from gen.sam.group_generator import GroupGenerator
 from gen.sam.sam_avenger import AvengerGenerator
 from gen.sam.sam_chaparral import ChaparralGenerator
 from gen.sam.sam_gepard import GepardGenerator
