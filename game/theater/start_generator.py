@@ -37,10 +37,8 @@ from gen.fleet.ship_group_generator import (
 from gen.locations.preset_location_finder import MizDataLocationFinder
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.airdefensegroupgenerator import AirDefenseRange
-from gen.sam.sam_group_generator import (
-    generate_anti_air_group,
-    generate_ewr_group,
-)
+from gen.sam.sam_group_generator import generate_anti_air_group
+from gen.sam.ewr_group_generator import generate_ewr_group
 from . import (
     ConflictTheater,
     ControlPoint,
@@ -464,7 +462,11 @@ class BaseDefenseGenerator:
         group_id = self.game.next_group_id()
 
         g = EwrGroundObject(
-            namegen.random_objective_name(), group_id, position, self.control_point
+            namegen.random_objective_name(),
+            group_id,
+            position,
+            self.control_point,
+            True,
         )
 
         group = generate_ewr_group(self.game, g, self.faction)
@@ -609,6 +611,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
         skip_sams = self.generate_required_aa()
+        skip_ewrs = self.generate_required_ewr()
 
         if self.control_point.is_global:
             return
@@ -625,6 +628,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                     skip_sams -= 1
                 else:
                     self.generate_aa_site()
+            # 1 in 4 additional objectives are EWR.
+            elif random.randint(0, 3) == 0:
+                if skip_ewrs > 0:
+                    skip_ewrs -= 1
+                else:
+                    self.generate_ewr_site()
             else:
                 self.generate_ground_point()
 
@@ -655,6 +664,17 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         return len(presets.required_long_range_sams) + len(
             presets.required_medium_range_sams
         )
+
+    def generate_required_ewr(self) -> int:
+        """Generates the EWR sites that are required by the campaign.
+
+        Returns:
+            The number of EWR sites that were generated.
+        """
+        presets = self.control_point.preset_locations
+        for position in presets.required_ewrs:
+            self.generate_ewr_at(position)
+        return len(presets.required_ewrs)
 
     def generate_ground_point(self) -> None:
         try:
@@ -731,6 +751,33 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             )
             return
         g.groups = groups
+        self.control_point.connected_objectives.append(g)
+
+    def generate_ewr_site(self) -> None:
+        position = self.location_finder.location_for(LocationType.Ewr)
+        if position is None:
+            return
+        self.generate_ewr_at(position)
+
+    def generate_ewr_at(self, position: Point) -> None:
+        group_id = self.game.next_group_id()
+
+        g = EwrGroundObject(
+            namegen.random_objective_name(),
+            group_id,
+            position,
+            self.control_point,
+            for_airbase=False,
+        )
+        group = generate_ewr_group(self.game, g, self.faction)
+        if group is None:
+            logging.error(
+                "Could not generate ewr group for %s at %s",
+                g.name,
+                self.control_point,
+            )
+            return
+        g.groups = [group]
         self.control_point.connected_objectives.append(g)
 
     def generate_missile_sites(self) -> None:
