@@ -103,12 +103,12 @@
     "Wudang Shan"
   ],
   "destroyers": [
-    "FF_1135M_Rezky",
+    "Frigate_1135M_Rezky",
     "Type_052B_Destroyer",
     "Type_052C_Destroyer"
   ],
   "cruiser": [
-    "FSG_1241_1MP_Molniya",
+    "Corvette_1241_1_Molniya",
     "Type_054A_Frigate"
   ],
   "requirements": {},

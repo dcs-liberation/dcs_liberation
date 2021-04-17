@@ -1,6 +1,6 @@
 import random
 
-from dcs.ships import Uboat_VIIC_U_flak
+from dcs.ships import U_boat_VIIC_U_flak
 
 from gen.sam.group_generator import ShipGroupGenerator
 
@@ -10,7 +10,7 @@ class UBoatGroupGenerator(ShipGroupGenerator):
 
         for i in range(random.randint(1, 4)):
             self.add_unit(
-                Uboat_VIIC_U_flak,
+                U_boat_VIIC_U_flak,
                 "Uboat" + str(i),
                 self.position.x + i * random.randint(100, 250),
                 self.position.y + (random.randint(100, 200) - 100),

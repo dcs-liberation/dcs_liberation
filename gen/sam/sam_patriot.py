@@ -76,7 +76,11 @@ class PatriotGenerator(AirDefenseGroupGenerator):
         )
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
-                aa_group, AirDefence.SPAAA_Vulcan_M163, f"SPAAA#{i}", Point(x, y), heading
+                aa_group,
+                AirDefence.SPAAA_Vulcan_M163,
+                f"SPAAA#{i}",
+                Point(x, y),
+                heading,
             )
 
     @classmethod

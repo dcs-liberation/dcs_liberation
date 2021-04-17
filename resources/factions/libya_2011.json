@@ -62,10 +62,10 @@
   ],
   "missiles_group_count": 1,
   "destroyers": [
-    "FF_1135M_Rezky"
+    "Frigate_1135M_Rezky"
   ],
   "cruisers": [
-    "FSG_1241_1MP_Molniya"
+    "Corvette_1241_1_Molniya"
   ],
   "requirements": {},
   "carrier_names": [

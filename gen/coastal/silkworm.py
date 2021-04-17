@@ -32,7 +32,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.Transport_KAMAZ_43101,
+            Unarmed.Truck_KAMAZ_43101,
             "KAMAZ#0",
             self.position.x - 35,
             self.position.y - 20,

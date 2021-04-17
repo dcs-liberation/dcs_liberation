@@ -28,10 +28,10 @@
     "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "logistics_units": [
-    "Blitz_3_6_6700A",
-    "Kübelwagen_82",
-    "Sd_Kfz_7",
-    "Sd_Kfz_2"
+    "Truck_Opel_Blitz",
+    "LUV_Kubelwagen_82",
+    "Carrier_Sd_Kfz_7_Tractor",
+    "LUV_Kettenrad"
   ],
   "infantry_units": [
     "Infantry_Mauser_98"

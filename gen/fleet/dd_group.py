@@ -6,7 +6,7 @@ from game.theater.theatergroundobject import TheaterGroundObject
 
 from gen.sam.group_generator import ShipGroupGenerator
 from dcs.unittype import ShipType
-from dcs.ships import Oliver_Hazzard_Perry_class, USS_Arleigh_Burke_IIa
+from dcs.ships import FFG_Oliver_Hazzard_Perry, DDG_Arleigh_Burke_IIa
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -46,7 +46,7 @@ class OliverHazardPerryGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(OliverHazardPerryGroupGenerator, self).__init__(
-            game, ground_object, faction, Oliver_Hazzard_Perry_class
+            game, ground_object, faction, FFG_Oliver_Hazzard_Perry
         )
 
 
@@ -55,5 +55,5 @@ class ArleighBurkeGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(ArleighBurkeGroupGenerator, self).__init__(
-            game, ground_object, faction, USS_Arleigh_Burke_IIa
+            game, ground_object, faction, DDG_Arleigh_Burke_IIa
         )

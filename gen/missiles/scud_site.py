@@ -14,21 +14,21 @@ class ScudGenerator(GroupGenerator):
 
         # Scuds
         self.add_unit(
-            MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M,
+            MissilesSS.SSM_SS_1C_Scud_B,
             "V1#0",
             self.position.x,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M,
+            MissilesSS.SSM_SS_1C_Scud_B,
             "V1#1",
             self.position.x + 50,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M,
+            MissilesSS.SSM_SS_1C_Scud_B,
             "V1#2",
             self.position.x + 100,
             self.position.y + random.randint(1, 8),

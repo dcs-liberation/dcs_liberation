@@ -78,7 +78,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.Kübelwagen_82,
+            Unarmed.LUV_Kubelwagen_82,
             "Kubel#",
             self.position.x - 35,
             self.position.y - 20,
@@ -89,7 +89,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
         for i in range(int(max(1, grid_x / 2))):
             for j in range(int(max(1, grid_x / 2))):
                 self.add_unit(
-                    Unarmed.Blitz_3_6_6700A,
+                    Unarmed.Truck_Opel_Blitz,
                     "BLITZ#" + str(index),
                     self.position.x + 125 + 15 * i + random.randint(1, 5),
                     self.position.y + 15 * j + random.randint(1, 5),

@@ -30,7 +30,7 @@ class SA15Generator(AirDefenseGroupGenerator):
             self.heading,
         )
         self.add_unit(
-            Unarmed.Transport_KAMAZ_43101,
+            Unarmed.Truck_KAMAZ_43101,
             "TRUCK",
             self.position.x + 80,
             self.position.y,

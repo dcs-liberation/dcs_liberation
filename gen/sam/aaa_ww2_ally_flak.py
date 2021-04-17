@@ -50,7 +50,7 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
 
         # Add a commander truck
         self.add_unit(
-            Unarmed.Willys_MB,
+            Unarmed.Car_Willys_Jeep,
             "CMD#1",
             self.position.x,
             self.position.y - 20,
@@ -71,7 +71,7 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
             random.randint(0, 360),
         )
         self.add_unit(
-            Unarmed.Bedford_MWD,
+            Unarmed.Truck_Bedford,
             "LOG#3",
             self.position.x - 20,
             self.position.y,

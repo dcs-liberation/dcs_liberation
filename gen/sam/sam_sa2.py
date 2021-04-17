@@ -18,7 +18,11 @@ class SA2Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_P19_Flat_Face_SR__SA_2_3, "SR", self.position.x, self.position.y, self.heading
+            AirDefence.SAM_P19_Flat_Face_SR__SA_2_3,
+            "SR",
+            self.position.x,
+            self.position.y,
+            self.heading,
         )
         self.add_unit(
             AirDefence.SAM_SA_2_S_75_Fan_Song_TR,

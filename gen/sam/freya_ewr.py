@@ -47,21 +47,21 @@ class FreyaGenerator(AirDefenseGroupGenerator):
 
         # Command/Logi
         self.add_unit(
-            Unarmed.Kübelwagen_82,
+            Unarmed.LUV_Kubelwagen_82,
             "Kubel#1",
             self.position.x - 20,
             self.position.y - 20,
             self.heading,
         )
         self.add_unit(
-            Unarmed.Sd_Kfz_7,
+            Unarmed.Carrier_Sd_Kfz_7_Tractor,
             "Sdkfz#1",
             self.position.x + 20,
             self.position.y + 22,
             self.heading,
         )
         self.add_unit(
-            Unarmed.Sd_Kfz_2,
+            Unarmed.LUV_Kettenrad,
             "Sdkfz#2",
             self.position.x - 22,
             self.position.y + 20,

@@ -1,7 +1,6 @@
 import random
 
 from dcs.mapping import Point
-from dcs.unittype import VehicleType
 from dcs.vehicles import AirDefence
 
 from game import Game

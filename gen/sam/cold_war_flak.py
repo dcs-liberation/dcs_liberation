@@ -55,7 +55,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Add a truck
         self.add_unit(
-            Unarmed.Transport_KAMAZ_43101,
+            Unarmed.Truck_KAMAZ_43101,
             "Truck#",
             self.position.x - 60,
             self.position.y - 20,

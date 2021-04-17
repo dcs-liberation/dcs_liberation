@@ -173,7 +173,6 @@ from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 
 UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
@@ -181,9 +180,6 @@ UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 plane_map["A-4E-C"] = A_4E_C
 plane_map["F-22A"] = F_22A
 plane_map["MB-339PAN"] = MB_339PAN
-plane_map["Rafale_M"] = Rafale_M
-plane_map["Rafale_A_S"] = Rafale_A_S
-plane_map["Rafale_B"] = Rafale_B
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
 
@@ -479,10 +475,6 @@ PRICES = {
     MQ_9_Reaper: 12,
     RQ_1A_Predator: 6,
     WingLoong_I: 6,
-    # Modded
-    Rafale_M: 26,
-    Rafale_A_S: 26,
-    Rafale_B: 26,
     # armor
     Armor.APC_MTLB: 4,
     Artillery.Grad_MRL_FDDM__FC: 4,
@@ -770,7 +762,6 @@ UNIT_BY_TASK = {
         SpitfireLFMkIXCW,
         SpitfireLFMkIX,
         A_4E_C,
-        Rafale_M,
         SA342Mistral,
     ],
     CAS: [
@@ -804,8 +795,6 @@ UNIT_BY_TASK = {
         P_47D_30bl1,
         P_47D_40,
         RQ_1A_Predator,
-        Rafale_A_S,
-        Rafale_B,
         S_3B,
         SA342L,
         SA342M,
@@ -1276,9 +1265,6 @@ PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
     A_20G: COMMON_OVERRIDE,
     A_4E_C: COMMON_OVERRIDE,
     MB_339PAN: COMMON_OVERRIDE,
-    Rafale_M: COMMON_OVERRIDE,
-    Rafale_A_S: COMMON_OVERRIDE,
-    Rafale_B: COMMON_OVERRIDE,
     OH_58D: COMMON_OVERRIDE,
     F_16A: COMMON_OVERRIDE,
     MQ_9_Reaper: COMMON_OVERRIDE,
@@ -1373,7 +1359,6 @@ CARRIER_CAPABLE = [
     AV8BNA,
     Su_33,
     A_4E_C,
-    Rafale_M,
     S_3B,
     E_2C,
     UH_1H,

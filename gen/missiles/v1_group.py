@@ -14,21 +14,21 @@ class V1GroupGenerator(GroupGenerator):
 
         # Ramps
         self.add_unit(
-            MissilesSS.V_1_ramp,
+            MissilesSS.SSM_V_1_Launcher,
             "V1#0",
             self.position.x,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.V_1_ramp,
+            MissilesSS.SSM_V_1_Launcher,
             "V1#1",
             self.position.x + 50,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.V_1_ramp,
+            MissilesSS.SSM_V_1_Launcher,
             "V1#2",
             self.position.x + 100,
             self.position.y + random.randint(1, 8),
@@ -37,7 +37,7 @@ class V1GroupGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.Kübelwagen_82,
+            Unarmed.LUV_Kubelwagen_82,
             "Kubel#0",
             self.position.x - 35,
             self.position.y - 20,
@@ -58,7 +58,7 @@ class V1GroupGenerator(GroupGenerator):
         )
 
         self.add_unit(
-            Unarmed.Blitz_3_6_6700A,
+            Unarmed.Truck_Opel_Blitz,
             "Blitz#0",
             self.position.x + 200,
             self.position.y + 15,

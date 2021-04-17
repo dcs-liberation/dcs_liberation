@@ -25,9 +25,9 @@ from dcs.planes import (
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     LHA_1_Tarawa,
-    Oliver_Hazzard_Perry_class,
-    USS_Arleigh_Burke_IIa,
-    Ticonderoga_class,
+    FFG_Oliver_Hazzard_Perry,
+    DDG_Arleigh_Burke_IIa,
+    CG_Ticonderoga,
 )
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
 
@@ -99,9 +99,9 @@ class TestFactionLoader(unittest.TestCase):
 
             self.assertIn(CVN_74_John_C__Stennis, faction.aircraft_carrier)
             self.assertIn(LHA_1_Tarawa, faction.helicopter_carrier)
-            self.assertIn(Oliver_Hazzard_Perry_class, faction.destroyers)
-            self.assertIn(USS_Arleigh_Burke_IIa, faction.destroyers)
-            self.assertIn(Ticonderoga_class, faction.cruisers)
+            self.assertIn(FFG_Oliver_Hazzard_Perry, faction.destroyers)
+            self.assertIn(DDG_Arleigh_Burke_IIa, faction.destroyers)
+            self.assertIn(CG_Ticonderoga, faction.cruisers)
 
             self.assertIn("mod", faction.requirements.keys())
             self.assertIn("Some mod is required", faction.requirements.values())

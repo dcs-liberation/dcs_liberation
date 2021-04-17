@@ -56,10 +56,10 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa"
+    "DDG_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "requirements": {
     "Community A-4E": "https://heclak.github.io/community-a4e-c/"

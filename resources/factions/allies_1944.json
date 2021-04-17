@@ -32,7 +32,7 @@
     "SPG_M12_GMC_155mm"
   ],
   "logistics_units": [
-    "Bedford_MWD",
+    "Truck_Bedford",
     "CCKW_353"
   ],
   "infantry_units": [

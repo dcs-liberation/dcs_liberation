@@ -23,7 +23,7 @@ from dcs.planes import F_15C
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     LHA_1_Tarawa,
-    USS_Arleigh_Burke_IIa,
+    DDG_Arleigh_Burke_IIa,
 )
 from dcs.statics import Fortification
 from dcs.terrain import (
@@ -93,16 +93,16 @@ class MizCampaignLoader:
     LHA_UNIT_TYPE = LHA_1_Tarawa.id
     FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
 
-    FOB_UNIT_TYPE = Unarmed.CP_SKP_11_ATC_Mobile_Command_Post.id
+    FOB_UNIT_TYPE = Unarmed.Truck_SKP_11_Mobile_ATC.id
     FARP_HELIPAD = "SINGLE_HELIPAD"
 
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
     SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR.id
     GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_Grison.id
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
-    SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
-    MISSILE_SITE_UNIT_TYPE = MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M.id
-    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.SS_N_2_Silkworm.id
+    SHIP_UNIT_TYPE = DDG_Arleigh_Burke_IIa.id
+    MISSILE_SITE_UNIT_TYPE = MissilesSS.SSM_SS_1C_Scud_B.id
+    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.AShM_SS_N_2_Silkworm.id
 
     # Multiple options for the required SAMs so campaign designers can more
     # accurately see the coverage of their IADS for the expected type.
@@ -711,8 +711,8 @@ class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
     overview_image = "persiangulf.gif"
     reference_points = (
-        ReferencePoint(persiangulf.Jiroft_Airport.position, Point(1692, 1343)),
-        ReferencePoint(persiangulf.Liwa_Airbase.position, Point(358, 3238)),
+        ReferencePoint(persiangulf.Jiroft.position, Point(1692, 1343)),
+        ReferencePoint(persiangulf.Liwa_AFB.position, Point(358, 3238)),
     )
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
