@@ -129,38 +129,34 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{BRU55_2*GBU-38}",
-					["num"] = 7,
-				},
-				[2] = {
-					["CLSID"] = "{BRU33_2X_MK-83}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 6,
-				},
-				[4] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FPU_8A_FUEL_TANK}",
-					["num"] = 5,
-				},
-				[6] = {
-					["CLSID"] = "{BRU55_2*GBU-38}",
-					["num"] = 3,
-				},
-				[7] = {
-					["CLSID"] = "{BRU33_2X_MK-83}",
-					["num"] = 2,
-				},
-				[8] = {
 					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
 					["num"] = 1,
 				},
-				[9] = {
+				[2] = {
+					["CLSID"] = "{GBU_31_V_2B}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 3,
+				},
+				[4] = {
+					["CLSID"] = "{AN_ASQ_228}",
+					["num"] = 4,
+				},
+				[5] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 6,
+				},
+				[6] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 7,
+				},
+				[7] = {
+					["CLSID"] = "{GBU_31_V_2B}",
+					["num"] = 8,
+				},
+				[8] = {
 					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
 					["num"] = 9,
 				},
