@@ -4,10 +4,14 @@ Saves from 2.4 are not compatible with 2.5.
 
 ## Features/Improvements
 
+* **[Engine]** DCS 2.7 Support
+* **[UI]** Improved FOB menu, added a custom banner, and do not display aircraft recruitment menu
 * **[Flight Planner]** Added AEW&C missions. (by siKruger)
 * **[Kneeboard]** Added dark kneeboard option (by GvonH)
 * **[Campaigns]** Multiple EWR sites may now be generated, and EWR sites may be generated outside bases (by SnappyComebacks)
 * **[Mission Generation]** Cloudy and rainy (but not thunderstorm) weather will use the cloud presets from DCS 2.7.
+* **[Plugins]** Added LotATC export plugin (by drsoran)
+* **[Plugins]** Added Splash Damage Plugin (by Wheelijoe)
 
 ## Fixes
 
@@ -21,6 +25,11 @@ Saves from 2.4 are not compatible with 2.5.
 * **[Campaign]** Date now progresses.
 * **[Campaign]** Added game over message when a coalition runs out of functioning airbases.
 * **[Mission Generation]** Fixed "invalid face handle" error in kneeboard generation that occurred on some machines.
+
+## Regressions
+
+* **[Mod Support]** Stopped support for 2.5.5 Rafale Mode, and removed factions that were using it
+* **[Mod Support]** Su-57 mod support might be out of date
 
 # 2.4.3
 
