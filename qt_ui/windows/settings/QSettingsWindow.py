@@ -213,14 +213,14 @@ class QSettingsWindow(QDialog):
 
         self.player_income = TenthsSpinSlider(
             "Player income multiplier",
-            1,
+            0,
             50,
             int(self.game.settings.player_income_multiplier * 10),
         )
         self.player_income.spinner.valueChanged.connect(self.applySettings)
         self.enemy_income = TenthsSpinSlider(
             "Enemy income multiplier",
-            1,
+            0,
             50,
             int(self.game.settings.enemy_income_multiplier * 10),
         )
