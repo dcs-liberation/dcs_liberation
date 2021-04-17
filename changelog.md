@@ -12,6 +12,7 @@ Saves from 2.4 are not compatible with 2.5.
 * **[Mission Generation]** Cloudy and rainy (but not thunderstorm) weather will use the cloud presets from DCS 2.7.
 * **[Plugins]** Added LotATC export plugin (by drsoran)
 * **[Plugins]** Added Splash Damage Plugin (by Wheelijoe)
+* **[Loadouts]** Replaced Litening with ATFLIR for all default F/A-18C loadouts.
 
 ## Fixes
 
