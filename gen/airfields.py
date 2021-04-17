@@ -964,7 +964,7 @@ AIRFIELD_DATA = {
         icao="LTAJ",
         elevation=2287,
         runway_length=8871,
-        atc=AtcData(MHz(3, 775), MHz(40, 150), MHz(120, 100), MHz(250, 50)),
+        atc=AtcData(MHz(3, 775), MHz(38, 450), MHz(120, 100), MHz(250, 50)),
         ils={
             "28": ("IGNP", MHz(109, 10)),
         },
