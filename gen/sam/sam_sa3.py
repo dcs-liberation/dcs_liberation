@@ -18,10 +18,14 @@ class SA3Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SR_P_19, "SR", self.position.x, self.position.y, self.heading
+            AirDefence.SAM_P19_Flat_Face_SR__SA_2_3,
+            "SR",
+            self.position.x,
+            self.position.y,
+            self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_SA_3_S_125_TR_SNR,
+            AirDefence.SAM_SA_3_S_125_Low_Blow_TR,
             "TR",
             self.position.x + 20,
             self.position.y,
@@ -35,7 +39,7 @@ class SA3Generator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_SA_3_S_125_LN_5P73,
+                AirDefence.SAM_SA_3_S_125_Goa_LN,
                 "LN#" + str(i),
                 position[0],
                 position[1],

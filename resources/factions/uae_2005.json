@@ -18,18 +18,18 @@
   ],
   "frontline_units": [
     "MBT_Leclerc",
-    "TPz_Fuchs",
+    "APC_TPz_Fuchs",
     "IFV_BMP_3"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "Infantry_M249",
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "HawkGenerator",

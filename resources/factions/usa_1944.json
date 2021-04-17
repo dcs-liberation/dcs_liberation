@@ -16,13 +16,13 @@
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
     "MT_M4_Sherman",
-    "APC_M2A1",
-    "LAC_M8_Greyhound",
-    "TD_M10_GMC",
-    "AA_gun_QF_3_7"
+    "APC_M2A1_Halftrack",
+    "Car_M8_Greyhound_Armored",
+    "SPG_M10_GMC",
+    "AAA_QF_3_7"
   ],
   "artillery_units": [
-    "M12_GMC"
+    "SPG_M12_GMC_155mm"
   ],
   "logistics_units": [
     "CCKW_353"

@@ -31,14 +31,14 @@
     "SAM_Chaparral_M48"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin"
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Infantry_M249"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -56,10 +56,10 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa"
+    "DDG_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "requirements": {
     "Community A-4E": "https://heclak.github.io/community-a4e-c/"

@@ -20,7 +20,7 @@ class LinebackerGenerator(AirDefenseGroupGenerator):
         num_launchers = random.randint(2, 4)
 
         self.add_unit(
-            Unarmed.Transport_M818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x,
             self.position.y,
@@ -31,7 +31,7 @@ class LinebackerGenerator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_Linebacker_M6,
+                AirDefence.SAM_Linebacker___Bradley_M6,
                 "M6#" + str(i),
                 position[0],
                 position[1],

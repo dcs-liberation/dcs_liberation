@@ -36,16 +36,16 @@
     "SAM_Roland_ADS"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "Stinger_MANPADS"
+    "Infantry_M249",
+    "MANPADS_Stinger"
   ],
   "air_defenses": [
     "RolandGenerator",
@@ -58,10 +58,10 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa"
+    "DDG_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "requirements": {
     "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"

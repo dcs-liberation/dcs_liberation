@@ -28,23 +28,23 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
-    "ATGM_M1134_Stryker",
-    "APC_M1126_Stryker_ICV",
+    "ATGM_Stryker",
+    "IFV_M1126_Stryker_ICV",
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW"
+    "APC_HMMWV__Scout",
+    "ATGM_HMMWV"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Infantry_M249"
   ],
   "shorads": [
     "AvengerGenerator"
@@ -59,11 +59,11 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "Oliver_Hazzard_Perry_class",
-    "USS_Arleigh_Burke_IIa"
+    "FFG_Oliver_Hazzard_Perry",
+    "DDG_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "requirements": {"mod": "Some mod is required"},
   "carrier_names": [

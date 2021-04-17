@@ -40,26 +40,26 @@
     "MBT_T_72B3",
     "MBT_T_80U",
     "MBT_T_90",
-    "SAM_SA_19_Tunguska_2S6",
+    "SAM_SA_19_Tunguska_Grison",
     "ZBD_04A",
     "ZTZ_96B"
   ],
   "artillery_units": [
-    "MLRS_9A52_Smerch",
-    "MLRS_9K57_Uragan_BM_27",
-    "SPH_2S9_Nona",
-    "SPH_2S19_Msta"
+    "MLRS_9A52_Smerch_HE_300mm",
+    "MLRS_BM_27_Uragan_220mm",
+    "SPH_2S9_Nona_120mm_M",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "_2B11_mortar",
-    "Infantry_Soldier_Rus",
+    "Mortar_2B11_120mm",
+    "Infantry_AK_74_Rus",
     "Paratrooper_AKS",
     "Paratrooper_RPG_16",
-    "SAM_SA_18_Igla_MANPADS"
+    "MANPADS_SA_18_Igla_Grouse"
   ],
   "air_defenses": [
     "HQ7Generator",
@@ -103,12 +103,12 @@
     "Wudang Shan"
   ],
   "destroyers": [
-    "FF_1135M_Rezky",
+    "Frigate_1135M_Rezky",
     "Type_052B_Destroyer",
     "Type_052C_Destroyer"
   ],
   "cruiser": [
-    "FSG_1241_1MP_Molniya",
+    "Corvette_1241_1_Molniya",
     "Type_054A_Frigate"
   ],
   "requirements": {},

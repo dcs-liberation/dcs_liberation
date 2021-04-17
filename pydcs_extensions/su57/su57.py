@@ -1511,7 +1511,7 @@ class Su_57(PlaneType):
             _15 = "15"
 
     class Pylon1:
-        R_73 = (1, Weapons.R_73)
+        R_73__AA_11_Archer____Infra_Red = (1, Weapons.R_73__AA_11_Archer____Infra_Red)
         RVV_AE = (1, Su57Weapons.RVV_AE)
         RVV_M = (1, Su57Weapons.RVV_M)
         Smoke_Generator___red = (1, Weapons.Smoke_Generator___red)
@@ -1522,33 +1522,26 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (1, Weapons.Smoke_Generator___orange)
 
     class Pylon2:
-        R_27R = (2, Weapons.R_27R)
-        R_27ER = (2, Weapons.R_27ER)
-        R_27T = (2, Weapons.R_27T)
-        R_27ET = (2, Weapons.R_27ET)
-        R_77 = (2, Weapons.R_77)
-        R_73 = (2, Weapons.R_73)
-        Kh_31P = (2, Weapons.Kh_31P)
-        Kh_31A = (2, Weapons.Kh_31A)
-        Kh_29L = (2, Weapons.Kh_29L)
-        Kh_29T = (2, Weapons.Kh_29T)
-        Kh_59M = (2, Weapons.Kh_59M)
-        MER_6_FAB_100 = (2, Weapons.MER_6_FAB_100)
-        B_8M1___20_S_8KOM = (2, Weapons.B_8M1___20_S_8KOM)
-        B_13L___5_S_13_OF = (2, Weapons.B_13L___5_S_13_OF)
-        S_25_OFM = (2, Weapons.S_25_OFM)
-        BetAB_500 = (2, Weapons.BetAB_500)
-        KMGU_2___96_AO_2_5RT = (2, Weapons.KMGU_2___96_AO_2_5RT)
-        KMGU_2___96_PTAB_2_5KO = (2, Weapons.KMGU_2___96_PTAB_2_5KO)
-        FAB_250 = (2, Weapons.FAB_250)
-        RBK_250_PTAB_2_5M = (2, Weapons.RBK_250_PTAB_2_5M)
-        FAB_500_M62 = (2, Weapons.FAB_500_M62)
-        RBK_500_255_PTAB_10_5 = (2, Weapons.RBK_500_255_PTAB_10_5)
-        KAB_500L = (2, Weapons.KAB_500L)
-        KAB_500kr = (2, Weapons.KAB_500kr)
-        FAB_1500_M54 = (2, Weapons.FAB_1500_M54)
-        KAB_1500L = (2, Weapons.KAB_1500L)
-        MER_6_FAB_250 = (2, Weapons.MER_6_FAB_250)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            2,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            2,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
+        R_27T = (2, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            2,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
+        R_77__AA_12_Adder____Active_Rdr = (2, Weapons.R_77__AA_12_Adder____Active_Rdr)
+        R_73__AA_11_Archer____Infra_Red = (2, Weapons.R_73__AA_11_Archer____Infra_Red)
+        Kh_31P = (2, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_31A = (2, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_29L = (2, Weapons.Kh_29L__AS_14_Kedge____657kg__ASM__Semi_Act_Laser)
+        Kh_29T = (2, Weapons.Kh_29T__AS_14_Kedge____670kg__ASM__TV_Guided)
+        Kh_59M = (2, Weapons.Kh_59M__AS_18_Kazoo____930kg__ASM__IN)
         RVV_BD = (2, Su57Weapons.RVV_BD)
         RVV_AE = (2, Su57Weapons.RVV_AE)
         RVV_M = (2, Su57Weapons.RVV_M)
@@ -1565,7 +1558,7 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (2, Weapons.Smoke_Generator___orange)
 
     class Pylon3:
-        R_73 = (3, Weapons.R_73)
+        R_73__AA_11_Archer____Infra_Red = (3, Weapons.R_73__AA_11_Archer____Infra_Red)
         Smoke_Generator___red = (3, Weapons.Smoke_Generator___red)
         Smoke_Generator___green = (3, Weapons.Smoke_Generator___green)
         Smoke_Generator___blue = (3, Weapons.Smoke_Generator___blue)
@@ -1574,33 +1567,29 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (3, Weapons.Smoke_Generator___orange)
 
     class Pylon4:
-        R_27R = (4, Weapons.R_27R)
-        R_27ER = (4, Weapons.R_27ER)
-        R_27T = (4, Weapons.R_27T)
-        R_27ET = (4, Weapons.R_27ET)
-        R_77 = (4, Weapons.R_77)
-        R_73 = (4, Weapons.R_73)
-        Kh_31P = (4, Weapons.Kh_31P)
-        Kh_31A = (4, Weapons.Kh_31A)
-        Kh_29L = (4, Weapons.Kh_29L)
-        Kh_29T = (4, Weapons.Kh_29T)
-        Kh_59M = (4, Weapons.Kh_59M)
-        MER_6_FAB_100 = (4, Weapons.MER_6_FAB_100)
-        B_8M1___20_S_8KOM = (4, Weapons.B_8M1___20_S_8KOM)
-        B_13L___5_S_13_OF = (4, Weapons.B_13L___5_S_13_OF)
-        S_25_OFM = (4, Weapons.S_25_OFM)
-        BetAB_500 = (4, Weapons.BetAB_500)
-        KMGU_2___96_AO_2_5RT = (4, Weapons.KMGU_2___96_AO_2_5RT)
-        KMGU_2___96_PTAB_2_5KO = (4, Weapons.KMGU_2___96_PTAB_2_5KO)
-        FAB_250 = (4, Weapons.FAB_250)
-        RBK_250_PTAB_2_5M = (4, Weapons.RBK_250_PTAB_2_5M)
-        FAB_500_M62 = (4, Weapons.FAB_500_M62)
-        RBK_500_255_PTAB_10_5 = (4, Weapons.RBK_500_255_PTAB_10_5)
-        KAB_500L = (4, Weapons.KAB_500L)
-        KAB_500kr = (4, Weapons.KAB_500kr)
-        FAB_1500_M54 = (4, Weapons.FAB_1500_M54)
-        KAB_1500L = (4, Weapons.KAB_1500L)
-        MER_6_FAB_250 = (4, Weapons.MER_6_FAB_250)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            4,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            4,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
+        R_27T__AA_10_Alamo_B____Infra_Red = (
+            4,
+            Weapons.R_27T__AA_10_Alamo_B____Infra_Red,
+        )
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            4,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
+        R_77__AA_12_Adder____Active_Rdr = (4, Weapons.R_77__AA_12_Adder____Active_Rdr)
+        R_73__AA_11_Archer____Infra_Red = (4, Weapons.R_73__AA_11_Archer____Infra_Red)
+        Kh_31P = (4, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_31A = (4, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_29L = (4, Weapons.Kh_29L__AS_14_Kedge____657kg__ASM__Semi_Act_Laser)
+        Kh_29T = (4, Weapons.Kh_29T__AS_14_Kedge____670kg__ASM__TV_Guided)
+        Kh_59M = (4, Weapons.Kh_59M__AS_18_Kazoo____930kg__ASM__IN)
         RVV_BD = (4, Su57Weapons.RVV_BD)
         RVV_AE = (4, Su57Weapons.RVV_AE)
         RVV_M = (4, Su57Weapons.RVV_M)
@@ -1610,57 +1599,50 @@ class Su_57(PlaneType):
         Kh_59MK2 = (4, Su57Weapons.Kh_59MK2)
 
     class Pylon5:
-        R_77 = (5, Weapons.R_77)
+        R_77__AA_12_Adder____Active_Rdr = (5, Weapons.R_77__AA_12_Adder____Active_Rdr)
         RVV_AE = (5, Su57Weapons.RVV_AE)
         RVV_M = (5, Su57Weapons.RVV_M)
         Kh_59MK2 = (5, Su57Weapons.Kh_59MK2)
 
     class Pylon6:
-        R_77 = (6, Weapons.R_77)
+        R_77__AA_12_Adder____Active_Rdr = (6, Weapons.R_77__AA_12_Adder____Active_Rdr)
         RVV_AE = (6, Su57Weapons.RVV_AE)
         RVV_M = (6, Su57Weapons.RVV_M)
         Kh_59MK2 = (6, Su57Weapons.Kh_59MK2)
 
     class Pylon7:
-        R_77 = (7, Weapons.R_77)
+        R_77__AA_12_Adder____Active_Rdr = (7, Weapons.R_77__AA_12_Adder____Active_Rdr)
         RVV_AE = (7, Su57Weapons.RVV_AE)
         RVV_M = (7, Su57Weapons.RVV_M)
         Kh_59MK2 = (7, Su57Weapons.Kh_59MK2)
 
     class Pylon8:
-        R_77 = (8, Weapons.R_77)
+        R_77__AA_12_Adder____Active_Rdr = (8, Weapons.R_77__AA_12_Adder____Active_Rdr)
         RVV_AE = (8, Su57Weapons.RVV_AE)
         RVV_M = (8, Su57Weapons.RVV_M)
         Kh_59MK2 = (8, Su57Weapons.Kh_59MK2)
 
     class Pylon9:
-        R_27R = (9, Weapons.R_27R)
-        R_27ER = (9, Weapons.R_27ER)
-        R_27T = (9, Weapons.R_27T)
-        R_27ET = (9, Weapons.R_27ET)
-        R_77 = (9, Weapons.R_77)
-        R_73 = (9, Weapons.R_73)
-        Kh_31P = (9, Weapons.Kh_31P)
-        Kh_31A = (9, Weapons.Kh_31A)
-        Kh_29L = (9, Weapons.Kh_29L)
-        Kh_29T = (9, Weapons.Kh_29T)
-        Kh_59M = (9, Weapons.Kh_59M)
-        MER_6_FAB_100 = (9, Weapons.MER_6_FAB_100)
-        B_8M1___20_S_8KOM = (9, Weapons.B_8M1___20_S_8KOM)
-        B_13L___5_S_13_OF = (9, Weapons.B_13L___5_S_13_OF)
-        S_25_OFM = (9, Weapons.S_25_OFM)
-        BetAB_500 = (9, Weapons.BetAB_500)
-        KMGU_2___96_AO_2_5RT = (9, Weapons.KMGU_2___96_AO_2_5RT)
-        KMGU_2___96_PTAB_2_5KO = (9, Weapons.KMGU_2___96_PTAB_2_5KO)
-        FAB_250 = (9, Weapons.FAB_250)
-        RBK_250_PTAB_2_5M = (9, Weapons.RBK_250_PTAB_2_5M)
-        FAB_500_M62 = (9, Weapons.FAB_500_M62)
-        RBK_500_255_PTAB_10_5 = (9, Weapons.RBK_500_255_PTAB_10_5)
-        KAB_500L = (9, Weapons.KAB_500L)
-        KAB_500kr = (9, Weapons.KAB_500kr)
-        FAB_1500_M54 = (9, Weapons.FAB_1500_M54)
-        KAB_1500L = (9, Weapons.KAB_1500L)
-        MER_6_FAB_250 = (9, Weapons.MER_6_FAB_250)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            9,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            9,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
+        R_27T = (9, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            9,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
+        R_77__AA_12_Adder____Active_Rdr = (9, Weapons.R_77__AA_12_Adder____Active_Rdr)
+        R_73__AA_11_Archer____Infra_Red = (9, Weapons.R_73__AA_11_Archer____Infra_Red)
+        Kh_31P = (9, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_31A = (9, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_29L = (9, Weapons.Kh_29L__AS_14_Kedge____657kg__ASM__Semi_Act_Laser)
+        Kh_29T = (9, Weapons.Kh_29T__AS_14_Kedge____670kg__ASM__TV_Guided)
+        Kh_59M = (9, Weapons.Kh_59M__AS_18_Kazoo____930kg__ASM__IN)
         RVV_BD = (9, Su57Weapons.RVV_BD)
         RVV_AE = (9, Su57Weapons.RVV_AE)
         RVV_M = (9, Su57Weapons.RVV_M)
@@ -1670,7 +1652,7 @@ class Su_57(PlaneType):
         Kh_59MK2 = (9, Su57Weapons.Kh_59MK2)
 
     class Pylon10:
-        R_73 = (10, Weapons.R_73)
+        R_73__AA_11_Archer____Infra_Red = (10, Weapons.R_73__AA_11_Archer____Infra_Red)
         Smoke_Generator___red = (10, Weapons.Smoke_Generator___red)
         Smoke_Generator___green = (10, Weapons.Smoke_Generator___green)
         Smoke_Generator___blue = (10, Weapons.Smoke_Generator___blue)
@@ -1679,33 +1661,26 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (10, Weapons.Smoke_Generator___orange)
 
     class Pylon11:
-        R_27R = (11, Weapons.R_27R)
-        R_27ER = (11, Weapons.R_27ER)
-        R_27T = (11, Weapons.R_27T)
-        R_27ET = (11, Weapons.R_27ET)
-        R_77 = (11, Weapons.R_77)
-        R_73 = (11, Weapons.R_73)
-        Kh_31P = (11, Weapons.Kh_31P)
-        Kh_31A = (11, Weapons.Kh_31A)
-        Kh_29L = (11, Weapons.Kh_29L)
-        Kh_29T = (11, Weapons.Kh_29T)
-        Kh_59M = (11, Weapons.Kh_59M)
-        MER_6_FAB_100 = (11, Weapons.MER_6_FAB_100)
-        B_8M1___20_S_8KOM = (11, Weapons.B_8M1___20_S_8KOM)
-        B_13L___5_S_13_OF = (11, Weapons.B_13L___5_S_13_OF)
-        S_25_OFM = (11, Weapons.S_25_OFM)
-        BetAB_500 = (11, Weapons.BetAB_500)
-        KMGU_2___96_AO_2_5RT = (11, Weapons.KMGU_2___96_AO_2_5RT)
-        KMGU_2___96_PTAB_2_5KO = (11, Weapons.KMGU_2___96_PTAB_2_5KO)
-        FAB_250 = (11, Weapons.FAB_250)
-        RBK_250_PTAB_2_5M = (11, Weapons.RBK_250_PTAB_2_5M)
-        FAB_500_M62 = (11, Weapons.FAB_500_M62)
-        RBK_500_255_PTAB_10_5 = (11, Weapons.RBK_500_255_PTAB_10_5)
-        KAB_500L = (11, Weapons.KAB_500L)
-        KAB_500kr = (11, Weapons.KAB_500kr)
-        FAB_1500_M54 = (11, Weapons.FAB_1500_M54)
-        KAB_1500L = (11, Weapons.KAB_1500L)
-        MER_6_FAB_250 = (11, Weapons.MER_6_FAB_250)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            11,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            11,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
+        R_27T = (11, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            11,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
+        R_77__AA_12_Adder____Active_Rdr = (11, Weapons.R_77__AA_12_Adder____Active_Rdr)
+        R_73__AA_11_Archer____Infra_Red = (11, Weapons.R_73__AA_11_Archer____Infra_Red)
+        Kh_31P = (11, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_31A = (11, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
+        Kh_29L = (11, Weapons.Kh_29L__AS_14_Kedge____657kg__ASM__Semi_Act_Laser)
+        Kh_29T = (11, Weapons.Kh_29T__AS_14_Kedge____670kg__ASM__TV_Guided)
+        Kh_59M = (11, Weapons.Kh_59M__AS_18_Kazoo____930kg__ASM__IN)
         # ERRR {R-33}
         RVV_BD = (11, Su57Weapons.RVV_BD)
         RVV_AE = (11, Su57Weapons.RVV_AE)
@@ -1723,7 +1698,7 @@ class Su_57(PlaneType):
         Kh_59MK2 = (11, Su57Weapons.Kh_59MK2)
 
     class Pylon12:
-        R_73 = (12, Weapons.R_73)
+        R_73__AA_11_Archer____Infra_Red = (12, Weapons.R_73__AA_11_Archer____Infra_Red)
         RVV_AE = (12, Su57Weapons.RVV_AE)
         RVV_M = (12, Su57Weapons.RVV_M)
         Smoke_Generator___red = (12, Weapons.Smoke_Generator___red)

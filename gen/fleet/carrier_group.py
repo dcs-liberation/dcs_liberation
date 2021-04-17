@@ -2,7 +2,7 @@ import random
 
 from gen.sam.group_generator import ShipGroupGenerator
 
-from dcs.ships import USS_Arleigh_Burke_IIa, Ticonderoga_class
+from dcs.ships import DDG_Arleigh_Burke_IIa, CG_Ticonderoga
 
 
 class CarrierGroupGenerator(ShipGroupGenerator):
@@ -22,7 +22,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
 
             # Add Arleigh Burke escort
             self.add_unit(
-                USS_Arleigh_Burke_IIa,
+                DDG_Arleigh_Burke_IIa,
                 "USS Ramage",
                 self.position.x + 6482,
                 self.position.y + 6667,
@@ -30,7 +30,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
             )
 
             self.add_unit(
-                USS_Arleigh_Burke_IIa,
+                DDG_Arleigh_Burke_IIa,
                 "USS Mitscher",
                 self.position.x - 7963,
                 self.position.y + 7037,
@@ -38,7 +38,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
             )
 
             self.add_unit(
-                USS_Arleigh_Burke_IIa,
+                DDG_Arleigh_Burke_IIa,
                 "USS Forrest Sherman",
                 self.position.x - 7408,
                 self.position.y - 7408,
@@ -46,7 +46,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
             )
 
             self.add_unit(
-                USS_Arleigh_Burke_IIa,
+                DDG_Arleigh_Burke_IIa,
                 "USS Lassen",
                 self.position.x + 8704,
                 self.position.y - 6296,
@@ -56,7 +56,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
             # Add Ticonderoga escort
             if self.heading >= 180:
                 self.add_unit(
-                    Ticonderoga_class,
+                    CG_Ticonderoga,
                     "USS Hué City",
                     self.position.x + 2222,
                     self.position.y - 3333,
@@ -64,7 +64,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
                 )
             else:
                 self.add_unit(
-                    Ticonderoga_class,
+                    CG_Ticonderoga,
                     "USS Hué City",
                     self.position.x - 3333,
                     self.position.y + 2222,

@@ -10,25 +10,25 @@
     "Mi_24V"
   ],
   "frontline_units": [
-    "ARV_BRDM_2",
+    "IFV_BRDM_2",
     "APC_BTR_80",
     "IFV_BMD_1",
     "IFV_BMP_1",
     "MBT_T_55",
-    "AAA_ZSU_57_2"
+    "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S9_Nona",
-    "SPH_2S1_Gvozdika"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S9_Nona_120mm_M",
+    "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Rus",
-    "Soldier_RPG"
+    "Infantry_AK_74_Rus",
+    "Infantry_RPG"
   ],
   "air_defenses": [
     "SA2Generator",

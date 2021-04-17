@@ -18,7 +18,7 @@ class SA6Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SA_6_Kub_STR_9S91,
+            AirDefence.SAM_SA_6_Kub_Long_Track_STR,
             "STR",
             self.position.x,
             self.position.y,
@@ -32,7 +32,7 @@ class SA6Generator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_SA_6_Kub_LN_2P25,
+                AirDefence.SAM_SA_6_Kub_Gainful_TEL,
                 "LN#" + str(i),
                 position[0],
                 position[1],

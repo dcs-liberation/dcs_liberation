@@ -3,13 +3,13 @@ import random
 from typing import TYPE_CHECKING
 
 from dcs.ships import (
-    FFL_1124_4_Grisha,
-    FSG_1241_1MP_Molniya,
-    FFG_11540_Neustrashimy,
-    FF_1135M_Rezky,
-    CG_1164_Moskva,
-    SSK_877,
-    SSK_641B,
+    Corvette_1124_4_Grisha,
+    Corvette_1241_1_Molniya,
+    Frigate_11540_Neustrashimy,
+    Frigate_1135M_Rezky,
+    Cruiser_1164_Moskva,
+    SSK_877V_Kilo,
+    SSK_641B_Tango,
 )
 
 from gen.fleet.dd_group import DDGroupGenerator
@@ -37,7 +37,9 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             include_frigate = True
 
         if include_frigate:
-            frigate_type = random.choice([FFL_1124_4_Grisha, FSG_1241_1MP_Molniya])
+            frigate_type = random.choice(
+                [Corvette_1124_4_Grisha, Corvette_1241_1_Molniya]
+            )
             self.add_unit(
                 frigate_type,
                 "FF1",
@@ -54,7 +56,7 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             )
 
         if include_dd:
-            dd_type = random.choice([FFG_11540_Neustrashimy, FF_1135M_Rezky])
+            dd_type = random.choice([Frigate_11540_Neustrashimy, Frigate_1135M_Rezky])
             self.add_unit(
                 dd_type,
                 "DD1",
@@ -74,7 +76,11 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             # Only include the Moskva for now, the Pyotry Velikiy is an unkillable monster.
             # See https://github.com/Khopa/dcs_liberation/issues/567
             self.add_unit(
-                CG_1164_Moskva, "CC1", self.position.x, self.position.y, self.heading
+                Cruiser_1164_Moskva,
+                "CC1",
+                self.position.x,
+                self.position.y,
+                self.heading,
             )
 
         self.get_generated_group().points[0].speed = 20
@@ -85,7 +91,7 @@ class GrishaGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(GrishaGroupGenerator, self).__init__(
-            game, ground_object, faction, FFL_1124_4_Grisha
+            game, ground_object, faction, Corvette_1124_4_Grisha
         )
 
 
@@ -94,7 +100,7 @@ class MolniyaGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(MolniyaGroupGenerator, self).__init__(
-            game, ground_object, faction, FSG_1241_1MP_Molniya
+            game, ground_object, faction, Corvette_1241_1_Molniya
         )
 
 
@@ -103,7 +109,7 @@ class KiloSubGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(KiloSubGroupGenerator, self).__init__(
-            game, ground_object, faction, SSK_877
+            game, ground_object, faction, SSK_877V_Kilo
         )
 
 
@@ -112,5 +118,5 @@ class TangoSubGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(TangoSubGroupGenerator, self).__init__(
-            game, ground_object, faction, SSK_641B
+            game, ground_object, faction, SSK_641B_Tango
         )
