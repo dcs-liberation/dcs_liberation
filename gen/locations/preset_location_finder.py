@@ -68,7 +68,7 @@ class MizDataLocationFinder:
                 for vehicle_group in m.country("Iran").vehicle_group:
                     if (
                         len(vehicle_group.units) > 0
-                        and vehicle_group.units[0].type == MissilesSS.SS_N_2_Silkworm.id
+                        and vehicle_group.units[0].type == MissilesSS.AShM_SS_N_2_Silkworm.id
                     ):
                         antiship_locations.append(
                             PresetLocation(
