@@ -110,6 +110,7 @@ TYPE_ARTILLERY = [
     Artillery.MLRS_M270_227mm,
     Artillery.SPH_2S9_Nona_120mm_M,
     Artillery.SPH_Dana_vz77_152mm,
+    Artillery.PLZ_05,
     Artillery.SPH_2S19_Msta_152mm,
     Artillery.MLRS_9A52_Smerch_CM_300mm,
     # WW2
