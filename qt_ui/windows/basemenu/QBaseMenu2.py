@@ -172,6 +172,8 @@ class QBaseMenu2(QDialog):
             return "./resources/ui/carrier.png"
         elif self.cp.cptype == ControlPointType.LHA_GROUP:
             return "./resources/ui/lha.png"
+        elif self.cp.cptype == ControlPointType.FOB:
+            return "./resources/ui/fob.png"
         else:
             return "./resources/ui/airbase.png"
 
