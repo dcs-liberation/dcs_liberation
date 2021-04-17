@@ -1522,10 +1522,19 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (1, Weapons.Smoke_Generator___orange)
 
     class Pylon2:
-        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (2, Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr)
-        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (2, Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            2,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            2,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
         R_27T = (2, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
-        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (2, Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            2,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
         R_77__AA_12_Adder____Active_Rdr = (2, Weapons.R_77__AA_12_Adder____Active_Rdr)
         R_73__AA_11_Archer____Infra_Red = (2, Weapons.R_73__AA_11_Archer____Infra_Red)
         Kh_31P = (2, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
@@ -1558,10 +1567,22 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (3, Weapons.Smoke_Generator___orange)
 
     class Pylon4:
-        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (4, Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr)
-        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (4, Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range)
-        R_27T__AA_10_Alamo_B____Infra_Red = (4, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
-        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (4, Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            4,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            4,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
+        R_27T__AA_10_Alamo_B____Infra_Red = (
+            4,
+            Weapons.R_27T__AA_10_Alamo_B____Infra_Red,
+        )
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            4,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
         R_77__AA_12_Adder____Active_Rdr = (4, Weapons.R_77__AA_12_Adder____Active_Rdr)
         R_73__AA_11_Archer____Infra_Red = (4, Weapons.R_73__AA_11_Archer____Infra_Red)
         Kh_31P = (4, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
@@ -1602,10 +1623,19 @@ class Su_57(PlaneType):
         Kh_59MK2 = (8, Su57Weapons.Kh_59MK2)
 
     class Pylon9:
-        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (9, Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr)
-        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (9, Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            9,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            9,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
         R_27T = (9, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
-        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (9, Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            9,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
         R_77__AA_12_Adder____Active_Rdr = (9, Weapons.R_77__AA_12_Adder____Active_Rdr)
         R_73__AA_11_Archer____Infra_Red = (9, Weapons.R_73__AA_11_Archer____Infra_Red)
         Kh_31P = (9, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)
@@ -1631,10 +1661,19 @@ class Su_57(PlaneType):
         Smoke_Generator___orange = (10, Weapons.Smoke_Generator___orange)
 
     class Pylon11:
-        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (11, Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr)
-        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (11, Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range)
+        R_27R__AA_10_Alamo_A____Semi_Act_Rdr = (
+            11,
+            Weapons.R_27R__AA_10_Alamo_A____Semi_Act_Rdr,
+        )
+        R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range = (
+            11,
+            Weapons.R_27ER__AA_10_Alamo_C____Semi_Act_Extended_Range,
+        )
         R_27T = (11, Weapons.R_27T__AA_10_Alamo_B____Infra_Red)
-        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (11, Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range)
+        R_27ET__AA_10_Alamo_D____IR_Extended_Range = (
+            11,
+            Weapons.R_27ET__AA_10_Alamo_D____IR_Extended_Range,
+        )
         R_77__AA_12_Adder____Active_Rdr = (11, Weapons.R_77__AA_12_Adder____Active_Rdr)
         R_73__AA_11_Archer____Infra_Red = (11, Weapons.R_73__AA_11_Archer____Infra_Red)
         Kh_31P = (11, Weapons.Kh_31P__AS_17_Krypton____600kg__ARM__IN__Pas_Rdr)

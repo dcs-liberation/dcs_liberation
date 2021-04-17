@@ -37,7 +37,9 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             include_frigate = True
 
         if include_frigate:
-            frigate_type = random.choice([Corvette_1124_4_Grisha, Corvette_1241_1_Molniya])
+            frigate_type = random.choice(
+                [Corvette_1124_4_Grisha, Corvette_1241_1_Molniya]
+            )
             self.add_unit(
                 frigate_type,
                 "FF1",
@@ -74,7 +76,11 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
             # Only include the Moskva for now, the Pyotry Velikiy is an unkillable monster.
             # See https://github.com/Khopa/dcs_liberation/issues/567
             self.add_unit(
-                Cruiser_1164_Moskva, "CC1", self.position.x, self.position.y, self.heading
+                Cruiser_1164_Moskva,
+                "CC1",
+                self.position.x,
+                self.position.y,
+                self.heading,
             )
 
         self.get_generated_group().points[0].speed = 20

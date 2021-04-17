@@ -409,15 +409,27 @@ class WeaponsA4EC:
         "name": "Mk-83 *3 (TER)",
         "weight": 1388.6,
     }
-    _3_LAU_61 = {"clsid": "{TER,LAU-61*3}", "name": "3*LAU-61", "weight": 98},
-    Fuel_Tank_150_gallons__EMPTY_ = {"clsid": "{DFT-150gal_EMPTY}", "name": "Fuel_Tank_150_gallons__EMPTY",
-                                     "weight": 61.688512}
-    Fuel_Tank_300_gallons__EMPTY_ = {"clsid": "{DFT-300gal_EMPTY}", "name": "Fuel_Tank_300_gallons__EMPTY",
-                                     "weight": 83.007336}
-    Fuel_Tank_300_gallons__EMPTY__ = {"clsid": "{DFT-300gal_LR_EMPTY}", "name": "Fuel_Tank_300_gallons__EMPTY",
-                                      "weight": 90.264808}
-    Fuel_Tank_400_gallons__EMPTY_ = {"clsid": "{DFT-400gal_EMPTY}", "name": "Fuel_Tank_400_gallons__EMPTY",
-                                     "weight": 108.86208}
+    _3_LAU_61 = ({"clsid": "{TER,LAU-61*3}", "name": "3*LAU-61", "weight": 98},)
+    Fuel_Tank_150_gallons__EMPTY_ = {
+        "clsid": "{DFT-150gal_EMPTY}",
+        "name": "Fuel_Tank_150_gallons__EMPTY",
+        "weight": 61.688512,
+    }
+    Fuel_Tank_300_gallons__EMPTY_ = {
+        "clsid": "{DFT-300gal_EMPTY}",
+        "name": "Fuel_Tank_300_gallons__EMPTY",
+        "weight": 83.007336,
+    }
+    Fuel_Tank_300_gallons__EMPTY__ = {
+        "clsid": "{DFT-300gal_LR_EMPTY}",
+        "name": "Fuel_Tank_300_gallons__EMPTY",
+        "weight": 90.264808,
+    }
+    Fuel_Tank_400_gallons__EMPTY_ = {
+        "clsid": "{DFT-400gal_EMPTY}",
+        "name": "Fuel_Tank_400_gallons__EMPTY",
+        "weight": 108.86208,
+    }
 
 
 class A_4E_C(PlaneType):
@@ -839,29 +851,59 @@ class A_4E_C(PlaneType):
             Community_A_4E_II = "Community A-4E II"
 
         class Pylon1:
-            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (1, Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (1, Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (1, Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM)
+            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
+                1,
+                Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (
+                1,
+                Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (
+                1,
+                Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
+            )
             LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
-            1, Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG)
+                1,
+                Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            1, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (1, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                1,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                1,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            1, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                1,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            1, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (1, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                1,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                1,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            1, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                1,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             AGM_45A_Shrike_ARM = (1, Weapons.AGM_45A_Shrike_ARM)
             # ERRR {AGM12_B}
             Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            1, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+                1,
+                Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+            )
             Mk_81___250lb_GP_Bomb_LD = (1, Weapons.Mk_81___250lb_GP_Bomb_LD)
             Mk_81SE = (1, WeaponsA4EC.Mk_81SE)
             Mk_82___500lb_GP_Bomb_LD = (1, Weapons.Mk_82___500lb_GP_Bomb_LD)
-            Mk_82_Snakeye___500lb_GP_Bomb_HD = (1, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
+            Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+                1,
+                Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
+            )
             Mk_77_mod_1 = (1, WeaponsA4EC.Mk_77_mod_1)
             AN_M30A1___100lb_GP_Bomb_LD = (1, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
             AN_M57___250lb_GP_Bomb_LD = (1, Weapons.AN_M57___250lb_GP_Bomb_LD)
@@ -869,41 +911,77 @@ class A_4E_C(PlaneType):
             AN_M81 = (1, WeaponsA4EC.AN_M81)
             AN_M88 = (1, WeaponsA4EC.AN_M88)
             LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
-            1, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum)
+                1,
+                Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            )
             Smokewinder___red = (1, Weapons.Smokewinder___red)
             Smokewinder___green = (1, Weapons.Smokewinder___green)
             Smokewinder___blue = (1, Weapons.Smokewinder___blue)
             Smokewinder___white = (1, Weapons.Smokewinder___white)
             Smokewinder___yellow = (1, Weapons.Smokewinder___yellow)
             Smokewinder___orange = (1, Weapons.Smokewinder___orange)
-            SUU_25_x_8_LUU_2___Target_Marker_Flares = (1, Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares)
+            SUU_25_x_8_LUU_2___Target_Marker_Flares = (
+                1,
+                Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
+            )
 
         # ERRR <CLEAN>
 
         class Pylon2:
             Fuel_Tank_300_gallons_ = (2, WeaponsA4EC.Fuel_Tank_300_gallons_)
-            Fuel_Tank_300_gallons__EMPTY__ = (2, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
+            Fuel_Tank_300_gallons__EMPTY__ = (
+                2,
+                WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__,
+            )
             Fuel_Tank_150_gallons = (2, WeaponsA4EC.Fuel_Tank_150_gallons)
-            Fuel_Tank_150_gallons__EMPTY_ = (2, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
-            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (2, Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (2, Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (2, Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM)
+            Fuel_Tank_150_gallons__EMPTY_ = (
+                2,
+                WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
+            )
+            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
+                2,
+                Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (
+                2,
+                Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (
+                2,
+                Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
+            )
             LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
-            2, Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG)
+                2,
+                Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            )
             LAU_10_2___4_ZUNI_MK_71_ = (2, WeaponsA4EC.LAU_10_2___4_ZUNI_MK_71_)
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            2, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (2, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                2,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                2,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            2, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                2,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_3_2___19_FFAR_M156_WP_ = (2, WeaponsA4EC.LAU_3_2___19_FFAR_M156_WP_)
             LAU_3_2___19_FFAR_Mk1_HE_ = (2, WeaponsA4EC.LAU_3_2___19_FFAR_Mk1_HE_)
             LAU_3_2___19_FFAR_Mk5_HEAT_ = (2, WeaponsA4EC.LAU_3_2___19_FFAR_Mk5_HEAT_)
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            2, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (2, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                2,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                2,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            2, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                2,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_68_2___7_FFAR_M156_WP_ = (2, WeaponsA4EC.LAU_68_2___7_FFAR_M156_WP_)
             LAU_68_2___7_FFAR_Mk1_HE_ = (2, WeaponsA4EC.LAU_68_2___7_FFAR_Mk1_HE_)
             LAU_68_2___7_FFAR_Mk5_HEAT_ = (2, WeaponsA4EC.LAU_68_2___7_FFAR_Mk5_HEAT_)
@@ -911,13 +989,20 @@ class A_4E_C(PlaneType):
             # ERRR {AGM12_C}
             # ERRR {AGM12_B}
             AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            2, Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_)
+                2,
+                Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
+            )
             Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            2, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+                2,
+                Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+            )
             Mk_81___250lb_GP_Bomb_LD = (2, Weapons.Mk_81___250lb_GP_Bomb_LD)
             Mk_81SE = (2, WeaponsA4EC.Mk_81SE)
             Mk_82___500lb_GP_Bomb_LD = (2, Weapons.Mk_82___500lb_GP_Bomb_LD)
-            Mk_82_Snakeye___500lb_GP_Bomb_HD = (2, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
+            Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+                2,
+                Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
+            )
             Mk_83___1000lb_GP_Bomb_LD = (2, Weapons.Mk_83___1000lb_GP_Bomb_LD)
             Mk_84___2000lb_GP_Bomb_LD = (2, Weapons.Mk_84___2000lb_GP_Bomb_LD)
             M117___750lb_GP_Bomb_LD = (2, Weapons.M117___750lb_GP_Bomb_LD)
@@ -951,7 +1036,10 @@ class A_4E_C(PlaneType):
             Smokewinder___white = (2, Weapons.Smokewinder___white)
             Smokewinder___yellow = (2, Weapons.Smokewinder___yellow)
             Smokewinder___orange = (2, Weapons.Smokewinder___orange)
-            SUU_25_x_8_LUU_2___Target_Marker_Flares = (2, Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares)
+            SUU_25_x_8_LUU_2___Target_Marker_Flares = (
+                2,
+                Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
+            )
 
         # ERRR <CLEAN>
 
@@ -959,21 +1047,41 @@ class A_4E_C(PlaneType):
             Fuel_Tank_400_gallons = (3, WeaponsA4EC.Fuel_Tank_400_gallons)
             Fuel_Tank_300_gallons = (3, WeaponsA4EC.Fuel_Tank_300_gallons)
             Fuel_Tank_150_gallons = (3, WeaponsA4EC.Fuel_Tank_150_gallons)
-            Fuel_Tank_400_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_400_gallons__EMPTY_)
-            Fuel_Tank_300_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY_)
-            Fuel_Tank_150_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
+            Fuel_Tank_400_gallons__EMPTY_ = (
+                3,
+                WeaponsA4EC.Fuel_Tank_400_gallons__EMPTY_,
+            )
+            Fuel_Tank_300_gallons__EMPTY_ = (
+                3,
+                WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY_,
+            )
+            Fuel_Tank_150_gallons__EMPTY_ = (
+                3,
+                WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
+            )
             # ERRR {3*LAU-61}
             BRU_42_with_3_x_LAU_68_pods___21_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
-            3, Weapons.BRU_42_with_3_x_LAU_68_pods___21_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT)
+                3,
+                Weapons.BRU_42_with_3_x_LAU_68_pods___21_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
-            3, Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG)
+                3,
+                Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            )
             LAU_10_2___4_ZUNI_MK_71 = (3, WeaponsA4EC.LAU_10_2___4_ZUNI_MK_71)
             LAU_10_3___4_ZUNI_MK_71 = (3, WeaponsA4EC.LAU_10_3___4_ZUNI_MK_71)
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            3, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (3, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                3,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                3,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            3, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                3,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_3_2___19_FFAR_M156_WP = (3, WeaponsA4EC.LAU_3_2___19_FFAR_M156_WP)
             LAU_3_2___19_FFAR_Mk1_HE = (3, WeaponsA4EC.LAU_3_2___19_FFAR_Mk1_HE)
             LAU_3_2___19_FFAR_Mk5_HEAT = (3, WeaponsA4EC.LAU_3_2___19_FFAR_Mk5_HEAT)
@@ -981,10 +1089,17 @@ class A_4E_C(PlaneType):
             LAU_3_3___19_FFAR_Mk1_HE = (3, WeaponsA4EC.LAU_3_3___19_FFAR_Mk1_HE)
             LAU_3_3___19_FFAR_Mk5_HEAT = (3, WeaponsA4EC.LAU_3_3___19_FFAR_Mk5_HEAT)
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            3, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (3, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                3,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                3,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            3, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                3,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_68_2___7_FFAR_M156_WP = (3, WeaponsA4EC.LAU_68_2___7_FFAR_M156_WP)
             LAU_68_2___7_FFAR_Mk1_HE = (3, WeaponsA4EC.LAU_68_2___7_FFAR_Mk1_HE)
             LAU_68_2___7_FFAR_Mk5_HEAT = (3, WeaponsA4EC.LAU_68_2___7_FFAR_Mk5_HEAT)
@@ -993,13 +1108,20 @@ class A_4E_C(PlaneType):
             LAU_68_3___7_FFAR_Mk5_HEAT = (3, WeaponsA4EC.LAU_68_3___7_FFAR_Mk5_HEAT)
             # ERRR {AGM12_B}
             AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            3, Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_)
+                3,
+                Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
+            )
             Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            3, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+                3,
+                Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+            )
             Mk_81___250lb_GP_Bomb_LD = (3, Weapons.Mk_81___250lb_GP_Bomb_LD)
             Mk_81SE = (3, WeaponsA4EC.Mk_81SE)
             Mk_82___500lb_GP_Bomb_LD = (3, Weapons.Mk_82___500lb_GP_Bomb_LD)
-            Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
+            Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+                3,
+                Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
+            )
             Mk_83___1000lb_GP_Bomb_LD = (3, Weapons.Mk_83___1000lb_GP_Bomb_LD)
             Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
             M117___750lb_GP_Bomb_LD = (3, Weapons.M117___750lb_GP_Bomb_LD)
@@ -1036,34 +1158,68 @@ class A_4E_C(PlaneType):
             Smokewinder___white = (3, Weapons.Smokewinder___white)
             Smokewinder___yellow = (3, Weapons.Smokewinder___yellow)
             Smokewinder___orange = (3, Weapons.Smokewinder___orange)
-            SUU_25_x_8_LUU_2___Target_Marker_Flares = (3, Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares)
+            SUU_25_x_8_LUU_2___Target_Marker_Flares = (
+                3,
+                Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
+            )
 
         # ERRR <CLEAN>
 
         class Pylon4:
             Fuel_Tank_300_gallons_ = (4, WeaponsA4EC.Fuel_Tank_300_gallons_)
-            Fuel_Tank_300_gallons__EMPTY__ = (4, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
+            Fuel_Tank_300_gallons__EMPTY__ = (
+                4,
+                WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__,
+            )
             Fuel_Tank_150_gallons = (4, WeaponsA4EC.Fuel_Tank_150_gallons)
-            Fuel_Tank_150_gallons__EMPTY_ = (4, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
-            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (4, Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (4, Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (4, Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM)
+            Fuel_Tank_150_gallons__EMPTY_ = (
+                4,
+                WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
+            )
+            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
+                4,
+                Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (
+                4,
+                Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (
+                4,
+                Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
+            )
             LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
-            4, Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG)
+                4,
+                Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            )
             LAU_10_2___4_ZUNI_MK_71__ = (4, WeaponsA4EC.LAU_10_2___4_ZUNI_MK_71__)
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            4, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (4, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                4,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                4,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            4, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                4,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_3_2___19_FFAR_M156_WP__ = (4, WeaponsA4EC.LAU_3_2___19_FFAR_M156_WP__)
             LAU_3_2___19_FFAR_Mk1_HE__ = (4, WeaponsA4EC.LAU_3_2___19_FFAR_Mk1_HE__)
             LAU_3_2___19_FFAR_Mk5_HEAT__ = (4, WeaponsA4EC.LAU_3_2___19_FFAR_Mk5_HEAT__)
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            4, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (4, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                4,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                4,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            4, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                4,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_68_2___7_FFAR_M156_WP__ = (4, WeaponsA4EC.LAU_68_2___7_FFAR_M156_WP__)
             LAU_68_2___7_FFAR_Mk1_HE__ = (4, WeaponsA4EC.LAU_68_2___7_FFAR_Mk1_HE__)
             LAU_68_2___7_FFAR_Mk5_HEAT__ = (4, WeaponsA4EC.LAU_68_2___7_FFAR_Mk5_HEAT__)
@@ -1071,13 +1227,20 @@ class A_4E_C(PlaneType):
             # ERRR {AGM12_C}
             # ERRR {AGM12_B}
             AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            4, Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_)
+                4,
+                Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
+            )
             Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            4, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+                4,
+                Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+            )
             Mk_81___250lb_GP_Bomb_LD = (4, Weapons.Mk_81___250lb_GP_Bomb_LD)
             Mk_81SE = (4, WeaponsA4EC.Mk_81SE)
             Mk_82___500lb_GP_Bomb_LD = (4, Weapons.Mk_82___500lb_GP_Bomb_LD)
-            Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
+            Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+                4,
+                Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
+            )
             Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
             Mk_84___2000lb_GP_Bomb_LD = (4, Weapons.Mk_84___2000lb_GP_Bomb_LD)
             M117___750lb_GP_Bomb_LD = (4, Weapons.M117___750lb_GP_Bomb_LD)
@@ -1111,34 +1274,67 @@ class A_4E_C(PlaneType):
             Smokewinder___white = (4, Weapons.Smokewinder___white)
             Smokewinder___yellow = (4, Weapons.Smokewinder___yellow)
             Smokewinder___orange = (4, Weapons.Smokewinder___orange)
-            SUU_25_x_8_LUU_2___Target_Marker_Flares = (4, Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares)
+            SUU_25_x_8_LUU_2___Target_Marker_Flares = (
+                4,
+                Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
+            )
 
         # ERRR <CLEAN>
 
         class Pylon5:
-            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (5, Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (5, Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM)
-            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (5, Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM)
+            LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
+                5,
+                Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (
+                5,
+                Weapons.LAU_7_with_AIM_9P_Sidewinder_IR_AAM,
+            )
+            LAU_7_with_AIM_9P5_Sidewinder_IR_AAM = (
+                5,
+                Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
+            )
             LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
-            5, Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG)
+                5,
+                Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            5, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (5, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                5,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                5,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            5, Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                5,
+                Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
-            5, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos)
-            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (5, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE)
+                5,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
+            )
+            LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE = (
+                5,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk1__HE,
+            )
             LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT = (
-            5, Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT)
+                5,
+                Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
+            )
             AGM_45A_Shrike_ARM = (5, Weapons.AGM_45A_Shrike_ARM)
             # ERRR {AGM12_B}
             Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            5, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+                5,
+                Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+            )
             Mk_81___250lb_GP_Bomb_LD = (5, Weapons.Mk_81___250lb_GP_Bomb_LD)
             Mk_81SE = (5, WeaponsA4EC.Mk_81SE)
             Mk_82___500lb_GP_Bomb_LD = (5, Weapons.Mk_82___500lb_GP_Bomb_LD)
-            Mk_82_Snakeye___500lb_GP_Bomb_HD = (5, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
+            Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+                5,
+                Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
+            )
             Mk_77_mod_1 = (5, WeaponsA4EC.Mk_77_mod_1)
             AN_M30A1___100lb_GP_Bomb_LD = (5, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
             AN_M57___250lb_GP_Bomb_LD = (5, Weapons.AN_M57___250lb_GP_Bomb_LD)
@@ -1146,14 +1342,19 @@ class A_4E_C(PlaneType):
             AN_M81 = (5, WeaponsA4EC.AN_M81)
             AN_M88 = (5, WeaponsA4EC.AN_M88)
             LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
-            5, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum)
+                5,
+                Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            )
             Smokewinder___red = (5, Weapons.Smokewinder___red)
             Smokewinder___green = (5, Weapons.Smokewinder___green)
             Smokewinder___blue = (5, Weapons.Smokewinder___blue)
             Smokewinder___white = (5, Weapons.Smokewinder___white)
             Smokewinder___yellow = (5, Weapons.Smokewinder___yellow)
             Smokewinder___orange = (5, Weapons.Smokewinder___orange)
-            SUU_25_x_8_LUU_2___Target_Marker_Flares = (5, Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares)
+            SUU_25_x_8_LUU_2___Target_Marker_Flares = (
+                5,
+                Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
+            )
 
     # ERRR <CLEAN>
 
