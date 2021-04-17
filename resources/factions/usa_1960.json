@@ -13,12 +13,12 @@
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",
-    "AAA_Vulcan_M163"
+    "SPAAA_Vulcan_M163"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4"

@@ -13,7 +13,7 @@ class SilkwormGenerator(GroupGenerator):
         positions = self.get_circular_position(5, launcher_distance=120, coverage=180)
 
         self.add_unit(
-            MissilesSS.Silkworm_Radar,
+            MissilesSS.AShM_Silkworm_SR,
             "SR#0",
             self.position.x,
             self.position.y,
@@ -23,7 +23,7 @@ class SilkwormGenerator(GroupGenerator):
         # Launchers
         for i, p in enumerate(positions):
             self.add_unit(
-                MissilesSS.SS_N_2_Silkworm,
+                MissilesSS.AShM_SS_N_2_Silkworm,
                 "Missile#" + str(i),
                 p[0],
                 p[1],
@@ -32,7 +32,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.Transport_KAMAZ_43101,
+            Unarmed.Truck_KAMAZ_43101,
             "KAMAZ#0",
             self.position.x - 35,
             self.position.y - 20,
@@ -41,7 +41,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Shorad
         self.add_unit(
-            AirDefence.SPAAA_ZSU_23_4_Shilka,
+            AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
             "SHILKA#0",
             self.position.x - 55,
             self.position.y - 38,
@@ -50,7 +50,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Shorad 2
         self.add_unit(
-            AirDefence.SAM_SA_9_Strela_1_9P31,
+            AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,

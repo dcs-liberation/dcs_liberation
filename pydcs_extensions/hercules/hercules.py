@@ -1056,7 +1056,7 @@ class Hercules(PlaneType):
     class Pylon2:
         LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
             2,
-            Weapons.LAU_68___7_2_75__rockets_M257__Parachute_illumination_,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
         Smokewinder___red = (2, Weapons.Smokewinder___red)
         Smokewinder___green = (2, Weapons.Smokewinder___green)
@@ -1064,13 +1064,13 @@ class Hercules(PlaneType):
         Smokewinder___white = (2, Weapons.Smokewinder___white)
         Smokewinder___yellow = (2, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (2, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (2, Weapons.MER_6_Mk_82)
+        MER_6_Mk_82 = (2, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
         Herc_Ext_Fuel_Tank = (2, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon3:
         LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
             3,
-            Weapons.LAU_68___7_2_75__rockets_M257__Parachute_illumination_,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
         Smokewinder___red = (3, Weapons.Smokewinder___red)
         Smokewinder___green = (3, Weapons.Smokewinder___green)
@@ -1078,13 +1078,13 @@ class Hercules(PlaneType):
         Smokewinder___white = (3, Weapons.Smokewinder___white)
         Smokewinder___yellow = (3, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (3, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (3, Weapons.MER_6_Mk_82)
+        MER_6_Mk_82 = (3, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
         Herc_Ext_Fuel_Tank = (3, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon4:
         LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
             4,
-            Weapons.LAU_68___7_2_75__rockets_M257__Parachute_illumination_,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
         Smokewinder___red = (4, Weapons.Smokewinder___red)
         Smokewinder___green = (4, Weapons.Smokewinder___green)
@@ -1092,13 +1092,13 @@ class Hercules(PlaneType):
         Smokewinder___white = (4, Weapons.Smokewinder___white)
         Smokewinder___yellow = (4, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (4, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (4, Weapons.MER_6_Mk_82)
+        MER_6_Mk_82 = (4, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
         Herc_Ext_Fuel_Tank = (4, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon5:
         LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
             5,
-            Weapons.LAU_68___7_2_75__rockets_M257__Parachute_illumination_,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
         Smokewinder___red = (5, Weapons.Smokewinder___red)
         Smokewinder___green = (5, Weapons.Smokewinder___green)
@@ -1106,7 +1106,7 @@ class Hercules(PlaneType):
         Smokewinder___white = (5, Weapons.Smokewinder___white)
         Smokewinder___yellow = (5, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (5, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (5, Weapons.MER_6_Mk_82)
+        MER_6_Mk_82 = (5, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
         Herc_Ext_Fuel_Tank = (5, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon6:

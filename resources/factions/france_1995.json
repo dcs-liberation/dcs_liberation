@@ -19,26 +19,26 @@
   ],
   "frontline_units": [
     "MBT_Leclerc",
-    "TPz_Fuchs",
-    "APC_Cobra",
-    "ATGM_M1134_Stryker",
+    "APC_TPz_Fuchs",
+    "APC_Cobra__Scout",
+    "ATGM_Stryker",
     "IFV_LAV_25",
-    "APC_M1043_HMMWV_Armament",
-    "ATGM_M1045_HMMWV_TOW",
+    "APC_HMMWV__Scout",
+    "ATGM_HMMWV",
     "SAM_Roland_ADS"
   ],
   "artillery_units": [
-    "MLRS_M270",
-    "SPH_M109_Paladin"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "Stinger_MANPADS",
-    "_2B11_mortar"
+    "Infantry_M249",
+    "MANPADS_Stinger",
+    "Mortar_2B11_120mm"
   ],
   "air_defenses": [
     "RolandGenerator",
@@ -53,11 +53,11 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa",
-    "Oliver_Hazzard_Perry_class"
+    "DDG_Arleigh_Burke_IIa",
+    "FFG_Oliver_Hazzard_Perry"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "requirements": {},
   "carrier_names": [

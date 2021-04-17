@@ -6,24 +6,24 @@
   "aircrafts": [
   ],
   "frontline_units": [
-    "APC_Cobra",
+    "APC_Cobra__Scout",
     "APC_MTLB",
-    "ARV_BRDM_2",
-    "AAA_ZU_23_Insurgent_on_Ural_375"
+    "IFV_BRDM_2",
+    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S19_Msta"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Insurgents",
-    "Soldier_RPG",
-    "_2B11_mortar",
-    "SAM_SA_18_Igla_MANPADS"
+    "Insurgent_AK_74",
+    "Infantry_RPG",
+    "Mortar_2B11_120mm",
+    "MANPADS_SA_18_Igla_Grouse"
   ],
   "air_defenses": [
     "SA9Generator",

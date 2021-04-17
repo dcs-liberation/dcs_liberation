@@ -28,22 +28,22 @@
     "MBT_M60A3_Patton",
     "IFV_BMP_1",
     "MBT_T_72B",
-    "SPAAA_ZSU_23_4_Shilka",
-    "AAA_ZSU_57_2"
+    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
+    "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad",
-    "SPH_2S19_Msta"
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",
-    "Infantry_Soldier_Insurgents",
+    "Insurgent_AK_74",
     "Paratrooper_RPG_16",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "HawkGenerator",
@@ -67,10 +67,10 @@
   "helicopter_carrier_names": [
   ],
   "destroyers": [
-    "FF_1135M_Rezky"
+    "Frigate_1135M_Rezky"
   ],
   "cruisers": [
-    "FSG_1241_1MP_Molniya"
+    "Corvette_1241_1_Molniya"
   ],
   "requirements": {},
   "carrier_names": [

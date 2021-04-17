@@ -18,17 +18,17 @@
     "MBT_M60A3_Patton",
     "APC_M113",
     "SAM_Chaparral_M48",
-    "AAA_Vulcan_M163"
+    "SPAAA_Vulcan_M163"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin"
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249"
+    "Infantry_M249"
   ],
   "air_defenses": [
     "ChaparralGenerator",

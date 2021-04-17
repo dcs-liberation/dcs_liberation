@@ -483,11 +483,11 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_layout = QtWidgets.QVBoxLayout()
         economy_group.setLayout(economy_layout)
 
-        player_income = TenthsSpinSlider("Player income multiplier", 1, 50, 10)
+        player_income = TenthsSpinSlider("Player income multiplier", 0, 50, 10)
         self.registerField("player_income_multiplier", player_income.spinner)
         economy_layout.addLayout(player_income)
 
-        enemy_income = TenthsSpinSlider("Enemy income multiplier", 1, 50, 10)
+        enemy_income = TenthsSpinSlider("Enemy income multiplier", 0, 50, 10)
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
         economy_layout.addLayout(enemy_income)
 

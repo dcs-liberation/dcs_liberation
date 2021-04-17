@@ -15,23 +15,23 @@
   "tankers": [
   ],
   "frontline_units": [
-    "ARV_BRDM_2",
-    "FDDM_Grad",
+    "IFV_BRDM_2",
+    "Grad_MRL_FDDM__FC",
     "APC_MTLB",
     "MBT_T_55",
-    "AAA_ZU_23_on_Ural_375",
+    "SPAAA_ZU_23_2_Mounted_Ural_375",
     "AAA_8_8cm_Flak_18"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad"
+    "MLRS_BM_21_Grad_122mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Rus",
-    "Soldier_RPG"
+    "Infantry_AK_74_Rus",
+    "Infantry_RPG"
   ],
   "air_defenses": [
     "FlakGenerator",

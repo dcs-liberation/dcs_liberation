@@ -9,7 +9,7 @@ from gen.locations.preset_locations import PresetLocation
 class PresetControlPointLocations:
     """A repository of preset locations for a given control point"""
 
-    # List of possible ashore locations to generate objects (Represented in miz file by an APC_AAV_7)
+    # List of possible ashore locations to generate objects (Represented in miz file by an APC_AAV_7_Amphibious)
     ashore_locations: List[PresetLocation] = field(default_factory=list)
 
     # List of possible offshore locations to generate ship groups (Represented in miz file by an Oliver Hazard Perry)

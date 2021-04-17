@@ -10,22 +10,22 @@
     "Ka_50"
   ],
   "frontline_units": [
-    "APC_Cobra",
+    "APC_Cobra__Scout",
     "APC_BTR_80",
-    "ARV_BRDM_2",
-    "SAM_SA_13_Strela_10M3_9A35M3"
+    "IFV_BRDM_2",
+    "SAM_SA_13_Strela_10M3_Gopher_TEL"
   ],
   "artillery_units": [
-    "SPH_2S19_Msta"
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",
     "Paratrooper_RPG_16",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "SA9Generator",

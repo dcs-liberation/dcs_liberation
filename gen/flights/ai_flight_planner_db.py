@@ -59,7 +59,6 @@ from dcs.planes import (
     MiG_27K,
     MiG_29A,
     MiG_29G,
-    MiG_29K,
     MiG_29S,
     MiG_31,
     Mirage_2000_5,
@@ -97,7 +96,6 @@ from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_B, Rafale_M
 from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
@@ -115,14 +113,12 @@ CAP_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     MiG_25PD,
-    Rafale_M,
     Su_33,
     Su_30,
     Su_27,
     J_11A,
     F_15C,
     MiG_29S,
-    MiG_29K,
     MiG_29G,
     MiG_29A,
     F_16C_50,
@@ -169,8 +165,6 @@ CAS_CAPABLE = [
     F_15E,
     F_16C_50,
     FA_18C_hornet,
-    Rafale_A_S,
-    Rafale_B,
     Tornado_GR4,
     Tornado_IDS,
     JF_17,
@@ -232,8 +226,6 @@ SEAD_CAPABLE = [
     Tornado_IDS,
     Su_25T,
     Su_25TM,
-    Rafale_A_S,
-    Rafale_B,
     F_4E,
     A_4E_C,
     AV8BNA,
@@ -281,8 +273,6 @@ STRIKE_CAPABLE = [
     Tu_22M3,
     F_15E,
     AJS37,
-    Rafale_A_S,
-    Rafale_B,
     Tornado_GR4,
     F_16C_50,
     FA_18C_hornet,
@@ -301,7 +291,6 @@ STRIKE_CAPABLE = [
     Su_30,
     Su_27,
     MiG_29S,
-    MiG_29K,
     MiG_29G,
     MiG_29A,
     JF_17,
@@ -338,8 +327,6 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
-    Rafale_A_S,
-    Rafale_B,
     Su_24M,
     Su_17M4,
     JF_17,
