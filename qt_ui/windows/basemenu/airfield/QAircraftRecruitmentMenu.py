@@ -64,7 +64,10 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     continue
                 if self.cp.is_lha and unit not in db.LHA_CAPABLE:
                     continue
-                if self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP] and unit not in helicopter_map.values():
+                if (
+                    self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
+                    and unit not in helicopter_map.values()
+                ):
                     continue
                 unit_types.add(unit)
 
