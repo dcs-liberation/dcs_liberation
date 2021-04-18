@@ -22,6 +22,7 @@ from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
+from gen.convoys import ConvoyGenerator
 from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
@@ -314,6 +315,7 @@ class Operation:
             cls.airgen.flights, cls.airsupportgen.air_support
         )
         cls._generate_ground_conflicts()
+        cls._generate_convoys()
 
         # Triggers
         triggersgen = TriggersGenerator(cls.current_mission, cls.game)
@@ -427,6 +429,11 @@ class Operation:
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
+
+    @classmethod
+    def _generate_convoys(cls) -> None:
+        """Generates convoys for unit transfers by road."""
+        ConvoyGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
 
     @classmethod
     def reset_naming_ids(cls):

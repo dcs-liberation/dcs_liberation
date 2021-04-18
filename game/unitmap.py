@@ -9,6 +9,7 @@ from dcs.unittype import VehicleType
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject
+from game.transfers import RoadTransferOrder
 from gen.flights.flight import Flight
 
 
@@ -26,6 +27,12 @@ class GroundObjectUnit:
 
 
 @dataclass(frozen=True)
+class ConvoyUnit:
+    unit_type: Type[VehicleType]
+    transfer: RoadTransferOrder
+
+
+@dataclass(frozen=True)
 class Building:
     ground_object: BuildingGroundObject
 
@@ -37,6 +44,7 @@ class UnitMap:
         self.front_line_units: Dict[str, FrontLineUnit] = {}
         self.ground_object_units: Dict[str, GroundObjectUnit] = {}
         self.buildings: Dict[str, Building] = {}
+        self.convoys: Dict[str, ConvoyUnit] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -112,6 +120,25 @@ class UnitMap:
 
     def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
         return self.ground_object_units.get(name, None)
+
+    def add_convoy_units(self, group: Group, transfer: RoadTransferOrder) -> None:
+        for unit in group.units:
+            # The actual name is a String (the pydcs translatable string), which
+            # doesn't define __eq__.
+            name = str(unit.name)
+            if name in self.convoys:
+                raise RuntimeError(f"Duplicate convoy unit: {name}")
+            unit_type = db.unit_type_from_name(unit.type)
+            if unit_type is None:
+                raise RuntimeError(f"Unknown unit type: {unit.type}")
+            if not issubclass(unit_type, VehicleType):
+                raise RuntimeError(
+                    f"{name} is a {unit_type.__name__}, expected a VehicleType"
+                )
+            self.convoys[name] = ConvoyUnit(unit_type, transfer)
+
+    def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
+        return self.convoys.get(name, None)
 
     def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
         # The actual name is a String (the pydcs translatable string), which

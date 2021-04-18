@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Type
+from typing import Dict, Iterator, List, Type
 
 from dcs.unittype import VehicleType
 from game.theater import ControlPoint
@@ -48,6 +48,9 @@ class RoadTransferOrder(TransferOrder):
 class PendingTransfers:
     def __init__(self) -> None:
         self.pending_transfers: List[RoadTransferOrder] = []
+
+    def __iter__(self) -> Iterator[RoadTransferOrder]:
+        yield from self.pending_transfers
 
     @property
     def pending_transfer_count(self) -> int:
