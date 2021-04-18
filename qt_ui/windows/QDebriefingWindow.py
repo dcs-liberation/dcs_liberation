@@ -72,6 +72,17 @@ class QDebriefingWindow(QDialog):
             except AttributeError:
                 logging.exception(f"Issue adding {unit_type} to debriefing information")
 
+        convoy_losses = self.debriefing.convoy_losses_by_type(player=True)
+        for unit_type, count in convoy_losses.items():
+            try:
+                lostUnitsLayout.addWidget(
+                    QLabel(f"{db.unit_type_name(unit_type)} from convoy"), row, 0
+                )
+                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
+                row += 1
+            except AttributeError:
+                logging.exception(f"Issue adding {unit_type} to debriefing information")
+
         building_losses = self.debriefing.building_losses_by_type(player=True)
         for building, count in building_losses.items():
             try:
@@ -112,6 +123,17 @@ class QDebriefingWindow(QDialog):
             enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
             enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
             row += 1
+
+        convoy_losses = self.debriefing.convoy_losses_by_type(player=False)
+        for unit_type, count in convoy_losses.items():
+            try:
+                lostUnitsLayout.addWidget(
+                    QLabel(f"{db.unit_type_name(unit_type)} from convoy"), row, 0
+                )
+                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
+                row += 1
+            except AttributeError:
+                logging.exception(f"Issue adding {unit_type} to debriefing information")
 
         building_losses = self.debriefing.building_losses_by_type(player=False)
         for building, count in building_losses.items():

@@ -155,6 +155,23 @@ class Event:
             control_point.base.armor[unit_type] -= 1
 
     @staticmethod
+    def commit_convoy_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.convoy_losses:
+            unit_type = loss.unit_type
+            transfer = loss.transfer
+            available = loss.transfer.units.get(unit_type, 0)
+            convoy_name = f"convoy from {transfer.position} to {transfer.destination}"
+            if available <= 0:
+                logging.error(
+                    f"Found killed {unit_type} in {convoy_name} but that convoy has "
+                    "none available."
+                )
+                continue
+
+            logging.info(f"{unit_type} destroyed in {convoy_name}")
+            transfer.units[unit_type] -= 1
+
+    @staticmethod
     def commit_ground_object_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.ground_object_losses:
             # TODO: This should be stored in the TGO, not in the pydcs Group.
@@ -186,6 +203,7 @@ class Event:
 
         self.commit_air_losses(debriefing)
         self.commit_front_line_losses(debriefing)
+        self.commit_convoy_losses(debriefing)
         self.commit_ground_object_losses(debriefing)
         self.commit_building_losses(debriefing)
         self.commit_damaged_runways(debriefing)

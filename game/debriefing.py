@@ -22,7 +22,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import Airfield, ControlPoint
-from game.unitmap import Building, FrontLineUnit, GroundObjectUnit, UnitMap
+from game.unitmap import Building, ConvoyUnit, FrontLineUnit, GroundObjectUnit, UnitMap
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -59,6 +59,9 @@ class AirLosses:
 class GroundLosses:
     player_front_line: List[FrontLineUnit] = field(default_factory=list)
     enemy_front_line: List[FrontLineUnit] = field(default_factory=list)
+
+    player_convoy: List[ConvoyUnit] = field(default_factory=list)
+    enemy_convoy: List[ConvoyUnit] = field(default_factory=list)
 
     player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
     enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
@@ -121,6 +124,11 @@ class Debriefing:
         yield from self.ground_losses.enemy_front_line
 
     @property
+    def convoy_losses(self) -> Iterator[ConvoyUnit]:
+        yield from self.ground_losses.player_convoy
+        yield from self.ground_losses.enemy_convoy
+
+    @property
     def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
@@ -144,6 +152,16 @@ class Debriefing:
             losses = self.ground_losses.player_front_line
         else:
             losses = self.ground_losses.enemy_front_line
+        for loss in losses:
+            losses_by_type[loss.unit_type] += 1
+        return losses_by_type
+
+    def convoy_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_convoy
+        else:
+            losses = self.ground_losses.enemy_convoy
         for loss in losses:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
@@ -184,6 +202,14 @@ class Debriefing:
                     losses.player_front_line.append(front_line_unit)
                 else:
                     losses.enemy_front_line.append(front_line_unit)
+                continue
+
+            convoy_unit = self.unit_map.convoy_unit(unit_name)
+            if convoy_unit is not None:
+                if convoy_unit.transfer.player:
+                    losses.player_convoy.append(convoy_unit)
+                else:
+                    losses.enemy_convoy.append(convoy_unit)
                 continue
 
             ground_object_unit = self.unit_map.ground_object_unit(unit_name)
