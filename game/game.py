@@ -275,7 +275,7 @@ class Game:
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
 
-        self.transfers.complete_transfers()
+        self.transfers.perform_transfers()
 
         self.process_enemy_income()
 
