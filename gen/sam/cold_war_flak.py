@@ -129,14 +129,14 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
         # Short range guns
         self.add_unit(
             AirDefence.AAA_ZU_23_Closed_Emplacement,
-            "SHO#1",
+            "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
             AirDefence.AAA_ZU_23_Closed_Emplacement,
-            "SHO#2",
+            "SHO#4",
             self.position.x + spacing * 2 + 80,
             self.position.y + spacing + 40,
             self.heading,
