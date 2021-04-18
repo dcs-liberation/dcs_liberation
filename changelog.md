@@ -20,6 +20,7 @@ Saves from 2.4 are not compatible with 2.5.
 * **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
 * **[Flight Planner]** Mig-19 was not allowed for CAS roles fixed
 * **[Flight Planner]** Increased size of navigation planning area to avoid plannign failures with distant waypoints.
+* **[Flight Planner]** Fixed UI refresh when unchecking the "default loadout" box in the loadout editor.
 * **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO (by SnappyComebacks)
 * **[Payloads]** F-86 Sabre was missing a custom payload
 * **[Payloads]** Added GAR-8 period restrictions (by Mustang-25)
