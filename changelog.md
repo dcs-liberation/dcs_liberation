@@ -1,3 +1,11 @@
+# 2.6.0
+
+Saves from 2.5 are not compatible with 2.6.
+
+## Features/Improvements
+
+## Fixes
+
 # 2.5.0
 
 Saves from 2.4 are not compatible with 2.5.
