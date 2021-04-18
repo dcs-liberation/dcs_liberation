@@ -383,8 +383,8 @@ AIRFIELD_DATA = {
             "31": ("IVZ", MHz(108, 750)),
         },
     ),
-    # TODO : PERSIAN GULF MAP
-    "Liwa Airbase": AirfieldData(
+    # PERSIAN GULF MAP
+    "Liwa AFB": AirfieldData(
         theater="Persian Gulf",
         icao="OMLW",
         elevation=400,
@@ -394,7 +394,7 @@ AIRFIELD_DATA = {
         vor=("OMLW", MHz(117, 400)),
         atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(119, 300), MHz(250, 950)),
     ),
-    "Al Dhafra AB": AirfieldData(
+    "Al Dhafra AFB": AirfieldData(
         theater="Persian Gulf",
         icao="OMAM",
         elevation=52,
@@ -408,7 +408,7 @@ AIRFIELD_DATA = {
             "31": ("IMA", MHz(109, 100)),
         },
     ),
-    "Al-Bateen Airport": AirfieldData(
+    "Al-Bateen": AirfieldData(
         theater="Persian Gulf",
         icao="OMAD",
         elevation=11,
@@ -416,7 +416,7 @@ AIRFIELD_DATA = {
         vor=("ALB", MHz(114, 0)),
         atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(119, 900), MHz(250, 550)),
     ),
-    "Sas Al Nakheel Airport": AirfieldData(
+    "Sas Al Nakheel": AirfieldData(
         theater="Persian Gulf",
         icao="OMNK",
         elevation=9,
@@ -424,7 +424,7 @@ AIRFIELD_DATA = {
         vor=("SAS", MHz(128, 930)),
         atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(128, 900), MHz(250, 450)),
     ),
-    "Abu Dhabi International Airport": AirfieldData(
+    "Abu Dhabi Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMAA",
         elevation=91,
@@ -432,7 +432,7 @@ AIRFIELD_DATA = {
         vor=("ADV", MHz(114, 250)),
         atc=AtcData(MHz(4, 000), MHz(38, 900), MHz(119, 200), MHz(250, 500)),
     ),
-    "Al Ain International Airport": AirfieldData(
+    "Al Ain Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMAL",
         elevation=813,
@@ -497,7 +497,7 @@ AIRFIELD_DATA = {
             "29": ("IFJR", MHz(111, 500)),
         },
     ),
-    "Ras AL Khaimah": AirfieldData(
+    "Ras AL Khaimah Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMRK",
         elevation=70,
@@ -526,7 +526,7 @@ AIRFIELD_DATA = {
         vor=("SIR", MHz(113, 750)),
         atc=AtcData(MHz(3, 875), MHz(38, 650), MHz(135, 50), MHz(250, 250)),
     ),
-    "Abu Musa Island Airport": AirfieldData(
+    "Abu Musa Island": AirfieldData(
         theater="Persian Gulf",
         icao="OIBA",
         elevation=16,
@@ -555,7 +555,7 @@ AIRFIELD_DATA = {
         vor=("KHM", MHz(117, 100)),
         atc=AtcData(MHz(3, 825), MHz(38, 550), MHz(118, 50), MHz(250, 150)),
     ),
-    "Bandar-e-Jask airfield": AirfieldData(
+    "Bandar-e-Jask": AirfieldData(
         theater="Persian Gulf",
         icao="OIZJ",
         elevation=26,
@@ -571,7 +571,7 @@ AIRFIELD_DATA = {
         vor=("LEN", MHz(114, 800)),
         atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(121, 700), MHz(250, 950)),
     ),
-    "Kish International Airport": AirfieldData(
+    "Kish Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OIBK",
         elevation=114,
@@ -580,7 +580,7 @@ AIRFIELD_DATA = {
         tacan_callsign="KIH",
         atc=AtcData(MHz(4, 50), MHz(39, 000), MHz(121, 650), MHz(250, 600)),
     ),
-    "Lavan Island Airport": AirfieldData(
+    "Lavan Island": AirfieldData(
         theater="Persian Gulf",
         icao="OIBV",
         elevation=75,
@@ -588,7 +588,7 @@ AIRFIELD_DATA = {
         vor=("LVA", MHz(116, 850)),
         atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(128, 550), MHz(250, 700)),
     ),
-    "Lar Airbase": AirfieldData(
+    "Lar": AirfieldData(
         theater="Persian Gulf",
         icao="OISL",
         elevation=2635,
@@ -621,14 +621,14 @@ AIRFIELD_DATA = {
             "21": ("IBND", MHz(333, 800)),
         },
     ),
-    "Jiroft Airport": AirfieldData(
+    "Jiroft": AirfieldData(
         theater="Persian Gulf",
         icao="OIKJ",
         elevation=2664,
         runway_length=9160,
         atc=AtcData(MHz(4, 125), MHz(39, 120), MHz(136, 0), MHz(250, 750)),
     ),
-    "Kerman Airport": AirfieldData(
+    "Kerman": AirfieldData(
         theater="Persian Gulf",
         icao="OIKK",
         elevation=5746,
@@ -638,7 +638,7 @@ AIRFIELD_DATA = {
         vor=("KER", MHz(112, 0)),
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(118, 250), MHz(250, 300)),
     ),
-    "Shiraz International Airport": AirfieldData(
+    "Shiraz Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OISS",
         elevation=4878,
