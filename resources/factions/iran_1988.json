@@ -22,7 +22,8 @@
     "MBT_M60A3_Patton",
     "IFV_BMP_1",
     "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
-    "SPAAA_ZSU_57_2"
+    "SPAAA_ZSU_57_2",
+    "SPAAA_ZU_23_2_Mounted_Ural_375"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad_122mm",
@@ -45,7 +46,7 @@
     "ZSU57Generator",
     "ZSU23Generator",
     "ZU23Generator",
-    "ZU23UralGenerator"
+    "ColdWarFlakGenerator"
   ],
   "ewrs": [
     "TallRackGenerator"
