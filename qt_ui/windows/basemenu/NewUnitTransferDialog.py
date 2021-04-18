@@ -24,18 +24,18 @@ from dcs.task import PinpointStrike
 from dcs.unittype import UnitType
 
 from game import db
-from game.theater import ControlPoint
+from game.theater import ControlPoint, SupplyRoute
 from game.transfers import RoadTransferOrder
 from qt_ui.models import GameModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 
 
 class TransferDestinationComboBox(QComboBox):
-    def __init__(self, game_model: GameModel, origin: ControlPoint) -> None:
+    def __init__(self, origin: ControlPoint) -> None:
         super().__init__()
 
-        for cp in game_model.game.theater.controlpoints:
-            if cp != origin and cp.captured and not cp.is_global:
+        for cp in SupplyRoute.for_control_point(origin):
+            if cp != origin and cp.captured:
                 self.addItem(cp.name, cp)
         self.model().sort(0)
         self.setCurrentIndex(0)
@@ -81,10 +81,10 @@ class UnitTransferList(QFrame):
 
 
 class TransferDestinationPanel(QVBoxLayout):
-    def __init__(self, label: str, origin: ControlPoint, game_model: GameModel) -> None:
+    def __init__(self, label: str, origin: ControlPoint) -> None:
         super().__init__()
 
-        self.source_combo_box = TransferDestinationComboBox(game_model, origin)
+        self.source_combo_box = TransferDestinationComboBox(origin)
         self.addLayout(QLabeledWidget(label, self.source_combo_box))
 
     @property
@@ -266,7 +266,7 @@ class NewUnitTransferDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.dest_panel = TransferDestinationPanel("Destination:", origin, game_model)
+        self.dest_panel = TransferDestinationPanel("Destination:", origin)
         self.dest_panel.changed.connect(self.on_destination_changed)
         layout.addLayout(self.dest_panel)
 

@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering
-from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
+from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -291,6 +291,23 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def is_global(self):
         return not self.connected_points
+
+    def transitive_connected_friendly_points(
+        self, seen: Optional[Set[ControlPoint]] = None
+    ) -> List[ControlPoint]:
+        if seen is None:
+            seen = {self}
+
+        connected = []
+        for cp in self.connected_points:
+            if cp.captured != self.captured:
+                continue
+            if cp in seen:
+                continue
+            seen.add(cp)
+            connected.append(cp)
+            connected.extend(cp.transitive_connected_friendly_points(seen))
+        return connected
 
     @property
     def is_carrier(self):

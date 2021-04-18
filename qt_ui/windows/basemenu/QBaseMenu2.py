@@ -11,7 +11,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game, db
-from game.theater import ControlPoint, ControlPointType
+from game.theater import ControlPoint, ControlPointType, SupplyRoute
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -89,7 +89,7 @@ class QBaseMenu2(QDialog):
             runway_attack_button.setProperty("style", "btn-danger")
             runway_attack_button.clicked.connect(self.new_package)
 
-        if self.cp.captured and not self.cp.is_global:
+        if self.cp.captured and self.has_transfer_destinations:
             transfer_button = QPushButton("Transfer Units")
             bottom_row.addWidget(transfer_button)
             transfer_button.clicked.connect(self.open_transfer_dialog)
@@ -102,6 +102,10 @@ class QBaseMenu2(QDialog):
         bottom_row.addWidget(self.budget_display)
         GameUpdateSignal.get_instance().budgetupdated.connect(self.update_budget)
         self.setLayout(main_layout)
+
+    @property
+    def has_transfer_destinations(self) -> bool:
+        return SupplyRoute.for_control_point(self.cp) is not None
 
     @property
     def can_repair_runway(self) -> bool:
