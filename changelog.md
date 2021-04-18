@@ -4,6 +4,8 @@ Saves from 2.5 are not compatible with 2.6.
 
 ## Features/Improvements
 
+* **[Campaign]** Ground units can now be transferred by road. See https://github.com/Khopa/dcs_liberation/wiki/Unit-Transfers for more information.
+
 ## Fixes
 
 # 2.5.0
