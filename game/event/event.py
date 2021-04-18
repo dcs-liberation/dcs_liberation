@@ -469,12 +469,15 @@ class UnitsDeliveryEvent:
             logging.info(f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
             game.adjust_budget(price * count, player=self.to_cp.captured)
 
-    def available_next_turn(self, unit_type: Type[UnitType]) -> int:
+    def pending_orders(self, unit_type: Type[UnitType]) -> int:
         pending_units = self.units.get(unit_type)
         if pending_units is None:
             pending_units = 0
+        return pending_units
+
+    def available_next_turn(self, unit_type: Type[UnitType]) -> int:
         current_units = self.to_cp.base.total_units_of_type(unit_type)
-        return pending_units + current_units
+        return self.pending_orders(unit_type) + current_units
 
     def process(self, game: Game) -> None:
         bought_units: Dict[Type[UnitType], int] = {}

@@ -1,3 +1,5 @@
+from typing import Type
+
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
@@ -65,13 +67,13 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def sell(self, unit_type: UnitType):
-        if self.pending_deliveries.available_next_turn(unit_type) <= 0:
+    def sell(self, unit_type: Type[UnitType]) -> None:
+        if self.pending_deliveries.pending_orders(unit_type) <= 0:
             QMessageBox.critical(
                 self,
                 "Could not sell ground unit",
-                f"Attempted to sell one {unit_type.id} at {self.cp.name} "
-                "but none are available.",
+                f"Attempted to cancel order of one {unit_type.id} at {self.cp.name} "
+                "but no orders are pending.",
                 QMessageBox.Ok,
             )
             return
