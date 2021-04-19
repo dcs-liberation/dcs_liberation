@@ -335,13 +335,20 @@ class MizCampaignLoader:
                     f"No control point near the final waypoint of {group.name}"
                 )
 
+            convoy_origin = waypoints[0]
+            convoy_destination = waypoints[-1]
+
             # Snap the begin and end points to the control points.
             waypoints[0] = origin.position
             waypoints[-1] = destination.position
             front_line_id = f"{origin.id}|{destination.id}"
             front_lines[front_line_id] = ComplexFrontLine(origin, waypoints)
-            self.control_points[origin.id].connect(self.control_points[destination.id])
-            self.control_points[destination.id].connect(self.control_points[origin.id])
+            self.control_points[origin.id].connect(
+                self.control_points[destination.id], convoy_origin
+            )
+            self.control_points[destination.id].connect(
+                self.control_points[origin.id], convoy_destination
+            )
         return front_lines
 
     def objective_info(self, group: Group) -> Tuple[ControlPoint, Distance]:

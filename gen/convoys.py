@@ -31,14 +31,9 @@ class ConvoyGenerator:
             self.generate_convoy_for(transfer)
 
     def generate_convoy_for(self, transfer: RoadTransferOrder) -> None:
-        # TODO: Add convoy spawn points to campaign so these can start on/near a road.
-        # Groups that start with an on-road waypoint that are not on a road will move to
-        # the road one at a time. Spawning them arbitrarily at the control point spawns
-        # them on the runway (or in a FOB structure) and they'll take forever to get to
-        # a road.
-        origin = transfer.position.position
         next_hop = transfer.path()[0]
-        destination = next_hop.position
+        origin = transfer.position.convoy_spawns[next_hop]
+        destination = next_hop.convoy_spawns[transfer.position]
 
         group = self._create_mixed_unit_group(
             f"Convoy {next(self.count)}",

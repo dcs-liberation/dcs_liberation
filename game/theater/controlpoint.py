@@ -267,6 +267,7 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
+        self.convoy_spawns: Dict[ControlPoint, Point] = {}
         self.base: Base = Base()
         self.cptype = cptype
         # TODO: Should be Airbase specific.
@@ -392,8 +393,9 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     # TODO: Should be Airbase specific.
-    def connect(self, to: ControlPoint) -> None:
+    def connect(self, to: ControlPoint, convoy_location: Point) -> None:
         self.connected_points.append(to)
+        self.convoy_spawns[to] = convoy_location
         self.stances[to.id] = CombatStance.DEFENSIVE
 
     @abstractmethod
