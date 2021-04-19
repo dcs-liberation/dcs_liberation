@@ -179,6 +179,7 @@ def create_game(
             automate_runway_repair=auto_procurement,
             automate_front_line_reinforcements=auto_procurement,
             automate_aircraft_reinforcements=auto_procurement,
+            enable_new_ground_unit_recruitment=True,
         ),
         GeneratorSettings(
             start_date=datetime.today(),
