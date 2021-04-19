@@ -13,6 +13,7 @@ from PySide2.QtWidgets import QAbstractItemView, QListView
 
 import qt_ui.uiconstants as CONST
 from game.theater import ConflictTheater, MizCampaignLoader
+from game.version import CAMPAIGN_FORMAT_VERSION
 
 PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
@@ -63,12 +64,12 @@ class Campaign:
     @property
     def is_out_of_date(self) -> bool:
         """Returns True if this campaign is not up to date with the latest format."""
-        return self.version < MizCampaignLoader.VERSION
+        return self.version < CAMPAIGN_FORMAT_VERSION
 
     @property
     def is_from_future(self) -> bool:
         """Returns True if this campaign is newer than the supported format."""
-        return self.version > MizCampaignLoader.VERSION
+        return self.version > CAMPAIGN_FORMAT_VERSION
 
     @property
     def is_compatible(self) -> bool:
