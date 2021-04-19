@@ -31,6 +31,7 @@ from game.point_with_heading import PointWithHeading
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
+    FactoryGroundObject,
     GenericCarrierGroundObject,
     SamGroundObject,
     TheaterGroundObject,
@@ -311,6 +312,16 @@ class ControlPoint(MissionTarget, ABC):
             connected.append(cp)
             connected.extend(cp.transitive_connected_friendly_points(seen))
         return connected
+
+    def can_recruit_ground_units(self, game: Game) -> bool:
+        """Returns True if this control point is capable of recruiting ground units."""
+        if not game.settings.enable_new_ground_unit_recruitment:
+            return True
+
+        for tgo in self.connected_objectives:
+            if isinstance(tgo, FactoryGroundObject) and not tgo.is_dead:
+                return True
+        return False
 
     @property
     def is_carrier(self):

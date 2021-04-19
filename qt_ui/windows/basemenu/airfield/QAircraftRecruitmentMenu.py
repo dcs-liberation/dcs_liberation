@@ -77,12 +77,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             ),
         )
         for unit_type in sorted_units:
-            row = self.add_purchase_row(
-                unit_type,
-                task_box_layout,
-                row,
-                disabled=not self.cp.can_operate(unit_type),
-            )
+            row = self.add_purchase_row(unit_type, task_box_layout, row)
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
@@ -96,6 +91,20 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addLayout(self.hangar_status)
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
+
+    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        if not issubclass(unit_type, FlyingType):
+            return False
+        if not self.cp.can_operate(unit_type):
+            return False
+        return True
+
+    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+        if not issubclass(unit_type, FlyingType):
+            return False
+        if not self.cp.can_operate(unit_type):
+            return False
+        return True
 
     def buy(self, unit_type):
         if self.maximum_units > 0:

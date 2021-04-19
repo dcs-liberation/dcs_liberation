@@ -67,14 +67,8 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def sell(self, unit_type: Type[UnitType]) -> None:
-        if self.pending_deliveries.pending_orders(unit_type) <= 0:
-            QMessageBox.critical(
-                self,
-                "Could not sell ground unit",
-                f"Attempted to cancel order of one {unit_type.id} at {self.cp.name} "
-                "but no orders are pending.",
-                QMessageBox.Ok,
-            )
-            return
-        super().sell(unit_type)
+    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        return self.cp.can_recruit_ground_units(self.game_model.game)
+
+    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+        return self.pending_deliveries.pending_orders(unit_type) > 0
