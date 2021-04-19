@@ -6,6 +6,7 @@ Saves from 2.5 are not compatible with 2.6.
 
 * **[Campaign]** Ground units can now be transferred by road. See https://github.com/Khopa/dcs_liberation/wiki/Unit-Transfers for more information.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
+* **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory and a transfer will be created on the next turn. This feature is off by default.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
 
