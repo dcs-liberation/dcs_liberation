@@ -329,6 +329,11 @@ class ControlPoint(MissionTarget, ABC):
         if not game.settings.enable_new_ground_unit_recruitment:
             return True
 
+        if game.turn == 0:
+            # Allow units to be recruited anywhere on turn 0 to avoid long delays to get
+            # everyone to the front line.
+            return True
+
         return self.has_factory
 
     def has_ground_unit_source(self, game: Game) -> bool:

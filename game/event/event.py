@@ -540,6 +540,12 @@ class UnitsDeliveryEvent:
             )
 
     def find_ground_unit_source(self, game: Game) -> Optional[ControlPoint]:
+        # This is running *after* the turn counter has been incremented, so this is the
+        # reaction to turn 0. On turn zero we allow units to be recruited anywhere for
+        # delivery on turn 1 so that turn 1 always starts with units on the front line.
+        if game.turn == 1:
+            return self.destination
+
         # Fast path if the destination is a valid source.
         if self.destination.can_recruit_ground_units(game):
             return self.destination
