@@ -266,6 +266,28 @@ class BuildingGroundObject(TheaterGroundObject):
         self._dead = True
 
 
+class FactoryGroundObject(BuildingGroundObject):
+    def __init__(
+        self,
+        name: str,
+        group_id: int,
+        position: Point,
+        heading: int,
+        control_point: ControlPoint,
+    ) -> None:
+        super().__init__(
+            name=name,
+            category="factory",
+            group_id=group_id,
+            object_id=0,
+            position=position,
+            heading=heading,
+            control_point=control_point,
+            dcs_identifier="Workshop A",
+            airbase_group=False,
+        )
+
+
 class NavalGroundObject(TheaterGroundObject):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType

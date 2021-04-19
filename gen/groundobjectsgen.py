@@ -14,7 +14,7 @@ from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 from dcs import Mission, Point, unitgroup
 from dcs.country import Country
 from dcs.point import StaticPoint
-from dcs.statics import fortification_map, warehouse_map, Warehouse
+from dcs.statics import Fortification, fortification_map, warehouse_map, Warehouse
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
@@ -34,6 +34,7 @@ from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
+    FactoryGroundObject,
     GenericCarrierGroundObject,
     LhaGroundObject,
     ShipGroundObject,
@@ -213,7 +214,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
                 f"{self.ground_object.dcs_identifier} not found in static maps"
             )
 
-    def generate_vehicle_group(self, unit_type: UnitType) -> None:
+    def generate_vehicle_group(self, unit_type: Type[UnitType]) -> None:
         if not self.ground_object.is_dead:
             group = self.m.vehicle_group(
                 country=self.country,
@@ -224,7 +225,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
             )
             self._register_fortification(group)
 
-    def generate_static(self, static_type: StaticType) -> None:
+    def generate_static(self, static_type: Type[StaticType]) -> None:
         group = self.m.static_group(
             country=self.country,
             name=self.ground_object.group_name,
@@ -242,6 +243,22 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
     def _register_building(self, building: StaticGroup) -> None:
         assert isinstance(self.ground_object, BuildingGroundObject)
         self.unit_map.add_building(self.ground_object, building)
+
+
+class FactoryGenerator(BuildingSiteGenerator):
+    """Generator for factory sites.
+
+    Factory sites are the buildings that allow the recruitment of ground units.
+    Destroying these prevents the owner from recruiting ground units at the connected
+    control point.
+    """
+
+    def generate(self) -> None:
+        if self.game.position_culled(self.ground_object.position):
+            return
+
+        # TODO: Faction specific?
+        self.generate_static(Fortification.Workshop_A)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):
@@ -557,7 +574,11 @@ class GroundObjectsGenerator:
             ).generate()
 
             for ground_object in cp.ground_objects:
-                if isinstance(ground_object, BuildingGroundObject):
+                if isinstance(ground_object, FactoryGroundObject):
+                    generator = FactoryGenerator(
+                        ground_object, country, self.game, self.m, self.unit_map
+                    )
+                elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )

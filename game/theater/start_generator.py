@@ -18,6 +18,7 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
     EwrGroundObject,
+    FactoryGroundObject,
     LhaGroundObject,
     MissileSiteGroundObject,
     SamGroundObject,
@@ -612,6 +613,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """Generate ground objects and AA sites for the control point."""
         skip_sams = self.generate_required_aa()
         skip_ewrs = self.generate_required_ewr()
+        self.generate_factories()
 
         if self.control_point.is_global:
             return
@@ -716,6 +718,25 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             )
 
             self.control_point.connected_objectives.append(g)
+
+    def generate_factories(self) -> None:
+        """Generates the factories that are required by the campaign."""
+        for position in self.control_point.preset_locations.factories:
+            self.generate_factory_at(position)
+
+    def generate_factory_at(self, point: PointWithHeading) -> None:
+        obj_name = namegen.random_objective_name()
+        group_id = self.game.next_group_id()
+
+        g = FactoryGroundObject(
+            obj_name,
+            group_id,
+            point,
+            point.heading,
+            self.control_point,
+        )
+
+        self.control_point.connected_objectives.append(g)
 
     def generate_aa_site(self) -> None:
         position = self.location_finder.location_for(LocationType.Sam)

@@ -110,6 +110,9 @@ class PresetLocations:
     #: Locations of EWRs which should always be spawned.
     required_ewrs: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations of factories for producing ground units. These will always be spawned.
+    factories: List[PointWithHeading] = field(default_factory=list)
+
     @staticmethod
     def _random_from(points: List[PointWithHeading]) -> Optional[PointWithHeading]:
         """Finds, removes, and returns a random position from the given list."""

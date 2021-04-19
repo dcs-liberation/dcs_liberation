@@ -10,14 +10,12 @@ DEFAULT_AVAILABLE_BUILDINGS = [
     "farp",
     "fob",
     "power",
-    "factory",
     "derrick",
 ]
 
-WW2_FREE = ["fuel", "factory", "ware", "fob"]
+WW2_FREE = ["fuel", "ware", "fob"]
 WW2_GERMANY_BUILDINGS = [
     "fuel",
-    "factory",
     "ww2bunker",
     "ww2bunker",
     "ww2bunker",
@@ -27,7 +25,6 @@ WW2_GERMANY_BUILDINGS = [
 ]
 WW2_ALLIES_BUILDINGS = [
     "fuel",
-    "factory",
     "allycamp",
     "allycamp",
     "allycamp",

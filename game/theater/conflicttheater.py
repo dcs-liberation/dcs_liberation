@@ -120,6 +120,8 @@ class MizCampaignLoader:
 
     REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
 
+    FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
+
     BASE_DEFENSE_RADIUS = nautical_miles(2)
 
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
@@ -259,6 +261,12 @@ class MizCampaignLoader:
     def helipads(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type == self.FARP_HELIPAD:
+                yield group
+
+    @property
+    def factories(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type in self.FACTORY_UNIT_TYPE:
                 yield group
 
     @cached_property
@@ -418,6 +426,12 @@ class MizCampaignLoader:
         for group in self.helipads:
             closest, distance = self.objective_info(group)
             closest.helipads.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.factories:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.factories.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
