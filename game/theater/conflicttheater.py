@@ -494,14 +494,7 @@ class ConflictTheater:
             logging.warning("Replacing existing frontline data")
         self._frontline_data = data
 
-    def add_controlpoint(
-        self, point: ControlPoint, connected_to: Optional[List[ControlPoint]] = None
-    ):
-        if connected_to is None:
-            connected_to = []
-        for connected_point in connected_to:
-            point.connect(to=connected_point)
-
+    def add_controlpoint(self, point: ControlPoint):
         self.controlpoints.append(point)
 
     def find_ground_objects_by_obj_name(self, obj_name):
@@ -707,26 +700,11 @@ class ConflictTheater:
         t = theater()
 
         miz = data.get("miz", None)
-        if miz is not None:
-            MizCampaignLoader(directory / miz, t).populate_theater()
-            return t
-
-        cps = {}
-        for p in data["player_points"]:
-            cp = t.add_json_cp(theater, p)
-            cp.captured = True
-            cps[p["id"]] = cp
-            t.add_controlpoint(cp)
-
-        for p in data["enemy_points"]:
-            cp = t.add_json_cp(theater, p)
-            cps[p["id"]] = cp
-            t.add_controlpoint(cp)
-
-        for l in data["links"]:
-            cps[l[0]].connect(cps[l[1]])
-            cps[l[1]].connect(cps[l[0]])
-
+        if miz is None:
+            raise RuntimeError(
+                "Old format (non-miz) campaigns are no longer supported."
+            )
+        MizCampaignLoader(directory / miz, t).populate_theater()
         return t
 
 
