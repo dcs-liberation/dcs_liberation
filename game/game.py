@@ -34,7 +34,7 @@ from .settings import Settings
 from .theater import ConflictTheater, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import MissileSiteGroundObject
 from .threatzones import ThreatZones
-from .transfers import PendingTransfers
+from .transfers import PendingTransfers, RoadTransferOrder
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -272,10 +272,12 @@ class Game:
         )
         self.turn += 1
 
+        # Must happen *before* unit deliveries are handled, or else new units will spawn
+        # one hop ahead. ControlPoint.process_turn handles unit deliveries.
+        self.transfers.perform_transfers()
+
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
-
-        self.transfers.perform_transfers()
 
         self.process_enemy_income()
 

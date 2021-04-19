@@ -145,6 +145,8 @@ class ProcurementAi:
         if not self.faction.frontline_units and not self.faction.artillery_units:
             return budget
 
+        # TODO: Attempt to transfer from reserves.
+
         while budget > 0:
             candidates = self.front_line_candidates()
             if not candidates:
@@ -239,7 +241,16 @@ class ProcurementAi:
         # Prefer to buy front line units at active front lines that are not
         # already overloaded.
         for cp in self.owned_points:
-            if cp.expected_ground_units_next_turn.total >= 30:
+            if not cp.has_ground_unit_source(self.game):
+                continue
+
+            # Buy to a higher limit when using the new recruitment mechanic since it
+            # will take longer to reinforce losses.
+            if self.game.settings.enable_new_ground_unit_recruitment:
+                limit = 50
+            else:
+                limit = 30
+            if self.total_ground_units_allocated_to(cp) >= limit:
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:
@@ -258,12 +269,19 @@ class ProcurementAi:
             # Also, do not bother buying units at bases that will never connect
             # to a front line.
             for cp in self.owned_points:
-                if not cp.can_deploy_ground_units:
+                if not cp.can_recruit_ground_units(self.game):
                     continue
-                if cp.expected_ground_units_next_turn.total >= 10:
+                if self.total_ground_units_allocated_to(cp) >= 10:
                     continue
                 if cp.is_global:
                     continue
                 candidates.append(cp)
 
         return candidates
+
+    def total_ground_units_allocated_to(self, control_point: ControlPoint) -> int:
+        total = control_point.expected_ground_units_next_turn.total
+        for transfer in self.game.transfers:
+            if transfer.destination == control_point:
+                total += sum(transfer.units.values())
+        return total

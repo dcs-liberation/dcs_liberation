@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-import math
-from typing import Dict, Iterator, List, TYPE_CHECKING, Tuple, Type
+from collections import defaultdict
+from typing import Dict, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
@@ -12,10 +12,11 @@ from game import persistency
 from game.debriefing import AirLosses, Debriefing
 from game.infos.information import Information
 from game.operation.operation import Operation
-from game.theater import ControlPoint
+from game.theater import ControlPoint, SupplyRoute
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..db import PRICES
+from ..transfers import RoadTransferOrder
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -439,35 +440,37 @@ class Event:
 
 
 class UnitsDeliveryEvent:
-    def __init__(self, control_point: ControlPoint) -> None:
-        self.to_cp = control_point
-        self.units: Dict[Type[UnitType], int] = {}
+    def __init__(self, destination: ControlPoint) -> None:
+        self.destination = destination
+
+        # Maps unit type to order quantity.
+        self.units: Dict[Type[UnitType], int] = defaultdict(int)
 
     def __str__(self) -> str:
-        return "Pending delivery to {}".format(self.to_cp)
+        return f"Pending delivery to {self.destination}"
 
     def order(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
-            self.units[k] = self.units.get(k, 0) + v
+            self.units[k] += v
 
     def sell(self, units: Dict[Type[UnitType], int]) -> None:
         for k, v in units.items():
-            self.units[k] = self.units.get(k, 0) - v
-
-    def consume_each_order(self) -> Iterator[Tuple[Type[UnitType], int]]:
-        while self.units:
-            yield self.units.popitem()
+            self.units[k] -= v
 
     def refund_all(self, game: Game) -> None:
-        for unit_type, count in self.consume_each_order():
+        self.refund(game, self.units)
+        self.units = defaultdict(int)
+
+    def refund(self, game: Game, units: Dict[Type[UnitType], int]) -> None:
+        for unit_type, count in units.items():
             try:
                 price = PRICES[unit_type]
             except KeyError:
                 logging.error(f"Could not refund {unit_type.id}, price unknown")
                 continue
 
-            logging.info(f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
-            game.adjust_budget(price * count, player=self.to_cp.captured)
+            logging.info(f"Refunding {count} {unit_type.id} at {self.destination.name}")
+            game.adjust_budget(price * count, player=self.destination.captured)
 
     def pending_orders(self, unit_type: Type[UnitType]) -> int:
         pending_units = self.units.get(unit_type)
@@ -476,26 +479,94 @@ class UnitsDeliveryEvent:
         return pending_units
 
     def available_next_turn(self, unit_type: Type[UnitType]) -> int:
-        current_units = self.to_cp.base.total_units_of_type(unit_type)
+        current_units = self.destination.base.total_units_of_type(unit_type)
         return self.pending_orders(unit_type) + current_units
 
     def process(self, game: Game) -> None:
+        ground_unit_source = self.find_ground_unit_source(game)
         bought_units: Dict[Type[UnitType], int] = {}
+        units_needing_transfer: Dict[Type[VehicleType], int] = {}
         sold_units: Dict[Type[UnitType], int] = {}
         for unit_type, count in self.units.items():
-            coalition = "Ally" if self.to_cp.captured else "Enemy"
-            aircraft = unit_type.id
-            name = self.to_cp.name
+            coalition = "Ally" if self.destination.captured else "Enemy"
+            name = unit_type.id
+
+            if (
+                issubclass(unit_type, VehicleType)
+                and self.destination != ground_unit_source
+            ):
+                source = ground_unit_source
+                d = units_needing_transfer
+                ground = True
+            else:
+                source = self.destination
+                d = bought_units
+                ground = False
+
             if count >= 0:
-                bought_units[unit_type] = count
-                game.message(
-                    f"{coalition} reinforcements: {aircraft} x {count} at {name}"
-                )
+                # The destination dict will be set appropriately even if we have no
+                # source, and we'll refund later, buto nly emit the message when we're
+                # actually completing the purchase.
+                d[unit_type] = count
+                if ground or ground_unit_source is not None:
+                    game.message(
+                        f"{coalition} reinforcements: {name} x {count} at {source}"
+                    )
             else:
                 sold_units[unit_type] = -count
-                game.message(f"{coalition} sold: {aircraft} x {-count} at {name}")
-        self.to_cp.base.commision_units(bought_units)
-        self.to_cp.base.commit_losses(sold_units)
-        self.units = {}
-        bought_units = {}
-        sold_units = {}
+                game.message(f"{coalition} sold: {name} x {-count} at {source}")
+
+        self.units = defaultdict(int)
+        self.destination.base.commision_units(bought_units)
+        self.destination.base.commit_losses(sold_units)
+
+        if ground_unit_source is None:
+            game.message(
+                f"{self.destination.name} lost its source for ground unit "
+                "reinforcements. Refunding purchase price."
+            )
+            self.refund(game, units_needing_transfer)
+            return
+
+        if units_needing_transfer:
+            ground_unit_source.base.commision_units(units_needing_transfer)
+            game.transfers.new_transfer(
+                RoadTransferOrder(
+                    ground_unit_source,
+                    self.destination,
+                    self.destination.captured,
+                    units_needing_transfer,
+                )
+            )
+
+    def find_ground_unit_source(self, game: Game) -> Optional[ControlPoint]:
+        # Fast path if the destination is a valid source.
+        if self.destination.can_recruit_ground_units(game):
+            return self.destination
+
+        supply_route = SupplyRoute.for_control_point(self.destination)
+        if supply_route is None:
+            return None
+
+        sources = []
+        for control_point in supply_route:
+            if control_point.can_recruit_ground_units(game):
+                sources.append(control_point)
+
+        if not sources:
+            return None
+
+        # Fast path to skip the distance calculation if we have only one option.
+        if len(sources) == 1:
+            return sources[0]
+
+        closest = sources[0]
+        distance = len(supply_route.shortest_path_between(self.destination, closest))
+        for source in sources:
+            new_distance = len(
+                supply_route.shortest_path_between(self.destination, source)
+            )
+            if new_distance < distance:
+                closest = source
+                distance = new_distance
+        return closest

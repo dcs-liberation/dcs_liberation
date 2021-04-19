@@ -313,13 +313,39 @@ class ControlPoint(MissionTarget, ABC):
             connected.extend(cp.transitive_connected_friendly_points(seen))
         return connected
 
+    @property
+    def has_factory(self) -> bool:
+        for tgo in self.connected_objectives:
+            if isinstance(tgo, FactoryGroundObject) and not tgo.is_dead:
+                return True
+        return False
+
     def can_recruit_ground_units(self, game: Game) -> bool:
         """Returns True if this control point is capable of recruiting ground units."""
+        if not self.can_deploy_ground_units:
+            return False
+
         if not game.settings.enable_new_ground_unit_recruitment:
             return True
 
-        for tgo in self.connected_objectives:
-            if isinstance(tgo, FactoryGroundObject) and not tgo.is_dead:
+        return self.has_factory
+
+    def has_ground_unit_source(self, game: Game) -> bool:
+        """Returns True if this control point has access to ground reinforcements."""
+        if not self.can_deploy_ground_units:
+            return False
+
+        if not game.settings.enable_new_ground_unit_recruitment:
+            return True
+
+        from game.theater.supplyroutes import SupplyRoute
+
+        supply_route = SupplyRoute.for_control_point(self)
+        if supply_route is None:
+            return False
+
+        for cp in supply_route:
+            if cp.can_recruit_ground_units(game):
                 return True
         return False
 
