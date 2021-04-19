@@ -68,7 +68,7 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
-        return self.cp.can_recruit_ground_units(self.game_model.game)
+        return self.cp.has_ground_unit_source(self.game_model.game)
 
     def enable_sale(self, unit_type: Type[UnitType]) -> bool:
         return self.pending_deliveries.pending_orders(unit_type) > 0
