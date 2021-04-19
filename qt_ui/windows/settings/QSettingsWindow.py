@@ -1,22 +1,22 @@
 import logging
 from typing import Callable
 
-from PySide2.QtCore import QSize, Qt, QItemSelectionModel, QPoint
-from PySide2.QtGui import QStandardItemModel, QStandardItem
+from PySide2.QtCore import QItemSelectionModel, QPoint, QSize, Qt
+from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import (
-    QLabel,
+    QAbstractItemView,
+    QCheckBox,
+    QComboBox,
     QDialog,
     QGridLayout,
-    QListView,
-    QStackedLayout,
-    QComboBox,
-    QWidget,
-    QAbstractItemView,
-    QPushButton,
     QGroupBox,
-    QCheckBox,
-    QVBoxLayout,
+    QLabel,
+    QListView,
+    QPushButton,
     QSpinBox,
+    QStackedLayout,
+    QVBoxLayout,
+    QWidget,
 )
 from dcs.forcedoptions import ForcedOptions
 
@@ -76,6 +76,17 @@ class CheatSettingsBox(QGroupBox):
 
 
 START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
+
+NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP = (
+    "If checked, the new ground unit recruitment behavior will be used. Ground "
+    "units may only be purchased at factories or off-map spawns and must "
+    "travel to the front line."
+)
+NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL = (
+    "Enable new ground unit recruitment behavior (WIP)<br />"
+    '<a href="https://github.com/Khopa/dcs_liberation/issues/986">'
+    '<span style="color:#FFFFFF;">More information.</span></a>'
+)
 
 
 class StartTypeComboBox(QComboBox):
@@ -366,6 +377,27 @@ class QSettingsWindow(QDialog):
 
         general_layout.addWidget(old_awac_label, 1, 0)
         general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
+
+        def set_new_ground_unit_recruitment(value: bool) -> None:
+            self.game.settings.enable_new_ground_unit_recruitment = value
+
+        new_ground_unit_recruitment_behavior_label = QLabel(
+            NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL
+        )
+        new_ground_unit_recruitment_behavior_label.setToolTip(
+            NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP
+        )
+        new_ground_unit_recruitment_behavior_label.setOpenExternalLinks(True)
+
+        new_ground_unit_recruitment = QCheckBox()
+        new_ground_unit_recruitment.setToolTip(NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP)
+        new_ground_unit_recruitment.setChecked(
+            self.game.settings.enable_new_ground_unit_recruitment
+        )
+        new_ground_unit_recruitment.toggled.connect(set_new_ground_unit_recruitment)
+
+        general_layout.addWidget(new_ground_unit_recruitment_behavior_label, 2, 0)
+        general_layout.addWidget(new_ground_unit_recruitment, 2, 1, Qt.AlignRight)
 
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)

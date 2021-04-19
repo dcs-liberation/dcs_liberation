@@ -33,6 +33,10 @@ class Settings:
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
 
+    #: Feature flag for new ground unit behavior. Old campaigns are sufficiently broken
+    #: that we need to implement this conditionally for the time being.
+    enable_new_ground_unit_recruitment: bool = False
+
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True
