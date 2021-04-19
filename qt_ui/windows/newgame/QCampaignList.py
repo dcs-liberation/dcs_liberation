@@ -4,7 +4,7 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from PySide2 import QtGui
 from PySide2.QtCore import QItemSelectionModel
@@ -12,7 +12,7 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
 import qt_ui.uiconstants as CONST
-from game.theater import ConflictTheater
+from game.theater import ConflictTheater, MizCampaignLoader
 
 PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
@@ -26,6 +26,12 @@ class Campaign:
     icon_name: str
     authors: str
     description: str
+
+    #: The revision of the campaign format the campaign was built for. We do not attempt
+    #: to migrate old campaigns, but this is used to show a warning in the UI when
+    #: selecting a campaign that is not up to date.
+    version: int
+
     recommended_player_faction: str
     recommended_enemy_faction: str
     performance: Union[PERF_FRIENDLY, PERF_MEDIUM, PERF_HARD, PERF_NASA]
@@ -43,6 +49,7 @@ class Campaign:
             f"Terrain_{sanitized_theater}",
             data.get("authors", "???"),
             data.get("description", ""),
+            data.get("version", 0),
             data.get("recommended_player_faction", "USA 2005"),
             data.get("recommended_enemy_faction", "Russia 1990"),
             data.get("performance", 0),
@@ -52,6 +59,27 @@ class Campaign:
 
     def load_theater(self) -> ConflictTheater:
         return ConflictTheater.from_json(self.path.parent, self.data)
+
+    @property
+    def is_out_of_date(self) -> bool:
+        """Returns True if this campaign is not up to date with the latest format."""
+        return self.version < MizCampaignLoader.VERSION
+
+    @property
+    def is_from_future(self) -> bool:
+        """Returns True if this campaign is newer than the supported format."""
+        return self.version > MizCampaignLoader.VERSION
+
+    @property
+    def is_compatible(self) -> bool:
+        """Returns True is this campaign was built for this version of the game."""
+        if not self.version:
+            return False
+        if self.is_out_of_date:
+            return False
+        if self.is_from_future:
+            return False
+        return True
 
 
 def load_campaigns() -> List[Campaign]:
@@ -73,7 +101,11 @@ class QCampaignItem(QStandardItem):
         super(QCampaignItem, self).__init__()
         self.setIcon(QtGui.QIcon(CONST.ICONS[campaign.icon_name]))
         self.setEditable(False)
-        self.setText(campaign.name)
+        if campaign.is_compatible:
+            name = campaign.name
+        else:
+            name = f"[INCOMPATIBLE] {campaign.name}"
+        self.setText(name)
 
 
 class QCampaignList(QListView):

@@ -321,7 +321,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         # Faction description
         self.campaignMapDescription = QTextEdit("")
         self.campaignMapDescription.setReadOnly(True)
-        self.campaignMapDescription.setMaximumHeight(100)
+        self.campaignMapDescription.setMaximumHeight(200)
 
         self.performanceText = QTextEdit("")
         self.performanceText.setReadOnly(True)
