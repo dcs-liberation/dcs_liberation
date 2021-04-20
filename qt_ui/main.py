@@ -158,6 +158,8 @@ def parse_args() -> argparse.Namespace:
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
+    new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
+
     return parser.parse_args()
 
 
@@ -168,6 +170,7 @@ def create_game(
     supercarrier: bool,
     auto_procurement: bool,
     inverted: bool,
+    cheats: bool,
 ) -> Game:
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
@@ -180,6 +183,8 @@ def create_game(
             automate_front_line_reinforcements=auto_procurement,
             automate_aircraft_reinforcements=auto_procurement,
             enable_new_ground_unit_recruitment=True,
+            enable_frontline_cheats=cheats,
+            enable_base_capture_cheat=cheats,
         ),
         GeneratorSettings(
             start_date=datetime.today(),
@@ -227,6 +232,7 @@ def main():
             args.supercarrier,
             args.auto_procurement,
             args.inverted,
+            args.cheats,
         )
 
     run_ui(game)
