@@ -711,6 +711,12 @@ class ControlPoint(MissionTarget, ABC):
     def has_active_frontline(self) -> bool:
         return any(not c.is_friendly(self.captured) for c in self.connected_points)
 
+    def front_is_active(self, other: ControlPoint) -> bool:
+        if other not in self.connected_points:
+            raise ValueError
+
+        return self.captured != other.captured
+
 
 class Airfield(ControlPoint):
     def __init__(

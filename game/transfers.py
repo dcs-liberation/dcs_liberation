@@ -42,6 +42,9 @@ class RoadTransferOrder(TransferOrder):
         supply_route = SupplyRoute.for_control_point(self.position)
         return supply_route.shortest_path_between(self.position, self.destination)
 
+    def next_stop(self) -> ControlPoint:
+        return self.path()[0]
+
 
 class PendingTransfers:
     def __init__(self) -> None:

@@ -4,7 +4,7 @@ import datetime
 import logging
 import math
 from functools import singledispatchmethod
-from typing import Iterable, Iterator, List, Optional, Tuple
+from typing import Iterable, Iterator, List, Optional, Set, Tuple
 
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtCore import QLineF, QPointF, QRectF, Qt
@@ -39,7 +39,7 @@ from shapely.geometry import (
 import qt_ui.uiconstants as CONST
 from game import Game
 from game.navmesh import NavMesh
-from game.theater import ControlPoint, Enum
+from game.theater import ControlPoint, Enum, SupplyRoute
 from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
@@ -644,14 +644,7 @@ class QLiberationMap(QGraphicsView):
                     QPen(CONST.COLORS["green"], width=10, s=Qt.DashDotLine),
                 )
 
-        for cp in self.game.theater.enemy_points():
-            if DisplayOptions.lines:
-                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
-
-        for cp in self.game.theater.player_points():
-            if DisplayOptions.lines:
-                self.scene_create_lines_for_cp(cp, playerColor, enemyColor)
-
+        self.draw_supply_routes()
         self.draw_flight_plans(scene)
 
         for cp in self.game.theater.controlpoints:
@@ -829,7 +822,11 @@ class QLiberationMap(QGraphicsView):
         )
 
     def draw_bezier_frontline(
-        self, scene: QGraphicsScene, pen: QPen, frontline: FrontLine
+        self,
+        scene: QGraphicsScene,
+        pen: QPen,
+        frontline: FrontLine,
+        convoy_size: int = 0,
     ) -> None:
         """
         Thanks to Alquimista for sharing a python implementation of the bezier algorithm this is adapted from.
@@ -844,32 +841,93 @@ class QLiberationMap(QGraphicsView):
         for point in bezier_curve_range(
             int(len(bezier_fixed_points) * 2), bezier_fixed_points
         ):
-            scene.addLine(old_point[0], old_point[1], point[0], point[1], pen=pen)
+            line = scene.addLine(
+                old_point[0], old_point[1], point[0], point[1], pen=pen
+            )
+            if convoy_size:
+                units = "units" if convoy_size > 1 else "unit"
+                tooltip = (
+                    f"{convoy_size} {units} transferring between "
+                    f"{frontline.control_point_a} and {frontline.control_point_b}."
+                )
+            else:
+                tooltip = "No convoys present on this supply route."
+            line.setToolTip(tooltip)
             old_point = point
 
-    def scene_create_lines_for_cp(self, cp: ControlPoint, playerColor, enemyColor):
+    def draw_supply_routes(self) -> None:
+        seen = set()
+        for cp in self.game.theater.controlpoints:
+            seen.add(cp)
+            for connected in cp.connected_points:
+                if connected in seen:
+                    continue
+                if DisplayOptions.lines:
+                    self.draw_supply_route_between(cp, connected)
+
+    def _count_units_tranferring_between(self, a: ControlPoint, b: ControlPoint) -> int:
+        # We attempt to short circuit the expensive shortest path computation for the
+        # cases where there is never a transfer, but caching might be needed.
+
+        if a.captured != b.captured:
+            # Cannot transfer to enemy CPs.
+            return 0
+
+        # This is only called for drawing lines between nodes and have rules out routes
+        # to enemy bases, so a and b are guaranteed to be in the same supply route.
+        supply_route = SupplyRoute.for_control_point(a)
+
+        count = 0
+        points = {a, b}
+        for transfer in self.game.transfers:
+            # No possible route from our network to this transfer.
+            if transfer.position not in supply_route:
+                continue
+
+            # Anything left is a transfer within our supply route.
+            transfer_points = {transfer.position, transfer.next_stop()}
+            if points == transfer_points:
+                count += sum(transfer.units.values())
+        return count
+
+    def supply_route_color(self, a: ControlPoint, b: ControlPoint) -> QColor:
+        if a.front_is_active(b):
+            return CONST.COLORS["red"]
+        elif a.captured:
+            return CONST.COLORS["dark_" + self.game.get_player_color()]
+        else:
+            return CONST.COLORS["dark_" + self.game.get_enemy_color()]
+
+    def supply_route_style(
+        self, a: ControlPoint, b: ControlPoint, has_transfer: bool
+    ) -> Qt.PenStyle:
+        if a.front_is_active(b) or has_transfer:
+            return Qt.PenStyle.SolidLine
+        return Qt.PenStyle.DotLine
+
+    def supply_route_pen(
+        self, a: ControlPoint, b: ControlPoint, has_transfer: bool
+    ) -> QPen:
+        color = self.supply_route_color(a, b)
+        pen = QPen(brush=color)
+        pen.setColor(color)
+        pen.setStyle(self.supply_route_style(a, b, has_transfer))
+        pen.setWidth(6)
+        return pen
+
+    def draw_supply_route_between(self, a: ControlPoint, b: ControlPoint) -> None:
         scene = self.scene()
-        for connected_cp in cp.connected_points:
-            pos2 = self._transform_point(connected_cp.position)
-            if not cp.captured:
-                color = CONST.COLORS["dark_" + enemyColor]
+
+        convoy_size = self._count_units_tranferring_between(a, b)
+        pen = self.supply_route_pen(a, b, convoy_size > 0)
+        frontline = FrontLine(a, b, self.game.theater)
+        if a.front_is_active(b):
+            if DisplayOptions.actual_frontline_pos:
+                self.draw_actual_frontline(frontline, scene, pen)
             else:
-                color = CONST.COLORS["dark_" + playerColor]
-            pen = QPen(brush=color)
-            pen.setColor(color)
-            pen.setWidth(6)
-            frontline = FrontLine(cp, connected_cp, self.game.theater)
-            if (
-                cp.captured
-                and not connected_cp.captured
-                and Conflict.has_frontline_between(cp, connected_cp)
-            ):
-                if DisplayOptions.actual_frontline_pos:
-                    self.draw_actual_frontline(frontline, scene, pen)
-                else:
-                    self.draw_frontline_approximation(frontline, scene, pen)
-            else:
-                self.draw_bezier_frontline(scene, pen, frontline)
+                self.draw_frontline_approximation(frontline, scene, pen)
+        else:
+            self.draw_bezier_frontline(scene, pen, frontline, convoy_size)
 
     def draw_frontline_approximation(
         self, frontline: FrontLine, scene: QGraphicsScene, pen: QPen
