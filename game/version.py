@@ -36,7 +36,7 @@ VERSION = _build_version_string()
 #: Version 2
 #: * Front line endpoints now define convoy origin/destination waypoints. They should be
 #:   placed on or near roads.
-#: * Factories (Warehouse_A) define factory objectives. Only control points with
+#: * Factories (Workshop_A) define factory objectives. Only control points with
 #:   factories will be able to recruit ground units, so they should exist in sufficient
 #:   number and be protected by IADS.
 CAMPAIGN_FORMAT_VERSION = 2
