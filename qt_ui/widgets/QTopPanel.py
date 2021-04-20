@@ -16,6 +16,8 @@ import qt_ui.uiconstants as CONST
 from game import Game
 from game.event.airwar import AirWarEvent
 from gen.ato import Package
+from gen.flights.flight import FlightType
+from gen.flights.flightplan import ConvoyInterdictionFlightPlan
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -199,6 +201,36 @@ class QTopPanel(QFrame):
         )
         return result == QMessageBox.Yes
 
+    def ato_has_ai_convoy_interdiction(self) -> bool:
+        for package in self.game.blue_ato.packages:
+            for flight in package.flights:
+                if (
+                    isinstance(flight.flight_plan, ConvoyInterdictionFlightPlan)
+                    and not flight.client_count
+                ):
+                    return True
+        return False
+
+    def confirm_ai_convoy_interdiction_launch(self) -> bool:
+        result = QMessageBox.question(
+            self,
+            "Continue with AI convoy interdiction missions?",
+            (
+                "AI only convoy interdiction missions were planned. AI behavior for "
+                "these missions has not been developed so they will probably get "
+                "themselves killed. Continuing is not recommended.<br />"
+                "<br />"
+                "To remove AI convoy interdiction missions, delete any BAI flights "
+                "that are planned against supply route objectives.<br />"
+                "<br />"
+                "Click 'Yes' to continue with AI only convoy interdiction missions."
+                "<br /><br />Click 'No' to cancel and revise your flight planning."
+            ),
+            QMessageBox.No,
+            QMessageBox.Yes,
+        )
+        return result == QMessageBox.Yes
+
     def confirm_negative_start_time(self, negative_starts: List[Package]) -> bool:
         formatted = "<br />".join(
             [f"{p.primary_task} {p.target.name}" for p in negative_starts]
@@ -239,6 +271,12 @@ class QTopPanel(QFrame):
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
         if not self.ato_has_clients() and not self.confirm_no_client_launch():
+            return
+
+        if (
+            self.ato_has_ai_convoy_interdiction()
+            and not self.confirm_ai_convoy_interdiction_launch()
+        ):
             return
 
         negative_starts = self.negative_start_packages()

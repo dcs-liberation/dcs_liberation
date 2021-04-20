@@ -3,10 +3,19 @@ from typing import List, Optional
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPen
-from PySide2.QtWidgets import QGraphicsItem, QGraphicsLineItem
+from PySide2.QtWidgets import (
+    QAction,
+    QGraphicsItem,
+    QGraphicsLineItem,
+    QGraphicsSceneContextMenuEvent,
+    QGraphicsSceneHoverEvent,
+    QMenu,
+)
 
 from game.theater import ControlPoint
+from game.theater.supplyroutes import SupplyRouteLink
 from game.transfers import RoadTransferOrder
+from qt_ui.dialogs import Dialog
 from qt_ui.uiconstants import COLORS
 
 
@@ -28,6 +37,7 @@ class SupplyRouteSegment(QGraphicsLineItem):
         self.convoys = convoys
         self.setPen(self.make_pen())
         self.setToolTip(self.make_tooltip())
+        self.setAcceptHoverEvents(True)
 
     @cached_property
     def convoy_size(self) -> int:
@@ -71,3 +81,33 @@ class SupplyRouteSegment(QGraphicsLineItem):
     @property
     def has_convoys(self) -> bool:
         return bool(self.convoys)
+
+    @property
+    def targetable(self) -> bool:
+        return self.convoys and not self.control_point_a.captured
+
+    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
+        # Can only plan missions against enemy supply routes that have convoys.
+        if not self.targetable:
+            super().contextMenuEvent(event)
+            return
+
+        menu = QMenu("Menu")
+
+        new_package_action = QAction(f"New package")
+        new_package_action.triggered.connect(self.open_new_package_dialog)
+        menu.addAction(new_package_action)
+
+        menu.exec_(event.screenPos())
+
+    def open_new_package_dialog(self) -> None:
+        """Opens the dialog for planning a new mission package."""
+        Dialog.open_new_package_dialog(
+            SupplyRouteLink(self.control_point_a, self.control_point_b)
+        )
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
+        if self.targetable:
+            self.setCursor(Qt.PointingHandCursor)
+        else:
+            super().hoverEnterEvent(event)

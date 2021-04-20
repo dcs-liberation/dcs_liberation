@@ -6,6 +6,8 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, Iterator, List, Optional
 
+from dcs import Point
+from game.theater import FlightType, MissionTarget
 from game.theater.controlpoint import ControlPoint
 
 
@@ -97,3 +99,25 @@ class SupplyRoute:
             current = previous
         path.reverse()
         return path
+
+
+class SupplyRouteLink(MissionTarget):
+    def __init__(self, a: ControlPoint, b: ControlPoint) -> None:
+        self.control_point_a = a
+        self.control_point_b = b
+        super().__init__(
+            f"Supply route between {a} and {b}",
+            Point((a.position.x + b.position.x) / 2, (a.position.y + b.position.y) / 2),
+        )
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        yield from [
+            FlightType.BAI,
+            # TODO: Escort
+            # TODO: SEAD
+            # TODO: Recon
+            # TODO: TARCAP
+        ]
+
+    def is_friendly(self, to_player: bool) -> bool:
+        return self.control_point_a.captured

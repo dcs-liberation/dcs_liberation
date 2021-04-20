@@ -350,6 +350,63 @@ class WaypointBuilder:
         )
 
     @staticmethod
+    def convoy_search_start(
+        control_point: ControlPoint, altitude: Distance
+    ) -> FlightWaypoint:
+        """Creates a convoy search start waypoint.
+
+        Args:
+            control_point: Control point for the beginning of the search.
+            altitude: Altitude of the racetrack.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.INGRESS_BAI,
+            control_point.position.x,
+            control_point.position.y,
+            altitude,
+        )
+        waypoint.name = control_point.name
+        waypoint.description = "Beginning of convoy search area"
+        waypoint.pretty_name = "Search start"
+        return waypoint
+
+    @staticmethod
+    def convoy_search_end(
+        control_point: ControlPoint, altitude: Distance
+    ) -> FlightWaypoint:
+        """Creates a convoy search start waypoint.
+
+        Args:
+            control_point: Control point for the beginning of the search.
+            altitude: Altitude of the racetrack.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.EGRESS,
+            control_point.position.x,
+            control_point.position.y,
+            altitude,
+        )
+        waypoint.name = control_point.name
+        waypoint.description = "End of convoy search area"
+        waypoint.pretty_name = "Search end"
+        return waypoint
+
+    def convoy_search(
+        self, start: ControlPoint, end: ControlPoint, altitude: Distance
+    ) -> Tuple[FlightWaypoint, FlightWaypoint]:
+        """Creates two waypoint for a convoy search path.
+
+        Args:
+            start: The beginning convoy search waypoint.
+            end: The ending convoy search waypoint.
+            altitude: The convoy search altitude.
+        """
+        return (
+            self.convoy_search_start(start, altitude),
+            self.convoy_search_end(end, altitude),
+        )
+
+    @staticmethod
     def orbit(start: Point, altitude: Distance) -> FlightWaypoint:
         """Creates an circular orbit point.
 

@@ -30,6 +30,7 @@ from game.theater import (
     SamGroundObject,
     TheaterGroundObject,
 )
+from game.theater.supplyroutes import SupplyRouteLink
 from game.theater.theatergroundobject import EwrGroundObject
 from game.utils import Distance, Speed, feet, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
@@ -464,6 +465,25 @@ class CasFlightPlan(PatrollingFlightPlan):
 
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_end
+
+
+@dataclass(frozen=True)
+class ConvoyInterdictionFlightPlan(PatrollingFlightPlan):
+    takeoff: FlightWaypoint
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield from [
+            self.patrol_start,
+            self.patrol_end,
+        ]
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
 
 
 @dataclass(frozen=True)
@@ -1014,13 +1034,16 @@ class FlightPlanBuilder:
             hold_duration=timedelta(hours=4),
         )
 
-    def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
+    def generate_bai(self, flight: Flight) -> FlightPlan:
         """Generates a BAI flight plan.
 
         Args:
             flight: The flight to generate the flight plan for.
         """
         location = self.package.target
+
+        if isinstance(location, SupplyRouteLink):
+            return self.generate_supply_route_bai(flight, location)
 
         if not isinstance(location, TheaterGroundObject):
             raise InvalidObjectiveLocation(flight.flight_type, location)
@@ -1032,6 +1055,60 @@ class FlightPlanBuilder:
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
+        )
+
+    def generate_supply_route_bai(
+        self, flight: Flight, location: SupplyRouteLink
+    ) -> ConvoyInterdictionFlightPlan:
+        """Generates a BAI flight plan for attacking a supply route.
+
+        These flight plans are extremely rough because we do not know where the roads
+        are. For now they're mostly only usable by players. The flight plan includes a
+        start and end patrol point matching the end points of the convoy's route and a
+        30 minute time on station. It is up to the player to find the target.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+            location: The supply route link to attack.
+        """
+
+        origin = self.package_airfield()
+        a_dist = origin.distance_to(location.control_point_a)
+        b_dist = origin.distance_to(location.control_point_b)
+        if a_dist < b_dist:
+            near = location.control_point_a
+            far = location.control_point_b
+        else:
+            near = location.control_point_b
+            far = location.control_point_a
+
+        patrol_alt = meters(
+            random.randint(
+                int(self.doctrine.min_patrol_altitude.meters),
+                int(self.doctrine.max_patrol_altitude.meters),
+            )
+        )
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+        start, end = builder.convoy_search(near, far, patrol_alt)
+
+        return ConvoyInterdictionFlightPlan(
+            self.package,
+            flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(
+                flight.departure.position, near.position, patrol_alt
+            ),
+            nav_from=builder.nav_path(
+                far.position, flight.arrival.position, patrol_alt
+            ),
+            patrol_start=start,
+            patrol_end=end,
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            # Not relevant because player only.
+            engagement_distance=meters(0),
+            patrol_duration=timedelta(minutes=30),
         )
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
