@@ -40,8 +40,6 @@ class RoadTransferOrder(TransferOrder):
 
     def path(self) -> List[ControlPoint]:
         supply_route = SupplyRoute.for_control_point(self.position)
-        if supply_route is None:
-            raise RuntimeError(f"Supply route from {self.position.name} interrupted")
         return supply_route.shortest_path_between(self.position, self.destination)
 
 
@@ -83,7 +81,7 @@ class PendingTransfers:
             return True
 
         supply_route = SupplyRoute.for_control_point(transfer.destination)
-        if supply_route is None or transfer.position not in supply_route:
+        if transfer.position not in supply_route:
             logging.info(
                 f"Route from {transfer.position.name} to {transfer.destination.name} "
                 "was cut off."

@@ -42,11 +42,14 @@ class SupplyRoute:
     def __iter__(self) -> Iterator[ControlPoint]:
         yield from self.control_points
 
+    def __len__(self) -> int:
+        return len(self.control_points)
+
     @classmethod
-    def for_control_point(cls, control_point: ControlPoint) -> Optional[SupplyRoute]:
+    def for_control_point(cls, control_point: ControlPoint) -> SupplyRoute:
         connected_friendly_points = control_point.transitive_connected_friendly_points()
         if not connected_friendly_points:
-            return None
+            return SupplyRoute([control_point])
         return SupplyRoute([control_point] + connected_friendly_points)
 
     def shortest_path_between(

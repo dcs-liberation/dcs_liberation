@@ -105,7 +105,7 @@ class QBaseMenu2(QDialog):
 
     @property
     def has_transfer_destinations(self) -> bool:
-        return SupplyRoute.for_control_point(self.cp) is not None
+        return len(SupplyRoute.for_control_point(self.cp)) > 1
 
     @property
     def can_repair_runway(self) -> bool:

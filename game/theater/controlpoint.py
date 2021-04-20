@@ -346,11 +346,7 @@ class ControlPoint(MissionTarget, ABC):
 
         from game.theater.supplyroutes import SupplyRoute
 
-        supply_route = SupplyRoute.for_control_point(self)
-        if supply_route is None:
-            return False
-
-        for cp in supply_route:
+        for cp in SupplyRoute.for_control_point(self):
             if cp.can_recruit_ground_units(game):
                 return True
         return False

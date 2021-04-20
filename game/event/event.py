@@ -551,8 +551,6 @@ class UnitsDeliveryEvent:
             return self.destination
 
         supply_route = SupplyRoute.for_control_point(self.destination)
-        if supply_route is None:
-            return None
 
         sources = []
         for control_point in supply_route:
