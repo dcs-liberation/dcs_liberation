@@ -9,17 +9,17 @@
     "Bf_109K_4"
   ],
   "frontline_units": [
-    "MT_Pz_Kpfw_IV_Ausf_H",
-    "APC_Sd_Kfz_251",
+    "MT_PzIV_H",
+    "APC_Sd_Kfz_251_Halftrack",
     "AAA_8_8cm_Flak_18"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Blitz_3_6_6700A"
+    "Truck_Opel_Blitz"
   ],
   "infantry_units": [
-    "Infantry_Soldier_Rus"
+    "Infantry_AK_74_Rus"
   ],
   "air_defenses": [
     "Flak18Generator"

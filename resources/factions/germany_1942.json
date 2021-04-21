@@ -10,20 +10,20 @@
     "Ju_88A4"
   ],
   "frontline_units": [
-    "MT_Pz_Kpfw_IV_Ausf_H",
-    "APC_Sd_Kfz_251",
-    "AC_Sd_Kfz_234_2_Puma",
-    "TD_Jagdpanzer_IV",
+    "MT_PzIV_H",
+    "APC_Sd_Kfz_251_Halftrack",
+    "IFV_Sd_Kfz_234_2_Puma",
+    "SPG_Jagdpanzer_IV",
     "AAA_8_8cm_Flak_18"
   ],
   "artillery_units": [
-    "Sturmpanzer_IV_Brummbär"
+    "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "logistics_units": [
-    "Blitz_3_6_6700A",
-    "Kübelwagen_82",
-    "Sd_Kfz_7",
-    "Sd_Kfz_2"
+    "Truck_Opel_Blitz",
+    "LUV_Kubelwagen_82",
+    "Carrier_Sd_Kfz_7_Tractor",
+    "LUV_Kettenrad"
   ],
   "infantry_units": [
     "Infantry_Mauser_98"

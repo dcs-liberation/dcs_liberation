@@ -16,7 +16,7 @@ class SA8Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SA_8_Osa_9A33,
+            AirDefence.SAM_SA_8_Osa_Gecko_TEL,
             "OSA",
             self.position.x,
             self.position.y,

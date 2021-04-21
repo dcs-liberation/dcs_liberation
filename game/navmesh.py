@@ -21,6 +21,10 @@ from game.threatzones import ThreatZones
 from game.utils import nautical_miles
 
 
+class NavMeshError(RuntimeError):
+    pass
+
+
 class NavMeshPoly:
     def __init__(self, ident: int, poly: Polygon, threatened: bool) -> None:
         self.ident = ident
@@ -125,7 +129,7 @@ class NavMesh:
             path.append(current.world_point)
             previous = came_from[current]
             if previous is None:
-                raise RuntimeError(
+                raise NavMeshError(
                     f"Could not reconstruct path to {destination} from {origin}"
                 )
             current = previous
@@ -140,10 +144,12 @@ class NavMesh:
     def shortest_path(self, origin: Point, destination: Point) -> List[Point]:
         origin_poly = self.localize(origin)
         if origin_poly is None:
-            raise ValueError(f"Origin point {origin} is outside the navmesh")
+            raise NavMeshError(f"Origin point {origin} is outside the navmesh")
         destination_poly = self.localize(destination)
         if destination_poly is None:
-            raise ValueError(f"Origin point {destination} is outside the navmesh")
+            raise NavMeshError(
+                f"Destination point {destination} is outside the navmesh"
+            )
 
         return self._shortest_path(
             NavPoint(self.dcs_to_shapely_point(origin), origin_poly),
@@ -203,7 +209,7 @@ class NavMesh:
         # threatened airbases at the map edges have room to retreat from the
         # threat without running off the navmesh.
         return box(*LineString(points).bounds).buffer(
-            nautical_miles(100).meters, resolution=1
+            nautical_miles(200).meters, resolution=1
         )
 
     @staticmethod

@@ -9,7 +9,7 @@ MISSILES_MAP = {"V1GroupGenerator": V1GroupGenerator, "ScudGenerator": ScudGener
 
 def generate_missile_group(game, ground_object, faction_name: str):
     """
-    This generate a ship group
+    This generate a missiles group
     :return: Nothing, but put the group reference inside the ground object
     """
     faction = db.FACTIONS[faction_name]

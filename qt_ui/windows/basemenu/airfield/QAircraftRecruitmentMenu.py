@@ -12,11 +12,12 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.task import CAP, CAS
+from dcs.helicopters import helicopter_map
+from dcs.task import CAP, CAS, AWACS
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
-from game.theater import ControlPoint
+from game.theater import ControlPoint, ControlPointType
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
@@ -45,7 +46,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        tasks = [CAP, CAS]
+        tasks = [CAP, CAS, AWACS]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
@@ -62,6 +63,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                 if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
                     continue
                 if self.cp.is_lha and unit not in db.LHA_CAPABLE:
+                    continue
+                if (
+                    self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
+                    and unit not in helicopter_map.values()
+                ):
                     continue
                 unit_types.add(unit)
 

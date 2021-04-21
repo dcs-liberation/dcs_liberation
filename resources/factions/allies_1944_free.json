@@ -15,13 +15,13 @@
   ],
   "frontline_units": [
     "MT_M4_Sherman",
-    "APC_M2A1",
-    "AAA_Bofors_40mm"
+    "APC_M2A1_Halftrack",
+    "AAA_40mm_Bofors"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Bedford_MWD"
+    "Truck_Bedford"
   ],
   "infantry_units": [
     "Paratrooper_AKS"

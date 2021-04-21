@@ -17,6 +17,7 @@ class EnvironmentGenerator:
         self.mission.weather.clouds_thickness = clouds.thickness
         self.mission.weather.clouds_density = clouds.density
         self.mission.weather.clouds_iprecptns = clouds.precipitation
+        self.mission.weather.clouds_preset = clouds.preset
 
     def set_fog(self, fog: Optional[Fog]) -> None:
         if fog is None:

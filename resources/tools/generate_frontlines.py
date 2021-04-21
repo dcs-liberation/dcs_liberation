@@ -12,13 +12,16 @@ Terrain = Union[Caucasus, PersianGulf, Syria, Nevada, Normandy, TheChannel]
 
 SAVE_PATH = Path("resources/frontlines")
 
+
 def validate_miz(file_path: Path) -> bool:
     return bool(file_path.suffix == ".miz" and file_path.exists())
+
 
 def validate_airports(airports: Tuple[int], terrain: Terrain):
     for airport in airports:
         if terrain.airport_by_id(airport) is None:
             print(f"Cannot load airport for invalid id {airport}")
+
 
 def load_files(files) -> List[Mission]:
     missions = []
@@ -31,25 +34,29 @@ def load_files(files) -> List[Mission]:
             print(f"Error: {file} doesn't look like a valid mission file.")
     return missions
 
+
 def create_frontline_dict(mission: Mission) -> Dict[str, Dict]:
     frontline_dict = {}
     for group in mission.country("USA").vehicle_group:
-        groupname = str(group.name).replace(group.name.id, "").replace(":","")
+        groupname = str(group.name).replace(group.name.id, "").replace(":", "")
         control_points = groupname.split("|")
         frontline_dict[groupname] = {
             "points": [(i.position.x, i.position.y) for i in group.points],
-            "start_cp": int(control_points[0])
-            }
+            "start_cp": int(control_points[0]),
+        }
     return frontline_dict
+
 
 def process_missions(missions: List[Mission]) -> None:
     for mission in missions:
         frontline_dict = create_frontline_dict(mission)
         write_json(frontline_dict, mission.terrain.name.lower())
 
+
 def write_json(frontline_dict: Dict[str, Dict], terrain_name: str) -> None:
     with open(SAVE_PATH.joinpath(terrain_name + ".json"), "w") as file:
         json.dump(frontline_dict, file)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -69,6 +76,3 @@ if __name__ == "__main__":
     # frontline_dict = create_frontline_dict(missions[0])
 
     print("Done")
-
-
-

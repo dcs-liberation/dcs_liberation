@@ -26,29 +26,29 @@
     "IFV_BMP_1",
     "IFV_BMP_2",
     "APC_BTR_80",
-    "ARV_BRDM_2",
+    "IFV_BRDM_2",
     "APC_MTLB",
-    "APC_Cobra",
+    "APC_Cobra__Scout",
     "MBT_T_55",
     "MBT_T_72B",
     "MBT_T_90",
-    "AAA_ZSU_57_2"
+    "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27",
-    "SPH_2S9_Nona",
-    "MLRS_BM_21_Grad",
-    "SPH_2S1_Gvozdika"
+    "MLRS_BM_27_Uragan_220mm",
+    "SPH_2S9_Nona_120mm_M",
+    "MLRS_BM_21_Grad_122mm",
+    "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [
-    "Transport_Ural_375",
-    "Transport_UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",
-    "Infantry_Soldier_Rus",
+    "Infantry_AK_74_Rus",
     "Paratrooper_RPG_16",
-    "SAM_SA_18_Igla_S_MANPADS"
+    "MANPADS_SA_18_Igla_S_Grouse"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",

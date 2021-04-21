@@ -24,7 +24,7 @@ class F_22A(PlaneType):
     chaff_charge_size = 1
     flare_charge_size = 2
     eplrs = True
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
 
     property_defaults = {
@@ -36,7 +36,6 @@ class F_22A(PlaneType):
             id = "BAY_DOOR_OPTION"
 
     class Liveries:
-
         class USSR(Enum):
             default = "default"
             _154_wg = "154 wg"
@@ -1767,15 +1766,15 @@ class F_22A(PlaneType):
         Fuel_tank_610_gal = (2, Weapons.Fuel_tank_610_gal)
 
     class Pylon3:
-        AIM_120C = (3, Weapons.AIM_120C)
+        AIM_120C = (3, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (3, F22AWeapons.AIM_120D)
 
     class Pylon4:
-        AIM_120C = (4, Weapons.AIM_120C)
+        AIM_120C = (4, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (4, F22AWeapons.AIM_120D)
 
     class Pylon5:
-        AIM_120C = (5, Weapons.AIM_120C)
+        AIM_120C = (5, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (5, F22AWeapons.AIM_120D)
 
     class Pylon6:
@@ -1786,15 +1785,15 @@ class F_22A(PlaneType):
         Smokewinder___yellow = (6, Weapons.Smokewinder___yellow)
 
     class Pylon7:
-        AIM_120C = (7, Weapons.AIM_120C)
+        AIM_120C = (7, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (7, F22AWeapons.AIM_120D)
 
     class Pylon8:
-        AIM_120C = (8, Weapons.AIM_120C)
+        AIM_120C = (8, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (8, F22AWeapons.AIM_120D)
 
     class Pylon9:
-        AIM_120C = (9, Weapons.AIM_120C)
+        AIM_120C = (9, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         AIM_120D = (9, F22AWeapons.AIM_120D)
 
     class Pylon10:
@@ -1806,5 +1805,11 @@ class F_22A(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
-    tasks = [task.CAP, task.Escort, task.FighterSweep, task.Intercept, task.Reconnaissance]
+    tasks = [
+        task.CAP,
+        task.Escort,
+        task.FighterSweep,
+        task.Intercept,
+        task.Reconnaissance,
+    ]
     task_default = task.CAP

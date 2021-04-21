@@ -12,8 +12,8 @@ from dcs.helicopters import (
     OH_58D,
     SA342L,
     SA342M,
-    UH_1H,
     SH_60B,
+    UH_1H,
 )
 from dcs.planes import (
     AJS37,
@@ -22,11 +22,14 @@ from dcs.planes import (
     A_10C,
     A_10C_2,
     A_20G,
+    A_50,
     B_17G,
     B_1B,
     B_52H,
     Bf_109K_4,
     C_101CC,
+    E_2C,
+    E_3A,
     FA_18C_hornet,
     FW_190A8,
     FW_190D9,
@@ -40,9 +43,11 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
+    I_16,
     JF_17,
     J_11A,
     Ju_88A4,
+    KJ_2000,
     L_39ZA,
     MQ_9_Reaper,
     M_2000C,
@@ -54,7 +59,6 @@ from dcs.planes import (
     MiG_27K,
     MiG_29A,
     MiG_29G,
-    MiG_29K,
     MiG_29S,
     MiG_31,
     Mirage_2000_5,
@@ -88,13 +92,11 @@ from dcs.planes import (
 from dcs.unittype import FlyingType
 
 from gen.flights.flight import FlightType
-
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
-from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_A_S, Rafale_M, Rafale_B
-from pydcs_extensions.su57.su57 import Su_57
 from pydcs_extensions.hercules.hercules import Hercules
+from pydcs_extensions.mb339.mb339 import MB_339PAN
+from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
@@ -111,14 +113,12 @@ CAP_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     MiG_25PD,
-    Rafale_M,
     Su_33,
     Su_30,
     Su_27,
     J_11A,
     F_15C,
     MiG_29S,
-    MiG_29K,
     MiG_29G,
     MiG_29A,
     F_16C_50,
@@ -155,8 +155,8 @@ CAP_CAPABLE = [
 # Used for CAS (Close air support) and BAI (Battlefield Interdiction)
 CAS_CAPABLE = [
     A_10C_2,
-    A_10C,
     B_1B,
+    A_10C,
     F_14B,
     F_14A_135_GR,
     Su_25TM,
@@ -165,8 +165,6 @@ CAS_CAPABLE = [
     F_15E,
     F_16C_50,
     FA_18C_hornet,
-    Rafale_A_S,
-    Rafale_B,
     Tornado_GR4,
     Tornado_IDS,
     JF_17,
@@ -180,6 +178,7 @@ CAS_CAPABLE = [
     S_3B,
     Su_34,
     Su_30,
+    MiG_19P,
     MiG_29S,
     MiG_27K,
     MiG_29A,
@@ -227,8 +226,6 @@ SEAD_CAPABLE = [
     Tornado_IDS,
     Su_25T,
     Su_25TM,
-    Rafale_A_S,
-    Rafale_B,
     F_4E,
     A_4E_C,
     AV8BNA,
@@ -276,8 +273,6 @@ STRIKE_CAPABLE = [
     Tu_22M3,
     F_15E,
     AJS37,
-    Rafale_A_S,
-    Rafale_B,
     Tornado_GR4,
     F_16C_50,
     FA_18C_hornet,
@@ -296,7 +291,6 @@ STRIKE_CAPABLE = [
     Su_30,
     Su_27,
     MiG_29S,
-    MiG_29K,
     MiG_29G,
     MiG_29A,
     JF_17,
@@ -333,8 +327,6 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
-    Rafale_A_S,
-    Rafale_B,
     Su_24M,
     Su_17M4,
     JF_17,
@@ -369,6 +361,13 @@ TRANSPORT_CAPABLE = [
 
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
 
+AEWC_CAPABLE = [
+    E_3A,
+    E_2C,
+    A_50,
+    KJ_2000,
+]
+
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
@@ -392,6 +391,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return STRIKE_CAPABLE
     elif task == FlightType.ESCORT:
         return CAP_CAPABLE
+    elif task == FlightType.AEWC:
+        return AEWC_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []

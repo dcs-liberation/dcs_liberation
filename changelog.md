@@ -1,3 +1,38 @@
+# 2.5.0
+
+Saves from 2.4 are not compatible with 2.5.
+
+## Features/Improvements
+
+* **[Engine]** DCS 2.7 Support
+* **[UI]** Improved FOB menu, added a custom banner, and do not display aircraft recruitment menu
+* **[Flight Planner]** Added AEW&C missions. (by siKruger)
+* **[Kneeboard]** Added dark kneeboard option (by GvonH)
+* **[Campaigns]** Multiple EWR sites may now be generated, and EWR sites may be generated outside bases (by SnappyComebacks)
+* **[Mission Generation]** Cloudy and rainy (but not thunderstorm) weather will use the cloud presets from DCS 2.7.
+* **[Plugins]** Added LotATC export plugin (by drsoran)
+* **[Plugins]** Added Splash Damage Plugin (by Wheelijoe)
+* **[Loadouts]** Replaced Litening with ATFLIR for all default F/A-18C loadouts.
+
+## Fixes
+
+* **[Flight Planner]** Front lines now project threat zones, so TARCAP/escorts will not be pruned for flights near the front. Packages may also route around the front line when practical.
+* **[Flight Planner]** Fixed error when planning BAI at SAMs with dead subgroups.
+* **[Flight Planner]** Mig-19 was not allowed for CAS roles fixed
+* **[Flight Planner]** Increased size of navigation planning area to avoid plannign failures with distant waypoints.
+* **[Flight Planner]** Fixed UI refresh when unchecking the "default loadout" box in the loadout editor.
+* **[Objective names]** Fixed typos in objective name : ARMADILLLO -> ARMADILLO (by SnappyComebacks)
+* **[Payloads]** F-86 Sabre was missing a custom payload
+* **[Payloads]** Added GAR-8 period restrictions (by Mustang-25)
+* **[Campaign]** Date now progresses.
+* **[Campaign]** Added game over message when a coalition runs out of functioning airbases.
+* **[Mission Generation]** Fixed "invalid face handle" error in kneeboard generation that occurred on some machines.
+
+## Regressions
+
+* **[Mod Support]** Stopped support for 2.5.5 Rafale Mode, and removed factions that were using it
+* **[Mod Support]** Su-57 mod support might be out of date
+
 # 2.4.3
 
 ## Features/Improvements
@@ -8,7 +43,6 @@
 
 * **[Mods]** Updated C-130J mod data to version 6.4
 * **[Mods]** Updated F-22A mod to latest version
-* **[Payload]** Mirage-2000C : Added Eclair counter measures pod to all default loadouts
 
 # 2.4.2
 

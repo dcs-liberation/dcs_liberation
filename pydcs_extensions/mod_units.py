@@ -3,11 +3,16 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
 from pydcs_extensions.mb339.mb339 import MB_339PAN
-from pydcs_extensions.rafale.rafale import Rafale_M, Rafale_A_S, Rafale_B
 from pydcs_extensions.su57.su57 import Su_57
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
-MODDED_AIRPLANES = [A_4E_C, MB_339PAN, Rafale_A_S, Rafale_M, Rafale_B, Su_57, F_22A, Hercules]
+MODDED_AIRPLANES = [
+    A_4E_C,
+    MB_339PAN,
+    Su_57,
+    F_22A,
+    Hercules,
+]
 MODDED_VEHICLES = [
     frenchpack._FIELD_HIDE,
     frenchpack._FIELD_HIDE_SMALL,
@@ -84,5 +89,5 @@ MODDED_VEHICLES = [
     highdigitsams.SAM_SA_24_Igla_S_manpad,
     highdigitsams.SAM_SA_14_Strela_3_manpad,
     highdigitsams.Polyana_D4M1_C2_node,
-    highdigitsams._34Ya6E_Gazetchik_E_decoy
+    highdigitsams._34Ya6E_Gazetchik_E_decoy,
 ]

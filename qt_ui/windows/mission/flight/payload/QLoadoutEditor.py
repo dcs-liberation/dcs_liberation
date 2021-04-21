@@ -43,4 +43,4 @@ class QLoadoutEditor(QGroupBox):
         self.flight.use_custom_loadout = self.isChecked()
         if not self.isChecked():
             for i in self.findChildren(QPylonEditor):
-                i.default_loadout(i.pylon.number)
+                i.default_loadout()

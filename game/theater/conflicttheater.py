@@ -23,7 +23,7 @@ from dcs.planes import F_15C
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     LHA_1_Tarawa,
-    USS_Arleigh_Burke_IIa,
+    DDG_Arleigh_Burke_IIa,
 )
 from dcs.statics import Fortification
 from dcs.terrain import (
@@ -55,6 +55,7 @@ from .controlpoint import (
     Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
+from ..point_with_heading import PointWithHeading
 from ..utils import Distance, meters, nautical_miles
 
 Numeric = Union[int, float]
@@ -92,29 +93,32 @@ class MizCampaignLoader:
     LHA_UNIT_TYPE = LHA_1_Tarawa.id
     FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
 
-    FOB_UNIT_TYPE = Unarmed.CP_SKP_11_ATC_Mobile_Command_Post.id
+    FOB_UNIT_TYPE = Unarmed.Truck_SKP_11_Mobile_ATC.id
+    FARP_HELIPAD = "SINGLE_HELIPAD"
 
     EWR_UNIT_TYPE = AirDefence.EWR_55G6.id
-    SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300PS_SR_64H6E.id
-    GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_2S6.id
+    SAM_UNIT_TYPE = AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR.id
+    GARRISON_UNIT_TYPE = AirDefence.SAM_SA_19_Tunguska_Grison.id
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
-    SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
-    MISSILE_SITE_UNIT_TYPE = MissilesSS.SRBM_SS_1C_Scud_B_9K72_LN_9P117M.id
-    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.SS_N_2_Silkworm.id
+    SHIP_UNIT_TYPE = DDG_Arleigh_Burke_IIa.id
+    MISSILE_SITE_UNIT_TYPE = MissilesSS.SSM_SS_1C_Scud_B.id
+    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.AShM_SS_N_2_Silkworm.id
 
     # Multiple options for the required SAMs so campaign designers can more
     # accurately see the coverage of their IADS for the expected type.
     REQUIRED_LONG_RANGE_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Patriot_LN_M901.id,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85C.id,
-        AirDefence.SAM_SA_10_S_300PS_LN_5P85D.id,
+        AirDefence.SAM_Patriot_LN.id,
+        AirDefence.SAM_SA_10_S_300_Grumble_TEL_C.id,
+        AirDefence.SAM_SA_10_S_300_Grumble_TEL_D.id,
     }
 
     REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES = {
         AirDefence.SAM_Hawk_LN_M192.id,
-        AirDefence.SAM_SA_2_LN_SM_90.id,
-        AirDefence.SAM_SA_3_S_125_LN_5P73.id,
+        AirDefence.SAM_SA_2_S_75_Guideline_LN.id,
+        AirDefence.SAM_SA_3_S_125_Goa_LN.id,
     }
+
+    REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
 
     BASE_DEFENSE_RADIUS = nautical_miles(2)
 
@@ -245,6 +249,18 @@ class MizCampaignLoader:
             if group.units[0].type in self.REQUIRED_MEDIUM_RANGE_SAM_UNIT_TYPES:
                 yield group
 
+    @property
+    def required_ewrs(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type in self.REQUIRED_EWR_UNIT_TYPE:
+                yield group
+
+    @property
+    def helipads(self) -> Iterator[StaticGroup]:
+        for group in self.blue.static_group:
+            if group.units[0].type == self.FARP_HELIPAD:
+                yield group
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -270,7 +286,7 @@ class MizCampaignLoader:
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for group in self.lhas(blue):
-                # TODO: Name the LHA.
+                # TODO: Name the LHA.db
                 control_point = Lha("lha", group.position, next(self.control_point_id))
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
@@ -329,44 +345,81 @@ class MizCampaignLoader:
         for group in self.garrisons:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_garrisons.append(group.position)
+                closest.preset_locations.base_garrisons.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
             else:
                 logging.warning(f"Found garrison unit too far from base: {group.name}")
 
         for group in self.sams:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_air_defense.append(group.position)
+                closest.preset_locations.base_air_defense.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
             else:
-                closest.preset_locations.strike_locations.append(group.position)
+                closest.preset_locations.strike_locations.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(group.position)
+            if distance < self.BASE_DEFENSE_RADIUS:
+                closest.preset_locations.ewrs.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
+            else:
+                closest.preset_locations.ewrs.append(
+                    PointWithHeading.from_point(group.position, group.units[0].heading)
+                )
 
         for group in self.offshore_strike_targets:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.offshore_strike_locations.append(group.position)
+            closest.preset_locations.offshore_strike_locations.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.ships:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ships.append(group.position)
+            closest.preset_locations.ships.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.missile_sites.append(group.position)
+            closest.preset_locations.missile_sites.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.coastal_defenses.append(group.position)
+            closest.preset_locations.coastal_defenses.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.required_long_range_sams:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.required_long_range_sams.append(group.position)
+            closest.preset_locations.required_long_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
         for group in self.required_medium_range_sams:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.required_medium_range_sams.append(group.position)
+            closest.preset_locations.required_medium_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_ewrs:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_ewrs.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.helipads:
+            closest, distance = self.objective_info(group)
+            closest.helipads.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
@@ -677,8 +730,8 @@ class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
     overview_image = "persiangulf.gif"
     reference_points = (
-        ReferencePoint(persiangulf.Jiroft_Airport.position, Point(1692, 1343)),
-        ReferencePoint(persiangulf.Liwa_Airbase.position, Point(358, 3238)),
+        ReferencePoint(persiangulf.Jiroft.position, Point(1692, 1343)),
+        ReferencePoint(persiangulf.Liwa_AFB.position, Point(358, 3238)),
     )
     landmap = load_landmap("resources\\gulflandmap.p")
     daytime_map = {
@@ -811,6 +864,7 @@ class FrontLine(MissionTarget):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         yield from [
             FlightType.CAS,
+            FlightType.AEWC,
             # TODO: FlightType.TROOP_TRANSPORT
             # TODO: FlightType.EVAC
         ]

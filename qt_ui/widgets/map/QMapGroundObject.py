@@ -9,7 +9,10 @@ from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import REWARDS
 from game.theater import ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import MissileSiteGroundObject
+from game.theater.theatergroundobject import (
+    MissileSiteGroundObject,
+    CoastalSiteGroundObject,
+)
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from .QMapObject import QMapObject
 from ...displayoptions import DisplayOptions
@@ -85,6 +88,8 @@ class QMapGroundObject(QMapObject):
                 cat = "ship"
             if isinstance(self.ground_object, MissileSiteGroundObject):
                 cat = "missile"
+            if isinstance(self.ground_object, CoastalSiteGroundObject):
+                cat = "coastal"
 
             rect = QRect(
                 option.rect.x() + 2,

@@ -213,14 +213,14 @@ class QSettingsWindow(QDialog):
 
         self.player_income = TenthsSpinSlider(
             "Player income multiplier",
-            1,
+            0,
             50,
             int(self.game.settings.player_income_multiplier * 10),
         )
         self.player_income.spinner.valueChanged.connect(self.applySettings)
         self.enemy_income = TenthsSpinSlider(
             "Enemy income multiplier",
-            1,
+            0,
             50,
             int(self.game.settings.enemy_income_multiplier * 10),
         )
@@ -347,6 +347,26 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(restrict_weapons_label, 0, 0)
         general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
 
+        def set_old_awec(value: bool) -> None:
+            self.game.settings.disable_legacy_aewc = value
+
+        old_awac = QCheckBox()
+        old_awac.setChecked(self.game.settings.disable_legacy_aewc)
+        old_awac.toggled.connect(set_old_awec)
+
+        old_awec_info = (
+            "If checked, the invulnerable friendly AEW&C aircraft that begins "
+            "the mission in the air will not be spawned. AEW&C missions must "
+            "be planned in the ATO and will take time to arrive on-station."
+        )
+
+        old_awac.setToolTip(old_awec_info)
+        old_awac_label = QLabel("Disable invulnerable, always-available AEW&C (WIP)")
+        old_awac_label.setToolTip(old_awec_info)
+
+        general_layout.addWidget(old_awac_label, 1, 0)
+        general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
+
         automation = QGroupBox("HQ Automation")
         campaign_layout.addWidget(automation)
 
@@ -402,6 +422,12 @@ class QSettingsWindow(QDialog):
         self.generate_marks.setChecked(self.game.settings.generate_marks)
         self.generate_marks.toggled.connect(self.applySettings)
 
+        self.generate_dark_kneeboard = QCheckBox()
+        self.generate_dark_kneeboard.setChecked(
+            self.game.settings.generate_dark_kneeboard
+        )
+        self.generate_dark_kneeboard.toggled.connect(self.applySettings)
+
         self.never_delay_players = QCheckBox()
         self.never_delay_players.setChecked(
             self.game.settings.never_delay_player_flights
@@ -416,19 +442,40 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
         self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Never delay player flights"), 2, 0)
-        self.gameplayLayout.addWidget(self.never_delay_players, 2, 1, Qt.AlignRight)
+
+        dark_kneeboard_label = QLabel(
+            "Generate Dark Kneeboard <br />"
+            "<strong>Dark kneeboard for night missions.<br />"
+            "This will likely make the kneeboard on the pilot leg unreadable.</strong>"
+        )
+        self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
+        self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
+
+        spawn_players_immediately_tooltip = (
+            "Always spawns player aircraft immediately, even if their start time is "
+            "more than 10 minutes after the start of the mission. <strong>This does "
+            "not alter the timing of your mission. Your TOT will not change. This "
+            "option only allows the player to wait on the ground.</strong>"
+        )
+        spawn_immediately_label = QLabel(
+            "Player flights ignore TOT and spawn immediately<br />"
+            "<strong>Does not adjust package waypoint times.<br />"
+            "Should not be used if players have runway or in-air starts.</strong>"
+        )
+        spawn_immediately_label.setToolTip(spawn_players_immediately_tooltip)
+        self.gameplayLayout.addWidget(spawn_immediately_label, 3, 0)
+        self.gameplayLayout.addWidget(self.never_delay_players, 3, 1, Qt.AlignRight)
 
         start_type_label = QLabel(
-            "Default start type for AI aircraft:<br /><strong>Warning: "
-            + "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+            "Default start type for AI aircraft<br /><strong>Warning: "
+            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
         )
         start_type_label.setToolTip(START_TYPE_TOOLTIP)
         start_type = StartTypeComboBox(self.game.settings)
         start_type.setCurrentText(self.game.settings.default_start_type)
 
-        self.gameplayLayout.addWidget(start_type_label, 3, 0)
-        self.gameplayLayout.addWidget(start_type, 3, 1)
+        self.gameplayLayout.addWidget(start_type_label, 4, 0)
+        self.gameplayLayout.addWidget(start_type, 4, 1)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()
@@ -595,6 +642,10 @@ class QSettingsWindow(QDialog):
         )
 
         self.game.settings.supercarrier = self.supercarrier.isChecked()
+
+        self.game.settings.generate_dark_kneeboard = (
+            self.generate_dark_kneeboard.isChecked()
+        )
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()

@@ -21,21 +21,21 @@
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",
-    "APC_M1025_HMMWV",
-    "AAA_Vulcan_M163"
+    "APC_HMMWV__Scout",
+    "SPAAA_Vulcan_M163"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin",
-    "MLRS_M270"
+    "SPH_M109_Paladin_155mm",
+    "MLRS_M270_227mm"
   ],
   "logistics_units": [
-    "Transport_M818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
     "Infantry_M4",
-    "Soldier_M249",
-    "_2B11_mortar",
-    "Stinger_MANPADS"
+    "Infantry_M249",
+    "Mortar_2B11_120mm",
+    "MANPADS_Stinger"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -49,10 +49,10 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "Oliver_Hazzard_Perry_class"
+    "FFG_Oliver_Hazzard_Perry"
   ],
   "cruisers": [
-    "Ticonderoga_class"
+    "CG_Ticonderoga"
   ],
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",

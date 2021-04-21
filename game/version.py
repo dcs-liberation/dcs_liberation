@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def _build_version_string() -> str:
-    components = ["2.4.3"]
+    components = ["2.5"]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
         with build_number_path.open("r") as build_number_file:

@@ -3,11 +3,12 @@ from __future__ import annotations
 import datetime
 import logging
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, TYPE_CHECKING
 
-from dcs.weather import Weather as PydcsWeather, Wind
+from dcs.cloud_presets import Clouds as PydcsClouds
+from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 
 from game.settings import Settings
 from game.utils import Distance, meters
@@ -36,6 +37,23 @@ class Clouds:
     density: int
     thickness: int
     precipitation: PydcsWeather.Preceptions
+    preset: Optional[CloudPreset] = field(default=None)
+
+    @classmethod
+    def random_preset(cls, rain: bool) -> Clouds:
+        clouds = (p.value for p in PydcsClouds)
+        if rain:
+            presets = [p for p in clouds if "Rain" in p.name]
+        else:
+            presets = [p for p in clouds if "Rain" not in p.name]
+        preset = random.choice(presets)
+        return Clouds(
+            base=random.randint(preset.min_base, preset.max_base),
+            density=0,
+            thickness=0,
+            precipitation=PydcsWeather.Preceptions.None_,
+            preset=preset,
+        )
 
 
 @dataclass(frozen=True)
@@ -101,12 +119,11 @@ class ClearSkies(Weather):
 
 class Cloudy(Weather):
     def generate_clouds(self) -> Optional[Clouds]:
-        return Clouds(
-            base=self.random_cloud_base(),
-            density=random.randint(1, 8),
-            thickness=self.random_cloud_thickness(),
-            precipitation=PydcsWeather.Preceptions.None_,
-        )
+        return Clouds.random_preset(rain=False)
+
+    def generate_fog(self) -> Optional[Fog]:
+        # DCS 2.7 says to not use fog with the cloud presets.
+        return None
 
     def generate_wind(self) -> WindConditions:
         return self.random_wind(0, 4)
@@ -114,12 +131,11 @@ class Cloudy(Weather):
 
 class Raining(Weather):
     def generate_clouds(self) -> Optional[Clouds]:
-        return Clouds(
-            base=self.random_cloud_base(),
-            density=random.randint(5, 8),
-            thickness=self.random_cloud_thickness(),
-            precipitation=PydcsWeather.Preceptions.Rain,
-        )
+        return Clouds.random_preset(rain=True)
+
+    def generate_fog(self) -> Optional[Fog]:
+        # DCS 2.7 says to not use fog with the cloud presets.
+        return None
 
     def generate_wind(self) -> WindConditions:
         return self.random_wind(0, 6)

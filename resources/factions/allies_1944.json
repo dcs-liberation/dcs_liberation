@@ -17,23 +17,23 @@
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
     "MT_M4_Sherman",
-    "APC_M2A1",
+    "APC_M2A1_Halftrack",
     "CT_Cromwell_IV",
     "CT_Centaur_IV",
     "HIT_Churchill_VII",
-    "LAC_M8_Greyhound",
-    "TD_M10_GMC",
-    "Daimler_Armoured_Car",
+    "Car_M8_Greyhound_Armored",
+    "SPG_M10_GMC",
+    "Car_Daimler_Armored",
     "LT_Mk_VII_Tetrarch",
-    "AA_gun_QF_3_7",
-    "AAA_Bofors_40mm"
+    "AAA_QF_3_7",
+    "AAA_40mm_Bofors"
   ],
   "artillery_units": [
-    "M12_GMC"
+    "SPG_M12_GMC_155mm"
   ],
   "logistics_units": [
-    "Bedford_MWD",
-    "CCKW_353"
+    "Truck_Bedford",
+    "Truck_GMC_Jimmy_6x6_Truck"
   ],
   "infantry_units": [
     "Infantry_SMLE_No_4_Mk_1",

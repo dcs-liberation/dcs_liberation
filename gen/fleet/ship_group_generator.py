@@ -47,6 +47,7 @@ def generate_ship_group(game, ground_object, faction_name: str):
         gen = random.choice(faction.navy_generators)
         if gen in SHIP_MAP.keys():
             generator = SHIP_MAP[gen](game, ground_object, faction)
+            print(generator.position)
             generator.generate()
             return generator.get_generated_group()
         else:

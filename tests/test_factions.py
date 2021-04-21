@@ -16,6 +16,7 @@ from dcs.planes import (
     F_117A,
     MQ_9_Reaper,
     E_3A,
+    E_2C,
     KC130,
     KC_135,
     A_10C,
@@ -24,9 +25,9 @@ from dcs.planes import (
 from dcs.ships import (
     CVN_74_John_C__Stennis,
     LHA_1_Tarawa,
-    Oliver_Hazzard_Perry_class,
-    USS_Arleigh_Burke_IIa,
-    Ticonderoga_class,
+    FFG_Oliver_Hazzard_Perry,
+    DDG_Arleigh_Burke_IIa,
+    CG_Ticonderoga,
 )
 from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
 
@@ -67,6 +68,7 @@ class TestFactionLoader(unittest.TestCase):
 
             self.assertEqual(len(faction.awacs), 1)
             self.assertIn(E_3A, faction.awacs)
+            self.assertIn(E_2C, faction.awacs)
 
             self.assertEqual(len(faction.tankers), 2)
             self.assertIn(KC_135, faction.tankers)
@@ -76,20 +78,20 @@ class TestFactionLoader(unittest.TestCase):
             self.assertEqual(faction.jtac_unit, MQ_9_Reaper)
 
             self.assertIn(Armor.MBT_M1A2_Abrams, faction.frontline_units)
-            self.assertIn(Armor.ATGM_M1134_Stryker, faction.frontline_units)
-            self.assertIn(Armor.APC_M1126_Stryker_ICV, faction.frontline_units)
+            self.assertIn(Armor.ATGM_Stryker, faction.frontline_units)
+            self.assertIn(Armor.IFV_M1126_Stryker_ICV, faction.frontline_units)
             self.assertIn(Armor.IFV_M2A2_Bradley, faction.frontline_units)
             self.assertIn(Armor.IFV_LAV_25, faction.frontline_units)
-            self.assertIn(Armor.APC_M1043_HMMWV_Armament, faction.frontline_units)
-            self.assertIn(Armor.ATGM_M1045_HMMWV_TOW, faction.frontline_units)
+            self.assertIn(Armor.APC_HMMWV__Scout, faction.frontline_units)
+            self.assertIn(Armor.ATGM_HMMWV, faction.frontline_units)
 
-            self.assertIn(Artillery.MLRS_M270, faction.artillery_units)
-            self.assertIn(Artillery.SPH_M109_Paladin, faction.artillery_units)
+            self.assertIn(Artillery.MLRS_M270_227mm, faction.artillery_units)
+            self.assertIn(Artillery.SPH_M109_Paladin_155mm, faction.artillery_units)
 
-            self.assertIn(Unarmed.Transport_M818, faction.logistics_units)
+            self.assertIn(Unarmed.Truck_M818_6x6, faction.logistics_units)
 
             self.assertIn(Infantry.Infantry_M4, faction.infantry_units)
-            self.assertIn(Infantry.Soldier_M249, faction.infantry_units)
+            self.assertIn(Infantry.Infantry_M249, faction.infantry_units)
 
             self.assertIn("AvengerGenerator", faction.air_defenses)
 
@@ -97,9 +99,9 @@ class TestFactionLoader(unittest.TestCase):
 
             self.assertIn(CVN_74_John_C__Stennis, faction.aircraft_carrier)
             self.assertIn(LHA_1_Tarawa, faction.helicopter_carrier)
-            self.assertIn(Oliver_Hazzard_Perry_class, faction.destroyers)
-            self.assertIn(USS_Arleigh_Burke_IIa, faction.destroyers)
-            self.assertIn(Ticonderoga_class, faction.cruisers)
+            self.assertIn(FFG_Oliver_Hazzard_Perry, faction.destroyers)
+            self.assertIn(DDG_Arleigh_Burke_IIa, faction.destroyers)
+            self.assertIn(CG_Ticonderoga, faction.cruisers)
 
             self.assertIn("mod", faction.requirements.keys())
             self.assertIn("Some mod is required", faction.requirements.values())

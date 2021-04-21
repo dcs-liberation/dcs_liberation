@@ -34,7 +34,7 @@ class Flak18Generator(AirDefenseGroupGenerator):
 
         # Add a commander truck
         self.add_unit(
-            Unarmed.Blitz_3_6_6700A,
+            Unarmed.Truck_Opel_Blitz,
             "Blitz#",
             self.position.x - 35,
             self.position.y - 20,
