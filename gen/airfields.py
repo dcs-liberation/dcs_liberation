@@ -516,7 +516,10 @@ AIRFIELD_DATA = {
         },
     ),
     "Sir Abu Nuayr": AirfieldData(
-        theater="Persian Gulf", icao="OMSN", elevation=25, runway_length=2229,
+        theater="Persian Gulf",
+        icao="OMSN",
+        elevation=25,
+        runway_length=2229,
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(118, 0), MHz(250, 800)),
     ),
     "Sirri Island": AirfieldData(
@@ -540,7 +543,7 @@ AIRFIELD_DATA = {
         elevation=15,
         runway_length=1481,
         tacan=TacanChannel(89, TacanBand.X),
-        tacan_callsign="KCK"
+        tacan_callsign="KCK",
     ),
     "Tunb Island AFB": AirfieldData(
         theater="Persian Gulf",
@@ -706,7 +709,7 @@ AIRFIELD_DATA = {
         icao="OSAP",
         elevation=1253,
         runway_length=8332,
-        atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(119, 100), MHz(250, 850))
+        atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(119, 100), MHz(250, 850)),
     ),
     "Jirah": AirfieldData(
         theater="Syria",
