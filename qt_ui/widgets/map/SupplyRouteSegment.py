@@ -4,18 +4,12 @@ from typing import List, Optional
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPen
 from PySide2.QtWidgets import (
-    QAction,
     QGraphicsItem,
     QGraphicsLineItem,
-    QGraphicsSceneContextMenuEvent,
-    QGraphicsSceneHoverEvent,
-    QMenu,
 )
 
 from game.theater import ControlPoint
-from game.theater.supplyroutes import SupplyRouteLink
 from game.transfers import RoadTransferOrder
-from qt_ui.dialogs import Dialog
 from qt_ui.uiconstants import COLORS
 
 
@@ -39,12 +33,16 @@ class SupplyRouteSegment(QGraphicsLineItem):
         self.setToolTip(self.make_tooltip())
         self.setAcceptHoverEvents(True)
 
+    @property
+    def has_convoys(self) -> bool:
+        return bool(self.convoys)
+
     @cached_property
     def convoy_size(self) -> int:
         return sum(sum(c.units.values()) for c in self.convoys)
 
     def make_tooltip(self) -> str:
-        if not self.convoys:
+        if not self.has_convoys:
             return "No convoys present on this supply route."
         units = "units" if self.convoy_size > 1 else "unit"
 
@@ -77,37 +75,3 @@ class SupplyRouteSegment(QGraphicsLineItem):
         pen.setStyle(self.line_style)
         pen.setWidth(6)
         return pen
-
-    @property
-    def has_convoys(self) -> bool:
-        return bool(self.convoys)
-
-    @property
-    def targetable(self) -> bool:
-        return self.convoys and not self.control_point_a.captured
-
-    def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
-        # Can only plan missions against enemy supply routes that have convoys.
-        if not self.targetable:
-            super().contextMenuEvent(event)
-            return
-
-        menu = QMenu("Menu")
-
-        new_package_action = QAction(f"New package")
-        new_package_action.triggered.connect(self.open_new_package_dialog)
-        menu.addAction(new_package_action)
-
-        menu.exec_(event.screenPos())
-
-    def open_new_package_dialog(self) -> None:
-        """Opens the dialog for planning a new mission package."""
-        Dialog.open_new_package_dialog(
-            SupplyRouteLink(self.control_point_a, self.control_point_b)
-        )
-
-    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
-        if self.targetable:
-            self.setCursor(Qt.PointingHandCursor)
-        else:
-            super().hoverEnterEvent(event)

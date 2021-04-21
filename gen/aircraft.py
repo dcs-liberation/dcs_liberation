@@ -72,7 +72,7 @@ from dcs.task import (
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
+from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -88,6 +88,7 @@ from game.theater.controlpoint import (
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import TheaterGroundObject
+from game.transfers import Convoy, RoadTransferOrder
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
@@ -1691,25 +1692,30 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
+        # TODO: Add common "UnitGroupTarget" base type.
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name)
-            if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
-                task.params["attackQtyLimit"] = False
-                task.params["directionEnabled"] = False
-                task.params["altitudeEnabled"] = False
-                task.params["groupAttack"] = True
-                waypoint.tasks.append(task)
-            else:
-                logging.error(
-                    "Could not find group for BAI mission %s", target_group.group_name
-                )
+            group_name = target_group.group_name
+        elif isinstance(target_group, Convoy):
+            group_name = target_group.transfer.name
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",
                 target_group.__class__.__name__,
             )
+            return waypoint
+
+        group = self.mission.find_group(group_name)
+        if group is None:
+            logging.error("Could not find group for BAI mission %s", group_name)
+            return waypoint
+
+        task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
+        task.params["attackQtyLimit"] = False
+        task.params["directionEnabled"] = False
+        task.params["altitudeEnabled"] = False
+        task.params["groupAttack"] = True
+        waypoint.tasks.append(task)
         return waypoint
 
 

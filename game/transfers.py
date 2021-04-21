@@ -3,8 +3,10 @@ from dataclasses import dataclass, field
 from typing import Dict, Iterator, List, Type
 
 from dcs.unittype import VehicleType
-from game.theater import ControlPoint
+from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
+from gen.naming import namegen
+from gen.flights.flight import FlightType
 
 
 @dataclass
@@ -35,6 +37,8 @@ class RoadTransferOrder(TransferOrder):
     #: point a turn through the supply line.
     position: ControlPoint = field(init=False)
 
+    name: str = field(init=False, default_factory=namegen.next_convoy_name)
+
     def __post_init__(self) -> None:
         self.position = self.origin
 
@@ -44,6 +48,27 @@ class RoadTransferOrder(TransferOrder):
 
     def next_stop(self) -> ControlPoint:
         return self.path()[0]
+
+
+class Convoy(MissionTarget):
+    def __init__(self, transfer: RoadTransferOrder) -> None:
+        self.transfer = transfer
+        count = sum(c for c in transfer.units.values())
+        super().__init__(
+            f"{transfer.name} of {count} units moving from {transfer.position} to "
+            f"{transfer.destination}",
+            transfer.position.position,
+        )
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        if self.is_friendly(for_player):
+            return
+
+        yield FlightType.BAI
+        yield from super().mission_types(for_player)
+
+    def is_friendly(self, to_player: bool) -> bool:
+        return self.transfer.position.captured
 
 
 class PendingTransfers:

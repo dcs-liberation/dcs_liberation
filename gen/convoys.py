@@ -12,6 +12,7 @@ from dcs.unittype import VehicleType
 
 from game.transfers import RoadTransferOrder
 from game.unitmap import UnitMap
+from game.utils import kph
 
 if TYPE_CHECKING:
     from game import Game
@@ -26,24 +27,26 @@ class ConvoyGenerator:
 
     def generate(self) -> None:
         # Reset the count to make generation deterministic.
-        self.count = itertools.count()
         for transfer in self.game.transfers:
             self.generate_convoy_for(transfer)
 
-    def generate_convoy_for(self, transfer: RoadTransferOrder) -> None:
+    def generate_convoy_for(self, transfer: RoadTransferOrder) -> VehicleGroup:
         next_hop = transfer.path()[0]
         origin = transfer.position.convoy_spawns[next_hop]
         destination = next_hop.convoy_spawns[transfer.position]
 
         group = self._create_mixed_unit_group(
-            f"Convoy {next(self.count)}",
+            transfer.name,
             origin,
             transfer.units,
             transfer.player,
         )
-        group.add_waypoint(destination, move_formation=PointAction.OnRoad)
+        group.add_waypoint(
+            destination, speed=kph(40).kph, move_formation=PointAction.OnRoad
+        )
         self.make_drivable(group)
         self.unit_map.add_convoy_units(group, transfer)
+        return group
 
     def _create_mixed_unit_group(
         self,

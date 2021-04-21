@@ -1,10 +1,9 @@
 from __future__ import annotations
-from game.theater.theatergroundobject import TheaterGroundObject
 
 import logging
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set
+from typing import Iterable, List, Optional, Set, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -14,7 +13,9 @@ from dcs.lua.parse import loads
 from dcs.mapping import Point
 from dcs.translation import String
 from dcs.triggers import TriggerStart
+
 from game.plugins import LuaPluginManager
+from game.theater.theatergroundobject import TheaterGroundObject
 from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
@@ -31,7 +32,6 @@ from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
-
 from .. import db
 from ..theater import Airfield
 from ..unitmap import UnitMap
@@ -43,18 +43,13 @@ if TYPE_CHECKING:
 class Operation:
     """Static class for managing the final Mission generation"""
 
-    current_mission = None  # type: Mission
-    airgen = None  # type: AircraftConflictGenerator
-    triggersgen = None  # type: TriggersGenerator
-    airsupportgen = None  # type: AirSupportConflictGenerator
-    visualgen = None  # type: VisualGenerator
-    groundobjectgen = None  # type: GroundObjectsGenerator
-    briefinggen = None  # type: BriefingGenerator
-    forcedoptionsgen = None  # type: ForcedOptionsGenerator
-    radio_registry: Optional[RadioRegistry] = None
-    tacan_registry: Optional[TacanRegistry] = None
-    game = None  # type: Game
-    environment_settings = None
+    current_mission: Mission
+    airgen: AircraftConflictGenerator
+    airsupportgen: AirSupportConflictGenerator
+    groundobjectgen: GroundObjectsGenerator
+    radio_registry: RadioRegistry
+    tacan_registry: TacanRegistry
+    game: Game
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
     player_awacs_enabled = True
@@ -309,13 +304,13 @@ class Operation:
         # Set mission time and weather conditions.
         EnvironmentGenerator(cls.current_mission, cls.game.conditions).generate()
         cls._generate_ground_units()
+        cls._generate_convoys()
         cls._generate_destroyed_units()
         cls._generate_air_units()
         cls.assign_channels_to_flights(
             cls.airgen.flights, cls.airsupportgen.air_support
         )
         cls._generate_ground_conflicts()
-        cls._generate_convoys()
 
         # Triggers
         triggersgen = TriggersGenerator(cls.current_mission, cls.game)
