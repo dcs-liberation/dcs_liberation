@@ -884,7 +884,7 @@ AIRFIELD_DATA = {
         icao="LLRD",
         elevation=105,
         runway_length=7037,
-        atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(118, 600), MHz(251, 20)),
+        atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(118, 600), MHz(251, 50)),
     ),
     "Megiddo": AirfieldData(
         theater="Syria",
