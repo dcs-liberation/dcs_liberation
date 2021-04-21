@@ -206,7 +206,7 @@ class Debriefing:
 
             convoy_unit = self.unit_map.convoy_unit(unit_name)
             if convoy_unit is not None:
-                if convoy_unit.transfer.player:
+                if convoy_unit.convoy.player_owned:
                     losses.player_convoy.append(convoy_unit)
                 else:
                     losses.enemy_convoy.append(convoy_unit)

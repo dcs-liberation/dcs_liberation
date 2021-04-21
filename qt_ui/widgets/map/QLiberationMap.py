@@ -44,7 +44,7 @@ from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
-from game.transfers import RoadTransferOrder
+from game.transfers import Convoy, RoadTransferOrder
 from game.utils import Distance, meters, nautical_miles
 from game.weather import TimeOfDay
 from gen import Conflict, Package
@@ -827,7 +827,7 @@ class QLiberationMap(QGraphicsView):
         self,
         scene: QGraphicsScene,
         frontline: FrontLine,
-        convoys: List[RoadTransferOrder],
+        convoys: List[Convoy],
     ) -> None:
         """
         Thanks to Alquimista for sharing a python implementation of the bezier algorithm this is adapted from.
@@ -895,7 +895,15 @@ class QLiberationMap(QGraphicsView):
     def draw_supply_route_between(self, a: ControlPoint, b: ControlPoint) -> None:
         scene = self.scene()
 
-        convoys = self._transfers_between(a, b)
+        convoy_map = self.game.transfers.convoys
+        convoys = []
+        convoy = convoy_map.find_convoy(a, b)
+        if convoy is not None:
+            convoys.append(convoy)
+        convoy = convoy_map.find_convoy(b, a)
+        if convoy is not None:
+            convoys.append(convoy)
+
         frontline = FrontLine(a, b, self.game.theater)
         if a.front_is_active(b):
             if DisplayOptions.actual_frontline_pos:
@@ -909,7 +917,7 @@ class QLiberationMap(QGraphicsView):
         self,
         scene: QGraphicsScene,
         frontline: FrontLine,
-        convoys: List[RoadTransferOrder],
+        convoys: List[Convoy],
     ) -> None:
         posx = frontline.position
         h = frontline.attack_heading
@@ -925,7 +933,7 @@ class QLiberationMap(QGraphicsView):
         self,
         scene: QGraphicsScene,
         frontline: FrontLine,
-        convoys: List[RoadTransferOrder],
+        convoys: List[Convoy],
     ) -> None:
         self.draw_bezier_frontline(scene, frontline, convoys)
         vector = Conflict.frontline_vector(

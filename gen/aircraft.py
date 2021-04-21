@@ -1697,7 +1697,7 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         if isinstance(target_group, TheaterGroundObject):
             group_name = target_group.group_name
         elif isinstance(target_group, Convoy):
-            group_name = target_group.transfer.name
+            group_name = target_group.name
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",

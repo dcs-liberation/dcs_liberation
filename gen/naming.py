@@ -333,7 +333,7 @@ class NameGenerator:
     @classmethod
     def next_convoy_name(cls) -> str:
         cls.convoy_number += 1
-        return f"Convoy {cls.convoy_number:04}"
+        return f"Convoy {cls.convoy_number:03}"
 
     @classmethod
     def random_objective_name(cls):

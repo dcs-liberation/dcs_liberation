@@ -9,7 +9,7 @@ from PySide2.QtWidgets import (
 )
 
 from game.theater import ControlPoint
-from game.transfers import RoadTransferOrder
+from game.transfers import Convoy
 from qt_ui.uiconstants import COLORS
 
 
@@ -22,7 +22,7 @@ class SupplyRouteSegment(QGraphicsLineItem):
         y1: float,
         control_point_a: ControlPoint,
         control_point_b: ControlPoint,
-        convoys: List[RoadTransferOrder],
+        convoys: List[Convoy],
         parent: Optional[QGraphicsItem] = None,
     ) -> None:
         super().__init__(x0, y0, x1, y1, parent)
@@ -37,19 +37,18 @@ class SupplyRouteSegment(QGraphicsLineItem):
     def has_convoys(self) -> bool:
         return bool(self.convoys)
 
-    @cached_property
-    def convoy_size(self) -> int:
-        return sum(sum(c.units.values()) for c in self.convoys)
-
     def make_tooltip(self) -> str:
         if not self.has_convoys:
             return "No convoys present on this supply route."
-        units = "units" if self.convoy_size > 1 else "unit"
 
-        return (
-            f"{self.convoy_size} {units} transferring between {self.control_point_a} "
-            f"and {self.control_point_b}."
-        )
+        convoys = []
+        for convoy in self.convoys:
+            units = "units" if convoy.size > 1 else "unit"
+            convoys.append(
+                f"{convoy.size} {units} transferring from {convoy.origin} to "
+                f"{convoy.destination}"
+            )
+        return "\n".join(convoys)
 
     @property
     def line_color(self) -> QColor:

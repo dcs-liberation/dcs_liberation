@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import logging
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, List, Type
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.unittype import VehicleType
+
+if TYPE_CHECKING:
+    pass
 from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
 from gen.naming import namegen
@@ -37,8 +43,6 @@ class RoadTransferOrder(TransferOrder):
     #: point a turn through the supply line.
     position: ControlPoint = field(init=False)
 
-    name: str = field(init=False, default_factory=namegen.next_convoy_name)
-
     def __post_init__(self) -> None:
         self.position = self.origin
 
@@ -51,14 +55,11 @@ class RoadTransferOrder(TransferOrder):
 
 
 class Convoy(MissionTarget):
-    def __init__(self, transfer: RoadTransferOrder) -> None:
-        self.transfer = transfer
-        count = sum(c for c in transfer.units.values())
-        super().__init__(
-            f"{transfer.name} of {count} units moving from {transfer.position} to "
-            f"{transfer.destination}",
-            transfer.position.position,
-        )
+    def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:
+        super().__init__(namegen.next_convoy_name(), origin.position)
+        self.origin = origin
+        self.destination = destination
+        self.transfers: List[RoadTransferOrder] = []
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         if self.is_friendly(for_player):
@@ -68,11 +69,93 @@ class Convoy(MissionTarget):
         yield from super().mission_types(for_player)
 
     def is_friendly(self, to_player: bool) -> bool:
-        return self.transfer.position.captured
+        return self.origin.captured
+
+    def add_units(self, transfer: RoadTransferOrder) -> None:
+        self.transfers.append(transfer)
+
+    def remove_units(self, transfer: RoadTransferOrder) -> None:
+        self.transfers.remove(transfer)
+
+    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+        for transfer in self.transfers:
+            if unit_type in transfer.units:
+                transfer.units[unit_type] -= 1
+                return
+        raise KeyError
+
+    @property
+    def size(self) -> int:
+        return sum(sum(t.units.values()) for t in self.transfers)
+
+    @property
+    def units(self) -> Dict[Type[VehicleType], int]:
+        units: Dict[Type[VehicleType], int] = defaultdict(int)
+        for transfer in self.transfers:
+            for unit_type, count in transfer.units.items():
+                units[unit_type] += count
+        return units
+
+    @property
+    def player_owned(self) -> bool:
+        return self.origin.captured
+
+
+class ConvoyMap:
+    def __init__(self) -> None:
+        # Dict of origin -> destination -> convoy.
+        self.convoys: Dict[ControlPoint, Dict[ControlPoint, Convoy]] = defaultdict(dict)
+
+    def convoy_exists(self, origin: ControlPoint, destination: ControlPoint) -> bool:
+        return destination in self.convoys[origin]
+
+    def find_convoy(
+        self, origin: ControlPoint, destination: ControlPoint
+    ) -> Optional[Convoy]:
+        return self.convoys[origin].get(destination)
+
+    def find_or_create_convoy(
+        self, origin: ControlPoint, destination: ControlPoint
+    ) -> Convoy:
+        convoy = self.find_convoy(origin, destination)
+        if convoy is None:
+            convoy = Convoy(origin, destination)
+            self.convoys[origin][destination] = convoy
+        return convoy
+
+    def departing_from(self, origin: ControlPoint) -> Iterator[Convoy]:
+        yield from self.convoys[origin].values()
+
+    def disband_convoy(self, convoy: Convoy) -> None:
+        del self.convoys[convoy.origin][convoy.destination]
+
+    def add(self, transfer: RoadTransferOrder) -> None:
+        next_stop = transfer.next_stop()
+        self.find_or_create_convoy(transfer.position, next_stop).add_units(transfer)
+
+    def remove(self, transfer: RoadTransferOrder) -> None:
+        next_stop = transfer.next_stop()
+        convoy = self.find_convoy(transfer.position, next_stop)
+        if convoy is None:
+            logging.error(
+                f"Attempting to remove {transfer} from convoy but it is in no convoy."
+            )
+            return
+        convoy.remove_units(transfer)
+        if not convoy.transfers:
+            self.disband_convoy(convoy)
+
+    def disband_all(self) -> None:
+        self.convoys = defaultdict(dict)
+
+    def __iter__(self) -> Iterator[Convoy]:
+        for destination_dict in self.convoys.values():
+            yield from destination_dict.values()
 
 
 class PendingTransfers:
     def __init__(self) -> None:
+        self.convoys = ConvoyMap()
         self.pending_transfers: List[RoadTransferOrder] = []
 
     def __iter__(self) -> Iterator[RoadTransferOrder]:
@@ -88,8 +171,10 @@ class PendingTransfers:
     def new_transfer(self, transfer: RoadTransferOrder) -> None:
         transfer.origin.base.commit_losses(transfer.units)
         self.pending_transfers.append(transfer)
+        self.convoys.add(transfer)
 
     def cancel_transfer(self, transfer: RoadTransferOrder) -> None:
+        self.convoys.remove(transfer)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commision_units(transfer.units)
 
@@ -99,8 +184,16 @@ class PendingTransfers:
             if not self.perform_transfer(transfer):
                 incomplete.append(transfer)
         self.pending_transfers = incomplete
+        self.rebuild_convoys()
+
+    def rebuild_convoys(self) -> None:
+        self.convoys.disband_all()
+        for transfer in self.pending_transfers:
+            self.convoys.add(transfer)
 
     def perform_transfer(self, transfer: RoadTransferOrder) -> bool:
+        # TODO: Can be improved to use the convoy map.
+        # The convoy map already has a lot of the data that we're recomputing here.
         if transfer.player != transfer.destination.captured:
             logging.info(
                 f"Transfer destination {transfer.destination.name} was captured."

@@ -12,15 +12,15 @@ from PySide2.QtWidgets import (
 
 from game import db
 from game.theater import ControlPoint
-from game.transfers import Convoy, RoadTransferOrder
+from game.transfers import Convoy
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import VEHICLES_ICONS
 
 
 class DepartingConvoyInfo(QGroupBox):
-    def __init__(self, convoy: RoadTransferOrder, game_model: GameModel) -> None:
-        super().__init__(f"To {convoy.destination}")
+    def __init__(self, convoy: Convoy, game_model: GameModel) -> None:
+        super().__init__(f"{convoy.name} to {convoy.destination}")
         self.convoy = convoy
 
         main_layout = QVBoxLayout()
@@ -61,7 +61,7 @@ class DepartingConvoyInfo(QGroupBox):
         # complicated. We could instead generate this at the start of the turn (and
         # update whenever transfers are created or canceled) and also use that time to
         # precalculate things like the next stop and group names.
-        Dialog.open_new_package_dialog(Convoy(self.convoy), parent=self.window())
+        Dialog.open_new_package_dialog(self.convoy, parent=self.window())
 
 
 class DepartingConvoysList(QFrame):
@@ -78,9 +78,8 @@ class DepartingConvoysList(QFrame):
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
 
-        for convoy in game_model.game.transfers:
-            if convoy.position != cp:
-                continue
+        convoy_map = game_model.game.transfers.convoys
+        for convoy in convoy_map.departing_from(cp):
             group_info = DepartingConvoyInfo(convoy, game_model)
             task_box_layout.addWidget(group_info)
 

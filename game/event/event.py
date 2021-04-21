@@ -159,9 +159,9 @@ class Event:
     def commit_convoy_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.convoy_losses:
             unit_type = loss.unit_type
-            transfer = loss.transfer
-            available = loss.transfer.units.get(unit_type, 0)
-            convoy_name = f"convoy from {transfer.position} to {transfer.destination}"
+            convoy = loss.convoy
+            available = loss.convoy.units.get(unit_type, 0)
+            convoy_name = f"convoy from {convoy.origin} to {convoy.destination}"
             if available <= 0:
                 logging.error(
                     f"Found killed {unit_type} in {convoy_name} but that convoy has "
@@ -170,7 +170,7 @@ class Event:
                 continue
 
             logging.info(f"{unit_type} destroyed in {convoy_name}")
-            transfer.units[unit_type] -= 1
+            convoy.kill_unit(unit_type)
 
     @staticmethod
     def commit_ground_object_losses(debriefing: Debriefing) -> None:
