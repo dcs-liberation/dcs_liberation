@@ -402,7 +402,7 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(96, TacanBand.X),
         tacan_callsign="MA",
         vor=("MA", MHz(114, 900)),
-        atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(126, 500), MHz(251, 000)),
+        atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(126, 500), MHz(251, 100)),
         ils={
             "13": ("MMA", MHz(111, 100)),
             "31": ("IMA", MHz(109, 100)),
@@ -414,7 +414,7 @@ AIRFIELD_DATA = {
         elevation=11,
         runway_length=6808,
         vor=("ALB", MHz(114, 0)),
-        atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(119, 900), MHz(250, 550)),
+        atc=AtcData(MHz(4, 75), MHz(39, 50), MHz(119, 900), MHz(250, 600)),
     ),
     "Sas Al Nakheel": AirfieldData(
         theater="Persian Gulf",
@@ -422,7 +422,7 @@ AIRFIELD_DATA = {
         elevation=9,
         runway_length=5387,
         vor=("SAS", MHz(128, 930)),
-        atc=AtcData(MHz(3, 975), MHz(38, 850), MHz(128, 900), MHz(250, 450)),
+        atc=AtcData(MHz(4, 0), MHz(38, 900), MHz(128, 900), MHz(250, 450)),
     ),
     "Abu Dhabi Intl": AirfieldData(
         theater="Persian Gulf",
@@ -430,7 +430,7 @@ AIRFIELD_DATA = {
         elevation=91,
         runway_length=12817,
         vor=("ADV", MHz(114, 250)),
-        atc=AtcData(MHz(4, 000), MHz(38, 900), MHz(119, 200), MHz(250, 500)),
+        atc=AtcData(MHz(4, 50), MHz(39, 0), MHz(119, 200), MHz(250, 550)),
     ),
     "Al Ain Intl": AirfieldData(
         theater="Persian Gulf",
@@ -438,14 +438,14 @@ AIRFIELD_DATA = {
         elevation=813,
         runway_length=11267,
         vor=("ALN", MHz(112, 600)),
-        atc=AtcData(MHz(4, 75), MHz(39, 50), MHz(119, 850), MHz(250, 650)),
+        atc=AtcData(MHz(4, 125), MHz(39, 150), MHz(119, 850), MHz(250, 700)),
     ),
     "Al Maktoum Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMDW",
         elevation=123,
         runway_length=11500,
-        atc=AtcData(MHz(4, 300), MHz(39, 500), MHz(118, 650), MHz(251, 100)),
+        atc=AtcData(MHz(4, 350), MHz(39, 600), MHz(118, 600), MHz(251, 200)),
         ils={
             "30": ("IJWA", MHz(109, 750)),
             "12": ("IMA", MHz(111, 750)),
@@ -458,7 +458,7 @@ AIRFIELD_DATA = {
         runway_length=11865,
         tacan=TacanChannel(99, TacanBand.X),
         tacan_callsign="MIN",
-        atc=AtcData(MHz(3, 800), MHz(38, 500), MHz(121, 800), MHz(250, 100)),
+        atc=AtcData(MHz(3, 800), MHz(38, 500), MHz(118, 550), MHz(250, 100)),
         ils={
             "27": ("IMNR", MHz(110, 750)),
             "9": ("IMNW", MHz(110, 700)),
@@ -469,7 +469,7 @@ AIRFIELD_DATA = {
         icao="OMDB",
         elevation=16,
         runway_length=11018,
-        atc=AtcData(MHz(4, 275), MHz(39, 450), MHz(118, 750), MHz(251, 50)),
+        atc=AtcData(MHz(4, 325), MHz(39, 550), MHz(118, 750), MHz(251, 150)),
         ils={
             "30": ("IDBL", MHz(110, 900)),
             "12": ("IDBR", MHz(110, 100)),
@@ -480,7 +480,7 @@ AIRFIELD_DATA = {
         icao="OMSJ",
         elevation=98,
         runway_length=10535,
-        atc=AtcData(MHz(3, 850), MHz(38, 600), MHz(118, 600), MHz(252, 200)),
+        atc=AtcData(MHz(3, 850), MHz(38, 600), MHz(118, 600), MHz(250, 200)),
         ils={
             "30": ("ISHW", MHz(111, 950)),
             "12": ("ISRE", MHz(108, 550)),
@@ -492,18 +492,18 @@ AIRFIELD_DATA = {
         elevation=60,
         runway_length=9437,
         vor=("FJV", MHz(113, 800)),
-        atc=AtcData(MHz(4, 325), MHz(39, 550), MHz(124, 600), MHz(251, 150)),
+        atc=AtcData(MHz(4, 375), MHz(39, 650), MHz(124, 600), MHz(251, 250)),
         ils={
             "29": ("IFJR", MHz(111, 500)),
         },
     ),
-    "Ras AL Khaimah Intl": AirfieldData(
+    "Ras Al Khaimah Intl": AirfieldData(
         theater="Persian Gulf",
         icao="OMRK",
         elevation=70,
         runway_length=8406,
         vor=("OMRK", MHz(113, 600)),
-        atc=AtcData(MHz(4, 150), MHz(39, 200), MHz(121, 600), MHz(250, 800)),
+        atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(121, 600), MHz(250, 900)),
     ),
     "Khasab": AirfieldData(
         theater="Persian Gulf",
@@ -516,7 +516,8 @@ AIRFIELD_DATA = {
         },
     ),
     "Sir Abu Nuayr": AirfieldData(
-        theater="Persian Gulf", icao="OMSN", elevation=25, runway_length=2229
+        theater="Persian Gulf", icao="OMSN", elevation=25, runway_length=2229,
+        atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(118, 0), MHz(250, 800)),
     ),
     "Sirri Island": AirfieldData(
         theater="Persian Gulf",
@@ -539,7 +540,7 @@ AIRFIELD_DATA = {
         elevation=15,
         runway_length=1481,
         tacan=TacanChannel(89, TacanBand.X),
-        tacan_callsign="KCK",
+        tacan_callsign="KCK"
     ),
     "Tunb Island AFB": AirfieldData(
         theater="Persian Gulf",
@@ -561,7 +562,7 @@ AIRFIELD_DATA = {
         elevation=26,
         runway_length=6842,
         vor=("KHM", MHz(116, 300)),
-        atc=AtcData(MHz(3, 825), MHz(38, 550), MHz(118, 50), MHz(250, 150)),
+        atc=AtcData(MHz(4, 25), MHz(38, 950), MHz(118, 150), MHz(250, 500)),
     ),
     "Bandar Lengeh": AirfieldData(
         theater="Persian Gulf",
@@ -569,7 +570,7 @@ AIRFIELD_DATA = {
         elevation=80,
         runway_length=7625,
         vor=("LEN", MHz(114, 800)),
-        atc=AtcData(MHz(4, 225), MHz(39, 350), MHz(121, 700), MHz(250, 950)),
+        atc=AtcData(MHz(4, 275), MHz(39, 450), MHz(121, 700), MHz(251, 50)),
     ),
     "Kish Intl": AirfieldData(
         theater="Persian Gulf",
@@ -578,7 +579,7 @@ AIRFIELD_DATA = {
         runway_length=10617,
         tacan=TacanChannel(112, TacanBand.X),
         tacan_callsign="KIH",
-        atc=AtcData(MHz(4, 50), MHz(39, 000), MHz(121, 650), MHz(250, 600)),
+        atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(121, 650), MHz(250, 650)),
     ),
     "Lavan Island": AirfieldData(
         theater="Persian Gulf",
@@ -586,7 +587,7 @@ AIRFIELD_DATA = {
         elevation=75,
         runway_length=8234,
         vor=("LVA", MHz(116, 850)),
-        atc=AtcData(MHz(4, 100), MHz(39, 100), MHz(128, 550), MHz(250, 700)),
+        atc=AtcData(MHz(4, 150), MHz(39, 200), MHz(128, 550), MHz(250, 750)),
     ),
     "Lar": AirfieldData(
         theater="Persian Gulf",
@@ -603,7 +604,7 @@ AIRFIELD_DATA = {
         runway_length=7300,
         tacan=TacanChannel(47, TacanBand.X),
         tacan_callsign="HDR",
-        atc=AtcData(MHz(4, 350), MHz(39, 600), MHz(123, 150), MHz(251, 200)),
+        atc=AtcData(MHz(4, 400), MHz(39, 700), MHz(123, 150), MHz(251, 300)),
         ils={
             "8": ("IBHD", MHz(108, 900)),
         },
@@ -616,7 +617,7 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(78, TacanBand.X),
         tacan_callsign="BND",
         vor=("BND", MHz(117, 200)),
-        atc=AtcData(MHz(4, 200), MHz(39, 300), MHz(118, 100), MHz(250, 900)),
+        atc=AtcData(MHz(4, 250), MHz(39, 401), MHz(118, 100), MHz(251, 0)),
         ils={
             "21": ("IBND", MHz(333, 800)),
         },
@@ -636,7 +637,7 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(97, TacanBand.X),
         tacan_callsign="KER",
         vor=("KER", MHz(112, 0)),
-        atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(118, 250), MHz(250, 300)),
+        atc=AtcData(MHz(3, 925), MHz(38, 750), MHz(118, 250), MHz(250, 300)),
     ),
     "Shiraz Intl": AirfieldData(
         theater="Persian Gulf",
@@ -646,7 +647,7 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(94, TacanBand.X),
         tacan_callsign="SYZ1",
         vor=("SYZ", MHz(112, 0)),
-        atc=AtcData(MHz(3, 925), MHz(38, 750), MHz(121, 900), MHz(250, 350)),
+        atc=AtcData(MHz(3, 950), MHz(38, 800), MHz(121, 900), MHz(250, 350)),
     ),
     # Syria Map
     "Adana Sakirpasa": AirfieldData(
