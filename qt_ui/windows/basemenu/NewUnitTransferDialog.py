@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import Callable, Dict, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
     QFrame,
@@ -23,7 +25,7 @@ from PySide2.QtWidgets import (
 from dcs.task import PinpointStrike
 from dcs.unittype import UnitType
 
-from game import db
+from game import Game, db
 from game.theater import ControlPoint, SupplyRoute
 from game.transfers import RoadTransferOrder
 from qt_ui.models import GameModel
@@ -80,12 +82,43 @@ class UnitTransferList(QFrame):
         main_layout.addWidget(scroll)
 
 
-class TransferDestinationPanel(QVBoxLayout):
-    def __init__(self, label: str, origin: ControlPoint) -> None:
+@dataclass(frozen=True)
+class AirliftCapacity:
+    helicopter: int
+    cargo_plane: int
+
+    @property
+    def total(self) -> int:
+        return self.helicopter + self.cargo_plane
+
+    @classmethod
+    def to_control_point(cls, game: Game) -> AirliftCapacity:
+        helo_capacity = 0
+        plane_capacity = 0
+        for cp in game.theater.player_points():
+            inventory = game.aircraft_inventory.for_control_point(cp)
+            for unit_type, count in inventory.all_aircraft:
+                if unit_type.helicopter:
+                    helo_capacity += count
+        return AirliftCapacity(helicopter=helo_capacity, cargo_plane=plane_capacity)
+
+
+class TransferOptionsPanel(QVBoxLayout):
+    def __init__(self, origin: ControlPoint, airlift_capacity: AirliftCapacity) -> None:
         super().__init__()
 
         self.source_combo_box = TransferDestinationComboBox(origin)
-        self.addLayout(QLabeledWidget(label, self.source_combo_box))
+        self.addLayout(QLabeledWidget("Destination:", self.source_combo_box))
+        self.airlift = QCheckBox()
+        self.airlift.toggled.connect(self.set_airlift)
+        self.addLayout(QLabeledWidget("Airlift (non-functional):", self.airlift))
+        self.addWidget(
+            QLabel(
+                f"{airlift_capacity.total} airlift capacity "
+                f"({airlift_capacity.cargo_plane} from cargo planes, "
+                f"{airlift_capacity.helicopter} from helicopters)"
+            )
+        )
 
     @property
     def changed(self):
@@ -94,6 +127,9 @@ class TransferDestinationPanel(QVBoxLayout):
     @property
     def current(self) -> ControlPoint:
         return self.source_combo_box.currentData()
+
+    def set_airlift(self, value: bool) -> None:
+        pass
 
 
 class TransferControls(QGroupBox):
@@ -147,9 +183,17 @@ class TransferControls(QGroupBox):
 
 
 class ScrollingUnitTransferGrid(QFrame):
-    def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
+    def __init__(
+        self,
+        cp: ControlPoint,
+        airlift: bool,
+        airlift_capacity: AirliftCapacity,
+        game_model: GameModel,
+    ) -> None:
         super().__init__()
         self.cp = cp
+        self.airlift = airlift
+        self.remaining_capacity = airlift_capacity.total
         self.game_model = game_model
         self.transfers: Dict[Type[UnitType, int]] = defaultdict(int)
 
@@ -219,6 +263,11 @@ class ScrollingUnitTransferGrid(QFrame):
             if not origin_inventory:
                 return
 
+            if self.airlift:
+                if not self.remaining_capacity:
+                    return
+                self.remaining_capacity -= 1
+
             self.transfers[unit_type] += 1
             origin_inventory -= 1
             controls.set_quantity(self.transfers[unit_type])
@@ -229,6 +278,9 @@ class ScrollingUnitTransferGrid(QFrame):
             nonlocal origin_inventory_label
             if not controls.quantity:
                 return
+
+            if self.airlift:
+                self.remaining_capacity += 1
 
             self.transfers[unit_type] -= 1
             origin_inventory += 1
@@ -266,11 +318,18 @@ class NewUnitTransferDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.dest_panel = TransferDestinationPanel("Destination:", origin)
-        self.dest_panel.changed.connect(self.on_destination_changed)
+        self.airlift_capacity = AirliftCapacity.to_control_point(game_model.game)
+        self.dest_panel = TransferOptionsPanel(origin, self.airlift_capacity)
+        self.dest_panel.changed.connect(self.rebuild_transfers)
         layout.addLayout(self.dest_panel)
 
-        self.transfer_panel = ScrollingUnitTransferGrid(origin, game_model)
+        self.transfer_panel = ScrollingUnitTransferGrid(
+            origin,
+            airlift=False,
+            airlift_capacity=self.airlift_capacity,
+            game_model=game_model,
+        )
+        self.dest_panel.airlift.toggled.connect(self.rebuild_transfers)
         layout.addWidget(self.transfer_panel)
 
         self.submit_button = QPushButton("Create Transfer Order", parent=self)
@@ -278,12 +337,17 @@ class NewUnitTransferDialog(QDialog):
         self.submit_button.setProperty("style", "start-button")
         layout.addWidget(self.submit_button)
 
-    def on_destination_changed(self, index: int) -> None:
+    def rebuild_transfers(self) -> None:
         # Rebuild the transfer panel to reset everything. It's easier to recreate the
         # panel itself than to clear the grid layout in the panel.
         self.layout().removeWidget(self.transfer_panel)
         self.layout().removeWidget(self.submit_button)
-        self.transfer_panel = ScrollingUnitTransferGrid(self.origin, self.game_model)
+        self.transfer_panel = ScrollingUnitTransferGrid(
+            self.origin,
+            airlift=self.dest_panel.airlift.isChecked(),
+            airlift_capacity=self.airlift_capacity,
+            game_model=self.game_model,
+        )
         self.layout().addWidget(self.transfer_panel)
         self.layout().addWidget(self.submit_button)
 
