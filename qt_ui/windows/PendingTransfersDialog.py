@@ -139,6 +139,10 @@ class PendingTransfersList(QListView):
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         index = self.indexAt(event.pos())
+        if not index.isValid():
+            return
+        if not self.transfer_model.transfer_at_index(index).player:
+            return
 
         menu = QMenu("Menu")
 
@@ -181,15 +185,23 @@ class PendingTransfersDialog(QDialog):
         self.cancel_button = QPushButton("Cancel Transfer")
         self.cancel_button.setProperty("style", "btn-danger")
         self.cancel_button.clicked.connect(self.on_cancel_transfer)
-        self.cancel_button.setEnabled(self.transfer_model.rowCount() > 0)
+        self.cancel_button.setEnabled(
+            self.can_cancel(self.transfer_list.currentIndex())
+        )
         button_layout.addWidget(self.cancel_button)
 
     def on_cancel_transfer(self) -> None:
         """Cancels the selected transfer order."""
         self.transfer_model.cancel_transfer_at_index(self.transfer_list.currentIndex())
 
+    def can_cancel(self, index: QModelIndex) -> bool:
+        return self.transfer_model.transfer_at_index(index).player
+
     def on_selection_changed(
         self, selected: QItemSelection, _deselected: QItemSelection
     ) -> None:
         """Updates the state of the delete button."""
-        self.cancel_button.setEnabled(not selected.empty())
+        if selected.empty():
+            self.cancel_button.setEnabled(False)
+            return
+        self.cancel_button.setEnabled(self.can_cancel(selected.indexes()[0]))
