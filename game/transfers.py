@@ -126,6 +126,11 @@ class ConvoyMap:
     def departing_from(self, origin: ControlPoint) -> Iterator[Convoy]:
         yield from self.convoys[origin].values()
 
+    def travelling_to(self, destination: ControlPoint) -> Iterator[Convoy]:
+        for destination_dict in self.convoys.values():
+            if destination in destination_dict:
+                yield destination_dict[destination]
+
     def disband_convoy(self, convoy: Convoy) -> None:
         del self.convoys[convoy.origin][convoy.destination]
 

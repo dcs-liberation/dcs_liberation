@@ -39,6 +39,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     VehicleGroupGroundObject,
 )
+from game.transfers import Convoy
 from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
@@ -444,6 +445,15 @@ class ObjectiveFinder:
                 airfields.append(control_point)
         return self._targets_by_range(airfields)
 
+    def convoys(self) -> Iterator[Convoy]:
+        for front_line in self.front_lines():
+            if front_line.control_point_a.is_friendly(self.is_player):
+                enemy_cp = front_line.control_point_a
+            else:
+                enemy_cp = front_line.control_point_b
+
+            yield from self.game.transfers.convoys.travelling_to(enemy_cp)
+
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
         return (
@@ -601,6 +611,34 @@ class CoalitionMissionPlanner:
                     # TODO: Max escort range.
                     ProposedFlight(
                         FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
+                    ),
+                ],
+            )
+
+        # These will only rarely get planned. When a convoy is travelling multiple legs,
+        # they're targetable after the first leg. The reason for this is that
+        # procurement happens *after* mission planning so that the missions that could
+        # not be filled will guide the procurement process. Procurement is the stage
+        # that convoys are created (because they're created to move ground units that
+        # were just purchased), so we haven't created any yet. Any incomplete transfers
+        # from the previous turn (multi-leg journeys) will still be present though so
+        # they can be targeted.
+        #
+        # Even after this is fixed, the player's convoys that were created through the
+        # UI will never be targeted on the first turn of their journey because the AI
+        # stops planning after the start of the turn. We could potentially fix this by
+        # moving opfor mission planning until the takeoff button is pushed.
+        for convoy in self.objective_finder.convoys():
+            yield ProposedMission(
+                convoy,
+                [
+                    ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
+                    ),
+                    ProposedFlight(
+                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
                     ),
                 ],
             )
