@@ -24,23 +24,41 @@ class QIntelBox(QGroupBox):
         self.setLayout(columns)
 
         summary = QGridLayout()
-        columns.addLayout(summary)
+        summary.setContentsMargins(5, 5, 5, 5)
+        # columns.addLayout(summary)
 
-        summary.addWidget(QLabel("Air superiority:"), 0, 0)
+        air_superiority = QLabel("Air superiority:")
+        summary.addWidget(air_superiority, 0, 0)
         self.air_strength = QLabel()
         summary.addWidget(self.air_strength, 0, 1)
 
-        summary.addWidget(QLabel("Front line:"), 1, 0)
+        front_line = QLabel("Front line:")
+        summary.addWidget(front_line, 1, 0)
         self.ground_strength = QLabel()
         summary.addWidget(self.ground_strength, 1, 1)
 
-        summary.addWidget(QLabel("Economic strength:"), 2, 0)
+        economy = QLabel("Economic strength:")
+        summary.addWidget(economy, 2, 0)
         self.economic_strength = QLabel()
         summary.addWidget(self.economic_strength, 2, 1)
 
-        details = QPushButton("Details")
-        columns.addWidget(details)
-        details.clicked.connect(self.open_details_window)
+        # some dirty styling to make the labels show up well on the button
+        button_text_style = "background-color: rgba(0,0,0,0%); color: white;"
+        air_superiority.setStyleSheet(button_text_style)
+        front_line.setStyleSheet(button_text_style)
+        economy.setStyleSheet(button_text_style)
+        self.air_strength.setStyleSheet(button_text_style)
+        self.ground_strength.setStyleSheet(button_text_style)
+        self.economic_strength.setStyleSheet(button_text_style)
+
+        # details = QPushButton("Details")
+        self.details = QPushButton()
+        self.details.setMinimumHeight(50)
+        self.details.setMinimumWidth(210)
+        self.details.setLayout(summary)
+        columns.addWidget(self.details)
+        self.details.clicked.connect(self.open_details_window)
+        self.details.setEnabled(False)
 
         self.update_summary()
 
@@ -48,6 +66,7 @@ class QIntelBox(QGroupBox):
 
     def set_game(self, game: Optional[Game]) -> None:
         self.game = game
+        self.details.setEnabled(True)
         self.update_summary()
 
     @staticmethod
