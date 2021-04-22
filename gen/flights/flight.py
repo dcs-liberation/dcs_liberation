@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from datetime import timedelta
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING, Type
@@ -15,6 +14,7 @@ from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 
 if TYPE_CHECKING:
+    from game.transfers import AirliftOrder
     from gen.ato import Package
     from gen.flights.flightplan import FlightPlan
 
@@ -43,6 +43,7 @@ class FlightType(Enum):
     OCA_RUNWAY = "OCA/Runway"
     OCA_AIRCRAFT = "OCA/Aircraft"
     AEWC = "AEW&C"
+    TRANSPORT = "Transport"
 
     def __str__(self) -> str:
         return self.value
@@ -75,6 +76,8 @@ class FlightWaypointType(Enum):
     DIVERT = 23
     INGRESS_OCA_RUNWAY = 24
     INGRESS_OCA_AIRCRAFT = 25
+    PICKUP = 26
+    DROP_OFF = 27
 
 
 class FlightWaypoint:
@@ -164,6 +167,7 @@ class Flight:
         arrival: ControlPoint,
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
+        cargo: Optional[AirliftOrder] = None,
     ) -> None:
         self.package = package
         self.country = country
@@ -180,6 +184,9 @@ class Flight:
         self.use_custom_loadout = False
         self.client_count = 0
         self.custom_name = custom_name
+
+        # Only used by transport missions.
+        self.cargo = cargo
 
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an

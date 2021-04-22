@@ -122,7 +122,7 @@ class Game:
 
         self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
-        self.transfers = PendingTransfers()
+        self.transfers = PendingTransfers(self)
 
         self.sanitize_sides()
 

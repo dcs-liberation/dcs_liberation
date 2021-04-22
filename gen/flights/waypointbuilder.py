@@ -16,10 +16,9 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import Group, VehicleGroup
 
-from game.transfers import Convoy
-
 if TYPE_CHECKING:
     from game import Game
+    from game.transfers import Convoy
 
 from game.theater import (
     ControlPoint,
@@ -444,24 +443,69 @@ class WaypointBuilder:
         return ingress, waypoint, egress
 
     @staticmethod
-    def nav(position: Point, altitude: Distance) -> FlightWaypoint:
+    def pickup(control_point: ControlPoint) -> FlightWaypoint:
+        """Creates a cargo pickup waypoint.
+
+        Args:
+            control_point: Pick up location.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.PICKUP,
+            control_point.position.x,
+            control_point.position.y,
+            meters(0),
+        )
+        waypoint.alt_type = "RADIO"
+        waypoint.name = "PICKUP"
+        waypoint.description = f"Pick up cargo from {control_point}"
+        waypoint.pretty_name = "Pick up location"
+        return waypoint
+
+    @staticmethod
+    def drop_off(control_point: ControlPoint) -> FlightWaypoint:
+        """Creates a cargo drop-off waypoint.
+
+        Args:
+            control_point: Drop-off location.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.PICKUP,
+            control_point.position.x,
+            control_point.position.y,
+            meters(0),
+        )
+        waypoint.alt_type = "RADIO"
+        waypoint.name = "DROP OFF"
+        waypoint.description = f"Drop off cargo at {control_point}"
+        waypoint.pretty_name = "Drop off location"
+        return waypoint
+
+    @staticmethod
+    def nav(
+        position: Point, altitude: Distance, altitude_is_agl: bool = False
+    ) -> FlightWaypoint:
         """Creates a navigation point.
 
         Args:
             position: Position of the waypoint.
             altitude: Altitude of the waypoint.
+            altitude_is_agl: True for altitude is AGL. False if altitude is MSL.
         """
         waypoint = FlightWaypoint(
             FlightWaypointType.NAV, position.x, position.y, altitude
         )
+        if altitude_is_agl:
+            waypoint.alt_type = "RADIO"
         waypoint.name = "NAV"
         waypoint.description = "NAV"
         waypoint.pretty_name = "Nav"
         return waypoint
 
-    def nav_path(self, a: Point, b: Point, altitude: Distance) -> List[FlightWaypoint]:
+    def nav_path(
+        self, a: Point, b: Point, altitude: Distance, altitude_is_agl: bool = False
+    ) -> List[FlightWaypoint]:
         path = self.clean_nav_points(self.navmesh.shortest_path(a, b))
-        return [self.nav(self.perturb(p), altitude) for p in path]
+        return [self.nav(self.perturb(p), altitude, altitude_is_agl) for p in path]
 
     def clean_nav_points(self, points: Iterable[Point]) -> Iterator[Point]:
         # Examine a sliding window of three waypoints. `current` is the waypoint

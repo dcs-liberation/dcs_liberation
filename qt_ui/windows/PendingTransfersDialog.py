@@ -22,8 +22,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game.theater.supplyroutes import SupplyRoute
-from game.transfers import RoadTransferOrder
+from game.transfers import TransferOrder
 from qt_ui.delegate_helpers import painter_context
 from qt_ui.models import GameModel, TransferModel
 
@@ -43,20 +42,14 @@ class TransferDelegate(QStyledItemDelegate):
         return font
 
     @staticmethod
-    def transfer(index: QModelIndex) -> RoadTransferOrder:
+    def transfer(index: QModelIndex) -> TransferOrder:
         return index.data(TransferModel.TransferRole)
 
     def first_row_text(self, index: QModelIndex) -> str:
         return self.transfer_model.data(index, Qt.DisplayRole)
 
     def second_row_text(self, index: QModelIndex) -> str:
-        transfer = self.transfer(index)
-        path = transfer.path()
-        if len(path) == 1:
-            turns = "1 turn"
-        else:
-            turns = f"{len(path)} turns"
-        return f"Currently at {transfer.position}. Arrives at destination in {turns}."
+        return self.transfer(index).description
 
     def paint(
         self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex

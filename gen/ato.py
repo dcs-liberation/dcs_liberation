@@ -8,6 +8,8 @@ example, the package to strike an enemy airfield may contain an escort flight,
 a SEAD flight, and the strike aircraft themselves. CAP packages may contain only
 the single CAP flight.
 """
+from __future__ import annotations
+
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -172,6 +174,7 @@ class Package:
             FlightType.OCA_RUNWAY,
             FlightType.BAI,
             FlightType.DEAD,
+            FlightType.TRANSPORT,
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,

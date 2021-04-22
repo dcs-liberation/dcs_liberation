@@ -31,7 +31,6 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.transfers import Convoy
 from game.utils import Distance, Speed, feet, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
@@ -42,6 +41,7 @@ from ..conflictgen import Conflict, FRONTLINE_LENGTH
 if TYPE_CHECKING:
     from game import Game
     from gen.ato import Package
+    from game.transfers import Convoy
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
@@ -737,6 +737,46 @@ class AwacsFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
+class AirliftFlightPlan(FlightPlan):
+    takeoff: FlightWaypoint
+    nav_to_pickup: List[FlightWaypoint]
+    pickup: Optional[FlightWaypoint]
+    nav_to_drop_off: List[FlightWaypoint]
+    drop_off: FlightWaypoint
+    nav_to_home: List[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to_pickup
+        if self.pickup:
+            yield self.pickup
+        yield from self.nav_to_drop_off
+        yield self.drop_off
+        yield from self.nav_to_home
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.drop_off
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        # TOT planning isn't really useful for transports. They're behind the front
+        # lines so no need to wait for escorts or for other missions to complete.
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        return None
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.package.time_over_target
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -844,6 +884,8 @@ class FlightPlanBuilder:
             return self.generate_tarcap(flight)
         elif task == FlightType.AEWC:
             return self.generate_aewc(flight)
+        elif task == FlightType.TRANSPORT:
+            return self.generate_transport(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -1023,6 +1065,8 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
+        from game.transfers import Convoy
+
         targets: List[StrikeTarget] = []
         if isinstance(location, TheaterGroundObject):
             for group in location.groups:
@@ -1137,6 +1181,57 @@ class FlightPlanBuilder:
             ),
             sweep_start=start,
             sweep_end=end,
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+        )
+
+    def generate_transport(self, flight: Flight) -> AirliftFlightPlan:
+        """Generate an airlift flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        cargo = flight.cargo
+        if cargo is None:
+            raise PlanningError(
+                "Cannot plan transport mission for flight with no cargo."
+            )
+
+        altitude = feet(1500)
+        altitude_is_agl = True
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+
+        pickup = None
+        nav_to_pickup = []
+        if cargo.origin != flight.departure:
+            pickup = builder.pickup(cargo.origin)
+            nav_to_pickup = builder.nav_path(
+                flight.departure.position,
+                cargo.origin.position,
+                altitude,
+                altitude_is_agl,
+            )
+
+        return AirliftFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to_pickup=nav_to_pickup,
+            pickup=pickup,
+            nav_to_drop_off=builder.nav_path(
+                cargo.origin.position,
+                cargo.destination.position,
+                altitude,
+                altitude_is_agl,
+            ),
+            drop_off=builder.drop_off(cargo.destination),
+            nav_to_home=builder.nav_path(
+                cargo.origin.position,
+                flight.arrival.position,
+                altitude,
+                altitude_is_agl,
+            ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
         )

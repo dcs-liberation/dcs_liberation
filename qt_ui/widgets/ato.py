@@ -204,7 +204,6 @@ class QFlightList(QListView):
         )
 
     def delete_flight(self, index: QModelIndex) -> None:
-        self.game_model.game.aircraft_inventory.return_from_flight(self.selected_item)
         self.package_model.delete_flight_at_index(index)
         GameUpdateSignal.get_instance().redraw_flight_paths()
 

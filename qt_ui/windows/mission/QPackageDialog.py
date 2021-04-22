@@ -185,7 +185,6 @@ class QPackageDialog(QDialog):
         try:
             planner.populate_flight_plan(flight)
         except PlanningError as ex:
-            self.game.aircraft_inventory.return_from_flight(flight)
             self.package_model.delete_flight(flight)
             logging.exception("Could not create flight")
             QMessageBox.critical(
@@ -201,7 +200,6 @@ class QPackageDialog(QDialog):
         if flight is None:
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
-        self.game.aircraft_inventory.return_from_flight(flight)
         self.package_model.delete_flight(flight)
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
@@ -216,7 +214,9 @@ class QNewPackageDialog(QPackageDialog):
     def __init__(
         self, game_model: GameModel, model: AtoModel, target: MissionTarget, parent=None
     ) -> None:
-        super().__init__(game_model, PackageModel(Package(target)), parent=parent)
+        super().__init__(
+            game_model, PackageModel(Package(target), game_model), parent=parent
+        )
         self.ato_model = model
 
         self.save_button = QPushButton("Save")

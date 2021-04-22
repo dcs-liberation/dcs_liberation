@@ -15,6 +15,7 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QSizePolicy,
@@ -23,12 +24,16 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.task import PinpointStrike
-from dcs.unittype import UnitType
+from dcs.unittype import FlyingType, UnitType, VehicleType
 
 from game import Game, db
+from game.inventory import ControlPointAircraftInventory
 from game.theater import ControlPoint, SupplyRoute
-from game.transfers import RoadTransferOrder
-from qt_ui.models import GameModel
+from game.transfers import AirliftOrder, RoadTransferOrder
+from gen.ato import Package
+from gen.flights.flight import Flight, FlightType
+from gen.flights.flightplan import FlightPlanBuilder, PlanningError
+from qt_ui.models import GameModel, PackageModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 
 
@@ -111,7 +116,7 @@ class TransferOptionsPanel(QVBoxLayout):
         self.addLayout(QLabeledWidget("Destination:", self.source_combo_box))
         self.airlift = QCheckBox()
         self.airlift.toggled.connect(self.set_airlift)
-        self.addLayout(QLabeledWidget("Airlift (non-functional):", self.airlift))
+        self.addLayout(QLabeledWidget("Airlift (WIP):", self.airlift))
         self.addWidget(
             QLabel(
                 f"{airlift_capacity.total} airlift capacity "
@@ -363,12 +368,112 @@ class NewUnitTransferDialog(QDialog):
             )
             transfers[unit_type] = count
 
-        self.game_model.transfer_model.new_transfer(
-            RoadTransferOrder(
+        if self.dest_panel.airlift.isChecked():
+            self.create_package_for_airlift(
+                self.transfer_panel.cp,
+                self.dest_panel.current,
+                transfers,
+            )
+        else:
+            transfer = RoadTransferOrder(
                 player=True,
                 origin=self.transfer_panel.cp,
                 destination=self.dest_panel.current,
                 units=transfers,
             )
-        )
+            self.game_model.transfer_model.new_transfer(transfer)
         self.close()
+
+    @staticmethod
+    def take_units(
+        units: Dict[Type[VehicleType], int], count: int
+    ) -> Dict[Type[VehicleType], int]:
+        taken = {}
+        for unit_type, remaining in units.items():
+            take = min(remaining, count)
+            count -= take
+            units[unit_type] -= take
+            taken[unit_type] = take
+            if not count:
+                break
+        return taken
+
+    def create_airlift_flight(
+        self,
+        game: Game,
+        package_model: PackageModel,
+        unit_type: Type[FlyingType],
+        inventory: ControlPointAircraftInventory,
+        needed_capacity: int,
+        pickup: ControlPoint,
+        drop_off: ControlPoint,
+        units: Dict[Type[VehicleType], int],
+    ) -> int:
+        available = inventory.available(unit_type)
+        # 4 is the max flight size in DCS.
+        flight_size = min(needed_capacity, available, 4)
+        flight = Flight(
+            package_model.package,
+            game.player_country,
+            unit_type,
+            flight_size,
+            FlightType.TRANSPORT,
+            game.settings.default_start_type,
+            departure=inventory.control_point,
+            arrival=inventory.control_point,
+            divert=None,
+        )
+
+        transfer = AirliftOrder(
+            player=True,
+            origin=pickup,
+            destination=drop_off,
+            units=self.take_units(units, flight_size),
+            flight=flight,
+        )
+        flight.cargo = transfer
+
+        package_model.add_flight(flight)
+        planner = FlightPlanBuilder(game, package_model.package, is_player=True)
+        try:
+            planner.populate_flight_plan(flight)
+        except PlanningError as ex:
+            package_model.delete_flight(flight)
+            logging.exception("Could not create flight")
+            QMessageBox.critical(
+                self, "Could not create flight", str(ex), QMessageBox.Ok
+            )
+        game.aircraft_inventory.claim_for_flight(flight)
+        self.game_model.transfer_model.new_transfer(transfer)
+        return flight_size
+
+    def create_package_for_airlift(
+        self,
+        pickup: ControlPoint,
+        drop_off: ControlPoint,
+        units: Dict[Type[VehicleType], int],
+    ) -> None:
+        package = Package(target=drop_off, auto_asap=True)
+        package_model = PackageModel(package, self.game_model)
+
+        needed_capacity = sum(c for c in units.values())
+        game = self.game_model.game
+        for cp in game.theater.player_points():
+            inventory = game.aircraft_inventory.for_control_point(cp)
+            for unit_type, available in inventory.all_aircraft:
+                if unit_type.helicopter:
+                    while available and needed_capacity:
+                        flight_size = self.create_airlift_flight(
+                            self.game_model.game,
+                            package_model,
+                            unit_type,
+                            inventory,
+                            needed_capacity,
+                            pickup,
+                            drop_off,
+                            units,
+                        )
+                        available -= flight_size
+                        needed_capacity -= flight_size
+        package_model.update_tot()
+        self.game_model.ato_model.add_package(package)

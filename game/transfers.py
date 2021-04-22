@@ -3,16 +3,17 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import singledispatchmethod
 from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.unittype import VehicleType
 
 if TYPE_CHECKING:
-    pass
+    from game import Game
 from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
 from gen.naming import namegen
-from gen.flights.flight import FlightType
+from gen.flights.flight import Flight, FlightType
 
 
 @dataclass
@@ -31,13 +32,17 @@ class TransferOrder:
     #: True if the transfer order belongs to the player.
     player: bool
 
+    #: The units being transferred.
+    units: Dict[Type[VehicleType], int]
+
+    @property
+    def description(self) -> str:
+        raise NotImplementedError
+
 
 @dataclass
 class RoadTransferOrder(TransferOrder):
     """A transfer order that moves units by road."""
-
-    #: The units being transferred.
-    units: Dict[Type[VehicleType], int]
 
     #: The current position of the group being transferred. Groups move one control
     #: point a turn through the supply line.
@@ -52,6 +57,26 @@ class RoadTransferOrder(TransferOrder):
 
     def next_stop(self) -> ControlPoint:
         return self.path()[0]
+
+    @property
+    def description(self) -> str:
+        path = self.path()
+        if len(path) == 1:
+            turns = "1 turn"
+        else:
+            turns = f"{len(path)} turns"
+        return f"Currently at {self.position}. Arrives at destination in {turns}."
+
+
+@dataclass
+class AirliftOrder(TransferOrder):
+    """A transfer order that moves units by cargo planes and helicopters."""
+
+    flight: Flight
+
+    @property
+    def description(self) -> str:
+        return "Airlift"
 
 
 class Convoy(MissionTarget):
@@ -159,27 +184,54 @@ class ConvoyMap:
 
 
 class PendingTransfers:
-    def __init__(self) -> None:
+    def __init__(self, game: Game) -> None:
+        self.game = game
         self.convoys = ConvoyMap()
-        self.pending_transfers: List[RoadTransferOrder] = []
+        self.pending_transfers: List[TransferOrder] = []
 
-    def __iter__(self) -> Iterator[RoadTransferOrder]:
+    def __iter__(self) -> Iterator[TransferOrder]:
         yield from self.pending_transfers
 
     @property
     def pending_transfer_count(self) -> int:
         return len(self.pending_transfers)
 
-    def transfer_at_index(self, index: int) -> RoadTransferOrder:
+    def transfer_at_index(self, index: int) -> TransferOrder:
         return self.pending_transfers[index]
 
-    def new_transfer(self, transfer: RoadTransferOrder) -> None:
-        transfer.origin.base.commit_losses(transfer.units)
-        self.pending_transfers.append(transfer)
+    def index_of_transfer(self, transfer: TransferOrder) -> int:
+        return self.pending_transfers.index(transfer)
+
+    # TODO: Move airlift arrangements here?
+    @singledispatchmethod
+    def arrange_transport(self, transfer) -> None:
+        pass
+
+    @arrange_transport.register
+    def _arrange_transport_road(self, transfer: RoadTransferOrder) -> None:
         self.convoys.add(transfer)
 
-    def cancel_transfer(self, transfer: RoadTransferOrder) -> None:
+    def new_transfer(self, transfer: TransferOrder) -> None:
+        transfer.origin.base.commit_losses(transfer.units)
+        self.pending_transfers.append(transfer)
+        self.arrange_transport(transfer)
+
+    @singledispatchmethod
+    def cancel_transport(self, transfer) -> None:
+        pass
+
+    @cancel_transport.register
+    def _cancel_transport_air(self, transfer: AirliftOrder) -> None:
+        flight = transfer.flight
+        flight.package.remove_flight(flight)
+        self.game.aircraft_inventory.return_from_flight(flight)
+
+    @cancel_transport.register
+    def _cancel_transport_road(self, transfer: RoadTransferOrder) -> None:
         self.convoys.remove(transfer)
+
+    def cancel_transfer(self, transfer: TransferOrder) -> None:
+        self.cancel_transport(transfer)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commision_units(transfer.units)
 
@@ -194,9 +246,27 @@ class PendingTransfers:
     def rebuild_convoys(self) -> None:
         self.convoys.disband_all()
         for transfer in self.pending_transfers:
-            self.convoys.add(transfer)
+            self.arrange_transport(transfer)
 
-    def perform_transfer(self, transfer: RoadTransferOrder) -> bool:
+    @singledispatchmethod
+    def perform_transfer(self, transfer) -> bool:
+        raise NotImplementedError
+
+    @perform_transfer.register
+    def _perform_transfer_air(self, transfer: AirliftOrder) -> bool:
+        if transfer.player != transfer.destination.captured:
+            logging.info(
+                f"Transfer destination {transfer.destination} was captured. Cancelling "
+                "transport."
+            )
+            transfer.origin.base.commision_units(transfer.units)
+            return True
+
+        transfer.destination.base.commision_units(transfer.units)
+        return True
+
+    @perform_transfer.register
+    def _perform_transfer_road(self, transfer: RoadTransferOrder) -> bool:
         # TODO: Can be improved to use the convoy map.
         # The convoy map already has a lot of the data that we're recomputing here.
         if transfer.player != transfer.destination.captured:
