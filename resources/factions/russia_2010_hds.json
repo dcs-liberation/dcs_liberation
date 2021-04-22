@@ -85,7 +85,7 @@
   ],
   "requirements": { "High Digit SAMs":  "https://github.com/Auranis/HighDigitSAMs/releases"},
   "carrier_names": [
-    "Admiral Kuznetov"
+    "Admiral Kuznetsov"
   ],
   "navy_generators": [
     "RussianNavyGroupGenerator"
