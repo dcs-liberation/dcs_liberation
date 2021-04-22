@@ -59,5 +59,11 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Canada 409th Squadron",
+      "Canada 425th Squadron"
+    ]
+  }
 }

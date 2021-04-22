@@ -61,5 +61,11 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Australian 75th Squadron",
+      "Australian 77th Squadron"
+    ]
+  }
 }
