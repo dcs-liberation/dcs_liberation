@@ -1,0 +1,74 @@
+{
+  "country": "Australia",
+  "name": "Australia 2005 (With C-130)",
+  "authors": "Khopa, SpaceEnthusiast",
+  "description": "<p>The Australian army in 2005.</p><p>Some units might not be accurate, but were picked to represent at best this army.</p>",
+  "aircrafts": [
+    "FA_18C_hornet",
+    "UH_1H",
+    "SH_60B",
+    "AH_1W",
+	"Hercules"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_M1A2_Abrams",
+    "MBT_Leopard_1A3",
+    "APC_M113",
+    "IFV_LAV_25",
+    "IFV_Warrior"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Truck_M818_6x6"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Infantry_M249",
+    "MANPADS_Stinger"
+  ],
+  "air_defenses": [
+    "HawkGenerator",
+    "RapierGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+    "LHA_1_Tarawa"
+  ],
+  "destroyers": [
+    "DDG_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+    "HMAS Canberra",
+    "HMAS Adelaide"
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Australian 75th Squadron",
+      "Australian 77th Squadron"
+    ]
+  }
+}
