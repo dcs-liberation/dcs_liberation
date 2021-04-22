@@ -195,6 +195,8 @@ class PendingTransfersDialog(QDialog):
         self.transfer_model.cancel_transfer_at_index(self.transfer_list.currentIndex())
 
     def can_cancel(self, index: QModelIndex) -> bool:
+        if not index.isValid():
+            return False
         return self.transfer_model.transfer_at_index(index).player
 
     def on_selection_changed(
