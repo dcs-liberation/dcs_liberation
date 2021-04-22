@@ -1647,6 +1647,7 @@ class PydcsWaypointBuilder:
         mission: Mission,
     ) -> PydcsWaypointBuilder:
         builders = {
+            FlightWaypointType.DROP_OFF: CargoStopBuilder,
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
@@ -1660,6 +1661,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
+            FlightWaypointType.PICKUP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission)
@@ -1999,6 +2001,15 @@ class LandingPointBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
         waypoint.type = "Land"
         waypoint.action = PointAction.Landing
+        return waypoint
+
+
+class CargoStopBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+        waypoint.type = "LandingReFuAr"
+        waypoint.action = PointAction.LandingReFuAr
+        waypoint.landing_refuel_rearm_time = 2  # Minutes.
         return waypoint
 
 
