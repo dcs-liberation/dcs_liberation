@@ -450,21 +450,31 @@ class ObjectiveFinder:
             c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
         )
 
-    def farthest_friendly_control_point(self) -> ControlPoint:
+    def farthest_friendly_control_point(self) -> Optional[ControlPoint]:
         """
         Iterates over all friendly control points and find the one farthest away from the frontline
         BUT! prefer Cvs. Everybody likes CVs!
         """
         from_frontline = 0
+        cp = None
+        first_friendly_cp = None
 
         for c in self.game.theater.controlpoints:
-            if c.is_carrier and c.is_friendly(self.is_player):
-                return c
-            if c.is_friendly(self.is_player) and c.has_frontline:
-                if c.distance_to(self.front_lines().__next__()) > from_frontline:
-                    from_frontline = c.distance_to(self.front_lines().__next__())
-                    cp = c
-        return cp
+            if c.is_friendly(self.is_player):
+                if first_friendly_cp is None:
+                    first_friendly_cp = c
+                if c.is_carrier:
+                    return c
+                if c.has_active_frontline:
+                    if c.distance_to(self.front_lines().__next__()) > from_frontline:
+                        from_frontline = c.distance_to(self.front_lines().__next__())
+                        cp = c
+
+        # If no frontlines on the map, return the first friendly cp
+        if cp is None:
+            return first_friendly_cp
+        else:
+            return cp
 
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
@@ -546,9 +556,10 @@ class CoalitionMissionPlanner:
 
         # Find farthest, friendly CP for AEWC
         cp = self.objective_finder.farthest_friendly_control_point()
-        yield ProposedMission(
-            cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
-        )
+        if cp is not None:
+            yield ProposedMission(
+                cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+            )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
