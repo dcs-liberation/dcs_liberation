@@ -35,7 +35,6 @@ from gen.fleet.ship_group_generator import (
     generate_lha_group,
     generate_ship_group,
 )
-from gen.locations.preset_location_finder import MizDataLocationFinder
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.airdefensegroupgenerator import AirDefenseRange
 from gen.sam.sam_group_generator import generate_anti_air_group
@@ -142,12 +141,8 @@ class GameGenerator:
 
 
 class LocationFinder:
-    def __init__(self, game: Game, control_point: ControlPoint) -> None:
-        self.game = game
+    def __init__(self, control_point: ControlPoint) -> None:
         self.control_point = control_point
-        self.miz_data = MizDataLocationFinder.compute_possible_locations(
-            game.theater.terrain.name, control_point.full_name
-        )
 
     def location_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
         position = self.control_point.preset_locations.random_for(location_type)
@@ -155,158 +150,10 @@ class LocationFinder:
             return position
 
         logging.warning(
-            f"No campaign location for %s Mat %s",
+            f"No campaign location for %s at %s",
             location_type.value,
             self.control_point,
         )
-        position = self.random_from_miz_data(
-            location_type == LocationType.OffshoreStrikeTarget
-        )
-        if position is not None:
-            return position
-
-        logging.debug(
-            f"No mizdata location for %s at %s", location_type.value, self.control_point
-        )
-        position = self.random_position(location_type)
-        if position is not None:
-            return position
-
-        logging.error(
-            f"Could not find position for %s at %s",
-            location_type.value,
-            self.control_point,
-        )
-        return None
-
-    def random_from_miz_data(self, offshore: bool) -> Optional[PointWithHeading]:
-        if offshore:
-            locations = self.miz_data.offshore_locations
-        else:
-            locations = self.miz_data.ashore_locations
-        if self.miz_data.offshore_locations:
-            preset = random.choice(locations)
-            locations.remove(preset)
-            return PointWithHeading.from_point(preset.position, preset.heading)
-        return None
-
-    def random_position(
-        self, location_type: LocationType
-    ) -> Optional[PointWithHeading]:
-        # TODO: Flesh out preset locations so we never hit this case.
-
-        if location_type == LocationType.Coastal:
-            # No coastal locations generated randomly
-            return None
-
-        logging.warning(
-            "Falling back to random location for %s at %s",
-            location_type.value,
-            self.control_point,
-        )
-
-        is_base_defense = location_type in {
-            LocationType.BaseAirDefense,
-            LocationType.Garrison,
-            LocationType.Shorad,
-        }
-
-        on_land = location_type not in {
-            LocationType.OffshoreStrikeTarget,
-            LocationType.Ship,
-        }
-
-        avoid_others = location_type not in {
-            LocationType.Garrison,
-            LocationType.MissileSite,
-            LocationType.Sam,
-            LocationType.Ship,
-            LocationType.Shorad,
-        }
-
-        if is_base_defense:
-            min_range = 400
-            max_range = 3200
-        elif location_type == LocationType.Ship:
-            min_range = 5000
-            max_range = 40000
-        elif location_type == LocationType.MissileSite:
-            min_range = 2500
-            max_range = 40000
-        else:
-            min_range = 10000
-            max_range = 40000
-
-        position = self._find_random_position(
-            min_range, max_range, on_land, is_base_defense, avoid_others
-        )
-
-        # Retry once, searching a bit further (On some big airbases, 3200 is too
-        # short (Ex : Incirlik)), but searching farther on every base would be
-        # problematic, as some base defense units would end up very far away
-        # from small airfields.
-        if position is None and is_base_defense:
-            position = self._find_random_position(
-                3200, 4800, on_land, is_base_defense, avoid_others
-            )
-        return position
-
-    def _find_random_position(
-        self,
-        min_range: int,
-        max_range: int,
-        on_ground: bool,
-        is_base_defense: bool,
-        avoid_others: bool,
-    ) -> Optional[PointWithHeading]:
-        """
-        Find a valid ground object location
-        :param on_ground: Whether it should be on ground or on sea (True = on
-        ground)
-        :param min_range: Minimal range from point
-        :param max_range: Max range from point
-        :param is_base_defense: True if the location is for base defense.
-        :return:
-        """
-        near = self.control_point.position
-        others = self.control_point.ground_objects
-
-        def is_valid(point: Optional[PointWithHeading]) -> bool:
-            if point is None:
-                return False
-
-            if on_ground and not self.game.theater.is_on_land(point):
-                return False
-            elif not on_ground and not self.game.theater.is_in_sea(point):
-                return False
-
-            if avoid_others:
-                for other in others:
-                    if other.position.distance_to_point(point) < 10000:
-                        return False
-
-            if is_base_defense:
-                # If it's a base defense we don't care how close it is to other
-                # points.
-                return True
-
-            # Else verify that it's not too close to another control point.
-            for control_point in self.game.theater.controlpoints:
-                if control_point != self.control_point:
-                    if control_point.position.distance_to_point(point) < 30000:
-                        return False
-                    for ground_obj in control_point.ground_objects:
-                        if ground_obj.position.distance_to_point(point) < 10000:
-                            return False
-            return True
-
-        for _ in range(300):
-            # Check if on land or sea
-            p = PointWithHeading.from_point(
-                near.random_point_within(max_range, min_range), random.randint(0, 360)
-            )
-            if is_valid(p):
-                return p
         return None
 
 
@@ -320,7 +167,7 @@ class ControlPointGroundObjectGenerator:
         self.game = game
         self.generator_settings = generator_settings
         self.control_point = control_point
-        self.location_finder = LocationFinder(game, control_point)
+        self.location_finder = LocationFinder(control_point)
 
     @property
     def faction_name(self) -> str:
@@ -437,7 +284,7 @@ class BaseDefenseGenerator:
     def __init__(self, game: Game, control_point: ControlPoint) -> None:
         self.game = game
         self.control_point = control_point
-        self.location_finder = LocationFinder(game, control_point)
+        self.location_finder = LocationFinder(control_point)
 
     @property
     def faction_name(self) -> str:
