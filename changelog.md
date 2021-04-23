@@ -2,7 +2,8 @@
 
 ## Features/Improvements
 
-* **[UI]** BARCAP commit ranges are now displayed by default.
+* **[UI]** Engagement ranges are now displayed by default.
+* **[UI]** Engagement range display generalized to work for all patrolling flight plans (BARCAP, TARCAP, and CAS).
 
 ## Fixes
 
