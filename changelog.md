@@ -1,6 +1,6 @@
-# 2.6.0
+# 3.0.0
 
-Saves from 2.5 are not compatible with 2.6.
+Saves from 2.5 are not compatible with 3.0.
 
 ## Features/Improvements
 
