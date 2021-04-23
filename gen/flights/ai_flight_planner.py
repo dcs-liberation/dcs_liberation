@@ -589,9 +589,23 @@ class CoalitionMissionPlanner:
                 front_line,
                 [
                     ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
-                    ProposedFlight(
-                        FlightType.TARCAP, 2, self.MAX_CAP_RANGE, EscortType.AirToAir
-                    ),
+                    # This is *not* an escort because front lines don't create a threat
+                    # zone. Generating threat zones from front lines causes the front
+                    # line to push back BARCAPs as it gets closer to the base. While
+                    # front lines do have the same problem of potentially pulling
+                    # BARCAPs off bases to engage a front line TARCAP, that's probably
+                    # the one time where we do want that.
+                    #
+                    # TODO: Use intercepts and extra TARCAPs to cover bases near fronts.
+                    # We don't have intercept missions yet so this isn't something we
+                    # can do today, but we should probably return to having the front
+                    # line project a threat zone (so that strike missions will route
+                    # around it) and instead *not plan* a BARCAP at bases near the
+                    # front, since there isn't a place to put a barrier. Instead, the
+                    # aircraft that would have been a BARCAP could be used as additional
+                    # interceptors and TARCAPs which will defend the base but won't be
+                    # trying to avoid front line contacts.
+                    ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
                 ],
             )
 

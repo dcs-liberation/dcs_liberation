@@ -18,6 +18,7 @@ Saves from 2.5 are not compatible with 2.6.
 
 * **[UI]** Engagement ranges are now displayed by default.
 * **[UI]** Engagement range display generalized to work for all patrolling flight plans (BARCAP, TARCAP, and CAS).
+* **[Flight Planner]** Front lines no longer project threat zones to avoid pushing BARCAPs back so much. TARCAPs will be forcibly planned but strike packages will not route around front lines even if it is reasonable to do so.
 
 ## Fixes
 
