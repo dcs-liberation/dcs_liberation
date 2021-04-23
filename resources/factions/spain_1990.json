@@ -64,5 +64,22 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Spain 111th Escuadron C.15-73",
+      "Spain 111th Escuadron C.15-88",
+	  "Spain 121th Escuadron C.15-45",
+	  "Spain 121th Escuadron C.15-50",
+	  "Spain 121th Escuadron C.15-60",
+	  "Spain 151th Escuadron C.15-14",
+	  "Spain 151th Escuadron C.15-18",
+	  "Spain 151th Escuadron C.15-23",
+	  "Spain 151th Escuadron C.15-24",
+	  "Spain 211th Escuadron C.15-76",
+	  "Spain 211th Escuadron C.15-77",
+	  "Spain 462th Escuadron C.15-79",
+	  "Spain 462th Escuadron C.15-90"
+    ]
+  }
 }

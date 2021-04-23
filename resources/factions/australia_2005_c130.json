@@ -1,12 +1,14 @@
 {
-  "country": "Canada",
-  "name": "Canada 2005",
-  "authors": "Khopa",
-  "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
+  "country": "Australia",
+  "name": "Australia 2005 (With C-130)",
+  "authors": "Khopa, SpaceEnthusiast",
+  "description": "<p>The Australian army in 2005.</p><p>Some units might not be accurate, but were picked to represent at best this army.</p>",
   "aircrafts": [
     "FA_18C_hornet",
     "UH_1H",
-    "AH_1W"
+    "SH_60B",
+    "AH_1W",
+	"Hercules"
   ],
   "awacs": [
     "E_3A"
@@ -16,12 +18,11 @@
     "KC130"
   ],
   "frontline_units": [
+    "MBT_M1A2_Abrams",
     "MBT_Leopard_1A3",
-    "MBT_Leopard_2",
-    "IFV_LAV_25",
     "APC_M113",
-    "IFV_Warrior",
-    "SAM_Avenger__Stinger"
+    "IFV_LAV_25",
+    "IFV_Warrior"
   ],
   "artillery_units": [
   ],
@@ -34,8 +35,8 @@
     "MANPADS_Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator"
+    "HawkGenerator",
+    "RapierGenerator"
   ],
   "ewrs": [
     "HawkEwrGenerator"
@@ -43,17 +44,21 @@
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [
+    "LHA_1_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
   ],
-  "requirements": {},
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
   "carrier_names": [
   ],
   "helicopter_carrier_names": [
+    "HMAS Canberra",
+    "HMAS Adelaide"
   ],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"
@@ -62,8 +67,8 @@
   "jtac_unit": "MQ_9_Reaper",
   "liveries_overrides": {
     "FA_18C_hornet": [
-      "Canada 409th Squadron",
-      "Canada 425th Squadron"
+      "Australian 75th Squadron",
+      "Australian 77th Squadron"
     ]
   }
 }
