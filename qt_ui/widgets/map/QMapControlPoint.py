@@ -103,7 +103,9 @@ class QMapControlPoint(QMapObject):
 
     def cheat_capture(self) -> None:
         self.control_point.capture(self.game_model.game, for_player=True)
-        # Reinitialized ground planners and the like.
+        # Reinitialized ground planners and the like. The ATO needs to be reset because
+        # missions planned against the flipped base are no longer valid.
+        self.game_model.game.reset_ato()
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 

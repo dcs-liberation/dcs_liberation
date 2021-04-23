@@ -154,6 +154,11 @@ class Game:
         # Regenerate any state that was not persisted.
         self.on_load()
 
+    def ato_for(self, player: bool) -> AirTaskingOrder:
+        if player:
+            return self.blue_ato
+        return self.red_ato
+
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
             self.theater, self.current_day, self.current_turn_time_of_day, self.settings
@@ -257,6 +262,10 @@ class Game:
         self.compute_conflicts_position()
         self.compute_threat_zones()
 
+    def reset_ato(self) -> None:
+        self.blue_ato.clear()
+        self.red_ato.clear()
+
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
         self.informations.append(
@@ -268,11 +277,13 @@ class Game:
         # one hop ahead. ControlPoint.process_turn handles unit deliveries.
         self.transfers.perform_transfers()
 
+        # Needs to happen *before* planning transfers so we don't cancel the
+        self.reset_ato()
+
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
 
         self.process_enemy_income()
-
         self.process_player_income()
 
         if not no_action and self.turn > 1:
@@ -325,8 +336,6 @@ class Game:
         self.compute_conflicts_position()
         self.compute_threat_zones()
         self.ground_planners = {}
-        self.blue_ato.clear()
-        self.red_ato.clear()
 
         blue_planner = CoalitionMissionPlanner(self, is_player=True)
         blue_planner.plan_missions()

@@ -344,10 +344,8 @@ class ControlPoint(MissionTarget, ABC):
         if not game.settings.enable_new_ground_unit_recruitment:
             return True
 
-        from game.theater.supplyroutes import SupplyRoute
-
-        for cp in SupplyRoute.for_control_point(self):
-            if cp.can_recruit_ground_units(game):
+        for cp in game.theater.controlpoints:
+            if cp.is_friendly(self.captured) and cp.can_recruit_ground_units(game):
                 return True
         return False
 

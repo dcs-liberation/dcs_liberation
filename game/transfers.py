@@ -6,14 +6,18 @@ from dataclasses import dataclass, field
 from functools import singledispatchmethod
 from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
-from dcs.unittype import VehicleType
+from dcs.unittype import FlyingType, VehicleType
 
-if TYPE_CHECKING:
-    from game import Game
+from gen.ato import Package
+from gen.flights.flightplan import FlightPlanBuilder
 from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
 from gen.naming import namegen
 from gen.flights.flight import Flight, FlightType
+
+if TYPE_CHECKING:
+    from game import Game
+    from game.inventory import ControlPointAircraftInventory
 
 
 # TODO: Remove base classes.
@@ -93,6 +97,82 @@ class AirliftOrder(TransferOrder):
             self.units[unit_type] -= 1
             return
         raise KeyError
+
+
+class AirliftPlanner:
+    def __init__(
+        self,
+        game: Game,
+        pickup: ControlPoint,
+        drop_off: ControlPoint,
+        units: Dict[Type[VehicleType], int],
+    ) -> None:
+        self.game = game
+        self.pickup = pickup
+        self.drop_off = drop_off
+        self.units = units
+        self.for_player = drop_off.captured
+        self.package = Package(target=drop_off, auto_asap=True)
+
+    def create_package_for_airlift(self) -> Dict[Type[VehicleType], int]:
+        for cp in self.game.theater.player_points():
+            inventory = self.game.aircraft_inventory.for_control_point(cp)
+            for unit_type, available in inventory.all_aircraft:
+                if unit_type.helicopter:
+                    while available and self.needed_capacity:
+                        flight_size = self.create_airlift_flight(unit_type, inventory)
+                        available -= flight_size
+        self.game.ato_for(self.for_player).add_package(self.package)
+        return self.units
+
+    def take_units(self, count: int) -> Dict[Type[VehicleType], int]:
+        taken = {}
+        for unit_type, remaining in self.units.items():
+            take = min(remaining, count)
+            count -= take
+            self.units[unit_type] -= take
+            taken[unit_type] = take
+            if not count:
+                break
+        return taken
+
+    @property
+    def needed_capacity(self) -> int:
+        return sum(c for c in self.units.values())
+
+    def create_airlift_flight(
+        self, unit_type: Type[FlyingType], inventory: ControlPointAircraftInventory
+    ) -> int:
+        available = inventory.available(unit_type)
+        # 4 is the max flight size in DCS.
+        flight_size = min(self.needed_capacity, available, 4)
+        flight = Flight(
+            self.package,
+            self.game.player_country,
+            unit_type,
+            flight_size,
+            FlightType.TRANSPORT,
+            self.game.settings.default_start_type,
+            departure=inventory.control_point,
+            arrival=inventory.control_point,
+            divert=None,
+        )
+
+        transfer = AirliftOrder(
+            player=True,
+            origin=self.pickup,
+            destination=self.drop_off,
+            units=self.take_units(flight_size),
+            flight=flight,
+        )
+        flight.cargo = transfer
+
+        self.package.add_flight(flight)
+        planner = FlightPlanBuilder(self.game, self.package, self.for_player)
+        planner.populate_flight_plan(flight)
+        self.game.aircraft_inventory.claim_for_flight(flight)
+        self.game.transfers.new_transfer(transfer)
+        return flight_size
 
 
 class Convoy(MissionTarget):
