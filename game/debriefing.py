@@ -22,7 +22,14 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import Airfield, ControlPoint
-from game.unitmap import Building, ConvoyUnit, FrontLineUnit, GroundObjectUnit, UnitMap
+from game.unitmap import (
+    AirliftUnit,
+    Building,
+    ConvoyUnit,
+    FrontLineUnit,
+    GroundObjectUnit,
+    UnitMap,
+)
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -62,6 +69,9 @@ class GroundLosses:
 
     player_convoy: List[ConvoyUnit] = field(default_factory=list)
     enemy_convoy: List[ConvoyUnit] = field(default_factory=list)
+
+    player_airlifts: List[AirliftUnit] = field(default_factory=list)
+    enemy_airlifts: List[AirliftUnit] = field(default_factory=list)
 
     player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
     enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
@@ -129,6 +139,11 @@ class Debriefing:
         yield from self.ground_losses.enemy_convoy
 
     @property
+    def airlift_losses(self) -> Iterator[AirliftUnit]:
+        yield from self.ground_losses.player_airlifts
+        yield from self.ground_losses.enemy_airlifts
+
+    @property
     def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
@@ -162,6 +177,16 @@ class Debriefing:
             losses = self.ground_losses.player_convoy
         else:
             losses = self.ground_losses.enemy_convoy
+        for loss in losses:
+            losses_by_type[loss.unit_type] += 1
+        return losses_by_type
+
+    def airlift_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_airlifts
+        else:
+            losses = self.ground_losses.enemy_airlifts
         for loss in losses:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
@@ -249,6 +274,15 @@ class Debriefing:
                 f"Death of untracked ground unit {unit_name} will "
                 "have no effect. This may be normal behavior."
             )
+
+        for unit_name in self.state_data.killed_aircraft:
+            airlift_unit = self.unit_map.airlift_unit(unit_name)
+            if airlift_unit is not None:
+                if airlift_unit.transfer.player:
+                    losses.player_airlifts.append(airlift_unit)
+                else:
+                    losses.enemy_airlifts.append(airlift_unit)
+                continue
 
         return losses
 

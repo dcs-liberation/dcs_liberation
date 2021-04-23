@@ -151,16 +151,19 @@ class QWaitingForMissionResultWindow(QDialog):
         updateLayout.addWidget(QLabel("<b>Convoy units destroyed</b>"), 2, 0)
         updateLayout.addWidget(QLabel(str(len(list(debriefing.convoy_losses)))), 2, 1)
 
-        updateLayout.addWidget(QLabel("<b>Other ground units destroyed</b>"), 3, 0)
+        updateLayout.addWidget(QLabel("<b>Airlift cargo destroyed</b>"), 3, 0)
+        updateLayout.addWidget(QLabel(str(len(list(debriefing.airlift_losses)))), 3, 1)
+
+        updateLayout.addWidget(QLabel("<b>Other ground units destroyed</b>"), 4, 0)
         updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.ground_object_losses)))), 3, 1
+            QLabel(str(len(list(debriefing.ground_object_losses)))), 4, 1
         )
 
-        updateLayout.addWidget(QLabel("<b>Buildings destroyed</b>"), 4, 0)
-        updateLayout.addWidget(QLabel(str(len(list(debriefing.building_losses)))), 4, 1)
+        updateLayout.addWidget(QLabel("<b>Buildings destroyed</b>"), 5, 0)
+        updateLayout.addWidget(QLabel(str(len(list(debriefing.building_losses)))), 5, 1)
 
-        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 5, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 5, 1)
+        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 6, 0)
+        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 6, 1)
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):

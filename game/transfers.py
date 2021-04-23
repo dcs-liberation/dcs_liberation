@@ -78,6 +78,17 @@ class AirliftOrder(TransferOrder):
     def description(self) -> str:
         return "Airlift"
 
+    def iter_units(self) -> Iterator[Type[VehicleType]]:
+        for unit_type, count in self.units.items():
+            for _ in range(count):
+                yield unit_type
+
+    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+        if unit_type in self.units:
+            self.units[unit_type] -= 1
+            return
+        raise KeyError
+
 
 class Convoy(MissionTarget):
     def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:

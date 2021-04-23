@@ -9,7 +9,7 @@ from dcs.unittype import VehicleType
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject
-from game.transfers import Convoy, RoadTransferOrder
+from game.transfers import AirliftOrder, Convoy
 from gen.flights.flight import Flight
 
 
@@ -33,6 +33,12 @@ class ConvoyUnit:
 
 
 @dataclass(frozen=True)
+class AirliftUnit:
+    unit_type: Type[VehicleType]
+    transfer: AirliftOrder
+
+
+@dataclass(frozen=True)
 class Building:
     ground_object: BuildingGroundObject
 
@@ -45,6 +51,7 @@ class UnitMap:
         self.ground_object_units: Dict[str, GroundObjectUnit] = {}
         self.buildings: Dict[str, Building] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
+        self.airlifts: Dict[str, AirliftUnit] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -54,6 +61,8 @@ class UnitMap:
             if name in self.aircraft:
                 raise RuntimeError(f"Duplicate unit name: {name}")
             self.aircraft[name] = flight
+        if flight.cargo is not None:
+            self.add_airlift_units(group, flight.cargo)
 
     def flight(self, unit_name: str) -> Optional[Flight]:
         return self.aircraft.get(unit_name, None)
@@ -139,6 +148,21 @@ class UnitMap:
 
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
         return self.convoys.get(name, None)
+
+    def add_airlift_units(self, group: FlyingGroup, airlift: AirliftOrder) -> None:
+        for transport, cargo_type in zip(group.units, airlift.iter_units()):
+            # The actual name is a String (the pydcs translatable string), which
+            # doesn't define __eq__.
+            name = str(transport.name)
+            if name in self.airlifts:
+                raise RuntimeError(f"Duplicate airlift unit: {name}")
+            unit_type = db.unit_type_from_name(transport.type)
+            if unit_type is None:
+                raise RuntimeError(f"Unknown unit type: {transport.type}")
+            self.airlifts[name] = AirliftUnit(cargo_type, airlift)
+
+    def airlift_unit(self, name: str) -> Optional[AirliftUnit]:
+        return self.airlifts.get(name, None)
 
     def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
         # The actual name is a String (the pydcs translatable string), which
