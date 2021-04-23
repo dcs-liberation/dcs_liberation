@@ -1,3 +1,12 @@
+# 2.5.1
+
+## Features/Improvements
+
+* **[UI]** BARCAP commit ranges are now displayed by default.
+
+## Fixes
+
+>>>>>>> 208d1b82 (Show BARCAP commit ranges by default.)
 # 2.5.0
 
 Saves from 2.4 are not compatible with 2.5.
