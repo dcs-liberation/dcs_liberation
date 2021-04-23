@@ -25,7 +25,6 @@ class QIntelBox(QGroupBox):
 
         summary = QGridLayout()
         summary.setContentsMargins(5, 5, 5, 5)
-        # columns.addLayout(summary)
 
         air_superiority = QLabel("Air superiority:")
         summary.addWidget(air_superiority, 0, 0)
@@ -51,7 +50,6 @@ class QIntelBox(QGroupBox):
         self.ground_strength.setStyleSheet(button_text_style)
         self.economic_strength.setStyleSheet(button_text_style)
 
-        # details = QPushButton("Details")
         self.details = QPushButton()
         self.details.setMinimumHeight(50)
         self.details.setMinimumWidth(210)

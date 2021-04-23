@@ -14,14 +14,6 @@ class QBudgetBox(QGroupBox):
         super(QBudgetBox, self).__init__("Budget")
 
         self.game = game
-        # self.money_icon = QLabel()
-        # self.money_icon.setPixmap(CONST.ICONS["Money"])
-        # self.money_amount = QLabel()
-
-        # self.finances = QPushButton("Details")
-        # self.finances.setDisabled(True)
-        # self.finances.setProperty("style", "btn-primary")
-        # self.finances.clicked.connect(self.openFinances)
 
         self.finances = QPushButton()
         self.finances.setDisabled(True)
@@ -30,8 +22,6 @@ class QBudgetBox(QGroupBox):
         self.finances.clicked.connect(self.openFinances)
 
         self.layout = QHBoxLayout()
-        # self.layout.addWidget(self.money_icon)
-        # self.layout.addWidget(self.money_amount)
         self.layout.addWidget(self.finances)
         self.setLayout(self.layout)
 
