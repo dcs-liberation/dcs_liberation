@@ -15,6 +15,7 @@ from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
+from game.theater.theatergroundobject import MissileSiteGroundObject
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -23,7 +24,7 @@ from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
 from .debriefing import Debriefing
-from .event.event import Event, UnitsDeliveryEvent
+from .event.event import Event
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .income import Income
@@ -31,10 +32,9 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import ProcurementAi
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import MissileSiteGroundObject
+from .theater import ConflictTheater
 from .threatzones import ThreatZones
-from .transfers import Convoy, ConvoyMap, PendingTransfers, RoadTransferOrder
+from .transfers import PendingTransfers
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 

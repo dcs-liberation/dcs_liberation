@@ -272,9 +272,9 @@ class ControlPoint(MissionTarget, ABC):
         self.cptype = cptype
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
-        from ..event import UnitsDeliveryEvent
+        from ..unitdelivery import PendingUnitDeliveries
 
-        self.pending_unit_deliveries = UnitsDeliveryEvent(self)
+        self.pending_unit_deliveries = PendingUnitDeliveries(self)
 
         self.target_position: Optional[Point] = None
 

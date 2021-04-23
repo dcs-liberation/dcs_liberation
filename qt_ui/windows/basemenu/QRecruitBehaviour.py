@@ -1,26 +1,20 @@
 import logging
-from typing import Callable, Set, Type
+from typing import Type
 
-from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
-    QFrame,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLayout,
     QPushButton,
-    QScrollArea,
     QSizePolicy,
     QSpacerItem,
-    QVBoxLayout,
-    QWidget,
 )
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import UnitType
 
 from game import db
-from game.event import UnitsDeliveryEvent
 from game.theater import ControlPoint
+from game.unitdelivery import PendingUnitDeliveries
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
@@ -40,7 +34,7 @@ class QRecruitBehaviour:
         self.update_available_budget()
 
     @property
-    def pending_deliveries(self) -> UnitsDeliveryEvent:
+    def pending_deliveries(self) -> PendingUnitDeliveries:
         return self.cp.pending_unit_deliveries
 
     @property
