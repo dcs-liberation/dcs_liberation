@@ -16,6 +16,11 @@ from gen.naming import namegen
 from gen.flights.flight import Flight, FlightType
 
 
+# TODO: Remove base classes.
+# Eventually we'll want multi-mode transfers (convoy from factory to port, onto a ship,
+# then airlifted to the final destination, etc). To do this we'll need to make the
+# transfer *order* represent the full journey and let classes like Convoy handle the
+# individual hops.
 @dataclass
 class TransferOrder:
     """The base type of all transfer orders.
