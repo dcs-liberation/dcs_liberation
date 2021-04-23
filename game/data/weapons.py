@@ -830,6 +830,8 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.LAU_115C_with_AIM_7F_Sparrow_Semi_Active_Radar): 1976,
     Weapon.from_pydcs(Weapons.LAU_115C_with_AIM_7MH_Sparrow_Semi_Active_Radar): 1987,
     # AIM-9 Sidewinder
+    Weapon.from_pydcs(Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM): 1956
+    Weapon.from_pydcs(Weapons.LAU_7_with_2_x_AIM_9B_Sidewinder_IR_AAM): 1956
     Weapon.from_pydcs(Weapons.AIM_9L_Sidewinder_IR_AAM): 1977,
     Weapon.from_pydcs(Weapons.AIM_9M_Sidewinder_IR_AAM): 1982,
     Weapon.from_pydcs(Weapons.AIM_9P5_Sidewinder_IR_AAM): 1980,
