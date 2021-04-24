@@ -392,7 +392,7 @@ class ControlPoint(MissionTarget, ABC):
         for base_defense in self.base_defenses:
             p = PointWithHeading.from_point(base_defense.position, base_defense.heading)
             if isinstance(base_defense, EwrGroundObject):
-                self.preset_locations.ewrs.append(p)
+                self.preset_locations.base_air_defense.append(p)
             elif isinstance(base_defense, SamGroundObject):
                 self.preset_locations.base_air_defense.append(p)
             elif isinstance(base_defense, VehicleGroupGroundObject):
