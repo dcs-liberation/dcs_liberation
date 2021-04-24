@@ -10,6 +10,7 @@ from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
 from gen.ato import Package
+from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
 from gen.flights.flightplan import FlightPlanBuilder
 from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
@@ -147,15 +148,23 @@ class AirliftPlanner:
         self.for_player = transfer.destination.captured
         self.package = Package(target=transfer.destination, auto_asap=True)
 
+    def is_airlift_capable(self, unit_type: Type[FlyingType]) -> bool:
+        return (
+            unit_type in TRANSPORT_CAPABLE
+            and self.transfer.origin.can_operate(unit_type)
+            and self.transfer.destination.can_operate(unit_type)
+        )
+
     def create_package_for_airlift(self) -> None:
         for cp in self.game.theater.player_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
-                if unit_type.helicopter:
+                if self.is_airlift_capable(unit_type):
                     while available and self.transfer.transport is None:
                         flight_size = self.create_airlift_flight(unit_type, inventory)
                         available -= flight_size
-        self.game.ato_for(self.for_player).add_package(self.package)
+        if self.package.flights:
+            self.game.ato_for(self.for_player).add_package(self.package)
 
     def create_airlift_flight(
         self, unit_type: Type[FlyingType], inventory: ControlPointAircraftInventory
