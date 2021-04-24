@@ -9,6 +9,8 @@ from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
+from game.procurement import AircraftProcurementRequest
+from game.utils import nautical_miles
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
 from gen.flights.flightplan import FlightPlanBuilder
@@ -409,3 +411,38 @@ class PendingTransfers:
         for transfer in self.pending_transfers:
             if transfer.transport is None:
                 self.arrange_transport(transfer)
+
+    def order_airlift_assets(self) -> None:
+        for control_point in self.game.theater.controlpoints:
+            self.order_airlift_assets_at(control_point)
+
+    @staticmethod
+    def desired_airlift_capacity(control_point: ControlPoint) -> int:
+        return 4 if control_point.has_factory else 0
+
+    def current_airlift_capacity(self, control_point: ControlPoint) -> int:
+        inventory = self.game.aircraft_inventory.for_control_point(control_point)
+        return sum(
+            count
+            for unit_type, count in inventory.all_aircraft
+            if unit_type in TRANSPORT_CAPABLE
+        )
+
+    def order_airlift_assets_at(self, control_point: ControlPoint) -> None:
+        gap = self.desired_airlift_capacity(
+            control_point
+        ) - self.current_airlift_capacity(control_point)
+
+        if gap <= 0:
+            return
+
+        if gap % 2:
+            # Always buy in pairs since we're not trying to fill odd squadrons. Purely
+            # aesthetic.
+            gap += 1
+
+        self.game.procurement_requests_for(player=control_point.captured).append(
+            AircraftProcurementRequest(
+                control_point, nautical_miles(200), FlightType.TRANSPORT, gap
+            )
+        )

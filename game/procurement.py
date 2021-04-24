@@ -72,7 +72,7 @@ class ProcurementAi:
         if not self.is_player:
             budget += self.sell_incomplete_squadrons()
         if self.manage_aircraft:
-            budget = self.purchase_aircraft(budget, aircraft_requests)
+            budget = self.purchase_aircraft(budget)
         return budget
 
     def sell_incomplete_squadrons(self) -> float:
@@ -192,10 +192,8 @@ class ProcurementAi:
             aircraft_for_task(request.task_capability), airbase, request.number, budget
         )
 
-    def purchase_aircraft(
-        self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
-    ) -> float:
-        for request in aircraft_requests:
+    def purchase_aircraft(self, budget: float) -> float:
+        for request in self.game.procurement_requests_for(self.is_player):
             for airbase in self.best_airbases_for(request):
                 unit = self.affordable_aircraft_for(request, airbase, budget)
                 if unit is None:

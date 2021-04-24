@@ -30,7 +30,7 @@ from .factions.faction import Faction
 from .income import Income
 from .infos.information import Information
 from .navmesh import NavMesh
-from .procurement import ProcurementAi
+from .procurement import AircraftProcurementRequest, ProcurementAi
 from .settings import Settings
 from .theater import ConflictTheater
 from .threatzones import ThreatZones
@@ -117,6 +117,9 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
+        self.blue_procurement_requests: List[AircraftProcurementRequest] = []
+        self.red_procurement_requests: List[AircraftProcurementRequest] = []
+
         self.blue_ato = AirTaskingOrder()
         self.red_ato = AirTaskingOrder()
 
@@ -131,13 +134,15 @@ class Game:
         # Turn 0 procurement. We don't actually have any missions to plan, but
         # the planner will tell us what it would like to plan so we can use that
         # to drive purchase decisions.
+        self.transfers.order_airlift_assets()
+
         blue_planner = CoalitionMissionPlanner(self, is_player=True)
         blue_planner.plan_missions()
 
         red_planner = CoalitionMissionPlanner(self, is_player=False)
         red_planner.plan_missions()
 
-        self.plan_procurement(blue_planner, red_planner)
+        self.plan_procurement()
 
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
@@ -158,6 +163,13 @@ class Game:
         if player:
             return self.blue_ato
         return self.red_ato
+
+    def procurement_requests_for(
+        self, player: bool
+    ) -> List[AircraftProcurementRequest]:
+        if player:
+            return self.blue_procurement_requests
+        return self.red_procurement_requests
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
@@ -337,6 +349,7 @@ class Game:
         self.compute_threat_zones()
         self.ground_planners = {}
 
+        self.transfers.order_airlift_assets()
         self.transfers.plan_transports()
 
         blue_planner = CoalitionMissionPlanner(self, is_player=True)
@@ -351,13 +364,9 @@ class Game:
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
 
-        self.plan_procurement(blue_planner, red_planner)
+        self.plan_procurement()
 
-    def plan_procurement(
-        self,
-        blue_planner: CoalitionMissionPlanner,
-        red_planner: CoalitionMissionPlanner,
-    ) -> None:
+    def plan_procurement(self) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
@@ -372,7 +381,7 @@ class Game:
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.budget, blue_planner.procurement_requests)
+        ).spend_budget(self.budget, self.blue_procurement_requests)
 
         self.enemy_budget = ProcurementAi(
             self,
@@ -382,7 +391,7 @@ class Game:
             manage_front_line=True,
             manage_aircraft=True,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.enemy_budget, red_planner.procurement_requests)
+        ).spend_budget(self.enemy_budget, self.red_procurement_requests)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))
