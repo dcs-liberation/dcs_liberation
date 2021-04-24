@@ -49,10 +49,7 @@ class QAircraftTypeSelector(QComboBox):
                 FlightType.BAI,
                 FlightType.OCA_AIRCRAFT,
             ]:
-                if (
-                    aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE
-                    or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
-                ):
+                if aircraft in gen.flights.ai_flight_planner_db.CAS_CAPABLE:
                     self.addItem(
                         f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
                         userData=aircraft,
@@ -70,10 +67,7 @@ class QAircraftTypeSelector(QComboBox):
                         userData=aircraft,
                     )
             elif mission_type in [FlightType.STRIKE]:
-                if (
-                    aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE
-                    or aircraft in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
-                ):
+                if aircraft in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE:
                     self.addItem(
                         f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
                         userData=aircraft,

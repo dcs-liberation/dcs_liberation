@@ -157,6 +157,7 @@ CAS_CAPABLE = [
     A_10C_2,
     B_1B,
     A_10C,
+    Hercules,
     F_14B,
     F_14A_135_GR,
     Su_25TM,
