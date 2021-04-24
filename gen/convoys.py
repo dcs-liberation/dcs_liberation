@@ -33,12 +33,12 @@ class ConvoyGenerator:
     def generate_convoy(self, convoy: Convoy) -> VehicleGroup:
         group = self._create_mixed_unit_group(
             convoy.name,
-            convoy.origin.position,
+            convoy.route_start,
             convoy.units,
             convoy.player_owned,
         )
         group.add_waypoint(
-            convoy.destination.position,
+            convoy.route_end,
             speed=kph(40).kph,
             move_formation=PointAction.OnRoad,
         )

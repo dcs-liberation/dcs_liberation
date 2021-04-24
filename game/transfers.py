@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from functools import singledispatchmethod
 from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
+from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
 from gen.ato import Package
@@ -245,6 +246,14 @@ class Convoy(MissionTarget, Transport):
 
     def description(self) -> str:
         return f"In a convoy to {self.destination}"
+
+    @property
+    def route_start(self) -> Point:
+        return self.origin.convoy_spawns[self.destination]
+
+    @property
+    def route_end(self) -> Point:
+        return self.destination.convoy_spawns[self.origin]
 
 
 class ConvoyMap:
