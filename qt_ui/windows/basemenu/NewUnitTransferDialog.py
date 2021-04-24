@@ -28,7 +28,7 @@ from dcs.unittype import UnitType
 
 from game import Game, db
 from game.theater import ControlPoint, SupplyRoute
-from game.transfers import AirliftPlanner, RoadTransferOrder
+from game.transfers import TransferOrder
 from qt_ui.models import GameModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 
@@ -89,50 +89,12 @@ class UnitTransferList(QFrame):
         main_layout.addWidget(scroll)
 
 
-@dataclass(frozen=True)
-class AirliftCapacity:
-    helicopter: int
-    cargo_plane: int
-
-    @property
-    def total(self) -> int:
-        return self.helicopter + self.cargo_plane
-
-    @classmethod
-    def to_control_point(cls, game: Game) -> AirliftCapacity:
-        helo_capacity = 0
-        plane_capacity = 0
-        for cp in game.theater.player_points():
-            inventory = game.aircraft_inventory.for_control_point(cp)
-            for unit_type, count in inventory.all_aircraft:
-                if unit_type.helicopter:
-                    helo_capacity += count
-        return AirliftCapacity(helicopter=helo_capacity, cargo_plane=plane_capacity)
-
-
 class TransferOptionsPanel(QVBoxLayout):
-    def __init__(
-        self,
-        game: Game,
-        origin: ControlPoint,
-        airlift_capacity: AirliftCapacity,
-        airlift_required: bool,
-    ) -> None:
+    def __init__(self, game: Game, origin: ControlPoint) -> None:
         super().__init__()
 
         self.source_combo_box = TransferDestinationComboBox(game, origin)
         self.addLayout(QLabeledWidget("Destination:", self.source_combo_box))
-        self.airlift = QCheckBox()
-        self.airlift.setChecked(airlift_required)
-        self.airlift.setDisabled(airlift_required)
-        self.addLayout(QLabeledWidget("Airlift:", self.airlift))
-        self.addWidget(
-            QLabel(
-                f"{airlift_capacity.total} airlift capacity "
-                f"({airlift_capacity.cargo_plane} from cargo planes, "
-                f"{airlift_capacity.helicopter} from helicopters)"
-            )
-        )
 
     @property
     def changed(self):
@@ -194,17 +156,9 @@ class TransferControls(QGroupBox):
 
 
 class ScrollingUnitTransferGrid(QFrame):
-    def __init__(
-        self,
-        cp: ControlPoint,
-        airlift: bool,
-        airlift_capacity: AirliftCapacity,
-        game_model: GameModel,
-    ) -> None:
+    def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
         super().__init__()
         self.cp = cp
-        self.airlift = airlift
-        self.remaining_capacity = airlift_capacity.total
         self.game_model = game_model
         self.transfers: Dict[Type[UnitType, int]] = defaultdict(int)
 
@@ -274,11 +228,6 @@ class ScrollingUnitTransferGrid(QFrame):
             if not origin_inventory:
                 return
 
-            if self.airlift:
-                if not self.remaining_capacity:
-                    return
-                self.remaining_capacity -= 1
-
             self.transfers[unit_type] += 1
             origin_inventory -= 1
             controls.set_quantity(self.transfers[unit_type])
@@ -289,9 +238,6 @@ class ScrollingUnitTransferGrid(QFrame):
             nonlocal origin_inventory_label
             if not controls.quantity:
                 return
-
-            if self.airlift:
-                self.remaining_capacity += 1
 
             self.transfers[unit_type] -= 1
             origin_inventory += 1
@@ -329,21 +275,10 @@ class NewUnitTransferDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.airlift_capacity = AirliftCapacity.to_control_point(game_model.game)
-        airlift_required = len(SupplyRoute.for_control_point(origin)) == 1
-        self.dest_panel = TransferOptionsPanel(
-            game_model.game, origin, self.airlift_capacity, airlift_required
-        )
-        self.dest_panel.changed.connect(self.rebuild_transfers)
+        self.dest_panel = TransferOptionsPanel(game_model.game, origin)
         layout.addLayout(self.dest_panel)
 
-        self.transfer_panel = ScrollingUnitTransferGrid(
-            origin,
-            airlift=airlift_required,
-            airlift_capacity=self.airlift_capacity,
-            game_model=game_model,
-        )
-        self.dest_panel.airlift.toggled.connect(self.rebuild_transfers)
+        self.transfer_panel = ScrollingUnitTransferGrid(origin, game_model)
         layout.addWidget(self.transfer_panel)
 
         self.submit_button = QPushButton("Create Transfer Order", parent=self)
@@ -351,31 +286,8 @@ class NewUnitTransferDialog(QDialog):
         self.submit_button.setProperty("style", "start-button")
         layout.addWidget(self.submit_button)
 
-    def rebuild_transfers(self) -> None:
-        # Rebuild the transfer panel to reset everything. It's easier to recreate the
-        # panel itself than to clear the grid layout in the panel.
-        self.layout().removeWidget(self.transfer_panel)
-        self.layout().removeWidget(self.submit_button)
-        self.transfer_panel = ScrollingUnitTransferGrid(
-            self.origin,
-            airlift=self.dest_panel.airlift.isChecked(),
-            airlift_capacity=self.airlift_capacity,
-            game_model=self.game_model,
-        )
-        self.layout().addWidget(self.transfer_panel)
-        self.layout().addWidget(self.submit_button)
-
     def on_submit(self) -> None:
         destination = self.dest_panel.current
-        supply_route = SupplyRoute.for_control_point(self.origin)
-        if not self.dest_panel.airlift.isChecked() and destination not in supply_route:
-            QMessageBox.critical(
-                self,
-                "Could not create transfer",
-                f"Transfers from {self.origin} to {destination} require airlift.",
-                QMessageBox.Ok,
-            )
-            return
         transfers = {}
         for unit_type, count in self.transfer_panel.transfers.items():
             if not count:
@@ -387,20 +299,10 @@ class NewUnitTransferDialog(QDialog):
             )
             transfers[unit_type] = count
 
-        if self.dest_panel.airlift.isChecked():
-            planner = AirliftPlanner(
-                self.game_model.game,
-                self.origin,
-                destination,
-                transfers,
-            )
-            planner.create_package_for_airlift()
-        else:
-            transfer = RoadTransferOrder(
-                player=True,
-                origin=self.origin,
-                destination=destination,
-                units=transfers,
-            )
-            self.game_model.transfer_model.new_transfer(transfer)
+        transfer = TransferOrder(
+            origin=self.origin,
+            destination=destination,
+            units=transfers,
+        )
+        self.game_model.transfer_model.new_transfer(transfer)
         self.close()

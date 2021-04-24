@@ -14,7 +14,7 @@ from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 
 if TYPE_CHECKING:
-    from game.transfers import AirliftOrder
+    from game.transfers import Airlift, TransferOrder
     from gen.ato import Package
     from gen.flights.flightplan import FlightPlan
 
@@ -167,7 +167,7 @@ class Flight:
         arrival: ControlPoint,
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
-        cargo: Optional[AirliftOrder] = None,
+        cargo: Optional[TransferOrder] = None,
     ) -> None:
         self.package = package
         self.country = country

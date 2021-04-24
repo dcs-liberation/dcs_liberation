@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
 from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union
@@ -42,6 +42,7 @@ from dcs.planes import (
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
+    AWACSTaskAction,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -66,13 +67,12 @@ from dcs.task import (
     StartCommand,
     Targets,
     Task,
+    Transport,
     WeaponType,
-    AWACSTaskAction,
-    SetFrequencyCommand,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup, VehicleGroup
+from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -88,7 +88,7 @@ from game.theater.controlpoint import (
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import TheaterGroundObject
-from game.transfers import Convoy, RoadTransferOrder
+from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
@@ -101,17 +101,17 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
+from .airsupportgen import AirSupport, AwacsInfo
+from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
+    AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
     SweepFlightPlan,
-    AwacsFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
 from .naming import namegen
-from .airsupportgen import AirSupport, AwacsInfo
-from .callsigns import callsign_for_support_unit
 
 if TYPE_CHECKING:
     from game import Game
@@ -1421,6 +1421,25 @@ class AircraftConflictGenerator:
             group, roe=OptROE.Values.OpenFire, restrict_jettison=True
         )
 
+    def configure_transport(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        # Escort groups are actually given the CAP task so they can perform the
+        # Search Then Engage task, which we have to use instead of the Escort
+        # task for the reasons explained in JoinPointBuilder.
+        group.task = Transport.name
+        self._setup_group(group, Transport, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
     def configure_unknown_task(self, group: FlyingGroup, flight: Flight) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
         self.configure_behavior(group)
@@ -1459,6 +1478,8 @@ class AircraftConflictGenerator:
             self.configure_runway_attack(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.OCA_AIRCRAFT:
             self.configure_oca_strike(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.TRANSPORT:
+            self.configure_transport(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 

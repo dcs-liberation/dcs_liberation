@@ -9,7 +9,7 @@ from dcs.unittype import VehicleType
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject
-from game.transfers import AirliftOrder, Convoy
+from game.transfers import Convoy, TransferOrder
 from gen.flights.flight import Flight
 
 
@@ -35,7 +35,7 @@ class ConvoyUnit:
 @dataclass(frozen=True)
 class AirliftUnit:
     unit_type: Type[VehicleType]
-    transfer: AirliftOrder
+    transfer: TransferOrder
 
 
 @dataclass(frozen=True)
@@ -149,17 +149,14 @@ class UnitMap:
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
         return self.convoys.get(name, None)
 
-    def add_airlift_units(self, group: FlyingGroup, airlift: AirliftOrder) -> None:
-        for transport, cargo_type in zip(group.units, airlift.iter_units()):
+    def add_airlift_units(self, group: FlyingGroup, transfer: TransferOrder) -> None:
+        for transport, cargo_type in zip(group.units, transfer.iter_units()):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(transport.name)
             if name in self.airlifts:
                 raise RuntimeError(f"Duplicate airlift unit: {name}")
-            unit_type = db.unit_type_from_name(transport.type)
-            if unit_type is None:
-                raise RuntimeError(f"Unknown unit type: {transport.type}")
-            self.airlifts[name] = AirliftUnit(cargo_type, airlift)
+            self.airlifts[name] = AirliftUnit(cargo_type, transfer)
 
     def airlift_unit(self, name: str) -> Optional[AirliftUnit]:
         return self.airlifts.get(name, None)

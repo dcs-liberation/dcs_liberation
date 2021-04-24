@@ -20,11 +20,14 @@ if TYPE_CHECKING:
     from game.inventory import ControlPointAircraftInventory
 
 
-# TODO: Remove base classes.
-# Eventually we'll want multi-mode transfers (convoy from factory to port, onto a ship,
-# then airlifted to the final destination, etc). To do this we'll need to make the
-# transfer *order* represent the full journey and let classes like Convoy handle the
-# individual hops.
+class Transport:
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        raise NotImplementedError
+
+    def description(self) -> str:
+        raise NotImplementedError
+
+
 @dataclass
 class TransferOrder:
     """The base type of all transfer orders.
@@ -38,59 +41,30 @@ class TransferOrder:
     #: The location the units are transferring to.
     destination: ControlPoint
 
+    #: The current position of the group being transferred. Groups may make multiple
+    #: stops and can switch transport modes before reaching their destination.
+    position: ControlPoint = field(init=False)
+
     #: True if the transfer order belongs to the player.
-    player: bool
+    player: bool = field(init=False)
 
     #: The units being transferred.
     units: Dict[Type[VehicleType], int]
 
-    @property
-    def description(self) -> str:
-        raise NotImplementedError
-
-
-@dataclass
-class RoadTransferOrder(TransferOrder):
-    """A transfer order that moves units by road."""
-
-    #: The current position of the group being transferred. Groups move one control
-    #: point a turn through the supply line.
-    position: ControlPoint = field(init=False)
+    transport: Optional[Transport] = field(default=None)
 
     def __post_init__(self) -> None:
         self.position = self.origin
-
-    def path(self) -> List[ControlPoint]:
-        supply_route = SupplyRoute.for_control_point(self.position)
-        return supply_route.shortest_path_between(self.position, self.destination)
-
-    def next_stop(self) -> ControlPoint:
-        return self.path()[0]
+        self.player = self.origin.is_friendly(to_player=True)
 
     @property
     def description(self) -> str:
-        path = self.path()
-        if len(path) == 1:
-            turns = "1 turn"
-        else:
-            turns = f"{len(path)} turns"
-        return f"Currently at {self.position}. Arrives at destination in {turns}."
+        if self.transport is None:
+            return "No transports available"
+        return self.transport.description()
 
-
-@dataclass
-class AirliftOrder(TransferOrder):
-    """A transfer order that moves units by cargo planes and helicopters."""
-
-    flight: Flight
-
-    @property
-    def description(self) -> str:
-        return "Airlift"
-
-    def iter_units(self) -> Iterator[Type[VehicleType]]:
-        for unit_type, count in self.units.items():
-            for _ in range(count):
-                yield unit_type
+    def kill_all(self) -> None:
+        self.units.clear()
 
     def kill_unit(self, unit_type: Type[VehicleType]) -> None:
         if unit_type in self.units:
@@ -98,54 +72,102 @@ class AirliftOrder(TransferOrder):
             return
         raise KeyError
 
+    @property
+    def size(self) -> int:
+        return sum(c for c in self.units.values())
+
+    def iter_units(self) -> Iterator[Type[VehicleType]]:
+        for unit_type, count in self.units.items():
+            for _ in range(count):
+                yield unit_type
+
+    @property
+    def completed(self) -> bool:
+        return self.destination == self.position or not self.units
+
+    def disband_at(self, location: ControlPoint) -> None:
+        logging.info(f"Units halting at {location}.")
+        location.base.commision_units(self.units)
+        self.units.clear()
+
+    def proceed(self) -> None:
+        if self.transport is None:
+            return
+
+        if not self.destination.is_friendly(self.player):
+            logging.info(f"Transfer destination {self.destination} was captured.")
+            if self.position.is_friendly(self.player):
+                self.disband_at(self.position)
+            elif (escape_route := self.transport.find_escape_route()) is not None:
+                self.disband_at(escape_route)
+            else:
+                logging.info(
+                    f"No escape route available. Units were surrounded and destroyed "
+                    "during transfer."
+                )
+                self.kill_all()
+            return
+
+        self.position = self.destination
+        self.transport = None
+
+        if self.completed:
+            self.disband_at(self.position)
+
+
+@dataclass
+class Airlift(Transport):
+    """A transfer order that moves units by cargo planes and helicopters."""
+
+    transfer: TransferOrder
+
+    flight: Flight
+
+    @property
+    def units(self) -> Dict[Type[VehicleType], int]:
+        return self.transfer.units
+
+    @property
+    def player_owned(self) -> bool:
+        return self.transfer.player
+
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        # TODO: Move units to closest base.
+        return None
+
+    def description(self) -> str:
+        return f"Being airlifted by {self.flight}"
+
 
 class AirliftPlanner:
-    def __init__(
-        self,
-        game: Game,
-        pickup: ControlPoint,
-        drop_off: ControlPoint,
-        units: Dict[Type[VehicleType], int],
-    ) -> None:
+    def __init__(self, game: Game, transfer: TransferOrder) -> None:
         self.game = game
-        self.pickup = pickup
-        self.drop_off = drop_off
-        self.units = units
-        self.for_player = drop_off.captured
-        self.package = Package(target=drop_off, auto_asap=True)
+        self.transfer = transfer
+        self.for_player = transfer.destination.captured
+        self.package = Package(target=transfer.destination, auto_asap=True)
 
-    def create_package_for_airlift(self) -> Dict[Type[VehicleType], int]:
+    def create_package_for_airlift(self) -> None:
         for cp in self.game.theater.player_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
                 if unit_type.helicopter:
-                    while available and self.needed_capacity:
+                    while available and self.transfer.transport is None:
                         flight_size = self.create_airlift_flight(unit_type, inventory)
                         available -= flight_size
         self.game.ato_for(self.for_player).add_package(self.package)
-        return self.units
-
-    def take_units(self, count: int) -> Dict[Type[VehicleType], int]:
-        taken = {}
-        for unit_type, remaining in self.units.items():
-            take = min(remaining, count)
-            count -= take
-            self.units[unit_type] -= take
-            taken[unit_type] = take
-            if not count:
-                break
-        return taken
-
-    @property
-    def needed_capacity(self) -> int:
-        return sum(c for c in self.units.values())
 
     def create_airlift_flight(
         self, unit_type: Type[FlyingType], inventory: ControlPointAircraftInventory
     ) -> int:
         available = inventory.available(unit_type)
         # 4 is the max flight size in DCS.
-        flight_size = min(self.needed_capacity, available, 4)
+        flight_size = min(self.transfer.size, available, 4)
+
+        if flight_size < self.transfer.size:
+            transfer = self.game.transfers.split_transfer(self.transfer, flight_size)
+        else:
+            transfer = self.transfer
+
         flight = Flight(
             self.package,
             self.game.player_country,
@@ -156,31 +178,25 @@ class AirliftPlanner:
             departure=inventory.control_point,
             arrival=inventory.control_point,
             divert=None,
+            cargo=transfer,
         )
 
-        transfer = AirliftOrder(
-            player=True,
-            origin=self.pickup,
-            destination=self.drop_off,
-            units=self.take_units(flight_size),
-            flight=flight,
-        )
-        flight.cargo = transfer
+        transport = Airlift(transfer, flight)
+        transfer.transport = transport
 
         self.package.add_flight(flight)
         planner = FlightPlanBuilder(self.game, self.package, self.for_player)
         planner.populate_flight_plan(flight)
         self.game.aircraft_inventory.claim_for_flight(flight)
-        self.game.transfers.new_transfer(transfer)
         return flight_size
 
 
-class Convoy(MissionTarget):
+class Convoy(MissionTarget, Transport):
     def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:
         super().__init__(namegen.next_convoy_name(), origin.position)
         self.origin = origin
         self.destination = destination
-        self.transfers: List[RoadTransferOrder] = []
+        self.transfers: List[TransferOrder] = []
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         if self.is_friendly(for_player):
@@ -192,17 +208,20 @@ class Convoy(MissionTarget):
     def is_friendly(self, to_player: bool) -> bool:
         return self.origin.captured
 
-    def add_units(self, transfer: RoadTransferOrder) -> None:
+    def add_units(self, transfer: TransferOrder) -> None:
         self.transfers.append(transfer)
+        transfer.transport = self
 
-    def remove_units(self, transfer: RoadTransferOrder) -> None:
+    def remove_units(self, transfer: TransferOrder) -> None:
         self.transfers.remove(transfer)
 
     def kill_unit(self, unit_type: Type[VehicleType]) -> None:
         for transfer in self.transfers:
-            if unit_type in transfer.units:
-                transfer.units[unit_type] -= 1
+            try:
+                transfer.kill_unit(unit_type)
                 return
+            except KeyError:
+                pass
         raise KeyError
 
     @property
@@ -220,6 +239,12 @@ class Convoy(MissionTarget):
     @property
     def player_owned(self) -> bool:
         return self.origin.captured
+
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        return None
+
+    def description(self) -> str:
+        return f"In a convoy to {self.destination}"
 
 
 class ConvoyMap:
@@ -255,18 +280,21 @@ class ConvoyMap:
     def disband_convoy(self, convoy: Convoy) -> None:
         del self.convoys[convoy.origin][convoy.destination]
 
-    def add(self, transfer: RoadTransferOrder) -> None:
-        next_stop = transfer.next_stop()
+    @staticmethod
+    def path_for(transfer: TransferOrder) -> List[ControlPoint]:
+        supply_route = SupplyRoute.for_control_point(transfer.position)
+        return supply_route.shortest_path_between(
+            transfer.position, transfer.destination
+        )
+
+    def next_stop_for(self, transfer: TransferOrder) -> ControlPoint:
+        return self.path_for(transfer)[0]
+
+    def add(self, transfer: TransferOrder) -> None:
+        next_stop = self.next_stop_for(transfer)
         self.find_or_create_convoy(transfer.position, next_stop).add_units(transfer)
 
-    def remove(self, transfer: RoadTransferOrder) -> None:
-        next_stop = transfer.next_stop()
-        convoy = self.find_convoy(transfer.position, next_stop)
-        if convoy is None:
-            logging.error(
-                f"Attempting to remove {transfer} from convoy but it is in no convoy."
-            )
-            return
+    def remove(self, convoy: Convoy, transfer: TransferOrder) -> None:
         convoy.remove_units(transfer)
         if not convoy.transfers:
             self.disband_convoy(convoy)
@@ -298,43 +326,63 @@ class PendingTransfers:
     def index_of_transfer(self, transfer: TransferOrder) -> int:
         return self.pending_transfers.index(transfer)
 
-    # TODO: Move airlift arrangements here?
-    @singledispatchmethod
-    def arrange_transport(self, transfer) -> None:
-        pass
-
-    @arrange_transport.register
-    def _arrange_transport_road(self, transfer: RoadTransferOrder) -> None:
-        self.convoys.add(transfer)
+    def arrange_transport(self, transfer: TransferOrder) -> None:
+        supply_route = SupplyRoute.for_control_point(transfer.position)
+        if transfer.destination in supply_route:
+            self.convoys.add(transfer)
+        else:
+            AirliftPlanner(self.game, transfer).create_package_for_airlift()
 
     def new_transfer(self, transfer: TransferOrder) -> None:
         transfer.origin.base.commit_losses(transfer.units)
         self.pending_transfers.append(transfer)
         self.arrange_transport(transfer)
 
+    def split_transfer(self, transfer: TransferOrder, size: int) -> TransferOrder:
+        """Creates a smaller transfer that is a subset of the original."""
+        if transfer.size <= size:
+            raise ValueError
+
+        units = {}
+        for unit_type, remaining in transfer.units.items():
+            take = min(remaining, size)
+            size -= take
+            transfer.units[unit_type] -= take
+            units[unit_type] = take
+            if not size:
+                break
+        new_transfer = TransferOrder(transfer.origin, transfer.destination, units)
+        self.pending_transfers.append(new_transfer)
+        return new_transfer
+
     @singledispatchmethod
-    def cancel_transport(self, transfer) -> None:
+    def cancel_transport(self, transfer: TransferOrder, transport) -> None:
         pass
 
     @cancel_transport.register
-    def _cancel_transport_air(self, transfer: AirliftOrder) -> None:
-        flight = transfer.flight
+    def _cancel_transport_air(
+        self, _transfer: TransferOrder, transport: Airlift
+    ) -> None:
+        flight = transport.flight
         flight.package.remove_flight(flight)
         self.game.aircraft_inventory.return_from_flight(flight)
 
-    @cancel_transport.register
-    def _cancel_transport_road(self, transfer: RoadTransferOrder) -> None:
-        self.convoys.remove(transfer)
+    def _cancel_transport_convoy(
+        self, transfer: TransferOrder, transport: Convoy
+    ) -> None:
+        self.convoys.remove(transport, transfer)
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
-        self.cancel_transport(transfer)
+        if transfer.transport is not None:
+            self.cancel_transport(transfer, transfer.transport)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commision_units(transfer.units)
 
     def perform_transfers(self) -> None:
         incomplete = []
         for transfer in self.pending_transfers:
-            if not self.perform_transfer(transfer):
+            transfer.proceed()
+            if not transfer.completed:
                 incomplete.append(transfer)
         self.pending_transfers = incomplete
         self.rebuild_convoys()
@@ -343,80 +391,3 @@ class PendingTransfers:
         self.convoys.disband_all()
         for transfer in self.pending_transfers:
             self.arrange_transport(transfer)
-
-    @singledispatchmethod
-    def perform_transfer(self, transfer) -> bool:
-        raise NotImplementedError
-
-    @perform_transfer.register
-    def _perform_transfer_air(self, transfer: AirliftOrder) -> bool:
-        if transfer.player != transfer.destination.captured:
-            logging.info(
-                f"Transfer destination {transfer.destination} was captured. Cancelling "
-                "transport."
-            )
-            transfer.origin.base.commision_units(transfer.units)
-            return True
-
-        transfer.destination.base.commision_units(transfer.units)
-        return True
-
-    @perform_transfer.register
-    def _perform_transfer_road(self, transfer: RoadTransferOrder) -> bool:
-        # TODO: Can be improved to use the convoy map.
-        # The convoy map already has a lot of the data that we're recomputing here.
-        if transfer.player != transfer.destination.captured:
-            logging.info(
-                f"Transfer destination {transfer.destination.name} was captured."
-            )
-            self.handle_route_interrupted(transfer)
-            return True
-
-        supply_route = SupplyRoute.for_control_point(transfer.destination)
-        if transfer.position not in supply_route:
-            logging.info(
-                f"Route from {transfer.position.name} to {transfer.destination.name} "
-                "was cut off."
-            )
-            self.handle_route_interrupted(transfer)
-            return True
-
-        path = transfer.path()
-        next_hop = path[0]
-        if next_hop == transfer.destination:
-            logging.info(
-                f"Units transferred from {transfer.origin.name} to "
-                f"{transfer.destination.name}"
-            )
-            transfer.destination.base.commision_units(transfer.units)
-            return True
-
-        logging.info(
-            f"Units transferring from {transfer.origin.name} to "
-            f"{transfer.destination.name} arrived at {next_hop.name}. {len(path) - 1} "
-            "turns remaining."
-        )
-        transfer.position = next_hop
-        return False
-
-    @staticmethod
-    def handle_route_interrupted(transfer: RoadTransferOrder):
-        # Halt the transfer in place if safe.
-        if transfer.player == transfer.position.captured:
-            logging.info(f"Transferring units are halting at {transfer.position.name}.")
-            transfer.position.base.commision_units(transfer.units)
-            return
-
-        # If the current position was captured attempt to divert to a neighboring
-        # friendly CP.
-        for connected in transfer.position.connected_points:
-            if connected.captured == transfer.player:
-                logging.info(f"Transferring units are re-routing to {connected.name}.")
-                connected.base.commision_units(transfer.units)
-                return
-
-        # If the units are cutoff they are destroyed.
-        logging.info(
-            f"Both {transfer.position.name} and {transfer.destination.name} were "
-            "captured. Units were surrounded and destroyed during transfer."
-        )

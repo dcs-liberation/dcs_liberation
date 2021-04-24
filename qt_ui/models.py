@@ -163,12 +163,10 @@ class PackageModel(QAbstractListModel):
         """Removes the given flight from the package."""
         index = self.package.flights.index(flight)
         self.beginRemoveRows(QModelIndex(), index, index)
-        if flight.cargo is None:
-            self.game_model.game.aircraft_inventory.return_from_flight(flight)
-            self.package.remove_flight(flight)
-        else:
-            # Deleted transfers will clean up after themselves.
-            self.game_model.transfer_model.cancel_transfer(flight.cargo)
+        if flight.cargo is not None:
+            flight.cargo.transport = None
+        self.game_model.game.aircraft_inventory.return_from_flight(flight)
+        self.package.remove_flight(flight)
         self.endRemoveRows()
         self.update_tot()
 
@@ -261,7 +259,7 @@ class AtoModel(QAbstractListModel):
         for flight in package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
             if flight.cargo is not None:
-                self.game_model.transfer_model.cancel_transfer(flight.cargo)
+                flight.cargo.transport = None
         self.endRemoveRows()
         # noinspection PyUnresolvedReferences
         self.client_slots_changed.emit()

@@ -10,7 +10,7 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 from dcs.unittype import VehicleType
 
-from game.transfers import Convoy, RoadTransferOrder
+from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
 

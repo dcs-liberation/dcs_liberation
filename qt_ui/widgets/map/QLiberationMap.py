@@ -39,12 +39,12 @@ from shapely.geometry import (
 import qt_ui.uiconstants as CONST
 from game import Game
 from game.navmesh import NavMesh
-from game.theater import ControlPoint, Enum, SupplyRoute
+from game.theater import ControlPoint, Enum
 from game.theater.conflicttheater import FrontLine, ReferencePoint
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
-from game.transfers import Convoy, RoadTransferOrder
+from game.transfers import Convoy
 from game.utils import Distance, meters, nautical_miles
 from game.weather import TimeOfDay
 from gen import Conflict, Package
@@ -55,12 +55,10 @@ from gen.flights.flight import (
     FlightWaypointType,
 )
 from gen.flights.flightplan import (
-    BarCapFlightPlan,
     FlightPlan,
     FlightPlanBuilder,
     InvalidObjectiveLocation,
     PatrollingFlightPlan,
-    TarCapFlightPlan,
 )
 from gen.flights.traveltime import TotEstimator
 from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
@@ -864,33 +862,6 @@ class QLiberationMap(QGraphicsView):
                     continue
                 if DisplayOptions.lines:
                     self.draw_supply_route_between(cp, connected)
-
-    def _transfers_between(
-        self, a: ControlPoint, b: ControlPoint
-    ) -> List[RoadTransferOrder]:
-        # We attempt to short circuit the expensive shortest path computation for the
-        # cases where there is never a transfer, but caching might be needed.
-
-        if a.captured != b.captured:
-            # Cannot transfer to enemy CPs.
-            return []
-
-        # This is only called for drawing lines between nodes and have rules out routes
-        # to enemy bases, so a and b are guaranteed to be in the same supply route.
-        supply_route = SupplyRoute.for_control_point(a)
-
-        transfers = []
-        points = {a, b}
-        for transfer in self.game.transfers:
-            # No possible route from our network to this transfer.
-            if transfer.position not in supply_route:
-                continue
-
-            # Anything left is a transfer within our supply route.
-            transfer_points = {transfer.position, transfer.next_stop()}
-            if points == transfer_points:
-                transfers.append(transfer)
-        return transfers
 
     def draw_supply_route_between(self, a: ControlPoint, b: ControlPoint) -> None:
         scene = self.scene()

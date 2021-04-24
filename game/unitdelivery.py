@@ -8,11 +8,9 @@ from typing import Dict, Optional, TYPE_CHECKING, Type
 from dcs.unittype import UnitType, VehicleType
 
 from game.theater import ControlPoint, SupplyRoute
-from gen.ato import Package
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import Flight
 from .db import PRICES
-from .transfers import AirliftOrder, AirliftPlanner, RoadTransferOrder
+from .transfers import TransferOrder
 
 if TYPE_CHECKING:
     from .game import Game
@@ -111,44 +109,14 @@ class PendingUnitDeliveries:
             ground_unit_source.control_point.base.commision_units(
                 units_needing_transfer
             )
-            if ground_unit_source.requires_airlift:
-                self.create_air_transfer(
-                    game, ground_unit_source.control_point, units_needing_transfer
-                )
-            else:
-                self.create_road_transfer(
-                    game, ground_unit_source.control_point, units_needing_transfer
-                )
+            self.create_transfer(
+                game, ground_unit_source.control_point, units_needing_transfer
+            )
 
-    def create_air_transfer(
+    def create_transfer(
         self, game: Game, source: ControlPoint, units: Dict[Type[VehicleType], int]
     ) -> None:
-        planner = AirliftPlanner(game, source, self.destination, units)
-        leftovers = planner.create_package_for_airlift()
-        if leftovers:
-            game.message(
-                f"No airlift capacity remaining for {self.destination}. "
-                "Remaining unit orders were refunded."
-            )
-            self.refund(game, leftovers)
-            source.base.commit_losses(leftovers)
-
-    def find_transport_for(
-        self,
-        origin: ControlPoint,
-        destination: ControlPoint,
-        units: Dict[Type[VehicleType], int],
-    ) -> Optional[Flight]:
-        pass
-
-    def create_road_transfer(
-        self, game: Game, source: ControlPoint, units: Dict[Type[VehicleType], int]
-    ) -> None:
-        game.transfers.new_transfer(
-            RoadTransferOrder(
-                source, self.destination, self.destination.captured, units
-            )
-        )
+        game.transfers.new_transfer(TransferOrder(source, self.destination, units))
 
     def find_ground_unit_source(self, game: Game) -> Optional[GroundUnitSource]:
         # This is running *after* the turn counter has been incremented, so this is the
