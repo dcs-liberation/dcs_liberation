@@ -1,6 +1,6 @@
 {
     "nameInUI": "Splash Damage",
-    "defaultValue": true,
+    "defaultValue": false,
     "specificOptions": [],
     "scriptsWorkOrders": [
         {
