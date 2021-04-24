@@ -264,6 +264,7 @@ class Convoy(MissionTarget, Transport):
         transfer.transport = self
 
     def remove_units(self, transfer: TransferOrder) -> None:
+        transfer.transport = None
         self.transfers.remove(transfer)
 
     def kill_unit(self, unit_type: Type[VehicleType]) -> None:
@@ -274,6 +275,11 @@ class Convoy(MissionTarget, Transport):
             except KeyError:
                 pass
         raise KeyError
+
+    def disband(self) -> None:
+        for transfer in list(self.transfers):
+            self.remove_units(transfer)
+        self.transfers.clear()
 
     @property
     def size(self) -> int:
@@ -337,6 +343,7 @@ class ConvoyMap:
                 yield destination_dict[destination]
 
     def disband_convoy(self, convoy: Convoy) -> None:
+        self.convoys[convoy.origin][convoy.destination].disband()
         del self.convoys[convoy.origin][convoy.destination]
 
     @staticmethod
@@ -359,7 +366,8 @@ class ConvoyMap:
             self.disband_convoy(convoy)
 
     def disband_all(self) -> None:
-        self.convoys = defaultdict(dict)
+        for convoy in list(self):
+            self.disband_convoy(convoy)
 
     def __iter__(self) -> Iterator[Convoy]:
         for destination_dict in self.convoys.values():
@@ -444,9 +452,9 @@ class PendingTransfers:
             if not transfer.completed:
                 incomplete.append(transfer)
         self.pending_transfers = incomplete
+        self.convoys.disband_all()
 
     def plan_transports(self) -> None:
-        self.convoys.disband_all()
         for transfer in self.pending_transfers:
             if transfer.transport is None:
                 self.arrange_transport(transfer)

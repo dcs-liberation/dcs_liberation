@@ -291,7 +291,6 @@ class Game:
 
         # Needs to happen *before* planning transfers so we don't cancel the
         self.reset_ato()
-
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
 
