@@ -10,7 +10,7 @@ from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
 from game.procurement import AircraftProcurementRequest
-from game.utils import nautical_miles
+from game.utils import meters, nautical_miles
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
 from gen.flights.flightplan import FlightPlanBuilder
@@ -144,24 +144,56 @@ class Airlift(Transport):
 
 
 class AirliftPlanner:
+    #: Maximum range from for any link in the route of takeoff, pickup, dropoff, and RTB
+    #: for a helicopter to be considered for airlift. Total route length is not
+    #: considered because the helicopter can refuel at each stop. Cargo planes have no
+    #: maximum range.
+    HELO_MAX_RANGE = nautical_miles(100)
+
     def __init__(self, game: Game, transfer: TransferOrder) -> None:
         self.game = game
         self.transfer = transfer
         self.for_player = transfer.destination.captured
         self.package = Package(target=transfer.destination, auto_asap=True)
 
-    def is_airlift_capable(self, unit_type: Type[FlyingType]) -> bool:
-        return (
-            unit_type in TRANSPORT_CAPABLE
-            and self.transfer.origin.can_operate(unit_type)
-            and self.transfer.destination.can_operate(unit_type)
-        )
+    def compatible_with_mission(
+        self, unit_type: Type[FlyingType], airfield: ControlPoint
+    ) -> bool:
+        if not unit_type in TRANSPORT_CAPABLE:
+            return False
+        if not self.transfer.origin.can_operate(unit_type):
+            return False
+        if not self.transfer.destination.can_operate(unit_type):
+            return False
+
+        # Cargo planes have no maximum range.
+        if not unit_type.helicopter:
+            return True
+
+        # A helicopter that is transport capable and able to operate at both bases. Need
+        # to check that no leg of the journey exceeds the maximum range. This doesn't
+        # account for any routing around threats that might take place, but it's close
+        # enough.
+
+        home = airfield.position
+        pickup = self.transfer.position.position
+        drop_off = self.transfer.position.position
+        if meters(home.distance_to_point(pickup)) > self.HELO_MAX_RANGE:
+            return False
+
+        if meters(pickup.distance_to_point(drop_off)) > self.HELO_MAX_RANGE:
+            return False
+
+        if meters(drop_off.distance_to_point(home)) > self.HELO_MAX_RANGE:
+            return False
+
+        return True
 
     def create_package_for_airlift(self) -> None:
         for cp in self.game.theater.player_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
-                if self.is_airlift_capable(unit_type):
+                if self.compatible_with_mission(unit_type, cp):
                     while available and self.transfer.transport is None:
                         flight_size = self.create_airlift_flight(unit_type, inventory)
                         available -= flight_size
