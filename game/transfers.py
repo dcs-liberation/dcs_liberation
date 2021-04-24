@@ -13,6 +13,7 @@ from game.procurement import AircraftProcurementRequest
 from game.utils import meters, nautical_miles
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
+from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flightplan import FlightPlanBuilder
 from game.theater import ControlPoint, MissionTarget
 from game.theater.supplyroutes import SupplyRoute
@@ -190,7 +191,13 @@ class AirliftPlanner:
         return True
 
     def create_package_for_airlift(self) -> None:
-        for cp in self.game.theater.player_points():
+        distance_cache = ObjectiveDistanceCache.get_closest_airfields(
+            self.transfer.position
+        )
+        for cp in distance_cache.closest_airfields:
+            if cp.captured != self.for_player:
+                continue
+
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
                 if self.compatible_with_mission(unit_type, cp):
