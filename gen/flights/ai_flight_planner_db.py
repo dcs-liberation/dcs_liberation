@@ -5,8 +5,11 @@ from dcs.helicopters import (
     AH_1W,
     AH_64A,
     AH_64D,
+    CH_47D,
+    CH_53E,
     Ka_50,
     Mi_24V,
+    Mi_26,
     Mi_28N,
     Mi_8MT,
     OH_58D,
@@ -14,6 +17,7 @@ from dcs.helicopters import (
     SA342M,
     SH_60B,
     UH_1H,
+    UH_60A,
 )
 from dcs.planes import (
     AJS37,
@@ -23,11 +27,14 @@ from dcs.planes import (
     A_10C_2,
     A_20G,
     A_50,
+    An_26B,
     B_17G,
     B_1B,
     B_52H,
     Bf_109K_4,
     C_101CC,
+    C_130,
+    C_17A,
     E_2C,
     E_3A,
     FA_18C_hornet,
@@ -43,6 +50,7 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
+    IL_76MD,
     I_16,
     JF_17,
     J_11A,
@@ -88,6 +96,7 @@ from dcs.planes import (
     Tu_95MS,
     WingLoong_I,
     I_16,
+    Yak_40,
 )
 from dcs.unittype import FlyingType
 
@@ -355,9 +364,20 @@ RUNWAY_ATTACK_CAPABLE = [
 # For any aircraft that isn't necessarily directly involved in strike
 # missions in a direct combat sense, but can transport objects and infantry.
 TRANSPORT_CAPABLE = [
+    C_17A,
     Hercules,
-    Mi_8MT,
+    C_130,
+    IL_76MD,
+    An_26B,
+    Yak_40,
+    CH_53E,
+    CH_47D,
+    SH_60B,
+    UH_60A,
     UH_1H,
+    Mi_8MT,
+    Mi_8MT,
+    Mi_26,
 ]
 
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
@@ -394,6 +414,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAP_CAPABLE
     elif task == FlightType.AEWC:
         return AEWC_CAPABLE
+    elif task == FlightType.TRANSPORT:
+        return TRANSPORT_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []

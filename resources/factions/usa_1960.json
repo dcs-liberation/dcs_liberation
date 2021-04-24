@@ -4,10 +4,11 @@
   "authors": "Khopa",
   "description": "<p>US army in the 60s, pre-Vietnam war.</p>",
   "aircrafts": [
+    "B_52H",
+    "C_130",
     "F_86F_Sabre",
     "P_51D",
     "P_51D_30_NA",
-    "B_52H",
     "UH_1H"
   ],
   "frontline_units": [

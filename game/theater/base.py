@@ -4,7 +4,7 @@ import math
 import typing
 from typing import Dict, Type
 
-from dcs.task import AWACS, CAP, CAS, Embarking, PinpointStrike, Task
+from dcs.task import AWACS, CAP, CAS, Embarking, PinpointStrike, Task, Transport
 from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import AirDefence, Armor
 
@@ -152,6 +152,7 @@ class Base:
                 or for_task == CAS
                 or for_task == CAP
                 or for_task == Embarking
+                or for_task == Transport
             ):
                 target_dict = self.aircraft
             elif for_task == PinpointStrike:
