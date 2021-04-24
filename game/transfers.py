@@ -394,9 +394,9 @@ class PendingTransfers:
             if not transfer.completed:
                 incomplete.append(transfer)
         self.pending_transfers = incomplete
-        self.rebuild_convoys()
 
-    def rebuild_convoys(self) -> None:
+    def plan_transports(self) -> None:
         self.convoys.disband_all()
         for transfer in self.pending_transfers:
-            self.arrange_transport(transfer)
+            if transfer.transport is None:
+                self.arrange_transport(transfer)

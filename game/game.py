@@ -337,6 +337,8 @@ class Game:
         self.compute_threat_zones()
         self.ground_planners = {}
 
+        self.transfers.plan_transports()
+
         blue_planner = CoalitionMissionPlanner(self, is_player=True)
         blue_planner.plan_missions()
 

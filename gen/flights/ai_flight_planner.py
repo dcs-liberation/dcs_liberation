@@ -39,7 +39,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     VehicleGroupGroundObject,
 )
-from game.transfers import Convoy
+from game.transfers import Convoy, TransferOrder
 from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
