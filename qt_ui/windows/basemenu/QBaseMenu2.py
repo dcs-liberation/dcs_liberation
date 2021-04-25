@@ -12,6 +12,7 @@ from PySide2.QtWidgets import (
 
 from game import Game, db
 from game.theater import ControlPoint, ControlPointType, SupplyRoute
+from game.theater.supplyroutes import RoadNetwork, ShippingNetwork
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -107,7 +108,8 @@ class QBaseMenu2(QDialog):
     def has_transfer_destinations(self) -> bool:
         return (
             self.cp.runway_is_operational()
-            or len(SupplyRoute.for_control_point(self.cp)) > 1
+            or len(RoadNetwork.for_control_point(self.cp)) > 1
+            or len(ShippingNetwork.for_control_point(self.cp)) > 1
         )
 
     @property
