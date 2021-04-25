@@ -4,7 +4,7 @@ import datetime
 import logging
 import math
 from functools import singledispatchmethod
-from typing import Iterable, Iterator, List, Optional, Tuple
+from typing import Iterable, Iterator, List, Optional, Sequence, Tuple
 
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtCore import QLineF, QPointF, QRectF, Qt
@@ -87,7 +87,7 @@ def bernstein(t: float, i: int, n: int) -> float:
     return binomial(i, n) * (t ** i) * ((1 - t) ** (n - i))
 
 
-def bezier(t: float, points: Iterable[Tuple[float, float]]) -> Tuple[float, float]:
+def bezier(t: float, points: Sequence[Tuple[float, float]]) -> Tuple[float, float]:
     """Calculate coordinate of a point in the bezier curve"""
     n = len(points) - 1
     x = y = 0
@@ -99,7 +99,7 @@ def bezier(t: float, points: Iterable[Tuple[float, float]]) -> Tuple[float, floa
 
 
 def bezier_curve_range(
-    n: int, points: Iterable[Tuple[float, float]]
+    n: int, points: Sequence[Tuple[float, float]]
 ) -> Iterator[Tuple[float, float]]:
     """Range of points in a curve bezier"""
     for i in range(n):
@@ -145,7 +145,7 @@ class QLiberationMap(QGraphicsView):
             QtCore.QLineF(QPointF(0, 0), QPointF(0, 0))
         )
         self.movement_line.setPen(QPen(CONST.COLORS["orange"], width=10.0))
-        self.selected_cp: QMapControlPoint = None
+        self.selected_cp: Optional[QMapControlPoint] = None
 
         GameUpdateSignal.get_instance().flight_paths_changed.connect(
             lambda: self.draw_flight_plans(self.scene())
@@ -767,7 +767,7 @@ class QLiberationMap(QGraphicsView):
         scene: QGraphicsScene,
         number: int,
         waypoint: FlightWaypoint,
-        position: Tuple[int, int],
+        position: Tuple[float, float],
         flight_plan: FlightPlan,
     ) -> None:
 
@@ -880,19 +880,28 @@ class QLiberationMap(QGraphicsView):
                     self.draw_shipping_lane_between(cp, destination)
 
     def draw_shipping_lane_between(self, a: ControlPoint, b: ControlPoint) -> None:
+        ship_map = self.game.transfers.cargo_ships
+        ships = []
+        ship = ship_map.find_transport(a, b)
+        if ship is not None:
+            ships.append(ship)
+        ship = ship_map.find_transport(b, a)
+        if ship is not None:
+            ships.append(ship)
+
         scene = self.scene()
         for pa, pb in self.bezier_points(a.shipping_lanes[b]):
-            scene.addItem(ShippingLaneSegment(pa[0], pa[1], pb[0], pb[1], a, b))
+            scene.addItem(ShippingLaneSegment(pa[0], pa[1], pb[0], pb[1], a, b, ships))
 
     def draw_supply_route_between(self, a: ControlPoint, b: ControlPoint) -> None:
         scene = self.scene()
 
         convoy_map = self.game.transfers.convoys
         convoys = []
-        convoy = convoy_map.find_convoy(a, b)
+        convoy = convoy_map.find_transport(a, b)
         if convoy is not None:
             convoys.append(convoy)
-        convoy = convoy_map.find_convoy(b, a)
+        convoy = convoy_map.find_transport(b, a)
         if convoy is not None:
             convoys.append(convoy)
 

@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Callable, Dict, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
-    QCheckBox,
     QComboBox,
     QDialog,
     QFrame,
@@ -15,7 +13,6 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
     QScrollArea,
     QSizePolicy,
@@ -27,7 +24,7 @@ from dcs.task import PinpointStrike
 from dcs.unittype import UnitType
 
 from game import Game, db
-from game.theater import ControlPoint, SupplyRoute
+from game.theater import ControlPoint
 from game.transfers import TransferOrder
 from qt_ui.models import GameModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget

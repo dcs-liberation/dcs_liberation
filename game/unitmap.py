@@ -9,7 +9,7 @@ from dcs.unittype import VehicleType
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject
-from game.transfers import Convoy, TransferOrder
+from game.transfers import MultiGroupTransport, TransferOrder
 from gen.flights.flight import Flight
 
 
@@ -29,7 +29,7 @@ class GroundObjectUnit:
 @dataclass(frozen=True)
 class ConvoyUnit:
     unit_type: Type[VehicleType]
-    convoy: Convoy
+    convoy: MultiGroupTransport
 
 
 @dataclass(frozen=True)
@@ -130,7 +130,7 @@ class UnitMap:
     def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
         return self.ground_object_units.get(name, None)
 
-    def add_convoy_units(self, group: Group, convoy: Convoy) -> None:
+    def add_convoy_units(self, group: Group, convoy: MultiGroupTransport) -> None:
         for unit in group.units:
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.

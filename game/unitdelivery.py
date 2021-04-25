@@ -10,6 +10,7 @@ from dcs.unittype import UnitType, VehicleType
 from game.theater import ControlPoint, SupplyRoute
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from .db import PRICES
+from .theater.supplyroutes import RoadNetwork, ShippingNetwork
 from .transfers import TransferOrder
 
 if TYPE_CHECKING:
@@ -19,7 +20,6 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class GroundUnitSource:
     control_point: ControlPoint
-    requires_airlift: bool
 
 
 class PendingUnitDeliveries:
@@ -84,9 +84,9 @@ class PendingUnitDeliveries:
 
             if (
                 issubclass(unit_type, VehicleType)
-                and self.destination != ground_unit_source.control_point
+                and self.destination != ground_unit_source
             ):
-                source = ground_unit_source.control_point
+                source = ground_unit_source
                 d = units_needing_transfer
             else:
                 source = self.destination
@@ -106,41 +106,45 @@ class PendingUnitDeliveries:
         self.destination.base.commit_losses(sold_units)
 
         if units_needing_transfer:
-            ground_unit_source.control_point.base.commision_units(
-                units_needing_transfer
-            )
-            self.create_transfer(
-                game, ground_unit_source.control_point, units_needing_transfer
-            )
+            ground_unit_source.base.commision_units(units_needing_transfer)
+            self.create_transfer(game, ground_unit_source, units_needing_transfer)
 
     def create_transfer(
         self, game: Game, source: ControlPoint, units: Dict[Type[VehicleType], int]
     ) -> None:
         game.transfers.new_transfer(TransferOrder(source, self.destination, units))
 
-    def find_ground_unit_source(self, game: Game) -> Optional[GroundUnitSource]:
+    def find_ground_unit_source(self, game: Game) -> Optional[ControlPoint]:
         # This is running *after* the turn counter has been incremented, so this is the
         # reaction to turn 0. On turn zero we allow units to be recruited anywhere for
         # delivery on turn 1 so that turn 1 always starts with units on the front line.
         if game.turn == 1:
-            return GroundUnitSource(self.destination, requires_airlift=False)
+            return self.destination
 
         # Fast path if the destination is a valid source.
         if self.destination.can_recruit_ground_units(game):
-            return GroundUnitSource(self.destination, requires_airlift=False)
+            return self.destination
 
-        by_road = self.find_ground_unit_source_by_road(game)
+        by_road = self.find_ground_unit_source_in_supply_route(
+            RoadNetwork.for_control_point(self.destination), game
+        )
         if by_road is not None:
-            return GroundUnitSource(by_road, requires_airlift=False)
+            return by_road
+
+        by_ship = self.find_ground_unit_source_in_supply_route(
+            ShippingNetwork.for_control_point(self.destination), game
+        )
+        if by_ship is not None:
+            return by_ship
 
         by_air = self.find_ground_unit_source_by_air(game)
         if by_air is not None:
-            return GroundUnitSource(by_air, requires_airlift=True)
+            return by_air
         return None
 
-    def find_ground_unit_source_by_road(self, game: Game) -> Optional[ControlPoint]:
-        supply_route = SupplyRoute.for_control_point(self.destination)
-
+    def find_ground_unit_source_in_supply_route(
+        self, supply_route: SupplyRoute, game: Game
+    ) -> Optional[ControlPoint]:
         sources = []
         for control_point in supply_route:
             if control_point.can_recruit_ground_units(game):

@@ -39,7 +39,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     VehicleGroupGroundObject,
 )
-from game.transfers import Convoy, TransferOrder
+from game.transfers import Convoy, MultiGroupTransport, TransferOrder
 from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
@@ -445,7 +445,7 @@ class ObjectiveFinder:
                 airfields.append(control_point)
         return self._targets_by_range(airfields)
 
-    def convoys(self) -> Iterator[Convoy]:
+    def convoys(self) -> Iterator[MultiGroupTransport]:
         for front_line in self.front_lines():
             if front_line.control_point_a.is_friendly(self.is_player):
                 enemy_cp = front_line.control_point_a

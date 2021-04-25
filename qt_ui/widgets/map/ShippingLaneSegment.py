@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPen
@@ -8,6 +8,7 @@ from PySide2.QtWidgets import (
 )
 
 from game.theater import ControlPoint
+from game.transfers import CargoShip
 from qt_ui.uiconstants import COLORS
 
 
@@ -20,12 +21,13 @@ class ShippingLaneSegment(QGraphicsLineItem):
         y1: float,
         control_point_a: ControlPoint,
         control_point_b: ControlPoint,
+        ships: List[CargoShip],
         parent: Optional[QGraphicsItem] = None,
     ) -> None:
         super().__init__(x0, y0, x1, y1, parent)
         self.control_point_a = control_point_a
         self.control_point_b = control_point_b
-        self.ships = []
+        self.ships = ships
         self.setPen(self.make_pen())
         self.setToolTip(self.make_tooltip())
         self.setAcceptHoverEvents(True)

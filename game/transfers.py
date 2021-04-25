@@ -16,7 +16,7 @@ from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flightplan import FlightPlanBuilder
 from game.theater import ControlPoint, MissionTarget
-from game.theater.supplyroutes import SupplyRoute
+from game.theater.supplyroutes import RoadNetwork, ShippingNetwork, SupplyRoute
 from gen.naming import namegen
 from gen.flights.flight import Flight, FlightType
 
@@ -242,19 +242,14 @@ class AirliftPlanner:
         return flight_size
 
 
-class Convoy(MissionTarget, Transport):
-    def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:
-        super().__init__(namegen.next_convoy_name(), origin.position)
+class MultiGroupTransport(MissionTarget, Transport):
+    def __init__(
+        self, name: str, origin: ControlPoint, destination: ControlPoint
+    ) -> None:
+        super().__init__(name, origin.position)
         self.origin = origin
         self.destination = destination
         self.transfers: List[TransferOrder] = []
-
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        if self.is_friendly(for_player):
-            return
-
-        yield FlightType.BAI
-        yield from super().mission_types(for_player)
 
     def is_friendly(self, to_player: bool) -> bool:
         return self.origin.captured
@@ -298,10 +293,30 @@ class Convoy(MissionTarget, Transport):
         return self.origin.captured
 
     def find_escape_route(self) -> Optional[ControlPoint]:
-        return None
+        raise NotImplementedError
 
     def description(self) -> str:
-        return f"In a convoy to {self.destination}"
+        raise NotImplementedError
+
+    @property
+    def route_start(self) -> Point:
+        raise NotImplementedError
+
+    @property
+    def route_end(self) -> Point:
+        raise NotImplementedError
+
+
+class Convoy(MultiGroupTransport):
+    def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:
+        super().__init__(namegen.next_convoy_name(), origin, destination)
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        if self.is_friendly(for_player):
+            return
+
+        yield FlightType.BAI
+        yield from super().mission_types(for_player)
 
     @property
     def route_start(self) -> Point:
@@ -311,44 +326,85 @@ class Convoy(MissionTarget, Transport):
     def route_end(self) -> Point:
         return self.destination.convoy_spawns[self.origin]
 
+    def description(self) -> str:
+        return f"In a convoy to {self.destination}"
 
-class ConvoyMap:
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        return None
+
+
+class CargoShip(MultiGroupTransport):
+    def __init__(self, origin: ControlPoint, destination: ControlPoint) -> None:
+        super().__init__(namegen.next_cargo_ship_name(), origin, destination)
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        if self.is_friendly(for_player):
+            return
+
+        yield FlightType.ANTISHIP
+        yield from super().mission_types(for_player)
+
+    @property
+    def route_start(self) -> Point:
+        return self.origin.shipping_lanes[self.destination][0]
+
+    @property
+    def route_end(self) -> Point:
+        return self.destination.shipping_lanes[self.origin][-1]
+
+    def description(self) -> str:
+        return f"On a ship to {self.destination}"
+
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        return None
+
+
+class TransportMap:
     def __init__(self) -> None:
-        # Dict of origin -> destination -> convoy.
-        self.convoys: Dict[ControlPoint, Dict[ControlPoint, Convoy]] = defaultdict(dict)
+        # Dict of origin -> destination -> transport.
+        self.transports: Dict[
+            ControlPoint, Dict[ControlPoint, MultiGroupTransport]
+        ] = defaultdict(dict)
 
-    def convoy_exists(self, origin: ControlPoint, destination: ControlPoint) -> bool:
-        return destination in self.convoys[origin]
-
-    def find_convoy(
+    def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> Optional[Convoy]:
-        return self.convoys[origin].get(destination)
+    ) -> MultiGroupTransport:
+        raise NotImplementedError
 
-    def find_or_create_convoy(
+    def transport_exists(self, origin: ControlPoint, destination: ControlPoint) -> bool:
+        return destination in self.transports[origin]
+
+    def find_transport(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> Convoy:
-        convoy = self.find_convoy(origin, destination)
-        if convoy is None:
-            convoy = Convoy(origin, destination)
-            self.convoys[origin][destination] = convoy
-        return convoy
+    ) -> Optional[MultiGroupTransport]:
+        return self.transports[origin].get(destination)
 
-    def departing_from(self, origin: ControlPoint) -> Iterator[Convoy]:
-        yield from self.convoys[origin].values()
+    def find_or_create_transport(
+        self, origin: ControlPoint, destination: ControlPoint
+    ) -> MultiGroupTransport:
+        transport = self.find_transport(origin, destination)
+        if transport is None:
+            transport = self.create_transport(origin, destination)
+            self.transports[origin][destination] = transport
+        return transport
 
-    def travelling_to(self, destination: ControlPoint) -> Iterator[Convoy]:
-        for destination_dict in self.convoys.values():
+    def departing_from(self, origin: ControlPoint) -> Iterator[MultiGroupTransport]:
+        yield from self.transports[origin].values()
+
+    def travelling_to(self, destination: ControlPoint) -> Iterator[MultiGroupTransport]:
+        for destination_dict in self.transports.values():
             if destination in destination_dict:
                 yield destination_dict[destination]
 
-    def disband_convoy(self, convoy: Convoy) -> None:
-        self.convoys[convoy.origin][convoy.destination].disband()
-        del self.convoys[convoy.origin][convoy.destination]
+    def disband_transport(self, transport: MultiGroupTransport) -> None:
+        transport.disband()
+        del self.transports[transport.origin][transport.destination]
 
-    @staticmethod
-    def path_for(transfer: TransferOrder) -> List[ControlPoint]:
-        supply_route = SupplyRoute.for_control_point(transfer.position)
+    def network_for(self, control_point: ControlPoint) -> SupplyRoute:
+        raise NotImplementedError
+
+    def path_for(self, transfer: TransferOrder) -> List[ControlPoint]:
+        supply_route = self.network_for(transfer.position)
         return supply_route.shortest_path_between(
             transfer.position, transfer.destination
         )
@@ -358,26 +414,47 @@ class ConvoyMap:
 
     def add(self, transfer: TransferOrder) -> None:
         next_stop = self.next_stop_for(transfer)
-        self.find_or_create_convoy(transfer.position, next_stop).add_units(transfer)
+        self.find_or_create_transport(transfer.position, next_stop).add_units(transfer)
 
-    def remove(self, convoy: Convoy, transfer: TransferOrder) -> None:
-        convoy.remove_units(transfer)
-        if not convoy.transfers:
-            self.disband_convoy(convoy)
+    def remove(self, transport: MultiGroupTransport, transfer: TransferOrder) -> None:
+        transport.remove_units(transfer)
+        if not transport.transfers:
+            self.disband_transport(transport)
 
     def disband_all(self) -> None:
-        for convoy in list(self):
-            self.disband_convoy(convoy)
+        for transport in list(self):
+            self.disband_transport(transport)
 
-    def __iter__(self) -> Iterator[Convoy]:
-        for destination_dict in self.convoys.values():
+    def __iter__(self) -> Iterator[MultiGroupTransport]:
+        for destination_dict in self.transports.values():
             yield from destination_dict.values()
+
+
+class ConvoyMap(TransportMap):
+    def create_transport(
+        self, origin: ControlPoint, destination: ControlPoint
+    ) -> Convoy:
+        return Convoy(origin, destination)
+
+    def network_for(self, control_point: ControlPoint) -> RoadNetwork:
+        return RoadNetwork.for_control_point(control_point)
+
+
+class CargoShipMap(TransportMap):
+    def create_transport(
+        self, origin: ControlPoint, destination: ControlPoint
+    ) -> CargoShip:
+        return CargoShip(origin, destination)
+
+    def network_for(self, control_point: ControlPoint) -> ShippingNetwork:
+        return ShippingNetwork.for_control_point(control_point)
 
 
 class PendingTransfers:
     def __init__(self, game: Game) -> None:
         self.game = game
         self.convoys = ConvoyMap()
+        self.cargo_ships = CargoShipMap()
         self.pending_transfers: List[TransferOrder] = []
 
     def __iter__(self) -> Iterator[TransferOrder]:
@@ -394,9 +471,12 @@ class PendingTransfers:
         return self.pending_transfers.index(transfer)
 
     def arrange_transport(self, transfer: TransferOrder) -> None:
-        supply_route = SupplyRoute.for_control_point(transfer.position)
-        if transfer.destination in supply_route:
+        if transfer.destination in RoadNetwork.for_control_point(transfer.position):
             self.convoys.add(transfer)
+        elif transfer.destination in ShippingNetwork.for_control_point(
+            transfer.position
+        ):
+            self.cargo_ships.add(transfer)
         else:
             AirliftPlanner(self.game, transfer).create_package_for_airlift()
 
@@ -438,6 +518,11 @@ class PendingTransfers:
         self, transfer: TransferOrder, transport: Convoy
     ) -> None:
         self.convoys.remove(transport, transfer)
+
+    def _cancel_transport_cargo_ship(
+        self, transfer: TransferOrder, transport: CargoShip
+    ) -> None:
+        self.cargo_ships.remove(transport, transfer)
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
         if transfer.transport is not None:
