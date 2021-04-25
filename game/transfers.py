@@ -533,6 +533,7 @@ class PendingTransfers:
                 incomplete.append(transfer)
         self.pending_transfers = incomplete
         self.convoys.disband_all()
+        self.cargo_ships.disband_all()
 
     def plan_transports(self) -> None:
         for transfer in self.pending_transfers:
