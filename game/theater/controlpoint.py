@@ -267,6 +267,7 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
+        self.shipping_lanes: Dict[ControlPoint, List[Point]] = {}
         self.convoy_spawns: Dict[ControlPoint, Point] = {}
         self.base: Base = Base()
         self.cptype = cptype
@@ -396,6 +397,9 @@ class ControlPoint(MissionTarget, ABC):
         self.connected_points.append(to)
         self.convoy_spawns[to] = convoy_location
         self.stances[to.id] = CombatStance.DEFENSIVE
+
+    def create_shipping_lane(self, to: ControlPoint, waypoints: List[Point]) -> None:
+        self.shipping_lanes[to] = waypoints
 
     @abstractmethod
     def runway_is_operational(self) -> bool:

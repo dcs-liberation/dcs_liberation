@@ -45,7 +45,7 @@ from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
 from game.transfers import Convoy
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, meters, nautical_miles, pairwise
 from game.weather import TimeOfDay
 from gen import Conflict, Package
 from gen.flights.flight import (
@@ -67,10 +67,14 @@ from qt_ui.widgets.map.QFrontLine import QFrontLine
 from qt_ui.widgets.map.QLiberationScene import QLiberationScene
 from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
+from qt_ui.widgets.map.ShippingLaneSegment import ShippingLaneSegment
 from qt_ui.widgets.map.SupplyRouteSegment import SupplyRouteSegment
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 MAX_SHIP_DISTANCE = nautical_miles(80)
+
+
+MapPoint = Tuple[float, float]
 
 
 def binomial(i: int, n: int) -> float:
@@ -821,47 +825,64 @@ class QLiberationMap(QGraphicsView):
             )
         )
 
+    def bezier_points(
+        self, points: Iterable[Point]
+    ) -> Iterator[Tuple[MapPoint, MapPoint]]:
+        # Thanks to Alquimista for sharing a python implementation of the bezier
+        # algorithm this is adapted from.
+        # https://gist.github.com/Alquimista/1274149#file-bezdraw-py
+        bezier_fixed_points = []
+        for a, b in pairwise(points):
+            bezier_fixed_points.append(self._transform_point(a))
+            bezier_fixed_points.append(self._transform_point(b))
+
+        old_point = bezier_fixed_points[0]
+        for point in bezier_curve_range(
+            int(len(bezier_fixed_points) * 2), bezier_fixed_points
+        ):
+            yield old_point, point
+            old_point = point
+
     def draw_bezier_frontline(
         self,
         scene: QGraphicsScene,
         frontline: FrontLine,
         convoys: List[Convoy],
     ) -> None:
-        """
-        Thanks to Alquimista for sharing a python implementation of the bezier algorithm this is adapted from.
-        https://gist.github.com/Alquimista/1274149#file-bezdraw-py
-        """
-        bezier_fixed_points = []
-        for segment in frontline.segments:
-            bezier_fixed_points.append(self._transform_point(segment.point_a))
-            bezier_fixed_points.append(self._transform_point(segment.point_b))
-
-        old_point = bezier_fixed_points[0]
-        for point in bezier_curve_range(
-            int(len(bezier_fixed_points) * 2), bezier_fixed_points
-        ):
+        for a, b in self.bezier_points(frontline.points):
             scene.addItem(
                 SupplyRouteSegment(
-                    old_point[0],
-                    old_point[1],
-                    point[0],
-                    point[1],
+                    a[0],
+                    a[1],
+                    b[0],
+                    b[1],
                     frontline.control_point_a,
                     frontline.control_point_b,
                     convoys,
                 )
             )
-            old_point = point
 
     def draw_supply_routes(self) -> None:
+        if not DisplayOptions.lines:
+            return
+
         seen = set()
         for cp in self.game.theater.controlpoints:
             seen.add(cp)
             for connected in cp.connected_points:
                 if connected in seen:
                     continue
-                if DisplayOptions.lines:
-                    self.draw_supply_route_between(cp, connected)
+                self.draw_supply_route_between(cp, connected)
+            for destination, shipping_lane in cp.shipping_lanes.items():
+                if destination in seen:
+                    continue
+                if cp.is_friendly(destination.captured):
+                    self.draw_shipping_lane_between(cp, destination)
+
+    def draw_shipping_lane_between(self, a: ControlPoint, b: ControlPoint) -> None:
+        scene = self.scene()
+        for pa, pb in self.bezier_points(a.shipping_lanes[b]):
+            scene.addItem(ShippingLaneSegment(pa[0], pa[1], pb[0], pb[1], a, b))
 
     def draw_supply_route_between(self, a: ControlPoint, b: ControlPoint) -> None:
         scene = self.scene()
