@@ -578,6 +578,8 @@ class GroundObjectsGenerator:
                     generator = FactoryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )
+                elif isInstance(ground_object, SceneryGroundObject):
+                    return
                 elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map

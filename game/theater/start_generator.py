@@ -156,6 +156,20 @@ class LocationFinder:
         )
         return None
 
+    def location_for_scenery(
+        self, location_type: LocationType
+    ) -> Optional[SceneryGroup]:
+        position = self.control_point.preset_locations.random_for_scenery(location_type)
+        if position is not None:
+            return position
+
+        logging.warning(
+            f"No campaign location for %s at %s",
+            location_type.value,
+            self.control_point,
+        )
+        return None
+
 
 class ControlPointGroundObjectGenerator:
     def __init__(
@@ -647,6 +661,36 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             return
         g.groups = [group]
         self.control_point.connected_objectives.append(g)
+
+    def generate_scenery_site(self) -> None:
+        scenery = self.location_finder.location_for_scenery(Location.Scenery)
+        if position is None:
+            return
+        self.generate_tgo_for_scenery(scenery)
+
+    def generate_tgo_for_scenery(scenery: SceneryGroup) -> None:
+        group_id = self.game.next_group_id()
+        obj_name = namegen.random_objective_name()
+        position = scenery.zone_def.position
+        for_airbase = False
+        dcs_identifier = scenery.zone_def.name
+
+        g = SceneryGroundObject(
+            obj_name,
+            group_id,
+            position,
+            0,
+            self.control_point,
+            dcs_identifier,
+            for_airbase,
+            scenery,
+            False,
+        )
+
+        g.groups = []
+
+        self.control_point.connected_objectives.append(g)
+        return
 
     def generate_missile_sites(self) -> None:
         for i in range(self.faction.missiles_group_count):

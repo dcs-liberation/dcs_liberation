@@ -43,6 +43,10 @@ from dcs.unitgroup import (
     VehicleGroup,
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
+from dcs.triggers import Triggers
+from dcs.triggers import TriggerZone
+
+from ..scenery_group import SceneryGroup
 
 from gen.flights.flight import FlightType
 from .controlpoint import (
@@ -269,6 +273,14 @@ class MizCampaignLoader:
             if group.units[0].type in self.FACTORY_UNIT_TYPE:
                 yield group
 
+    @property
+    def scenery(self) -> Iterator[SceneryGroup]:
+        yield SceneryGroup.make_scenery_groups(self.mission.triggers._zones, True)
+
+    @property
+    def required_scenery(self) -> Iterator[SceneryGroup]:
+        yield SceneryGroup.make_scenery_groups(self.mission.triggers._zones, False)
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -441,6 +453,14 @@ class MizCampaignLoader:
             closest.preset_locations.factories.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
+
+        for group in self.scenery:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.scenery.append(group)
+
+        for group in self.required_scenery:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_scenery.append(group)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
