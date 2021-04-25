@@ -18,7 +18,7 @@ from dcs.unitgroup import Group, VehicleGroup
 
 if TYPE_CHECKING:
     from game import Game
-    from game.transfers import Convoy
+    from game.transfers import MultiGroupTransport
 
 from game.theater import (
     ControlPoint,
@@ -33,7 +33,7 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group, Convoy]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group, MultiGroupTransport]
 
 
 class WaypointBuilder:

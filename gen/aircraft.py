@@ -88,7 +88,7 @@ from game.theater.controlpoint import (
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import TheaterGroundObject
-from game.transfers import Convoy
+from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
@@ -1719,7 +1719,7 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         target_group = self.package.target
         if isinstance(target_group, TheaterGroundObject):
             group_name = target_group.group_name
-        elif isinstance(target_group, Convoy):
+        elif isinstance(target_group, MultiGroupTransport):
             group_name = target_group.name
         else:
             logging.error(
