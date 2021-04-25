@@ -39,6 +39,7 @@ from game.theater.theatergroundobject import (
     LhaGroundObject,
     ShipGroundObject,
     MissileSiteGroundObject,
+    SceneryGroundObject,
 )
 from game.unitmap import UnitMap
 from game.utils import knots, mps
@@ -578,8 +579,8 @@ class GroundObjectsGenerator:
                     generator = FactoryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )
-                elif isInstance(ground_object, SceneryGroundObject):
-                    return
+                elif isinstance(ground_object, SceneryGroundObject):
+                    print("I am a scenery object.  Generate me!")
                 elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map

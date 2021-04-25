@@ -1,4 +1,7 @@
 from dcs.triggers import TriggerZone
+from dcs import Point
+
+# from dcs.unitgroup import Group
 from typing import Iterable
 
 
@@ -7,6 +10,11 @@ class SceneryGroup:
 
         self.zone_def = zone_def
         self.zones = zones
+        self.position = zone_def.position
+
+    # @property
+    # def position(self) -> Point:
+    #     return self.position
 
     @property
     def blue(self) -> bool:
@@ -22,13 +30,13 @@ class SceneryGroup:
 
         for zone in trigger_zones:
             if blue:
-                if is_blue(zone):
+                if SceneryGroup.is_blue(zone):
                     zone_definitions.append(zone)
             else:
-                if is_red(zone):
+                if SceneryGroup.is_red(zone):
                     zone_definitions.append(zone)
-            if is_white(zone):
-                white_zones.append
+            if SceneryGroup.is_white(zone):
+                white_zones.append(zone)
 
         for zone_def in zone_definitions:
 
@@ -42,7 +50,9 @@ class SceneryGroup:
                     valid_white_zones.append(zone)
                     # todo remove found white_zone.  Don't need to search again.
 
-            yield scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
+            scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
+
+        return scenery_groups
 
     @staticmethod
     def is_blue(zone: TriggerZone) -> bool:
