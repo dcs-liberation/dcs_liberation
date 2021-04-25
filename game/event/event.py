@@ -170,6 +170,15 @@ class Event:
             convoy.kill_unit(unit_type)
 
     @staticmethod
+    def commit_cargo_ship_losses(debriefing: Debriefing) -> None:
+        for ship in debriefing.cargo_ship_losses:
+            logging.info(
+                f"All units destroyed in cargo ship from {ship.origin} to "
+                f"{ship.destination}."
+            )
+            ship.kill_all()
+
+    @staticmethod
     def commit_airlift_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.airlift_losses:
             unit_type = loss.unit_type

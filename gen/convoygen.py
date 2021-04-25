@@ -10,7 +10,7 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 from dcs.unittype import VehicleType
 
-from game.transfers import MultiGroupTransport
+from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
 
@@ -30,7 +30,7 @@ class ConvoyGenerator:
         for convoy in self.game.transfers.convoys:
             self.generate_convoy(convoy)
 
-    def generate_convoy(self, convoy: MultiGroupTransport) -> VehicleGroup:
+    def generate_convoy(self, convoy: Convoy) -> VehicleGroup:
         group = self._create_mixed_unit_group(
             convoy.name,
             convoy.route_start,

@@ -4,6 +4,7 @@ import json
 import os
 import timeit
 from datetime import timedelta
+from typing import Sized
 
 from PySide2 import QtCore
 from PySide2.QtCore import QObject, Qt, Signal
@@ -132,38 +133,48 @@ class QWaitingForMissionResultWindow(QDialog):
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
 
+    @staticmethod
+    def add_update_row(description: str, count: Sized, layout: QGridLayout) -> None:
+        row = layout.rowCount()
+        layout.addWidget(QLabel(f"<b>{description}</b>"), row, 0)
+        layout.addWidget(QLabel(f"{len(count)}"), row, 1)
+
     def updateLayout(self, debriefing: Debriefing) -> None:
         updateBox = QGroupBox("Mission status")
-        updateLayout = QGridLayout()
-        updateBox.setLayout(updateLayout)
+        update_layout = QGridLayout()
+        updateBox.setLayout(update_layout)
         self.debriefing = debriefing
 
-        updateLayout.addWidget(QLabel("<b>Aircraft destroyed</b>"), 0, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.air_losses.losses)))), 0, 1
+        self.add_update_row(
+            "Aircraft destroyed", list(debriefing.air_losses.losses), update_layout
         )
-
-        updateLayout.addWidget(QLabel("<b>Front line units destroyed</b>"), 1, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.front_line_losses)))), 1, 1
+        self.add_update_row(
+            "Front line units destroyed",
+            list(debriefing.front_line_losses),
+            update_layout,
         )
-
-        updateLayout.addWidget(QLabel("<b>Convoy units destroyed</b>"), 2, 0)
-        updateLayout.addWidget(QLabel(str(len(list(debriefing.convoy_losses)))), 2, 1)
-
-        updateLayout.addWidget(QLabel("<b>Airlift cargo destroyed</b>"), 3, 0)
-        updateLayout.addWidget(QLabel(str(len(list(debriefing.airlift_losses)))), 3, 1)
-
-        updateLayout.addWidget(QLabel("<b>Other ground units destroyed</b>"), 4, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.ground_object_losses)))), 4, 1
+        self.add_update_row(
+            "Convoy units destroyed", list(debriefing.convoy_losses), update_layout
         )
-
-        updateLayout.addWidget(QLabel("<b>Buildings destroyed</b>"), 5, 0)
-        updateLayout.addWidget(QLabel(str(len(list(debriefing.building_losses)))), 5, 1)
-
-        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 6, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 6, 1)
+        self.add_update_row(
+            "Shipping cargo destroyed",
+            list(debriefing.cargo_ship_losses),
+            update_layout,
+        )
+        self.add_update_row(
+            "Airlift cargo destroyed", list(debriefing.airlift_losses), update_layout
+        )
+        self.add_update_row(
+            "Ground units lost at objective areas",
+            list(debriefing.ground_object_losses),
+            update_layout,
+        )
+        self.add_update_row(
+            "Buildings destroyed", list(debriefing.building_losses), update_layout
+        )
+        self.add_update_row(
+            "Base capture events", list(debriefing.base_capture_events), update_layout
+        )
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):

@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Type
+from typing import Dict, Generic, Iterator, List, Optional, TYPE_CHECKING, Type, TypeVar
 
 from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
@@ -271,6 +271,10 @@ class MultiGroupTransport(MissionTarget, Transport):
                 pass
         raise KeyError
 
+    def kill_all(self) -> None:
+        for transfer in self.transfers:
+            transfer.kill_all()
+
     def disband(self) -> None:
         for transfer in list(self.transfers):
             self.remove_units(transfer)
@@ -296,14 +300,6 @@ class MultiGroupTransport(MissionTarget, Transport):
         raise NotImplementedError
 
     def description(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def route_start(self) -> Point:
-        raise NotImplementedError
-
-    @property
-    def route_end(self) -> Point:
         raise NotImplementedError
 
 
@@ -345,12 +341,8 @@ class CargoShip(MultiGroupTransport):
         yield from super().mission_types(for_player)
 
     @property
-    def route_start(self) -> Point:
-        return self.origin.shipping_lanes[self.destination][0]
-
-    @property
-    def route_end(self) -> Point:
-        return self.destination.shipping_lanes[self.origin][-1]
+    def route(self) -> List[Point]:
+        return self.origin.shipping_lanes[self.destination]
 
     def description(self) -> str:
         return f"On a ship to {self.destination}"
@@ -359,16 +351,19 @@ class CargoShip(MultiGroupTransport):
         return None
 
 
-class TransportMap:
+TransportType = TypeVar("TransportType", bound=MultiGroupTransport)
+
+
+class TransportMap(Generic[TransportType]):
     def __init__(self) -> None:
         # Dict of origin -> destination -> transport.
         self.transports: Dict[
-            ControlPoint, Dict[ControlPoint, MultiGroupTransport]
+            ControlPoint, Dict[ControlPoint, TransportType]
         ] = defaultdict(dict)
 
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> MultiGroupTransport:
+    ) -> TransportType:
         raise NotImplementedError
 
     def transport_exists(self, origin: ControlPoint, destination: ControlPoint) -> bool:
@@ -376,27 +371,27 @@ class TransportMap:
 
     def find_transport(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> Optional[MultiGroupTransport]:
+    ) -> Optional[TransportType]:
         return self.transports[origin].get(destination)
 
     def find_or_create_transport(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> MultiGroupTransport:
+    ) -> TransportType:
         transport = self.find_transport(origin, destination)
         if transport is None:
             transport = self.create_transport(origin, destination)
             self.transports[origin][destination] = transport
         return transport
 
-    def departing_from(self, origin: ControlPoint) -> Iterator[MultiGroupTransport]:
+    def departing_from(self, origin: ControlPoint) -> Iterator[TransportType]:
         yield from self.transports[origin].values()
 
-    def travelling_to(self, destination: ControlPoint) -> Iterator[MultiGroupTransport]:
+    def travelling_to(self, destination: ControlPoint) -> Iterator[TransportType]:
         for destination_dict in self.transports.values():
             if destination in destination_dict:
                 yield destination_dict[destination]
 
-    def disband_transport(self, transport: MultiGroupTransport) -> None:
+    def disband_transport(self, transport: TransportType) -> None:
         transport.disband()
         del self.transports[transport.origin][transport.destination]
 
@@ -416,7 +411,7 @@ class TransportMap:
         next_stop = self.next_stop_for(transfer)
         self.find_or_create_transport(transfer.position, next_stop).add_units(transfer)
 
-    def remove(self, transport: MultiGroupTransport, transfer: TransferOrder) -> None:
+    def remove(self, transport: TransportType, transfer: TransferOrder) -> None:
         transport.remove_units(transfer)
         if not transport.transfers:
             self.disband_transport(transport)
@@ -425,7 +420,7 @@ class TransportMap:
         for transport in list(self):
             self.disband_transport(transport)
 
-    def __iter__(self) -> Iterator[MultiGroupTransport]:
+    def __iter__(self) -> Iterator[TransportType]:
         for destination_dict in self.transports.values():
             yield from destination_dict.values()
 

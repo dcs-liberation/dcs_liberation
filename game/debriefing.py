@@ -22,6 +22,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import Airfield, ControlPoint
+from game.transfers import CargoShip
 from game.unitmap import (
     AirliftUnit,
     Building,
@@ -69,6 +70,9 @@ class GroundLosses:
 
     player_convoy: List[ConvoyUnit] = field(default_factory=list)
     enemy_convoy: List[ConvoyUnit] = field(default_factory=list)
+
+    player_cargo_ships: List[CargoShip] = field(default_factory=list)
+    enemy_cargo_ships: List[CargoShip] = field(default_factory=list)
 
     player_airlifts: List[AirliftUnit] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnit] = field(default_factory=list)
@@ -139,6 +143,11 @@ class Debriefing:
         yield from self.ground_losses.enemy_convoy
 
     @property
+    def cargo_ship_losses(self) -> Iterator[CargoShip]:
+        yield from self.ground_losses.player_cargo_ships
+        yield from self.ground_losses.enemy_cargo_ships
+
+    @property
     def airlift_losses(self) -> Iterator[AirliftUnit]:
         yield from self.ground_losses.player_airlifts
         yield from self.ground_losses.enemy_airlifts
@@ -179,6 +188,17 @@ class Debriefing:
             losses = self.ground_losses.enemy_convoy
         for loss in losses:
             losses_by_type[loss.unit_type] += 1
+        return losses_by_type
+
+    def cargo_ship_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            ships = self.ground_losses.player_cargo_ships
+        else:
+            ships = self.ground_losses.enemy_cargo_ships
+        for ship in ships:
+            for unit_type, count in ship.units.items():
+                losses_by_type[unit_type] += count
         return losses_by_type
 
     def airlift_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
@@ -235,6 +255,14 @@ class Debriefing:
                     losses.player_convoy.append(convoy_unit)
                 else:
                     losses.enemy_convoy.append(convoy_unit)
+                continue
+
+            cargo_ship = self.unit_map.cargo_ship(unit_name)
+            if cargo_ship is not None:
+                if cargo_ship.player_owned:
+                    losses.player_cargo_ships.append(cargo_ship)
+                else:
+                    losses.enemy_cargo_ships.append(cargo_ship)
                 continue
 
             ground_object_unit = self.unit_map.ground_object_unit(unit_name)
