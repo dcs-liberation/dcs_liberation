@@ -503,11 +503,13 @@ class PendingTransfers:
         flight.package.remove_flight(flight)
         self.game.aircraft_inventory.return_from_flight(flight)
 
+    @cancel_transport.register
     def _cancel_transport_convoy(
         self, transfer: TransferOrder, transport: Convoy
     ) -> None:
         self.convoys.remove(transport, transfer)
 
+    @cancel_transport.register
     def _cancel_transport_cargo_ship(
         self, transfer: TransferOrder, transport: CargoShip
     ) -> None:
