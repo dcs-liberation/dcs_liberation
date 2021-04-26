@@ -83,7 +83,7 @@ NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP = (
     "travel to the front line."
 )
 NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL = (
-    "Enable new ground unit recruitment behavior (WIP)<br />"
+    "Enable new ground unit recruitment behavior<br />"
     '<a href="https://github.com/Khopa/dcs_liberation/issues/986">'
     '<span style="color:#FFFFFF;">More information.</span></a>'
 )
