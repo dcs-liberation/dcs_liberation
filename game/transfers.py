@@ -157,7 +157,10 @@ class Airlift(Transport):
         return None
 
     def description(self) -> str:
-        return f"Being airlifted by {self.flight}"
+        return (
+            f"Being airlifted from {self.transfer.position} to {self.destination} by "
+            f"{self.flight}"
+        )
 
 
 class AirliftPlanner:
@@ -342,7 +345,7 @@ class Convoy(MultiGroupTransport):
         return self.destination.convoy_spawns[self.origin]
 
     def description(self) -> str:
-        return f"In a convoy to {self.destination}"
+        return f"In a convoy from {self.origin} to {self.destination}"
 
     def find_escape_route(self) -> Optional[ControlPoint]:
         return None
@@ -364,7 +367,7 @@ class CargoShip(MultiGroupTransport):
         return self.origin.shipping_lanes[self.destination]
 
     def description(self) -> str:
-        return f"On a ship to {self.destination}"
+        return f"On a ship from {self.origin} to {self.destination}"
 
     def find_escape_route(self) -> Optional[ControlPoint]:
         return None
