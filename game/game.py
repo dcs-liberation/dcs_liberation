@@ -33,6 +33,7 @@ from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .settings import Settings
 from .theater import ConflictTheater
+from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
 from .transfers import PendingTransfers
 from .unitmap import UnitMap
@@ -117,6 +118,9 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
+        self.blue_transit_network = self.compute_transit_network_for(player=True)
+        self.red_transit_network = self.compute_transit_network_for(player=False)
+
         self.blue_procurement_requests: List[AircraftProcurementRequest] = []
         self.red_procurement_requests: List[AircraftProcurementRequest] = []
 
@@ -170,6 +174,11 @@ class Game:
         if player:
             return self.blue_procurement_requests
         return self.red_procurement_requests
+
+    def transit_network_for(self, player: bool) -> TransitNetwork:
+        if player:
+            return self.blue_transit_network
+        return self.red_transit_network
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
@@ -346,6 +355,7 @@ class Game:
         # Plan flights & combat for next turn
         self.compute_conflicts_position()
         self.compute_threat_zones()
+        self.compute_transit_networks()
         self.ground_planners = {}
 
         self.transfers.order_airlift_assets()
@@ -416,6 +426,13 @@ class Game:
         """
         self.current_group_id += 1
         return self.current_group_id
+
+    def compute_transit_networks(self) -> None:
+        self.blue_transit_network = self.compute_transit_network_for(player=True)
+        self.red_transit_network = self.compute_transit_network_for(player=False)
+
+    def compute_transit_network_for(self, player: bool) -> TransitNetwork:
+        return TransitNetworkBuilder(self.theater, player).build()
 
     def compute_threat_zones(self) -> None:
         self.blue_threat_zone = ThreatZones.for_faction(self, player=True)

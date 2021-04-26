@@ -466,6 +466,9 @@ class ControlPoint(MissionTarget, ABC):
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
 
+    def is_friendly_to(self, control_point: ControlPoint) -> bool:
+        return control_point.is_friendly(self.captured)
+
     # TODO: Should be Airbase specific.
     def clear_base_defenses(self) -> None:
         for base_defense in self.base_defenses:

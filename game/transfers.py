@@ -10,15 +10,18 @@ from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
 from game.procurement import AircraftProcurementRequest
+from game.theater import ControlPoint, MissionTarget
+from game.theater.transitnetwork import (
+    TransitConnection,
+    TransitNetwork,
+)
 from game.utils import meters, nautical_miles
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flightplan import FlightPlanBuilder
-from game.theater import ControlPoint, MissionTarget
-from game.theater.supplyroutes import RoadNetwork, ShippingNetwork, SupplyRoute
-from gen.naming import namegen
 from gen.flights.flight import Flight, FlightType
+from gen.flights.flightplan import FlightPlanBuilder
+from gen.naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
@@ -151,11 +154,14 @@ class AirliftPlanner:
     #: maximum range.
     HELO_MAX_RANGE = nautical_miles(100)
 
-    def __init__(self, game: Game, transfer: TransferOrder) -> None:
+    def __init__(
+        self, game: Game, transfer: TransferOrder, next_stop: ControlPoint
+    ) -> None:
         self.game = game
         self.transfer = transfer
+        self.next_stop = next_stop
         self.for_player = transfer.destination.captured
-        self.package = Package(target=transfer.destination, auto_asap=True)
+        self.package = Package(target=next_stop, auto_asap=True)
 
     def compatible_with_mission(
         self, unit_type: Type[FlyingType], airfield: ControlPoint
@@ -164,7 +170,7 @@ class AirliftPlanner:
             return False
         if not self.transfer.origin.can_operate(unit_type):
             return False
-        if not self.transfer.destination.can_operate(unit_type):
+        if not self.next_stop.can_operate(unit_type):
             return False
 
         # Cargo planes have no maximum range.
@@ -395,20 +401,7 @@ class TransportMap(Generic[TransportType]):
         transport.disband()
         del self.transports[transport.origin][transport.destination]
 
-    def network_for(self, control_point: ControlPoint) -> SupplyRoute:
-        raise NotImplementedError
-
-    def path_for(self, transfer: TransferOrder) -> List[ControlPoint]:
-        supply_route = self.network_for(transfer.position)
-        return supply_route.shortest_path_between(
-            transfer.position, transfer.destination
-        )
-
-    def next_stop_for(self, transfer: TransferOrder) -> ControlPoint:
-        return self.path_for(transfer)[0]
-
-    def add(self, transfer: TransferOrder) -> None:
-        next_stop = self.next_stop_for(transfer)
+    def add(self, transfer: TransferOrder, next_stop: ControlPoint) -> None:
         self.find_or_create_transport(transfer.position, next_stop).add_units(transfer)
 
     def remove(self, transport: TransportType, transfer: TransferOrder) -> None:
@@ -431,18 +424,12 @@ class ConvoyMap(TransportMap):
     ) -> Convoy:
         return Convoy(origin, destination)
 
-    def network_for(self, control_point: ControlPoint) -> RoadNetwork:
-        return RoadNetwork.for_control_point(control_point)
-
 
 class CargoShipMap(TransportMap):
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
     ) -> CargoShip:
         return CargoShip(origin, destination)
-
-    def network_for(self, control_point: ControlPoint) -> ShippingNetwork:
-        return ShippingNetwork.for_control_point(control_point)
 
 
 class PendingTransfers:
@@ -465,15 +452,22 @@ class PendingTransfers:
     def index_of_transfer(self, transfer: TransferOrder) -> int:
         return self.pending_transfers.index(transfer)
 
+    def network_for(self, control_point: ControlPoint) -> TransitNetwork:
+        return self.game.transit_network_for(control_point.captured)
+
     def arrange_transport(self, transfer: TransferOrder) -> None:
-        if transfer.destination in RoadNetwork.for_control_point(transfer.position):
-            self.convoys.add(transfer)
-        elif transfer.destination in ShippingNetwork.for_control_point(
-            transfer.position
+        network = self.network_for(transfer.position)
+        path = network.shortest_path_between(transfer.position, transfer.destination)
+        next_stop = path[0]
+        if network.link_type(transfer.position, next_stop) == TransitConnection.Road:
+            self.convoys.add(transfer, next_stop)
+        elif (
+            network.link_type(transfer.position, next_stop)
+            == TransitConnection.Shipping
         ):
-            self.cargo_ships.add(transfer)
+            self.cargo_ships.add(transfer, next_stop)
         else:
-            AirliftPlanner(self.game, transfer).create_package_for_airlift()
+            AirliftPlanner(self.game, transfer, next_stop).create_package_for_airlift()
 
     def new_transfer(self, transfer: TransferOrder) -> None:
         transfer.origin.base.commit_losses(transfer.units)
