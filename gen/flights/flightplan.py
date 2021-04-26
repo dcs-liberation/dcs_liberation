@@ -1225,11 +1225,11 @@ class FlightPlanBuilder:
             pickup=pickup,
             nav_to_drop_off=builder.nav_path(
                 cargo.origin.position,
-                cargo.destination.position,
+                cargo.next_stop.position,
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=builder.drop_off(cargo.destination),
+            drop_off=builder.drop_off(cargo.next_stop),
             nav_to_home=builder.nav_path(
                 cargo.origin.position,
                 flight.arrival.position,

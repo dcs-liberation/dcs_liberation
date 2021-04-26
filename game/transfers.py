@@ -29,6 +29,9 @@ if TYPE_CHECKING:
 
 
 class Transport:
+    def __init__(self, destination: ControlPoint):
+        self.destination = destination
+
     def find_escape_route(self) -> Optional[ControlPoint]:
         raise NotImplementedError
 
@@ -98,6 +101,14 @@ class TransferOrder:
         location.base.commision_units(self.units)
         self.units.clear()
 
+    @property
+    def next_stop(self) -> ControlPoint:
+        if self.transport is None:
+            raise RuntimeError(
+                "TransferOrder.next_stop called with no transport assigned"
+            )
+        return self.transport.destination
+
     def proceed(self) -> None:
         if self.transport is None:
             return
@@ -116,20 +127,22 @@ class TransferOrder:
                 self.kill_all()
             return
 
-        self.position = self.destination
+        self.position = self.next_stop
         self.transport = None
 
         if self.completed:
             self.disband_at(self.position)
 
 
-@dataclass
 class Airlift(Transport):
     """A transfer order that moves units by cargo planes and helicopters."""
 
-    transfer: TransferOrder
-
-    flight: Flight
+    def __init__(
+        self, transfer: TransferOrder, flight: Flight, next_stop: ControlPoint
+    ) -> None:
+        super().__init__(next_stop)
+        self.transfer = transfer
+        self.flight = flight
 
     @property
     def units(self) -> Dict[Type[VehicleType], int]:
@@ -238,7 +251,7 @@ class AirliftPlanner:
             cargo=transfer,
         )
 
-        transport = Airlift(transfer, flight)
+        transport = Airlift(transfer, flight, self.next_stop)
         transfer.transport = transport
 
         self.package.add_flight(flight)
@@ -252,9 +265,9 @@ class MultiGroupTransport(MissionTarget, Transport):
     def __init__(
         self, name: str, origin: ControlPoint, destination: ControlPoint
     ) -> None:
-        super().__init__(name, origin.position)
+        MissionTarget.__init__(self, name, origin.position)
+        Transport.__init__(self, destination)
         self.origin = origin
-        self.destination = destination
         self.transfers: List[TransferOrder] = []
 
     def is_friendly(self, to_player: bool) -> bool:
