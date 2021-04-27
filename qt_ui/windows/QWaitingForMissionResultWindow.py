@@ -173,7 +173,7 @@ class QWaitingForMissionResultWindow(QDialog):
             "Buildings destroyed", list(debriefing.building_losses), update_layout
         )
         self.add_update_row(
-            "Base capture events", list(debriefing.base_capture_events), update_layout
+            "Base capture events", debriefing.base_captures, update_layout
         )
 
         # Clear previous content of the window

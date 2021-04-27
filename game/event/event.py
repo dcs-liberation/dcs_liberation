@@ -222,6 +222,29 @@ class Event:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()
 
+    def commit_captures(self, debriefing: Debriefing) -> None:
+        for captured in debriefing.base_captures:
+            try:
+                if captured.captured_by_player:
+                    info = Information(
+                        f"{captured.control_point} captured!",
+                        f"We took control of {captured.control_point}.",
+                        self.game.turn,
+                    )
+                else:
+                    info = Information(
+                        f"{captured.control_point} lost!",
+                        f"The enemy took control of {captured.control_point}.",
+                        self.game.turn,
+                    )
+
+                self.game.informations.append(info)
+                captured.control_point.capture(self.game, captured.captured_by_player)
+                logging.info(f"Will run redeploy for {captured.control_point}")
+                self.redeploy_units(captured.control_point)
+            except Exception:
+                logging.exception(f"Could not process base capture {captured}")
+
     def commit(self, debriefing: Debriefing):
         logging.info("Committing mission results")
 
@@ -232,54 +255,7 @@ class Event:
         self.commit_ground_object_losses(debriefing)
         self.commit_building_losses(debriefing)
         self.commit_damaged_runways(debriefing)
-
-        # ------------------------------
-        # Captured bases
-        # if self.game.player_country in db.BLUEFOR_FACTIONS:
-        coalition = 2  # Value in DCS mission event for BLUE
-        # else:
-        #    coalition = 1 # Value in DCS mission event for RED
-
-        for captured in debriefing.base_capture_events:
-            try:
-                id = int(captured.split("||")[0])
-                new_owner_coalition = int(captured.split("||")[1])
-
-                captured_cps = []
-                for cp in self.game.theater.controlpoints:
-                    if cp.id == id:
-
-                        if cp.captured and new_owner_coalition != coalition:
-                            for_player = False
-                            info = Information(
-                                cp.name + " lost !",
-                                "The ennemy took control of "
-                                + cp.name
-                                + "\nShame on us !",
-                                self.game.turn,
-                            )
-                            self.game.informations.append(info)
-                            captured_cps.append(cp)
-                        elif not (cp.captured) and new_owner_coalition == coalition:
-                            for_player = True
-                            info = Information(
-                                cp.name + " captured !",
-                                "We took control of " + cp.name + "! Great job !",
-                                self.game.turn,
-                            )
-                            self.game.informations.append(info)
-                            captured_cps.append(cp)
-                        else:
-                            continue
-
-                        cp.capture(self.game, for_player)
-
-                for cp in captured_cps:
-                    logging.info("Will run redeploy for " + cp.name)
-                    self.redeploy_units(cp)
-            except Exception:
-                logging.exception(f"Could not process base capture {captured}")
-
+        self.commit_captures(debriefing)
         self.complete_aircraft_transfers(debriefing)
 
         # Destroyed units carcass

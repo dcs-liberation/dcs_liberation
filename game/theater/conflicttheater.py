@@ -673,7 +673,7 @@ class ConflictTheater:
         for i in self.controlpoints:
             if i.id == id:
                 return i
-        raise RuntimeError(f"Cannot find ControlPoint with ID {id}")
+        raise KeyError(f"Cannot find ControlPoint with ID {id}")
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
         cp: ControlPoint
