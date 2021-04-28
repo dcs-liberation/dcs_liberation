@@ -36,7 +36,7 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
 )
 
 
-def run_ui(game: Optional[Game] = None) -> None:
+def run_ui(game: Optional[Game], new_map: bool) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
@@ -104,7 +104,7 @@ def run_ui(game: Optional[Game] = None) -> None:
     GameUpdateSignal()
 
     # Start window
-    window = QLiberationWindow(game)
+    window = QLiberationWindow(game, new_map)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()
@@ -130,6 +130,10 @@ def parse_args() -> argparse.Namespace:
         "--warn-missing-weapon-data",
         action="store_true",
         help="Emits a warning for weapons without date or fallback information.",
+    )
+
+    parser.add_argument(
+        "--new-map", action="store_true", help="Use the new map. Non functional."
     )
 
     new_game = subparsers.add_parser("new-game")
@@ -239,7 +243,7 @@ def main():
                 args.cheats,
             )
 
-    run_ui(game)
+    run_ui(game, args.new_map)
 
 
 if __name__ == "__main__":

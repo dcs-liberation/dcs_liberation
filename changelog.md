@@ -8,6 +8,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
 * **[Campaign AI]** Every 30 minutes the AI will plan a CAP, so players can customize their mission better.
+* **[UI]** Added (extremely WIP) new web based map UI. Enable with --new-map.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
 * **[Modding]** Can now install custom factions to <DCS saved games>/Liberation/Factions instead of the Liberation install directory.

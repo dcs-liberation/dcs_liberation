@@ -4,7 +4,15 @@ import datetime
 import logging
 import math
 from functools import singledispatchmethod
-from typing import Iterable, Iterator, List, Optional, Sequence, Tuple
+from pathlib import Path
+from typing import (
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtCore import QLineF, QPointF, QRectF, Qt
@@ -16,6 +24,11 @@ from PySide2.QtGui import (
     QPixmap,
     QPolygonF,
     QWheelEvent,
+)
+from PySide2.QtWebChannel import QWebChannel
+from PySide2.QtWebEngineWidgets import (
+    QWebEnginePage,
+    QWebEngineView,
 )
 from PySide2.QtWidgets import (
     QFrame,
@@ -40,7 +53,10 @@ import qt_ui.uiconstants as CONST
 from game import Game
 from game.navmesh import NavMesh
 from game.theater import ControlPoint, Enum
-from game.theater.conflicttheater import FrontLine, ReferencePoint
+from game.theater.conflicttheater import (
+    FrontLine,
+    ReferencePoint,
+)
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
 )
@@ -69,6 +85,7 @@ from qt_ui.widgets.map.QMapControlPoint import QMapControlPoint
 from qt_ui.widgets.map.QMapGroundObject import QMapGroundObject
 from qt_ui.widgets.map.ShippingLaneSegment import ShippingLaneSegment
 from qt_ui.widgets.map.SupplyRouteSegment import SupplyRouteSegment
+from qt_ui.widgets.map.mapmodel import MapModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 MAX_SHIP_DISTANCE = nautical_miles(80)
@@ -112,17 +129,65 @@ class QLiberationMapState(Enum):
     MOVING_UNIT = 1
 
 
-class QLiberationMap(QGraphicsView):
+class LoggingWebPage(QWebEnginePage):
+    def javaScriptConsoleMessage(
+        self,
+        level: QWebEnginePage.JavaScriptConsoleMessageLevel,
+        message: str,
+        line_number: int,
+        source: str,
+    ) -> None:
+        if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
+            logging.error(message)
+        elif level == QWebEnginePage.JavaScriptConsoleMessageLevel.WarningMessageLevel:
+            logging.warning(message)
+        else:
+            logging.info(message)
+
+
+class LiberationMap:
+    def set_game(self, game: Optional[Game]) -> None:
+        raise NotImplementedError
+
+
+class LeafletMap(QWebEngineView, LiberationMap):
+    def __init__(self, game_model: GameModel, parent) -> None:
+        super().__init__(parent)
+        self.game_model = game_model
+        self.setMinimumSize(800, 600)
+        self.map_model = MapModel(game_model)
+
+        self.channel = QWebChannel()
+        self.channel.registerObject("game", self.map_model)
+
+        self.page = LoggingWebPage(self)
+        self.page.setWebChannel(self.channel)
+        self.page.setHtml(Path("resources/ui/map/canvas.html").read_text())
+        self.setPage(self.page)
+
+        self.loadFinished.connect(self.load_finished)
+
+    def load_finished(self) -> None:
+        self.page.runJavaScript(Path("resources/ui/map/map.js").read_text())
+
+    def set_game(self, game: Optional[Game]) -> None:
+        if game is None:
+            self.map_model.clear()
+        else:
+            self.map_model.reset()
+
+
+class QLiberationMap(QGraphicsView, LiberationMap):
 
     WAYPOINT_SIZE = 4
     reference_point_setup_mode = False
     instance: Optional[QLiberationMap] = None
 
-    def __init__(self, game_model: GameModel):
-        super(QLiberationMap, self).__init__()
+    def __init__(self, game_model: GameModel) -> None:
+        super().__init__()
         QLiberationMap.instance = self
         self.game_model = game_model
-        self.game: Optional[Game] = None  # Setup by setGame below.
+        self.game: Optional[Game] = None  # Setup by set_game below.
         self.state = QLiberationMapState.NORMAL
 
         self.waypoint_info_font = QFont()
@@ -138,7 +203,7 @@ class QLiberationMap(QGraphicsView):
         self.factor = 1
         self.factorized = 1
         self.init_scene()
-        self.setGame(game_model.game)
+        self.set_game(game_model.game)
 
         # Object displayed when unit is selected
         self.movement_line = QtWidgets.QGraphicsLineItem(
@@ -201,7 +266,7 @@ class QLiberationMap(QGraphicsView):
         self.setFrameShape(QFrame.NoFrame)
         self.setDragMode(QGraphicsView.ScrollHandDrag)
 
-    def setGame(self, game: Optional[Game]):
+    def set_game(self, game: Optional[Game]):
         should_recenter = self.game is None
         self.game = game
         if self.game is not None:

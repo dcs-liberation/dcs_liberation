@@ -478,11 +478,35 @@ class ConflictTheater:
 
     def __init__(self):
         self.controlpoints: List[ControlPoint] = []
+        self.point_to_ll_transformer = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        )
+        self.ll_to_point_transformer = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        )
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Avoid persisting any volatile types that can be deterministically
+        # recomputed on load for the sake of save compatibility.
+        del state["point_to_ll_transformer"]
+        del state["ll_to_point_transformer"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Regenerate any state that was not persisted.
+        self.point_to_ll_transformer = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        )
+        self.ll_to_point_transformer = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        )
 
     def add_controlpoint(self, point: ControlPoint):
         self.controlpoints.append(point)
@@ -637,35 +661,6 @@ class ConflictTheater:
                 return i
         raise KeyError(f"Cannot find ControlPoint with ID {id}")
 
-    def add_json_cp(self, theater, p: dict) -> ControlPoint:
-        cp: ControlPoint
-        if p["type"] == "airbase":
-
-            airbase = theater.terrain.airports[p["id"]]
-
-            if "size" in p.keys():
-                size = p["size"]
-            else:
-                size = SIZE_REGULAR
-
-            if "importance" in p.keys():
-                importance = p["importance"]
-            else:
-                importance = IMPORTANCE_MEDIUM
-
-            cp = Airfield(airbase, size, importance)
-        elif p["type"] == "carrier":
-            cp = Carrier("carrier", Point(p["x"], p["y"]), p["id"])
-        else:
-            cp = Lha("lha", Point(p["x"], p["y"]), p["id"])
-
-        if "captured_invert" in p.keys():
-            cp.captured_invert = p["captured_invert"]
-        else:
-            cp.captured_invert = False
-
-        return cp
-
     @staticmethod
     def from_json(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
         theaters = {
@@ -694,15 +689,11 @@ class ConflictTheater:
         raise NotImplementedError
 
     def point_to_ll(self, point: Point) -> LatLon:
-        lat, lon = Transformer.from_crs(
-            self.projection_parameters.to_crs(), CRS("WGS84")
-        ).transform(point.x, point.y)
+        lat, lon = self.point_to_ll_transformer.transform(point.x, point.y)
         return LatLon(lat, lon)
 
     def ll_to_point(self, ll: LatLon) -> Point:
-        x, y = Transformer.from_crs(
-            CRS("WGS84"), self.projection_parameters.to_crs()
-        ).transform(ll.latitude, ll.longitude)
+        x, y = self.ll_to_point_transformer.transform(ll.latitude, ll.longitude)
         return Point(x, y)
 
 
