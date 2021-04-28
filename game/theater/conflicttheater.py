@@ -40,6 +40,7 @@ from dcs.unitgroup import (
     VehicleGroup,
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
+from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
 from gen.flights.flight import FlightType
@@ -53,6 +54,7 @@ from .controlpoint import (
     OffMapSpawn,
 )
 from .landmap import Landmap, load_landmap, poly_contains
+from .projections import TransverseMercator
 from ..point_with_heading import PointWithHeading
 from ..utils import Distance, meters, nautical_miles, pairwise
 
@@ -473,6 +475,12 @@ class ReferencePoint:
     image_coordinates: Point
 
 
+@dataclass(frozen=True)
+class LatLon:
+    latitude: float
+    longitude: float
+
+
 class ConflictTheater:
     terrain: Terrain
 
@@ -725,6 +733,22 @@ class ConflictTheater:
         MizCampaignLoader(directory / miz, t).populate_theater()
         return t
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        raise NotImplementedError
+
+    def point_to_ll(self, point: Point) -> LatLon:
+        lat, lon = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        ).transform(point.x, point.y)
+        return LatLon(lat, lon)
+
+    def ll_to_point(self, ll: LatLon) -> Point:
+        x, y = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        ).transform(ll.latitude, ll.longitude)
+        return Point(x, y)
+
 
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
@@ -742,6 +766,12 @@ class CaucasusTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .caucasus import PARAMETERS
+
+        return PARAMETERS
+
 
 class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
@@ -757,6 +787,12 @@ class PersianGulfTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .persiangulf import PARAMETERS
+
+        return PARAMETERS
 
 
 class NevadaTheater(ConflictTheater):
@@ -774,6 +810,12 @@ class NevadaTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .nevada import PARAMETERS
+
+        return PARAMETERS
+
 
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
@@ -789,6 +831,12 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .normandy import PARAMETERS
+
+        return PARAMETERS
 
 
 class TheChannelTheater(ConflictTheater):
@@ -806,6 +854,12 @@ class TheChannelTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .thechannel import PARAMETERS
+
+        return PARAMETERS
+
 
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
@@ -821,6 +875,12 @@ class SyriaTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .syria import PARAMETERS
+
+        return PARAMETERS
 
 
 @dataclass

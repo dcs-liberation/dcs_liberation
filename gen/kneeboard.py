@@ -33,6 +33,7 @@ from dcs.mission import Mission
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
+from game.theater import ConflictTheater
 from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
@@ -293,7 +294,6 @@ class BriefingPage(KneeboardPage):
             headers=["#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"],
         )
 
-        flight_plan_builder
         writer.table(
             [
                 [
@@ -415,6 +415,41 @@ class BriefingPage(KneeboardPage):
         return local_time.strftime(f"%H:%M:%S")
 
 
+class TargetInfoPage(KneeboardPage):
+    """A kneeboard page containing target information."""
+
+    def __init__(
+        self,
+        flight: FlightData,
+        targets: List[FlightWaypoint],
+        dark_kneeboard: bool,
+        theater: ConflictTheater,
+    ) -> None:
+        self.flight = flight
+        self.targets = targets
+        self.dark_kneeboard = dark_kneeboard
+        self.theater = theater
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Target Info{custom_name_title}")
+
+        writer.table(
+            [self.target_info_row(t) for t in self.targets],
+            headers=["Description", "Location"],
+        )
+
+        writer.write(path)
+
+    def target_info_row(self, target: FlightWaypoint) -> List[str]:
+        ll = self.theater.point_to_ll(target.position)
+        return [target.pretty_name, f"{ll.latitude} {ll.longitude}"]
+
+
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
@@ -456,9 +491,21 @@ class KneeboardGenerator(MissionInfoGenerator):
             )
         return all_flights
 
+    def generate_target_page(self, flight: FlightData) -> Optional[KneeboardPage]:
+        target_waypoints = [
+            w
+            for w in flight.waypoints
+            if w.waypoint_type == FlightWaypointType.TARGET_GROUP_LOC
+        ]
+        if not target_waypoints:
+            return None
+        return TargetInfoPage(
+            flight, target_waypoints, self.dark_kneeboard, self.game.theater
+        )
+
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
-        return [
+        pages: List[KneeboardPage] = [
             BriefingPage(
                 flight,
                 self.comms,
@@ -469,3 +516,8 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.dark_kneeboard,
             ),
         ]
+
+        if (target_page := self.generate_target_page(flight)) is not None:
+            pages.append(target_page)
+
+        return pages
