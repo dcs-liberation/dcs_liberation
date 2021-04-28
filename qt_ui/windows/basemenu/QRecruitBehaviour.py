@@ -178,6 +178,10 @@ class QRecruitBehaviour:
             return
 
         price = db.PRICES[unit_type]
+        if self.budget < price:
+            logging.info(f"Not enough cash to buy")
+            return
+
         self.pending_deliveries.order({unit_type: 1})
         self.budget -= price
         self._update_count_label(unit_type)
