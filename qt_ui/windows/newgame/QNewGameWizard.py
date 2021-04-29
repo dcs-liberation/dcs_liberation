@@ -223,7 +223,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
 
     def setDefaultFactions(self, campaign: Campaign):
-        """ Set default faction for selected campaign """
+        """Set default faction for selected campaign"""
 
         self.blueFactionSelect.clear()
         self.redFactionSelect.clear()
