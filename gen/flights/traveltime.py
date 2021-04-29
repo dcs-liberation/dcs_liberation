@@ -74,10 +74,15 @@ class TotEstimator:
     def earliest_tot(self) -> timedelta:
         result = timedelta(0)
 
-        flights_list = (self.earliest_tot_for_flight(f) for f in self.package.flights)
-        if not flights_list:
+        try:
+            flights_list = (
+                self.earliest_tot_for_flight(f) for f in self.package.flights
+            )
             earliest_tot = max(flights_list)
             result = timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
+        except Exception as e:
+            logging.info("Cannot ASAP an empty flight")
+            logging.error(e)
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we
