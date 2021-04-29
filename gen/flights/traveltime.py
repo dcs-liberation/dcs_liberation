@@ -72,16 +72,19 @@ class TotEstimator:
         return startup_time
 
     def earliest_tot(self) -> timedelta:
-        earliest_tot = max(
-            (self.earliest_tot_for_flight(f) for f in self.package.flights)
-        )
+        result = timedelta(0)
+
+        flights_list = (self.earliest_tot_for_flight(f) for f in self.package.flights)
+        if not flights_list:
+            earliest_tot = max(flights_list)
+            result = timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we
         # don't want them in the UI.
         #
         # Round up so we don't get negative start times.
-        return timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
+        return result
 
     @staticmethod
     def earliest_tot_for_flight(flight: Flight) -> timedelta:
