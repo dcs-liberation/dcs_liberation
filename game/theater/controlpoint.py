@@ -64,6 +64,7 @@ class LocationType(Enum):
     BaseAirDefense = "base air defense"
     Coastal = "coastal defense"
     Ewr = "EWR"
+    BaseEwr = "Base EWR"
     Garrison = "garrison"
     MissileSite = "missile site"
     OffshoreStrikeTarget = "offshore strike target"
@@ -86,6 +87,9 @@ class PresetLocations:
 
     #: Locations used by EWRs.
     ewrs: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations used by Base EWRs.
+    base_ewrs: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[PointWithHeading] = field(default_factory=list)
@@ -135,6 +139,8 @@ class PresetLocations:
             return self._random_from(self.coastal_defenses)
         if location_type == LocationType.Ewr:
             return self._random_from(self.ewrs)
+        if location_type == LocationType.BaseEwr:
+            return self._random_from(self.base_ewrs)
         if location_type == LocationType.Garrison:
             return self._random_from(self.base_garrisons)
         if location_type == LocationType.MissileSite:
@@ -474,7 +480,7 @@ class ControlPoint(MissionTarget, ABC):
         for base_defense in self.base_defenses:
             p = PointWithHeading.from_point(base_defense.position, base_defense.heading)
             if isinstance(base_defense, EwrGroundObject):
-                self.preset_locations.ewrs.append(p)
+                self.preset_locations.base_ewrs.append(p)
             elif isinstance(base_defense, SamGroundObject):
                 self.preset_locations.base_air_defense.append(p)
             elif isinstance(base_defense, VehicleGroupGroundObject):
