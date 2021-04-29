@@ -251,6 +251,7 @@ class NameGenerator:
     infantry_number = 0
     aircraft_number = 0
     convoy_number = 0
+    cargo_ship_number = 0
 
     ANIMALS = ANIMALS
     existing_alphas: List[str] = []
@@ -260,6 +261,7 @@ class NameGenerator:
         cls.number = 0
         cls.infantry_number = 0
         cls.convoy_number = 0
+        cls.cargo_ship_number = 0
         cls.ANIMALS = ANIMALS
         cls.existing_alphas = []
 
@@ -269,6 +271,7 @@ class NameGenerator:
         cls.infantry_number = 0
         cls.aircraft_number = 0
         cls.convoy_number = 0
+        cls.cargo_ship_number = 0
 
     @classmethod
     def next_aircraft_name(cls, country: Country, parent_base_id: int, flight: Flight):
@@ -334,6 +337,11 @@ class NameGenerator:
     def next_convoy_name(cls) -> str:
         cls.convoy_number += 1
         return f"Convoy {cls.convoy_number:03}"
+
+    @classmethod
+    def next_cargo_ship_name(cls) -> str:
+        cls.cargo_ship_number += 1
+        return f"Cargo Ship {cls.cargo_ship_number:03}"
 
     @classmethod
     def random_objective_name(cls):

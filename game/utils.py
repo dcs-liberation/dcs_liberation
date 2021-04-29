@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import math
 from dataclasses import dataclass
 from typing import Union
@@ -178,3 +179,13 @@ def mach(value: float, altitude: Distance) -> Speed:
 
 
 SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)
+
+
+def pairwise(iterable):
+    """
+    itertools recipe
+    s -> (s0,s1), (s1,s2), (s2, s3), ...
+    """
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return zip(a, b)

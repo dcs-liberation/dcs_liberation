@@ -317,7 +317,7 @@ class BaseDefenseGenerator:
         self.generate_base_defenses()
 
     def generate_ewr(self) -> None:
-        position = self.location_finder.location_for(LocationType.Ewr)
+        position = self.location_finder.location_for(LocationType.BaseEwr)
         if position is None:
             return
 

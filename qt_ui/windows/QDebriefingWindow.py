@@ -1,4 +1,5 @@
 import logging
+from typing import Callable, Dict, TypeVar
 
 from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtWidgets import (
@@ -14,6 +15,57 @@ from game import db
 from game.debriefing import Debriefing
 
 
+T = TypeVar("T")
+
+
+class LossGrid(QGridLayout):
+    def __init__(self, debriefing: Debriefing, player: bool) -> None:
+        super().__init__()
+
+        if player:
+            country = debriefing.player_country
+        else:
+            country = debriefing.enemy_country
+
+        self.add_loss_rows(
+            debriefing.air_losses.by_type(player),
+            lambda u: db.unit_get_expanded_info(country, u, "name"),
+        )
+        self.add_loss_rows(
+            debriefing.front_line_losses_by_type(player),
+            lambda u: db.unit_type_name(u),
+        )
+        self.add_loss_rows(
+            debriefing.convoy_losses_by_type(player),
+            lambda u: f"{db.unit_type_name(u)} from convoy",
+        )
+        self.add_loss_rows(
+            debriefing.cargo_ship_losses_by_type(player),
+            lambda u: f"{db.unit_type_name(u)} from cargo ship",
+        )
+        self.add_loss_rows(
+            debriefing.airlift_losses_by_type(player),
+            lambda u: f"{db.unit_type_name(u)} from airlift",
+        )
+        self.add_loss_rows(
+            debriefing.building_losses_by_type(player),
+            lambda u: u,
+        )
+
+        # TODO: Display dead ground object units and runways.
+
+    def add_loss_rows(self, losses: Dict[T, int], make_name: Callable[[T], str]):
+        for unit_type, count in losses.items():
+            row = self.rowCount()
+            try:
+                name = make_name(unit_type)
+            except AttributeError:
+                logging.exception(f"Could not make unit name for {unit_type}")
+                name = unit_type.id
+            self.addWidget(QLabel(name), row, 0)
+            self.addWidget(QLabel(str(count)), row, 1)
+
+
 class QDebriefingWindow(QDialog):
     def __init__(self, debriefing: Debriefing):
         super(QDebriefingWindow, self).__init__()
@@ -24,155 +76,27 @@ class QDebriefingWindow(QDialog):
         self.setMinimumSize(300, 200)
         self.setWindowIcon(QIcon("./resources/icon.png"))
 
-        self.initUI()
-
-    def initUI(self):
-
-        self.layout = QVBoxLayout()
+        layout = QVBoxLayout()
+        self.setLayout(layout)
 
         header = QLabel(self)
         header.setGeometry(0, 0, 655, 106)
         pixmap = QPixmap("./resources/ui/debriefing.png")
         header.setPixmap(pixmap)
-        self.layout.addWidget(header)
-        self.layout.addStretch()
+        layout.addWidget(header)
+        layout.addStretch()
 
         title = QLabel("<b>Casualty report</b>")
-        self.layout.addWidget(title)
+        layout.addWidget(title)
 
-        # Player lost units
-        lostUnits = QGroupBox(f"{self.debriefing.player_country}'s lost units:")
-        lostUnitsLayout = QGridLayout()
-        lostUnits.setLayout(lostUnitsLayout)
+        player_lost_units = QGroupBox(f"{self.debriefing.player_country}'s lost units:")
+        player_lost_units.setLayout(LossGrid(debriefing, player=True))
+        layout.addWidget(player_lost_units)
 
-        row = 0
-        player_air_losses = self.debriefing.air_losses.by_type(player=True)
-        for unit_type, count in player_air_losses.items():
-            try:
-                lostUnitsLayout.addWidget(
-                    QLabel(
-                        db.unit_get_expanded_info(
-                            self.debriefing.player_country, unit_type, "name"
-                        )
-                    ),
-                    row,
-                    0,
-                )
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
+        enemy_lost_units = QGroupBox(f"{self.debriefing.enemy_country}'s lost units:")
+        enemy_lost_units.setLayout(LossGrid(debriefing, player=False))
+        layout.addWidget(enemy_lost_units)
 
-        front_line_losses = self.debriefing.front_line_losses_by_type(player=True)
-        for unit_type, count in front_line_losses.items():
-            try:
-                lostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        convoy_losses = self.debriefing.convoy_losses_by_type(player=True)
-        for unit_type, count in convoy_losses.items():
-            try:
-                lostUnitsLayout.addWidget(
-                    QLabel(f"{db.unit_type_name(unit_type)} from convoy"), row, 0
-                )
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        airlift_losses = self.debriefing.airlift_losses_by_type(player=True)
-        for unit_type, count in airlift_losses.items():
-            try:
-                lostUnitsLayout.addWidget(
-                    QLabel(f"{db.unit_type_name(unit_type)} from airlift"), row, 0
-                )
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        building_losses = self.debriefing.building_losses_by_type(player=True)
-        for building, count in building_losses.items():
-            try:
-                lostUnitsLayout.addWidget(QLabel(building), row, 0)
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {building} to debriefing information")
-
-        self.layout.addWidget(lostUnits)
-
-        # Enemy lost units
-        enemylostUnits = QGroupBox(f"{self.debriefing.enemy_country}'s lost units:")
-        enemylostUnitsLayout = QGridLayout()
-        enemylostUnits.setLayout(enemylostUnitsLayout)
-
-        enemy_air_losses = self.debriefing.air_losses.by_type(player=False)
-        for unit_type, count in enemy_air_losses.items():
-            try:
-                enemylostUnitsLayout.addWidget(
-                    QLabel(
-                        db.unit_get_expanded_info(
-                            self.debriefing.enemy_country, unit_type, "name"
-                        )
-                    ),
-                    row,
-                    0,
-                )
-                enemylostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        front_line_losses = self.debriefing.front_line_losses_by_type(player=False)
-        for unit_type, count in front_line_losses.items():
-            if count == 0:
-                continue
-            enemylostUnitsLayout.addWidget(QLabel(db.unit_type_name(unit_type)), row, 0)
-            enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
-            row += 1
-
-        convoy_losses = self.debriefing.convoy_losses_by_type(player=False)
-        for unit_type, count in convoy_losses.items():
-            try:
-                lostUnitsLayout.addWidget(
-                    QLabel(f"{db.unit_type_name(unit_type)} from convoy"), row, 0
-                )
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        airlift_losses = self.debriefing.airlift_losses_by_type(player=False)
-        for unit_type, count in airlift_losses.items():
-            try:
-                lostUnitsLayout.addWidget(
-                    QLabel(f"{db.unit_type_name(unit_type)} from airlift"), row, 0
-                )
-                lostUnitsLayout.addWidget(QLabel(str(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {unit_type} to debriefing information")
-
-        building_losses = self.debriefing.building_losses_by_type(player=False)
-        for building, count in building_losses.items():
-            try:
-                enemylostUnitsLayout.addWidget(QLabel(building), row, 0)
-                enemylostUnitsLayout.addWidget(QLabel("{}".format(count)), row, 1)
-                row += 1
-            except AttributeError:
-                logging.exception(f"Issue adding {building} to debriefing information")
-
-        self.layout.addWidget(enemylostUnits)
-
-        # TODO: Display dead ground object units and runways.
-
-        # confirm button
         okay = QPushButton("Okay")
         okay.clicked.connect(self.close)
-        self.layout.addWidget(okay)
-
-        self.setLayout(self.layout)
+        layout.addWidget(okay)

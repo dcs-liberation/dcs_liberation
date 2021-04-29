@@ -12,14 +12,14 @@ from PySide2.QtWidgets import (
 
 from game import db
 from game.theater import ControlPoint
-from game.transfers import Convoy
+from game.transfers import MultiGroupTransport
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import VEHICLES_ICONS
 
 
 class DepartingConvoyInfo(QGroupBox):
-    def __init__(self, convoy: Convoy, game_model: GameModel) -> None:
+    def __init__(self, convoy: MultiGroupTransport, game_model: GameModel) -> None:
         super().__init__(f"{convoy.name} to {convoy.destination}")
         self.convoy = convoy
 
@@ -78,9 +78,12 @@ class DepartingConvoysList(QFrame):
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
 
-        convoy_map = game_model.game.transfers.convoys
-        for convoy in convoy_map.departing_from(cp):
+        for convoy in game_model.game.transfers.convoys.departing_from(cp):
             group_info = DepartingConvoyInfo(convoy, game_model)
+            task_box_layout.addWidget(group_info)
+
+        for cargo_ship in game_model.game.transfers.cargo_ships.departing_from(cp):
+            group_info = DepartingConvoyInfo(cargo_ship, game_model)
             task_box_layout.addWidget(group_info)
 
         scroll_content.setLayout(task_box_layout)

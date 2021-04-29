@@ -23,7 +23,8 @@ from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
-from gen.convoys import ConvoyGenerator
+from gen.cargoshipgen import CargoShipGenerator
+from gen.convoygen import ConvoyGenerator
 from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
@@ -304,7 +305,7 @@ class Operation:
         # Set mission time and weather conditions.
         EnvironmentGenerator(cls.current_mission, cls.game.conditions).generate()
         cls._generate_ground_units()
-        cls._generate_convoys()
+        cls._generate_transports()
         cls._generate_destroyed_units()
         cls._generate_air_units()
         cls.assign_channels_to_flights(
@@ -426,9 +427,10 @@ class Operation:
             cls.jtacs.extend(ground_conflict_gen.jtacs)
 
     @classmethod
-    def _generate_convoys(cls) -> None:
+    def _generate_transports(cls) -> None:
         """Generates convoys for unit transfers by road."""
         ConvoyGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
+        CargoShipGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
 
     @classmethod
     def reset_naming_ids(cls):

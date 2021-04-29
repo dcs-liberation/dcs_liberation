@@ -39,7 +39,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     VehicleGroupGroundObject,
 )
-from game.transfers import Convoy, TransferOrder
+from game.transfers import CargoShip, Convoy
 from game.utils import Distance, nautical_miles
 from gen import Conflict
 from gen.ato import Package
@@ -454,6 +454,15 @@ class ObjectiveFinder:
 
             yield from self.game.transfers.convoys.travelling_to(enemy_cp)
 
+    def cargo_ships(self) -> Iterator[CargoShip]:
+        for front_line in self.front_lines():
+            if front_line.control_point_a.is_friendly(self.is_player):
+                enemy_cp = front_line.control_point_a
+            else:
+                enemy_cp = front_line.control_point_b
+
+            yield from self.game.transfers.cargo_ships.travelling_to(enemy_cp)
+
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
         return (
@@ -658,6 +667,21 @@ class CoalitionMissionPlanner:
                 convoy,
                 [
                     ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
+                    # TODO: Max escort range.
+                    ProposedFlight(
+                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
+                    ),
+                    ProposedFlight(
+                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
+                    ),
+                ],
+            )
+
+        for ship in self.objective_finder.cargo_ships():
+            yield ProposedMission(
+                ship,
+                [
+                    ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
                     # TODO: Max escort range.
                     ProposedFlight(
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir

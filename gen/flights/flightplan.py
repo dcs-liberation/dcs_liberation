@@ -1083,6 +1083,10 @@ class FlightPlanBuilder:
             flight, location, FlightWaypointType.INGRESS_BAI, targets
         )
 
+    @staticmethod
+    def anti_ship_targets_for_tgo(tgo: TheaterGroundObject) -> List[StrikeTarget]:
+        return [StrikeTarget(f"{g.name} at {tgo.name}", g) for g in tgo.groups]
+
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
         """Generates an anti-ship flight plan.
 
@@ -1091,19 +1095,19 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
+        from game.transfers import CargoShip
+
         if isinstance(location, ControlPoint):
-            if location.is_fleet:
-                # The first group generated will be the carrier group itself.
-                location = location.ground_objects[0]
-            else:
+            if not location.is_fleet:
                 raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        if not isinstance(location, TheaterGroundObject):
+            # The first group generated will be the carrier group itself.
+            targets = self.anti_ship_targets_for_tgo(location.ground_objects[0])
+        elif isinstance(location, TheaterGroundObject):
+            targets = self.anti_ship_targets_for_tgo(location)
+        elif isinstance(location, CargoShip):
+            targets = [StrikeTarget(location.name, location)]
+        else:
             raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        targets: List[StrikeTarget] = []
-        for group in location.groups:
-            targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
@@ -1221,11 +1225,11 @@ class FlightPlanBuilder:
             pickup=pickup,
             nav_to_drop_off=builder.nav_path(
                 cargo.origin.position,
-                cargo.destination.position,
+                cargo.next_stop.position,
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=builder.drop_off(cargo.destination),
+            drop_off=builder.drop_off(cargo.next_stop),
             nav_to_home=builder.nav_path(
                 cargo.origin.position,
                 flight.arrival.position,

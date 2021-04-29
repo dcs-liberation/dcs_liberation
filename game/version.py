@@ -39,4 +39,9 @@ VERSION = _build_version_string()
 #: * Factories (Workshop_A) define factory objectives. Only control points with
 #:   factories will be able to recruit ground units, so they should exist in sufficient
 #:   number and be protected by IADS.
-CAMPAIGN_FORMAT_VERSION = 2
+#:
+#: Version 3
+#: * Bulker Handy Winds define shipping lanes. They should be placed in port areas that
+#:   are navigable by ships and have a route to another port area. DCS ships *will not*
+#:   avoid driving into islands, so ensure that their waypoints plot a navigable route.
+CAMPAIGN_FORMAT_VERSION = 3

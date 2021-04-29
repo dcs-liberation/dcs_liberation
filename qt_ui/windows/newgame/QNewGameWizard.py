@@ -229,7 +229,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionSelect.activated.connect(self.updateUnitRecap)
 
     def setDefaultFactions(self, campaign: Campaign):
-        """ Set default faction for selected campaign """
+        """Set default faction for selected campaign"""
 
         self.blueFactionSelect.clear()
         self.redFactionSelect.clear()
@@ -536,6 +536,7 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         new_ground_unit_recruitment_label.setOpenExternalLinks(True)
         flags_layout.addWidget(new_ground_unit_recruitment_label, 0, 0)
         new_ground_unit_recruitment = QtWidgets.QCheckBox()
+        new_ground_unit_recruitment.setChecked(True)
         self.registerField("new_ground_unit_recruitment", new_ground_unit_recruitment)
         flags_layout.addWidget(new_ground_unit_recruitment, 0, 1, Qt.AlignRight)
 

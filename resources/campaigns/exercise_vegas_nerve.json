@@ -3,6 +3,7 @@
   "theater": "Nevada",
   "authors": "Starfire",
   "description": "<p>A Red Flag Exercise scenario for the NTTR comprising 4 control points.</p>",
+  "version": 3,
   "miz": "exercise_vegas_nerve.miz",
   "performance": 0
 }

@@ -7,9 +7,12 @@ from typing import Dict, Optional, TYPE_CHECKING, Type
 
 from dcs.unittype import UnitType, VehicleType
 
-from game.theater import ControlPoint, SupplyRoute
-from gen.flights.closestairfields import ObjectiveDistanceCache
+from game.theater import ControlPoint
 from .db import PRICES
+from .theater.transitnetwork import (
+    NoPathError,
+    TransitNetwork,
+)
 from .transfers import TransferOrder
 
 if TYPE_CHECKING:
@@ -19,7 +22,6 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class GroundUnitSource:
     control_point: ControlPoint
-    requires_airlift: bool
 
 
 class PendingUnitDeliveries:
@@ -84,9 +86,9 @@ class PendingUnitDeliveries:
 
             if (
                 issubclass(unit_type, VehicleType)
-                and self.destination != ground_unit_source.control_point
+                and self.destination != ground_unit_source
             ):
-                source = ground_unit_source.control_point
+                source = ground_unit_source
                 d = units_needing_transfer
             else:
                 source = self.destination
@@ -106,43 +108,37 @@ class PendingUnitDeliveries:
         self.destination.base.commit_losses(sold_units)
 
         if units_needing_transfer:
-            ground_unit_source.control_point.base.commision_units(
-                units_needing_transfer
-            )
-            self.create_transfer(
-                game, ground_unit_source.control_point, units_needing_transfer
-            )
+            ground_unit_source.base.commision_units(units_needing_transfer)
+            self.create_transfer(game, ground_unit_source, units_needing_transfer)
 
     def create_transfer(
         self, game: Game, source: ControlPoint, units: Dict[Type[VehicleType], int]
     ) -> None:
         game.transfers.new_transfer(TransferOrder(source, self.destination, units))
 
-    def find_ground_unit_source(self, game: Game) -> Optional[GroundUnitSource]:
+    def find_ground_unit_source(self, game: Game) -> Optional[ControlPoint]:
         # This is running *after* the turn counter has been incremented, so this is the
         # reaction to turn 0. On turn zero we allow units to be recruited anywhere for
         # delivery on turn 1 so that turn 1 always starts with units on the front line.
         if game.turn == 1:
-            return GroundUnitSource(self.destination, requires_airlift=False)
+            return self.destination
 
         # Fast path if the destination is a valid source.
         if self.destination.can_recruit_ground_units(game):
-            return GroundUnitSource(self.destination, requires_airlift=False)
+            return self.destination
 
-        by_road = self.find_ground_unit_source_by_road(game)
-        if by_road is not None:
-            return GroundUnitSource(by_road, requires_airlift=False)
+        try:
+            return self.find_ground_unit_source_in_network(
+                game.transit_network_for(self.destination.captured), game
+            )
+        except NoPathError:
+            return None
 
-        by_air = self.find_ground_unit_source_by_air(game)
-        if by_air is not None:
-            return GroundUnitSource(by_air, requires_airlift=True)
-        return None
-
-    def find_ground_unit_source_by_road(self, game: Game) -> Optional[ControlPoint]:
-        supply_route = SupplyRoute.for_control_point(self.destination)
-
+    def find_ground_unit_source_in_network(
+        self, network: TransitNetwork, game: Game
+    ) -> Optional[ControlPoint]:
         sources = []
-        for control_point in supply_route:
+        for control_point in game.theater.control_points_for(self.destination.captured):
             if control_point.can_recruit_ground_units(game):
                 sources.append(control_point)
 
@@ -154,23 +150,10 @@ class PendingUnitDeliveries:
             return sources[0]
 
         closest = sources[0]
-        distance = len(supply_route.shortest_path_between(self.destination, closest))
+        _, cost = network.shortest_path_with_cost(self.destination, closest)
         for source in sources:
-            new_distance = len(
-                supply_route.shortest_path_between(self.destination, source)
-            )
-            if new_distance < distance:
+            _, new_cost = network.shortest_path_with_cost(self.destination, source)
+            if new_cost < cost:
                 closest = source
-                distance = new_distance
+                cost = new_cost
         return closest
-
-    def find_ground_unit_source_by_air(self, game: Game) -> Optional[ControlPoint]:
-        closest_airfields = ObjectiveDistanceCache.get_closest_airfields(
-            self.destination
-        )
-        for airfield in closest_airfields.operational_airfields:
-            if airfield.is_friendly(
-                self.destination.captured
-            ) and airfield.can_recruit_ground_units(game):
-                return airfield
-        return None

@@ -64,6 +64,7 @@ class LocationType(Enum):
     BaseAirDefense = "base air defense"
     Coastal = "coastal defense"
     Ewr = "EWR"
+    BaseEwr = "Base EWR"
     Garrison = "garrison"
     MissileSite = "missile site"
     OffshoreStrikeTarget = "offshore strike target"
@@ -87,6 +88,9 @@ class PresetLocations:
 
     #: Locations used by EWRs.
     ewrs: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations used by Base EWRs.
+    base_ewrs: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[PointWithHeading] = field(default_factory=list)
@@ -152,6 +156,8 @@ class PresetLocations:
             return self._random_from(self.coastal_defenses)
         if location_type == LocationType.Ewr:
             return self._random_from(self.ewrs)
+        if location_type == LocationType.BaseEwr:
+            return self._random_from(self.base_ewrs)
         if location_type == LocationType.Garrison:
             return self._random_from(self.base_garrisons)
         if location_type == LocationType.MissileSite:
@@ -290,6 +296,7 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
+        self.shipping_lanes: Dict[ControlPoint, List[Point]] = {}
         self.convoy_spawns: Dict[ControlPoint, Point] = {}
         self.base: Base = Base()
         self.cptype = cptype
@@ -335,6 +342,23 @@ class ControlPoint(MissionTarget, ABC):
             seen.add(cp)
             connected.append(cp)
             connected.extend(cp.transitive_connected_friendly_points(seen))
+        return connected
+
+    def transitive_friendly_shipping_destinations(
+        self, seen: Optional[Set[ControlPoint]] = None
+    ) -> List[ControlPoint]:
+        if seen is None:
+            seen = {self}
+
+        connected = []
+        for cp in self.shipping_lanes:
+            if cp.captured != self.captured:
+                continue
+            if cp in seen:
+                continue
+            seen.add(cp)
+            connected.append(cp)
+            connected.extend(cp.transitive_friendly_shipping_destinations(seen))
         return connected
 
     @property
@@ -420,6 +444,9 @@ class ControlPoint(MissionTarget, ABC):
         self.convoy_spawns[to] = convoy_location
         self.stances[to.id] = CombatStance.DEFENSIVE
 
+    def create_shipping_lane(self, to: ControlPoint, waypoints: List[Point]) -> None:
+        self.shipping_lanes[to] = waypoints
+
     @abstractmethod
     def runway_is_operational(self) -> bool:
         """
@@ -468,12 +495,15 @@ class ControlPoint(MissionTarget, ABC):
     def is_friendly(self, to_player: bool) -> bool:
         return self.captured == to_player
 
+    def is_friendly_to(self, control_point: ControlPoint) -> bool:
+        return control_point.is_friendly(self.captured)
+
     # TODO: Should be Airbase specific.
     def clear_base_defenses(self) -> None:
         for base_defense in self.base_defenses:
             p = PointWithHeading.from_point(base_defense.position, base_defense.heading)
             if isinstance(base_defense, EwrGroundObject):
-                self.preset_locations.ewrs.append(p)
+                self.preset_locations.base_ewrs.append(p)
             elif isinstance(base_defense, SamGroundObject):
                 self.preset_locations.base_air_defense.append(p)
             elif isinstance(base_defense, VehicleGroupGroundObject):

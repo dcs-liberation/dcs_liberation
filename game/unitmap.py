@@ -9,7 +9,7 @@ from dcs.unittype import VehicleType
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject
-from game.transfers import Convoy, TransferOrder
+from game.transfers import CargoShip, Convoy, TransferOrder
 from gen.flights.flight import Flight
 
 
@@ -51,6 +51,7 @@ class UnitMap:
         self.ground_object_units: Dict[str, GroundObjectUnit] = {}
         self.buildings: Dict[str, Building] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
+        self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnit] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
@@ -148,6 +149,23 @@ class UnitMap:
 
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
         return self.convoys.get(name, None)
+
+    def add_cargo_ship(self, group: Group, ship: CargoShip) -> None:
+        if len(group.units) > 1:
+            # Cargo ship "groups" are single units. Killing the one ship kills the whole
+            # transfer. If we ever want to add escorts or create multiple cargo ships in
+            # a convoy of ships that logic needs to change.
+            raise ValueError("Expected cargo ship to be a single unit group.")
+        unit = group.units[0]
+        # The actual name is a String (the pydcs translatable string), which
+        # doesn't define __eq__.
+        name = str(unit.name)
+        if name in self.cargo_ships:
+            raise RuntimeError(f"Duplicate cargo ship: {name}")
+        self.cargo_ships[name] = ship
+
+    def cargo_ship(self, name: str) -> Optional[CargoShip]:
+        return self.cargo_ships.get(name, None)
 
     def add_airlift_units(self, group: FlyingGroup, transfer: TransferOrder) -> None:
         for transport, cargo_type in zip(group.units, transfer.iter_units()):

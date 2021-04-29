@@ -5,12 +5,8 @@ import json
 import logging
 from dataclasses import dataclass
 from functools import cached_property
-from itertools import tee
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Set, Tuple, Union, cast
-
-from shapely import geometry
-from shapely import ops
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 from dcs import Mission
 from dcs.countries import (
@@ -21,9 +17,10 @@ from dcs.country import Country
 from dcs.mapping import Point
 from dcs.planes import F_15C
 from dcs.ships import (
+    Bulker_Handy_Wind,
     CVN_74_John_C__Stennis,
-    LHA_1_Tarawa,
     DDG_Arleigh_Burke_IIa,
+    LHA_1_Tarawa,
 )
 from dcs.statics import Fortification
 from dcs.terrain import (
@@ -47,20 +44,23 @@ from dcs.triggers import Triggers
 from dcs.triggers import TriggerZone
 
 from ..scenery_group import SceneryGroup
+from pyproj import CRS, Transformer
+from shapely import geometry, ops
 
 from gen.flights.flight import FlightType
 from .controlpoint import (
     Airfield,
     Carrier,
     ControlPoint,
+    Fob,
     Lha,
     MissionTarget,
     OffMapSpawn,
-    Fob,
 )
 from .landmap import Landmap, load_landmap, poly_contains
+from .projections import TransverseMercator
 from ..point_with_heading import PointWithHeading
-from ..utils import Distance, meters, nautical_miles
+from ..utils import Distance, meters, nautical_miles, pairwise
 
 Numeric = Union[int, float]
 
@@ -77,16 +77,6 @@ IMPORTANCE_HIGH = 1.4
 FRONTLINE_MIN_CP_DISTANCE = 5000
 
 
-def pairwise(iterable):
-    """
-    itertools recipe
-    s -> (s0,s1), (s1,s2), (s2, s3), ...
-    """
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
-
-
 class MizCampaignLoader:
     BLUE_COUNTRY = CombinedJointTaskForcesBlue()
     RED_COUNTRY = CombinedJointTaskForcesRed()
@@ -96,6 +86,7 @@ class MizCampaignLoader:
     CV_UNIT_TYPE = CVN_74_John_C__Stennis.id
     LHA_UNIT_TYPE = LHA_1_Tarawa.id
     FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
+    SHIPPING_LANE_UNIT_TYPE = Bulker_Handy_Wind.id
 
     FOB_UNIT_TYPE = Unarmed.Truck_SKP_11_Mobile_ATC.id
     FARP_HELIPAD = "SINGLE_HELIPAD"
@@ -327,6 +318,12 @@ class MizCampaignLoader:
             if group.units[0].type == self.FRONT_LINE_UNIT_TYPE:
                 yield group
 
+    @property
+    def shipping_lane_groups(self) -> Iterator[ShipGroup]:
+        for group in self.country(blue=True).ship_group:
+            if group.units[0].type == self.SHIPPING_LANE_UNIT_TYPE:
+                yield group
+
     @cached_property
     def front_lines(self) -> Dict[str, ComplexFrontLine]:
         # Dict of front line ID to a front line.
@@ -363,6 +360,28 @@ class MizCampaignLoader:
             )
         return front_lines
 
+    def add_shipping_lanes(self) -> None:
+        for group in self.shipping_lane_groups:
+            # The unit will have its first waypoint at the source CP and the final
+            # waypoint at the destination CP. Each waypoint defines the path of the
+            # cargo ship.
+            waypoints = [p.position for p in group.points]
+            origin = self.theater.closest_control_point(waypoints[0])
+            if origin is None:
+                raise RuntimeError(
+                    f"No control point near the first waypoint of {group.name}"
+                )
+            destination = self.theater.closest_control_point(waypoints[-1])
+            if destination is None:
+                raise RuntimeError(
+                    f"No control point near the final waypoint of {group.name}"
+                )
+
+            self.control_points[origin.id].create_shipping_lane(destination, waypoints)
+            self.control_points[destination.id].create_shipping_lane(
+                origin, list(reversed(waypoints))
+            )
+
     def objective_info(self, group: Group) -> Tuple[ControlPoint, Distance]:
         closest = self.theater.closest_control_point(group.position)
         distance = meters(closest.position.distance_to_point(group.position))
@@ -397,7 +416,7 @@ class MizCampaignLoader:
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.ewrs.append(
+                closest.preset_locations.base_ewrs.append(
                     PointWithHeading.from_point(group.position, group.units[0].heading)
                 )
             else:
@@ -472,6 +491,7 @@ class MizCampaignLoader:
         for control_point in self.control_points.values():
             self.theater.add_controlpoint(control_point)
         self.add_preset_locations()
+        self.add_shipping_lanes()
         self.theater.set_frontline_data(self.front_lines)
 
 
@@ -479,6 +499,12 @@ class MizCampaignLoader:
 class ReferencePoint:
     world_coordinates: Point
     image_coordinates: Point
+
+
+@dataclass(frozen=True)
+class LatLon:
+    latitude: float
+    longitude: float
 
 
 class ConflictTheater:
@@ -681,7 +707,7 @@ class ConflictTheater:
         for i in self.controlpoints:
             if i.id == id:
                 return i
-        raise RuntimeError(f"Cannot find ControlPoint with ID {id}")
+        raise KeyError(f"Cannot find ControlPoint with ID {id}")
 
     def add_json_cp(self, theater, p: dict) -> ControlPoint:
         cp: ControlPoint
@@ -733,6 +759,22 @@ class ConflictTheater:
         MizCampaignLoader(directory / miz, t).populate_theater()
         return t
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        raise NotImplementedError
+
+    def point_to_ll(self, point: Point) -> LatLon:
+        lat, lon = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        ).transform(point.x, point.y)
+        return LatLon(lat, lon)
+
+    def ll_to_point(self, ll: LatLon) -> Point:
+        x, y = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        ).transform(ll.latitude, ll.longitude)
+        return Point(x, y)
+
 
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
@@ -750,6 +792,12 @@ class CaucasusTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .caucasus import PARAMETERS
+
+        return PARAMETERS
+
 
 class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
@@ -765,6 +813,12 @@ class PersianGulfTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .persiangulf import PARAMETERS
+
+        return PARAMETERS
 
 
 class NevadaTheater(ConflictTheater):
@@ -782,6 +836,12 @@ class NevadaTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .nevada import PARAMETERS
+
+        return PARAMETERS
+
 
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
@@ -797,6 +857,12 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .normandy import PARAMETERS
+
+        return PARAMETERS
 
 
 class TheChannelTheater(ConflictTheater):
@@ -814,6 +880,12 @@ class TheChannelTheater(ConflictTheater):
         "night": (0, 5),
     }
 
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .thechannel import PARAMETERS
+
+        return PARAMETERS
+
 
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
@@ -829,6 +901,12 @@ class SyriaTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .syria import PARAMETERS
+
+        return PARAMETERS
 
 
 @dataclass
@@ -902,6 +980,12 @@ class FrontLine(MissionTarget):
         according to the current strength of each control point.
         """
         return self.point_from_a(self._position_distance)
+
+    @property
+    def points(self) -> Iterator[Point]:
+        yield self.segments[0].point_a
+        for segment in self.segments:
+            yield segment.point_b
 
     @property
     def control_points(self) -> Tuple[ControlPoint, ControlPoint]:

@@ -11,15 +11,15 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game, db
-from game.theater import ControlPoint, ControlPointType, SupplyRoute
+from game.theater import ControlPoint, ControlPointType
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.basemenu.NewUnitTransferDialog import NewUnitTransferDialog
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
-from qt_ui.windows.basemenu.NewUnitTransferDialog import NewUnitTransferDialog
 
 
 class QBaseMenu2(QDialog):
@@ -105,10 +105,9 @@ class QBaseMenu2(QDialog):
 
     @property
     def has_transfer_destinations(self) -> bool:
-        return (
-            self.cp.runway_is_operational()
-            or len(SupplyRoute.for_control_point(self.cp)) > 1
-        )
+        return self.game_model.game.transit_network_for(
+            self.cp.captured
+        ).has_destinations(self.cp)
 
     @property
     def can_repair_runway(self) -> bool:

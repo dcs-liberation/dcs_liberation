@@ -22,6 +22,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import Airfield, ControlPoint
+from game.transfers import CargoShip
 from game.unitmap import (
     AirliftUnit,
     Building,
@@ -70,6 +71,9 @@ class GroundLosses:
     player_convoy: List[ConvoyUnit] = field(default_factory=list)
     enemy_convoy: List[ConvoyUnit] = field(default_factory=list)
 
+    player_cargo_ships: List[CargoShip] = field(default_factory=list)
+    enemy_cargo_ships: List[CargoShip] = field(default_factory=list)
+
     player_airlifts: List[AirliftUnit] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnit] = field(default_factory=list)
 
@@ -81,6 +85,12 @@ class GroundLosses:
 
     player_airfields: List[Airfield] = field(default_factory=list)
     enemy_airfields: List[Airfield] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class BaseCaptureEvent:
+    control_point: ControlPoint
+    captured_by_player: bool
 
 
 @dataclass(frozen=True)
@@ -118,6 +128,7 @@ class Debriefing:
         self, state_data: Dict[str, Any], game: Game, unit_map: UnitMap
     ) -> None:
         self.state_data = StateData.from_json(state_data)
+        self.game = game
         self.unit_map = unit_map
 
         self.player_country = game.player_country
@@ -127,6 +138,7 @@ class Debriefing:
 
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()
+        self.base_captures = self.base_capture_events()
 
     @property
     def front_line_losses(self) -> Iterator[FrontLineUnit]:
@@ -137,6 +149,11 @@ class Debriefing:
     def convoy_losses(self) -> Iterator[ConvoyUnit]:
         yield from self.ground_losses.player_convoy
         yield from self.ground_losses.enemy_convoy
+
+    @property
+    def cargo_ship_losses(self) -> Iterator[CargoShip]:
+        yield from self.ground_losses.player_cargo_ships
+        yield from self.ground_losses.enemy_cargo_ships
 
     @property
     def airlift_losses(self) -> Iterator[AirliftUnit]:
@@ -179,6 +196,17 @@ class Debriefing:
             losses = self.ground_losses.enemy_convoy
         for loss in losses:
             losses_by_type[loss.unit_type] += 1
+        return losses_by_type
+
+    def cargo_ship_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            ships = self.ground_losses.player_cargo_ships
+        else:
+            ships = self.ground_losses.enemy_cargo_ships
+        for ship in ships:
+            for unit_type, count in ship.units.items():
+                losses_by_type[unit_type] += count
         return losses_by_type
 
     def airlift_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
@@ -237,6 +265,14 @@ class Debriefing:
                     losses.enemy_convoy.append(convoy_unit)
                 continue
 
+            cargo_ship = self.unit_map.cargo_ship(unit_name)
+            if cargo_ship is not None:
+                if cargo_ship.player_owned:
+                    losses.player_cargo_ships.append(cargo_ship)
+                else:
+                    losses.enemy_cargo_ships.append(cargo_ship)
+                continue
+
             ground_object_unit = self.unit_map.ground_object_unit(unit_name)
             if ground_object_unit is not None:
                 if ground_object_unit.ground_object.control_point.captured:
@@ -286,15 +322,35 @@ class Debriefing:
 
         return losses
 
-    @property
-    def base_capture_events(self):
+    def base_capture_events(self) -> List[BaseCaptureEvent]:
         """Keeps only the last instance of a base capture event for each base ID."""
-        reversed_captures = list(reversed(self.state_data.base_capture_events))
-        last_base_cap_indexes = []
-        for idx, base in enumerate(i.split("||")[0] for i in reversed_captures):
-            if base not in [x[1] for x in last_base_cap_indexes]:
-                last_base_cap_indexes.append((idx, base))
-        return [reversed_captures[idx[0]] for idx in last_base_cap_indexes]
+        blue_coalition_id = 2
+        seen = set()
+        captures = []
+        for capture in reversed(self.state_data.base_capture_events):
+            cp_id_str, new_owner_id_str, _name = capture.split("||")
+            cp_id = int(cp_id_str)
+
+            # Only the most recent capture event matters.
+            if cp_id in seen:
+                continue
+            seen.add(cp_id)
+
+            try:
+                control_point = self.game.theater.find_control_point_by_id(cp_id)
+            except KeyError:
+                # Captured base is not a part of the campaign. This happens when neutral
+                # bases are near the conflict. Nothing to do.
+                continue
+
+            captured_by_player = int(new_owner_id_str) == blue_coalition_id
+            if control_point.is_friendly(to_player=captured_by_player):
+                # Base is currently friendly to the new owner. Was captured and
+                # recaptured in the same mission. Nothing to do.
+                continue
+
+            captures.append(BaseCaptureEvent(control_point, captured_by_player))
+        return captures
 
 
 class PollDebriefingFileThread(threading.Thread):
