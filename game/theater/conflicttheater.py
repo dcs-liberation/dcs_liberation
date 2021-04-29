@@ -365,7 +365,7 @@ class MizCampaignLoader:
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
             if distance < self.BASE_DEFENSE_RADIUS:
-                closest.preset_locations.base_air_defense.append(
+                closest.preset_locations.base_ewrs.append(
                     PointWithHeading.from_point(group.position, group.units[0].heading)
                 )
             else:
