@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.scenery_group import SceneryGroup
 
 import itertools
 import logging

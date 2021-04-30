@@ -18,7 +18,7 @@ class SceneryGroup:
 
     @property
     def blue(self) -> bool:
-        return is_blue(zone_def)
+        return SceneryGroup.is_blue(self.zone_def)
 
     @staticmethod
     def make_scenery_groups(trigger_zones: Iterable[TriggerZone], blue: bool):
@@ -48,7 +48,7 @@ class SceneryGroup:
             for zone in white_zones:
                 if zone.position.distance_to_point(zone_def_position) < zone_def_radius:
                     valid_white_zones.append(zone)
-                    # todo remove found white_zone.  Don't need to search again.
+                    # ToDo: remove found white_zone.  Don't need to search again.
 
             scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
 

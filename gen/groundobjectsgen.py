@@ -580,7 +580,8 @@ class GroundObjectsGenerator:
                         ground_object, country, self.game, self.m, self.unit_map
                     )
                 elif isinstance(ground_object, SceneryGroundObject):
-                    print("I am a scenery object.  Generate me!")
+                    # Scenery objects do not need to be generated."
+                    continue
                 elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map

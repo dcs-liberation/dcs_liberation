@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.scenery_group import SceneryGroup
 
 import logging
 import pickle
@@ -23,6 +24,7 @@ from game.theater.theatergroundobject import (
     MissileSiteGroundObject,
     SamGroundObject,
     ShipGroundObject,
+    SceneryGroundObject,
     VehicleGroupGroundObject,
     CoastalSiteGroundObject,
 )
@@ -663,12 +665,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.control_point.connected_objectives.append(g)
 
     def generate_scenery_site(self) -> None:
-        scenery = self.location_finder.location_for_scenery(Location.Scenery)
-        if position is None:
+        scenery = self.location_finder.location_for_scenery(LocationType.Scenery)
+        if scenery is None:
             return
         self.generate_tgo_for_scenery(scenery)
 
-    def generate_tgo_for_scenery(scenery: SceneryGroup) -> None:
+    def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:
         group_id = self.game.next_group_id()
         obj_name = namegen.random_objective_name()
         position = scenery.zone_def.position

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.scenery_group import SceneryGroup
 
 import heapq
 import itertools
