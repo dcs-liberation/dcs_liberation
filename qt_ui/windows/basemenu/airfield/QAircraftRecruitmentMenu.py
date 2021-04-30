@@ -93,6 +93,8 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        if not super().enable_purchase(unit_type):
+            return False
         if not issubclass(unit_type, FlyingType):
             return False
         if not self.cp.can_operate(unit_type):
