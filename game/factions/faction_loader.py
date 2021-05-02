@@ -31,7 +31,7 @@ class FactionLoader:
         for f in files:
             try:
                 with f.open("r", encoding="utf-8") as fdata:
-                    data = json.load(fdata, encoding="utf-8")
+                    data = json.load(fdata)
                     factions[data["name"]] = Faction.from_json(data)
                     logging.info("Loaded faction : " + str(f))
             except Exception:
