@@ -683,11 +683,11 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         heading = 0
         for_airbase = False
 
-        for structure in scenery.zones:
+        for zone in scenery.zones:
 
             object_id += 1
-            local_position = structure.position
-            local_dcs_identifier = structure.name
+            local_position = zone.position
+            local_dcs_identifier = zone.name
 
             g = SceneryGroundObject(
                 obj_name,
@@ -698,7 +698,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 heading,
                 self.control_point,
                 local_dcs_identifier,
-                scenery,
+                zone,
                 for_airbase,
             )
 

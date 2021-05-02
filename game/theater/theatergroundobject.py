@@ -8,7 +8,7 @@ from typing import Iterator, List, TYPE_CHECKING
 from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import Group
-from dcs.triggers import Triggers
+from dcs.triggers import TriggerZone, Triggers
 
 from .. import db
 from ..data.radar_db import UNITS_WITH_RADAR
@@ -279,7 +279,7 @@ class SceneryGroundObject(BuildingGroundObject):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        scenery: SceneryGroup,
+        zone: TriggerZone,
         airbase_group=False,
     ) -> None:
         super().__init__(
@@ -293,7 +293,7 @@ class SceneryGroundObject(BuildingGroundObject):
             dcs_identifier=dcs_identifier,
             airbase_group=airbase_group,
         )
-        self.scenery = scenery
+        self.zone = zone
         # Other TGOs track deadness based on the number of alive units, but
         # buildings don't have groups assigned to the TGO.
         self._dead = False

@@ -12,6 +12,7 @@ import random
 from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 
 from dcs import Mission, Point, unitgroup
+from dcs.action import SceneryDestructionZone
 from dcs.country import Country
 from dcs.point import StaticPoint
 from dcs.statics import Fortification, fortification_map, warehouse_map, Warehouse
@@ -22,6 +23,7 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
+from dcs.triggers import TriggerOnce, TriggerZone, Triggers
 from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
@@ -260,6 +262,28 @@ class FactoryGenerator(BuildingSiteGenerator):
 
         # TODO: Faction specific?
         self.generate_static(Fortification.Workshop_A)
+
+
+class SceneryGenerator(BuildingSiteGenerator):
+    def generate(self) -> None:
+        if isinstance(self.ground_object, SceneryGroundObject):
+            trigger_zone = self.generate_trigger_zone(self.ground_object)
+
+            if self.ground_object.is_dead:
+                self.generate_dead_trigger_rule(trigger_zone)
+
+    def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
+        zone = scenery.zone
+        # self.m.triggers._zones.append(scenery.zone)
+        return self.m.triggers.add_triggerzone(
+            zone.position, zone.radius, zone.hidden, zone.name, zone.properties
+        )
+
+    def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
+        # Add destruction zone trigger
+        t = TriggerOnce(comment="Destruction")
+        t.actions.append(SceneryDestructionZone(100, trigger_zone.id))
+        self.m.triggerrules.triggers.append(t)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):
@@ -580,8 +604,9 @@ class GroundObjectsGenerator:
                         ground_object, country, self.game, self.m, self.unit_map
                     )
                 elif isinstance(ground_object, SceneryGroundObject):
-                    # Scenery objects do not need to be generated."
-                    continue
+                    generator = SceneryGenerator(
+                        ground_object, country, self.game, self.m, self.unit_map
+                    )
                 elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
