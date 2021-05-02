@@ -22,6 +22,9 @@ Saves from 2.5 are not compatible with 3.0.
 
 ## Fixes
 
+* **[Campaigns]** EWRs associated with a base will now only be generated near the base.
+* **[Flight Planner]** Fixed error when generating AEW&C flight plans in campaigns with no front lines.
+
 # 2.5.0
 
 Saves from 2.4 are not compatible with 2.5.
