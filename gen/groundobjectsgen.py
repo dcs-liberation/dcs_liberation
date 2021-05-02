@@ -272,6 +272,8 @@ class SceneryGenerator(BuildingSiteGenerator):
             if self.ground_object.is_dead:
                 self.generate_dead_trigger_rule(trigger_zone)
 
+            self.register_scenery()
+
     def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
         zone = scenery.zone
         # self.m.triggers._zones.append(scenery.zone)
@@ -284,6 +286,10 @@ class SceneryGenerator(BuildingSiteGenerator):
         t = TriggerOnce(comment="Destruction")
         t.actions.append(SceneryDestructionZone(100, trigger_zone.id))
         self.m.triggerrules.triggers.append(t)
+
+    def register_scenery(self) -> None:
+        scenery = self.ground_object
+        self.unit_map.add_scenery(scenery)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):

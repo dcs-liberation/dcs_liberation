@@ -217,6 +217,18 @@ class Event:
                 )
             )
 
+    def commit_scenery_losses(self, debriefing: Debriefing) -> None:
+        for loss in debriefing.scenery_losses:
+            loss.ground_object.kill()
+            self.game.informations.append(
+                Information(
+                    "Building destroyed",
+                    f"{loss.ground_object.dcs_identifier} has been destroyed at "
+                    f"location {loss.ground_object.obj_name}",
+                    self.game.turn,
+                )
+            )
+
     @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:
         for damaged_runway in debriefing.damaged_runways:
@@ -254,6 +266,7 @@ class Event:
         self.commit_airlift_losses(debriefing)
         self.commit_ground_object_losses(debriefing)
         self.commit_building_losses(debriefing)
+        self.commit_scenery_losses(debriefing)
         self.commit_damaged_runways(debriefing)
         self.commit_captures(debriefing)
         self.complete_aircraft_transfers(debriefing)

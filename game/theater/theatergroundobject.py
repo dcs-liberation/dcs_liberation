@@ -299,6 +299,12 @@ class SceneryGroundObject(BuildingGroundObject):
         self._dead = False
 
     @property
+    def map_object_id(self) -> str:
+        if len(self.zone.properties) < 4:
+            return ""
+        return self.zone.properties[3].get("value").lower()
+
+    @property
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}|{self.object_id}"

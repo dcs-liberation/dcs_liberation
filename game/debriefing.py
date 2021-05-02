@@ -29,6 +29,7 @@ from game.unitmap import (
     ConvoyUnit,
     FrontLineUnit,
     GroundObjectUnit,
+    Scenery,
     UnitMap,
 )
 from gen.flights.flight import Flight
@@ -82,6 +83,9 @@ class GroundLosses:
 
     player_buildings: List[Building] = field(default_factory=list)
     enemy_buildings: List[Building] = field(default_factory=list)
+
+    player_scenery: List[Scenery] = field(default_factory=list)
+    enemy_scenery: List[Scenery] = field(default_factory=list)
 
     player_airfields: List[Airfield] = field(default_factory=list)
     enemy_airfields: List[Airfield] = field(default_factory=list)
@@ -171,6 +175,11 @@ class Debriefing:
         yield from self.ground_losses.enemy_buildings
 
     @property
+    def scenery_losses(self) -> Iterator[Scenery]:
+        yield from self.ground_losses.player_scenery
+        yield from self.ground_losses.enemy_scenery
+
+    @property
     def damaged_runways(self) -> Iterator[Airfield]:
         yield from self.ground_losses.player_airfields
         yield from self.ground_losses.enemy_airfields
@@ -232,6 +241,19 @@ class Debriefing:
             losses_by_type[loss.ground_object.dcs_identifier] += 1
         return losses_by_type
 
+    def scenery_losses_by_type(self, player: bool) -> Dict[str, int]:
+        losses_by_type: Dict[str, int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_scenery
+        else:
+            losses = self.ground_losses.enemy_scenery
+        for loss in losses:
+            if loss.ground_object.control_point.captured != player:
+                continue
+
+            losses_by_type[loss.ground_object.dcs_identifier] += 1
+        return losses_by_type
+
     def dead_aircraft(self) -> AirLosses:
         player_losses = []
         enemy_losses = []
@@ -279,6 +301,16 @@ class Debriefing:
                     losses.player_ground_objects.append(ground_object_unit)
                 else:
                     losses.enemy_ground_objects.append(ground_object_unit)
+                continue
+
+            scenery_unit = self.unit_map.scenery_unit(unit_name)
+            if scenery_unit is not None:
+
+                print(scenery_unit + "was not none.")
+                if scenery_unit.control_point.captured:
+                    losses.player_scenery.append(scenery_unit)
+                else:
+                    losses.enemy_scenery.append(scenery_unit)
                 continue
 
             building = self.unit_map.building_or_fortification(unit_name)

@@ -1,6 +1,7 @@
 """Maps generated units back to their Liberation types."""
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
+from dcs.triggers import TriggerZone
 
 from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
@@ -8,7 +9,7 @@ from dcs.unittype import VehicleType
 
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import BuildingGroundObject
+from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
 from game.transfers import CargoShip, Convoy, TransferOrder
 from gen.flights.flight import Flight
 
@@ -43,6 +44,11 @@ class Building:
     ground_object: BuildingGroundObject
 
 
+@dataclass(frozen=True)
+class Scenery:
+    ground_object: SceneryGroundObject
+
+
 class UnitMap:
     def __init__(self) -> None:
         self.aircraft: Dict[str, Flight] = {}
@@ -53,6 +59,7 @@ class UnitMap:
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnit] = {}
+        self.scenery: Dict[str, Scenery] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -204,3 +211,17 @@ class UnitMap:
 
     def building_or_fortification(self, name: str) -> Optional[Building]:
         return self.buildings.get(name, None)
+
+    def add_scenery(self, ground_object: SceneryGroundObject) -> None:
+        name = str(ground_object.map_object_id)
+
+        if name in self.scenery:
+            raise RuntimeError(
+                f"Duplicate TGO unit: {name}.  TriggerZone name: {ground_object.dcs_identifier}"
+            )
+
+        self.scenery[name] = Scenery(ground_object)
+
+    def scenery_unit(self, name: str) -> Optional[Scenery]:
+        str_name = str(name)
+        self.scenery.get(str_name, None)
