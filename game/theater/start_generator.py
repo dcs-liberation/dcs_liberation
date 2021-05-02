@@ -679,28 +679,32 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         category = scenery.category
 
         group_id = self.game.next_group_id()
-        object_id = self.game.next_unit_id()
-        position = scenery.zone_def.position
+        object_id = 0
         heading = 0
         for_airbase = False
-        dcs_identifier = scenery.zone_def.name
 
-        g = SceneryGroundObject(
-            obj_name,
-            category,
-            group_id,
-            object_id,
-            position,
-            heading,
-            self.control_point,
-            dcs_identifier,
-            scenery,
-            for_airbase,
-        )
+        for structure in scenery.zones:
 
-        g.groups = []
+            object_id += 1
+            local_position = structure.position
+            local_dcs_identifier = structure.name
 
-        self.control_point.connected_objectives.append(g)
+            g = SceneryGroundObject(
+                obj_name,
+                category,
+                group_id,
+                object_id,
+                local_position,
+                heading,
+                self.control_point,
+                local_dcs_identifier,
+                scenery,
+                for_airbase,
+            )
+
+            g.groups = []
+            self.control_point.connected_objectives.append(g)
+
         return
 
     def generate_missile_sites(self) -> None:
