@@ -20,6 +20,12 @@ class SceneryGroup:
     def blue(self) -> bool:
         return SceneryGroup.is_blue(self.zone_def)
 
+    @property
+    def category(self) -> str:
+        if len(self.zone_def.properties) == 0:
+            return ""
+        return self.zone_def.properties[1].get("value").lower()
+
     @staticmethod
     def make_scenery_groups(trigger_zones: Iterable[TriggerZone], blue: bool):
 

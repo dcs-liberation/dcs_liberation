@@ -286,14 +286,13 @@ class SceneryGroundObject(BuildingGroundObject):
             name=name,
             category=category,
             group_id=group_id,
+            object_id=object_id,
             position=position,
             heading=heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
             airbase_group=airbase_group,
-            sea_object=False,
         )
-        self.object_id = object_id
         self.scenery = scenery
         # Other TGOs track deadness based on the number of alive units, but
         # buildings don't have groups assigned to the TGO.

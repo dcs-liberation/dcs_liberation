@@ -178,7 +178,7 @@ class PresetLocations:
 
     def random_for_scenery(self, location_type: LocationType) -> Optional[SceneryGroup]:
         if location_type == LocationType.Scenery:
-            return self._random_from(self.scenery)
+            return self._random_from_scenery(self.scenery)
         logging.error(f"Unknown location type: {location_type}")
         return None
 

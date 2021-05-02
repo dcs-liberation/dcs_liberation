@@ -17,6 +17,7 @@ from game.factions.faction import Faction
 from game.theater import Carrier, Lha, LocationType, PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
+    CATEGORY_MAP,
     CarrierGroundObject,
     EwrGroundObject,
     FactoryGroundObject,
@@ -501,6 +502,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                     self.generate_ewr_site()
             else:
                 self.generate_ground_point()
+                self.generate_scenery_site()
 
     def generate_required_aa(self) -> int:
         """Generates the AA sites that are required by the campaign.
@@ -671,22 +673,29 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.generate_tgo_for_scenery(scenery)
 
     def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:
-        group_id = self.game.next_group_id()
+
         obj_name = namegen.random_objective_name()
+
+        category = scenery.category
+
+        group_id = self.game.next_group_id()
+        object_id = self.game.next_unit_id()
         position = scenery.zone_def.position
+        heading = 0
         for_airbase = False
         dcs_identifier = scenery.zone_def.name
 
         g = SceneryGroundObject(
             obj_name,
+            category,
             group_id,
+            object_id,
             position,
-            0,
+            heading,
             self.control_point,
             dcs_identifier,
-            for_airbase,
             scenery,
-            False,
+            for_airbase,
         )
 
         g.groups = []
