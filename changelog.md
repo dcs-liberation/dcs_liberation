@@ -1,3 +1,16 @@
+# 2.5.1
+
+## Features/Improvements
+
+* **[UI]** Engagement ranges are now displayed by default.
+* **[UI]** Engagement range display generalized to work for all patrolling flight plans (BARCAP, TARCAP, and CAS).
+* **[Flight Planner]** Front lines no longer project threat zones to avoid pushing BARCAPs back so much. TARCAPs will be forcibly planned but strike packages will not route around front lines even if it is reasonable to do so.
+
+## Fixes
+
+* **[Campaigns]** EWRs associated with a base will now only be generated near the base.
+* **[Flight Planner]** Fixed error when generating AEW&C flight plans in campaigns with no front lines.
+
 # 2.5.0
 
 Saves from 2.4 are not compatible with 2.5.

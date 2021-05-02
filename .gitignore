@@ -11,6 +11,7 @@ a.py
 resources/tools/a.miz
 # User-specific stuff
 .idea/
+.env
 
 /kneeboards
 /liberation_preferences.json

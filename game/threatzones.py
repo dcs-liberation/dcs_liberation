@@ -152,23 +152,6 @@ class ThreatZones:
                         threat_zone = point.buffer(threat_range.meters)
                         air_defenses.append(threat_zone)
 
-        for front_line in game.theater.conflicts(player):
-            vector = Conflict.frontline_vector(
-                front_line.control_point_a, front_line.control_point_b, game.theater
-            )
-
-            start = vector[0]
-            end = vector[0].point_from_heading(vector[1], vector[2])
-
-            line = LineString(
-                [
-                    ShapelyPoint(start.x, start.y),
-                    ShapelyPoint(end.x, end.y),
-                ]
-            )
-            doctrine = game.faction_for(player).doctrine
-            air_threats.append(line.buffer(doctrine.cap_engagement_range.meters))
-
         return cls(
             airbases=unary_union(air_threats), air_defenses=unary_union(air_defenses)
         )

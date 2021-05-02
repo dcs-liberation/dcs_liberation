@@ -58,6 +58,8 @@ from gen.flights.flightplan import (
     FlightPlan,
     FlightPlanBuilder,
     InvalidObjectiveLocation,
+    PatrollingFlightPlan,
+    TarCapFlightPlan,
 )
 from gen.flights.traveltime import TotEstimator
 from qt_ui.displayoptions import DisplayOptions, ThreatZoneOptions
@@ -721,13 +723,11 @@ class QLiberationMap(QGraphicsView):
                 )
             prev_pos = tuple(new_pos)
 
-        if selected and DisplayOptions.barcap_commit_range:
-            self.draw_barcap_commit_range(scene, flight)
+        if selected and DisplayOptions.patrol_engagement_range:
+            self.draw_patrol_commit_range(scene, flight)
 
-    def draw_barcap_commit_range(self, scene: QGraphicsScene, flight: Flight) -> None:
-        if flight.flight_type is not FlightType.BARCAP:
-            return
-        if not isinstance(flight.flight_plan, BarCapFlightPlan):
+    def draw_patrol_commit_range(self, scene: QGraphicsScene, flight: Flight) -> None:
+        if not isinstance(flight.flight_plan, PatrollingFlightPlan):
             return
         start = flight.flight_plan.patrol_start
         end = flight.flight_plan.patrol_end

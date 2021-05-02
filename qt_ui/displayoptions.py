@@ -103,7 +103,9 @@ class DisplayOptions:
     waypoint_info = DisplayRule("Waypoint Information", True)
     culling = DisplayRule("Display Culling Zones", False)
     actual_frontline_pos = DisplayRule("Display Actual Frontline Location", False)
-    barcap_commit_range = DisplayRule("Display selected BARCAP commit range", False)
+    patrol_engagement_range = DisplayRule(
+        "Display selected patrol engagement range", True
+    )
     flight_paths = FlightPathOptions()
     blue_threat_zones = ThreatZoneOptions("Blue")
     red_threat_zones = ThreatZoneOptions("Red")

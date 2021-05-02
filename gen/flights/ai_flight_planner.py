@@ -450,7 +450,7 @@ class ObjectiveFinder:
             c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
         )
 
-    def farthest_friendly_control_point(self) -> ControlPoint:
+    def farthest_friendly_control_point(self) -> Optional[ControlPoint]:
         """
         Iterates over all friendly control points and find the one farthest away from the frontline
         BUT! prefer Cvs. Everybody likes CVs!
@@ -556,9 +556,10 @@ class CoalitionMissionPlanner:
 
         # Find farthest, friendly CP for AEWC
         cp = self.objective_finder.farthest_friendly_control_point()
-        yield ProposedMission(
-            cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
-        )
+        if cp is not None:
+            yield ProposedMission(
+                cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+            )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
@@ -589,9 +590,23 @@ class CoalitionMissionPlanner:
                 front_line,
                 [
                     ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
-                    ProposedFlight(
-                        FlightType.TARCAP, 2, self.MAX_CAP_RANGE, EscortType.AirToAir
-                    ),
+                    # This is *not* an escort because front lines don't create a threat
+                    # zone. Generating threat zones from front lines causes the front
+                    # line to push back BARCAPs as it gets closer to the base. While
+                    # front lines do have the same problem of potentially pulling
+                    # BARCAPs off bases to engage a front line TARCAP, that's probably
+                    # the one time where we do want that.
+                    #
+                    # TODO: Use intercepts and extra TARCAPs to cover bases near fronts.
+                    # We don't have intercept missions yet so this isn't something we
+                    # can do today, but we should probably return to having the front
+                    # line project a threat zone (so that strike missions will route
+                    # around it) and instead *not plan* a BARCAP at bases near the
+                    # front, since there isn't a place to put a barrier. Instead, the
+                    # aircraft that would have been a BARCAP could be used as additional
+                    # interceptors and TARCAPs which will defend the base but won't be
+                    # trying to avoid front line contacts.
+                    ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
                 ],
             )
 
