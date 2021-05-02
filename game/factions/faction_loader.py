@@ -2,8 +2,9 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Iterator, Optional, Type
+from typing import Dict, Iterator, List, Optional, Type
 
+from game import persistency
 from game.factions.faction import Faction
 
 FACTION_DIRECTORY = Path("./resources/factions/")
@@ -23,9 +24,16 @@ class FactionLoader:
         if self._factions is None:
             self._factions = self.load_factions()
 
+    @staticmethod
+    def find_faction_files_in(path: Path) -> List[Path]:
+        return [f for f in path.glob("*.json") if f.is_file()]
+
     @classmethod
     def load_factions(cls: Type[FactionLoader]) -> Dict[str, Faction]:
-        files = [f for f in FACTION_DIRECTORY.glob("*.json") if f.is_file()]
+        user_faction_path = Path(persistency.base_path()) / "Liberation/Factions"
+        files = cls.find_faction_files_in(
+            FACTION_DIRECTORY
+        ) + cls.find_faction_files_in(user_faction_path)
         factions = {}
 
         for f in files:
