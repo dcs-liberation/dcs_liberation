@@ -23,7 +23,7 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
-from dcs.triggers import TriggerOnce, TriggerZone, Triggers
+from dcs.triggers import TriggerStart, TriggerZone
 from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
@@ -283,7 +283,7 @@ class SceneryGenerator(BuildingSiteGenerator):
 
     def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
         # Add destruction zone trigger
-        t = TriggerOnce(comment="Destruction")
+        t = TriggerStart(comment="Destruction")
         t.actions.append(SceneryDestructionZone(100, trigger_zone.id))
         self.m.triggerrules.triggers.append(t)
 

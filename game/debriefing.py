@@ -305,9 +305,7 @@ class Debriefing:
 
             scenery_unit = self.unit_map.scenery_unit(unit_name)
             if scenery_unit is not None:
-
-                print(scenery_unit + "was not none.")
-                if scenery_unit.control_point.captured:
+                if scenery_unit.ground_object.control_point.captured:
                     losses.player_scenery.append(scenery_unit)
                 else:
                     losses.enemy_scenery.append(scenery_unit)

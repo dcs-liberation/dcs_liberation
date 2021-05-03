@@ -224,4 +224,6 @@ class UnitMap:
 
     def scenery_unit(self, name: str) -> Optional[Scenery]:
         str_name = str(name)
-        self.scenery.get(str_name, None)
+        value = self.scenery.get(str_name, None)
+
+        return value
