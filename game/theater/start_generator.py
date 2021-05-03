@@ -17,7 +17,6 @@ from game.factions.faction import Faction
 from game.theater import Carrier, Lha, LocationType, PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
-    CATEGORY_MAP,
     CarrierGroundObject,
     EwrGroundObject,
     FactoryGroundObject,
@@ -681,9 +680,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:
 
         obj_name = namegen.random_objective_name()
-
         category = scenery.category
-
         group_id = self.game.next_group_id()
         object_id = 0
         heading = 0

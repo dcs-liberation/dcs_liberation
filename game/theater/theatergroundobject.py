@@ -1,5 +1,4 @@
 from __future__ import annotations
-from game.scenery_group import SceneryGroup
 
 import itertools
 import logging
@@ -321,9 +320,6 @@ class SceneryGroundObject(BuildingGroundObject):
 
     def kill(self) -> None:
         self._dead = True
-
-    def create_dead_trigger(self) -> Triggers:
-        t = Triggers()
 
 
 class FactoryGroundObject(BuildingGroundObject):

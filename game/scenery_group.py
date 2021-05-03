@@ -12,10 +12,6 @@ class SceneryGroup:
         self.zones = zones
         self.position = zone_def.position
 
-    # @property
-    # def position(self) -> Point:
-    #     return self.position
-
     @property
     def blue(self) -> bool:
         return SceneryGroup.is_blue(self.zone_def)
@@ -41,6 +37,7 @@ class SceneryGroup:
             else:
                 if SceneryGroup.is_red(zone):
                     zone_definitions.append(zone)
+
             if SceneryGroup.is_white(zone):
                 white_zones.append(zone)
 
@@ -54,7 +51,7 @@ class SceneryGroup:
             for zone in white_zones:
                 if zone.position.distance_to_point(zone_def_position) < zone_def_radius:
                     valid_white_zones.append(zone)
-                    # ToDo: remove found white_zone.  Don't need to search again.
+                    # Todo: remove found white_zone.  Don't need to search again.
 
             scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
 

@@ -1,7 +1,6 @@
 """Maps generated units back to their Liberation types."""
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
-from dcs.triggers import TriggerZone
 
 from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
