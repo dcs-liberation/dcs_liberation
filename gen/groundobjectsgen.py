@@ -275,10 +275,17 @@ class SceneryGenerator(BuildingSiteGenerator):
             self.register_scenery()
 
     def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
+
         zone = scenery.zone
-        # self.m.triggers._zones.append(scenery.zone)
+        color_code = scenery.faction_color
+
+        if color_code == "BLUE":
+            color = {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
+        else:
+            color = {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
+
         return self.m.triggers.add_triggerzone(
-            zone.position, zone.radius, zone.hidden, zone.name, zone.properties
+            zone.position, zone.radius, zone.hidden, zone.name, color, zone.properties
         )
 
     def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
