@@ -72,6 +72,9 @@ class TotEstimator:
         return startup_time
 
     def earliest_tot(self) -> timedelta:
+        if not self.package.flights:
+            return timedelta(0)
+
         earliest_tot = max(
             (self.earliest_tot_for_flight(f) for f in self.package.flights)
         )
