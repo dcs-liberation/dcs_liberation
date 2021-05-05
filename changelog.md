@@ -9,6 +9,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
+* **[Modding]** Can now install custom factions to <DCS saved games>/Liberation/Factions instead of the Liberation install directory.
 
 ## Fixes
 
@@ -21,6 +22,9 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Flight Planner]** Front lines no longer project threat zones to avoid pushing BARCAPs back so much. TARCAPs will be forcibly planned but strike packages will not route around front lines even if it is reasonable to do so.
 
 ## Fixes
+
+* **[Campaigns]** EWRs associated with a base will now only be generated near the base.
+* **[Flight Planner]** Fixed error when generating AEW&C flight plans in campaigns with no front lines.
 
 # 2.5.0
 
