@@ -213,9 +213,6 @@ def lint_weapon_data() -> None:
 def main():
     logging_config.init_logging(VERSION)
 
-    # Load eagerly to catch errors early.
-    db.FACTIONS.initialize()
-
     game: Optional[Game] = None
 
     args = parse_args()

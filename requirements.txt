@@ -17,7 +17,8 @@ pathspec==0.8.1
 pefile==2019.4.18
 Pillow==8.1.1
 pre-commit==2.10.1
-PyInstaller==3.6
+pyinstaller==4.3
+pyinstaller-hooks-contrib==2021.1
 pyproj==3.0.1
 PySide2==5.15.2
 pywin32-ctypes==0.2.0
