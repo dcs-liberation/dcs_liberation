@@ -143,7 +143,9 @@ class QLiberationWindow(QMainWindow):
         self.openGithubAction = QAction("&Github Repo", self)
         self.openGithubAction.setIcon(CONST.ICONS["Github"])
         self.openGithubAction.triggered.connect(
-            lambda: webbrowser.open_new_tab("https://github.com/dcs-liberation/dcs_liberation")
+            lambda: webbrowser.open_new_tab(
+                "https://github.com/dcs-liberation/dcs_liberation"
+            )
         )
 
     def initToolbar(self):
