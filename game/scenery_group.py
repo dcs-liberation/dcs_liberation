@@ -1,11 +1,11 @@
 from dcs.triggers import TriggerZone
-from dcs import Point
 
-# from dcs.unitgroup import Group
 from typing import Iterable
 
 
 class SceneryGroup:
+    """Store information about a scenery objective."""
+
     def __init__(self, zone_def: TriggerZone, zones: Iterable[TriggerZone]) -> None:
 
         self.zone_def = zone_def
@@ -24,12 +24,13 @@ class SceneryGroup:
 
     @staticmethod
     def make_scenery_groups(trigger_zones: Iterable[TriggerZone], blue: bool):
-
+        """Define scenery objectives based on their encompassing blue/red circle."""
         zone_definitions = []
         white_zones = []
 
         scenery_groups = []
 
+        # Aggregate trigger zones into different groups based on color.
         for zone in trigger_zones:
             if blue:
                 if SceneryGroup.is_blue(zone):
@@ -41,6 +42,7 @@ class SceneryGroup:
             if SceneryGroup.is_white(zone):
                 white_zones.append(zone)
 
+        # For each objective definition.
         for zone_def in zone_definitions:
 
             zone_def_radius = zone_def.radius
@@ -53,7 +55,8 @@ class SceneryGroup:
                     valid_white_zones.append(zone)
                     # Todo: remove found white_zone.  Don't need to search again.
 
-            scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
+            if len(valid_white_zones) > 0:
+                scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
 
         return scenery_groups
 

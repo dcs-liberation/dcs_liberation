@@ -686,6 +686,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         heading = 0
         for_airbase = False
 
+        # Each nested trigger zone is a target/building/unit for an objective.
         for zone in scenery.zones:
 
             object_id += 1

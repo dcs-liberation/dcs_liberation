@@ -222,7 +222,7 @@ class Event:
             loss.ground_object.kill()
             self.game.informations.append(
                 Information(
-                    "Building destroyed",
+                    "Scenery destroyed",
                     f"{loss.ground_object.dcs_identifier} has been destroyed at "
                     f"location {loss.ground_object.obj_name}",
                     self.game.turn,

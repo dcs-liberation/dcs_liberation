@@ -294,11 +294,12 @@ class SceneryGroundObject(BuildingGroundObject):
         )
         self.zone = zone
         # Other TGOs track deadness based on the number of alive units, but
-        # buildings don't have groups assigned to the TGO.
+        # scenery doesn't have groups assigned to the TGO.
         self._dead = False
 
     @property
     def map_object_id(self) -> str:
+        """This is the Id that Liberation tracks for alive/dead.  DCS defines this Id."""
         if len(self.zone.properties) < 4:
             return ""
         return self.zone.properties[3].get("value").lower()

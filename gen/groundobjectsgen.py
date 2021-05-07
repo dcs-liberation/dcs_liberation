@@ -269,9 +269,13 @@ class SceneryGenerator(BuildingSiteGenerator):
         if isinstance(self.ground_object, SceneryGroundObject):
             trigger_zone = self.generate_trigger_zone(self.ground_object)
 
+            # DCS only visually shows a scenery object is dead when
+            # this trigger rule is applied.  Otherwise you can kill a
+            # structure twice.
             if self.ground_object.is_dead:
                 self.generate_dead_trigger_rule(trigger_zone)
 
+            # Tell Liberation to manage this groundobjectsgen as part of the campaign.
             self.register_scenery()
 
     def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
@@ -279,13 +283,23 @@ class SceneryGenerator(BuildingSiteGenerator):
         zone = scenery.zone
         color_code = scenery.faction_color
 
+        # Align the trigger zones to the faction color on the DCS briefing/F10 map.
         if color_code == "BLUE":
             color = {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
         else:
             color = {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
 
+        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap is minimized.
+        # As long as the triggerzone is over the scenery object, we're ok.
+        smallest_valid_radius = 4.8768
+
         return self.m.triggers.add_triggerzone(
-            zone.position, zone.radius, zone.hidden, zone.name, color, zone.properties
+            zone.position,
+            smallest_valid_radius,
+            zone.hidden,
+            zone.name,
+            color,
+            zone.properties,
         )
 
     def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
