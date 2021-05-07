@@ -1,3 +1,4 @@
+from game.theater.theatergroundobject import NAME_BY_CATEGORY
 from dcs.triggers import TriggerZone
 
 from typing import Iterable
@@ -47,6 +48,16 @@ class SceneryGroup:
 
             zone_def_radius = zone_def.radius
             zone_def_position = zone_def.position
+            zone_def_name = zone_def.name
+
+            if len(zone_def.properties) == 0:
+                print(
+                    "Error: Undefined SceneryGroup category in TriggerZone: "
+                    + zone_def_name
+                )
+                continue
+
+            zone_def_category = zone_def.properties[1].get("value").lower()
 
             valid_white_zones = []
 
@@ -55,8 +66,17 @@ class SceneryGroup:
                     valid_white_zones.append(zone)
                     # Todo: remove found white_zone.  Don't need to search again.
 
-            if len(valid_white_zones) > 0:
+            if len(valid_white_zones) > 0 and zone_def_category in NAME_BY_CATEGORY:
                 scenery_groups.append(SceneryGroup(zone_def, valid_white_zones))
+            elif len(valid_white_zones) == 0:
+                print("Error: No white triggerzones found in: " + zone_def_name)
+            elif zone_def_category not in NAME_BY_CATEGORY:
+                print(
+                    "Error: Incorrect TriggerZone category definition for: "
+                    + zone_def_name
+                    + " in campaign definition.  TriggerZone category: "
+                    + zone_def_category
+                )
 
         return scenery_groups
 
