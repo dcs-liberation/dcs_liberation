@@ -78,14 +78,14 @@ class ProcurementAi:
     def sell_incomplete_squadrons(self) -> float:
         # Selling incomplete squadrons gives us more money to spend on the next
         # turn. This serves as a short term fix for
-        # https://github.com/Khopa/dcs_liberation/issues/41.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/41.
         #
         # Only incomplete squadrons which are unlikely to get used will be sold
         # rather than all unused aircraft because the unused aircraft are what
         # make OCA strikes worthwhile.
         #
         # This option is only used by the AI since players cannot cancel sales
-        # (https://github.com/Khopa/dcs_liberation/issues/365).
+        # (https://github.com/dcs-liberation/dcs_liberation/issues/365).
         total = 0.0
         for cp in self.game.theater.control_points_for(self.is_player):
             inventory = self.game.aircraft_inventory.for_control_point(cp)

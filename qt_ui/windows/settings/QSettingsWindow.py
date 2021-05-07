@@ -85,7 +85,7 @@ NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP = (
 )
 NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL = (
     "Enable new ground unit recruitment behavior<br />"
-    '<a href="https://github.com/Khopa/dcs_liberation/issues/986">'
+    '<a href="https://github.com/dcs-liberation/dcs_liberation/issues/986">'
     '<span style="color:#FFFFFF;">More information.</span></a>'
 )
 

@@ -18,7 +18,7 @@ class ClosestAirfields:
         self.target = target
         # This cache is configured once on load, so it's important that it is
         # complete and deterministic to avoid different behaviors across loads.
-        # E.g. https://github.com/Khopa/dcs_liberation/issues/819
+        # E.g. https://github.com/dcs-liberation/dcs_liberation/issues/819
         self.closest_airfields: List[ControlPoint] = sorted(
             all_control_points, key=lambda c: self.target.distance_to(c)
         )

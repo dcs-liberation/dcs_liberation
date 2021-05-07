@@ -18,7 +18,7 @@ class QFlightPayloadTab(QFrame):
 
         # Docs Link
         docsText = QLabel(
-            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Custom-Loadouts"><span style="color:#FFFFFF;">How to create your own default loadout</span></a>'
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Loadouts"><span style="color:#FFFFFF;">How to create your own default loadout</span></a>'
         )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)

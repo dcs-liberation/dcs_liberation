@@ -2,12 +2,12 @@
 
 [![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
 
-[![Download](https://img.shields.io/github/downloads/dcs-liberation/dcs_liberation/total?label=Download)](https://github.com/Khopa/dcs_liberation/releases)
+[![Download](https://img.shields.io/github/downloads/dcs-liberation/dcs_liberation/total?label=Download)](https://github.com/dcs-liberation/dcs_liberation/releases)
 
 [![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/dcs-liberation/dcs_liberation)](https://github.com/Khopa/dcs_liberation)
-[![GitHub issues](https://img.shields.io/github/issues/dcs-liberation/dcs_liberation)](https://github.com/Khopa/dcs_liberation/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/dcs-liberation/dcs_liberation)](https://github.com/dcs-liberation/dcs_liberation)
+[![GitHub issues](https://img.shields.io/github/issues/dcs-liberation/dcs_liberation)](https://github.com/dcs-liberation/dcs_liberation/issues)
 ![GitHub stars](https://img.shields.io/github/stars/dcs-liberation/dcs_liberation?style=social)
 
 ## About DCS Liberation
@@ -18,9 +18,9 @@ It is an external program that generates full and complex DCS missions and manag
 
 ## Downloads
 
-Latest release is available here : https://github.com/Khopa/dcs_liberation/releases
+Latest release is available here : https://github.com/dcs-liberation/dcs_liberation/releases
 
-To download preview builds of the next version of DCS Liberation, see https://github.com/Khopa/dcs_liberation/wiki/Preview-builds.
+To download preview builds of the next version of DCS Liberation, see https://github.com/dcs-liberation/dcs_liberation/wiki/Preview-builds.
 
 ## Bugs and feature requests
 
@@ -28,7 +28,7 @@ If you need to report a bug or want to suggest a new feature, you can do this on
 
 ## Roadmap
 
-Our plans for future releases can be found on our [Projects page](https://github.com/dcs-liberation/dcs_liberation/projects). Each planned release has a Project, and the page for that project has columns for to do, in progress, and done. Items in the Done column are in the [preview build](https://github.com/Khopa/dcs_liberation/wiki/Preview-builds) for that release. Items in the To do column are planned to be added to that release.
+Our plans for future releases can be found on our [Projects page](https://github.com/dcs-liberation/dcs_liberation/projects). Each planned release has a Project, and the page for that project has columns for to do, in progress, and done. Items in the Done column are in the [preview build](https://github.com/dcs-liberation/dcs_liberation/wiki/Preview-builds) for that release. Items in the To do column are planned to be added to that release.
 
 ## Resources
 
