@@ -325,13 +325,6 @@ class MizCampaignLoader:
                     f"No control point near the final waypoint of {group.name}"
                 )
 
-            # TODO: Snapping? Probably should be in the UI instead?
-            # convoy_origin = waypoints[0]
-            # convoy_destination = waypoints[-1]
-            #
-            # waypoints[0] = origin.position
-            # waypoints[-1] = destination.position
-
             self.control_points[origin.id].create_convoy_route(destination, waypoints)
             self.control_points[destination.id].create_convoy_route(
                 origin, list(reversed(waypoints))
