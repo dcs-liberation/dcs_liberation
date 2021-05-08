@@ -16,6 +16,7 @@ Saves from 2.5 are not compatible with 3.0.
 
 * **[Campaign AI]** Fixed bug causing AI to over-purchase cheap aircraft.
 * **[Campaign AI]** Auto planner will no longer attempt to plan missions for which the faction has no compatible aircraft.
+* **[Campaign AI]** Stop purchasing aircraft after the first unaffordable package to attempt to complete more packages rather than filling airfields with cheap escorts that will never be used.
 
 # 2.5.1
 

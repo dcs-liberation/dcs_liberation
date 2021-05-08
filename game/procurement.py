@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, TYPE_CHECKING, Type
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from dcs.unittype import FlyingType, VehicleType
 
@@ -194,7 +194,7 @@ class ProcurementAi:
 
     def fulfill_aircraft_request(
         self, request: AircraftProcurementRequest, budget: float
-    ) -> float:
+    ) -> Tuple[float, bool]:
         for airbase in self.best_airbases_for(request):
             unit = self.affordable_aircraft_for(request, airbase, budget)
             if unit is None:
@@ -207,12 +207,22 @@ class ProcurementAi:
 
             budget -= db.PRICES[unit] * request.number
             airbase.pending_unit_deliveries.order({unit: request.number})
-            break
-        return budget
+            return budget, True
+        return budget, False
 
     def purchase_aircraft(self, budget: float) -> float:
         for request in self.game.procurement_requests_for(self.is_player):
-            budget = self.fulfill_aircraft_request(request, budget)
+            if not list(self.best_airbases_for(request)):
+                # No airbases in range of this request. Skip it.
+                continue
+            budget, fulfilled = self.fulfill_aircraft_request(request, budget)
+            if not fulfilled:
+                # The request was not fulfilled because we could not afford any suitable
+                # aircraft. Rather than continuing, which could proceed to buy tons of
+                # cheap escorts that will never allow us to plan a strike package, stop
+                # buying so we can save the budget until a turn where we *can* afford to
+                # fill the package.
+                break
         return budget
 
     @property
