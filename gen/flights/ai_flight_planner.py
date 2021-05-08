@@ -441,21 +441,15 @@ class ObjectiveFinder:
 
     def convoys(self) -> Iterator[Convoy]:
         for front_line in self.front_lines():
-            if front_line.blue_cp.is_friendly(self.is_player):
-                enemy_cp = front_line.blue_cp
-            else:
-                enemy_cp = front_line.red_cp
-
-            yield from self.game.transfers.convoys.travelling_to(enemy_cp)
+            yield from self.game.transfers.convoys.travelling_to(
+                front_line.control_point_hostile_to(self.is_player)
+            )
 
     def cargo_ships(self) -> Iterator[CargoShip]:
         for front_line in self.front_lines():
-            if front_line.blue_cp.is_friendly(self.is_player):
-                enemy_cp = front_line.blue_cp
-            else:
-                enemy_cp = front_line.red_cp
-
-            yield from self.game.transfers.cargo_ships.travelling_to(enemy_cp)
+            yield from self.game.transfers.cargo_ships.travelling_to(
+                front_line.control_point_hostile_to(self.is_player)
+            )
 
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
