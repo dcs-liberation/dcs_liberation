@@ -93,13 +93,11 @@ class GenericGroundObjectGenerator:
                 position=group.position,
                 heading=group.units[0].heading,
             )
-            vg.units[0].name = self.m.string(group.units[0].name)
+            vg.units[0].name = group.units[0].name
             vg.units[0].player_can_drive = True
             for i, u in enumerate(group.units):
                 if i > 0:
-                    vehicle = Vehicle(
-                        self.m.next_unit_id(), self.m.string(u.name), u.type
-                    )
+                    vehicle = Vehicle(self.m.next_unit_id(), u.name, u.type)
                     vehicle.position.x = u.position.x
                     vehicle.position.y = u.position.y
                     vehicle.heading = u.heading
@@ -330,13 +328,13 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
             heading=group.units[0].heading,
         )
         ship_group.set_frequency(atc_channel.hertz)
-        ship_group.units[0].name = self.m.string(group.units[0].name)
+        ship_group.units[0].name = group.units[0].name
         return ship_group
 
     def create_ship(self, unit: Unit, atc_channel: RadioFrequency) -> Ship:
         ship = Ship(
             self.m.next_unit_id(),
-            self.m.string(unit.name),
+            unit.name,
             unit_type_from_name(unit.type),
         )
         ship.position.x = unit.position.x
@@ -481,11 +479,11 @@ class ShipObjectGenerator(GenericGroundObjectGenerator):
             position=group_def.position,
             heading=group_def.units[0].heading,
         )
-        group.units[0].name = self.m.string(group_def.units[0].name)
+        group.units[0].name = group_def.units[0].name
         # TODO: Skipping the first unit looks like copy pasta from the carrier.
         for unit in group_def.units[1:]:
             unit_type = unit_type_from_name(unit.type)
-            ship = Ship(self.m.next_unit_id(), self.m.string(unit.name), unit_type)
+            ship = Ship(self.m.next_unit_id(), unit.name, unit_type)
             ship.position.x = unit.position.x
             ship.position.y = unit.position.y
             ship.heading = unit.heading
@@ -524,11 +522,11 @@ class HelipadGenerator:
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad : " + name)
-            pad = SingleHeliPad(name=self.m.string(name + "_unit"))
+            pad = SingleHeliPad(name=(name + "_unit"))
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading
             # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
-            sg = unitgroup.StaticGroup(self.m.next_group_id(), self.m.string(name))
+            sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)
             sp = StaticPoint()
             sp.position = pad.position

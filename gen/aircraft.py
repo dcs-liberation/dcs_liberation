@@ -1615,7 +1615,7 @@ class PydcsWaypointBuilder:
         waypoint = self.group.add_waypoint(
             Point(self.waypoint.x, self.waypoint.y),
             self.waypoint.alt.meters,
-            name=self.mission.string(self.waypoint.name),
+            name=self.waypoint.name,
         )
 
         if self.waypoint.flyover:
