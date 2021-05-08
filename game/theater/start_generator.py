@@ -106,6 +106,7 @@ class GameGenerator:
 
         GroundObjectGenerator(game, self.generator_settings).generate()
         game.settings.version = VERSION
+        game.begin_turn_0()
         return game
 
     def prepare_theater(self) -> None:
