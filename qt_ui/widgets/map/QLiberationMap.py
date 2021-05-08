@@ -122,7 +122,7 @@ class QLiberationMap(QGraphicsView):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
         self.game_model = game_model
-        self.game: Optional[Game] = game_model.game
+        self.game: Optional[Game] = None  # Setup by setGame below.
         self.state = QLiberationMapState.NORMAL
 
         self.waypoint_info_font = QFont()
