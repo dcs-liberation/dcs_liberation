@@ -949,9 +949,7 @@ class QLiberationMap(QGraphicsView):
         convoys: List[Convoy],
     ) -> None:
         self.draw_bezier_frontline(scene, frontline, convoys)
-        vector = Conflict.frontline_vector(
-            frontline.blue_cp, frontline.red_cp, self.game.theater
-        )
+        vector = Conflict.frontline_vector(frontline, self.game.theater)
         left_pos = self._transform_point(vector[0])
         right_pos = self._transform_point(
             vector[0].point_from_heading(vector[1], vector[2])
