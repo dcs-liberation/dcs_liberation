@@ -192,21 +192,27 @@ class ProcurementAi:
             aircraft_for_task(request.task_capability), airbase, request.number, budget
         )
 
+    def fulfill_aircraft_request(
+        self, request: AircraftProcurementRequest, budget: float
+    ) -> float:
+        for airbase in self.best_airbases_for(request):
+            unit = self.affordable_aircraft_for(request, airbase, budget)
+            if unit is None:
+                # Can't afford any aircraft capable of performing the
+                # required mission that can operate from this airbase. We
+                # might be able to afford aircraft at other airbases though,
+                # in the case where the airbase we attempted to use is only
+                # able to operate expensive aircraft.
+                continue
+
+            budget -= db.PRICES[unit] * request.number
+            airbase.pending_unit_deliveries.order({unit: request.number})
+            break
+        return budget
+
     def purchase_aircraft(self, budget: float) -> float:
         for request in self.game.procurement_requests_for(self.is_player):
-            for airbase in self.best_airbases_for(request):
-                unit = self.affordable_aircraft_for(request, airbase, budget)
-                if unit is None:
-                    # Can't afford any aircraft capable of performing the
-                    # required mission that can operate from this airbase. We
-                    # might be able to afford aircraft at other airbases though,
-                    # in the case where the airbase we attempted to use is only
-                    # able to operate expensive aircraft.
-                    continue
-
-                budget -= db.PRICES[unit] * request.number
-                airbase.pending_unit_deliveries.order({unit: request.number})
-
+            budget = self.fulfill_aircraft_request(request, budget)
         return budget
 
     @property
