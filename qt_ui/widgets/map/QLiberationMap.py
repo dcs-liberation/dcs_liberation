@@ -915,9 +915,9 @@ class QLiberationMap(QGraphicsView):
             convoys.append(convoy)
 
         if a.captured:
-            frontline = FrontLine(a, b, self.game.theater)
+            frontline = FrontLine(a, b)
         else:
-            frontline = FrontLine(b, a, self.game.theater)
+            frontline = FrontLine(b, a)
         if a.front_is_active(b):
             if DisplayOptions.actual_frontline_pos:
                 self.draw_actual_frontline(scene, frontline, convoys)

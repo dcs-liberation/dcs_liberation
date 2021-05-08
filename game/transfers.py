@@ -338,11 +338,11 @@ class Convoy(MultiGroupTransport):
 
     @property
     def route_start(self) -> Point:
-        return self.origin.convoy_spawns[self.destination]
+        return self.origin.convoy_origin_for(self.destination)
 
     @property
     def route_end(self) -> Point:
-        return self.destination.convoy_spawns[self.origin]
+        return self.destination.convoy_origin_for(self.origin)
 
     def description(self) -> str:
         return f"In a convoy from {self.origin} to {self.destination}"

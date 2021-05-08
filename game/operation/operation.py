@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Iterable, List, Optional, Set, TYPE_CHECKING
+from typing import Iterable, List, Set, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -94,7 +94,7 @@ class Operation:
         )
         return Conflict(
             cls.game.theater,
-            FrontLine(player_cp, enemy_cp, cls.game.theater),
+            FrontLine(player_cp, enemy_cp),
             cls.game.player_name,
             cls.game.enemy_name,
             cls.game.player_country,
