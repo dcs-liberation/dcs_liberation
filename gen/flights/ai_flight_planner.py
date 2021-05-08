@@ -561,6 +561,19 @@ class CoalitionMissionPlanner:
         self.ato = self.game.blue_ato if is_player else self.game.red_ato
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
         self.procurement_requests = self.game.procurement_requests_for(self.is_player)
+        self.faction = self.game.faction_for(self.is_player)
+
+    def faction_can_plan(self, mission_type: FlightType) -> bool:
+        """Returns True if it is possible for the faction to plan this mission type.
+
+        Not all mission types can be fulfilled by all factions. Many factions do not
+        have AEW&C aircraft, so they will never be able to plan those missions.
+        """
+        all_compatible = aircraft_for_task(mission_type)
+        for aircraft in self.faction.aircrafts:
+            if aircraft in all_compatible:
+                return True
+        return False
 
     def critical_missions(self) -> Iterator[ProposedMission]:
         """Identifies the most important missions to plan this turn.
@@ -853,6 +866,11 @@ class CoalitionMissionPlanner:
         missing_types: Set[FlightType] = set()
         escorts = []
         for proposed_flight in mission.flights:
+            if not self.faction_can_plan(proposed_flight.task):
+                # This faction can never plan this mission type because they do not have
+                # compatible aircraft. Skip fulfillment so that we don't place the
+                # purchase request.
+                continue
             if proposed_flight.escort_type is not None:
                 # Escorts are planned after the primary elements of the package.
                 # If the package does not need escorts they may be pruned.
@@ -864,6 +882,12 @@ class CoalitionMissionPlanner:
             self.scrub_mission_missing_aircraft(
                 mission, builder, missing_types, escorts, reserves
             )
+            return
+
+        if not builder.package.flights:
+            # The non-escort part of this mission is unplannable by this faction. Scrub
+            # the mission and do not attempt planning escorts because there's no reason
+            # to buy them because this mission will never be planned.
             return
 
         # Create flight plans for the main flights of the package so we can

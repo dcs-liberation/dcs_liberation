@@ -15,6 +15,7 @@ Saves from 2.5 are not compatible with 3.0.
 ## Fixes
 
 * **[Campaign AI]** Fixed bug causing AI to over-purchase cheap aircraft.
+* **[Campaign AI]** Auto planner will no longer attempt to plan missions for which the faction has no compatible aircraft.
 
 # 2.5.1
 
