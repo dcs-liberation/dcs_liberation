@@ -204,7 +204,7 @@ class ControlPointGroundObjectGenerator:
             self.generate_ship()
 
     def generate_ship(self) -> None:
-        point = self.location_finder.location_for(LocationType.OffshoreStrikeTarget)
+        point = self.location_finder.location_for(LocationType.Ship)
         if point is None:
             return
 
