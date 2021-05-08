@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 import json
 import logging
+import math
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -601,12 +602,12 @@ class ConflictTheater:
     def player_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=True))
 
-    def conflicts(self, from_player=True) -> Iterator[FrontLine]:
-        for cp in [x for x in self.controlpoints if x.captured == from_player]:
-            for connected_point in [
-                x for x in cp.connected_points if x.captured != from_player
+    def conflicts(self) -> Iterator[FrontLine]:
+        for player_cp in [x for x in self.controlpoints if x.captured]:
+            for enemy_cp in [
+                x for x in player_cp.connected_points if not x.is_friendly_to(player_cp)
             ]:
-                yield FrontLine(cp, connected_point, self)
+                yield FrontLine(player_cp, enemy_cp, self)
 
     def enemy_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=False))
@@ -646,36 +647,26 @@ class ConflictTheater:
         Returns a tuple of the two nearest opposing ControlPoints in theater.
         (player_cp, enemy_cp)
         """
-        all_cp_min_distances = {}
-        for idx, control_point in enumerate(self.controlpoints):
-            distances = {}
-            closest_distance = None
-            for i, cp in enumerate(self.controlpoints):
-                if i != idx and cp.captured is not control_point.captured:
-                    dist = cp.position.distance_to_point(control_point.position)
-                    if not closest_distance:
-                        closest_distance = dist
-                        distances[cp.id] = dist
-                    if dist < closest_distance:
-                        distances[cp.id] = dist
-            closest_cp_id = min(distances, key=distances.get)  # type: ignore
+        seen = set()
+        min_distance = math.inf
+        closest_blue = None
+        closest_red = None
+        for blue_cp in self.player_points():
+            for red_cp in self.enemy_points():
+                if (blue_cp, red_cp) in seen:
+                    continue
+                seen.add((blue_cp, red_cp))
+                seen.add((red_cp, blue_cp))
 
-            all_cp_min_distances[(control_point.id, closest_cp_id)] = distances[
-                closest_cp_id
-            ]
-        closest_opposing_cps = [
-            self.find_control_point_by_id(i)
-            for i in min(
-                all_cp_min_distances, key=all_cp_min_distances.get
-            )  # type: ignore
-        ]  # type: List[ControlPoint]
-        assert len(closest_opposing_cps) == 2
-        if closest_opposing_cps[0].captured:
-            return cast(Tuple[ControlPoint, ControlPoint], tuple(closest_opposing_cps))
-        else:
-            return cast(
-                Tuple[ControlPoint, ControlPoint], tuple(reversed(closest_opposing_cps))
-            )
+                dist = red_cp.position.distance_to_point(blue_cp.position)
+                if dist < min_distance:
+                    closest_red = red_cp
+                    closest_blue = blue_cp
+                    min_distance = dist
+
+        assert closest_blue is not None
+        assert closest_red is not None
+        return closest_blue, closest_red
 
     def find_control_point_by_id(self, id: int) -> ControlPoint:
         for i in self.controlpoints:
@@ -923,16 +914,16 @@ class FrontLine(MissionTarget):
 
     def __init__(
         self,
-        control_point_a: ControlPoint,
-        control_point_b: ControlPoint,
+        blue_point: ControlPoint,
+        red_point: ControlPoint,
         theater: ConflictTheater,
     ) -> None:
-        self.control_point_a = control_point_a
-        self.control_point_b = control_point_b
+        self.blue_cp = blue_point
+        self.red_cp = red_point
         self.segments: List[FrontLineSegment] = []
         self.theater = theater
         self._build_segments()
-        self.name = f"Front line {control_point_a}/{control_point_b}"
+        self.name = f"Front line {blue_point}/{red_point}"
 
     def is_friendly(self, to_player: bool) -> bool:
         """Returns True if the objective is in friendly territory."""
@@ -964,7 +955,7 @@ class FrontLine(MissionTarget):
     @property
     def control_points(self) -> Tuple[ControlPoint, ControlPoint]:
         """Returns a tuple of the two control points."""
-        return self.control_point_a, self.control_point_b
+        return self.blue_cp, self.red_cp
 
     @property
     def attack_distance(self):
@@ -998,7 +989,7 @@ class FrontLine(MissionTarget):
         Returns a point {distance} away from control_point_a along the frontline segments.
         """
         if distance < self.segments[0].attack_distance:
-            return self.control_point_a.position.point_from_heading(
+            return self.blue_cp.position.point_from_heading(
                 self.segments[0].attack_heading, distance
             )
         remaining_dist = distance
@@ -1016,14 +1007,12 @@ class FrontLine(MissionTarget):
         The distance from point "a" where the conflict should occur
         according to the current strength of each control point
         """
-        total_strength = (
-            self.control_point_a.base.strength + self.control_point_b.base.strength
-        )
-        if self.control_point_a.base.strength == 0:
+        total_strength = self.blue_cp.base.strength + self.red_cp.base.strength
+        if self.blue_cp.base.strength == 0:
             return self._adjust_for_min_dist(0)
-        if self.control_point_b.base.strength == 0:
+        if self.red_cp.base.strength == 0:
             return self._adjust_for_min_dist(self.attack_distance)
-        strength_pct = self.control_point_a.base.strength / total_strength
+        strength_pct = self.blue_cp.base.strength / total_strength
         return self._adjust_for_min_dist(strength_pct * self.attack_distance)
 
     def _adjust_for_min_dist(self, distance: Numeric) -> Numeric:
@@ -1044,11 +1033,9 @@ class FrontLine(MissionTarget):
     def _build_segments(self) -> None:
         """Create line segments for the frontline"""
         control_point_ids = "|".join(
-            [str(self.control_point_a.id), str(self.control_point_b.id)]
+            [str(self.blue_cp.id), str(self.red_cp.id)]
         )  # from_cp.id|to_cp.id
-        reversed_cp_ids = "|".join(
-            [str(self.control_point_b.id), str(self.control_point_a.id)]
-        )
+        reversed_cp_ids = "|".join([str(self.red_cp.id), str(self.blue_cp.id)])
         complex_frontlines = self.theater.frontline_data
         if (complex_frontlines) and (
             (control_point_ids in complex_frontlines)
@@ -1071,9 +1058,7 @@ class FrontLine(MissionTarget):
         # If no complex frontline has been configured, fall back to the old straight line method.
         else:
             self.segments.append(
-                FrontLineSegment(
-                    self.control_point_a.position, self.control_point_b.position
-                )
+                FrontLineSegment(self.blue_cp.position, self.red_cp.position)
             )
 
     @staticmethod

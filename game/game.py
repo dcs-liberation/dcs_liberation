@@ -220,11 +220,11 @@ class Game:
         )
 
     def _generate_events(self):
-        for front_line in self.theater.conflicts(True):
+        for front_line in self.theater.conflicts():
             self._generate_player_event(
                 FrontlineAttackEvent,
-                front_line.control_point_a,
-                front_line.control_point_b,
+                front_line.blue_cp,
+                front_line.red_cp,
             )
 
     def adjust_budget(self, amount: float, player: bool) -> None:
@@ -459,12 +459,10 @@ class Game:
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
-            position = Conflict.frontline_position(
-                front_line.control_point_a, front_line.control_point_b, self.theater
-            )
+            position = Conflict.frontline_position(front_line, self.theater)
             zones.append(position[0])
-            zones.append(front_line.control_point_a.position)
-            zones.append(front_line.control_point_b.position)
+            zones.append(front_line.blue_cp.position)
+            zones.append(front_line.red_cp.position)
 
         for cp in self.theater.controlpoints:
             # Don't cull missile sites - their range is long enough to make them

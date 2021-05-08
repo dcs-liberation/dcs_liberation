@@ -101,16 +101,16 @@ class QFrontLine(QGraphicsLineItem):
         Dialog.open_new_package_dialog(self.mission_target)
 
     def cheat_forward(self) -> None:
-        self.mission_target.control_point_a.base.affect_strength(0.1)
-        self.mission_target.control_point_b.base.affect_strength(-0.1)
+        self.mission_target.blue_cp.base.affect_strength(0.1)
+        self.mission_target.red_cp.base.affect_strength(-0.1)
         # Clear the ATO to replan missions affected by the front line.
         self.game_model.game.reset_ato()
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def cheat_backward(self) -> None:
-        self.mission_target.control_point_a.base.affect_strength(-0.1)
-        self.mission_target.control_point_b.base.affect_strength(0.1)
+        self.mission_target.blue_cp.base.affect_strength(-0.1)
+        self.mission_target.red_cp.base.affect_strength(0.1)
         # Clear the ATO to replan missions affected by the front line.
         self.game_model.game.reset_ato()
         self.game_model.game.initialize_turn()

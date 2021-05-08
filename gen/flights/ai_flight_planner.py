@@ -409,13 +409,7 @@ class ObjectiveFinder:
 
     def front_lines(self) -> Iterator[FrontLine]:
         """Iterates over all active front lines in the theater."""
-        for cp in self.friendly_control_points():
-            for connected in cp.connected_points:
-                if connected.is_friendly(self.is_player):
-                    continue
-
-                if Conflict.has_frontline_between(cp, connected):
-                    yield FrontLine(cp, connected, self.game.theater)
+        yield from self.game.theater.conflicts()
 
     def vulnerable_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over friendly CPs that are vulnerable to enemy CPs.
@@ -447,19 +441,19 @@ class ObjectiveFinder:
 
     def convoys(self) -> Iterator[Convoy]:
         for front_line in self.front_lines():
-            if front_line.control_point_a.is_friendly(self.is_player):
-                enemy_cp = front_line.control_point_a
+            if front_line.blue_cp.is_friendly(self.is_player):
+                enemy_cp = front_line.blue_cp
             else:
-                enemy_cp = front_line.control_point_b
+                enemy_cp = front_line.red_cp
 
             yield from self.game.transfers.convoys.travelling_to(enemy_cp)
 
     def cargo_ships(self) -> Iterator[CargoShip]:
         for front_line in self.front_lines():
-            if front_line.control_point_a.is_friendly(self.is_player):
-                enemy_cp = front_line.control_point_a
+            if front_line.blue_cp.is_friendly(self.is_player):
+                enemy_cp = front_line.blue_cp
             else:
-                enemy_cp = front_line.control_point_b
+                enemy_cp = front_line.red_cp
 
             yield from self.game.transfers.cargo_ships.travelling_to(enemy_cp)
 

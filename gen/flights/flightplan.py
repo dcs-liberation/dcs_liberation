@@ -1320,11 +1320,9 @@ class FlightPlanBuilder:
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
     ) -> Tuple[Point, Point]:
-        ally_cp, enemy_cp = front_line.control_points
-
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(
-            ally_cp, enemy_cp, self.game.theater
+            front_line, self.game.theater
         )
         center = ingress.point_from_heading(heading, distance / 2)
         orbit_center = center.point_from_heading(
@@ -1533,7 +1531,7 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         ingress, heading, distance = Conflict.frontline_vector(
-            location.control_points[0], location.control_points[1], self.game.theater
+            location, self.game.theater
         )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)

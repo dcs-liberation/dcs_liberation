@@ -865,8 +865,8 @@ class QLiberationMap(QGraphicsView):
                     a[1],
                     b[0],
                     b[1],
-                    frontline.control_point_a,
-                    frontline.control_point_b,
+                    frontline.blue_cp,
+                    frontline.red_cp,
                     convoys,
                 )
             )
@@ -914,7 +914,10 @@ class QLiberationMap(QGraphicsView):
         if convoy is not None:
             convoys.append(convoy)
 
-        frontline = FrontLine(a, b, self.game.theater)
+        if a.captured:
+            frontline = FrontLine(a, b, self.game.theater)
+        else:
+            frontline = FrontLine(b, a, self.game.theater)
         if a.front_is_active(b):
             if DisplayOptions.actual_frontline_pos:
                 self.draw_actual_frontline(scene, frontline, convoys)
@@ -947,7 +950,7 @@ class QLiberationMap(QGraphicsView):
     ) -> None:
         self.draw_bezier_frontline(scene, frontline, convoys)
         vector = Conflict.frontline_vector(
-            frontline.control_point_a, frontline.control_point_b, self.game.theater
+            frontline.blue_cp, frontline.red_cp, self.game.theater
         )
         left_pos = self._transform_point(vector[0])
         right_pos = self._transform_point(

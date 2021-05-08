@@ -34,7 +34,7 @@ from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from .. import db
-from ..theater import Airfield
+from ..theater import Airfield, FrontLine
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -76,8 +76,7 @@ class Operation:
         for frontline in cls.game.theater.conflicts():
             yield Conflict(
                 cls.game.theater,
-                frontline.control_point_a,
-                frontline.control_point_b,
+                frontline,
                 cls.game.player_name,
                 cls.game.enemy_name,
                 cls.game.player_country,
@@ -95,8 +94,7 @@ class Operation:
         )
         return Conflict(
             cls.game.theater,
-            player_cp,
-            enemy_cp,
+            FrontLine(player_cp, enemy_cp, cls.game.theater),
             cls.game.player_name,
             cls.game.enemy_name,
             cls.game.player_country,
@@ -399,16 +397,15 @@ class Operation:
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        for front_line in cls.game.theater.conflicts(True):
-            player_cp = front_line.control_point_a
-            enemy_cp = front_line.control_point_b
+        for front_line in cls.game.theater.conflicts():
+            player_cp = front_line.blue_cp
+            enemy_cp = front_line.red_cp
             conflict = Conflict.frontline_cas_conflict(
                 cls.game.player_name,
                 cls.game.enemy_name,
                 cls.current_mission.country(cls.game.player_country),
                 cls.current_mission.country(cls.game.enemy_country),
-                player_cp,
-                enemy_cp,
+                front_line,
                 cls.game.theater,
             )
             # Generate frontline ops
