@@ -451,7 +451,7 @@ AIRFIELD_DATA = {
             "12": ("IMA", MHz(111, 750)),
         },
     ),
-    "Al Minhad Intl": AirfieldData(
+    "Al Minhad AFB": AirfieldData(
         theater="Persian Gulf",
         icao="OMDM",
         elevation=190,
