@@ -122,7 +122,7 @@ class QLiberationMap(QGraphicsView):
         super(QLiberationMap, self).__init__()
         QLiberationMap.instance = self
         self.game_model = game_model
-        self.game: Optional[Game] = game_model.game
+        self.game: Optional[Game] = None  # Setup by setGame below.
         self.state = QLiberationMapState.NORMAL
 
         self.waypoint_info_font = QFont()
@@ -202,11 +202,12 @@ class QLiberationMap(QGraphicsView):
         self.setDragMode(QGraphicsView.ScrollHandDrag)
 
     def setGame(self, game: Optional[Game]):
+        should_recenter = self.game is None
         self.game = game
         if self.game is not None:
             logging.debug("Reloading Map Canvas")
             self.nm_to_pixel_ratio = self.distance_to_pixels(nautical_miles(1))
-            self.reload_scene()
+            self.reload_scene(should_recenter)
 
     """
     
@@ -597,7 +598,13 @@ class QLiberationMap(QGraphicsView):
                     self.draw_threat_range(scene, group, ground_object, cp)
             added_objects.append(ground_object.obj_name)
 
-    def reload_scene(self):
+    def recenter(self) -> None:
+        center = self._transform_point(
+            self.game.theater.terrain.map_view_default.position
+        )
+        self.centerOn(QPointF(center[0], center[1]))
+
+    def reload_scene(self, recenter: bool = False) -> None:
         scene = self.scene()
         scene.clear()
 
@@ -605,6 +612,8 @@ class QLiberationMap(QGraphicsView):
         enemyColor = self.game.get_enemy_color()
 
         self.addBackground()
+        if recenter:
+            self.recenter()
 
         # Display Culling
         if DisplayOptions.culling and self.game.settings.perf_culling:

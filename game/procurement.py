@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, TYPE_CHECKING, Type
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from dcs.unittype import FlyingType, VehicleType
 
@@ -78,14 +78,14 @@ class ProcurementAi:
     def sell_incomplete_squadrons(self) -> float:
         # Selling incomplete squadrons gives us more money to spend on the next
         # turn. This serves as a short term fix for
-        # https://github.com/Khopa/dcs_liberation/issues/41.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/41.
         #
         # Only incomplete squadrons which are unlikely to get used will be sold
         # rather than all unused aircraft because the unused aircraft are what
         # make OCA strikes worthwhile.
         #
         # This option is only used by the AI since players cannot cancel sales
-        # (https://github.com/Khopa/dcs_liberation/issues/365).
+        # (https://github.com/dcs-liberation/dcs_liberation/issues/365).
         total = 0.0
         for cp in self.game.theater.control_points_for(self.is_player):
             inventory = self.game.aircraft_inventory.for_control_point(cp)
@@ -192,21 +192,37 @@ class ProcurementAi:
             aircraft_for_task(request.task_capability), airbase, request.number, budget
         )
 
+    def fulfill_aircraft_request(
+        self, request: AircraftProcurementRequest, budget: float
+    ) -> Tuple[float, bool]:
+        for airbase in self.best_airbases_for(request):
+            unit = self.affordable_aircraft_for(request, airbase, budget)
+            if unit is None:
+                # Can't afford any aircraft capable of performing the
+                # required mission that can operate from this airbase. We
+                # might be able to afford aircraft at other airbases though,
+                # in the case where the airbase we attempted to use is only
+                # able to operate expensive aircraft.
+                continue
+
+            budget -= db.PRICES[unit] * request.number
+            airbase.pending_unit_deliveries.order({unit: request.number})
+            return budget, True
+        return budget, False
+
     def purchase_aircraft(self, budget: float) -> float:
         for request in self.game.procurement_requests_for(self.is_player):
-            for airbase in self.best_airbases_for(request):
-                unit = self.affordable_aircraft_for(request, airbase, budget)
-                if unit is None:
-                    # Can't afford any aircraft capable of performing the
-                    # required mission that can operate from this airbase. We
-                    # might be able to afford aircraft at other airbases though,
-                    # in the case where the airbase we attempted to use is only
-                    # able to operate expensive aircraft.
-                    continue
-
-                budget -= db.PRICES[unit] * request.number
-                airbase.pending_unit_deliveries.order({unit: request.number})
-
+            if not list(self.best_airbases_for(request)):
+                # No airbases in range of this request. Skip it.
+                continue
+            budget, fulfilled = self.fulfill_aircraft_request(request, budget)
+            if not fulfilled:
+                # The request was not fulfilled because we could not afford any suitable
+                # aircraft. Rather than continuing, which could proceed to buy tons of
+                # cheap escorts that will never allow us to plan a strike package, stop
+                # buying so we can save the budget until a turn where we *can* afford to
+                # fill the package.
+                break
         return budget
 
     @property

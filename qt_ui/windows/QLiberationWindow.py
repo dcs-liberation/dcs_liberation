@@ -143,7 +143,9 @@ class QLiberationWindow(QMainWindow):
         self.openGithubAction = QAction("&Github Repo", self)
         self.openGithubAction.setIcon(CONST.ICONS["Github"])
         self.openGithubAction.triggered.connect(
-            lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation")
+            lambda: webbrowser.open_new_tab(
+                "https://github.com/dcs-liberation/dcs_liberation"
+            )
         )
 
     def initToolbar(self):
@@ -202,7 +204,7 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction(
             "&Releases",
             lambda: webbrowser.open_new_tab(
-                "https://github.com/Khopa/dcs_liberation/releases"
+                "https://github.com/dcs-liberation/dcs_liberation/releases"
             ),
         )
         help_menu.addAction(
@@ -309,7 +311,7 @@ class QLiberationWindow(QMainWindow):
             "<h3>DCS Liberation "
             + VERSION
             + "</h3>"
-            + "<b>Source code :</b> https://github.com/khopa/dcs_liberation"
+            + "<b>Source code :</b> https://github.com/dcs-liberation/dcs_liberation"
             + "<h4>Authors</h4>"
             + "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>."
             "<h4>Contributors</h4>"

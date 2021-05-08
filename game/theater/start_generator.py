@@ -108,6 +108,7 @@ class GameGenerator:
 
         GroundObjectGenerator(game, self.generator_settings).generate()
         game.settings.version = VERSION
+        game.begin_turn_0()
         return game
 
     def prepare_theater(self) -> None:
@@ -220,7 +221,7 @@ class ControlPointGroundObjectGenerator:
             self.generate_ship()
 
     def generate_ship(self) -> None:
-        point = self.location_finder.location_for(LocationType.OffshoreStrikeTarget)
+        point = self.location_finder.location_for(LocationType.Ship)
         if point is None:
             return
 

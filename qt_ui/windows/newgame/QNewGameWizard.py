@@ -208,7 +208,7 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         # Docs Link
         docsText = QtWidgets.QLabel(
-            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Custom-Factions"><span style="color:#FFFFFF;">How to create your own faction</span></a>'
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Factions"><span style="color:#FFFFFF;">How to create your own faction</span></a>'
         )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
@@ -400,7 +400,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Docs Link
         docsText = QtWidgets.QLabel(
-            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns"><span style="color:#FFFFFF;">How to create your own theater</span></a>'
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Campaigns"><span style="color:#FFFFFF;">How to create your own theater</span></a>'
         )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)

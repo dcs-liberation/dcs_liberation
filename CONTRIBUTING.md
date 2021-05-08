@@ -11,7 +11,7 @@ Note that you may need to remove the filter for open bugs if it's something we'v
 
 ## Making content for Liberation
 
-You can create new campaigns : See [campaign creation wiki](https://github.com/Khopa/dcs_liberation/wiki/Custom-Campaigns).
+You can create new campaigns : See [campaign creation wiki](https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Campaigns).
 You can also improve existing campaigns.
 
 You can then submit new campaigns on the "campaigns" channel on Discord, or by making a pull request if you are comfortable with git. 

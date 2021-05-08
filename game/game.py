@@ -97,7 +97,9 @@ class Game:
         self.player_country = db.FACTIONS[player_name].country
         self.enemy_name = enemy_name
         self.enemy_country = db.FACTIONS[enemy_name].country
-        self.turn = 0
+        # pass_turn() will be called when initialization is complete which will
+        # increment this to turn 0 before it reaches the player.
+        self.turn = -1
         # NB: This is the *start* date. It is never updated.
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
@@ -134,19 +136,6 @@ class Game:
         self.sanitize_sides()
 
         self.on_load()
-
-        # Turn 0 procurement. We don't actually have any missions to plan, but
-        # the planner will tell us what it would like to plan so we can use that
-        # to drive purchase decisions.
-        self.transfers.order_airlift_assets()
-
-        blue_planner = CoalitionMissionPlanner(self, is_player=True)
-        blue_planner.plan_missions()
-
-        red_planner = CoalitionMissionPlanner(self, is_player=False)
-        red_planner.plan_missions()
-
-        self.plan_procurement()
 
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
@@ -287,8 +276,7 @@ class Game:
         self.blue_ato.clear()
         self.red_ato.clear()
 
-    def pass_turn(self, no_action: bool = False) -> None:
-        logging.info("Pass turn")
+    def finish_turn(self, skipped: bool = False) -> None:
         self.informations.append(
             Information("End of turn #" + str(self.turn), "-" * 40, 0)
         )
@@ -303,10 +291,7 @@ class Game:
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
 
-        self.process_enemy_income()
-        self.process_player_income()
-
-        if not no_action and self.turn > 1:
+        if not skipped and self.turn > 1:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
         else:
@@ -316,6 +301,16 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
+        self.process_enemy_income()
+        self.process_player_income()
+
+    def begin_turn_0(self) -> None:
+        self.turn = 0
+        self.initialize_turn()
+
+    def pass_turn(self, no_action: bool = False) -> None:
+        logging.info("Pass turn")
+        self.finish_turn(no_action)
         self.initialize_turn()
 
         # Autosave progress

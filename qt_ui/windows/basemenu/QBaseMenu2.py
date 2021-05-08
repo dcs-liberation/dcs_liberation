@@ -166,10 +166,12 @@ class QBaseMenu2(QDialog):
         self.repair_button.setDisabled(True)
 
     def update_intel_summary(self) -> None:
+        aircraft = self.cp.base.total_aircraft
+        parking = self.cp.total_aircraft_parking
         self.intel_summary.setText(
             "\n".join(
                 [
-                    f"{self.cp.base.total_aircraft} aircraft",
+                    f"{aircraft}/{parking} aircraft",
                     f"{self.cp.base.total_armor} ground units",
                     str(self.cp.runway_status),
                 ]

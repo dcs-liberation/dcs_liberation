@@ -172,6 +172,12 @@ def create_game(
     inverted: bool,
     cheats: bool,
 ) -> Game:
+    first_start = liberation_install.init()
+    if first_start:
+        sys.exit(
+            "Cannot generate campaign without configuring DCS Liberation. Start the UI "
+            "for the first run configuration."
+        )
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue,

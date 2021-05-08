@@ -74,7 +74,7 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
 
         if include_cc:
             # Only include the Moskva for now, the Pyotry Velikiy is an unkillable monster.
-            # See https://github.com/Khopa/dcs_liberation/issues/567
+            # See https://github.com/dcs-liberation/dcs_liberation/issues/567
             self.add_unit(
                 Cruiser_1164_Moskva,
                 "CC1",

@@ -41,6 +41,7 @@ class Settings:
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True
+    perf_smoke_spacing = 1600
     perf_artillery: bool = True
     perf_moving_units: bool = True
     perf_infantry: bool = True

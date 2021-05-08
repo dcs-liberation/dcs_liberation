@@ -17,6 +17,7 @@ from PySide2.QtWidgets import (
     QStackedLayout,
     QVBoxLayout,
     QWidget,
+    QSlider,
 )
 from dcs.forcedoptions import ForcedOptions
 
@@ -84,7 +85,7 @@ NEW_GROUND_UNIT_RECRUITMENT_TOOLTIP = (
 )
 NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL = (
     "Enable new ground unit recruitment behavior<br />"
-    '<a href="https://github.com/Khopa/dcs_liberation/issues/986">'
+    '<a href="https://github.com/dcs-liberation/dcs_liberation/issues/986">'
     '<span style="color:#FFFFFF;">More information.</span></a>'
 )
 
@@ -518,6 +519,12 @@ class QSettingsWindow(QDialog):
         self.smoke.setChecked(self.game.settings.perf_smoke_gen)
         self.smoke.toggled.connect(self.applySettings)
 
+        self.smoke_spacing = QSpinBox()
+        self.smoke_spacing.setMinimum(800)
+        self.smoke_spacing.setMaximum(24000)
+        self.smoke_spacing.setValue(self.game.settings.perf_smoke_spacing)
+        self.smoke_spacing.valueChanged.connect(self.applySettings)
+
         self.red_alert = QCheckBox()
         self.red_alert.setChecked(self.game.settings.perf_red_alert_state)
         self.red_alert.toggled.connect(self.applySettings)
@@ -558,18 +565,27 @@ class QSettingsWindow(QDialog):
             QLabel("Smoke visual effect on frontline"), 0, 0
         )
         self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 1, 0)
-        self.performanceLayout.addWidget(self.red_alert, 1, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Artillery strikes"), 2, 0)
-        self.performanceLayout.addWidget(self.arti, 2, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Moving ground units"), 3, 0)
         self.performanceLayout.addWidget(
-            self.moving_units, 3, 1, alignment=Qt.AlignRight
+            QLabel("Smoke generator spacing (higher means less smoke)"),
+            1,
+            0,
+            alignment=Qt.AlignRight,
         )
         self.performanceLayout.addWidget(
-            QLabel("Generate infantry squads along vehicles"), 4, 0
+            self.smoke_spacing, 1, 1, alignment=Qt.AlignRight
         )
-        self.performanceLayout.addWidget(self.infantry, 4, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 2, 0)
+        self.performanceLayout.addWidget(self.red_alert, 2, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Artillery strikes"), 3, 0)
+        self.performanceLayout.addWidget(self.arti, 3, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Moving ground units"), 4, 0)
+        self.performanceLayout.addWidget(
+            self.moving_units, 4, 1, alignment=Qt.AlignRight
+        )
+        self.performanceLayout.addWidget(
+            QLabel("Generate infantry squads along vehicles"), 5, 0
+        )
+        self.performanceLayout.addWidget(self.infantry, 5, 1, alignment=Qt.AlignRight)
         self.performanceLayout.addWidget(
             QLabel("Include destroyed units carcass"), 6, 0
         )
@@ -681,6 +697,7 @@ class QSettingsWindow(QDialog):
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()
+        self.game.settings.perf_smoke_spacing = self.smoke_spacing.value()
         self.game.settings.perf_artillery = self.arti.isChecked()
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
