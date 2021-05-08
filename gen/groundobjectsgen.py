@@ -308,6 +308,7 @@ class SceneryGenerator(BuildingSiteGenerator):
 
     def register_scenery(self) -> None:
         scenery = self.ground_object
+        assert isinstance(scenery, SceneryGroundObject)
         self.unit_map.add_scenery(scenery)
 
 
