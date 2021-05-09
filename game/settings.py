@@ -25,6 +25,9 @@ class Settings:
 
     default_start_type: str = "Cold"
 
+    # Mission specific
+    mission_length: int = 90
+
     # Campaign management
     automate_runway_repair: bool = False
     automate_front_line_reinforcements: bool = False
