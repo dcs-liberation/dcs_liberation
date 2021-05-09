@@ -35,6 +35,7 @@ jinja_env = Environment(
 
 
 DEFAULT_BUDGET = 2000
+DEFUALT_MISSION_TIME = 90
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -85,6 +86,7 @@ class NewGameWizard(QtWidgets.QWizard):
             automate_front_line_reinforcements=self.field(
                 "automate_front_line_purchases"
             ),
+            mission_length=self.field("mission_length"),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
             enable_new_ground_unit_recruitment=self.field(
@@ -447,6 +449,25 @@ class CurrencySpinner(QtWidgets.QSpinBox):
     def textFromValue(self, val: int) -> str:
         return f"${val}"
 
+class TimeSpinner(QtWidgets.QSpinBox):
+    def __init__(
+        self,
+        minimum: Optional[int] = None,
+        maximum: Optional[int] = None,
+        initial: Optional[int] = None,
+    ) -> None:
+        super().__init__()
+
+        if minimum is not None:
+            self.setMinimum(minimum)
+        if maximum is not None:
+            self.setMaximum(maximum)
+        if initial is not None:
+            self.setValue(initial)
+
+    def textFromValue(self, val: int) -> str:
+        return f"{val} minutes"
+
 
 class BudgetInputs(QtWidgets.QGridLayout):
     def __init__(self, label: str) -> None:
@@ -467,6 +488,27 @@ class BudgetInputs(QtWidgets.QGridLayout):
 
         self.addWidget(slider, 1, 0)
         self.addWidget(self.starting_money, 1, 1)
+
+
+class TimeInputs(QtWidgets.QGridLayout):
+    def __init__(self, label: str) -> None:
+        super().__init__()
+        self.addWidget(QtWidgets.QLabel(label), 0, 0)
+
+        minimum = 30
+        maximum = 150
+        initial = DEFUALT_MISSION_TIME
+
+        slider = QtWidgets.QSlider(Qt.Horizontal)
+        slider.setMinimum(minimum)
+        slider.setMaximum(maximum)
+        slider.setValue(initial)
+        self.mission_length = TimeSpinner(minimum, maximum, initial)
+        slider.valueChanged.connect(lambda x: self.mission_length.setValue(x))
+        self.mission_length.valueChanged.connect(lambda x: slider.setValue(x))
+
+        self.addWidget(slider, 1, 0)
+        self.addWidget(self.mission_length, 1, 1)
 
 
 class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
@@ -565,6 +607,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
+        mission_length = TimeInputs("Expected mission length")
+        self.registerField("mission_length", mission_length.mission_length)
+        
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -577,6 +622,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
+        generatorLayout.addLayout(mission_length,6,1)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         mlayout = QVBoxLayout()
