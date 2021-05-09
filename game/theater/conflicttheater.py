@@ -56,6 +56,7 @@ from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .projections import TransverseMercator
 from ..point_with_heading import PointWithHeading
+from ..profiling import logged_duration
 from ..utils import Distance, meters, nautical_miles
 
 SIZE_TINY = 150
@@ -114,7 +115,8 @@ class MizCampaignLoader:
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
         self.theater = theater
         self.mission = Mission()
-        self.mission.load_file(str(miz))
+        with logged_duration("Loading miz"):
+            self.mission.load_file(str(miz))
         self.control_point_id = itertools.count(1000)
 
         # If there are no red carriers there usually aren't red units. Make sure
@@ -682,7 +684,9 @@ class ConflictTheater:
             raise RuntimeError(
                 "Old format (non-miz) campaigns are no longer supported."
             )
-        MizCampaignLoader(directory / miz, t).populate_theater()
+
+        with logged_duration("Importing miz data"):
+            MizCampaignLoader(directory / miz, t).populate_theater()
         return t
 
     @property

@@ -46,6 +46,7 @@ from . import (
     Fob,
     OffMapSpawn,
 )
+from ..profiling import logged_duration
 from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
@@ -91,20 +92,21 @@ class GameGenerator:
         self.generator_settings = generator_settings
 
     def generate(self) -> Game:
-        # Reset name generator
-        namegen.reset()
-        self.prepare_theater()
-        game = Game(
-            player_name=self.player,
-            enemy_name=self.enemy,
-            theater=self.theater,
-            start_date=self.generator_settings.start_date,
-            settings=self.settings,
-            player_budget=self.generator_settings.player_budget,
-            enemy_budget=self.generator_settings.enemy_budget,
-        )
+        with logged_duration("TGO population"):
+            # Reset name generator
+            namegen.reset()
+            self.prepare_theater()
+            game = Game(
+                player_name=self.player,
+                enemy_name=self.enemy,
+                theater=self.theater,
+                start_date=self.generator_settings.start_date,
+                settings=self.settings,
+                player_budget=self.generator_settings.player_budget,
+                enemy_budget=self.generator_settings.enemy_budget,
+            )
 
-        GroundObjectGenerator(game, self.generator_settings).generate()
+            GroundObjectGenerator(game, self.generator_settings).generate()
         game.settings.version = VERSION
         game.begin_turn_0()
         return game

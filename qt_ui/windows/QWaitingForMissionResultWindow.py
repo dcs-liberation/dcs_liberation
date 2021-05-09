@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import timeit
-from datetime import timedelta
 from typing import Sized
 
 from PySide2 import QtCore
@@ -25,6 +23,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from game.debriefing import Debriefing, wait_for_debriefing
 from game.game import Event, Game, logging
 from game.persistency import base_path
+from game.profiling import logged_duration
 from game.unitmap import UnitMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
@@ -205,14 +204,12 @@ class QWaitingForMissionResultWindow(QDialog):
         )
 
     def process_debriefing(self):
-        start = timeit.default_timer()
-        self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
-        self.game.pass_turn()
+        with logged_duration("Turn processing"):
+            self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
+            self.game.pass_turn()
 
-        GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
-        GameUpdateSignal.get_instance().updateGame(self.game)
-        end = timeit.default_timer()
-        logging.info("Turn processing took %s", timedelta(seconds=end - start))
+            GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
+            GameUpdateSignal.get_instance().updateGame(self.game)
         self.close()
 
     def debriefing_directory_location(self) -> str:

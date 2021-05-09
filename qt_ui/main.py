@@ -7,18 +7,18 @@ from pathlib import Path
 from typing import Optional
 
 import dcs
-from dcs.weapons_data import weapon_ids
-
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
+from dcs.weapons_data import weapon_ids
 
-from game import Game, db, persistency, VERSION
+from game import Game, VERSION, persistency
 from game.data.weapons import (
     WEAPON_FALLBACK_MAP,
     WEAPON_INTRODUCTION_YEARS,
     Weapon,
 )
+from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
@@ -228,15 +228,16 @@ def main():
         lint_weapon_data()
 
     if args.subcommand == "new-game":
-        game = create_game(
-            args.campaign,
-            args.blue,
-            args.red,
-            args.supercarrier,
-            args.auto_procurement,
-            args.inverted,
-            args.cheats,
-        )
+        with logged_duration("New game creation"):
+            game = create_game(
+                args.campaign,
+                args.blue,
+                args.red,
+                args.supercarrier,
+                args.auto_procurement,
+                args.inverted,
+                args.cheats,
+            )
 
     run_ui(game)
 
