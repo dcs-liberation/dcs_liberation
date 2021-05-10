@@ -585,13 +585,12 @@ class CoalitionMissionPlanner:
         for cp in self.objective_finder.vulnerable_control_points():
             # Plan one round of CAP for each 30 minutes. If the last round is less then 15 minutes left, don't do it.
             for minutes in range(0, self.game.settings.mission_length, 30):
-                if self.game.settings.mission_length - minutes < 15:
-                    yield ProposedMission(
-                        cp,
-                        [
-                            ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                        ],
-                    )
+                yield ProposedMission(
+                    cp,
+                    [
+                        ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                    ],
+                )
 
         # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():
