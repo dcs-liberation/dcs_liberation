@@ -12,7 +12,7 @@ from game import db
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import TenthsSpinSlider
+from qt_ui.widgets.spinsliders import (TenthsSpinSlider, TimeInputs, CurrencySpinner)
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
@@ -33,10 +33,7 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
-
 DEFAULT_BUDGET = 2000
-DEFUALT_MISSION_TIME = 90
-
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
@@ -429,46 +426,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout.addWidget(timeGroup, 3, 1, 3, 1)
         self.setLayout(layout)
 
-
-class CurrencySpinner(QtWidgets.QSpinBox):
-    def __init__(
-        self,
-        minimum: Optional[int] = None,
-        maximum: Optional[int] = None,
-        initial: Optional[int] = None,
-    ) -> None:
-        super().__init__()
-
-        if minimum is not None:
-            self.setMinimum(minimum)
-        if maximum is not None:
-            self.setMaximum(maximum)
-        if initial is not None:
-            self.setValue(initial)
-
-    def textFromValue(self, val: int) -> str:
-        return f"${val}"
-
-class TimeSpinner(QtWidgets.QSpinBox):
-    def __init__(
-        self,
-        minimum: Optional[int] = None,
-        maximum: Optional[int] = None,
-        initial: Optional[int] = None,
-    ) -> None:
-        super().__init__()
-
-        if minimum is not None:
-            self.setMinimum(minimum)
-        if maximum is not None:
-            self.setMaximum(maximum)
-        if initial is not None:
-            self.setValue(initial)
-
-    def textFromValue(self, val: int) -> str:
-        return f"{val} minutes"
-
-
 class BudgetInputs(QtWidgets.QGridLayout):
     def __init__(self, label: str) -> None:
         super().__init__()
@@ -490,25 +447,6 @@ class BudgetInputs(QtWidgets.QGridLayout):
         self.addWidget(self.starting_money, 1, 1)
 
 
-class TimeInputs(QtWidgets.QGridLayout):
-    def __init__(self, label: str) -> None:
-        super().__init__()
-        self.addWidget(QtWidgets.QLabel(label), 0, 0)
-
-        minimum = 30
-        maximum = 150
-        initial = DEFUALT_MISSION_TIME
-
-        slider = QtWidgets.QSlider(Qt.Horizontal)
-        slider.setMinimum(minimum)
-        slider.setMaximum(maximum)
-        slider.setValue(initial)
-        self.mission_length = TimeSpinner(minimum, maximum, initial)
-        slider.valueChanged.connect(lambda x: self.mission_length.setValue(x))
-        self.mission_length.valueChanged.connect(lambda x: slider.setValue(x))
-
-        self.addWidget(slider, 1, 0)
-        self.addWidget(self.mission_length, 1, 1)
 
 
 class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
