@@ -622,7 +622,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(mission_length,6,1)
+        generatorLayout.addLayout(mission_length,6,0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         mlayout = QVBoxLayout()
