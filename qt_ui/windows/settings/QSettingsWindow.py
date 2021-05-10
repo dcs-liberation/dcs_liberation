@@ -26,7 +26,7 @@ from game.game import Game
 from game.infos.information import Information
 from game.settings import Settings
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
-from qt_ui.widgets.spinsliders import TenthsSpinSlider
+from qt_ui.widgets.spinsliders import (TenthsSpinSlider, TimeInputs)
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
@@ -471,6 +471,9 @@ class QSettingsWindow(QDialog):
             "spawned immediately. AI wingmen may begin startup immediately."
         )
 
+        self.mission_length = TimeInputs("Mission length", self.game.settings.mission_length)
+        self.mission_length.spinner.valueChanged.connect(self.applySettings)
+
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
         self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
@@ -483,6 +486,7 @@ class QSettingsWindow(QDialog):
         )
         self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
         self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
+        self.gameplayLayout.addLayout(self.mission_length, 5, 0, Qt.AlignRight)
 
         spawn_players_immediately_tooltip = (
             "Always spawns player aircraft immediately, even if their start time is "
@@ -694,6 +698,8 @@ class QSettingsWindow(QDialog):
         self.game.settings.generate_dark_kneeboard = (
             self.generate_dark_kneeboard.isChecked()
         )
+
+        self.game.settings.mission_length = self.mission_length.value
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()

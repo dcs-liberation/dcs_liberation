@@ -34,6 +34,7 @@ jinja_env = Environment(
 )
 
 DEFAULT_BUDGET = 2000
+DEFAULT_MISSION_LENGTH = 90
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
@@ -545,8 +546,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
-        mission_length = TimeInputs("Expected mission length")
-        self.registerField("mission_length", mission_length.mission_length)
+        mission_length = TimeInputs("Expected mission length", DEFAULT_MISSION_LENGTH)
+        self.registerField("mission_length", mission_length.spinner)
         
 
         generatorLayout = QtWidgets.QGridLayout()

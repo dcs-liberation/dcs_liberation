@@ -25,28 +25,31 @@ class TenthsSpinSlider(QGridLayout):
     def value(self) -> float:
         return self.spinner.value() / 10
 
-        
+
 class TimeInputs(QtWidgets.QGridLayout):
-    def __init__(self, label: str) -> None:
+    def __init__(self, label: str, initial: int) -> None:
         super().__init__()
         self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
         minimum = 30
         maximum = 150
-        initial = 90
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
         slider.setMinimum(minimum)
         slider.setMaximum(maximum)
         slider.setValue(initial)
-        self.mission_length = TimeSpinner(minimum, maximum, initial)
-        slider.valueChanged.connect(lambda x: self.mission_length.setValue(x))
-        self.mission_length.valueChanged.connect(lambda x: slider.setValue(x))
+        self.spinner = TimeSpinner(minimum, maximum, initial)
+        slider.valueChanged.connect(lambda x: self.spinner.setValue(x))
+        self.spinner.valueChanged.connect(lambda x: slider.setValue(x))
 
         self.addWidget(slider, 1, 0)
-        self.addWidget(self.mission_length, 1, 1)
+        self.addWidget(self.spinner, 1, 1)
 
-        
+    @property
+    def value(self) -> int:
+        return self.spinner.value()
+      
+
 class TimeSpinner(QtWidgets.QSpinBox):
     def __init__(
         self,
@@ -65,6 +68,7 @@ class TimeSpinner(QtWidgets.QSpinBox):
 
     def textFromValue(self, val: int) -> str:
         return f"{val} minutes"
+
 
 class CurrencySpinner(QtWidgets.QSpinBox):
     def __init__(
