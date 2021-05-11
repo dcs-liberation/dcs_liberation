@@ -586,8 +586,8 @@ class CoalitionMissionPlanner:
             # Plan one round of CAP for each 30 minutes.
             for _ in range(
                 0,
-                int(self.game.settings.desired_player_mission_duration),
-                int(self.faction.doctrine.cap_duration.total_seconds),
+                int(self.game.settings.desired_player_mission_duration()),
+                int(self.faction.doctrine.cap_duration.total_seconds()),
             ):
                 yield ProposedMission(
                     cp,
