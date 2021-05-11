@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Dict, Optional
 
 from dcs.forcedoptions import ForcedOptions
@@ -24,6 +25,9 @@ class Settings:
     enemy_income_multiplier: float = 1.0
 
     default_start_type: str = "Cold"
+
+    # Mission specific
+    desired_player_mission_duration: timedelta = timedelta(minutes=90)
 
     # Campaign management
     automate_runway_repair: bool = False

@@ -7,12 +7,13 @@ from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
 from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from datetime import timedelta
 
 from game import db
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import TenthsSpinSlider
+from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
@@ -33,8 +34,8 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
-
 DEFAULT_BUDGET = 2000
+DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=90)
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -84,6 +85,9 @@ class NewGameWizard(QtWidgets.QWizard):
             automate_runway_repair=self.field("automate_runway_repairs"),
             automate_front_line_reinforcements=self.field(
                 "automate_front_line_purchases"
+            ),
+            desired_player_mission_duration=timedelta(
+                minutes=self.field("desired_player_mission_duration")
             ),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
@@ -428,26 +432,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         self.setLayout(layout)
 
 
-class CurrencySpinner(QtWidgets.QSpinBox):
-    def __init__(
-        self,
-        minimum: Optional[int] = None,
-        maximum: Optional[int] = None,
-        initial: Optional[int] = None,
-    ) -> None:
-        super().__init__()
-
-        if minimum is not None:
-            self.setMinimum(minimum)
-        if maximum is not None:
-            self.setMaximum(maximum)
-        if initial is not None:
-            self.setValue(initial)
-
-    def textFromValue(self, val: int) -> str:
-        return f"${val}"
-
-
 class BudgetInputs(QtWidgets.QGridLayout):
     def __init__(self, label: str) -> None:
         super().__init__()
@@ -565,6 +549,12 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
+        desired_player_mission_duration = TimeInputs(
+            "Desired mission duration", DEFAULT_MISSION_LENGTH
+        )
+        self.registerField(
+            "desired_player_mission_duration", desired_player_mission_duration.spinner
+        )
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -577,6 +567,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
+        generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         mlayout = QVBoxLayout()

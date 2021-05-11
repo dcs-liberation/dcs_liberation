@@ -583,26 +583,18 @@ class CoalitionMissionPlanner:
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
-            # Plan three rounds of CAP to give ~90 minutes coverage. Spacing
-            # these out appropriately is done in stagger_missions.
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
+            # Plan CAP in such a way, that it is established during the whole desired mission length
+            for _ in range(
+                0,
+                int(self.game.settings.desired_player_mission_duration.total_seconds()),
+                int(self.faction.doctrine.cap_duration.total_seconds()),
+            ):
+                yield ProposedMission(
+                    cp,
+                    [
+                        ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                    ],
+                )
 
         # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():
