@@ -472,7 +472,8 @@ class QSettingsWindow(QDialog):
         )
 
         self.desired_player_mission_duration = TimeInputs(
-            "Desired mission duration", self.game.settings.desired_player_mission_duration
+            "Desired mission duration",
+            self.game.settings.desired_player_mission_duration,
         )
         self.desired_player_mission_duration.spinner.valueChanged.connect(
             self.applySettings

@@ -583,7 +583,7 @@ class CoalitionMissionPlanner:
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
-            # Plan CAP in such a way, that it is established during the whole desired mission length 
+            # Plan CAP in such a way, that it is established during the whole desired mission length
             for _ in range(
                 0,
                 int(self.game.settings.desired_player_mission_duration.total_seconds()),
