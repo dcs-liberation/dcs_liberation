@@ -12,7 +12,7 @@ from game import db
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import (TenthsSpinSlider, TimeInputs, CurrencySpinner)
+from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
@@ -35,6 +35,7 @@ jinja_env = Environment(
 
 DEFAULT_BUDGET = 2000
 DEFAULT_MISSION_LENGTH = 90
+
 
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
@@ -84,7 +85,7 @@ class NewGameWizard(QtWidgets.QWizard):
             automate_front_line_reinforcements=self.field(
                 "automate_front_line_purchases"
             ),
-            mission_length=self.field("mission_length"),
+            desired_player_mission_duration=self.field("mission_length"),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
             enable_new_ground_unit_recruitment=self.field(
@@ -427,6 +428,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout.addWidget(timeGroup, 3, 1, 3, 1)
         self.setLayout(layout)
 
+
 class BudgetInputs(QtWidgets.QGridLayout):
     def __init__(self, label: str) -> None:
         super().__init__()
@@ -446,8 +448,6 @@ class BudgetInputs(QtWidgets.QGridLayout):
 
         self.addWidget(slider, 1, 0)
         self.addWidget(self.starting_money, 1, 1)
-
-
 
 
 class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
@@ -548,7 +548,6 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_enemy_navy", no_enemy_navy)
         mission_length = TimeInputs("Expected mission length", DEFAULT_MISSION_LENGTH)
         self.registerField("mission_length", mission_length.spinner)
-        
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -561,7 +560,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(mission_length,6,0)
+        generatorLayout.addLayout(mission_length, 6, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         mlayout = QVBoxLayout()

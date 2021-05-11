@@ -583,8 +583,12 @@ class CoalitionMissionPlanner:
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
-            # Plan one round of CAP for each 30 minutes. If the last round is less then 15 minutes left, don't do it.
-            for minutes in range(1, self.game.settings.mission_length, 30):
+            # Plan one round of CAP for each 30 minutes.
+            for _ in range(
+                0,
+                int(self.game.settings.desired_player_mission_duration),
+                int(self.faction.doctrine.cap_duration.total_seconds),
+            ):
                 yield ProposedMission(
                     cp,
                     [

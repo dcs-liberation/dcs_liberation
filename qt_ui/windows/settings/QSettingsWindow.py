@@ -26,7 +26,7 @@ from game.game import Game
 from game.infos.information import Information
 from game.settings import Settings
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
-from qt_ui.widgets.spinsliders import (TenthsSpinSlider, TimeInputs)
+from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
@@ -471,7 +471,9 @@ class QSettingsWindow(QDialog):
             "spawned immediately. AI wingmen may begin startup immediately."
         )
 
-        self.mission_length = TimeInputs("Mission length", self.game.settings.mission_length)
+        self.mission_length = TimeInputs(
+            "Mission length", self.game.settings.desired_player_mission_duration
+        )
         self.mission_length.spinner.valueChanged.connect(self.applySettings)
 
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
@@ -699,7 +701,7 @@ class QSettingsWindow(QDialog):
             self.generate_dark_kneeboard.isChecked()
         )
 
-        self.game.settings.mission_length = self.mission_length.value
+        self.game.settings.desired_player_mission_duration = self.mission_length.value
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()

@@ -48,7 +48,7 @@ class TimeInputs(QtWidgets.QGridLayout):
     @property
     def value(self) -> int:
         return self.spinner.value()
-      
+
 
 class TimeSpinner(QtWidgets.QSpinBox):
     def __init__(

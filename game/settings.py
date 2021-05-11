@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Dict, Optional
 
 from dcs.forcedoptions import ForcedOptions
@@ -26,7 +27,7 @@ class Settings:
     default_start_type: str = "Cold"
 
     # Mission specific
-    mission_length: int = 90
+    desired_player_mission_duration: timedelta = 90
 
     # Campaign management
     automate_runway_repair: bool = False
