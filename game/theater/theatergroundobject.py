@@ -217,6 +217,10 @@ class TheaterGroundObject(MissionTarget):
             return meters(0)
         return self._max_range_of_type(group, "threat_range")
 
+    @property
+    def is_factory(self) -> bool:
+        return self.category == "factory"
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(

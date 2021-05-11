@@ -21,17 +21,16 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from game.point_with_heading import PointWithHeading
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
-from game.point_with_heading import PointWithHeading
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
-    FactoryGroundObject,
     GenericCarrierGroundObject,
     SamGroundObject,
     TheaterGroundObject,
@@ -341,7 +340,7 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def has_factory(self) -> bool:
         for tgo in self.connected_objectives:
-            if isinstance(tgo, FactoryGroundObject) and not tgo.is_dead:
+            if tgo.is_factory and not tgo.is_dead:
                 return True
         return False
 
