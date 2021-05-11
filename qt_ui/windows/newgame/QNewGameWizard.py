@@ -7,6 +7,7 @@ from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
 from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from datetime import timedelta
 
 from game import db
 from game.settings import Settings
@@ -34,7 +35,7 @@ jinja_env = Environment(
 )
 
 DEFAULT_BUDGET = 2000
-DEFAULT_MISSION_LENGTH = 90
+DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=90)
 
 
 class NewGameWizard(QtWidgets.QWizard):
@@ -85,7 +86,9 @@ class NewGameWizard(QtWidgets.QWizard):
             automate_front_line_reinforcements=self.field(
                 "automate_front_line_purchases"
             ),
-            desired_player_mission_duration=self.field("mission_length"),
+            desired_player_mission_duration=timedelta(
+                minutes=self.field("desired_player_mission_duration")
+            ),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
             enable_new_ground_unit_recruitment=self.field(
@@ -546,8 +549,12 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
-        mission_length = TimeInputs("Expected mission length", DEFAULT_MISSION_LENGTH)
-        self.registerField("mission_length", mission_length.spinner)
+        desired_player_mission_duration = TimeInputs(
+            "Desired mission duration", DEFAULT_MISSION_LENGTH
+        )
+        self.registerField(
+            "desired_player_mission_duration", desired_player_mission_duration.spinner
+        )
 
         generatorLayout = QtWidgets.QGridLayout()
         generatorLayout.addWidget(QtWidgets.QLabel("No Aircraft Carriers"), 1, 0)
@@ -560,7 +567,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(mission_length, 6, 0)
+        generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         mlayout = QVBoxLayout()

@@ -471,10 +471,12 @@ class QSettingsWindow(QDialog):
             "spawned immediately. AI wingmen may begin startup immediately."
         )
 
-        self.mission_length = TimeInputs(
-            "Mission length", self.game.settings.desired_player_mission_duration
+        self.desired_player_mission_duration = TimeInputs(
+            "Desired mission duration", self.game.settings.desired_player_mission_duration
         )
-        self.mission_length.spinner.valueChanged.connect(self.applySettings)
+        self.desired_player_mission_duration.spinner.valueChanged.connect(
+            self.applySettings
+        )
 
         self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
         self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
@@ -488,7 +490,9 @@ class QSettingsWindow(QDialog):
         )
         self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
         self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
-        self.gameplayLayout.addLayout(self.mission_length, 5, 0, Qt.AlignRight)
+        self.gameplayLayout.addLayout(
+            self.desired_player_mission_duration, 5, 0, Qt.AlignRight
+        )
 
         spawn_players_immediately_tooltip = (
             "Always spawns player aircraft immediately, even if their start time is "
@@ -701,7 +705,9 @@ class QSettingsWindow(QDialog):
             self.generate_dark_kneeboard.isChecked()
         )
 
-        self.game.settings.desired_player_mission_duration = self.mission_length.value
+        self.game.settings.desired_player_mission_duration = (
+            self.desired_player_mission_duration.value
+        )
 
         self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
         self.game.settings.perf_smoke_gen = self.smoke.isChecked()
