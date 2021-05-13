@@ -129,6 +129,17 @@ class TheaterGroundObject(MissionTarget):
         return list(itertools.chain.from_iterable([g.units for g in self.groups]))
 
     @property
+    def dead_units(self) -> List[Unit]:
+        """
+        :return: all the dead units at this location
+        """
+        return list(
+            itertools.chain.from_iterable(
+                [getattr(g, "units_losts", []) for g in self.groups]
+            )
+        )
+
+    @property
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}"

@@ -4,8 +4,10 @@ from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
+from dcs.vehicles import vehicle_map
+from dcs.unit import Unit
 
-from game import Game
+from game import Game, db
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
@@ -55,10 +57,42 @@ class ControlPointJs(QObject):
 
 
 class GroundObjectJs(QObject):
-    def __init__(self, tgo: TheaterGroundObject, theater: ConflictTheater) -> None:
+    def __init__(
+        self, tgo: TheaterGroundObject, theater: ConflictTheater, country: str
+    ) -> None:
         super().__init__()
         self.tgo = tgo
         self.theater = theater
+        self.country = country
+
+    @Property(str)
+    def name(self) -> str:
+        return self.tgo.name
+
+    def make_unit_name(self, unit: Unit, dead: bool) -> str:
+        dead_label = " [DEAD]" if dead else ""
+        unit_display_name = unit.type
+        unit_type = vehicle_map.get(unit.type)
+        if unit_type is not None:
+            unit_display_name = db.unit_get_expanded_info(
+                self.country, unit_type, "name"
+            )
+        return f"Unit #{unit.id} - {unit_display_name}{dead_label}"
+
+    @Property(list)
+    def units(self) -> List[str]:
+        units = []
+        if self.tgo.groups:
+            for unit in self.tgo.units:
+                units.append(self.make_unit_name(unit, dead=False))
+            for unit in self.tgo.dead_units:
+                units.append(self.make_unit_name(unit, dead=True))
+        else:
+            buildings = self.theater.find_ground_objects_by_obj_name(self.tgo.obj_name)
+            for building in buildings:
+                dead = " [DEAD]" if building.is_dead else ""
+                units.append(f"{building.dcs_identifier}{dead}")
+        return units
 
     @Property(bool)
     def blue(self) -> bool:
@@ -315,12 +349,19 @@ class MapModel(QObject):
         seen = set()
         self._ground_objects = []
         for cp in self.game.theater.controlpoints:
+            if cp.captured:
+                country = self.game.player_country
+            else:
+                country = self.game.enemy_country
+
             for tgo in cp.ground_objects:
                 if tgo.name in seen:
                     continue
                 seen.add(tgo.name)
 
-                self._ground_objects.append(GroundObjectJs(tgo, self.game.theater))
+                self._ground_objects.append(
+                    GroundObjectJs(tgo, self.game.theater, country)
+                )
         self.groundObjectsChanged.emit()
 
     @Property(list, notify=groundObjectsChanged)

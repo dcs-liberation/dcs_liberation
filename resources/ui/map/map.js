@@ -166,9 +166,9 @@ function drawGroundObjects() {
   blueSamThreatLayer.clearLayers();
   redSamThreatLayer.clearLayers();
   game.groundObjects.forEach((tgo) => {
-    L.marker(tgo.position, { icon: iconFor(tgo.blue) }).addTo(
-      groundObjectsLayer
-    );
+    L.marker(tgo.position, { icon: iconFor(tgo.blue) })
+      .bindTooltip(`${tgo.name}<br />${tgo.units.join("<br />")}`)
+      .addTo(groundObjectsLayer);
     drawSamThreatsAt(tgo);
   });
 }
