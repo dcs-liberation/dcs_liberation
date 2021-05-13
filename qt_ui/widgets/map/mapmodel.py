@@ -18,6 +18,7 @@ from game.utils import meters
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from gen.flights.flightplan import FlightPlan
+from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
@@ -37,6 +38,7 @@ class ControlPointJs(QObject):
         self.control_point = control_point
         self.game_model = game_model
         self.theater = theater
+        self.dialog: Optional[QBaseMenu2] = None
 
     @Property(str)
     def name(self) -> str:
@@ -52,9 +54,14 @@ class ControlPointJs(QObject):
         return [ll.latitude, ll.longitude]
 
     @Slot()
-    def open_base_menu(self) -> None:
-        self.base_details_dialog = QBaseMenu2(None, self.control_point, self.game_model)
-        self.base_details_dialog.show()
+    def showInfoDialog(self) -> None:
+        if self.dialog is None:
+            self.dialog = QBaseMenu2(None, self.control_point, self.game_model)
+        self.dialog.show()
+
+    @Slot()
+    def showPackageDialog(self) -> None:
+        Dialog.open_new_package_dialog(self.control_point)
 
 
 class GroundObjectJs(QObject):
@@ -73,7 +80,7 @@ class GroundObjectJs(QObject):
         self.dialog: Optional[QGroundObjectMenu] = None
 
     @Slot()
-    def open_dialog(self) -> None:
+    def showInfoDialog(self) -> None:
         if self.dialog is None:
             self.dialog = QGroundObjectMenu(
                 None,
@@ -83,6 +90,10 @@ class GroundObjectJs(QObject):
                 self.game,
             )
         self.dialog.show()
+
+    @Slot()
+    def showPackageDialog(self) -> None:
+        Dialog.open_new_package_dialog(self.tgo)
 
     @Property(str)
     def name(self) -> str:

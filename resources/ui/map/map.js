@@ -128,7 +128,10 @@ function drawControlPoints() {
         permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
       })
       .on("click", function () {
-        cp.open_base_menu();
+        cp.showInfoDialog();
+      })
+      .on("contextmenu", function () {
+        cp.showPackageDialog();
       })
       .addTo(controlPointsLayer);
   });
@@ -169,7 +172,10 @@ function drawGroundObjects() {
     L.marker(tgo.position, { icon: iconFor(tgo.blue) })
       .bindTooltip(`${tgo.name}<br />${tgo.units.join("<br />")}`)
       .on("click", function () {
-        tgo.open_dialog();
+        tgo.showInfoDialog();
+      })
+      .on("contextmenu", function () {
+        tgo.showPackageDialog();
       })
       .addTo(groundObjectsLayer);
     drawSamThreatsAt(tgo);
