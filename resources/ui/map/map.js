@@ -148,7 +148,7 @@ function drawSamThreatsAt(tgo) {
       radius: range,
       color: detectionColor,
       fill: false,
-      weight: 2,
+      weight: 1,
     }).addTo(detectionLayer);
   });
 
@@ -157,7 +157,7 @@ function drawSamThreatsAt(tgo) {
       radius: range,
       color: threatColor,
       fill: false,
-      weight: 2,
+      weight: 1,
     }).addTo(threatLayer);
   });
 }
@@ -185,7 +185,18 @@ function drawGroundObjects() {
 function drawSupplyRoutes() {
   supplyRoutesLayer.clearLayers();
   game.supplyRoutes.forEach((route) => {
-    L.polyline(route.points).addTo(supplyRoutesLayer);
+    var color;
+    if (route.frontActive) {
+      color = Colors.Red;
+    } else if (route.blue) {
+      color = "#2d3e50";
+    } else {
+      color = "#8c1414";
+    }
+    L.polyline(route.points, {
+      color: color,
+      weight: route.isSea ? 4 : 6,
+    }).addTo(supplyRoutesLayer);
   });
 }
 
@@ -217,11 +228,12 @@ function drawFlightPlan(flight) {
         .addTo(selectedFlightPlansLayer);
     }
   });
+
   if (flight.selected) {
     L.polyline(points, { color: highlight }).addTo(selectedFlightPlansLayer);
     L.polyline(points, { color: highlight }).addTo(layer);
   } else {
-    L.polyline(points, { color: color }).addTo(layer);
+    L.polyline(points, { color: color, weight: 1 }).addTo(layer);
   }
 }
 

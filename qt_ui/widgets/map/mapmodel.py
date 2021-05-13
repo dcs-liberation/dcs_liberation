@@ -158,13 +158,36 @@ class GroundObjectJs(QObject):
 
 
 class SupplyRouteJs(QObject):
-    def __init__(self, points: List[LeafletLatLon]) -> None:
+    def __init__(
+        self,
+        a: ControlPoint,
+        b: ControlPoint,
+        points: List[LeafletLatLon],
+        sea_route: bool,
+    ) -> None:
         super().__init__()
+        self.control_point_a = a
+        self.control_point_b = b
         self._points = points
+        self.sea_route = sea_route
 
     @Property(list)
     def points(self) -> List[LeafletLatLon]:
         return self._points
+
+    @Property(bool)
+    def frontActive(self) -> bool:
+        if self.sea_route:
+            return False
+        return self.control_point_a.front_is_active(self.control_point_b)
+
+    @Property(bool)
+    def isSea(self) -> bool:
+        return self.sea_route
+
+    @Property(bool)
+    def blue(self) -> bool:
+        return self.control_point_a.captured
 
 
 class WaypointJs(QObject):
@@ -400,10 +423,13 @@ class MapModel(QObject):
                     continue
                 self._supply_routes.append(
                     SupplyRouteJs(
+                        control_point,
+                        destination,
                         [
                             self.leaflet_coord_for(p, self.game.theater)
                             for p in convoy_route
-                        ]
+                        ],
+                        sea_route=False,
                     )
                 )
             for destination, shipping_lane in control_point.shipping_lanes.items():
@@ -412,10 +438,13 @@ class MapModel(QObject):
                 if control_point.is_friendly(destination.captured):
                     self._supply_routes.append(
                         SupplyRouteJs(
+                            control_point,
+                            destination,
                             [
                                 self.leaflet_coord_for(p, self.game.theater)
                                 for p in shipping_lane
-                            ]
+                            ],
+                            sea_route=True,
                         )
                     )
         self.supplyRoutesChanged.emit()
