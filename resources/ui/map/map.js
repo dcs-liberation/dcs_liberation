@@ -33,7 +33,7 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 var controlPointsLayer = L.layerGroup().addTo(map);
-var groundObjectsLayer = L.layerGroup().addTo(map);
+var groundObjectsLayer = L.markerClusterGroup().addTo(map);
 var supplyRoutesLayer = L.layerGroup().addTo(map);
 var redSamThreatLayer = L.layerGroup().addTo(map);
 var blueFlightPlansLayer = L.layerGroup().addTo(map);
