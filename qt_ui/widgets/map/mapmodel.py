@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
@@ -11,8 +12,10 @@ from game.theater import (
     ControlPoint,
     TheaterGroundObject,
 )
+from game.utils import meters
 from gen.ato import AirTaskingOrder
-from gen.flights.flight import Flight, FlightWaypoint
+from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from gen.flights.flightplan import FlightPlan
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
@@ -102,15 +105,54 @@ class SupplyRouteJs(QObject):
 
 
 class WaypointJs(QObject):
-    def __init__(self, waypoint: FlightWaypoint, theater: ConflictTheater) -> None:
+    def __init__(
+        self,
+        waypoint: FlightWaypoint,
+        number: int,
+        flight_plan: FlightPlan,
+        theater: ConflictTheater,
+    ) -> None:
         super().__init__()
         self.waypoint = waypoint
+        self._number = number
+        self.flight_plan = flight_plan
         self.theater = theater
+
+    @Property(int)
+    def number(self) -> int:
+        return self._number
 
     @Property(list)
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.waypoint.position)
         return [ll.latitude, ll.longitude]
+
+    @Property(int)
+    def altitudeFt(self) -> int:
+        return int(self.waypoint.alt.feet)
+
+    @Property(str)
+    def altitudeReference(self) -> str:
+        return "AGL" if self.waypoint.alt_type == "RADIO" else "MSL"
+
+    @Property(str)
+    def name(self) -> str:
+        return self.waypoint.name
+
+    @Property(str)
+    def timing(self) -> str:
+        prefix = "TOT"
+        time = self.flight_plan.tot_for_waypoint(self.waypoint)
+        if time is None:
+            prefix = "Depart"
+            time = self.flight_plan.depart_time_for_waypoint(self.waypoint)
+        if time is None:
+            return ""
+        return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
+
+    @Property(bool)
+    def isDivert(self) -> bool:
+        return self.waypoint.waypoint_type is FlightWaypointType.DIVERT
 
 
 class FlightJs(QObject):
@@ -127,7 +169,17 @@ class FlightJs(QObject):
         self.reset_waypoints()
 
     def reset_waypoints(self) -> None:
-        self._waypoints = [WaypointJs(p, self.theater) for p in self.flight.points]
+        departure = FlightWaypoint(
+            FlightWaypointType.TAKEOFF,
+            self.flight.departure.position.x,
+            self.flight.departure.position.y,
+            meters(0),
+        )
+        departure.alt_type = "RADIO"
+        self._waypoints = [
+            WaypointJs(p, i, self.flight.flight_plan, self.theater)
+            for i, p in enumerate([departure] + self.flight.points)
+        ]
         self.flightPlanChanged.emit()
 
     @Property(list, notify=flightPlanChanged)

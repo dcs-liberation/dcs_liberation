@@ -8,7 +8,6 @@
  * - Time of day/weather themeing
  * - Exclusion zones
  * - Commit ranges
- * - Waypoint info
  * - Supply route status
  * - Front line
  * - Debug flight plan drawing
@@ -61,7 +60,7 @@ L.control
         "Enemy SAM detection range": redSamDetectionLayer,
       },
       "Flight Plans": {
-        "Hide": L.layerGroup(),
+        Hide: L.layerGroup(),
         "Show selected blue": selectedFlightPlansLayer,
         "Show all blue": blueFlightPlansLayer,
         "Show all red": redFlightPlansLayer,
@@ -178,19 +177,32 @@ function drawFlightPlan(flight) {
   var layer = flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
   var color = flight.blue ? Colors.Blue : Colors.Red;
   var highlight = "#ffff00";
-  var points = [];
-  flight.flightPlan.forEach((waypoint) => {
-    points.push(waypoint.position);
-    L.circle(waypoint.position, { radius: 50, color: color }).addTo(layer);
+  // We don't need a marker for the departure waypoint (and it's likely
+  // coincident with the landing waypoint, so hard to see). We do want to draw
+  // the path from it though.
+  var points = [flight.flightPlan[0].position];
+  flight.flightPlan.slice(1).forEach((waypoint) => {
+    if (!waypoint.isDivert) {
+      points.push(waypoint.position);
+    }
+
     if (flight.selected) {
-      L.circle(waypoint.position, { radius: 50, color: highlight }).addTo(
-        selectedFlightPlansLayer
-      );
+      L.marker(waypoint.position)
+        .bindTooltip(
+          `${waypoint.number} ${waypoint.name}<br />` +
+            `${waypoint.altitudeFt} ft ${waypoint.altitudeReference}<br />` +
+            `${waypoint.timing}`,
+          { permanent: true }
+        )
+        .addTo(layer)
+        .addTo(selectedFlightPlansLayer);
     }
   });
-  L.polyline(points, { color: color }).addTo(layer);
   if (flight.selected) {
     L.polyline(points, { color: highlight }).addTo(selectedFlightPlansLayer);
+    L.polyline(points, { color: highlight }).addTo(layer);
+  } else {
+    L.polyline(points, { color: color }).addTo(layer);
   }
 }
 
@@ -198,9 +210,22 @@ function drawFlightPlans() {
   blueFlightPlansLayer.clearLayers();
   redFlightPlansLayer.clearLayers();
   selectedFlightPlansLayer.clearLayers();
+  var selected = null;
   game.flights.forEach((flight) => {
-    drawFlightPlan(flight);
+    // Draw the selected waypoint last so it's on top. bringToFront only brings
+    // it to the front of the *extant* elements, so any flights drawn later will
+    // be drawn on top. We could fight with manual Z-indexes but leaflet does a
+    // lot of that automatically so it'd be error prone.
+    if (flight.selected) {
+      selected = flight;
+    } else {
+      drawFlightPlan(flight);
+    }
   });
+
+  if (selected != null) {
+    drawFlightPlan(selected);
+  }
 }
 
 function drawInitialMap() {
