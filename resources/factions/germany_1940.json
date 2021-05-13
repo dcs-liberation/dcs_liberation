@@ -1,0 +1,55 @@
+{
+  "country": "Third Reich",
+  "name": "Germany 1940",
+  "authors": "Khopa",
+  "description": "<p>Germany 1940, Early german faction for Battle of France, or Battle of England.</p>",
+  "aircrafts": [
+    "FW_190A8",
+    "FW_190D9",
+    "Bf_109K_4",
+    "Ju_88A4"
+  ],
+  "frontline_units": [
+    "MT_PzIV_H",
+    "APC_Sd_Kfz_251_Halftrack",
+    "IFV_Sd_Kfz_234_2_Puma",
+    "AAA_8_8cm_Flak_18"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Truck_Opel_Blitz",
+    "LUV_Kubelwagen_82",
+    "Carrier_Sd_Kfz_7_Tractor",
+    "LUV_Kettenrad"
+  ],
+  "infantry_units": [
+    "Infantry_Mauser_98"
+  ],
+  "air_defenses": [
+    "FlakGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "UBoatGroupGenerator",
+    "SchnellbootGroupGenerator"
+  ],
+  "navy_group_count": 2,
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2germany"
+}
