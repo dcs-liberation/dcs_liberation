@@ -9,7 +9,7 @@
  * - Exclusion zones
  * - Commit ranges
  * - Supply route status
- * - Front line
+ * - "Actual" front line
  * - Debug flight plan drawing
  * - Icon variety
  */
@@ -35,6 +35,7 @@ defaultBaseMap.addTo(map);
 var controlPointsLayer = L.layerGroup().addTo(map);
 var groundObjectsLayer = L.markerClusterGroup().addTo(map);
 var supplyRoutesLayer = L.layerGroup().addTo(map);
+var frontLinesLayer = L.layerGroup().addTo(map);
 var redSamThreatLayer = L.layerGroup().addTo(map);
 var blueFlightPlansLayer = L.layerGroup().addTo(map);
 
@@ -53,6 +54,7 @@ L.control
         "Control points": controlPointsLayer,
         "Ground objects": groundObjectsLayer,
         "Supply routes": supplyRoutesLayer,
+        "Front lines": frontLinesLayer,
       },
       "Air Defenses": {
         "Ally SAM threat range": blueSamThreatLayer,
@@ -102,6 +104,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.controlPointsChanged.connect(drawControlPoints);
   game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
+  game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawFlightPlans);
 });
 
@@ -200,6 +203,17 @@ function drawSupplyRoutes() {
   });
 }
 
+function drawFrontLines() {
+  frontLinesLayer.clearLayers();
+  game.frontLines.forEach((front) => {
+    L.polyline(front.extents, { weight: 8, color: "#fe7d0a" })
+      .on("contextmenu", function () {
+        front.showPackageDialog();
+      })
+      .addTo(frontLinesLayer);
+  });
+}
+
 const SHOW_WAYPOINT_INFO_AT_ZOOM = 9;
 
 function drawFlightPlan(flight) {
@@ -264,6 +278,7 @@ function drawInitialMap() {
   drawControlPoints();
   drawGroundObjects();
   drawSupplyRoutes();
+  drawFrontLines();
   drawFlightPlans();
 }
 

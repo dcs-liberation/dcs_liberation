@@ -4,8 +4,8 @@ from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
-from dcs.vehicles import vehicle_map
 from dcs.unit import Unit
+from dcs.vehicles import vehicle_map
 
 from game import Game, db
 from game.profiling import logged_duration
@@ -13,8 +13,9 @@ from game.theater import (
     ConflictTheater,
     ControlPoint,
     TheaterGroundObject,
+    FrontLine,
 )
-from game.utils import meters
+from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from gen.flights.flightplan import FlightPlan
@@ -190,6 +191,31 @@ class SupplyRouteJs(QObject):
         return self.control_point_a.captured
 
 
+class FrontLineJs(QObject):
+    def __init__(self, front_line: FrontLine, theater: ConflictTheater) -> None:
+        super().__init__()
+        self.front_line = front_line
+        self.theater = theater
+
+    @Property(list)
+    def extents(self) -> List[LeafletLatLon]:
+        a = self.theater.point_to_ll(
+            self.front_line.position.point_from_heading(
+                self.front_line.attack_heading + 90, nautical_miles(2).meters
+            )
+        )
+        b = self.theater.point_to_ll(
+            self.front_line.position.point_from_heading(
+                self.front_line.attack_heading + 270, nautical_miles(2).meters
+            )
+        )
+        return [[a.latitude, a.longitude], [b.latitude, b.longitude]]
+
+    @Slot()
+    def showPackageDialog(self) -> None:
+        Dialog.open_new_package_dialog(self.front_line)
+
+
 class WaypointJs(QObject):
     def __init__(
         self,
@@ -289,6 +315,7 @@ class MapModel(QObject):
     groundObjectsChanged = Signal()
     supplyRoutesChanged = Signal()
     flightsChanged = Signal()
+    frontLinesChanged = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -298,6 +325,7 @@ class MapModel(QObject):
         self._ground_objects = []
         self._supply_routes = []
         self._flights = []
+        self._front_lines = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -308,6 +336,14 @@ class MapModel(QObject):
             self.set_flight_selection
         )
         self.reset()
+
+    def clear(self) -> None:
+        self._control_points = []
+        self._supply_routes = []
+        self._ground_objects = []
+        self._flights = []
+        self._front_lines = []
+        self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
         # Optional[int] isn't a valid type for a Qt signal. None will be converted to
@@ -349,6 +385,7 @@ class MapModel(QObject):
             self.reset_ground_objects()
             self.reset_routes()
             self.reset_atos()
+            self.reset_front_lines()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -453,12 +490,15 @@ class MapModel(QObject):
     def supplyRoutes(self) -> List[SupplyRouteJs]:
         return self._supply_routes
 
-    def clear(self) -> None:
-        self._control_points = []
-        self._supply_routes = []
-        self._ground_objects = []
-        self._flights = []
-        self.cleared.emit()
+    def reset_front_lines(self) -> None:
+        self._front_lines = [
+            FrontLineJs(f, self.game.theater) for f in self.game.theater.conflicts()
+        ]
+        self.frontLinesChanged.emit()
+
+    @Property(list, notify=frontLinesChanged)
+    def frontLines(self) -> List[FrontLineJs]:
+        return self._front_lines
 
     @property
     def game(self) -> Game:
