@@ -117,10 +117,16 @@ function iconFor(player) {
   }
 }
 
+const SHOW_BASE_NAME_AT_ZOOM = 8;
+
 function drawControlPoints() {
   controlPointsLayer.clearLayers();
+  var zoom = map.getZoom();
   game.controlPoints.forEach((cp) => {
     L.marker(cp.position, { icon: iconFor(cp.blue) })
+      .bindTooltip(`<h3 style="margin: 0;">${cp.name}</h3>`, {
+        permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
+      })
       .on("click", function () {
         cp.open_base_menu();
       })
@@ -174,6 +180,8 @@ function drawSupplyRoutes() {
   });
 }
 
+const SHOW_WAYPOINT_INFO_AT_ZOOM = 9;
+
 function drawFlightPlan(flight) {
   var layer = flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
   var color = flight.blue ? Colors.Blue : Colors.Red;
@@ -182,6 +190,7 @@ function drawFlightPlan(flight) {
   // coincident with the landing waypoint, so hard to see). We do want to draw
   // the path from it though.
   var points = [flight.flightPlan[0].position];
+  var zoom = map.getZoom();
   flight.flightPlan.slice(1).forEach((waypoint) => {
     if (!waypoint.isDivert) {
       points.push(waypoint.position);
@@ -193,7 +202,7 @@ function drawFlightPlan(flight) {
           `${waypoint.number} ${waypoint.name}<br />` +
             `${waypoint.altitudeFt} ft ${waypoint.altitudeReference}<br />` +
             `${waypoint.timing}`,
-          { permanent: true }
+          { permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM }
         )
         .addTo(layer)
         .addTo(selectedFlightPlansLayer);
@@ -244,3 +253,34 @@ function clearAllLayers() {
     }
   });
 }
+
+function setTooltipZoomThreshold(layerGroup, showAt) {
+  var showing = map.getZoom() >= showAt;
+  map.on("zoomend", function () {
+    var zoom = map.getZoom();
+    if (zoom < showAt && showing) {
+      showing = false;
+      layerGroup.eachLayer(function (layer) {
+        if (layer.getTooltip()) {
+          var tooltip = layer.getTooltip();
+          layer.unbindTooltip().bindTooltip(tooltip, {
+            permanent: false,
+          });
+        }
+      });
+    } else if (zoom >= showAt && !showing) {
+      showing = true;
+      layerGroup.eachLayer(function (layer) {
+        if (layer.getTooltip()) {
+          var tooltip = layer.getTooltip();
+          layer.unbindTooltip().bindTooltip(tooltip, {
+            permanent: true,
+          });
+        }
+      });
+    }
+  });
+}
+
+setTooltipZoomThreshold(controlPointsLayer, SHOW_BASE_NAME_AT_ZOOM);
+setTooltipZoomThreshold(selectedFlightPlansLayer, SHOW_WAYPOINT_INFO_AT_ZOOM);
