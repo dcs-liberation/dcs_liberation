@@ -21,6 +21,7 @@ from gen.flights.flightplan import FlightPlan
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
+from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 
 LeafletLatLon = List[float]
 
@@ -57,13 +58,31 @@ class ControlPointJs(QObject):
 
 
 class GroundObjectJs(QObject):
-    def __init__(
-        self, tgo: TheaterGroundObject, theater: ConflictTheater, country: str
-    ) -> None:
+    def __init__(self, tgo: TheaterGroundObject, game: Game) -> None:
         super().__init__()
         self.tgo = tgo
-        self.theater = theater
-        self.country = country
+        self.game = game
+        self.theater = game.theater
+        self.buildings = self.theater.find_ground_objects_by_obj_name(self.tgo.obj_name)
+
+        if self.tgo.is_friendly(to_player=True):
+            self.country = game.player_country
+        else:
+            self.country = game.enemy_country
+
+        self.dialog: Optional[QGroundObjectMenu] = None
+
+    @Slot()
+    def open_dialog(self) -> None:
+        if self.dialog is None:
+            self.dialog = QGroundObjectMenu(
+                None,
+                self.tgo,
+                self.buildings,
+                self.tgo.control_point,
+                self.game,
+            )
+        self.dialog.show()
 
     @Property(str)
     def name(self) -> str:
@@ -82,16 +101,15 @@ class GroundObjectJs(QObject):
     @Property(list)
     def units(self) -> List[str]:
         units = []
-        if self.tgo.groups:
+        if self.buildings:
+            for building in self.buildings:
+                dead = " [DEAD]" if building.is_dead else ""
+                units.append(f"{building.dcs_identifier}{dead}")
+        else:
             for unit in self.tgo.units:
                 units.append(self.make_unit_name(unit, dead=False))
             for unit in self.tgo.dead_units:
                 units.append(self.make_unit_name(unit, dead=True))
-        else:
-            buildings = self.theater.find_ground_objects_by_obj_name(self.tgo.obj_name)
-            for building in buildings:
-                dead = " [DEAD]" if building.is_dead else ""
-                units.append(f"{building.dcs_identifier}{dead}")
         return units
 
     @Property(bool)
@@ -349,19 +367,12 @@ class MapModel(QObject):
         seen = set()
         self._ground_objects = []
         for cp in self.game.theater.controlpoints:
-            if cp.captured:
-                country = self.game.player_country
-            else:
-                country = self.game.enemy_country
-
             for tgo in cp.ground_objects:
                 if tgo.name in seen:
                     continue
                 seen.add(tgo.name)
 
-                self._ground_objects.append(
-                    GroundObjectJs(tgo, self.game.theater, country)
-                )
+                self._ground_objects.append(GroundObjectJs(tgo, self.game))
         self.groundObjectsChanged.emit()
 
     @Property(list, notify=groundObjectsChanged)

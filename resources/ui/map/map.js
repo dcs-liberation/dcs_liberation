@@ -168,6 +168,9 @@ function drawGroundObjects() {
   game.groundObjects.forEach((tgo) => {
     L.marker(tgo.position, { icon: iconFor(tgo.blue) })
       .bindTooltip(`${tgo.name}<br />${tgo.units.join("<br />")}`)
+      .on("click", function () {
+        tgo.open_dialog();
+      })
       .addTo(groundObjectsLayer);
     drawSamThreatsAt(tgo);
   });
