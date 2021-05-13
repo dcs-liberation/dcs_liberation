@@ -20,6 +20,7 @@ const Colors = Object.freeze({
 });
 
 var map = L.map("map").setView([0, 0], 3);
+L.control.scale({ maxWidth: 200 }).addTo(map);
 
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
 var baseLayers = {
