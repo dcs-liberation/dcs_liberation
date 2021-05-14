@@ -301,7 +301,9 @@ class SceneryGroundObject(BuildingGroundObject):
             raise IndexError(
                 "Non-standard TriggerZone for Scenery definition.  Standard TriggerZone definition has Map Object Id in the third property value."
             )
-        return self.zone.properties[3].get("value").lower()
+
+        # In the default TriggerZone using "assign as..." in the DCS Mission Editor, property three has the scenery's object ID as it's value.
+        return self.zone.properties[3].get("value")
 
 
 class FactoryGroundObject(BuildingGroundObject):
