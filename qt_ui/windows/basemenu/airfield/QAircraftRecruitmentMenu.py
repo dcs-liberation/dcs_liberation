@@ -52,23 +52,19 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         row = 0
 
         unit_types: Set[Type[FlyingType]] = set()
-        for task in tasks:
-            units = db.find_unittype(task, self.game_model.game.player_name)
-            if not units:
+        for unit_type in self.game_model.game.player_faction.aircrafts:
+            if not issubclass(unit_type, FlyingType):
+                raise RuntimeError(f"Non-flying aircraft found in faction: {unit_type}")
+            if self.cp.is_carrier and unit_type not in db.CARRIER_CAPABLE:
                 continue
-            for unit in units:
-                if not issubclass(unit, FlyingType):
-                    continue
-                if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
-                    continue
-                if self.cp.is_lha and unit not in db.LHA_CAPABLE:
-                    continue
-                if (
-                    self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
-                    and unit not in helicopter_map.values()
-                ):
-                    continue
-                unit_types.add(unit)
+            if self.cp.is_lha and unit_type not in db.LHA_CAPABLE:
+                continue
+            if (
+                self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
+                and unit_type not in helicopter_map.values()
+            ):
+                continue
+            unit_types.add(unit_type)
 
         sorted_units = sorted(
             unit_types,
