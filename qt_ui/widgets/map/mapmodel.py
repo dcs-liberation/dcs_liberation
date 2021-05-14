@@ -27,8 +27,27 @@ from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 
 LeafletLatLon = List[float]
 
+# **EVERY PROPERTY NEEDS A NOTIFY SIGNAL**
+#
+# https://bugreports.qt.io/browse/PYSIDE-1426
+#
+# PySide2 5.15.2 released 6 days before the fix for this was merged, but presumably we
+# can clean up after 5.15.3 (or a future version) is released.
+#
+# Until then, all properties must use a notify signal. For some reason the error doesn't
+# show up when running from source, and member properties also are not sufficient.
+# Failing to do this will cause every sync of the property to emit an expensive log
+# message. This can prevent the UI from being responsive.
+#
+# A local signal (i.e. `@Property(t, notify=Signal())`) is not sufficient. The class
+# needs a named signal for every property, even if it is constant.
+
 
 class ControlPointJs(QObject):
+    nameChanged = Signal()
+    blueChanged = Signal()
+    positionChanged = Signal()
+
     def __init__(
         self,
         control_point: ControlPoint,
@@ -41,15 +60,15 @@ class ControlPointJs(QObject):
         self.theater = theater
         self.dialog: Optional[QBaseMenu2] = None
 
-    @Property(str)
+    @Property(str, notify=nameChanged)
     def name(self) -> str:
         return self.control_point.name
 
-    @Property(bool)
+    @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
         return self.control_point.captured
 
-    @Property(list)
+    @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.control_point.position)
         return [ll.latitude, ll.longitude]
@@ -66,6 +85,13 @@ class ControlPointJs(QObject):
 
 
 class GroundObjectJs(QObject):
+    nameChanged = Signal()
+    unitsChanged = Signal()
+    blueChanged = Signal()
+    positionChanged = Signal()
+    samThreatRangesChanged = Signal()
+    samDetectionRangesChanged = Signal()
+
     def __init__(self, tgo: TheaterGroundObject, game: Game) -> None:
         super().__init__()
         self.tgo = tgo
@@ -96,7 +122,7 @@ class GroundObjectJs(QObject):
     def showPackageDialog(self) -> None:
         Dialog.open_new_package_dialog(self.tgo)
 
-    @Property(str)
+    @Property(str, notify=nameChanged)
     def name(self) -> str:
         return self.tgo.name
 
@@ -110,7 +136,7 @@ class GroundObjectJs(QObject):
             )
         return f"Unit #{unit.id} - {unit_display_name}{dead_label}"
 
-    @Property(list)
+    @Property(list, notify=unitsChanged)
     def units(self) -> List[str]:
         units = []
         if self.buildings:
@@ -124,16 +150,16 @@ class GroundObjectJs(QObject):
                 units.append(self.make_unit_name(unit, dead=True))
         return units
 
-    @Property(bool)
+    @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
         return self.tgo.control_point.captured
 
-    @Property(list)
+    @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.tgo.position)
         return [ll.latitude, ll.longitude]
 
-    @Property(list)
+    @Property(list, notify=samThreatRangesChanged)
     def samThreatRanges(self) -> List[float]:
         if not self.tgo.might_have_aa:
             return []
@@ -145,7 +171,7 @@ class GroundObjectJs(QObject):
                 ranges.append(threat_range.meters)
         return ranges
 
-    @Property(list)
+    @Property(list, notify=samDetectionRangesChanged)
     def samDetectionRanges(self) -> List[float]:
         if not self.tgo.might_have_aa:
             return []
@@ -159,6 +185,11 @@ class GroundObjectJs(QObject):
 
 
 class SupplyRouteJs(QObject):
+    pointsChanged = Signal()
+    frontActiveChanged = Signal()
+    isSeaChanged = Signal()
+    blueChanged = Signal()
+
     def __init__(
         self,
         a: ControlPoint,
@@ -172,32 +203,34 @@ class SupplyRouteJs(QObject):
         self._points = points
         self.sea_route = sea_route
 
-    @Property(list)
+    @Property(list, notify=pointsChanged)
     def points(self) -> List[LeafletLatLon]:
         return self._points
 
-    @Property(bool)
+    @Property(bool, notify=frontActiveChanged)
     def frontActive(self) -> bool:
         if self.sea_route:
             return False
         return self.control_point_a.front_is_active(self.control_point_b)
 
-    @Property(bool)
+    @Property(bool, notify=isSeaChanged)
     def isSea(self) -> bool:
         return self.sea_route
 
-    @Property(bool)
+    @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
         return self.control_point_a.captured
 
 
 class FrontLineJs(QObject):
+    extentsChanged = Signal()
+
     def __init__(self, front_line: FrontLine, theater: ConflictTheater) -> None:
         super().__init__()
         self.front_line = front_line
         self.theater = theater
 
-    @Property(list)
+    @Property(list, notify=extentsChanged)
     def extents(self) -> List[LeafletLatLon]:
         a = self.theater.point_to_ll(
             self.front_line.position.point_from_heading(
@@ -217,6 +250,14 @@ class FrontLineJs(QObject):
 
 
 class WaypointJs(QObject):
+    numberChanged = Signal()
+    positionChanged = Signal()
+    altitudeFtChanged = Signal()
+    altitudeReferenceChanged = Signal()
+    nameChanged = Signal()
+    timingChanged = Signal()
+    isDivertChanged = Signal()
+
     def __init__(
         self,
         waypoint: FlightWaypoint,
@@ -230,28 +271,28 @@ class WaypointJs(QObject):
         self.flight_plan = flight_plan
         self.theater = theater
 
-    @Property(int)
+    @Property(int, notify=numberChanged)
     def number(self) -> int:
         return self._number
 
-    @Property(list)
+    @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.waypoint.position)
         return [ll.latitude, ll.longitude]
 
-    @Property(int)
+    @Property(int, notify=altitudeFtChanged)
     def altitudeFt(self) -> int:
         return int(self.waypoint.alt.feet)
 
-    @Property(str)
+    @Property(str, notify=altitudeReferenceChanged)
     def altitudeReference(self) -> str:
         return "AGL" if self.waypoint.alt_type == "RADIO" else "MSL"
 
-    @Property(str)
+    @Property(str, notify=nameChanged)
     def name(self) -> str:
         return self.waypoint.name
 
-    @Property(str)
+    @Property(str, notify=timingChanged)
     def timing(self) -> str:
         prefix = "TOT"
         time = self.flight_plan.tot_for_waypoint(self.waypoint)
@@ -262,13 +303,15 @@ class WaypointJs(QObject):
             return ""
         return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
 
-    @Property(bool)
+    @Property(bool, notify=isDivertChanged)
     def isDivert(self) -> bool:
         return self.waypoint.waypoint_type is FlightWaypointType.DIVERT
 
 
 class FlightJs(QObject):
     flightPlanChanged = Signal()
+    blueChanged = Signal()
+    selectedChanged = Signal()
 
     def __init__(
         self, flight: Flight, selected: bool, theater: ConflictTheater
@@ -298,11 +341,11 @@ class FlightJs(QObject):
     def flightPlan(self) -> List[WaypointJs]:
         return self._waypoints
 
-    @Property(bool)
+    @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
         return self.flight.departure.captured
 
-    @Property(bool)
+    @Property(bool, notify=selectedChanged)
     def selected(self) -> bool:
         return self._selected
 
