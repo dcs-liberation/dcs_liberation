@@ -266,11 +266,11 @@ class MizCampaignLoader:
 
     @property
     def scenery(self) -> Iterator[SceneryGroup]:
-        return SceneryGroup.make_scenery_groups(self.mission.triggers._zones, True)
+        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones, True)
 
     @property
     def required_scenery(self) -> Iterator[SceneryGroup]:
-        return SceneryGroup.make_scenery_groups(self.mission.triggers._zones, False)
+        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones, False)
 
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
