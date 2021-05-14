@@ -1,5 +1,7 @@
 import json
+import logging
 import os
+from pathlib import Path
 from shutil import copyfile
 
 import dcs
@@ -10,7 +12,10 @@ global __dcs_saved_game_directory
 global __dcs_installation_directory
 global __last_save_file
 
-PREFERENCES_FILE_PATH = "liberation_preferences.json"
+
+USER_PATH = Path(os.environ["LOCALAPPDATA"]) / "DCSLiberation"
+
+PREFERENCES_PATH = USER_PATH / "liberation_preferences.json"
 
 
 def init():
@@ -18,18 +23,16 @@ def init():
     global __dcs_installation_directory
     global __last_save_file
 
-    if os.path.isfile(PREFERENCES_FILE_PATH):
+    if PREFERENCES_PATH.exists():
         try:
-            with (open(PREFERENCES_FILE_PATH)) as prefs:
-                pref_data = json.loads(prefs.read())
-                __dcs_saved_game_directory = pref_data["saved_game_dir"]
-                __dcs_installation_directory = pref_data["dcs_install_dir"]
-                if "last_save_file" in pref_data:
-                    __last_save_file = pref_data["last_save_file"]
-                else:
-                    __last_save_file = ""
+            logging.debug("Loading Liberation preferences from %s", PREFERENCES_PATH)
+            with PREFERENCES_PATH.open() as prefs:
+                pref_data = json.load(prefs)
+            __dcs_saved_game_directory = pref_data["saved_game_dir"]
+            __dcs_installation_directory = pref_data["dcs_install_dir"]
+            __last_save_file = pref_data.get("last_save_file", "")
             is_first_start = False
-        except:
+        except KeyError:
             __dcs_saved_game_directory = ""
             __dcs_installation_directory = ""
             __last_save_file = ""
@@ -78,8 +81,9 @@ def save_config():
         "dcs_install_dir": __dcs_installation_directory,
         "last_save_file": __last_save_file,
     }
-    with (open(PREFERENCES_FILE_PATH, "w")) as prefs:
-        prefs.write(json.dumps(pref_data))
+    PREFERENCES_PATH.parent.mkdir(exist_ok=True, parents=True)
+    with PREFERENCES_PATH.open("w") as prefs:
+        json.dump(pref_data, prefs, indent="  ")
 
 
 def get_dcs_install_directory():

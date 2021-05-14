@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 import shutil
 
-from zipfile import *
+THIS_DIR = Path(__file__).resolve()
+SRC_DIR = THIS_DIR.parents[1]
 
 
 IGNORED_PATHS = [
@@ -15,10 +17,8 @@ IGNORED_PATHS = [
     "venv",
 ]
 
-VERSION = input("version str:")
 
-
-def _zip_dir(archieve, path):
+def _zip_dir(archive, path):
     for path, directories, files in os.walk(path):
         is_ignored = False
         for ignored_path in IGNORED_PATHS:
@@ -32,29 +32,16 @@ def _zip_dir(archieve, path):
         for file in files:
             if file in IGNORED_PATHS:
                 continue
-            archieve.write(os.path.join(path, file))
+            archive.write(os.path.join(path, file))
 
 
-def _mk_archieve():
-    path = os.path.join(
-        os.path.dirname(__file__),
-        os.pardir,
-        os.pardir,
-        "build",
-        "dcs_liberation_{}.zip".format(VERSION),
-    )
-    if os.path.exists(path):
-        print("version already exists")
-        return
-
+def main():
     try:
         shutil.rmtree("./dist")
     except FileNotFoundError:
         pass
     os.system("pyinstaller.exe --clean pyinstaller.spec")
-    # archieve = ZipFile(path, "w")
-    # archieve.writestr("dcs_liberation.bat", "cd dist\\dcs_liberation\r\nliberation_main \"%UserProfile%\\Saved Games\" \"{}\"".format(VERSION))
-    # _zip_dir(archieve, "./dist/dcs_liberation")
 
 
-_mk_archieve()
+if __name__ == "__main__":
+    main()

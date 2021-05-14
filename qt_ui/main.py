@@ -223,6 +223,8 @@ def lint_weapon_data() -> None:
 def main():
     logging_config.init_logging(VERSION)
 
+    logging.debug("Python version %s", sys.version)
+
     game: Optional[Game] = None
 
     args = parse_args()

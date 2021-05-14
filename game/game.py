@@ -282,6 +282,11 @@ class Game:
         )
         self.turn += 1
 
+        # Need to recompute before transfers and deliveries to account for captures.
+        # This happens in in initialize_turn as well, because cheating doesn't advance a
+        # turn but can capture bases so we need to recompute there as well.
+        self.compute_transit_networks()
+
         # Must happen *before* unit deliveries are handled, or else new units will spawn
         # one hop ahead. ControlPoint.process_turn handles unit deliveries.
         self.transfers.perform_transfers()
