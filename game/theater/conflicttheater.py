@@ -265,13 +265,13 @@ class MizCampaignLoader:
                 yield group
 
     @property
-    def scenery(self) -> Iterator[SceneryGroup]:
+    def scenery(self) -> List[SceneryGroup]:
         return SceneryGroup.from_trigger_zones(
             self.mission.triggers._zones, for_optional_objective=True
         )
 
     @property
-    def required_scenery(self) -> Iterator[SceneryGroup]:
+    def required_scenery(self) -> List[SceneryGroup]:
         return SceneryGroup.from_trigger_zones(
             self.mission.triggers._zones, for_optional_objective=False
         )

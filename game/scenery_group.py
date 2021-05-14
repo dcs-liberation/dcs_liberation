@@ -2,7 +2,7 @@ from __future__ import annotations
 from game.theater.theatergroundobject import NAME_BY_CATEGORY
 from dcs.triggers import TriggerZone
 
-from typing import Iterable
+from typing import Iterable, List
 
 
 class SceneryGroupError(RuntimeError):
@@ -30,7 +30,7 @@ class SceneryGroup:
     @staticmethod
     def from_trigger_zones(
         trigger_zones: Iterable[TriggerZone], for_optional_objective: bool
-    ) -> Iterable[SceneryGroup]:
+    ) -> List[SceneryGroup]:
         """Define scenery objectives based on their encompassing blue/red circle."""
         zone_definitions = []
         white_zones = []
