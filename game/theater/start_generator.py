@@ -702,6 +702,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
     def generate(self) -> bool:
         self.generate_fob()
         FobDefenseGenerator(self.game, self.control_point).generate()
+        self.generate_factories()
         self.generate_required_aa()
         return True
 
