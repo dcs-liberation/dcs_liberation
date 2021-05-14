@@ -52,5 +52,5 @@ VERSION = _build_version_string()
 #:   white TriggerZones to define an objective.  If a white TriggerZone is not surrounded
 #:   by a blue circular TriggerZone, campaign creation will fail.  Blue circular
 #:   TriggerZones must also have their first property's value field define the type of
-#:   objective.
+#:   objective (a valid value for a building TGO category, from `game.db.PRICES`).
 CAMPAIGN_FORMAT_VERSION = 4

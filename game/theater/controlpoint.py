@@ -69,7 +69,6 @@ class LocationType(Enum):
     MissileSite = "missile site"
     OffshoreStrikeTarget = "offshore strike target"
     Sam = "SAM"
-    Scenery = "scenery"
     Ship = "ship"
     Shorad = "SHORAD"
     StrikeTarget = "strike target"

@@ -80,10 +80,10 @@ class SceneryGroup:
 
     @staticmethod
     def is_blue(zone: TriggerZone) -> bool:
-        """Blue in RGB is [0 Red], [0 Green], [1 Blue].  Ignore the fourth position: Transparency."""
+        # Blue in RGB is [0 Red], [0 Green], [1 Blue]. Ignore the fourth position: Transparency.
         return zone.color[1] == 0 and zone.color[2] == 0 and zone.color[3] == 1
 
     @staticmethod
     def is_white(zone: TriggerZone) -> bool:
-        """White in RGB is [1 Red], [1 Green], [1 Blue].  Ignore the fourth position: Transparency."""
+        # White in RGB is [1 Red], [1 Green], [1 Blue]. Ignore the fourth position: Transparency.
         return zone.color[1] == 1 and zone.color[2] == 1 and zone.color[3] == 1

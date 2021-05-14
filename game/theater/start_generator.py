@@ -465,7 +465,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """Generate ground objects and AA sites for the control point."""
         skip_sams = self.generate_required_aa()
         skip_ewrs = self.generate_required_ewr()
-        self.generate_scenery_site()
+        self.generate_scenery_sites()
         self.generate_factories()
 
         if self.control_point.is_global:
@@ -654,7 +654,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = [group]
         self.control_point.connected_objectives.append(g)
 
-    def generate_scenery_site(self) -> None:
+    def generate_scenery_sites(self) -> None:
         presets = self.control_point.preset_locations
         for scenery_group in presets.scenery:
             self.generate_tgo_for_scenery(scenery_group)
@@ -688,7 +688,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 for_airbase,
             )
 
-            g.groups = []
             self.control_point.connected_objectives.append(g)
 
         return
