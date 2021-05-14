@@ -92,9 +92,9 @@ class AirSupportConflictGenerator:
 
     def generate(self):
         player_cp = (
-            self.conflict.from_cp
-            if self.conflict.from_cp.captured
-            else self.conflict.to_cp
+            self.conflict.blue_cp
+            if self.conflict.blue_cp.captured
+            else self.conflict.red_cp
         )
 
         fallback_tanker_number = 0
@@ -107,8 +107,8 @@ class AirSupportConflictGenerator:
             freq = self.radio_registry.alloc_uhf()
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
             tanker_heading = (
-                self.conflict.to_cp.position.heading_between_point(
-                    self.conflict.from_cp.position
+                self.conflict.red_cp.position.heading_between_point(
+                    self.conflict.blue_cp.position
                 )
                 + TANKER_HEADING_OFFSET * i
             )

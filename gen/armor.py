@@ -134,10 +134,10 @@ class GroundConflictGenerator:
 
     def generate(self):
         position = Conflict.frontline_position(
-            self.conflict.from_cp, self.conflict.to_cp, self.game.theater
+            self.conflict.front_line, self.game.theater
         )
         frontline_vector = Conflict.frontline_vector(
-            self.conflict.from_cp, self.conflict.to_cp, self.game.theater
+            self.conflict.front_line, self.game.theater
         )
 
         # Create player groups at random position
@@ -156,21 +156,21 @@ class GroundConflictGenerator:
             player_groups,
             enemy_groups,
             self.conflict.heading + 90,
-            self.conflict.from_cp,
-            self.conflict.to_cp,
+            self.conflict.blue_cp,
+            self.conflict.red_cp,
         )
         self.plan_action_for_groups(
             self.enemy_stance,
             enemy_groups,
             player_groups,
             self.conflict.heading - 90,
-            self.conflict.to_cp,
-            self.conflict.from_cp,
+            self.conflict.red_cp,
+            self.conflict.blue_cp,
         )
 
         # Add JTAC
         if self.game.player_faction.has_jtac:
-            n = "JTAC" + str(self.conflict.from_cp.id) + str(self.conflict.to_cp.id)
+            n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
 
             utype = MQ_9_Reaper
@@ -191,7 +191,7 @@ class GroundConflictGenerator:
                 OrbitAction(5000, 300, OrbitAction.OrbitPattern.Circle)
             )
             frontline = (
-                f"Frontline {self.conflict.from_cp.name}/{self.conflict.to_cp.name}"
+                f"Frontline {self.conflict.blue_cp.name}/{self.conflict.red_cp.name}"
             )
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
@@ -213,9 +213,9 @@ class GroundConflictGenerator:
             logging.warning("Could not find infantry position")
             return
         if side == self.conflict.attackers_country:
-            cp = self.conflict.from_cp
+            cp = self.conflict.blue_cp
         else:
-            cp = self.conflict.to_cp
+            cp = self.conflict.red_cp
 
         if is_player:
             faction = self.game.player_name
@@ -782,9 +782,9 @@ class GroundConflictGenerator:
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:
-            cp = self.conflict.from_cp
+            cp = self.conflict.blue_cp
         else:
-            cp = self.conflict.to_cp
+            cp = self.conflict.red_cp
 
         logging.info("armorgen: {} for {}".format(unit, side.id))
         group = self.mission.vehicle_group(

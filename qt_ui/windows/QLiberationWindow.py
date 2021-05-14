@@ -27,7 +27,7 @@ from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
-from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.widgets.map.QLiberationMap import LeafletMap, QLiberationMap, LiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
@@ -38,7 +38,7 @@ from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
 
 
 class QLiberationWindow(QMainWindow):
-    def __init__(self, game: Optional[Game]) -> None:
+    def __init__(self, game: Optional[Game], new_map: bool) -> None:
         super(QLiberationWindow, self).__init__()
 
         self.game = game
@@ -46,7 +46,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model)
+        self.liberation_map: LiberationMap = self.create_map(new_map)
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
@@ -254,14 +254,13 @@ class QLiberationWindow(QMainWindow):
         )
         if file is not None:
             game = persistency.load_game(file[0])
-            GameUpdateSignal.get_instance().updateGame(game)
+            GameUpdateSignal.get_instance().game_loaded.emit(game)
 
     def saveGame(self):
         logging.info("Saving game")
 
         if self.game.savepath:
             persistency.save_game(self.game)
-            GameUpdateSignal.get_instance().updateGame(self.game)
             liberation_install.setup_last_save_file(self.game.savepath)
             liberation_install.save_config()
         else:
@@ -283,7 +282,12 @@ class QLiberationWindow(QMainWindow):
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")
         self.game = game
-        GameUpdateSignal.get_instance().updateGame(self.game)
+        GameUpdateSignal.get_instance().game_loaded.emit(self.game)
+
+    def create_map(self, new_map: bool) -> LiberationMap:
+        if new_map:
+            return LeafletMap(self.game_model, self)
+        return QLiberationMap(self.game_model)
 
     def setGame(self, game: Optional[Game]):
         try:
@@ -291,8 +295,7 @@ class QLiberationWindow(QMainWindow):
             if self.info_panel is not None:
                 self.info_panel.setGame(game)
             self.game_model.set(self.game)
-            if self.liberation_map is not None:
-                self.liberation_map.setGame(game)
+            self.liberation_map.set_game(game)
         except AttributeError:
             logging.exception("Incompatible save game")
             QMessageBox.critical(

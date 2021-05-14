@@ -15,6 +15,8 @@ class GameUpdateSignal(QObject):
     budgetupdated = Signal(Game)
     debriefingReceived = Signal(Debriefing)
 
+    game_loaded = Signal(Game)
+
     flight_paths_changed = Signal()
     package_selection_changed = Signal(int)  # -1 indicates no selection.
     flight_selection_changed = Signal(int)  # -1 indicates no selection.
@@ -22,6 +24,8 @@ class GameUpdateSignal(QObject):
     def __init__(self):
         super(GameUpdateSignal, self).__init__()
         GameUpdateSignal.instance = self
+
+        self.game_loaded.connect(self.updateGame)
 
     def select_package(self, index: Optional[int]) -> None:
         # noinspection PyUnresolvedReferences

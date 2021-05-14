@@ -154,6 +154,8 @@ class Faction:
         faction.awacs = load_all_aircraft(json.get("awacs", []))
         faction.tankers = load_all_aircraft(json.get("tankers", []))
 
+        faction.aircrafts = list(set(faction.aircrafts + faction.awacs))
+
         faction.frontline_units = load_all_vehicles(json.get("frontline_units", []))
         faction.artillery_units = load_all_vehicles(json.get("artillery_units", []))
         faction.infantry_units = load_all_vehicles(json.get("infantry_units", []))

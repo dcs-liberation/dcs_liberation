@@ -7,18 +7,18 @@ from pathlib import Path
 from typing import Optional
 
 import dcs
-from dcs.weapons_data import weapon_ids
-
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
+from dcs.weapons_data import weapon_ids
 
-from game import Game, db, persistency, VERSION
+from game import Game, VERSION, persistency
 from game.data.weapons import (
     WEAPON_FALLBACK_MAP,
     WEAPON_INTRODUCTION_YEARS,
     Weapon,
 )
+from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
@@ -36,7 +36,7 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
 )
 
 
-def run_ui(game: Optional[Game] = None) -> None:
+def run_ui(game: Optional[Game], new_map: bool) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
@@ -104,7 +104,7 @@ def run_ui(game: Optional[Game] = None) -> None:
     GameUpdateSignal()
 
     # Start window
-    window = QLiberationWindow(game)
+    window = QLiberationWindow(game, new_map)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()
@@ -130,6 +130,10 @@ def parse_args() -> argparse.Namespace:
         "--warn-missing-weapon-data",
         action="store_true",
         help="Emits a warning for weapons without date or fallback information.",
+    )
+
+    parser.add_argument(
+        "--new-map", action="store_true", help="Use the new map. Non functional."
     )
 
     new_game = subparsers.add_parser("new-game")
@@ -219,6 +223,8 @@ def lint_weapon_data() -> None:
 def main():
     logging_config.init_logging(VERSION)
 
+    logging.debug("Python version %s", sys.version)
+
     game: Optional[Game] = None
 
     args = parse_args()
@@ -228,17 +234,18 @@ def main():
         lint_weapon_data()
 
     if args.subcommand == "new-game":
-        game = create_game(
-            args.campaign,
-            args.blue,
-            args.red,
-            args.supercarrier,
-            args.auto_procurement,
-            args.inverted,
-            args.cheats,
-        )
+        with logged_duration("New game creation"):
+            game = create_game(
+                args.campaign,
+                args.blue,
+                args.red,
+                args.supercarrier,
+                args.auto_procurement,
+                args.inverted,
+                args.cheats,
+            )
 
-    run_ui(game)
+    run_ui(game, args.new_map)
 
 
 if __name__ == "__main__":

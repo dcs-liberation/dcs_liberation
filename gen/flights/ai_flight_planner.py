@@ -409,13 +409,7 @@ class ObjectiveFinder:
 
     def front_lines(self) -> Iterator[FrontLine]:
         """Iterates over all active front lines in the theater."""
-        for cp in self.friendly_control_points():
-            for connected in cp.connected_points:
-                if connected.is_friendly(self.is_player):
-                    continue
-
-                if Conflict.has_frontline_between(cp, connected):
-                    yield FrontLine(cp, connected, self.game.theater)
+        yield from self.game.theater.conflicts()
 
     def vulnerable_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over friendly CPs that are vulnerable to enemy CPs.
@@ -447,21 +441,15 @@ class ObjectiveFinder:
 
     def convoys(self) -> Iterator[Convoy]:
         for front_line in self.front_lines():
-            if front_line.control_point_a.is_friendly(self.is_player):
-                enemy_cp = front_line.control_point_a
-            else:
-                enemy_cp = front_line.control_point_b
-
-            yield from self.game.transfers.convoys.travelling_to(enemy_cp)
+            yield from self.game.transfers.convoys.travelling_to(
+                front_line.control_point_hostile_to(self.is_player)
+            )
 
     def cargo_ships(self) -> Iterator[CargoShip]:
         for front_line in self.front_lines():
-            if front_line.control_point_a.is_friendly(self.is_player):
-                enemy_cp = front_line.control_point_a
-            else:
-                enemy_cp = front_line.control_point_b
-
-            yield from self.game.transfers.cargo_ships.travelling_to(enemy_cp)
+            yield from self.game.transfers.cargo_ships.travelling_to(
+                front_line.control_point_hostile_to(self.is_player)
+            )
 
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
@@ -595,26 +583,18 @@ class CoalitionMissionPlanner:
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
-            # Plan three rounds of CAP to give ~90 minutes coverage. Spacing
-            # these out appropriately is done in stagger_missions.
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
-            yield ProposedMission(
-                cp,
-                [
-                    ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
+            # Plan CAP in such a way, that it is established during the whole desired mission length
+            for _ in range(
+                0,
+                int(self.game.settings.desired_player_mission_duration.total_seconds()),
+                int(self.faction.doctrine.cap_duration.total_seconds()),
+            ):
+                yield ProposedMission(
+                    cp,
+                    [
+                        ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
+                    ],
+                )
 
         # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():

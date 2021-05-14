@@ -1,6 +1,3 @@
-import logging
-import timeit
-from datetime import timedelta
 from typing import List, Optional
 
 from PySide2.QtWidgets import (
@@ -15,10 +12,12 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game
 from game.event.airwar import AirWarEvent
+from game.profiling import logged_duration
 from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
+from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QIntelBox import QIntelBox
 from qt_ui.widgets.clientslots import MaxPlayerCount
@@ -27,7 +26,6 @@ from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
-from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 
 
 class QTopPanel(QFrame):
@@ -145,12 +143,10 @@ class QTopPanel(QFrame):
         self.dialog.show()
 
     def passTurn(self):
-        start = timeit.default_timer()
-        self.game.pass_turn(no_action=True)
-        GameUpdateSignal.get_instance().updateGame(self.game)
-        self.proceedButton.setEnabled(True)
-        end = timeit.default_timer()
-        logging.info("Skipping turn took %s", timedelta(seconds=end - start))
+        with logged_duration("Skipping turn"):
+            self.game.pass_turn(no_action=True)
+            GameUpdateSignal.get_instance().updateGame(self.game)
+            self.proceedButton.setEnabled(True)
 
     def negative_start_packages(self) -> List[Package]:
         packages = []

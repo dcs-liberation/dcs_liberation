@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import itertools
-import json
 import logging
+import math
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from dcs import Mission
 from dcs.countries import (
@@ -47,7 +47,6 @@ from ..scenery_group import SceneryGroup
 from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
-from gen.flights.flight import FlightType
 from .controlpoint import (
     Airfield,
     Carrier,
@@ -57,12 +56,12 @@ from .controlpoint import (
     MissionTarget,
     OffMapSpawn,
 )
+from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .projections import TransverseMercator
 from ..point_with_heading import PointWithHeading
-from ..utils import Distance, meters, nautical_miles, pairwise
-
-Numeric = Union[int, float]
+from ..profiling import logged_duration
+from ..utils import Distance, meters, nautical_miles
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -73,8 +72,6 @@ SIZE_LARGE = 3000
 IMPORTANCE_LOW = 1
 IMPORTANCE_MEDIUM = 1.2
 IMPORTANCE_HIGH = 1.4
-
-FRONTLINE_MIN_CP_DISTANCE = 5000
 
 
 class MizCampaignLoader:
@@ -122,7 +119,8 @@ class MizCampaignLoader:
     def __init__(self, miz: Path, theater: ConflictTheater) -> None:
         self.theater = theater
         self.mission = Mission()
-        self.mission.load_file(str(miz))
+        with logged_duration("Loading miz"):
+            self.mission.load_file(str(miz))
         self.control_point_id = itertools.count(1000)
 
         # If there are no red carriers there usually aren't red units. Make sure
@@ -328,14 +326,11 @@ class MizCampaignLoader:
             if group.units[0].type == self.SHIPPING_LANE_UNIT_TYPE:
                 yield group
 
-    @cached_property
-    def front_lines(self) -> Dict[str, ComplexFrontLine]:
-        # Dict of front line ID to a front line.
-        front_lines = {}
+    def add_supply_routes(self) -> None:
         for group in self.front_line_path_groups:
-            # The unit will have its first waypoint at the source CP and the
-            # final waypoint at the destination CP. Intermediate waypoints
-            # define the curve of the front line.
+            # The unit will have its first waypoint at the source CP and the final
+            # waypoint at the destination CP. Each waypoint defines the path of the
+            # cargo ship.
             waypoints = [p.position for p in group.points]
             origin = self.theater.closest_control_point(waypoints[0])
             if origin is None:
@@ -348,21 +343,10 @@ class MizCampaignLoader:
                     f"No control point near the final waypoint of {group.name}"
                 )
 
-            convoy_origin = waypoints[0]
-            convoy_destination = waypoints[-1]
-
-            # Snap the begin and end points to the control points.
-            waypoints[0] = origin.position
-            waypoints[-1] = destination.position
-            front_line_id = f"{origin.id}|{destination.id}"
-            front_lines[front_line_id] = ComplexFrontLine(origin, waypoints)
-            self.control_points[origin.id].connect(
-                self.control_points[destination.id], convoy_origin
+            self.control_points[origin.id].create_convoy_route(destination, waypoints)
+            self.control_points[destination.id].create_convoy_route(
+                origin, list(reversed(waypoints))
             )
-            self.control_points[destination.id].connect(
-                self.control_points[origin.id], convoy_destination
-            )
-        return front_lines
 
     def add_shipping_lanes(self) -> None:
         for group in self.shipping_lane_groups:
@@ -489,8 +473,8 @@ class MizCampaignLoader:
         for control_point in self.control_points.values():
             self.theater.add_controlpoint(control_point)
         self.add_preset_locations()
+        self.add_supply_routes()
         self.add_shipping_lanes()
-        self.theater.set_frontline_data(self.front_lines)
 
 
 @dataclass
@@ -515,34 +499,38 @@ class ConflictTheater:
     land_poly = None  # type: Polygon
     """
     daytime_map: Dict[str, Tuple[int, int]]
-    _frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
 
     def __init__(self):
         self.controlpoints: List[ControlPoint] = []
-        self._frontline_data: Optional[Dict[str, ComplexFrontLine]] = None
+        self.point_to_ll_transformer = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        )
+        self.ll_to_point_transformer = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        )
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
 
-    @property
-    def frontline_data(self) -> Optional[Dict[str, ComplexFrontLine]]:
-        if self._frontline_data is None:
-            self.load_frontline_data_from_file()
-        return self._frontline_data
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Avoid persisting any volatile types that can be deterministically
+        # recomputed on load for the sake of save compatibility.
+        del state["point_to_ll_transformer"]
+        del state["ll_to_point_transformer"]
+        return state
 
-    def load_frontline_data_from_file(self) -> None:
-        if self._frontline_data is not None:
-            logging.warning("Replacing existing frontline data from file")
-        self._frontline_data = FrontLine.load_json_frontlines(self)
-        if self._frontline_data is None:
-            self._frontline_data = {}
-
-    def set_frontline_data(self, data: Dict[str, ComplexFrontLine]) -> None:
-        if self._frontline_data is not None:
-            logging.warning("Replacing existing frontline data")
-        self._frontline_data = data
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Regenerate any state that was not persisted.
+        self.point_to_ll_transformer = Transformer.from_crs(
+            self.projection_parameters.to_crs(), CRS("WGS84")
+        )
+        self.ll_to_point_transformer = Transformer.from_crs(
+            CRS("WGS84"), self.projection_parameters.to_crs()
+        )
 
     def add_controlpoint(self, point: ControlPoint):
         self.controlpoints.append(point)
@@ -625,12 +613,12 @@ class ConflictTheater:
     def player_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=True))
 
-    def conflicts(self, from_player=True) -> Iterator[FrontLine]:
-        for cp in [x for x in self.controlpoints if x.captured == from_player]:
-            for connected_point in [
-                x for x in cp.connected_points if x.captured != from_player
+    def conflicts(self) -> Iterator[FrontLine]:
+        for player_cp in [x for x in self.controlpoints if x.captured]:
+            for enemy_cp in [
+                x for x in player_cp.connected_points if not x.is_friendly_to(player_cp)
             ]:
-                yield FrontLine(cp, connected_point, self)
+                yield FrontLine(player_cp, enemy_cp)
 
     def enemy_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=False))
@@ -670,71 +658,32 @@ class ConflictTheater:
         Returns a tuple of the two nearest opposing ControlPoints in theater.
         (player_cp, enemy_cp)
         """
-        all_cp_min_distances = {}
-        for idx, control_point in enumerate(self.controlpoints):
-            distances = {}
-            closest_distance = None
-            for i, cp in enumerate(self.controlpoints):
-                if i != idx and cp.captured is not control_point.captured:
-                    dist = cp.position.distance_to_point(control_point.position)
-                    if not closest_distance:
-                        closest_distance = dist
-                        distances[cp.id] = dist
-                    if dist < closest_distance:
-                        distances[cp.id] = dist
-            closest_cp_id = min(distances, key=distances.get)  # type: ignore
+        seen = set()
+        min_distance = math.inf
+        closest_blue = None
+        closest_red = None
+        for blue_cp in self.player_points():
+            for red_cp in self.enemy_points():
+                if (blue_cp, red_cp) in seen:
+                    continue
+                seen.add((blue_cp, red_cp))
+                seen.add((red_cp, blue_cp))
 
-            all_cp_min_distances[(control_point.id, closest_cp_id)] = distances[
-                closest_cp_id
-            ]
-        closest_opposing_cps = [
-            self.find_control_point_by_id(i)
-            for i in min(
-                all_cp_min_distances, key=all_cp_min_distances.get
-            )  # type: ignore
-        ]  # type: List[ControlPoint]
-        assert len(closest_opposing_cps) == 2
-        if closest_opposing_cps[0].captured:
-            return cast(Tuple[ControlPoint, ControlPoint], tuple(closest_opposing_cps))
-        else:
-            return cast(
-                Tuple[ControlPoint, ControlPoint], tuple(reversed(closest_opposing_cps))
-            )
+                dist = red_cp.position.distance_to_point(blue_cp.position)
+                if dist < min_distance:
+                    closest_red = red_cp
+                    closest_blue = blue_cp
+                    min_distance = dist
+
+        assert closest_blue is not None
+        assert closest_red is not None
+        return closest_blue, closest_red
 
     def find_control_point_by_id(self, id: int) -> ControlPoint:
         for i in self.controlpoints:
             if i.id == id:
                 return i
         raise KeyError(f"Cannot find ControlPoint with ID {id}")
-
-    def add_json_cp(self, theater, p: dict) -> ControlPoint:
-        cp: ControlPoint
-        if p["type"] == "airbase":
-
-            airbase = theater.terrain.airports[p["id"]]
-
-            if "size" in p.keys():
-                size = p["size"]
-            else:
-                size = SIZE_REGULAR
-
-            if "importance" in p.keys():
-                importance = p["importance"]
-            else:
-                importance = IMPORTANCE_MEDIUM
-
-            cp = Airfield(airbase, size, importance)
-        elif p["type"] == "carrier":
-            cp = Carrier("carrier", Point(p["x"], p["y"]), p["id"])
-        else:
-            cp = Lha("lha", Point(p["x"], p["y"]), p["id"])
-
-        if "captured_invert" in p.keys():
-            cp.captured_invert = p["captured_invert"]
-        else:
-            cp.captured_invert = False
-
-        return cp
 
     @staticmethod
     def from_json(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
@@ -754,7 +703,9 @@ class ConflictTheater:
             raise RuntimeError(
                 "Old format (non-miz) campaigns are no longer supported."
             )
-        MizCampaignLoader(directory / miz, t).populate_theater()
+
+        with logged_duration("Importing miz data"):
+            MizCampaignLoader(directory / miz, t).populate_theater()
         return t
 
     @property
@@ -762,15 +713,11 @@ class ConflictTheater:
         raise NotImplementedError
 
     def point_to_ll(self, point: Point) -> LatLon:
-        lat, lon = Transformer.from_crs(
-            self.projection_parameters.to_crs(), CRS("WGS84")
-        ).transform(point.x, point.y)
+        lat, lon = self.point_to_ll_transformer.transform(point.x, point.y)
         return LatLon(lat, lon)
 
     def ll_to_point(self, ll: LatLon) -> Point:
-        x, y = Transformer.from_crs(
-            CRS("WGS84"), self.projection_parameters.to_crs()
-        ).transform(ll.latitude, ll.longitude)
+        x, y = self.ll_to_point_transformer.transform(ll.latitude, ll.longitude)
         return Point(x, y)
 
 
@@ -905,220 +852,3 @@ class SyriaTheater(ConflictTheater):
         from .syria import PARAMETERS
 
         return PARAMETERS
-
-
-@dataclass
-class ComplexFrontLine:
-    """
-    Stores data necessary for building a multi-segment frontline.
-    "points" should be ordered from closest to farthest distance originating from start_cp.position
-    """
-
-    start_cp: ControlPoint
-    points: List[Point]
-
-
-@dataclass
-class FrontLineSegment:
-    """
-    Describes a line segment of a FrontLine
-    """
-
-    point_a: Point
-    point_b: Point
-
-    @property
-    def attack_heading(self) -> Numeric:
-        """The heading of the frontline segment from player to enemy control point"""
-        return self.point_a.heading_between_point(self.point_b)
-
-    @property
-    def attack_distance(self) -> Numeric:
-        """Length of the segment"""
-        return self.point_a.distance_to_point(self.point_b)
-
-
-class FrontLine(MissionTarget):
-    """Defines a front line location between two control points.
-    Front lines are the area where ground combat happens.
-    Overwrites the entirety of MissionTarget __init__ method to allow for
-    dynamic position calculation.
-    """
-
-    def __init__(
-        self,
-        control_point_a: ControlPoint,
-        control_point_b: ControlPoint,
-        theater: ConflictTheater,
-    ) -> None:
-        self.control_point_a = control_point_a
-        self.control_point_b = control_point_b
-        self.segments: List[FrontLineSegment] = []
-        self.theater = theater
-        self._build_segments()
-        self.name = f"Front line {control_point_a}/{control_point_b}"
-
-    def is_friendly(self, to_player: bool) -> bool:
-        """Returns True if the objective is in friendly territory."""
-        return False
-
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        yield from [
-            FlightType.CAS,
-            FlightType.AEWC,
-            # TODO: FlightType.TROOP_TRANSPORT
-            # TODO: FlightType.EVAC
-        ]
-        yield from super().mission_types(for_player)
-
-    @property
-    def position(self):
-        """
-        The position where the conflict should occur
-        according to the current strength of each control point.
-        """
-        return self.point_from_a(self._position_distance)
-
-    @property
-    def points(self) -> Iterator[Point]:
-        yield self.segments[0].point_a
-        for segment in self.segments:
-            yield segment.point_b
-
-    @property
-    def control_points(self) -> Tuple[ControlPoint, ControlPoint]:
-        """Returns a tuple of the two control points."""
-        return self.control_point_a, self.control_point_b
-
-    @property
-    def attack_distance(self):
-        """The total distance of all segments"""
-        return sum(i.attack_distance for i in self.segments)
-
-    @property
-    def attack_heading(self):
-        """The heading of the active attack segment from player to enemy control point"""
-        return self.active_segment.attack_heading
-
-    @property
-    def active_segment(self) -> FrontLineSegment:
-        """The FrontLine segment where there can be an active conflict"""
-        if self._position_distance <= self.segments[0].attack_distance:
-            return self.segments[0]
-
-        remaining_dist = self._position_distance
-        for segment in self.segments:
-            if remaining_dist <= segment.attack_distance:
-                return segment
-            else:
-                remaining_dist -= segment.attack_distance
-        logging.error(
-            "Frontline attack distance is greater than the sum of its segments"
-        )
-        return self.segments[0]
-
-    def point_from_a(self, distance: Numeric) -> Point:
-        """
-        Returns a point {distance} away from control_point_a along the frontline segments.
-        """
-        if distance < self.segments[0].attack_distance:
-            return self.control_point_a.position.point_from_heading(
-                self.segments[0].attack_heading, distance
-            )
-        remaining_dist = distance
-        for segment in self.segments:
-            if remaining_dist < segment.attack_distance:
-                return segment.point_a.point_from_heading(
-                    segment.attack_heading, remaining_dist
-                )
-            else:
-                remaining_dist -= segment.attack_distance
-
-    @property
-    def _position_distance(self) -> float:
-        """
-        The distance from point "a" where the conflict should occur
-        according to the current strength of each control point
-        """
-        total_strength = (
-            self.control_point_a.base.strength + self.control_point_b.base.strength
-        )
-        if self.control_point_a.base.strength == 0:
-            return self._adjust_for_min_dist(0)
-        if self.control_point_b.base.strength == 0:
-            return self._adjust_for_min_dist(self.attack_distance)
-        strength_pct = self.control_point_a.base.strength / total_strength
-        return self._adjust_for_min_dist(strength_pct * self.attack_distance)
-
-    def _adjust_for_min_dist(self, distance: Numeric) -> Numeric:
-        """
-        Ensures the frontline conflict is never located within the minimum distance
-        constant of either end control point.
-        """
-        if (distance > self.attack_distance / 2) and (
-            distance + FRONTLINE_MIN_CP_DISTANCE > self.attack_distance
-        ):
-            distance = self.attack_distance - FRONTLINE_MIN_CP_DISTANCE
-        elif (distance < self.attack_distance / 2) and (
-            distance < FRONTLINE_MIN_CP_DISTANCE
-        ):
-            distance = FRONTLINE_MIN_CP_DISTANCE
-        return distance
-
-    def _build_segments(self) -> None:
-        """Create line segments for the frontline"""
-        control_point_ids = "|".join(
-            [str(self.control_point_a.id), str(self.control_point_b.id)]
-        )  # from_cp.id|to_cp.id
-        reversed_cp_ids = "|".join(
-            [str(self.control_point_b.id), str(self.control_point_a.id)]
-        )
-        complex_frontlines = self.theater.frontline_data
-        if (complex_frontlines) and (
-            (control_point_ids in complex_frontlines)
-            or (reversed_cp_ids in complex_frontlines)
-        ):
-            # The frontline segments must be stored in the correct order for the distance algorithms to work.
-            # The points in the frontline are ordered from the id before the | to the id after.
-            # First, check if control point id pair matches in order, and create segments if a match is found.
-            if control_point_ids in complex_frontlines:
-                point_pairs = pairwise(complex_frontlines[control_point_ids].points)
-                for i in point_pairs:
-                    self.segments.append(FrontLineSegment(i[0], i[1]))
-            # Check the reverse order and build in reverse if found.
-            elif reversed_cp_ids in complex_frontlines:
-                point_pairs = pairwise(
-                    reversed(complex_frontlines[reversed_cp_ids].points)
-                )
-                for i in point_pairs:
-                    self.segments.append(FrontLineSegment(i[0], i[1]))
-        # If no complex frontline has been configured, fall back to the old straight line method.
-        else:
-            self.segments.append(
-                FrontLineSegment(
-                    self.control_point_a.position, self.control_point_b.position
-                )
-            )
-
-    @staticmethod
-    def load_json_frontlines(
-        theater: ConflictTheater,
-    ) -> Optional[Dict[str, ComplexFrontLine]]:
-        """Load complex frontlines from json"""
-        try:
-            path = Path(f"resources/frontlines/{theater.terrain.name.lower()}.json")
-            with open(path, "r") as file:
-                logging.debug(f"Loading frontline from {path}...")
-                data = json.load(file)
-            return {
-                frontline: ComplexFrontLine(
-                    data[frontline]["start_cp"],
-                    [Point(i[0], i[1]) for i in data[frontline]["points"]],
-                )
-                for frontline in data
-            }
-        except OSError:
-            logging.warning(
-                f"Unable to load preset frontlines for {theater.terrain.name}"
-            )
-            return None

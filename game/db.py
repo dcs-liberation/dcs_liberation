@@ -117,6 +117,7 @@ from dcs.planes import (
     Yak_40,
     plane_map,
     I_16,
+    Tu_142,
 )
 from dcs.ships import (
     Boat_Armed_Hi_speed,
@@ -456,6 +457,7 @@ PRICES = {
     Tu_160: 50,
     Tu_22M3: 40,
     Tu_95MS: 35,
+    Tu_142: 35,
     # special
     IL_76MD: 30,
     An_26B: 25,

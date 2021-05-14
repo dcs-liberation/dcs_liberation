@@ -17,8 +17,7 @@ class Conflict:
     def __init__(
         self,
         theater: ConflictTheater,
-        from_cp: ControlPoint,
-        to_cp: ControlPoint,
+        front_line: FrontLine,
         attackers_side: str,
         defenders_side: str,
         attackers_country: Country,
@@ -33,12 +32,19 @@ class Conflict:
         self.attackers_country = attackers_country
         self.defenders_country = defenders_country
 
-        self.from_cp = from_cp
-        self.to_cp = to_cp
+        self.front_line = front_line
         self.theater = theater
         self.position = position
         self.heading = heading
         self.size = size
+
+    @property
+    def blue_cp(self) -> ControlPoint:
+        return self.front_line.blue_cp
+
+    @property
+    def red_cp(self) -> ControlPoint:
+        return self.front_line.red_cp
 
     @classmethod
     def has_frontline_between(cls, from_cp: ControlPoint, to_cp: ControlPoint) -> bool:
@@ -46,9 +52,8 @@ class Conflict:
 
     @classmethod
     def frontline_position(
-        cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater
+        cls, frontline: FrontLine, theater: ConflictTheater
     ) -> Tuple[Point, int]:
-        frontline = FrontLine(from_cp, to_cp, theater)
         attack_heading = frontline.attack_heading
         position = cls.find_ground_position(
             frontline.position,
@@ -60,12 +65,12 @@ class Conflict:
 
     @classmethod
     def frontline_vector(
-        cls, from_cp: ControlPoint, to_cp: ControlPoint, theater: ConflictTheater
+        cls, front_line: FrontLine, theater: ConflictTheater
     ) -> Tuple[Point, int, int]:
         """
         Returns a vector for a valid frontline location avoiding exclusion zones.
         """
-        center_position, heading = cls.frontline_position(from_cp, to_cp, theater)
+        center_position, heading = cls.frontline_position(front_line, theater)
         left_heading = heading_sum(heading, -90)
         right_heading = heading_sum(heading, 90)
         left_position = cls.extend_ground_position(
@@ -84,18 +89,16 @@ class Conflict:
         defender_name: str,
         attacker: Country,
         defender: Country,
-        from_cp: ControlPoint,
-        to_cp: ControlPoint,
+        front_line: FrontLine,
         theater: ConflictTheater,
     ):
-        assert cls.has_frontline_between(from_cp, to_cp)
-        position, heading, distance = cls.frontline_vector(from_cp, to_cp, theater)
+        assert cls.has_frontline_between(front_line.blue_cp, front_line.red_cp)
+        position, heading, distance = cls.frontline_vector(front_line, theater)
         conflict = cls(
             position=position,
             heading=heading,
             theater=theater,
-            from_cp=from_cp,
-            to_cp=to_cp,
+            front_line=front_line,
             attackers_side=attacker_name,
             defenders_side=defender_name,
             attackers_country=attacker,

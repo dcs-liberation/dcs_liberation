@@ -22,17 +22,16 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unittype import FlyingType
 
 from game import db
+from game.point_with_heading import PointWithHeading
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
-from game.point_with_heading import PointWithHeading
 from .theatergroundobject import (
     BaseDefenseGroundObject,
     EwrGroundObject,
-    FactoryGroundObject,
     GenericCarrierGroundObject,
     SamGroundObject,
     TheaterGroundObject,
@@ -297,8 +296,8 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
+        self.convoy_routes: Dict[ControlPoint, List[Point]] = {}
         self.shipping_lanes: Dict[ControlPoint, List[Point]] = {}
-        self.convoy_spawns: Dict[ControlPoint, Point] = {}
         self.base: Base = Base()
         self.cptype = cptype
         # TODO: Should be Airbase specific.
@@ -365,7 +364,7 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def has_factory(self) -> bool:
         for tgo in self.connected_objectives:
-            if isinstance(tgo, FactoryGroundObject) and not tgo.is_dead:
+            if tgo.is_factory and not tgo.is_dead:
                 return True
         return False
 
@@ -440,10 +439,20 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     # TODO: Should be Airbase specific.
-    def connect(self, to: ControlPoint, convoy_location: Point) -> None:
+    def connect(self, to: ControlPoint) -> None:
         self.connected_points.append(to)
-        self.convoy_spawns[to] = convoy_location
         self.stances[to.id] = CombatStance.DEFENSIVE
+
+    def convoy_origin_for(self, destination: ControlPoint) -> Point:
+        return self.convoy_route_to(destination)[0]
+
+    def convoy_route_to(self, destination: ControlPoint) -> List[Point]:
+        return self.convoy_routes[destination]
+
+    def create_convoy_route(self, to: ControlPoint, waypoints: List[Point]) -> None:
+        self.connected_points.append(to)
+        self.stances[to.id] = CombatStance.DEFENSIVE
+        self.convoy_routes[to] = waypoints
 
     def create_shipping_lane(self, to: ControlPoint, waypoints: List[Point]) -> None:
         self.shipping_lanes[to] = waypoints
