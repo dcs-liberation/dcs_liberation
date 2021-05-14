@@ -23,14 +23,8 @@ class SceneryGroup:
         self.position = zone_def.position
         self.category = category
 
-    @property
-    def blue(self) -> bool:
-        return self.is_blue(self.zone_def)
-
     @staticmethod
-    def from_trigger_zones(
-        trigger_zones: Iterable[TriggerZone], for_optional_objective: bool
-    ) -> List[SceneryGroup]:
+    def from_trigger_zones(trigger_zones: Iterable[TriggerZone]) -> List[SceneryGroup]:
         """Define scenery objectives based on their encompassing blue/red circle."""
         zone_definitions = []
         white_zones = []
@@ -39,13 +33,8 @@ class SceneryGroup:
 
         # Aggregate trigger zones into different groups based on color.
         for zone in trigger_zones:
-            if for_optional_objective:
-                if SceneryGroup.is_blue(zone):
-                    zone_definitions.append(zone)
-            else:
-                if SceneryGroup.is_red(zone):
-                    zone_definitions.append(zone)
-
+            if SceneryGroup.is_blue(zone):
+                zone_definitions.append(zone)
             if SceneryGroup.is_white(zone):
                 white_zones.append(zone)
 
@@ -93,11 +82,6 @@ class SceneryGroup:
     def is_blue(zone: TriggerZone) -> bool:
         """Blue in RGB is [0 Red], [0 Green], [1 Blue].  Ignore the fourth position: Transparency."""
         return zone.color[1] == 0 and zone.color[2] == 0 and zone.color[3] == 1
-
-    @staticmethod
-    def is_red(zone: TriggerZone) -> bool:
-        """Red in RGB is [1 Red], [0 Green], [0 Blue].  Ignore the fourth position: Transparency."""
-        return zone.color[1] == 1 and zone.color[2] == 0 and zone.color[3] == 0
 
     @staticmethod
     def is_white(zone: TriggerZone) -> bool:

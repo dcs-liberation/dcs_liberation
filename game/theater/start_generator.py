@@ -161,20 +161,6 @@ class LocationFinder:
         )
         return None
 
-    def location_for_scenery(
-        self, location_type: LocationType
-    ) -> Optional[SceneryGroup]:
-        position = self.control_point.preset_locations.random_for_scenery(location_type)
-        if position is not None:
-            return position
-
-        logging.warning(
-            f"No campaign location for %s at %s",
-            location_type.value,
-            self.control_point,
-        )
-        return None
-
 
 class ControlPointGroundObjectGenerator:
     def __init__(
@@ -479,7 +465,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """Generate ground objects and AA sites for the control point."""
         skip_sams = self.generate_required_aa()
         skip_ewrs = self.generate_required_ewr()
-        self.generate_required_scenery()
+        self.generate_scenery_site()
         self.generate_factories()
 
         if self.control_point.is_global:
@@ -505,7 +491,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                     self.generate_ewr_site()
             else:
                 self.generate_ground_point()
-                self.generate_scenery_site()
 
     def generate_required_aa(self) -> int:
         """Generates the AA sites that are required by the campaign.
@@ -670,14 +655,8 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.control_point.connected_objectives.append(g)
 
     def generate_scenery_site(self) -> None:
-        scenery = self.location_finder.location_for_scenery(LocationType.Scenery)
-        if scenery is None:
-            return
-        self.generate_tgo_for_scenery(scenery)
-
-    def generate_required_scenery(self) -> None:
         presets = self.control_point.preset_locations
-        for scenery_group in presets.required_scenery:
+        for scenery_group in presets.scenery:
             self.generate_tgo_for_scenery(scenery_group)
 
     def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:

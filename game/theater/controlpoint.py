@@ -119,9 +119,6 @@ class PresetLocations:
     #: Locations of map scenery to create zones for.
     scenery: List[SceneryGroup] = field(default_factory=list)
 
-    #: Locations of map scenery to always create zones for.
-    required_scenery: List[SceneryGroup] = field(default_factory=list)
-
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)
 
@@ -133,16 +130,6 @@ class PresetLocations:
         point = random.choice(points)
         points.remove(point)
         return point
-
-    @staticmethod
-    def _random_from_scenery(
-        scenery_groups: List[SceneryGroup],
-    ) -> Optional[SceneryGroup]:
-        if not scenery_groups:
-            return None
-        scenery_group = random.choice(scenery_groups)
-        scenery_groups.remove(scenery_group)
-        return scenery_group
 
     def random_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
         """Returns a position suitable for the given location type.
@@ -172,12 +159,6 @@ class PresetLocations:
             return self._random_from(self.base_garrisons)
         if location_type == LocationType.StrikeTarget:
             return self._random_from(self.strike_locations)
-        logging.error(f"Unknown location type: {location_type}")
-        return None
-
-    def random_for_scenery(self, location_type: LocationType) -> Optional[SceneryGroup]:
-        if location_type == LocationType.Scenery:
-            return self._random_from_scenery(self.scenery)
         logging.error(f"Unknown location type: {location_type}")
         return None
 

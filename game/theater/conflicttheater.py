@@ -264,15 +264,7 @@ class MizCampaignLoader:
 
     @property
     def scenery(self) -> List[SceneryGroup]:
-        return SceneryGroup.from_trigger_zones(
-            self.mission.triggers._zones, for_optional_objective=True
-        )
-
-    @property
-    def required_scenery(self) -> List[SceneryGroup]:
-        return SceneryGroup.from_trigger_zones(
-            self.mission.triggers._zones, for_optional_objective=False
-        )
+        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones)
 
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
@@ -464,10 +456,6 @@ class MizCampaignLoader:
         for group in self.scenery:
             closest, distance = self.objective_info(group)
             closest.preset_locations.scenery.append(group)
-
-        for group in self.required_scenery:
-            closest, distance = self.objective_info(group)
-            closest.preset_locations.required_scenery.append(group)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
