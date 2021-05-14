@@ -293,34 +293,15 @@ class SceneryGroundObject(BuildingGroundObject):
             airbase_group=airbase_group,
         )
         self.zone = zone
-        # Other TGOs track deadness based on the number of alive units, but
-        # scenery doesn't have groups assigned to the TGO.
-        self._dead = False
 
     @property
     def map_object_id(self) -> str:
         """This is the Id that Liberation tracks for alive/dead.  DCS defines this Id."""
         if len(self.zone.properties) < 4:
-            return ""
+            raise IndexError(
+                "Non-standard TriggerZone for Scenery definition.  Standard TriggerZone definition has Map Object Id in the third property value."
+            )
         return self.zone.properties[3].get("value").lower()
-
-    @property
-    def group_name(self) -> str:
-        """The name of the unit group."""
-        return f"{self.category}|{self.group_id}|{self.object_id}"
-
-    @property
-    def waypoint_name(self) -> str:
-        return f"{super().waypoint_name} #{self.object_id}"
-
-    @property
-    def is_dead(self) -> bool:
-        if not hasattr(self, "_dead"):
-            self._dead = False
-        return self._dead
-
-    def kill(self) -> None:
-        self._dead = True
 
 
 class FactoryGroundObject(BuildingGroundObject):
