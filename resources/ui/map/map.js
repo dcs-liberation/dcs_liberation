@@ -26,6 +26,7 @@ L.control.scale({ maxWidth: 200 }).addTo(map);
 var baseLayers = {
   "Imagery Clarity": L.esri.basemapLayer("ImageryClarity", { maxZoom: 17 }),
   "Imagery Firefly": L.esri.basemapLayer("ImageryFirefly", { maxZoom: 17 }),
+  Topographic: L.esri.basemapLayer("Topographic", { maxZoom: 16 }),
 };
 
 var defaultBaseMap = baseLayers["Imagery Clarity"];
