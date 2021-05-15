@@ -233,6 +233,11 @@ class TheaterGroundObject(MissionTarget):
     def is_factory(self) -> bool:
         return self.category == "factory"
 
+    @property
+    def is_control_point(self) -> bool:
+        """True if this TGO is the group for the control point itself (CVs and FOBs)."""
+        return False
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -354,7 +359,9 @@ class NavalGroundObject(TheaterGroundObject):
 
 
 class GenericCarrierGroundObject(NavalGroundObject):
-    pass
+    @property
+    def is_control_point(self) -> bool:
+        return True
 
 
 # TODO: Why is this both a CP and a TGO?

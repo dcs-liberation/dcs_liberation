@@ -517,6 +517,11 @@ class MapModel(QObject):
                     continue
                 seen.add(tgo.name)
 
+                if tgo.is_control_point:
+                    # TGOs that are the CP (CV groups) are an implementation quirk that
+                    # we don't need to expose to the UI.
+                    continue
+
                 self._ground_objects.append(GroundObjectJs(tgo, self.game))
         self.groundObjectsChanged.emit()
 
