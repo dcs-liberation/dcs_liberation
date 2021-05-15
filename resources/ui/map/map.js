@@ -126,7 +126,10 @@ function drawControlPoints() {
   controlPointsLayer.clearLayers();
   const zoom = map.getZoom();
   game.controlPoints.forEach((cp) => {
-    L.marker(cp.position, { icon: iconFor(cp.blue) })
+    // We might draw other markers on top of the CP. The tooltips from the other
+    // markers are helpful so we want to keep them, but make sure the CP is always
+    // the clickable thing.
+    L.marker(cp.position, { icon: iconFor(cp.blue), zIndexOffset: 1000 })
       .bindTooltip(`<h3 style="margin: 0;">${cp.name}</h3>`, {
         permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
       })
