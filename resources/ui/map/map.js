@@ -16,6 +16,7 @@ const Colors = Object.freeze({
   Blue: "#0084ff",
   Red: "#c85050",
   Green: "#80BA80",
+  Highlight: "#ffff00",
 });
 
 function metersToNauticalMiles(meters) {
@@ -401,44 +402,140 @@ function drawFrontLines() {
 
 const SHOW_WAYPOINT_INFO_AT_ZOOM = 9;
 
-function drawFlightPlan(flight) {
-  const layer = flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
-  const color = flight.blue ? Colors.Blue : Colors.Red;
-  const highlight = "#ffff00";
-  // We don't need a marker for the departure waypoint (and it's likely
-  // coincident with the landing waypoint, so hard to see). We do want to draw
-  // the path from it though.
-  const points = [flight.flightPlan[0].position];
-  const zoom = map.getZoom();
-  flight.flightPlan.slice(1).forEach((waypoint) => {
-    if (!waypoint.isDivert) {
-      points.push(waypoint.position);
-    }
+class Waypoint {
+  constructor(waypoint, flight) {
+    this.waypoint = waypoint;
+    this.flight = flight;
+    this.marker = this.makeMarker();
+    this.waypoint.positionChanged.connect(() => this.relocate());
+    this.waypoint.timingChanged.connect(() => this.updateDescription());
+  }
 
-    if (flight.selected) {
-      L.marker(waypoint.position)
-        .bindTooltip(
-          `${waypoint.number} ${waypoint.name}<br />` +
-            `${waypoint.altitudeFt} ft ${waypoint.altitudeReference}<br />` +
-            `${waypoint.timing}`,
-          { permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM }
-        )
+  position() {
+    return this.waypoint.position;
+  }
+
+  shouldMark() {
+    // We don't need a marker for the departure waypoint (and it's likely
+    // coincident with the landing waypoint, so hard to see). We do want to draw
+    // the path from it though.
+    return !this.waypoint.isTakeoff;
+  }
+
+  description(dragging) {
+    const timing = dragging
+      ? "Waiting to recompute TOT..."
+      : this.waypoint.timing;
+    return (
+      `${this.waypoint.number} ${this.waypoint.name}<br />` +
+      `${this.waypoint.altitudeFt} ft ${this.waypoint.altitudeReference}<br />` +
+      `${timing}`
+    );
+  }
+
+  relocate() {
+    this.marker.setLatLng(this.waypoint.position);
+  }
+
+  updateDescription(dragging) {
+    this.marker.setTooltipContent(this.description(dragging));
+  }
+
+  makeMarker() {
+    const zoom = map.getZoom();
+    return L.marker(this.waypoint.position, { draggable: true })
+      .bindTooltip(this.description(), {
+        permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
+      })
+      .on("dragstart", (e) => {
+        this.updateDescription(true);
+      })
+      .on("drag", (e) => {
+        const marker = e.target;
+        const destination = marker.getLatLng();
+        this.flight.updatePath(this.waypoint.number, destination);
+      })
+      .on("dragend", (e) => {
+        const marker = e.target;
+        const destination = marker.getLatLng();
+        this.waypoint
+          .setPosition([destination.lat, destination.lng])
+          .then((err) => {
+            if (err) {
+              console.log(err);
+              marker.bindPopup(err);
+            }
+          });
+      });
+  }
+
+  includeInPath() {
+    return !this.waypoint.isDivert;
+  }
+}
+
+class Flight {
+  constructor(flight) {
+    this.flight = flight;
+    this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
+    this.path = null;
+    this.flight.flightPlanChanged.connect(() => this.draw());
+  }
+
+  shouldMark(waypoint) {
+    return this.flight.selected && waypoint.shouldMark();
+  }
+
+  flightPlanLayer() {
+    return this.flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
+  }
+
+  updatePath(idx, position) {
+    const points = this.path.getLatLngs();
+    points[idx] = position;
+    this.path.setLatLngs(points);
+  }
+
+  drawPath(path) {
+    const color = this.flight.blue ? Colors.Blue : Colors.Red;
+    const layer = this.flightPlanLayer();
+    if (this.flight.selected) {
+      this.path = L.polyline(path, { color: Colors.Highlight })
         .addTo(layer)
         .addTo(selectedFlightPlansLayer);
+    } else {
+      this.path = L.polyline(path, { color: color }).addTo(layer);
     }
-  });
+  }
 
-  if (flight.selected) {
-    L.polyline(points, { color: highlight })
-      .addTo(layer)
-      .addTo(selectedFlightPlansLayer);
-    if (flight.commitBoundary) {
-      L.polyline(flight.commitBoundary, { color: highlight, weight: 1 }).addTo(
-        layer.addTo(selectedFlightPlansLayer)
-      );
+  drawCommitBoundary() {
+    if (this.flight.selected) {
+      if (this.flight.commitBoundary) {
+        L.polyline(this.flight.commitBoundary, {
+          color: Colors.Highlight,
+          weight: 1,
+        })
+          .addTo(this.flightPlanLayer())
+          .addTo(selectedFlightPlansLayer);
+      }
     }
-  } else {
-    L.polyline(points, { color: color, weight: 1 }).addTo(layer);
+  }
+
+  draw() {
+    const path = [];
+    this.flightPlan.forEach((waypoint) => {
+      if (waypoint.includeInPath()) {
+        path.push(waypoint.position());
+      }
+      if (this.shouldMark(waypoint)) {
+        waypoint.marker
+          .addTo(this.flightPlanLayer())
+          .addTo(selectedFlightPlansLayer);
+      }
+    });
+
+    this.drawPath(path);
+    this.drawCommitBoundary();
   }
 }
 
@@ -455,12 +552,12 @@ function drawFlightPlans() {
     if (flight.selected) {
       selected = flight;
     } else {
-      drawFlightPlan(flight);
+      new Flight(flight).draw();
     }
   });
 
   if (selected != null) {
-    drawFlightPlan(selected);
+    new Flight(selected).draw();
   }
 }
 

@@ -177,8 +177,6 @@ class PackageModel(QAbstractListModel):
     def set_tot(self, tot: datetime.timedelta) -> None:
         self.package.time_over_target = tot
         self.update_tot()
-        # For some reason this is needed to make the UI update quickly.
-        self.layoutChanged.emit()
 
     def set_asap(self, asap: bool) -> None:
         self.package.auto_asap = asap
@@ -188,6 +186,8 @@ class PackageModel(QAbstractListModel):
         if self.package.auto_asap:
             self.package.set_tot_asap()
         self.tot_changed.emit()
+        # For some reason this is needed to make the UI update quickly.
+        self.layoutChanged.emit()
 
     @property
     def mission_target(self) -> MissionTarget:
@@ -291,6 +291,12 @@ class AtoModel(QAbstractListModel):
         """Returns a model for the package at the given index."""
         return self.package_models.acquire(self.package_at_index(index))
 
+    def find_matching_package_model(self, package: Package) -> Optional[PackageModel]:
+        for model in self.packages:
+            if model.package == package:
+                return model
+        return None
+
     @property
     def packages(self) -> Iterator[PackageModel]:
         """Iterates over all the packages in the ATO."""
@@ -375,6 +381,11 @@ class GameModel:
         else:
             self.ato_model = AtoModel(self, self.game.blue_ato)
             self.red_ato_model = AtoModel(self, self.game.red_ato)
+
+    def ato_model_for(self, player: bool) -> AtoModel:
+        if player:
+            return self.ato_model
+        return self.red_ato_model
 
     def set(self, game: Optional[Game]) -> None:
         """Updates the managed Game object.

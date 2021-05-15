@@ -23,7 +23,7 @@ from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
 from gen.flights.flightplan import FlightPlan, PatrollingFlightPlan
 from qt_ui.dialogs import Dialog
-from qt_ui.models import GameModel
+from qt_ui.models import GameModel, AtoModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
@@ -316,20 +316,27 @@ class WaypointJs(QObject):
     altitudeReferenceChanged = Signal()
     nameChanged = Signal()
     timingChanged = Signal()
+    isTakeoffChanged = Signal()
     isDivertChanged = Signal()
 
     def __init__(
         self,
         waypoint: FlightWaypoint,
         number: int,
-        flight_plan: FlightPlan,
+        flight: Flight,
         theater: ConflictTheater,
+        ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.waypoint = waypoint
         self._number = number
-        self.flight_plan = flight_plan
+        self.flight = flight
         self.theater = theater
+        self.ato_model = ato_model
+
+    @property
+    def flight_plan(self) -> FlightPlan:
+        return self.flight.flight_plan
 
     @Property(int, notify=numberChanged)
     def number(self) -> int:
@@ -363,9 +370,25 @@ class WaypointJs(QObject):
             return ""
         return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
 
+    @Property(bool, notify=isTakeoffChanged)
+    def isTakeoff(self) -> bool:
+        return self.waypoint.waypoint_type is FlightWaypointType.TAKEOFF
+
     @Property(bool, notify=isDivertChanged)
     def isDivert(self) -> bool:
         return self.waypoint.waypoint_type is FlightWaypointType.DIVERT
+
+    @Slot(list, result=str)
+    def setPosition(self, position: LeafletLatLon) -> str:
+        point = self.theater.ll_to_point(LatLon(*position))
+        self.waypoint.x = point.x
+        self.waypoint.y = point.y
+        package = self.ato_model.find_matching_package_model(self.flight.package)
+        if package is None:
+            return "Could not find package model containing modified flight"
+        package.update_tot()
+        self.positionChanged.emit()
+        return ""
 
 
 class FlightJs(QObject):
@@ -375,15 +398,25 @@ class FlightJs(QObject):
     commitBoundaryChanged = Signal()
 
     def __init__(
-        self, flight: Flight, selected: bool, theater: ConflictTheater, faction: Faction
+        self,
+        flight: Flight,
+        selected: bool,
+        theater: ConflictTheater,
+        faction: Faction,
+        ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.flight = flight
         self._selected = selected
         self.theater = theater
         self.faction = faction
+        self.ato_model = ato_model
         self._waypoints = self.make_waypoints()
         self._commit_boundary = self.make_commit_boundary()
+
+    def update_waypoints(self) -> None:
+        for waypoint in self._waypoints:
+            waypoint.timingChanged.emit()
 
     def make_waypoints(self) -> List[WaypointJs]:
         departure = FlightWaypoint(
@@ -393,10 +426,12 @@ class FlightJs(QObject):
             meters(0),
         )
         departure.alt_type = "RADIO"
-        return [
-            WaypointJs(p, i, self.flight.flight_plan, self.theater)
-            for i, p in enumerate([departure] + self.flight.points)
-        ]
+        waypoints = []
+        for idx, point in enumerate([departure] + self.flight.points):
+            waypoint = WaypointJs(point, idx, self.flight, self.theater, self.ato_model)
+            waypoint.positionChanged.connect(self.update_waypoints)
+            waypoints.append(waypoint)
+        return waypoints
 
     def make_commit_boundary(self) -> Optional[List[LeafletLatLon]]:
         if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
@@ -533,6 +568,7 @@ class MapModel(QObject):
                         selected=blue and (p_idx, f_idx) == self._selected_flight_index,
                         theater=self.game.theater,
                         faction=self.game.faction_for(blue),
+                        ato_model=self.game_model.ato_model_for(blue),
                     )
                 )
         return flights
