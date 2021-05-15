@@ -97,21 +97,32 @@ class ControlPointJs(QObject):
             return []
         return self.theater.point_to_ll(self.control_point.target_position).as_list()
 
+    def destination_in_range(self, destination: Point) -> bool:
+        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
+
+        move_distance = meters(
+            destination.distance_to_point(self.control_point.position)
+        )
+        return move_distance <= MAX_SHIP_DISTANCE
+
+    @Slot(list, result=bool)
+    def destinationInRange(self, destination: LeafletLatLon) -> bool:
+        return self.destination_in_range(self.theater.ll_to_point(LatLon(*destination)))
+
     @Slot(list, result=str)
     def setDestination(self, destination: LeafletLatLon) -> str:
+        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
+
         if not self.control_point.moveable:
             return f"{self.control_point} is not mobile"
         if not self.control_point.captured:
             return f"{self.control_point} is not owned by player"
-        point = self.theater.ll_to_point(LatLon(*destination))
-        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
 
-        move_distance = meters(point.distance_to_point(self.control_point.position))
-        if move_distance > MAX_SHIP_DISTANCE:
+        point = self.theater.ll_to_point(LatLon(*destination))
+        if not self.destination_in_range(point):
             return (
                 f"Cannot move {self.control_point} more than "
-                f"{MAX_SHIP_DISTANCE.nautical_miles}nm. Attempted "
-                f"{move_distance.nautical_miles}nm"
+                f"{MAX_SHIP_DISTANCE.nautical_miles}nm."
             )
         self.control_point.target_position = point
         self.destinationChanged.emit(destination)

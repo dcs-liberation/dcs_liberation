@@ -15,7 +15,20 @@
 const Colors = Object.freeze({
   Blue: "#0084ff",
   Red: "#c85050",
+  Green: "#80BA80",
 });
+
+function metersToNauticalMiles(meters) {
+  return meters * 0.000539957;
+}
+
+function formatLatLng(latLng) {
+  const lat = latLng.lat.toFixed(2);
+  const lng = latLng.lng.toFixed(2);
+  const ns = lat >= 0 ? "N" : "S";
+  const ew = lng >= 0 ? "E" : "W";
+  return `${lat}&deg;${ns} ${lng}&deg;${ew}`;
+}
 
 const map = L.map("map").setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
@@ -152,12 +165,33 @@ class ControlPoint {
     this.cp.setDestination([destination.lat, destination.lng]).then((err) => {
       if (err) {
         console.log(`Could not set control point destination: ${err}`);
+        // Reset markers and paths on error. On success this happens when we get
+        // the destinationChanged signal from the backend.
+        this.onDestinationChanged();
       }
-      // No need to update destination positions. The backend will emit an event
-      // that causes that if we've successfully changed the destination. If it
-      // was not successful, we've already reset the origin so no need for a
-      //change.
     });
+  }
+
+  onDrag(destination) {
+    this.path.setLatLngs([this.cp.position, destination]);
+    this.path.addTo(controlPointsLayer);
+    const distance = metersToNauticalMiles(
+      destination.distanceTo(this.cp.position)
+    );
+    this.primaryMarker.unbindTooltip();
+    this.primaryMarker.bindTooltip(
+      `Move ${distance.toFixed(1)}nm to ${formatLatLng(destination)}`,
+      {
+        permanent: true,
+      }
+    );
+    this.cp
+      .destinationInRange([destination.lat, destination.lng])
+      .then((inRange) => {
+        this.path.setStyle({
+          color: inRange ? Colors.Green : Colors.Red,
+        });
+      });
   }
 
   detachTooltipsAndHandlers() {
@@ -169,12 +203,13 @@ class ControlPoint {
     this.secondaryMarker.off("contextmenu");
   }
 
-  attachTooltipsAndHandlers() {
+  attachTooltipsAndHandlers(dragging = false) {
     this.detachTooltipsAndHandlers();
     const zoom = map.getZoom();
-    const locationMarker = this.hasDestination()
-      ? this.secondaryMarker
-      : this.primaryMarker;
+    const locationMarker =
+      this.hasDestination() || dragging
+        ? this.secondaryMarker
+        : this.primaryMarker;
     const destinationMarker = this.hasDestination() ? this.primaryMarker : null;
     locationMarker
       .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
@@ -187,7 +222,15 @@ class ControlPoint {
         this.cp.showPackageDialog();
       });
     if (destinationMarker != null) {
-      destinationMarker.bindTooltip(`${this.cp.name} destination`);
+      const origin = locationMarker.getLatLng();
+      const destination = destinationMarker.getLatLng();
+      const distance = metersToNauticalMiles(
+        destination.distanceTo(origin)
+      ).toFixed(1);
+      const dest = formatLatLng(destination);
+      destinationMarker.bindTooltip(
+        `${this.cp.name} moving ${distance}nm to ${dest} next turn`
+      );
       destinationMarker.on("contextmenu", () => this.cp.cancelTravel());
       destinationMarker.addTo(map);
     }
@@ -206,6 +249,15 @@ class ControlPoint {
       draggable: this.cp.mobile,
       autoPan: true,
     })
+      .on("dragstart", () => {
+        this.secondaryMarker.addTo(controlPointsLayer);
+        this.attachTooltipsAndHandlers(true);
+      })
+      .on("drag", (event) => {
+        const marker = event.target;
+        const newPosition = marker.getLatLng();
+        this.onDrag(newPosition);
+      })
       .on("dragend", (event) => {
         const marker = event.target;
         const newPosition = marker.getLatLng();
@@ -224,7 +276,7 @@ class ControlPoint {
   makePath() {
     const destination = this.hasDestination() ? this.cp.destination : [0, 0];
     return L.polyline([this.cp.position, destination], {
-      color: "#80BA80",
+      color: Colors.Green,
       weight: 1,
     });
   }
@@ -235,6 +287,7 @@ class ControlPoint {
       this.secondaryMarker.addTo(controlPointsLayer);
       this.path.setLatLngs([this.cp.position, this.cp.destination]);
       this.path.addTo(controlPointsLayer);
+      this.path.setStyle({ color: Colors.Green });
     } else {
       this.hideDestination();
       this.primaryMarker.setLatLng(this.cp.position);
