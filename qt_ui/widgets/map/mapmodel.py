@@ -6,8 +6,10 @@ from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
 from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
+from shapely.geometry import LineString, Point as ShapelyPoint, Polygon
 
 from game import Game, db
+from game.factions.faction import Faction
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
@@ -18,7 +20,7 @@ from game.theater import (
 from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.flightplan import FlightPlan
+from gen.flights.flightplan import FlightPlan, PatrollingFlightPlan
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -41,6 +43,14 @@ LeafletLatLon = List[float]
 #
 # A local signal (i.e. `@Property(t, notify=Signal())`) is not sufficient. The class
 # needs a named signal for every property, even if it is constant.
+
+
+def shapely_poly_to_leaflet_points(
+    poly: Polygon, theater: ConflictTheater
+) -> Optional[List[LeafletLatLon]]:
+    if poly.is_empty:
+        return None
+    return [theater.point_to_ll(Point(x, y)).as_list() for x, y in poly.exterior.coords]
 
 
 class ControlPointJs(QObject):
@@ -312,18 +322,20 @@ class FlightJs(QObject):
     flightPlanChanged = Signal()
     blueChanged = Signal()
     selectedChanged = Signal()
+    commitBoundaryChanged = Signal()
 
     def __init__(
-        self, flight: Flight, selected: bool, theater: ConflictTheater
+        self, flight: Flight, selected: bool, theater: ConflictTheater, faction: Faction
     ) -> None:
         super().__init__()
         self.flight = flight
         self._selected = selected
         self.theater = theater
-        self._waypoints = []
-        self.reset_waypoints()
+        self.faction = faction
+        self._waypoints = self.make_waypoints()
+        self._commit_boundary = self.make_commit_boundary()
 
-    def reset_waypoints(self) -> None:
+    def make_waypoints(self) -> List[WaypointJs]:
         departure = FlightWaypoint(
             FlightWaypointType.TAKEOFF,
             self.flight.departure.position.x,
@@ -331,11 +343,25 @@ class FlightJs(QObject):
             meters(0),
         )
         departure.alt_type = "RADIO"
-        self._waypoints = [
+        return [
             WaypointJs(p, i, self.flight.flight_plan, self.theater)
             for i, p in enumerate([departure] + self.flight.points)
         ]
-        self.flightPlanChanged.emit()
+
+    def make_commit_boundary(self) -> Optional[List[LeafletLatLon]]:
+        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
+            return []
+        start = self.flight.flight_plan.patrol_start
+        end = self.flight.flight_plan.patrol_end
+        line = LineString(
+            [
+                ShapelyPoint(start.x, start.y),
+                ShapelyPoint(end.x, end.y),
+            ]
+        )
+        doctrine = self.faction.doctrine
+        bubble = line.buffer(doctrine.cap_engagement_range.meters)
+        return shapely_poly_to_leaflet_points(bubble, self.theater)
 
     @Property(list, notify=flightPlanChanged)
     def flightPlan(self) -> List[WaypointJs]:
@@ -348,6 +374,10 @@ class FlightJs(QObject):
     @Property(bool, notify=selectedChanged)
     def selected(self) -> bool:
         return self._selected
+
+    @Property(list)
+    def commitBoundary(self) -> Optional[List[LeafletLatLon]]:
+        return self._commit_boundary
 
 
 class MapModel(QObject):
@@ -452,6 +482,7 @@ class MapModel(QObject):
                         flight,
                         selected=blue and (p_idx, f_idx) == self._selected_flight_index,
                         theater=self.game.theater,
+                        faction=self.game.faction_for(blue),
                     )
                 )
         return flights

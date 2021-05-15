@@ -7,7 +7,6 @@
  * - CV waypoints
  * - Time of day/weather themeing
  * - Exclusion zones
- * - Commit ranges
  * - Supply route status
  * - "Actual" front line
  * - Debug flight plan drawing
@@ -247,8 +246,14 @@ function drawFlightPlan(flight) {
   });
 
   if (flight.selected) {
-    L.polyline(points, { color: highlight }).addTo(selectedFlightPlansLayer);
-    L.polyline(points, { color: highlight }).addTo(layer);
+    L.polyline(points, { color: highlight })
+      .addTo(layer)
+      .addTo(selectedFlightPlansLayer);
+    if (flight.commitBoundary) {
+      L.polyline(flight.commitBoundary, { color: highlight, weight: 1 }).addTo(
+        layer.addTo(selectedFlightPlansLayer)
+      );
+    }
   } else {
     L.polyline(points, { color: color, weight: 1 }).addTo(layer);
   }
