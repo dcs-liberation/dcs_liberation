@@ -290,11 +290,9 @@ class SceneryGroundObject(BuildingGroundObject):
         group_id: int,
         object_id: int,
         position: Point,
-        heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
         zone: TriggerZone,
-        airbase_group=False,
     ) -> None:
         super().__init__(
             name=name,
@@ -302,23 +300,22 @@ class SceneryGroundObject(BuildingGroundObject):
             group_id=group_id,
             object_id=object_id,
             position=position,
-            heading=heading,
+            heading=0,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=airbase_group,
+            airbase_group=False,
         )
         self.zone = zone
-
-    @property
-    def map_object_id(self) -> str:
-        """This is the Id that Liberation tracks for alive/dead.  DCS defines this Id."""
-        if len(self.zone.properties) < 4:
-            raise IndexError(
-                "Non-standard TriggerZone for Scenery definition.  Standard TriggerZone definition has Map Object Id in the third property value."
+        try:
+            # In the default TriggerZone using "assign as..." in the DCS Mission Editor,
+            # property three has the scenery's object ID as its value.
+            self.map_object_id = self.zone.properties[3]["value"]
+        except (IndexError, KeyError):
+            logging.exception(
+                "Invalid TriggerZone for Scenery definition. The third property must "
+                "be the map object ID."
             )
-
-        # In the default TriggerZone using "assign as..." in the DCS Mission Editor, property three has the scenery's object ID as it's value.
-        return self.zone.properties[3].get("value")
+            raise
 
 
 class FactoryGroundObject(BuildingGroundObject):

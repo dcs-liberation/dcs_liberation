@@ -665,8 +665,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         category = scenery.category
         group_id = self.game.next_group_id()
         object_id = 0
-        heading = 0
-        for_airbase = False
 
         # Each nested trigger zone is a target/building/unit for an objective.
         for zone in scenery.zones:
@@ -681,11 +679,9 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 group_id,
                 object_id,
                 local_position,
-                heading,
                 self.control_point,
                 local_dcs_identifier,
                 zone,
-                for_airbase,
             )
 
             self.control_point.connected_objectives.append(g)
