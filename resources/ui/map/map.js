@@ -161,7 +161,6 @@ function drawSamThreatsAt(tgo) {
     L.circle(tgo.position, {
       radius: range,
       color: threatColor,
-      fill: false,
       weight: 1,
     }).addTo(threatLayer);
   });
