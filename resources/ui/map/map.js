@@ -165,6 +165,7 @@ class ControlPoint {
     this.cp.setDestination([destination.lat, destination.lng]).then((err) => {
       if (err) {
         console.log(`Could not set control point destination: ${err}`);
+        this.locationMarker().bindPopup(err).openPopup();
         // Reset markers and paths on error. On success this happens when we get
         // the destinationChanged signal from the backend.
         this.onDestinationChanged();
@@ -203,14 +204,21 @@ class ControlPoint {
     this.secondaryMarker.off("contextmenu");
   }
 
+  locationMarker(dragging = false) {
+    return this.hasDestination() || dragging
+      ? this.secondaryMarker
+      : this.primaryMarker;
+  }
+
+  destinationMarker() {
+    return this.hasDestination() ? this.primaryMarker : null;
+  }
+
   attachTooltipsAndHandlers(dragging = false) {
     this.detachTooltipsAndHandlers();
     const zoom = map.getZoom();
-    const locationMarker =
-      this.hasDestination() || dragging
-        ? this.secondaryMarker
-        : this.primaryMarker;
-    const destinationMarker = this.hasDestination() ? this.primaryMarker : null;
+    const locationMarker = this.locationMarker(dragging);
+    const destinationMarker = this.destinationMarker();
     locationMarker
       .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
         permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
