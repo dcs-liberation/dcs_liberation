@@ -32,7 +32,9 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
-const groundObjectsLayer = L.markerClusterGroup().addTo(map);
+const groundObjectsLayer = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(
+  map
+);
 const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
 const redSamThreatLayer = L.layerGroup().addTo(map);
