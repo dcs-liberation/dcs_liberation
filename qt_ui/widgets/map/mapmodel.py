@@ -16,6 +16,7 @@ from game.theater import (
     ControlPoint,
     TheaterGroundObject,
     FrontLine,
+    LatLon,
 )
 from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
@@ -57,6 +58,8 @@ class ControlPointJs(QObject):
     nameChanged = Signal()
     blueChanged = Signal()
     positionChanged = Signal()
+    mobileChanged = Signal()
+    destinationChanged = Signal(list)
 
     def __init__(
         self,
@@ -82,6 +85,42 @@ class ControlPointJs(QObject):
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.control_point.position)
         return [ll.latitude, ll.longitude]
+
+    @Property(bool, notify=mobileChanged)
+    def mobile(self) -> bool:
+        return self.control_point.moveable and self.control_point.captured
+
+    @Property(list, notify=destinationChanged)
+    def destination(self) -> LeafletLatLon:
+        if self.control_point.target_position is None:
+            # Qt seems to convert None to [] for list Properties :(
+            return []
+        return self.theater.point_to_ll(self.control_point.target_position).as_list()
+
+    @Slot(list, result=str)
+    def setDestination(self, destination: LeafletLatLon) -> str:
+        if not self.control_point.moveable:
+            return f"{self.control_point} is not mobile"
+        if not self.control_point.captured:
+            return f"{self.control_point} is not owned by player"
+        point = self.theater.ll_to_point(LatLon(*destination))
+        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
+
+        move_distance = meters(point.distance_to_point(self.control_point.position))
+        if move_distance > MAX_SHIP_DISTANCE:
+            return (
+                f"Cannot move {self.control_point} more than "
+                f"{MAX_SHIP_DISTANCE.nautical_miles}nm. Attempted "
+                f"{move_distance.nautical_miles}nm"
+            )
+        self.control_point.target_position = point
+        self.destinationChanged.emit(destination)
+        return ""
+
+    @Slot()
+    def cancelTravel(self) -> None:
+        self.control_point.target_position = None
+        self.destinationChanged.emit([])
 
     @Slot()
     def showInfoDialog(self) -> None:

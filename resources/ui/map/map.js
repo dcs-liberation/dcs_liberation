@@ -4,7 +4,6 @@
  * - Culling
  * - Threat zones
  * - Navmeshes
- * - CV waypoints
  * - Time of day/weather themeing
  * - Exclusion zones
  * - Supply route status
@@ -122,24 +121,119 @@ function iconFor(player) {
 
 const SHOW_BASE_NAME_AT_ZOOM = 8;
 
-function drawControlPoints() {
-  controlPointsLayer.clearLayers();
-  const zoom = map.getZoom();
-  game.controlPoints.forEach((cp) => {
+class ControlPoint {
+  constructor(cp) {
+    this.cp = cp;
+    this.locationMarker = this.makeLocationMarker();
+    this.destinationMarker = this.makeDestinationMarker();
+    this.path = this.makePath();
+    this.cp.destinationChanged.connect(() => this.onDestinationChanged());
+  }
+
+  hasDestination() {
+    return this.cp.destination.length > 0;
+  }
+
+  resetLocationMarker() {
+    // It seems that moving this without removing/adding it to the layer does
+    // nothing.
+    this.locationMarker
+      .removeFrom(controlPointsLayer)
+      .setLatLng(this.cp.position)
+      .addTo(controlPointsLayer);
+  }
+
+  hideDestination() {
+    this.destinationMarker.removeFrom(controlPointsLayer);
+    this.path.removeFrom(controlPointsLayer);
+  }
+
+  setDestination(destination) {
+    this.cp.setDestination([destination.lat, destination.lng]).then((err) => {
+      if (err) {
+        console.log(`Could not set control point destination: ${err}`);
+      }
+      // No need to update destination positions. The backend will emit an event
+      // that causes that if we've successfully changed the destination. If it
+      // was not successful, we've already reset the origin so no need for a
+      //change.
+    });
+  }
+
+  makeLocationMarker() {
     // We might draw other markers on top of the CP. The tooltips from the other
-    // markers are helpful so we want to keep them, but make sure the CP is always
-    // the clickable thing.
-    L.marker(cp.position, { icon: iconFor(cp.blue), zIndexOffset: 1000 })
-      .bindTooltip(`<h3 style="margin: 0;">${cp.name}</h3>`, {
+    // markers are helpful so we want to keep them, but make sure the CP is
+    // always the clickable thing.
+    const zoom = map.getZoom();
+    return L.marker(this.cp.position, {
+      icon: iconFor(this.cp.blue),
+      zIndexOffset: 1000,
+      draggable: this.cp.mobile,
+      autoPan: true,
+    })
+      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
         permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
       })
-      .on("click", function () {
-        cp.showInfoDialog();
+      .on("click", () => {
+        this.cp.showInfoDialog();
       })
-      .on("contextmenu", function () {
-        cp.showPackageDialog();
+      .on("contextmenu", () => {
+        this.cp.showPackageDialog();
       })
-      .addTo(controlPointsLayer);
+      .on("dragend", (event) => {
+        const marker = event.target;
+        const newPosition = marker.getLatLng();
+        this.setDestination(newPosition);
+        this.resetLocationMarker();
+      });
+  }
+
+  makeDestinationMarker() {
+    const destination = this.hasDestination() ? this.cp.destination : [0, 0];
+    return L.marker(destination, {
+      icon: iconFor(this.cp.blue),
+      zIndexOffset: 1000,
+    })
+      .bindTooltip(`${this.cp.name} destination`)
+      .on("contextmenu", () => this.cp.cancelTravel());
+  }
+
+  makePath() {
+    const destination = this.hasDestination() ? this.cp.destination : [0, 0];
+    return L.polyline([this.cp.position, destination], {
+      color: "#80BA80",
+      weight: 1,
+    });
+  }
+
+  onDestinationChanged() {
+    if (this.hasDestination()) {
+      this.destinationMarker.setLatLng(this.cp.destination);
+      this.destinationMarker.addTo(controlPointsLayer);
+      this.path.setLatLngs([this.cp.position, this.cp.destination]);
+      this.path.addTo(controlPointsLayer);
+    } else {
+      this.hideDestination();
+    }
+  }
+
+  drawDestination() {
+    this.destinationMarker.addTo(controlPointsLayer);
+    this.path.addTo(controlPointsLayer);
+  }
+
+  draw() {
+    this.locationMarker.addTo(controlPointsLayer);
+    if (this.hasDestination()) {
+      this.drawDestination();
+    }
+  }
+}
+
+function drawControlPoints() {
+  controlPointsLayer.clearLayers();
+  game.controlPoints.forEach((cp) => {
+    new ControlPoint(cp).draw();
   });
 }
 
