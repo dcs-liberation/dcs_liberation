@@ -133,7 +133,14 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--new-map", action="store_true", help="Use the new map. Non functional."
+        "--new-map",
+        action="store_true",
+        default=True,
+        help="Use the new map. Functional but missing many display options.",
+    )
+
+    parser.add_argument(
+        "--old-map", dest="new_map", action="store_false", help="Use the old map."
     )
 
     new_game = subparsers.add_parser("new-game")
