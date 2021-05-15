@@ -44,4 +44,13 @@ VERSION = _build_version_string()
 #: * Bulker Handy Winds define shipping lanes. They should be placed in port areas that
 #:   are navigable by ships and have a route to another port area. DCS ships *will not*
 #:   avoid driving into islands, so ensure that their waypoints plot a navigable route.
-CAMPAIGN_FORMAT_VERSION = 3
+#:
+#: Version 4
+#: * TriggerZones define map based building targets.  White TriggerZones created by right
+#:   clicking an object and using "assign as..." define the buildings within an objective.
+#:   Blue circular TriggerZones created normally must surround groups of one or more
+#:   white TriggerZones to define an objective.  If a white TriggerZone is not surrounded
+#:   by a blue circular TriggerZone, campaign creation will fail.  Blue circular
+#:   TriggerZones must also have their first property's value field define the type of
+#:   objective (a valid value for a building TGO category, from `game.db.PRICES`).
+CAMPAIGN_FORMAT_VERSION = 4

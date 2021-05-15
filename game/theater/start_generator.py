@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.scenery_group import SceneryGroup
 
 import logging
 import pickle
@@ -23,6 +24,7 @@ from game.theater.theatergroundobject import (
     MissileSiteGroundObject,
     SamGroundObject,
     ShipGroundObject,
+    SceneryGroundObject,
     VehicleGroupGroundObject,
     CoastalSiteGroundObject,
 )
@@ -463,6 +465,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """Generate ground objects and AA sites for the control point."""
         skip_sams = self.generate_required_aa()
         skip_ewrs = self.generate_required_ewr()
+        self.generate_scenery_sites()
         self.generate_factories()
 
         if self.control_point.is_global:
@@ -650,6 +653,40 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             return
         g.groups = [group]
         self.control_point.connected_objectives.append(g)
+
+    def generate_scenery_sites(self) -> None:
+        presets = self.control_point.preset_locations
+        for scenery_group in presets.scenery:
+            self.generate_tgo_for_scenery(scenery_group)
+
+    def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:
+
+        obj_name = namegen.random_objective_name()
+        category = scenery.category
+        group_id = self.game.next_group_id()
+        object_id = 0
+
+        # Each nested trigger zone is a target/building/unit for an objective.
+        for zone in scenery.zones:
+
+            object_id += 1
+            local_position = zone.position
+            local_dcs_identifier = zone.name
+
+            g = SceneryGroundObject(
+                obj_name,
+                category,
+                group_id,
+                object_id,
+                local_position,
+                self.control_point,
+                local_dcs_identifier,
+                zone,
+            )
+
+            self.control_point.connected_objectives.append(g)
+
+        return
 
     def generate_missile_sites(self) -> None:
         for i in range(self.faction.missiles_group_count):

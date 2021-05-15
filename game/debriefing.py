@@ -117,7 +117,10 @@ class StateData:
             killed_aircraft=data["killed_aircrafts"],
             # Airfields emit a new "dead" event every time a bomb is dropped on
             # them when they've already dead. Dedup.
-            killed_ground_units=list(set(data["killed_ground_units"])),
+            #
+            # Also normalize dead map objects (which are ints) to strings. The unit map
+            # only stores strings.
+            killed_ground_units=list({str(u) for u in data["killed_ground_units"]}),
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
         )

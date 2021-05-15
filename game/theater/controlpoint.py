@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.scenery_group import SceneryGroup
 
 import heapq
 import itertools
@@ -113,6 +114,9 @@ class PresetLocations:
 
     #: Locations of EWRs which should always be spawned.
     required_ewrs: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of map scenery to create zones for.
+    scenery: List[SceneryGroup] = field(default_factory=list)
 
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)

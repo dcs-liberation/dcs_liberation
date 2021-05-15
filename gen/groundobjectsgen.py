@@ -12,6 +12,7 @@ import random
 from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 
 from dcs import Mission, Point, unitgroup
+from dcs.action import SceneryDestructionZone
 from dcs.country import Country
 from dcs.point import StaticPoint
 from dcs.statics import Fortification, fortification_map, warehouse_map, Warehouse
@@ -22,6 +23,7 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
+from dcs.triggers import TriggerStart, TriggerZone
 from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
@@ -39,9 +41,10 @@ from game.theater.theatergroundobject import (
     LhaGroundObject,
     ShipGroundObject,
     MissileSiteGroundObject,
+    SceneryGroundObject,
 )
 from game.unitmap import UnitMap
-from game.utils import knots, mps
+from game.utils import feet, knots, mps
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
 from .tacan import TacanBand, TacanChannel, TacanRegistry
@@ -257,6 +260,58 @@ class FactoryGenerator(BuildingSiteGenerator):
 
         # TODO: Faction specific?
         self.generate_static(Fortification.Workshop_A)
+
+
+class SceneryGenerator(BuildingSiteGenerator):
+    def generate(self) -> None:
+        assert isinstance(self.ground_object, SceneryGroundObject)
+
+        trigger_zone = self.generate_trigger_zone(self.ground_object)
+
+        # DCS only visually shows a scenery object is dead when
+        # this trigger rule is applied.  Otherwise you can kill a
+        # structure twice.
+        if self.ground_object.is_dead:
+            self.generate_dead_trigger_rule(trigger_zone)
+
+        # Tell Liberation to manage this groundobjectsgen as part of the campaign.
+        self.register_scenery()
+
+    def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
+
+        zone = scenery.zone
+
+        # Align the trigger zones to the faction color on the DCS briefing/F10 map.
+        if scenery.is_friendly(to_player=True):
+            color = {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
+        else:
+            color = {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
+
+        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap is minimized.
+        # As long as the triggerzone is over the scenery object, we're ok.
+        smallest_valid_radius = feet(16).meters
+
+        return self.m.triggers.add_triggerzone(
+            zone.position,
+            smallest_valid_radius,
+            zone.hidden,
+            zone.name,
+            color,
+            zone.properties,
+        )
+
+    def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
+        # Add destruction zone trigger
+        t = TriggerStart(comment="Destruction")
+        t.actions.append(
+            SceneryDestructionZone(destruction_level=100, zone=trigger_zone.id)
+        )
+        self.m.triggerrules.triggers.append(t)
+
+    def register_scenery(self) -> None:
+        scenery = self.ground_object
+        assert isinstance(scenery, SceneryGroundObject)
+        self.unit_map.add_scenery(scenery)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):
@@ -574,6 +629,10 @@ class GroundObjectsGenerator:
             for ground_object in cp.ground_objects:
                 if isinstance(ground_object, FactoryGroundObject):
                     generator = FactoryGenerator(
+                        ground_object, country, self.game, self.m, self.unit_map
+                    )
+                elif isinstance(ground_object, SceneryGroundObject):
+                    generator = SceneryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )
                 elif isinstance(ground_object, BuildingGroundObject):

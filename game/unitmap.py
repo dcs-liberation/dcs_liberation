@@ -8,7 +8,7 @@ from dcs.unittype import VehicleType
 
 from game import db
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import BuildingGroundObject
+from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
 from game.transfers import CargoShip, Convoy, TransferOrder
 from gen.flights.flight import Flight
 
@@ -200,6 +200,16 @@ class UnitMap:
         name = str(unit.name)
         if name in self.buildings:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
+        self.buildings[name] = Building(ground_object)
+
+    def add_scenery(self, ground_object: SceneryGroundObject) -> None:
+        name = str(ground_object.map_object_id)
+        if name in self.buildings:
+            raise RuntimeError(
+                f"Duplicate TGO unit: {name}. TriggerZone name: "
+                f"{ground_object.dcs_identifier}"
+            )
+
         self.buildings[name] = Building(ground_object)
 
     def building_or_fortification(self, name: str) -> Optional[Building]:

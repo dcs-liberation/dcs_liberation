@@ -40,6 +40,10 @@ from dcs.unitgroup import (
     VehicleGroup,
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
+from dcs.triggers import Triggers
+from dcs.triggers import TriggerZone
+
+from ..scenery_group import SceneryGroup
 from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
@@ -258,6 +262,10 @@ class MizCampaignLoader:
             if group.units[0].type in self.FACTORY_UNIT_TYPE:
                 yield group
 
+    @property
+    def scenery(self) -> List[SceneryGroup]:
+        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones)
+
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
         control_points = {}
@@ -444,6 +452,10 @@ class MizCampaignLoader:
             closest.preset_locations.factories.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
+
+        for group in self.scenery:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.scenery.append(group)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():

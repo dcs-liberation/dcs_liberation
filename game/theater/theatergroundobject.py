@@ -7,6 +7,7 @@ from typing import Iterator, List, TYPE_CHECKING
 from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import Group
+from dcs.triggers import TriggerZone, Triggers
 
 from .. import db
 from ..data.radar_db import UNITS_WITH_RADAR
@@ -279,6 +280,42 @@ class BuildingGroundObject(TheaterGroundObject):
 
     def kill(self) -> None:
         self._dead = True
+
+
+class SceneryGroundObject(BuildingGroundObject):
+    def __init__(
+        self,
+        name: str,
+        category: str,
+        group_id: int,
+        object_id: int,
+        position: Point,
+        control_point: ControlPoint,
+        dcs_identifier: str,
+        zone: TriggerZone,
+    ) -> None:
+        super().__init__(
+            name=name,
+            category=category,
+            group_id=group_id,
+            object_id=object_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier=dcs_identifier,
+            airbase_group=False,
+        )
+        self.zone = zone
+        try:
+            # In the default TriggerZone using "assign as..." in the DCS Mission Editor,
+            # property three has the scenery's object ID as its value.
+            self.map_object_id = self.zone.properties[3]["value"]
+        except (IndexError, KeyError):
+            logging.exception(
+                "Invalid TriggerZone for Scenery definition. The third property must "
+                "be the map object ID."
+            )
+            raise
 
 
 class FactoryGroundObject(BuildingGroundObject):
