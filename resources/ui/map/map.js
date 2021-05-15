@@ -19,33 +19,33 @@ const Colors = Object.freeze({
   Red: "#c85050",
 });
 
-var map = L.map("map").setView([0, 0], 3);
+const map = L.map("map").setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
-var baseLayers = {
+const baseLayers = {
   "Imagery Clarity": L.esri.basemapLayer("ImageryClarity", { maxZoom: 17 }),
   "Imagery Firefly": L.esri.basemapLayer("ImageryFirefly", { maxZoom: 17 }),
   Topographic: L.esri.basemapLayer("Topographic", { maxZoom: 16 }),
 };
 
-var defaultBaseMap = baseLayers["Imagery Clarity"];
+const defaultBaseMap = baseLayers["Imagery Clarity"];
 defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
-var controlPointsLayer = L.layerGroup().addTo(map);
-var groundObjectsLayer = L.markerClusterGroup().addTo(map);
-var supplyRoutesLayer = L.layerGroup().addTo(map);
-var frontLinesLayer = L.layerGroup().addTo(map);
-var redSamThreatLayer = L.layerGroup().addTo(map);
-var blueFlightPlansLayer = L.layerGroup().addTo(map);
+const controlPointsLayer = L.layerGroup().addTo(map);
+const groundObjectsLayer = L.markerClusterGroup().addTo(map);
+const supplyRoutesLayer = L.layerGroup().addTo(map);
+const frontLinesLayer = L.layerGroup().addTo(map);
+const redSamThreatLayer = L.layerGroup().addTo(map);
+const blueFlightPlansLayer = L.layerGroup().addTo(map);
 
 // Added to map by the user via layer controls.
-var blueSamThreatLayer = L.layerGroup();
-var blueSamDetectionLayer = L.layerGroup();
-var redSamDetectionLayer = L.layerGroup();
-var redFlightPlansLayer = L.layerGroup();
-var selectedFlightPlansLayer = L.layerGroup();
+const blueSamThreatLayer = L.layerGroup();
+const blueSamDetectionLayer = L.layerGroup();
+const redSamDetectionLayer = L.layerGroup();
+const redFlightPlansLayer = L.layerGroup();
+const selectedFlightPlansLayer = L.layerGroup();
 
 L.control
   .groupedLayers(
@@ -74,7 +74,7 @@ L.control
   )
   .addTo(map);
 
-var friendlyCpIcon = new L.Icon({
+const friendlyCpIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
   shadowUrl:
@@ -85,7 +85,7 @@ var friendlyCpIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-var enemyCpIcon = new L.Icon({
+const enemyCpIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
   shadowUrl:
@@ -96,7 +96,7 @@ var enemyCpIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-var game;
+let game;
 new QWebChannel(qt.webChannelTransport, function (channel) {
   game = channel.objects.game;
   drawInitialMap();
@@ -125,7 +125,7 @@ const SHOW_BASE_NAME_AT_ZOOM = 8;
 
 function drawControlPoints() {
   controlPointsLayer.clearLayers();
-  var zoom = map.getZoom();
+  const zoom = map.getZoom();
   game.controlPoints.forEach((cp) => {
     L.marker(cp.position, { icon: iconFor(cp.blue) })
       .bindTooltip(`<h3 style="margin: 0;">${cp.name}</h3>`, {
@@ -142,10 +142,12 @@ function drawControlPoints() {
 }
 
 function drawSamThreatsAt(tgo) {
-  var detectionLayer = tgo.blue ? blueSamDetectionLayer : redSamDetectionLayer;
-  var threatLayer = tgo.blue ? blueSamThreatLayer : redSamThreatLayer;
-  var threatColor = tgo.blue ? Colors.Blue : Colors.Red;
-  var detectionColor = tgo.blue ? "#bb89ff" : "#eee17b";
+  const detectionLayer = tgo.blue
+    ? blueSamDetectionLayer
+    : redSamDetectionLayer;
+  const threatLayer = tgo.blue ? blueSamThreatLayer : redSamThreatLayer;
+  const threatColor = tgo.blue ? Colors.Blue : Colors.Red;
+  const detectionColor = tgo.blue ? "#bb89ff" : "#eee17b";
 
   tgo.samDetectionRanges.forEach((range) => {
     L.circle(tgo.position, {
@@ -189,7 +191,7 @@ function drawGroundObjects() {
 function drawSupplyRoutes() {
   supplyRoutesLayer.clearLayers();
   game.supplyRoutes.forEach((route) => {
-    var color;
+    let color;
     if (route.frontActive) {
       color = Colors.Red;
     } else if (route.blue) {
@@ -218,14 +220,14 @@ function drawFrontLines() {
 const SHOW_WAYPOINT_INFO_AT_ZOOM = 9;
 
 function drawFlightPlan(flight) {
-  var layer = flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
-  var color = flight.blue ? Colors.Blue : Colors.Red;
-  var highlight = "#ffff00";
+  const layer = flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
+  const color = flight.blue ? Colors.Blue : Colors.Red;
+  const highlight = "#ffff00";
   // We don't need a marker for the departure waypoint (and it's likely
   // coincident with the landing waypoint, so hard to see). We do want to draw
   // the path from it though.
-  var points = [flight.flightPlan[0].position];
-  var zoom = map.getZoom();
+  const points = [flight.flightPlan[0].position];
+  const zoom = map.getZoom();
   flight.flightPlan.slice(1).forEach((waypoint) => {
     if (!waypoint.isDivert) {
       points.push(waypoint.position);
@@ -256,7 +258,7 @@ function drawFlightPlans() {
   blueFlightPlansLayer.clearLayers();
   redFlightPlansLayer.clearLayers();
   selectedFlightPlansLayer.clearLayers();
-  var selected = null;
+  let selected = null;
   game.flights.forEach((flight) => {
     // Draw the selected waypoint last so it's on top. bringToFront only brings
     // it to the front of the *extant* elements, so any flights drawn later will
@@ -292,14 +294,14 @@ function clearAllLayers() {
 }
 
 function setTooltipZoomThreshold(layerGroup, showAt) {
-  var showing = map.getZoom() >= showAt;
+  let showing = map.getZoom() >= showAt;
   map.on("zoomend", function () {
-    var zoom = map.getZoom();
+    const zoom = map.getZoom();
     if (zoom < showAt && showing) {
       showing = false;
       layerGroup.eachLayer(function (layer) {
         if (layer.getTooltip()) {
-          var tooltip = layer.getTooltip();
+          const tooltip = layer.getTooltip();
           layer.unbindTooltip().bindTooltip(tooltip, {
             permanent: false,
           });
@@ -309,7 +311,7 @@ function setTooltipZoomThreshold(layerGroup, showAt) {
       showing = true;
       layerGroup.eachLayer(function (layer) {
         if (layer.getTooltip()) {
-          var tooltip = layer.getTooltip();
+          const tooltip = layer.getTooltip();
           layer.unbindTooltip().bindTooltip(tooltip, {
             permanent: true,
           });
