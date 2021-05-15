@@ -51,10 +51,6 @@ class LossGrid(QGridLayout):
             debriefing.building_losses_by_type(player),
             lambda u: u,
         )
-        self.add_loss_rows(
-            debriefing.scenery_losses_by_type(player),
-            lambda u: u,
-        )
 
         # TODO: Display dead ground object units and runways.
 

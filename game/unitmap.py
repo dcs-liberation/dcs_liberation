@@ -43,11 +43,6 @@ class Building:
     ground_object: BuildingGroundObject
 
 
-@dataclass(frozen=True)
-class Scenery:
-    ground_object: SceneryGroundObject
-
-
 class UnitMap:
     def __init__(self) -> None:
         self.aircraft: Dict[str, Flight] = {}
@@ -58,7 +53,6 @@ class UnitMap:
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnit] = {}
-        self.scenery: Dict[str, Scenery] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for unit in group.units:
@@ -208,21 +202,15 @@ class UnitMap:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
         self.buildings[name] = Building(ground_object)
 
-    def building_or_fortification(self, name: str) -> Optional[Building]:
-        return self.buildings.get(name, None)
-
     def add_scenery(self, ground_object: SceneryGroundObject) -> None:
         name = str(ground_object.map_object_id)
-
-        if name in self.scenery:
+        if name in self.buildings:
             raise RuntimeError(
-                f"Duplicate TGO unit: {name}.  TriggerZone name: {ground_object.dcs_identifier}"
+                f"Duplicate TGO unit: {name}. TriggerZone name: "
+                f"{ground_object.dcs_identifier}"
             )
 
-        self.scenery[name] = Scenery(ground_object)
+        self.buildings[name] = Building(ground_object)
 
-    def scenery_unit(self, name: str) -> Optional[Scenery]:
-        str_name = str(name)
-        value = self.scenery.get(str_name, None)
-
-        return value
+    def building_or_fortification(self, name: str) -> Optional[Building]:
+        return self.buildings.get(name, None)
