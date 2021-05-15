@@ -15,7 +15,7 @@ from typing import (
 )
 
 from PySide2 import QtCore, QtWidgets
-from PySide2.QtCore import QLineF, QPointF, QRectF, Qt
+from PySide2.QtCore import QLineF, QPointF, QRectF, Qt, QUrl
 from PySide2.QtGui import (
     QBrush,
     QColor,
@@ -162,7 +162,9 @@ class LeafletMap(QWebEngineView, LiberationMap):
 
         self.page = LoggingWebPage(self)
         self.page.setWebChannel(self.channel)
-        self.page.setHtml(Path("resources/ui/map/canvas.html").read_text())
+        self.page.load(
+            QUrl.fromLocalFile(str(Path("resources/ui/map/canvas.html").resolve()))
+        )
         self.setPage(self.page)
 
         self.loadFinished.connect(self.load_finished)
