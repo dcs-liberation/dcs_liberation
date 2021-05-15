@@ -126,9 +126,16 @@ const SHOW_BASE_NAME_AT_ZOOM = 8;
 class ControlPoint {
   constructor(cp) {
     this.cp = cp;
-    this.locationMarker = this.makeLocationMarker();
-    this.destinationMarker = this.makeDestinationMarker();
+    // The behavior we want is for the CP to be draggable when it has no
+    // destination, but for the destination to be draggable when it does. The
+    // primary marker is always shown and draggable. When a destination exists,
+    // the primary marker marks the destination and the secondary marker marks
+    // the location. When no destination exists, the primary marker marks the
+    // location and the secondary marker is not shown.
+    this.primaryMarker = this.makePrimaryMarker();
+    this.secondaryMarker = this.makeSecondaryMarker();
     this.path = this.makePath();
+    this.attachTooltipsAndHandlers();
     this.cp.destinationChanged.connect(() => this.onDestinationChanged());
   }
 
@@ -136,17 +143,8 @@ class ControlPoint {
     return this.cp.destination.length > 0;
   }
 
-  resetLocationMarker() {
-    // It seems that moving this without removing/adding it to the layer does
-    // nothing.
-    this.locationMarker
-      .removeFrom(controlPointsLayer)
-      .setLatLng(this.cp.position)
-      .addTo(controlPointsLayer);
-  }
-
   hideDestination() {
-    this.destinationMarker.removeFrom(controlPointsLayer);
+    this.secondaryMarker.removeFrom(controlPointsLayer);
     this.path.removeFrom(controlPointsLayer);
   }
 
@@ -162,17 +160,23 @@ class ControlPoint {
     });
   }
 
-  makeLocationMarker() {
-    // We might draw other markers on top of the CP. The tooltips from the other
-    // markers are helpful so we want to keep them, but make sure the CP is
-    // always the clickable thing.
+  detachTooltipsAndHandlers() {
+    this.primaryMarker.unbindTooltip();
+    this.primaryMarker.off("click");
+    this.primaryMarker.off("contextmenu");
+    this.secondaryMarker.unbindTooltip();
+    this.secondaryMarker.off("click");
+    this.secondaryMarker.off("contextmenu");
+  }
+
+  attachTooltipsAndHandlers() {
+    this.detachTooltipsAndHandlers();
     const zoom = map.getZoom();
-    return L.marker(this.cp.position, {
-      icon: iconFor(this.cp.blue),
-      zIndexOffset: 1000,
-      draggable: this.cp.mobile,
-      autoPan: true,
-    })
+    const locationMarker = this.hasDestination()
+      ? this.secondaryMarker
+      : this.primaryMarker;
+    const destinationMarker = this.hasDestination() ? this.primaryMarker : null;
+    locationMarker
       .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
         permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
       })
@@ -181,23 +185,40 @@ class ControlPoint {
       })
       .on("contextmenu", () => {
         this.cp.showPackageDialog();
-      })
+      });
+    if (destinationMarker != null) {
+      destinationMarker.bindTooltip(`${this.cp.name} destination`);
+      destinationMarker.on("contextmenu", () => this.cp.cancelTravel());
+      destinationMarker.addTo(map);
+    }
+  }
+
+  makePrimaryMarker() {
+    const location = this.hasDestination()
+      ? this.cp.destination
+      : this.cp.position;
+    // We might draw other markers on top of the CP. The tooltips from the other
+    // markers are helpful so we want to keep them, but make sure the CP is
+    // always the clickable thing.
+    return L.marker(location, {
+      icon: iconFor(this.cp.blue),
+      zIndexOffset: 1000,
+      draggable: this.cp.mobile,
+      autoPan: true,
+    })
       .on("dragend", (event) => {
         const marker = event.target;
         const newPosition = marker.getLatLng();
         this.setDestination(newPosition);
-        this.resetLocationMarker();
-      });
+      })
+      .addTo(map);
   }
 
-  makeDestinationMarker() {
-    const destination = this.hasDestination() ? this.cp.destination : [0, 0];
-    return L.marker(destination, {
+  makeSecondaryMarker() {
+    return L.marker(this.cp.position, {
       icon: iconFor(this.cp.blue),
       zIndexOffset: 1000,
-    })
-      .bindTooltip(`${this.cp.name} destination`)
-      .on("contextmenu", () => this.cp.cancelTravel());
+    });
   }
 
   makePath() {
@@ -210,22 +231,24 @@ class ControlPoint {
 
   onDestinationChanged() {
     if (this.hasDestination()) {
-      this.destinationMarker.setLatLng(this.cp.destination);
-      this.destinationMarker.addTo(controlPointsLayer);
+      this.primaryMarker.setLatLng(this.cp.destination);
+      this.secondaryMarker.addTo(controlPointsLayer);
       this.path.setLatLngs([this.cp.position, this.cp.destination]);
       this.path.addTo(controlPointsLayer);
     } else {
       this.hideDestination();
+      this.primaryMarker.setLatLng(this.cp.position);
     }
+    this.attachTooltipsAndHandlers();
   }
 
   drawDestination() {
-    this.destinationMarker.addTo(controlPointsLayer);
+    this.secondaryMarker.addTo(controlPointsLayer);
     this.path.addTo(controlPointsLayer);
   }
 
   draw() {
-    this.locationMarker.addTo(controlPointsLayer);
+    this.primaryMarker.addTo(controlPointsLayer);
     if (this.hasDestination()) {
       this.drawDestination();
     }
