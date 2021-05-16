@@ -201,15 +201,18 @@ class GroundObjectJs(QObject):
     @Property(list, notify=unitsChanged)
     def units(self) -> List[str]:
         units = []
-        if self.buildings:
-            for building in self.buildings:
-                dead = " [DEAD]" if building.is_dead else ""
-                units.append(f"{building.dcs_identifier}{dead}")
-        else:
+        # TGOs with a non-empty group set are non-building TGOs. Building TGOs have no
+        # groups set, but instead are one TGO per building "group" (DCS doesn't support
+        # groups of statics) all with the same name.
+        if self.tgo.groups:
             for unit in self.tgo.units:
                 units.append(self.make_unit_name(unit, dead=False))
             for unit in self.tgo.dead_units:
                 units.append(self.make_unit_name(unit, dead=True))
+        else:
+            for building in self.buildings:
+                dead = " [DEAD]" if building.is_dead else ""
+                units.append(f"{building.dcs_identifier}{dead}")
         return units
 
     @Property(bool, notify=blueChanged)
