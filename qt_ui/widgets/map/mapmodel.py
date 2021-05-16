@@ -20,6 +20,7 @@ from game.theater import (
     FrontLine,
     LatLon,
 )
+from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
@@ -254,6 +255,7 @@ class SupplyRouteJs(QObject):
     frontActiveChanged = Signal()
     isSeaChanged = Signal()
     blueChanged = Signal()
+    activeTransportsChanged = Signal()
 
     def __init__(
         self,
@@ -261,12 +263,50 @@ class SupplyRouteJs(QObject):
         b: ControlPoint,
         points: List[LeafletLatLon],
         sea_route: bool,
+        game: Game,
     ) -> None:
         super().__init__()
         self.control_point_a = a
         self.control_point_b = b
         self._points = points
         self.sea_route = sea_route
+        self.game = game
+
+    def find_in_transport_map(
+        self, transport_map: TransportMap
+    ) -> List[MultiGroupTransport]:
+        transports = []
+        transport = transport_map.find_transport(
+            self.control_point_a, self.control_point_b
+        )
+        if transport is not None:
+            transports.append(transport)
+        transport = transport_map.find_transport(
+            self.control_point_b, self.control_point_a
+        )
+        if transport is not None:
+            transports.append(transport)
+        return transports
+
+    def find_transports(self) -> List[MultiGroupTransport]:
+        if self.sea_route:
+            return self.find_in_transport_map(self.game.transfers.cargo_ships)
+        return self.find_in_transport_map(self.game.transfers.convoys)
+
+    @Property(list, notify=activeTransportsChanged)
+    def activeTransports(self) -> List[str]:
+        transports = self.find_transports()
+        if not transports:
+            return []
+
+        descriptions = []
+        for transport in transports:
+            units = "units" if transport.size > 1 else "unit"
+            descriptions.append(
+                f"{transport.size} {units} transferring from {transport.origin} to "
+                f"{transport.destination}"
+            )
+        return descriptions
 
     @Property(list, notify=pointsChanged)
     def points(self) -> List[LeafletLatLon]:
@@ -638,6 +678,7 @@ class MapModel(QObject):
                             for p in convoy_route
                         ],
                         sea_route=False,
+                        game=self.game,
                     )
                 )
             for destination, shipping_lane in control_point.shipping_lanes.items():
@@ -653,6 +694,7 @@ class MapModel(QObject):
                                 for p in shipping_lane
                             ],
                             sea_route=True,
+                            game=self.game,
                         )
                     )
         self.supplyRoutesChanged.emit()

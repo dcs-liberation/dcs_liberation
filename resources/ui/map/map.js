@@ -6,7 +6,6 @@
  * - Navmeshes
  * - Time of day/weather themeing
  * - Exclusion zones
- * - Supply route status
  * - "Actual" front line
  * - Debug flight plan drawing
  * - Icon variety
@@ -384,10 +383,20 @@ function drawSupplyRoutes() {
     } else {
       color = "#8c1414";
     }
-    L.polyline(route.points, {
+    const line = L.polyline(route.points, {
       color: color,
       weight: route.isSea ? 4 : 6,
     }).addTo(supplyRoutesLayer);
+    const activeTransports = route.activeTransports;
+    if (activeTransports.length > 0) {
+      line.bindTooltip(activeTransports.join("<br />"));
+      L.polyline(route.points, {
+        color: "#ffffff",
+        weight: 2,
+      }).addTo(supplyRoutesLayer);
+    } else {
+      line.bindTooltip("This supply route is inactive.");
+    }
   });
 }
 
