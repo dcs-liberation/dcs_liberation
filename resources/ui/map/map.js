@@ -59,6 +59,7 @@ const blueSamDetectionLayer = L.layerGroup();
 const redSamDetectionLayer = L.layerGroup();
 const redFlightPlansLayer = L.layerGroup();
 const selectedFlightPlansLayer = L.layerGroup();
+const allFlightPlansLayer = L.layerGroup();
 
 L.control
   .groupedLayers(
@@ -83,6 +84,7 @@ L.control
         "Show selected blue": selectedFlightPlansLayer,
         "Show all blue": blueFlightPlansLayer,
         "Show all red": redFlightPlansLayer,
+        "Show all": allFlightPlansLayer,
       },
     },
     { collapsed: false, exclusiveGroups: ["Flight Plans"] }
@@ -514,18 +516,22 @@ class Flight {
     const layer = this.flightPlanLayer();
     if (this.flight.selected) {
       this.path = L.polyline(path, { color: Colors.Highlight })
+        .addTo(selectedFlightPlansLayer)
         .addTo(layer)
-        .addTo(selectedFlightPlansLayer);
+        .addTo(allFlightPlansLayer);
     } else {
-      this.path = L.polyline(path, { color: color }).addTo(layer);
+      this.path = L.polyline(path, { color: color })
+        .addTo(layer)
+        .addTo(allFlightPlansLayer);
     }
   }
 
   drawCommitBoundary() {
     if (this.commitBoundary != null) {
       this.commitBoundary
+        .removeFrom(selectedFlightPlansLayer)
         .removeFrom(this.flightPlanLayer())
-        .removeFrom(selectedFlightPlansLayer);
+        .removeFrom(allFlightPlansLayer);
     }
     if (this.flight.selected) {
       if (this.flight.commitBoundary) {
@@ -533,8 +539,9 @@ class Flight {
           color: Colors.Highlight,
           weight: 1,
         })
+          .addTo(selectedFlightPlansLayer)
           .addTo(this.flightPlanLayer())
-          .addTo(selectedFlightPlansLayer);
+          .addTo(allFlightPlansLayer);
       }
     }
   }
@@ -547,8 +554,9 @@ class Flight {
       }
       if (this.shouldMark(waypoint)) {
         waypoint.marker
+          .addTo(selectedFlightPlansLayer)
           .addTo(this.flightPlanLayer())
-          .addTo(selectedFlightPlansLayer);
+          .addTo(allFlightPlansLayer);
       }
     });
 
@@ -561,6 +569,7 @@ function drawFlightPlans() {
   blueFlightPlansLayer.clearLayers();
   redFlightPlansLayer.clearLayers();
   selectedFlightPlansLayer.clearLayers();
+  allFlightPlansLayer.clearLayers();
   let selected = null;
   game.flights.forEach((flight) => {
     // Draw the selected waypoint last so it's on top. bringToFront only brings
