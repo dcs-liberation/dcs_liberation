@@ -71,11 +71,13 @@ L.control
         "Supply routes": supplyRoutesLayer,
         "Front lines": frontLinesLayer,
       },
-      "Air Defenses": {
-        "Ally SAM threat range": blueSamThreatLayer,
+      "Enemy Air Defenses": {
         "Enemy SAM threat range": redSamThreatLayer,
-        "Ally SAM detection range": blueSamDetectionLayer,
         "Enemy SAM detection range": redSamDetectionLayer,
+      },
+      "Allied Air Defenses": {
+        "Ally SAM threat range": blueSamThreatLayer,
+        "Ally SAM detection range": blueSamDetectionLayer,
       },
       "Flight Plans": {
         Hide: L.layerGroup(),
