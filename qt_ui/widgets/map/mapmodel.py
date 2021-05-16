@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from datetime import timedelta
 from typing import List, Optional, Tuple
@@ -323,16 +325,20 @@ class WaypointJs(QObject):
         self,
         waypoint: FlightWaypoint,
         number: int,
-        flight: Flight,
+        flight_model: FlightJs,
         theater: ConflictTheater,
         ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.waypoint = waypoint
         self._number = number
-        self.flight = flight
+        self.flight_model = flight_model
         self.theater = theater
         self.ato_model = ato_model
+
+    @property
+    def flight(self) -> Flight:
+        return self.flight_model.flight
 
     @property
     def flight_plan(self) -> FlightPlan:
@@ -388,6 +394,7 @@ class WaypointJs(QObject):
             return "Could not find package model containing modified flight"
         package.update_tot()
         self.positionChanged.emit()
+        self.flight_model.commitBoundaryChanged.emit()
         return ""
 
 
@@ -412,7 +419,6 @@ class FlightJs(QObject):
         self.faction = faction
         self.ato_model = ato_model
         self._waypoints = self.make_waypoints()
-        self._commit_boundary = self.make_commit_boundary()
 
     def update_waypoints(self) -> None:
         for waypoint in self._waypoints:
@@ -428,25 +434,10 @@ class FlightJs(QObject):
         departure.alt_type = "RADIO"
         waypoints = []
         for idx, point in enumerate([departure] + self.flight.points):
-            waypoint = WaypointJs(point, idx, self.flight, self.theater, self.ato_model)
+            waypoint = WaypointJs(point, idx, self, self.theater, self.ato_model)
             waypoint.positionChanged.connect(self.update_waypoints)
             waypoints.append(waypoint)
         return waypoints
-
-    def make_commit_boundary(self) -> Optional[List[LeafletLatLon]]:
-        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
-            return []
-        start = self.flight.flight_plan.patrol_start
-        end = self.flight.flight_plan.patrol_end
-        line = LineString(
-            [
-                ShapelyPoint(start.x, start.y),
-                ShapelyPoint(end.x, end.y),
-            ]
-        )
-        doctrine = self.faction.doctrine
-        bubble = line.buffer(doctrine.cap_engagement_range.meters)
-        return shapely_poly_to_leaflet_points(bubble, self.theater)
 
     @Property(list, notify=flightPlanChanged)
     def flightPlan(self) -> List[WaypointJs]:
@@ -460,9 +451,21 @@ class FlightJs(QObject):
     def selected(self) -> bool:
         return self._selected
 
-    @Property(list)
+    @Property(list, notify=commitBoundaryChanged)
     def commitBoundary(self) -> Optional[List[LeafletLatLon]]:
-        return self._commit_boundary
+        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
+            return []
+        start = self.flight.flight_plan.patrol_start
+        end = self.flight.flight_plan.patrol_end
+        line = LineString(
+            [
+                ShapelyPoint(start.x, start.y),
+                ShapelyPoint(end.x, end.y),
+            ]
+        )
+        doctrine = self.faction.doctrine
+        bubble = line.buffer(doctrine.cap_engagement_range.meters)
+        return shapely_poly_to_leaflet_points(bubble, self.theater)
 
 
 class MapModel(QObject):

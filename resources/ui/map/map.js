@@ -479,7 +479,9 @@ class Flight {
     this.flight = flight;
     this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
     this.path = null;
+    this.commitBoundary = null;
     this.flight.flightPlanChanged.connect(() => this.draw());
+    this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
   }
 
   shouldMark(waypoint) {
@@ -509,9 +511,14 @@ class Flight {
   }
 
   drawCommitBoundary() {
+    if (this.commitBoundary != null) {
+      this.commitBoundary
+        .removeFrom(this.flightPlanLayer())
+        .removeFrom(selectedFlightPlansLayer);
+    }
     if (this.flight.selected) {
       if (this.flight.commitBoundary) {
-        L.polyline(this.flight.commitBoundary, {
+        this.commitBoundary = L.polyline(this.flight.commitBoundary, {
           color: Colors.Highlight,
           weight: 1,
         })
