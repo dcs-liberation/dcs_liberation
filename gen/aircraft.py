@@ -728,7 +728,7 @@ class AircraftConflictGenerator:
     def _setup_group(
         self,
         group: FlyingGroup,
-        for_task: Type[Task],
+        loadout_for_task: Type[Task],
         package: Package,
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
@@ -742,10 +742,10 @@ class AircraftConflictGenerator:
                 p.pylons.clear()
 
             # Now load loadout
-            if for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][for_task]
+            if loadout_for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
+                payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][loadout_for_task]
                 group.load_loadout(payload_name)
-                if not group.units[0].pylons and for_task == RunwayAttack:
+                if not group.units[0].pylons and loadout_for_task == RunwayAttack:
                     if PinpointStrike in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
                         logging.warning(
                             'No loadout for "Runway Attack" for the {}, defaulting to Strike loadout'.format(
@@ -759,12 +759,12 @@ class AircraftConflictGenerator:
                 did_load_loadout = True
                 logging.info(
                     "Loaded overridden payload for {} - {} for task {}".format(
-                        unit_type, payload_name, for_task
+                        unit_type, payload_name, loadout_for_task
                     )
                 )
 
         if not did_load_loadout:
-            group.load_task_default_loadout(for_task)
+            group.load_task_default_loadout(loadout_for_task)
 
         if unit_type in db.PLANE_LIVERY_OVERRIDES:
             for unit_instance in group.units:
@@ -1287,7 +1287,14 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        group.task = SEAD.name
+        # Only CAS and SEAD are capable of the Attack Group task. SEAD is arguably more
+        # appropriate but it has an extremely limited list of capable aircraft, whereas
+        # CAS has a much wider selection of units.
+        #
+        # Note that the only effect that the DCS task type has is in determining which
+        # waypoint actions the group may perform.
+        group.task = CAS.name
+        # But we still use the SEAD *loadout*.
         self._setup_group(group, SEAD, package, flight, dynamic_runways)
         self.configure_behavior(
             group,

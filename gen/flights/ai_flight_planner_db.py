@@ -229,7 +229,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD tasks
+# Aircraft used for SEAD tasks. Must be capable of the SEAD DCS task.
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -246,8 +246,18 @@ SEAD_CAPABLE = [
     Su_30,
     MiG_27K,
     Tornado_GR4,
-    F_117A,
-    B_17G,
+]
+
+
+# Aircraft used for DEAD tasks. Must be capable of the CAS DCS task.
+DEAD_CAPABLE = [
+    AJS37,
+    F_14B,
+    F_14A_135_GR,
+    B_1B,
+    B_52H,
+    Tu_160,
+    Tu_95MS,
     A_20G,
     P_47D_40,
     P_47D_30bl1,
@@ -259,18 +269,6 @@ SEAD_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-]
-
-
-# Aircraft used for DEAD tasks
-DEAD_CAPABLE = [
-    AJS37,
-    F_14B,
-    F_14A_135_GR,
-    B_1B,
-    B_52H,
-    Tu_160,
-    Tu_95MS,
 ] + SEAD_CAPABLE
 
 
