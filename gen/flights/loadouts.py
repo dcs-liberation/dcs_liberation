@@ -83,7 +83,8 @@ class Loadout:
         # names, so those have been included here too. The priority goes from first to
         # last - the first element in the tuple will be tried first, then the second,
         # etc.
-        yield from {
+        loadout_names = {t: [f"Liberation {t.value}"] for t in FlightType}
+        legacy_names = {
             FlightType.TARCAP: ("CAP HEAVY", "CAP"),
             FlightType.BARCAP: ("CAP HEAVY", "CAP"),
             FlightType.CAS: ("CAS MAVERICK F", "CAS"),
@@ -97,9 +98,10 @@ class Loadout:
             FlightType.SWEEP: ("CAP HEAVY", "CAP"),
             FlightType.OCA_RUNWAY: ("RUNWAY_ATTACK", "RUNWAY_STRIKE", "STRIKE"),
             FlightType.OCA_AIRCRAFT: ("OCA", "CAS MAVERICK F", "CAS"),
-            FlightType.TRANSPORT: (),
-            FlightType.AEWC: (),
-        }.get(flight.flight_type, [])
+        }
+        for flight_type, names in legacy_names.items():
+            loadout_names[flight_type].extend(names)
+        yield from loadout_names[flight.flight_type]
 
     @classmethod
     def default_for(cls, flight: Flight) -> Loadout:
