@@ -61,12 +61,10 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
-    PinpointStrike,
     RunwayAttack,
     SEAD,
     StartCommand,
     Targets,
-    Task,
     Transport,
     WeaponType,
 )
@@ -77,7 +75,7 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
-from game.data.weapons import Pylon, Weapon
+from game.data.weapons import Pylon
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -728,43 +726,13 @@ class AircraftConflictGenerator:
     def _setup_group(
         self,
         group: FlyingGroup,
-        loadout_for_task: Type[Task],
         package: Package,
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        did_load_loadout = False
         unit_type = group.units[0].unit_type
 
-        if unit_type in db.PLANE_PAYLOAD_OVERRIDES:
-            # Clear pylons
-            for p in group.units:
-                p.pylons.clear()
-
-            # Now load loadout
-            if loadout_for_task in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][loadout_for_task]
-                group.load_loadout(payload_name)
-                if not group.units[0].pylons and loadout_for_task == RunwayAttack:
-                    if PinpointStrike in db.PLANE_PAYLOAD_OVERRIDES[unit_type]:
-                        logging.warning(
-                            'No loadout for "Runway Attack" for the {}, defaulting to Strike loadout'.format(
-                                str(unit_type)
-                            )
-                        )
-                        payload_name = db.PLANE_PAYLOAD_OVERRIDES[unit_type][
-                            PinpointStrike
-                        ]
-                        group.load_loadout(payload_name)
-                did_load_loadout = True
-                logging.info(
-                    "Loaded overridden payload for {} - {} for task {}".format(
-                        unit_type, payload_name, loadout_for_task
-                    )
-                )
-
-        if not did_load_loadout:
-            group.load_task_default_loadout(loadout_for_task)
+        self._setup_payload(flight, group)
 
         if unit_type in db.PLANE_LIVERY_OVERRIDES:
             for unit_instance in group.units:
@@ -976,38 +944,19 @@ class AircraftConflictGenerator:
         else:
             assert False
 
-    @staticmethod
-    def _setup_custom_payload(flight: Flight, group: FlyingGroup) -> None:
-        if not flight.use_custom_loadout:
-            return
-
-        logging.info("Custom loadout for flight : " + flight.__repr__())
+    def _setup_payload(self, flight: Flight, group: FlyingGroup) -> None:
         for p in group.units:
             p.pylons.clear()
 
-        for pylon_number, weapon in flight.loadout.items():
+        loadout = flight.loadout
+        if self.game.settings.restrict_weapons_by_date:
+            loadout = loadout.degrade_for_date(flight.unit_type, self.game.date)
+
+        for pylon_number, weapon in loadout.pylons.items():
             if weapon is None:
                 continue
             pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
             pylon.equip(group, weapon)
-
-    def _degrade_payload_to_era(self, flight: Flight, group: FlyingGroup) -> None:
-        loadout = dict(group.units[0].pylons)
-        for pylon_number, clsid in loadout.items():
-            weapon = Weapon.from_clsid(clsid["CLSID"])
-            if weapon is None:
-                logging.error(f"Could not find weapon for clsid {clsid}")
-                continue
-
-            if not weapon.available_on(self.game.date):
-                pylon = Pylon.for_aircraft(flight.unit_type, pylon_number)
-                for fallback in weapon.fallbacks:
-                    if not pylon.can_equip(fallback):
-                        continue
-                    if not fallback.available_on(self.game.date):
-                        continue
-                    pylon.equip(group, fallback)
-                    break
 
     def clear_parking_slots(self) -> None:
         for cp in self.game.theater.controlpoints:
@@ -1237,7 +1186,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = CAP.name
-        self._setup_group(group, CAP, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
 
         if flight.unit_type not in GUNFIGHTERS:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
@@ -1254,7 +1203,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = FighterSweep.name
-        self._setup_group(group, FighterSweep, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
 
         if flight.unit_type not in GUNFIGHTERS:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
@@ -1271,7 +1220,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = CAS.name
-        self._setup_group(group, CAS, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1295,7 +1244,7 @@ class AircraftConflictGenerator:
         # waypoint actions the group may perform.
         group.task = CAS.name
         # But we still use the SEAD *loadout*.
-        self._setup_group(group, SEAD, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1312,7 +1261,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = SEAD.name
-        self._setup_group(group, SEAD, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1329,7 +1278,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = GroundAttack.name
-        self._setup_group(group, GroundAttack, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1345,7 +1294,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = AntishipStrike.name
-        self._setup_group(group, AntishipStrike, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1361,7 +1310,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = RunwayAttack.name
-        self._setup_group(group, RunwayAttack, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1377,7 +1326,7 @@ class AircraftConflictGenerator:
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
         group.task = CAS.name
-        self._setup_group(group, CAS, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1400,7 +1349,7 @@ class AircraftConflictGenerator:
             )
             return
 
-        self._setup_group(group, AWACS, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
 
         # Awacs task action
         self.configure_behavior(
@@ -1423,7 +1372,7 @@ class AircraftConflictGenerator:
         # Search Then Engage task, which we have to use instead of the Escort
         # task for the reasons explained in JoinPointBuilder.
         group.task = CAP.name
-        self._setup_group(group, CAP, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group, roe=OptROE.Values.OpenFire, restrict_jettison=True
         )
@@ -1439,7 +1388,7 @@ class AircraftConflictGenerator:
         # Search Then Engage task, which we have to use instead of the Escort
         # task for the reasons explained in JoinPointBuilder.
         group.task = Transport.name
-        self._setup_group(group, Transport, package, flight, dynamic_runways)
+        self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
@@ -1540,9 +1489,6 @@ class AircraftConflictGenerator:
         # Set here rather than when the FlightData is created so they waypoints
         # have their TOTs set.
         self.flights[-1].waypoints = [takeoff_point] + flight.points
-        self._setup_custom_payload(flight, group)
-        if self.game.settings.restrict_weapons_by_date:
-            self._degrade_payload_to_era(flight, group)
 
     def should_delay_flight(self, flight: Flight, start_time: timedelta) -> bool:
         if start_time.total_seconds() <= 0:

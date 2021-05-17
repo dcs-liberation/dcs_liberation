@@ -1,8 +1,8 @@
+import json
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Type, Union
-import json
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -62,7 +62,6 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
-    F_A_18C,
     IL_76MD,
     IL_78M,
     JF_17,
@@ -72,7 +71,6 @@ from dcs.planes import (
     KC_135,
     KC135MPRS,
     KJ_2000,
-    L_39C,
     L_39ZA,
     MQ_9_Reaper,
     M_2000C,
@@ -92,7 +90,6 @@ from dcs.planes import (
     P_47D_40,
     P_51D,
     P_51D_30_NA,
-    PlaneType,
     RQ_1A_Predator,
     S_3B,
     S_3B_Tanker,
@@ -103,7 +100,6 @@ from dcs.planes import (
     Su_24MR,
     Su_25,
     Su_25T,
-    Su_25TM,
     Su_27,
     Su_30,
     Su_33,
@@ -1176,141 +1172,6 @@ COMMON_OVERRIDE = {
     RunwayAttack: "RUNWAY_ATTACK",
     FighterSweep: "CAP",
     AWACS: "AEW&C",
-}
-
-"""
-This is a list of mappings from the FlightType of a Flight to the type of payload defined in the
-resources/payloads/UNIT_TYPE.lua file. A Flight has no concept of a PyDCS task, so COMMON_OVERRIDE cannot be
-used here. This is used in the payload editor, for setting the default loadout of an object.
-The left element is the FlightType name, and the right element is a tuple containing what is used in the lua file.
-Some aircraft differ from the standard loadout names, so those have been included here too.
-The priority goes from first to last - the first element in the tuple will be tried first, then the second, etc.
-"""
-
-EXPANDED_TASK_PAYLOAD_OVERRIDE = {
-    "TARCAP": ("CAP HEAVY", "CAP"),
-    "BARCAP": ("CAP HEAVY", "CAP"),
-    "CAS": ("CAS MAVERICK F", "CAS"),
-    "INTERCEPTION": ("CAP HEAVY", "CAP"),
-    "STRIKE": ("STRIKE",),
-    "ANTISHIP": ("ANTISHIP",),
-    "SEAD": ("SEAD",),
-    "DEAD": ("SEAD",),
-    "ESCORT": ("CAP HEAVY", "CAP"),
-    "BAI": ("BAI", "CAS MAVERICK F", "CAS"),
-    "SWEEP": ("CAP HEAVY", "CAP"),
-    "OCA_RUNWAY": ("RUNWAY_ATTACK", "RUNWAY_STRIKE", "STRIKE"),
-    "OCA_AIRCRAFT": ("OCA", "CAS MAVERICK F", "CAS"),
-    "TRANSPORT": (),
-}
-
-PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
-    B_1B: COMMON_OVERRIDE,
-    B_52H: COMMON_OVERRIDE,
-    F_117A: COMMON_OVERRIDE,
-    F_15E: COMMON_OVERRIDE,
-    FA_18C_hornet: {
-        CAP: "CAP HEAVY",
-        Intercept: "CAP HEAVY",
-        CAS: "CAS MAVERICK F",
-        PinpointStrike: "STRIKE",
-        SEAD: "SEAD",
-        AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE",
-        Escort: "CAP HEAVY",
-        FighterSweep: "CAP HEAVY",
-    },
-    F_A_18C: {
-        CAP: "CAP HEAVY",
-        Intercept: "CAP HEAVY",
-        CAS: "CAS MAVERICK F",
-        PinpointStrike: "STRIKE",
-        SEAD: "SEAD",
-        AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE",
-        Escort: "CAP HEAVY",
-        FighterSweep: "CAP HEAVY",
-    },
-    Tu_160: {
-        PinpointStrike: "Kh-65*12",
-    },
-    Tu_22M3: COMMON_OVERRIDE,
-    Tu_95MS: COMMON_OVERRIDE,
-    A_10A: COMMON_OVERRIDE,
-    A_10C: COMMON_OVERRIDE,
-    A_10C_2: COMMON_OVERRIDE,
-    AV8BNA: COMMON_OVERRIDE,
-    C_101CC: COMMON_OVERRIDE,
-    F_5E_3: COMMON_OVERRIDE,
-    F_14A_135_GR: COMMON_OVERRIDE,
-    F_14B: COMMON_OVERRIDE,
-    F_15C: COMMON_OVERRIDE,
-    F_22A: COMMON_OVERRIDE,
-    F_16C_50: COMMON_OVERRIDE,
-    JF_17: COMMON_OVERRIDE,
-    M_2000C: COMMON_OVERRIDE,
-    MiG_15bis: COMMON_OVERRIDE,
-    MiG_19P: COMMON_OVERRIDE,
-    MiG_21Bis: COMMON_OVERRIDE,
-    AJS37: COMMON_OVERRIDE,
-    Su_25T: COMMON_OVERRIDE,
-    Su_25: COMMON_OVERRIDE,
-    Su_27: COMMON_OVERRIDE,
-    Su_33: COMMON_OVERRIDE,
-    MiG_29A: COMMON_OVERRIDE,
-    MiG_29G: COMMON_OVERRIDE,
-    MiG_29S: COMMON_OVERRIDE,
-    Su_24M: COMMON_OVERRIDE,
-    Su_30: COMMON_OVERRIDE,
-    Su_34: COMMON_OVERRIDE,
-    Su_57: COMMON_OVERRIDE,
-    MiG_23MLD: COMMON_OVERRIDE,
-    MiG_27K: COMMON_OVERRIDE,
-    Tornado_GR4: COMMON_OVERRIDE,
-    Tornado_IDS: COMMON_OVERRIDE,
-    Mirage_2000_5: COMMON_OVERRIDE,
-    MiG_31: COMMON_OVERRIDE,
-    S_3B: COMMON_OVERRIDE,
-    SA342M: COMMON_OVERRIDE,
-    SA342L: COMMON_OVERRIDE,
-    SA342Mistral: COMMON_OVERRIDE,
-    Mi_8MT: COMMON_OVERRIDE,
-    Mi_24V: COMMON_OVERRIDE,
-    Mi_28N: COMMON_OVERRIDE,
-    Ka_50: COMMON_OVERRIDE,
-    L_39ZA: COMMON_OVERRIDE,
-    L_39C: COMMON_OVERRIDE,
-    Su_17M4: COMMON_OVERRIDE,
-    F_4E: COMMON_OVERRIDE,
-    P_47D_30: COMMON_OVERRIDE,
-    P_47D_30bl1: COMMON_OVERRIDE,
-    P_47D_40: COMMON_OVERRIDE,
-    B_17G: COMMON_OVERRIDE,
-    P_51D: COMMON_OVERRIDE,
-    P_51D_30_NA: COMMON_OVERRIDE,
-    FW_190D9: COMMON_OVERRIDE,
-    FW_190A8: COMMON_OVERRIDE,
-    Bf_109K_4: COMMON_OVERRIDE,
-    I_16: COMMON_OVERRIDE,
-    SpitfireLFMkIXCW: COMMON_OVERRIDE,
-    SpitfireLFMkIX: COMMON_OVERRIDE,
-    A_20G: COMMON_OVERRIDE,
-    A_4E_C: COMMON_OVERRIDE,
-    MB_339PAN: COMMON_OVERRIDE,
-    OH_58D: COMMON_OVERRIDE,
-    F_16A: COMMON_OVERRIDE,
-    MQ_9_Reaper: COMMON_OVERRIDE,
-    RQ_1A_Predator: COMMON_OVERRIDE,
-    WingLoong_I: COMMON_OVERRIDE,
-    AH_1W: COMMON_OVERRIDE,
-    AH_64D: COMMON_OVERRIDE,
-    AH_64A: COMMON_OVERRIDE,
-    SH_60B: COMMON_OVERRIDE,
-    Hercules: COMMON_OVERRIDE,
-    F_86F_Sabre: COMMON_OVERRIDE,
-    Su_25TM: {
-        SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
-    },
 }
 
 """

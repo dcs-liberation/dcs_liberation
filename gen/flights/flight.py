@@ -2,19 +2,19 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING, Type
+from typing import List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unittype import FlyingType
 
 from game import db
-from game.data.weapons import Weapon
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
+from gen.flights.loadouts import Loadout
 
 if TYPE_CHECKING:
-    from game.transfers import Airlift, TransferOrder
+    from game.transfers import TransferOrder
     from gen.ato import Package
     from gen.flights.flightplan import FlightPlan
 
@@ -179,7 +179,7 @@ class Flight:
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
-        self.loadout: Dict[int, Optional[Weapon]] = {}
+        self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
         self.client_count = 0
