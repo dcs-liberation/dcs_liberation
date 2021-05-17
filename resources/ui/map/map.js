@@ -30,7 +30,7 @@ function formatLatLng(latLng) {
   return `${lat}&deg;${ns} ${lng}&deg;${ew}`;
 }
 
-const map = L.map("map").setView([0, 0], 3);
+const map = L.map("map", { doubleClickZoom: false }).setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
