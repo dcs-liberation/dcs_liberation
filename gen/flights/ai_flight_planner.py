@@ -933,8 +933,9 @@ class CoalitionMissionPlanner:
         start_time = start_time_generator(
             count=len(non_dca_packages),
             earliest=5,
-            latest=self.game.settings.desired_player_mission_duration.total_seconds()
-            / 60,
+            latest=int(
+                self.game.settings.desired_player_mission_duration.total_seconds() / 60
+            ),
             margin=5,
         )
         for package in self.ato.packages:
