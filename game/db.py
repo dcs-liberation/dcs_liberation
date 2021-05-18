@@ -1244,6 +1244,7 @@ REWARDS = {
     "comms": 10,
     "oil": 10,
     "derrick": 8,
+    "bridge": 0,
 }
 
 CARRIER_CAPABLE = [

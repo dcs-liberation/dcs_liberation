@@ -35,6 +35,7 @@ NAME_BY_CATEGORY = {
     "village": "Village",
     "allycamp": "Camp",
     "EWR": "EWR",
+    "bridge": "bridge",
 }
 
 ABBREV_NAME = {
@@ -52,6 +53,7 @@ ABBREV_NAME = {
     "ww2bunker": "BUNK",
     "village": "VLG",
     "allycamp": "CMP",
+    "bridge": "BRIDGE",
 }
 
 CATEGORY_MAP = {
