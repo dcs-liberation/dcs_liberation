@@ -13,12 +13,14 @@ MarkupSafe==1.1.1
 mypy==0.812
 mypy-extensions==0.4.3
 nodeenv==1.5.0
+packaging==20.9
 pathspec==0.8.1
 pefile==2019.4.18
 Pillow==8.1.1
 pre-commit==2.10.1
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
+pyparsing==2.4.7
 pyproj==3.0.1
 PySide2==5.15.2
 pywin32-ctypes==0.2.0

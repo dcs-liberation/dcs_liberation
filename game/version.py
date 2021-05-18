@@ -53,4 +53,4 @@ VERSION = _build_version_string()
 #:   by a blue circular TriggerZone, campaign creation will fail.  Blue circular
 #:   TriggerZones must also have their first property's value field define the type of
 #:   objective (a valid value for a building TGO category, from `game.db.PRICES`).
-CAMPAIGN_FORMAT_VERSION = 4
+CAMPAIGN_FORMAT_VERSION = (4, 0)
