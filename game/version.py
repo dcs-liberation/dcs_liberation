@@ -53,4 +53,17 @@ VERSION = _build_version_string()
 #:   by a blue circular TriggerZone, campaign creation will fail.  Blue circular
 #:   TriggerZones must also have their first property's value field define the type of
 #:   objective (a valid value for a building TGO category, from `game.db.PRICES`).
-CAMPAIGN_FORMAT_VERSION = (4, 0)
+#:
+#: Version 4.1
+#: * All objective types may now be set as required generation (similar to the required
+#:   IADS generation). This includes:
+#:     * SHORADS
+#:     * Armor groups
+#:     * Strike targets
+#:     * Offshore strike targets
+#:     * Ships
+#:     * Missile sites
+#:     * Coastal defenses
+#:
+#:   See the unit lists in MizCampaignLoader in conflicttheater.py for unit types.
+CAMPAIGN_FORMAT_VERSION = (4, 1)

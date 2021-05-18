@@ -94,23 +94,46 @@ class PresetLocations:
     #: Locations used by non-carrier ships. Carriers and LHAs are not random.
     ships: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations used by non-carrier ships that will be spawned unless the faction has
+    #: no navy or the player has disable ship generation for the original owning side.
+    required_ships: List[PointWithHeading] = field(default_factory=list)
+
     #: Locations used by coastal defenses.
     coastal_defenses: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations used by coastal defenses that are always generated if the faction is
+    #: capable.
+    required_coastal_defenses: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
     strike_locations: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations used by ground based strike objectives that will always be spawned.
+    required_strike_locations: List[PointWithHeading] = field(default_factory=list)
+
     #: Locations used by offshore strike objectives.
     offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations used by offshore strike objectives that will always be spawned.
+    required_offshore_strike_locations: List[PointWithHeading] = field(
+        default_factory=list
+    )
+
     #: Locations used by missile sites like scuds and V-2s.
     missile_sites: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations used by missile sites like scuds and V-2s that are always generated if
+    #: the faction is capable.
+    required_missile_sites: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of long range SAMs which should always be spawned.
     required_long_range_sams: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of medium range SAMs which should always be spawned.
     required_medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of short range SAMs which should always be spawned.
+    required_short_range_sams: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of EWRs which should always be spawned.
     required_ewrs: List[PointWithHeading] = field(default_factory=list)
@@ -120,6 +143,9 @@ class PresetLocations:
 
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of stationary armor groups. These will always be spawned.
+    armor_groups: List[PointWithHeading] = field(default_factory=list)
 
     @staticmethod
     def _random_from(points: List[PointWithHeading]) -> Optional[PointWithHeading]:

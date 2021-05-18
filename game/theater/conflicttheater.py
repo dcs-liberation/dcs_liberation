@@ -40,8 +40,6 @@ from dcs.unitgroup import (
     VehicleGroup,
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
-from dcs.triggers import Triggers
-from dcs.triggers import TriggerZone
 
 from ..scenery_group import SceneryGroup
 from pyproj import CRS, Transformer
@@ -110,9 +108,20 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_3_S_125_Goa_LN.id,
     }
 
+    REQUIRED_SHORT_RANGE_SAM_UNIT_TYPES = {
+        AirDefence.SAM_Avenger__Stinger.id,
+        AirDefence.SAM_Rapier_LN.id,
+        AirDefence.SAM_SA_19_Tunguska_Grison.id,
+        AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL.id,
+    }
+
     REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
 
+    ARMOR_GROUP_UNIT_TYPE = Armor.MBT_M1A2_Abrams.id
+
     FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
+
+    REQUIRED_STRIKE_TARGET_UNIT_TYPE = Fortification.Tech_combine.id
 
     BASE_DEFENSE_RADIUS = nautical_miles(2)
 
@@ -197,6 +206,12 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def required_ships(self) -> Iterator[ShipGroup]:
+        for group in self.red.ship_group:
+            if group.units[0].type == self.SHIP_UNIT_TYPE:
+                yield group
+
+    @property
     def ewrs(self) -> Iterator[VehicleGroup]:
         for group in self.blue.vehicle_group:
             if group.units[0].type == self.EWR_UNIT_TYPE:
@@ -221,14 +236,32 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def required_offshore_strike_targets(self) -> Iterator[StaticGroup]:
+        for group in self.red.static_group:
+            if group.units[0].type == self.OFFSHORE_STRIKE_TARGET_UNIT_TYPE:
+                yield group
+
+    @property
     def missile_sites(self) -> Iterator[VehicleGroup]:
         for group in self.blue.vehicle_group:
             if group.units[0].type == self.MISSILE_SITE_UNIT_TYPE:
                 yield group
 
     @property
+    def required_missile_sites(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type == self.MISSILE_SITE_UNIT_TYPE:
+                yield group
+
+    @property
     def coastal_defenses(self) -> Iterator[VehicleGroup]:
         for group in self.blue.vehicle_group:
+            if group.units[0].type == self.COASTAL_DEFENSE_UNIT_TYPE:
+                yield group
+
+    @property
+    def required_coastal_defenses(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
             if group.units[0].type == self.COASTAL_DEFENSE_UNIT_TYPE:
                 yield group
 
@@ -245,9 +278,21 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def required_short_range_sams(self) -> Iterator[VehicleGroup]:
+        for group in self.red.vehicle_group:
+            if group.units[0].type in self.REQUIRED_SHORT_RANGE_SAM_UNIT_TYPES:
+                yield group
+
+    @property
     def required_ewrs(self) -> Iterator[VehicleGroup]:
         for group in self.red.vehicle_group:
             if group.units[0].type in self.REQUIRED_EWR_UNIT_TYPE:
+                yield group
+
+    @property
+    def armor_groups(self) -> Iterator[VehicleGroup]:
+        for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
+            if group.units[0].type in self.ARMOR_GROUP_UNIT_TYPE:
                 yield group
 
     @property
@@ -260,6 +305,12 @@ class MizCampaignLoader:
     def factories(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type in self.FACTORY_UNIT_TYPE:
+                yield group
+
+    @property
+    def required_strike_targets(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.REQUIRED_STRIKE_TARGET_UNIT_TYPE:
                 yield group
 
     @property
@@ -405,9 +456,21 @@ class MizCampaignLoader:
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
+        for group in self.required_offshore_strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_offshore_strike_locations.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
         for group in self.ships:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ships.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_ships:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_ships.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
@@ -417,9 +480,21 @@ class MizCampaignLoader:
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
+        for group in self.required_missile_sites:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_missile_sites.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
             closest.preset_locations.coastal_defenses.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_coastal_defenses:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_coastal_defenses.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
@@ -435,9 +510,21 @@ class MizCampaignLoader:
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
+        for group in self.required_short_range_sams:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_short_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
         for group in self.required_ewrs:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_ewrs.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.armor_groups:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.armor_groups.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
@@ -450,6 +537,12 @@ class MizCampaignLoader:
         for group in self.factories:
             closest, distance = self.objective_info(group)
             closest.preset_locations.factories.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_strike_targets:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_strike_locations.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
