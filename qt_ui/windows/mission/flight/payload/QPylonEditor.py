@@ -16,6 +16,7 @@ class QPylonEditor(QComboBox):
         self.flight = flight
         self.pylon = pylon
         self.game = game
+        self.has_added_clean_item = False
 
         current = self.flight.loadout.pylons.get(self.pylon.number)
 
@@ -45,9 +46,20 @@ class QPylonEditor(QComboBox):
         weapon = loadout.pylons.get(self.pylon.number)
         if weapon is None:
             return None
-        # TODO: Handle removed pylons better.
+        # TODO: Fix pydcs to support the <CLEAN> "weapon".
+        # These are not exported in the pydcs weapon map, which causes the pydcs pylon
+        # exporter to fail to include them in the supported list. Since they aren't
+        # known to be compatible (and we can't show them as compatible for *every*
+        # pylon, because they aren't), we won't have populated a "Clean" weapon when
+        # creating the selection list, so it's not selectable. To work around this, add
+        # the item to the list the first time it's encountered for the pylon.
+        #
+        # A similar hack exists in Pylon to support forcibly equipping this even when
+        # it's not known to be compatible.
         if weapon.cls_id == "<CLEAN>":
-            return None
+            if not self.has_added_clean_item:
+                self.addItem("Clean", weapon)
+                self.has_added_clean_item = True
         return weapon
 
     def matching_weapon_name(self, loadout: Loadout) -> str:
@@ -55,7 +67,7 @@ class QPylonEditor(QComboBox):
             loadout = loadout.degrade_for_date(self.flight.unit_type, self.game.date)
         weapon = self.weapon_from_loadout(loadout)
         if weapon is None:
-            return ""
+            return "None"
         return weapon.name
 
     def set_from(self, loadout: Loadout) -> None:

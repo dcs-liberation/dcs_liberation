@@ -1243,7 +1243,6 @@ class AircraftConflictGenerator:
         # Note that the only effect that the DCS task type has is in determining which
         # waypoint actions the group may perform.
         group.task = CAS.name
-        # But we still use the SEAD *loadout*.
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,

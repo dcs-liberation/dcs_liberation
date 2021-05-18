@@ -59,6 +59,9 @@ class Weapon:
     @classmethod
     def from_clsid(cls, clsid: str) -> Optional[Weapon]:
         data = weapon_ids.get(clsid)
+        if clsid == "<CLEAN>":
+            # Special case for a "weapon" that isn't exposed by pydcs.
+            return Weapon(clsid, "Clean", 0)
         if data is None:
             return None
         return cls.from_pydcs(data)
@@ -70,7 +73,15 @@ class Pylon:
     allowed: Set[Weapon]
 
     def can_equip(self, weapon: Weapon) -> bool:
-        return weapon in self.allowed
+        # TODO: Fix pydcs to support the <CLEAN> "weapon".
+        # <CLEAN> is a special case because pydcs doesn't know about that "weapon", so
+        # it's not compatible with *any* pylon. Just trust the loadout and try to equip
+        # it.
+        #
+        # A similar hack exists in QPylonEditor to forcibly add "Clean" to the list of
+        # valid configurations for that pylon if a loadout has been seen with that
+        # configuration.
+        return weapon in self.allowed or weapon.cls_id == "<CLEAN>"
 
     def equip(self, group: FlyingGroup, weapon: Weapon) -> None:
         if not self.can_equip(weapon):
