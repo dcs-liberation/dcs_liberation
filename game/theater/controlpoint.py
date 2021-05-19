@@ -382,9 +382,6 @@ class ControlPoint(MissionTarget, ABC):
         if not self.can_deploy_ground_units:
             return False
 
-        if not game.settings.enable_new_ground_unit_recruitment:
-            return True
-
         if game.turn == 0:
             # Allow units to be recruited anywhere on turn 0 to avoid long delays to get
             # everyone to the front line.
@@ -396,9 +393,6 @@ class ControlPoint(MissionTarget, ABC):
         """Returns True if this control point has access to ground reinforcements."""
         if not self.can_deploy_ground_units:
             return False
-
-        if not game.settings.enable_new_ground_unit_recruitment:
-            return True
 
         for cp in game.theater.controlpoints:
             if cp.is_friendly(self.captured) and cp.can_recruit_ground_units(game):

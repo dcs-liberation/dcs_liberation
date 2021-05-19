@@ -258,13 +258,7 @@ class ProcurementAi:
             if not cp.has_ground_unit_source(self.game):
                 continue
 
-            # Buy to a higher limit when using the new recruitment mechanic since it
-            # will take longer to reinforce losses.
-            if self.game.settings.enable_new_ground_unit_recruitment:
-                limit = 50
-            else:
-                limit = 30
-            if self.total_ground_units_allocated_to(cp) >= limit:
+            if self.total_ground_units_allocated_to(cp) >= 50:
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:

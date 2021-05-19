@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 
 import logging
-from typing import List, Optional
+from datetime import timedelta
+from typing import List
 
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
 from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from datetime import timedelta
 
 from game import db
 from game.settings import Settings
@@ -18,9 +18,6 @@ from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
     load_campaigns,
-)
-from qt_ui.windows.settings.QSettingsWindow import (
-    NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL,
 )
 
 jinja_env = Environment(
@@ -91,9 +88,6 @@ class NewGameWizard(QtWidgets.QWizard):
             ),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
-            enable_new_ground_unit_recruitment=self.field(
-                "new_ground_unit_recruitment"
-            ),
         )
         generator_settings = GeneratorSettings(
             start_date=start_date,
@@ -508,21 +502,6 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         aircraft = QtWidgets.QCheckBox()
         self.registerField("automate_aircraft_purchases", aircraft)
         assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
-
-        flags_group = QtWidgets.QGroupBox("Feature flags")
-        layout.addWidget(flags_group)
-        flags_layout = QtWidgets.QGridLayout()
-        flags_group.setLayout(flags_layout)
-
-        new_ground_unit_recruitment_label = QtWidgets.QLabel(
-            NEW_GROUND_UNIT_RECRUITMENT_BEHAVIOR_LABEL
-        )
-        new_ground_unit_recruitment_label.setOpenExternalLinks(True)
-        flags_layout.addWidget(new_ground_unit_recruitment_label, 0, 0)
-        new_ground_unit_recruitment = QtWidgets.QCheckBox()
-        new_ground_unit_recruitment.setChecked(True)
-        self.registerField("new_ground_unit_recruitment", new_ground_unit_recruitment)
-        flags_layout.addWidget(new_ground_unit_recruitment, 0, 1, Qt.AlignRight)
 
         self.setLayout(layout)
 
