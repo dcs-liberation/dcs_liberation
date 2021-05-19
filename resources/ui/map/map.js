@@ -8,7 +8,6 @@
  * - Exclusion zones
  * - "Actual" front line
  * - Debug flight plan drawing
- * - Icon variety
  */
 
 const Colors = Object.freeze({
