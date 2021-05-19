@@ -152,13 +152,14 @@ class LocationFinder:
     def location_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
         position = self.control_point.preset_locations.random_for(location_type)
         if position is not None:
+            logging.warning(
+                f"Campaign relies on random generation of %s at %s. Support for random "
+                "objectives will be removed soon.",
+                location_type.value,
+                self.control_point,
+            )
             return position
 
-        logging.warning(
-            f"No campaign location for %s at %s",
-            location_type.value,
-            self.control_point,
-        )
         return None
 
 
