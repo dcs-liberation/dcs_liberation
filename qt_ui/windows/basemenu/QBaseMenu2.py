@@ -91,6 +91,7 @@ class QBaseMenu2(QDialog):
 
         if self.cp.captured and self.has_transfer_destinations:
             transfer_button = QPushButton("Transfer Units")
+            transfer_button.setProperty("style", "btn-success")
             bottom_row.addWidget(transfer_button)
             transfer_button.clicked.connect(self.open_transfer_dialog)
 
