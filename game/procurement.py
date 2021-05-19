@@ -171,7 +171,7 @@ class ProcurementAi:
         max_price: float,
     ) -> Optional[Type[FlyingType]]:
         best_choice: Optional[Type[FlyingType]] = None
-        for unit in [u for u in self.faction.aircrafts if u in types]:
+        for unit in [u for u in types if u in self.faction.aircrafts]:
             if db.PRICES[unit] * number > max_price:
                 continue
             if not airbase.can_operate(unit):
