@@ -8,6 +8,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
 * **[Campaign AI]** Every 30 minutes the AI will plan a CAP, so players can customize their mission better.
+* **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[UI]** Added new web based map UI. This is mostly functional but many of the old display options are a WIP. Revert to the old map with --old-map.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[UI]** DCS loadouts are now selectable in the loadout setup menu.
