@@ -84,12 +84,6 @@ class QMapGroundObject(QMapObject):
             painter.save()
 
             cat = self.ground_object.category
-            if cat == "aa" and self.ground_object.sea_object:
-                cat = "ship"
-            if isinstance(self.ground_object, MissileSiteGroundObject):
-                cat = "missile"
-            if isinstance(self.ground_object, CoastalSiteGroundObject):
-                cat = "coastal"
 
             rect = QRect(
                 option.rect.x() + 2,
