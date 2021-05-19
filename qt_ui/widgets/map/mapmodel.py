@@ -154,6 +154,8 @@ class GroundObjectJs(QObject):
     positionChanged = Signal()
     samThreatRangesChanged = Signal()
     samDetectionRangesChanged = Signal()
+    categoryChanged = Signal()
+    deadChanged = Signal()
 
     def __init__(self, tgo: TheaterGroundObject, game: Game) -> None:
         super().__init__()
@@ -188,6 +190,10 @@ class GroundObjectJs(QObject):
     @Property(str, notify=nameChanged)
     def name(self) -> str:
         return self.tgo.name
+
+    @Property(str, notify=categoryChanged)
+    def category(self) -> str:
+        return self.tgo.category
 
     def make_unit_name(self, unit: Unit, dead: bool) -> str:
         dead_label = " [DEAD]" if dead else ""
@@ -224,6 +230,12 @@ class GroundObjectJs(QObject):
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.tgo.position)
         return [ll.latitude, ll.longitude]
+
+    @Property(bool, notify=deadChanged)
+    def dead(self) -> bool:
+        if not self.tgo.groups:
+            return all(b.is_dead for b in self.buildings)
+        return not any(g.units for g in self.tgo.groups)
 
     @Property(list, notify=samThreatRangesChanged)
     def samThreatRanges(self) -> List[float]:
