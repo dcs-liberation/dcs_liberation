@@ -31,6 +31,7 @@ from .income import Income
 from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
+from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -361,11 +362,12 @@ class Game:
         self.transfers.order_airlift_assets()
         self.transfers.plan_transports()
 
-        blue_planner = CoalitionMissionPlanner(self, is_player=True)
-        blue_planner.plan_missions()
+        with logged_duration("Mission planning"):
+            blue_planner = CoalitionMissionPlanner(self, is_player=True)
+            blue_planner.plan_missions()
 
-        red_planner = CoalitionMissionPlanner(self, is_player=False)
-        red_planner.plan_missions()
+            red_planner = CoalitionMissionPlanner(self, is_player=False)
+            red_planner.plan_missions()
 
         for cp in self.theater.controlpoints:
             if cp.has_frontline:
