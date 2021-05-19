@@ -98,4 +98,4 @@ class FlakGenerator(AirDefenseGroupGenerator):
 
     @classmethod
     def range(cls) -> AirDefenseRange:
-        return AirDefenseRange.Short
+        return AirDefenseRange.AAA

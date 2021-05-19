@@ -135,6 +135,9 @@ class PresetLocations:
     #: Locations of short range SAMs which should always be spawned.
     required_short_range_sams: List[PointWithHeading] = field(default_factory=list)
 
+    #: Locations of AAA groups which should always be spawned.
+    required_aaa: List[PointWithHeading] = field(default_factory=list)
+
     #: Locations of EWRs which should always be spawned.
     required_ewrs: List[PointWithHeading] = field(default_factory=list)
 

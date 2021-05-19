@@ -115,6 +115,12 @@ class MizCampaignLoader:
         AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL.id,
     }
 
+    REQUIRED_AAA_UNIT_TYPES = {
+        AirDefence.AAA_8_8cm_Flak_18.id,
+        AirDefence.SPAAA_Vulcan_M163.id,
+        AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish.id,
+    }
+
     REQUIRED_EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
 
     ARMOR_GROUP_UNIT_TYPE = Armor.MBT_M1A2_Abrams.id
@@ -281,6 +287,12 @@ class MizCampaignLoader:
     def required_short_range_sams(self) -> Iterator[VehicleGroup]:
         for group in self.red.vehicle_group:
             if group.units[0].type in self.REQUIRED_SHORT_RANGE_SAM_UNIT_TYPES:
+                yield group
+
+    @property
+    def required_aaa(self) -> Iterator[VehicleGroup]:
+        for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
+            if group.units[0].type in self.REQUIRED_AAA_UNIT_TYPES:
                 yield group
 
     @property
@@ -513,6 +525,12 @@ class MizCampaignLoader:
         for group in self.required_short_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.required_short_range_sams.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.required_aaa:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.required_aaa.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 

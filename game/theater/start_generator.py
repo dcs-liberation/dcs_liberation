@@ -407,7 +407,10 @@ class BaseDefenseGenerator:
         )
 
         groups = generate_anti_air_group(
-            self.game, g, self.faction, ranges=[{AirDefenseRange.Short}]
+            self.game,
+            g,
+            self.faction,
+            ranges=[{AirDefenseRange.Short, AirDefenseRange.AAA}],
         )
         if not groups:
             logging.error(f"Could not generate SHORAD group at {self.control_point}")
@@ -540,6 +543,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                     {AirDefenseRange.Long},
                     {AirDefenseRange.Medium},
                     {AirDefenseRange.Short},
+                    {AirDefenseRange.AAA},
                 ],
             )
         for position in presets.required_medium_range_sams:
@@ -548,17 +552,24 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 ranges=[
                     {AirDefenseRange.Medium},
                     {AirDefenseRange.Short},
+                    {AirDefenseRange.AAA},
                 ],
             )
         for position in presets.required_short_range_sams:
             self.generate_aa_at(
                 position,
-                ranges=[{AirDefenseRange.Short}],
+                ranges=[{AirDefenseRange.Short}, {AirDefenseRange.AAA}],
+            )
+        for position in presets.required_aaa:
+            self.generate_aa_at(
+                position,
+                ranges=[{AirDefenseRange.AAA}],
             )
         return (
             len(presets.required_long_range_sams)
             + len(presets.required_medium_range_sams)
             + len(presets.required_short_range_sams)
+            + len(presets.required_aaa)
         )
 
     def generate_required_ewr(self) -> int:

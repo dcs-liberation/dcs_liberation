@@ -66,4 +66,11 @@ VERSION = _build_version_string()
 #:     * Coastal defenses
 #:
 #:   See the unit lists in MizCampaignLoader in conflicttheater.py for unit types.
-CAMPAIGN_FORMAT_VERSION = (4, 1)
+#:
+#: Version 4.2
+#: * Adds support for AAA objectives. Place with any of the following units (either red
+#:   or blue):
+#:     * AAA_8_8cm_Flak_18,
+#:     * SPAAA_Vulcan_M163,
+#:     * SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+CAMPAIGN_FORMAT_VERSION = (4, 2)
