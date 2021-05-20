@@ -22,6 +22,7 @@ const Categories = Object.freeze([
   "allycamp",
   "ammo",
   "armor",
+  "coastal",
   "comms",
   "derrick",
   "ewr",
@@ -29,6 +30,7 @@ const Categories = Object.freeze([
   "farp",
   "fob",
   "fuel",
+  "missile",
   "oil",
   "power",
   "ship",
@@ -36,8 +38,6 @@ const Categories = Object.freeze([
   "ware",
   "ww2bunker",
 ]);
-
-const LegacyCategories = Object.freeze(["coastal", "missile"]);
 
 const UnitState = Object.freeze({
   Alive: "alive",
@@ -57,18 +57,6 @@ class TgoIcons {
             category,
             player,
             state
-          );
-        }
-      }
-    }
-    for (const category of LegacyCategories) {
-      this.icons[category] = {};
-      for (const player of [true, false]) {
-        this.icons[category][player] = {};
-        for (const state of Object.values(UnitState)) {
-          this.icons[category][player][state] = this.loadLegacyIcon(
-            category,
-            player
           );
         }
       }
