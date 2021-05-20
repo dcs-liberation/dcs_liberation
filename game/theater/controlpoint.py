@@ -1,5 +1,4 @@
 from __future__ import annotations
-from game.scenery_group import SceneryGroup
 
 import heapq
 import itertools
@@ -9,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering
-from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type
+from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type, Union
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -19,10 +18,12 @@ from dcs.ships import (
     Type_071_Amphibious_Transport_Dock,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
+from dcs.unit import Unit
 from dcs.unittype import FlyingType
 
 from game import db
 from game.point_with_heading import PointWithHeading
+from game.scenery_group import SceneryGroup
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
@@ -780,6 +781,10 @@ class ControlPoint(MissionTarget, ABC):
             raise ValueError
 
         return self.captured != other.captured
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return []
 
 
 class Airfield(ControlPoint):

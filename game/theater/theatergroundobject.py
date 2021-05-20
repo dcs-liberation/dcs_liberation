@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 import logging
-from typing import Iterator, List, TYPE_CHECKING
+from typing import Iterator, List, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
@@ -185,6 +185,10 @@ class TheaterGroundObject(MissionTarget):
         """True if this TGO is the group for the control point itself (CVs and FOBs)."""
         return False
 
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return self.units
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -232,6 +236,15 @@ class BuildingGroundObject(TheaterGroundObject):
 
     def kill(self) -> None:
         self._dead = True
+
+    def iter_building_group(self) -> Iterator[TheaterGroundObject]:
+        for tgo in self.control_point.ground_objects:
+            if tgo.obj_name == self.obj_name and not tgo.is_dead:
+                yield tgo
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return list(self.iter_building_group())
 
 
 class SceneryGroundObject(BuildingGroundObject):

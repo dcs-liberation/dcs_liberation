@@ -26,7 +26,7 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Iterator
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
@@ -38,7 +38,7 @@ from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
-from .flights.flight import FlightWaypoint, FlightWaypointType
+from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
 
