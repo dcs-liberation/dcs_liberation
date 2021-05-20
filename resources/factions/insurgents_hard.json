@@ -7,8 +7,8 @@
   ],
   "frontline_units": [
     "ATGM_HMMWV",
-    "APC_HMMWV__Scout",
-    "IFV_BRDM_2",
+    "Scout_HMMWV",
+    "Scout_BRDM_2",
     "APC_BTR_80",
     "APC_BTR_RD",
     "IFV_BMP_1",

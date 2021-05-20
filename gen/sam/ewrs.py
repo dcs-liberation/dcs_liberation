@@ -87,7 +87,7 @@ class StraightFlushGenerator(EwrGenerator):
     This is the SA-6 search/track radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SA_6_Kub_Long_Track_STR
+    unit_type = AirDefence.SAM_SA_6_Kub_Straight_Flush_STR
 
 
 class HawkEwrGenerator(EwrGenerator):

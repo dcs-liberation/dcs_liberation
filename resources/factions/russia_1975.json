@@ -23,7 +23,7 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "APC_BTR_80",
     "IFV_BMD_1",
     "IFV_BMP_1",
@@ -32,7 +32,7 @@
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad_122mm",
-    "SPH_2S9_Nona_120mm_M",
+    "SPM_2S9_Nona_120mm_M",
     "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [

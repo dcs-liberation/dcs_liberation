@@ -21,7 +21,7 @@
   ],
   "frontline_units": [
     "APC_M113",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "MBT_Merkava_IV",
     "SPAAA_Vulcan_M163"

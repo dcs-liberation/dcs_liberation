@@ -31,11 +31,11 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A4",
     "ATGM_Stryker",
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "SAM_Avenger__Stinger"
   ],
   "artillery_units": [

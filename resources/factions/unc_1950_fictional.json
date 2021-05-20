@@ -12,11 +12,11 @@
     "P_47D_40"
   ],
   "frontline_units": [
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "MBT_M60A3_Patton",
     "APC_M2A1_Halftrack",
     "Car_M8_Greyhound_Armored",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "SPG_M12_GMC_155mm"

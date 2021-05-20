@@ -15,10 +15,10 @@
     "KC130"
   ],
   "frontline_units": [
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A4",
     "MBT_Leopard_1A3",
     "MBT_M60A3_Patton",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "APC_M113",
     "IFV_BMP_1"
