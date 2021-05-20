@@ -19,28 +19,25 @@ const Colors = Object.freeze({
 
 const Categories = Object.freeze([
   "aa",
+  "allycamp",
   "ammo",
   "armor",
-  "ewr",
-  "factory",
-  "fob",
-  "oil",
-  "ship",
-  "ware",
-]);
-
-const LegacyCategories = Object.freeze([
-  "allycamp",
-  "coastal",
   "comms",
   "derrick",
+  "ewr",
+  "factory",
   "farp",
+  "fob",
   "fuel",
-  "missile",
+  "oil",
   "power",
+  "ship",
   "village",
+  "ware",
   "ww2bunker",
 ]);
+
+const LegacyCategories = Object.freeze(["coastal", "missile"]);
 
 const UnitState = Object.freeze({
   Alive: "alive",
