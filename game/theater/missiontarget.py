@@ -46,4 +46,4 @@ class MissionTarget:
 
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
-        raise NotImplementedError
+        return []
