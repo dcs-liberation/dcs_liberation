@@ -16,6 +16,8 @@ from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 
+from game import unitType_dic_information_provider
+
 if TYPE_CHECKING:
     from game import Game
 
@@ -56,6 +58,7 @@ class ProcurementAi:
         self.manage_aircraft = manage_aircraft
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
+        self.unitType_dic_information_provider = unitType_dic_information_provider
 
     def spend_budget(
         self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
@@ -125,7 +128,17 @@ class ProcurementAi:
         ]
 
         test = cp.base.armor
-        tanks = cp.base.tanks_in_base
+        orderedvehicles = cp.pending_unit_deliveries.units
+
+        othertanks = (
+            unitType_dic_information_provider.dic_analyser.get_all_tanks_from_dic(
+                orderedvehicles
+            )
+        )
+
+        totalprice = unitType_dic_information_provider.dic_analyser.get_costs_for_provided_vehicles(
+            othertanks
+        )
 
         total_number_aa = (
             cp.base.total_shorad_cost + cp.pending_frontline_aa_deliveries_count
