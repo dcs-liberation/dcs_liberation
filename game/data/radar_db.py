@@ -32,7 +32,7 @@ UNITS_WITH_RADAR = [
     AirDefence.SPAAA_Vulcan_M163,
     AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
     AirDefence.EWR_1L13,
-    AirDefence.SAM_SA_6_Kub_Long_Track_STR,
+    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR,
     AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR,
     AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR,
     AirDefence.EWR_55G6,

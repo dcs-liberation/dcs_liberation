@@ -20,10 +20,10 @@
   "frontline_units": [
     "MBT_Leclerc",
     "APC_TPz_Fuchs",
-    "APC_Cobra__Scout",
+    "Scout_Cobra",
     "ATGM_Stryker",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "SAM_Roland_ADS"
   ],

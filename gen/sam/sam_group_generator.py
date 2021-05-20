@@ -105,13 +105,13 @@ SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
 
 
 SAM_PRICES = {
-    AirDefence.SAM_Hawk_Generator__PCP: 35,
+    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP: 35,
     AirDefence.AAA_ZU_23_Emplacement: 10,
     AirDefence.AAA_ZU_23_Closed_Emplacement: 10,
     AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375: 10,
     AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375: 10,
-    AirDefence.AAA_ZU_23_Closed_Emplacement_Insurgent: 10,
-    AirDefence.AAA_ZU_23_Insurgent: 10,
+    AirDefence.AAA_ZU_23_Insurgent_Closed_Emplacement: 10,
+    AirDefence.AAA_ZU_23_Insurgent_Emplacement: 10,
     AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish: 10,
     AirDefence.SPAAA_Vulcan_M163: 15,
     AirDefence.SAM_Linebacker___Bradley_M6: 20,
@@ -122,7 +122,7 @@ SAM_PRICES = {
     AirDefence.SAM_Patriot_LN: 85,
     AirDefence.SAM_Patriot_EPP_III: 85,
     AirDefence.SAM_Chaparral_M48: 25,
-    AirDefence.AAA_40mm_Bofors: 15,
+    AirDefence.AAA_Bofors_40mm: 15,
     AirDefence.AAA_8_8cm_Flak_36: 15,
     AirDefence.SAM_SA_2_S_75_Guideline_LN: 30,
     AirDefence.SAM_SA_3_S_125_Goa_LN: 35,

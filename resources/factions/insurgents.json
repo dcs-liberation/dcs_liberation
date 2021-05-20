@@ -6,9 +6,9 @@
   "aircrafts": [
   ],
   "frontline_units": [
-    "APC_Cobra__Scout",
+    "Scout_Cobra",
     "APC_MTLB",
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375"
   ],
   "artillery_units": [

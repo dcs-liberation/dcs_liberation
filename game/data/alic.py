@@ -9,7 +9,7 @@ class AlicCodes:
         AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR.id: 103,
         AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR.id: 104,
         AirDefence.SAM_SA_11_Buk_Gadfly_Snow_Drift_SR.id: 107,
-        AirDefence.SAM_SA_6_Kub_Long_Track_STR.id: 108,
+        AirDefence.SAM_SA_6_Kub_Straight_Flush_STR.id: 108,
         AirDefence.MCC_SR_Sborka_Dog_Ear_SR.id: 109,
         AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR.id: 110,
         AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL.id: 115,

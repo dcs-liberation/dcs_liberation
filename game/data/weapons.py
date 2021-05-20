@@ -154,7 +154,7 @@ _WEAPON_FALLBACKS = [
         Weapons.BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_,
         None,
     ),  # doesn't exist on any aircraft yet
-    (Weapons.AGM_154B___JSOW_Anti_Armour, Weapons.CBU_105___10_x_CEM__CBU_with_WCMD),
+    (Weapons.AGM_154B___JSOW_Anti_Armour, Weapons.CBU_105___10_x_SFW__CBU_with_WCMD),
     (Weapons.AGM_154C___JSOW_Unitary_BROACH, Weapons.GBU_12),
     (
         Weapons.BRU_55_with_2_x_AGM_154C___JSOW_Unitary_BROACH,
@@ -483,29 +483,29 @@ _WEAPON_FALLBACKS = [
     # CBU-87 CEM
     (Weapons.CBU_87___202_x_CEM_Cluster_Bomb, Weapons.Mk_82),
     (
-        Weapons.TER_9A_with_2_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb,
+        Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb,
         Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD,
     ),
     (
-        Weapons.TER_9A_with_2_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb_,
+        Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_,
         Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD,
     ),
     (
-        Weapons.TER_9A_with_3_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb,
+        Weapons.TER_9A_with_3_x_CBU_87___202_x_CEM_Cluster_Bomb,
         Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD,
     ),
     # CBU-97
-    (Weapons.CBU_97___10_x_CEM_Cluster_Bomb, Weapons.Mk_82),
+    (Weapons.CBU_97___10_x_SFW_Cluster_Bomb, Weapons.Mk_82),
     (
-        Weapons.TER_9A_with_2_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb,
+        Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb,
         Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD,
     ),
     (
-        Weapons.TER_9A_with_2_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb_,
+        Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_,
         Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
     ),
     (
-        Weapons.TER_9A_with_3_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb,
+        Weapons.TER_9A_with_3_x_CBU_97___10_x_SFW_Cluster_Bomb,
         Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD,
     ),
     # CBU-99 (It's a bomb made in 1968, I'm not bothering right now with backups)
@@ -515,7 +515,7 @@ _WEAPON_FALLBACKS = [
         Weapons.CBU_87___202_x_CEM_Cluster_Bomb,
     ),
     # CBU-105
-    (Weapons.CBU_105___10_x_CEM__CBU_with_WCMD, Weapons.CBU_97___10_x_CEM_Cluster_Bomb),
+    (Weapons.CBU_105___10_x_SFW__CBU_with_WCMD, Weapons.CBU_97___10_x_SFW_Cluster_Bomb),
     (
         Weapons.LAU_131_pod___7_x_2_75_Hydra__Laser_Guided_Rkts_M151__HE_APKWS,
         Weapons.LAU_131_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
@@ -971,26 +971,14 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.CBU_52B___220_x_HE_Frag_bomblets): 1970,
     # CBU-87 CEM
     Weapon.from_pydcs(Weapons.CBU_87___202_x_CEM_Cluster_Bomb): 1986,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_2_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb
-    ): 1986,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_2_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb_
-    ): 1986,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_3_x_CBU_87___202_x_Anti_Armor_Skeet_SFW_Cluster_Bomb
-    ): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_): 1986,
+    Weapon.from_pydcs(Weapons.TER_9A_with_3_x_CBU_87___202_x_CEM_Cluster_Bomb): 1986,
     # CBU-97
-    Weapon.from_pydcs(Weapons.CBU_97___10_x_CEM_Cluster_Bomb): 1992,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_2_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb
-    ): 1992,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_2_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb_
-    ): 1992,
-    Weapon.from_pydcs(
-        Weapons.TER_9A_with_3_x_CBU_97___10_x_Anti_Armor_Skeet_SFW_Cluster_Bomb
-    ): 1992,
+    Weapon.from_pydcs(Weapons.CBU_97___10_x_SFW_Cluster_Bomb): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_): 1992,
+    Weapon.from_pydcs(Weapons.TER_9A_with_3_x_CBU_97___10_x_SFW_Cluster_Bomb): 1992,
     # CBU-99
     Weapon.from_pydcs(
         Weapons.BRU_33_with_2_x_CBU_99___490lbs__247_x_HEAT_Bomblets
@@ -1032,11 +1020,11 @@ WEAPON_INTRODUCTION_YEARS = {
         Weapons.MER2_with_2_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets
     ): 1968,
     # CBU-103
-    Weapon.from_pydcs(Weapons.BRU_57_with_2_x_CBU_103): 2000,
+    Weapon.from_pydcs(Weapons.BRU_57_with_2_x_CBU_103___202_x_CEM__CBU_with_WCMD): 2000,
     Weapon.from_pydcs(Weapons.CBU_103___202_x_CEM__CBU_with_WCMD): 2000,
     # CBU-105
-    Weapon.from_pydcs(Weapons.BRU_57_with_2_x_CBU_105): 2000,
-    Weapon.from_pydcs(Weapons.CBU_105___10_x_CEM__CBU_with_WCMD): 2000,
+    Weapon.from_pydcs(Weapons.BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD): 2000,
+    Weapon.from_pydcs(Weapons.CBU_105___10_x_SFW__CBU_with_WCMD): 2000,
     # APKWS
     Weapon.from_pydcs(
         Weapons.LAU_131_pod___7_x_2_75_Hydra__Laser_Guided_Rkts_M151__HE_APKWS

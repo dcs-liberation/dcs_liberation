@@ -37,13 +37,13 @@
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A6M",
     "MBT_Merkava_IV",
     "ATGM_Stryker",
     "IFV_M2A2_Bradley",
     "IFV_Marder",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "SAM_Linebacker___Bradley_M6",
     "SAM_Avenger__Stinger"
