@@ -10,7 +10,14 @@ from dcs.vehicles import AirDefence, Armor
 
 from game import db
 from game.db import PRICES
-from gen.ground_forces.ai_ground_planner_db import TYPE_APC, TYPE_ARTILLERY, TYPE_ATGM, TYPE_IFV, TYPE_SHORAD, TYPE_TANKS
+from gen.ground_forces.ai_ground_planner_db import (
+    TYPE_APC,
+    TYPE_ARTILLERY,
+    TYPE_ATGM,
+    TYPE_IFV,
+    TYPE_SHORAD,
+    TYPE_TANKS,
+)
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 2
