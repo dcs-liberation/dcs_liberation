@@ -25,71 +25,86 @@ const Categories = Object.freeze([
   "coastal",
   "comms",
   "derrick",
+  "ewr",
   "factory",
   "farp",
   "fob",
   "fuel",
-  "ewr",
   "missile",
   "oil",
-  "ship",
   "power",
+  "ship",
   "village",
   "ware",
   "ww2bunker",
 ]);
 
-function makeTgoIcons(player) {
-  const icons = {};
-  const playerSuffix = player ? "_blue" : "";
-  Categories.forEach((category) => {
-    const iconName = `${category}${playerSuffix}`;
-    icons[category] = new L.Icon({
-      iconUrl: `../ground_assets/${iconName}.png`,
-    });
-    if (!icons[category]) {
-      console.log(`Failed to load icon for ${iconName}`);
+const UnitState = Object.freeze({
+  Alive: "alive",
+  Damaged: "damaged",
+  Destroyed: "destroyed",
+});
+
+class TgoIcons {
+  constructor() {
+    this.icons = {};
+    for (const category of Categories) {
+      this.icons[category] = {};
+      for (const player of [true, false]) {
+        this.icons[category][player] = {};
+        for (const state of Object.values(UnitState)) {
+          this.icons[category][player][state] = this.loadIcon(
+            category,
+            player,
+            state
+          );
+        }
+      }
     }
-  });
+  }
 
-  return Object.freeze(icons);
-}
+  icon(category, player, state) {
+    return this.icons[category][player][state];
+  }
 
-function makeIcons(player) {
-  const color = player ? "blue" : "red";
-  const playerSuffix = player ? "_blue" : "";
-  const icons = {
-    ControlPoint: new L.Icon({
-      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    }),
+  loadIcon(category, player, state) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
+      iconSize: [32, 32],
+    });
+  }
 
-    Objectives: makeTgoIcons(player),
-
-    Destroyed: new L.Icon({
-      iconUrl: "../ground_assets/destroyed.png",
-    }),
-
-    NoThreat: new L.icon({
-      iconUrl: `../ground_assets/nothreat${playerSuffix}.png`,
-    }),
-  };
-
-  return Object.freeze(icons);
+  loadLegacyIcon(category, player) {
+    const playerSuffix = player ? "_blue" : "";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}${playerSuffix}.png`,
+    });
+  }
 }
 
 const Icons = Object.freeze({
-  Friendly: makeIcons(true),
-  Enemy: makeIcons(false),
+  BlueControlPoint: new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  }),
 
-  for(player) {
-    return player ? this.Friendly : this.Enemy;
-  },
+  RedControlPoint: new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png`,
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  }),
+
+  Objectives: new TgoIcons(),
 });
 
 function metersToNauticalMiles(meters) {
@@ -119,9 +134,7 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
-const groundObjectsLayer = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(
-  map
-);
+const groundObjectsLayer = L.layerGroup().addTo(map);
 const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
 const redSamThreatLayer = L.layerGroup().addTo(map);
@@ -182,8 +195,6 @@ function recenterMap(center) {
   map.setView(center, 8, { animate: true, duration: 1 });
 }
 
-const SHOW_BASE_NAME_AT_ZOOM = 8;
-
 class ControlPoint {
   constructor(cp) {
     this.cp = cp;
@@ -201,7 +212,10 @@ class ControlPoint {
   }
 
   icon() {
-    return Icons.for(this.cp.blue).ControlPoint;
+    if (this.cp.blue) {
+      return Icons.BlueControlPoint;
+    }
+    return Icons.RedControlPoint;
   }
 
   hasDestination() {
@@ -268,13 +282,10 @@ class ControlPoint {
 
   attachTooltipsAndHandlers(dragging = false) {
     this.detachTooltipsAndHandlers();
-    const zoom = map.getZoom();
     const locationMarker = this.locationMarker(dragging);
     const destinationMarker = this.destinationMarker();
     locationMarker
-      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
-        permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
-      })
+      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`)
       .on("click", () => {
         this.cp.showInfoDialog();
       })
@@ -391,14 +402,15 @@ class TheaterGroundObject {
   }
 
   icon() {
-    const iconSet = Icons.for(this.tgo.blue);
+    let state;
     if (this.tgo.category == "aa" && !this.samIsThreat()) {
-      return iconSet.NoThreat;
+      state = UnitState.Damaged;
     } else if (this.tgo.dead) {
-      return iconSet.Destroyed;
+      state = UnitState.Destroyed;
     } else {
-      return iconSet.Objectives[this.tgo.category];
+      state = UnitState.Alive;
     }
+    return Icons.Objectives.icon(this.tgo.category, this.tgo.blue, state);
   }
 
   drawSamThreats() {
@@ -708,5 +720,4 @@ function setTooltipZoomThreshold(layerGroup, showAt) {
   });
 }
 
-setTooltipZoomThreshold(controlPointsLayer, SHOW_BASE_NAME_AT_ZOOM);
 setTooltipZoomThreshold(selectedFlightPlansLayer, SHOW_WAYPOINT_INFO_AT_ZOOM);

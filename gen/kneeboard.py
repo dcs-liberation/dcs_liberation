@@ -26,22 +26,24 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Iterator
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
+from dcs.unit import Unit
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
-from game.theater import ConflictTheater
+from game.data.alic import AlicCodes
+from game.db import find_unittype, unit_type_from_name
+from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
-from .flights.flight import FlightWaypoint, FlightWaypointType
+from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
-
 
 if TYPE_CHECKING:
     from game import Game
@@ -137,6 +139,11 @@ class KneeboardPage:
     def write(self, path: Path) -> None:
         """Writes the kneeboard page to the given path."""
         raise NotImplementedError
+
+    def format_ll(self, ll: LatLon) -> str:
+        ns = "N" if ll.latitude >= 0 else "S"
+        ew = "E" if ll.longitude >= 0 else "W"
+        return f"{ll.latitude:.4}°{ns} {ll.longitude:.4}°{ew}"
 
 
 @dataclass(frozen=True)
@@ -415,20 +422,27 @@ class BriefingPage(KneeboardPage):
         return local_time.strftime(f"%H:%M:%S")
 
 
-class TargetInfoPage(KneeboardPage):
-    """A kneeboard page containing target information."""
+class SeadTaskPage(KneeboardPage):
+    """A kneeboard page containing SEAD/DEAD target information."""
 
     def __init__(
-        self,
-        flight: FlightData,
-        targets: List[FlightWaypoint],
-        dark_kneeboard: bool,
-        theater: ConflictTheater,
+        self, flight: FlightData, dark_kneeboard: bool, theater: ConflictTheater
     ) -> None:
         self.flight = flight
-        self.targets = targets
         self.dark_kneeboard = dark_kneeboard
         self.theater = theater
+
+    @property
+    def target_units(self) -> Iterator[Unit]:
+        if isinstance(self.flight.package.target, TheaterGroundObject):
+            yield from self.flight.package.target.units
+
+    @staticmethod
+    def alic_for(unit: Unit) -> str:
+        try:
+            return str(AlicCodes.code_for(unit))
+        except KeyError:
+            return ""
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
@@ -436,18 +450,60 @@ class TargetInfoPage(KneeboardPage):
             custom_name_title = ' ("{}")'.format(self.flight.custom_name)
         else:
             custom_name_title = ""
-        writer.title(f"{self.flight.callsign} Target Info{custom_name_title}")
+        task = "DEAD" if self.flight.flight_type == FlightType.DEAD else "SEAD"
+        writer.title(f"{self.flight.callsign} {task} Target Info{custom_name_title}")
 
         writer.table(
-            [self.target_info_row(t) for t in self.targets],
-            headers=["Description", "Location"],
+            [self.target_info_row(t) for t in self.target_units],
+            headers=["Description", "ALIC", "Location"],
         )
 
         writer.write(path)
 
-    def target_info_row(self, target: FlightWaypoint) -> List[str]:
-        ll = self.theater.point_to_ll(target.position)
-        return [target.pretty_name, f"{ll.latitude} {ll.longitude}"]
+    def target_info_row(self, unit: Unit) -> List[str]:
+        ll = self.theater.point_to_ll(unit.position)
+        unit_type = unit_type_from_name(unit.type)
+        name = unit.name if unit_type is None else unit_type.name
+        return [name, self.alic_for(unit), self.format_ll(ll)]
+
+
+class StrikeTaskPage(KneeboardPage):
+    """A kneeboard page containing strike target information."""
+
+    def __init__(
+        self,
+        flight: FlightData,
+        dark_kneeboard: bool,
+        theater: ConflictTheater,
+    ) -> None:
+        self.flight = flight
+        self.dark_kneeboard = dark_kneeboard
+        self.theater = theater
+
+    @property
+    def targets(self) -> Iterator[NumberedWaypoint]:
+        for idx, waypoint in enumerate(self.flight.waypoints):
+            if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
+                yield NumberedWaypoint(idx, waypoint)
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Strike Task Info{custom_name_title}")
+
+        writer.table(
+            [self.target_info_row(t) for t in self.targets],
+            headers=["Steerpoint", "Description", "Location"],
+        )
+
+        writer.write(path)
+
+    def target_info_row(self, target: NumberedWaypoint) -> List[str]:
+        ll = self.theater.point_to_ll(target.waypoint.position)
+        return [str(target.number), target.waypoint.pretty_name, self.format_ll(ll)]
 
 
 class KneeboardGenerator(MissionInfoGenerator):
@@ -491,17 +547,12 @@ class KneeboardGenerator(MissionInfoGenerator):
             )
         return all_flights
 
-    def generate_target_page(self, flight: FlightData) -> Optional[KneeboardPage]:
-        target_waypoints = [
-            w
-            for w in flight.waypoints
-            if w.waypoint_type == FlightWaypointType.TARGET_GROUP_LOC
-        ]
-        if not target_waypoints:
-            return None
-        return TargetInfoPage(
-            flight, target_waypoints, self.dark_kneeboard, self.game.theater
-        )
+    def generate_task_page(self, flight: FlightData) -> Optional[KneeboardPage]:
+        if flight.flight_type in (FlightType.DEAD, FlightType.SEAD):
+            return SeadTaskPage(flight, self.dark_kneeboard, self.game.theater)
+        elif flight.flight_type is FlightType.STRIKE:
+            return StrikeTaskPage(flight, self.dark_kneeboard, self.game.theater)
+        return None
 
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
@@ -517,7 +568,7 @@ class KneeboardGenerator(MissionInfoGenerator):
             ),
         ]
 
-        if (target_page := self.generate_target_page(flight)) is not None:
+        if (target_page := self.generate_task_page(flight)) is not None:
             pages.append(target_page)
 
         return pages

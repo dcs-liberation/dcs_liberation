@@ -85,7 +85,7 @@ class Pylon:
 
     def equip(self, group: FlyingGroup, weapon: Weapon) -> None:
         if not self.can_equip(weapon):
-            raise ValueError(f"Pylon {self.number} cannot equip {weapon.name}")
+            logging.error(f"Pylon {self.number} cannot equip {weapon.name}")
         group.load_pylon(self.make_pydcs_assignment(weapon), self.number)
 
     def make_pydcs_assignment(self, weapon: Weapon) -> PydcsWeaponAssignment:
