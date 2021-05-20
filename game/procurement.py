@@ -124,8 +124,11 @@ class ProcurementAi:
             if db.PRICES[u] <= budget
         ]
 
+        test = cp.base.armor
+        tanks = cp.base.tanks_in_base
+
         total_number_aa = (
-            cp.base.total_frontline_aa + cp.pending_frontline_aa_deliveries_count
+            cp.base.total_shorad_cost + cp.pending_frontline_aa_deliveries_count
         )
         total_non_aa = (
             cp.base.total_armor + cp.pending_deliveries_count - total_number_aa
@@ -152,6 +155,7 @@ class ProcurementAi:
             if not candidates:
                 break
 
+            # TODO: split up on more candidates
             cp = random.choice(candidates)
             unit = self.random_affordable_ground_unit(budget, cp)
             if unit is None:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, Optional
+from typing import Dict, List, Optional
+from gen.ground_forces import ground_forces_procurement_ratio
 
 from dcs.forcedoptions import ForcedOptions
 
@@ -36,6 +37,13 @@ class Settings:
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
+
+    # Ground unit behaviour/doctrine
+
+    # Buying ratio for ground units. Could be made adjustable in the ui
+    ground_forces_procurement_ratio: ground_forces_procurement_ratio = (
+        ground_forces_procurement_ratio
+    )
 
     #: Feature flag for new ground unit behavior. Old campaigns are will not work with
     #: this so the old behavior remains an option until it breaks, at which point we'll

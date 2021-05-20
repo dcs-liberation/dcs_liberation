@@ -10,7 +10,7 @@ from dcs.vehicles import AirDefence, Armor
 
 from game import db
 from game.db import PRICES
-from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
+from gen.ground_forces.ai_ground_planner_db import TYPE_APC, TYPE_ARTILLERY, TYPE_ATGM, TYPE_IFV, TYPE_SHORAD, TYPE_TANKS
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 2
@@ -30,6 +30,84 @@ class Base:
         self.strength = 1
 
     @property
+    def tanks_in_base(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_TANKS:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_tanks_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_TANKS])
+
+    @property
+    def atgms_in_base(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_ATGM:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_atgm_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_ATGM])
+
+    @property
+    def ifvs_in_base(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_IFV:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_ifv_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_IFV])
+
+    @property
+    def apcs_in_base(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_APC:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_apc_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_APC])
+
+    @property
+    def artilleries_in_base(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_ARTILLERY:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_artillery_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_ARTILLERY])
+
+    @property
+    def total_shorad(self) -> list:
+        vehicles = []
+        for unit_type, count in self.armor.items():
+            if unit_type in TYPE_SHORAD:
+                for _x in range(count):
+                    vehicles.append(unit_type)
+        return vehicles
+
+    @property
+    def total_shorad_cost(self) -> int:
+        return sum([v for k, v in self.armor.items() if k in TYPE_SHORAD])
+
+    @property
     def total_aircraft(self) -> int:
         return sum(self.aircraft.values())
 
@@ -46,10 +124,6 @@ class Base:
             except KeyError:
                 logging.exception(f"No price found for {unit_type.id}")
         return total
-
-    @property
-    def total_frontline_aa(self) -> int:
-        return sum([v for k, v in self.armor.items() if k in TYPE_SHORAD])
 
     @property
     def total_aa(self) -> int:
