@@ -481,10 +481,10 @@ class StrikeTaskPage(KneeboardPage):
         self.theater = theater
 
     @property
-    def targets(self) -> Iterator[FlightWaypoint]:
-        for waypoint in self.flight.waypoints:
+    def targets(self) -> Iterator[NumberedWaypoint]:
+        for idx, waypoint in enumerate(self.flight.waypoints):
             if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
-                yield waypoint
+                yield NumberedWaypoint(idx, waypoint)
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
@@ -492,18 +492,18 @@ class StrikeTaskPage(KneeboardPage):
             custom_name_title = ' ("{}")'.format(self.flight.custom_name)
         else:
             custom_name_title = ""
-        writer.title(f"{self.flight.callsign} Target Info{custom_name_title}")
+        writer.title(f"{self.flight.callsign} Strike Task Info{custom_name_title}")
 
         writer.table(
             [self.target_info_row(t) for t in self.targets],
-            headers=["Description", "Location"],
+            headers=["Steerpoint", "Description", "Location"],
         )
 
         writer.write(path)
 
-    def target_info_row(self, target: FlightWaypoint) -> List[str]:
-        ll = self.theater.point_to_ll(target.position)
-        return [target.pretty_name, self.format_ll(ll)]
+    def target_info_row(self, target: NumberedWaypoint) -> List[str]:
+        ll = self.theater.point_to_ll(target.waypoint.position)
+        return [str(target.number), target.waypoint.pretty_name, self.format_ll(ll)]
 
 
 class KneeboardGenerator(MissionInfoGenerator):
