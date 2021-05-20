@@ -257,21 +257,12 @@ class BriefingPage(KneeboardPage):
     def __init__(
         self,
         flight: FlightData,
-        comms: List[CommInfo],
-        awacs: List[AwacsInfo],
-        tankers: List[TankerInfo],
-        jtacs: List[JtacInfo],
         start_time: datetime.datetime,
         dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
-        self.comms = list(comms)
-        self.awacs = awacs
-        self.tankers = tankers
-        self.jtacs = jtacs
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
-        self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
@@ -310,6 +301,86 @@ class BriefingPage(KneeboardPage):
             ],
             ["Bingo", "Joker"],
         )
+
+        writer.write(path)
+
+    def airfield_info_row(
+        self, row_title: str, runway: Optional[RunwayData]
+    ) -> List[str]:
+        """Creates a table row for a given airfield.
+
+        Args:
+            row_title: Purpose of the airfield. e.g. "Departure", "Arrival" or
+                "Divert".
+            runway: The runway described by this row.
+
+        Returns:
+            A list of strings to be used as a row of the airfield table.
+        """
+        if runway is None:
+            return [row_title, "", "", "", "", ""]
+
+        atc = ""
+        if runway.atc is not None:
+            atc = self.format_frequency(runway.atc)
+        if runway.tacan is None:
+            tacan = ""
+        else:
+            tacan = str(runway.tacan)
+        if runway.ils is not None:
+            ils = str(runway.ils)
+        elif runway.icls is not None:
+            ils = str(runway.icls)
+        else:
+            ils = ""
+        return [
+            row_title,
+            runway.airfield_name,
+            atc,
+            tacan,
+            ils,
+            runway.runway_name,
+        ]
+
+    def format_frequency(self, frequency: RadioFrequency) -> str:
+        channel = self.flight.channel_for(frequency)
+        if channel is None:
+            return str(frequency)
+
+        namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
+        channel_name = namer.channel_name(channel.radio_id, channel.channel)
+        return f"{channel_name} {frequency}"
+
+
+class SupportPage(KneeboardPage):
+    """A kneeboard page containing information about support units."""
+
+    def __init__(
+        self,
+        flight: FlightData,
+        comms: List[CommInfo],
+        awacs: List[AwacsInfo],
+        tankers: List[TankerInfo],
+        jtacs: List[JtacInfo],
+        start_time: datetime.datetime,
+        dark_kneeboard: bool,
+    ) -> None:
+        self.flight = flight
+        self.comms = list(comms)
+        self.awacs = awacs
+        self.tankers = tankers
+        self.jtacs = jtacs
+        self.start_time = start_time
+        self.dark_kneeboard = dark_kneeboard
+        self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Support Info{custom_name_title}")
 
         # AEW&C
         writer.heading("AEW&C")
@@ -367,44 +438,6 @@ class BriefingPage(KneeboardPage):
         writer.table(jtacs, headers=["Callsign", "Region", "Laser Code"])
 
         writer.write(path)
-
-    def airfield_info_row(
-        self, row_title: str, runway: Optional[RunwayData]
-    ) -> List[str]:
-        """Creates a table row for a given airfield.
-
-        Args:
-            row_title: Purpose of the airfield. e.g. "Departure", "Arrival" or
-                "Divert".
-            runway: The runway described by this row.
-
-        Returns:
-            A list of strings to be used as a row of the airfield table.
-        """
-        if runway is None:
-            return [row_title, "", "", "", "", ""]
-
-        atc = ""
-        if runway.atc is not None:
-            atc = self.format_frequency(runway.atc)
-        if runway.tacan is None:
-            tacan = ""
-        else:
-            tacan = str(runway.tacan)
-        if runway.ils is not None:
-            ils = str(runway.ils)
-        elif runway.icls is not None:
-            ils = str(runway.icls)
-        else:
-            ils = ""
-        return [
-            row_title,
-            runway.airfield_name,
-            atc,
-            tacan,
-            ils,
-            runway.runway_name,
-        ]
 
     def format_frequency(self, frequency: RadioFrequency) -> str:
         channel = self.flight.channel_for(frequency)
@@ -557,7 +590,8 @@ class KneeboardGenerator(MissionInfoGenerator):
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
         pages: List[KneeboardPage] = [
-            BriefingPage(
+            BriefingPage(flight, self.mission.start_time, self.dark_kneeboard),
+            SupportPage(
                 flight,
                 self.comms,
                 self.awacs,
