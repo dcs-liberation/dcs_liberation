@@ -210,8 +210,6 @@ function recenterMap(center) {
   map.setView(center, 8, { animate: true, duration: 1 });
 }
 
-const SHOW_BASE_NAME_AT_ZOOM = 8;
-
 class ControlPoint {
   constructor(cp) {
     this.cp = cp;
@@ -299,13 +297,10 @@ class ControlPoint {
 
   attachTooltipsAndHandlers(dragging = false) {
     this.detachTooltipsAndHandlers();
-    const zoom = map.getZoom();
     const locationMarker = this.locationMarker(dragging);
     const destinationMarker = this.destinationMarker();
     locationMarker
-      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
-        permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
-      })
+      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`)
       .on("click", () => {
         this.cp.showInfoDialog();
       })
@@ -740,5 +735,4 @@ function setTooltipZoomThreshold(layerGroup, showAt) {
   });
 }
 
-setTooltipZoomThreshold(controlPointsLayer, SHOW_BASE_NAME_AT_ZOOM);
 setTooltipZoomThreshold(selectedFlightPlansLayer, SHOW_WAYPOINT_INFO_AT_ZOOM);
