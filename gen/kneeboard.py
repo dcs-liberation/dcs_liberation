@@ -23,6 +23,7 @@ only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 import datetime
+import textwrap
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -335,7 +336,7 @@ class BriefingPage(KneeboardPage):
             ils = ""
         return [
             row_title,
-            runway.airfield_name,
+            "\n".join(textwrap.wrap(runway.airfield_name, width=24)),
             atc,
             tacan,
             ils,
@@ -349,7 +350,7 @@ class BriefingPage(KneeboardPage):
 
         namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
         channel_name = namer.channel_name(channel.radio_id, channel.channel)
-        return f"{channel_name} {frequency}"
+        return f"{channel_name}\n{frequency}"
 
 
 class SupportPage(KneeboardPage):
