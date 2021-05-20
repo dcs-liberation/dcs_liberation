@@ -20,13 +20,21 @@ local unitPayloads = {
 		[2] = {
 			["name"] = "CAS",
 			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
 			},
 			["tasks"] = {
 				[1] = 32,
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["name"] = "CAP",
 			["pylons"] = {
 			},
 			["tasks"] = {
@@ -34,8 +42,67 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "CAP",
+			["name"] = "STRIKE",
 			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[5] = {
+			["displayName"] = "RUNWAY_ATTACK",
+			["name"] = "RUNWAY_ATTACK",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[6] = {
+			["displayName"] = "SEAD",
+			["name"] = "SEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[7] = {
+			["displayName"] = "DEAD",
+			["name"] = "DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
 			},
 			["tasks"] = {
 				[1] = 32,

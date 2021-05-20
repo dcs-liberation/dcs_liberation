@@ -8,7 +8,6 @@
  * - Exclusion zones
  * - "Actual" front line
  * - Debug flight plan drawing
- * - Icon variety
  */
 
 const Colors = Object.freeze({
@@ -16,6 +15,96 @@ const Colors = Object.freeze({
   Red: "#c85050",
   Green: "#80BA80",
   Highlight: "#ffff00",
+});
+
+const Categories = Object.freeze([
+  "aa",
+  "allycamp",
+  "ammo",
+  "armor",
+  "coastal",
+  "comms",
+  "derrick",
+  "ewr",
+  "factory",
+  "farp",
+  "fob",
+  "fuel",
+  "missile",
+  "oil",
+  "power",
+  "ship",
+  "village",
+  "ware",
+  "ww2bunker",
+]);
+
+const UnitState = Object.freeze({
+  Alive: "alive",
+  Damaged: "damaged",
+  Destroyed: "destroyed",
+});
+
+class TgoIcons {
+  constructor() {
+    this.icons = {};
+    for (const category of Categories) {
+      this.icons[category] = {};
+      for (const player of [true, false]) {
+        this.icons[category][player] = {};
+        for (const state of Object.values(UnitState)) {
+          this.icons[category][player][state] = this.loadIcon(
+            category,
+            player,
+            state
+          );
+        }
+      }
+    }
+  }
+
+  icon(category, player, state) {
+    return this.icons[category][player][state];
+  }
+
+  loadIcon(category, player, state) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
+      iconSize: [32, 32],
+    });
+  }
+
+  loadLegacyIcon(category, player) {
+    const playerSuffix = player ? "_blue" : "";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}${playerSuffix}.png`,
+    });
+  }
+}
+
+const Icons = Object.freeze({
+  BlueControlPoint: new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  }),
+
+  RedControlPoint: new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png`,
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  }),
+
+  Objectives: new TgoIcons(),
 });
 
 function metersToNauticalMiles(meters) {
@@ -45,9 +134,7 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
-const groundObjectsLayer = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(
-  map
-);
+const groundObjectsLayer = L.layerGroup().addTo(map);
 const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
 const redSamThreatLayer = L.layerGroup().addTo(map);
@@ -91,28 +178,6 @@ L.control
   )
   .addTo(map);
 
-const friendlyCpIcon = new L.Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-const enemyCpIcon = new L.Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
 let game;
 new QWebChannel(qt.webChannelTransport, function (channel) {
   game = channel.objects.game;
@@ -130,16 +195,6 @@ function recenterMap(center) {
   map.setView(center, 8, { animate: true, duration: 1 });
 }
 
-function iconFor(player) {
-  if (player) {
-    return friendlyCpIcon;
-  } else {
-    return enemyCpIcon;
-  }
-}
-
-const SHOW_BASE_NAME_AT_ZOOM = 8;
-
 class ControlPoint {
   constructor(cp) {
     this.cp = cp;
@@ -154,6 +209,13 @@ class ControlPoint {
     this.path = this.makePath();
     this.attachTooltipsAndHandlers();
     this.cp.destinationChanged.connect(() => this.onDestinationChanged());
+  }
+
+  icon() {
+    if (this.cp.blue) {
+      return Icons.BlueControlPoint;
+    }
+    return Icons.RedControlPoint;
   }
 
   hasDestination() {
@@ -220,13 +282,10 @@ class ControlPoint {
 
   attachTooltipsAndHandlers(dragging = false) {
     this.detachTooltipsAndHandlers();
-    const zoom = map.getZoom();
     const locationMarker = this.locationMarker(dragging);
     const destinationMarker = this.destinationMarker();
     locationMarker
-      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`, {
-        permanent: zoom >= SHOW_BASE_NAME_AT_ZOOM,
-      })
+      .bindTooltip(`<h3 style="margin: 0;">${this.cp.name}</h3>`)
       .on("click", () => {
         this.cp.showInfoDialog();
       })
@@ -256,7 +315,7 @@ class ControlPoint {
     // markers are helpful so we want to keep them, but make sure the CP is
     // always the clickable thing.
     return L.marker(location, {
-      icon: iconFor(this.cp.blue),
+      icon: this.icon(),
       zIndexOffset: 1000,
       draggable: this.cp.mobile,
       autoPan: true,
@@ -280,7 +339,7 @@ class ControlPoint {
 
   makeSecondaryMarker() {
     return L.marker(this.cp.position, {
-      icon: iconFor(this.cp.blue),
+      icon: this.icon(),
       zIndexOffset: 1000,
     });
   }
@@ -327,31 +386,68 @@ function drawControlPoints() {
   });
 }
 
-function drawSamThreatsAt(tgo) {
-  const detectionLayer = tgo.blue
-    ? blueSamDetectionLayer
-    : redSamDetectionLayer;
-  const threatLayer = tgo.blue ? blueSamThreatLayer : redSamThreatLayer;
-  const threatColor = tgo.blue ? Colors.Blue : Colors.Red;
-  const detectionColor = tgo.blue ? "#bb89ff" : "#eee17b";
+class TheaterGroundObject {
+  constructor(tgo) {
+    this.tgo = tgo;
+  }
 
-  tgo.samDetectionRanges.forEach((range) => {
-    L.circle(tgo.position, {
-      radius: range,
-      color: detectionColor,
-      fill: false,
-      weight: 1,
-    }).addTo(detectionLayer);
-  });
+  samIsThreat() {
+    for (const range of this.tgo.samThreatRanges) {
+      if (range > 0) {
+        return true;
+      }
+    }
 
-  tgo.samThreatRanges.forEach((range) => {
-    L.circle(tgo.position, {
-      radius: range,
-      color: threatColor,
-      fill: false,
-      weight: 2,
-    }).addTo(threatLayer);
-  });
+    return false;
+  }
+
+  icon() {
+    let state;
+    if (this.tgo.category == "aa" && !this.samIsThreat()) {
+      state = UnitState.Damaged;
+    } else if (this.tgo.dead) {
+      state = UnitState.Destroyed;
+    } else {
+      state = UnitState.Alive;
+    }
+    return Icons.Objectives.icon(this.tgo.category, this.tgo.blue, state);
+  }
+
+  drawSamThreats() {
+    const detectionLayer = this.tgo.blue
+      ? blueSamDetectionLayer
+      : redSamDetectionLayer;
+    const threatLayer = this.tgo.blue ? blueSamThreatLayer : redSamThreatLayer;
+    const threatColor = this.tgo.blue ? Colors.Blue : Colors.Red;
+    const detectionColor = this.tgo.blue ? "#bb89ff" : "#eee17b";
+
+    this.tgo.samDetectionRanges.forEach((range) => {
+      L.circle(this.tgo.position, {
+        radius: range,
+        color: detectionColor,
+        fill: false,
+        weight: 1,
+      }).addTo(detectionLayer);
+    });
+
+    this.tgo.samThreatRanges.forEach((range) => {
+      L.circle(this.tgo.position, {
+        radius: range,
+        color: threatColor,
+        fill: false,
+        weight: 2,
+      }).addTo(threatLayer);
+    });
+  }
+
+  draw() {
+    L.marker(this.tgo.position, { icon: this.icon() })
+      .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
+      .on("click", () => this.tgo.showInfoDialog())
+      .on("contextmenu", () => this.tgo.showPackageDialog())
+      .addTo(groundObjectsLayer);
+    this.drawSamThreats();
+  }
 }
 
 function drawGroundObjects() {
@@ -361,16 +457,7 @@ function drawGroundObjects() {
   blueSamThreatLayer.clearLayers();
   redSamThreatLayer.clearLayers();
   game.groundObjects.forEach((tgo) => {
-    L.marker(tgo.position, { icon: iconFor(tgo.blue) })
-      .bindTooltip(`${tgo.name}<br />${tgo.units.join("<br />")}`)
-      .on("click", function () {
-        tgo.showInfoDialog();
-      })
-      .on("contextmenu", function () {
-        tgo.showPackageDialog();
-      })
-      .addTo(groundObjectsLayer);
-    drawSamThreatsAt(tgo);
+    new TheaterGroundObject(tgo).draw();
   });
 }
 
@@ -633,5 +720,4 @@ function setTooltipZoomThreshold(layerGroup, showAt) {
   });
 }
 
-setTooltipZoomThreshold(controlPointsLayer, SHOW_BASE_NAME_AT_ZOOM);
 setTooltipZoomThreshold(selectedFlightPlansLayer, SHOW_WAYPOINT_INFO_AT_ZOOM);

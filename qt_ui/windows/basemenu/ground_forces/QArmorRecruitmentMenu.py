@@ -68,6 +68,8 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.setLayout(main_layout)
 
     def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        if not super().enable_purchase(unit_type):
+            return False
         return self.cp.has_ground_unit_source(self.game_model.game)
 
     def enable_sale(self, unit_type: Type[UnitType]) -> bool:

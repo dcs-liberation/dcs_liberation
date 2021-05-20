@@ -334,7 +334,8 @@ class TransferModel(QAbstractListModel):
         count = sum(transfer.units.values())
         origin = transfer.origin.name
         destination = transfer.destination.name
-        return f"Transfer of {count} units from {origin} to {destination}"
+        description = "Transfer" if transfer.player else "Enemy transfer"
+        return f"{description} of {count} units from {origin} to {destination}"
 
     @staticmethod
     def icon_for_transfer(_transfer: TransferOrder) -> Optional[QIcon]:

@@ -202,8 +202,7 @@ class WaypointBuilder:
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
         waypoint.name = "INGRESS"
-        # TODO: This seems wrong, but it's what was there before.
-        waypoint.targets.append(objective)
+        waypoint.targets = objective.strike_targets
         return waypoint
 
     def egress(self, position: Point, target: MissionTarget) -> FlightWaypoint:

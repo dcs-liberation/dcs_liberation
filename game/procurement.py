@@ -175,7 +175,7 @@ class ProcurementAi:
         max_price: float,
     ) -> Optional[Type[FlyingType]]:
         best_choice: Optional[Type[FlyingType]] = None
-        for unit in [u for u in self.faction.aircrafts if u in types]:
+        for unit in [u for u in types if u in self.faction.aircrafts]:
             if db.PRICES[unit] * number > max_price:
                 continue
             if not airbase.can_operate(unit):
@@ -262,13 +262,7 @@ class ProcurementAi:
             if not cp.has_ground_unit_source(self.game):
                 continue
 
-            # Buy to a higher limit when using the new recruitment mechanic since it
-            # will take longer to reinforce losses.
-            if self.game.settings.enable_new_ground_unit_recruitment:
-                limit = 50
-            else:
-                limit = 30
-            if self.total_ground_units_allocated_to(cp) >= limit:
+            if self.total_ground_units_allocated_to(cp) >= 50:
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:

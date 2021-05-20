@@ -38,6 +38,7 @@ class Settings:
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
 
+<<<<<<< HEAD
     # Ground unit behaviour/doctrine
 
     # Buying ratio for ground units. Could be made adjustable in the ui
@@ -50,6 +51,8 @@ class Settings:
     #: remove it.
     enable_new_ground_unit_recruitment: bool = True
 
+=======
+>>>>>>> 52d96b8518c1c499bf89e932b52c369b7708527e
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True

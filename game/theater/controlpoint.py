@@ -1,5 +1,4 @@
 from __future__ import annotations
-from game.scenery_group import SceneryGroup
 
 import heapq
 import itertools
@@ -9,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering
-from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type
+from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type, Union
 
 from dcs.mapping import Point
 from dcs.ships import (
@@ -19,10 +18,12 @@ from dcs.ships import (
     Type_071_Amphibious_Transport_Dock,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
+from dcs.unit import Unit
 from dcs.unittype import FlyingType
 
 from game import db
 from game.point_with_heading import PointWithHeading
+from game.scenery_group import SceneryGroup
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
@@ -134,6 +135,9 @@ class PresetLocations:
 
     #: Locations of short range SAMs which should always be spawned.
     required_short_range_sams: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of AAA groups which should always be spawned.
+    required_aaa: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of EWRs which should always be spawned.
     required_ewrs: List[PointWithHeading] = field(default_factory=list)
@@ -379,9 +383,6 @@ class ControlPoint(MissionTarget, ABC):
         if not self.can_deploy_ground_units:
             return False
 
-        if not game.settings.enable_new_ground_unit_recruitment:
-            return True
-
         if game.turn == 0:
             # Allow units to be recruited anywhere on turn 0 to avoid long delays to get
             # everyone to the front line.
@@ -393,9 +394,6 @@ class ControlPoint(MissionTarget, ABC):
         """Returns True if this control point has access to ground reinforcements."""
         if not self.can_deploy_ground_units:
             return False
-
-        if not game.settings.enable_new_ground_unit_recruitment:
-            return True
 
         for cp in game.theater.controlpoints:
             if cp.is_friendly(self.captured) and cp.can_recruit_ground_units(game):
@@ -783,6 +781,10 @@ class ControlPoint(MissionTarget, ABC):
             raise ValueError
 
         return self.captured != other.captured
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return []
 
 
 class Airfield(ControlPoint):

@@ -6,7 +6,6 @@ from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
 )
-from gen.sam.group_generator import GroupGenerator
 
 
 class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
@@ -80,7 +79,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 
     @classmethod
     def range(cls) -> AirDefenseRange:
-        return AirDefenseRange.Short
+        return AirDefenseRange.AAA
 
 
 class ColdWarFlakGenerator(AirDefenseGroupGenerator):
@@ -153,4 +152,4 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
 
     @classmethod
     def range(cls) -> AirDefenseRange:
-        return AirDefenseRange.Short
+        return AirDefenseRange.AAA

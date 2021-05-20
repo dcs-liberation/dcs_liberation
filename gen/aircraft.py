@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
-from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union, Iterable
 
 from dcs import helicopters
 from dcs.action import AITaskPush, ActivateGroup
@@ -70,6 +70,7 @@ from dcs.task import (
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
+from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
@@ -85,6 +86,7 @@ from game.theater.controlpoint import (
     NavalControlPoint,
     OffMapSpawn,
 )
+from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
@@ -1629,7 +1631,9 @@ class PydcsWaypointBuilder:
         else:
             return False
 
-    def register_special_waypoints(self, targets) -> None:
+    def register_special_waypoints(
+        self, targets: Iterable[Union[MissionTarget, Unit]]
+    ) -> None:
         """Create special target waypoints for various aircraft"""
         for i, t in enumerate(targets):
             if self.group.units[0].unit_type == JF_17 and i < 4:
@@ -1850,29 +1854,16 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build_strike(self) -> MovingPoint:
         waypoint = super().build()
         for target in self.waypoint.targets:
+            bombing = Bombing(target.position)
+            # If there is only one target, drop all ordnance in one pass.
+            if len(self.waypoint.targets) == 1:
+                bombing.params["expend"] = "All"
+            bombing.params["weaponType"] = WeaponType.Auto.value
+            bombing.params["groupAttack"] = True
+            waypoint.tasks.append(bombing)
 
-            targets = [target]
-            # If the target type is a group of units,
-            # then target each unit in the group with a Bombing task on their position
-            # (It is not perfect, we should have an engage Group task instead,
-            # but we don't have the group ref in the model there)
-            # TODO : for building group, engage all the buildings as well
-            if isinstance(target, TheaterGroundObject):
-                if len(target.units) > 0:
-                    targets = target.units
-
-            for t in targets:
-                bombing = Bombing(t.position)
-                # If there is only one target, drop all ordnance in one pass
-                if len(self.waypoint.targets) == 1 and len(targets) == 1:
-                    bombing.params["expend"] = "All"
-                bombing.params["weaponType"] = WeaponType.Auto.value
-                bombing.params["groupAttack"] = True
-                waypoint.tasks.append(bombing)
-                print(bombing)
-
-                # Register special waypoints
-                self.register_special_waypoints(targets)
+            # Register special waypoints
+            self.register_special_waypoints(self.waypoint.targets)
         return waypoint
 
 

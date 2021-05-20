@@ -162,10 +162,10 @@ class AircraftAllocator:
             if not airfield.is_friendly(self.is_player):
                 continue
             inventory = self.global_inventory.for_control_point(airfield)
-            for aircraft, available in inventory.all_aircraft:
+            for aircraft in types:
                 if not airfield.can_operate(aircraft):
                     continue
-                if aircraft in types and available >= flight.num_aircraft:
+                if inventory.available(aircraft) >= flight.num_aircraft:
                     inventory.remove_aircraft(aircraft, flight.num_aircraft)
                     return airfield, aircraft
 
@@ -931,7 +931,12 @@ class CoalitionMissionPlanner:
         ]
 
         start_time = start_time_generator(
-            count=len(non_dca_packages), earliest=5, latest=90, margin=5
+            count=len(non_dca_packages),
+            earliest=5,
+            latest=int(
+                self.game.settings.desired_player_mission_duration.total_seconds() / 60
+            ),
+            margin=5,
         )
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()

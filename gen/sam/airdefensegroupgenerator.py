@@ -1,4 +1,3 @@
-import logging
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Iterator, List
@@ -6,11 +5,12 @@ from typing import Iterator, List
 from dcs.unitgroup import VehicleGroup
 
 from game import Game
-from gen.sam.group_generator import GroupGenerator
 from game.theater.theatergroundobject import SamGroundObject
+from gen.sam.group_generator import GroupGenerator
 
 
 class AirDefenseRange(Enum):
+    AAA = "AAA"
     Short = "short"
     Medium = "medium"
     Long = "long"
