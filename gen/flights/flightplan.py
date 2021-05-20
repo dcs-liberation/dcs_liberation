@@ -1772,4 +1772,5 @@ class FlightPlanBuilder:
             for flight in self.package.flights:
                 if flight.departure == airfield:
                     return airfield
+
         raise RuntimeError("Could not find any airfield assigned to this package")

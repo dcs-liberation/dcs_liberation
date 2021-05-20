@@ -1110,18 +1110,43 @@ class AircraftConflictGenerator:
                     at=self.m.find_group(group_name),
                 )
             else:
-                if not isinstance(cp, Airfield):
-                    raise RuntimeError(
-                        f"Attempted to spawn at airfield for non-airfield {cp}"
+
+                # If the flight is an helicopter flight, then prioritize dedicated helipads
+                group = None
+                if flight.unit_type in helicopters.helicopter_map.values():
+                    helipad = cp.get_free_helipad()
+                    if helipad is not None:
+                        group = self._generate_at_group(
+                            name=name,
+                            side=country,
+                            unit_type=flight.unit_type,
+                            count=flight.count,
+                            start_type=flight.start_type,
+                            at=helipad.static_unit,
+                        )
+                        group.points[0].action = PointAction.FromGroundArea
+                        group.points[0].type = "From Ground Area"
+                        helipad.occupied = True
+
+                    for i in range(flight.count - 1):
+                        helipad = cp.get_free_helipad()
+                        if helipad is not None:
+                            helipad.occupied = True
+                            group.units[1 + i].position = Point(helipad.x, helipad.y)
+
+                if group is None:
+                    if not isinstance(cp, Airfield):
+                        raise RuntimeError(
+                            f"Attempted to spawn at airfield for non-airfield {cp}"
+                        )
+                    group = self._generate_at_airport(
+                        name=name,
+                        side=country,
+                        unit_type=flight.unit_type,
+                        count=flight.count,
+                        start_type=flight.start_type,
+                        airport=cp.airport,
                     )
-                group = self._generate_at_airport(
-                    name=name,
-                    side=country,
-                    unit_type=flight.unit_type,
-                    count=flight.count,
-                    start_type=flight.start_type,
-                    airport=cp.airport,
-                )
         except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
             logging.error(e)

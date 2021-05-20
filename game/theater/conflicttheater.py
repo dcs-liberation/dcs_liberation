@@ -41,6 +41,7 @@ from dcs.unitgroup import (
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
+from ..helipad import Helipad
 from ..scenery_group import SceneryGroup
 from pyproj import CRS, Transformer
 from shapely import geometry, ops
@@ -549,7 +550,7 @@ class MizCampaignLoader:
         for group in self.helipads:
             closest, distance = self.objective_info(group)
             closest.helipads.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                Helipad.from_point(group.position, group.units[0].heading)
             )
 
         for group in self.factories:

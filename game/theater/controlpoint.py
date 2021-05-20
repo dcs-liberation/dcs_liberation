@@ -10,6 +10,7 @@ from enum import Enum
 from functools import total_ordering
 from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type, Union
 
+from dcs import helicopters
 from dcs.mapping import Point
 from dcs.ships import (
     CVN_74_John_C__Stennis,
@@ -39,6 +40,7 @@ from .theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from ..db import PRICES
+from ..helipad import Helipad
 from ..utils import nautical_miles
 from ..weather import Conditions
 
@@ -296,7 +298,7 @@ class ControlPoint(MissionTarget, ABC):
         self.connected_objectives: List[TheaterGroundObject] = []
         self.base_defenses: List[BaseDefenseGroundObject] = []
         self.preset_locations = PresetLocations()
-        self.helipads: List[PointWithHeading] = []
+        self.helipads: List[Helipad] = []
 
         # TODO: Should be Airbase specific.
         self.size = size
@@ -377,6 +379,29 @@ class ControlPoint(MissionTarget, ABC):
             if tgo.is_factory and not tgo.is_dead:
                 return True
         return False
+
+    @property
+    def has_helipads(self) -> bool:
+        """
+        Returns true if cp has helipads
+        """
+        return len(self.helipads) > 0
+
+    @property
+    def has_free_helipad(self) -> bool:
+        """
+        Returns true if cp has a free helipad
+        """
+        return False in [h.occupied for h in self.helipads]
+
+    def get_free_helipad(self) -> Optional[Helipad]:
+        """
+        Returns the first free additional helipad
+        """
+        for h in self.helipads:
+            if not h.occupied:
+                return h
+        return None
 
     def can_recruit_ground_units(self, game: Game) -> bool:
         """Returns True if this control point is capable of recruiting ground units."""
@@ -1084,10 +1109,13 @@ class Fob(ControlPoint):
 
     @property
     def total_aircraft_parking(self) -> int:
-        return 0
+        return len(self.helipads)
 
     def can_operate(self, aircraft: FlyingType) -> bool:
-        return False
+        if aircraft in helicopters.helicopter_map.values():
+            return True
+        else:
+            return False
 
     @property
     def heading(self) -> int:

@@ -25,7 +25,11 @@ class ClosestAirfields:
 
     @property
     def operational_airfields(self) -> Iterator[ControlPoint]:
-        return (c for c in self.closest_airfields if c.runway_is_operational())
+        return (
+            c
+            for c in self.closest_airfields
+            if c.runway_is_operational() or c.has_helipads
+        )
 
     def airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
         """Iterates over all airfields within the given range of the target.

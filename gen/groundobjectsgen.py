@@ -587,6 +587,8 @@ class HelipadGenerator:
             sp.position = pad.position
             sg.add_point(sp)
             country.add_static_group(sg)
+            helipad.static_unit = sg
+            helipad.occupied = False
 
 
 class GroundObjectsGenerator:
