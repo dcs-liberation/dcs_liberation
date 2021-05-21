@@ -9,6 +9,8 @@ assignees: ''
 
 Before filing, please search the issue tracker to see if the issue has already been reported.
 
+If reporting a DCS AI bug, check https://github.com/dcs-liberation/dcs_liberation#dcs-bugs.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
