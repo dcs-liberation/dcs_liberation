@@ -1250,7 +1250,6 @@ REWARDS = {
     "fuel": 2,
     "ammo": 2,
     "farp": 1,
-    "fob": 1,
     # TODO: Should generate no cash once they generate units.
     "factory": 10,
     "comms": 10,
