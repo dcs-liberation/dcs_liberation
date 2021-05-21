@@ -76,7 +76,7 @@
   ],
   "coastal_group_count": 2,
   "navy_generators": [
-    "GrishaGroupGenerator",
+    "LaCombattanteIIGroupGenerator",
     "MolniyaGroupGenerator"
   ],
   "has_jtac": true,

@@ -72,6 +72,6 @@
   "carrier_names": [
   ],
   "navy_generators": [
-     "GrishaGroupGenerator", "MolniyaGroupGenerator"
+     "GrishaGroupGenerator", "MolniyaGroupGenerator", "LaCombattanteIIGroupGenerator"
   ]
 }
