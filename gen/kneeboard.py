@@ -38,6 +38,7 @@ from tabulate import tabulate
 from game.data.alic import AlicCodes
 from game.db import find_unittype, unit_type_from_name
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
+from game.theater.bullseye import Bullseye
 from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
@@ -258,10 +259,14 @@ class BriefingPage(KneeboardPage):
     def __init__(
         self,
         flight: FlightData,
+        bullseye: Bullseye,
+        theater: ConflictTheater,
         start_time: datetime.datetime,
         dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
+        self.bullseye = bullseye
+        self.theater = theater
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
 
@@ -291,6 +296,10 @@ class BriefingPage(KneeboardPage):
         writer.table(
             flight_plan_builder.build(),
             headers=["#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"],
+        )
+
+        writer.text(
+            f"Bullseye: {self.format_ll(self.bullseye.to_lat_lon(self.theater))}"
         )
 
         writer.table(
@@ -591,7 +600,13 @@ class KneeboardGenerator(MissionInfoGenerator):
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
         pages: List[KneeboardPage] = [
-            BriefingPage(flight, self.mission.start_time, self.dark_kneeboard),
+            BriefingPage(
+                flight,
+                self.game.bullseye_for(flight.friendly),
+                self.game.theater,
+                self.mission.start_time,
+                self.dark_kneeboard,
+            ),
             SupportPage(
                 flight,
                 self.comms,
