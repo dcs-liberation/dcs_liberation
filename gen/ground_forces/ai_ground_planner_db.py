@@ -19,6 +19,7 @@ TYPE_TANKS = [
     Armor.MBT_M60A3_Patton,
     Armor.MBT_Merkava_IV,
     Armor.ZTZ_96B,
+    Armor.LT_PT_76,
     # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
     Armor.Tk_PzIV_H,
