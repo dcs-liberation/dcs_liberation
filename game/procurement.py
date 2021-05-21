@@ -14,9 +14,9 @@ from game.utils import Distance
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
-from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
+from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD, TYPE_TANKS
 
-from game import unitType_dic_information_provider
+from game import dic_filter
 
 if TYPE_CHECKING:
     from game import Game
@@ -58,7 +58,6 @@ class ProcurementAi:
         self.manage_aircraft = manage_aircraft
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
-        self.unitType_dic_information_provider = unitType_dic_information_provider
 
     def spend_budget(
         self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
@@ -127,19 +126,6 @@ class ProcurementAi:
             if db.PRICES[u] <= budget
         ]
 
-        test = cp.base.armor
-        orderedvehicles = cp.pending_unit_deliveries.units
-
-        othertanks = (
-            unitType_dic_information_provider.dic_analyser.get_all_tanks_from_dic(
-                orderedvehicles
-            )
-        )
-
-        totalprice = unitType_dic_information_provider.dic_analyser.get_costs_for_provided_vehicles(
-            othertanks
-        )
-
         total_number_aa = (
             cp.base.total_shorad_cost + cp.pending_frontline_aa_deliveries_count
         )
@@ -157,28 +143,62 @@ class ProcurementAi:
             return None
         return random.choice(affordable_units)
 
-    def reinforce_front_line(self, budget: float) -> float:
+    def reinforce_front_line(self, ground_unit_budget: float) -> float:
         if not self.faction.frontline_units and not self.faction.artillery_units:
-            return budget
+            return ground_unit_budget
 
         # TODO: Attempt to transfer from reserves.
 
-        while budget > 0:
-            candidates = self.front_line_candidates()
-            if not candidates:
-                break
+        frontline_controlpoints = self.front_line_candidates()
+        if not frontline_controlpoints:
+            return ground_unit_budget
 
-            # TODO: split up on more candidates
-            cp = random.choice(candidates)
-            unit = self.random_affordable_ground_unit(budget, cp)
+        budget_for_each_controlpoint = int(
+            ground_unit_budget / len(frontline_controlpoints)
+        )
+
+        for cp in frontline_controlpoints:
+            budget = self.buy_groundUnits_for_controlpoint(
+                int (ground_unit_budget), budget_for_each_controlpoint, cp
+            )
+
+        return budget
+
+    def buy_groundUnits_for_controlpoint(
+        self,
+        ground_unit_budget: int,
+        budget_for_each_controlpoint: int,
+        cp: ControlPoint,
+    ):
+        cp_budget = budget_for_each_controlpoint
+        while cp_budget > 0:
+            tanks_in_base = dic_filter.dic_analyser.get_all_vehicletype_from_dic(
+                cp.base.armor, TYPE_TANKS
+            )
+            tanks_orderd = dic_filter.dic_analyser.get_all_vehicletype_from_dic(
+                cp.pending_unit_deliveries.units, TYPE_TANKS
+            )
+            all_tanks_list = tanks_in_base + tanks_orderd
+            all_tanks_dic = (
+                dic_filter.dic_analyser.get_dic_with_numbers_of_vehicles_from_list(
+                    all_tanks_list
+                )
+            )
+            tank_costs = dic_filter.dic_analyser.get_costs_for_provided_vehicles(
+                all_tanks_dic
+            )
+
+            unit = self.random_affordable_ground_unit(cp_budget, cp)
+
             if unit is None:
                 # Can't afford any more units.
                 break
 
-            budget -= db.PRICES[unit]
+            unit_price = db.PRICES[unit]
+            ground_unit_budget -= unit_price
+            cp_budget -= unit_price
             cp.pending_unit_deliveries.order({unit: 1})
-
-        return budget
+        return ground_unit_budget
 
     def _affordable_aircraft_of_types(
         self,
