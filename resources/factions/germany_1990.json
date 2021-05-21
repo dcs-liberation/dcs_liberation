@@ -61,7 +61,8 @@
   "helicopter_carrier_names": [
   ],
   "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
+    "OliverHazardPerryGroupGenerator",
+    "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

@@ -7,10 +7,13 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units can now be transferred by road, airlift, and cargo ship. See https://github.com/dcs-liberation/dcs_liberation/wiki/Unit-Transfers for more information.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
+* **[Campaign]** Non-control point FOBs will no longer spawn.
 * **[Campaign AI]** Every 30 minutes the AI will plan a CAP, so players can customize their mission better.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** Fix purchase of aircraft by priority (the faction's list was being used as the priority list rather than the game's).
 * **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
+* **[Flight Planner]** Flight plans now include bullseye waypoints.
+* **[Kneeboard]** ATC table overflow alleviated by wrapping long airfield names and splitting ATC frequency and channel into separate rows.
 * **[UI]** Added new web based map UI. This is mostly functional but many of the old display options are a WIP. Revert to the old map with --old-map.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[UI]** DCS loadouts are now selectable in the loadout setup menu.

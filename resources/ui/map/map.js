@@ -570,7 +570,7 @@ class Waypoint {
   }
 
   includeInPath() {
-    return !this.waypoint.isDivert;
+    return !this.waypoint.isDivert && !this.waypoint.isBullseye;
   }
 }
 

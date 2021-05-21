@@ -815,12 +815,13 @@ class AircraftConflictGenerator:
 
             self.air_support.awacs.append(
                 AwacsInfo(
-                    dcsGroupName=str(group.name),
+                    group_name=str(group.name),
                     callsign=callsign,
                     freq=channel,
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
                 )
             )
 
@@ -1275,7 +1276,7 @@ class AircraftConflictGenerator:
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
-            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.All,
             restrict_jettison=True,
         )
 
@@ -1410,9 +1411,6 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        # Escort groups are actually given the CAP task so they can perform the
-        # Search Then Engage task, which we have to use instead of the Escort
-        # task for the reasons explained in JoinPointBuilder.
         group.task = Transport.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
@@ -1761,7 +1759,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
         if isinstance(target_group, TheaterGroundObject):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
                 task.params["expend"] = "All"
                 task.params["attackQtyLimit"] = False
                 task.params["directionEnabled"] = False
@@ -1866,12 +1864,11 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
             center.y += target.position.y
         center.x /= len(targets)
         center.y /= len(targets)
-        bombing = Bombing(center)
+        bombing = Bombing(center, weapon_type=WeaponType.Bombs)
         bombing.params["expend"] = "All"
         bombing.params["attackQtyLimit"] = False
         bombing.params["directionEnabled"] = False
         bombing.params["altitudeEnabled"] = False
-        bombing.params["weaponType"] = WeaponType.Bombs.value
         bombing.params["groupAttack"] = True
         waypoint.tasks.append(bombing)
         return waypoint
@@ -1879,11 +1876,10 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build_strike(self) -> MovingPoint:
         waypoint = super().build()
         for target in self.waypoint.targets:
-            bombing = Bombing(target.position)
+            bombing = Bombing(target.position, weapon_type=WeaponType.Auto)
             # If there is only one target, drop all ordnance in one pass.
             if len(self.waypoint.targets) == 1:
                 bombing.params["expend"] = "All"
-            bombing.params["weaponType"] = WeaponType.Auto.value
             bombing.params["groupAttack"] = True
             waypoint.tasks.append(bombing)
 
@@ -1954,7 +1950,10 @@ class JoinPointBuilder(PydcsWaypointBuilder):
                 EngageTargets(
                     # TODO: From doctrine.
                     max_distance=int(nautical_miles(30).meters),
-                    targets=[Targets.All.Air.Planes.Fighters],
+                    targets=[
+                        Targets.All.Air.Planes.Fighters,
+                        Targets.All.Air.Planes.MultiroleFighters,
+                    ],
                 )
             )
         )

@@ -41,6 +41,7 @@ from dcs.unitgroup import (
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
+from .latlon import LatLon
 from ..helipad import Helipad
 from ..scenery_group import SceneryGroup
 from pyproj import CRS, Transformer
@@ -581,15 +582,6 @@ class MizCampaignLoader:
 class ReferencePoint:
     world_coordinates: Point
     image_coordinates: Point
-
-
-@dataclass(frozen=True)
-class LatLon:
-    latitude: float
-    longitude: float
-
-    def as_list(self) -> List[float]:
-        return [self.latitude, self.longitude]
 
 
 class ConflictTheater:

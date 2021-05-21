@@ -46,7 +46,8 @@
     "Scout_HMMWV",
     "ATGM_HMMWV",
     "SAM_Linebacker___Bradley_M6",
-    "SAM_Avenger__Stinger"
+    "SAM_Avenger__Stinger",
+    "ATGM_VAB_Mephisto"
   ],
   "artillery_units": [
     "MLRS_M270_227mm",

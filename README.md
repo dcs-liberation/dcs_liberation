@@ -22,6 +22,14 @@ Latest release is available here : https://github.com/dcs-liberation/dcs_liberat
 
 To download preview builds of the next version of DCS Liberation, see https://github.com/dcs-liberation/dcs_liberation/wiki/Preview-builds.
 
+## DCS bugs
+
+These DCS bugs prevent us from improving AI behavior. Please upvote them! (But please
+_don't_ spam them with comments):
+
+* [A2A and SEAD escorts don't escort](https://forums.eagle.ru/topic/251798-options-for-alternate-ai-escort-behavior/?tab=comments#comment-4668033)
+* [DEAD can't use mixed loadouts effectively](https://forums.eagle.ru/topic/271941-ai-rtbs-after-firing-decoys-despite-full-load-of-bombs/)
+
 ## Bugs and feature requests
 
 If you need to report a bug or want to suggest a new feature, you can do this on our [bug tracker](https://github.com/dcs-liberation/dcs_liberation/issues). In either case, please use the search bar at the top of the page to see if it has already been reported. Note that you may need to remove the filter for open bugs if it's something we've recently fixed.

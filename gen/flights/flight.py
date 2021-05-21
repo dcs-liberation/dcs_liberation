@@ -79,6 +79,7 @@ class FlightWaypointType(Enum):
     INGRESS_OCA_AIRCRAFT = 25
     PICKUP = 26
     DROP_OFF = 27
+    BULLSEYE = 28
 
 
 class FlightWaypoint:

@@ -145,20 +145,26 @@ _WEAPON_FALLBACKS = [
         Weapons.LAU_117_with_AGM_65E___Maverick_E__Laser_ASM___Lg_Whd_,
     ),  # internal pylons harrier
     # AGM-154 JSOW
-    (Weapons.AGM_154A___JSOW_CEB__CBU_type_, Weapons.GBU_12),
+    (
+        Weapons.AGM_154A___JSOW_CEB__CBU_type_,
+        Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
+    ),
     (
         Weapons.BRU_55_with_2_x_AGM_154A___JSOW_CEB__CBU_type_,
-        Weapons.BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb,
+        Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
     ),
     (
         Weapons.BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_,
-        None,
+        Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
     ),  # doesn't exist on any aircraft yet
     (Weapons.AGM_154B___JSOW_Anti_Armour, Weapons.CBU_105___10_x_SFW__CBU_with_WCMD),
-    (Weapons.AGM_154C___JSOW_Unitary_BROACH, Weapons.GBU_12),
+    (
+        Weapons.AGM_154C___JSOW_Unitary_BROACH,
+        Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
+    ),
     (
         Weapons.BRU_55_with_2_x_AGM_154C___JSOW_Unitary_BROACH,
-        Weapons.BRU_33_with_2_x_GBU_12___500lb_Laser_Guided_Bomb,
+        Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
     ),
     # AGM-45 Shrike
     (Weapons.AGM_45A_Shrike_ARM, None),
