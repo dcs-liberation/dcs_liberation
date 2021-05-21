@@ -403,10 +403,10 @@ class TheaterGroundObject {
 
   icon() {
     let state;
-    if (this.tgo.category == "aa" && !this.samIsThreat()) {
-      state = UnitState.Damaged;
-    } else if (this.tgo.dead) {
+    if (this.tgo.dead) {
       state = UnitState.Destroyed;
+    } else if (this.tgo.category == "aa" && !this.samIsThreat()) {
+      state = UnitState.Damaged;
     } else {
       state = UnitState.Alive;
     }
