@@ -15,6 +15,7 @@ TYPE_TANKS = [
     Armor.MBT_Leopard_1A3,
     Armor.MBT_Leclerc,
     Armor.MBT_Challenger_II,
+    Armor.MBT_Chieftain_Mk_3,
     Armor.MBT_M1A2_Abrams,
     Armor.MBT_M60A3_Patton,
     Armor.MBT_Merkava_IV,
