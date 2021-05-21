@@ -1925,7 +1925,10 @@ class JoinPointBuilder(PydcsWaypointBuilder):
                 EngageTargets(
                     # TODO: From doctrine.
                     max_distance=int(nautical_miles(30).meters),
-                    targets=[Targets.All.Air.Planes.Fighters],
+                    targets=[
+                        Targets.All.Air.Planes.Fighters,
+                        Targets.All.Air.Planes.MultiroleFighters,
+                    ],
                 )
             )
         )
