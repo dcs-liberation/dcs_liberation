@@ -815,12 +815,13 @@ class AircraftConflictGenerator:
 
             self.air_support.awacs.append(
                 AwacsInfo(
-                    dcsGroupName=str(group.name),
+                    group_name=str(group.name),
                     callsign=callsign,
                     freq=channel,
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
                 )
             )
 

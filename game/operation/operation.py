@@ -171,13 +171,16 @@ class Operation:
                 gen.add_dynamic_runway(dynamic_runway)
 
             for tanker in airsupportgen.air_support.tankers:
-                gen.add_tanker(tanker)
+                if tanker.blue:
+                    gen.add_tanker(tanker)
 
             for aewc in airsupportgen.air_support.awacs:
-                gen.add_awacs(aewc)
+                if aewc.blue:
+                    gen.add_awacs(aewc)
 
             for jtac in jtacs:
-                gen.add_jtac(jtac)
+                if jtac.blue:
+                    gen.add_jtac(jtac)
 
             for flight in airgen.flights:
                 gen.add_flight(flight)
@@ -453,7 +456,7 @@ class Operation:
 
         for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = {
-                "dcsGroupName": tanker.dcsGroupName,
+                "dcsGroupName": tanker.group_name,
                 "callsign": tanker.callsign,
                 "variant": tanker.variant,
                 "radio": tanker.freq.mhz,
@@ -463,14 +466,14 @@ class Operation:
         if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = {
-                    "dcsGroupName": awacs.dcsGroupName,
+                    "dcsGroupName": awacs.group_name,
                     "callsign": awacs.callsign,
                     "radio": awacs.freq.mhz,
                 }
 
         for jtac in jtacs:
             luaData["JTACs"][jtac.callsign] = {
-                "dcsGroupName": jtac.dcsGroupName,
+                "dcsGroupName": jtac.group_name,
                 "callsign": jtac.callsign,
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,
