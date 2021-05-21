@@ -35,6 +35,9 @@ class Loadout:
 
         new_pylons = dict(self.pylons)
         for pylon_number, weapon in self.pylons.items():
+            if weapon is None:
+                del new_pylons[pylon_number]
+                continue
             if not weapon.available_on(date):
                 pylon = Pylon.for_aircraft(unit_type, pylon_number)
                 for fallback in weapon.fallbacks:
@@ -44,6 +47,8 @@ class Loadout:
                         continue
                     new_pylons[pylon_number] = fallback
                     break
+                else:
+                    del new_pylons[pylon_number]
         return Loadout(f"{self.name} ({date.year})", new_pylons, date)
 
     @classmethod
