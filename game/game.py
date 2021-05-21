@@ -34,6 +34,7 @@ from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
+from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
 from .transfers import PendingTransfers
@@ -130,6 +131,9 @@ class Game:
         self.blue_ato = AirTaskingOrder()
         self.red_ato = AirTaskingOrder()
 
+        self.blue_bullseye = Bullseye(Point(0, 0))
+        self.red_bullseye = Bullseye(Point(0, 0))
+
         self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
         self.transfers = PendingTransfers(self)
@@ -200,6 +204,11 @@ class Game:
         if player:
             return self.player_faction
         return self.enemy_faction
+
+    def bullseye_for(self, player: bool) -> Bullseye:
+        if player:
+            return self.blue_bullseye
+        return self.red_bullseye
 
     def _roll(self, prob, mult):
         if self.settings.version == "dev":
@@ -337,9 +346,16 @@ class Game:
 
         return TurnState.CONTINUE
 
+    def set_bullseye(self) -> None:
+        player_cp, enemy_cp = self.theater.closest_opposing_control_points()
+        self.blue_bullseye = Bullseye(enemy_cp.position)
+        self.red_bullseye = Bullseye(player_cp.position)
+
     def initialize_turn(self) -> None:
         self.events = []
         self._generate_events()
+
+        self.set_bullseye()
 
         # Update statistics
         self.game_stats.update(self)

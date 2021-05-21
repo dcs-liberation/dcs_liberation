@@ -375,6 +375,7 @@ class WaypointJs(QObject):
     timingChanged = Signal()
     isTakeoffChanged = Signal()
     isDivertChanged = Signal()
+    isBullseyeChanged = Signal()
 
     def __init__(
         self,
@@ -438,6 +439,10 @@ class WaypointJs(QObject):
     @Property(bool, notify=isDivertChanged)
     def isDivert(self) -> bool:
         return self.waypoint.waypoint_type is FlightWaypointType.DIVERT
+
+    @Property(bool, notify=isBullseyeChanged)
+    def isBullseye(self) -> bool:
+        return self.waypoint.waypoint_type is FlightWaypointType.BULLSEYE
 
     @Slot(list, result=str)
     def setPosition(self, position: LeafletLatLon) -> str:

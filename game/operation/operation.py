@@ -108,8 +108,12 @@ class Operation:
 
     @classmethod
     def _setup_mission_coalitions(cls):
-        cls.current_mission.coalition["blue"] = Coalition("blue")
-        cls.current_mission.coalition["red"] = Coalition("red")
+        cls.current_mission.coalition["blue"] = Coalition(
+            "blue", bullseye=cls.game.blue_bullseye.to_pydcs()
+        )
+        cls.current_mission.coalition["red"] = Coalition(
+            "red", bullseye=cls.game.red_bullseye.to_pydcs()
+        )
 
         p_country = cls.game.player_country
         e_country = cls.game.enemy_country

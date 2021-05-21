@@ -209,16 +209,6 @@ class TriggersGenerator:
         player_coalition = "blue"
         enemy_coalition = "red"
 
-        player_cp, enemy_cp = self.game.theater.closest_opposing_control_points()
-        self.mission.coalition["blue"].bullseye = {
-            "x": enemy_cp.position.x,
-            "y": enemy_cp.position.y,
-        }
-        self.mission.coalition["red"].bullseye = {
-            "x": player_cp.position.x,
-            "y": player_cp.position.y,
-        }
-
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)
         self._gen_markers()
