@@ -21,10 +21,8 @@
     "MBT_Leclerc",
     "APC_TPz_Fuchs",
     "Scout_Cobra",
-    "ATGM_Stryker",
     "IFV_LAV_25",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
+    "ATGM_VAB_Mephisto",
     "SAM_Roland_ADS"
   ],
   "artillery_units": [

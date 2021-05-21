@@ -24,7 +24,6 @@
     "ERC_90",
     "TRM_2000_PAMELA",
     "VAB__50",
-    "VAB_MEPHISTO",
     "VAB_T20_13",
     "VAB_T20_13",
     "VBL__50",
@@ -33,7 +32,8 @@
     "VBAE_CRAB_MMP",
     "AMX_30B2",
     "Leclerc_Serie_XXI",
-    "SAM_Roland_ADS"
+    "SAM_Roland_ADS",
+    "ATGM_VAB_Mephisto"
   ],
   "artillery_units": [
     "MLRS_M270_227mm",

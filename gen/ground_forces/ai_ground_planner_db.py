@@ -45,6 +45,7 @@ TYPE_TANKS = [
 
 TYPE_ATGM = [
     Armor.ATGM_HMMWV,
+    Armor.ATGM_VAB_Mephisto,
     Armor.ATGM_Stryker,
     Armor.IFV_BMP_2,
     # WW2 (Tank Destroyers)
