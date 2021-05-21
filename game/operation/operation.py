@@ -324,13 +324,8 @@ class Operation:
 
         # Setup combined arms parameters
         cls.current_mission.groundControl.pilot_can_control_vehicles = cls.ca_slots > 0
-        if cls.game.player_country in [
-            country.name
-            for country in cls.current_mission.coalition["blue"].countries.values()
-        ]:
-            cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
-        else:
-            cls.current_mission.groundControl.red_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_observer = 1
 
         # Options
         forcedoptionsgen = ForcedOptionsGenerator(cls.current_mission, cls.game)
