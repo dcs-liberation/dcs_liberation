@@ -10,7 +10,6 @@ from dcs.unit import Unit
 from dcs.unitgroup import Group
 
 from .. import db
-from ..data.radar_db import UNITS_WITH_RADAR
 from ..utils import Distance, meters
 
 if TYPE_CHECKING:
@@ -141,7 +140,15 @@ class TheaterGroundObject(MissionTarget):
         """Returns True if the ground object contains a unit with radar."""
         for group in self.groups:
             for unit in group.units:
-                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
+                unit_type = db.unit_type_from_name(unit.type)
+                if unit_type is None:
+                    logging.error(f"Unknown unit type {unit.type}")
+                    continue
+
+                # Some units in pydcs have detection_range/threat_range defined, but
+                # explicitly set to None. Others do not define it at all.
+                unit_range = getattr(unit_type, "detection_range", None)
+                if unit_range is not None:
                     return True
         return False
 
@@ -156,8 +163,8 @@ class TheaterGroundObject(MissionTarget):
                 logging.error(f"Unknown unit type {u.type}")
                 continue
 
-            # Some units in pydcs have detection_range/threat_range defined,
-            # but explicitly set to None.
+            # Some units in pydcs have detection_range/threat_range defined, but
+            # explicitly set to None. Others do not define it at all.
             unit_range = getattr(unit, range_type, None)
             if unit_range is not None:
                 max_range = max(max_range, meters(unit_range))

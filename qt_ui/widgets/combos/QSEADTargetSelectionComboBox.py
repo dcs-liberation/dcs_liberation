@@ -1,7 +1,6 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
-from game.data.radar_db import UNITS_WITH_RADAR
 from gen import db
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
@@ -45,21 +44,18 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
             for g in cp.ground_objects:
 
                 radars = []
-                detection_range = 0
+                max_detection_range = 0
                 threat_range = 0
                 if g.dcs_identifier == "AA":
                     for group in g.groups:
                         for u in group.units:
                             utype = db.unit_type_from_name(u.type)
-
-                            if utype in UNITS_WITH_RADAR:
-                                if (
-                                    hasattr(utype, "detection_range")
-                                    and utype.detection_range > 1000
-                                ):
-                                    if utype.detection_range > detection_range:
-                                        detection_range = utype.detection_range
-                                radars.append(u)
+                            detection_range = getattr(utype, "detection_range", 0)
+                            if detection_range > 1000:
+                                max_detection_range = max(
+                                    detection_range, max_detection_range
+                                )
+                            radars.append(u)
 
                             if hasattr(utype, "threat_range"):
                                 if utype.threat_range > threat_range:
@@ -81,7 +77,7 @@ class QSEADTargetSelectionComboBox(QFilteredComboBox):
                         tgt_info.radars = radars
                         tgt_info.location = g
                         tgt_info.threat_range = threat_range
-                        tgt_info.detection_range = detection_range
+                        tgt_info.detection_range = max_detection_range
                         i = add_model_item(i, model, tgt_info)
 
         self.setModel(model)
