@@ -137,7 +137,7 @@ class TheaterGroundObject(MissionTarget):
         return False
 
     @property
-    def has_radar(self) -> bool:
+    def has_alive_radar(self) -> bool:
         """Returns True if the ground object contains a unit with radar."""
         for group in self.groups:
             for unit in group.units:
