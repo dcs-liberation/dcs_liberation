@@ -106,6 +106,9 @@ class Loadout:
         }
         for flight_type, names in legacy_names.items():
             loadout_names[flight_type].extend(names)
+        # A SEAD escort typically does not need a different loadout than a regular
+        # SEAD flight, so fall back to SEAD if needed.
+        loadout_names[FlightType.SEAD_ESCORT].extend(loadout_names[FlightType.SEAD])
         yield from loadout_names[flight.flight_type]
 
     @classmethod
