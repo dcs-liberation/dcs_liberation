@@ -890,6 +890,8 @@ class FlightPlanBuilder:
             return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
             return self.generate_sead(flight, custom_targets)
+        elif task == FlightType.SEAD_ESCORT:
+            return self.generate_escort(flight)
         elif task == FlightType.STRIKE:
             return self.generate_strike(flight)
         elif task == FlightType.SWEEP:

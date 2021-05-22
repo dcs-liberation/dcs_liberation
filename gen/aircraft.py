@@ -67,6 +67,7 @@ from dcs.task import (
     Targets,
     Transport,
     WeaponType,
+    TargetType,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -1379,6 +1380,22 @@ class AircraftConflictGenerator:
             group, roe=OptROE.Values.OpenFire, restrict_jettison=True
         )
 
+    def configure_sead_escort(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = SEAD.name
+        self._setup_group(group, package, flight, dynamic_runways)
+        self.configure_behavior(
+            group,
+            roe=OptROE.Values.OpenFire,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.Guided,
+            restrict_jettison=True,
+        )
+
     def configure_transport(
         self,
         group: FlyingGroup,
@@ -1423,6 +1440,8 @@ class AircraftConflictGenerator:
             self.configure_dead(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.SEAD:
             self.configure_sead(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.SEAD_ESCORT:
+            self.configure_sead_escort(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.STRIKE:
             self.configure_strike(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ANTISHIP:
@@ -1802,18 +1821,16 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
         if isinstance(target_group, TheaterGroundObject):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
-                waypoint.add_task(
-                    EngageTargetsInZone(
-                        position=tgroup.position,
-                        radius=int(nautical_miles(30).meters),
-                        targets=[
-                            Targets.All.GroundUnits.AirDefence,
-                        ],
-                    )
-                )
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
+                task.params["expend"] = "All"
+                task.params["attackQtyLimit"] = False
+                task.params["directionEnabled"] = False
+                task.params["altitudeEnabled"] = False
+                task.params["groupAttack"] = True
+                waypoint.tasks.append(task)
             else:
                 logging.error(
-                    f"Could not find group for DEAD mission {target_group.group_name}"
+                    f"Could not find group for SEAD mission {target_group.group_name}"
                 )
         self.register_special_waypoints(self.waypoint.targets)
         return waypoint
@@ -1889,11 +1906,23 @@ class JoinPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
         if self.flight.flight_type == FlightType.ESCORT:
-            self.configure_escort_tasks(waypoint)
+            self.configure_escort_tasks(
+                waypoint,
+                [
+                    Targets.All.Air.Planes.Fighters,
+                    Targets.All.Air.Planes.MultiroleFighters,
+                ],
+            )
+        elif self.flight.flight_type == FlightType.SEAD_ESCORT:
+            self.configure_escort_tasks(
+                waypoint, [Targets.All.GroundUnits.AirDefence.AAA.SAMRelated]
+            )
         return waypoint
 
     @staticmethod
-    def configure_escort_tasks(waypoint: MovingPoint) -> None:
+    def configure_escort_tasks(
+        waypoint: MovingPoint, target_types: List[Type[TargetType]]
+    ) -> None:
         # Ideally we would use the escort mission type and escort task to have
         # the AI automatically but the AI only escorts AI flights while they are
         # traveling between waypoints. When an AI flight performs an attack
@@ -1919,16 +1948,13 @@ class JoinPointBuilder(PydcsWaypointBuilder):
         # for the target area that is set to end on a flag flip that occurs when
         # the strike aircraft finish their attack task.
         #
-        # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/250183-task-follow-and-escort-temporarily-aborted
+        # https://forums.eagle.ru/topic/251798-options-for-alternate-ai-escort-behavior
         waypoint.add_task(
             ControlledTask(
                 EngageTargets(
                     # TODO: From doctrine.
                     max_distance=int(nautical_miles(30).meters),
-                    targets=[
-                        Targets.All.Air.Planes.Fighters,
-                        Targets.All.Air.Planes.MultiroleFighters,
-                    ],
+                    targets=target_types,
                 )
             )
         )

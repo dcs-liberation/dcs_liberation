@@ -452,6 +452,7 @@ class SamGroundObject(BaseDefenseGroundObject):
 
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
+            yield FlightType.SEAD
         yield from super().mission_types(for_player)
 
     @property

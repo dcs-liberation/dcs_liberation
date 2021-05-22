@@ -423,7 +423,10 @@ class WaypointBuilder:
         return self.sweep_start(start, altitude), self.sweep_end(end, altitude)
 
     def escort(
-        self, ingress: Point, target: MissionTarget, egress: Point
+        self,
+        ingress: Point,
+        target: MissionTarget,
+        egress: Point,
     ) -> Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 

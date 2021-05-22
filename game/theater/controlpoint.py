@@ -1100,7 +1100,7 @@ class Fob(ControlPoint):
                 FlightType.STRIKE,
                 FlightType.SWEEP,
                 FlightType.ESCORT,
-                FlightType.SEAD,
+                FlightType.SEAD_ESCORT,
             ]
 
     @property

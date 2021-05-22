@@ -405,6 +405,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAS_CAPABLE
     elif task == FlightType.SEAD:
         return SEAD_CAPABLE
+    elif task == FlightType.SEAD_ESCORT:
+        return SEAD_CAPABLE
     elif task == FlightType.DEAD:
         return DEAD_CAPABLE
     elif task == FlightType.OCA_AIRCRAFT:

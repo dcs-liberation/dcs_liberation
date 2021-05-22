@@ -37,7 +37,7 @@ class MissionTarget:
             yield from [
                 FlightType.ESCORT,
                 FlightType.TARCAP,
-                FlightType.SEAD,
+                FlightType.SEAD_ESCORT,
                 FlightType.SWEEP,
                 # TODO: FlightType.ELINT,
                 # TODO: FlightType.EWAR,

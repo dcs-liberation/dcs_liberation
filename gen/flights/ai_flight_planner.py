@@ -635,6 +635,7 @@ class CoalitionMissionPlanner:
                 sam,
                 [
                     ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
+                    ProposedFlight(FlightType.SEAD, 2, self.MAX_SEAD_RANGE),
                     # TODO: Max escort range.
                     ProposedFlight(
                         FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
@@ -665,7 +666,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -680,7 +681,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -710,7 +711,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -732,7 +733,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_OCA_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
                     ),
                 ]
             )
@@ -749,7 +750,10 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_STRIKE_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT,
+                        2,
+                        self.MAX_STRIKE_RANGE,
+                        EscortType.Sead,
                     ),
                 ],
             )
