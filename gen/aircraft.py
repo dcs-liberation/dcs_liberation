@@ -1263,7 +1263,10 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        group.task = SEAD.name
+        # CAS is able to perform all the same tasks as SEAD using a superset of the
+        # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
+        # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
+        group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,
@@ -1387,7 +1390,10 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        group.task = SEAD.name
+        # CAS is able to perform all the same tasks as SEAD using a superset of the
+        # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
+        # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
+        group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
             group,

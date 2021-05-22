@@ -230,7 +230,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD tasks. Must be capable of the SEAD DCS task.
+# Aircraft used for SEAD and SEAD Escort tasks. Must be capable of the CAS DCS task.
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -240,6 +240,8 @@ SEAD_CAPABLE = [
     Su_25TM,
     F_4E,
     A_4E_C,
+    F_14B,
+    F_14A_135_GR,
     AV8BNA,
     Su_24M,
     Su_17M4,
