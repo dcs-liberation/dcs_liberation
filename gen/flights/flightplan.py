@@ -243,7 +243,7 @@ class FlightPlan:
         if self.flight.from_cp.is_fleet:
             return timedelta(minutes=2)
         else:
-            return timedelta(minutes=5)
+            return timedelta(minutes=8)
 
     @property
     def mission_departure_time(self) -> timedelta:
