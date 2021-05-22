@@ -27,7 +27,7 @@ class Settings:
     default_start_type: str = "Cold"
 
     # Mission specific
-    desired_player_mission_duration: timedelta = timedelta(minutes=90)
+    desired_player_mission_duration: timedelta = timedelta(minutes=60)
 
     # Campaign management
     automate_runway_repair: bool = False
