@@ -52,7 +52,7 @@ class GroundSpeed:
 class TravelTime:
     @staticmethod
     def between_points(a: Point, b: Point, speed: Speed) -> timedelta:
-        error_factor = 1.1
+        error_factor = 1.05
         distance = meters(a.distance_to_point(b))
         return timedelta(hours=distance.nautical_miles / speed.knots * error_factor)
 
