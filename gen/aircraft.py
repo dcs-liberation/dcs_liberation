@@ -1272,6 +1272,8 @@ class AircraftConflictGenerator:
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
+            # ASM includes ARMs and TALDs (among other things, but those are the useful
+            # weapons for SEAD).
             rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True,
         )
@@ -1398,7 +1400,9 @@ class AircraftConflictGenerator:
         self.configure_behavior(
             group,
             roe=OptROE.Values.OpenFire,
-            rtb_winchester=OptRTBOnOutOfAmmo.Values.Guided,
+            # ASM includes ARMs and TALDs (among other things, but those are the useful
+            # weapons for SEAD).
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True,
         )
 
