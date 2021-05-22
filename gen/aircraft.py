@@ -62,7 +62,6 @@ from dcs.task import (
     OptRestrictJettison,
     OrbitAction,
     RunwayAttack,
-    SEAD,
     StartCommand,
     Targets,
     Transport,
@@ -78,6 +77,7 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.data.weapons import Pylon
+from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -1155,12 +1155,23 @@ class AircraftConflictGenerator:
             raise RuntimeError(f"No reduced fuel case for type {unit_type}")
 
     @staticmethod
+    def flight_always_keeps_gun(flight: Flight) -> bool:
+        # Never take bullets from players. They're smart enough to know when to use it
+        # and when to RTB.
+        if flight.client_count > 0:
+            return True
+
+        return flight.unit_type in GUN_RELIANT_AIRFRAMES
+
     def configure_behavior(
+        self,
+        flight: Flight,
         group: FlyingGroup,
         react_on_threat: Optional[OptReactOnThreat.Values] = None,
         roe: Optional[OptROE.Values] = None,
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
+        mission_uses_gun: bool = True,
     ) -> None:
         group.points[0].tasks.clear()
         if react_on_threat is not None:
@@ -1171,6 +1182,17 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(restrict_jettison))
         if rtb_winchester is not None:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
+
+        # Confiscate the bullets of AI missions that do not rely on the gun. There is no
+        # "all but gun" RTB winchester option, so air to ground missions with mixed
+        # weapon types will insist on using all of their bullets after running out of
+        # missiles and bombs. Take away their bullets so they don't strafe a Tor.
+        #
+        # Exceptions are made for player flights and for airframes where the gun is
+        # essential like the A-10 or warbirds.
+        if not mission_uses_gun and not self.flight_always_keeps_gun(flight):
+            for unit in group.units:
+                unit.gun = 0
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         # Do not restrict afterburner.
@@ -1197,7 +1219,7 @@ class AircraftConflictGenerator:
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
 
-        self.configure_behavior(group, rtb_winchester=ammo_type)
+        self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
     def configure_sweep(
         self,
@@ -1214,7 +1236,7 @@ class AircraftConflictGenerator:
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
 
-        self.configure_behavior(group, rtb_winchester=ammo_type)
+        self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
     def configure_cas(
         self,
@@ -1226,6 +1248,7 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
@@ -1249,11 +1272,13 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             rtb_winchester=OptRTBOnOutOfAmmo.Values.All,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_sead(
@@ -1269,6 +1294,7 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
@@ -1276,6 +1302,7 @@ class AircraftConflictGenerator:
             # weapons for SEAD).
             rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_strike(
@@ -1288,10 +1315,12 @@ class AircraftConflictGenerator:
         group.task = GroundAttack.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_anti_ship(
@@ -1304,10 +1333,12 @@ class AircraftConflictGenerator:
         group.task = AntishipStrike.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_runway_attack(
@@ -1320,10 +1351,12 @@ class AircraftConflictGenerator:
         group.task = RunwayAttack.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_oca_strike(
@@ -1336,6 +1369,7 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
@@ -1361,6 +1395,7 @@ class AircraftConflictGenerator:
 
         # Awacs task action
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
@@ -1382,7 +1417,7 @@ class AircraftConflictGenerator:
         group.task = CAP.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
-            group, roe=OptROE.Values.OpenFire, restrict_jettison=True
+            flight, group, roe=OptROE.Values.OpenFire, restrict_jettison=True
         )
 
     def configure_sead_escort(
@@ -1398,12 +1433,14 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             roe=OptROE.Values.OpenFire,
             # ASM includes ARMs and TALDs (among other things, but those are the useful
             # weapons for SEAD).
             rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_transport(
@@ -1416,6 +1453,7 @@ class AircraftConflictGenerator:
         group.task = Transport.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
@@ -1424,7 +1462,7 @@ class AircraftConflictGenerator:
 
     def configure_unknown_task(self, group: FlyingGroup, flight: Flight) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
-        self.configure_behavior(group)
+        self.configure_behavior(flight, group)
 
     def setup_flight_group(
         self,
