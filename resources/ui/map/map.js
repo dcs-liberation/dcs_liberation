@@ -45,6 +45,49 @@ const UnitState = Object.freeze({
   Destroyed: "destroyed",
 });
 
+class CpIcons {
+  constructor() {
+    this.icons = {};
+    for (const player of [true, false]) {
+      this.icons[player] = {};
+      for (const state of Object.values(UnitState)) {
+        this.icons[player][state] = {
+          airfield: this.loadIcon("airfield", player, state),
+          cv: this.loadIcon("cv", player, state),
+          fob: this.loadLegacyIcon(player),
+          lha: this.loadIcon("lha", player, state),
+          offmap: this.loadLegacyIcon(player),
+        };
+      }
+    }
+  }
+
+  icon(category, player, state) {
+    return this.icons[player][state][category];
+  }
+
+  loadIcon(category, player, state) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
+      iconSize: [32, 32],
+    });
+  }
+
+  loadLegacyIcon(player) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+  }
+}
+
 class TgoIcons {
   constructor() {
     this.icons = {};
@@ -84,26 +127,7 @@ class TgoIcons {
 }
 
 const Icons = Object.freeze({
-  BlueControlPoint: new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-
-  RedControlPoint: new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png`,
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-
+  ControlPoints: new CpIcons(),
   Objectives: new TgoIcons(),
 });
 
@@ -212,10 +236,13 @@ class ControlPoint {
   }
 
   icon() {
-    if (this.cp.blue) {
-      return Icons.BlueControlPoint;
-    }
-    return Icons.RedControlPoint;
+    // TODO: Runway status.
+    // https://github.com/dcs-liberation/dcs_liberation/issues/1105
+    return Icons.ControlPoints.icon(
+      this.cp.category,
+      this.cp.blue,
+      UnitState.Alive
+    );
   }
 
   hasDestination() {

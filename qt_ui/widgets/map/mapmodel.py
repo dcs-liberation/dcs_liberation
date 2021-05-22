@@ -19,6 +19,8 @@ from game.theater import (
     TheaterGroundObject,
     FrontLine,
     LatLon,
+    Airfield,
+    Carrier,
 )
 from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
@@ -63,6 +65,7 @@ class ControlPointJs(QObject):
     positionChanged = Signal()
     mobileChanged = Signal()
     destinationChanged = Signal(list)
+    categoryChanged = Signal()
 
     def __init__(
         self,
@@ -83,6 +86,10 @@ class ControlPointJs(QObject):
     @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
         return self.control_point.captured
+
+    @Property(str, notify=categoryChanged)
+    def category(self) -> str:
+        return self.control_point.category
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:

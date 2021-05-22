@@ -786,6 +786,11 @@ class ControlPoint(MissionTarget, ABC):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return []
 
+    @property
+    @abstractmethod
+    def category(self) -> str:
+        ...
+
 
 class Airfield(ControlPoint):
     def __init__(
@@ -862,6 +867,10 @@ class Airfield(ControlPoint):
     @property
     def income_per_turn(self) -> int:
         return 20
+
+    @property
+    def category(self) -> str:
+        return "airfield"
 
 
 class NavalControlPoint(ControlPoint, ABC):
@@ -956,6 +965,10 @@ class Carrier(NavalControlPoint):
     def total_aircraft_parking(self) -> int:
         return 90
 
+    @property
+    def category(self) -> str:
+        return "cv"
+
 
 class Lha(NavalControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
@@ -985,6 +998,10 @@ class Lha(NavalControlPoint):
     @property
     def total_aircraft_parking(self) -> int:
         return 20
+
+    @property
+    def category(self) -> str:
+        return "lha"
 
 
 class OffMapSpawn(ControlPoint):
@@ -1035,6 +1052,10 @@ class OffMapSpawn(ControlPoint):
     @property
     def can_deploy_ground_units(self) -> bool:
         return False
+
+    @property
+    def category(self) -> str:
+        return "offmap"
 
 
 class Fob(ControlPoint):
@@ -1100,3 +1121,7 @@ class Fob(ControlPoint):
     @property
     def income_per_turn(self) -> int:
         return 10
+
+    @property
+    def category(self) -> str:
+        return "fob"
