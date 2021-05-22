@@ -36,16 +36,16 @@ class GroundSpeed:
         # DCS's max speed is in kph at 0 MSL.
         max_speed = kph(flight.unit_type.max_speed)
         if max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL:
-            # Aircraft is supersonic. Limit to mach 0.8 to conserve fuel and
+            # Aircraft is supersonic. Limit to mach 0.85 to conserve fuel and
             # account for heavily loaded jets.
-            return mach(0.8, altitude)
+            return mach(0.85, altitude)
 
         # For subsonic aircraft, assume the aircraft can reasonably perform at
         # 80% of its maximum, and that it can maintain the same mach at altitude
         # as it can at sea level. This probably isn't great assumption, but
         # might. be sufficient given the wiggle room. We can come up with
         # another heuristic if needed.
-        cruise_mach = max_speed.mach() * 0.8
+        cruise_mach = max_speed.mach() * 0.85
         return mach(cruise_mach, altitude)
 
 
