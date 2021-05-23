@@ -131,7 +131,10 @@ function formatLatLng(latLng) {
   return `${lat}&deg;${ns} ${lng}&deg;${ew}`;
 }
 
-const map = L.map("map", { doubleClickZoom: false }).setView([0, 0], 3);
+const map = L.map("map", {
+  doubleClickZoom: false,
+  zoomControl: false,
+}).setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
@@ -146,6 +149,9 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
+const airDefensesLayer = L.layerGroup().addTo(map);
+const factoriesLayer = L.layerGroup().addTo(map);
+const shipsLayer = L.layerGroup().addTo(map);
 const groundObjectsLayer = L.layerGroup().addTo(map);
 const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
@@ -170,13 +176,21 @@ const redAircraftThreatZones = L.layerGroup();
 const redAirDefenseThreatZones = L.layerGroup();
 const redRadarSamThreatZones = L.layerGroup();
 
+// Main map controls. These are the ones that we expect users to interact with.
+// These are always open, which unfortunately means that the scroll bar will not
+// appear if the menu doesn't fit. This fits in the smallest window size we
+// allow, but may need to start auto-collapsing it (or fix the plugin to add a
+// scrollbar when non-collapsing) if it gets much larger.
 L.control
   .groupedLayers(
     baseLayers,
     {
       "Points of Interest": {
         "Control points": controlPointsLayer,
-        "Ground objects": groundObjectsLayer,
+        "Air defenses": airDefensesLayer,
+        Factories: factoriesLayer,
+        Ships: shipsLayer,
+        "Other ground objects": groundObjectsLayer,
         "Supply routes": supplyRoutesLayer,
         "Front lines": frontLinesLayer,
       },
@@ -195,6 +209,21 @@ L.control
         "Show all red": redFlightPlansLayer,
         "Show all": allFlightPlansLayer,
       },
+    },
+    {
+      collapsed: false,
+      exclusiveGroups: ["Flight Plans"],
+      groupCheckboxes: true,
+    }
+  )
+  .addTo(map);
+
+// Debug map controls. Hover over to open. Not something most users will want or
+// need to interact with.
+L.control
+  .groupedLayers(
+    null,
+    {
       "Blue Threat Zones": {
         Hide: L.layerGroup().addTo(map),
         Full: blueFullThreatZones,
@@ -211,12 +240,9 @@ L.control
       },
     },
     {
-      collapsed: false,
-      exclusiveGroups: [
-        "Flight Plans",
-        "Blue Threat Zones",
-        "Red Threat Zones",
-      ],
+      position: "topleft",
+      exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones"],
+      groupCheckboxes: true,
     }
   )
   .addTo(map);
@@ -460,6 +486,19 @@ class TheaterGroundObject {
     return Icons.Objectives.icon(this.tgo.category, this.tgo.blue, state);
   }
 
+  layer() {
+    switch (this.tgo.category) {
+      case "aa":
+        return airDefensesLayer;
+      case "factory":
+        return factoriesLayer;
+      case "ship":
+        return shipsLayer;
+      default:
+        return groundObjectsLayer;
+    }
+  }
+
   drawSamThreats() {
     const detectionLayer = this.tgo.blue
       ? blueSamDetectionLayer
@@ -499,12 +538,15 @@ class TheaterGroundObject {
       .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
       .on("click", () => this.tgo.showInfoDialog())
       .on("contextmenu", () => this.tgo.showPackageDialog())
-      .addTo(groundObjectsLayer);
+      .addTo(this.layer());
     this.drawSamThreats();
   }
 }
 
 function drawGroundObjects() {
+  airDefensesLayer.clearLayers();
+  factoriesLayer.clearLayers();
+  shipsLayer.clearLayers();
   groundObjectsLayer.clearLayers();
   blueSamDetectionLayer.clearLayers();
   redSamDetectionLayer.clearLayers();
