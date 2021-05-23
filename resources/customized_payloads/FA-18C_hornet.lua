@@ -206,15 +206,16 @@ local unitPayloads = {
 			},
 		},
 		[6] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation SEAD",
+			["name"] = "Liberation SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
-					["num"] = 7,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
-					["num"] = 8,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 1,
 				},
 				[3] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
@@ -226,27 +227,23 @@ local unitPayloads = {
 				},
 				[5] = {
 					["CLSID"] = "{FPU_8A_FUEL_TANK}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 				[6] = {
-					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
-					["num"] = 3,
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 7,
 				},
 				[7] = {
 					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
 					["num"] = 2,
 				},
 				[8] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 1,
-				},
-				[9] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 9,
+					["CLSID"] = "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}",
+					["num"] = 8,
 				},
 			},
 			["tasks"] = {
-				[1] = 11,
+				[1] = 29,
 			},
 		},
 		[7] = {
@@ -291,6 +288,46 @@ local unitPayloads = {
 			},
 			["tasks"] = {
 				[1] = 34,
+			},
+		},
+		[8] = {
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 9,
+				},
+				[2] = {
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 3,
+				},
+				[6] = {
+					["CLSID"] = "{BRU55_2*AGM-154A}",
+					["num"] = 8,
+				},
+				[7] = {
+					["CLSID"] = "{BRU55_2*AGM-154A}",
+					["num"] = 2,
+				},
+				[8] = {
+					["CLSID"] = "{AN_ASQ_228}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
 			},
 		},
 	},
