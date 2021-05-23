@@ -2,39 +2,39 @@ local unitPayloads = {
 	["name"] = "FA-18C_hornet",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS MAVERICK F",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 7,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 6,
-				},
-				[4] = {
-					["CLSID"] = "{AN_ASQ_228}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 3,
-				},
-				[6] = {
-					["CLSID"] = "LAU_117_AGM_65F",
-					["num"] = 2,
-				},
-				[7] = {
 					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
 					["num"] = 1,
 				},
+				[3] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 3,
+				},
+				[4] = {
+					["CLSID"] = "{FPU_8A_FUEL_TANK}",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
+					["num"] = 8,
+				},
+				[6] = {
+					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
+					["num"] = 2,
+				},
+				[7] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 6,
+				},
 				[8] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 9,
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -42,90 +42,50 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS MAVERICK E",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}",
-					["num"] = 7,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}",
-					["num"] = 8,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 6,
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 2,
 				},
 				[4] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 8,
+				},
+				[5] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 7,
+				},
+				[6] = {
+					["CLSID"] = "LAU_117_AGM_65F",
+					["num"] = 3,
+				},
+				[7] = {
 					["CLSID"] = "{AN_ASQ_228}",
 					["num"] = 4,
 				},
-				[5] = {
-					["CLSID"] = "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}",
-					["num"] = 3,
-				},
-				[6] = {
-					["CLSID"] = "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}",
-					["num"] = 2,
-				},
-				[7] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 1,
-				},
 				[8] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 9,
-				},
-			},
-			["tasks"] = {
-				[1] = 11,
-			},
-		},
-		[3] = {
-			["name"] = "CAP HEAVY",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
-					["num"] = 7,
-				},
-				[2] = {
-					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
-					["num"] = 8,
-				},
-				[3] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 6,
 				},
-				[4] = {
-					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
-					["num"] = 4,
-				},
-				[5] = {
+				[9] = {
 					["CLSID"] = "{FPU_8A_FUEL_TANK}",
 					["num"] = 5,
 				},
-				[6] = {
-					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
-					["num"] = 3,
-				},
-				[7] = {
-					["CLSID"] = "LAU-115_2*LAU-127_AIM-120C",
-					["num"] = 2,
-				},
-				[8] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 1,
-				},
-				[9] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 9,
-				},
 			},
 			["tasks"] = {
-				[1] = 11,
+				[1] = 31,
 			},
 		},
-		[4] = {
+		[3] = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
@@ -165,7 +125,7 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
-		[5] = {
+		[4] = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
@@ -205,7 +165,7 @@ local unitPayloads = {
 				[1] = 11,
 			},
 		},
-		[6] = {
+		[5] = {
 			["displayName"] = "Liberation SEAD",
 			["name"] = "Liberation SEAD",
 			["pylons"] = {
@@ -246,7 +206,7 @@ local unitPayloads = {
 				[1] = 29,
 			},
 		},
-		[7] = {
+		[6] = {
 			["name"] = "RUNWAY_ATTACK",
 			["pylons"] = {
 				[1] = {
@@ -290,7 +250,7 @@ local unitPayloads = {
 				[1] = 34,
 			},
 		},
-		[8] = {
+		[7] = {
 			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
