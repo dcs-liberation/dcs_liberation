@@ -24,12 +24,13 @@ from dcs.vehicles import AirDefence
 
 UNITS_WITH_RADAR = [
     # Radars
+    AirDefence.SAM_SA_19_Tunguska_Grison,
+    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
+    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
     AirDefence.SAM_SA_15_Tor_Gauntlet,
-    AirDefence.SAM_SA_11_Buk_Gadfly_C2,
-    AirDefence.SAM_Patriot_CR__AMG_AN_MRC_137,
-    AirDefence.SAM_Patriot_ECS,
     AirDefence.SPAAA_Gepard,
     AirDefence.SPAAA_Vulcan_M163,
+    AirDefence.SAM_Roland_ADS,
     AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
     AirDefence.EWR_1L13,
     AirDefence.SAM_SA_6_Kub_Straight_Flush_STR,
@@ -47,7 +48,11 @@ UNITS_WITH_RADAR = [
     AirDefence.SAM_Roland_EWR,
     AirDefence.SAM_SA_3_S_125_Low_Blow_TR,
     AirDefence.SAM_SA_2_S_75_Fan_Song_TR,
+    AirDefence.SAM_Rapier_Blindfire_TR,
+    AirDefence.HQ_7_Self_Propelled_LN,
     AirDefence.HQ_7_Self_Propelled_STR,
+    AirDefence.EWR_FuMG_401_Freya_LZ,
+    AirDefence.EWR_FuSe_65_Würzburg_Riese,
     # Ships
     CVN_70_Carl_Vinson,
     FFG_Oliver_Hazzard_Perry,
