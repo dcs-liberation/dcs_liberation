@@ -488,6 +488,13 @@ class TheaterGroundObject {
   }
 
   draw() {
+    if (!this.tgo.blue && this.tgo.dead) {
+      // Don't bother drawing dead opfor TGOs. Blue is worth showing because
+      // some of them can be repaired, but the player can't interact with dead
+      // red things so there's no point in showing them.
+      return;
+    }
+
     L.marker(this.tgo.position, { icon: this.icon() })
       .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
       .on("click", () => this.tgo.showInfoDialog())
