@@ -16,7 +16,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
 * **[Flight Planner]** Planned airspeed increased to 0.85 mach for supersonic airframes and 85% of max speed for subsonic.
 * **[Flight Planner]** Taxi time estimation for airfields increased from 5 minutes to 8 minutes.
-* **[Flight Planner]** Reduce expected error margin for flight plans from 10% to 5%. 
+* **[Flight Planner]** Reduce expected error margin for flight plans from 10% to 5%.
 * **[Payloads]** AI flights for most air to ground mission types (CAS excluded) will have their guns emptied to prevent strafing fully armed and operational battle stations. Gun-reliant airframes like A-10s and warbirds will keep their bullets.
 * **[Kneeboard]** ATC table overflow alleviated by wrapping long airfield names and splitting ATC frequency and channel into separate rows.
 * **[UI]** Added new web based map UI. This is mostly functional but many of the old display options are a WIP. Revert to the old map with --old-map.
