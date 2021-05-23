@@ -215,7 +215,9 @@ class QNewPackageDialog(QPackageDialog):
         self, game_model: GameModel, model: AtoModel, target: MissionTarget, parent=None
     ) -> None:
         super().__init__(
-            game_model, PackageModel(Package(target), game_model), parent=parent
+            game_model,
+            PackageModel(Package(target, auto_asap=True), game_model),
+            parent=parent,
         )
         self.ato_model = model
 
