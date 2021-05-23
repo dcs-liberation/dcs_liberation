@@ -833,7 +833,7 @@ class CoalitionMissionPlanner:
         for flight in builder.package.flights:
             if self.threat_zones.threatened_by_aircraft(flight):
                 threats[EscortType.AirToAir] = True
-            if self.threat_zones.threatened_by_air_defense(flight):
+            if self.threat_zones.threatened_by_radar_sam(flight):
                 threats[EscortType.Sead] = True
         return threats
 

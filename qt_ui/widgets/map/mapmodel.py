@@ -538,17 +538,20 @@ class ThreatZonesJs(QObject):
     fullChanged = Signal()
     aircraftChanged = Signal()
     airDefensesChanged = Signal()
+    radarSamsChanged = Signal()
 
     def __init__(
         self,
         full: List[List[LeafletLatLon]],
         aircraft: List[List[LeafletLatLon]],
         air_defenses: List[List[LeafletLatLon]],
+        radar_sams: List[List[LeafletLatLon]],
     ) -> None:
         super().__init__()
         self._full = full
         self._aircraft = aircraft
         self._air_defenses = air_defenses
+        self._radar_sams = radar_sams
 
     @Property(list, notify=fullChanged)
     def full(self) -> List[List[LeafletLatLon]]:
@@ -561,6 +564,10 @@ class ThreatZonesJs(QObject):
     @Property(list, notify=airDefensesChanged)
     def airDefenses(self) -> List[List[LeafletLatLon]]:
         return self._air_defenses
+
+    @Property(list, notify=radarSamsChanged)
+    def radarSams(self) -> List[List[LeafletLatLon]]:
+        return self._radar_sams
 
     @staticmethod
     def polys_to_leaflet(
@@ -578,11 +585,12 @@ class ThreatZonesJs(QObject):
             cls.polys_to_leaflet(zones.all, theater),
             cls.polys_to_leaflet(zones.airbases, theater),
             cls.polys_to_leaflet(zones.air_defenses, theater),
+            cls.polys_to_leaflet(zones.radar_sam_threats, theater),
         )
 
     @classmethod
     def empty(cls) -> ThreatZonesJs:
-        return ThreatZonesJs([], [], [])
+        return ThreatZonesJs([], [], [], [])
 
 
 class ThreatZoneContainerJs(QObject):

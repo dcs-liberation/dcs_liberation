@@ -163,10 +163,12 @@ const allFlightPlansLayer = L.layerGroup();
 const blueFullThreatZones = L.layerGroup();
 const blueAircraftThreatZones = L.layerGroup();
 const blueAirDefenseThreatZones = L.layerGroup();
+const blueRadarSamThreatZones = L.layerGroup();
 
 const redFullThreatZones = L.layerGroup();
 const redAircraftThreatZones = L.layerGroup();
 const redAirDefenseThreatZones = L.layerGroup();
+const redRadarSamThreatZones = L.layerGroup();
 
 L.control
   .groupedLayers(
@@ -198,12 +200,14 @@ L.control
         Full: blueFullThreatZones,
         Aircraft: blueAircraftThreatZones,
         "Air Defenses": blueAirDefenseThreatZones,
+        "Radar SAMs": blueRadarSamThreatZones,
       },
       "Red Threat Zones": {
         Hide: L.layerGroup().addTo(map),
         Full: redFullThreatZones,
         Aircraft: redAircraftThreatZones,
         "Air Defenses": redAirDefenseThreatZones,
+        "Radar SAMs": redRadarSamThreatZones,
       },
     },
     {
@@ -735,9 +739,11 @@ function drawThreatZones() {
   blueFullThreatZones.clearLayers();
   blueAircraftThreatZones.clearLayers();
   blueAirDefenseThreatZones.clearLayers();
+  blueRadarSamThreatZones.clearLayers();
   redFullThreatZones.clearLayers();
   redAircraftThreatZones.clearLayers();
   redAirDefenseThreatZones.clearLayers();
+  redRadarSamThreatZones.clearLayers();
 
   _drawThreatZones(game.threatZones.blue.full, blueFullThreatZones, true);
   _drawThreatZones(
@@ -750,6 +756,11 @@ function drawThreatZones() {
     blueAirDefenseThreatZones,
     true
   );
+  _drawThreatZones(
+    game.threatZones.blue.radarSams,
+    blueRadarSamThreatZones,
+    true
+  );
 
   _drawThreatZones(game.threatZones.red.full, redFullThreatZones, false);
   _drawThreatZones(
@@ -760,6 +771,11 @@ function drawThreatZones() {
   _drawThreatZones(
     game.threatZones.red.airDefenses,
     redAirDefenseThreatZones,
+    false
+  );
+  _drawThreatZones(
+    game.threatZones.red.radarSams,
+    redRadarSamThreatZones,
     false
   );
 }

@@ -22,7 +22,38 @@ from dcs.ships import (
 )
 from dcs.vehicles import AirDefence
 
-UNITS_WITH_RADAR = [
+TELARS = {
+    AirDefence.SAM_SA_19_Tunguska_Grison,
+    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
+    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
+    AirDefence.SAM_SA_15_Tor_Gauntlet,
+    AirDefence.SAM_Roland_ADS,
+}
+
+TRACK_RADARS = {
+    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR,
+    AirDefence.SAM_SA_3_S_125_Low_Blow_TR,
+    AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR,
+    AirDefence.SAM_Hawk_TR__AN_MPQ_46,
+    AirDefence.SAM_Patriot_STR,
+    AirDefence.SAM_SA_2_S_75_Fan_Song_TR,
+    AirDefence.SAM_Rapier_Blindfire_TR,
+    AirDefence.HQ_7_Self_Propelled_STR,
+}
+
+LAUNCHER_TRACKER_PAIRS = {
+    AirDefence.SAM_SA_6_Kub_Gainful_TEL: AirDefence.SAM_SA_6_Kub_Straight_Flush_STR,
+    AirDefence.SAM_SA_3_S_125_Goa_LN: AirDefence.SAM_SA_3_S_125_Low_Blow_TR,
+    AirDefence.SAM_SA_10_S_300_Grumble_TEL_D: AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR,
+    AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR,
+    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_TR__AN_MPQ_46,
+    AirDefence.SAM_Patriot_LN: AirDefence.SAM_Patriot_STR,
+    AirDefence.SAM_SA_2_S_75_Guideline_LN: AirDefence.SAM_SA_2_S_75_Fan_Song_TR,
+    AirDefence.SAM_Rapier_LN: AirDefence.SAM_Rapier_Blindfire_TR,
+    AirDefence.HQ_7_Self_Propelled_LN: AirDefence.HQ_7_Self_Propelled_STR,
+}
+
+UNITS_WITH_RADAR = {
     # Radars
     AirDefence.SAM_SA_19_Tunguska_Grison,
     AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
@@ -74,4 +105,4 @@ UNITS_WITH_RADAR = [
     Type_052B_Destroyer,
     Type_054A_Frigate,
     Type_052C_Destroyer,
-]
+}
