@@ -90,25 +90,33 @@ class Loadout:
         # etc.
         loadout_names = {t: [f"Liberation {t.value}"] for t in FlightType}
         legacy_names = {
-            FlightType.TARCAP: ("CAP HEAVY", "CAP"),
-            FlightType.BARCAP: ("CAP HEAVY", "CAP"),
+            FlightType.TARCAP: ("CAP HEAVY", "CAP", "Liberation BARCAP"),
+            FlightType.BARCAP: ("CAP HEAVY", "CAP", "Liberation TARCAP"),
             FlightType.CAS: ("CAS MAVERICK F", "CAS"),
-            FlightType.INTERCEPTION: ("CAP HEAVY", "CAP"),
             FlightType.STRIKE: ("STRIKE",),
             FlightType.ANTISHIP: ("ANTISHIP",),
             FlightType.SEAD: ("SEAD",),
-            FlightType.DEAD: ("SEAD",),
-            FlightType.ESCORT: ("CAP HEAVY", "CAP"),
-            FlightType.BAI: ("BAI", "CAS MAVERICK F", "CAS"),
-            FlightType.SWEEP: ("CAP HEAVY", "CAP"),
-            FlightType.OCA_RUNWAY: ("RUNWAY_ATTACK", "RUNWAY_STRIKE", "STRIKE"),
-            FlightType.OCA_AIRCRAFT: ("OCA", "CAS MAVERICK F", "CAS"),
+            FlightType.BAI: ("BAI",),
+            FlightType.OCA_RUNWAY: ("RUNWAY_ATTACK", "RUNWAY_STRIKE"),
+            FlightType.OCA_AIRCRAFT: ("OCA",),
         }
         for flight_type, names in legacy_names.items():
             loadout_names[flight_type].extend(names)
         # A SEAD escort typically does not need a different loadout than a regular
         # SEAD flight, so fall back to SEAD if needed.
         loadout_names[FlightType.SEAD_ESCORT].extend(loadout_names[FlightType.SEAD])
+        # Sweep and escort can fall back to TARCAP.
+        loadout_names[FlightType.ESCORT].extend(loadout_names[FlightType.TARCAP])
+        loadout_names[FlightType.SWEEP].extend(loadout_names[FlightType.TARCAP])
+        # Intercept can fall back to BARCAP.
+        loadout_names[FlightType.INTERCEPTION].extend(loadout_names[FlightType.BARCAP])
+        # OCA/Aircraft falls back to BAI, which falls back to CAS.
+        loadout_names[FlightType.BAI].extend(loadout_names[FlightType.CAS])
+        loadout_names[FlightType.OCA_AIRCRAFT].extend(loadout_names[FlightType.BAI])
+        # DEAD also falls back to BAI.
+        loadout_names[FlightType.DEAD].extend(loadout_names[FlightType.BAI])
+        # OCA/Runway falls back to Strike
+        loadout_names[FlightType.OCA_RUNWAY].extend(loadout_names[FlightType.STRIKE])
         yield from loadout_names[flight.flight_type]
 
     @classmethod
