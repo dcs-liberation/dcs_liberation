@@ -143,12 +143,11 @@ class TheaterGroundObject(MissionTarget):
         return False
 
     @property
-    def has_alive_radar(self) -> bool:
-        """Returns True if the ground object contains a unit with radar."""
+    def has_live_radar_sam(self) -> bool:
+        """Returns True if the ground object contains a unit with working radar SAM."""
         for group in self.groups:
-            for unit in group.units:
-                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
-                    return True
+            if self.threat_range(group, radar_only=True):
+                return True
         return False
 
     def _max_range_of_type(self, group: Group, range_type: str) -> Distance:

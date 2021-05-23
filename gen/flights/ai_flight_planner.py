@@ -628,16 +628,17 @@ class CoalitionMissionPlanner:
 
             # Only include SEAD against SAMs that still have emitters. No need to
             # suppress an EWR, and SEAD isn't useful against a SAM that no longer has a
-            # radar.
+            # working track radar.
             #
-            # For SAMs without radar and EWRs, we still want a SEAD escort if needed.
+            # For SAMs without track radars and EWRs, we still want a SEAD escort if
+            # needed.
             #
             # Note that there is a quirk here: we should potentially be included a SEAD
             # escort *and* SEAD when the target is a radar SAM but the flight path is
             # also threatened by SAMs. We don't want to include a SEAD escort if the
             # package is *only* threatened by the target though. Could be improved, but
             # needs a decent refactor to the escort planning to do so.
-            if isinstance(sam, SamGroundObject) and sam.has_alive_radar:
+            if sam.has_live_radar_sam:
                 flights.append(ProposedFlight(FlightType.SEAD, 2, self.MAX_SEAD_RANGE))
             else:
                 flights.append(
