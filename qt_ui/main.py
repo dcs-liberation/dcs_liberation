@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-import dcs
+from dcs.payloads import PayloadDirectories
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
@@ -36,6 +36,27 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
 )
 
 
+THIS_DIR = Path(__file__).parent
+
+
+def inject_custom_payloads() -> None:
+    dev_payloads = THIS_DIR.parent / "resources/customized_payloads"
+    # The packaged release rearranges the file locations, so the release has the
+    # customized payloads in a different location.
+    release_payloads = THIS_DIR / "resources/customized_payloads"
+    if dev_payloads.exists():
+        payloads = dev_payloads
+    elif release_payloads.exists():
+        payloads = release_payloads
+    else:
+        raise RuntimeError(
+            f"Could not find customized payloads at {release_payloads} or "
+            f"{dev_payloads}. Aircraft will have no payloads."
+        )
+    # We configure these as fallbacks so that the user's payloads override ours.
+    PayloadDirectories.set_fallback(payloads)
+
+
 def run_ui(game: Optional[Game], new_map: bool) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
@@ -48,21 +69,7 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
 
-    # Inject custom payload in pydcs framework
-    custom_payloads = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "..\\resources\\customized_payloads",
-    )
-    if os.path.exists(custom_payloads):
-        dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
-    else:
-        # For release version the path is different.
-        custom_payloads = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "resources\\customized_payloads",
-        )
-        if os.path.exists(custom_payloads):
-            dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
+    inject_custom_payloads()
 
     first_start = liberation_install.init()
     if first_start:

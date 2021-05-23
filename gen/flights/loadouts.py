@@ -62,7 +62,7 @@ class Loadout:
         #   "tasks": List (as a dict) of task IDs the payload is used by.
         # }
         payloads = flight.unit_type.load_payloads()
-        for payload in payloads["payloads"].values():
+        for payload in payloads.values():
             name = payload["name"]
             pylons = payload["pylons"]
             yield Loadout(
