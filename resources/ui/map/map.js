@@ -1,15 +1,3 @@
-/*
- * TODO:
- *
- * - Culling
- * - Threat zones
- * - Navmeshes
- * - Time of day/weather themeing
- * - Exclusion zones
- * - "Actual" front line
- * - Debug flight plan drawing
- */
-
 const Colors = Object.freeze({
   Blue: "#0084ff",
   Red: "#c85050",
@@ -172,6 +160,14 @@ const redFlightPlansLayer = L.layerGroup();
 const selectedFlightPlansLayer = L.layerGroup();
 const allFlightPlansLayer = L.layerGroup();
 
+const blueFullThreatZones = L.layerGroup();
+const blueAircraftThreatZones = L.layerGroup();
+const blueAirDefenseThreatZones = L.layerGroup();
+
+const redFullThreatZones = L.layerGroup();
+const redAircraftThreatZones = L.layerGroup();
+const redAirDefenseThreatZones = L.layerGroup();
+
 L.control
   .groupedLayers(
     baseLayers,
@@ -197,8 +193,27 @@ L.control
         "Show all red": redFlightPlansLayer,
         "Show all": allFlightPlansLayer,
       },
+      "Blue Threat Zones": {
+        Hide: L.layerGroup().addTo(map),
+        Full: blueFullThreatZones,
+        Aircraft: blueAircraftThreatZones,
+        "Air Defenses": blueAirDefenseThreatZones,
+      },
+      "Red Threat Zones": {
+        Hide: L.layerGroup().addTo(map),
+        Full: redFullThreatZones,
+        Aircraft: redAircraftThreatZones,
+        "Air Defenses": redAirDefenseThreatZones,
+      },
     },
-    { collapsed: false, exclusiveGroups: ["Flight Plans"] }
+    {
+      collapsed: false,
+      exclusiveGroups: [
+        "Flight Plans",
+        "Blue Threat Zones",
+        "Red Threat Zones",
+      ],
+    }
   )
   .addTo(map);
 
@@ -213,6 +228,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawFlightPlans);
+  game.threatZonesChanged.connect(drawThreatZones);
 });
 
 function recenterMap(center) {
@@ -702,6 +718,52 @@ function drawFlightPlans() {
   }
 }
 
+function _drawThreatZones(zones, layer, player) {
+  const color = player ? Colors.Blue : Colors.Red;
+  for (const zone of zones) {
+    L.polyline(zone, {
+      color: color,
+      weight: 1,
+      fill: true,
+      fillOpacity: 0.4,
+      noClip: true,
+    }).addTo(layer);
+  }
+}
+
+function drawThreatZones() {
+  blueFullThreatZones.clearLayers();
+  blueAircraftThreatZones.clearLayers();
+  blueAirDefenseThreatZones.clearLayers();
+  redFullThreatZones.clearLayers();
+  redAircraftThreatZones.clearLayers();
+  redAirDefenseThreatZones.clearLayers();
+
+  _drawThreatZones(game.threatZones.blue.full, blueFullThreatZones, true);
+  _drawThreatZones(
+    game.threatZones.blue.aircraft,
+    blueAircraftThreatZones,
+    true
+  );
+  _drawThreatZones(
+    game.threatZones.blue.airDefenses,
+    blueAirDefenseThreatZones,
+    true
+  );
+
+  _drawThreatZones(game.threatZones.red.full, redFullThreatZones, false);
+  _drawThreatZones(
+    game.threatZones.red.aircraft,
+    redAircraftThreatZones,
+    false
+  );
+  _drawThreatZones(
+    game.threatZones.red.airDefenses,
+    redAirDefenseThreatZones,
+    false
+  );
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -709,6 +771,7 @@ function drawInitialMap() {
   drawSupplyRoutes();
   drawFrontLines();
   drawFlightPlans();
+  drawThreatZones();
 }
 
 function clearAllLayers() {
