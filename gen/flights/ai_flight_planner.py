@@ -831,9 +831,13 @@ class CoalitionMissionPlanner:
     def check_needed_escorts(self, builder: PackageBuilder) -> Dict[EscortType, bool]:
         threats = defaultdict(bool)
         for flight in builder.package.flights:
-            if self.threat_zones.threatened_by_aircraft(flight):
+            if self.threat_zones.waypoints_threatened_by_aircraft(
+                flight.flight_plan.escorted_waypoints()
+            ):
                 threats[EscortType.AirToAir] = True
-            if self.threat_zones.threatened_by_radar_sam(flight):
+            if self.threat_zones.waypoints_threatened_by_radar_sam(
+                list(flight.flight_plan.escorted_waypoints())
+            ):
                 threats[EscortType.Sead] = True
         return threats
 

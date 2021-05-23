@@ -198,6 +198,20 @@ class FlightPlan:
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return None
 
+    def escorted_waypoints(self) -> Iterator[FlightWaypoint]:
+        begin = self.request_escort_at()
+        end = self.dismiss_escort_at()
+        if begin is None or end is None:
+            return
+        escorting = False
+        for waypoint in self.waypoints:
+            if waypoint == begin:
+                escorting = True
+            if escorting:
+                yield waypoint
+            if waypoint == end:
+                return
+
     def takeoff_time(self) -> Optional[timedelta]:
         tot_waypoint = self.tot_waypoint
         if tot_waypoint is None:
@@ -599,10 +613,6 @@ class StrikeFlightPlan(FormationFlightPlan):
                 f"waypoints for {self.flight}"
             )
         return total
-
-    @property
-    def mission_speed(self) -> Speed:
-        return GroundSpeed.for_flight(self.flight, self.ingress.alt)
 
     @property
     def join_time(self) -> timedelta:
