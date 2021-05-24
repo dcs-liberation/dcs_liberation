@@ -132,7 +132,6 @@ CAP_CAPABLE = [
     MiG_29A,
     F_16C_50,
     FA_18C_hornet,
-    F_15E,
     F_16A,
     F_4E,
     JF_17,
@@ -140,6 +139,7 @@ CAP_CAPABLE = [
     MiG_21Bis,
     Mirage_2000_5,
     M_2000C,
+    F_15E,
     F_5E_3,
     MiG_19P,
     A_4E_C,
@@ -230,7 +230,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD tasks. Must be capable of the SEAD DCS task.
+# Aircraft used for SEAD and SEAD Escort tasks. Must be capable of the CAS DCS task.
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -240,6 +240,8 @@ SEAD_CAPABLE = [
     Su_25TM,
     F_4E,
     A_4E_C,
+    F_14B,
+    F_14A_135_GR,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -404,6 +406,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     elif task == FlightType.CAS:
         return CAS_CAPABLE
     elif task == FlightType.SEAD:
+        return SEAD_CAPABLE
+    elif task == FlightType.SEAD_ESCORT:
         return SEAD_CAPABLE
     elif task == FlightType.DEAD:
         return DEAD_CAPABLE

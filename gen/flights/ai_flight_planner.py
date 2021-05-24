@@ -17,6 +17,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     Type,
+    TypeVar,
 )
 
 from dcs.unittype import FlyingType
@@ -41,7 +42,6 @@ from game.theater.theatergroundobject import (
 )
 from game.transfers import CargoShip, Convoy
 from game.utils import Distance, nautical_miles
-from gen import Conflict
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import (
@@ -253,6 +253,9 @@ class PackageBuilder:
             self.package.remove_flight(flight)
 
 
+MissionTargetType = TypeVar("MissionTargetType", bound=MissionTarget)
+
+
 class ObjectiveFinder:
     """Identifies potential objectives for the mission planner."""
 
@@ -264,11 +267,8 @@ class ObjectiveFinder:
         self.game = game
         self.is_player = is_player
 
-    def enemy_sams(self) -> Iterator[TheaterGroundObject]:
+    def enemy_air_defenses(self) -> Iterator[TheaterGroundObject]:
         """Iterates over all enemy SAM sites."""
-        # Control points might have the same ground object several times, for
-        # some reason.
-        found_targets: Set[str] = set()
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
                 is_ewr = isinstance(ground_object, EwrGroundObject)
@@ -279,26 +279,19 @@ class ObjectiveFinder:
                 if ground_object.is_dead:
                     continue
 
-                if ground_object.name in found_targets:
-                    continue
-
-                if not ground_object.has_radar:
-                    continue
-
                 # TODO: Yield in order of most threatening.
                 # Need to sort in order of how close their defensive range comes
                 # to friendly assets. To do that we need to add effective range
                 # information to the database.
                 yield ground_object
-                found_targets.add(ground_object.name)
 
-    def threatening_sams(self) -> Iterator[MissionTarget]:
+    def threatening_air_defenses(self) -> Iterator[TheaterGroundObject]:
         """Iterates over enemy SAMs in threat range of friendly control points.
 
         SAM sites are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        return self._targets_by_range(self.enemy_sams())
+        return self._targets_by_range(self.enemy_air_defenses())
 
     def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
         """Iterates over all enemy vehicle groups."""
@@ -340,9 +333,9 @@ class ObjectiveFinder:
         return self._targets_by_range(self.enemy_ships())
 
     def _targets_by_range(
-        self, targets: Iterable[MissionTarget]
-    ) -> Iterator[MissionTarget]:
-        target_ranges: List[Tuple[MissionTarget, int]] = []
+        self, targets: Iterable[MissionTargetType]
+    ) -> Iterator[MissionTargetType]:
+        target_ranges: List[Tuple[MissionTargetType, int]] = []
         for target in targets:
             ranges: List[int] = []
             for cp in self.friendly_control_points():
@@ -630,17 +623,36 @@ class CoalitionMissionPlanner:
         # or objects, plan DEAD.
         # Find enemy SAM sites with ranges that extend to within 50 nmi of
         # friendly CPs, front, lines, or objects, plan DEAD.
-        for sam in self.objective_finder.threatening_sams():
-            yield ProposedMission(
-                sam,
-                [
-                    ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE),
-                    # TODO: Max escort range.
+        for sam in self.objective_finder.threatening_air_defenses():
+            flights = [ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE)]
+
+            # Only include SEAD against SAMs that still have emitters. No need to
+            # suppress an EWR, and SEAD isn't useful against a SAM that no longer has a
+            # working track radar.
+            #
+            # For SAMs without track radars and EWRs, we still want a SEAD escort if
+            # needed.
+            #
+            # Note that there is a quirk here: we should potentially be included a SEAD
+            # escort *and* SEAD when the target is a radar SAM but the flight path is
+            # also threatened by SAMs. We don't want to include a SEAD escort if the
+            # package is *only* threatened by the target though. Could be improved, but
+            # needs a decent refactor to the escort planning to do so.
+            if sam.has_live_radar_sam:
+                flights.append(ProposedFlight(FlightType.SEAD, 2, self.MAX_SEAD_RANGE))
+            else:
+                flights.append(
                     ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
-                    ),
-                ],
+                        FlightType.SEAD_ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.Sead
+                    )
+                )
+            # TODO: Max escort range.
+            flights.append(
+                ProposedFlight(
+                    FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
+                )
             )
+            yield ProposedMission(sam, flights)
 
         # These will only rarely get planned. When a convoy is travelling multiple legs,
         # they're targetable after the first leg. The reason for this is that
@@ -665,7 +677,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -680,7 +692,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_BAI_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -710,7 +722,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
                     ),
                 ],
             )
@@ -732,7 +744,7 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_OCA_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_OCA_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
                     ),
                 ]
             )
@@ -749,7 +761,10 @@ class CoalitionMissionPlanner:
                         FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE, EscortType.AirToAir
                     ),
                     ProposedFlight(
-                        FlightType.SEAD, 2, self.MAX_STRIKE_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT,
+                        2,
+                        self.MAX_STRIKE_RANGE,
+                        EscortType.Sead,
                     ),
                 ],
             )
@@ -817,9 +832,13 @@ class CoalitionMissionPlanner:
     def check_needed_escorts(self, builder: PackageBuilder) -> Dict[EscortType, bool]:
         threats = defaultdict(bool)
         for flight in builder.package.flights:
-            if self.threat_zones.threatened_by_aircraft(flight):
+            if self.threat_zones.waypoints_threatened_by_aircraft(
+                flight.flight_plan.escorted_waypoints()
+            ):
                 threats[EscortType.AirToAir] = True
-            if self.threat_zones.threatened_by_air_defense(flight):
+            if self.threat_zones.waypoints_threatened_by_radar_sam(
+                list(flight.flight_plan.escorted_waypoints())
+            ):
                 threats[EscortType.Sead] = True
         return threats
 

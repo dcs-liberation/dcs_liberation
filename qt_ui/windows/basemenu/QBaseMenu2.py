@@ -95,6 +95,12 @@ class QBaseMenu2(QDialog):
             bottom_row.addWidget(transfer_button)
             transfer_button.clicked.connect(self.open_transfer_dialog)
 
+        if self.cheat_capturable:
+            capture_button = QPushButton("CHEAT: Capture")
+            capture_button.setProperty("style", "btn-danger")
+            bottom_row.addWidget(capture_button)
+            capture_button.clicked.connect(self.cheat_capture)
+
         self.budget_display = QLabel(
             QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
         )
@@ -103,6 +109,26 @@ class QBaseMenu2(QDialog):
         bottom_row.addWidget(self.budget_display)
         GameUpdateSignal.get_instance().budgetupdated.connect(self.update_budget)
         self.setLayout(main_layout)
+
+    @property
+    def cheat_capturable(self) -> bool:
+        if not self.game_model.game.settings.enable_base_capture_cheat:
+            return False
+        if self.cp.captured:
+            return False
+
+        for connected in self.cp.connected_points:
+            if connected.captured:
+                return True
+        return False
+
+    def cheat_capture(self) -> None:
+        self.cp.capture(self.game_model.game, for_player=True)
+        # Reinitialized ground planners and the like. The ATO needs to be reset because
+        # missions planned against the flipped base are no longer valid.
+        self.game_model.game.reset_ato()
+        self.game_model.game.initialize_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     @property
     def has_transfer_destinations(self) -> bool:

@@ -845,12 +845,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
         return True
 
     def generate_fob(self) -> None:
-        try:
-            category = self.faction.building_set[self.faction.building_set.index("fob")]
-        except IndexError:
-            logging.exception("Faction has no fob buildings defined")
-            return
-
+        category = "fob"
         obj_name = self.control_point.name
         template = random.choice(list(self.templates[category].values()))
         point = self.control_point.position

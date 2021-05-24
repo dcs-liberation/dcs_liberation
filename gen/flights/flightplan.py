@@ -198,6 +198,20 @@ class FlightPlan:
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return None
 
+    def escorted_waypoints(self) -> Iterator[FlightWaypoint]:
+        begin = self.request_escort_at()
+        end = self.dismiss_escort_at()
+        if begin is None or end is None:
+            return
+        escorting = False
+        for waypoint in self.waypoints:
+            if waypoint == begin:
+                escorting = True
+            if escorting:
+                yield waypoint
+            if waypoint == end:
+                return
+
     def takeoff_time(self) -> Optional[timedelta]:
         tot_waypoint = self.tot_waypoint
         if tot_waypoint is None:
@@ -243,7 +257,7 @@ class FlightPlan:
         if self.flight.from_cp.is_fleet:
             return timedelta(minutes=2)
         else:
-            return timedelta(minutes=5)
+            return timedelta(minutes=8)
 
     @property
     def mission_departure_time(self) -> timedelta:
@@ -426,6 +440,7 @@ class BarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -438,6 +453,7 @@ class BarCapFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
 
 @dataclass(frozen=True)
@@ -446,6 +462,7 @@ class CasFlightPlan(PatrollingFlightPlan):
     target: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -459,6 +476,7 @@ class CasFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     def request_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_start
@@ -472,6 +490,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -485,6 +504,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def tot_offset(self) -> timedelta:
@@ -523,6 +543,7 @@ class StrikeFlightPlan(FormationFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -537,6 +558,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
@@ -593,10 +615,6 @@ class StrikeFlightPlan(FormationFlightPlan):
         return total
 
     @property
-    def mission_speed(self) -> Speed:
-        return GroundSpeed.for_flight(self.flight, self.ingress.alt)
-
-    @property
     def join_time(self) -> timedelta:
         travel_time = self.travel_time_between_waypoints(self.join, self.ingress)
         return self.ingress_time - travel_time
@@ -641,6 +659,7 @@ class SweepFlightPlan(LoiterFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -653,6 +672,7 @@ class SweepFlightPlan(LoiterFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
@@ -704,6 +724,7 @@ class AwacsFlightPlan(LoiterFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -713,6 +734,7 @@ class AwacsFlightPlan(LoiterFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def mission_start_time(self) -> Optional[timedelta]:
@@ -746,6 +768,7 @@ class AirliftFlightPlan(FlightPlan):
     nav_to_home: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -758,6 +781,7 @@ class AirliftFlightPlan(FlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
@@ -876,6 +900,8 @@ class FlightPlanBuilder:
             return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
             return self.generate_sead(flight, custom_targets)
+        elif task == FlightType.SEAD_ESCORT:
+            return self.generate_escort(flight)
         elif task == FlightType.STRIKE:
             return self.generate_strike(flight)
         elif task == FlightType.SWEEP:
@@ -1053,6 +1079,7 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
             hold=start,
             hold_duration=timedelta(hours=4),
         )
@@ -1151,6 +1178,7 @@ class FlightPlanBuilder:
             patrol_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
@@ -1187,6 +1215,7 @@ class FlightPlanBuilder:
             sweep_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_transport(self, flight: Flight) -> AirliftFlightPlan:
@@ -1238,6 +1267,7 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def racetrack_for_objective(
@@ -1389,6 +1419,7 @@ class FlightPlanBuilder:
             patrol_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_dead(
@@ -1517,6 +1548,7 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_cas(self, flight: Flight) -> CasFlightPlan:
@@ -1562,6 +1594,7 @@ class FlightPlanBuilder:
             patrol_end=builder.egress(egress, location),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     @staticmethod
@@ -1696,6 +1729,7 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def _retreating_rendezvous_point(self, attack_transition: Point) -> Point:

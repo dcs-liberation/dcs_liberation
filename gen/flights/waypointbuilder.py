@@ -50,6 +50,7 @@ class WaypointBuilder:
         self.threat_zones = game.threat_zone_for(not player)
         self.navmesh = game.navmesh_for(player)
         self.targets = targets
+        self._bullseye = game.bullseye_for(player)
 
     @property
     def is_helo(self) -> bool:
@@ -142,6 +143,19 @@ class WaypointBuilder:
         waypoint.name = "DIVERT"
         waypoint.description = "Divert"
         waypoint.pretty_name = "Divert"
+        waypoint.only_for_player = True
+        return waypoint
+
+    def bullseye(self) -> FlightWaypoint:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.BULLSEYE,
+            self._bullseye.position.x,
+            self._bullseye.position.y,
+            meters(0),
+        )
+        waypoint.pretty_name = "Bullseye"
+        waypoint.description = "Bullseye"
+        waypoint.name = "BULLSEYE"
         waypoint.only_for_player = True
         return waypoint
 
@@ -409,7 +423,10 @@ class WaypointBuilder:
         return self.sweep_start(start, altitude), self.sweep_end(end, altitude)
 
     def escort(
-        self, ingress: Point, target: MissionTarget, egress: Point
+        self,
+        ingress: Point,
+        target: MissionTarget,
+        egress: Point,
     ) -> Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 

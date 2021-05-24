@@ -19,8 +19,9 @@
   ],
   "frontline_units": [
     "MBT_Challenger_II",
+    "MBT_Chieftain_Mk_3",
     "IFV_Warrior",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "SAM_Avenger__Stinger"
   ],

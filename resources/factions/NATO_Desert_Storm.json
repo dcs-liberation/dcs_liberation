@@ -40,14 +40,15 @@
     "IFV_M2A2_Bradley",
     "IFV_M1126_Stryker_ICV",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "APC_TPz_Fuchs",
     "IFV_Warrior",
     "MBT_Challenger_II",	
     "MBT_M60A3_Patton",
     "SPG_Stryker_MGS",
-    "SAM_Avenger__Stinger"
+    "SAM_Avenger__Stinger",
+    "ATGM_VAB_Mephisto"
   ],
   "artillery_units": [
     "MLRS_M270_227mm",

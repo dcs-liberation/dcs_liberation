@@ -108,8 +108,12 @@ class Operation:
 
     @classmethod
     def _setup_mission_coalitions(cls):
-        cls.current_mission.coalition["blue"] = Coalition("blue")
-        cls.current_mission.coalition["red"] = Coalition("red")
+        cls.current_mission.coalition["blue"] = Coalition(
+            "blue", bullseye=cls.game.blue_bullseye.to_pydcs()
+        )
+        cls.current_mission.coalition["red"] = Coalition(
+            "red", bullseye=cls.game.red_bullseye.to_pydcs()
+        )
 
         p_country = cls.game.player_country
         e_country = cls.game.enemy_country
@@ -171,13 +175,16 @@ class Operation:
                 gen.add_dynamic_runway(dynamic_runway)
 
             for tanker in airsupportgen.air_support.tankers:
-                gen.add_tanker(tanker)
+                if tanker.blue:
+                    gen.add_tanker(tanker)
 
             for aewc in airsupportgen.air_support.awacs:
-                gen.add_awacs(aewc)
+                if aewc.blue:
+                    gen.add_awacs(aewc)
 
             for jtac in jtacs:
-                gen.add_jtac(jtac)
+                if jtac.blue:
+                    gen.add_jtac(jtac)
 
             for flight in airgen.flights:
                 gen.add_flight(flight)
@@ -317,13 +324,8 @@ class Operation:
 
         # Setup combined arms parameters
         cls.current_mission.groundControl.pilot_can_control_vehicles = cls.ca_slots > 0
-        if cls.game.player_country in [
-            country.name
-            for country in cls.current_mission.coalition["blue"].countries.values()
-        ]:
-            cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
-        else:
-            cls.current_mission.groundControl.red_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_observer = 1
 
         # Options
         forcedoptionsgen = ForcedOptionsGenerator(cls.current_mission, cls.game)
@@ -453,7 +455,7 @@ class Operation:
 
         for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = {
-                "dcsGroupName": tanker.dcsGroupName,
+                "dcsGroupName": tanker.group_name,
                 "callsign": tanker.callsign,
                 "variant": tanker.variant,
                 "radio": tanker.freq.mhz,
@@ -463,14 +465,14 @@ class Operation:
         if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = {
-                    "dcsGroupName": awacs.dcsGroupName,
+                    "dcsGroupName": awacs.group_name,
                     "callsign": awacs.callsign,
                     "radio": awacs.freq.mhz,
                 }
 
         for jtac in jtacs:
             luaData["JTACs"][jtac.callsign] = {
-                "dcsGroupName": jtac.dcsGroupName,
+                "dcsGroupName": jtac.group_name,
                 "callsign": jtac.callsign,
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,

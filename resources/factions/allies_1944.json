@@ -16,7 +16,7 @@
   ],
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
     "CT_Cromwell_IV",
     "CT_Centaur_IV",
@@ -26,7 +26,7 @@
     "Car_Daimler_Armored",
     "LT_Mk_VII_Tetrarch",
     "AAA_QF_3_7",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "SPG_M12_GMC_155mm"

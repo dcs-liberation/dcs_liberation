@@ -26,7 +26,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Hawk_Generator__PCP,
+            AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
             "PCP",
             self.position.x,
             self.position.y,

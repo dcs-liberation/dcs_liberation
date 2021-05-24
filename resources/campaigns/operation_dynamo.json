@@ -5,7 +5,7 @@
   "recommended_player_faction": "Allies 1940",
   "recommended_enemy_faction": "Germany 1940",
   "description": "<p>The Battle of Dunkirk (French: Bataille de Dunkerque) was fought around the French port of Dunkirk (Dunkerque) during the Second World War, between the Allies and Nazi Germany. As the Allies were losing the Battle of France on the Western Front, the Battle of Dunkirk was the defence and evacuation of British and other Allied forces to Britain from 26 May to 4 June 1940..</p>",
-  "version": 3,
+  "version": 4.2,
   "miz": "operation_dynamo.miz",
   "performance": 1
 }

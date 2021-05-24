@@ -62,11 +62,11 @@ from dcs.task import (
     OptRestrictJettison,
     OrbitAction,
     RunwayAttack,
-    SEAD,
     StartCommand,
     Targets,
     Transport,
     WeaponType,
+    TargetType,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -77,6 +77,7 @@ from dcs.unittype import FlyingType, UnitType
 from game import db
 from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.data.weapons import Pylon
+from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.controlpoint import (
@@ -815,12 +816,13 @@ class AircraftConflictGenerator:
 
             self.air_support.awacs.append(
                 AwacsInfo(
-                    dcsGroupName=str(group.name),
+                    group_name=str(group.name),
                     callsign=callsign,
                     freq=channel,
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
                 )
             )
 
@@ -1153,12 +1155,23 @@ class AircraftConflictGenerator:
             raise RuntimeError(f"No reduced fuel case for type {unit_type}")
 
     @staticmethod
+    def flight_always_keeps_gun(flight: Flight) -> bool:
+        # Never take bullets from players. They're smart enough to know when to use it
+        # and when to RTB.
+        if flight.client_count > 0:
+            return True
+
+        return flight.unit_type in GUN_RELIANT_AIRFRAMES
+
     def configure_behavior(
+        self,
+        flight: Flight,
         group: FlyingGroup,
         react_on_threat: Optional[OptReactOnThreat.Values] = None,
         roe: Optional[OptROE.Values] = None,
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
+        mission_uses_gun: bool = True,
     ) -> None:
         group.points[0].tasks.clear()
         if react_on_threat is not None:
@@ -1169,6 +1182,17 @@ class AircraftConflictGenerator:
             group.points[0].tasks.append(OptRestrictJettison(restrict_jettison))
         if rtb_winchester is not None:
             group.points[0].tasks.append(OptRTBOnOutOfAmmo(rtb_winchester))
+
+        # Confiscate the bullets of AI missions that do not rely on the gun. There is no
+        # "all but gun" RTB winchester option, so air to ground missions with mixed
+        # weapon types will insist on using all of their bullets after running out of
+        # missiles and bombs. Take away their bullets so they don't strafe a Tor.
+        #
+        # Exceptions are made for player flights and for airframes where the gun is
+        # essential like the A-10 or warbirds.
+        if not mission_uses_gun and not self.flight_always_keeps_gun(flight):
+            for unit in group.units:
+                unit.gun = 0
 
         group.points[0].tasks.append(OptRTBOnBingoFuel(True))
         # Do not restrict afterburner.
@@ -1195,7 +1219,7 @@ class AircraftConflictGenerator:
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
 
-        self.configure_behavior(group, rtb_winchester=ammo_type)
+        self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
     def configure_sweep(
         self,
@@ -1212,7 +1236,7 @@ class AircraftConflictGenerator:
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
 
-        self.configure_behavior(group, rtb_winchester=ammo_type)
+        self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
     def configure_cas(
         self,
@@ -1224,6 +1248,7 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
@@ -1247,11 +1272,13 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
-            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.All,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_sead(
@@ -1261,14 +1288,21 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        group.task = SEAD.name
+        # CAS is able to perform all the same tasks as SEAD using a superset of the
+        # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
+        # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
+        group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
+            # ASM includes ARMs and TALDs (among other things, but those are the useful
+            # weapons for SEAD).
             rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_strike(
@@ -1281,10 +1315,12 @@ class AircraftConflictGenerator:
         group.task = GroundAttack.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_anti_ship(
@@ -1297,10 +1333,12 @@ class AircraftConflictGenerator:
         group.task = AntishipStrike.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_runway_attack(
@@ -1313,10 +1351,12 @@ class AircraftConflictGenerator:
         group.task = RunwayAttack.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
             restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_oca_strike(
@@ -1329,6 +1369,7 @@ class AircraftConflictGenerator:
         group.task = CAS.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.OpenFire,
@@ -1354,6 +1395,7 @@ class AircraftConflictGenerator:
 
         # Awacs task action
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
@@ -1375,7 +1417,30 @@ class AircraftConflictGenerator:
         group.task = CAP.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
-            group, roe=OptROE.Values.OpenFire, restrict_jettison=True
+            flight, group, roe=OptROE.Values.OpenFire, restrict_jettison=True
+        )
+
+    def configure_sead_escort(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        # CAS is able to perform all the same tasks as SEAD using a superset of the
+        # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
+        # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
+        group.task = CAS.name
+        self._setup_group(group, package, flight, dynamic_runways)
+        self.configure_behavior(
+            flight,
+            group,
+            roe=OptROE.Values.OpenFire,
+            # ASM includes ARMs and TALDs (among other things, but those are the useful
+            # weapons for SEAD).
+            rtb_winchester=OptRTBOnOutOfAmmo.Values.ASM,
+            restrict_jettison=True,
+            mission_uses_gun=False,
         )
 
     def configure_transport(
@@ -1385,12 +1450,10 @@ class AircraftConflictGenerator:
         flight: Flight,
         dynamic_runways: Dict[str, RunwayData],
     ) -> None:
-        # Escort groups are actually given the CAP task so they can perform the
-        # Search Then Engage task, which we have to use instead of the Escort
-        # task for the reasons explained in JoinPointBuilder.
         group.task = Transport.name
         self._setup_group(group, package, flight, dynamic_runways)
         self.configure_behavior(
+            flight,
             group,
             react_on_threat=OptReactOnThreat.Values.EvadeFire,
             roe=OptROE.Values.WeaponHold,
@@ -1399,7 +1462,7 @@ class AircraftConflictGenerator:
 
     def configure_unknown_task(self, group: FlyingGroup, flight: Flight) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
-        self.configure_behavior(group)
+        self.configure_behavior(flight, group)
 
     def setup_flight_group(
         self,
@@ -1425,6 +1488,8 @@ class AircraftConflictGenerator:
             self.configure_dead(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.SEAD:
             self.configure_sead(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.SEAD_ESCORT:
+            self.configure_sead_escort(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.STRIKE:
             self.configure_strike(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.ANTISHIP:
@@ -1736,7 +1801,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
         if isinstance(target_group, TheaterGroundObject):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
                 task.params["expend"] = "All"
                 task.params["attackQtyLimit"] = False
                 task.params["directionEnabled"] = False
@@ -1804,18 +1869,16 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
         if isinstance(target_group, TheaterGroundObject):
             tgroup = self.mission.find_group(target_group.group_name)
             if tgroup is not None:
-                waypoint.add_task(
-                    EngageTargetsInZone(
-                        position=tgroup.position,
-                        radius=int(nautical_miles(30).meters),
-                        targets=[
-                            Targets.All.GroundUnits.AirDefence,
-                        ],
-                    )
-                )
+                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
+                task.params["expend"] = "All"
+                task.params["attackQtyLimit"] = False
+                task.params["directionEnabled"] = False
+                task.params["altitudeEnabled"] = False
+                task.params["groupAttack"] = True
+                waypoint.tasks.append(task)
             else:
                 logging.error(
-                    f"Could not find group for DEAD mission {target_group.group_name}"
+                    f"Could not find group for SEAD mission {target_group.group_name}"
                 )
         self.register_special_waypoints(self.waypoint.targets)
         return waypoint
@@ -1841,12 +1904,11 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
             center.y += target.position.y
         center.x /= len(targets)
         center.y /= len(targets)
-        bombing = Bombing(center)
+        bombing = Bombing(center, weapon_type=WeaponType.Bombs)
         bombing.params["expend"] = "All"
         bombing.params["attackQtyLimit"] = False
         bombing.params["directionEnabled"] = False
         bombing.params["altitudeEnabled"] = False
-        bombing.params["weaponType"] = WeaponType.Bombs.value
         bombing.params["groupAttack"] = True
         waypoint.tasks.append(bombing)
         return waypoint
@@ -1854,11 +1916,10 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
     def build_strike(self) -> MovingPoint:
         waypoint = super().build()
         for target in self.waypoint.targets:
-            bombing = Bombing(target.position)
+            bombing = Bombing(target.position, weapon_type=WeaponType.Auto)
             # If there is only one target, drop all ordnance in one pass.
             if len(self.waypoint.targets) == 1:
                 bombing.params["expend"] = "All"
-            bombing.params["weaponType"] = WeaponType.Auto.value
             bombing.params["groupAttack"] = True
             waypoint.tasks.append(bombing)
 
@@ -1893,11 +1954,23 @@ class JoinPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
         if self.flight.flight_type == FlightType.ESCORT:
-            self.configure_escort_tasks(waypoint)
+            self.configure_escort_tasks(
+                waypoint,
+                [
+                    Targets.All.Air.Planes.Fighters,
+                    Targets.All.Air.Planes.MultiroleFighters,
+                ],
+            )
+        elif self.flight.flight_type == FlightType.SEAD_ESCORT:
+            self.configure_escort_tasks(
+                waypoint, [Targets.All.GroundUnits.AirDefence.AAA.SAMRelated]
+            )
         return waypoint
 
     @staticmethod
-    def configure_escort_tasks(waypoint: MovingPoint) -> None:
+    def configure_escort_tasks(
+        waypoint: MovingPoint, target_types: List[Type[TargetType]]
+    ) -> None:
         # Ideally we would use the escort mission type and escort task to have
         # the AI automatically but the AI only escorts AI flights while they are
         # traveling between waypoints. When an AI flight performs an attack
@@ -1923,13 +1996,13 @@ class JoinPointBuilder(PydcsWaypointBuilder):
         # for the target area that is set to end on a flag flip that occurs when
         # the strike aircraft finish their attack task.
         #
-        # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/250183-task-follow-and-escort-temporarily-aborted
+        # https://forums.eagle.ru/topic/251798-options-for-alternate-ai-escort-behavior
         waypoint.add_task(
             ControlledTask(
                 EngageTargets(
                     # TODO: From doctrine.
                     max_distance=int(nautical_miles(30).meters),
-                    targets=[Targets.All.Air.Planes.Fighters],
+                    targets=target_types,
                 )
             )
         )

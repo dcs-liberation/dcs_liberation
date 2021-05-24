@@ -28,6 +28,27 @@ class FlightType(Enum):
     These values are persisted to the save game as well since they are a part of
     each flight and thus a part of the ATO, so changing these values will break
     save compat.
+
+    When adding new mission types to this list, you will also need to update:
+
+    * flightplan.py: Add waypoint population in generate_flight_plan. Add a new flight
+      plan type if necessary, though most are a subclass of StrikeFlightPlan.
+    * aircraft.py: Add a configuration method and call it in setup_flight_group. This is
+      responsible for configuring waypoint 0 actions like setting ROE, threat reaction,
+      and mission abort parameters (winchester, bingo, etc).
+    * Implementations of MissionTarget.mission_types: A mission type can only be planned
+      against compatible targets. The mission_types method of each target class defines
+      which missions may target it.
+    * ai_flight_planner_db.py: Add the new mission type to aircraft_for_task that
+      returns the list of compatible aircraft in order of preference.
+
+    You may also need to update:
+
+    * flight.py: Add a new waypoint type if necessary. Most mission types will need
+      these, as aircraft.py uses the ingress point type to specialize AI tasks, and non-
+      strike-like missions will need more specialized control.
+    * ai_flight_planner.py: Use the new mission type in propose_missions so the AI will
+      plan the new mission type.
     """
 
     TARCAP = "TARCAP"
@@ -45,12 +66,27 @@ class FlightType(Enum):
     OCA_AIRCRAFT = "OCA/Aircraft"
     AEWC = "AEW&C"
     TRANSPORT = "Transport"
+    SEAD_ESCORT = "SEAD Escort"
 
     def __str__(self) -> str:
         return self.value
 
 
 class FlightWaypointType(Enum):
+    """Enumeration of waypoint types.
+
+    The value of the enum has no meaning but should remain stable to prevent breaking
+    save game compatibility.
+
+    When adding a new waypoint type, you will also need to update:
+
+    * waypointbuilder.py: Add a builder to simplify construction of the new waypoint
+      type unless the new waypoint type will be a parameter to an existing builder
+      method (such as how escort ingress waypoints work).
+    * aircraft.py: Associate AI actions with the new waypoint type by subclassing
+      PydcsWaypointBuilder and using it in PydcsWaypointBuilder.for_waypoint.
+    """
+
     TAKEOFF = 0  # Take off point
     ASCEND_POINT = 1  # Ascension point after take off
     PATROL = 2  # Patrol point
@@ -79,6 +115,7 @@ class FlightWaypointType(Enum):
     INGRESS_OCA_AIRCRAFT = 25
     PICKUP = 26
     DROP_OFF = 27
+    BULLSEYE = 28
 
 
 class FlightWaypoint:

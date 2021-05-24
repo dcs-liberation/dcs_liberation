@@ -26,6 +26,7 @@
     "APC_M113",
     "APC_BTR_80",
     "MBT_M60A3_Patton",
+    "MBT_Chieftain_Mk_3",
     "IFV_BMP_1",
     "MBT_T_72B",
     "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
@@ -85,7 +86,8 @@
   "coastal_group_count": 3,
   "navy_generators": [
     "GrishaGroupGenerator",
-    "MolniyaGroupGenerator"
+    "MolniyaGroupGenerator",
+    "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

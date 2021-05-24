@@ -11,10 +11,10 @@
     "P_51D_30_NA"
   ],
   "frontline_units": [
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "MBT_M60A3_Patton",
     "APC_M2A1_Halftrack",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "SPG_M12_GMC_155mm"

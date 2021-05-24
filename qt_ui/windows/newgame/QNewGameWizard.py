@@ -32,7 +32,7 @@ jinja_env = Environment(
 )
 
 DEFAULT_BUDGET = 2000
-DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=90)
+DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=60)
 
 
 class NewGameWizard(QtWidgets.QWizard):

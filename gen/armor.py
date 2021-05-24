@@ -68,11 +68,12 @@ INFANTRY_GROUP_SIZE = 5
 class JtacInfo:
     """JTAC information."""
 
-    dcsGroupName: str
+    group_name: str
     unit_name: str
     callsign: str
     region: str
     code: str
+    blue: bool
     # TODO: Radio info? Type?
 
 
@@ -196,7 +197,14 @@ class GroundConflictGenerator:
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
             self.jtacs.append(
-                JtacInfo(str(jtac.name), n, callsign, frontline, str(code))
+                JtacInfo(
+                    str(jtac.name),
+                    n,
+                    callsign,
+                    frontline,
+                    str(code),
+                    blue=True,
+                )
             )
 
     def gen_infantry_group_for_group(

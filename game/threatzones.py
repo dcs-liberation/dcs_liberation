@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union, Iterable
 
 from dcs.mapping import Point as DcsPoint
 from shapely.geometry import (
@@ -15,9 +15,8 @@ from shapely.ops import nearest_points, unary_union
 
 from game.theater import ControlPoint
 from game.utils import Distance, meters, nautical_miles
-from gen import Conflict
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightWaypoint
 
 if TYPE_CHECKING:
     from game import Game
@@ -27,9 +26,12 @@ ThreatPoly = Union[MultiPolygon, Polygon]
 
 
 class ThreatZones:
-    def __init__(self, airbases: ThreatPoly, air_defenses: ThreatPoly) -> None:
+    def __init__(
+        self, airbases: ThreatPoly, air_defenses: ThreatPoly, radar_sam_threats
+    ) -> None:
         self.airbases = airbases
         self.air_defenses = air_defenses
+        self.radar_sam_threats = radar_sam_threats
         self.all = unary_union([airbases, air_defenses])
 
     def closest_boundary(self, point: DcsPoint) -> DcsPoint:
@@ -69,6 +71,13 @@ class ThreatZones:
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
         )
 
+    def waypoints_threatened_by_aircraft(
+        self, waypoints: Iterable[FlightWaypoint]
+    ) -> bool:
+        return self.threatened_by_aircraft(
+            LineString((self.dcs_to_shapely_point(p.position) for p in waypoints))
+        )
+
     @singledispatchmethod
     def threatened_by_air_defense(self, target) -> bool:
         raise NotImplementedError
@@ -81,6 +90,27 @@ class ThreatZones:
     def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:
         return self.threatened_by_air_defense(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
+        )
+
+    @singledispatchmethod
+    def threatened_by_radar_sam(self, target) -> bool:
+        raise NotImplementedError
+
+    @threatened_by_radar_sam.register
+    def _threatened_by_radar_sam_geom(self, position: BaseGeometry) -> bool:
+        return self.radar_sam_threats.intersects(position)
+
+    @threatened_by_radar_sam.register
+    def _threatened_by_radar_sam_flight(self, flight: Flight) -> bool:
+        return self.threatened_by_radar_sam(
+            LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
+        )
+
+    def waypoints_threatened_by_radar_sam(
+        self, waypoints: Iterable[FlightWaypoint]
+    ) -> bool:
+        return self.threatened_by_radar_sam(
+            LineString((self.dcs_to_shapely_point(p.position) for p in waypoints))
         )
 
     @classmethod
@@ -134,6 +164,7 @@ class ThreatZones:
         """
         air_threats = []
         air_defenses = []
+        radar_sam_threats = []
         for control_point in game.theater.controlpoints:
             if control_point.captured != player:
                 continue
@@ -151,9 +182,16 @@ class ThreatZones:
                         point = ShapelyPoint(tgo.position.x, tgo.position.y)
                         threat_zone = point.buffer(threat_range.meters)
                         air_defenses.append(threat_zone)
+                    radar_threat_range = tgo.threat_range(group, radar_only=True)
+                    if radar_threat_range > nautical_miles(3):
+                        point = ShapelyPoint(tgo.position.x, tgo.position.y)
+                        threat_zone = point.buffer(threat_range.meters)
+                        radar_sam_threats.append(threat_zone)
 
         return cls(
-            airbases=unary_union(air_threats), air_defenses=unary_union(air_defenses)
+            airbases=unary_union(air_threats),
+            air_defenses=unary_union(air_defenses),
+            radar_sam_threats=unary_union(radar_sam_threats),
         )
 
     @staticmethod

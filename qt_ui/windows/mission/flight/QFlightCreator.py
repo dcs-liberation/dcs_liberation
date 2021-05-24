@@ -211,7 +211,7 @@ class QFlightCreator(QDialog):
                 self.restore_start_type = None
 
     def on_task_changed(self) -> None:
-        self.aircraft_selector.updateItems(
+        self.aircraft_selector.update_items(
             self.task_selector.currentData(),
             self.game.aircraft_inventory.available_types_for_player,
         )

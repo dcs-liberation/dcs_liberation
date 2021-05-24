@@ -26,17 +26,18 @@
     "IFV_BMP_1",
     "IFV_BMP_2",
     "APC_BTR_80",
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
+    "LT_PT_76",
     "APC_MTLB",
-    "APC_Cobra__Scout",
+    "Scout_Cobra",
     "MBT_T_55",
     "MBT_T_72B",
     "MBT_T_90",
     "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_BM_27_Uragan_220mm",
-    "SPH_2S9_Nona_120mm_M",
+    "MLRS_9K57_Uragan_BM_27_220mm",
+    "SPM_2S9_Nona_120mm_M",
     "MLRS_BM_21_Grad_122mm",
     "SPH_2S1_Gvozdika_122mm"
   ],

@@ -8,7 +8,6 @@ DEFAULT_AVAILABLE_BUILDINGS = [
     "oil",
     "ware",
     "farp",
-    "fob",
     "power",
     "derrick",
 ]
@@ -21,7 +20,6 @@ WW2_GERMANY_BUILDINGS = [
     "ww2bunker",
     "allycamp",
     "allycamp",
-    "fob",
 ]
 WW2_ALLIES_BUILDINGS = [
     "fuel",
@@ -30,7 +28,6 @@ WW2_ALLIES_BUILDINGS = [
     "allycamp",
     "allycamp",
     "allycamp",
-    "fob",
 ]
 
 FORTIFICATION_BUILDINGS = [
