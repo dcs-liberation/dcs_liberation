@@ -120,7 +120,7 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-        self, budget: float, cp: ControlPoint, vehicle_type: list
+        self, budget: float, cp: ControlPoint, vehicle_type
     ) -> Optional[Type[VehicleType]]:
         affordable_units = [
             u
@@ -166,17 +166,17 @@ class ProcurementAi:
 
         return budget_for_each_controlpoint
 
-    def buy_ground_units(self, budget: int, priority_list: Dict[Type[VehicleType], int], cp: ControlPoint) -> int:
+    def buy_ground_units(self, budget: int, priority_list: List[Tuple[List, int]], cp: ControlPoint) -> int:
         ratio_all_units: int = 0
         for item in priority_list:
-            ratio_all_units += priority_list[item]
+            ratio_all_units += item[1]
 
-        for vehicle_type in priority_list:
+        for entry in priority_list:
             #budget for each type of vehicle, now not as ratio but as concrete number to buy
-            budget_for_type = budget / ratio_all_units * priority_list[vehicle_type]
+            budget_for_type = budget / ratio_all_units * entry[1]
 
             while budget_for_type > 0:
-                unit = self.random_affordable_ground_unit(budget_for_type, cp, vehicle_type)
+                unit = self.random_affordable_ground_unit(budget_for_type, cp, entry[0])
 
                 if unit is None:
                     # Can't afford any more units.
@@ -190,9 +190,8 @@ class ProcurementAi:
         #rest of budget
         return budget
 
-    def calculate_vehicle_investment_ratio(self, cp: ControlPoint) -> Dict[Type[VehicleType], int]:
-        # k = type of vehicle, v = needed ratio
-        prioritylist: Dict[Type[VehicleType], int] = {}
+    def calculate_vehicle_investment_ratio(self, cp: ControlPoint) -> List[Tuple[List, int]]:
+        prioritylist: List[Tuple[List, int]] = []
 
         tank_costs = self.calculate_investment_of_vehicleType(cp, TYPE_TANKS)
         atgm_costs = self.calculate_investment_of_vehicleType(cp, TYPE_ATGM)
@@ -211,69 +210,69 @@ class ProcurementAi:
         faction_has_shorad_access = False
 
         for unit in self.faction.frontline_units:
-            if unit in TYPE_TANKS & faction_has_tank_access == False:
+            if faction_has_tank_access is False and unit in TYPE_TANKS:
                 faction_has_tank_access = True
-            if unit in TYPE_ATGM & faction_has_atgm_access == False:
+            if faction_has_atgm_access is False and unit in TYPE_ATGM:
                 faction_has_atgm_access = True
-            if unit in TYPE_IFV & faction_has_ifv_access == False:
+            if faction_has_ifv_access is False and unit in TYPE_IFV:
                 faction_has_ifv_access = True
-            if unit in TYPE_APC & faction_has_apc_access == False:
+            if faction_has_apc_access is False and unit in TYPE_APC:
                 faction_has_apc_access = True
-            if unit in TYPE_SHORAD & faction_has_shorad_access == False:
+            if faction_has_shorad_access is False and unit in TYPE_SHORAD:
                 faction_has_shorad_access = True
             
         for unit in self.faction.artillery_units:
-            if unit in TYPE_ARTILLERY & faction_has_artillery_access == False:
+            if faction_has_artillery_access is False and unit in TYPE_ARTILLERY:
                 faction_has_artillery_access = True
                 break
 
         if  faction_has_tank_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_TANKS]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio
+            if costs_of_all_vehicles is 0:
+                prioritylist.append((TYPE_TANKS, self.game.settings.ground_forces_procurement_ratio.tank_ratio))
             else:
                 current_ratio = tank_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio:
-                    prioritylist[TYPE_TANKS]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.tank_ratio:
+                    prioritylist.append((TYPE_TANKS,  self.game.settings.ground_forces_procurement_ratio.tank_ratio - int(current_ratio)))
 
         if  faction_has_atgm_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_ATGM]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio
+            if costs_of_all_vehicles is 0:
+                prioritylist.append((TYPE_ATGM, self.game.settings.ground_forces_procurement_ratio.atgm_ratio))
             else:
                 current_ratio = atgm_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio:
-                    prioritylist[TYPE_ATGM]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.atgm_ratio:
+                    prioritylist.append((TYPE_ATGM, self.game.settings.ground_forces_procurement_ratio.atgm_ratio - int(current_ratio)))
 
         if  faction_has_ifv_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_IFV]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio
+            if costs_of_all_vehicles is 0:
+                prioritylist.append((TYPE_IFV, self.game.settings.ground_forces_procurement_ratio.ifv_ratio))
             else:
                 current_ratio = ifv_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio:
-                    prioritylist[TYPE_IFV]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ifv_ratio:
+                    prioritylist.append((TYPE_IFV, self.game.settings.ground_forces_procurement_ratio.ifv_ratio - int(current_ratio)))
 
         if  faction_has_apc_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_APC]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio
+            if costs_of_all_vehicles is 0:
+                prioritylist.append((TYPE_APC, self.game.settings.ground_forces_procurement_ratio.apc_ratio))
             else:
                 current_ratio = apc_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio:
-                    prioritylist[TYPE_APC]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.apc_ratio:
+                    prioritylist.append((TYPE_APC, self.game.settings.ground_forces_procurement_ratio.apc_ratio - int(current_ratio)))
 
         if  faction_has_artillery_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_ARTILLERY]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio
+            if costs_of_all_vehicles is 0:                
+                prioritylist.append((TYPE_ARTILLERY, self.game.settings.ground_forces_procurement_ratio.artillery_ratio))
             else:
                 current_ratio = artillery_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio:
-                    prioritylist[TYPE_ARTILLERY]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.artillery_ratio:
+                    prioritylist.append((TYPE_ARTILLERY, self.game.settings.ground_forces_procurement_ratio.artillery_ratio - int(current_ratio)))
 
         if  faction_has_shorad_access:
-            if costs_of_all_vehicles == 0:
-                prioritylist[TYPE_SHORAD]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio
+            if costs_of_all_vehicles is 0:                
+                prioritylist.append((TYPE_SHORAD, self.game.settings.ground_forces_procurement_ratio.shorad_ratio))
             else:
                 current_ratio = shorad_costs / costs_of_all_vehicles
-                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio:
-                    prioritylist[TYPE_SHORAD]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio - int(current_ratio)
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.shorad_ratio:
+                    prioritylist.append((TYPE_SHORAD, self.game.settings.ground_forces_procurement_ratio.shorad_ratio - int(current_ratio)))
 
         return prioritylist
 

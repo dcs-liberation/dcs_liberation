@@ -41,9 +41,7 @@ class Settings:
     # Ground unit behaviour/doctrine
 
     # Buying ratio for ground units. Could be made adjustable in the ui
-    ground_forces_procurement_ratio: ground_forces_procurement_ratio = (
-        ground_forces_procurement_ratio
-    )
+    ground_forces_procurement_ratio = ground_forces_procurement_ratio.ground_forces_procurement_raito()
 
     #: Feature flag for new ground unit behavior. Old campaigns are will not work with
     #: this so the old behavior remains an option until it breaks, at which point we'll
