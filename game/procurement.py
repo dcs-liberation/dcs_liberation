@@ -120,7 +120,7 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-        self, budget: float, cp: ControlPoint, vehicle_type
+        self, budget: float, vehicle_type
     ) -> Optional[Type[VehicleType]]:
         affordable_units = [
             u
@@ -176,7 +176,7 @@ class ProcurementAi:
             budget_for_type = budget / ratio_all_units * entry[1]
 
             while budget_for_type > 0:
-                unit = self.random_affordable_ground_unit(budget_for_type, cp, entry[0])
+                unit = self.random_affordable_ground_unit(budget_for_type, entry[0])
 
                 if unit is None:
                     # Can't afford any more units.
