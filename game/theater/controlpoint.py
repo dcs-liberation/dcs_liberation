@@ -442,11 +442,6 @@ class ControlPoint(MissionTarget, ABC):
         """
         ...
 
-    # TODO: Should be Airbase specific.
-    def connect(self, to: ControlPoint) -> None:
-        self.connected_points.append(to)
-        self.stances[to.id] = CombatStance.DEFENSIVE
-
     def convoy_origin_for(self, destination: ControlPoint) -> Point:
         return self.convoy_route_to(destination)[0]
 
