@@ -52,7 +52,7 @@ class FrontLine(MissionTarget):
         self.blue_cp = blue_point
         self.red_cp = red_point
         try:
-            route = blue_point.convoy_route_to(red_point)
+            route = list(blue_point.convoy_route_to(red_point))
         except KeyError:
             # Some campaigns are air only and the mission generator currently relies on
             # *some* "front line" being drawn between these two. In this case there will

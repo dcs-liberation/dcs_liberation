@@ -4,7 +4,17 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
-from typing import Dict, Generic, Iterator, List, Optional, TYPE_CHECKING, Type, TypeVar
+from typing import (
+    Dict,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    Type,
+    TypeVar,
+    Sequence,
+)
 
 from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
@@ -363,7 +373,7 @@ class CargoShip(MultiGroupTransport):
         yield from super().mission_types(for_player)
 
     @property
-    def route(self) -> List[Point]:
+    def route(self) -> Sequence[Point]:
         return self.origin.shipping_lanes[self.destination]
 
     def description(self) -> str:
