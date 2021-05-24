@@ -382,9 +382,6 @@ class ProcurementAi:
 
         return prioritylist
 
-    def caluclate_budget_for_ratio(self) -> int:
-        return 0
-
     def calculate_investment_of_vehicleType(
         self, cp: ControlPoint, vehicle_type: list
     ) -> int:
