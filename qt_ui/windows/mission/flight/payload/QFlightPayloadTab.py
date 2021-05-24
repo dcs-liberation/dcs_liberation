@@ -49,5 +49,5 @@ class QFlightPayloadTab(QFrame):
         if use_custom:
             self.flight.loadout = self.flight.loadout.derive_custom("Custom")
         else:
-            self.flight.loadout = Loadout.default_for(self.flight)
+            self.flight.loadout = self.loadout_selector.currentData()
             self.payload_editor.reset_pylons()
