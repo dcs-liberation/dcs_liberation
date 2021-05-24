@@ -3,18 +3,19 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from dcs.unittype import FlyingType, VehicleType
 
 from game import db
+import game
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
-from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD, TYPE_TANKS
+from gen.ground_forces.ai_ground_planner_db import TYPE_APC, TYPE_ARTILLERY, TYPE_ATGM, TYPE_IFV, TYPE_SHORAD, TYPE_TANKS
 
 from game import dic_filter
 
@@ -58,6 +59,7 @@ class ProcurementAi:
         self.manage_aircraft = manage_aircraft
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
+        self.filter = dic_filter.dic_analyser()
 
     def spend_budget(
         self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
@@ -118,7 +120,7 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-        self, budget: float, cp: ControlPoint
+        self, budget: float, cp: ControlPoint, vehicle_type: list
     ) -> Optional[Type[VehicleType]]:
         affordable_units = [
             u
@@ -157,48 +159,155 @@ class ProcurementAi:
             ground_unit_budget / len(frontline_controlpoints)
         )
 
+        ground_unit_budget = 0
         for cp in frontline_controlpoints:
-            budget = self.buy_groundUnits_for_controlpoint(
-                int (ground_unit_budget), budget_for_each_controlpoint, cp
-            )
+            ground_unit_budget += self.buy_groundUnits_for_controlpoint(budget_for_each_controlpoint, cp)
 
-        return budget
+        return ground_unit_budget
 
     def buy_groundUnits_for_controlpoint(
         self,
-        ground_unit_budget: int,
         budget_for_each_controlpoint: int,
         cp: ControlPoint,
     ):
-        cp_budget = budget_for_each_controlpoint
-        while cp_budget > 0:
-            tanks_in_base = dic_filter.dic_analyser.get_all_vehicletype_from_dic(
-                cp.base.armor, TYPE_TANKS
-            )
-            tanks_orderd = dic_filter.dic_analyser.get_all_vehicletype_from_dic(
-                cp.pending_unit_deliveries.units, TYPE_TANKS
-            )
-            all_tanks_list = tanks_in_base + tanks_orderd
-            all_tanks_dic = (
-                dic_filter.dic_analyser.get_dic_with_numbers_of_vehicles_from_list(
-                    all_tanks_list
-                )
-            )
-            tank_costs = dic_filter.dic_analyser.get_costs_for_provided_vehicles(
-                all_tanks_dic
-            )
+        cp_priorityList = self.calculate_vehicle_investment_ratio(cp)
 
-            unit = self.random_affordable_ground_unit(cp_budget, cp)
+        budget_for_each_controlpoint = self.buy_ground_units(budget_for_each_controlpoint, cp_priorityList, cp)
 
-            if unit is None:
-                # Can't afford any more units.
+        return budget_for_each_controlpoint
+
+    def buy_ground_units(self, budget: int, priority_list: Dict[Type[VehicleType], int], cp: ControlPoint) -> int:
+        ratio_all_units: int = 0
+        for item in priority_list:
+            ratio_all_units += priority_list[item]
+
+        for vehicle_type in priority_list:
+            #budget for each type of vehicle, now not as ratio but as concrete number to buy
+            budget_for_type = budget / ratio_all_units * priority_list[vehicle_type]
+
+            while budget_for_type > 0:
+                unit = self.random_affordable_ground_unit(budget_for_type, cp, vehicle_type)
+
+                if unit is None:
+                    # Can't afford any more units.
+                    break
+
+                unit_price = db.PRICES[unit]
+                budget_for_type -= unit_price
+                budget -= unit_price
+                cp.pending_unit_deliveries.order({unit: 1})
+        
+        #rest of budget
+        return budget
+
+    def calculate_vehicle_investment_ratio(self, cp: ControlPoint) -> Dict[Type[VehicleType], int]:
+        # k = type of vehicle, v = needed ratio
+        prioritylist: Dict[Type[VehicleType], int] = {}
+
+        tank_costs = self.calculate_investment_of_vehicleType(cp, TYPE_TANKS)
+        atgm_costs = self.calculate_investment_of_vehicleType(cp, TYPE_ATGM)
+        ifv_costs = self.calculate_investment_of_vehicleType(cp, TYPE_IFV)
+        apc_costs = self.calculate_investment_of_vehicleType(cp, TYPE_APC)
+        artillery_costs = self.calculate_investment_of_vehicleType(cp, TYPE_ARTILLERY)
+        shorad_costs = self.calculate_investment_of_vehicleType(cp, TYPE_SHORAD)
+
+        costs_of_all_vehicles = tank_costs + atgm_costs + ifv_costs + apc_costs + artillery_costs + shorad_costs
+
+        faction_has_tank_access = False
+        faction_has_atgm_access = False
+        faction_has_ifv_access = False
+        faction_has_apc_access = False
+        faction_has_artillery_access = False
+        faction_has_shorad_access = False
+
+        for unit in self.faction.frontline_units:
+            if unit in TYPE_TANKS & faction_has_tank_access == False:
+                faction_has_tank_access = True
+            if unit in TYPE_ATGM & faction_has_atgm_access == False:
+                faction_has_atgm_access = True
+            if unit in TYPE_IFV & faction_has_ifv_access == False:
+                faction_has_ifv_access = True
+            if unit in TYPE_APC & faction_has_apc_access == False:
+                faction_has_apc_access = True
+            if unit in TYPE_SHORAD & faction_has_shorad_access == False:
+                faction_has_shorad_access = True
+            
+        for unit in self.faction.artillery_units:
+            if unit in TYPE_ARTILLERY & faction_has_artillery_access == False:
+                faction_has_artillery_access = True
                 break
 
-            unit_price = db.PRICES[unit]
-            ground_unit_budget -= unit_price
-            cp_budget -= unit_price
-            cp.pending_unit_deliveries.order({unit: 1})
-        return ground_unit_budget
+        if  faction_has_tank_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_TANKS]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio
+            else:
+                current_ratio = tank_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio:
+                    prioritylist[TYPE_TANKS]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.tank_ratio - int(current_ratio)
+
+        if  faction_has_atgm_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_ATGM]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio
+            else:
+                current_ratio = atgm_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio:
+                    prioritylist[TYPE_ATGM]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.atgm_ratio - int(current_ratio)
+
+        if  faction_has_ifv_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_IFV]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio
+            else:
+                current_ratio = ifv_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio:
+                    prioritylist[TYPE_IFV]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.ifv_ratio - int(current_ratio)
+
+        if  faction_has_apc_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_APC]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio
+            else:
+                current_ratio = apc_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio:
+                    prioritylist[TYPE_APC]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.apc_ratio - int(current_ratio)
+
+        if  faction_has_artillery_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_ARTILLERY]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio
+            else:
+                current_ratio = artillery_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio:
+                    prioritylist[TYPE_ARTILLERY]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.artillery_ratio - int(current_ratio)
+
+        if  faction_has_shorad_access:
+            if costs_of_all_vehicles == 0:
+                prioritylist[TYPE_SHORAD]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio
+            else:
+                current_ratio = shorad_costs / costs_of_all_vehicles
+                if  int(current_ratio) < self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio:
+                    prioritylist[TYPE_SHORAD]= self.game.settings.ground_forces_procurement_ratio.ground_forces_procurement_raito.shorad_ratio - int(current_ratio)
+
+        return prioritylist
+
+    def caluclate_budget_for_ratio (self) -> int :
+        return 0
+
+    def calculate_investment_of_vehicleType (self, cp: ControlPoint, vehicle_type: list) -> int:
+        costs = 0
+        vehicles_in_base = self.filter.get_all_vehicletype_from_dic(
+                cp.base.armor, vehicle_type
+            )
+        vehicles_ordered = self.filter.get_all_vehicletype_from_dic(
+                cp.pending_unit_deliveries.units, vehicle_type
+            )
+        all_vehicles_list = vehicles_in_base + vehicles_ordered
+        all_vehicles_dic = (
+                self.filter.get_dic_with_numbers_of_vehicles_from_list(
+                    all_vehicles_list
+                )
+            )
+        costs += self.filter.get_costs_for_provided_vehicles(
+                all_vehicles_dic
+            )
+        return costs
 
     def _affordable_aircraft_of_types(
         self,
