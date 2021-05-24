@@ -101,7 +101,7 @@ class FlightWaypointType(Enum):
     LANDING_POINT = 11  # Should land there
     TARGET_POINT = 12  # A target building or static object, position
     TARGET_GROUP_LOC = 13  # A target group approximate location
-    TARGET_SHIP = 14  # A target ship known location
+    TARGET_SHIP = 14  # Unused.
     CUSTOM = 15  # User waypoint (no specific behaviour)
     JOIN = 16
     SPLIT = 17
