@@ -6,7 +6,7 @@ class ground_forces_procurement_raito:
     atgm_ratio: int = 1
     apc_ratio: int = 2
     ifv_ratio: int = 3
-    artillery_ratio: int = 3
+    artillery_ratio: int = 1
     shorad_ratio: int = 2
     combined_ratio: int = (
         tank_ratio + atgm_ratio + apc_ratio + ifv_ratio + artillery_ratio + shorad_ratio
