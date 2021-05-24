@@ -128,17 +128,7 @@ class ProcurementAi:
             if db.PRICES[u] <= budget
         ]
 
-        total_number_aa = (
-            cp.base.total_shorad_cost + cp.pending_frontline_aa_deliveries_count
-        )
-        total_non_aa = (
-            cp.base.total_armor + cp.pending_deliveries_count - total_number_aa
-        )
-        max_aa = math.ceil(total_non_aa / 8)
-
-        # Limit the number of AA units the AI will buy
-        if not total_number_aa < max_aa:
-            for unit in [u for u in affordable_units if u in TYPE_SHORAD]:
+        for unit in [u for u in affordable_units if u not in vehicle_type]:
                 affordable_units.remove(unit)
 
         if not affordable_units:
