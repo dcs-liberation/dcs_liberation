@@ -288,6 +288,7 @@ class NewUnitTransferDialog(QDialog):
         self.submit_button = QPushButton("Create Transfer Order", parent=self)
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setProperty("style", "start-button")
+        self.submit_button.setDisabled(True)
         layout.addWidget(self.submit_button)
 
     def on_submit(self) -> None:
