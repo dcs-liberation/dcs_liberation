@@ -620,9 +620,9 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(78, TacanBand.X),
         tacan_callsign="BND",
         vor=("BND", MHz(117, 200)),
-        atc=AtcData(MHz(4, 250), MHz(39, 401), MHz(118, 100), MHz(251, 0)),
+        atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(118, 100), MHz(251, 0)),
         ils={
-            "21": ("IBND", MHz(333, 800)),
+            "21": ("IBND", MHz(109, 900)),
         },
     ),
     "Jiroft": AirfieldData(
