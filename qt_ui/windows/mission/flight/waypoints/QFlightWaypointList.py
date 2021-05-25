@@ -31,6 +31,9 @@ class QFlightWaypointList(QTableView):
         )
 
     def update_list(self):
+        # We need to keep just the row and rebuild the index later because the
+        # QModelIndex will not be valid after the model is cleared.
+        current_index = self.currentIndex().row()
         self.model.clear()
 
         self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
@@ -39,7 +42,7 @@ class QFlightWaypointList(QTableView):
         for row, waypoint in enumerate(waypoints):
             self.add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(
-            self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
+            self.model.index(current_index, 0), QItemSelectionModel.Select
         )
         self.resizeColumnsToContents()
         total_column_width = self.verticalHeader().width() + self.lineWidth()
