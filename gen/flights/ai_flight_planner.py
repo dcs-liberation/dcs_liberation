@@ -22,8 +22,10 @@ from typing import (
 
 from dcs.unittype import FlyingType
 
+from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
+from game.squadrons import AirWing
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -182,6 +184,7 @@ class PackageBuilder:
         location: MissionTarget,
         closest_airfields: ClosestAirfields,
         global_inventory: GlobalAircraftInventory,
+        air_wing: AirWing,
         is_player: bool,
         package_country: str,
         start_type: str,
@@ -189,6 +192,7 @@ class PackageBuilder:
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
+        self.air_wing = air_wing
         self.package_country = package_country
         self.package = Package(location, auto_asap=asap)
         self.allocator = AircraftAllocator(
@@ -217,7 +221,7 @@ class PackageBuilder:
         flight = Flight(
             self.package,
             self.package_country,
-            aircraft,
+            self.air_wing.squadron_for(aircraft),
             plan.num_aircraft,
             plan.task,
             start_type,
@@ -850,18 +854,13 @@ class CoalitionMissionPlanner:
 
     def plan_mission(self, mission: ProposedMission, reserves: bool = False) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
-
-        if self.is_player:
-            package_country = self.game.player_country
-        else:
-            package_country = self.game.enemy_country
-
         builder = PackageBuilder(
             mission.location,
             self.objective_finder.closest_airfields_to(mission.location),
             self.game.aircraft_inventory,
+            self.game.air_wing_for(self.is_player),
             self.is_player,
-            package_country,
+            self.game.country_for(self.is_player),
             self.game.settings.default_start_type,
             mission.asap,
         )

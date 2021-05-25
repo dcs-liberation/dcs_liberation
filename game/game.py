@@ -4,12 +4,13 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Iterator
 
 from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
+from faker import Faker
 
 from game import db
 from game.inventory import GlobalAircraftInventory
@@ -33,6 +34,7 @@ from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings
+from .squadrons import Pilot, AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -140,6 +142,12 @@ class Game:
 
         self.sanitize_sides()
 
+        self.blue_faker = Faker(self.player_faction.locales)
+        self.red_faker = Faker(self.enemy_faction.locales)
+
+        self.blue_air_wing = AirWing(self, player=True)
+        self.red_air_wing = AirWing(self, player=False)
+
         self.on_load()
 
     def __getstate__(self) -> Dict[str, Any]:
@@ -150,6 +158,8 @@ class Game:
         del state["red_threat_zone"]
         del state["blue_navmesh"]
         del state["red_navmesh"]
+        del state["blue_faker"]
+        del state["red_faker"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
@@ -204,6 +214,16 @@ class Game:
         if player:
             return self.player_faction
         return self.enemy_faction
+
+    def faker_for(self, player: bool) -> Faker:
+        if player:
+            return self.blue_faker
+        return self.red_faker
+
+    def air_wing_for(self, player: bool) -> AirWing:
+        if player:
+            return self.blue_air_wing
+        return self.red_air_wing
 
     def country_for(self, player: bool) -> str:
         if player:
@@ -286,6 +306,8 @@ class Game:
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
         self.compute_threat_zones()
+        self.blue_faker = Faker(self.faction_for(player=True).locales)
+        self.red_faker = Faker(self.faction_for(player=False).locales)
 
     def reset_ato(self) -> None:
         self.blue_ato.clear()

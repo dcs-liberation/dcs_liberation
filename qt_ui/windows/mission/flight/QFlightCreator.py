@@ -175,7 +175,7 @@ class QFlightCreator(QDialog):
         flight = Flight(
             self.package,
             self.country,
-            aircraft,
+            self.game.air_wing_for(player=True).squadron_for(aircraft),
             size,
             task,
             self.start_type.currentText(),

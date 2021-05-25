@@ -21,6 +21,7 @@ from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
+from game.squadrons import Pilot
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -857,11 +858,7 @@ class FlightPlanBuilder:
         self.game = game
         self.package = package
         self.is_player = is_player
-        if is_player:
-            faction = self.game.player_faction
-        else:
-            faction = self.game.enemy_faction
-        self.doctrine: Doctrine = faction.doctrine
+        self.doctrine: Doctrine = self.game.faction_for(self.is_player).doctrine
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def populate_flight_plan(

@@ -21,9 +21,6 @@ class QFlightWaypointList(QTableView):
 
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-
-        if len(self.flight.points) > 0:
-            self.selectedPoint = self.flight.points[0]
         self.update_list()
 
         self.selectionModel().setCurrentIndex(

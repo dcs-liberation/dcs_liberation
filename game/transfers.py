@@ -251,10 +251,11 @@ class AirliftPlanner:
         else:
             transfer = self.transfer
 
+        player = inventory.control_point.captured
         flight = Flight(
             self.package,
-            self.game.country_for(inventory.control_point.captured),
-            unit_type,
+            self.game.country_for(player),
+            self.game.air_wing_for(player).squadron_for(unit_type),
             flight_size,
             FlightType.TRANSPORT,
             self.game.settings.default_start_type,

@@ -1020,7 +1020,7 @@ class AircraftConflictGenerator:
             flight = Flight(
                 Package(control_point),
                 faction.country,
-                aircraft,
+                self.game.air_wing_for(control_point.captured).squadron_for(aircraft),
                 1,
                 FlightType.BARCAP,
                 "Cold",

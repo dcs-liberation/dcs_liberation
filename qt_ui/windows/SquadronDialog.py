@@ -1,40 +1,35 @@
 from typing import Optional
 
 from PySide2.QtCore import (
-    QItemSelection,
     QItemSelectionModel,
     QModelIndex,
     QSize,
     Qt,
 )
-from PySide2.QtGui import QContextMenuEvent, QFont, QFontMetrics, QIcon, QPainter
+from PySide2.QtGui import QFont, QFontMetrics, QIcon, QPainter
 from PySide2.QtWidgets import (
     QAbstractItemView,
-    QAction,
     QDialog,
-    QHBoxLayout,
     QListView,
-    QMenu,
-    QPushButton,
     QStyle,
     QStyleOptionViewItem,
     QStyledItemDelegate,
     QVBoxLayout,
 )
 
-from game.transfers import TransferOrder
+from game.squadrons import Pilot
 from qt_ui.delegate_helpers import painter_context
-from qt_ui.models import GameModel, TransferModel
+from qt_ui.models import SquadronModel
 
 
-class TransferDelegate(QStyledItemDelegate):
+class PilotDelegate(QStyledItemDelegate):
     FONT_SIZE = 10
     HMARGIN = 4
     VMARGIN = 4
 
-    def __init__(self, transfer_model: TransferModel) -> None:
+    def __init__(self, squadron_model: SquadronModel) -> None:
         super().__init__()
-        self.transfer_model = transfer_model
+        self.squadron_model = squadron_model
 
     def get_font(self, option: QStyleOptionViewItem) -> QFont:
         font = QFont(option.font)
@@ -42,14 +37,14 @@ class TransferDelegate(QStyledItemDelegate):
         return font
 
     @staticmethod
-    def transfer(index: QModelIndex) -> TransferOrder:
-        return index.data(TransferModel.TransferRole)
+    def pilot(index: QModelIndex) -> Pilot:
+        return index.data(SquadronModel.PilotRole)
 
     def first_row_text(self, index: QModelIndex) -> str:
-        return self.transfer_model.data(index, Qt.DisplayRole)
+        return self.squadron_model.data(index, Qt.DisplayRole)
 
     def second_row_text(self, index: QModelIndex) -> str:
-        return self.transfer(index).description
+        return "Alive" if self.pilot(index).alive else "Dead"
 
     def paint(
         self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
@@ -114,89 +109,34 @@ class TransferDelegate(QStyledItemDelegate):
         )
 
 
-class PendingTransfersList(QListView):
-    """List view for displaying the pending unit transfers."""
+class PilotList(QListView):
+    """List view for displaying a squadron's pilots."""
 
-    def __init__(self, transfer_model: TransferModel) -> None:
+    def __init__(self, squadron_model: SquadronModel) -> None:
         super().__init__()
-        self.transfer_model = transfer_model
+        self.squadron_model = squadron_model
 
-        self.setItemDelegate(TransferDelegate(self.transfer_model))
-        self.setModel(self.transfer_model)
+        self.setItemDelegate(PilotDelegate(self.squadron_model))
+        self.setModel(self.squadron_model)
         self.selectionModel().setCurrentIndex(
-            self.transfer_model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
+            self.squadron_model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
         )
 
         # self.setIconSize(QSize(91, 24))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
 
-    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            return
-        if not self.transfer_model.transfer_at_index(index).player:
-            return
 
-        menu = QMenu("Menu")
+class SquadronDialog(QDialog):
+    """Dialog window showing a squadron."""
 
-        delete_action = QAction("Cancel")
-        delete_action.triggered.connect(lambda: self.cancel_transfer(index))
-        menu.addAction(delete_action)
-
-        menu.exec_(event.globalPos())
-
-    def cancel_transfer(self, index: QModelIndex) -> None:
-        """Cancels the given transfer order."""
-        self.transfer_model.cancel_transfer_at_index(index)
-
-
-class PendingTransfersDialog(QDialog):
-    """Dialog window showing all scheduled transfers for the player."""
-
-    def __init__(self, game_model: GameModel, parent=None) -> None:
+    def __init__(self, squadron_model: SquadronModel, parent) -> None:
         super().__init__(parent)
-        self.transfer_model = game_model.transfer_model
 
         self.setMinimumSize(1000, 440)
-        self.setWindowTitle(f"Pending Transfers")
+        self.setWindowTitle(squadron_model.squadron.name)
         # TODO: self.setWindowIcon()
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.transfer_list = PendingTransfersList(self.transfer_model)
-        self.transfer_list.selectionModel().selectionChanged.connect(
-            self.on_selection_changed
-        )
-        layout.addWidget(self.transfer_list)
-
-        button_layout = QHBoxLayout()
-        layout.addLayout(button_layout)
-
-        button_layout.addStretch()
-
-        self.cancel_button = QPushButton("Cancel Transfer")
-        self.cancel_button.setProperty("style", "btn-danger")
-        self.cancel_button.clicked.connect(self.on_cancel_transfer)
-        self.cancel_button.setEnabled(
-            self.can_cancel(self.transfer_list.currentIndex())
-        )
-        button_layout.addWidget(self.cancel_button)
-
-    def on_cancel_transfer(self) -> None:
-        """Cancels the selected transfer order."""
-        self.transfer_model.cancel_transfer_at_index(self.transfer_list.currentIndex())
-
-    def can_cancel(self, index: QModelIndex) -> bool:
-        if not index.isValid():
-            return False
-        return self.transfer_model.pilot_at_index(index).player
-
-    def on_selection_changed(
-        self, selected: QItemSelection, _deselected: QItemSelection
-    ) -> None:
-        """Updates the state of the delete button."""
-        if selected.empty():
-            self.cancel_button.setEnabled(False)
-            return
-        self.cancel_button.setEnabled(self.can_cancel(selected.indexes()[0]))
+        layout.addWidget(PilotList(squadron_model))

@@ -14,6 +14,7 @@ from PySide2.QtGui import QIcon
 
 from game import db
 from game.game import Game
+from game.squadrons import Squadron, Pilot
 from game.theater.missiontarget import MissionTarget
 from game.transfers import TransferOrder
 from gen.ato import AirTaskingOrder, Package
@@ -366,6 +367,87 @@ class TransferModel(QAbstractListModel):
         return self.game_model.game.transfers.transfer_at_index(index.row())
 
 
+class AirWingModel(QAbstractListModel):
+    """The model for an air wing."""
+
+    SquadronRole = Qt.UserRole
+
+    def __init__(self, game_model: GameModel, player: bool) -> None:
+        super().__init__()
+        self.game_model = game_model
+        self.player = player
+
+    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
+        return self.game_model.game.air_wing_for(self.player).size
+
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
+        if not index.isValid():
+            return None
+        squadron = self.squadron_at_index(index)
+        if role == Qt.DisplayRole:
+            return self.text_for_squadron(squadron)
+        if role == Qt.DecorationRole:
+            return self.icon_for_squadron(squadron)
+        elif role == AirWingModel.SquadronRole:
+            return squadron
+        return None
+
+    @staticmethod
+    def text_for_squadron(squadron: Squadron) -> str:
+        """Returns the text that should be displayed for the squadron."""
+        return squadron.name
+
+    @staticmethod
+    def icon_for_squadron(_squadron: Squadron) -> Optional[QIcon]:
+        """Returns the icon that should be displayed for the squadron."""
+        return None
+
+    def squadron_at_index(self, index: QModelIndex) -> Squadron:
+        """Returns the squadron located at the given index."""
+        return self.game_model.game.air_wing_for(self.player).squadron_at_index(
+            index.row()
+        )
+
+
+class SquadronModel(QAbstractListModel):
+    """The model for a squadron."""
+
+    PilotRole = Qt.UserRole
+
+    def __init__(self, squadron: Squadron) -> None:
+        super().__init__()
+        self.squadron = squadron
+
+    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
+        return self.squadron.size
+
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
+        if not index.isValid():
+            return None
+        pilot = self.pilot_at_index(index)
+        if role == Qt.DisplayRole:
+            return self.text_for_pilot(pilot)
+        if role == Qt.DecorationRole:
+            return self.icon_for_pilot(pilot)
+        elif role == SquadronModel.PilotRole:
+            return pilot
+        return None
+
+    @staticmethod
+    def text_for_pilot(pilot: Pilot) -> str:
+        """Returns the text that should be displayed for the pilot."""
+        return pilot.name
+
+    @staticmethod
+    def icon_for_pilot(_pilot: Pilot) -> Optional[QIcon]:
+        """Returns the icon that should be displayed for the pilot."""
+        return None
+
+    def pilot_at_index(self, index: QModelIndex) -> Pilot:
+        """Returns the pilot located at the given index."""
+        return self.squadron.pilot_at_index(index.row())
+
+
 class GameModel:
     """A model for the Game object.
 
@@ -376,6 +458,7 @@ class GameModel:
     def __init__(self, game: Optional[Game]) -> None:
         self.game: Optional[Game] = game
         self.transfer_model = TransferModel(self)
+        self.blue_air_wing_model = AirWingModel(self, player=True)
         if self.game is None:
             self.ato_model = AtoModel(self, AirTaskingOrder())
             self.red_ato_model = AtoModel(self, AirTaskingOrder())
