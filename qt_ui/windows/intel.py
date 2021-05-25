@@ -164,7 +164,8 @@ class IntelWindow(QDialog):
 
         # Add the new layout
         own_faction = QCheckBox("Enemy Info")
+        own_faction.setChecked(not self.player)
         own_faction.stateChanged.connect(self.on_faction_changed)
 
         self.layout().addWidget(own_faction)
-        self.layout().addWidget(IntelTabs(self.game, self.player))
+        self.layout().addWidget(IntelTabs(self.game, self.player), stretch=1)
