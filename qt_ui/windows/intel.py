@@ -1,5 +1,5 @@
 import itertools
-from PySide2.QtCore import Signal
+
 from PySide2.QtWidgets import (
     QCheckBox,
     QDialog,
