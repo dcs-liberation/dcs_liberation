@@ -9,10 +9,8 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
 * **[Campaign]** Non-control point FOBs will no longer spawn.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
-* **[Campaign AI]** Fix purchase of aircraft by priority (the faction's list was being used as the priority list rather than the game's).
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP. 
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
-* **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
 * **[Flight Planner]** Planned airspeed increased to 0.85 mach for supersonic airframes and 85% of max speed for subsonic.
@@ -34,10 +32,13 @@ Saves from 2.5 are not compatible with 3.0.
 
 ## Fixes
 
+* **[Campaign AI]** Fix purchase of aircraft by priority (the faction's list was being used as the priority list rather than the game's).
 * **[Campaign AI]** Fixed bug causing AI to over-purchase cheap aircraft.
 * **[Campaign AI]** Auto planner will no longer attempt to plan missions for which the faction has no compatible aircraft.
 * **[Campaign AI]** Stop purchasing aircraft after the first unaffordable package to attempt to complete more packages rather than filling airfields with cheap escorts that will never be used.
 * **[Campaign]** Fixed bug where offshore strike locations were being used to spawn ship objectives.
+* **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
+* **[Flight Planner]** AI BAI/DEAD/SEAD flights now have tasks to attack all groups at the target location, not just the primary group (for multi-group SAM sites).
 
 # 2.5.1
 

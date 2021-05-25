@@ -1737,29 +1737,32 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
 
         # TODO: Add common "UnitGroupTarget" base type.
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            group_name = target_group.group_name
-        elif isinstance(target_group, MultiGroupTransport):
-            group_name = target_group.name
+        group_names = []
+        target = self.package.target
+        if isinstance(target, TheaterGroundObject):
+            for group in target.groups:
+                group_names.append(group.name)
+        elif isinstance(target, MultiGroupTransport):
+            group_names.append(target.name)
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",
-                target_group.__class__.__name__,
+                target.__class__.__name__,
             )
             return waypoint
 
-        group = self.mission.find_group(group_name)
-        if group is None:
-            logging.error("Could not find group for BAI mission %s", group_name)
-            return waypoint
+        for group_name in group_names:
+            group = self.mission.find_group(group_name)
+            if group is None:
+                logging.error("Could not find group for BAI mission %s", group_name)
+                continue
 
-        task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
-        task.params["attackQtyLimit"] = False
-        task.params["directionEnabled"] = False
-        task.params["altitudeEnabled"] = False
-        task.params["groupAttack"] = True
-        waypoint.tasks.append(task)
+            task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
@@ -1796,23 +1799,29 @@ class CasIngressBuilder(PydcsWaypointBuilder):
 class DeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name)
-            if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
-                task.params["expend"] = "All"
-                task.params["attackQtyLimit"] = False
-                task.params["directionEnabled"] = False
-                task.params["altitudeEnabled"] = False
-                task.params["groupAttack"] = True
-                waypoint.tasks.append(task)
-            else:
-                logging.error(
-                    f"Could not find group for DEAD mission {target_group.group_name}"
-                )
         self.register_special_waypoints(self.waypoint.targets)
+
+        target = self.package.target
+        if not isinstance(target, TheaterGroundObject):
+            logging.error(
+                "Unexpected target type for DEAD mission: %s",
+                target.__class__.__name__,
+            )
+            return waypoint
+
+        for group in target.groups:
+            miz_group = self.mission.find_group(group.name)
+            if miz_group is None:
+                logging.error(f"Could not find group for DEAD mission {group.name}")
+                continue
+
+            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
+            task.params["expend"] = "All"
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
@@ -1864,23 +1873,29 @@ class OcaRunwayIngressBuilder(PydcsWaypointBuilder):
 class SeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name)
-            if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
-                task.params["expend"] = "All"
-                task.params["attackQtyLimit"] = False
-                task.params["directionEnabled"] = False
-                task.params["altitudeEnabled"] = False
-                task.params["groupAttack"] = True
-                waypoint.tasks.append(task)
-            else:
-                logging.error(
-                    f"Could not find group for SEAD mission {target_group.group_name}"
-                )
         self.register_special_waypoints(self.waypoint.targets)
+
+        target = self.package.target
+        if not isinstance(target, TheaterGroundObject):
+            logging.error(
+                "Unexpected target type for SEAD mission: %s",
+                target.__class__.__name__,
+            )
+            return waypoint
+
+        for group in target.groups:
+            miz_group = self.mission.find_group(group.name)
+            if miz_group is None:
+                logging.error(f"Could not find group for SEAD mission {group.name}")
+                continue
+
+            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Guided)
+            task.params["expend"] = "All"
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
