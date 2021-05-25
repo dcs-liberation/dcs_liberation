@@ -36,7 +36,7 @@ from dcs.unittype import FlyingType
 from tabulate import tabulate
 
 from game.data.alic import AlicCodes
-from game.db import find_unittype, unit_type_from_name
+from game.db import unit_type_from_name
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
 from game.utils import meters
@@ -298,9 +298,7 @@ class BriefingPage(KneeboardPage):
             headers=["#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"],
         )
 
-        writer.text(
-            f"Bullseye: {self.format_ll(self.bullseye.to_lat_lon(self.theater))}"
-        )
+        writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")
 
         writer.table(
             [
@@ -507,7 +505,7 @@ class SeadTaskPage(KneeboardPage):
         ll = self.theater.point_to_ll(unit.position)
         unit_type = unit_type_from_name(unit.type)
         name = unit.name if unit_type is None else unit_type.name
-        return [name, self.alic_for(unit), self.format_ll(ll)]
+        return [name, self.alic_for(unit), ll.format_dms(include_decimal_seconds=True)]
 
 
 class StrikeTaskPage(KneeboardPage):
@@ -546,7 +544,11 @@ class StrikeTaskPage(KneeboardPage):
 
     def target_info_row(self, target: NumberedWaypoint) -> List[str]:
         ll = self.theater.point_to_ll(target.waypoint.position)
-        return [str(target.number), target.waypoint.pretty_name, self.format_ll(ll)]
+        return [
+            str(target.number),
+            target.waypoint.pretty_name,
+            ll.format_dms(include_decimal_seconds=True),
+        ]
 
 
 class KneeboardGenerator(MissionInfoGenerator):
