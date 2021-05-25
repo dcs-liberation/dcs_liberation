@@ -253,7 +253,7 @@ class AirliftPlanner:
 
         flight = Flight(
             self.package,
-            self.game.player_country,
+            self.game.country_for(inventory.control_point.captured),
             unit_type,
             flight_size,
             FlightType.TRANSPORT,

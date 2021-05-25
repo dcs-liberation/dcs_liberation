@@ -205,6 +205,11 @@ class Game:
             return self.player_faction
         return self.enemy_faction
 
+    def country_for(self, player: bool) -> str:
+        if player:
+            return self.player_country
+        return self.enemy_country
+
     def bullseye_for(self, player: bool) -> Bullseye:
         if player:
             return self.blue_bullseye
