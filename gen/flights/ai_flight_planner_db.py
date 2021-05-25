@@ -396,7 +396,7 @@ AEWC_CAPABLE = [
 
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
     elif task == FlightType.ANTISHIP:
