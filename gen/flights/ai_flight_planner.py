@@ -982,7 +982,9 @@ class CoalitionMissionPlanner:
                     logging.error(f"Could not determine mission end time for {package}")
                     continue
                 previous_cap_end_time[package.target] = departure_time
-            elif not package.auto_asap:
+            elif package.auto_asap:
+                package.set_tot_asap()
+            else:
                 # But other packages should be spread out a bit. Note that take
                 # times are delayed, but all aircraft will become active at
                 # mission start. This makes it more worthwhile to attack enemy
