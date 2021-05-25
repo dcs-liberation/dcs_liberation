@@ -7,7 +7,7 @@ from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from dcs.unittype import FlyingType, VehicleType
 
-from game import db
+from game import db, vehicles_filter_and_cost_calculator
 import game
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
@@ -23,8 +23,6 @@ from gen.ground_forces.ai_ground_planner_db import (
     TYPE_SHORAD,
     TYPE_TANKS,
 )
-
-from game import dic_filter
 
 if TYPE_CHECKING:
     from game import Game
@@ -66,7 +64,9 @@ class ProcurementAi:
         self.manage_aircraft = manage_aircraft
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
-        self.filter = dic_filter.dic_analyser()
+        self.filter = (
+            vehicles_filter_and_cost_calculator.vehicles_filter_and_cost_calculator()
+        )
 
     def spend_budget(
         self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
@@ -127,7 +127,7 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-        self, budget: int, vehicle_type
+        self, budget: int, vehicle_types: List[Type[VehicleType]]
     ) -> Optional[Type[VehicleType]]:
         affordable_units = [
             u
@@ -135,7 +135,7 @@ class ProcurementAi:
             if db.PRICES[u] <= budget
         ]
 
-        for unit in [u for u in affordable_units if u not in vehicle_type]:
+        for unit in [u for u in affordable_units if u not in vehicle_types]:
             affordable_units.remove(unit)
 
         if not affordable_units:
@@ -152,9 +152,7 @@ class ProcurementAi:
         if not frontline_controlpoints:
             return ground_unit_budget
 
-        budget_for_each_controlpoint = int(
-            ground_unit_budget / len(frontline_controlpoints)
-        )
+        budget_for_each_controlpoint = ground_unit_budget / len(frontline_controlpoints)
 
         ground_unit_budget = 0
         for cp in frontline_controlpoints:
@@ -166,7 +164,7 @@ class ProcurementAi:
 
     def buy_groundUnits_for_controlpoint(
         self,
-        budget_for_each_controlpoint: int,
+        budget_for_each_controlpoint: float,
         cp: ControlPoint,
     ):
         cp_priorityList = self.calculate_vehicle_investment_ratio(cp)
@@ -178,8 +176,8 @@ class ProcurementAi:
         return budget_for_each_controlpoint
 
     def buy_ground_units(
-        self, budget: int, priority_list: List[Tuple[List, int]], cp: ControlPoint
-    ) -> int:
+        self, budget: float, priority_list: List[Tuple[List, int]], cp: ControlPoint
+    ) -> float:
         ratio_all_units: int = 0
         for item in priority_list:
             ratio_all_units += item[1]

@@ -45,11 +45,6 @@ class Settings:
         ground_forces_procurement_ratio.ground_forces_procurement_raito()
     )
 
-    #: Feature flag for new ground unit behavior. Old campaigns are will not work with
-    #: this so the old behavior remains an option until it breaks, at which point we'll
-    #: remove it.
-    enable_new_ground_unit_recruitment: bool = True
-
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True

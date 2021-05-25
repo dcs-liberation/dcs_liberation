@@ -4,7 +4,7 @@ from dcs.unittype import VehicleType
 import logging
 
 
-class dic_analyser:
+class vehicles_filter_and_cost_calculator:
     def get_all_vehicletype_from_dic(
         self, vehicle_list: Dict[Type[VehicleType], int], vehicle_type: list
     ) -> List[Type[VehicleType]]:

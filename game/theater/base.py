@@ -32,10 +32,6 @@ class Base:
         self.strength = 1
 
     @property
-    def total_shorad_cost(self) -> int:
-        return sum([v for k, v in self.armor.items() if k in TYPE_SHORAD])
-
-    @property
     def total_aircraft(self) -> int:
         return sum(self.aircraft.values())
 
