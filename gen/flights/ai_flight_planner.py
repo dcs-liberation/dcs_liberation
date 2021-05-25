@@ -109,6 +109,8 @@ class ProposedMission:
     #: The proposed flights that are required for the mission.
     flights: List[ProposedFlight]
 
+    asap: bool = field(default=False)
+
     def __str__(self) -> str:
         flights = ", ".join([str(f) for f in self.flights])
         return f"{self.location.name}: {flights}"
@@ -183,11 +185,12 @@ class PackageBuilder:
         is_player: bool,
         package_country: str,
         start_type: str,
+        asap: bool,
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
         self.package_country = package_country
-        self.package = Package(location)
+        self.package = Package(location, auto_asap=asap)
         self.allocator = AircraftAllocator(
             closest_airfields, global_inventory, is_player
         )
@@ -571,7 +574,10 @@ class CoalitionMissionPlanner:
         cp = self.objective_finder.farthest_friendly_control_point()
         if cp is not None:
             yield ProposedMission(
-                cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+                cp,
+                [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
+                # Supports all the early CAP flights, so should be in the air ASAP.
+                asap=True,
             )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
@@ -857,6 +863,7 @@ class CoalitionMissionPlanner:
             self.is_player,
             package_country,
             self.game.settings.default_start_type,
+            mission.asap,
         )
 
         # Attempt to plan all the main elements of the mission first. Escorts
@@ -975,7 +982,7 @@ class CoalitionMissionPlanner:
                     logging.error(f"Could not determine mission end time for {package}")
                     continue
                 previous_cap_end_time[package.target] = departure_time
-            else:
+            elif not package.auto_asap:
                 # But other packages should be spread out a bit. Note that take
                 # times are delayed, but all aircraft will become active at
                 # mission start. This makes it more worthwhile to attack enemy

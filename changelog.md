@@ -10,6 +10,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Non-control point FOBs will no longer spawn.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** Fix purchase of aircraft by priority (the faction's list was being used as the priority list rather than the game's).
+* **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP. 
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
