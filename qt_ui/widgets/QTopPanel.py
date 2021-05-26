@@ -244,9 +244,42 @@ class QTopPanel(QFrame):
             return True
         return False
 
+    def check_no_missing_pilots(self) -> bool:
+        missing_pilots = []
+        for package in self.game.blue_ato.packages:
+            for flight in package.flights:
+                if flight.missing_pilots > 0:
+                    missing_pilots.append((package, flight))
+
+        if not missing_pilots:
+            return False
+
+        formatted = "<br />".join(
+            [f"{p.primary_task} {p.target}: {f}" for p, f in missing_pilots]
+        )
+        mbox = QMessageBox(
+            QMessageBox.Critical,
+            "Flights are missing pilots",
+            (
+                "The following flights are missing one or more pilots:<br />"
+                "<br />"
+                f"{formatted}<br />"
+                "<br />"
+                "You must either assign pilots to those flights or cancel those "
+                "missions."
+            ),
+            parent=self,
+        )
+        mbox.setEscapeButton(mbox.addButton(QMessageBox.Close))
+        mbox.exec_()
+        return True
+
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
         if not self.ato_has_clients() and not self.confirm_no_client_launch():
+            return
+
+        if self.check_no_missing_pilots():
             return
 
         negative_starts = self.negative_start_packages()
