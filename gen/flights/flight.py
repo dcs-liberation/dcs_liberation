@@ -280,6 +280,10 @@ class Flight:
             self.squadron.return_pilot(current_pilot)
         self.pilots[index] = pilot
 
+    @property
+    def missing_pilots(self) -> int:
+        return len([p for p in self.pilots if p is None])
+
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)
         if self.custom_name:

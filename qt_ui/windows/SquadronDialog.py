@@ -18,7 +18,7 @@ from PySide2.QtWidgets import (
 )
 
 from game.squadrons import Pilot
-from qt_ui.delegate_helpers import painter_context
+from qt_ui.delegates import painter_context
 from qt_ui.models import SquadronModel
 
 

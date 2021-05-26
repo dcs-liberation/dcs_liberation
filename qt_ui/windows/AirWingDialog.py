@@ -18,7 +18,7 @@ from PySide2.QtWidgets import (
 )
 
 from game.squadrons import Squadron
-from qt_ui.delegate_helpers import painter_context
+from qt_ui.delegates import painter_context
 from qt_ui.models import GameModel, AirWingModel, SquadronModel
 from qt_ui.windows.SquadronDialog import SquadronDialog
 
