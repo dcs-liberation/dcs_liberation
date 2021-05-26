@@ -145,6 +145,7 @@ class IntelWindow(QDialog):
         self.setWindowTitle("Intelligence")
         self.setWindowIcon(ICONS["Statistics"])
         self.setMinimumSize(600, 500)
+        self.selected_intel_tab = 0
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -167,5 +168,14 @@ class IntelWindow(QDialog):
         own_faction.setChecked(not self.player)
         own_faction.stateChanged.connect(self.on_faction_changed)
 
+        intel_tabs = IntelTabs(self.game, self.player)
+        intel_tabs.currentChanged.connect(self.on_tab_changed)
+
+        if self.selected_intel_tab:
+            intel_tabs.setCurrentIndex(self.selected_intel_tab)
+
         self.layout().addWidget(own_faction)
-        self.layout().addWidget(IntelTabs(self.game, self.player), stretch=1)
+        self.layout().addWidget(intel_tabs, stretch=1)
+
+    def on_tab_changed(self, idx) -> None:
+        self.selected_intel_tab = idx
