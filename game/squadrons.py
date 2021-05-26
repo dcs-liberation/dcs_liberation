@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import itertools
+import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Type, Tuple, List, TYPE_CHECKING, Optional, Iterable
+from typing import Type, Tuple, List, TYPE_CHECKING, Optional, Iterable, Iterator
 
 import yaml
 from dcs.unittype import FlyingType
@@ -118,11 +119,14 @@ class AirWing:
 
         self.game = game
         self.player = player
-        self.squadrons = {
-            aircraft: [
+        self.squadrons: dict[Type[FlyingType], list[Squadron]] = {
+            aircraft: [] for aircraft in game.faction_for(player).aircrafts
+        }
+        for num, (aircraft, squadrons) in enumerate(self.squadrons.items()):
+            squadrons.append(
                 Squadron(
                     name=f"Squadron {num + 1:03}",
-                    nickname="The Unremarkable",
+                    nickname=self.random_nickname(),
                     role="Flying Squadron",
                     aircraft=aircraft,
                     mission_types=tuple(FlightType),
@@ -130,16 +134,47 @@ class AirWing:
                     game=game,
                     player=player,
                 )
-            ]
-            for num, aircraft in enumerate(game.faction_for(player).aircrafts)
-        }
+            )
 
     def squadron_for(self, aircraft: Type[FlyingType]) -> Squadron:
         return self.squadrons[aircraft][0]
 
+    def iter_squadrons(self) -> Iterator[Squadron]:
+        return itertools.chain.from_iterable(self.squadrons.values())
+
     def squadron_at_index(self, index: int) -> Squadron:
-        return list(itertools.chain.from_iterable(self.squadrons.values()))[index]
+        return list(self.iter_squadrons())[index]
 
     @property
     def size(self) -> int:
         return sum(len(s) for s in self.squadrons.values())
+
+    @staticmethod
+    def _make_random_nickname() -> str:
+        from gen.naming import ANIMALS
+
+        animal = random.choice(ANIMALS)
+        adjective = random.choice(
+            (
+                None,
+                "Red",
+                "Blue",
+                "Green",
+                "Golden",
+                "Black",
+                "Fighting",
+                "Flying",
+            )
+        )
+        if adjective is None:
+            return animal.title()
+        return f"{adjective} {animal}".title()
+
+    def random_nickname(self) -> str:
+        while True:
+            nickname = self._make_random_nickname()
+            for squadron in self.iter_squadrons():
+                if squadron.nickname == nickname:
+                    break
+            else:
+                return nickname
