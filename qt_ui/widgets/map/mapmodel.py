@@ -52,9 +52,9 @@ LeafletLatLon = List[float]
 
 def shapely_poly_to_leaflet_points(
     poly: Polygon, theater: ConflictTheater
-) -> Optional[List[LeafletLatLon]]:
+) -> List[LeafletLatLon]:
     if poly.is_empty:
-        return None
+        return []
     return [theater.point_to_ll(Point(x, y)).as_list() for x, y in poly.exterior.coords]
 
 
