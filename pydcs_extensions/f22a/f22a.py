@@ -2,12 +2,16 @@ from enum import Enum
 
 from dcs import task
 from dcs.planes import PlaneType
-from dcs.weapons_data import Weapons
+from dcs.weapons_data import Weapons, weapon_ids
 
 
 class F22AWeapons:
     AIM_9XX = {"clsid": "{AIM-9XX}", "name": "AIM-9XX", "weight": 85}
     AIM_120D = {"clsid": "{AIM-120D}", "name": "AIM-120D", "weight": 152}
+    Weapons.AIM_9XX = AIM_9XX
+    Weapons.AIM_120D = AIM_120D
+    weapon_ids["{AIM-9XX}"] = AIM_9XX
+    weapon_ids["{AIM-120D}"] = AIM_120D
 
 
 class F_22A(PlaneType):
