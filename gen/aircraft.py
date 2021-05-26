@@ -1958,7 +1958,10 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
         waypoint.tasks.append(
             EngageTargets(
                 max_distance=int(nautical_miles(50).meters),
-                targets=[Targets.All.Air.Planes.Fighters],
+                targets=[
+                    Targets.All.Air.Planes.Fighters,
+                    Targets.All.Air.Planes.MultiroleFighters,
+                ],
             )
         )
 
