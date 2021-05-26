@@ -8,6 +8,5 @@ def inject_weapons(weapon_class: Any) -> None:
         if key.startswith("__"):
             continue
         if isinstance(value, dict) and value.get("clsid"):
-            weapon_data = value
             setattr(Weapons, key, value)
-            weapon_ids[weapon_data["clsid"]] = value
+            weapon_ids[value["clsid"]] = value
