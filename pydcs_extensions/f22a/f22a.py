@@ -2,7 +2,7 @@ from enum import Enum
 
 from dcs import task
 from dcs.planes import PlaneType
-from dcs.weapons_data import Weapons, weapon_ids
+from dcs.weapons_data import Weapons
 
 from pydcs_extensions.weapon_injector import inject_weapons
 

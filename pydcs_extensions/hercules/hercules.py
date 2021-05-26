@@ -4,6 +4,8 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from pydcs_extensions.weapon_injector import inject_weapons
+
 
 class HerculesWeapons:
     GAU_23A_Chain_Gun__30mm_ = {
@@ -677,6 +679,9 @@ class HerculesWeapons:
         "name": "105mm Howitzer",
         "weight": 595.9426,
     }
+
+
+inject_weapons(HerculesWeapons)
 
 
 class Hercules(PlaneType):

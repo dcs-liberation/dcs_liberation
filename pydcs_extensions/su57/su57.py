@@ -4,6 +4,8 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from pydcs_extensions.weapon_injector import inject_weapons
+
 
 class Su57Weapons:
     Kh_59MK2 = {"clsid": "{KH_59MK2}", "name": "Kh-59MK2", "weight": None}
@@ -16,6 +18,9 @@ class Su57Weapons:
         "name": "Su-57 Fuel Tank",
         "weight": 1561.421,
     }
+
+
+inject_weapons(Su57Weapons)
 
 
 class Su_57(PlaneType):
