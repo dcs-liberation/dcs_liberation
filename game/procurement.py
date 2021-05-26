@@ -3,7 +3,8 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
+from dcs.terrain.thechannel import High_Halden
 
 from dcs.unittype import FlyingType, VehicleType
 
@@ -127,7 +128,7 @@ class ProcurementAi:
         return budget
 
     def random_affordable_ground_unit(
-        self, budget: int, vehicle_types: List[Type[VehicleType]]
+        self, budget: float, vehicle_types: List[Type[VehicleType]]
     ) -> Optional[Type[VehicleType]]:
         affordable_units = [
             u
@@ -140,6 +141,7 @@ class ProcurementAi:
 
         if not affordable_units:
             return None
+
         return random.choice(affordable_units)
 
     def reinforce_front_line(self, ground_unit_budget: float) -> float:
@@ -148,63 +150,59 @@ class ProcurementAi:
 
         # TODO: Attempt to transfer from reserves.
 
-        frontline_controlpoints = self.front_line_candidates()
-        if not frontline_controlpoints:
-            return ground_unit_budget
+        while ground_unit_budget > 0:
+            frontline_controlpoints: List[ControlPoint] = self.front_line_candidates()
+            if not frontline_controlpoints:
+                return ground_unit_budget
 
-        budget_for_each_controlpoint = ground_unit_budget / len(frontline_controlpoints)
+            cp_with_fewest_units: ControlPoint = frontline_controlpoints[0]
 
-        ground_unit_budget = 0
-        for cp in frontline_controlpoints:
-            ground_unit_budget += self.buy_groundUnits_for_controlpoint(
-                budget_for_each_controlpoint, cp
+            for cp in frontline_controlpoints:
+                if (
+                    cp.base.total_ground_units
+                    > cp_with_fewest_units.base.total_ground_units
+                ):
+                    cp_with_fewest_units = cp
+
+            groundunits_priority_list: List[
+                Tuple[List, float]
+            ] = self.calculate_vehicle_investment_ratio(cp_with_fewest_units)
+            # if no priority is found, buy a tank
+            most_needed_type = TYPE_TANKS
+            if groundunits_priority_list:
+                lowest_ratio: float = 99
+                for gu_priority in groundunits_priority_list:
+                    if gu_priority[1] < lowest_ratio:
+                        lowest_ratio = gu_priority[1]
+                        most_needed_type = gu_priority[0]
+
+            unit = self.buy_ground_unit(
+                ground_unit_budget, most_needed_type, cp_with_fewest_units
             )
+            if unit is None:
+                break
+
+            unit_price = db.PRICES[unit]
+            ground_unit_budget -= unit_price
+            cp_with_fewest_units.pending_unit_deliveries.order({unit: 1})
 
         return ground_unit_budget
 
-    def buy_groundUnits_for_controlpoint(
-        self,
-        budget_for_each_controlpoint: float,
-        cp: ControlPoint,
-    ):
-        cp_priorityList = self.calculate_vehicle_investment_ratio(cp)
+    def buy_ground_unit(
+        self, budget: float, vehicle_type: List[Type[VehicleType]], cp: ControlPoint
+    ) -> Optional[Type[VehicleType]]:
+        unit = self.random_affordable_ground_unit(budget, vehicle_type)
 
-        budget_for_each_controlpoint = self.buy_ground_units(
-            budget_for_each_controlpoint, cp_priorityList, cp
-        )
+        if unit is None:
+            # Can't afford any more units.
+            return None
 
-        return budget_for_each_controlpoint
-
-    def buy_ground_units(
-        self, budget: float, priority_list: List[Tuple[List, int]], cp: ControlPoint
-    ) -> float:
-        ratio_all_units: int = 0
-        for item in priority_list:
-            ratio_all_units += item[1]
-
-        for entry in priority_list:
-            # budget for each type of vehicle, now not as ratio but as concrete number to buy
-            budget_for_type = int(budget / ratio_all_units) * entry[1]
-
-            while budget_for_type > 0:
-                unit = self.random_affordable_ground_unit(budget_for_type, entry[0])
-
-                if unit is None:
-                    # Can't afford any more units.
-                    break
-
-                unit_price = db.PRICES[unit]
-                budget_for_type -= unit_price
-                budget -= unit_price
-                cp.pending_unit_deliveries.order({unit: 1})
-
-        # rest of budget
-        return budget
+        return unit
 
     def calculate_vehicle_investment_ratio(
         self, cp: ControlPoint
-    ) -> List[Tuple[List, int]]:
-        prioritylist: List[Tuple[List, int]] = []
+    ) -> List[Tuple[List, float]]:
+        prioritylist: List[Tuple[List, float]] = []
 
         tank_costs = self.calculate_investment_of_vehicleType(cp, TYPE_TANKS)
         atgm_costs = self.calculate_investment_of_vehicleType(cp, TYPE_ATGM)
@@ -257,16 +255,10 @@ class ProcurementAi:
             else:
                 current_ratio = tank_costs / costs_of_all_vehicles
                 if (
-                    int(current_ratio)
+                    current_ratio
                     < self.game.settings.ground_forces_procurement_ratio.tank_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_TANKS,
-                            self.game.settings.ground_forces_procurement_ratio.tank_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_TANKS, current_ratio))
 
         if faction_has_atgm_access:
             if costs_of_all_vehicles is 0:
@@ -282,13 +274,7 @@ class ProcurementAi:
                     int(current_ratio)
                     < self.game.settings.ground_forces_procurement_ratio.atgm_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_ATGM,
-                            self.game.settings.ground_forces_procurement_ratio.atgm_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_ATGM, current_ratio))
 
         if faction_has_ifv_access:
             if costs_of_all_vehicles is 0:
@@ -304,13 +290,7 @@ class ProcurementAi:
                     int(current_ratio)
                     < self.game.settings.ground_forces_procurement_ratio.ifv_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_IFV,
-                            self.game.settings.ground_forces_procurement_ratio.ifv_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_IFV, current_ratio))
 
         if faction_has_apc_access:
             if costs_of_all_vehicles is 0:
@@ -326,13 +306,7 @@ class ProcurementAi:
                     int(current_ratio)
                     < self.game.settings.ground_forces_procurement_ratio.apc_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_APC,
-                            self.game.settings.ground_forces_procurement_ratio.apc_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_APC, current_ratio))
 
         if faction_has_artillery_access:
             if costs_of_all_vehicles is 0:
@@ -348,13 +322,7 @@ class ProcurementAi:
                     int(current_ratio)
                     < self.game.settings.ground_forces_procurement_ratio.artillery_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_ARTILLERY,
-                            self.game.settings.ground_forces_procurement_ratio.artillery_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_ARTILLERY, current_ratio))
 
         if faction_has_shorad_access:
             if costs_of_all_vehicles is 0:
@@ -370,13 +338,7 @@ class ProcurementAi:
                     int(current_ratio)
                     < self.game.settings.ground_forces_procurement_ratio.shorad_ratio
                 ):
-                    prioritylist.append(
-                        (
-                            TYPE_SHORAD,
-                            self.game.settings.ground_forces_procurement_ratio.shorad_ratio
-                            - int(current_ratio),
-                        )
-                    )
+                    prioritylist.append((TYPE_SHORAD, current_ratio))
 
         return prioritylist
 
@@ -492,7 +454,10 @@ class ProcurementAi:
             if not cp.has_ground_unit_source(self.game):
                 continue
 
-            if self.total_ground_units_allocated_to(cp) >= 50:
+            if (
+                self.total_ground_units_allocated_to(cp)
+                >= self.game.settings.maximum_ground_units_in_base
+            ):
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:

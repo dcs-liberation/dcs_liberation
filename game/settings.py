@@ -53,6 +53,7 @@ class Settings:
     perf_moving_units: bool = True
     perf_infantry: bool = True
     perf_destroyed_units: bool = True
+    maximum_ground_units_in_base: int = 50
 
     # Performance culling
     perf_culling: bool = False

@@ -40,6 +40,10 @@ class Base:
         return sum(self.armor.values())
 
     @property
+    def total_ground_units(self) -> int:
+        return sum(self.armor.values()) + sum(self.aircraft.values())
+
+    @property
     def total_armor_value(self) -> int:
         total = 0
         for unit_type, count in self.armor.items():
