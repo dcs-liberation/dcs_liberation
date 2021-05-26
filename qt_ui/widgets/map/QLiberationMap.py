@@ -167,11 +167,6 @@ class LeafletMap(QWebEngineView, LiberationMap):
         )
         self.setPage(self.page)
 
-        self.loadFinished.connect(self.load_finished)
-
-    def load_finished(self) -> None:
-        self.page.runJavaScript(Path("resources/ui/map/map.js").read_text())
-
     def set_game(self, game: Optional[Game]) -> None:
         if game is None:
             self.map_model.clear()
