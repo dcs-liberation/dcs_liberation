@@ -177,5 +177,5 @@ class IntelWindow(QDialog):
         self.layout().addWidget(own_faction)
         self.layout().addWidget(intel_tabs, stretch=1)
 
-    def on_tab_changed(self, idx) -> None:
+    def on_tab_changed(self, idx: int) -> None:
         self.selected_intel_tab = idx
