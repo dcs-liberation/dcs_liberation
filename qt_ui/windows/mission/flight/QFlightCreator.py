@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from PySide2.QtCore import Qt, Signal
@@ -184,7 +185,14 @@ class QFlightCreator(QDialog):
             divert,
             custom_name=self.custom_name_text,
         )
-        flight.client_count = self.client_slots_spinner.value()
+        for pilot, idx in zip(flight.pilots, range(self.client_slots_spinner.value())):
+            if pilot is None:
+                logging.error(
+                    f"Cannot create client slot because {flight} has no pilot for "
+                    f"aircraft {idx}"
+                )
+                continue
+            pilot.player = True
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
