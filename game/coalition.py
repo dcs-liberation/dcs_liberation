@@ -150,6 +150,13 @@ class Coalition:
         # is handled correctly.
         self.transfers.perform_transfers()
 
+    def preinit_turn_0(self) -> None:
+        """Runs final Coalition initialization.
+
+        Final initialization occurs before Game.initialize_turn runs for turn 0.
+        """
+        self.air_wing.populate_for_turn_0()
+
     def initialize_turn(self) -> None:
         """Processes coalition-specific turn initialization.
 

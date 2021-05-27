@@ -101,9 +101,6 @@ class Squadron:
     settings: Settings = field(hash=False, compare=False)
 
     def __post_init__(self) -> None:
-        if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
-            raise ValueError("Squadrons can only be created with active pilots.")
-        self._recruit_pilots(self.settings.squadron_pilot_limit)
         self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
@@ -180,6 +177,11 @@ class Squadron:
         new_pilots.extend([Pilot(self.faker.name()) for _ in range(count)])
         self.current_roster.extend(new_pilots)
         self.available_pilots.extend(new_pilots)
+
+    def populate_for_turn_0(self) -> None:
+        if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
+            raise ValueError("Squadrons can only be created with active pilots.")
+        self._recruit_pilots(self.settings.squadron_pilot_limit)
 
     def replenish_lost_pilots(self) -> None:
         if not self.pilot_limits_enabled:
@@ -413,6 +415,10 @@ class AirWing:
 
     def squadron_at_index(self, index: int) -> Squadron:
         return list(self.iter_squadrons())[index]
+
+    def populate_for_turn_0(self) -> None:
+        for squadron in self.iter_squadrons():
+            squadron.populate_for_turn_0()
 
     def replenish(self) -> None:
         for squadron in self.iter_squadrons():

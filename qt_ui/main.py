@@ -246,7 +246,9 @@ def create_game(
             high_digit_sams=False,
         ),
     )
-    return generator.generate()
+    game = generator.generate()
+    game.begin_turn_0()
+    return game
 
 
 def lint_weapon_data() -> None:
