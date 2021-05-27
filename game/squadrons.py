@@ -85,8 +85,12 @@ class Squadron:
         return self.game.faker_for(self.player)
 
     @property
+    def active_pilots(self) -> list[Pilot]:
+        return [p for p in self.pilots if p.alive]
+
+    @property
     def size(self) -> int:
-        return len(self.pilots)
+        return len(self.active_pilots)
 
     def pilot_at_index(self, index: int) -> Pilot:
         return self.pilots[index]
