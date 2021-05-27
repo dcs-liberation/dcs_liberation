@@ -188,17 +188,20 @@ class QTopPanel(QFrame):
     def confirm_no_client_launch(self) -> bool:
         result = QMessageBox.question(
             self,
-            "Continue without client slots?",
+            "Continue without player pilots?",
             (
-                "No client slots have been created for players. Continuing will "
-                "allow the AI to perform the mission, but players will be unable "
-                "to participate.<br />"
+                "No player pilots have been assigned to flights. Continuing will allow "
+                "the AI to perform the mission, but players will be unable to "
+                "participate.<br />"
                 "<br />"
-                "To add client slots for players, select a package from the "
-                "Packages panel on the left of the main window, and then a flight "
-                "from the Flights panel below the Packages panel. The edit button "
-                "below the Flights panel will allow you to edit the number of "
-                "client slots in the flight. Each client slot allows one player.<br />"
+                "If you have not created any player pilots for the squadron you want "
+                "to fly for, open the Air Wing menu, double click the squadron, select "
+                'a pilot, then click "Convert to player".<br />'
+                "<br />"
+                "Next, select a package from the Packages panel on the left of the "
+                "main window, and then a flight from the Flights panel below the "
+                "Packages panel. The edit button below the Flights panel will allow "
+                "you to assign specific pilots to the flight.<br />"
                 "<br />Click 'Yes' to continue with an AI only mission"
                 "<br />Click 'No' if you'd like to make more changes."
             ),
