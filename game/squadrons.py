@@ -52,7 +52,7 @@ class Squadron:
     player: bool
 
     def __post_init__(self) -> None:
-        self.available_pilots = list(self.pilots)
+        self.available_pilots = list(self.active_pilots)
 
     def claim_available_pilot(self) -> Optional[Pilot]:
         if not self.available_pilots:
@@ -78,7 +78,7 @@ class Squadron:
         self.available_pilots.extend(new_pilots)
 
     def return_all_pilots(self) -> None:
-        self.available_pilots = list(self.pilots)
+        self.available_pilots = list(self.active_pilots)
 
     @property
     def faker(self) -> Faker:
