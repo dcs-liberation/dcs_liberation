@@ -33,7 +33,7 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
-from .settings import Settings
+from .settings import Settings, AutoAtoBehavior
 from .squadrons import Pilot, AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
@@ -408,8 +408,9 @@ class Game:
         self.transfers.plan_transports()
 
         with logged_duration("Mission planning"):
-            blue_planner = CoalitionMissionPlanner(self, is_player=True)
-            blue_planner.plan_missions()
+            if self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled:
+                blue_planner = CoalitionMissionPlanner(self, is_player=True)
+                blue_planner.plan_missions()
 
             red_planner = CoalitionMissionPlanner(self, is_player=False)
             red_planner.plan_missions()
