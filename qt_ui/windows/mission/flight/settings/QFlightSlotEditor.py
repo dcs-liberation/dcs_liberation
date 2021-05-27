@@ -1,7 +1,16 @@
 import logging
+from typing import Optional
 
 from PySide2.QtCore import Signal, QModelIndex
-from PySide2.QtWidgets import QLabel, QGroupBox, QSpinBox, QGridLayout, QComboBox
+from PySide2.QtWidgets import (
+    QLabel,
+    QGroupBox,
+    QSpinBox,
+    QGridLayout,
+    QComboBox,
+    QHBoxLayout,
+    QCheckBox,
+)
 
 from game import Game
 from game.squadrons import Pilot
@@ -21,8 +30,6 @@ class PilotSelector(QComboBox):
 
     @staticmethod
     def text_for(pilot: Pilot) -> str:
-        if pilot.player:
-            return f"{pilot.name} (player)"
         return pilot.name
 
     def _do_rebuild(self) -> None:
@@ -77,6 +84,51 @@ class PilotSelector(QComboBox):
         self.available_pilots_changed.emit()
 
 
+class PilotControls(QHBoxLayout):
+    def __init__(self, flight: Flight, idx: int) -> None:
+        super().__init__()
+        self.flight = flight
+        self.pilot_index = idx
+
+        self.selector = PilotSelector(flight, idx)
+        self.addWidget(self.selector)
+
+        self.player_checkbox = QCheckBox()
+        self.player_checkbox.setToolTip("Checked if this pilot is a player.")
+        self.addWidget(self.player_checkbox)
+
+        self.reset()
+        self.player_checkbox.toggled.connect(self.toggle_player_state)
+
+    @property
+    def pilot(self) -> Optional[Pilot]:
+        if self.pilot_index >= self.flight.count:
+            return None
+        return self.flight.pilots[self.pilot_index]
+
+    def toggle_player_state(self, checked: bool) -> None:
+        pilot = self.pilot
+        if pilot is None:
+            logging.error("Cannot toggle state of a pilot when none is selected")
+            return
+        pilot.player = checked
+
+    def reset(self, initial: bool = False) -> None:
+        if not initial:
+            self.selector.rebuild()
+        self.blockSignals(True)
+        try:
+            pilot = self.pilot
+            if pilot is None:
+                self.player_checkbox.setChecked(False)
+                self.player_checkbox.setEnabled(False)
+                return
+            self.player_checkbox.setEnabled(True)
+            self.player_checkbox.setChecked(self.pilot.player)
+        finally:
+            self.blockSignals(False)
+
+
 class QFlightSlotEditor(QGroupBox):
     def __init__(self, package_model: PackageModel, flight: Flight, game: Game):
         super().__init__("Slots")
@@ -105,18 +157,20 @@ class QFlightSlotEditor(QGroupBox):
         layout.addWidget(QLabel(str(self.flight.squadron)), 1, 1)
 
         layout.addWidget(QLabel("Assigned pilots:"), 2, 0)
-        self.pilot_selectors = []
+        self.pilot_controls = []
         for pilot_idx, row in enumerate(range(2, 6)):
-            selector = PilotSelector(self.flight, pilot_idx)
-            selector.available_pilots_changed.connect(self.reset_pilot_selectors)
-            self.pilot_selectors.append(selector)
-            layout.addWidget(selector, row, 1)
+            controls = PilotControls(self.flight, pilot_idx)
+            controls.selector.available_pilots_changed.connect(
+                self.reset_pilot_selectors
+            )
+            self.pilot_controls.append(controls)
+            layout.addLayout(controls, row, 1)
 
         self.setLayout(layout)
 
     def reset_pilot_selectors(self) -> None:
-        for selector in self.pilot_selectors:
-            selector.rebuild()
+        for controls in self.pilot_controls:
+            controls.reset()
 
     def _changed_aircraft_count(self):
         self.game.aircraft_inventory.return_from_flight(self.flight)
