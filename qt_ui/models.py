@@ -452,6 +452,12 @@ class SquadronModel(QAbstractListModel):
         """Returns the pilot located at the given index."""
         return self.squadron.pilot_at_index(index.row())
 
+    def toggle_ai_state(self, index: QModelIndex) -> None:
+        pilot = self.pilot_at_index(index)
+        self.beginResetModel()
+        pilot.player = not pilot.player
+        self.endResetModel()
+
 
 class GameModel:
     """A model for the Game object.
