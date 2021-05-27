@@ -398,8 +398,11 @@ class AirWingModel(QAbstractListModel):
         return squadron.name
 
     @staticmethod
-    def icon_for_squadron(_squadron: Squadron) -> Optional[QIcon]:
+    def icon_for_squadron(squadron: Squadron) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the squadron."""
+        name = db.unit_type_name(squadron.aircraft)
+        if name in AIRCRAFT_ICONS:
+            return QIcon(AIRCRAFT_ICONS[name])
         return None
 
     def squadron_at_index(self, index: QModelIndex) -> Squadron:

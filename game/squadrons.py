@@ -38,6 +38,7 @@ class Pilot:
 class Squadron:
     name: str
     nickname: str
+    country: str
     role: str
     aircraft: Type[FlyingType]
     mission_types: Tuple[FlightType, ...]
@@ -104,6 +105,7 @@ class Squadron:
         return Squadron(
             name=data["name"],
             nickname=data["nickname"],
+            country=game.country_for(player),
             role=data["role"],
             aircraft=unit_type,
             mission_types=tuple(FlightType.from_name(n) for n in data["mission_types"]),
@@ -127,6 +129,7 @@ class AirWing:
                 Squadron(
                     name=f"Squadron {num + 1:03}",
                     nickname=self.random_nickname(),
+                    country=game.country_for(player),
                     role="Flying Squadron",
                     aircraft=aircraft,
                     mission_types=tuple(FlightType),

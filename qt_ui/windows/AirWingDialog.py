@@ -4,6 +4,7 @@ from PySide2.QtCore import (
     QItemSelectionModel,
     QModelIndex,
     Qt,
+    QSize,
 )
 from PySide2.QtWidgets import (
     QAbstractItemView,
@@ -12,6 +13,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
+from game import db
 from game.squadrons import Squadron
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.models import GameModel, AirWingModel, SquadronModel
@@ -20,7 +22,7 @@ from qt_ui.windows.SquadronDialog import SquadronDialog
 
 class SquadronDelegate(TwoColumnRowDelegate):
     def __init__(self, air_wing_model: AirWingModel) -> None:
-        super().__init__(rows=2, columns=1, font_size=12)
+        super().__init__(rows=2, columns=2, font_size=12)
         self.air_wing_model = air_wing_model
 
     @staticmethod
@@ -28,9 +30,14 @@ class SquadronDelegate(TwoColumnRowDelegate):
         return index.data(AirWingModel.SquadronRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
-        if row == 0:
+        if (row, column) == (0, 0):
             return self.air_wing_model.data(index, Qt.DisplayRole)
-        elif row == 1:
+        elif (row, column) == (0, 1):
+            squadron = self.air_wing_model.data(index, AirWingModel.SquadronRole)
+            return db.unit_get_expanded_info(
+                squadron.country, squadron.aircraft, "name"
+            )
+        elif (row, column) == (1, 0):
             return self.squadron(index).nickname
         return ""
 
@@ -43,6 +50,7 @@ class SquadronList(QListView):
         self.air_wing_model = air_wing_model
         self.dialog: Optional[SquadronDialog] = None
 
+        self.setIconSize(QSize(91, 24))
         self.setItemDelegate(SquadronDelegate(self.air_wing_model))
         self.setModel(self.air_wing_model)
         self.selectionModel().setCurrentIndex(
