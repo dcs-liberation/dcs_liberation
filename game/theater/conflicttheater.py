@@ -22,7 +22,7 @@ from dcs.ships import (
     DDG_Arleigh_Burke_IIa,
     LHA_1_Tarawa,
 )
-from dcs.statics import Fortification
+from dcs.statics import Fortification, Warehouse
 from dcs.terrain import (
     caucasus,
     nevada,
@@ -127,6 +127,8 @@ class MizCampaignLoader:
     ARMOR_GROUP_UNIT_TYPE = Armor.MBT_M1A2_Abrams.id
 
     FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
+
+    AMMUNITION_DEPOT_UNIT_TYPE = Warehouse.Ammunition_depot.id
 
     REQUIRED_STRIKE_TARGET_UNIT_TYPE = Fortification.Tech_combine.id
 
@@ -318,6 +320,12 @@ class MizCampaignLoader:
     def factories(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type in self.FACTORY_UNIT_TYPE:
+                yield group
+
+    @property
+    def ammunition_depots(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.AMMUNITION_DEPOT_UNIT_TYPE:
                 yield group
 
     @property
@@ -556,6 +564,12 @@ class MizCampaignLoader:
         for group in self.factories:
             closest, distance = self.objective_info(group)
             closest.preset_locations.factories.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.ammunition_depots:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.ammunition_depots.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 

@@ -59,6 +59,9 @@ if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
 
+FREE_FRONTLINE_UNIT_SUPPLY: int = 15
+AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
+
 
 class ControlPointType(Enum):
     #: An airbase with slots for everything.
@@ -160,6 +163,9 @@ class PresetLocations:
 
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of ammo depots for controlling number of units on the front line at a control point.
+    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of stationary armor groups. These will always be spawned.
     armor_groups: List[PointWithHeading] = field(default_factory=list)
@@ -782,6 +788,20 @@ class ControlPoint(MissionTarget, ABC):
             raise ValueError
 
         return self.captured != other.captured
+
+    @property
+    def frontline_unit_count_limit(self) -> int:
+
+        tally_connected_ammo_depots = 0
+
+        for cp_objective in self.connected_objectives:
+            if cp_objective.category == "ammo" and not cp_objective.is_dead:
+                tally_connected_ammo_depots += 1
+
+        return (
+            FREE_FRONTLINE_UNIT_SUPPLY
+            + tally_connected_ammo_depots * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+        )
 
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
