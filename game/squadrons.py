@@ -112,6 +112,9 @@ class Squadron:
         if unit_type is None:
             raise KeyError(f"Could not find any aircraft with the ID {unit_type}")
 
+        pilots = [Pilot(n, player=False) for n in data.get("pilots", [])]
+        pilots.extend([Pilot(n, player=True) for n in data.get("players", [])])
+
         return Squadron(
             name=data["name"],
             nickname=data["nickname"],
@@ -120,7 +123,7 @@ class Squadron:
             aircraft=unit_type,
             livery=data.get("livery"),
             mission_types=tuple(FlightType.from_name(n) for n in data["mission_types"]),
-            pilots=[Pilot(n) for n in data.get("pilots", [])],
+            pilots=pilots,
             game=game,
             player=player,
         )
