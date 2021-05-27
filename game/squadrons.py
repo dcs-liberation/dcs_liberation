@@ -78,7 +78,7 @@ class Squadron:
         self.available_pilots.extend(new_pilots)
 
     def return_all_pilots(self) -> None:
-        self.available_pilots = self.pilots
+        self.available_pilots = list(self.pilots)
 
     @property
     def faker(self) -> Faker:
@@ -151,6 +151,10 @@ class AirWing:
 
     def squadron_at_index(self, index: int) -> Squadron:
         return list(self.iter_squadrons())[index]
+
+    def reset(self) -> None:
+        for squadron in self.iter_squadrons():
+            squadron.return_all_pilots()
 
     @property
     def size(self) -> int:

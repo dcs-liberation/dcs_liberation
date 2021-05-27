@@ -257,6 +257,7 @@ class PackageBuilder:
         flights = list(self.package.flights)
         for flight in flights:
             self.global_inventory.return_from_flight(flight)
+            flight.clear_roster()
             self.package.remove_flight(flight)
 
 

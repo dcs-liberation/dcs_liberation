@@ -239,6 +239,7 @@ class QNewPackageDialog(QPackageDialog):
         super().on_cancel()
         for flight in self.package_model.package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
+            flight.clear_roster()
 
 
 class QEditPackageDialog(QPackageDialog):

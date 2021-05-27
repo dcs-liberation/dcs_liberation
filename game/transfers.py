@@ -529,6 +529,7 @@ class PendingTransfers:
         flight = transport.flight
         flight.package.remove_flight(flight)
         self.game.aircraft_inventory.return_from_flight(flight)
+        flight.clear_roster()
 
     @cancel_transport.register
     def _cancel_transport_convoy(

@@ -167,6 +167,7 @@ class PackageModel(QAbstractListModel):
         if flight.cargo is not None:
             flight.cargo.transport = None
         self.game_model.game.aircraft_inventory.return_from_flight(flight)
+        flight.clear_roster()
         self.package.remove_flight(flight)
         self.endRemoveRows()
         self.update_tot()
@@ -259,6 +260,7 @@ class AtoModel(QAbstractListModel):
         self.ato.remove_package(package)
         for flight in package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
+            flight.clear_roster()
             if flight.cargo is not None:
                 flight.cargo.transport = None
         self.endRemoveRows()

@@ -284,6 +284,9 @@ class Flight:
     def missing_pilots(self) -> int:
         return len([p for p in self.pilots if p is None])
 
+    def clear_roster(self) -> None:
+        self.squadron.return_pilots([p for p in self.pilots if p is not None])
+
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)
         if self.custom_name:

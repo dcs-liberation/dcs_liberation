@@ -387,6 +387,8 @@ class Game:
         # Update statistics
         self.game_stats.update(self)
 
+        self.blue_air_wing.reset()
+        self.red_air_wing.reset()
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
             self.aircraft_inventory.set_from_control_point(cp)
