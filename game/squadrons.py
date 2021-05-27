@@ -13,6 +13,7 @@ from dcs.unittype import FlyingType
 from faker import Faker
 
 from game.db import flying_type_from_name
+from game.settings import AutoAtoBehavior
 
 if TYPE_CHECKING:
     from game import Game
@@ -61,7 +62,35 @@ class Squadron:
         return f'{self.name} "{self.nickname}"'
 
     def claim_available_pilot(self) -> Optional[Pilot]:
+        # No pilots available, so the preference is irrelevant. Create a new pilot and
+        # return it.
         if not self.available_pilots:
+            self.enlist_new_pilots(1)
+            return self.available_pilots.pop()
+
+        # For opfor, so player/AI option is irrelevant.
+        if not self.player:
+            return self.available_pilots.pop()
+
+        preference = self.game.settings.auto_ato_behavior
+
+        # No preference, so the first pilot is fine.
+        if preference is AutoAtoBehavior.Default:
+            return self.available_pilots.pop()
+
+        prefer_players = preference is AutoAtoBehavior.Prefer
+        for pilot in self.available_pilots:
+            if pilot.player == prefer_players:
+                self.available_pilots.remove(pilot)
+                return pilot
+
+        # No pilot was found that matched the user's preference.
+        #
+        # If they chose to *never* assign players and only players remain in the pool,
+        # we cannot fill the slot with the available pilots. Recruit a new one.
+        #
+        # If they prefer players and we're out of players, just return an AI pilot.
+        if not prefer_players:
             self.enlist_new_pilots(1)
         return self.available_pilots.pop()
 
