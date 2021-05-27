@@ -138,6 +138,23 @@ class Event:
             cp.base.aircraft[aircraft] -= 1
 
     @staticmethod
+    def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
+        for package in ato.packages:
+            for flight in package.flights:
+                for idx, pilot in enumerate(flight.pilots):
+                    if pilot is None:
+                        logging.error(
+                            f"Cannot award experience to pilot #{idx} of {flight} "
+                            "because no pilot is assigned"
+                        )
+                        continue
+                    pilot.record.missions_flown += 1
+
+    def commit_pilot_experience(self) -> None:
+        self._commit_pilot_experience(self.game.blue_ato)
+        self._commit_pilot_experience(self.game.red_ato)
+
+    @staticmethod
     def commit_front_line_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.front_line_losses:
             unit_type = loss.unit_type
@@ -250,6 +267,7 @@ class Event:
         logging.info("Committing mission results")
 
         self.commit_air_losses(debriefing)
+        self.commit_pilot_experience()
         self.commit_front_line_losses(debriefing)
         self.commit_convoy_losses(debriefing)
         self.commit_airlift_losses(debriefing)

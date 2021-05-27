@@ -17,7 +17,7 @@ from qt_ui.models import SquadronModel
 
 class PilotDelegate(TwoColumnRowDelegate):
     def __init__(self, squadron_model: SquadronModel) -> None:
-        super().__init__(rows=2, columns=1, font_size=12)
+        super().__init__(rows=2, columns=2, font_size=12)
         self.squadron_model = squadron_model
 
     @staticmethod
@@ -25,9 +25,13 @@ class PilotDelegate(TwoColumnRowDelegate):
         return index.data(SquadronModel.PilotRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
-        if row == 0:
+        if (row, column) == (0, 0):
             return self.squadron_model.data(index, Qt.DisplayRole)
-        elif row == 1:
+        elif (row, column) == (0, 1):
+            flown = self.pilot(index).record.missions_flown
+            missions = "missions" if flown != 1 else "mission"
+            return f"{flown} {missions} flown"
+        elif (row, column) == (1, 0):
             return "Alive" if self.pilot(index).alive else "Dead"
         return ""
 
