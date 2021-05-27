@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import itertools
+import logging
 import random
+from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Type, Tuple, List, TYPE_CHECKING, Optional, Iterable, Iterator
@@ -54,6 +56,9 @@ class Squadron:
     def __post_init__(self) -> None:
         self.available_pilots = list(self.active_pilots)
 
+    def __str__(self) -> str:
+        return f'{self.name} "{self.nickname}"'
+
     def claim_available_pilot(self) -> Optional[Pilot]:
         if not self.available_pilots:
             self.enlist_new_pilots(1)
@@ -100,7 +105,7 @@ class Squadron:
         from gen.flights.flight import FlightType
 
         with path.open() as squadron_file:
-            data = yaml.load(squadron_file)
+            data = yaml.safe_load(squadron_file)
 
         unit_type = flying_type_from_name(data["aircraft"])
         if unit_type is None:
@@ -109,7 +114,7 @@ class Squadron:
         return Squadron(
             name=data["name"],
             nickname=data["nickname"],
-            country=game.country_for(player),
+            country=data["country"],
             role=data["role"],
             aircraft=unit_type,
             mission_types=tuple(FlightType.from_name(n) for n in data["mission_types"]),
@@ -119,19 +124,78 @@ class Squadron:
         )
 
 
+class SquadronLoader:
+    def __init__(self, game: Game, player: bool) -> None:
+        self.game = game
+        self.player = player
+
+    @staticmethod
+    def squadron_directories() -> Iterator[Path]:
+        from game import persistency
+
+        yield Path(persistency.base_path()) / "Liberation/Squadrons"
+        yield Path("resources/squadrons")
+
+    def load(self) -> dict[Type[FlyingType], list[Squadron]]:
+        squadrons: dict[Type[FlyingType], list[Squadron]] = defaultdict(list)
+        country = self.game.country_for(self.player)
+        faction = self.game.faction_for(self.player)
+        any_country = country.startswith("Combined Joint Task Forces ")
+        for directory in self.squadron_directories():
+            for path, squadron in self.load_squadrons_from(directory):
+                if not any_country and squadron.country != country:
+                    logging.debug(
+                        "Not using squadron for non-matching country (is "
+                        f"{squadron.country}, need {country}: {path}"
+                    )
+                    continue
+                if squadron.aircraft not in faction.aircrafts:
+                    logging.debug(
+                        f"Not using squadron because {faction.name} cannot use "
+                        f"{squadron.aircraft}: {path}"
+                    )
+                    continue
+                logging.debug(
+                    f"Found {squadron.name} {squadron.aircraft} {squadron.role} "
+                    f"compatible with {faction.name}"
+                )
+                squadrons[squadron.aircraft].append(squadron)
+        # Convert away from defaultdict because defaultdict doesn't unpickle so we don't
+        # want it in the save state.
+        return dict(squadrons)
+
+    def load_squadrons_from(self, directory: Path) -> Iterator[Tuple[Path, Squadron]]:
+        logging.debug(f"Looking for factions in {directory}")
+        # First directory level is the aircraft type so that historical squadrons that
+        # have flown multiple airframes can be defined as many times as needed. The main
+        # load() method is responsible for filtering out squadrons that aren't
+        # compatible with the faction.
+        for squadron_path in directory.glob("*/*.yaml"):
+            try:
+                yield squadron_path, Squadron.from_yaml(
+                    squadron_path, self.game, self.player
+                )
+            except Exception as ex:
+                raise RuntimeError(
+                    f"Failed to load squadron defined by {squadron_path}"
+                ) from ex
+
+
 class AirWing:
     def __init__(self, game: Game, player: bool) -> None:
         from gen.flights.flight import FlightType
 
         self.game = game
         self.player = player
-        self.squadrons: dict[Type[FlyingType], list[Squadron]] = {
-            aircraft: [] for aircraft in game.faction_for(player).aircrafts
-        }
-        for num, (aircraft, squadrons) in enumerate(self.squadrons.items()):
-            squadrons.append(
+        self.squadrons = SquadronLoader(game, player).load()
+
+        count = itertools.count(1)
+        for aircraft in game.faction_for(player).aircrafts:
+            if aircraft in self.squadrons:
+                continue
+            self.squadrons[aircraft] = [
                 Squadron(
-                    name=f"Squadron {num + 1:03}",
+                    name=f"Squadron {next(count):03}",
                     nickname=self.random_nickname(),
                     country=game.country_for(player),
                     role="Flying Squadron",
@@ -141,7 +205,7 @@ class AirWing:
                     game=game,
                     player=player,
                 )
-            )
+            ]
 
     def squadron_for(self, aircraft: Type[FlyingType]) -> Squadron:
         return self.squadrons[aircraft][0]

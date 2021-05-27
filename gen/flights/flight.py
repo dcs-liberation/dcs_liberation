@@ -74,9 +74,9 @@ class FlightType(Enum):
 
     @classmethod
     def from_name(cls, name: str) -> FlightType:
-        for value in cls:
-            if name == value:
-                return value
+        for entry in cls:
+            if name == entry.value:
+                return entry
         raise KeyError(f"No FlightType with name {name}")
 
 

@@ -68,7 +68,7 @@ class SquadronDialog(QDialog):
         self.squadron_model = squadron_model
 
         self.setMinimumSize(1000, 440)
-        self.setWindowTitle(squadron_model.squadron.name)
+        self.setWindowTitle(str(squadron_model.squadron))
         # TODO: self.setWindowIcon()
 
         layout = QVBoxLayout()

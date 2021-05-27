@@ -397,7 +397,7 @@ class AirWingModel(QAbstractListModel):
     @staticmethod
     def text_for_squadron(squadron: Squadron) -> str:
         """Returns the text that should be displayed for the squadron."""
-        return squadron.name
+        return str(squadron)
 
     @staticmethod
     def icon_for_squadron(squadron: Squadron) -> Optional[QIcon]:

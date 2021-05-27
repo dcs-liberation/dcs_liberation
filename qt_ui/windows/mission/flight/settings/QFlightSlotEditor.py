@@ -102,7 +102,7 @@ class QFlightSlotEditor(QGroupBox):
         layout.addWidget(self.aircraft_count_spinner, 0, 1)
 
         layout.addWidget(QLabel("Squadron:"), 1, 0)
-        layout.addWidget(QLabel(self.flight.squadron.name), 1, 1)
+        layout.addWidget(QLabel(str(self.flight.squadron)), 1, 1)
 
         layout.addWidget(QLabel("Assigned pilots:"), 2, 0)
         self.pilot_selectors = []
