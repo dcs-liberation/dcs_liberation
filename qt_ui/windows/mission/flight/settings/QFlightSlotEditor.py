@@ -4,6 +4,7 @@ from PySide2.QtCore import Signal, QModelIndex
 from PySide2.QtWidgets import QLabel, QGroupBox, QSpinBox, QGridLayout, QComboBox
 
 from game import Game
+from game.squadrons import Pilot
 from gen.flights.flight import Flight
 from qt_ui.models import PackageModel
 
@@ -18,6 +19,12 @@ class PilotSelector(QComboBox):
 
         self.rebuild(initial_build=True)
 
+    @staticmethod
+    def text_for(pilot: Pilot) -> str:
+        if pilot.player:
+            return f"{pilot.name} (player)"
+        return pilot.name
+
     def _do_rebuild(self) -> None:
         self.clear()
         if self.pilot_index >= self.flight.count:
@@ -31,12 +38,13 @@ class PilotSelector(QComboBox):
         current_pilot = self.flight.pilots[self.pilot_index]
         if current_pilot is not None:
             choices.append(current_pilot)
-        for pilot in sorted(choices, key=lambda p: p.name):
-            self.addItem(pilot.name, pilot)
+        # Put players first, otherwise alphabetically.
+        for pilot in sorted(choices, key=lambda p: (not p.player, p.name)):
+            self.addItem(self.text_for(pilot), pilot)
         if current_pilot is None:
             self.setCurrentText("Unassigned")
             return
-        self.setCurrentText(current_pilot.name)
+        self.setCurrentText(self.text_for(current_pilot))
         self.currentIndexChanged.connect(self.replace_pilot)
 
     def rebuild(self, initial_build: bool = False) -> None:
@@ -90,29 +98,15 @@ class QFlightSlotEditor(QGroupBox):
         self.aircraft_count_spinner.setValue(flight.count)
         self.aircraft_count_spinner.valueChanged.connect(self._changed_aircraft_count)
 
-        self.client_count = QLabel("Client slots count:")
-        self.client_count_spinner = QSpinBox()
-        self.client_count_spinner.setMinimum(0)
-        self.client_count_spinner.setMaximum(max_count)
-        self.client_count_spinner.setValue(flight.client_count)
-        self.client_count_spinner.valueChanged.connect(self._changed_client_count)
-
-        if not self.flight.unit_type.flyable:
-            self.client_count_spinner.setValue(0)
-            self.client_count_spinner.setEnabled(False)
-
         layout.addWidget(self.aircraft_count, 0, 0)
         layout.addWidget(self.aircraft_count_spinner, 0, 1)
 
-        layout.addWidget(self.client_count, 1, 0)
-        layout.addWidget(self.client_count_spinner, 1, 1)
+        layout.addWidget(QLabel("Squadron:"), 1, 0)
+        layout.addWidget(QLabel(self.flight.squadron.name), 1, 1)
 
-        layout.addWidget(QLabel("Squadron:"), 2, 0)
-        layout.addWidget(QLabel(self.flight.squadron.name), 2, 1)
-
-        layout.addWidget(QLabel("Assigned pilots:"), 3, 0)
+        layout.addWidget(QLabel("Assigned pilots:"), 2, 0)
         self.pilot_selectors = []
-        for pilot_idx, row in enumerate(range(3, 7)):
+        for pilot_idx, row in enumerate(range(2, 6)):
             selector = PilotSelector(self.flight, pilot_idx)
             selector.available_pilots_changed.connect(self.reset_pilot_selectors)
             self.pilot_selectors.append(selector)
@@ -143,15 +137,4 @@ class QFlightSlotEditor(QGroupBox):
             return
 
         self.flight.resize(new_count)
-        self._cap_client_count()
         self.reset_pilot_selectors()
-
-    def _changed_client_count(self):
-        self.flight.client_count = int(self.client_count_spinner.value())
-        self._cap_client_count()
-        self.package_model.update_tot()
-
-    def _cap_client_count(self):
-        if self.flight.client_count > self.flight.count:
-            self.flight.client_count = self.flight.count
-            self.client_count_spinner.setValue(self.flight.client_count)

@@ -751,6 +751,16 @@ class AircraftConflictGenerator:
         new_level = min(current_level + increase, len(levels) - 1)
         return levels[new_level]
 
+    def set_skill(self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool) -> None:
+        if pilot is None or not pilot.player:
+            unit.skill = self.skill_level_for(unit, pilot, blue)
+            return
+
+        if self.use_client:
+            unit.set_client()
+        else:
+            unit.set_player()
+
     def _setup_group(
         self,
         group: FlyingGroup,
@@ -777,28 +787,16 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = livery
 
-        num_clients = min(len(group.units), flight.client_count)
-        for idx in range(0, num_clients):
-            unit = group.units[idx]
-            if self.use_client:
-                unit.set_client()
-            else:
-                unit.set_player()
-
+        for unit, pilot in zip(group.units, flight.pilots):
+            player = pilot is not None and pilot.player
+            self.set_skill(unit, pilot, blue=flight.departure.captured)
             # Do not generate player group with late activation.
-            if group.late_activation:
+            if player and group.late_activation:
                 group.late_activation = False
 
             # Set up F-14 Client to have pre-stored alignment
             if unit_type is F_14B:
                 unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
-
-        for idx in range(num_clients, len(group.units)):
-            unit = group.units[idx]
-            pilot = flight.pilots[idx]
-            unit.skill = self.skill_level_for(
-                unit, pilot, blue=flight.departure.captured
-            )
 
         group.points[0].tasks.append(
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)

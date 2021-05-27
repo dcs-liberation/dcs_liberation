@@ -228,7 +228,6 @@ class Flight:
         self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
-        self.client_count = 0
         self.custom_name = custom_name
 
         # Only used by transport missions.
@@ -246,6 +245,10 @@ class Flight:
     @property
     def count(self) -> int:
         return len(self.pilots)
+
+    @property
+    def client_count(self) -> int:
+        return len([p for p in self.pilots if p is not None and p.player])
 
     @property
     def unit_type(self) -> Type[FlyingType]:
