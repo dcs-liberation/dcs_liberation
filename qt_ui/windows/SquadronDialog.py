@@ -25,14 +25,17 @@ class PilotDelegate(TwoColumnRowDelegate):
         return index.data(SquadronModel.PilotRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
+        pilot = self.pilot(index)
         if (row, column) == (0, 0):
             return self.squadron_model.data(index, Qt.DisplayRole)
         elif (row, column) == (0, 1):
-            flown = self.pilot(index).record.missions_flown
+            flown = pilot.record.missions_flown
             missions = "missions" if flown != 1 else "mission"
             return f"{flown} {missions} flown"
         elif (row, column) == (1, 0):
-            return "Alive" if self.pilot(index).alive else "Dead"
+            return "Player" if pilot.player else "AI"
+        elif (row, column) == (1, 1):
+            return "Alive" if pilot.alive else "Dead"
         return ""
 
 
