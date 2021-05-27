@@ -70,7 +70,7 @@ from dcs.task import (
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unit import Unit
+from dcs.unit import Unit, Skill
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
@@ -80,6 +80,7 @@ from game.data.weapons import Pylon
 from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
+from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -726,6 +727,30 @@ class AircraftConflictGenerator:
             return StartType.Cold
         return StartType.Warm
 
+    def skill_level_for(
+        self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool
+    ) -> Skill:
+        if blue:
+            base_skill = Skill(self.game.settings.player_skill)
+        else:
+            base_skill = Skill(self.game.settings.enemy_skill)
+
+        if pilot is None:
+            logging.error(f"Cannot determine skill level: {unit.name} has not pilot")
+            return base_skill
+
+        levels = [
+            Skill.Average,
+            Skill.Good,
+            Skill.High,
+            Skill.Excellent,
+        ]
+        current_level = levels.index(base_skill)
+        missions_for_skill_increase = 4
+        increase = pilot.record.missions_flown // missions_for_skill_increase
+        new_level = min(current_level + increase, len(levels) - 1)
+        return levels[new_level]
+
     def _setup_group(
         self,
         group: FlyingGroup,
@@ -752,7 +777,8 @@ class AircraftConflictGenerator:
             for unit_instance in group.units:
                 unit_instance.livery_id = livery
 
-        for idx in range(0, min(len(group.units), flight.client_count)):
+        num_clients = min(len(group.units), flight.client_count)
+        for idx in range(0, num_clients):
             unit = group.units[idx]
             if self.use_client:
                 unit.set_client()
@@ -763,9 +789,16 @@ class AircraftConflictGenerator:
             if group.late_activation:
                 group.late_activation = False
 
-            # Set up F-14 Client to have pre-stored alignement
+            # Set up F-14 Client to have pre-stored alignment
             if unit_type is F_14B:
                 unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
+
+        for idx in range(num_clients, len(group.units)):
+            unit = group.units[idx]
+            pilot = flight.pilots[idx]
+            unit.skill = self.skill_level_for(
+                unit, pilot, blue=flight.departure.captured
+            )
 
         group.points[0].tasks.append(
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
