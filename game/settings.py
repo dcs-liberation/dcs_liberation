@@ -36,6 +36,7 @@ class Settings:
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
+    invulnerable_player_pilots: bool = True
 
     # Performance oriented
     perf_red_alert_state: bool = True

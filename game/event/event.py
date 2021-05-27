@@ -120,10 +120,13 @@ class Event:
             self.game.red_ato, debriefing.air_losses, for_player=False
         )
 
-    @staticmethod
-    def commit_air_losses(debriefing: Debriefing) -> None:
+    def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
-            loss.pilot.alive = False
+            if (
+                not loss.pilot.player
+                or not self.game.settings.invulnerable_player_pilots
+            ):
+                loss.pilot.alive = False
             aircraft = loss.flight.unit_type
             cp = loss.flight.departure
             available = cp.base.total_units_of_type(aircraft)

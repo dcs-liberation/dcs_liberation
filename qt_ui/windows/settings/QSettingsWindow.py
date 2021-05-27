@@ -92,7 +92,7 @@ class StartTypeComboBox(QComboBox):
 
 class QSettingsWindow(QDialog):
     def __init__(self, game: Game):
-        super(QSettingsWindow, self).__init__()
+        super().__init__()
 
         self.game = game
         self.pluginsPage = None
@@ -285,6 +285,23 @@ class QSettingsWindow(QDialog):
         self.ext_views.setChecked(self.game.settings.external_views_allowed)
         self.ext_views.toggled.connect(self.applySettings)
 
+        def set_invulnerable_player_pilots(checked: bool) -> None:
+            self.game.settings.invulnerable_player_pilots = checked
+
+        invulnerable_player_pilots_label = QLabel(
+            "Player pilots cannot be killed<br />"
+            "<strong>Aircraft are vulnerable, but the player's pilot will be<br />"
+            "returned to the squadron at the end of the mission</strong>"
+        )
+
+        invulnerable_player_pilots_checkbox = QCheckBox()
+        invulnerable_player_pilots_checkbox.setChecked(
+            self.game.settings.invulnerable_player_pilots
+        )
+        invulnerable_player_pilots_checkbox.toggled.connect(
+            set_invulnerable_player_pilots
+        )
+
         self.aiDifficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
         self.aiDifficultyLayout.addWidget(
             self.playerCoalitionSkill, 0, 1, Qt.AlignRight
@@ -295,6 +312,10 @@ class QSettingsWindow(QDialog):
         self.aiDifficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
         self.aiDifficultyLayout.addLayout(self.player_income, 3, 0)
         self.aiDifficultyLayout.addLayout(self.enemy_income, 4, 0)
+        self.aiDifficultyLayout.addWidget(invulnerable_player_pilots_label, 5, 0)
+        self.aiDifficultyLayout.addWidget(
+            invulnerable_player_pilots_checkbox, 5, 1, Qt.AlignRight
+        )
         self.aiDifficultySettings.setLayout(self.aiDifficultyLayout)
         self.difficultyLayout.addWidget(self.aiDifficultySettings)
 
