@@ -4,6 +4,7 @@ nickname: Stingers
 country: USA
 role: Strike Fighter
 aircraft: FA-18C_hornet
+livery: VFA-113
 mission_types:
   - Anti-ship
   - BAI

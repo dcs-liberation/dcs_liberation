@@ -761,6 +761,36 @@ class AircraftConflictGenerator:
         else:
             unit.set_player()
 
+    @staticmethod
+    def livery_from_db(flight: Flight) -> Optional[str]:
+        return db.PLANE_LIVERY_OVERRIDES.get(flight.unit_type)
+
+    def livery_from_faction(self, flight: Flight) -> Optional[str]:
+        faction = self.game.faction_for(player=flight.departure.captured)
+        if (choices := faction.liveries_overrides.get(flight.unit_type)) is not None:
+            return random.choice(choices)
+        return None
+
+    @staticmethod
+    def livery_from_squadron(flight: Flight) -> Optional[str]:
+        return flight.squadron.livery
+
+    def livery_for(self, flight: Flight) -> Optional[str]:
+        if (livery := self.livery_from_squadron(flight)) is not None:
+            return livery
+        if (livery := self.livery_from_faction(flight)) is not None:
+            return livery
+        if (livery := self.livery_from_db(flight)) is not None:
+            return livery
+        return None
+
+    def _setup_livery(self, flight: Flight, group: FlyingGroup) -> None:
+        livery = self.livery_for(flight)
+        if livery is None:
+            return
+        for unit in group.units:
+            unit.livery_id = livery
+
     def _setup_group(
         self,
         group: FlyingGroup,
@@ -771,21 +801,7 @@ class AircraftConflictGenerator:
         unit_type = group.units[0].unit_type
 
         self._setup_payload(flight, group)
-
-        if unit_type in db.PLANE_LIVERY_OVERRIDES:
-            for unit_instance in group.units:
-                unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
-
-        # Override livery by faction file data
-        if flight.from_cp.captured:
-            faction = self.game.player_faction
-        else:
-            faction = self.game.enemy_faction
-
-        if unit_type in faction.liveries_overrides:
-            livery = random.choice(faction.liveries_overrides[unit_type])
-            for unit_instance in group.units:
-                unit_instance.livery_id = livery
+        self._setup_livery(flight, group)
 
         for unit, pilot in zip(group.units, flight.pilots):
             player = pilot is not None and pilot.player
@@ -815,7 +831,7 @@ class AircraftConflictGenerator:
         self.flights.append(
             FlightData(
                 package=package,
-                country=faction.country,
+                country=self.game.faction_for(player=flight.departure.captured).country,
                 flight_type=flight.flight_type,
                 units=group.units,
                 size=len(group.units),

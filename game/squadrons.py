@@ -43,6 +43,7 @@ class Squadron:
     country: str
     role: str
     aircraft: Type[FlyingType]
+    livery: Optional[str]
     mission_types: Tuple[FlightType, ...]
     pilots: List[Pilot]
     available_pilots: List[Pilot] = field(init=False, hash=False, compare=False)
@@ -117,6 +118,7 @@ class Squadron:
             country=data["country"],
             role=data["role"],
             aircraft=unit_type,
+            livery=data.get("livery"),
             mission_types=tuple(FlightType.from_name(n) for n in data["mission_types"]),
             pilots=[Pilot(n) for n in data.get("pilots", [])],
             game=game,
@@ -200,6 +202,7 @@ class AirWing:
                     country=game.country_for(player),
                     role="Flying Squadron",
                     aircraft=aircraft,
+                    livery=None,
                     mission_types=tuple(FlightType),
                     pilots=[],
                     game=game,
