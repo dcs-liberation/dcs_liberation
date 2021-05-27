@@ -935,6 +935,11 @@ class CoalitionMissionPlanner:
         for flight in package.flights:
             if not flight.flight_plan.waypoints:
                 flight_plan_builder.populate_flight_plan(flight)
+
+        if package.has_players and self.game.settings.auto_ato_player_missions_asap:
+            package.auto_asap = True
+            package.set_tot_asap()
+
         self.ato.add_package(package)
 
     def stagger_missions(self) -> None:
