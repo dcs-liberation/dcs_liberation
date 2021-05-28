@@ -8,7 +8,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
 * **[Campaign]** Non-control point FOBs will no longer spawn.
-* **[Campaign]** (WIP) Added squadrons and pilots. See https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots for more information.
+* **[Campaign]** Added squadrons and pilots. See https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots for more information.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP. 
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
