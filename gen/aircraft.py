@@ -80,7 +80,7 @@ from game.data.weapons import Pylon
 from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot
+from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,

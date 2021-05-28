@@ -7,7 +7,16 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import unique, Enum
 from pathlib import Path
-from typing import Type, Tuple, List, TYPE_CHECKING, Optional, Iterable, Iterator
+from typing import (
+    Type,
+    Tuple,
+    List,
+    TYPE_CHECKING,
+    Optional,
+    Iterable,
+    Iterator,
+    Sequence,
+)
 
 import yaml
 from dcs.unittype import FlyingType
@@ -278,8 +287,11 @@ class AirWing:
                 )
             ]
 
+    def squadrons_for(self, aircraft: Type[FlyingType]) -> Sequence[Squadron]:
+        return self.squadrons[aircraft]
+
     def squadron_for(self, aircraft: Type[FlyingType]) -> Squadron:
-        return self.squadrons[aircraft][0]
+        return self.squadrons_for(aircraft)[0]
 
     def iter_squadrons(self) -> Iterator[Squadron]:
         return itertools.chain.from_iterable(self.squadrons.values())

@@ -25,7 +25,7 @@ from dcs.unittype import FlyingType
 from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
-from game.squadrons import AirWing
+from game.squadrons import AirWing, Squadron
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -123,17 +123,19 @@ class AircraftAllocator:
 
     def __init__(
         self,
+        air_wing: AirWing,
         closest_airfields: ClosestAirfields,
         global_inventory: GlobalAircraftInventory,
         is_player: bool,
     ) -> None:
+        self.air_wing = air_wing
         self.closest_airfields = closest_airfields
         self.global_inventory = global_inventory
         self.is_player = is_player
 
-    def find_aircraft_for_flight(
+    def find_squadron_for_flight(
         self, flight: ProposedFlight
-    ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
+    ) -> Optional[Tuple[ControlPoint, Squadron]]:
         """Finds aircraft suitable for the given mission.
 
         Searches for aircraft capable of performing the given mission within the
@@ -152,16 +154,18 @@ class AircraftAllocator:
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        return self.find_aircraft_of_type(flight, aircraft_for_task(flight.task))
+        return self.find_aircraft_for_task(flight, flight.task)
 
-    def find_aircraft_of_type(
-        self,
-        flight: ProposedFlight,
-        types: List[Type[FlyingType]],
-    ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
+    def find_aircraft_for_task(
+        self, flight: ProposedFlight, task: FlightType
+    ) -> Optional[Tuple[ControlPoint, Squadron]]:
+        types = aircraft_for_task(task)
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
+
+        # Prefer using squadrons with pilots first
+        best_understaffed: Optional[Tuple[ControlPoint, Squadron]] = None
         for airfield in airfields_in_range:
             if not airfield.is_friendly(self.is_player):
                 continue
@@ -169,11 +173,28 @@ class AircraftAllocator:
             for aircraft in types:
                 if not airfield.can_operate(aircraft):
                     continue
-                if inventory.available(aircraft) >= flight.num_aircraft:
-                    inventory.remove_aircraft(aircraft, flight.num_aircraft)
-                    return airfield, aircraft
+                if inventory.available(aircraft) < flight.num_aircraft:
+                    continue
+                # Valid location with enough aircraft available. Find a squadron to fit
+                # the role.
+                for squadron in self.air_wing.squadrons_for(aircraft):
+                    if task not in squadron.mission_types:
+                        continue
+                    if len(squadron.available_pilots) >= flight.num_aircraft:
+                        inventory.remove_aircraft(aircraft, flight.num_aircraft)
+                        return airfield, squadron
 
-        return None
+                    # A compatible squadron that doesn't have enough pilots. Remember it
+                    # as a fallback in case we find no better choices.
+                    if best_understaffed is None:
+                        best_understaffed = airfield, squadron
+
+        if best_understaffed is not None:
+            airfield, squadron = best_understaffed
+            self.global_inventory.for_control_point(airfield).remove_aircraft(
+                squadron.aircraft, flight.num_aircraft
+            )
+        return best_understaffed
 
 
 class PackageBuilder:
@@ -192,11 +213,10 @@ class PackageBuilder:
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
-        self.air_wing = air_wing
         self.package_country = package_country
         self.package = Package(location, auto_asap=asap)
         self.allocator = AircraftAllocator(
-            closest_airfields, global_inventory, is_player
+            air_wing, closest_airfields, global_inventory, is_player
         )
         self.global_inventory = global_inventory
         self.start_type = start_type
@@ -209,10 +229,10 @@ class PackageBuilder:
         caller should return any previously planned flights to the inventory
         using release_planned_aircraft.
         """
-        assignment = self.allocator.find_aircraft_for_flight(plan)
+        assignment = self.allocator.find_squadron_for_flight(plan)
         if assignment is None:
             return False
-        airfield, aircraft = assignment
+        airfield, squadron = assignment
         if isinstance(airfield, OffMapSpawn):
             start_type = "In Flight"
         else:
@@ -221,13 +241,13 @@ class PackageBuilder:
         flight = Flight(
             self.package,
             self.package_country,
-            self.air_wing.squadron_for(aircraft),
+            squadron,
             plan.num_aircraft,
             plan.task,
             start_type,
             departure=airfield,
             arrival=airfield,
-            divert=self.find_divert_field(aircraft, airfield),
+            divert=self.find_divert_field(squadron.aircraft, airfield),
         )
         self.package.add_flight(flight)
         return True
