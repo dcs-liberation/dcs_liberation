@@ -126,7 +126,7 @@ class Event:
                 not loss.pilot.player
                 or not self.game.settings.invulnerable_player_pilots
             ):
-                loss.pilot.alive = False
+                loss.pilot.kill()
             aircraft = loss.flight.unit_type
             cp = loss.flight.departure
             available = cp.base.total_units_of_type(aircraft)

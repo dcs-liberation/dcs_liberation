@@ -41,8 +41,9 @@ class SquadronDelegate(TwoColumnRowDelegate):
             return self.squadron(index).nickname
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
+            active = len(squadron.active_pilots)
             available = len(squadron.available_pilots)
-            return f"{squadron.size} active pilots, {available} available"
+            return f"{squadron.size} pilots, {active} active, {available} unassigned"
         return ""
 
 

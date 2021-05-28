@@ -12,6 +12,7 @@ from PySide2.QtWidgets import (
     QListView,
     QVBoxLayout,
     QPushButton,
+    QHBoxLayout,
 )
 
 from game.squadrons import Pilot
@@ -39,7 +40,7 @@ class PilotDelegate(TwoColumnRowDelegate):
         elif (row, column) == (1, 0):
             return "Player" if pilot.player else "AI"
         elif (row, column) == (1, 1):
-            return "Alive" if pilot.alive else "Dead"
+            return pilot.status.value
         return ""
 
 
@@ -80,11 +81,35 @@ class SquadronDialog(QDialog):
         )
         layout.addWidget(self.pilot_list)
 
+        button_panel = QHBoxLayout()
+        button_panel.addStretch()
+        layout.addLayout(button_panel)
+
         self.toggle_ai_button = QPushButton()
-        self.reset_button_state(self.pilot_list.currentIndex())
+        self.reset_ai_toggle_state(self.pilot_list.currentIndex())
         self.toggle_ai_button.setProperty("style", "start-button")
         self.toggle_ai_button.clicked.connect(self.toggle_ai)
-        layout.addWidget(self.toggle_ai_button, alignment=Qt.AlignRight)
+        button_panel.addWidget(self.toggle_ai_button, alignment=Qt.AlignRight)
+
+        self.toggle_leave_button = QPushButton()
+        self.reset_leave_toggle_state(self.pilot_list.currentIndex())
+        self.toggle_leave_button.setProperty("style", "start-button")
+        self.toggle_leave_button.clicked.connect(self.toggle_leave)
+        button_panel.addWidget(self.toggle_leave_button, alignment=Qt.AlignRight)
+
+    def check_disabled_button_states(
+        self, button: QPushButton, index: QModelIndex
+    ) -> bool:
+        if not index.isValid():
+            button.setText("No pilot selected")
+            button.setDisabled(True)
+            return True
+        pilot = self.squadron_model.pilot_at_index(index)
+        if not pilot.alive:
+            button.setText("Pilot is dead")
+            button.setDisabled(True)
+            return True
+        return False
 
     def toggle_ai(self) -> None:
         index = self.pilot_list.currentIndex()
@@ -93,13 +118,11 @@ class SquadronDialog(QDialog):
             return
         self.squadron_model.toggle_ai_state(index)
 
-    def reset_button_state(self, index: QModelIndex) -> None:
+    def reset_ai_toggle_state(self, index: QModelIndex) -> None:
+        if self.check_disabled_button_states(self.toggle_ai_button, index):
+            return
         if not self.squadron_model.squadron.aircraft.flyable:
             self.toggle_ai_button.setText("Not flyable")
-            self.toggle_ai_button.setDisabled(True)
-            return
-        if not index.isValid():
-            self.toggle_ai_button.setText("No pilot selected")
             self.toggle_ai_button.setDisabled(True)
             return
         self.toggle_ai_button.setEnabled(True)
@@ -108,8 +131,25 @@ class SquadronDialog(QDialog):
             "Convert to AI" if pilot.player else "Convert to player"
         )
 
+    def toggle_leave(self) -> None:
+        index = self.pilot_list.currentIndex()
+        if not index.isValid():
+            logging.error("Cannot toggle on leave state: no pilot is selected")
+            return
+        self.squadron_model.toggle_leave_state(index)
+
+    def reset_leave_toggle_state(self, index: QModelIndex) -> None:
+        if self.check_disabled_button_states(self.toggle_leave_button, index):
+            return
+        pilot = self.squadron_model.pilot_at_index(index)
+        self.toggle_leave_button.setEnabled(True)
+        self.toggle_leave_button.setText(
+            "Return from leave" if pilot.on_leave else "Send on leave"
+        )
+
     def on_selection_changed(
         self, selected: QItemSelection, _deselected: QItemSelection
     ) -> None:
         index = selected.indexes()[0]
-        self.reset_button_state(index)
+        self.reset_ai_toggle_state(index)
+        self.reset_leave_toggle_state(index)

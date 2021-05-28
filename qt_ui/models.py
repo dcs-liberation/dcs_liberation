@@ -458,6 +458,15 @@ class SquadronModel(QAbstractListModel):
         pilot.player = not pilot.player
         self.endResetModel()
 
+    def toggle_leave_state(self, index: QModelIndex) -> None:
+        pilot = self.pilot_at_index(index)
+        self.beginResetModel()
+        if pilot.on_leave:
+            pilot.return_from_leave()
+        else:
+            pilot.send_on_leave()
+        self.endResetModel()
+
 
 class GameModel:
     """A model for the Game object.

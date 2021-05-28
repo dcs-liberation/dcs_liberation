@@ -5,6 +5,7 @@ import logging
 import random
 from collections import defaultdict
 from dataclasses import dataclass, field
+from enum import unique, Enum
 from pathlib import Path
 from typing import Type, Tuple, List, TYPE_CHECKING, Optional, Iterable, Iterator
 
@@ -25,12 +26,40 @@ class PilotRecord:
     missions_flown: int = field(default=0)
 
 
+@unique
+class PilotStatus(Enum):
+    Active = "Active"
+    OnLeave = "On leave"
+    Dead = "Dead"
+
+
 @dataclass
 class Pilot:
     name: str
     player: bool = field(default=False)
-    alive: bool = field(default=True)
+    status: PilotStatus = field(default=PilotStatus.Active)
     record: PilotRecord = field(default_factory=PilotRecord)
+
+    @property
+    def alive(self) -> bool:
+        return self.status is not PilotStatus.Dead
+
+    @property
+    def on_leave(self) -> bool:
+        return self.status is PilotStatus.OnLeave
+
+    def send_on_leave(self) -> None:
+        if self.status is not PilotStatus.Active:
+            raise RuntimeError("Only active pilots may be sent on leave")
+        self.status = PilotStatus.OnLeave
+
+    def return_from_leave(self) -> None:
+        if self.status is not PilotStatus.OnLeave:
+            raise RuntimeError("Only pilots on leave may be returned from leave")
+        self.status = PilotStatus.Active
+
+    def kill(self) -> None:
+        self.status = PilotStatus.Dead
 
     @classmethod
     def random(cls, faker: Faker) -> Pilot:
@@ -119,13 +148,20 @@ class Squadron:
     def faker(self) -> Faker:
         return self.game.faker_for(self.player)
 
+    def _pilots_with_status(self, status: PilotStatus) -> list[Pilot]:
+        return [p for p in self.pilots if p.status == status]
+
     @property
     def active_pilots(self) -> list[Pilot]:
-        return [p for p in self.pilots if p.alive]
+        return self._pilots_with_status(PilotStatus.Active)
+
+    @property
+    def pilots_on_leave(self) -> list[Pilot]:
+        return self._pilots_with_status(PilotStatus.OnLeave)
 
     @property
     def size(self) -> int:
-        return len(self.active_pilots)
+        return len(self.active_pilots) + len(self.pilots_on_leave)
 
     def pilot_at_index(self, index: int) -> Pilot:
         return self.pilots[index]
