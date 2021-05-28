@@ -50,8 +50,8 @@ class PilotSelector(QComboBox):
             self.addItem(self.text_for(pilot), pilot)
         if current_pilot is None:
             self.setCurrentText("Unassigned")
-            return
-        self.setCurrentText(self.text_for(current_pilot))
+        else:
+            self.setCurrentText(self.text_for(current_pilot))
         self.currentIndexChanged.connect(self.replace_pilot)
 
     def rebuild(self) -> None:
