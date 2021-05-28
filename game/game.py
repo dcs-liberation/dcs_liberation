@@ -404,6 +404,9 @@ class Game:
         self.compute_transit_networks()
         self.ground_planners = {}
 
+        self.blue_procurement_requests.clear()
+        self.red_procurement_requests.clear()
+
         self.transfers.order_airlift_assets()
         self.transfers.plan_transports()
 
@@ -438,7 +441,7 @@ class Game:
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.budget, self.blue_procurement_requests)
+        ).spend_budget(self.budget)
 
         self.enemy_budget = ProcurementAi(
             self,
@@ -448,7 +451,7 @@ class Game:
             manage_front_line=True,
             manage_aircraft=True,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.enemy_budget, self.red_procurement_requests)
+        ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))

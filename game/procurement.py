@@ -58,9 +58,7 @@ class ProcurementAi:
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
-    def spend_budget(
-        self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
-    ) -> float:
+    def spend_budget(self, budget: float) -> float:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
