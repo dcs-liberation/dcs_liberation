@@ -3,6 +3,7 @@
   "name": "USA 1960",
   "authors": "Khopa",
   "description": "<p>US army in the 60s, pre-Vietnam war.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "B_52H",
     "C_130",

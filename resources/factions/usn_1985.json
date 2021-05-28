@@ -3,6 +3,7 @@
   "name": "US Navy 1985",
   "authors": "HerrTom",
   "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "AH_1W",
     "F_4E",

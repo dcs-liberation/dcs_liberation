@@ -3,6 +3,7 @@
   "name": "USA 1955",
   "authors": "Khopa",
   "description": "<p>US army in the 50s, circa Korean War.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "B_52H",
     "C_130",

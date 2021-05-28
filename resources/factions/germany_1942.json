@@ -3,6 +3,7 @@
   "name": "Germany 1942",
   "authors": "Khopa",
   "description": "<p>Germany 1942, is a faction that does not use the late war german units such as the Tiger tank, so it's a bit easier to perform CAS against them.</p>",
+  "locales": ["de_DE"],
   "aircrafts": [
     "FW_190A8",
     "FW_190D9",

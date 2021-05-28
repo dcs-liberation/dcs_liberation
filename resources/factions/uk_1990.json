@@ -3,6 +3,7 @@
   "name": "United Kingdom 1990",
   "authors": "Khopa",
   "description": "<p>United Kingdom Army in the 1990s.</p>",
+  "locales": ["en_UK"],
   "aircrafts": [
     "Tornado_GR4",
     "AV8BNA",
