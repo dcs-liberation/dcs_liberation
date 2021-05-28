@@ -25,6 +25,7 @@ from dcs.unittype import FlyingType
 from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
+from game.profiling import logged_duration, MultiEventTracer
 from game.squadrons import AirWing, Squadron
 from game.theater import (
     Airfield,
@@ -807,13 +808,19 @@ class CoalitionMissionPlanner:
 
     def plan_missions(self) -> None:
         """Identifies and plans mission for the turn."""
-        for proposed_mission in self.propose_missions():
-            self.plan_mission(proposed_mission)
+        player = "Blue" if self.is_player else "Red"
+        with logged_duration(f"{player} mission identification and fulfillment"):
+            with MultiEventTracer() as tracer:
+                for proposed_mission in self.propose_missions():
+                    self.plan_mission(proposed_mission, tracer)
 
-        for critical_mission in self.critical_missions():
-            self.plan_mission(critical_mission, reserves=True)
+        with logged_duration(f"{player} reserve mission planning"):
+            with MultiEventTracer() as tracer:
+                for critical_mission in self.critical_missions():
+                    self.plan_mission(critical_mission, tracer, reserves=True)
 
-        self.stagger_missions()
+        with logged_duration(f"{player} mission scheduling"):
+            self.stagger_missions()
 
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
@@ -878,7 +885,9 @@ class CoalitionMissionPlanner:
                 threats[EscortType.Sead] = True
         return threats
 
-    def plan_mission(self, mission: ProposedMission, reserves: bool = False) -> None:
+    def plan_mission(
+        self, mission: ProposedMission, tracer: MultiEventTracer, reserves: bool = False
+    ) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
         builder = PackageBuilder(
             mission.location,
@@ -907,7 +916,10 @@ class CoalitionMissionPlanner:
                 # If the package does not need escorts they may be pruned.
                 escorts.append(proposed_flight)
                 continue
-            self.plan_flight(mission, proposed_flight, builder, missing_types, reserves)
+            with tracer.trace("Flight planning"):
+                self.plan_flight(
+                    mission, proposed_flight, builder, missing_types, reserves
+                )
 
         if missing_types:
             self.scrub_mission_missing_aircraft(
@@ -931,7 +943,8 @@ class CoalitionMissionPlanner:
             self.game, builder.package, self.is_player
         )
         for flight in builder.package.flights:
-            flight_plan_builder.populate_flight_plan(flight)
+            with tracer.trace("Flight plan population"):
+                flight_plan_builder.populate_flight_plan(flight)
 
         needed_escorts = self.check_needed_escorts(builder)
         for escort in escorts:
@@ -939,7 +952,8 @@ class CoalitionMissionPlanner:
             # impossible.
             assert escort.escort_type is not None
             if needed_escorts[escort.escort_type]:
-                self.plan_flight(mission, escort, builder, missing_types, reserves)
+                with tracer.trace("Flight planning"):
+                    self.plan_flight(mission, escort, builder, missing_types, reserves)
 
         # Check again for unavailable aircraft. If the escort was required and
         # none were found, scrub the mission.
@@ -959,7 +973,8 @@ class CoalitionMissionPlanner:
         # Add flight plans for escorts.
         for flight in package.flights:
             if not flight.flight_plan.waypoints:
-                flight_plan_builder.populate_flight_plan(flight)
+                with tracer.trace("Flight plan population"):
+                    flight_plan_builder.populate_flight_plan(flight)
 
         if package.has_players and self.game.settings.auto_ato_player_missions_asap:
             package.auto_asap = True

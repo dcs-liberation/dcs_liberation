@@ -352,8 +352,10 @@ class Game:
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
-        self.finish_turn(no_action)
-        self.initialize_turn()
+        with logged_duration("Turn finalization"):
+            self.finish_turn(no_action)
+        with logged_duration("Turn initialization"):
+            self.initialize_turn()
 
         # Autosave progress
         persistency.autosave(self)
@@ -399,22 +401,28 @@ class Game:
             return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
-        self.compute_conflicts_position()
-        self.compute_threat_zones()
-        self.compute_transit_networks()
+        with logged_duration("Computing conflict positions"):
+            self.compute_conflicts_position()
+        with logged_duration("Threat zone computation"):
+            self.compute_threat_zones()
+        with logged_duration("Transit network identification"):
+            self.compute_transit_networks()
         self.ground_planners = {}
 
         self.blue_procurement_requests.clear()
         self.red_procurement_requests.clear()
 
-        self.transfers.order_airlift_assets()
-        self.transfers.plan_transports()
+        with logged_duration("Procurement of airlift assets"):
+            self.transfers.order_airlift_assets()
+        with logged_duration("Transport planning"):
+            self.transfers.plan_transports()
 
-        with logged_duration("Mission planning"):
+        with logged_duration("Blue mission planning"):
             if self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled:
                 blue_planner = CoalitionMissionPlanner(self, is_player=True)
                 blue_planner.plan_missions()
 
+        with logged_duration("Red mission planning"):
             red_planner = CoalitionMissionPlanner(self, is_player=False)
             red_planner.plan_missions()
 
