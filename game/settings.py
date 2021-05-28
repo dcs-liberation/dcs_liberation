@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, List, Optional
-from gen.ground_forces import ground_forces_procurement_ratio
+from typing import Dict, Optional
 
 from dcs.forcedoptions import ForcedOptions
 
@@ -38,13 +37,6 @@ class Settings:
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
 
-    # Ground unit behaviour/doctrine
-
-    # Buying ratio for ground units. Could be made adjustable in the ui
-    ground_forces_procurement_ratio = (
-        ground_forces_procurement_ratio.ground_forces_procurement_raito()
-    )
-
     # Performance oriented
     perf_red_alert_state: bool = True
     perf_smoke_gen: bool = True
@@ -53,7 +45,8 @@ class Settings:
     perf_moving_units: bool = True
     perf_infantry: bool = True
     perf_destroyed_units: bool = True
-    maximum_ground_units_in_base: int = 50
+    front_line_procurement_target: int = 50
+    reserves_procurement_target: int = 10
 
     # Performance culling
     perf_culling: bool = False

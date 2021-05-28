@@ -10,9 +10,6 @@ from dcs.vehicles import AirDefence, Armor
 
 from game import db
 from game.db import PRICES
-from gen.ground_forces.ai_ground_planner_db import (
-    TYPE_SHORAD,
-)
 
 STRENGTH_AA_ASSEMBLE_MIN = 0.2
 PLANES_SCRAMBLE_MIN_BASE = 2
@@ -27,6 +24,7 @@ class Base:
     def __init__(self):
         self.aircraft: Dict[Type[FlyingType], int] = {}
         self.armor: Dict[Type[VehicleType], int] = {}
+        # TODO: Appears unused.
         self.aa: Dict[AirDefence, int] = {}
         self.commision_points: Dict[Type, float] = {}
         self.strength = 1
@@ -38,10 +36,6 @@ class Base:
     @property
     def total_armor(self) -> int:
         return sum(self.armor.values())
-
-    @property
-    def total_ground_units(self) -> int:
-        return sum(self.armor.values()) + sum(self.aircraft.values())
 
     @property
     def total_armor_value(self) -> int:

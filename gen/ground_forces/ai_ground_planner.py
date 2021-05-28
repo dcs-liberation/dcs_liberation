@@ -1,3 +1,4 @@
+import logging
 import random
 from enum import Enum
 from typing import Dict, List
@@ -5,7 +6,8 @@ from typing import Dict, List
 from dcs.unittype import VehicleType
 
 from game.theater import ControlPoint
-from gen.ground_forces.ai_ground_planner_db import *
+
+from game.data.groundunitclass import GroundUnitClass
 from gen.ground_forces.combat_stance import CombatStance
 
 MAX_COMBAT_GROUP_PER_CP = 10
@@ -87,37 +89,35 @@ class GroundPlanner:
             group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[CombatStance.DEFENSIVE]
 
         # Create combat groups and assign them randomly to each enemy CP
-        for key in self.cp.base.armor.keys():
-
-            role = None
-            collection = None
-            if key in TYPE_TANKS:
+        for unit_type in self.cp.base.armor:
+            if unit_type in GroundUnitClass.Tank:
                 collection = self.tank_groups
                 role = CombatGroupRole.TANK
-            elif key in TYPE_APC:
+            elif unit_type in GroundUnitClass.Apc:
                 collection = self.apc_group
                 role = CombatGroupRole.APC
-            elif key in TYPE_ARTILLERY:
+            elif unit_type in GroundUnitClass.Artillery:
                 collection = self.art_group
                 role = CombatGroupRole.ARTILLERY
-            elif key in TYPE_IFV:
+            elif unit_type in GroundUnitClass.Ifv:
                 collection = self.ifv_group
                 role = CombatGroupRole.IFV
-            elif key in TYPE_LOGI:
+            elif unit_type in GroundUnitClass.Logistics:
                 collection = self.logi_groups
                 role = CombatGroupRole.LOGI
-            elif key in TYPE_ATGM:
+            elif unit_type in GroundUnitClass.Atgm:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
-            elif key in TYPE_SHORAD:
+            elif unit_type in GroundUnitClass.Shorads:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
             else:
-                print("Warning unit type not handled by ground generator")
-                print(key)
+                logging.warning(
+                    f"Unused front line vehicle at base {unit_type}: unknown unit class"
+                )
                 continue
 
-            available = self.cp.base.armor[key]
+            available = self.cp.base.armor[unit_type]
             while available > 0:
 
                 if role == CombatGroupRole.SHORAD:
@@ -141,14 +141,14 @@ class GroundPlanner:
                     group.assigned_enemy_cp = "__reserve__"
 
                 for i in range(n):
-                    group.units.append(key)
+                    group.units.append(unit_type)
                 collection.append(group)
 
         print("------------------")
         print("Ground Planner : ")
         print(self.cp.name)
         print("------------------")
-        for key in self.units_per_cp.keys():
-            print("For : #" + str(key))
-            for group in self.units_per_cp[key]:
+        for unit_type in self.units_per_cp.keys():
+            print("For : #" + str(unit_type))
+            for group in self.units_per_cp[unit_type]:
                 print(str(group))
