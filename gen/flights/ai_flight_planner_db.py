@@ -426,3 +426,11 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
+
+
+def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+    tasks = []
+    for task in FlightType:
+        if aircraft in aircraft_for_task(task):
+            tasks.append(task)
+    return tasks

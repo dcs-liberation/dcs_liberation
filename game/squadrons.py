@@ -177,6 +177,7 @@ class Squadron:
 
     @classmethod
     def from_yaml(cls, path: Path, game: Game, player: bool) -> Squadron:
+        from gen.flights.ai_flight_planner_db import tasks_for_aircraft
         from gen.flights.flight import FlightType
 
         with path.open() as squadron_file:
@@ -189,6 +190,16 @@ class Squadron:
         pilots = [Pilot(n, player=False) for n in data.get("pilots", [])]
         pilots.extend([Pilot(n, player=True) for n in data.get("players", [])])
 
+        mission_types = [FlightType.from_name(n) for n in data["mission_types"]]
+        tasks = tasks_for_aircraft(unit_type)
+        for mission_type in list(mission_types):
+            if mission_type not in tasks:
+                logging.error(
+                    f"Squadron has mission type {mission_type} but {unit_type} is not "
+                    f"capable of that task: {path}"
+                )
+                mission_types.remove(mission_type)
+
         return Squadron(
             name=data["name"],
             nickname=data["nickname"],
@@ -196,7 +207,7 @@ class Squadron:
             role=data["role"],
             aircraft=unit_type,
             livery=data.get("livery"),
-            mission_types=tuple(FlightType.from_name(n) for n in data["mission_types"]),
+            mission_types=tuple(mission_types),
             pilots=pilots,
             game=game,
             player=player,
@@ -262,7 +273,7 @@ class SquadronLoader:
 
 class AirWing:
     def __init__(self, game: Game, player: bool) -> None:
-        from gen.flights.flight import FlightType
+        from gen.flights.ai_flight_planner_db import tasks_for_aircraft
 
         self.game = game
         self.player = player
@@ -280,7 +291,7 @@ class AirWing:
                     role="Flying Squadron",
                     aircraft=aircraft,
                     livery=None,
-                    mission_types=tuple(FlightType),
+                    mission_types=tuple(tasks_for_aircraft(aircraft)),
                     pilots=[],
                     game=game,
                     player=player,
