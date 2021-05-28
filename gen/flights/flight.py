@@ -214,11 +214,16 @@ class Flight:
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
+        no_pilots: bool = False,
     ) -> None:
         self.package = package
         self.country = country
         self.squadron = squadron
-        self.pilots = [squadron.claim_available_pilot() for _ in range(count)]
+        self.pilots: List[Optional[Pilot]]
+        if no_pilots:
+            self.pilots = [None for _ in range(count)]
+        else:
+            self.pilots = [squadron.claim_available_pilot() for _ in range(count)]
         self.departure = departure
         self.arrival = arrival
         self.divert = divert
