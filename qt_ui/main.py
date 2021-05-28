@@ -196,6 +196,15 @@ def create_game(
             "Cannot generate campaign without configuring DCS Liberation. Start the UI "
             "for the first run configuration."
         )
+
+    # This needs to run before the pydcs payload cache is created, which happens
+    # extremely early. It's not a problem that we inject these paths twice because we'll
+    # get the same answers each time.
+    #
+    # Without this, it is not possible to use next turn (or anything that needs to check
+    # for loadouts) without saving the generated campaign and reloading it the normal
+    # way.
+    inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue,
