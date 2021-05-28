@@ -572,15 +572,20 @@ class CoalitionMissionPlanner:
         self.procurement_requests = self.game.procurement_requests_for(self.is_player)
         self.faction = self.game.faction_for(self.is_player)
 
-    def faction_can_plan(self, mission_type: FlightType) -> bool:
-        """Returns True if it is possible for the faction to plan this mission type.
+    def air_wing_can_plan(self, mission_type: FlightType) -> bool:
+        """Returns True if it is possible for the air wing to plan this mission type.
 
-        Not all mission types can be fulfilled by all factions. Many factions do not
-        have AEW&C aircraft, so they will never be able to plan those missions.
+        Not all mission types can be fulfilled by all air wings. Many factions do not
+        have AEW&C aircraft, so they will never be able to plan those missions. It's
+        also possible for the player to exclude mission types from their squadron
+        designs.
         """
         all_compatible = aircraft_for_task(mission_type)
-        for aircraft in self.faction.aircrafts:
-            if aircraft in all_compatible:
+        for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
+            if (
+                squadron.aircraft in all_compatible
+                and mission_type in squadron.mission_types
+            ):
                 return True
         return False
 
@@ -892,10 +897,10 @@ class CoalitionMissionPlanner:
         missing_types: Set[FlightType] = set()
         escorts = []
         for proposed_flight in mission.flights:
-            if not self.faction_can_plan(proposed_flight.task):
-                # This faction can never plan this mission type because they do not have
-                # compatible aircraft. Skip fulfillment so that we don't place the
-                # purchase request.
+            if not self.air_wing_can_plan(proposed_flight.task):
+                # This air wing can never plan this mission type because they do not
+                # have compatible aircraft or squadrons. Skip fulfillment so that we
+                # don't place the purchase request.
                 continue
             if proposed_flight.escort_type is not None:
                 # Escorts are planned after the primary elements of the package.
