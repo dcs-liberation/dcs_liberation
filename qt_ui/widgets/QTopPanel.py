@@ -21,6 +21,7 @@ from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QIntelBox import QIntelBox
 from qt_ui.widgets.clientslots import MaxPlayerCount
+from qt_ui.windows.AirWingDialog import AirWingDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
@@ -63,6 +64,11 @@ class QTopPanel(QFrame):
 
         self.factionsInfos = QFactionsInfos(self.game)
 
+        self.air_wing = QPushButton("Air Wing")
+        self.air_wing.setDisabled(True)
+        self.air_wing.setProperty("style", "btn-primary")
+        self.air_wing.clicked.connect(self.open_air_wing)
+
         self.transfers = QPushButton("Transfers")
         self.transfers.setDisabled(True)
         self.transfers.setProperty("style", "btn-primary")
@@ -84,6 +90,7 @@ class QTopPanel(QFrame):
 
         self.buttonBox = QGroupBox("Misc")
         self.buttonBoxLayout = QHBoxLayout()
+        self.buttonBoxLayout.addWidget(self.air_wing)
         self.buttonBoxLayout.addWidget(self.transfers)
         self.buttonBoxLayout.addWidget(self.settings)
         self.buttonBoxLayout.addWidget(self.statistics)
@@ -114,6 +121,7 @@ class QTopPanel(QFrame):
         if game is None:
             return
 
+        self.air_wing.setEnabled(True)
         self.transfers.setEnabled(True)
         self.settings.setEnabled(True)
         self.statistics.setEnabled(True)
@@ -129,6 +137,10 @@ class QTopPanel(QFrame):
             self.proceedButton.setEnabled(False)
         else:
             self.proceedButton.setEnabled(True)
+
+    def open_air_wing(self):
+        self.dialog = AirWingDialog(self.game_model, self.window())
+        self.dialog.show()
 
     def open_transfers(self):
         self.dialog = PendingTransfersDialog(self.game_model)
@@ -176,17 +188,18 @@ class QTopPanel(QFrame):
     def confirm_no_client_launch(self) -> bool:
         result = QMessageBox.question(
             self,
-            "Continue without client slots?",
+            "Continue without player pilots?",
             (
-                "No client slots have been created for players. Continuing will "
-                "allow the AI to perform the mission, but players will be unable "
-                "to participate.<br />"
+                "No player pilots have been assigned to flights. Continuing will allow "
+                "the AI to perform the mission, but players will be unable to "
+                "participate.<br />"
                 "<br />"
-                "To add client slots for players, select a package from the "
-                "Packages panel on the left of the main window, and then a flight "
-                "from the Flights panel below the Packages panel. The edit button "
-                "below the Flights panel will allow you to edit the number of "
-                "client slots in the flight. Each client slot allows one player.<br />"
+                "To assign player pilots to a flight, select a package from the "
+                "Packages panel on the left of the main window, and then a flight from "
+                "the Flights panel below the Packages panel. The edit button below the "
+                "Flights panel will allow you to assign specific pilots to the flight. "
+                "If you have no player pilots available, the checkbox next to the "
+                "name will convert them to a player.<br />"
                 "<br />Click 'Yes' to continue with an AI only mission"
                 "<br />Click 'No' if you'd like to make more changes."
             ),
@@ -232,9 +245,42 @@ class QTopPanel(QFrame):
             return True
         return False
 
+    def check_no_missing_pilots(self) -> bool:
+        missing_pilots = []
+        for package in self.game.blue_ato.packages:
+            for flight in package.flights:
+                if flight.missing_pilots > 0:
+                    missing_pilots.append((package, flight))
+
+        if not missing_pilots:
+            return False
+
+        formatted = "<br />".join(
+            [f"{p.primary_task} {p.target}: {f}" for p, f in missing_pilots]
+        )
+        mbox = QMessageBox(
+            QMessageBox.Critical,
+            "Flights are missing pilots",
+            (
+                "The following flights are missing one or more pilots:<br />"
+                "<br />"
+                f"{formatted}<br />"
+                "<br />"
+                "You must either assign pilots to those flights or cancel those "
+                "missions."
+            ),
+            parent=self,
+        )
+        mbox.setEscapeButton(mbox.addButton(QMessageBox.Close))
+        mbox.exec_()
+        return True
+
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
         if not self.ato_has_clients() and not self.confirm_no_client_launch():
+            return
+
+        if self.check_no_missing_pilots():
             return
 
         negative_starts = self.negative_start_packages()

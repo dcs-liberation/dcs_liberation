@@ -4,10 +4,15 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from pydcs_extensions.weapon_injector import inject_weapons
+
 
 class F22AWeapons:
     AIM_9XX = {"clsid": "{AIM-9XX}", "name": "AIM-9XX", "weight": 85}
     AIM_120D = {"clsid": "{AIM-120D}", "name": "AIM-120D", "weight": 152}
+
+
+inject_weapons(F22AWeapons)
 
 
 class F_22A(PlaneType):

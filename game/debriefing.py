@@ -30,6 +30,7 @@ from game.unitmap import (
     FrontLineUnit,
     GroundObjectUnit,
     UnitMap,
+    FlyingUnit,
 )
 from gen.flights.flight import Flight
 
@@ -41,24 +42,24 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 @dataclass(frozen=True)
 class AirLosses:
-    player: List[Flight]
-    enemy: List[Flight]
+    player: List[FlyingUnit]
+    enemy: List[FlyingUnit]
 
     @property
-    def losses(self) -> Iterator[Flight]:
+    def losses(self) -> Iterator[FlyingUnit]:
         return itertools.chain(self.player, self.enemy)
 
     def by_type(self, player: bool) -> Dict[Type[FlyingType], int]:
         losses_by_type: Dict[Type[FlyingType], int] = defaultdict(int)
         losses = self.player if player else self.enemy
         for loss in losses:
-            losses_by_type[loss.unit_type] += 1
+            losses_by_type[loss.flight.unit_type] += 1
         return losses_by_type
 
     def surviving_flight_members(self, flight: Flight) -> int:
         losses = 0
         for loss in self.losses:
-            if loss == flight:
+            if loss.flight == flight:
                 losses += 1
         return flight.count - losses
 
@@ -239,14 +240,14 @@ class Debriefing:
         player_losses = []
         enemy_losses = []
         for unit_name in self.state_data.killed_aircraft:
-            flight = self.unit_map.flight(unit_name)
-            if flight is None:
+            aircraft = self.unit_map.flight(unit_name)
+            if aircraft is None:
                 logging.error(f"Could not find Flight matching {unit_name}")
                 continue
-            if flight.departure.captured:
-                player_losses.append(flight)
+            if aircraft.flight.departure.captured:
+                player_losses.append(aircraft)
             else:
-                enemy_losses.append(flight)
+                enemy_losses.append(aircraft)
         return AirLosses(player_losses, enemy_losses)
 
     def dead_ground_units(self) -> GroundLosses:

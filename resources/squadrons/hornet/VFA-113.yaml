@@ -1,0 +1,22 @@
+---
+name: VFA-113
+nickname: Stingers
+country: USA
+role: Strike Fighter
+aircraft: FA-18C_hornet
+livery: VFA-113
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

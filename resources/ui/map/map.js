@@ -615,7 +615,40 @@ class Waypoint {
     // We don't need a marker for the departure waypoint (and it's likely
     // coincident with the landing waypoint, so hard to see). We do want to draw
     // the path from it though.
-    return !this.waypoint.isTakeoff;
+    //
+    // We also don't need the landing waypoint since we'll be drawing that path
+    // as well and it's clear what it is, and only obscured the CP icon.
+    //
+    // The divert waypoint also obscures the CP. We don't draw the path to it,
+    // but it can be seen in the flight settings page so it's not really a
+    // problem to exclude it.
+    //
+    // Bullseye ought to be (but currently isn't) drawn *once* rather than as a
+    // flight waypoint.
+    return !(
+      this.waypoint.isTakeoff ||
+      this.waypoint.isLanding ||
+      this.waypoint.isDivert ||
+      this.waypoint.isBullseye
+    );
+  }
+
+  draggable() {
+    // Target *points* are the exact location of a unit, whereas the target area
+    // is only the center of the objective. Allow moving the latter since its
+    // exact location isn't very important.
+    //
+    // Landing, and divert should be changed in the flight settings UI, takeoff
+    // cannot be changed because that's where the plane is.
+    //
+    // Moving the bullseye reference only makes it wrong.
+    return !(
+      this.waypoint.isTargetPoint ||
+      this.waypoint.isTakeoff ||
+      this.waypoint.isLanding ||
+      this.waypoint.isDivert ||
+      this.waypoint.isBullseye
+    );
   }
 
   description(dragging) {
@@ -639,7 +672,7 @@ class Waypoint {
 
   makeMarker() {
     const zoom = map.getZoom();
-    return L.marker(this.waypoint.position, { draggable: true })
+    return L.marker(this.waypoint.position, { draggable: this.draggable() })
       .bindTooltip(this.description(), {
         permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
       })

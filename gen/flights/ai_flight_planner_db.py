@@ -396,7 +396,7 @@ AEWC_CAPABLE = [
 
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
     elif task == FlightType.ANTISHIP:
@@ -426,3 +426,11 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
+
+
+def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+    tasks = []
+    for task in FlightType:
+        if aircraft in aircraft_for_task(task):
+            tasks.append(task)
+    return tasks

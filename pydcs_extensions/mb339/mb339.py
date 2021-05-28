@@ -4,6 +4,8 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from pydcs_extensions.weapon_injector import inject_weapons
+
 
 class MB_339PAN_Weapons:
     ARF8M3_TP = {"clsid": "{ARF8M3_TP}", "name": "ARF8M3 TP", "weight": None}
@@ -105,6 +107,9 @@ class MB_339PAN_Weapons:
         "name": "Tip Fuel Tank Ellittici 320lt",
         "weight": 314.2,
     }
+
+
+inject_weapons(MB_339PAN_Weapons)
 
 
 class MB_339PAN(PlaneType):

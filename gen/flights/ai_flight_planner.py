@@ -22,8 +22,10 @@ from typing import (
 
 from dcs.unittype import FlyingType
 
+from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
+from game.squadrons import AirWing, Squadron
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -109,6 +111,8 @@ class ProposedMission:
     #: The proposed flights that are required for the mission.
     flights: List[ProposedFlight]
 
+    asap: bool = field(default=False)
+
     def __str__(self) -> str:
         flights = ", ".join([str(f) for f in self.flights])
         return f"{self.location.name}: {flights}"
@@ -119,17 +123,19 @@ class AircraftAllocator:
 
     def __init__(
         self,
+        air_wing: AirWing,
         closest_airfields: ClosestAirfields,
         global_inventory: GlobalAircraftInventory,
         is_player: bool,
     ) -> None:
+        self.air_wing = air_wing
         self.closest_airfields = closest_airfields
         self.global_inventory = global_inventory
         self.is_player = is_player
 
-    def find_aircraft_for_flight(
+    def find_squadron_for_flight(
         self, flight: ProposedFlight
-    ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
+    ) -> Optional[Tuple[ControlPoint, Squadron]]:
         """Finds aircraft suitable for the given mission.
 
         Searches for aircraft capable of performing the given mission within the
@@ -148,16 +154,18 @@ class AircraftAllocator:
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        return self.find_aircraft_of_type(flight, aircraft_for_task(flight.task))
+        return self.find_aircraft_for_task(flight, flight.task)
 
-    def find_aircraft_of_type(
-        self,
-        flight: ProposedFlight,
-        types: List[Type[FlyingType]],
-    ) -> Optional[Tuple[ControlPoint, Type[FlyingType]]]:
+    def find_aircraft_for_task(
+        self, flight: ProposedFlight, task: FlightType
+    ) -> Optional[Tuple[ControlPoint, Squadron]]:
+        types = aircraft_for_task(task)
         airfields_in_range = self.closest_airfields.airfields_within(
             flight.max_distance
         )
+
+        # Prefer using squadrons with pilots first
+        best_understaffed: Optional[Tuple[ControlPoint, Squadron]] = None
         for airfield in airfields_in_range:
             if not airfield.is_friendly(self.is_player):
                 continue
@@ -165,11 +173,28 @@ class AircraftAllocator:
             for aircraft in types:
                 if not airfield.can_operate(aircraft):
                     continue
-                if inventory.available(aircraft) >= flight.num_aircraft:
-                    inventory.remove_aircraft(aircraft, flight.num_aircraft)
-                    return airfield, aircraft
+                if inventory.available(aircraft) < flight.num_aircraft:
+                    continue
+                # Valid location with enough aircraft available. Find a squadron to fit
+                # the role.
+                for squadron in self.air_wing.squadrons_for(aircraft):
+                    if task not in squadron.mission_types:
+                        continue
+                    if len(squadron.available_pilots) >= flight.num_aircraft:
+                        inventory.remove_aircraft(aircraft, flight.num_aircraft)
+                        return airfield, squadron
 
-        return None
+                    # A compatible squadron that doesn't have enough pilots. Remember it
+                    # as a fallback in case we find no better choices.
+                    if best_understaffed is None:
+                        best_understaffed = airfield, squadron
+
+        if best_understaffed is not None:
+            airfield, squadron = best_understaffed
+            self.global_inventory.for_control_point(airfield).remove_aircraft(
+                squadron.aircraft, flight.num_aircraft
+            )
+        return best_understaffed
 
 
 class PackageBuilder:
@@ -180,16 +205,18 @@ class PackageBuilder:
         location: MissionTarget,
         closest_airfields: ClosestAirfields,
         global_inventory: GlobalAircraftInventory,
+        air_wing: AirWing,
         is_player: bool,
         package_country: str,
         start_type: str,
+        asap: bool,
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
         self.package_country = package_country
-        self.package = Package(location)
+        self.package = Package(location, auto_asap=asap)
         self.allocator = AircraftAllocator(
-            closest_airfields, global_inventory, is_player
+            air_wing, closest_airfields, global_inventory, is_player
         )
         self.global_inventory = global_inventory
         self.start_type = start_type
@@ -202,10 +229,10 @@ class PackageBuilder:
         caller should return any previously planned flights to the inventory
         using release_planned_aircraft.
         """
-        assignment = self.allocator.find_aircraft_for_flight(plan)
+        assignment = self.allocator.find_squadron_for_flight(plan)
         if assignment is None:
             return False
-        airfield, aircraft = assignment
+        airfield, squadron = assignment
         if isinstance(airfield, OffMapSpawn):
             start_type = "In Flight"
         else:
@@ -214,13 +241,13 @@ class PackageBuilder:
         flight = Flight(
             self.package,
             self.package_country,
-            aircraft,
+            squadron,
             plan.num_aircraft,
             plan.task,
             start_type,
             departure=airfield,
             arrival=airfield,
-            divert=self.find_divert_field(aircraft, airfield),
+            divert=self.find_divert_field(squadron.aircraft, airfield),
         )
         self.package.add_flight(flight)
         return True
@@ -250,6 +277,7 @@ class PackageBuilder:
         flights = list(self.package.flights)
         for flight in flights:
             self.global_inventory.return_from_flight(flight)
+            flight.clear_roster()
             self.package.remove_flight(flight)
 
 
@@ -544,15 +572,20 @@ class CoalitionMissionPlanner:
         self.procurement_requests = self.game.procurement_requests_for(self.is_player)
         self.faction = self.game.faction_for(self.is_player)
 
-    def faction_can_plan(self, mission_type: FlightType) -> bool:
-        """Returns True if it is possible for the faction to plan this mission type.
+    def air_wing_can_plan(self, mission_type: FlightType) -> bool:
+        """Returns True if it is possible for the air wing to plan this mission type.
 
-        Not all mission types can be fulfilled by all factions. Many factions do not
-        have AEW&C aircraft, so they will never be able to plan those missions.
+        Not all mission types can be fulfilled by all air wings. Many factions do not
+        have AEW&C aircraft, so they will never be able to plan those missions. It's
+        also possible for the player to exclude mission types from their squadron
+        designs.
         """
         all_compatible = aircraft_for_task(mission_type)
-        for aircraft in self.faction.aircrafts:
-            if aircraft in all_compatible:
+        for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
+            if (
+                squadron.aircraft in all_compatible
+                and mission_type in squadron.mission_types
+            ):
                 return True
         return False
 
@@ -571,7 +604,10 @@ class CoalitionMissionPlanner:
         cp = self.objective_finder.farthest_friendly_control_point()
         if cp is not None:
             yield ProposedMission(
-                cp, [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)]
+                cp,
+                [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
+                # Supports all the early CAP flights, so should be in the air ASAP.
+                asap=True,
             )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
@@ -844,19 +880,15 @@ class CoalitionMissionPlanner:
 
     def plan_mission(self, mission: ProposedMission, reserves: bool = False) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
-
-        if self.is_player:
-            package_country = self.game.player_country
-        else:
-            package_country = self.game.enemy_country
-
         builder = PackageBuilder(
             mission.location,
             self.objective_finder.closest_airfields_to(mission.location),
             self.game.aircraft_inventory,
+            self.game.air_wing_for(self.is_player),
             self.is_player,
-            package_country,
+            self.game.country_for(self.is_player),
             self.game.settings.default_start_type,
+            mission.asap,
         )
 
         # Attempt to plan all the main elements of the mission first. Escorts
@@ -865,10 +897,10 @@ class CoalitionMissionPlanner:
         missing_types: Set[FlightType] = set()
         escorts = []
         for proposed_flight in mission.flights:
-            if not self.faction_can_plan(proposed_flight.task):
-                # This faction can never plan this mission type because they do not have
-                # compatible aircraft. Skip fulfillment so that we don't place the
-                # purchase request.
+            if not self.air_wing_can_plan(proposed_flight.task):
+                # This air wing can never plan this mission type because they do not
+                # have compatible aircraft or squadrons. Skip fulfillment so that we
+                # don't place the purchase request.
                 continue
             if proposed_flight.escort_type is not None:
                 # Escorts are planned after the primary elements of the package.
@@ -928,6 +960,11 @@ class CoalitionMissionPlanner:
         for flight in package.flights:
             if not flight.flight_plan.waypoints:
                 flight_plan_builder.populate_flight_plan(flight)
+
+        if package.has_players and self.game.settings.auto_ato_player_missions_asap:
+            package.auto_asap = True
+            package.set_tot_asap()
+
         self.ato.add_package(package)
 
     def stagger_missions(self) -> None:
@@ -975,6 +1012,8 @@ class CoalitionMissionPlanner:
                     logging.error(f"Could not determine mission end time for {package}")
                     continue
                 previous_cap_end_time[package.target] = departure_time
+            elif package.auto_asap:
+                package.set_tot_asap()
             else:
                 # But other packages should be spread out a bit. Note that take
                 # times are delayed, but all aircraft will become active at

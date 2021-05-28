@@ -3,6 +3,7 @@
   "name": "German Democratic Republic 1985",
   "authors": "Colonel Panic",
   "description": "<p>The German Democratic Republic in 1985.</p>",
+  "locales": ["de_DE"],
   "doctrine": "coldwar",
   "aircrafts": [
     "MiG_21Bis",

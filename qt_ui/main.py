@@ -6,10 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from dcs.payloads import PayloadDirectories
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
+from dcs.payloads import PayloadDirectories
 from dcs.weapons_data import weapon_ids
 
 from game import Game, VERSION, persistency
@@ -35,11 +35,10 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
     QLiberationFirstStartWindow,
 )
 
-
 THIS_DIR = Path(__file__).parent
 
 
-def inject_custom_payloads() -> None:
+def inject_custom_payloads(user_path: Path) -> None:
     dev_payloads = THIS_DIR.parent / "resources/customized_payloads"
     # The packaged release rearranges the file locations, so the release has the
     # customized payloads in a different location.
@@ -55,6 +54,7 @@ def inject_custom_payloads() -> None:
         )
     # We configure these as fallbacks so that the user's payloads override ours.
     PayloadDirectories.set_fallback(payloads)
+    PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
 
 
 def run_ui(game: Optional[Game], new_map: bool) -> None:
@@ -69,8 +69,6 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
 
-    inject_custom_payloads()
-
     first_start = liberation_install.init()
     if first_start:
         window = QLiberationFirstStartWindow()
@@ -82,6 +80,8 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
             liberation_install.get_dcs_install_directory()
         )
     )
+
+    inject_custom_payloads(Path(persistency.base_path()))
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -196,6 +196,15 @@ def create_game(
             "Cannot generate campaign without configuring DCS Liberation. Start the UI "
             "for the first run configuration."
         )
+
+    # This needs to run before the pydcs payload cache is created, which happens
+    # extremely early. It's not a problem that we inject these paths twice because we'll
+    # get the same answers each time.
+    #
+    # Without this, it is not possible to use next turn (or anything that needs to check
+    # for loadouts) without saving the generated campaign and reloading it the normal
+    # way.
+    inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue,

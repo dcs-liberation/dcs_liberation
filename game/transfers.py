@@ -20,6 +20,7 @@ from dcs.mapping import Point
 from dcs.unittype import FlyingType, VehicleType
 
 from game.procurement import AircraftProcurementRequest
+from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
 from game.theater.transitnetwork import (
     TransitConnection,
@@ -232,17 +233,27 @@ class AirliftPlanner:
 
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
+                squadrons = [
+                    s
+                    for s in self.game.air_wing_for(self.for_player).squadrons_for(
+                        unit_type
+                    )
+                    if FlightType.TRANSPORT in s.mission_types
+                ]
+                if not squadrons:
+                    continue
+                squadron = squadrons[0]
                 if self.compatible_with_mission(unit_type, cp):
                     while available and self.transfer.transport is None:
-                        flight_size = self.create_airlift_flight(unit_type, inventory)
+                        flight_size = self.create_airlift_flight(squadron, inventory)
                         available -= flight_size
         if self.package.flights:
             self.game.ato_for(self.for_player).add_package(self.package)
 
     def create_airlift_flight(
-        self, unit_type: Type[FlyingType], inventory: ControlPointAircraftInventory
+        self, squadron: Squadron, inventory: ControlPointAircraftInventory
     ) -> int:
-        available = inventory.available(unit_type)
+        available = inventory.available(squadron.aircraft)
         # 4 is the max flight size in DCS.
         flight_size = min(self.transfer.size, available, 4)
 
@@ -251,10 +262,11 @@ class AirliftPlanner:
         else:
             transfer = self.transfer
 
+        player = inventory.control_point.captured
         flight = Flight(
             self.package,
-            self.game.player_country,
-            unit_type,
+            self.game.country_for(player),
+            squadron,
             flight_size,
             FlightType.TRANSPORT,
             self.game.settings.default_start_type,
@@ -528,6 +540,7 @@ class PendingTransfers:
         flight = transport.flight
         flight.package.remove_flight(flight)
         self.game.aircraft_inventory.return_from_flight(flight)
+        flight.clear_roster()
 
     @cancel_transport.register
     def _cancel_transport_convoy(
@@ -572,10 +585,14 @@ class PendingTransfers:
 
     def current_airlift_capacity(self, control_point: ControlPoint) -> int:
         inventory = self.game.aircraft_inventory.for_control_point(control_point)
+        squadrons = self.game.air_wing_for(control_point.captured).squadrons_for_task(
+            FlightType.TRANSPORT
+        )
+        unit_types = {s.aircraft for s in squadrons}.intersection(TRANSPORT_CAPABLE)
         return sum(
             count
             for unit_type, count in inventory.all_aircraft
-            if unit_type in TRANSPORT_CAPABLE
+            if unit_type in unit_types
         )
 
     def order_airlift_assets_at(self, control_point: ControlPoint) -> None:

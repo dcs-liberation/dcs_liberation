@@ -52,9 +52,9 @@ LeafletLatLon = List[float]
 
 def shapely_poly_to_leaflet_points(
     poly: Polygon, theater: ConflictTheater
-) -> Optional[List[LeafletLatLon]]:
+) -> List[LeafletLatLon]:
     if poly.is_empty:
-        return None
+        return []
     return [theater.point_to_ll(Point(x, y)).as_list() for x, y in poly.exterior.coords]
 
 
@@ -379,7 +379,9 @@ class WaypointJs(QObject):
     altitudeReferenceChanged = Signal()
     nameChanged = Signal()
     timingChanged = Signal()
+    isTargetPointChanged = Signal()
     isTakeoffChanged = Signal()
+    isLandingChanged = Signal()
     isDivertChanged = Signal()
     isBullseyeChanged = Signal()
 
@@ -438,9 +440,17 @@ class WaypointJs(QObject):
             return ""
         return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
 
+    @Property(bool, notify=isTargetPointChanged)
+    def isTargetPoint(self) -> bool:
+        return self.waypoint.waypoint_type is FlightWaypointType.TARGET_POINT
+
     @Property(bool, notify=isTakeoffChanged)
     def isTakeoff(self) -> bool:
         return self.waypoint.waypoint_type is FlightWaypointType.TAKEOFF
+
+    @Property(bool, notify=isLandingChanged)
+    def isLanding(self) -> bool:
+        return self.waypoint.waypoint_type is FlightWaypointType.LANDING_POINT
 
     @Property(bool, notify=isDivertChanged)
     def isDivert(self) -> bool:

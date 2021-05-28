@@ -23,7 +23,7 @@ from dcs.forcedoptions import ForcedOptions
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
-from game.settings import Settings
+from game.settings import Settings, AutoAtoBehavior
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -75,6 +75,110 @@ class CheatSettingsBox(QGroupBox):
         return self.base_capture_cheat_checkbox.isChecked()
 
 
+class AutoAtoBehaviorSelector(QComboBox):
+    def __init__(self, default: AutoAtoBehavior) -> None:
+        super().__init__()
+
+        for behavior in AutoAtoBehavior:
+            self.addItem(behavior.value, behavior)
+        self.setCurrentText(default.value)
+
+
+class HqAutomationSettingsBox(QGroupBox):
+    def __init__(self, game: Game) -> None:
+        super().__init__("HQ Automation")
+        self.game = game
+
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        runway_repair = QCheckBox()
+        runway_repair.setChecked(self.game.settings.automate_runway_repair)
+        runway_repair.toggled.connect(self.set_runway_automation)
+
+        layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
+        layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
+
+        front_line = QCheckBox()
+        front_line.setChecked(self.game.settings.automate_front_line_reinforcements)
+        front_line.toggled.connect(self.set_front_line_automation)
+
+        layout.addWidget(QLabel("Automate front-line purchases"), 1, 0)
+        layout.addWidget(front_line, 1, 1, Qt.AlignRight)
+
+        self.automate_aircraft_reinforcements = QCheckBox()
+        self.automate_aircraft_reinforcements.setChecked(
+            self.game.settings.automate_aircraft_reinforcements
+        )
+        self.automate_aircraft_reinforcements.toggled.connect(
+            self.set_aircraft_automation
+        )
+
+        layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
+        layout.addWidget(self.automate_aircraft_reinforcements, 2, 1, Qt.AlignRight)
+
+        self.auto_ato_behavior = AutoAtoBehaviorSelector(
+            self.game.settings.auto_ato_behavior
+        )
+        self.auto_ato_behavior.currentIndexChanged.connect(self.set_auto_ato_behavior)
+        layout.addWidget(
+            QLabel(
+                "Automatic package planning behavior<br>"
+                "<strong>Aircraft auto-purchase is directed by the auto-planner,<br />"
+                "so disabling auto-planning disables auto-purchase.</strong>"
+            ),
+            3,
+            0,
+        )
+        layout.addWidget(self.auto_ato_behavior, 3, 1)
+
+        self.auto_ato_player_missions_asap = QCheckBox()
+        self.auto_ato_player_missions_asap.setChecked(
+            self.game.settings.auto_ato_player_missions_asap
+        )
+        self.auto_ato_player_missions_asap.toggled.connect(
+            self.set_auto_ato_player_missions_asap
+        )
+
+        layout.addWidget(
+            QLabel("Automatically generated packages with players are scheduled ASAP"),
+            4,
+            0,
+        )
+        layout.addWidget(self.auto_ato_player_missions_asap, 4, 1, Qt.AlignRight)
+
+    def set_runway_automation(self, value: bool) -> None:
+        self.game.settings.automate_runway_repair = value
+
+    def set_front_line_automation(self, value: bool) -> None:
+        self.game.settings.automate_front_line_reinforcements = value
+
+    def set_aircraft_automation(self, value: bool) -> None:
+        self.game.settings.automate_aircraft_reinforcements = value
+
+    def set_auto_ato_behavior(self, index: int) -> None:
+        behavior = self.auto_ato_behavior.itemData(index)
+        self.game.settings.auto_ato_behavior = behavior
+        if behavior in (AutoAtoBehavior.Disabled, AutoAtoBehavior.Never):
+            self.auto_ato_player_missions_asap.setChecked(False)
+            self.auto_ato_player_missions_asap.setEnabled(False)
+            if behavior is AutoAtoBehavior.Disabled:
+                self.automate_aircraft_reinforcements.setChecked(False)
+                self.automate_aircraft_reinforcements.setEnabled(False)
+        else:
+            self.auto_ato_player_missions_asap.setEnabled(True)
+            self.auto_ato_player_missions_asap.setChecked(
+                self.game.settings.auto_ato_player_missions_asap
+            )
+            self.automate_aircraft_reinforcements.setEnabled(True)
+            self.automate_aircraft_reinforcements.setChecked(
+                self.game.settings.automate_aircraft_reinforcements
+            )
+
+    def set_auto_ato_player_missions_asap(self, value: bool) -> None:
+        self.game.settings.auto_ato_player_missions_asap = value
+
+
 START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
 
 
@@ -92,7 +196,7 @@ class StartTypeComboBox(QComboBox):
 
 class QSettingsWindow(QDialog):
     def __init__(self, game: Game):
-        super(QSettingsWindow, self).__init__()
+        super().__init__()
 
         self.game = game
         self.pluginsPage = None
@@ -285,6 +389,23 @@ class QSettingsWindow(QDialog):
         self.ext_views.setChecked(self.game.settings.external_views_allowed)
         self.ext_views.toggled.connect(self.applySettings)
 
+        def set_invulnerable_player_pilots(checked: bool) -> None:
+            self.game.settings.invulnerable_player_pilots = checked
+
+        invulnerable_player_pilots_label = QLabel(
+            "Player pilots cannot be killed<br />"
+            "<strong>Aircraft are vulnerable, but the player's pilot will be<br />"
+            "returned to the squadron at the end of the mission</strong>"
+        )
+
+        invulnerable_player_pilots_checkbox = QCheckBox()
+        invulnerable_player_pilots_checkbox.setChecked(
+            self.game.settings.invulnerable_player_pilots
+        )
+        invulnerable_player_pilots_checkbox.toggled.connect(
+            set_invulnerable_player_pilots
+        )
+
         self.aiDifficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
         self.aiDifficultyLayout.addWidget(
             self.playerCoalitionSkill, 0, 1, Qt.AlignRight
@@ -295,6 +416,10 @@ class QSettingsWindow(QDialog):
         self.aiDifficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
         self.aiDifficultyLayout.addLayout(self.player_income, 3, 0)
         self.aiDifficultyLayout.addLayout(self.enemy_income, 4, 0)
+        self.aiDifficultyLayout.addWidget(invulnerable_player_pilots_label, 5, 0)
+        self.aiDifficultyLayout.addWidget(
+            invulnerable_player_pilots_checkbox, 5, 1, Qt.AlignRight
+        )
         self.aiDifficultySettings.setLayout(self.aiDifficultyLayout)
         self.difficultyLayout.addWidget(self.aiDifficultySettings)
 
@@ -367,41 +492,7 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(old_awac_label, 1, 0)
         general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
 
-        automation = QGroupBox("HQ Automation")
-        campaign_layout.addWidget(automation)
-
-        automation_layout = QGridLayout()
-        automation.setLayout(automation_layout)
-
-        def set_runway_automation(value: bool) -> None:
-            self.game.settings.automate_runway_repair = value
-
-        def set_front_line_automation(value: bool) -> None:
-            self.game.settings.automate_front_line_reinforcements = value
-
-        def set_aircraft_automation(value: bool) -> None:
-            self.game.settings.automate_aircraft_reinforcements = value
-
-        runway_repair = QCheckBox()
-        runway_repair.setChecked(self.game.settings.automate_runway_repair)
-        runway_repair.toggled.connect(set_runway_automation)
-
-        automation_layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
-        automation_layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
-
-        front_line = QCheckBox()
-        front_line.setChecked(self.game.settings.automate_front_line_reinforcements)
-        front_line.toggled.connect(set_front_line_automation)
-
-        automation_layout.addWidget(QLabel("Automate front-line purchases"), 1, 0)
-        automation_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
-
-        aircraft = QCheckBox()
-        aircraft.setChecked(self.game.settings.automate_aircraft_reinforcements)
-        aircraft.toggled.connect(set_aircraft_automation)
-
-        automation_layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
-        automation_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
+        campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()

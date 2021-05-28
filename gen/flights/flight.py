@@ -10,6 +10,7 @@ from dcs.unit import Unit
 from dcs.unittype import FlyingType
 
 from game import db
+from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 from gen.flights.loadouts import Loadout
@@ -71,6 +72,13 @@ class FlightType(Enum):
     def __str__(self) -> str:
         return self.value
 
+    @classmethod
+    def from_name(cls, name: str) -> FlightType:
+        for entry in cls:
+            if name == entry.value:
+                return entry
+        raise KeyError(f"No FlightType with name {name}")
+
 
 class FlightWaypointType(Enum):
     """Enumeration of waypoint types.
@@ -101,7 +109,7 @@ class FlightWaypointType(Enum):
     LANDING_POINT = 11  # Should land there
     TARGET_POINT = 12  # A target building or static object, position
     TARGET_GROUP_LOC = 13  # A target group approximate location
-    TARGET_SHIP = 14  # A target ship known location
+    TARGET_SHIP = 14  # Unused.
     CUSTOM = 15  # User waypoint (no specific behaviour)
     JOIN = 16
     SPLIT = 17
@@ -197,7 +205,7 @@ class Flight:
         self,
         package: Package,
         country: str,
-        unit_type: Type[FlyingType],
+        squadron: Squadron,
         count: int,
         flight_type: FlightType,
         start_type: str,
@@ -209,8 +217,8 @@ class Flight:
     ) -> None:
         self.package = package
         self.country = country
-        self.unit_type = unit_type
-        self.count = count
+        self.squadron = squadron
+        self.pilots = [squadron.claim_available_pilot() for _ in range(count)]
         self.departure = departure
         self.arrival = arrival
         self.divert = divert
@@ -220,7 +228,6 @@ class Flight:
         self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
-        self.client_count = 0
         self.custom_name = custom_name
 
         # Only used by transport missions.
@@ -236,12 +243,52 @@ class Flight:
         )
 
     @property
+    def count(self) -> int:
+        return len(self.pilots)
+
+    @property
+    def client_count(self) -> int:
+        return len([p for p in self.pilots if p is not None and p.player])
+
+    @property
+    def unit_type(self) -> Type[FlyingType]:
+        return self.squadron.aircraft
+
+    @property
     def from_cp(self) -> ControlPoint:
         return self.departure
 
     @property
     def points(self) -> List[FlightWaypoint]:
         return self.flight_plan.waypoints[1:]
+
+    def resize(self, new_size: int) -> None:
+        if self.count > new_size:
+            self.squadron.return_pilots(
+                p for p in self.pilots[new_size:] if p is not None
+            )
+            self.pilots = self.pilots[:new_size]
+            return
+        self.pilots.extend(
+            [
+                self.squadron.claim_available_pilot()
+                for _ in range(new_size - self.count)
+            ]
+        )
+
+    def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
+        if pilot is not None:
+            self.squadron.claim_pilot(pilot)
+        if (current_pilot := self.pilots[index]) is not None:
+            self.squadron.return_pilot(current_pilot)
+        self.pilots[index] = pilot
+
+    @property
+    def missing_pilots(self) -> int:
+        return len([p for p in self.pilots if p is None])
+
+    def clear_roster(self) -> None:
+        self.squadron.return_pilots([p for p in self.pilots if p is not None])
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)

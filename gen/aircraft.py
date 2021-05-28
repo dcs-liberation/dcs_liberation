@@ -70,7 +70,7 @@ from dcs.task import (
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unit import Unit
+from dcs.unit import Unit, Skill
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, UnitType
 
@@ -80,6 +80,7 @@ from game.data.weapons import Pylon
 from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
+from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -726,6 +727,70 @@ class AircraftConflictGenerator:
             return StartType.Cold
         return StartType.Warm
 
+    def skill_level_for(
+        self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool
+    ) -> Skill:
+        if blue:
+            base_skill = Skill(self.game.settings.player_skill)
+        else:
+            base_skill = Skill(self.game.settings.enemy_skill)
+
+        if pilot is None:
+            logging.error(f"Cannot determine skill level: {unit.name} has not pilot")
+            return base_skill
+
+        levels = [
+            Skill.Average,
+            Skill.Good,
+            Skill.High,
+            Skill.Excellent,
+        ]
+        current_level = levels.index(base_skill)
+        missions_for_skill_increase = 4
+        increase = pilot.record.missions_flown // missions_for_skill_increase
+        new_level = min(current_level + increase, len(levels) - 1)
+        return levels[new_level]
+
+    def set_skill(self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool) -> None:
+        if pilot is None or not pilot.player:
+            unit.skill = self.skill_level_for(unit, pilot, blue)
+            return
+
+        if self.use_client:
+            unit.set_client()
+        else:
+            unit.set_player()
+
+    @staticmethod
+    def livery_from_db(flight: Flight) -> Optional[str]:
+        return db.PLANE_LIVERY_OVERRIDES.get(flight.unit_type)
+
+    def livery_from_faction(self, flight: Flight) -> Optional[str]:
+        faction = self.game.faction_for(player=flight.departure.captured)
+        if (choices := faction.liveries_overrides.get(flight.unit_type)) is not None:
+            return random.choice(choices)
+        return None
+
+    @staticmethod
+    def livery_from_squadron(flight: Flight) -> Optional[str]:
+        return flight.squadron.livery
+
+    def livery_for(self, flight: Flight) -> Optional[str]:
+        if (livery := self.livery_from_squadron(flight)) is not None:
+            return livery
+        if (livery := self.livery_from_faction(flight)) is not None:
+            return livery
+        if (livery := self.livery_from_db(flight)) is not None:
+            return livery
+        return None
+
+    def _setup_livery(self, flight: Flight, group: FlyingGroup) -> None:
+        livery = self.livery_for(flight)
+        if livery is None:
+            return
+        for unit in group.units:
+            unit.livery_id = livery
+
     def _setup_group(
         self,
         group: FlyingGroup,
@@ -736,34 +801,16 @@ class AircraftConflictGenerator:
         unit_type = group.units[0].unit_type
 
         self._setup_payload(flight, group)
+        self._setup_livery(flight, group)
 
-        if unit_type in db.PLANE_LIVERY_OVERRIDES:
-            for unit_instance in group.units:
-                unit_instance.livery_id = db.PLANE_LIVERY_OVERRIDES[unit_type]
-
-        # Override livery by faction file data
-        if flight.from_cp.captured:
-            faction = self.game.player_faction
-        else:
-            faction = self.game.enemy_faction
-
-        if unit_type in faction.liveries_overrides:
-            livery = random.choice(faction.liveries_overrides[unit_type])
-            for unit_instance in group.units:
-                unit_instance.livery_id = livery
-
-        for idx in range(0, min(len(group.units), flight.client_count)):
-            unit = group.units[idx]
-            if self.use_client:
-                unit.set_client()
-            else:
-                unit.set_player()
-
+        for unit, pilot in zip(group.units, flight.pilots):
+            player = pilot is not None and pilot.player
+            self.set_skill(unit, pilot, blue=flight.departure.captured)
             # Do not generate player group with late activation.
-            if group.late_activation:
+            if player and group.late_activation:
                 group.late_activation = False
 
-            # Set up F-14 Client to have pre-stored alignement
+            # Set up F-14 Client to have pre-stored alignment
             if unit_type is F_14B:
                 unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
 
@@ -784,7 +831,7 @@ class AircraftConflictGenerator:
         self.flights.append(
             FlightData(
                 package=package,
-                country=faction.country,
+                country=self.game.faction_for(player=flight.departure.captured).country,
                 flight_type=flight.flight_type,
                 units=group.units,
                 size=len(group.units),
@@ -1020,7 +1067,7 @@ class AircraftConflictGenerator:
             flight = Flight(
                 Package(control_point),
                 faction.country,
-                aircraft,
+                self.game.air_wing_for(control_point.captured).squadron_for(aircraft),
                 1,
                 FlightType.BARCAP,
                 "Cold",
@@ -1737,29 +1784,32 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
 
         # TODO: Add common "UnitGroupTarget" base type.
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            group_name = target_group.group_name
-        elif isinstance(target_group, MultiGroupTransport):
-            group_name = target_group.name
+        group_names = []
+        target = self.package.target
+        if isinstance(target, TheaterGroundObject):
+            for group in target.groups:
+                group_names.append(group.name)
+        elif isinstance(target, MultiGroupTransport):
+            group_names.append(target.name)
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",
-                target_group.__class__.__name__,
+                target.__class__.__name__,
             )
             return waypoint
 
-        group = self.mission.find_group(group_name)
-        if group is None:
-            logging.error("Could not find group for BAI mission %s", group_name)
-            return waypoint
+        for group_name in group_names:
+            group = self.mission.find_group(group_name)
+            if group is None:
+                logging.error("Could not find group for BAI mission %s", group_name)
+                continue
 
-        task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
-        task.params["attackQtyLimit"] = False
-        task.params["directionEnabled"] = False
-        task.params["altitudeEnabled"] = False
-        task.params["groupAttack"] = True
-        waypoint.tasks.append(task)
+            task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
@@ -1796,23 +1846,29 @@ class CasIngressBuilder(PydcsWaypointBuilder):
 class DeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name)
-            if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Auto)
-                task.params["expend"] = "All"
-                task.params["attackQtyLimit"] = False
-                task.params["directionEnabled"] = False
-                task.params["altitudeEnabled"] = False
-                task.params["groupAttack"] = True
-                waypoint.tasks.append(task)
-            else:
-                logging.error(
-                    f"Could not find group for DEAD mission {target_group.group_name}"
-                )
         self.register_special_waypoints(self.waypoint.targets)
+
+        target = self.package.target
+        if not isinstance(target, TheaterGroundObject):
+            logging.error(
+                "Unexpected target type for DEAD mission: %s",
+                target.__class__.__name__,
+            )
+            return waypoint
+
+        for group in target.groups:
+            miz_group = self.mission.find_group(group.name)
+            if miz_group is None:
+                logging.error(f"Could not find group for DEAD mission {group.name}")
+                continue
+
+            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
+            task.params["expend"] = "All"
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
@@ -1864,23 +1920,29 @@ class OcaRunwayIngressBuilder(PydcsWaypointBuilder):
 class SeadIngressBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
-
-        target_group = self.package.target
-        if isinstance(target_group, TheaterGroundObject):
-            tgroup = self.mission.find_group(target_group.group_name)
-            if tgroup is not None:
-                task = AttackGroup(tgroup.id, weapon_type=WeaponType.Guided)
-                task.params["expend"] = "All"
-                task.params["attackQtyLimit"] = False
-                task.params["directionEnabled"] = False
-                task.params["altitudeEnabled"] = False
-                task.params["groupAttack"] = True
-                waypoint.tasks.append(task)
-            else:
-                logging.error(
-                    f"Could not find group for SEAD mission {target_group.group_name}"
-                )
         self.register_special_waypoints(self.waypoint.targets)
+
+        target = self.package.target
+        if not isinstance(target, TheaterGroundObject):
+            logging.error(
+                "Unexpected target type for SEAD mission: %s",
+                target.__class__.__name__,
+            )
+            return waypoint
+
+        for group in target.groups:
+            miz_group = self.mission.find_group(group.name)
+            if miz_group is None:
+                logging.error(f"Could not find group for SEAD mission {group.name}")
+                continue
+
+            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Guided)
+            task.params["expend"] = "All"
+            task.params["attackQtyLimit"] = False
+            task.params["directionEnabled"] = False
+            task.params["altitudeEnabled"] = False
+            task.params["groupAttack"] = True
+            waypoint.tasks.append(task)
         return waypoint
 
 
@@ -1943,7 +2005,10 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
         waypoint.tasks.append(
             EngageTargets(
                 max_distance=int(nautical_miles(50).meters),
-                targets=[Targets.All.Air.Planes.Fighters],
+                targets=[
+                    Targets.All.Air.Planes.Fighters,
+                    Targets.All.Air.Planes.MultiroleFighters,
+                ],
             )
         )
 

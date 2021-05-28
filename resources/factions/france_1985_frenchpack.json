@@ -3,6 +3,7 @@
   "name": "France 1985 (Frenchpack)",
   "authors": "Colonel Panic",
   "description": "<p>1980s French equipment using FrenchPack.</p>",
+  "locales": ["fr_FR"],
   "doctrine": "coldwar",
   "aircrafts": [
     "M_2000C",

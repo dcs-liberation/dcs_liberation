@@ -1459,6 +1459,13 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return None
 
 
+def flying_type_from_name(name: str) -> Optional[Type[FlyingType]]:
+    unit_type = plane_map.get(name)
+    if unit_type is not None:
+        return unit_type
+    return helicopter_map.get(name)
+
+
 def unit_type_of(unit: Unit) -> UnitType:
     if isinstance(unit, Vehicle):
         return vehicle_map[unit.type]

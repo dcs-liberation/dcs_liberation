@@ -3,6 +3,7 @@
   "name": "Russia 1970 Limited Air",
   "authors": "Starfire",
   "description": "<p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_19P",
 	"MiG_21Bis",

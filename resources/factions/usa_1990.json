@@ -3,6 +3,7 @@
   "name": "USA 1990",
   "authors": "Khopa",
   "description": "<p>US army in the 90s, Gulf War/Desert Storm.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "AH_64A",
     "AV8BNA",

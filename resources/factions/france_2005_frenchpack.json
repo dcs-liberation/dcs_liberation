@@ -3,6 +3,7 @@
   "name": "France 2005 (Frenchpack)",
   "authors": "HerrTom",
   "description": "<p>French equipment using the Frenchpack, but without the Rafale mod.</p>",
+  "locales": ["fr_FR"],
   "aircrafts": [
     "M_2000C",
     "Mirage_2000_5",

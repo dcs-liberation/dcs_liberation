@@ -3,6 +3,7 @@
   "name": "Russia 1990",
   "authors": "Khopa",
   "description": "<p>Soviet/Russian army in the 90s.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_25PD",
     "MiG_29S",

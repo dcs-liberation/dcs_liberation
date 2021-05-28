@@ -3,6 +3,7 @@
   "name": "Russia 2010",
   "authors": "Khopa",
   "description": "<p>Russian army in the early 2010s.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_29S",
     "MiG_31",

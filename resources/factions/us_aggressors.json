@@ -3,6 +3,7 @@
   "name": "USAF Aggressors",
   "authors": "Khopa",
   "description": "<p>USAF aggresors.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "F_15C",
     "F_15E",

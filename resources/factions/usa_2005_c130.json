@@ -3,6 +3,7 @@
   "name": "USA 2005 (With C-130)",
   "authors": "Khopa",
   "description": "<p>USA in the 2000s.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "AH_64D",
     "AV8BNA",

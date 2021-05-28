@@ -3,6 +3,7 @@
   "name": "Russia 1955",
   "authors": "Khopa",
   "description": "<p>Soviet army around 1955, during the Korean War</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_15bis"
   ],

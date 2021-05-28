@@ -1,4 +1,5 @@
-from typing import Optional
+import logging
+from typing import Optional, Type
 
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
@@ -10,9 +11,10 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QLineEdit,
 )
-from dcs.planes import PlaneType
+from dcs.unittype import FlyingType
 
 from game import Game
+from game.squadrons import Squadron
 from game.theater import ControlPoint, OffMapSpawn
 from gen.ato import Package
 from gen.flights.flight import Flight
@@ -23,6 +25,7 @@ from qt_ui.widgets.combos.QAircraftTypeSelector import QAircraftTypeSelector
 from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelector
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
+from qt_ui.windows.mission.flight.SquadronSelector import SquadronSelector
 
 
 class QFlightCreator(QDialog):
@@ -54,6 +57,14 @@ class QFlightCreator(QDialog):
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(self.on_aircraft_changed)
         layout.addLayout(QLabeledWidget("Aircraft:", self.aircraft_selector))
+
+        self.squadron_selector = SquadronSelector(
+            self.game.air_wing_for(player=True),
+            self.task_selector.currentData(),
+            self.aircraft_selector.currentData(),
+        )
+        self.squadron_selector.setCurrentIndex(0)
+        layout.addLayout(QLabeledWidget("Squadron:", self.squadron_selector))
 
         self.departure = QOriginAirfieldSelector(
             self.game.aircraft_inventory,
@@ -132,13 +143,16 @@ class QFlightCreator(QDialog):
         self.custom_name_text = text
 
     def verify_form(self) -> Optional[str]:
-        aircraft: PlaneType = self.aircraft_selector.currentData()
-        origin: ControlPoint = self.departure.currentData()
-        arrival: ControlPoint = self.arrival.currentData()
-        divert: ControlPoint = self.divert.currentData()
+        aircraft: Optional[Type[FlyingType]] = self.aircraft_selector.currentData()
+        squadron: Optional[Squadron] = self.squadron_selector.currentData()
+        origin: Optional[ControlPoint] = self.departure.currentData()
+        arrival: Optional[ControlPoint] = self.arrival.currentData()
+        divert: Optional[ControlPoint] = self.divert.currentData()
         size: int = self.flight_size_spinner.value()
         if aircraft is None:
             return "You must select an aircraft type."
+        if squadron is None:
+            return "You must select a squadron."
         if not origin.captured:
             return f"{origin.name} is not owned by your coalition."
         if arrival is not None and not arrival.captured:
@@ -163,7 +177,7 @@ class QFlightCreator(QDialog):
             return
 
         task = self.task_selector.currentData()
-        aircraft = self.aircraft_selector.currentData()
+        squadron = self.squadron_selector.currentData()
         origin = self.departure.currentData()
         arrival = self.arrival.currentData()
         divert = self.divert.currentData()
@@ -175,7 +189,7 @@ class QFlightCreator(QDialog):
         flight = Flight(
             self.package,
             self.country,
-            aircraft,
+            squadron,
             size,
             task,
             self.start_type.currentText(),
@@ -184,7 +198,14 @@ class QFlightCreator(QDialog):
             divert,
             custom_name=self.custom_name_text,
         )
-        flight.client_count = self.client_slots_spinner.value()
+        for pilot, idx in zip(flight.pilots, range(self.client_slots_spinner.value())):
+            if pilot is None:
+                logging.error(
+                    f"Cannot create client slot because {flight} has no pilot for "
+                    f"aircraft {idx}"
+                )
+                continue
+            pilot.player = True
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
@@ -192,6 +213,9 @@ class QFlightCreator(QDialog):
 
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
+        self.squadron_selector.update_items(
+            self.task_selector.currentData(), new_aircraft
+        )
         self.departure.change_aircraft(new_aircraft)
         self.arrival.change_aircraft(new_aircraft)
         self.divert.change_aircraft(new_aircraft)
@@ -214,6 +238,9 @@ class QFlightCreator(QDialog):
         self.aircraft_selector.update_items(
             self.task_selector.currentData(),
             self.game.aircraft_inventory.available_types_for_player,
+        )
+        self.squadron_selector.update_items(
+            self.task_selector.currentData(), self.aircraft_selector.currentData()
         )
 
     def update_max_size(self, available: int) -> None:
