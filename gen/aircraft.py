@@ -1074,7 +1074,6 @@ class AircraftConflictGenerator:
                 departure=control_point,
                 arrival=control_point,
                 divert=None,
-                no_pilots=True,
             )
 
             group = self._generate_at_airport(
