@@ -773,15 +773,6 @@ class ControlPoint(MissionTarget, ABC):
     def income_per_turn(self) -> int:
         return 0
 
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
-
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.AEWC,
-            ]
-        yield from super().mission_types(for_player)
-
     @property
     def has_active_frontline(self) -> bool:
         return any(not c.is_friendly(self.captured) for c in self.connected_points)
@@ -830,17 +821,20 @@ class Airfield(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                # TODO: FlightType.INTERCEPTION
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
+        if not self.is_friendly(for_player):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
             ]
+
         yield from super().mission_types(for_player)
+
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.AEWC,
+                # TODO: FlightType.INTERCEPTION
+                # TODO: FlightType.LOGISTICS
+            ]
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -960,6 +954,13 @@ class Carrier(NavalControlPoint):
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            yield FlightType.AEWC
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")
@@ -1100,18 +1101,10 @@ class Fob(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.BARCAP,
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
-            yield from [
-                FlightType.STRIKE,
-                FlightType.SWEEP,
-                FlightType.ESCORT,
-                FlightType.SEAD_ESCORT,
-            ]
+        if not self.is_friendly(for_player):
+            yield FlightType.STRIKE
+
+        yield from super().mission_types(for_player)
 
     @property
     def total_aircraft_parking(self) -> int:
