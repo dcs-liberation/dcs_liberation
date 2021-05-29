@@ -103,7 +103,7 @@ class NavMesh:
         # currently.
         p = ShapelyPoint(point.x, point.y)
         for navpoly in self.polys:
-            if navpoly.poly.contains(p):
+            if navpoly.poly.intersects(p):
                 return navpoly
         return None
 
