@@ -176,6 +176,9 @@ const redAircraftThreatZones = L.layerGroup();
 const redAirDefenseThreatZones = L.layerGroup();
 const redRadarSamThreatZones = L.layerGroup();
 
+const blueNavmesh = L.layerGroup();
+const redNavmesh = L.layerGroup();
+
 // Main map controls. These are the ones that we expect users to interact with.
 // These are always open, which unfortunately means that the scroll bar will not
 // appear if the menu doesn't fit. This fits in the smallest window size we
@@ -238,10 +241,15 @@ L.control
         "Air Defenses": redAirDefenseThreatZones,
         "Radar SAMs": redRadarSamThreatZones,
       },
+      "Navmeshes": {
+        Hide: L.layerGroup().addTo(map),
+        Blue: blueNavmesh,
+        Red: redNavmesh,
+      },
     },
     {
       position: "topleft",
-      exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones"],
+      exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones", "Navmeshes"],
       groupCheckboxes: true,
     }
   )
@@ -259,6 +267,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawFlightPlans);
   game.threatZonesChanged.connect(drawThreatZones);
+  game.navmeshesChanged.connect(drawNavmeshes);
 });
 
 function recenterMap(center) {
@@ -862,6 +871,24 @@ function drawThreatZones() {
   );
 }
 
+function drawNavmesh(zones, layer) {
+  for (const zone of zones) {
+    L.polyline(zone, {
+      color: "#000000",
+      weight: 1,
+      fill: false,
+    }).addTo(layer);
+  }
+}
+
+function drawNavmeshes() {
+  blueNavmesh.clearLayers();
+  redNavmesh.clearLayers();
+
+  drawNavmesh(game.navmeshes.blue, blueNavmesh);
+  drawNavmesh(game.navmeshes.red, redNavmesh);
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -870,6 +897,7 @@ function drawInitialMap() {
   drawFrontLines();
   drawFlightPlans();
   drawThreatZones();
+  drawNavmeshes();
 }
 
 function clearAllLayers() {

@@ -40,7 +40,6 @@ from PySide2.QtWidgets import (
 )
 from dcs import Point
 from dcs.mapping import point_from_heading
-from dcs.planes import F_16C_50
 from dcs.unitgroup import Group
 from shapely.geometry import (
     LineString,
