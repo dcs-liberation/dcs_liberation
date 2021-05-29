@@ -168,8 +168,14 @@ class TheaterGroundObject(MissionTarget):
                 max_range = max(max_range, meters(unit_range))
         return max_range
 
+    def max_detection_range(self) -> Distance:
+        return max(self.detection_range(g) for g in self.groups)
+
     def detection_range(self, group: Group) -> Distance:
         return self._max_range_of_type(group, "detection_range")
+
+    def max_threat_range(self) -> Distance:
+        return max(self.threat_range(g) for g in self.groups)
 
     def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")

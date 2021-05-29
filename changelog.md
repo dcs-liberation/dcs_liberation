@@ -10,7 +10,8 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Non-control point FOBs will no longer spawn.
 * **[Campaign]** Added squadrons and pilots. See https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots for more information.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
-* **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP. 
+* **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP.
+* **[Campaign AI]** AI now considers the range to the SAM's threat zone rather than the range to the SAM itself when determining target priorities.
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
