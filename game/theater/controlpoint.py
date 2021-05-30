@@ -1,13 +1,15 @@
 from __future__ import annotations
+from game.data.groundunitclass import GroundUnitClass
 
 import heapq
 import itertools
 import logging
 import random
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from functools import total_ordering
+from functools import total_ordering, cached_property
 from typing import (
     Any,
     Dict,
@@ -32,13 +34,12 @@ from dcs.ships import (
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
-from dcs.unittype import FlyingType
+from dcs.unittype import FlyingType, VehicleType
 
 from game import db
 from game.point_with_heading import PointWithHeading
 from game.scenery_group import SceneryGroup
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
@@ -58,6 +59,7 @@ from ..weather import Conditions
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from ..transfers import PendingTransfers
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
 AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
@@ -220,6 +222,30 @@ class PendingOccupancy:
     @property
     def total(self) -> int:
         return self.present + self.ordered + self.transferring
+
+
+@dataclass(frozen=True)
+class GroundUnitAllocations:
+    present: dict[Type[VehicleType], int]
+    ordered: dict[Type[VehicleType], int]
+    transferring: dict[Type[VehicleType], int]
+
+    @property
+    def all(self) -> dict[Type[VehicleType], int]:
+        combined: dict[Type[VehicleType], int] = defaultdict(int)
+        for unit_type, count in itertools.chain(
+            self.present.items(), self.ordered.items(), self.transferring.items()
+        ):
+            combined[unit_type] += count
+        return dict(combined)
+
+    @cached_property
+    def total(self) -> int:
+        return (
+            sum(self.present.values())
+            + sum(self.ordered.values())
+            + sum(self.transferring.values())
+        )
 
 
 @dataclass
@@ -732,47 +758,24 @@ class ControlPoint(MissionTarget, ABC):
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
 
-    @property
-    def pending_frontline_aa_deliveries_count(self):
-        """
-        Get number of pending frontline aa units
-        """
-        if self.pending_unit_deliveries:
-            return sum(
-                [
-                    v
-                    for k, v in self.pending_unit_deliveries.units.items()
-                    if k in TYPE_SHORAD
-                ]
-            )
-        else:
-            return 0
+    def allocated_ground_units(
+        self, transfers: PendingTransfers
+    ) -> GroundUnitAllocations:
+        on_order = {}
+        for unit_bought, count in self.pending_unit_deliveries.units.items():
+            if issubclass(unit_bought, VehicleType):
+                on_order[unit_bought] = count
 
-    @property
-    def pending_deliveries_count(self):
-        """
-        Get number of pending units
-        """
-        if self.pending_unit_deliveries:
-            return sum([v for k, v in self.pending_unit_deliveries.units.items()])
-        else:
-            return 0
+        transferring: dict[Type[VehicleType], int] = defaultdict(int)
+        for transfer in transfers:
+            if transfer.destination == self:
+                for unit_type, count in transfer.units.items():
+                    transferring[unit_type] += count
 
-    @property
-    def expected_ground_units_next_turn(self) -> PendingOccupancy:
-        on_order = 0
-        for unit_bought in self.pending_unit_deliveries.units:
-            if issubclass(unit_bought, FlyingType):
-                continue
-            if unit_bought in TYPE_SHORAD:
-                continue
-            on_order += self.pending_unit_deliveries.units[unit_bought]
-
-        return PendingOccupancy(
-            self.base.total_armor,
+        return GroundUnitAllocations(
+            self.base.armor,
             on_order,
-            # Ground unit transfers not yet implemented.
-            transferring=0,
+            transferring,
         )
 
     @property
