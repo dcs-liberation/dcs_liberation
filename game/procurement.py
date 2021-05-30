@@ -153,6 +153,9 @@ class ProcurementAi:
         worst_balanced: Optional[GroundUnitClass] = None
         worst_fulfillment = math.inf
         for unit_class in GroundUnitClass:
+            if not self.faction.has_access_to_unittype(unit_class):
+                continue
+                
             current_ratio = self.cost_ratio_of_ground_unit(cp, unit_class)
             desired_ratio = (
                 self.faction.doctrine.ground_unit_procurement_ratios.for_unit_class(

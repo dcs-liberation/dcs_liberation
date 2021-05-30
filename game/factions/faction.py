@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.data.groundunitclass import GroundUnitClass
 
 import logging
 from dataclasses import dataclass, field
@@ -132,6 +133,16 @@ class Faction:
     #: Note that this option cannot be set per-side. If either faction needs it,
     #: both will use it.
     unrestricted_satnav: bool = False
+
+    def has_access_to_unittype (self, unitclass: GroundUnitClass) -> bool:
+        has_access = False
+        for vehicle in unitclass.unit_list:
+            if vehicle in self.frontline_units:
+                return True
+            if vehicle in self. artillery_units:
+                return True
+            
+        return has_access
 
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
