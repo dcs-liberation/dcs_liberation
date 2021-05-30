@@ -3,7 +3,7 @@
 Saves from 2.5 are not compatible with 3.0.
 
 ## Features/Improvements
-* **[Ground Units]** Ground units will be auto purchased by a certain ratio and not anymore randomly.
+* **[Campaign AI]** Ground units will be auto purchased by a certain ratio and not anymore randomly.
 * **[Campaign]** Ground units can now be transferred by road, airlift, and cargo ship. See https://github.com/dcs-liberation/dcs_liberation/wiki/Unit-Transfers for more information.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
