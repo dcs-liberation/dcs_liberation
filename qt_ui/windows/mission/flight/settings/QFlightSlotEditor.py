@@ -202,8 +202,10 @@ class QFlightSlotEditor(QGroupBox):
         self.setLayout(layout)
 
     def _changed_aircraft_count(self):
-        self.game.aircraft_inventory.return_from_flight(self.flight)
+        old_count = self.flight.count
         new_count = int(self.aircraft_count_spinner.value())
+        self.game.aircraft_inventory.return_from_flight(self.flight)
+        self.flight.resize(new_count)
         try:
             self.game.aircraft_inventory.claim_for_flight(self.flight)
         except ValueError:
@@ -217,7 +219,6 @@ class QFlightSlotEditor(QGroupBox):
                 f"{available} {self.flight.unit_type} remaining"
             )
             self.game.aircraft_inventory.claim_for_flight(self.flight)
+            self.flight.resize(old_count)
             return
-
-        self.flight.resize(new_count)
         self.roster_editor.resize(new_count)
