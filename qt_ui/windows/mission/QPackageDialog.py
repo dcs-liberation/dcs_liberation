@@ -215,7 +215,9 @@ class QNewPackageDialog(QPackageDialog):
         self, game_model: GameModel, model: AtoModel, target: MissionTarget, parent=None
     ) -> None:
         super().__init__(
-            game_model, PackageModel(Package(target), game_model), parent=parent
+            game_model,
+            PackageModel(Package(target, auto_asap=True), game_model),
+            parent=parent,
         )
         self.ato_model = model
 
@@ -237,6 +239,7 @@ class QNewPackageDialog(QPackageDialog):
         super().on_cancel()
         for flight in self.package_model.package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
+            flight.clear_roster()
 
 
 class QEditPackageDialog(QPackageDialog):

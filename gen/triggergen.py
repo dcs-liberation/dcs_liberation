@@ -96,32 +96,15 @@ class TriggersGenerator:
         """
         for coalition_name, coalition in self.mission.coalition.items():
             if coalition_name == player_coalition:
-                skill_level = (
-                    self.game.settings.player_skill,
-                    self.game.settings.player_skill,
-                )
+                skill_level = Skill(self.game.settings.player_skill)
             elif coalition_name == enemy_coalition:
-                skill_level = (
-                    self.game.settings.enemy_skill,
-                    self.game.settings.enemy_vehicle_skill,
-                )
+                skill_level = Skill(self.game.settings.enemy_vehicle_skill)
             else:
                 continue
 
             for country in coalition.countries.values():
-                flying_groups = (
-                    country.plane_group + country.helicopter_group
-                )  # type: FlyingGroup
-                for flying_group in flying_groups:
-                    for plane_unit in flying_group.units:
-                        if (
-                            plane_unit.skill != Skill.Client
-                            and plane_unit.skill != Skill.Player
-                        ):
-                            plane_unit.skill = Skill(skill_level[0])
-
                 for vehicle_group in country.vehicle_group:
-                    vehicle_group.set_skill(Skill(skill_level[1]))
+                    vehicle_group.set_skill(skill_level)
 
     def _gen_markers(self):
         """

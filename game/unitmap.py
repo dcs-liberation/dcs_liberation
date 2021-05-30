@@ -7,10 +7,17 @@ from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
 from dcs.unittype import VehicleType
 
 from game import db
+from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
 from game.transfers import CargoShip, Convoy, TransferOrder
 from gen.flights.flight import Flight
+
+
+@dataclass(frozen=True)
+class FlyingUnit:
+    flight: Flight
+    pilot: Pilot
 
 
 @dataclass(frozen=True)
@@ -45,7 +52,7 @@ class Building:
 
 class UnitMap:
     def __init__(self) -> None:
-        self.aircraft: Dict[str, Flight] = {}
+        self.aircraft: Dict[str, FlyingUnit] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
         self.ground_object_units: Dict[str, GroundObjectUnit] = {}
@@ -55,17 +62,19 @@ class UnitMap:
         self.airlifts: Dict[str, AirliftUnit] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
-        for unit in group.units:
+        for pilot, unit in zip(flight.pilots, group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)
             if name in self.aircraft:
                 raise RuntimeError(f"Duplicate unit name: {name}")
-            self.aircraft[name] = flight
+            if pilot is None:
+                raise ValueError(f"{name} has no pilot assigned")
+            self.aircraft[name] = FlyingUnit(flight, pilot)
         if flight.cargo is not None:
             self.add_airlift_units(group, flight.cargo)
 
-    def flight(self, unit_name: str) -> Optional[Flight]:
+    def flight(self, unit_name: str) -> Optional[FlyingUnit]:
         return self.aircraft.get(unit_name, None)
 
     def add_airfield(self, airfield: Airfield) -> None:

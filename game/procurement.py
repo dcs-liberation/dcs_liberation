@@ -50,6 +50,7 @@ class ProcurementAi:
 
         self.game = game
         self.is_player = for_player
+        self.air_wing = game.air_wing_for(for_player)
         self.faction = faction
         self.manage_runways = manage_runways
         self.manage_front_line = manage_front_line
@@ -57,9 +58,7 @@ class ProcurementAi:
         self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
-    def spend_budget(
-        self, budget: float, aircraft_requests: List[AircraftProcurementRequest]
-    ) -> float:
+    def spend_budget(self, budget: float) -> float:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
@@ -163,23 +162,31 @@ class ProcurementAi:
 
         return budget
 
-    def _affordable_aircraft_of_types(
+    def _affordable_aircraft_for_task(
         self,
-        types: List[Type[FlyingType]],
+        task: FlightType,
         airbase: ControlPoint,
         number: int,
         max_price: float,
     ) -> Optional[Type[FlyingType]]:
         best_choice: Optional[Type[FlyingType]] = None
-        for unit in [u for u in types if u in self.faction.aircrafts]:
+        for unit in aircraft_for_task(task):
+            if unit not in self.faction.aircrafts:
+                continue
             if db.PRICES[unit] * number > max_price:
                 continue
             if not airbase.can_operate(unit):
                 continue
 
-            # Affordable and compatible. To keep some variety, skip with a 50/50
-            # chance. Might be a good idea to have the chance to skip based on
-            # the price compared to the rest of the choices.
+            for squadron in self.air_wing.squadrons_for(unit):
+                if task in squadron.mission_types:
+                    break
+            else:
+                continue
+
+            # Affordable, compatible, and we have a squadron capable of the task. To
+            # keep some variety, skip with a 50/50 chance. Might be a good idea to have
+            # the chance to skip based on the price compared to the rest of the choices.
             best_choice = unit
             if random.choice([True, False]):
                 break
@@ -188,8 +195,8 @@ class ProcurementAi:
     def affordable_aircraft_for(
         self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
     ) -> Optional[Type[FlyingType]]:
-        return self._affordable_aircraft_of_types(
-            aircraft_for_task(request.task_capability), airbase, request.number, budget
+        return self._affordable_aircraft_for_task(
+            request.task_capability, airbase, request.number, budget
         )
 
     def fulfill_aircraft_request(
@@ -255,10 +262,19 @@ class ProcurementAi:
         # Prefer to buy front line units at active front lines that are not
         # already overloaded.
         for cp in self.owned_points:
+
+            total_ground_units_allocated_to_this_control_point = (
+                self.total_ground_units_allocated_to(cp)
+            )
+
             if not cp.has_ground_unit_source(self.game):
                 continue
 
-            if self.total_ground_units_allocated_to(cp) >= 50:
+            if (
+                total_ground_units_allocated_to_this_control_point >= 50
+                or total_ground_units_allocated_to_this_control_point
+                >= cp.frontline_unit_count_limit
+            ):
                 # Control point is already sufficiently defended.
                 continue
             for connected in cp.connected_points:

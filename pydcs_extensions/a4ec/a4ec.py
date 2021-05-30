@@ -4,6 +4,8 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from pydcs_extensions.weapon_injector import inject_weapons
+
 
 class WeaponsA4EC:
     AN_M57__2__TER_ = {
@@ -430,6 +432,9 @@ class WeaponsA4EC:
         "name": "Fuel_Tank_400_gallons__EMPTY",
         "weight": 108.86208,
     }
+
+
+inject_weapons(WeaponsA4EC)
 
 
 class A_4E_C(PlaneType):

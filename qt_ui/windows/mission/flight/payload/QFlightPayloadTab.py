@@ -40,6 +40,9 @@ class QFlightPayloadTab(QFrame):
 
         self.setLayout(layout)
 
+    def reload_from_flight(self) -> None:
+        self.loadout_selector.setCurrentText(self.flight.loadout.name)
+
     def on_new_loadout(self, index: int) -> None:
         self.flight.loadout = self.loadout_selector.itemData(index)
         self.payload_editor.reset_pylons()
@@ -49,5 +52,5 @@ class QFlightPayloadTab(QFrame):
         if use_custom:
             self.flight.loadout = self.flight.loadout.derive_custom("Custom")
         else:
-            self.flight.loadout = Loadout.default_for(self.flight)
+            self.flight.loadout = self.loadout_selector.currentData()
             self.payload_editor.reset_pylons()

@@ -4,12 +4,13 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Iterator
 
 from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
+from faker import Faker
 
 from game import db
 from game.inventory import GlobalAircraftInventory
@@ -32,7 +33,8 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
-from .settings import Settings
+from .settings import Settings, AutoAtoBehavior
+from .squadrons import Pilot, AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -140,6 +142,12 @@ class Game:
 
         self.sanitize_sides()
 
+        self.blue_faker = Faker(self.player_faction.locales)
+        self.red_faker = Faker(self.enemy_faction.locales)
+
+        self.blue_air_wing = AirWing(self, player=True)
+        self.red_air_wing = AirWing(self, player=False)
+
         self.on_load()
 
     def __getstate__(self) -> Dict[str, Any]:
@@ -150,6 +158,8 @@ class Game:
         del state["red_threat_zone"]
         del state["blue_navmesh"]
         del state["red_navmesh"]
+        del state["blue_faker"]
+        del state["red_faker"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
@@ -204,6 +214,21 @@ class Game:
         if player:
             return self.player_faction
         return self.enemy_faction
+
+    def faker_for(self, player: bool) -> Faker:
+        if player:
+            return self.blue_faker
+        return self.red_faker
+
+    def air_wing_for(self, player: bool) -> AirWing:
+        if player:
+            return self.blue_air_wing
+        return self.red_air_wing
+
+    def country_for(self, player: bool) -> str:
+        if player:
+            return self.player_country
+        return self.enemy_country
 
     def bullseye_for(self, player: bool) -> Bullseye:
         if player:
@@ -281,6 +306,8 @@ class Game:
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
         self.compute_threat_zones()
+        self.blue_faker = Faker(self.faction_for(player=True).locales)
+        self.red_faker = Faker(self.faction_for(player=False).locales)
 
     def reset_ato(self) -> None:
         self.blue_ato.clear()
@@ -325,8 +352,10 @@ class Game:
 
     def pass_turn(self, no_action: bool = False) -> None:
         logging.info("Pass turn")
-        self.finish_turn(no_action)
-        self.initialize_turn()
+        with logged_duration("Turn finalization"):
+            self.finish_turn(no_action)
+        with logged_duration("Turn initialization"):
+            self.initialize_turn()
 
         # Autosave progress
         persistency.autosave(self)
@@ -360,6 +389,8 @@ class Game:
         # Update statistics
         self.game_stats.update(self)
 
+        self.blue_air_wing.reset()
+        self.red_air_wing.reset()
         self.aircraft_inventory.reset()
         for cp in self.theater.controlpoints:
             self.aircraft_inventory.set_from_control_point(cp)
@@ -370,18 +401,28 @@ class Game:
             return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
-        self.compute_conflicts_position()
-        self.compute_threat_zones()
-        self.compute_transit_networks()
+        with logged_duration("Computing conflict positions"):
+            self.compute_conflicts_position()
+        with logged_duration("Threat zone computation"):
+            self.compute_threat_zones()
+        with logged_duration("Transit network identification"):
+            self.compute_transit_networks()
         self.ground_planners = {}
 
-        self.transfers.order_airlift_assets()
-        self.transfers.plan_transports()
+        self.blue_procurement_requests.clear()
+        self.red_procurement_requests.clear()
 
-        with logged_duration("Mission planning"):
-            blue_planner = CoalitionMissionPlanner(self, is_player=True)
-            blue_planner.plan_missions()
+        with logged_duration("Procurement of airlift assets"):
+            self.transfers.order_airlift_assets()
+        with logged_duration("Transport planning"):
+            self.transfers.plan_transports()
 
+        with logged_duration("Blue mission planning"):
+            if self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled:
+                blue_planner = CoalitionMissionPlanner(self, is_player=True)
+                blue_planner.plan_missions()
+
+        with logged_duration("Red mission planning"):
             red_planner = CoalitionMissionPlanner(self, is_player=False)
             red_planner.plan_missions()
 
@@ -408,7 +449,7 @@ class Game:
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.budget, self.blue_procurement_requests)
+        ).spend_budget(self.budget)
 
         self.enemy_budget = ProcurementAi(
             self,
@@ -418,7 +459,7 @@ class Game:
             manage_front_line=True,
             manage_aircraft=True,
             front_line_budget_share=ground_portion,
-        ).spend_budget(self.enemy_budget, self.red_procurement_requests)
+        ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))

@@ -3,6 +3,7 @@
   "name": "United Kingdom 1944",
   "authors": "Khopa",
   "description": "<p>United Kingdom army in 1944.</p>",
+  "locales": ["en_UK"],
   "aircrafts": [
     "P_51D",
     "P_51D_30_NA",

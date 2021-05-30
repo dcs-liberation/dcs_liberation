@@ -8,9 +8,15 @@ from dcs.mapping import Point
 from dcs.triggers import TriggerZone
 from dcs.unit import Unit
 from dcs.unitgroup import Group
+from dcs.unittype import VehicleType
 
 from .. import db
-from ..data.radar_db import UNITS_WITH_RADAR
+from ..data.radar_db import (
+    UNITS_WITH_RADAR,
+    TRACK_RADARS,
+    TELARS,
+    LAUNCHER_TRACKER_PAIRS,
+)
 from ..utils import Distance, meters
 
 if TYPE_CHECKING:
@@ -137,12 +143,11 @@ class TheaterGroundObject(MissionTarget):
         return False
 
     @property
-    def has_radar(self) -> bool:
-        """Returns True if the ground object contains a unit with radar."""
+    def has_live_radar_sam(self) -> bool:
+        """Returns True if the ground object contains a unit with working radar SAM."""
         for group in self.groups:
-            for unit in group.units:
-                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
-                    return True
+            if self.threat_range(group, radar_only=True):
+                return True
         return False
 
     def _max_range_of_type(self, group: Group, range_type: str) -> Distance:
@@ -163,17 +168,16 @@ class TheaterGroundObject(MissionTarget):
                 max_range = max(max_range, meters(unit_range))
         return max_range
 
+    def max_detection_range(self) -> Distance:
+        return max(self.detection_range(g) for g in self.groups)
+
     def detection_range(self, group: Group) -> Distance:
         return self._max_range_of_type(group, "detection_range")
 
-    def threat_range(self, group: Group) -> Distance:
-        if not self.detection_range(group):
-            # For simple SAMs like shilkas, the unit has both a threat and
-            # detection range. For complex sites like SA-2s, the launcher has a
-            # threat range and the search/track radars have detection ranges. If
-            # the site has no detection range it has no radars and can't fire,
-            # so it's not actually a threat even if it still has launchers.
-            return meters(0)
+    def max_threat_range(self) -> Distance:
+        return max(self.threat_range(g) for g in self.groups)
+
+    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
 
     @property
@@ -452,11 +456,44 @@ class SamGroundObject(BaseDefenseGroundObject):
 
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
+            yield FlightType.SEAD
         yield from super().mission_types(for_player)
 
     @property
     def might_have_aa(self) -> bool:
         return True
+
+    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
+        max_non_radar = meters(0)
+        live_trs = set()
+        max_telar_range = meters(0)
+        launchers = set()
+        for unit in group.units:
+            unit_type = db.unit_type_from_name(unit.type)
+            if unit_type is None or not issubclass(unit_type, VehicleType):
+                continue
+            if unit_type in TRACK_RADARS:
+                live_trs.add(unit_type)
+            elif unit_type in TELARS:
+                max_telar_range = max(
+                    max_telar_range, meters(getattr(unit_type, "threat_range", 0))
+                )
+            elif unit_type in LAUNCHER_TRACKER_PAIRS:
+                launchers.add(unit_type)
+            else:
+                max_non_radar = max(
+                    max_non_radar, meters(getattr(unit_type, "threat_range", 0))
+                )
+        max_tel_range = meters(0)
+        for launcher in launchers:
+            if LAUNCHER_TRACKER_PAIRS[launcher] in live_trs:
+                max_tel_range = max(
+                    max_tel_range, meters(getattr(launcher, "threat_range"))
+                )
+        if radar_only:
+            return max(max_tel_range, max_telar_range)
+        else:
+            return max(max_tel_range, max_telar_range, max_non_radar)
 
 
 class VehicleGroupGroundObject(BaseDefenseGroundObject):

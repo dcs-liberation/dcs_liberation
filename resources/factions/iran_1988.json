@@ -3,6 +3,7 @@
   "name": "Iran 1988",
   "authors": "Malakhit",
   "description": "<p>Iran at the end of the Iran-Iraq war</p>",
+  "locales": ["fa_IR"],
   "aircrafts": [
     "MiG_21Bis",
     "F_4E",

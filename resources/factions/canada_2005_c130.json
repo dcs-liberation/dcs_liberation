@@ -3,6 +3,7 @@
   "name": "Canada 2005 (With C-130)",
   "authors": "Khopa, SpaceEnthusiast",
   "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
+  "locales": ["en_US", "fr_CA"],
   "aircrafts": [
     "FA_18C_hornet",
     "UH_1H",

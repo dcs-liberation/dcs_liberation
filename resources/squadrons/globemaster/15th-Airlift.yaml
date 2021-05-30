@@ -1,0 +1,8 @@
+---
+name: 15th Airlift Squadron
+nickname: Global Eagles
+country: USA
+role: Airlift
+aircraft: C-17A
+mission_types:
+  - Transport

@@ -39,7 +39,7 @@ ALPHA_MILITARY = [
     "Zero",
 ]
 
-ANIMALS = [
+ANIMALS: tuple[str, ...] = (
     "SHARK",
     "TORTOISE",
     "BAT",
@@ -243,7 +243,7 @@ ANIMALS = [
     "CANARY",
     "WOODCHUCK",
     "ANACONDA",
-]
+)
 
 
 class NameGenerator:
@@ -253,7 +253,7 @@ class NameGenerator:
     convoy_number = 0
     cargo_ship_number = 0
 
-    ANIMALS = ANIMALS
+    animals: list[str] = list(ANIMALS)
     existing_alphas: List[str] = []
 
     @classmethod
@@ -262,7 +262,7 @@ class NameGenerator:
         cls.infantry_number = 0
         cls.convoy_number = 0
         cls.cargo_ship_number = 0
-        cls.ANIMALS = ANIMALS
+        cls.animals = list(ANIMALS)
         cls.existing_alphas = []
 
     @classmethod
@@ -345,30 +345,25 @@ class NameGenerator:
 
     @classmethod
     def random_objective_name(cls):
-        if len(cls.ANIMALS) == 0:
-            for i in range(10):
-                new_name_generated = True
-                alpha_mil_name = (
-                    random.choice(ALPHA_MILITARY).upper()
-                    + "#"
-                    + str(random.randint(0, 100))
-                )
-                for existing_name in cls.existing_alphas:
-                    if existing_name == alpha_mil_name:
-                        new_name_generated = False
-                if new_name_generated:
-                    cls.existing_alphas.append(alpha_mil_name)
-                    return alpha_mil_name
-
-            # At this point, give up trying - something has gone wrong and we haven't been able to make a new name in 10 tries.
-            # We'll just make a longer name using the current unix epoch in nanoseconds. That should be unique... right?
-            last_chance_name = alpha_mil_name + str(time.time_ns())
-            cls.existing_alphas.append(last_chance_name)
-            return last_chance_name
-        else:
-            animal = random.choice(cls.ANIMALS)
-            cls.ANIMALS.remove(animal)
+        if cls.animals:
+            animal = random.choice(cls.animals)
+            cls.animals.remove(animal)
             return animal
+
+        for _ in range(10):
+            alpha = random.choice(ALPHA_MILITARY).upper()
+            number = str(random.randint(0, 100))
+            alpha_mil_name = f"{alpha} #{number:02}"
+            if alpha_mil_name not in cls.existing_alphas:
+                cls.existing_alphas.append(alpha_mil_name)
+                return alpha_mil_name
+
+        # At this point, give up trying - something has gone wrong and we haven't been
+        # able to make a new name in 10 tries. We'll just make a longer name using the
+        # current unix epoch in nanoseconds. That should be unique... right?
+        last_chance_name = alpha_mil_name + str(time.time_ns())
+        cls.existing_alphas.append(last_chance_name)
+        return last_chance_name
 
 
 namegen = NameGenerator

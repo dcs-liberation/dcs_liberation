@@ -3,7 +3,6 @@ import dcs
 
 DEFAULT_AVAILABLE_BUILDINGS = [
     "fuel",
-    "ammo",
     "comms",
     "oil",
     "ware",

@@ -3,6 +3,7 @@
   "name": "Russia 1975",
   "authors": "Khopa",
   "description": "<p>Soviet army in the late 70s, using their prototype Mig-29A.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_21Bis",
     "MiG_23MLD",

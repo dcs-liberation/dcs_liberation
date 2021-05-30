@@ -88,9 +88,27 @@ class TransitNetwork:
             TransitConnection.Airlift: a.position.distance_to_point(b.position),
         }[self.link_type(a, b)]
 
+    def has_path_between(
+        self,
+        origin: ControlPoint,
+        destination: ControlPoint,
+        seen: Optional[set[ControlPoint]] = None,
+    ) -> bool:
+        if seen is None:
+            seen = set()
+        seen.add(origin)
+        for connection in self.connections_from(origin):
+            if connection in seen:
+                continue
+            if connection == destination:
+                return True
+            if self.has_path_between(connection, destination, seen):
+                return True
+        return False
+
     def shortest_path_between(
         self, origin: ControlPoint, destination: ControlPoint
-    ) -> List[ControlPoint]:
+    ) -> list[ControlPoint]:
         return self.shortest_path_with_cost(origin, destination)[0]
 
     def shortest_path_with_cost(
@@ -127,7 +145,7 @@ class TransitNetwork:
         path: List[ControlPoint] = []
         while current != origin:
             path.append(current)
-            previous = came_from[current]
+            previous = came_from.get(current)
             if previous is None:
                 raise NoPathError(origin, destination)
             current = previous

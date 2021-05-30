@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 from typing import Callable, Dict, Type
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
     QComboBox,
     QDialog,
@@ -153,6 +153,8 @@ class TransferControls(QGroupBox):
 
 
 class ScrollingUnitTransferGrid(QFrame):
+    transfer_quantity_changed = Signal()
+
     def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
         super().__init__()
         self.cp = cp
@@ -229,6 +231,7 @@ class ScrollingUnitTransferGrid(QFrame):
             origin_inventory -= 1
             controls.set_quantity(self.transfers[unit_type])
             origin_inventory_label.setText(str(origin_inventory))
+            self.transfer_quantity_changed.emit()
 
         def decrease(controls: TransferControls):
             nonlocal origin_inventory
@@ -240,6 +243,7 @@ class ScrollingUnitTransferGrid(QFrame):
             origin_inventory += 1
             controls.set_quantity(self.transfers[unit_type])
             origin_inventory_label.setText(str(origin_inventory))
+            self.transfer_quantity_changed.emit()
 
         transfer_controls = TransferControls("->", increase, "<-", decrease)
 
@@ -276,11 +280,15 @@ class NewUnitTransferDialog(QDialog):
         layout.addLayout(self.dest_panel)
 
         self.transfer_panel = ScrollingUnitTransferGrid(origin, game_model)
+        self.transfer_panel.transfer_quantity_changed.connect(
+            self.on_transfer_quantity_changed
+        )
         layout.addWidget(self.transfer_panel)
 
         self.submit_button = QPushButton("Create Transfer Order", parent=self)
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setProperty("style", "start-button")
+        self.submit_button.setDisabled(True)
         layout.addWidget(self.submit_button)
 
     def on_submit(self) -> None:
@@ -303,3 +311,7 @@ class NewUnitTransferDialog(QDialog):
         )
         self.game_model.transfer_model.new_transfer(transfer)
         self.close()
+
+    def on_transfer_quantity_changed(self) -> None:
+        has_transfer_items = any(self.transfer_panel.transfers.values())
+        self.submit_button.setDisabled(not has_transfer_items)

@@ -1,15 +1,3 @@
-/*
- * TODO:
- *
- * - Culling
- * - Threat zones
- * - Navmeshes
- * - Time of day/weather themeing
- * - Exclusion zones
- * - "Actual" front line
- * - Debug flight plan drawing
- */
-
 const Colors = Object.freeze({
   Blue: "#0084ff",
   Red: "#c85050",
@@ -44,6 +32,49 @@ const UnitState = Object.freeze({
   Damaged: "damaged",
   Destroyed: "destroyed",
 });
+
+class CpIcons {
+  constructor() {
+    this.icons = {};
+    for (const player of [true, false]) {
+      this.icons[player] = {};
+      for (const state of Object.values(UnitState)) {
+        this.icons[player][state] = {
+          airfield: this.loadIcon("airfield", player, state),
+          cv: this.loadIcon("cv", player, state),
+          fob: this.loadLegacyIcon(player),
+          lha: this.loadIcon("lha", player, state),
+          offmap: this.loadLegacyIcon(player),
+        };
+      }
+    }
+  }
+
+  icon(category, player, state) {
+    return this.icons[player][state][category];
+  }
+
+  loadIcon(category, player, state) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
+      iconSize: [32, 32],
+    });
+  }
+
+  loadLegacyIcon(player) {
+    const color = player ? "blue" : "red";
+    return new L.Icon({
+      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+  }
+}
 
 class TgoIcons {
   constructor() {
@@ -84,26 +115,7 @@ class TgoIcons {
 }
 
 const Icons = Object.freeze({
-  BlueControlPoint: new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-
-  RedControlPoint: new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png`,
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-
+  ControlPoints: new CpIcons(),
   Objectives: new TgoIcons(),
 });
 
@@ -119,7 +131,10 @@ function formatLatLng(latLng) {
   return `${lat}&deg;${ns} ${lng}&deg;${ew}`;
 }
 
-const map = L.map("map", { doubleClickZoom: false }).setView([0, 0], 3);
+const map = L.map("map", {
+  doubleClickZoom: false,
+  zoomControl: false,
+}).setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
@@ -134,6 +149,9 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
+const airDefensesLayer = L.layerGroup().addTo(map);
+const factoriesLayer = L.layerGroup().addTo(map);
+const shipsLayer = L.layerGroup().addTo(map);
 const groundObjectsLayer = L.layerGroup().addTo(map);
 const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
@@ -148,13 +166,34 @@ const redFlightPlansLayer = L.layerGroup();
 const selectedFlightPlansLayer = L.layerGroup();
 const allFlightPlansLayer = L.layerGroup();
 
+const blueFullThreatZones = L.layerGroup();
+const blueAircraftThreatZones = L.layerGroup();
+const blueAirDefenseThreatZones = L.layerGroup();
+const blueRadarSamThreatZones = L.layerGroup();
+
+const redFullThreatZones = L.layerGroup();
+const redAircraftThreatZones = L.layerGroup();
+const redAirDefenseThreatZones = L.layerGroup();
+const redRadarSamThreatZones = L.layerGroup();
+
+const blueNavmesh = L.layerGroup();
+const redNavmesh = L.layerGroup();
+
+// Main map controls. These are the ones that we expect users to interact with.
+// These are always open, which unfortunately means that the scroll bar will not
+// appear if the menu doesn't fit. This fits in the smallest window size we
+// allow, but may need to start auto-collapsing it (or fix the plugin to add a
+// scrollbar when non-collapsing) if it gets much larger.
 L.control
   .groupedLayers(
     baseLayers,
     {
       "Points of Interest": {
         "Control points": controlPointsLayer,
-        "Ground objects": groundObjectsLayer,
+        "Air defenses": airDefensesLayer,
+        Factories: factoriesLayer,
+        Ships: shipsLayer,
+        "Other ground objects": groundObjectsLayer,
         "Supply routes": supplyRoutesLayer,
         "Front lines": frontLinesLayer,
       },
@@ -174,7 +213,45 @@ L.control
         "Show all": allFlightPlansLayer,
       },
     },
-    { collapsed: false, exclusiveGroups: ["Flight Plans"] }
+    {
+      collapsed: false,
+      exclusiveGroups: ["Flight Plans"],
+      groupCheckboxes: true,
+    }
+  )
+  .addTo(map);
+
+// Debug map controls. Hover over to open. Not something most users will want or
+// need to interact with.
+L.control
+  .groupedLayers(
+    null,
+    {
+      "Blue Threat Zones": {
+        Hide: L.layerGroup().addTo(map),
+        Full: blueFullThreatZones,
+        Aircraft: blueAircraftThreatZones,
+        "Air Defenses": blueAirDefenseThreatZones,
+        "Radar SAMs": blueRadarSamThreatZones,
+      },
+      "Red Threat Zones": {
+        Hide: L.layerGroup().addTo(map),
+        Full: redFullThreatZones,
+        Aircraft: redAircraftThreatZones,
+        "Air Defenses": redAirDefenseThreatZones,
+        "Radar SAMs": redRadarSamThreatZones,
+      },
+      "Navmeshes": {
+        Hide: L.layerGroup().addTo(map),
+        Blue: blueNavmesh,
+        Red: redNavmesh,
+      },
+    },
+    {
+      position: "topleft",
+      exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones", "Navmeshes"],
+      groupCheckboxes: true,
+    }
   )
   .addTo(map);
 
@@ -189,6 +266,8 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawFlightPlans);
+  game.threatZonesChanged.connect(drawThreatZones);
+  game.navmeshesChanged.connect(drawNavmeshes);
 });
 
 function recenterMap(center) {
@@ -212,10 +291,13 @@ class ControlPoint {
   }
 
   icon() {
-    if (this.cp.blue) {
-      return Icons.BlueControlPoint;
-    }
-    return Icons.RedControlPoint;
+    // TODO: Runway status.
+    // https://github.com/dcs-liberation/dcs_liberation/issues/1105
+    return Icons.ControlPoints.icon(
+      this.cp.category,
+      this.cp.blue,
+      UnitState.Alive
+    );
   }
 
   hasDestination() {
@@ -403,14 +485,27 @@ class TheaterGroundObject {
 
   icon() {
     let state;
-    if (this.tgo.category == "aa" && !this.samIsThreat()) {
-      state = UnitState.Damaged;
-    } else if (this.tgo.dead) {
+    if (this.tgo.dead) {
       state = UnitState.Destroyed;
+    } else if (this.tgo.category == "aa" && !this.samIsThreat()) {
+      state = UnitState.Damaged;
     } else {
       state = UnitState.Alive;
     }
     return Icons.Objectives.icon(this.tgo.category, this.tgo.blue, state);
+  }
+
+  layer() {
+    switch (this.tgo.category) {
+      case "aa":
+        return airDefensesLayer;
+      case "factory":
+        return factoriesLayer;
+      case "ship":
+        return shipsLayer;
+      default:
+        return groundObjectsLayer;
+    }
   }
 
   drawSamThreats() {
@@ -441,16 +536,26 @@ class TheaterGroundObject {
   }
 
   draw() {
+    if (!this.tgo.blue && this.tgo.dead) {
+      // Don't bother drawing dead opfor TGOs. Blue is worth showing because
+      // some of them can be repaired, but the player can't interact with dead
+      // red things so there's no point in showing them.
+      return;
+    }
+
     L.marker(this.tgo.position, { icon: this.icon() })
       .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
       .on("click", () => this.tgo.showInfoDialog())
       .on("contextmenu", () => this.tgo.showPackageDialog())
-      .addTo(groundObjectsLayer);
+      .addTo(this.layer());
     this.drawSamThreats();
   }
 }
 
 function drawGroundObjects() {
+  airDefensesLayer.clearLayers();
+  factoriesLayer.clearLayers();
+  shipsLayer.clearLayers();
   groundObjectsLayer.clearLayers();
   blueSamDetectionLayer.clearLayers();
   redSamDetectionLayer.clearLayers();
@@ -519,7 +624,40 @@ class Waypoint {
     // We don't need a marker for the departure waypoint (and it's likely
     // coincident with the landing waypoint, so hard to see). We do want to draw
     // the path from it though.
-    return !this.waypoint.isTakeoff;
+    //
+    // We also don't need the landing waypoint since we'll be drawing that path
+    // as well and it's clear what it is, and only obscured the CP icon.
+    //
+    // The divert waypoint also obscures the CP. We don't draw the path to it,
+    // but it can be seen in the flight settings page so it's not really a
+    // problem to exclude it.
+    //
+    // Bullseye ought to be (but currently isn't) drawn *once* rather than as a
+    // flight waypoint.
+    return !(
+      this.waypoint.isTakeoff ||
+      this.waypoint.isLanding ||
+      this.waypoint.isDivert ||
+      this.waypoint.isBullseye
+    );
+  }
+
+  draggable() {
+    // Target *points* are the exact location of a unit, whereas the target area
+    // is only the center of the objective. Allow moving the latter since its
+    // exact location isn't very important.
+    //
+    // Landing, and divert should be changed in the flight settings UI, takeoff
+    // cannot be changed because that's where the plane is.
+    //
+    // Moving the bullseye reference only makes it wrong.
+    return !(
+      this.waypoint.isTargetPoint ||
+      this.waypoint.isTakeoff ||
+      this.waypoint.isLanding ||
+      this.waypoint.isDivert ||
+      this.waypoint.isBullseye
+    );
   }
 
   description(dragging) {
@@ -543,7 +681,7 @@ class Waypoint {
 
   makeMarker() {
     const zoom = map.getZoom();
-    return L.marker(this.waypoint.position, { draggable: true })
+    return L.marker(this.waypoint.position, { draggable: this.draggable() })
       .bindTooltip(this.description(), {
         permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
       })
@@ -675,6 +813,82 @@ function drawFlightPlans() {
   }
 }
 
+function _drawThreatZones(zones, layer, player) {
+  const color = player ? Colors.Blue : Colors.Red;
+  for (const zone of zones) {
+    L.polyline(zone, {
+      color: color,
+      weight: 1,
+      fill: true,
+      fillOpacity: 0.4,
+      noClip: true,
+    }).addTo(layer);
+  }
+}
+
+function drawThreatZones() {
+  blueFullThreatZones.clearLayers();
+  blueAircraftThreatZones.clearLayers();
+  blueAirDefenseThreatZones.clearLayers();
+  blueRadarSamThreatZones.clearLayers();
+  redFullThreatZones.clearLayers();
+  redAircraftThreatZones.clearLayers();
+  redAirDefenseThreatZones.clearLayers();
+  redRadarSamThreatZones.clearLayers();
+
+  _drawThreatZones(game.threatZones.blue.full, blueFullThreatZones, true);
+  _drawThreatZones(
+    game.threatZones.blue.aircraft,
+    blueAircraftThreatZones,
+    true
+  );
+  _drawThreatZones(
+    game.threatZones.blue.airDefenses,
+    blueAirDefenseThreatZones,
+    true
+  );
+  _drawThreatZones(
+    game.threatZones.blue.radarSams,
+    blueRadarSamThreatZones,
+    true
+  );
+
+  _drawThreatZones(game.threatZones.red.full, redFullThreatZones, false);
+  _drawThreatZones(
+    game.threatZones.red.aircraft,
+    redAircraftThreatZones,
+    false
+  );
+  _drawThreatZones(
+    game.threatZones.red.airDefenses,
+    redAirDefenseThreatZones,
+    false
+  );
+  _drawThreatZones(
+    game.threatZones.red.radarSams,
+    redRadarSamThreatZones,
+    false
+  );
+}
+
+function drawNavmesh(zones, layer) {
+  for (const zone of zones) {
+    L.polyline(zone, {
+      color: "#000000",
+      weight: 1,
+      fill: false,
+    }).addTo(layer);
+  }
+}
+
+function drawNavmeshes() {
+  blueNavmesh.clearLayers();
+  redNavmesh.clearLayers();
+
+  drawNavmesh(game.navmeshes.blue, blueNavmesh);
+  drawNavmesh(game.navmeshes.red, redNavmesh);
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -682,6 +896,8 @@ function drawInitialMap() {
   drawSupplyRoutes();
   drawFrontLines();
   drawFlightPlans();
+  drawThreatZones();
+  drawNavmeshes();
 }
 
 function clearAllLayers() {

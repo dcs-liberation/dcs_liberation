@@ -3,6 +3,7 @@
   "name": "Israel 2000",
   "authors": "Khopa",
   "description": "<p>Modern Israeli faction.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "F_4E",
     "F_15C",

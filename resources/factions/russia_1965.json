@@ -3,6 +3,7 @@
   "name": "Russia 1965",
   "authors": "Khopa",
   "description": "<p>Soviet army in the 60s, ideal to fly the Mig-19 or the Mig-21.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_15bis",
     "MiG_19P",

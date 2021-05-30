@@ -68,6 +68,10 @@ class Package:
     waypoints: Optional[PackageWaypoints] = field(default=None)
 
     @property
+    def has_players(self) -> bool:
+        return any(flight.client_count for flight in self.flights)
+
+    @property
     def formation_speed(self) -> Optional[Speed]:
         """The speed of the package when in formation.
 

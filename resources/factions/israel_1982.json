@@ -3,6 +3,7 @@
   "name": "Israel 1982",
   "authors": "Khopa",
   "description": "<p>Israel during the 1982 war with Lebanon.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "F_4E",
     "A_4E_C",

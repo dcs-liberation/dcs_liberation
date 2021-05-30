@@ -10,6 +10,7 @@ from dcs.unit import Unit
 from dcs.unittype import FlyingType
 
 from game import db
+from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 from gen.flights.loadouts import Loadout
@@ -28,6 +29,27 @@ class FlightType(Enum):
     These values are persisted to the save game as well since they are a part of
     each flight and thus a part of the ATO, so changing these values will break
     save compat.
+
+    When adding new mission types to this list, you will also need to update:
+
+    * flightplan.py: Add waypoint population in generate_flight_plan. Add a new flight
+      plan type if necessary, though most are a subclass of StrikeFlightPlan.
+    * aircraft.py: Add a configuration method and call it in setup_flight_group. This is
+      responsible for configuring waypoint 0 actions like setting ROE, threat reaction,
+      and mission abort parameters (winchester, bingo, etc).
+    * Implementations of MissionTarget.mission_types: A mission type can only be planned
+      against compatible targets. The mission_types method of each target class defines
+      which missions may target it.
+    * ai_flight_planner_db.py: Add the new mission type to aircraft_for_task that
+      returns the list of compatible aircraft in order of preference.
+
+    You may also need to update:
+
+    * flight.py: Add a new waypoint type if necessary. Most mission types will need
+      these, as aircraft.py uses the ingress point type to specialize AI tasks, and non-
+      strike-like missions will need more specialized control.
+    * ai_flight_planner.py: Use the new mission type in propose_missions so the AI will
+      plan the new mission type.
     """
 
     TARCAP = "TARCAP"
@@ -45,12 +67,34 @@ class FlightType(Enum):
     OCA_AIRCRAFT = "OCA/Aircraft"
     AEWC = "AEW&C"
     TRANSPORT = "Transport"
+    SEAD_ESCORT = "SEAD Escort"
 
     def __str__(self) -> str:
         return self.value
 
+    @classmethod
+    def from_name(cls, name: str) -> FlightType:
+        for entry in cls:
+            if name == entry.value:
+                return entry
+        raise KeyError(f"No FlightType with name {name}")
+
 
 class FlightWaypointType(Enum):
+    """Enumeration of waypoint types.
+
+    The value of the enum has no meaning but should remain stable to prevent breaking
+    save game compatibility.
+
+    When adding a new waypoint type, you will also need to update:
+
+    * waypointbuilder.py: Add a builder to simplify construction of the new waypoint
+      type unless the new waypoint type will be a parameter to an existing builder
+      method (such as how escort ingress waypoints work).
+    * aircraft.py: Associate AI actions with the new waypoint type by subclassing
+      PydcsWaypointBuilder and using it in PydcsWaypointBuilder.for_waypoint.
+    """
+
     TAKEOFF = 0  # Take off point
     ASCEND_POINT = 1  # Ascension point after take off
     PATROL = 2  # Patrol point
@@ -65,7 +109,7 @@ class FlightWaypointType(Enum):
     LANDING_POINT = 11  # Should land there
     TARGET_POINT = 12  # A target building or static object, position
     TARGET_GROUP_LOC = 13  # A target group approximate location
-    TARGET_SHIP = 14  # A target ship known location
+    TARGET_SHIP = 14  # Unused.
     CUSTOM = 15  # User waypoint (no specific behaviour)
     JOIN = 16
     SPLIT = 17
@@ -163,7 +207,7 @@ class Flight:
         self,
         package: Package,
         country: str,
-        unit_type: Type[FlyingType],
+        squadron: Squadron,
         count: int,
         flight_type: FlightType,
         start_type: str,
@@ -175,8 +219,8 @@ class Flight:
     ) -> None:
         self.package = package
         self.country = country
-        self.unit_type = unit_type
-        self.count = count
+        self.squadron = squadron
+        self.pilots = [squadron.claim_available_pilot() for _ in range(count)]
         self.departure = departure
         self.arrival = arrival
         self.divert = divert
@@ -186,7 +230,6 @@ class Flight:
         self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
-        self.client_count = 0
         self.custom_name = custom_name
 
         # Only used by transport missions.
@@ -202,12 +245,52 @@ class Flight:
         )
 
     @property
+    def count(self) -> int:
+        return len(self.pilots)
+
+    @property
+    def client_count(self) -> int:
+        return len([p for p in self.pilots if p is not None and p.player])
+
+    @property
+    def unit_type(self) -> Type[FlyingType]:
+        return self.squadron.aircraft
+
+    @property
     def from_cp(self) -> ControlPoint:
         return self.departure
 
     @property
     def points(self) -> List[FlightWaypoint]:
         return self.flight_plan.waypoints[1:]
+
+    def resize(self, new_size: int) -> None:
+        if self.count > new_size:
+            self.squadron.return_pilots(
+                p for p in self.pilots[new_size:] if p is not None
+            )
+            self.pilots = self.pilots[:new_size]
+            return
+        self.pilots.extend(
+            [
+                self.squadron.claim_available_pilot()
+                for _ in range(new_size - self.count)
+            ]
+        )
+
+    def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
+        if pilot is not None:
+            self.squadron.claim_pilot(pilot)
+        if (current_pilot := self.pilots[index]) is not None:
+            self.squadron.return_pilot(current_pilot)
+        self.pilots[index] = pilot
+
+    @property
+    def missing_pilots(self) -> int:
+        return len([p for p in self.pilots if p is None])
+
+    def clear_roster(self) -> None:
+        self.squadron.return_pilots([p for p in self.pilots if p is not None])
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)

@@ -3,6 +3,7 @@
   "name": "Germany 1940",
   "authors": "Khopa",
   "description": "<p>Germany 1940, Early german faction for Battle of France, or Battle of England.</p>",
+  "locales": ["de_DE"],
   "aircrafts": [
     "FW_190A8",
     "FW_190D9",

@@ -27,6 +27,9 @@ from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 
 @dataclass
 class Faction:
+    #: List of locales to use when generating random names. If not set, Faker will
+    #: choose the default locale.
+    locales: Optional[List[str]]
 
     # Country used by this faction
     country: str = field(default="")
@@ -132,8 +135,7 @@ class Faction:
 
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
-
-        faction = Faction()
+        faction = Faction(locales=json.get("locales"))
 
         faction.country = json.get("country", "/")
         if faction.country not in [c.name for c in country_dict.values()]:

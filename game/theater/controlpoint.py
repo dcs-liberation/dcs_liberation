@@ -8,7 +8,20 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering
-from typing import Any, Dict, Iterator, List, Optional, Set, TYPE_CHECKING, Type, Union
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    TYPE_CHECKING,
+    Type,
+    Union,
+    Sequence,
+    Iterable,
+    Tuple,
+)
 
 from dcs import helicopters
 from dcs.mapping import Point
@@ -47,6 +60,9 @@ from ..weather import Conditions
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+
+FREE_FRONTLINE_UNIT_SUPPLY: int = 15
+AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
 
 
 class ControlPointType(Enum):
@@ -149,6 +165,9 @@ class PresetLocations:
 
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of ammo depots for controlling number of units on the front line at a control point.
+    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of stationary armor groups. These will always be spawned.
     armor_groups: List[PointWithHeading] = field(default_factory=list)
@@ -308,8 +327,8 @@ class ControlPoint(MissionTarget, ABC):
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
-        self.convoy_routes: Dict[ControlPoint, List[Point]] = {}
-        self.shipping_lanes: Dict[ControlPoint, List[Point]] = {}
+        self.convoy_routes: Dict[ControlPoint, Tuple[Point, ...]] = {}
+        self.shipping_lanes: Dict[ControlPoint, Tuple[Point, ...]] = {}
         self.base: Base = Base()
         self.cptype = cptype
         # TODO: Should be Airbase specific.
@@ -467,24 +486,21 @@ class ControlPoint(MissionTarget, ABC):
         """
         ...
 
-    # TODO: Should be Airbase specific.
-    def connect(self, to: ControlPoint) -> None:
-        self.connected_points.append(to)
-        self.stances[to.id] = CombatStance.DEFENSIVE
-
     def convoy_origin_for(self, destination: ControlPoint) -> Point:
         return self.convoy_route_to(destination)[0]
 
-    def convoy_route_to(self, destination: ControlPoint) -> List[Point]:
+    def convoy_route_to(self, destination: ControlPoint) -> Sequence[Point]:
         return self.convoy_routes[destination]
 
-    def create_convoy_route(self, to: ControlPoint, waypoints: List[Point]) -> None:
+    def create_convoy_route(self, to: ControlPoint, waypoints: Iterable[Point]) -> None:
         self.connected_points.append(to)
         self.stances[to.id] = CombatStance.DEFENSIVE
-        self.convoy_routes[to] = waypoints
+        self.convoy_routes[to] = tuple(waypoints)
 
-    def create_shipping_lane(self, to: ControlPoint, waypoints: List[Point]) -> None:
-        self.shipping_lanes[to] = waypoints
+    def create_shipping_lane(
+        self, to: ControlPoint, waypoints: Iterable[Point]
+    ) -> None:
+        self.shipping_lanes[to] = tuple(waypoints)
 
     @abstractmethod
     def runway_is_operational(self) -> bool:
@@ -788,15 +804,6 @@ class ControlPoint(MissionTarget, ABC):
     def income_per_turn(self) -> int:
         return 0
 
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
-
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.AEWC,
-            ]
-        yield from super().mission_types(for_player)
-
     @property
     def has_active_frontline(self) -> bool:
         return any(not c.is_friendly(self.captured) for c in self.connected_points)
@@ -808,8 +815,27 @@ class ControlPoint(MissionTarget, ABC):
         return self.captured != other.captured
 
     @property
+    def frontline_unit_count_limit(self) -> int:
+
+        tally_connected_ammo_depots = 0
+
+        for cp_objective in self.connected_objectives:
+            if cp_objective.category == "ammo" and not cp_objective.is_dead:
+                tally_connected_ammo_depots += 1
+
+        return (
+            FREE_FRONTLINE_UNIT_SUPPLY
+            + tally_connected_ammo_depots * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+        )
+
+    @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return []
+
+    @property
+    @abstractmethod
+    def category(self) -> str:
+        ...
 
 
 class Airfield(ControlPoint):
@@ -840,17 +866,20 @@ class Airfield(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                # TODO: FlightType.INTERCEPTION
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
+        if not self.is_friendly(for_player):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
             ]
+
         yield from super().mission_types(for_player)
+
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.AEWC,
+                # TODO: FlightType.INTERCEPTION
+                # TODO: FlightType.LOGISTICS
+            ]
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -887,6 +916,10 @@ class Airfield(ControlPoint):
     @property
     def income_per_turn(self) -> int:
         return 20
+
+    @property
+    def category(self) -> str:
+        return "airfield"
 
 
 class NavalControlPoint(ControlPoint, ABC):
@@ -967,6 +1000,13 @@ class Carrier(NavalControlPoint):
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            yield FlightType.AEWC
+
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")
 
@@ -980,6 +1020,10 @@ class Carrier(NavalControlPoint):
     @property
     def total_aircraft_parking(self) -> int:
         return 90
+
+    @property
+    def category(self) -> str:
+        return "cv"
 
 
 class Lha(NavalControlPoint):
@@ -1010,6 +1054,10 @@ class Lha(NavalControlPoint):
     @property
     def total_aircraft_parking(self) -> int:
         return 20
+
+    @property
+    def category(self) -> str:
+        return "lha"
 
 
 class OffMapSpawn(ControlPoint):
@@ -1061,6 +1109,10 @@ class OffMapSpawn(ControlPoint):
     def can_deploy_ground_units(self) -> bool:
         return False
 
+    @property
+    def category(self) -> str:
+        return "offmap"
+
 
 class Fob(ControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
@@ -1094,18 +1146,10 @@ class Fob(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.BARCAP,
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
-            yield from [
-                FlightType.STRIKE,
-                FlightType.SWEEP,
-                FlightType.ESCORT,
-                FlightType.SEAD,
-            ]
+        if not self.is_friendly(for_player):
+            yield FlightType.STRIKE
+
+        yield from super().mission_types(for_player)
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -1128,3 +1172,7 @@ class Fob(ControlPoint):
     @property
     def income_per_turn(self) -> int:
         return 10
+
+    @property
+    def category(self) -> str:
+        return "fob"

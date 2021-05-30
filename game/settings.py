@@ -1,8 +1,17 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
+from enum import Enum, unique
 from typing import Dict, Optional
 
 from dcs.forcedoptions import ForcedOptions
+
+
+@unique
+class AutoAtoBehavior(Enum):
+    Disabled = "Disabled"
+    Never = "Never assign player pilots"
+    Default = "No preference"
+    Prefer = "Prefer player pilots"
 
 
 @dataclass
@@ -27,7 +36,7 @@ class Settings:
     default_start_type: str = "Cold"
 
     # Mission specific
-    desired_player_mission_duration: timedelta = timedelta(minutes=90)
+    desired_player_mission_duration: timedelta = timedelta(minutes=60)
 
     # Campaign management
     automate_runway_repair: bool = False
@@ -36,6 +45,9 @@ class Settings:
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = False
     generate_dark_kneeboard: bool = False
+    invulnerable_player_pilots: bool = True
+    auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default
+    auto_ato_player_missions_asap: bool = False
 
     # Performance oriented
     perf_red_alert_state: bool = True

@@ -230,7 +230,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD tasks. Must be capable of the SEAD DCS task.
+# Aircraft used for SEAD and SEAD Escort tasks. Must be capable of the CAS DCS task.
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -240,6 +240,8 @@ SEAD_CAPABLE = [
     Su_25TM,
     F_4E,
     A_4E_C,
+    F_14B,
+    F_14A_135_GR,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -394,7 +396,7 @@ AEWC_CAPABLE = [
 
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
     elif task == FlightType.ANTISHIP:
@@ -404,6 +406,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     elif task == FlightType.CAS:
         return CAS_CAPABLE
     elif task == FlightType.SEAD:
+        return SEAD_CAPABLE
+    elif task == FlightType.SEAD_ESCORT:
         return SEAD_CAPABLE
     elif task == FlightType.DEAD:
         return DEAD_CAPABLE
@@ -422,3 +426,11 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
+
+
+def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+    tasks = []
+    for task in FlightType:
+        if aircraft in aircraft_for_task(task):
+            tasks.append(task)
+    return tasks

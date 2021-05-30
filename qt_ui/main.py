@@ -6,10 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-import dcs
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
+from dcs.payloads import PayloadDirectories
 from dcs.weapons_data import weapon_ids
 
 from game import Game, VERSION, persistency
@@ -35,6 +35,27 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
     QLiberationFirstStartWindow,
 )
 
+THIS_DIR = Path(__file__).parent
+
+
+def inject_custom_payloads(user_path: Path) -> None:
+    dev_payloads = THIS_DIR.parent / "resources/customized_payloads"
+    # The packaged release rearranges the file locations, so the release has the
+    # customized payloads in a different location.
+    release_payloads = THIS_DIR / "resources/customized_payloads"
+    if dev_payloads.exists():
+        payloads = dev_payloads
+    elif release_payloads.exists():
+        payloads = release_payloads
+    else:
+        raise RuntimeError(
+            f"Could not find customized payloads at {release_payloads} or "
+            f"{dev_payloads}. Aircraft will have no payloads."
+        )
+    # We configure these as fallbacks so that the user's payloads override ours.
+    PayloadDirectories.set_fallback(payloads)
+    PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
+
 
 def run_ui(game: Optional[Game], new_map: bool) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
@@ -48,22 +69,6 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
 
-    # Inject custom payload in pydcs framework
-    custom_payloads = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "..\\resources\\customized_payloads",
-    )
-    if os.path.exists(custom_payloads):
-        dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
-    else:
-        # For release version the path is different.
-        custom_payloads = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "resources\\customized_payloads",
-        )
-        if os.path.exists(custom_payloads):
-            dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
-
     first_start = liberation_install.init()
     if first_start:
         window = QLiberationFirstStartWindow()
@@ -75,6 +80,8 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
             liberation_install.get_dcs_install_directory()
         )
     )
+
+    inject_custom_payloads(Path(persistency.base_path()))
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -189,6 +196,15 @@ def create_game(
             "Cannot generate campaign without configuring DCS Liberation. Start the UI "
             "for the first run configuration."
         )
+
+    # This needs to run before the pydcs payload cache is created, which happens
+    # extremely early. It's not a problem that we inject these paths twice because we'll
+    # get the same answers each time.
+    #
+    # Without this, it is not possible to use next turn (or anything that needs to check
+    # for loadouts) without saving the generated campaign and reloading it the normal
+    # way.
+    inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue,

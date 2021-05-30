@@ -3,6 +3,7 @@
   "name": "Russia 2020 (Modded)",
   "authors": "Khopa",
   "description": "<p>Russia in 2020, using the Su-57 mod by Cubanace.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_29S",
     "MiG_31",

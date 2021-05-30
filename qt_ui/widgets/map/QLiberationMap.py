@@ -40,7 +40,6 @@ from PySide2.QtWidgets import (
 )
 from dcs import Point
 from dcs.mapping import point_from_heading
-from dcs.planes import F_16C_50
 from dcs.unitgroup import Group
 from shapely.geometry import (
     LineString,
@@ -166,11 +165,6 @@ class LeafletMap(QWebEngineView, LiberationMap):
             QUrl.fromLocalFile(str(Path("resources/ui/map/canvas.html").resolve()))
         )
         self.setPage(self.page)
-
-        self.loadFinished.connect(self.load_finished)
-
-    def load_finished(self) -> None:
-        self.page.runJavaScript(Path("resources/ui/map/map.js").read_text())
 
     def set_game(self, game: Optional[Game]) -> None:
         if game is None:
@@ -567,10 +561,17 @@ class QLiberationMap(QGraphicsView, LiberationMap):
             origin = self.game.theater.enemy_points()[0]
 
         package = Package(target)
+        for squadron_list in self.game.air_wing_for(player=True).squadrons.values():
+            squadron = squadron_list[0]
+            break
+        else:
+            logging.error("Player has no squadrons?")
+            return
+
         flight = Flight(
             package,
-            self.game.player_country if player else self.game.enemy_country,
-            F_16C_50,
+            self.game.country_for(player),
+            squadron,
             2,
             task,
             start_type="Warm",
