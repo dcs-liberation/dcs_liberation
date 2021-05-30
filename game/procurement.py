@@ -19,6 +19,8 @@ from gen.ground_forces.ai_ground_planner_db import TYPE_SHORAD
 if TYPE_CHECKING:
     from game import Game
 
+RESERVE_FRONTLINE_OVERHEAD_PERCENTAGE = 30
+
 
 @dataclass(frozen=True)
 class AircraftProcurementRequest:
@@ -270,10 +272,9 @@ class ProcurementAi:
             if not cp.has_ground_unit_source(self.game):
                 continue
 
-            if (
-                total_ground_units_allocated_to_this_control_point >= 50
-                or total_ground_units_allocated_to_this_control_point
-                >= cp.frontline_unit_count_limit
+            if total_ground_units_allocated_to_this_control_point >= math.ceil(
+                cp.frontline_unit_count_limit
+                * (1 + RESERVE_FRONTLINE_OVERHEAD_PERCENTAGE / 100)
             ):
                 # Control point is already sufficiently defended.
                 continue
