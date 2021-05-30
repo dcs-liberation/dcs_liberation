@@ -20,6 +20,8 @@ from game.data.groundunitclass import GroundUnitClass
 if TYPE_CHECKING:
     from game import Game
 
+FRONTLINE_RESERVES_FACTOR = 1.3
+
 
 @dataclass(frozen=True)
 class AircraftProcurementRequest:
@@ -282,11 +284,9 @@ class ProcurementAi:
                 # No source of ground units, so can't buy anything.
                 continue
 
+            purchase_target = cp.frontline_unit_count_limit * FRONTLINE_RESERVES_FACTOR
             allocated = cp.allocated_ground_units(self.game.transfers)
-            if (
-                allocated.total >= self.game.settings.front_line_procurement_target
-                or allocated.total >= cp.frontline_unit_count_limit
-            ):
+            if allocated.total >= purchase_target:
                 # Control point is already sufficiently defended.
                 continue
             if allocated.total < worst_supply:

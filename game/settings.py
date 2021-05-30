@@ -57,7 +57,6 @@ class Settings:
     perf_moving_units: bool = True
     perf_infantry: bool = True
     perf_destroyed_units: bool = True
-    front_line_procurement_target: int = 50
     reserves_procurement_target: int = 10
 
     # Performance culling
