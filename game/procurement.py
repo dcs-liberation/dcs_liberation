@@ -291,6 +291,7 @@ class ProcurementAi:
             ):
                 # Control point is already sufficiently defended.
                 continue
+            allocated = cp.allocated_ground_units(self.game.transfers)
             if allocated.total < worst_supply:
                 worst_supply = allocated.total
                 understaffed = cp
