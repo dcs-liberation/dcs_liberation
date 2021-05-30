@@ -1,4 +1,7 @@
-from typing import Optional, Type
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Optional, Type, Iterator
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -17,11 +20,12 @@ from PySide2.QtWidgets import (
     QTableWidgetItem,
     QWidget,
 )
-
 from dcs.unittype import FlyingType
 
 from game import db
+from game.inventory import ControlPointAircraftInventory
 from game.squadrons import Squadron
+from gen.flights.flight import Flight
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.models import GameModel, AirWingModel, SquadronModel
 from qt_ui.windows.SquadronDialog import SquadronDialog
@@ -82,6 +86,72 @@ class SquadronList(QListView):
         self.dialog.show()
 
 
+@dataclass(frozen=True)
+class AircraftInventoryData:
+    location: str
+    unit_type: str
+    task: str
+    target: str
+    pilot: str
+    player: str
+
+    @classmethod
+    def headers(cls) -> list[str]:
+        return ["Base", "Type", "Flight Type", "Target", "Pilot", "Player"]
+
+    @property
+    def columns(self) -> Iterator[str]:
+        yield self.location
+        yield self.unit_type
+        yield self.task
+        yield self.target
+        yield self.pilot
+        yield self.player
+
+    @classmethod
+    def from_flight(cls, flight: Flight) -> AircraftInventoryData:
+        unit_type_name = cls.format_unit_type(flight.unit_type, flight.country)
+        num_units = flight.count
+        flight_type = flight.flight_type.value
+        target = flight.package.target.name
+        for idx in range(0, num_units):
+            pilot = flight.pilots[idx]
+            if pilot is None:
+                pilot_name = "Unassigned"
+                player = ""
+            else:
+                pilot_name = pilot.name
+                player = "Player" if pilot.player else "AI"
+            return AircraftInventoryData(
+                flight.departure.name,
+                unit_type_name,
+                flight_type,
+                target,
+                pilot_name,
+                player,
+            )
+
+    @classmethod
+    def each_from_inventory(
+        cls, inventory: ControlPointAircraftInventory, country: str
+    ) -> Iterator[AircraftInventoryData]:
+        for unit_type, num_units in inventory.all_aircraft:
+            unit_type_name = cls.format_unit_type(unit_type, country)
+            for _ in range(0, num_units):
+                yield AircraftInventoryData(
+                    inventory.control_point.name,
+                    unit_type_name,
+                    "Idle",
+                    "N/A",
+                    "N/A",
+                    "N/A",
+                )
+
+    @staticmethod
+    def format_unit_type(aircraft: Type[FlyingType], country: str) -> str:
+        return db.unit_get_expanded_info(country, aircraft, "name")
+
+
 class AirInventoryView(QWidget):
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -105,68 +175,39 @@ class AirInventoryView(QWidget):
         self.update_table(False)
 
     def update_table(self, only_unallocated: bool) -> None:
-        CP_COLUMN = 0
-        UNIT_TYPE_COLUMN = 1
-        FLIGHT_TYPE_COLUMN = 2
-        TARGET_NAME_COLUMN = 3
-
         self.table.setSortingEnabled(False)
         self.table.clear()
 
-        inventory_rows = self.get_data(only_unallocated)
+        inventory_rows = list(self.get_data(only_unallocated))
         self.table.setRowCount(len(inventory_rows))
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["Base", "Type", "Flight Type", "Target"])
+        headers = AircraftInventoryData.headers()
+        self.table.setColumnCount(len(headers))
+        self.table.setHorizontalHeaderLabels(headers)
 
-        for idx, inv_row in enumerate(inventory_rows):
-            self.table.setItem(idx, CP_COLUMN, QTableWidgetItem(inv_row[CP_COLUMN]))
-            self.table.setItem(
-                idx, UNIT_TYPE_COLUMN, QTableWidgetItem(inv_row[UNIT_TYPE_COLUMN])
-            )
-            self.table.setItem(
-                idx, FLIGHT_TYPE_COLUMN, QTableWidgetItem(inv_row[FLIGHT_TYPE_COLUMN])
-            )
-            self.table.setItem(
-                idx, TARGET_NAME_COLUMN, QTableWidgetItem(inv_row[TARGET_NAME_COLUMN])
-            )
+        for row, data in enumerate(inventory_rows):
+            for column, value in enumerate(data.columns):
+                self.table.setItem(row, column, QTableWidgetItem(value))
 
         self.table.resizeColumnsToContents()
         self.table.setSortingEnabled(True)
 
-    def get_data(self, only_unallocated: bool) -> list[list[str]]:
+    def iter_allocated_aircraft(self) -> Iterator[AircraftInventoryData]:
+        for package in self.game_model.game.blue_ato.packages:
+            for flight in package.flights:
+                yield AircraftInventoryData.from_flight(flight)
+
+    def iter_unallocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         game = self.game_model.game
-        ato = game.blue_ato
-        inventory_rows = []
+        for control_point, inventory in game.aircraft_inventory.inventories.items():
+            if control_point.captured:
+                yield from AircraftInventoryData.each_from_inventory(
+                    inventory, game.country_for(player=True)
+                )
 
-        for cp in game.theater.controlpoints:
-            if cp.captured:
-                cp_name = cp.name
-
-                # Allocated aircraft
-                if not only_unallocated:
-                    for package in ato.packages:
-                        for flight in package.flights:
-                            if flight.from_cp == cp:
-                                unit_type_name = self.format_unit_type(flight.unit_type)
-                                num_units = flight.count
-                                flight_type = flight.flight_type.value
-                                target = flight.package.target.name
-                                for _ in range(0, num_units):
-                                    inventory_rows.append(
-                                        [cp_name, unit_type_name, flight_type, target]
-                                    )
-
-                # Unallocated aircraft
-                inventory = game.aircraft_inventory.for_control_point(cp)
-                for unit_type, num_units in inventory.all_aircraft:
-                    unit_type_name = self.format_unit_type(unit_type)
-                    for _ in range(0, num_units):
-                        inventory_rows.append([cp_name, unit_type_name, "Idle", "None"])
-
-        return inventory_rows
-
-    def format_unit_type(self, aircraft: Type[FlyingType]) -> str:
-        return db.unit_get_expanded_info(self.country, aircraft, "name")
+    def get_data(self, only_unallocated: bool) -> Iterator[AircraftInventoryData]:
+        yield from self.iter_unallocated_aircraft()
+        if not only_unallocated:
+            yield from self.iter_allocated_aircraft()
 
 
 class AirWingTabs(QTabWidget):
