@@ -8,9 +8,14 @@ from PySide2.QtCore import (
 )
 from PySide2.QtWidgets import (
     QAbstractItemView,
+    QCheckBox,
     QDialog,
     QListView,
     QVBoxLayout,
+    QTabWidget,
+    QTableWidget,
+    QTableWidgetItem,
+    QWidget,
 )
 
 from game import db
@@ -75,6 +80,98 @@ class SquadronList(QListView):
         self.dialog.show()
 
 
+class AirInventoryView(QWidget):
+    def __init__(self, game_model: GameModel) -> None:
+        super().__init__()
+
+        self.game_model = game_model
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.only_unallocated_cb = QCheckBox("Unallocated Only?")
+        self.only_unallocated_cb.stateChanged.connect(self.update_table)
+
+        layout.addWidget(self.only_unallocated_cb)
+
+        self.table = QTableWidget()
+        layout.addWidget(self.table)
+
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.verticalHeader().setVisible(False)
+        self.update_table(False)
+
+    def update_table(self, only_unallocated: int) -> None:
+        CP_COLUMN = 0
+        UNIT_TYPE_COLUMN = 1
+        FLIGHT_TYPE_COLUMN = 2
+        TARGET_NAME_COLUMN = 3
+
+        self.table.setSortingEnabled(False)
+        self.table.clear()
+
+        inventory_rows = self.get_data(bool(only_unallocated))
+        self.table.setRowCount(len(inventory_rows))
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["Base", "Type", "Flight Type", "Target"])
+
+        for idx, inv_row in enumerate(inventory_rows):
+            self.table.setItem(idx, CP_COLUMN, QTableWidgetItem(inv_row[CP_COLUMN]))
+            self.table.setItem(
+                idx, UNIT_TYPE_COLUMN, QTableWidgetItem(inv_row[UNIT_TYPE_COLUMN])
+            )
+            self.table.setItem(
+                idx, FLIGHT_TYPE_COLUMN, QTableWidgetItem(inv_row[FLIGHT_TYPE_COLUMN])
+            )
+            self.table.setItem(
+                idx, TARGET_NAME_COLUMN, QTableWidgetItem(inv_row[TARGET_NAME_COLUMN])
+            )
+
+        self.table.resizeColumnsToContents()
+        self.table.setSortingEnabled(True)
+
+    def get_data(self, only_unallocated: bool) -> list[list[str]]:
+        game = self.game_model.game
+        ato = game.blue_ato
+        inventory_rows = []
+
+        for cp in game.theater.controlpoints:
+            if cp.captured:
+                cp_name = cp.name
+
+                # Allocated aircraft
+                if not only_unallocated:
+                    for package in ato.packages:
+                        for flight in package.flights:
+                            if flight.from_cp == cp:
+                                unit_type_name = db.unit_type_name(flight.unit_type)
+                                num_units = flight.count
+                                flight_type = flight.flight_type.value
+                                target = flight.package.target.name
+                                for i in range(0, num_units):
+                                    inventory_rows.append(
+                                        [cp_name, unit_type_name, flight_type, target]
+                                    )
+
+                # Unallocated aircraft
+                inventory = game.aircraft_inventory.for_control_point(cp)
+                for ac in inventory.all_aircraft:
+                    unit_type_name = db.unit_type_name(ac[0])
+                    num_units = ac[1]
+                    for i in range(0, num_units):
+                        inventory_rows.append([cp_name, unit_type_name, "None", "None"])
+
+        return inventory_rows
+
+
+class AirWingTabs(QTabWidget):
+    def __init__(self, game_model: GameModel) -> None:
+        super().__init__()
+
+        self.addTab(SquadronList(game_model.blue_air_wing_model), "Squadrons")
+        self.addTab(AirInventoryView(game_model), "Inventory")
+
+
 class AirWingDialog(QDialog):
     """Dialog window showing the player's air wing."""
 
@@ -89,4 +186,4 @@ class AirWingDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        layout.addWidget(SquadronList(self.air_wing_model))
+        layout.addWidget(AirWingTabs(game_model))
