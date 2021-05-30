@@ -339,3 +339,11 @@ class ProcurementAi:
         if not total_cost:
             return 0
         return class_cost / total_cost
+
+
+    def total_ground_units_allocated_to(self, control_point: ControlPoint) -> int:
+        total = control_point.expected_ground_units_next_turn.total
+        for transfer in self.game.transfers:
+            if transfer.destination == control_point:
+                total += sum(transfer.units.values())
+        return total
