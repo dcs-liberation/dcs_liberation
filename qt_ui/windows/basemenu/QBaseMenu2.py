@@ -11,7 +11,12 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game, db
-from game.theater import ControlPoint, ControlPointType
+from game.theater import (
+    ControlPoint,
+    ControlPointType,
+    FREE_FRONTLINE_UNIT_SUPPLY,
+    AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
+)
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -62,6 +67,7 @@ class QBaseMenu2(QDialog):
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
         self.intel_summary = QLabel()
+        self.intel_summary.setToolTip(self.generate_intel_tooltip())
         self.update_intel_summary()
         top_layout.addWidget(title)
         top_layout.addWidget(self.intel_summary)
@@ -195,15 +201,44 @@ class QBaseMenu2(QDialog):
     def update_intel_summary(self) -> None:
         aircraft = self.cp.base.total_aircraft
         parking = self.cp.total_aircraft_parking
+        ground_unit_limit = self.cp.frontline_unit_count_limit
+        deployable_unit_info = ""
+        unit_overage = max(
+            self.cp.base.total_armor - self.cp.frontline_unit_count_limit, 0
+        )
+        if self.cp.has_active_frontline:
+            deployable_unit_info = (
+                f" (Up to {ground_unit_limit} deployable, {unit_overage} reserve)"
+            )
         self.intel_summary.setText(
             "\n".join(
                 [
                     f"{aircraft}/{parking} aircraft",
-                    f"{self.cp.base.total_armor} ground units",
+                    f"{self.cp.base.total_armor} ground units" + deployable_unit_info,
                     str(self.cp.runway_status),
+                    f"{self.cp.active_ammo_depots_count}/{self.cp.total_ammo_depots_count} ammo depots",
+                    f"{'Factory can produce units' if self.cp.has_factory else 'Does not have a factory'}",
                 ]
             )
         )
+
+    def generate_intel_tooltip(self) -> str:
+        tooltip = (
+            f"Deployable unit limit ({self.cp.frontline_unit_count_limit}) = {FREE_FRONTLINE_UNIT_SUPPLY} (base) + "
+            f" {AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION} (per connected ammo depot) * {self.cp.total_ammo_depots_count} "
+            f"(depots)"
+        )
+
+        if self.cp.has_active_frontline:
+            unit_overage = max(
+                self.cp.base.total_armor - self.cp.frontline_unit_count_limit, 0
+            )
+            tooltip += (
+                f"\n{unit_overage} units will be held in reserve and will not be deployed to "
+                f"connected frontlines for this turn"
+            )
+
+        return tooltip
 
     def closeEvent(self, close_event: QCloseEvent):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)

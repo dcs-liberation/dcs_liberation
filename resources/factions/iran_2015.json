@@ -3,6 +3,7 @@
   "name": "Iran 2015",
   "authors": "Khopa",
   "description": "<p>Iranian 2010s faction</p>",
+  "locales": ["fa_IR"],
   "aircrafts": [
     "MiG_21Bis",
     "MiG_29A",

@@ -3,6 +3,7 @@
   "name": "China 2010",
   "authors": "Khopa",
   "description": "<p>China in the late 2000s, early 2010s.</p>",
+  "locales": ["zh_CN"],
   "aircrafts": [
     "MiG_21Bis",
     "Su_30",

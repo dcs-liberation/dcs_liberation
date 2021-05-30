@@ -7,5 +7,5 @@
   "description": "<p>A small theater in Russia, progress from Mozdok to Maykop.</p><p>This scenario is pretty simple, it is ideal if you want to run a short campaign. If your PC is not powerful, this is also the less performance heavy scenario.</p>",
   "miz": "russia_small.miz",
   "performance": 0,
-  "version": 3
+  "version": "5.0"
 }

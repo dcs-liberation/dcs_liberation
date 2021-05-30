@@ -3,6 +3,7 @@
   "name": "Israel 1973",
   "authors": "Khopa",
   "description": "<p>Israel during the 1973 Yom Kippur War.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "F_4E",
     "A_4E_C",

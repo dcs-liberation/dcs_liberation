@@ -3,6 +3,7 @@
   "name": "Greece 2005",
   "authors": "Malakhit",
   "description": "<p>Hellenic army in the mid/late 2000s.</p>",
+  "locales": ["el_GR"],
   "aircrafts": [
     "F_16C_50",
     "F_4E",

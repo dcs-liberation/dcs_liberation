@@ -12,6 +12,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP.
 * **[Campaign AI]** AI now considers the range to the SAM's threat zone rather than the range to the SAM itself when determining target priorities.
+* **[Campaign AI]** Auto purchase of ground units will now maintain unit composition instead of buying randomly. The unit composition is predefined.
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
@@ -26,6 +27,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[UI]** DCS loadouts are now selectable in the loadout setup menu.
 * **[UI]** Added global aircraft inventory view under Air Wing dialog.
+* **[UI]** Base menu now shows information about ground unit deployment limits.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
 * **[Modding]** Campaigns now use map structures as strike targets.
 * **[Modding]** Campaigns may now set *any* objective type to be a required spawn rather than random chance.
