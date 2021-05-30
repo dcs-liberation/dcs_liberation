@@ -515,11 +515,6 @@ QHeaderView::section:vertical
     background: #4B5B74;
 }
 
-QTableWidget {
-    gridline-color: red;
-    background: #4B5B74;
-}
-
 QTableView QTableCornerButton::section {
     background: #4B5B74;
 }
