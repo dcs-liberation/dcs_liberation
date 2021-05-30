@@ -3,6 +3,7 @@
   "name": "Netherlands 1990",
   "authors": "Khopa",
   "description": "<p>Netherlands forces in the 90s.</p>",
+  "locales": ["nl_NL"],
   "aircrafts": [
     "F_16C_50",
     "F_5E_3",

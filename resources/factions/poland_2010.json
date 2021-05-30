@@ -3,6 +3,7 @@
   "name": "Poland 2010",
   "authors": "Malakhit",
   "description": "<p>Polish army in the 2010s.</p>",
+  "locales": ["pl_PL"],
   "aircrafts": [
     "Su_17M4",
     "MiG_29A",

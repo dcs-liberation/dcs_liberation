@@ -3,6 +3,7 @@
   "name": "Israel 1948",
   "authors": "Khopa",
   "description": "<p>Israel during the 1948 Arab-Israeli war.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "SpitfireLFMkIXCW",
     "SpitfireLFMkIX",

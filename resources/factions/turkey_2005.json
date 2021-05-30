@@ -3,6 +3,7 @@
   "name": "Turkey 2005",
   "authors": "Khopa",
   "description": "<p>Turkish army in the mid/late 2000s.</p>",
+  "locales": ["tr_TR"],
   "aircrafts": [
     "F_16C_50",
     "F_4E",

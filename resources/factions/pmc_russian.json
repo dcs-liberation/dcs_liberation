@@ -3,6 +3,7 @@
   "name": "Private Military Company - Russian",
   "authors": "Khopa",
   "description": "<p>A private military company using Russian units.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "L_39ZA",
     "Mi_8MT",
