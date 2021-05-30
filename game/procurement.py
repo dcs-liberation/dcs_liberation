@@ -155,7 +155,7 @@ class ProcurementAi:
         for unit_class in GroundUnitClass:
             if not self.faction.has_access_to_unittype(unit_class):
                 continue
-                
+
             current_ratio = self.cost_ratio_of_ground_unit(cp, unit_class)
             desired_ratio = (
                 self.faction.doctrine.ground_unit_procurement_ratios.for_unit_class(
@@ -285,7 +285,8 @@ class ProcurementAi:
                 continue
 
             if (
-                total_ground_units_allocated_to_this_control_point >= self.game.settings.front_line_procurement_target
+                total_ground_units_allocated_to_this_control_point
+                >= self.game.settings.front_line_procurement_target
                 or total_ground_units_allocated_to_this_control_point
                 >= cp.frontline_unit_count_limit
             ):
@@ -339,7 +340,6 @@ class ProcurementAi:
         if not total_cost:
             return 0
         return class_cost / total_cost
-
 
     def total_ground_units_allocated_to(self, control_point: ControlPoint) -> int:
         total = control_point.expected_ground_units_next_turn.total
