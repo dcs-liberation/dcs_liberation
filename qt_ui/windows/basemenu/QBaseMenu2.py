@@ -201,6 +201,8 @@ class QBaseMenu2(QDialog):
                     f"{aircraft}/{parking} aircraft",
                     f"{self.cp.base.total_armor} ground units",
                     str(self.cp.runway_status),
+                    f"{self.cp.active_ammo_depots_count}/{self.cp.total_ammo_depots_count} ammo depots",
+                    f"{'Factory can produce units' if self.cp.has_factory else 'Does not have a factory'}",
                 ]
             )
         )
