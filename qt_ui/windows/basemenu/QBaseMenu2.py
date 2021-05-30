@@ -11,7 +11,12 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game, db
-from game.theater import ControlPoint, ControlPointType
+from game.theater import (
+    ControlPoint,
+    ControlPointType,
+    FREE_FRONTLINE_UNIT_SUPPLY,
+    AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
+)
 from gen.flights.flight import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -62,6 +67,11 @@ class QBaseMenu2(QDialog):
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
         self.intel_summary = QLabel()
+        self.intel_summary.setToolTip(
+            f"Ground unit limit ({self.cp.frontline_unit_count_limit}) = {FREE_FRONTLINE_UNIT_SUPPLY} (Base) + "
+            f"{AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION} (per connected ammo depot) * "
+            f"{self.cp.connected_ammo_depots} (depots)".title()
+        )
         self.update_intel_summary()
         top_layout.addWidget(title)
         top_layout.addWidget(self.intel_summary)
@@ -195,11 +205,12 @@ class QBaseMenu2(QDialog):
     def update_intel_summary(self) -> None:
         aircraft = self.cp.base.total_aircraft
         parking = self.cp.total_aircraft_parking
+        ground_unit_limit = self.cp.frontline_unit_count_limit
         self.intel_summary.setText(
             "\n".join(
                 [
                     f"{aircraft}/{parking} aircraft",
-                    f"{self.cp.base.total_armor} ground units",
+                    f"{self.cp.base.total_armor}/{ground_unit_limit} ground units",
                     str(self.cp.runway_status),
                 ]
             )

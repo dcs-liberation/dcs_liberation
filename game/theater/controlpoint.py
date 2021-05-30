@@ -792,16 +792,20 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def frontline_unit_count_limit(self) -> int:
 
-        tally_connected_ammo_depots = 0
-
-        for cp_objective in self.connected_objectives:
-            if cp_objective.category == "ammo" and not cp_objective.is_dead:
-                tally_connected_ammo_depots += 1
-
         return (
             FREE_FRONTLINE_UNIT_SUPPLY
-            + tally_connected_ammo_depots * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+            + self.connected_ammo_depots * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
         )
+
+    @property
+    def connected_ammo_depots(self) -> int:
+        connected_ammo_depots = [
+            co
+            for co in self.connected_objectives
+            if co.category == "ammo" and not co.is_dead
+        ]
+
+        return len(connected_ammo_depots)
 
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
