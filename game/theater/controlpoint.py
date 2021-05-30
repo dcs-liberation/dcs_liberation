@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.data.groundunitclass import GroundUnitClass
 
 import heapq
 import itertools
@@ -763,7 +764,7 @@ class ControlPoint(MissionTarget, ABC):
         for unit_bought in self.pending_unit_deliveries.units:
             if issubclass(unit_bought, FlyingType):
                 continue
-            if unit_bought in TYPE_SHORAD:
+            if unit_bought in GroundUnitClass.Shorads.unit_list:
                 continue
             on_order += self.pending_unit_deliveries.units[unit_bought]
 
