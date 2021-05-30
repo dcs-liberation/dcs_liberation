@@ -121,7 +121,7 @@ class GroundPlanner:
                 )
                 continue
 
-            available = self.cp.base.armor[key]
+            available = self.cp.base.armor[unit_type]
 
             if available > remaining_available_frontline_units:
                 available = remaining_available_frontline_units
