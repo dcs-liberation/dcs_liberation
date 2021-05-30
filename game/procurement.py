@@ -276,13 +276,19 @@ class ProcurementAi:
         # already overloaded.
         for cp in self.owned_points:
 
-            total_ground_units_allocated_to_this_control_point = (
-                self.total_ground_units_allocated_to(cp)
-            )
+            if not cp.front_is_active:
+                continue
+
+            if not cp.has_active_frontline:
+                continue
 
             if not cp.has_ground_unit_source(self.game):
                 # No source of ground units, so can't buy anything.
                 continue
+
+            total_ground_units_allocated_to_this_control_point = (
+                self.total_ground_units_allocated_to(cp)
+            )
 
             if (
                 total_ground_units_allocated_to_this_control_point
@@ -292,6 +298,7 @@ class ProcurementAi:
             ):
                 # Control point is already sufficiently defended.
                 continue
+
             allocated = cp.allocated_ground_units(self.game.transfers)
             if allocated.total < worst_supply:
                 worst_supply = allocated.total
