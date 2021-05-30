@@ -1,5 +1,4 @@
 from __future__ import annotations
-from game.data.groundunitclass import GroundUnitClass
 
 import heapq
 import itertools
@@ -802,9 +801,9 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def active_ammo_depots_count(self) -> int:
         """Return the number of available ammo depots"""
-        return sum(
+        return len(
             [
-                1
+                obj
                 for obj in self.connected_objectives
                 if obj.category == "ammo" and not obj.is_dead
             ]
@@ -813,7 +812,7 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def total_ammo_depots_count(self) -> int:
         """Return the number of ammo depots, including dead ones"""
-        return sum([1 for obj in self.connected_objectives if obj.category == "ammo"])
+        return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
 
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:

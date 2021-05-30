@@ -26,6 +26,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[UI]** Added new web based map UI. This is mostly functional but many of the old display options are a WIP. Revert to the old map with --old-map.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[UI]** DCS loadouts are now selectable in the loadout setup menu.
+* **[UI]** Base menu now shows information about ground unit deployment limits.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
 * **[Modding]** Campaigns now use map structures as strike targets.
 * **[Modding]** Campaigns may now set *any* objective type to be a required spawn rather than random chance.
