@@ -3,7 +3,6 @@
 Saves from 2.5 are not compatible with 3.0.
 
 ## Features/Improvements
-* **[Campaign AI]** Ground units will be auto purchased by a certain ratio and not anymore randomly.
 * **[Campaign]** Ground units can now be transferred by road, airlift, and cargo ship. See https://github.com/dcs-liberation/dcs_liberation/wiki/Unit-Transfers for more information.
 * **[Campaign]** Ground units can no longer be sold. To move units to a new location, transfer them.
 * **[Campaign]** Ground units must now be recruited at a base with a factory and transferred to their destination. When buying units in the UI, the purchase will automatically be fulfilled at the closest factory, and a transfer will be created on the next turn.
@@ -12,6 +11,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP.
 * **[Campaign AI]** AI now considers the range to the SAM's threat zone rather than the range to the SAM itself when determining target priorities.
+* **[Campaign AI]** Auto purchase of ground units will now maintain unit composition instead of buying randomly. The unit composition is predefined.
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
