@@ -18,6 +18,7 @@ from typing import (
     Tuple,
     Type,
     TypeVar,
+    Union,
 )
 
 from dcs.unittype import FlyingType
@@ -25,6 +26,7 @@ from dcs.unittype import FlyingType
 from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
+from game.profiling import logged_duration, MultiEventTracer
 from game.squadrons import AirWing, Squadron
 from game.theater import (
     Airfield,
@@ -43,7 +45,7 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from game.transfers import CargoShip, Convoy
-from game.utils import Distance, nautical_miles
+from game.utils import Distance, nautical_miles, meters
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import (
@@ -295,23 +297,35 @@ class ObjectiveFinder:
         self.game = game
         self.is_player = is_player
 
-    def enemy_air_defenses(self) -> Iterator[TheaterGroundObject]:
+    def enemy_air_defenses(self) -> Iterator[tuple[TheaterGroundObject, Distance]]:
         """Iterates over all enemy SAM sites."""
+        doctrine = self.game.faction_for(self.is_player).doctrine
+        threat_zones = self.game.threat_zone_for(not self.is_player)
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
-                is_ewr = isinstance(ground_object, EwrGroundObject)
-                is_sam = isinstance(ground_object, SamGroundObject)
-                if not is_ewr and not is_sam:
-                    continue
-
                 if ground_object.is_dead:
                     continue
 
-                # TODO: Yield in order of most threatening.
-                # Need to sort in order of how close their defensive range comes
-                # to friendly assets. To do that we need to add effective range
-                # information to the database.
-                yield ground_object
+                if isinstance(ground_object, EwrGroundObject):
+                    if threat_zones.threatened_by_air_defense(ground_object):
+                        # This is a very weak heuristic for determining whether the EWR
+                        # is close enough to be worth targeting before a SAM that is
+                        # covering it. Ingress distance corresponds to the beginning of
+                        # the attack range and is sufficient for most standoff weapons,
+                        # so treating the ingress distance as the threat distance sorts
+                        # these EWRs such that they will be attacked before SAMs that do
+                        # not threaten the ingress point, but after those that do.
+                        target_range = doctrine.ingress_egress_distance
+                    else:
+                        # But if the EWR isn't covered then we should only be worrying
+                        # about its detection range.
+                        target_range = ground_object.max_detection_range()
+                elif isinstance(ground_object, SamGroundObject):
+                    target_range = ground_object.max_threat_range()
+                else:
+                    continue
+
+                yield ground_object, target_range
 
     def threatening_air_defenses(self) -> Iterator[TheaterGroundObject]:
         """Iterates over enemy SAMs in threat range of friendly control points.
@@ -319,7 +333,17 @@ class ObjectiveFinder:
         SAM sites are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        return self._targets_by_range(self.enemy_air_defenses())
+
+        target_ranges: list[tuple[TheaterGroundObject, Distance]] = []
+        for target, threat_range in self.enemy_air_defenses():
+            ranges: list[Distance] = []
+            for cp in self.friendly_control_points():
+                ranges.append(meters(target.distance_to(cp)) - threat_range)
+            target_ranges.append((target, min(ranges)))
+
+        target_ranges = sorted(target_ranges, key=operator.itemgetter(1))
+        for target, _range in target_ranges:
+            yield target
 
     def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
         """Iterates over all enemy vehicle groups."""
@@ -807,13 +831,19 @@ class CoalitionMissionPlanner:
 
     def plan_missions(self) -> None:
         """Identifies and plans mission for the turn."""
-        for proposed_mission in self.propose_missions():
-            self.plan_mission(proposed_mission)
+        player = "Blue" if self.is_player else "Red"
+        with logged_duration(f"{player} mission identification and fulfillment"):
+            with MultiEventTracer() as tracer:
+                for proposed_mission in self.propose_missions():
+                    self.plan_mission(proposed_mission, tracer)
 
-        for critical_mission in self.critical_missions():
-            self.plan_mission(critical_mission, reserves=True)
+        with logged_duration(f"{player} reserve mission planning"):
+            with MultiEventTracer() as tracer:
+                for critical_mission in self.critical_missions():
+                    self.plan_mission(critical_mission, tracer, reserves=True)
 
-        self.stagger_missions()
+        with logged_duration(f"{player} mission scheduling"):
+            self.stagger_missions()
 
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
@@ -878,7 +908,9 @@ class CoalitionMissionPlanner:
                 threats[EscortType.Sead] = True
         return threats
 
-    def plan_mission(self, mission: ProposedMission, reserves: bool = False) -> None:
+    def plan_mission(
+        self, mission: ProposedMission, tracer: MultiEventTracer, reserves: bool = False
+    ) -> None:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
         builder = PackageBuilder(
             mission.location,
@@ -907,7 +939,10 @@ class CoalitionMissionPlanner:
                 # If the package does not need escorts they may be pruned.
                 escorts.append(proposed_flight)
                 continue
-            self.plan_flight(mission, proposed_flight, builder, missing_types, reserves)
+            with tracer.trace("Flight planning"):
+                self.plan_flight(
+                    mission, proposed_flight, builder, missing_types, reserves
+                )
 
         if missing_types:
             self.scrub_mission_missing_aircraft(
@@ -931,7 +966,8 @@ class CoalitionMissionPlanner:
             self.game, builder.package, self.is_player
         )
         for flight in builder.package.flights:
-            flight_plan_builder.populate_flight_plan(flight)
+            with tracer.trace("Flight plan population"):
+                flight_plan_builder.populate_flight_plan(flight)
 
         needed_escorts = self.check_needed_escorts(builder)
         for escort in escorts:
@@ -939,7 +975,8 @@ class CoalitionMissionPlanner:
             # impossible.
             assert escort.escort_type is not None
             if needed_escorts[escort.escort_type]:
-                self.plan_flight(mission, escort, builder, missing_types, reserves)
+                with tracer.trace("Flight planning"):
+                    self.plan_flight(mission, escort, builder, missing_types, reserves)
 
         # Check again for unavailable aircraft. If the escort was required and
         # none were found, scrub the mission.
@@ -959,7 +996,8 @@ class CoalitionMissionPlanner:
         # Add flight plans for escorts.
         for flight in package.flights:
             if not flight.flight_plan.waypoints:
-                flight_plan_builder.populate_flight_plan(flight)
+                with tracer.trace("Flight plan population"):
+                    flight_plan_builder.populate_flight_plan(flight)
 
         if package.has_players and self.game.settings.auto_ato_player_missions_asap:
             package.auto_asap = True

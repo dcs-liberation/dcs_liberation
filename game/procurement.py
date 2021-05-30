@@ -275,16 +275,20 @@ class ProcurementAi:
         # Prefer to buy front line units at active front lines that are not
         # already overloaded.
         for cp in self.owned_points:
+
+            total_ground_units_allocated_to_this_control_point = (
+                self.total_ground_units_allocated_to(cp)
+            )
+
             if not cp.has_ground_unit_source(self.game):
                 # No source of ground units, so can't buy anything.
                 continue
 
-            if not cp.has_active_frontline:
-                # Doesn't have an active front line, so doesn't matter.
-                continue
-
-            allocated = cp.allocated_ground_units(self.game.transfers)
-            if allocated.total >= self.game.settings.front_line_procurement_target:
+            if (
+                total_ground_units_allocated_to_this_control_point >= self.game.settings.front_line_procurement_target
+                or total_ground_units_allocated_to_this_control_point
+                >= cp.frontline_unit_count_limit
+            ):
                 # Control point is already sufficiently defended.
                 continue
             if allocated.total < worst_supply:

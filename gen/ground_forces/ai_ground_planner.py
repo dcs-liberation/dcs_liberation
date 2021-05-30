@@ -82,6 +82,10 @@ class GroundPlanner:
 
     def plan_groundwar(self):
 
+        ground_unit_limit = self.cp.frontline_unit_count_limit
+
+        remaining_available_frontline_units = ground_unit_limit
+
         if hasattr(self.cp, "stance"):
             group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[self.cp.stance]
         else:
@@ -117,7 +121,13 @@ class GroundPlanner:
                 )
                 continue
 
-            available = self.cp.base.armor[unit_type]
+            available = self.cp.base.armor[key]
+
+            if available > remaining_available_frontline_units:
+                available = remaining_available_frontline_units
+
+            remaining_available_frontline_units -= available
+
             while available > 0:
 
                 if role == CombatGroupRole.SHORAD:
@@ -143,6 +153,9 @@ class GroundPlanner:
                 for i in range(n):
                     group.units.append(unit_type)
                 collection.append(group)
+
+            if remaining_available_frontline_units == 0:
+                break
 
         print("------------------")
         print("Ground Planner : ")

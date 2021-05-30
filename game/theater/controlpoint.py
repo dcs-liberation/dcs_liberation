@@ -60,6 +60,9 @@ if TYPE_CHECKING:
     from gen.flights.flight import FlightType
     from ..transfers import PendingTransfers
 
+FREE_FRONTLINE_UNIT_SUPPLY: int = 15
+AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
+
 
 class ControlPointType(Enum):
     #: An airbase with slots for everything.
@@ -161,6 +164,9 @@ class PresetLocations:
 
     #: Locations of factories for producing ground units. These will always be spawned.
     factories: List[PointWithHeading] = field(default_factory=list)
+
+    #: Locations of ammo depots for controlling number of units on the front line at a control point.
+    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of stationary armor groups. These will always be spawned.
     armor_groups: List[PointWithHeading] = field(default_factory=list)
@@ -775,15 +781,6 @@ class ControlPoint(MissionTarget, ABC):
     def income_per_turn(self) -> int:
         return 0
 
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
-
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.AEWC,
-            ]
-        yield from super().mission_types(for_player)
-
     @property
     def has_active_frontline(self) -> bool:
         return any(not c.is_friendly(self.captured) for c in self.connected_points)
@@ -793,6 +790,20 @@ class ControlPoint(MissionTarget, ABC):
             raise ValueError
 
         return self.captured != other.captured
+
+    @property
+    def frontline_unit_count_limit(self) -> int:
+
+        tally_connected_ammo_depots = 0
+
+        for cp_objective in self.connected_objectives:
+            if cp_objective.category == "ammo" and not cp_objective.is_dead:
+                tally_connected_ammo_depots += 1
+
+        return (
+            FREE_FRONTLINE_UNIT_SUPPLY
+            + tally_connected_ammo_depots * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+        )
 
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
@@ -832,17 +843,20 @@ class Airfield(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                # TODO: FlightType.INTERCEPTION
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
+        if not self.is_friendly(for_player):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
             ]
+
         yield from super().mission_types(for_player)
+
+        if self.is_friendly(for_player):
+            yield from [
+                FlightType.AEWC,
+                # TODO: FlightType.INTERCEPTION
+                # TODO: FlightType.LOGISTICS
+            ]
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -962,6 +976,13 @@ class Carrier(NavalControlPoint):
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
+
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+
+        yield from super().mission_types(for_player)
+        if self.is_friendly(for_player):
+            yield FlightType.AEWC
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")
@@ -1102,18 +1123,10 @@ class Fob(ControlPoint):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
-        if self.is_friendly(for_player):
-            yield from [
-                FlightType.BARCAP,
-                # TODO: FlightType.LOGISTICS
-            ]
-        else:
-            yield from [
-                FlightType.STRIKE,
-                FlightType.SWEEP,
-                FlightType.ESCORT,
-                FlightType.SEAD_ESCORT,
-            ]
+        if not self.is_friendly(for_player):
+            yield FlightType.STRIKE
+
+        yield from super().mission_types(for_player)
 
     @property
     def total_aircraft_parking(self) -> int:

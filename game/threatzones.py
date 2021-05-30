@@ -13,7 +13,7 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.theater import ControlPoint
+from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance, meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight, FlightWaypoint
@@ -90,6 +90,12 @@ class ThreatZones:
     def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:
         return self.threatened_by_air_defense(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
+        )
+
+    @threatened_by_air_defense.register
+    def _threatened_by_air_defense_mission_target(self, target: MissionTarget) -> bool:
+        return self.threatened_by_air_defense(
+            self.dcs_to_shapely_point(target.position)
         )
 
     @singledispatchmethod

@@ -139,7 +139,9 @@ class PendingUnitDeliveries:
     ) -> Optional[ControlPoint]:
         sources = []
         for control_point in game.theater.control_points_for(self.destination.captured):
-            if control_point.can_recruit_ground_units(game):
+            if control_point.can_recruit_ground_units(
+                game
+            ) and network.has_path_between(self.destination, control_point):
                 sources.append(control_point)
 
         if not sources:

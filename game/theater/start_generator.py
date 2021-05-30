@@ -471,6 +471,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.generate_strike_targets()
         self.generate_offshore_strike_targets()
         self.generate_factories()
+        self.generate_ammunition_depots()
 
         if self.faction.missiles:
             self.generate_missile_sites()
@@ -628,6 +629,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             )
 
             self.control_point.connected_objectives.append(g)
+
+    def generate_ammunition_depots(self) -> None:
+        for position in self.control_point.preset_locations.ammunition_depots:
+            self.generate_strike_target_at(category="ammo", position=position)
 
     def generate_factories(self) -> None:
         """Generates the factories that are required by the campaign."""
@@ -828,6 +833,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
         FobDefenseGenerator(self.game, self.control_point).generate()
         self.generate_armor_groups()
         self.generate_factories()
+        self.generate_ammunition_depots()
         self.generate_required_aa()
         self.generate_required_ewr()
         self.generate_scenery_sites()
