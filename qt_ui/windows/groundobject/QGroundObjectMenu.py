@@ -21,7 +21,11 @@ from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
 from game.theater import ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import NavalGroundObject
+from game.theater.theatergroundobject import (
+    NavalGroundObject,
+    VehicleGroupGroundObject,
+    SamGroundObject,
+)
 from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
@@ -354,9 +358,10 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buyArmorBox.setLayout(self.buyArmorLayout)
 
         self.mainLayout = QHBoxLayout()
-        self.mainLayout.addWidget(self.buySamBox)
 
-        if self.ground_object.is_control_point:
+        if isinstance(self.ground_object, SamGroundObject):
+            self.mainLayout.addWidget(self.buySamBox)
+        elif isinstance(self.ground_object, VehicleGroupGroundObject):
             self.mainLayout.addWidget(self.buyArmorBox)
 
         self.setLayout(self.mainLayout)
