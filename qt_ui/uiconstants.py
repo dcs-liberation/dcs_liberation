@@ -1,7 +1,7 @@
 import os
 from typing import Dict
 
-from PySide2.QtGui import QColor, QFont, QPixmap
+from PySide2.QtGui import QPixmap
 
 from game.theater.theatergroundobject import NAME_BY_CATEGORY
 from .liberation_theme import get_theme_icons
@@ -15,51 +15,6 @@ URLS: Dict[str, str] = {
 
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
-
-FONT_SIZE = 8
-FONT_NAME = "Arial"
-# FONT = QFont("Arial", 12, weight=5, italic=True)
-FONT_PRIMARY = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=False)
-FONT_PRIMARY_I = QFont(FONT_NAME, FONT_SIZE, weight=5, italic=True)
-FONT_PRIMARY_B = QFont(FONT_NAME, FONT_SIZE, weight=75, italic=False)
-FONT_MAP = QFont(FONT_NAME, 10, weight=75, italic=False)
-
-COLORS: Dict[str, QColor] = {
-    "white": QColor(255, 255, 255),
-    "white_transparent": QColor(255, 255, 255, 35),
-    "light_red": QColor(231, 92, 83, 90),
-    "red": QColor(200, 80, 80),
-    "dark_red": QColor(140, 20, 20),
-    "red_transparent": QColor(227, 32, 0, 20),
-    "transparent": QColor(255, 255, 255, 0),
-    "light_blue": QColor(105, 182, 240, 90),
-    "blue": QColor(0, 132, 255),
-    "dark_blue": QColor(45, 62, 80),
-    "sea_blue": QColor(52, 68, 85),
-    "sea_blue_transparent": QColor(52, 68, 85, 150),
-    "blue_transparent": QColor(0, 132, 255, 20),
-    "purple": QColor(187, 137, 255),
-    "yellow": QColor(238, 225, 123),
-    "bright_red": QColor(150, 80, 80),
-    "super_red": QColor(227, 32, 0),
-    "green": QColor(128, 186, 128),
-    "light_green": QColor(223, 255, 173),
-    "light_green_transparent": QColor(180, 255, 140, 50),
-    "bright_green": QColor(64, 200, 64),
-    "black": QColor(0, 0, 0),
-    "black_transparent": QColor(0, 0, 0, 5),
-    "orange": QColor(254, 125, 10),
-    "night_overlay": QColor(12, 20, 69),
-    "dawn_dust_overlay": QColor(46, 38, 85),
-    "grey": QColor(150, 150, 150),
-    "grey_transparent": QColor(150, 150, 150, 150),
-    "dark_grey": QColor(75, 75, 75),
-    "dark_grey_transparent": QColor(75, 75, 75, 150),
-    "dark_dark_grey": QColor(48, 48, 48),
-    "dark_dark_grey_transparent": QColor(48, 48, 48, 150),
-}
-
-CP_SIZE = 12
 
 AIRCRAFT_BANNERS: Dict[str, QPixmap] = {}
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
@@ -137,17 +92,6 @@ def load_icons():
     ICONS["Ordnance"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/ordnance_icon.png"
     )
-
-    ICONS["target"] = QPixmap("./resources/ui/ground_assets/target.png")
-    ICONS["cleared"] = QPixmap("./resources/ui/ground_assets/cleared.png")
-    for category in NAME_BY_CATEGORY.keys():
-        ICONS[category] = QPixmap("./resources/ui/ground_assets/" + category + ".png")
-        ICONS[category + "_blue"] = QPixmap(
-            "./resources/ui/ground_assets/" + category + "_blue.png"
-        )
-    ICONS["destroyed"] = QPixmap("./resources/ui/ground_assets/destroyed.png")
-    ICONS["nothreat"] = QPixmap("./resources/ui/ground_assets/nothreat.png")
-    ICONS["nothreat_blue"] = QPixmap("./resources/ui/ground_assets/nothreat_blue.png")
 
     ICONS["Generator"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/generator.png"

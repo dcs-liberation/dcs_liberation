@@ -36,6 +36,8 @@ from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 LeafletLatLon = list[float]
 LeafletPoly = list[LeafletLatLon]
 
+MAX_SHIP_DISTANCE = nautical_miles(80)
+
 # **EVERY PROPERTY NEEDS A NOTIFY SIGNAL**
 #
 # https://bugreports.qt.io/browse/PYSIDE-1426

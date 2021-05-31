@@ -22,12 +22,11 @@ from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
-from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
-from qt_ui.widgets.map.QLiberationMap import LeafletMap, QLiberationMap, LiberationMap
+from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
@@ -38,7 +37,7 @@ from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
 
 
 class QLiberationWindow(QMainWindow):
-    def __init__(self, game: Optional[Game], new_map: bool) -> None:
+    def __init__(self, game: Optional[Game]) -> None:
         super(QLiberationWindow, self).__init__()
 
         self.game = game
@@ -46,7 +45,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map: LiberationMap = self.create_map(new_map)
+        self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
@@ -174,30 +173,6 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction("E&xit", self.close)
 
-        displayMenu = self.menu.addMenu("&Display")
-
-        last_was_group = False
-        for item in DisplayOptions.menu_items():
-            if isinstance(item, DisplayRule):
-                if last_was_group:
-                    displayMenu.addSeparator()
-                    self.display_bar.addSeparator()
-                action = self.make_display_rule_action(item)
-                displayMenu.addAction(action)
-                if action.icon():
-                    self.display_bar.addAction(action)
-                last_was_group = False
-            elif isinstance(item, DisplayGroup):
-                displayMenu.addSeparator()
-                self.display_bar.addSeparator()
-                group = QActionGroup(displayMenu)
-                for display_rule in item:
-                    action = self.make_display_rule_action(display_rule, group)
-                    displayMenu.addAction(action)
-                    if action.icon():
-                        self.display_bar.addAction(action)
-                last_was_group = True
-
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
         help_menu.addAction(self.openGithubAction)
@@ -283,11 +258,6 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Game generated")
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
-
-    def create_map(self, new_map: bool) -> LiberationMap:
-        if new_map:
-            return LeafletMap(self.game_model, self)
-        return QLiberationMap(self.game_model)
 
     def setGame(self, game: Optional[Game]):
         try:

@@ -23,7 +23,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Flight Planner]** Automatic ATO generation for the player's coalition can now be disabled in the settings.
 * **[Payloads]** AI flights for most air to ground mission types (CAS excluded) will have their guns emptied to prevent strafing fully armed and operational battle stations. Gun-reliant airframes like A-10s and warbirds will keep their bullets.
 * **[Kneeboard]** ATC table overflow alleviated by wrapping long airfield names and splitting ATC frequency and channel into separate rows.
-* **[UI]** Added new web based map UI. This is mostly functional but many of the old display options are a WIP. Revert to the old map with --old-map.
+* **[UI]** Overhauled the map implementation. Now uses satellite imagery instead of low res map images. Display options have moved from the toolbar to panels in the map.
 * **[UI]** Campaigns generated for an older or newer version of the game will now be marked as incompatible. They can still be played, but bugs may be present.
 * **[UI]** DCS loadouts are now selectable in the loadout setup menu.
 * **[UI]** Added global aircraft inventory view under Air Wing dialog.

@@ -1,7 +1,5 @@
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui
 from PySide2.QtWidgets import QCalendarWidget
-
-from qt_ui.uiconstants import COLORS
 
 
 class QLiberationCalendar(QCalendarWidget):
@@ -29,7 +27,7 @@ class QLiberationCalendar(QCalendarWidget):
             painter.save()
             painter.fillRect(rect, QtGui.QColor("#D3D3D3"))
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(QtGui.QColor(COLORS["sea_blue"]))
+            painter.setBrush(QtGui.QColor(52, 68, 85))
             r = QtCore.QRect(
                 QtCore.QPoint(), min(rect.width(), rect.height()) * QtCore.QSize(1, 1)
             )
