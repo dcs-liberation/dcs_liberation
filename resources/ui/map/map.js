@@ -43,7 +43,7 @@ class CpIcons {
           cv: this.loadIcon("cv", player, state),
           fob: this.loadIcon("fob", player, state),
           lha: this.loadIcon("lha", player, state),
-          offmap: this.loadLegacyIcon(player),
+          offmap: this.loadIcon("airfield", player, state),
         };
       }
     }
@@ -58,19 +58,6 @@ class CpIcons {
     return new L.Icon({
       iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
       iconSize: [32, 32],
-    });
-  }
-
-  loadLegacyIcon(player) {
-    const color = player ? "blue" : "red";
-    return new L.Icon({
-      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
     });
   }
 }
