@@ -5,7 +5,7 @@
   "recommended_player_faction": "USA 2005",
   "recommended_enemy_faction": "Insurgents (Hard)",
   "description": "<p>In this scenario, you start from Jordan, and have to fight your way through eastern Syria.</p>",
-  "version": "5.0",
+  "version": "6.0",
   "miz": "inherent_resolve.miz",
   "performance": 2
 }

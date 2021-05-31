@@ -75,10 +75,16 @@ VERSION = _build_version_string()
 #:     * SPAAA_ZSU_23_4_Shilka_Gun_Dish,
 #:
 #: Version 5.0
-#: * Ammunition Depots objective locations are now predetermined using the "Ammunition Depot"
-#:    Warehouse object, and through trigger zone based scenery objects.
-#:     * The number of alive Ammunition Depot objective buildings connected to a control point
-#:        directly influences how many ground units can be supported on the front line.
-#:     * The number of supported ground units at any control point is artificially capped at 50,
-#:        even if the number of alive Ammunition Depot objectives can support more.
-CAMPAIGN_FORMAT_VERSION = (5, 0)
+#: * Ammunition Depots objective locations are now predetermined using the "Ammunition
+#    Depot" Warehouse object, and through trigger zone based scenery objects.
+#:     * The number of alive Ammunition Depot objective buildings connected to a control
+#:       point directly influences how many ground units can be supported on the front
+#:       line.
+#:     * The number of supported ground units at any control point is artificially
+#:       capped at 50, even if the number of alive Ammunition Depot objectives can
+#:       support more.
+#:
+#: Version 6.0
+#: * Random objective generation no is longer supported. Fixed objective locations were
+#:   added in 4.1.
+CAMPAIGN_FORMAT_VERSION = (6, 0)

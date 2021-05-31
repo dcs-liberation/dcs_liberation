@@ -3,7 +3,6 @@ from __future__ import annotations
 import heapq
 import itertools
 import logging
-import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -44,12 +43,8 @@ from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
-    BaseDefenseGroundObject,
-    EwrGroundObject,
     GenericCarrierGroundObject,
-    SamGroundObject,
     TheaterGroundObject,
-    VehicleGroupGroundObject,
 )
 from ..db import PRICES
 from ..utils import nautical_miles
@@ -78,138 +73,54 @@ class ControlPointType(Enum):
     OFF_MAP = 6
 
 
-class LocationType(Enum):
-    BaseAirDefense = "base air defense"
-    Coastal = "coastal defense"
-    Ewr = "EWR"
-    BaseEwr = "Base EWR"
-    Garrison = "garrison"
-    MissileSite = "missile site"
-    OffshoreStrikeTarget = "offshore strike target"
-    Sam = "SAM"
-    Ship = "ship"
-    Shorad = "SHORAD"
-    StrikeTarget = "strike target"
-
-
 @dataclass
 class PresetLocations:
     """Defines the preset locations loaded from the campaign mission file."""
 
-    #: Locations used for spawning ground defenses for bases.
-    base_garrisons: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used for spawning air defenses for bases. Used by SAMs, AAA,
-    #: and SHORADs.
-    base_air_defense: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by EWRs.
-    ewrs: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by Base EWRs.
-    base_ewrs: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by non-carrier ships. Carriers and LHAs are not random.
+    #: Locations used by non-carrier ships that will be spawned unless the faction has
+    #: no navy or the player has disabled ship generation for the owning side.
     ships: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations used by non-carrier ships that will be spawned unless the faction has
-    #: no navy or the player has disable ship generation for the original owning side.
-    required_ships: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by coastal defenses.
+    #: Locations used by coastal defenses that are generated if the faction is capable.
     coastal_defenses: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by coastal defenses that are always generated if the faction is
-    #: capable.
-    required_coastal_defenses: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
     strike_locations: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations used by ground based strike objectives that will always be spawned.
-    required_strike_locations: List[PointWithHeading] = field(default_factory=list)
-
     #: Locations used by offshore strike objectives.
     offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations used by offshore strike objectives that will always be spawned.
-    required_offshore_strike_locations: List[PointWithHeading] = field(
-        default_factory=list
-    )
-
-    #: Locations used by missile sites like scuds and V-2s.
+    #: Locations used by missile sites like scuds and V-2s that are generated if the
+    #: faction is capable.
     missile_sites: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations used by missile sites like scuds and V-2s that are always generated if
-    #: the faction is capable.
-    required_missile_sites: List[PointWithHeading] = field(default_factory=list)
+    #: Locations of long range SAMs.
+    long_range_sams: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of long range SAMs which should always be spawned.
-    required_long_range_sams: List[PointWithHeading] = field(default_factory=list)
+    #: Locations of medium range SAMs.
+    medium_range_sams: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of medium range SAMs which should always be spawned.
-    required_medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+    #: Locations of short range SAMs.
+    short_range_sams: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of short range SAMs which should always be spawned.
-    required_short_range_sams: List[PointWithHeading] = field(default_factory=list)
+    #: Locations of AAA groups.
+    aaa: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of AAA groups which should always be spawned.
-    required_aaa: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations of EWRs which should always be spawned.
-    required_ewrs: List[PointWithHeading] = field(default_factory=list)
+    #: Locations of EWRs.
+    ewrs: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of map scenery to create zones for.
     scenery: List[SceneryGroup] = field(default_factory=list)
 
-    #: Locations of factories for producing ground units. These will always be spawned.
+    #: Locations of factories for producing ground units.
     factories: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of ammo depots for controlling number of units on the front line at a control point.
+    #: Locations of ammo depots for controlling number of units on the front line at a
+    #: control point.
     ammunition_depots: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of stationary armor groups. These will always be spawned.
+    #: Locations of stationary armor groups.
     armor_groups: List[PointWithHeading] = field(default_factory=list)
-
-    @staticmethod
-    def _random_from(points: List[PointWithHeading]) -> Optional[PointWithHeading]:
-        """Finds, removes, and returns a random position from the given list."""
-        if not points:
-            return None
-        point = random.choice(points)
-        points.remove(point)
-        return point
-
-    def random_for(self, location_type: LocationType) -> Optional[PointWithHeading]:
-        """Returns a position suitable for the given location type.
-
-        The location, if found, will be claimed by the caller and not available
-        to subsequent calls.
-        """
-        if location_type == LocationType.BaseAirDefense:
-            return self._random_from(self.base_air_defense)
-        if location_type == LocationType.Coastal:
-            return self._random_from(self.coastal_defenses)
-        if location_type == LocationType.Ewr:
-            return self._random_from(self.ewrs)
-        if location_type == LocationType.BaseEwr:
-            return self._random_from(self.base_ewrs)
-        if location_type == LocationType.Garrison:
-            return self._random_from(self.base_garrisons)
-        if location_type == LocationType.MissileSite:
-            return self._random_from(self.missile_sites)
-        if location_type == LocationType.OffshoreStrikeTarget:
-            return self._random_from(self.offshore_strike_locations)
-        if location_type == LocationType.Sam:
-            return self._random_from(self.strike_locations)
-        if location_type == LocationType.Ship:
-            return self._random_from(self.ships)
-        if location_type == LocationType.Shorad:
-            return self._random_from(self.base_garrisons)
-        if location_type == LocationType.StrikeTarget:
-            return self._random_from(self.strike_locations)
-        logging.error(f"Unknown location type: {location_type}")
-        return None
 
 
 @dataclass(frozen=True)
@@ -338,7 +249,6 @@ class ControlPoint(MissionTarget, ABC):
         self.full_name = name
         self.at = at
         self.connected_objectives: List[TheaterGroundObject] = []
-        self.base_defenses: List[BaseDefenseGroundObject] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
@@ -367,7 +277,7 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
-        return list(itertools.chain(self.connected_objectives, self.base_defenses))
+        return list(self.connected_objectives)
 
     @property
     @abstractmethod
@@ -553,24 +463,6 @@ class ControlPoint(MissionTarget, ABC):
     def is_friendly_to(self, control_point: ControlPoint) -> bool:
         return control_point.is_friendly(self.captured)
 
-    # TODO: Should be Airbase specific.
-    def clear_base_defenses(self) -> None:
-        for base_defense in self.base_defenses:
-            p = PointWithHeading.from_point(base_defense.position, base_defense.heading)
-            if isinstance(base_defense, EwrGroundObject):
-                self.preset_locations.base_ewrs.append(p)
-            elif isinstance(base_defense, SamGroundObject):
-                self.preset_locations.base_air_defense.append(p)
-            elif isinstance(base_defense, VehicleGroupGroundObject):
-                self.preset_locations.base_garrisons.append(p)
-            else:
-                logging.error(
-                    "Could not determine preset location type for "
-                    f"{base_defense}. Assuming garrison type."
-                )
-                self.preset_locations.base_garrisons.append(p)
-        self.base_defenses = []
-
     def capture_equipment(self, game: Game) -> None:
         total = self.base.total_armor_value
         self.base.armor.clear()
@@ -667,11 +559,6 @@ class ControlPoint(MissionTarget, ABC):
             self.captured = False
 
         self.base.set_strength_to_minimum()
-
-        self.clear_base_defenses()
-        from .start_generator import BaseDefenseGenerator
-
-        BaseDefenseGenerator(game, self).generate()
 
     @abstractmethod
     def can_operate(self, aircraft: Type[FlyingType]) -> bool:
