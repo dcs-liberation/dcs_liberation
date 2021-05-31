@@ -337,22 +337,8 @@ class QLiberationMap(QGraphicsView, LiberationMap):
 
     def display_culling(self, scene: QGraphicsScene) -> None:
         """Draws the culling distance rings on the map"""
-        culling_points = self.game_model.game.get_culling_points()
         culling_zones = self.game_model.game.get_culling_zones()
         culling_distance = self.game_model.game.settings.perf_culling_distance
-        for point in culling_points:
-            culling_distance_point = Point(point.x + 2500, point.y + 2500)
-            distance_point = self._transform_point(culling_distance_point)
-            transformed = self._transform_point(point)
-            radius = distance_point[0] - transformed[0]
-            scene.addEllipse(
-                transformed[0] - radius,
-                transformed[1] - radius,
-                2 * radius,
-                2 * radius,
-                CONST.COLORS["transparent"],
-                CONST.COLORS["light_green_transparent"],
-            )
         for zone in culling_zones:
             culling_distance_zone = Point(
                 zone.x + culling_distance * 1000, zone.y + culling_distance * 1000

@@ -15,7 +15,7 @@ from dcs import Mission, Point, unitgroup
 from dcs.action import SceneryDestructionZone
 from dcs.country import Country
 from dcs.point import StaticPoint
-from dcs.statics import Fortification, fortification_map, warehouse_map, Warehouse
+from dcs.statics import Fortification, fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
@@ -24,7 +24,7 @@ from dcs.task import (
     FireAtPoint,
 )
 from dcs.triggers import TriggerStart, TriggerZone
-from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
+from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
 from dcs.vehicles import vehicle_map
@@ -76,8 +76,12 @@ class GenericGroundObjectGenerator:
         self.m = mission
         self.unit_map = unit_map
 
+    @property
+    def culled(self) -> bool:
+        return self.game.position_culled(self.ground_object.position)
+
     def generate(self) -> None:
-        if self.game.position_culled(self.ground_object.position):
+        if self.culled:
             return
 
         for group in self.ground_object.groups:
@@ -130,6 +134,12 @@ class GenericGroundObjectGenerator:
 
 
 class MissileSiteGenerator(GenericGroundObjectGenerator):
+    @property
+    def culled(self) -> bool:
+        # Don't cull missile sites - their range is long enough to make them easily
+        # culled despite being a threat.
+        return False
+
     def generate(self) -> None:
         super(MissileSiteGenerator, self).generate()
         # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
