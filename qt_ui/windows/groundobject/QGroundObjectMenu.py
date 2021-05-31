@@ -25,8 +25,11 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     VehicleGroupGroundObject,
     SamGroundObject,
+    EwrGroundObject,
+    BuildingGroundObject,
 )
 from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
+from gen.sam.ewr_group_generator import get_faction_possible_ewrs_generator
 from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -36,9 +39,6 @@ from dcs import vehicles
 
 
 class QGroundObjectMenu(QDialog):
-
-    changed = QtCore.Signal()
-
     def __init__(
         self,
         parent,
@@ -74,12 +74,12 @@ class QGroundObjectMenu(QDialog):
 
         self.doLayout()
 
-        if self.ground_object.dcs_identifier == "AA":
-            self.mainLayout.addWidget(self.intelBox)
-        else:
+        if isinstance(self.ground_object, BuildingGroundObject):
             self.mainLayout.addWidget(self.buildingBox)
             if self.cp.captured:
                 self.mainLayout.addWidget(self.financesBox)
+        else:
+            self.mainLayout.addWidget(self.intelBox)
 
         self.actionLayout = QHBoxLayout()
 
@@ -91,12 +91,12 @@ class QGroundObjectMenu(QDialog):
         self.buy_replace.clicked.connect(self.buy_group)
         self.buy_replace.setProperty("style", "btn-success")
 
-        if not isinstance(self.ground_object, NavalGroundObject):
+        if self.ground_object.purchasable:
             if self.total_value > 0:
                 self.actionLayout.addWidget(self.sell_all_button)
             self.actionLayout.addWidget(self.buy_replace)
 
-        if self.cp.captured and self.ground_object.dcs_identifier == "AA":
+        if self.cp.captured and self.ground_object.purchasable:
             self.mainLayout.addLayout(self.actionLayout)
         self.setLayout(self.mainLayout)
 
@@ -200,23 +200,21 @@ class QGroundObjectMenu(QDialog):
             self.actionLayout.setParent(None)
 
             self.doLayout()
-            if self.ground_object.dcs_identifier == "AA":
-                self.mainLayout.addWidget(self.intelBox)
-            else:
+            if isinstance(self.ground_object, BuildingGroundObject):
                 self.mainLayout.addWidget(self.buildingBox)
+            else:
+                self.mainLayout.addWidget(self.intelBox)
 
             self.actionLayout = QHBoxLayout()
             if self.total_value > 0:
                 self.actionLayout.addWidget(self.sell_all_button)
             self.actionLayout.addWidget(self.buy_replace)
 
-            if self.cp.captured and self.ground_object.dcs_identifier == "AA":
+            if self.cp.captured and self.ground_object.purchasable:
                 self.mainLayout.addLayout(self.actionLayout)
-
         except Exception as e:
-            print(e)
+            logging.exception(e)
         self.update_total_value()
-        self.changed.emit()
 
     def update_total_value(self):
         total_value = 0
@@ -248,7 +246,6 @@ class QGroundObjectMenu(QDialog):
             logging.info("Repaired unit : " + str(unit.id) + " " + str(unit.type))
 
         self.do_refresh_layout()
-        self.changed.emit()
 
     def sell_all(self):
         self.update_total_value()
@@ -298,9 +295,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buySamBox = QGroupBox("Buy SAM site :")
         self.buyArmorBox = QGroupBox("Buy defensive position :")
 
-        self.init_ui()
-
-    def init_ui(self):
         faction = self.game.player_faction
 
         # Sams
@@ -320,6 +314,30 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buySamLayout.addLayout(stretch, 2, 0)
 
         self.buySamButton.clicked.connect(self.buySam)
+
+        # EWRs
+
+        buy_ewr_box = QGroupBox("Buy EWR:")
+        buy_ewr_layout = QGridLayout()
+        buy_ewr_box.setLayout(buy_ewr_layout)
+
+        buy_ewr_layout.addWidget(QLabel("Radar type:"), 0, 0, Qt.AlignLeft)
+
+        self.ewr_selector = QComboBox()
+        buy_ewr_layout.addWidget(self.ewr_selector, 0, 1, alignment=Qt.AlignRight)
+        ewr_types = get_faction_possible_ewrs_generator(faction)
+        for ewr_type in ewr_types:
+            self.ewr_selector.addItem(
+                f"{ewr_type.name()} [${ewr_type.price()}M]", ewr_type
+            )
+        self.ewr_selector.currentIndexChanged.connect(self.on_ewr_selection_changed)
+
+        self.buy_ewr_button = QPushButton("Buy")
+        self.buy_ewr_button.clicked.connect(self.buy_ewr)
+        buy_ewr_layout.addWidget(self.buy_ewr_button, 1, 1, alignment=Qt.AlignRight)
+        stretch = QVBoxLayout()
+        stretch.addStretch()
+        buy_ewr_layout.addLayout(stretch, 2, 0)
 
         # Armored units
 
@@ -363,12 +381,15 @@ class QBuyGroupForGroundObjectDialog(QDialog):
             self.mainLayout.addWidget(self.buySamBox)
         elif isinstance(self.ground_object, VehicleGroupGroundObject):
             self.mainLayout.addWidget(self.buyArmorBox)
+        elif isinstance(self.ground_object, EwrGroundObject):
+            self.mainLayout.addWidget(buy_ewr_box)
 
         self.setLayout(self.mainLayout)
 
         try:
             self.samComboChanged(0)
             self.armorComboChanged(0)
+            self.on_ewr_selection_changed(0)
         except:
             pass
 
@@ -379,6 +400,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
             + "M] [-$"
             + str(self.current_group_value)
             + "M]"
+        )
+
+    def on_ewr_selection_changed(self, index):
+        ewr = self.ewr_selector.itemData(index)
+        self.buy_ewr_button.setText(
+            f"Buy [${ewr.price()}M][-${self.current_group_value}M]"
         )
 
     def armorComboChanged(self, index):
@@ -440,6 +467,24 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         generator = sam_generator(self.game, self.ground_object)
         generator.generate()
         self.ground_object.groups = list(generator.groups)
+
+        GameUpdateSignal.get_instance().updateBudget(self.game)
+
+        self.changed.emit()
+        self.close()
+
+    def buy_ewr(self):
+        ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
+        price = ewr_generator.price() - self.current_group_value
+        if price > self.game.budget:
+            self.error_money()
+            return
+        else:
+            self.game.budget -= price
+
+        generator = ewr_generator(self.game, self.ground_object)
+        generator.generate()
+        self.ground_object.groups = [generator.vg]
 
         GameUpdateSignal.get_instance().updateBudget(self.game)
 

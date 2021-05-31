@@ -45,6 +45,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign AI]** Auto planner will no longer attempt to plan missions for which the faction has no compatible aircraft.
 * **[Campaign AI]** Stop purchasing aircraft after the first unaffordable package to attempt to complete more packages rather than filling airfields with cheap escorts that will never be used.
 * **[Campaign]** Fixed bug where offshore strike locations were being used to spawn ship objectives.
+* **[Campaign]** EWR sites are now purchasable.
 * **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
 * **[Flight Planner]** AI BAI/DEAD/SEAD flights now have tasks to attack all groups at the target location, not just the primary group (for multi-group SAM sites).
 * **[Flight Planner]** Fixed some contexts where damaged runways would be used. Destroying a carrier will no longer break the game.

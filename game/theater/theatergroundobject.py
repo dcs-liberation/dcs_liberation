@@ -197,6 +197,10 @@ class TheaterGroundObject(MissionTarget):
     def capturable(self) -> bool:
         raise NotImplementedError
 
+    @property
+    def purchasable(self) -> bool:
+        raise NotImplementedError
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -261,6 +265,10 @@ class BuildingGroundObject(TheaterGroundObject):
     @property
     def capturable(self) -> bool:
         return True
+
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 class SceneryGroundObject(BuildingGroundObject):
@@ -337,6 +345,10 @@ class NavalGroundObject(TheaterGroundObject):
     def capturable(self) -> bool:
         return False
 
+    @property
+    def purchasable(self) -> bool:
+        return False
+
 
 class GenericCarrierGroundObject(NavalGroundObject):
     @property
@@ -405,6 +417,10 @@ class MissileSiteGroundObject(TheaterGroundObject):
     def capturable(self) -> bool:
         return False
 
+    @property
+    def purchasable(self) -> bool:
+        return False
+
 
 class CoastalSiteGroundObject(TheaterGroundObject):
     def __init__(
@@ -428,6 +444,10 @@ class CoastalSiteGroundObject(TheaterGroundObject):
 
     @property
     def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
         return False
 
 
@@ -513,6 +533,10 @@ class SamGroundObject(TheaterGroundObject):
     def capturable(self) -> bool:
         return False
 
+    @property
+    def purchasable(self) -> bool:
+        return True
+
 
 class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
@@ -536,6 +560,10 @@ class VehicleGroupGroundObject(TheaterGroundObject):
     @property
     def capturable(self) -> bool:
         return False
+
+    @property
+    def purchasable(self) -> bool:
+        return True
 
 
 class EwrGroundObject(TheaterGroundObject):
@@ -576,6 +604,10 @@ class EwrGroundObject(TheaterGroundObject):
     @property
     def capturable(self) -> bool:
         return False
+
+    @property
+    def purchasable(self) -> bool:
+        return True
 
 
 class ShipGroundObject(NavalGroundObject):
