@@ -134,8 +134,6 @@ class ControlPointJs(QObject):
         return self.theater.point_to_ll(self.control_point.target_position).as_list()
 
     def destination_in_range(self, destination: Point) -> bool:
-        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
-
         move_distance = meters(
             destination.distance_to_point(self.control_point.position)
         )
@@ -147,8 +145,6 @@ class ControlPointJs(QObject):
 
     @Slot(list, result=str)
     def setDestination(self, destination: LeafletLatLon) -> str:
-        from qt_ui.widgets.map.QLiberationMap import MAX_SHIP_DISTANCE
-
         if not self.control_point.moveable:
             return f"{self.control_point} is not mobile"
         if not self.control_point.captured:
