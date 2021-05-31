@@ -60,6 +60,16 @@ def shapely_poly_to_leaflet_points(
     return [theater.point_to_ll(Point(x, y)).as_list() for x, y in poly.exterior.coords]
 
 
+def shapely_to_leaflet_polys(
+    poly: Union[Polygon, MultiPolygon], theater: ConflictTheater
+) -> list[LeafletPoly]:
+    if isinstance(poly, MultiPolygon):
+        polys = poly.geoms
+    else:
+        polys = [poly]
+    return [shapely_poly_to_leaflet_points(poly, theater) for poly in polys]
+
+
 class ControlPointJs(QObject):
     nameChanged = Signal()
     blueChanged = Signal()
@@ -581,23 +591,13 @@ class ThreatZonesJs(QObject):
     def radarSams(self) -> list[LeafletPoly]:
         return self._radar_sams
 
-    @staticmethod
-    def polys_to_leaflet(
-        poly: Union[Polygon, MultiPolygon], theater: ConflictTheater
-    ) -> list[LeafletPoly]:
-        if isinstance(poly, MultiPolygon):
-            polys = poly.geoms
-        else:
-            polys = [poly]
-        return [shapely_poly_to_leaflet_points(poly, theater) for poly in polys]
-
     @classmethod
     def from_zones(cls, zones: ThreatZones, theater: ConflictTheater) -> ThreatZonesJs:
         return ThreatZonesJs(
-            cls.polys_to_leaflet(zones.all, theater),
-            cls.polys_to_leaflet(zones.airbases, theater),
-            cls.polys_to_leaflet(zones.air_defenses, theater),
-            cls.polys_to_leaflet(zones.radar_sam_threats, theater),
+            shapely_to_leaflet_polys(zones.all, theater),
+            shapely_to_leaflet_polys(zones.airbases, theater),
+            shapely_to_leaflet_polys(zones.air_defenses, theater),
+            shapely_to_leaflet_polys(zones.radar_sam_threats, theater),
         )
 
     @classmethod
@@ -658,6 +658,44 @@ class NavMeshJs(QObject):
         )
 
 
+class MapZonesJs(QObject):
+    inclusionZonesChanged = Signal()
+    exclusionZonesChanged = Signal()
+    seaZonesChanged = Signal()
+
+    def __init__(
+        self,
+        inclusion_zones: list[LeafletPoly],
+        exclusion_zones: list[LeafletPoly],
+        sea_zones: list[LeafletPoly],
+    ) -> None:
+        super().__init__()
+        self._inclusion_zones = inclusion_zones
+        self._exclusion_zones = exclusion_zones
+        self._sea_zones = sea_zones
+
+    @Property(list, notify=inclusionZonesChanged)
+    def inclusionZones(self) -> list[LeafletPoly]:
+        return self._inclusion_zones
+
+    @Property(list, notify=exclusionZonesChanged)
+    def exclusionZones(self) -> list[LeafletPoly]:
+        return self._exclusion_zones
+
+    @Property(list, notify=seaZonesChanged)
+    def seaZones(self) -> list[LeafletPoly]:
+        return self._sea_zones
+
+    @classmethod
+    def from_game(cls, game: Game) -> MapZonesJs:
+        zones = game.theater.landmap
+        return MapZonesJs(
+            shapely_to_leaflet_polys(zones.inclusion_zones, game.theater),
+            shapely_to_leaflet_polys(zones.exclusion_zones, game.theater),
+            shapely_to_leaflet_polys(zones.sea_zones, game.theater),
+        )
+
+
 class MapModel(QObject):
     cleared = Signal()
 
@@ -669,6 +707,7 @@ class MapModel(QObject):
     frontLinesChanged = Signal()
     threatZonesChanged = Signal()
     navmeshesChanged = Signal()
+    mapZonesChanged = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -683,6 +722,7 @@ class MapModel(QObject):
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
         self._navmeshes = NavMeshJs([], [])
+        self._map_zones = MapZonesJs([], [], [])
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -704,6 +744,7 @@ class MapModel(QObject):
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
         self._navmeshes = NavMeshJs([], [])
+        self._map_zones = MapZonesJs([], [], [])
         self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
@@ -749,6 +790,7 @@ class MapModel(QObject):
             self.reset_front_lines()
             self.reset_threat_zones()
             self.reset_navmeshes()
+            self.reset_map_zones()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -894,6 +936,14 @@ class MapModel(QObject):
     @Property(NavMeshJs, notify=navmeshesChanged)
     def navmeshes(self) -> NavMeshJs:
         return self._navmeshes
+
+    def reset_map_zones(self) -> None:
+        self._map_zones = MapZonesJs.from_game(self.game)
+        self.mapZonesChanged.emit()
+
+    @Property(MapZonesJs, notify=mapZonesChanged)
+    def mapZones(self) -> NavMeshJs:
+        return self._map_zones
 
     @property
     def game(self) -> Game:

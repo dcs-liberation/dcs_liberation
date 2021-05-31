@@ -179,6 +179,10 @@ const redRadarSamThreatZones = L.layerGroup();
 const blueNavmesh = L.layerGroup();
 const redNavmesh = L.layerGroup();
 
+const inclusionZones = L.layerGroup();
+const exclusionZones = L.layerGroup();
+const seaZones = L.layerGroup();
+
 // Main map controls. These are the ones that we expect users to interact with.
 // These are always open, which unfortunately means that the scroll bar will not
 // appear if the menu doesn't fit. This fits in the smallest window size we
@@ -246,6 +250,11 @@ L.control
         Blue: blueNavmesh,
         Red: redNavmesh,
       },
+      "Map Zones": {
+        "Inclusion zones": inclusionZones,
+        "Exclusion zones": exclusionZones,
+        "Sea zones": seaZones,
+      }
     },
     {
       position: "topleft",
@@ -268,6 +277,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.flightsChanged.connect(drawFlightPlans);
   game.threatZonesChanged.connect(drawThreatZones);
   game.navmeshesChanged.connect(drawNavmeshes);
+  game.mapZonesChanged.connect(drawMapZones);
 });
 
 function recenterMap(center) {
@@ -889,6 +899,36 @@ function drawNavmeshes() {
   drawNavmesh(game.navmeshes.red, redNavmesh);
 }
 
+function drawMapZones() {
+  seaZones.clearLayers()
+  inclusionZones.clearLayers();
+  exclusionZones.clearLayers();
+
+  for (const zone of game.mapZones.seaZones) {
+    L.polygon(zone, {
+      color: "#344455",
+      fillColor: "#344455",
+      fillOpacity: 1,
+    }).addTo(seaZones);
+  }
+
+  for (const zone of game.mapZones.inclusionZones) {
+    L.polygon(zone, {
+      color: "#969696",
+      fillColor: "#4b4b4b",
+      fillOpacity: 1,
+    }).addTo(inclusionZones);
+  }
+
+  for (const zone of game.mapZones.exclusionZones) {
+    L.polygon(zone, {
+      color: "#969696",
+      fillColor: "#303030",
+      fillOpacity: 1,
+    }).addTo(exclusionZones);
+  }
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -898,6 +938,7 @@ function drawInitialMap() {
   drawFlightPlans();
   drawThreatZones();
   drawNavmeshes();
+  drawMapZones();
 }
 
 function clearAllLayers() {
