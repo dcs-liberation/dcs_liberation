@@ -936,9 +936,6 @@ function drawUnculledZones() {
   unculledZones.clearLayers();
 
   for (const zone of game.unculledZones) {
-    console.log(
-      `Drawing unculled zone with radius ${zone.radius} at ${zone.position}`
-    );
     L.circle(zone.position, {
       radius: zone.radius,
       color: "#b4ff8c",
