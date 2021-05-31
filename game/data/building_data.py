@@ -11,7 +11,7 @@ DEFAULT_AVAILABLE_BUILDINGS = [
     "derrick",
 ]
 
-WW2_FREE = ["fuel", "ware", "fob"]
+WW2_FREE = ["fuel", "ware"]
 WW2_GERMANY_BUILDINGS = [
     "fuel",
     "ww2bunker",

@@ -16,7 +16,6 @@ const Categories = Object.freeze([
   "ewr",
   "factory",
   "farp",
-  "fob",
   "fuel",
   "missile",
   "oil",
@@ -42,7 +41,7 @@ class CpIcons {
         this.icons[player][state] = {
           airfield: this.loadIcon("airfield", player, state),
           cv: this.loadIcon("cv", player, state),
-          fob: this.loadLegacyIcon(player),
+          fob: this.loadIcon("fob", player, state),
           lha: this.loadIcon("lha", player, state),
           offmap: this.loadLegacyIcon(player),
         };
