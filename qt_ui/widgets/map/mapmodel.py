@@ -20,6 +20,7 @@ from game.theater import (
     TheaterGroundObject,
     FrontLine,
     LatLon,
+    ControlPointStatus,
 )
 from game.threatzones import ThreatZones
 from game.transfers import MultiGroupTransport, TransportMap
@@ -79,6 +80,7 @@ class ControlPointJs(QObject):
     mobileChanged = Signal()
     destinationChanged = Signal(list)
     categoryChanged = Signal()
+    statusChanged = Signal()
 
     def __init__(
         self,
@@ -103,6 +105,17 @@ class ControlPointJs(QObject):
     @Property(str, notify=categoryChanged)
     def category(self) -> str:
         return self.control_point.category
+
+    @Property(str, notify=statusChanged)
+    def status(self) -> str:
+        status = self.control_point.status
+        if status is ControlPointStatus.Functional:
+            return "alive"
+        elif status is ControlPointStatus.Damaged:
+            return "damaged"
+        elif status is ControlPointStatus.Destroyed:
+            return "destroyed"
+        raise ValueError(f"Unhandled ControlPointStatus: {status.name}")
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:

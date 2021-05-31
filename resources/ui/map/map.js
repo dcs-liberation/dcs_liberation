@@ -290,12 +290,10 @@ class ControlPoint {
   }
 
   icon() {
-    // TODO: Runway status.
-    // https://github.com/dcs-liberation/dcs_liberation/issues/1105
     return Icons.ControlPoints.icon(
       this.cp.category,
       this.cp.blue,
-      UnitState.Alive
+      this.cp.status
     );
   }
 

@@ -6,7 +6,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, unique, auto, IntEnum
 from functools import total_ordering, cached_property
 from typing import (
     Any,
@@ -217,6 +217,13 @@ class GroundUnitDestination:
             raise TypeError
 
         return self.total_value < other.total_value
+
+
+@unique
+class ControlPointStatus(IntEnum):
+    Functional = auto()
+    Damaged = auto()
+    Destroyed = auto()
 
 
 class ControlPoint(MissionTarget, ABC):
@@ -710,6 +717,11 @@ class ControlPoint(MissionTarget, ABC):
     def category(self) -> str:
         ...
 
+    @property
+    @abstractmethod
+    def status(self) -> ControlPointStatus:
+        ...
+
 
 class Airfield(ControlPoint):
     def __init__(
@@ -794,6 +806,15 @@ class Airfield(ControlPoint):
     def category(self) -> str:
         return "airfield"
 
+    @property
+    def status(self) -> ControlPointStatus:
+        runway_staus = self.runway_status
+        if runway_staus.needs_repair:
+            return ControlPointStatus.Destroyed
+        elif runway_staus.damaged:
+            return ControlPointStatus.Damaged
+        return ControlPointStatus.Functional
+
 
 class NavalControlPoint(ControlPoint, ABC):
     @property
@@ -818,20 +839,24 @@ class NavalControlPoint(ControlPoint, ABC):
     def heading(self) -> int:
         return 0  # TODO compute heading
 
+    def find_main_tgo(self) -> TheaterGroundObject:
+        for g in self.ground_objects:
+            if g.dcs_identifier in ["CARRIER", "LHA"]:
+                return g
+        raise RuntimeError(f"Found no carrier/LHA group for {self.name}")
+
     def runway_is_operational(self) -> bool:
         # Necessary because it's possible for the carrier itself to have sunk
         # while its escorts are still alive.
-        for g in self.ground_objects:
-            if g.dcs_identifier in ["CARRIER", "LHA"]:
-                for group in g.groups:
-                    for u in group.units:
-                        if db.unit_type_from_name(u.type) in [
-                            CVN_74_John_C__Stennis,
-                            LHA_1_Tarawa,
-                            CV_1143_5_Admiral_Kuznetsov,
-                            Type_071_Amphibious_Transport_Dock,
-                        ]:
-                            return True
+        for group in self.find_main_tgo().groups:
+            for u in group.units:
+                if db.unit_type_from_name(u.type) in [
+                    CVN_74_John_C__Stennis,
+                    LHA_1_Tarawa,
+                    CV_1143_5_Admiral_Kuznetsov,
+                    Type_071_Amphibious_Transport_Dock,
+                ]:
+                    return True
         return False
 
     def active_runway(
@@ -856,6 +881,14 @@ class NavalControlPoint(ControlPoint, ABC):
     @property
     def can_deploy_ground_units(self) -> bool:
         return False
+
+    @property
+    def status(self) -> ControlPointStatus:
+        if not self.runway_is_operational():
+            return ControlPointStatus.Destroyed
+        if self.find_main_tgo().dead_units:
+            return ControlPointStatus.Damaged
+        return ControlPointStatus.Functional
 
 
 class Carrier(NavalControlPoint):
@@ -986,6 +1019,10 @@ class OffMapSpawn(ControlPoint):
     def category(self) -> str:
         return "offmap"
 
+    @property
+    def status(self) -> ControlPointStatus:
+        return ControlPointStatus.Functional
+
 
 class Fob(ControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
@@ -1046,3 +1083,7 @@ class Fob(ControlPoint):
     @property
     def category(self) -> str:
         return "fob"
+
+    @property
+    def status(self) -> ControlPointStatus:
+        return ControlPointStatus.Functional
