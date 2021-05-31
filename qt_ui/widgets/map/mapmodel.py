@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Iterator
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
@@ -696,6 +696,32 @@ class MapZonesJs(QObject):
         )
 
 
+class UnculledZone(QObject):
+    positionChanged = Signal()
+    radiusChanged = Signal()
+
+    def __init__(self, position: LeafletLatLon, radius: float) -> None:
+        super().__init__()
+        self._position = position
+        self._radius = radius
+
+    @Property(list, notify=positionChanged)
+    def position(self) -> LeafletLatLon:
+        return self._position
+
+    @Property(float, notify=radiusChanged)
+    def radius(self) -> float:
+        return self._radius
+
+    @classmethod
+    def each_from_game(cls, game: Game) -> Iterator[UnculledZone]:
+        for zone in game.get_culling_zones():
+            ll = game.theater.point_to_ll(zone)
+            yield UnculledZone(
+                [ll.latitude, ll.longitude], game.settings.perf_culling_distance * 1000
+            )
+
+
 class MapModel(QObject):
     cleared = Signal()
 
@@ -708,6 +734,7 @@ class MapModel(QObject):
     threatZonesChanged = Signal()
     navmeshesChanged = Signal()
     mapZonesChanged = Signal()
+    unculledZonesChanged = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -723,6 +750,7 @@ class MapModel(QObject):
         )
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
+        self._unculled_zones = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -745,6 +773,7 @@ class MapModel(QObject):
         )
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
+        self._unculled_zones = []
         self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
@@ -791,6 +820,7 @@ class MapModel(QObject):
             self.reset_threat_zones()
             self.reset_navmeshes()
             self.reset_map_zones()
+            self.reset_unculled_zones()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -944,6 +974,14 @@ class MapModel(QObject):
     @Property(MapZonesJs, notify=mapZonesChanged)
     def mapZones(self) -> NavMeshJs:
         return self._map_zones
+
+    def reset_unculled_zones(self) -> None:
+        self._unculled_zones = list(UnculledZone.each_from_game(self.game))
+        self.unculledZonesChanged.emit()
+
+    @Property(list, notify=unculledZonesChanged)
+    def unculledZones(self) -> list[UnculledZone]:
+        return self._unculled_zones
 
     @property
     def game(self) -> Game:

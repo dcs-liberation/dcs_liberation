@@ -182,6 +182,7 @@ const redNavmesh = L.layerGroup();
 const inclusionZones = L.layerGroup();
 const exclusionZones = L.layerGroup();
 const seaZones = L.layerGroup();
+const unculledZones = L.layerGroup();
 
 // Main map controls. These are the ones that we expect users to interact with.
 // These are always open, which unfortunately means that the scroll bar will not
@@ -245,7 +246,7 @@ L.control
         "Air Defenses": redAirDefenseThreatZones,
         "Radar SAMs": redRadarSamThreatZones,
       },
-      "Navmeshes": {
+      Navmeshes: {
         Hide: L.layerGroup().addTo(map),
         Blue: blueNavmesh,
         Red: redNavmesh,
@@ -254,7 +255,8 @@ L.control
         "Inclusion zones": inclusionZones,
         "Exclusion zones": exclusionZones,
         "Sea zones": seaZones,
-      }
+        "Culling exclusion zones": unculledZones,
+      },
     },
     {
       position: "topleft",
@@ -278,6 +280,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.threatZonesChanged.connect(drawThreatZones);
   game.navmeshesChanged.connect(drawNavmeshes);
   game.mapZonesChanged.connect(drawMapZones);
+  game.unculledZonesChanged.connect(drawUnculledZones);
 });
 
 function recenterMap(center) {
@@ -900,7 +903,7 @@ function drawNavmeshes() {
 }
 
 function drawMapZones() {
-  seaZones.clearLayers()
+  seaZones.clearLayers();
   inclusionZones.clearLayers();
   exclusionZones.clearLayers();
 
@@ -929,6 +932,21 @@ function drawMapZones() {
   }
 }
 
+function drawUnculledZones() {
+  unculledZones.clearLayers();
+
+  for (const zone of game.unculledZones) {
+    console.log(
+      `Drawing unculled zone with radius ${zone.radius} at ${zone.position}`
+    );
+    L.circle(zone.position, {
+      radius: zone.radius,
+      color: "#b4ff8c",
+      stroke: false,
+    }).addTo(unculledZones);
+  }
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -939,6 +957,7 @@ function drawInitialMap() {
   drawThreatZones();
   drawNavmeshes();
   drawMapZones();
+  drawUnculledZones();
 }
 
 function clearAllLayers() {
