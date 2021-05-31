@@ -122,8 +122,8 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
-        self.blue_transit_network = self.compute_transit_network_for(player=True)
-        self.red_transit_network = self.compute_transit_network_for(player=False)
+        self.blue_transit_network = TransitNetwork()
+        self.red_transit_network = TransitNetwork()
 
         self.blue_procurement_requests: List[AircraftProcurementRequest] = []
         self.red_procurement_requests: List[AircraftProcurementRequest] = []
@@ -146,7 +146,7 @@ class Game:
         self.blue_air_wing = AirWing(self, player=True)
         self.red_air_wing = AirWing(self, player=False)
 
-        self.on_load()
+        self.on_load(game_still_initializing=True)
 
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
@@ -299,11 +299,12 @@ class Game:
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
-    def on_load(self) -> None:
+    def on_load(self, game_still_initializing: bool = False) -> None:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
-        self.compute_threat_zones()
+        if not game_still_initializing:
+            self.compute_threat_zones()
         self.blue_faker = Faker(self.faction_for(player=True).locales)
         self.red_faker = Faker(self.faction_for(player=False).locales)
 
