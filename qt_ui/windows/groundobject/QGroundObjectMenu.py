@@ -356,7 +356,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.mainLayout = QHBoxLayout()
         self.mainLayout.addWidget(self.buySamBox)
 
-        if self.ground_object.airbase_group:
+        if self.ground_object.is_control_point:
             self.mainLayout.addWidget(self.buyArmorBox)
 
         self.setLayout(self.mainLayout)

@@ -307,7 +307,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             group_id,
             position,
             self.control_point,
-            for_airbase=False,
         )
 
         group = generate_armor_group(self.faction_name, self.game, g)
@@ -416,7 +415,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             group_id,
             position,
             self.control_point,
-            for_airbase=False,
         )
         groups = generate_anti_air_group(self.game, g, self.faction, ranges)
         if not groups:
@@ -437,7 +435,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             group_id,
             position,
             self.control_point,
-            for_airbase=False,
         )
         group = generate_ewr_group(self.game, g, self.faction)
         if group is None:
@@ -582,7 +579,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
                 unit["heading"],
                 self.control_point,
                 unit["type"],
-                airbase_group=True,
+                is_fob_structure=True,
             )
             self.control_point.connected_objectives.append(g)
 

@@ -433,7 +433,7 @@ class ObjectiveFinder:
 
                 is_building = isinstance(ground_object, BuildingGroundObject)
                 is_fob = isinstance(enemy_cp, Fob)
-                if is_building and is_fob and ground_object.airbase_group:
+                if is_building and is_fob and ground_object.is_control_point:
                     # This is the FOB structure itself. Can't be repaired or
                     # targeted by the player, so shouldn't be targetable by the
                     # AI.

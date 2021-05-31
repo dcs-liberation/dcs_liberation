@@ -12,7 +12,6 @@ from dcs.unittype import VehicleType
 
 from .. import db
 from ..data.radar_db import (
-    UNITS_WITH_RADAR,
     TRACK_RADARS,
     TELARS,
     LAUNCHER_TRACKER_PAIRS,
@@ -58,7 +57,6 @@ class TheaterGroundObject(MissionTarget):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group: bool,
         sea_object: bool,
     ) -> None:
         super().__init__(name, position)
@@ -67,7 +65,6 @@ class TheaterGroundObject(MissionTarget):
         self.heading = heading
         self.control_point = control_point
         self.dcs_identifier = dcs_identifier
-        self.airbase_group = airbase_group
         self.sea_object = sea_object
         self.groups: List[Group] = []
 
@@ -205,7 +202,7 @@ class BuildingGroundObject(TheaterGroundObject):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group=False,
+        is_fob_structure=False,
     ) -> None:
         super().__init__(
             name=name,
@@ -215,9 +212,9 @@ class BuildingGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=airbase_group,
             sea_object=False,
         )
+        self.is_fob_structure = is_fob_structure
         self.object_id = object_id
         # Other TGOs track deadness based on the number of alive units, but
         # buildings don't have groups assigned to the TGO.
@@ -250,6 +247,10 @@ class BuildingGroundObject(TheaterGroundObject):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return list(self.iter_building_group())
 
+    @property
+    def is_control_point(self) -> bool:
+        return self.is_fob_structure
+
 
 class SceneryGroundObject(BuildingGroundObject):
     def __init__(
@@ -272,7 +273,7 @@ class SceneryGroundObject(BuildingGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=False,
+            is_fob_structure=False,
         )
         self.zone = zone
         try:
@@ -305,7 +306,7 @@ class FactoryGroundObject(BuildingGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier="Workshop A",
-            airbase_group=False,
+            is_fob_structure=False,
         )
 
 
@@ -339,7 +340,6 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="CARRIER",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -361,7 +361,6 @@ class LhaGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="LHA",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -384,7 +383,6 @@ class MissileSiteGroundObject(TheaterGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
 
@@ -406,7 +404,6 @@ class CoastalSiteGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
 
@@ -421,7 +418,6 @@ class SamGroundObject(TheaterGroundObject):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -431,7 +427,6 @@ class SamGroundObject(TheaterGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
         # Set by the SAM unit generator if the generated group is compatible
@@ -499,7 +494,6 @@ class VehicleGroupGroundObject(TheaterGroundObject):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -509,7 +503,6 @@ class VehicleGroupGroundObject(TheaterGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
@@ -521,7 +514,6 @@ class EwrGroundObject(TheaterGroundObject):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -531,7 +523,6 @@ class EwrGroundObject(TheaterGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="EWR",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
@@ -564,7 +555,6 @@ class ShipGroundObject(NavalGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=True,
         )
 
