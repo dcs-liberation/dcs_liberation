@@ -190,6 +190,13 @@ class TheaterGroundObject(MissionTarget):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return self.units
 
+    def clear(self) -> None:
+        self.groups = []
+
+    @property
+    def capturable(self) -> bool:
+        raise NotImplementedError
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -250,6 +257,10 @@ class BuildingGroundObject(TheaterGroundObject):
     @property
     def is_control_point(self) -> bool:
         return self.is_fob_structure
+
+    @property
+    def capturable(self) -> bool:
+        return True
 
 
 class SceneryGroundObject(BuildingGroundObject):
@@ -322,6 +333,10 @@ class NavalGroundObject(TheaterGroundObject):
     def might_have_aa(self) -> bool:
         return True
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
 
 class GenericCarrierGroundObject(NavalGroundObject):
     @property
@@ -386,6 +401,10 @@ class MissileSiteGroundObject(TheaterGroundObject):
             sea_object=False,
         )
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
 
 class CoastalSiteGroundObject(TheaterGroundObject):
     def __init__(
@@ -406,6 +425,10 @@ class CoastalSiteGroundObject(TheaterGroundObject):
             dcs_identifier="AA",
             sea_object=False,
         )
+
+    @property
+    def capturable(self) -> bool:
+        return False
 
 
 # TODO: Differentiate types.
@@ -486,6 +509,10 @@ class SamGroundObject(TheaterGroundObject):
         else:
             return max(max_tel_range, max_telar_range, max_non_radar)
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
 
 class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
@@ -505,6 +532,10 @@ class VehicleGroupGroundObject(TheaterGroundObject):
             dcs_identifier="AA",
             sea_object=False,
         )
+
+    @property
+    def capturable(self) -> bool:
+        return False
 
 
 class EwrGroundObject(TheaterGroundObject):
@@ -541,6 +572,10 @@ class EwrGroundObject(TheaterGroundObject):
     @property
     def might_have_aa(self) -> bool:
         return True
+
+    @property
+    def capturable(self) -> bool:
+        return False
 
 
 class ShipGroundObject(NavalGroundObject):

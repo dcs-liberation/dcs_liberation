@@ -554,11 +554,17 @@ class ControlPoint(MissionTarget, ABC):
             airframe, count = self.base.aircraft.popitem()
             self._retreat_air_units(game, airframe, count)
 
+    def depopulate_uncapturable_tgos(self) -> None:
+        for tgo in self.connected_objectives:
+            if not tgo.capturable:
+                tgo.clear()
+
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
         self.pending_unit_deliveries.refund_all(game)
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
+        self.depopulate_uncapturable_tgos()
 
         if for_player:
             self.captured = True
