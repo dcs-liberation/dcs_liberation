@@ -411,14 +411,10 @@ class CoastalSiteGroundObject(TheaterGroundObject):
         )
 
 
-class BaseDefenseGroundObject(TheaterGroundObject):
-    """Base type for all base defenses."""
-
-
 # TODO: Differentiate types.
 # This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
 # be split into their own types.
-class SamGroundObject(BaseDefenseGroundObject):
+class SamGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
@@ -496,7 +492,7 @@ class SamGroundObject(BaseDefenseGroundObject):
             return max(max_tel_range, max_telar_range, max_non_radar)
 
 
-class VehicleGroupGroundObject(BaseDefenseGroundObject):
+class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
@@ -518,7 +514,7 @@ class VehicleGroupGroundObject(BaseDefenseGroundObject):
         )
 
 
-class EwrGroundObject(BaseDefenseGroundObject):
+class EwrGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,

@@ -312,10 +312,6 @@ class NameGenerator:
             db.unit_type_name(unit_type),
         )
 
-    @staticmethod
-    def next_basedefense_name():
-        return "basedefense_aa|0|0|"
-
     @classmethod
     def next_awacs_name(cls, country: Country):
         cls.number += 1
