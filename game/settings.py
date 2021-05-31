@@ -43,7 +43,7 @@ class Settings:
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
     restrict_weapons_by_date: bool = False
-    disable_legacy_aewc: bool = False
+    disable_legacy_aewc: bool = True
     generate_dark_kneeboard: bool = False
     invulnerable_player_pilots: bool = True
     auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default
