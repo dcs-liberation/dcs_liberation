@@ -162,7 +162,7 @@ class AircraftAllocator:
         self, flight: ProposedFlight, task: FlightType
     ) -> Optional[Tuple[ControlPoint, Squadron]]:
         types = aircraft_for_task(task)
-        airfields_in_range = self.closest_airfields.airfields_within(
+        airfields_in_range = self.closest_airfields.operational_airfields_within(
             flight.max_distance
         )
 
@@ -258,7 +258,9 @@ class PackageBuilder:
         self, aircraft: Type[FlyingType], arrival: ControlPoint
     ) -> Optional[ControlPoint]:
         divert_limit = nautical_miles(150)
-        for airfield in self.closest_airfields.airfields_within(divert_limit):
+        for airfield in self.closest_airfields.operational_airfields_within(
+            divert_limit
+        ):
             if airfield.captured != self.is_player:
                 continue
             if airfield == arrival:
@@ -467,8 +469,10 @@ class ObjectiveFinder:
                 # Off-map spawn locations don't need protection.
                 continue
             airfields_in_proximity = self.closest_airfields_to(cp)
-            airfields_in_threat_range = airfields_in_proximity.airfields_within(
-                self.AIRFIELD_THREAT_RANGE
+            airfields_in_threat_range = (
+                airfields_in_proximity.operational_airfields_within(
+                    self.AIRFIELD_THREAT_RANGE
+                )
             )
             for airfield in airfields_in_threat_range:
                 if not airfield.is_friendly(self.is_player):

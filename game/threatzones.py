@@ -124,7 +124,7 @@ class ThreatZones:
         cls, location: ControlPoint, max_distance: Distance
     ) -> Optional[ControlPoint]:
         airfields = ObjectiveDistanceCache.get_closest_airfields(location)
-        for airfield in airfields.airfields_within(max_distance):
+        for airfield in airfields.all_airfields_within(max_distance):
             if airfield.captured != location.captured:
                 return airfield
         return None

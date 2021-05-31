@@ -1807,7 +1807,7 @@ class FlightPlanBuilder:
         # We'll always have a package, but if this is being planned via the UI
         # it could be the first flight in the package.
         if not self.package.flights:
-            raise RuntimeError(
+            raise PlanningError(
                 "Cannot determine source airfield for package with no flights"
             )
 
@@ -1819,4 +1819,4 @@ class FlightPlanBuilder:
             for flight in self.package.flights:
                 if flight.departure == airfield:
                     return airfield
-        raise RuntimeError("Could not find any airfield assigned to this package")
+        raise PlanningError("Could not find any airfield assigned to this package")

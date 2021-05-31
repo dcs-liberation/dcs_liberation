@@ -517,7 +517,7 @@ class ControlPoint(MissionTarget, ABC):
         max_retreat_distance = nautical_miles(200)
         # Skip the first airbase because that's the airbase we're retreating
         # from.
-        airfields = list(closest.airfields_within(max_retreat_distance))[1:]
+        airfields = list(closest.operational_airfields_within(max_retreat_distance))[1:]
         for airbase in airfields:
             if not airbase.can_operate(airframe):
                 continue

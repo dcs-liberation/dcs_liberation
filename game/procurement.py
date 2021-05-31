@@ -258,10 +258,8 @@ class ProcurementAi:
     ) -> Iterator[ControlPoint]:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(request.near)
         threatened = []
-        for cp in distance_cache.airfields_within(request.range):
+        for cp in distance_cache.operational_airfields_within(request.range):
             if not cp.is_friendly(self.is_player):
-                continue
-            if not cp.runway_is_operational():
                 continue
             if cp.unclaimed_parking(self.game) < request.number:
                 continue

@@ -46,6 +46,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Fixed bug where offshore strike locations were being used to spawn ship objectives.
 * **[Flight Planner]** AI strike flight plans now include the correct target actions for building groups.
 * **[Flight Planner]** AI BAI/DEAD/SEAD flights now have tasks to attack all groups at the target location, not just the primary group (for multi-group SAM sites).
+* **[Flight Planner]** Fixed some contexts where damaged runways would be used. Destroying a carrier will no longer break the game.
 
 # 2.5.1
 
