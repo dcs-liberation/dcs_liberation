@@ -40,6 +40,10 @@ class ThreatZones:
         )
         return DcsPoint(boundary.x, boundary.y)
 
+    def distance_to_threat(self, point: DcsPoint) -> Distance:
+        boundary = self.closest_boundary(point)
+        return meters(boundary.distance_to_point(point))
+
     @singledispatchmethod
     def threatened(self, position) -> bool:
         raise NotImplementedError
