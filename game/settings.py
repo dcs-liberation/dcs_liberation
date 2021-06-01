@@ -47,7 +47,7 @@ class Settings:
     generate_dark_kneeboard: bool = False
     invulnerable_player_pilots: bool = True
     auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default
-    auto_ato_player_missions_asap: bool = False
+    auto_ato_player_missions_asap: bool = True
 
     # Performance oriented
     perf_red_alert_state: bool = True
