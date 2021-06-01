@@ -10,10 +10,12 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign]** Non-control point FOBs will no longer spawn.
 * **[Campaign]** Added squadrons and pilots. See https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots for more information.
 * **[Campaign]** Capturing a base now depopulates all of its attached objectives with units: air defenses, EWRs, ships, armor groups, etc. Buildings are captured.
+* **[Campaign]** Ammunition Depots determine how many ground units can be deployed on the frontline by a control point.
 * **[Campaign AI]** AI now considers Ju-88s for CAS, strike, and DEAD missions.
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP.
 * **[Campaign AI]** AI now considers the range to the SAM's threat zone rather than the range to the SAM itself when determining target priorities.
 * **[Campaign AI]** Auto purchase of ground units will now maintain unit composition instead of buying randomly. The unit composition is predefined.
+* **[Campaign AI]** AI will aim to purchase enough ground units to support the frontline, plus 30% reserve units.
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.
@@ -30,6 +32,7 @@ Saves from 2.5 are not compatible with 3.0.
 * **[UI]** Added global aircraft inventory view under Air Wing dialog.
 * **[UI]** Base menu now shows information about ground unit deployment limits.
 * **[Modding]** Campaigns now choose locations for factories to spawn.
+* **[Modding]** Campaigns now choose locations for ammunition depots to spawn.
 * **[Modding]** Campaigns now use map structures as strike targets.
 * **[Modding]** Campaigns may now set *any* objective type to be a required spawn rather than random chance. Support for random objective generation was removed.
 * **[Modding]** Campaigns may now place AAA objectives.
