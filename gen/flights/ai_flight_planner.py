@@ -513,6 +513,8 @@ class ObjectiveFinder:
         farthest = None
         max_distance = meters(0)
         for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                continue
             distance = threat_zones.distance_to_threat(cp.position)
             if distance > max_distance:
                 farthest = cp
