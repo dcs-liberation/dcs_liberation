@@ -115,7 +115,7 @@ class AircraftInventoryData:
         flight_type = flight.flight_type.value
         target = flight.package.target.name
         for idx in range(0, num_units):
-            pilot = flight.pilots[idx]
+            pilot = flight.roster.pilots[idx]
             if pilot is None:
                 pilot_name = "Unassigned"
                 player = ""

@@ -13,7 +13,6 @@ from typing import (
     List,
     TYPE_CHECKING,
     Optional,
-    Iterable,
     Iterator,
     Sequence,
 )
@@ -142,8 +141,12 @@ class Squadron:
     def return_pilot(self, pilot: Pilot) -> None:
         self.available_pilots.append(pilot)
 
-    def return_pilots(self, pilots: Iterable[Pilot]) -> None:
-        self.available_pilots.extend(pilots)
+    def return_pilots(self, pilots: Sequence[Pilot]) -> None:
+        # Return in reverse so that returning two pilots and then getting two more
+        # results in the same ordering. This happens commonly when resetting rosters in
+        # the UI, when we clear the roster because the UI is updating, then end up
+        # repopulating the same size flight from the same squadron.
+        self.available_pilots.extend(reversed(pilots))
 
     def enlist_new_pilots(self, count: int) -> None:
         new_pilots = [Pilot(self.faker.name()) for _ in range(count)]

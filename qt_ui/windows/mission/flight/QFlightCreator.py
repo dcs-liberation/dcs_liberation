@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QLineEdit,
+    QHBoxLayout,
 )
 from dcs.unittype import FlyingType
 
@@ -17,7 +18,7 @@ from game import Game
 from game.squadrons import Squadron
 from game.theater import ControlPoint, OffMapSpawn
 from gen.ato import Package
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightRoster
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
@@ -26,6 +27,7 @@ from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelect
 from qt_ui.widgets.combos.QFlightTypeComboBox import QFlightTypeComboBox
 from qt_ui.widgets.combos.QOriginAirfieldSelector import QOriginAirfieldSelector
 from qt_ui.windows.mission.flight.SquadronSelector import SquadronSelector
+from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import FlightRosterEditor
 
 
 class QFlightCreator(QDialog):
@@ -46,7 +48,7 @@ class QFlightCreator(QDialog):
 
         self.task_selector = QFlightTypeComboBox(self.game.theater, package.target)
         self.task_selector.setCurrentIndex(0)
-        self.task_selector.currentTextChanged.connect(self.on_task_changed)
+        self.task_selector.currentIndexChanged.connect(self.on_task_changed)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
@@ -93,13 +95,20 @@ class QFlightCreator(QDialog):
         self.update_max_size(self.departure.available)
         layout.addLayout(QLabeledWidget("Size:", self.flight_size_spinner))
 
-        self.client_slots_spinner = QFlightSizeSpinner(
-            min_size=0, max_size=self.flight_size_spinner.value(), default_size=0
-        )
-        self.flight_size_spinner.valueChanged.connect(
-            lambda v: self.client_slots_spinner.setMaximum(v)
-        )
-        layout.addLayout(QLabeledWidget("Client Slots:", self.client_slots_spinner))
+        squadron = self.squadron_selector.currentData()
+        if squadron is None:
+            roster = None
+        else:
+            roster = FlightRoster(
+                squadron, initial_size=self.flight_size_spinner.value()
+            )
+        self.roster_editor = FlightRosterEditor(roster)
+        self.flight_size_spinner.valueChanged.connect(self.resize_roster)
+        self.squadron_selector.currentIndexChanged.connect(self.on_squadron_changed)
+        roster_layout = QHBoxLayout()
+        layout.addLayout(roster_layout)
+        roster_layout.addWidget(QLabel("Assigned pilots:"))
+        roster_layout.addLayout(self.roster_editor)
 
         # When an off-map spawn overrides the start type to in-flight, we save
         # the selected type into this value. If a non-off-map spawn is selected
@@ -142,6 +151,10 @@ class QFlightCreator(QDialog):
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
 
+    def resize_roster(self, new_size: int) -> None:
+        self.roster_editor.roster.resize(new_size)
+        self.roster_editor.resize(new_size)
+
     def verify_form(self) -> Optional[str]:
         aircraft: Optional[Type[FlyingType]] = self.aircraft_selector.currentData()
         squadron: Optional[Squadron] = self.squadron_selector.currentData()
@@ -181,7 +194,7 @@ class QFlightCreator(QDialog):
         origin = self.departure.currentData()
         arrival = self.arrival.currentData()
         divert = self.divert.currentData()
-        size = self.flight_size_spinner.value()
+        roster = self.roster_editor.roster
 
         if arrival is None:
             arrival = origin
@@ -190,22 +203,17 @@ class QFlightCreator(QDialog):
             self.package,
             self.country,
             squadron,
-            size,
+            # A bit of a hack to work around the old API. Not actually relevant because
+            # the roster is passed explicitly. Needs a refactor.
+            roster.max_size,
             task,
             self.start_type.currentText(),
             origin,
             arrival,
             divert,
             custom_name=self.custom_name_text,
+            roster=roster,
         )
-        for pilot, idx in zip(flight.pilots, range(self.client_slots_spinner.value())):
-            if pilot is None:
-                logging.error(
-                    f"Cannot create client slot because {flight} has no pilot for "
-                    f"aircraft {idx}"
-                )
-                continue
-            pilot.player = True
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
@@ -234,14 +242,22 @@ class QFlightCreator(QDialog):
                 self.start_type.setCurrentText(self.restore_start_type)
                 self.restore_start_type = None
 
-    def on_task_changed(self) -> None:
+    def on_task_changed(self, index: int) -> None:
+        task = self.task_selector.itemData(index)
         self.aircraft_selector.update_items(
-            self.task_selector.currentData(),
-            self.game.aircraft_inventory.available_types_for_player,
+            task, self.game.aircraft_inventory.available_types_for_player
         )
-        self.squadron_selector.update_items(
-            self.task_selector.currentData(), self.aircraft_selector.currentData()
-        )
+        self.squadron_selector.update_items(task, self.aircraft_selector.currentData())
+
+    def on_squadron_changed(self, index: int) -> None:
+        squadron = self.squadron_selector.itemData(index)
+        # Clear the roster first so we return the pilots to the pool. This way if we end
+        # up repopulating from the same squadron we'll get the same pilots back.
+        self.roster_editor.replace(None)
+        if squadron is not None:
+            self.roster_editor.replace(
+                FlightRoster(squadron, self.flight_size_spinner.value())
+            )
 
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))
