@@ -30,15 +30,18 @@ class GroundUnitClass(Enum):
             Armor.MBT_Merkava_IV,
             Armor.ZTZ_96B,
             # WW2
-            Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
+            # Axxis
             Armor.Tk_PzIV_H,
+            Armor.SPG_Sturmpanzer_IV_Brummbar,
+            Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
             Armor.HT_Pz_Kpfw_VI_Tiger_I,
             Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
+            # Allies
             Armor.Tk_M4_Sherman,
             Armor.CT_Centaur_IV,
             Armor.CT_Cromwell_IV,
             Armor.HIT_Churchill_VII,
-            Armor.SPG_Sturmpanzer_IV_Brummbar,
+
             # Mods
             frenchpack.DIM__TOYOTA_BLUE,
             frenchpack.DIM__TOYOTA_GREEN,
@@ -57,11 +60,15 @@ class GroundUnitClass(Enum):
             Armor.ATGM_Stryker,
             Armor.IFV_BMP_2,
             # WW2 (Tank Destroyers)
-            Armor.MT_M4A4_Sherman_Firefly,
+            # Axxis
+            Armor.SPG_StuG_III_Ausf__G,
             Armor.SPG_StuG_IV,
             Armor.SPG_Jagdpanzer_IV,
             Armor.SPG_Jagdpanther_G1,
+            Armor.SPG_Sd_Kfz_184_Elefant,
+            # Allies
             Armor.SPG_M10_GMC,
+            Armor.MT_M4A4_Sherman_Firefly,
             # Mods
             frenchpack.VBAE_CRAB_MMP,
             frenchpack.VAB_MEPHISTO,
