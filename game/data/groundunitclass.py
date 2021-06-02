@@ -41,7 +41,6 @@ class GroundUnitClass(Enum):
             Armor.CT_Centaur_IV,
             Armor.CT_Cromwell_IV,
             Armor.HIT_Churchill_VII,
-
             # Mods
             frenchpack.DIM__TOYOTA_BLUE,
             frenchpack.DIM__TOYOTA_GREEN,
