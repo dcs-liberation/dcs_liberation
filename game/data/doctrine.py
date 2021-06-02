@@ -99,7 +99,7 @@ MODERN_DOCTRINE = Doctrine(
             GroundUnitClass.Ifv: 3,
             GroundUnitClass.Artillery: 1,
             GroundUnitClass.Shorads: 2,
-            GroundUnitClass.Recon: 2,
+            GroundUnitClass.Recon: 1,
         }
     ),
 )
@@ -131,7 +131,7 @@ COLDWAR_DOCTRINE = Doctrine(
     sweep_distance=nautical_miles(40),
     ground_unit_procurement_ratios=GroundUnitProcurementRatios(
         {
-            GroundUnitClass.Tank: 3,
+            GroundUnitClass.Tank: 4,
             GroundUnitClass.Atgm: 2,
             GroundUnitClass.Apc: 3,
             GroundUnitClass.Ifv: 2,
