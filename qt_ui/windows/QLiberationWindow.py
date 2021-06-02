@@ -34,6 +34,8 @@ from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
     QLiberationPreferencesWindow,
 )
+from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -147,6 +149,14 @@ class QLiberationWindow(QMainWindow):
             )
         )
 
+        self.openSettingsAction = QAction("Settings", self)
+        self.openSettingsAction.setIcon(CONST.ICONS["Settings"])
+        self.openSettingsAction.triggered.connect(self.showSettingsDialog)
+
+        self.openStatsAction = QAction("Stats", self)
+        self.openStatsAction.setIcon(CONST.ICONS["Statistics"])
+        self.openStatsAction.triggered.connect(self.showStatsDialog)
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -157,7 +167,9 @@ class QLiberationWindow(QMainWindow):
         self.links_bar.addAction(self.openDiscordAction)
         self.links_bar.addAction(self.openGithubAction)
 
-        self.display_bar = self.addToolBar("Display")
+        self.actions_bar = self.addToolBar("Actions")
+        self.actions_bar.addAction(self.openSettingsAction)
+        self.actions_bar.addAction(self.openStatsAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -306,6 +318,14 @@ class QLiberationWindow(QMainWindow):
     def showLiberationDialog(self):
         self.subwindow = QLiberationPreferencesWindow()
         self.subwindow.show()
+
+    def showSettingsDialog(self) -> None:
+        self.dialog = QSettingsWindow(self.game)
+        self.dialog.show()
+
+    def showStatsDialog(self):
+        self.dialog = QStatsWindow(self.game)
+        self.dialog.show()
 
     def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")
