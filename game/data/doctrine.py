@@ -137,7 +137,7 @@ COLDWAR_DOCTRINE = Doctrine(
             GroundUnitClass.Ifv: 2,
             GroundUnitClass.Artillery: 1,
             GroundUnitClass.Shorads: 2,
-            GroundUnitClass.Recon: 2,
+            GroundUnitClass.Recon: 1,
         }
     ),
 )
@@ -174,7 +174,7 @@ WWII_DOCTRINE = Doctrine(
             GroundUnitClass.Apc: 3,
             GroundUnitClass.Artillery: 1,
             GroundUnitClass.Shorads: 3,
-            GroundUnitClass.Recon: 2,
+            GroundUnitClass.Recon: 1,
         }
     ),
 )
