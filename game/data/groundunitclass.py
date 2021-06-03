@@ -30,7 +30,7 @@ class GroundUnitClass(Enum):
             Armor.MBT_Merkava_IV,
             Armor.ZTZ_96B,
             # WW2
-            # Axxis
+            # Axis
             Armor.Tk_PzIV_H,
             Armor.SPG_Sturmpanzer_IV_Brummbar,
             Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
