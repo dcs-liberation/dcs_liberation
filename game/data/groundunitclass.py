@@ -29,27 +29,23 @@ class GroundUnitClass(Enum):
             Armor.MBT_M60A3_Patton,
             Armor.MBT_Merkava_IV,
             Armor.ZTZ_96B,
-            Armor.LT_PT_76,
             # WW2
-            Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
+            # Axis
             Armor.Tk_PzIV_H,
+            Armor.SPG_Sturmpanzer_IV_Brummbar,
+            Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
             Armor.HT_Pz_Kpfw_VI_Tiger_I,
             Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
+            # Allies
             Armor.Tk_M4_Sherman,
-            Armor.MT_M4A4_Sherman_Firefly,
-            Armor.SPG_StuG_IV,
             Armor.CT_Centaur_IV,
             Armor.CT_Cromwell_IV,
             Armor.HIT_Churchill_VII,
-            Armor.LT_Mk_VII_Tetrarch,
-            Armor.SPG_Sturmpanzer_IV_Brummbar,
             # Mods
             frenchpack.DIM__TOYOTA_BLUE,
             frenchpack.DIM__TOYOTA_GREEN,
             frenchpack.DIM__TOYOTA_DESERT,
             frenchpack.DIM__KAMIKAZE,
-            frenchpack.AMX_10RCR,
-            frenchpack.AMX_10RCR_SEPAR,
             frenchpack.AMX_30B2,
             frenchpack.Leclerc_Serie_XXI,
         ),
@@ -63,10 +59,15 @@ class GroundUnitClass(Enum):
             Armor.ATGM_Stryker,
             Armor.IFV_BMP_2,
             # WW2 (Tank Destroyers)
-            Unarmed.Carrier_M30_Cargo,
+            # Axxis
+            Armor.SPG_StuG_III_Ausf__G,
+            Armor.SPG_StuG_IV,
             Armor.SPG_Jagdpanzer_IV,
             Armor.SPG_Jagdpanther_G1,
+            Armor.SPG_Sd_Kfz_184_Elefant,
+            # Allies
             Armor.SPG_M10_GMC,
+            Armor.MT_M4A4_Sherman_Firefly,
             # Mods
             frenchpack.VBAE_CRAB_MMP,
             frenchpack.VAB_MEPHISTO,
@@ -82,18 +83,11 @@ class GroundUnitClass(Enum):
             Armor.IFV_BMP_1,
             Armor.IFV_Marder,
             Armor.IFV_Warrior,
-            Armor.IFV_LAV_25,
             Armor.SPG_Stryker_MGS,
-            Armor.IFV_Sd_Kfz_234_2_Puma,
             Armor.IFV_M2A2_Bradley,
             Armor.IFV_BMD_1,
             Armor.ZBD_04A,
-            # WW2
-            Armor.IFV_Sd_Kfz_234_2_Puma,
-            Armor.Car_M8_Greyhound_Armored,
-            Armor.Car_Daimler_Armored,
             # Mods
-            frenchpack.ERC_90,
             frenchpack.VBAE_CRAB,
             frenchpack.VAB_T20_13,
         ),
@@ -102,20 +96,14 @@ class GroundUnitClass(Enum):
     Apc = (
         "APC",
         (
-            Armor.Scout_HMMWV,
             Armor.IFV_M1126_Stryker_ICV,
             Armor.APC_M113,
             Armor.APC_BTR_80,
             Armor.IFV_BTR_82A,
             Armor.APC_MTLB,
-            Armor.APC_M2A1_Halftrack,
-            Armor.Scout_Cobra,
-            Armor.APC_Sd_Kfz_251_Halftrack,
             Armor.APC_AAV_7_Amphibious,
             Armor.APC_TPz_Fuchs,
-            Armor.Scout_BRDM_2,
             Armor.APC_BTR_RD,
-            Artillery.Grad_MRL_FDDM__FC,
             # WW2
             Armor.APC_M2A1_Halftrack,
             Armor.APC_Sd_Kfz_251_Halftrack,
@@ -129,6 +117,7 @@ class GroundUnitClass(Enum):
     Artillery = (
         "Artillery",
         (
+            Artillery.Grad_MRL_FDDM__FC,
             Artillery.MLRS_9A52_Smerch_HE_300mm,
             Artillery.SPH_2S1_Gvozdika_122mm,
             Artillery.SPH_2S3_Akatsia_152mm,
@@ -150,6 +139,7 @@ class GroundUnitClass(Enum):
     Logistics = (
         "Logistics",
         (
+            Unarmed.Carrier_M30_Cargo,
             Unarmed.Truck_M818_6x6,
             Unarmed.Truck_KAMAZ_43101,
             Unarmed.Truck_Ural_375,
@@ -168,6 +158,26 @@ class GroundUnitClass(Enum):
             # Mods
             frenchpack.VBL,
             frenchpack.VAB,
+        ),
+    )
+
+    Recon = (
+        "Recon",
+        (
+            Armor.Scout_HMMWV,
+            Armor.Scout_Cobra,
+            Armor.LT_PT_76,
+            Armor.IFV_LAV_25,
+            Armor.Scout_BRDM_2,
+            # WW2
+            Armor.LT_Mk_VII_Tetrarch,
+            Armor.IFV_Sd_Kfz_234_2_Puma,
+            Armor.Car_M8_Greyhound_Armored,
+            Armor.Car_Daimler_Armored,
+            # Mods
+            frenchpack.ERC_90,
+            frenchpack.AMX_10RCR,
+            frenchpack.AMX_10RCR_SEPAR,
         ),
     )
 
