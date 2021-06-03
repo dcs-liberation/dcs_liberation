@@ -109,7 +109,7 @@ class AircraftInventoryData:
         yield self.player
 
     @classmethod
-    def from_flight(cls, flight: Flight) -> AircraftInventoryData:
+    def from_flight(cls, flight: Flight) -> Iterator[AircraftInventoryData]:
         unit_type_name = cls.format_unit_type(flight.unit_type, flight.country)
         num_units = flight.count
         flight_type = flight.flight_type.value
@@ -122,7 +122,7 @@ class AircraftInventoryData:
             else:
                 pilot_name = pilot.name
                 player = "Player" if pilot.player else "AI"
-            return AircraftInventoryData(
+            yield AircraftInventoryData(
                 flight.departure.name,
                 unit_type_name,
                 flight_type,
@@ -194,7 +194,7 @@ class AirInventoryView(QWidget):
     def iter_allocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         for package in self.game_model.game.blue_ato.packages:
             for flight in package.flights:
-                yield AircraftInventoryData.from_flight(flight)
+                yield from AircraftInventoryData.from_flight(flight)
 
     def iter_unallocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         game = self.game_model.game
