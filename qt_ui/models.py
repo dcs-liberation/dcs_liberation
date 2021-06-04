@@ -424,7 +424,7 @@ class SquadronModel(QAbstractListModel):
         self.squadron = squadron
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        return self.squadron.size
+        return self.squadron.number_of_pilots_including_dead
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():

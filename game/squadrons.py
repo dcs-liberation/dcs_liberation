@@ -163,6 +163,9 @@ class Squadron:
     def _pilots_with_status(self, status: PilotStatus) -> list[Pilot]:
         return [p for p in self.pilots if p.status == status]
 
+    def _pilots_without_status(self, status: PilotStatus) -> list[Pilot]:
+        return [p for p in self.pilots if p.status != status]
+
     @property
     def active_pilots(self) -> list[Pilot]:
         return self._pilots_with_status(PilotStatus.Active)
@@ -172,8 +175,12 @@ class Squadron:
         return self._pilots_with_status(PilotStatus.OnLeave)
 
     @property
-    def size(self) -> int:
-        return len(self.active_pilots) + len(self.pilots_on_leave)
+    def number_of_pilots_including_dead(self) -> int:
+        return len(self.pilots)
+
+    @property
+    def number_of_living_pilots(self) -> int:
+        return len(self._pilots_without_status(PilotStatus.Dead))
 
     def pilot_at_index(self, index: int) -> Pilot:
         return self.pilots[index]
