@@ -202,19 +202,17 @@ class Event:
     @staticmethod
     def commit_airlift_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.airlift_losses:
-            unit_type = loss.unit_type
             transfer = loss.transfer
-            available = loss.transfer.units.get(unit_type, 0)
             airlift_name = f"airlift from {transfer.origin} to {transfer.destination}"
-            if available <= 0:
-                logging.error(
-                    f"Found killed {unit_type} in {airlift_name} but that airlift has "
-                    "none available."
-                )
-                continue
-
-            logging.info(f"{unit_type} destroyed in {airlift_name}")
-            transfer.kill_unit(unit_type)
+            for unit_type in loss.cargo:
+                try:
+                    transfer.kill_unit(unit_type)
+                    logging.info(f"{unit_type} destroyed in {airlift_name}")
+                except KeyError:
+                    logging.exception(
+                        f"Found killed {unit_type} in {airlift_name} but that airlift "
+                        "has none available."
+                    )
 
     @staticmethod
     def commit_ground_object_losses(debriefing: Debriefing) -> None:

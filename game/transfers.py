@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
@@ -89,10 +90,9 @@ class TransferOrder:
         self.units.clear()
 
     def kill_unit(self, unit_type: Type[VehicleType]) -> None:
-        if unit_type in self.units:
-            self.units[unit_type] -= 1
-            return
-        raise KeyError
+        if unit_type not in self.units or not self.units[unit_type]:
+            raise KeyError(f"{self.destination} has no {unit_type} remaining")
+        self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
@@ -254,11 +254,13 @@ class AirliftPlanner:
         self, squadron: Squadron, inventory: ControlPointAircraftInventory
     ) -> int:
         available = inventory.available(squadron.aircraft)
-        # 4 is the max flight size in DCS.
-        flight_size = min(self.transfer.size, available, 4)
+        capacity_each = 1 if squadron.aircraft.helicopter else 2
+        required = math.ceil(self.transfer.size / capacity_each)
+        flight_size = min(required, available, squadron.aircraft.group_size_max)
+        capacity = flight_size * capacity_each
 
-        if flight_size < self.transfer.size:
-            transfer = self.game.transfers.split_transfer(self.transfer, flight_size)
+        if capacity < self.transfer.size:
+            transfer = self.game.transfers.split_transfer(self.transfer, capacity)
         else:
             transfer = self.transfer
 

@@ -1,4 +1,6 @@
 """Maps generated units back to their Liberation types."""
+import itertools
+import math
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
@@ -40,8 +42,8 @@ class ConvoyUnit:
 
 
 @dataclass(frozen=True)
-class AirliftUnit:
-    unit_type: Type[VehicleType]
+class AirliftUnits:
+    cargo: tuple[Type[VehicleType], ...]
     transfer: TransferOrder
 
 
@@ -59,7 +61,7 @@ class UnitMap:
         self.buildings: Dict[str, Building] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
-        self.airlifts: Dict[str, AirliftUnit] = {}
+        self.airlifts: Dict[str, AirliftUnits] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
         for pilot, unit in zip(flight.roster.pilots, group.units):
@@ -177,15 +179,26 @@ class UnitMap:
         return self.cargo_ships.get(name, None)
 
     def add_airlift_units(self, group: FlyingGroup, transfer: TransferOrder) -> None:
-        for transport, cargo_type in zip(group.units, transfer.iter_units()):
+        capacity_each = math.ceil(transfer.size / len(group.units))
+        for idx, transport in enumerate(group.units):
+            # Slice the units in groups based on the capacity of each unit. Cargo is
+            # assigned arbitrarily to units in the order of the group. The last unit in
+            # the group will receive a partial load if there is not enough cargo to fill
+            # every transport.
+            base_idx = idx * capacity_each
+            cargo = tuple(
+                itertools.islice(
+                    transfer.iter_units(), base_idx, base_idx + capacity_each
+                )
+            )
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(transport.name)
             if name in self.airlifts:
                 raise RuntimeError(f"Duplicate airlift unit: {name}")
-            self.airlifts[name] = AirliftUnit(cargo_type, transfer)
+            self.airlifts[name] = AirliftUnits(cargo, transfer)
 
-    def airlift_unit(self, name: str) -> Optional[AirliftUnit]:
+    def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
         return self.airlifts.get(name, None)
 
     def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
