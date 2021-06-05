@@ -51,10 +51,14 @@ from dcs.planes import (
     F_5E_3,
     F_86F_Sabre,
     IL_76MD,
+    IL_78M,
     I_16,
     JF_17,
     J_11A,
     Ju_88A4,
+    KC130,
+    KC135MPRS,
+    KC_135,
     KJ_2000,
     L_39ZA,
     MQ_9_Reaper,
@@ -77,6 +81,7 @@ from dcs.planes import (
     P_51D_30_NA,
     RQ_1A_Predator,
     S_3B,
+    S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_17M4,
@@ -394,6 +399,8 @@ AEWC_CAPABLE = [
     KJ_2000,
 ]
 
+REFUELING_CAPABALE = [S_3B_Tanker, KC130, KC135MPRS, KC_135, IL_78M]
+
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
@@ -421,6 +428,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAP_CAPABLE
     elif task == FlightType.AEWC:
         return AEWC_CAPABLE
+    elif task == FlightType.REFUELING:
+        return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
     else:

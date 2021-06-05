@@ -375,6 +375,7 @@ class Operation:
             cls.game.settings,
             cls.game,
             cls.radio_registry,
+            cls.tacan_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
         )
@@ -453,14 +454,15 @@ class Operation:
             "BlueAA": {},
         }  # type: ignore
 
-        for tanker in airsupportgen.air_support.tankers:
-            luaData["Tankers"][tanker.callsign] = {
-                "dcsGroupName": tanker.group_name,
-                "callsign": tanker.callsign,
-                "variant": tanker.variant,
-                "radio": tanker.freq.mhz,
-                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
-            }
+        if airsupportgen.air_support.tankers:
+            for tanker in airsupportgen.air_support.tankers:
+                luaData["Tankers"][tanker.callsign] = {
+                    "dcsGroupName": tanker.group_name,
+                    "callsign": tanker.callsign,
+                    "variant": tanker.variant,
+                    "radio": tanker.freq.mhz,
+                    "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
+                }
 
         if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:

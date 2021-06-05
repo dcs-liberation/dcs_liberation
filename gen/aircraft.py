@@ -1,4 +1,5 @@
 from __future__ import annotations
+from gen.tacan import TacanBand, TacanRegistry
 
 import logging
 import random
@@ -12,6 +13,7 @@ from dcs.action import AITaskPush, ActivateGroup
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
+from dcs.planes import IL_78M
 from dcs.helicopters import UH_1H, helicopter_map
 from dcs.mapping import Point
 from dcs.mission import Mission, StartType
@@ -43,6 +45,7 @@ from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
     AWACSTaskAction,
+    ActivateBeaconCommand,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -61,8 +64,10 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
+    Refueling,
     RunwayAttack,
     StartCommand,
+    Tanker,
     Targets,
     Transport,
     WeaponType,
@@ -103,13 +108,14 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from .airsupportgen import AirSupport, AwacsInfo
+from .airsupportgen import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
     AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
+    RaceTrackRefuellingFlightPlan,
     SweepFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
@@ -678,6 +684,7 @@ class AircraftConflictGenerator:
         settings: Settings,
         game: Game,
         radio_registry: RadioRegistry,
+        tacan_registry: TacanRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
     ) -> None:
@@ -685,6 +692,7 @@ class AircraftConflictGenerator:
         self.game = game
         self.settings = settings
         self.radio_registry = radio_registry
+        self.tacan_registy = tacan_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
@@ -818,7 +826,7 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        if flight.flight_type == FlightType.AEWC:
+        if flight.flight_type == FlightType.AEWC or FlightType.REFUELING:
             channel = self.radio_registry.alloc_uhf()
         else:
             channel = self.get_intra_flight_channel(unit_type)
@@ -869,6 +877,24 @@ class AircraftConflictGenerator:
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
+                )
+            )
+
+        if isinstance(flight.flight_plan, RaceTrackRefuellingFlightPlan):
+            callsign = callsign_for_support_unit(group)
+
+            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
+            variant = flight.flight_plan.flight.unit_type
+            self.air_support.tankers.append(
+                TankerInfo(
+                    group_name=str(group.name),
+                    callsign=callsign,
+                    variant=variant,
+                    freq=channel,
+                    tacan=tacan,
+                    start_time=flight.flight_plan.tot_waypoint,
+                    end_time=flight.flight_plan.mission_departure_time,
                     blue=flight.departure.captured,
                 )
             )
@@ -1451,6 +1477,65 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(AWACSTaskAction())
 
+    def configure_refueling(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = Refueling.name
+
+        if not isinstance(flight.flight_plan, RaceTrackRefuellingFlightPlan):
+            logging.error(
+                f"Cannot configure racetrack refueling tasks for {flight} because it does not have an racetrack refueling flight plan."
+            )
+            return
+
+        self._setup_group(group, package, flight, dynamic_runways)
+
+        # Tanker task action
+        self.configure_behavior(
+            flight,
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
+        racetrack_task_altitude = flight.flight_plan.racetrack_start.alt.meters
+
+        orbit_task = OrbitAction(
+            altitude=racetrack_task_altitude,
+            speed=315,
+            pattern=OrbitAction.OrbitPattern.RaceTrack,
+        )
+
+        this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
+        tacan = this_tanker.tacan
+        callsign = callsign_for_support_unit(group)
+        tacan_callsign = {
+            "Texaco": "TEX",
+            "Arco": "ARC",
+            "Shell": "SHL",
+        }.get(callsign)
+
+        group.points[1].tasks.append(Tanker())
+        group.points[1].tasks.append(orbit_task)
+
+        tanker_unit_type = flight.unit_type
+
+        if tanker_unit_type != IL_78M:
+            activate_tacan_task = ActivateBeaconCommand(
+                tacan.number,
+                tacan.band.value,
+                tacan_callsign,
+                True,
+                group.units[0].id,
+                True,
+            )
+            group.points[1].tasks.append(activate_tacan_task)
+
     def configure_escort(
         self,
         group: FlyingGroup,
@@ -1529,6 +1614,8 @@ class AircraftConflictGenerator:
             self.configure_sweep(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.AEWC:
             self.configure_awacs(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.REFUELING:
+            self.configure_refueling(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.DEAD:

@@ -770,6 +770,67 @@ class AwacsFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
+class RaceTrackRefuellingFlightPlan(FlightPlan):
+    takeoff: FlightWaypoint
+    nav_to: List[FlightWaypoint]
+    nav_from: List[FlightWaypoint]
+    racetrack_start: FlightWaypoint
+    racetrack_end: FlightWaypoint
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+
+    #: Maximum time to remain on station.
+    racetrack_duration: timedelta
+
+    @property
+    def racetrack_start_time(self) -> timedelta:
+        return self.package.time_over_target
+
+    @property
+    def racetrack_end_time(self) -> timedelta:
+        # TODO: This is currently wrong for CAS.
+        # CAS missions end when they're winchester or bingo. We need to
+        # configure push tasks for the escorts rather than relying on timing.
+        return self.racetrack_start_time + self.racetrack_duration
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.racetrack_start:
+            return self.racetrack_start_time
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.racetrack_end:
+            return self.racetrack_end_time
+        return None
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield from [
+            self.racetrack_start,
+            self.racetrack_end,
+        ]
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+    @property
+    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
+        return {self.racetrack_start, self.racetrack_end}
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.racetrack_start
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.racetrack_end_time
+
+
+@dataclass(frozen=True)
 class AirliftFlightPlan(FlightPlan):
     takeoff: FlightWaypoint
     nav_to_pickup: List[FlightWaypoint]
@@ -919,6 +980,8 @@ class FlightPlanBuilder:
             return self.generate_aewc(flight)
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
+        elif task == FlightType.REFUELING:
+            return self.generate_refueling_racetrack(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -1610,6 +1673,60 @@ class FlightPlanBuilder:
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
+        )
+
+    def generate_refueling_racetrack(
+        self, flight: Flight
+    ) -> RaceTrackRefuellingFlightPlan:
+        location = self.package.target
+
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = location.position.heading_between_point(
+            closest_boundary
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
+        # Station 100nm outside the threat zone.
+        threat_buffer = nautical_miles(70)
+        if self.threat_zones.threatened(location.position):
+            orbit_distance = distance_to_threat + threat_buffer
+        else:
+            orbit_distance = distance_to_threat - threat_buffer
+
+        racetrack_center = location.position.point_from_heading(
+            orbit_heading, orbit_distance.meters
+        )
+
+        racetrack_half_distance = Distance.from_nautical_miles(20).meters
+
+        racetrack_start = racetrack_center.point_from_heading(
+            orbit_heading + 90, racetrack_half_distance
+        )
+        racetrack_end = racetrack_center.point_from_heading(
+            orbit_heading - 90, racetrack_half_distance
+        )
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+        altitude = Distance.from_feet(14000)
+
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
+
+        return RaceTrackRefuellingFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(
+                flight.departure.position, racetrack_start, altitude
+            ),
+            nav_from=builder.nav_path(racetrack_end, flight.arrival.position, altitude),
+            racetrack_start=racetrack[0],
+            racetrack_end=racetrack[1],
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+            racetrack_duration=timedelta(hours=1),
         )
 
     @staticmethod

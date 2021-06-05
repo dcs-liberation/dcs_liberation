@@ -53,6 +53,8 @@ class TankerInfo:
     variant: str
     freq: RadioFrequency
     tacan: TacanChannel
+    start_time: Optional[timedelta]
+    end_time: Optional[timedelta]
     blue: bool
 
 
@@ -99,83 +101,85 @@ class AirSupportConflictGenerator:
             else self.conflict.red_cp
         )
 
-        fallback_tanker_number = 0
+        if not self.game.settings.disable_legacy_tanker:
 
-        for i, tanker_unit_type in enumerate(
-            db.find_unittype(Refueling, self.conflict.attackers_side)
-        ):
-            alt, airspeed = self._get_tanker_params(tanker_unit_type)
-            variant = db.unit_type_name(tanker_unit_type)
-            freq = self.radio_registry.alloc_uhf()
-            tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
-            tanker_heading = (
-                self.conflict.red_cp.position.heading_between_point(
-                    self.conflict.blue_cp.position
+            fallback_tanker_number = 0
+
+            for i, tanker_unit_type in enumerate(
+                db.find_unittype(Refueling, self.conflict.attackers_side)
+            ):
+                alt, airspeed = self._get_tanker_params(tanker_unit_type)
+                variant = db.unit_type_name(tanker_unit_type)
+                freq = self.radio_registry.alloc_uhf()
+                tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
+                tanker_heading = (
+                    self.conflict.red_cp.position.heading_between_point(
+                        self.conflict.blue_cp.position
+                    )
+                    + TANKER_HEADING_OFFSET * i
                 )
-                + TANKER_HEADING_OFFSET * i
-            )
-            tanker_position = player_cp.position.point_from_heading(
-                tanker_heading, TANKER_DISTANCE
-            )
-            tanker_group = self.mission.refuel_flight(
-                country=self.mission.country(self.game.player_country),
-                name=namegen.next_tanker_name(
-                    self.mission.country(self.game.player_country), tanker_unit_type
-                ),
-                airport=None,
-                plane_type=tanker_unit_type,
-                position=tanker_position,
-                altitude=alt,
-                race_distance=58000,
-                frequency=freq.mhz,
-                start_type=StartType.Warm,
-                speed=airspeed,
-                tacanchannel=str(tacan),
-            )
-            tanker_group.set_frequency(freq.mhz)
+                tanker_position = player_cp.position.point_from_heading(
+                    tanker_heading, TANKER_DISTANCE
+                )
+                tanker_group = self.mission.refuel_flight(
+                    country=self.mission.country(self.game.player_country),
+                    name=namegen.next_tanker_name(
+                        self.mission.country(self.game.player_country), tanker_unit_type
+                    ),
+                    airport=None,
+                    plane_type=tanker_unit_type,
+                    position=tanker_position,
+                    altitude=alt,
+                    race_distance=58000,
+                    frequency=freq.mhz,
+                    start_type=StartType.Warm,
+                    speed=airspeed,
+                    tacanchannel=str(tacan),
+                )
+                tanker_group.set_frequency(freq.mhz)
 
-            callsign = callsign_for_support_unit(tanker_group)
-            tacan_callsign = {
-                "Texaco": "TEX",
-                "Arco": "ARC",
-                "Shell": "SHL",
-            }.get(callsign)
-            if tacan_callsign is None:
-                # The dict above is all the callsigns currently in the game, but
-                # non-Western countries don't use the callsigns and instead just
-                # use numbers. It's possible that none of those nations have
-                # TACAN compatible refueling aircraft, but fallback just in
-                # case.
-                tacan_callsign = f"TK{fallback_tanker_number}"
-                fallback_tanker_number += 1
+                callsign = callsign_for_support_unit(tanker_group)
+                tacan_callsign = {
+                    "Texaco": "TEX",
+                    "Arco": "ARC",
+                    "Shell": "SHL",
+                }.get(callsign)
+                if tacan_callsign is None:
+                    # The dict above is all the callsigns currently in the game, but
+                    # non-Western countries don't use the callsigns and instead just
+                    # use numbers. It's possible that none of those nations have
+                    # TACAN compatible refueling aircraft, but fallback just in
+                    # case.
+                    tacan_callsign = f"TK{fallback_tanker_number}"
+                    fallback_tanker_number += 1
 
-            if tanker_unit_type != IL_78M:
-                # Override PyDCS tacan channel.
-                tanker_group.points[0].tasks.pop()
-                tanker_group.points[0].tasks.append(
-                    ActivateBeaconCommand(
-                        tacan.number,
-                        tacan.band.value,
-                        tacan_callsign,
-                        True,
-                        tanker_group.units[0].id,
-                        True,
+                if tanker_unit_type != IL_78M:
+                    # Override PyDCS tacan channel.
+                    tanker_group.points[0].tasks.pop()
+                    tanker_group.points[0].tasks.append(
+                        ActivateBeaconCommand(
+                            tacan.number,
+                            tacan.band.value,
+                            tacan_callsign,
+                            True,
+                            tanker_group.units[0].id,
+                            True,
+                        )
+                    )
+
+                tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
+                tanker_group.points[0].tasks.append(SetImmortalCommand(True))
+
+                self.air_support.tankers.append(
+                    TankerInfo(
+                        str(tanker_group.name),
+                        callsign,
+                        variant,
+                        freq,
+                        tacan,
+                        blue=True,
                     )
                 )
-
-            tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
-            tanker_group.points[0].tasks.append(SetImmortalCommand(True))
-
-            self.air_support.tankers.append(
-                TankerInfo(
-                    str(tanker_group.name),
-                    callsign,
-                    variant,
-                    freq,
-                    tacan,
-                    blue=True,
-                )
-            )
 
         if not self.game.settings.disable_legacy_aewc:
             possible_awacs = db.find_unittype(AWACS, self.conflict.attackers_side)

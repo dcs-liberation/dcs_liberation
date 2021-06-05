@@ -768,6 +768,7 @@ class Airfield(ControlPoint):
         if self.is_friendly(for_player):
             yield from [
                 FlightType.AEWC,
+                FlightType.REFUELING,
                 # TODO: FlightType.INTERCEPTION
                 # TODO: FlightType.LOGISTICS
             ]
@@ -917,7 +918,10 @@ class Carrier(NavalControlPoint):
 
         yield from super().mission_types(for_player)
         if self.is_friendly(for_player):
-            yield FlightType.AEWC
+            yield from [
+                FlightType.AEWC,
+                FlightType.REFUELING,
+            ]
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")

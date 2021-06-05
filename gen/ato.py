@@ -185,6 +185,7 @@ class Package:
             FlightType.AEWC,
             FlightType.SWEEP,
             FlightType.ESCORT,
+            FlightType.REFUELING,
         ]
         for task in task_priorities:
             if flight_counts[task]:
