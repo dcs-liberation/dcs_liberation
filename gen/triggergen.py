@@ -10,21 +10,18 @@ from dcs.condition import (
     FlagIsFalse,
     FlagIsTrue,
 )
-from dcs.unitgroup import FlyingGroup
 from dcs.mission import Mission
 from dcs.task import Option
 from dcs.translation import String
 from dcs.triggers import (
     Event,
     TriggerOnce,
-    TriggerZone,
     TriggerCondition,
 )
 from dcs.unit import Skill
 
 from game.theater import Airfield
 from game.theater.controlpoint import Fob
-
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -115,19 +112,22 @@ class TriggersGenerator:
             mark_trigger.add_condition(TimeAfter(1))
             v = 10
             for cp in self.game.theater.controlpoints:
-                added = []
+                seen = set()
                 for ground_object in cp.ground_objects:
-                    if ground_object.obj_name not in added:
+                    if ground_object.obj_name in seen:
+                        continue
+
+                    seen.add(ground_object.obj_name)
+                    for location in ground_object.mark_locations:
                         zone = self.mission.triggers.add_triggerzone(
-                            ground_object.position, radius=10, hidden=True, name="MARK"
+                            location, radius=10, hidden=True, name="MARK"
                         )
                         if cp.captured:
                             name = ground_object.obj_name + " [ALLY]"
                         else:
                             name = ground_object.obj_name + " [ENEMY]"
                         mark_trigger.add_action(MarkToAll(v, zone.id, String(name)))
-                        v = v + 1
-                    added.append(ground_object.obj_name)
+                        v += 1
             self.mission.triggerrules.triggers.append(mark_trigger)
 
     def _generate_capture_triggers(

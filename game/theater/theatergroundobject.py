@@ -190,6 +190,10 @@ class TheaterGroundObject(MissionTarget):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return self.units
 
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        yield self.position
+
     def clear(self) -> None:
         self.groups = []
 
@@ -257,6 +261,11 @@ class BuildingGroundObject(TheaterGroundObject):
     @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return list(self.iter_building_group())
+
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        for building in self.iter_building_group():
+            yield building.position
 
     @property
     def is_control_point(self) -> bool:
