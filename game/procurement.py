@@ -67,8 +67,8 @@ class ProcurementAi:
 
         total_investment = aircraft_investment + armor_investment
         if total_investment == 0:
-            # Turn 0 or all units were destroyed. Either way, split 50/50.
-            return 0.5
+            # Turn 0 or all units were destroyed. Either way, split 30/70.
+            return 0.3
 
         # the more planes we have, the more ground units we want and vice versa
         ground_unit_share = aircraft_investment / total_investment
