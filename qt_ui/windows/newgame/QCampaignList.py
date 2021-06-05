@@ -144,11 +144,15 @@ class QCampaignList(QListView):
         return self.currentIndex().data(QCampaignList.CampaignRole)
 
     def setup_content(self, show_incompatible: bool) -> None:
-        self.campaign_model.clear()
-        for campaign in self.campaigns:
-            if show_incompatible or campaign.is_compatible:
-                item = QCampaignItem(campaign)
-                self.campaign_model.appendRow(item)
+        self.selectionModel().blockSignals(True)
+        try:
+            self.campaign_model.clear()
+            for campaign in self.campaigns:
+                if show_incompatible or campaign.is_compatible:
+                    item = QCampaignItem(campaign)
+                    self.campaign_model.appendRow(item)
+        finally:
+            self.selectionModel().blockSignals(False)
 
         self.selectionModel().setCurrentIndex(
             self.campaign_model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
