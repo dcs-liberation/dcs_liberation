@@ -1,3 +1,11 @@
+# 4.0.0
+
+Saves from 3.x are not compatible with 4.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 3.0.0
 
 Saves from 2.5 are not compatible with 3.0.
