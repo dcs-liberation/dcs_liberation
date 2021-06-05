@@ -530,33 +530,35 @@ class PendingTransfers:
         return new_transfer
 
     @singledispatchmethod
-    def cancel_transport(self, transfer: TransferOrder, transport) -> None:
+    def cancel_transport(self, transport, transfer: TransferOrder) -> None:
         pass
 
     @cancel_transport.register
     def _cancel_transport_air(
-        self, _transfer: TransferOrder, transport: Airlift
+        self, transport: Airlift, _transfer: TransferOrder
     ) -> None:
         flight = transport.flight
         flight.package.remove_flight(flight)
+        if not flight.package.flights:
+            self.game.ato_for(transport.player_owned).remove_package(flight.package)
         self.game.aircraft_inventory.return_from_flight(flight)
         flight.clear_roster()
 
     @cancel_transport.register
     def _cancel_transport_convoy(
-        self, transfer: TransferOrder, transport: Convoy
+        self, transport: Convoy, transfer: TransferOrder
     ) -> None:
         self.convoys.remove(transport, transfer)
 
     @cancel_transport.register
     def _cancel_transport_cargo_ship(
-        self, transfer: TransferOrder, transport: CargoShip
+        self, transport: CargoShip, transfer: TransferOrder
     ) -> None:
         self.cargo_ships.remove(transport, transfer)
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
         if transfer.transport is not None:
-            self.cancel_transport(transfer, transfer.transport)
+            self.cancel_transport(transfer.transport, transfer)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commision_units(transfer.units)
 
