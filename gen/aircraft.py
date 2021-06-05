@@ -1503,39 +1503,6 @@ class AircraftConflictGenerator:
             restrict_jettison=True,
         )
 
-        racetrack_task_altitude = flight.flight_plan.racetrack_start.alt.meters
-
-        orbit_task = OrbitAction(
-            altitude=racetrack_task_altitude,
-            speed=315,
-            pattern=OrbitAction.OrbitPattern.RaceTrack,
-        )
-
-        this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
-        tacan = this_tanker.tacan
-        callsign = callsign_for_support_unit(group)
-        tacan_callsign = {
-            "Texaco": "TEX",
-            "Arco": "ARC",
-            "Shell": "SHL",
-        }.get(callsign)
-
-        group.points[1].tasks.append(Tanker())
-        group.points[1].tasks.append(orbit_task)
-
-        tanker_unit_type = flight.unit_type
-
-        if tanker_unit_type != IL_78M:
-            activate_tacan_task = ActivateBeaconCommand(
-                tacan.number,
-                tacan.band.value,
-                tacan_callsign,
-                True,
-                group.units[0].id,
-                True,
-            )
-            group.points[1].tasks.append(activate_tacan_task)
-
     def configure_escort(
         self,
         group: FlyingGroup,
@@ -1683,7 +1650,7 @@ class AircraftConflictGenerator:
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
-                point, group, package, flight, self.m
+                point, group, package, flight, self.m, self.air_support
             ).build()
 
         # Set here rather than when the FlightData is created so they waypoints
@@ -1757,12 +1724,14 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> None:
         self.waypoint = waypoint
         self.group = group
         self.package = package
         self.flight = flight
         self.mission = mission
+        self.air_support = air_support
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
@@ -1798,6 +1767,7 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.DROP_OFF: CargoStopBuilder,
@@ -1815,9 +1785,11 @@ class PydcsWaypointBuilder:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
+            FlightWaypointType.TANKER_RACETRACK_START: TankerRaceTrackStartBuilder,
+            FlightWaypointType.TANKER_RACETRACK_STOP: TankerRaceTrackStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
-        return builder(waypoint, group, package, flight, mission)
+        return builder(waypoint, group, package, flight, mission, air_support)
 
     def _viggen_client_tot(self) -> bool:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
@@ -2239,4 +2211,72 @@ class RaceTrackEndBuilder(PydcsWaypointBuilder):
             return waypoint
 
         self.waypoint.departure_time = self.flight.flight_plan.patrol_end_time
+        return waypoint
+
+
+class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        flight_plan = self.flight.flight_plan
+
+        if not isinstance(flight_plan, RaceTrackRefuellingFlightPlan):
+            flight_plan_type = flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create race track for {self.flight} because "
+                f"{flight_plan_type} does not define a refuelling racetrack."
+            )
+            return waypoint
+
+        racetrack = ControlledTask(
+            OrbitAction(
+                altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
+            )
+        )
+        self.set_waypoint_tot(waypoint, flight_plan.racetrack_start_time)
+        racetrack.stop_after_time(
+            int(flight_plan.mission_departure_time.total_seconds())
+        )
+
+        this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
+        tacan = this_tanker.tacan
+        callsign = callsign_for_support_unit(self.group)
+        tacan_callsign = {
+            "Texaco": "TEX",
+            "Arco": "ARC",
+            "Shell": "SHL",
+        }.get(callsign)
+
+        tanker_unit_type = self.flight.unit_type
+
+        if tanker_unit_type != IL_78M:
+            activate_tacan_task = ActivateBeaconCommand(
+                tacan.number,
+                tacan.band.value,
+                tacan_callsign,
+                True,
+                self.group.units[0].id,
+                True,
+            )
+
+        waypoint.add_task(Tanker())
+        waypoint.add_task(racetrack)
+        waypoint.add_task(activate_tacan_task)
+
+        return waypoint
+
+
+class TankerRaceTrackStopBuilder(PydcsWaypointBuilder):
+    def build(self) -> MovingPoint:
+        waypoint = super().build()
+
+        if not isinstance(self.flight.flight_plan, RaceTrackRefuellingFlightPlan):
+            flight_plan_type = self.flight.flight_plan.__class__.__name__
+            logging.error(
+                f"Cannot create race track for {self.flight} because "
+                f"{flight_plan_type} does not define a tanker racetrack."
+            )
+            return waypoint
+
+        self.waypoint.departure_time = self.flight.flight_plan.mission_departure_time
         return waypoint

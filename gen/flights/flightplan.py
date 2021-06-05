@@ -1711,7 +1711,7 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
         altitude = Distance.from_feet(14000)
 
-        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
+        racetrack = builder.tanker_race_track(racetrack_start, racetrack_end, altitude)
 
         return RaceTrackRefuellingFlightPlan(
             package=self.package,
