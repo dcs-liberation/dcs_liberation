@@ -18,7 +18,7 @@ from game.squadrons import Squadron, Pilot
 from game.theater.missiontarget import MissionTarget
 from game.transfers import TransferOrder
 from gen.ato import AirTaskingOrder, Package
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightType
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
@@ -466,6 +466,15 @@ class SquadronModel(QAbstractListModel):
         else:
             pilot.send_on_leave()
         self.endResetModel()
+
+    def is_auto_assignable(self, task: FlightType) -> bool:
+        return task in self.squadron.auto_assignable_mission_types
+
+    def set_auto_assignable(self, task: FlightType, auto_assignable: bool) -> None:
+        if auto_assignable:
+            self.squadron.auto_assignable_mission_types.add(task)
+        else:
+            self.squadron.auto_assignable_mission_types.remove(task)
 
 
 class GameModel:

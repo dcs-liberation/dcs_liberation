@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import (
     Type,
     Tuple,
-    List,
     TYPE_CHECKING,
     Optional,
     Iterator,
@@ -82,9 +81,12 @@ class Squadron:
     role: str
     aircraft: Type[FlyingType]
     livery: Optional[str]
-    mission_types: Tuple[FlightType, ...]
-    pilots: List[Pilot]
-    available_pilots: List[Pilot] = field(init=False, hash=False, compare=False)
+    mission_types: tuple[FlightType, ...]
+    pilots: list[Pilot]
+    available_pilots: list[Pilot] = field(init=False, hash=False, compare=False)
+    auto_assignable_mission_types: set[FlightType] = field(
+        init=False, hash=False, compare=False
+    )
 
     # We need a reference to the Game so that we can access the Faker without needing to
     # persist it to the save game, or having to reconstruct it (it's not cheap) each
@@ -94,6 +96,7 @@ class Squadron:
 
     def __post_init__(self) -> None:
         self.available_pilots = list(self.active_pilots)
+        self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
         return f'{self.name} "{self.nickname}"'
@@ -222,6 +225,12 @@ class Squadron:
             game=game,
             player=player,
         )
+
+    def __setstate__(self, state) -> None:
+        # TODO: Remove save compat.
+        if "auto_assignable_mission_types" not in state:
+            state["auto_assignable_mission_types"] = set(state["mission_types"])
+        self.__dict__.update(state)
 
 
 class SquadronLoader:
