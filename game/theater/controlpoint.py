@@ -151,11 +151,19 @@ class GroundUnitAllocations:
 
     @cached_property
     def total(self) -> int:
-        return (
-            sum(self.present.values())
-            + sum(self.ordered.values())
-            + sum(self.transferring.values())
-        )
+        return self.total_present + self.total_ordered + self.total_transferring
+
+    @cached_property
+    def total_present(self) -> int:
+        return sum(self.present.values())
+
+    @cached_property
+    def total_ordered(self) -> int:
+        return sum(self.ordered.values())
+
+    @cached_property
+    def total_transferring(self) -> int:
+        return sum(self.transferring.values())
 
 
 @dataclass
