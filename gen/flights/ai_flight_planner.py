@@ -524,6 +524,24 @@ class ObjectiveFinder:
             raise RuntimeError("Found no friendly control points. You probably lost.")
         return farthest
 
+    def closest_friendly_control_point(self) -> ControlPoint:
+        """Finds the friendly control point that is closest to any threats."""
+        threat_zones = self.game.threat_zone_for(not self.is_player)
+
+        farthest = None
+        max_distance = nautical_miles(10000)
+        for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                continue
+            distance = threat_zones.distance_to_threat(cp.position)
+            if distance < max_distance:
+                farthest = cp
+                max_distance = distance
+
+        if farthest is None:
+            raise RuntimeError("Found no friendly control points. You probably lost.")
+        return farthest
+
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
         return (
@@ -582,6 +600,7 @@ class CoalitionMissionPlanner:
     MAX_SEAD_RANGE = nautical_miles(150)
     MAX_STRIKE_RANGE = nautical_miles(150)
     MAX_AWEC_RANGE = nautical_miles(200)
+    MAX_TANKER_RANGE = nautical_miles(200)
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
@@ -626,6 +645,12 @@ class CoalitionMissionPlanner:
             [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
             # Supports all the early CAP flights, so should be in the air ASAP.
             asap=True,
+        )
+
+        yield ProposedMission(
+            self.objective_finder.closest_friendly_control_point(),
+            [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
+            asap=False,
         )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.

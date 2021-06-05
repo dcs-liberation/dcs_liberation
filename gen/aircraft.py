@@ -2238,18 +2238,22 @@ class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
             int(flight_plan.mission_departure_time.total_seconds())
         )
 
-        this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
-        tacan = this_tanker.tacan
-        callsign = callsign_for_support_unit(self.group)
-        tacan_callsign = {
-            "Texaco": "TEX",
-            "Arco": "ARC",
-            "Shell": "SHL",
-        }.get(callsign)
+        waypoint.add_task(Tanker())
+        waypoint.add_task(racetrack)
 
         tanker_unit_type = self.flight.unit_type
 
         if tanker_unit_type != IL_78M:
+
+            this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
+            tacan = this_tanker.tacan
+            callsign = callsign_for_support_unit(self.group)
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(callsign)
+
             activate_tacan_task = ActivateBeaconCommand(
                 tacan.number,
                 tacan.band.value,
@@ -2259,9 +2263,7 @@ class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
                 True,
             )
 
-        waypoint.add_task(Tanker())
-        waypoint.add_task(racetrack)
-        waypoint.add_task(activate_tacan_task)
+            waypoint.add_task(activate_tacan_task)
 
         return waypoint
 
