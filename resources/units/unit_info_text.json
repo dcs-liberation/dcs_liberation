@@ -383,6 +383,36 @@
             "year-of-variant-introduction": "1995"
         }
     }],
+    "KC130": [{
+        "default": {
+            "name": "KC-130",
+            "text": "The Lockheed Martin (previously Lockheed) KC-130 is a family of the extended-range tanker version of the C-130 Hercules transport aircraft modified for aerial refueling.",
+            "country-of-origin": "USA",
+            "manufacturer": "Lockheed Martin",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1962"
+        }
+    }],
+    "KC-135": [{
+        "default": {
+            "name": "KC-135 Stratotanker",
+            "text": "The Boeing KC-135 Stratotanker is a military aerial refueling aircraft that was developed from the Boeing 367-80 prototype, alongside the Boeing 707 airliner.",
+            "country-of-origin": "USA",
+            "manufacturer": "Beoing",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1957"
+        }
+    }],
+    "KC135MPRS": [{
+        "default": {
+            "name": "KC-135 Stratotanker MPRS",
+            "text": "The Boeing KC-135 Stratotanker is a military aerial refueling aircraft that was developed from the Boeing 367-80 prototype, alongside the Boeing 707 airliner.  This model has the Multi-point Refueling System modification, allowing for probe and drogue refuelling.",
+            "country-of-origin": "USA",
+            "manufacturer": "Beoing",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1994"
+        }
+    }],
     "L-39C": [{
         "default": {
             "name": "L-39C Albatros",
@@ -685,6 +715,15 @@
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Carrier-based Attack",
+            "year-of-variant-introduction": "1984"
+        }
+    }],
+    "S-3B Tanker": [{
+            "default": {
+            "name": "S-3B Tanker",
+            "country-of-origin": "USA",
+            "manufacturer": "Lockheed",
+            "role": "Carrier-based Tanker",
             "year-of-variant-introduction": "1984"
         }
     }],
