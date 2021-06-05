@@ -1006,7 +1006,7 @@ class CoalitionMissionPlanner:
             interval = (latest - earliest) // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
-                yield timedelta(minutes=max(0, time + error))
+                yield timedelta(seconds=max(0, time + error))
 
         dca_types = {
             FlightType.BARCAP,
@@ -1020,11 +1020,11 @@ class CoalitionMissionPlanner:
 
         start_time = start_time_generator(
             count=len(non_dca_packages),
-            earliest=5,
+            earliest=5 * 60,
             latest=int(
-                self.game.settings.desired_player_mission_duration.total_seconds() / 60
+                self.game.settings.desired_player_mission_duration.total_seconds()
             ),
-            margin=5,
+            margin=5 * 60,
         )
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()
