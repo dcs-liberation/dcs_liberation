@@ -49,8 +49,8 @@ class QBaseMenu2(QDialog):
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setMinimumSize(300, 200)
-        self.setMinimumWidth(800)
-        self.setMaximumWidth(800)
+        self.setMinimumWidth(1024)
+        self.setMaximumWidth(1024)
         self.setModal(True)
 
         self.setWindowTitle(self.cp.name)

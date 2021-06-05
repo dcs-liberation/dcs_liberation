@@ -62,7 +62,7 @@ class UnitMap:
         self.airlifts: Dict[str, AirliftUnit] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
-        for pilot, unit in zip(flight.pilots, group.units):
+        for pilot, unit in zip(flight.roster.pilots, group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)

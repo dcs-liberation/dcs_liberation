@@ -180,7 +180,7 @@ class AircraftAllocator:
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
                 for squadron in self.air_wing.squadrons_for(aircraft):
-                    if task not in squadron.mission_types:
+                    if task not in squadron.auto_assignable_mission_types:
                         continue
                     if len(squadron.available_pilots) >= flight.num_aircraft:
                         inventory.remove_aircraft(aircraft, flight.num_aircraft)
@@ -604,7 +604,7 @@ class CoalitionMissionPlanner:
         for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
             if (
                 squadron.aircraft in all_compatible
-                and mission_type in squadron.mission_types
+                and mission_type in squadron.auto_assignable_mission_types
             ):
                 return True
         return False

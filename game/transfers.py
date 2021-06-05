@@ -238,7 +238,7 @@ class AirliftPlanner:
                     for s in self.game.air_wing_for(self.for_player).squadrons_for(
                         unit_type
                     )
-                    if FlightType.TRANSPORT in s.mission_types
+                    if FlightType.TRANSPORT in s.auto_assignable_mission_types
                 ]
                 if not squadrons:
                     continue

@@ -52,9 +52,10 @@ class SquadronDelegate(TwoColumnRowDelegate):
             return self.squadron(index).nickname
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
+            alive = squadron.number_of_living_pilots
             active = len(squadron.active_pilots)
             available = len(squadron.available_pilots)
-            return f"{squadron.size} pilots, {active} active, {available} unassigned"
+            return f"{alive} pilots, {active} active, {available} unassigned"
         return ""
 
 
@@ -109,20 +110,20 @@ class AircraftInventoryData:
         yield self.player
 
     @classmethod
-    def from_flight(cls, flight: Flight) -> AircraftInventoryData:
+    def from_flight(cls, flight: Flight) -> Iterator[AircraftInventoryData]:
         unit_type_name = cls.format_unit_type(flight.unit_type, flight.country)
         num_units = flight.count
         flight_type = flight.flight_type.value
         target = flight.package.target.name
         for idx in range(0, num_units):
-            pilot = flight.pilots[idx]
+            pilot = flight.roster.pilots[idx]
             if pilot is None:
                 pilot_name = "Unassigned"
                 player = ""
             else:
                 pilot_name = pilot.name
                 player = "Player" if pilot.player else "AI"
-            return AircraftInventoryData(
+            yield AircraftInventoryData(
                 flight.departure.name,
                 unit_type_name,
                 flight_type,
@@ -194,7 +195,7 @@ class AirInventoryView(QWidget):
     def iter_allocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         for package in self.game_model.game.blue_ato.packages:
             for flight in package.flights:
-                yield AircraftInventoryData.from_flight(flight)
+                yield from AircraftInventoryData.from_flight(flight)
 
     def iter_unallocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         game = self.game_model.game

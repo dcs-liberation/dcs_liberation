@@ -193,7 +193,7 @@ class ProcurementAi:
                 continue
 
             for squadron in self.air_wing.squadrons_for(unit):
-                if task in squadron.mission_types:
+                if task in squadron.auto_assignable_mission_types:
                     break
             else:
                 continue
