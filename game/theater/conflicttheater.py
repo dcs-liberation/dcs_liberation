@@ -55,6 +55,7 @@ from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
+from ..helipad import Helipad
 from ..point_with_heading import PointWithHeading
 from ..profiling import logged_duration
 from ..scenery_group import SceneryGroup
