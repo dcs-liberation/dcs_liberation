@@ -90,7 +90,7 @@ class PilotControls(QHBoxLayout):
         self.selector.currentIndexChanged.connect(self.on_pilot_changed)
         self.addWidget(self.selector)
 
-        self.player_checkbox = QCheckBox()
+        self.player_checkbox = QCheckBox(text="Player")
         self.player_checkbox.setToolTip("Checked if this pilot is a player.")
         self.on_pilot_changed(self.selector.currentIndex())
         self.addWidget(self.player_checkbox)
