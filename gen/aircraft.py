@@ -13,7 +13,7 @@ from dcs.action import AITaskPush, ActivateGroup
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import IL_78M
+from dcs.planes import IL_78M, KC130, KC135MPRS, S_3B_Tanker
 from dcs.helicopters import UH_1H, helicopter_map
 from dcs.mapping import Point
 from dcs.mission import Mission, StartType
@@ -2228,11 +2228,25 @@ class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
             )
             return waypoint
 
-        racetrack = ControlledTask(
-            OrbitAction(
-                altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
+        basket_tankers = [KC130, KC135MPRS, IL_78M, S_3B_Tanker]
+
+        if self.flight.unit_type in basket_tankers:
+            racetrack = ControlledTask(
+                OrbitAction(
+                    altitude=waypoint.alt,
+                    speed=680,
+                    pattern=OrbitAction.OrbitPattern.RaceTrack,
+                )
             )
-        )
+        else:
+            racetrack = ControlledTask(
+                OrbitAction(
+                    altitude=waypoint.alt,
+                    speed=715,
+                    pattern=OrbitAction.OrbitPattern.RaceTrack,
+                )
+            )
+
         self.set_waypoint_tot(waypoint, flight_plan.racetrack_start_time)
         racetrack.stop_after_time(
             int(flight_plan.mission_departure_time.total_seconds())
