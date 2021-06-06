@@ -3,9 +3,10 @@ import logging
 import typing
 from typing import Dict, Type
 
-from dcs.unittype import FlyingType, VehicleType, UnitType
+from dcs.unittype import VehicleType
 
 from game.db import PRICES
+from game.dcs.aircrafttype import AircraftType
 
 BASE_MAX_STRENGTH = 1
 BASE_MIN_STRENGTH = 0
@@ -13,7 +14,7 @@ BASE_MIN_STRENGTH = 0
 
 class Base:
     def __init__(self):
-        self.aircraft: Dict[Type[FlyingType], int] = {}
+        self.aircraft: Dict[AircraftType, int] = {}
         self.armor: Dict[Type[VehicleType], int] = {}
         self.strength = 1
 
@@ -35,7 +36,7 @@ class Base:
                 logging.exception(f"No price found for {unit_type.id}")
         return total
 
-    def total_units_of_type(self, unit_type) -> int:
+    def total_units_of_type(self, unit_type: typing.Any) -> int:
         return sum(
             [
                 c
@@ -44,15 +45,16 @@ class Base:
             ]
         )
 
-    def commission_units(self, units: typing.Dict[typing.Type[UnitType], int]):
+    def commission_units(self, units: typing.Dict[typing.Any, int]):
         for unit_type, unit_count in units.items():
             if unit_count <= 0:
                 continue
 
-            if issubclass(unit_type, VehicleType):
-                target_dict = self.armor
-            elif issubclass(unit_type, FlyingType):
+            target_dict: dict[typing.Any, int]
+            if isinstance(unit_type, AircraftType):
                 target_dict = self.aircraft
+            elif issubclass(unit_type, VehicleType):
+                target_dict = self.armor
             else:
                 logging.error(
                     f"Unexpected unit type of {unit_type}: "
@@ -66,21 +68,22 @@ class Base:
 
         for unit_type, count in units_lost.items():
 
+            target_dict: dict[typing.Any, int]
             if unit_type in self.aircraft:
-                target_array = self.aircraft
+                target_dict = self.aircraft
             elif unit_type in self.armor:
-                target_array = self.armor
+                target_dict = self.armor
             else:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
 
-            if unit_type not in target_array:
+            if unit_type not in target_dict:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
 
-            target_array[unit_type] = max(target_array[unit_type] - count, 0)
-            if target_array[unit_type] == 0:
-                del target_array[unit_type]
+            target_dict[unit_type] = max(target_dict[unit_type] - count, 0)
+            if target_dict[unit_type] == 0:
+                del target_dict[unit_type]
 
     def affect_strength(self, amount):
         self.strength += amount

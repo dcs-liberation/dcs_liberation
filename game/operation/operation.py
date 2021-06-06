@@ -17,7 +17,7 @@ from dcs.triggers import TriggerStart
 from game.plugins import LuaPluginManager
 from game.theater.theatergroundobject import TheaterGroundObject
 from gen import Conflict, FlightType, VisualGenerator
-from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
+from gen.aircraft import AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
 from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
@@ -215,23 +215,7 @@ class Operation:
         for flight in flights:
             if not flight.client_units:
                 continue
-            cls.assign_channels_to_flight(flight, air_support)
-
-    @staticmethod
-    def assign_channels_to_flight(flight: FlightData, air_support: AirSupport) -> None:
-        """Assigns preset radio channels for a client flight."""
-        airframe = flight.aircraft_type
-
-        try:
-            aircraft_data = AIRCRAFT_DATA[airframe.id]
-        except KeyError:
-            logging.warning(f"No aircraft data for {airframe.id}")
-            return
-
-        if aircraft_data.channel_allocator is not None:
-            aircraft_data.channel_allocator.assign_channels_for_flight(
-                flight, air_support
-            )
+            flight.aircraft_type.assign_channels_for_flight(flight, air_support)
 
     @classmethod
     def _create_tacan_registry(

@@ -153,7 +153,7 @@ def get_radio(name: str) -> Radio:
     for radio in RADIOS:
         if radio.name == name:
             return radio
-    raise KeyError
+    raise KeyError(f"Unknown radio: {name}")
 
 
 class RadioRegistry:

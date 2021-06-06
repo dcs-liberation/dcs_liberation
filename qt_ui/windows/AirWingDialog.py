@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Type, Iterator
+from typing import Optional, Iterator
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -20,9 +20,7 @@ from PySide2.QtWidgets import (
     QTableWidgetItem,
     QWidget,
 )
-from dcs.unittype import FlyingType
 
-from game import db
 from game.inventory import ControlPointAircraftInventory
 from game.squadrons import Squadron
 from gen.flights.flight import Flight
@@ -45,9 +43,7 @@ class SquadronDelegate(TwoColumnRowDelegate):
             return self.air_wing_model.data(index, Qt.DisplayRole)
         elif (row, column) == (0, 1):
             squadron = self.air_wing_model.data(index, AirWingModel.SquadronRole)
-            return db.unit_get_expanded_info(
-                squadron.country, squadron.aircraft, "name"
-            )
+            return squadron.aircraft.name
         elif (row, column) == (1, 0):
             return self.squadron(index).nickname
         elif (row, column) == (1, 1):
@@ -111,7 +107,6 @@ class AircraftInventoryData:
 
     @classmethod
     def from_flight(cls, flight: Flight) -> Iterator[AircraftInventoryData]:
-        unit_type_name = cls.format_unit_type(flight.unit_type, flight.country)
         num_units = flight.count
         flight_type = flight.flight_type.value
         target = flight.package.target.name
@@ -125,7 +120,7 @@ class AircraftInventoryData:
                 player = "Player" if pilot.player else "AI"
             yield AircraftInventoryData(
                 flight.departure.name,
-                unit_type_name,
+                flight.unit_type.name,
                 flight_type,
                 target,
                 pilot_name,
@@ -134,23 +129,18 @@ class AircraftInventoryData:
 
     @classmethod
     def each_from_inventory(
-        cls, inventory: ControlPointAircraftInventory, country: str
+        cls, inventory: ControlPointAircraftInventory
     ) -> Iterator[AircraftInventoryData]:
         for unit_type, num_units in inventory.all_aircraft:
-            unit_type_name = cls.format_unit_type(unit_type, country)
             for _ in range(0, num_units):
                 yield AircraftInventoryData(
                     inventory.control_point.name,
-                    unit_type_name,
+                    unit_type.name,
                     "Idle",
                     "N/A",
                     "N/A",
                     "N/A",
                 )
-
-    @staticmethod
-    def format_unit_type(aircraft: Type[FlyingType], country: str) -> str:
-        return db.unit_get_expanded_info(country, aircraft, "name")
 
 
 class AirInventoryView(QWidget):
@@ -201,9 +191,7 @@ class AirInventoryView(QWidget):
         game = self.game_model.game
         for control_point, inventory in game.aircraft_inventory.inventories.items():
             if control_point.captured:
-                yield from AircraftInventoryData.each_from_inventory(
-                    inventory, game.country_for(player=True)
-                )
+                yield from AircraftInventoryData.each_from_inventory(inventory)
 
     def get_data(self, only_unallocated: bool) -> Iterator[AircraftInventoryData]:
         yield from self.iter_unallocated_aircraft()

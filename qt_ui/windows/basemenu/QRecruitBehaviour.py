@@ -1,5 +1,5 @@
 import logging
-from typing import Type
+from typing import Type, Union
 
 from PySide2.QtWidgets import (
     QGroupBox,
@@ -10,9 +10,9 @@ from PySide2.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
 )
-from dcs.unittype import UnitType
+from dcs.unittype import VehicleType
 
-from game import db
+from game.dcs.aircrafttype import AircraftType
 from game.theater import ControlPoint
 from game.unitdelivery import PendingUnitDeliveries
 from qt_ui.models import GameModel
@@ -47,7 +47,7 @@ class QRecruitBehaviour:
 
     def add_purchase_row(
         self,
-        unit_type: Type[UnitType],
+        unit_type: Union[AircraftType, Type[VehicleType]],
         layout: QLayout,
         row: int,
     ) -> int:
@@ -61,13 +61,7 @@ class QRecruitBehaviour:
         existing_units = self.cp.base.total_units_of_type(unit_type)
         scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
-        unitName = QLabel(
-            "<b>"
-            + db.unit_get_expanded_info(
-                self.game_model.game.player_country, unit_type, "name"
-            )
-            + "</b>"
-        )
+        unitName = QLabel(f"<b>{self.name_of(unit_type)}</b>")
         unitName.setSizePolicy(
             QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         )
@@ -81,7 +75,7 @@ class QRecruitBehaviour:
         self.existing_units_labels[unit_type] = existing_units
         self.bought_amount_labels[unit_type] = amount_bought
 
-        price = QLabel("<b>$ {:02d}</b> m".format(db.PRICES[unit_type]))
+        price = QLabel(f"<b>$ {self.price_of(unit_type)}</b> M")
         price.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         buysell = QGroupBox()
@@ -155,7 +149,7 @@ class QRecruitBehaviour:
 
         return row + 1
 
-    def _update_count_label(self, unit_type: Type[UnitType]):
+    def _update_count_label(self, unit_type: Union[AircraftType, Type[VehicleType]]):
 
         self.bought_amount_labels[unit_type].setText(
             "<b>{}</b>".format(
@@ -172,32 +166,31 @@ class QRecruitBehaviour:
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
-    def buy(self, unit_type: Type[UnitType]):
+    def buy(self, unit_type: Union[AircraftType, Type[VehicleType]]):
         if not self.enable_purchase(unit_type):
             logging.error(f"Purchase of {unit_type.id} not allowed at {self.cp.name}")
             return
 
-        price = db.PRICES[unit_type]
         self.pending_deliveries.order({unit_type: 1})
-        self.budget -= price
+        self.budget -= self.price_of(unit_type)
         self._update_count_label(unit_type)
         self.update_available_budget()
 
     def sell(self, unit_type):
         if self.pending_deliveries.available_next_turn(unit_type) > 0:
-            price = db.PRICES[unit_type]
-            self.budget += price
+            self.budget += self.price_of(unit_type)
             self.pending_deliveries.sell({unit_type: 1})
             if self.pending_deliveries.units[unit_type] == 0:
                 del self.pending_deliveries.units[unit_type]
         self._update_count_label(unit_type)
         self.update_available_budget()
 
-    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
-        price = db.PRICES[unit_type]
-        return self.budget >= price
+    def enable_purchase(
+        self, unit_type: Union[AircraftType, Type[VehicleType]]
+    ) -> bool:
+        return self.budget >= self.price_of(unit_type)
 
-    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+    def enable_sale(self, unit_type: Union[AircraftType, Type[VehicleType]]) -> bool:
         return True
 
     def info(self, unit_type):
@@ -209,3 +202,9 @@ class QRecruitBehaviour:
         Set the maximum number of units that can be bought
         """
         self.maximum_units = maximum_units
+
+    def name_of(self, unit_type: Union[AircraftType, Type[VehicleType]]) -> str:
+        raise NotImplementedError
+
+    def price_of(self, unit_type: Union[AircraftType, Type[VehicleType]]) -> int:
+        raise NotImplementedError

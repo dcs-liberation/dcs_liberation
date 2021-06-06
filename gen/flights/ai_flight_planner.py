@@ -17,14 +17,10 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
-from dcs.unittype import FlyingType
-
-from game.factions.faction import Faction
+from game.dcs.aircrafttype import AircraftType
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
 from game.profiling import logged_duration, MultiEventTracer
@@ -256,7 +252,7 @@ class PackageBuilder:
         return True
 
     def find_divert_field(
-        self, aircraft: Type[FlyingType], arrival: ControlPoint
+        self, aircraft: AircraftType, arrival: ControlPoint
     ) -> Optional[ControlPoint]:
         divert_limit = nautical_miles(150)
         for airfield in self.closest_airfields.operational_airfields_within(
@@ -867,7 +863,7 @@ class CoalitionMissionPlanner:
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
-                self.message("Unused aircraft", f"{available} {aircraft.id} from {cp}")
+                self.message("Unused aircraft", f"{available} {aircraft} from {cp}")
 
     def plan_flight(
         self,

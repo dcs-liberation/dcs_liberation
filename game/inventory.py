@@ -6,6 +6,7 @@ from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING, Type
 
 from dcs.unittype import FlyingType
 
+from game.dcs.aircrafttype import AircraftType
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -17,9 +18,9 @@ class ControlPointAircraftInventory:
 
     def __init__(self, control_point: ControlPoint) -> None:
         self.control_point = control_point
-        self.inventory: Dict[Type[FlyingType], int] = defaultdict(int)
+        self.inventory: Dict[AircraftType, int] = defaultdict(int)
 
-    def add_aircraft(self, aircraft: Type[FlyingType], count: int) -> None:
+    def add_aircraft(self, aircraft: AircraftType, count: int) -> None:
         """Adds aircraft to the inventory.
 
         Args:
@@ -28,7 +29,7 @@ class ControlPointAircraftInventory:
         """
         self.inventory[aircraft] += count
 
-    def remove_aircraft(self, aircraft: Type[FlyingType], count: int) -> None:
+    def remove_aircraft(self, aircraft: AircraftType, count: int) -> None:
         """Removes aircraft from the inventory.
 
         Args:
@@ -42,12 +43,12 @@ class ControlPointAircraftInventory:
         available = self.inventory[aircraft]
         if available < count:
             raise ValueError(
-                f"Cannot remove {count} {aircraft.id} from "
+                f"Cannot remove {count} {aircraft} from "
                 f"{self.control_point.name}. Only have {available}."
             )
         self.inventory[aircraft] -= count
 
-    def available(self, aircraft: Type[FlyingType]) -> int:
+    def available(self, aircraft: AircraftType) -> int:
         """Returns the number of available aircraft of the given type.
 
         Args:
@@ -59,14 +60,14 @@ class ControlPointAircraftInventory:
             return 0
 
     @property
-    def types_available(self) -> Iterator[Type[FlyingType]]:
+    def types_available(self) -> Iterator[AircraftType]:
         """Iterates over all available aircraft types."""
         for aircraft, count in self.inventory.items():
             if count > 0:
                 yield aircraft
 
     @property
-    def all_aircraft(self) -> Iterator[Tuple[Type[FlyingType], int]]:
+    def all_aircraft(self) -> Iterator[Tuple[AircraftType, int]]:
         """Iterates over all available aircraft types, including amounts."""
         for aircraft, count in self.inventory.items():
             if count > 0:
@@ -107,9 +108,9 @@ class GlobalAircraftInventory:
         return self.inventories[control_point]
 
     @property
-    def available_types_for_player(self) -> Iterator[Type[FlyingType]]:
+    def available_types_for_player(self) -> Iterator[AircraftType]:
         """Iterates over all aircraft types available to the player."""
-        seen: Set[Type[FlyingType]] = set()
+        seen: Set[AircraftType] = set()
         for control_point, inventory in self.inventories.items():
             if control_point.captured:
                 for aircraft in inventory.types_available:

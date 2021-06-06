@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from enum import unique, Enum
 from pathlib import Path
 from typing import (
-    Type,
     Tuple,
     TYPE_CHECKING,
     Optional,
@@ -17,10 +16,9 @@ from typing import (
 )
 
 import yaml
-from dcs.unittype import FlyingType
 from faker import Faker
 
-from game.db import flying_type_from_name
+from game.dcs.aircrafttype import AircraftType
 from game.settings import AutoAtoBehavior
 
 if TYPE_CHECKING:
@@ -79,7 +77,7 @@ class Squadron:
     nickname: str
     country: str
     role: str
-    aircraft: Type[FlyingType]
+    aircraft: AircraftType
     livery: Optional[str]
     mission_types: tuple[FlightType, ...]
     pilots: list[Pilot]
@@ -196,9 +194,11 @@ class Squadron:
         with path.open() as squadron_file:
             data = yaml.safe_load(squadron_file)
 
-        unit_type = flying_type_from_name(data["aircraft"])
-        if unit_type is None:
-            raise KeyError(f"Could not find any aircraft with the ID {unit_type}")
+        name = data["aircraft"]
+        try:
+            unit_type = AircraftType.named(name)
+        except KeyError as ex:
+            raise KeyError(f"Could not find any aircraft named {name}") from ex
 
         pilots = [Pilot(n, player=False) for n in data.get("pilots", [])]
         pilots.extend([Pilot(n, player=True) for n in data.get("players", [])])
@@ -245,8 +245,8 @@ class SquadronLoader:
         yield Path(persistency.base_path()) / "Liberation/Squadrons"
         yield Path("resources/squadrons")
 
-    def load(self) -> dict[Type[FlyingType], list[Squadron]]:
-        squadrons: dict[Type[FlyingType], list[Squadron]] = defaultdict(list)
+    def load(self) -> dict[AircraftType, list[Squadron]]:
+        squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
         country = self.game.country_for(self.player)
         faction = self.game.faction_for(self.player)
         any_country = country.startswith("Combined Joint Task Forces ")
@@ -317,7 +317,7 @@ class AirWing:
                 )
             ]
 
-    def squadrons_for(self, aircraft: Type[FlyingType]) -> Sequence[Squadron]:
+    def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
 
     def squadrons_for_task(self, task: FlightType) -> Iterator[Squadron]:
@@ -325,7 +325,7 @@ class AirWing:
             if task in squadron.mission_types:
                 yield squadron
 
-    def squadron_for(self, aircraft: Type[FlyingType]) -> Squadron:
+    def squadron_for(self, aircraft: AircraftType) -> Squadron:
         return self.squadrons_for(aircraft)[0]
 
     def iter_squadrons(self) -> Iterator[Squadron]:

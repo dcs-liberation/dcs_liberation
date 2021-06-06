@@ -143,7 +143,7 @@ class PackageModel(QAbstractListModel):
     @staticmethod
     def icon_for_flight(flight: Flight) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the flight."""
-        name = db.unit_type_name(flight.unit_type)
+        name = flight.unit_type.dcs_id
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None
@@ -402,7 +402,7 @@ class AirWingModel(QAbstractListModel):
     @staticmethod
     def icon_for_squadron(squadron: Squadron) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the squadron."""
-        name = db.unit_type_name(squadron.aircraft)
+        name = squadron.aircraft.dcs_id
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None

@@ -1,6 +1,5 @@
 from PySide2.QtGui import QStandardItem, QIcon
 
-from game import db
 from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
@@ -14,11 +13,8 @@ class QFlightItem(QStandardItem):
         self.package = package
         self.flight = flight
 
-        if (
-            db.unit_type_name(self.flight.unit_type).replace("/", " ")
-            in AIRCRAFT_ICONS.keys()
-        ):
-            icon = QIcon((AIRCRAFT_ICONS[db.unit_type_name(self.flight.unit_type)]))
+        if self.flight.unit_type.dcs_id in AIRCRAFT_ICONS:
+            icon = QIcon((AIRCRAFT_ICONS[self.flight.unit_type.dcs_id]))
             self.setIcon(icon)
         self.setEditable(False)
         estimator = TotEstimator(self.package)

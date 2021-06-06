@@ -84,10 +84,7 @@ class AircraftIntelLayout(IntelTableLayout):
             for airframe, count in base.aircraft.items():
                 if not count:
                     continue
-                self.add_row(
-                    db.unit_get_expanded_info(game.enemy_country, airframe, "name"),
-                    count,
-                )
+                self.add_row(airframe.name, count)
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)

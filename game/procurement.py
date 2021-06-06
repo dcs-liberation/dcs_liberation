@@ -9,6 +9,7 @@ from dcs.unittype import FlyingType, VehicleType
 
 from game import db
 from game.data.groundunitclass import GroundUnitClass
+from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
@@ -113,7 +114,7 @@ class ProcurementAi:
                 if available % 2 == 0:
                     continue
                 inventory.remove_aircraft(aircraft, 1)
-                total += db.PRICES[aircraft]
+                total += aircraft.price
         return total
 
     def repair_runways(self, budget: float) -> float:
@@ -198,12 +199,12 @@ class ProcurementAi:
         airbase: ControlPoint,
         number: int,
         max_price: float,
-    ) -> Optional[Type[FlyingType]]:
-        best_choice: Optional[Type[FlyingType]] = None
+    ) -> Optional[AircraftType]:
+        best_choice: Optional[AircraftType] = None
         for unit in aircraft_for_task(task):
             if unit not in self.faction.aircrafts:
                 continue
-            if db.PRICES[unit] * number > max_price:
+            if unit.price * number > max_price:
                 continue
             if not airbase.can_operate(unit):
                 continue
@@ -224,7 +225,7 @@ class ProcurementAi:
 
     def affordable_aircraft_for(
         self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
-    ) -> Optional[Type[FlyingType]]:
+    ) -> Optional[AircraftType]:
         return self._affordable_aircraft_for_task(
             request.task_capability, airbase, request.number, budget
         )
@@ -242,7 +243,7 @@ class ProcurementAi:
                 # able to operate expensive aircraft.
                 continue
 
-            budget -= db.PRICES[unit] * request.number
+            budget -= unit.price * request.number
             airbase.pending_unit_deliveries.order({unit: request.number})
             return budget, True
         return budget, False

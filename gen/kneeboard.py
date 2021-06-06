@@ -32,15 +32,15 @@ from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Iterator
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
 from dcs.unit import Unit
-from dcs.unittype import FlyingType
 from tabulate import tabulate
 
 from game.data.alic import AlicCodes
 from game.db import unit_type_from_name
+from game.dcs.aircrafttype import AircraftType
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
 from game.utils import meters
-from .aircraft import AIRCRAFT_DATA, FlightData
+from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
@@ -142,7 +142,8 @@ class KneeboardPage:
         """Writes the kneeboard page to the given path."""
         raise NotImplementedError
 
-    def format_ll(self, ll: LatLon) -> str:
+    @staticmethod
+    def format_ll(ll: LatLon) -> str:
         ns = "N" if ll.latitude >= 0 else "S"
         ew = "E" if ll.longitude >= 0 else "W"
         return f"{ll.latitude:.4}°{ns} {ll.longitude:.4}°{ew}"
@@ -355,8 +356,9 @@ class BriefingPage(KneeboardPage):
         if channel is None:
             return str(frequency)
 
-        namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
-        channel_name = namer.channel_name(channel.radio_id, channel.channel)
+        channel_name = self.flight.aircraft_type.channel_name(
+            channel.radio_id, channel.channel
+        )
         return f"{channel_name}\n{frequency}"
 
 
@@ -452,9 +454,10 @@ class SupportPage(KneeboardPage):
         if channel is None:
             return str(frequency)
 
-        namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
-        channel_name = namer.channel_name(channel.radio_id, channel.channel)
-        return f"{channel_name} {frequency}"
+        channel_name = self.flight.aircraft_type.channel_name(
+            channel.radio_id, channel.channel
+        )
+        return f"{channel_name}\n{frequency}"
 
     def _format_time(self, time: Optional[datetime.timedelta]) -> str:
         if time is None:
@@ -565,14 +568,14 @@ class KneeboardGenerator(MissionInfoGenerator):
         temp_dir = Path("kneeboards")
         temp_dir.mkdir(exist_ok=True)
         for aircraft, pages in self.pages_by_airframe().items():
-            aircraft_dir = temp_dir / aircraft.id
+            aircraft_dir = temp_dir / aircraft.dcs_unit_type.id
             aircraft_dir.mkdir(exist_ok=True)
             for idx, page in enumerate(pages):
                 page_path = aircraft_dir / f"page{idx:02}.png"
                 page.write(page_path)
-                self.mission.add_aircraft_kneeboard(aircraft, page_path)
+                self.mission.add_aircraft_kneeboard(aircraft.dcs_unit_type, page_path)
 
-    def pages_by_airframe(self) -> Dict[FlyingType, List[KneeboardPage]]:
+    def pages_by_airframe(self) -> Dict[AircraftType, List[KneeboardPage]]:
         """Returns a list of kneeboard pages per airframe in the mission.
 
         Only client flights will be included, but because DCS does not support
@@ -583,7 +586,7 @@ class KneeboardGenerator(MissionInfoGenerator):
             A dict mapping aircraft types to the list of kneeboard pages for
             that aircraft.
         """
-        all_flights: Dict[FlyingType, List[KneeboardPage]] = defaultdict(list)
+        all_flights: Dict[AircraftType, List[KneeboardPage]] = defaultdict(list)
         for flight in self.flights:
             if not flight.client_units:
                 continue

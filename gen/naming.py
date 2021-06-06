@@ -6,6 +6,7 @@ from dcs.country import Country
 from dcs.unittype import UnitType
 
 from game import db
+from game.dcs.aircrafttype import AircraftType
 
 from gen.flights.flight import Flight
 
@@ -290,7 +291,7 @@ class NameGenerator:
             country.id,
             cls.aircraft_number,
             parent_base_id,
-            db.unit_type_name(flight.unit_type),
+            flight.unit_type.name,
         )
 
     @classmethod
@@ -318,11 +319,9 @@ class NameGenerator:
         return "awacs|{}|{}|0|".format(country.id, cls.number)
 
     @classmethod
-    def next_tanker_name(cls, country: Country, unit_type: UnitType):
+    def next_tanker_name(cls, country: Country, unit_type: AircraftType):
         cls.number += 1
-        return "tanker|{}|{}|0|{}".format(
-            country.id, cls.number, db.unit_type_name(unit_type)
-        )
+        return "tanker|{}|{}|0|{}".format(country.id, cls.number, unit_type.name)
 
     @classmethod
     def next_carrier_name(cls, country: Country):
