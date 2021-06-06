@@ -23,7 +23,6 @@ from typing import (
     Tuple,
 )
 
-from dcs import helicopters
 from dcs.mapping import Point
 from dcs.ships import (
     CVN_74_John_C__Stennis,
@@ -1139,7 +1138,7 @@ class Fob(ControlPoint):
         return len(self.helipads)
 
     def can_operate(self, aircraft: FlyingType) -> bool:
-        if aircraft in helicopters.helicopter_map.values():
+        if aircraft.helicopter:
             return True
         else:
             return False
