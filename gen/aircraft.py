@@ -885,7 +885,7 @@ class AircraftConflictGenerator:
             callsign = callsign_for_support_unit(group)
 
             tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
-            variant = flight.flight_plan.flight.unit_type
+            variant = db.unit_type_name(flight.flight_plan.flight.unit_type)
             self.air_support.tankers.append(
                 TankerInfo(
                     group_name=str(group.name),
@@ -893,8 +893,8 @@ class AircraftConflictGenerator:
                     variant=variant,
                     freq=channel,
                     tacan=tacan,
-                    start_time=flight.flight_plan.tot_waypoint,
-                    end_time=flight.flight_plan.mission_departure_time,
+                    start_time=flight.flight_plan.racetrack_start_time,
+                    end_time=flight.flight_plan.racetrack_end_time,
                     blue=flight.departure.captured,
                 )
             )

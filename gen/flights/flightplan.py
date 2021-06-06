@@ -789,9 +789,6 @@ class RaceTrackRefuellingFlightPlan(FlightPlan):
 
     @property
     def racetrack_end_time(self) -> timedelta:
-        # TODO: This is currently wrong for CAS.
-        # CAS missions end when they're winchester or bingo. We need to
-        # configure push tasks for the escorts rather than relying on timing.
         return self.racetrack_start_time + self.racetrack_duration
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
